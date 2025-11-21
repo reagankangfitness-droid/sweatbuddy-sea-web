@@ -83,7 +83,6 @@ const ToastClose = React.forwardRef<
     toast-close=""
     {...props}
   >
-    {/* @ts-expect-error - lucide-react type compatibility issue with React 18 */}
     <X className="h-4 w-4" />
   </ToastPrimitives.Close>
 ))

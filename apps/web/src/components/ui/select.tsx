@@ -24,7 +24,6 @@ const SelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      {/* @ts-expect-error - lucide-react type compatibility issue with React 18 */}
       <ChevronDown className="h-4 w-4 opacity-50" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
@@ -43,7 +42,6 @@ const SelectScrollUpButton = React.forwardRef<
     )}
     {...props}
   >
-    {/* @ts-expect-error - lucide-react type compatibility issue with React 18 */}
     <ChevronUp className="h-4 w-4" />
   </SelectPrimitive.ScrollUpButton>
 ))
@@ -61,7 +59,6 @@ const SelectScrollDownButton = React.forwardRef<
     )}
     {...props}
   >
-    {/* @ts-expect-error - lucide-react type compatibility issue with React 18 */}
     <ChevronDown className="h-4 w-4" />
   </SelectPrimitive.ScrollDownButton>
 ))
@@ -126,7 +123,6 @@ const SelectItem = React.forwardRef<
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        {/* @ts-expect-error - lucide-react type compatibility issue with React 18 */}
         <Check className="h-4 w-4" />
       </SelectPrimitive.ItemIndicator>
     </span>

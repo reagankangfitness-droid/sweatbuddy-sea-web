@@ -34,7 +34,6 @@ const FormField = <
 }: ControllerProps<TFieldValues, TName>) => {
   return (
     <FormFieldContext.Provider value={{ name: props.name }}>
-      {/* @ts-expect-error - react-hook-form type compatibility issue with React 18 */}
       <Controller {...props} />
     </FormFieldContext.Provider>
   )

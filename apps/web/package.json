@@ -1,10 +1,11 @@
 {
-  "name": "@sweatbuddy/web",
+  "name": "sweatbuddy-web",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
@@ -16,6 +17,7 @@
   "dependencies": {
     "@clerk/nextjs": "^6.35.1",
     "@hookform/resolvers": "^5.2.2",
+    "@prisma/client": "^5.22.0",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-label": "^2.1.8",
@@ -23,9 +25,6 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-toast": "^1.2.15",
     "@react-google-maps/api": "^2.20.7",
-    "@sweatbuddy/database": "workspace:^",
-    "@sweatbuddy/types": "workspace:*",
-    "@sweatbuddy/ui": "workspace:*",
     "@uploadthing/react": "^7.3.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
@@ -41,6 +40,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "prisma": "^5.22.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",

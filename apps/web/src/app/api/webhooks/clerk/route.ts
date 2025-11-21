@@ -1,7 +1,7 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { prisma } from '@sweatbuddy/database'
+import { prisma } from '@/lib/prisma'
 
 export async function POST(req: Request) {
   // Get the Svix headers for verification

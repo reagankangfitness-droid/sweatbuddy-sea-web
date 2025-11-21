@@ -2,7 +2,7 @@ import { Header } from '@/components/header'
 import { auth } from '@clerk/nextjs/server'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { prisma } from '@sweatbuddy/database'
+import { prisma } from '@/lib/prisma'
 import { DashboardActivities } from '@/components/dashboard-activities'
 
 interface Activity {

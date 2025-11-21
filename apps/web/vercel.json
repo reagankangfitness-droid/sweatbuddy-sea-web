@@ -1,4 +1,3 @@
 {
-  "installCommand": "npm install -g pnpm && cd ../.. && pnpm install && pnpm --filter @sweatbuddy/database prisma generate",
-  "buildCommand": "pnpm build"
+  "framework": "nextjs"
 }

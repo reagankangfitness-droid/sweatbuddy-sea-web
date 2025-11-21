@@ -37,7 +37,7 @@
     "svix": "^1.81.0",
     "tailwind-merge": "^2.2.0",
     "uploadthing": "^7.7.4",
-    "zod": "^4.1.12"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "prisma": "^5.22.0",

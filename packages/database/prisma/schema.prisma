@@ -1,0 +1,170 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum ActivityType {
+  RUN
+  GYM
+  YOGA
+  HIKE
+  CYCLING
+  OTHER
+}
+
+enum ActivityStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}
+
+enum UserActivityStatus {
+  INTERESTED
+  JOINED
+  CANCELLED
+  COMPLETED
+}
+
+enum GroupPrivacy {
+  PUBLIC
+  PRIVATE
+}
+
+enum UserRole {
+  MEMBER
+  ADMIN
+}
+
+// Models
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  imageUrl  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  activities       Activity[]       @relation("CreatedActivities")
+  hostedActivities Activity[]       @relation("HostedActivities")
+  groups           UserGroup[]
+  messages         Message[]
+  userActivities   UserActivity[]
+
+  @@map("users")
+}
+
+model Activity {
+  id          String         @id @default(cuid())
+  title       String
+  description String?
+  type        ActivityType
+  city        String
+  latitude    Float
+  longitude   Float
+  startTime   DateTime?
+  endTime     DateTime?
+  maxPeople   Int?
+  imageUrl    String?
+  price       Float          @default(0)
+  currency    String         @default("USD")
+  status      ActivityStatus @default(PUBLISHED)
+  userId      String
+  hostId      String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  deletedAt   DateTime?
+
+  user           User             @relation("CreatedActivities", fields: [userId], references: [id])
+  host           User?            @relation("HostedActivities", fields: [hostId], references: [id])
+  userActivities UserActivity[]
+  groups         Group[]
+
+  @@index([userId])
+  @@index([hostId])
+  @@index([type])
+  @@index([city])
+  @@index([startTime])
+  @@index([title])
+  @@index([status])
+  @@map("activities")
+}
+
+model Group {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  privacy     GroupPrivacy @default(PUBLIC)
+  activityId  String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+
+  activity Activity?   @relation(fields: [activityId], references: [id])
+  members  UserGroup[]
+  messages Message[]
+
+  @@index([activityId])
+  @@map("groups")
+}
+
+model Message {
+  id        String    @id @default(cuid())
+  content   String
+  groupId   String
+  userId    String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  group Group @relation(fields: [groupId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@index([groupId])
+  @@index([userId])
+  @@map("messages")
+}
+
+model UserGroup {
+  id        String    @id @default(cuid())
+  userId    String
+  groupId   String
+  role      UserRole  @default(MEMBER)
+  joinedAt  DateTime  @default(now())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  user  User  @relation(fields: [userId], references: [id])
+  group Group @relation(fields: [groupId], references: [id])
+
+  @@unique([userId, groupId])
+  @@index([userId])
+  @@index([groupId])
+  @@map("user_groups")
+}
+
+model UserActivity {
+  id         String             @id @default(cuid())
+  userId     String
+  activityId String
+  status     UserActivityStatus @default(INTERESTED)
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  deletedAt  DateTime?
+
+  user     User     @relation(fields: [userId], references: [id])
+  activity Activity @relation(fields: [activityId], references: [id])
+
+  @@unique([userId, activityId])
+  @@index([userId])
+  @@index([activityId])
+  @@index([status])
+  @@map("user_activities")
+}

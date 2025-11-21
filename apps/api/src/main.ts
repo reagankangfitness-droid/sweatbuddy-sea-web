@@ -4,16 +4,18 @@ import { AppModule } from './app.module'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
-  // Enable CORS for Next.js frontend
+  // Enable CORS for all origins (development mode)
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: '*',
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id'],
   })
 
-  const port = process.env.PORT || 3001
+  const port = process.env.PORT || 3333
   await app.listen(port)
 
-  console.log(`API running on http://localhost:${port}`)
+  console.log(`API running on port ${port}`)
+  console.log(`CORS enabled for all origins`)
 }
 
 bootstrap()

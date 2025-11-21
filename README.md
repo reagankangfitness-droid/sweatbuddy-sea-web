@@ -1,21 +1,23 @@
-# Sea Workout
+# SweatBuddy
 
-A full-stack monorepo for tracking fitness activities, built with modern web technologies.
+A full-stack monorepo to find workout experiences near you, built with modern web technologies.
 
 ## Tech Stack
 
 - **Frontend**: Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, shadcn/ui
 - **Backend**: NestJS 10, Prisma 5, PostgreSQL
+- **Authentication**: Clerk
 - **Monorepo**: pnpm workspaces, Turborepo
 - **Database**: PostgreSQL (Neon)
 
 ## Project Structure
 
 ```
-sea-workout/
+sweatbuddy/
 ├── apps/
 │   ├── web/          # Next.js frontend application
-│   └── api/          # NestJS backend API
+│   ├── api/          # NestJS backend API
+│   └── mobile/       # Expo React Native mobile app
 ├── packages/
 │   ├── ui/           # Shared shadcn/ui components
 │   └── types/        # Shared TypeScript types
@@ -41,11 +43,23 @@ pnpm install
 
 2. Set up environment variables:
 
-Create `apps/api/.env`:
+**Backend (`apps/api/.env`):**
 ```env
 DATABASE_URL="postgresql://user:password@host:5432/dbname?schema=public"
 PORT=3001
 ```
+
+**Frontend (`apps/web/.env.local`):**
+```env
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
+```
+
+See the [Authentication Setup](#authentication-setup) section for details on getting Clerk keys.
 
 3. Generate Prisma client and push schema:
 ```bash
@@ -143,6 +157,59 @@ model Activity {
   updatedAt   DateTime @updatedAt
 }
 ```
+
+## Authentication Setup
+
+This project uses [Clerk](https://clerk.com) for authentication. Follow these steps to set it up:
+
+### 1. Create a Clerk Account
+
+1. Go to [clerk.com](https://clerk.com) and sign up
+2. Create a new application
+3. Choose your preferred authentication methods (Email, Google, GitHub, etc.)
+
+### 2. Get Your API Keys
+
+1. In your Clerk dashboard, go to **API Keys**
+2. Copy your **Publishable Key** (starts with `pk_test_` or `pk_live_`)
+3. Copy your **Secret Key** (starts with `sk_test_` or `sk_live_`)
+
+### 3. Configure Environment Variables
+
+Create `apps/web/.env.local` and add your Clerk keys:
+
+```env
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
+CLERK_SECRET_KEY=sk_test_your_key_here
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
+```
+
+### 4. Test Authentication
+
+1. Start the development server: `pnpm dev`
+2. Visit http://localhost:3000
+3. Click "Sign In" to test the authentication flow
+4. After signing in, you'll be redirected to `/dashboard`
+
+### Protected Routes
+
+The middleware (`apps/web/src/middleware.ts`) protects all routes except:
+- `/` - Public home page
+- `/sign-in` - Sign in page
+- `/sign-up` - Sign up page
+
+All other routes require authentication. Users will be redirected to `/sign-in` if not authenticated.
+
+### Components Available
+
+- `<UserButton />` - User profile button in header
+- `<SignIn />` - Pre-built sign in form
+- `<SignUp />` - Pre-built sign up form
+- `<SignedIn>` - Renders children only when user is signed in
+- `<SignedOut>` - Renders children only when user is signed out
 
 ## Adding shadcn/ui Components
 

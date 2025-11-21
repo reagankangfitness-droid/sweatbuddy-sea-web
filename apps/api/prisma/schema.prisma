@@ -7,14 +7,81 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  city      String
+  country   String   @default("Southeast Asia")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  activities    Activity[]
+  groupMembers  GroupMember[]
+  messages      Message[]
+
+  @@map("users")
+}
+
 model Activity {
   id          String   @id @default(cuid())
   name        String
   description String?
-  duration    Int      // in minutes
+  duration    Int?     // in minutes
   calories    Int?
+  city        String
+  latitude    Float
+  longitude   Float
+  userId      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  user User? @relation(fields: [userId], references: [id])
+
   @@map("activities")
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  city        String
+  latitude    Float
+  longitude   Float
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members  GroupMember[]
+  messages Message[]
+
+  @@map("groups")
+}
+
+model GroupMember {
+  id        String   @id @default(cuid())
+  groupId   String
+  userId    String
+  role      String   @default("member")
+  joinedAt  DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@map("group_members")
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  groupId   String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
 }

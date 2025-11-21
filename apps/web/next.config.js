@@ -1,6 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['@sea-workout/ui', '@sea-workout/types'],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+        pathname: "**",
+      },
+    ],
+  },
+  transpilePackages: ['@sweatbuddy/ui', '@sweatbuddy/types'],
 }
 
 module.exports = nextConfig

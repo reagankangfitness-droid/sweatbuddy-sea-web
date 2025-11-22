@@ -66,6 +66,11 @@ model Activity {
   description String?
   type        ActivityType
   city        String
+  address     String?        // Full formatted address
+  streetAddress String?      // Street address (e.g., "123 Orchard Road")
+  postalCode  String?        // Postal/ZIP code
+  country     String?        // Country
+  placeId     String?        // Google Maps Place ID for deep linking
   latitude    Float
   longitude   Float
   startTime   DateTime?

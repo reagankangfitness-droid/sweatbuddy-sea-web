@@ -11,7 +11,7 @@ import Link from 'next/link'
 import { AvatarStack } from '@/components/avatar-stack'
 import { ActivityMessaging } from '@/components/activity-messaging'
 import { generateGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
-import { Calendar, Download, MessageCircle } from 'lucide-react'
+import { Calendar, MessageCircle } from 'lucide-react'
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 
@@ -429,13 +429,6 @@ Organized via SweatBuddy
                       >
                         <Calendar className="w-4 h-4 mr-2" />
                         Add to Calendar
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={handleDownloadIcs}
-                      >
-                        <Download className="w-4 h-4" />
                       </Button>
                     </div>
                     <div className="flex gap-3">

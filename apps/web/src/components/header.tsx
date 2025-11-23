@@ -10,7 +10,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
       <div className="max-w-container mx-auto flex h-20 items-center justify-between px-6">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold text-foreground hover:opacity-80 transition-opacity tracking-tight">
+        <Link href="/" className="text-2xl font-bold text-primary hover:text-primary-hover transition-colors tracking-tight">
           SweatBuddies
         </Link>
 

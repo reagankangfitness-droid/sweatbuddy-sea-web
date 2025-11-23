@@ -39,7 +39,7 @@ export function generateIcsFile(event: CalendarEvent): string {
 
   return `BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//SweatBuddies//Calendar//EN
+PRODID:-//sweatbuddies//Calendar//EN
 BEGIN:VEVENT
 UID:${Date.now()}@sweatbuddies.com
 DTSTAMP:${formatIcsDate(new Date())}

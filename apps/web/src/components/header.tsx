@@ -11,7 +11,7 @@ export function Header() {
       <div className="max-w-container mx-auto flex h-20 items-center justify-between px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 text-2xl font-bold text-primary hover:text-primary-hover transition-all tracking-tight group">
-          {/* SweatBuddies Droplet Logo */}
+          {/* sweatbuddies Droplet Logo */}
           <svg
             width="32"
             height="32"
@@ -38,7 +38,7 @@ export function Header() {
               strokeLinecap="round"
             />
           </svg>
-          <span>SweatBuddies</span>
+          <span>sweatbuddies</span>
         </Link>
 
         {/* Right side actions */}

@@ -100,7 +100,7 @@ export default function Home() {
         {/* Hero Content */}
         <div className="relative z-10 max-w-container mx-auto px-8 py-28 md:py-36 text-center">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]" style={{ color: '#FFA51F' }}>
-            SweatBuddies
+            sweatbuddies
           </h1>
           <p className="text-xl md:text-2xl text-white/95 mb-10 leading-relaxed max-w-3xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
             Find local workouts, wellness hangs, and health-obsessed people who actually get it.
@@ -124,7 +124,7 @@ export default function Home() {
               <li className="flex items-start">
                 <span className="mr-3 mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
                 <span className="text-white/95 leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                  SweatBuddies is where wellness meets real friendship—move better, meet your people, and build something that lasts.
+                  sweatbuddies is where wellness meets real friendship—move better, meet your people, and build something that lasts.
                 </span>
               </li>
             </ul>

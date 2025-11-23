@@ -228,7 +228,7 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
 💰 Price: ${activity.currency} ${activity.price.toFixed(2)}
 👥 Participants: ${joinedCount}${activity.maxPeople ? ` of ${activity.maxPeople}` : ''}
 
-Organized via SweatBuddies - Find local workouts and wellness activities
+Organized via sweatbuddies - Find local workouts and wellness activities
 `.trim()
 
     const calendarUrl = generateGoogleCalendarUrl({
@@ -262,7 +262,7 @@ Host: ${activity.user.name || 'Anonymous'} (${activity.user.email})
 Price: ${activity.currency} ${activity.price.toFixed(2)}
 Participants: ${joinedCount}${activity.maxPeople ? ` of ${activity.maxPeople}` : ''}
 
-Organized via SweatBuddies
+Organized via sweatbuddies
 `.trim()
 
     downloadIcsFile(

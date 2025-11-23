@@ -141,7 +141,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                   </div>
 
                   {/* Dark Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
                   {/* Activity Type Badge - Top Left */}
                   <div className="absolute top-3 left-3">
@@ -165,12 +165,12 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                   <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                     {/* Location */}
                     <div className="flex items-center gap-1 mb-1">
-                      <MapPin className="w-3.5 h-3.5 text-primary" />
-                      <span className="text-sm font-medium drop-shadow-lg">{activity.city}</span>
+                      <MapPin className="w-3.5 h-3.5 text-white" />
+                      <span className="text-sm font-medium text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{activity.city}</span>
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-lg font-semibold mb-3 line-clamp-2 drop-shadow-lg">
+                    <h3 className="text-lg font-semibold mb-3 line-clamp-2 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                       {activity.title}
                     </h3>
 

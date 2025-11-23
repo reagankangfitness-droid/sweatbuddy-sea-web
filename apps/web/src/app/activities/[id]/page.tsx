@@ -415,25 +415,23 @@ Organized via SweatBuddy
                   <div className="space-y-3">
                     <div className="flex gap-3">
                       <Button
-                        size="lg"
+                        size="sm"
                         onClick={() => setIsMessagingOpen(true)}
                         className="flex-1"
                       >
                         <MessageCircle className="w-4 h-4 mr-2" />
                         Message Host
                       </Button>
-                    </div>
-                    <div className="flex gap-3">
                       <Button
-                        size="lg"
+                        size="sm"
                         onClick={handleAddToGoogleCalendar}
                         className="flex-1"
                       >
                         <Calendar className="w-4 h-4 mr-2" />
-                        Add to Google Calendar
+                        Add to Calendar
                       </Button>
                       <Button
-                        size="lg"
+                        size="sm"
                         variant="outline"
                         onClick={handleDownloadIcs}
                       >

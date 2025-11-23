@@ -81,45 +81,71 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main className="container mx-auto p-8">
-        {/* Hero Section */}
-        <div className="mb-12 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 text-black">SweatBuddies</h1>
-          <p className="text-lg md:text-xl text-gray-600 mb-6 leading-relaxed max-w-2xl mx-auto">
+      {/* Hero Section with Video Background */}
+      <div className="relative w-full min-h-[600px] md:min-h-[700px] -mt-8 mb-12 overflow-hidden">
+        {/* Video Background */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="/hero-video.mp4" type="video/mp4" />
+        </video>
+
+        {/* Dark Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
+
+        {/* Hero Content */}
+        <div className="relative z-10 container mx-auto px-8 py-24 md:py-32 text-center">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
+            SweatBuddies
+          </h1>
+          <p className="text-lg md:text-xl lg:text-2xl text-white mb-8 leading-relaxed max-w-2xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
             Find local workouts, wellness hangs, and health-obsessed people who actually get it.
           </p>
 
           {/* Feature Box */}
-          <div className="max-w-3xl mx-auto mb-8 rounded-lg border bg-card p-6 shadow-sm">
+          <div className="max-w-3xl mx-auto mb-10 rounded-lg border border-white/20 bg-white/10 backdrop-blur-md p-6 shadow-2xl">
             <ul className="text-left space-y-3">
               <li className="flex items-start">
-                <span className="mr-3 mt-1 text-gray-800">•</span>
-                <span className="text-gray-800 leading-relaxed">Find local workouts and wellness hangs hosted by your community.</span>
+                <span className="mr-3 mt-1 text-white">•</span>
+                <span className="text-white leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  Find local workouts and wellness hangs hosted by your community.
+                </span>
               </li>
               <li className="flex items-start">
-                <span className="mr-3 mt-1 text-gray-800">•</span>
-                <span className="text-gray-800 leading-relaxed">Connect with health-obsessed people in your area who actually show up and keep you consistent.</span>
+                <span className="mr-3 mt-1 text-white">•</span>
+                <span className="text-white leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  Connect with health-obsessed people in your area who actually show up and keep you consistent.
+                </span>
               </li>
               <li className="flex items-start">
-                <span className="mr-3 mt-1 text-gray-800">•</span>
-                <span className="text-gray-800 leading-relaxed">SweatBuddies is where wellness meets real friendship—move better, meet your people, and build something that lasts.</span>
+                <span className="mr-3 mt-1 text-white">•</span>
+                <span className="text-white leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  SweatBuddies is where wellness meets real friendship—move better, meet your people, and build something that lasts.
+                </span>
               </li>
             </ul>
           </div>
 
           <div className="flex gap-4 justify-center flex-wrap">
             <Link href="/activities/new">
-              <Button size="lg" className="font-semibold">
+              <Button size="lg" className="font-semibold shadow-xl">
                 + Create Activity
               </Button>
             </Link>
             <Link href="/dashboard">
-              <Button size="lg" variant="outline" className="font-semibold">
+              <Button size="lg" variant="outline" className="font-semibold bg-white/20 backdrop-blur-sm border-white/40 text-white hover:bg-white/30 shadow-xl">
                 My Dashboard
               </Button>
             </Link>
           </div>
         </div>
+      </div>
+
+      <main className="container mx-auto p-8">
 
         {/* Explore Activities Section */}
         <div>

@@ -98,7 +98,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
 
         {/* Hero Content */}
-        <div className="relative z-10 max-w-container mx-auto px-8 py-24 md:py-32 text-center">
+        <div className="relative z-10 max-w-container mx-auto px-8 py-28 md:py-36 text-center">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
             SweatBuddies
           </h1>
@@ -107,7 +107,7 @@ export default function Home() {
           </p>
 
           {/* Feature Box */}
-          <div className="max-w-3xl mx-auto mb-12 rounded-xl border border-white/20 bg-white/10 backdrop-blur-md p-8 shadow-2xl">
+          <div className="max-w-3xl mx-auto mb-12 rounded-lg border border-white/20 bg-white/15 backdrop-blur-md p-8 md:p-10 shadow-glass">
             <ul className="text-left space-y-4">
               <li className="flex items-start">
                 <span className="mr-3 mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
@@ -132,12 +132,12 @@ export default function Home() {
 
           <div className="flex gap-4 justify-center flex-wrap">
             <Link href="/activities/new">
-              <Button size="lg" className="shadow-xl">
+              <Button size="lg" className="shadow-button-glow hover:shadow-button-glow-hover">
                 Create Activity
               </Button>
             </Link>
             <Link href="/dashboard">
-              <Button size="lg" variant="outline" className="bg-white/20 backdrop-blur-sm border-2 border-white/40 text-white hover:bg-white/30 hover:border-white/60 shadow-xl">
+              <Button size="lg" variant="outline" className="bg-white/20 backdrop-blur-sm border-2 border-white/40 text-white hover:bg-white/30 hover:border-white/60 shadow-glass">
                 My Dashboard
               </Button>
             </Link>
@@ -145,7 +145,7 @@ export default function Home() {
         </div>
       </div>
 
-      <main className="container mx-auto p-8">
+      <main className="container mx-auto px-8 py-12 md:py-20">
 
         {/* Explore Activities Section */}
         <div>

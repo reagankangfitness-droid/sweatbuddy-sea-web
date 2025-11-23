@@ -120,11 +120,11 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
 
       {/* List View - Airbnb Style Grid */}
       {viewMode === 'list' && (
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-4 lg:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {activities.map((activity) => (
             <div key={activity.id} className="group">
               <Link href={`/activities/${activity.id}`}>
-                <div className="relative h-[280px] rounded-md overflow-hidden cursor-pointer transition-all duration-200 ease-airbnb hover:-translate-y-1 hover:shadow-airbnb-hover shadow-airbnb">
+                <div className="relative h-[280px] rounded-md overflow-hidden cursor-pointer transition-all duration-300 ease-airbnb hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-card-hover shadow-card">
                   {/* Full Background Image */}
                   <div className="absolute inset-0">
                     {activity.imageUrl ? (

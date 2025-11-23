@@ -31,13 +31,6 @@ enum UserActivityStatus {
   COMPLETED
 }
 
-enum PaymentStatus {
-  PENDING
-  PAID
-  FAILED
-  REFUNDED
-}
-
 enum GroupPrivacy {
   PUBLIC
   PRIVATE
@@ -162,18 +155,13 @@ model UserGroup {
 }
 
 model UserActivity {
-  id                    String             @id @default(cuid())
-  userId                String
-  activityId            String
-  status                UserActivityStatus @default(INTERESTED)
-  paymentStatus         PaymentStatus?     @default(PENDING)
-  stripeSessionId       String?            @unique
-  stripePaymentIntentId String?
-  amountPaid            Float?
-  paidAt                DateTime?
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
-  deletedAt             DateTime?
+  id         String             @id @default(cuid())
+  userId     String
+  activityId String
+  status     UserActivityStatus @default(INTERESTED)
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  deletedAt  DateTime?
 
   user     User     @relation(fields: [userId], references: [id])
   activity Activity @relation(fields: [activityId], references: [id])
@@ -182,8 +170,6 @@ model UserActivity {
   @@index([userId])
   @@index([activityId])
   @@index([status])
-  @@index([stripeSessionId])
-  @@index([paymentStatus])
   @@map("user_activities")
 }
 

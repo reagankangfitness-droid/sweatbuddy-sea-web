@@ -4,14 +4,14 @@
 
 @layer base {
   :root {
-    /* Airbnb-inspired with #2E8B57 Sea Green brand color */
+    /* Airbnb-inspired with #FFA51F Vibrant Orange brand color */
     --background: 0 0% 100%;
     --foreground: 0 0% 13%;
 
-    /* Brand Sea Green - Use sparingly for CTAs, prices, active states! */
-    --primary: 146 50% 36%;           /* #2E8B57 sea green */
+    /* Brand Vibrant Orange - Use sparingly for CTAs, prices, active states! */
+    --primary: 38 100% 56%;           /* #FFA51F vibrant orange */
     --primary-foreground: 0 0% 100%;  /* White text for accessibility */
-    --primary-hover: 146 52% 31%;     /* #267A4A hover state */
+    --primary-hover: 38 85% 50%;      /* #E69419 hover state */
 
     /* Neutrals - 90% of UI */
     --card: 0 0% 100%;
@@ -35,7 +35,7 @@
     --success: 123 100% 27%;          /* #008A05 success green */
 
     /* Effects */
-    --ring: 146 50% 36%;              /* Sea green focus ring */
+    --ring: 38 100% 56%;              /* Vibrant orange focus ring */
     --radius: 0.5rem;                 /* 8px border radius */
   }
 }

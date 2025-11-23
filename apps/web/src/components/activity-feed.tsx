@@ -158,14 +158,14 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                     }}
                     className="absolute top-2 right-2 sm:top-3 sm:right-3 p-2.5 sm:p-2 rounded-full hover:bg-black/20 transition-colors duration-200 group/heart min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center"
                   >
-                    <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-white stroke-2 group-hover/heart:fill-[#2E8B57] group-hover/heart:text-[#2E8B57] transition-all duration-200" />
+                    <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-white stroke-2 group-hover/heart:fill-[#FFA51F] group-hover/heart:text-[#FFA51F] transition-all duration-200" />
                   </button>
 
                   {/* Content Overlay - Bottom */}
                   <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 text-white">
                     {/* Location */}
                     <div className="flex items-center gap-1 mb-0.5 sm:mb-1">
-                      <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" style={{ color: '#2E8B57' }} />
+                      <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" style={{ color: '#FFA51F' }} />
                       <span className="text-xs sm:text-sm font-medium text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] truncate">{activity.city}</span>
                     </div>
 
@@ -178,7 +178,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                     <div className="flex items-center justify-between">
                       {activity.price !== undefined && activity.price > 0 ? (
                         <div className="flex items-baseline gap-1">
-                          <span className="text-sm sm:text-xl font-bold drop-shadow-lg" style={{ color: '#2E8B57' }}>
+                          <span className="text-sm sm:text-xl font-bold drop-shadow-lg" style={{ color: '#FFA51F' }}>
                             {activity.currency || 'SGD'} {activity.price.toFixed(2)}
                           </span>
                         </div>

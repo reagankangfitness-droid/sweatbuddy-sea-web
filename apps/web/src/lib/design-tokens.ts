@@ -1,12 +1,12 @@
-// Airbnb-inspired Design System with #2E8B57 Sea Green Brand Color
+// Airbnb-inspired Design System with #FFA51F Vibrant Orange Brand Color
 
 export const colors = {
-  // Brand Sea Green - Use SPARINGLY for CTAs, prices, active states (like Airbnb uses pink)
+  // Brand Vibrant Orange - Use SPARINGLY for CTAs, prices, active states (like Airbnb uses pink)
   brand: {
-    primary: '#2E8B57',        // Sea green
-    primaryHover: '#267A4A',   // 10% darker for hover states
-    primaryLight: 'rgba(46, 139, 87, 0.1)',
-    primaryText: '#FFFFFF',    // White text on sea green (for accessibility)
+    primary: '#FFA51F',        // Vibrant orange
+    primaryHover: '#E69419',   // 10% darker for hover states
+    primaryLight: 'rgba(255, 165, 31, 0.1)',
+    primaryText: '#FFFFFF',    // White text on vibrant orange (for accessibility)
   },
 
   // Neutrals - 90% of the UI

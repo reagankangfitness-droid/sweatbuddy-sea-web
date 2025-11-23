@@ -99,7 +99,7 @@ export default function Home() {
 
         {/* Hero Content */}
         <div className="relative z-10 max-w-container mx-auto px-8 py-28 md:py-36 text-center">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]" style={{ color: '#2E8B57' }}>
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]" style={{ color: '#FFA51F' }}>
             SweatBuddies
           </h1>
           <p className="text-xl md:text-2xl text-white/95 mb-10 leading-relaxed max-w-3xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">

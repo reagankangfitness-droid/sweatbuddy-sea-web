@@ -110,7 +110,7 @@ export default function Home() {
             textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)',
             lineHeight: '1.5'
           }}>
-            Book retreats that push you forward—and connect with people who'll keep you accountable long after you get home.
+            Book retreats that push you forward—and connect with people who&apos;ll keep you accountable long after you get home.
           </p>
 
           {/* Feature Box */}

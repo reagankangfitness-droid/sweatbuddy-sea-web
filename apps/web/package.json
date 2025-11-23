@@ -12,7 +12,9 @@
     "test:watch": "jest --watch",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
-    "clean": "rm -rf .next .turbo node_modules"
+    "clean": "rm -rf .next .turbo node_modules",
+    "deploy": "vercel link --yes --scope reagankangfitness-droids-projects --project web && git push && vercel --prod",
+    "deploy:prod": "vercel link --yes --scope reagankangfitness-droids-projects --project web && vercel --prod"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.35.1",

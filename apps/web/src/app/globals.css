@@ -4,14 +4,14 @@
 
 @layer base {
   :root {
-    /* Airbnb-inspired with #FFD483 Golden Yellow brand color */
+    /* Airbnb-inspired with #2E8B57 Sea Green brand color */
     --background: 0 0% 100%;
     --foreground: 0 0% 13%;
 
-    /* Brand Golden Yellow - Use sparingly for CTAs, prices, active states! */
-    --primary: 45 100% 76%;           /* #FFD483 golden yellow */
-    --primary-foreground: 0 0% 13%;   /* Dark text for accessibility */
-    --primary-hover: 45 92% 68%;      /* #F5C563 hover state */
+    /* Brand Sea Green - Use sparingly for CTAs, prices, active states! */
+    --primary: 146 50% 36%;           /* #2E8B57 sea green */
+    --primary-foreground: 0 0% 100%;  /* White text for accessibility */
+    --primary-hover: 146 52% 31%;     /* #267A4A hover state */
 
     /* Neutrals - 90% of UI */
     --card: 0 0% 100%;
@@ -35,7 +35,7 @@
     --success: 123 100% 27%;          /* #008A05 success green */
 
     /* Effects */
-    --ring: 45 100% 76%;              /* Golden yellow focus ring */
+    --ring: 146 50% 36%;              /* Sea green focus ring */
     --radius: 0.5rem;                 /* 8px border radius */
   }
 }

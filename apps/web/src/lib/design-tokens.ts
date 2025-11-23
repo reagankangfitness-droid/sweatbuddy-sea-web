@@ -1,12 +1,12 @@
-// Airbnb-inspired Design System with #FFD483 Golden Yellow Brand Color
+// Airbnb-inspired Design System with #2E8B57 Sea Green Brand Color
 
 export const colors = {
-  // Brand Golden Yellow - Use SPARINGLY for CTAs, prices, active states (like Airbnb uses pink)
+  // Brand Sea Green - Use SPARINGLY for CTAs, prices, active states (like Airbnb uses pink)
   brand: {
-    primary: '#FFD483',        // Warm golden yellow
-    primaryHover: '#F5C563',   // 10% darker for hover states
-    primaryLight: 'rgba(255, 212, 131, 0.1)',
-    primaryText: '#222222',    // Dark text on golden yellow (for accessibility)
+    primary: '#2E8B57',        // Sea green
+    primaryHover: '#267A4A',   // 10% darker for hover states
+    primaryLight: 'rgba(46, 139, 87, 0.1)',
+    primaryText: '#FFFFFF',    // White text on sea green (for accessibility)
   },
 
   // Neutrals - 90% of the UI

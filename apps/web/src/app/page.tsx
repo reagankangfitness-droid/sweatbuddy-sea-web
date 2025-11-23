@@ -84,8 +84,8 @@ export default function Home() {
       <main className="container mx-auto p-8">
         {/* Hero Section */}
         <div className="mb-12 text-center">
-          <h1 className="text-5xl font-bold mb-4">SweatBuddies</h1>
-          <p className="text-xl text-muted-foreground mb-6">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 text-black">SweatBuddies</h1>
+          <p className="text-lg md:text-xl text-gray-600 mb-6 leading-relaxed max-w-2xl mx-auto">
             Find local workouts, wellness hangs, and health-obsessed people who actually get it.
           </p>
 
@@ -93,28 +93,28 @@ export default function Home() {
           <div className="max-w-3xl mx-auto mb-8 rounded-lg border bg-card p-6 shadow-sm">
             <ul className="text-left space-y-3">
               <li className="flex items-start">
-                <span className="mr-3 mt-1">•</span>
-                <span>Find local workouts and wellness hangs hosted by your community.</span>
+                <span className="mr-3 mt-1 text-gray-800">•</span>
+                <span className="text-gray-800 leading-relaxed">Find local workouts and wellness hangs hosted by your community.</span>
               </li>
               <li className="flex items-start">
-                <span className="mr-3 mt-1">•</span>
-                <span>Connect with health-obsessed people in your area who actually show up and keep you consistent.</span>
+                <span className="mr-3 mt-1 text-gray-800">•</span>
+                <span className="text-gray-800 leading-relaxed">Connect with health-obsessed people in your area who actually show up and keep you consistent.</span>
               </li>
               <li className="flex items-start">
-                <span className="mr-3 mt-1">•</span>
-                <span>SweatBuddies is where wellness meets real friendship—move better, meet your people, and build something that lasts.</span>
+                <span className="mr-3 mt-1 text-gray-800">•</span>
+                <span className="text-gray-800 leading-relaxed">SweatBuddies is where wellness meets real friendship—move better, meet your people, and build something that lasts.</span>
               </li>
             </ul>
           </div>
 
-          <div className="flex gap-4 justify-center">
+          <div className="flex gap-4 justify-center flex-wrap">
             <Link href="/activities/new">
-              <Button size="lg">
+              <Button size="lg" className="font-semibold">
                 + Create Activity
               </Button>
             </Link>
             <Link href="/dashboard">
-              <Button size="lg" variant="outline">
+              <Button size="lg" variant="outline" className="font-semibold">
                 My Dashboard
               </Button>
             </Link>
@@ -124,8 +124,8 @@ export default function Home() {
         {/* Explore Activities Section */}
         <div>
           <div className="mb-6">
-            <h2 className="text-3xl font-bold mb-2">Explore Activities</h2>
-            <p className="text-muted-foreground mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-2 text-black">Explore Activities</h2>
+            <p className="text-base text-gray-500 mb-4 leading-relaxed">
               Discover workout experiences in Southeast Asia
             </p>
 

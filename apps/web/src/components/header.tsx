@@ -10,7 +10,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b bg-white">
       <div className="max-w-container mx-auto flex h-20 items-center justify-between px-6">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold text-foreground hover:opacity-80 transition-opacity">
+        <Link href="/" className="text-2xl font-bold text-black hover:opacity-80 transition-opacity tracking-tight">
           SweatBuddies
         </Link>
 
@@ -18,13 +18,13 @@ export function Header() {
         <div className="flex items-center gap-3">
           <SignedIn>
             <Link href="/activities/new">
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 font-semibold">
                 <Plus className="w-4 h-4" />
                 <span className="hidden sm:inline">Create Activity</span>
               </Button>
             </Link>
             <Link href="/dashboard">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="font-semibold">
                 Dashboard
               </Button>
             </Link>
@@ -33,7 +33,7 @@ export function Header() {
 
           <SignedOut>
             <SignInButton mode="modal">
-              <Button size="sm">
+              <Button size="sm" className="font-semibold">
                 Sign In
               </Button>
             </SignInButton>

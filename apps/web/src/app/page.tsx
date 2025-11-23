@@ -104,13 +104,13 @@ export default function Home() {
             letterSpacing: '-0.02em',
             lineHeight: '1.2'
           }}>
-            Discover fitness retreats, meet new friends, and build real connections.
+            Discover fitness experiences, meet new friends, and build real connections.
           </h1>
           <p className="text-lg md:text-xl text-white/95 mb-12 leading-relaxed max-w-[700px] mx-auto" style={{
             textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)',
             lineHeight: '1.5'
           }}>
-            Book retreats that push you forward—and connect with people who&apos;ll keep you accountable long after you get home.
+            Book activities that push you forward—and connect with people who&apos;ll keep you accountable long after you get home.
           </p>
 
           {/* Feature Box */}
@@ -119,7 +119,7 @@ export default function Home() {
               <li className="flex items-start">
                 <span className="mr-2 mt-1 text-lg flex-shrink-0" style={{ color: '#FFA51F' }}>•</span>
                 <span className="text-white text-base md:text-[17px] leading-relaxed">
-                  Discover curated wellness retreats hosted by passionate communities—from weekend Hyrox camps to mindfulness getaways across Southeast Asia.
+                  Discover curated wellness experiences hosted by passionate communities—from weekend Hyrox camps to mindfulness getaways across Southeast Asia.
                 </span>
               </li>
               <li className="flex items-start">
@@ -131,7 +131,7 @@ export default function Home() {
               <li className="flex items-start">
                 <span className="mr-2 mt-1 text-lg flex-shrink-0" style={{ color: '#FFA51F' }}>•</span>
                 <span className="text-white text-base md:text-[17px] leading-relaxed">
-                  sweatbuddies is where transformation meets lasting friendship—retreat together, grow together, and build a support system that sticks.
+                  SweatBuddies is where transformation meets lasting friendship—move together, grow together, and build meaningful relationships.
                 </span>
               </li>
             </ul>

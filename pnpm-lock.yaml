@@ -160,6 +160,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.66.0)
+      '@prisma/client':
+        specifier: ^5.22.0
+        version: 5.22.0(prisma@5.22.0)
       '@radix-ui/react-alert-dialog':
         specifier: ^1.1.15
         version: 1.1.15(@types/react-dom@18.3.7)(@types/react@18.3.26)(react-dom@18.3.1)(react@18.3.1)
@@ -181,15 +184,9 @@ importers:
       '@react-google-maps/api':
         specifier: ^2.20.7
         version: 2.20.7(react-dom@18.3.1)(react@18.3.1)
-      '@sweatbuddy/database':
-        specifier: workspace:^
-        version: link:../../packages/database
-      '@sweatbuddy/types':
-        specifier: workspace:*
-        version: link:../../packages/types
-      '@sweatbuddy/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
+      '@stripe/stripe-js':
+        specifier: ^8.5.2
+        version: 8.5.2
       '@uploadthing/react':
         specifier: ^7.3.3
         version: 7.3.3(next@14.2.33)(react@18.3.1)(uploadthing@7.7.4)
@@ -217,6 +214,9 @@ importers:
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@18.3.1)(react@18.3.1)
+      stripe:
+        specifier: ^20.0.0
+        version: 20.0.0(@types/node@20.19.25)
       svix:
         specifier: ^1.81.0
         version: 1.81.0
@@ -227,8 +227,8 @@ importers:
         specifier: ^7.7.4
         version: 7.7.4(next@14.2.33)(tailwindcss@3.4.18)
       zod:
-        specifier: ^4.1.12
-        version: 4.1.12
+        specifier: ^3.23.8
+        version: 3.25.76
     devDependencies:
       '@testing-library/jest-dom':
         specifier: ^6.9.1
@@ -275,6 +275,9 @@ importers:
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
+      prisma:
+        specifier: ^5.22.0
+        version: 5.22.0
       tailwindcss:
         specifier: ^3.4.18
         version: 3.4.18
@@ -4809,6 +4812,11 @@ packages:
 
   /@stripe/stripe-js@5.6.0:
     resolution: {integrity: sha512-w8CEY73X/7tw2KKlL3iOk679V9bWseE4GzNz3zlaYxcTjmcmWOathRb0emgo/QQ3eoNzmq68+2Y2gxluAv3xGw==}
+    engines: {node: '>=12.16'}
+    dev: false
+
+  /@stripe/stripe-js@8.5.2:
+    resolution: {integrity: sha512-Y4FZjOCYS5kf9dhSEQNUXo4oYc8sgwq2LK9hValXaykl/VfTkiwFb2WbyqnI3EFjNwoxm0KSmyMhz3Wji4My3Q==}
     engines: {node: '>=12.16'}
     dev: false
 
@@ -13093,6 +13101,19 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /stripe@20.0.0(@types/node@20.19.25):
+    resolution: {integrity: sha512-EaZeWpbJOCcDytdjKSwdrL5BxzbDGNueiCfHjHXlPdBQvLqoxl6AAivC35SPzTmVXJb5duXQlXFGS45H0+e6Gg==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@types/node': '>=16'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+    dependencies:
+      '@types/node': 20.19.25
+      qs: 6.13.0
+    dev: false
+
   /strtok3@10.3.4:
     resolution: {integrity: sha512-KIy5nylvC5le1OdaaoCJ07L+8iQzJHGH6pWDuzS+d07Cu7n1MZ2x26P8ZKIWfbK02+XIL8Mp4RkWeqdUCrDMfg==}
     engines: {node: '>=18'}
@@ -14480,10 +14501,6 @@ packages:
 
   /zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
-    dev: false
-
-  /zod@4.1.12:
-    resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
     dev: false
 
   /zustand@5.0.3(@types/react@19.1.17)(react@19.1.0):

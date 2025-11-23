@@ -84,7 +84,7 @@ export default function Home() {
       <main className="container mx-auto p-8">
         {/* Hero Section */}
         <div className="mb-12 text-center">
-          <h1 className="text-5xl font-bold mb-4">SweatBuddy</h1>
+          <h1 className="text-5xl font-bold mb-4">SweatBuddies</h1>
           <p className="text-xl text-muted-foreground mb-6">
             Find local workouts, wellness hangs, and health-obsessed people who actually get it.
           </p>
@@ -102,7 +102,7 @@ export default function Home() {
               </li>
               <li className="flex items-start">
                 <span className="mr-3 mt-1">•</span>
-                <span>SweatBuddy is where wellness meets real friendship—move better, meet your people, and build something that lasts.</span>
+                <span>SweatBuddies is where wellness meets real friendship—move better, meet your people, and build something that lasts.</span>
               </li>
             </ul>
           </div>

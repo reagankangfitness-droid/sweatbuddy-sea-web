@@ -1,7 +1,7 @@
 'use client'
 
 import { Header } from '@/components/header'
-import { notFound, useRouter } from 'next/navigation'
+import { notFound, useRouter, useSearchParams } from 'next/navigation'
 import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
 import { useEffect, useState } from 'react'
 import { useUser } from '@clerk/nextjs'
@@ -57,6 +57,7 @@ interface Activity {
 
 export default function ActivityPage({ params }: { params: { id: string } }) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user, isLoaded: userLoaded } = useUser()
   const { isLoaded: mapLoaded } = useLoadScript({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
@@ -66,6 +67,20 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
   const [isJoining, setIsJoining] = useState(false)
   const [hasJoined, setHasJoined] = useState(false)
   const [isMessagingOpen, setIsMessagingOpen] = useState(false)
+
+  // Handle payment status from URL params
+  useEffect(() => {
+    const paymentStatus = searchParams.get('payment')
+    if (paymentStatus === 'success') {
+      toast.success('Payment successful! You have joined the activity.')
+      // Remove the query param
+      router.replace(`/activities/${params.id}`)
+    } else if (paymentStatus === 'cancelled') {
+      toast.error('Payment was cancelled. Please try again if you want to join.')
+      // Remove the query param
+      router.replace(`/activities/${params.id}`)
+    }
+  }, [searchParams, router, params.id])
 
   useEffect(() => {
     async function fetchActivity() {
@@ -81,7 +96,7 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
         // Check if current user has joined
         if (user && data.userActivities) {
           const userRsvp = data.userActivities.find(
-            (ua: any) => ua.userId === user.id
+            (ua: any) => ua.userId === user.id && ua.status === 'JOINED'
           )
           setHasJoined(!!userRsvp)
         }
@@ -103,28 +118,64 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
       return
     }
 
+    // If activity is free, join directly without payment
+    if (activity && activity.price === 0) {
+      setIsJoining(true)
+      try {
+        const response = await fetch(`/api/activities/${params.id}/join`, {
+          method: 'POST',
+        })
+
+        if (!response.ok) {
+          const error = await response.json()
+          throw new Error(error.message || 'Failed to join activity')
+        }
+
+        toast.success('Successfully joined the activity!')
+        setHasJoined(true)
+
+        // Refresh activity data
+        const activityResponse = await fetch(`/api/activities/${params.id}`)
+        const data = await activityResponse.json()
+        setActivity(data)
+      } catch (error) {
+        console.error('Error joining activity:', error)
+        toast.error(error instanceof Error ? error.message : 'Failed to join activity')
+      } finally {
+        setIsJoining(false)
+      }
+      return
+    }
+
+    // For paid activities, redirect to Stripe Checkout
     setIsJoining(true)
     try {
-      const response = await fetch(`/api/activities/${params.id}/join`, {
+      const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          activityId: params.id,
+        }),
       })
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.message || 'Failed to join activity')
+        throw new Error(error.error || 'Failed to create checkout session')
       }
 
-      toast.success('Successfully joined the activity!')
-      setHasJoined(true)
+      const { url } = await response.json()
 
-      // Refresh activity data
-      const activityResponse = await fetch(`/api/activities/${params.id}`)
-      const data = await activityResponse.json()
-      setActivity(data)
+      // Redirect to Stripe Checkout
+      if (url) {
+        window.location.href = url
+      } else {
+        throw new Error('No checkout URL received')
+      }
     } catch (error) {
-      console.error('Error joining activity:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to join activity')
-    } finally {
+      console.error('Error creating checkout session:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to start payment')
       setIsJoining(false)
     }
   }
@@ -177,7 +228,7 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
 💰 Price: ${activity.currency} ${activity.price.toFixed(2)}
 👥 Participants: ${joinedCount}${activity.maxPeople ? ` of ${activity.maxPeople}` : ''}
 
-Organized via SweatBuddy - Find local workouts and wellness activities
+Organized via SweatBuddies - Find local workouts and wellness activities
 `.trim()
 
     const calendarUrl = generateGoogleCalendarUrl({
@@ -211,7 +262,7 @@ Host: ${activity.user.name || 'Anonymous'} (${activity.user.email})
 Price: ${activity.currency} ${activity.price.toFixed(2)}
 Participants: ${joinedCount}${activity.maxPeople ? ` of ${activity.maxPeople}` : ''}
 
-Organized via SweatBuddy
+Organized via SweatBuddies
 `.trim()
 
     downloadIcsFile(
@@ -453,7 +504,12 @@ Organized via SweatBuddy
                     disabled={isJoining}
                     className="w-full"
                   >
-                    {isJoining ? 'Joining...' : '🏃 Join Workout'}
+                    {isJoining
+                      ? 'Processing...'
+                      : activity.price > 0
+                        ? `Pay ${activity.currency} ${activity.price.toFixed(2)} & Join`
+                        : 'Join Activity'
+                    }
                   </Button>
                 )}
               </div>

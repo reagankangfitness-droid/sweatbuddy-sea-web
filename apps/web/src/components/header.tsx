@@ -10,8 +10,26 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
       <div className="max-w-container mx-auto flex h-20 items-center justify-between px-6">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold text-primary hover:text-primary-hover transition-colors tracking-tight">
-          SweatBuddies
+        <Link href="/" className="flex items-center gap-3 text-2xl font-bold text-primary hover:text-primary-hover transition-all tracking-tight group">
+          {/* Orange Droplet Logo */}
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="transition-transform group-hover:scale-105"
+          >
+            <path
+              d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"
+              fill="#FFA51F"
+              stroke="#FFA51F"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span>SweatBuddies</span>
         </Link>
 
         {/* Right side actions */}

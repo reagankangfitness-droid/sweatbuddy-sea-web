@@ -9,6 +9,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'SweatBuddies',
   description: 'Find a workout experience near you',
+  icons: {
+    icon: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({

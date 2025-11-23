@@ -38,24 +38,7 @@ export function Header() {
               strokeLinecap="round"
             />
           </svg>
-          <span style={{
-            fontFamily: "'Alfa Slab One', cursive",
-            fontSize: '28px',
-            letterSpacing: '-0.02em',
-            lineHeight: '1',
-            textTransform: 'lowercase'
-          }} className="hidden sm:inline">
-            sweatbuddies
-          </span>
-          <span style={{
-            fontFamily: "'Alfa Slab One', cursive",
-            fontSize: '22px',
-            letterSpacing: '-0.02em',
-            lineHeight: '1',
-            textTransform: 'lowercase'
-          }} className="inline sm:hidden">
-            sweatbuddies
-          </span>
+          <span>sweatbuddies</span>
         </Link>
 
         {/* Right side actions */}

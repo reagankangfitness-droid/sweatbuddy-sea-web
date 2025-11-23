@@ -99,39 +99,32 @@ export default function Home() {
 
         {/* Hero Content */}
         <div className="relative z-10 max-w-container mx-auto px-8 py-28 md:py-36 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-[56px] font-bold mb-6 text-white leading-tight max-w-[900px] mx-auto" style={{
-            textShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
-            letterSpacing: '-0.02em',
-            lineHeight: '1.2'
-          }}>
-            Discover fitness experiences, meet new friends, and build real connections.
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]" style={{ color: '#FFA51F' }}>
+            sweatbuddies
           </h1>
-          <p className="text-lg md:text-xl text-white/95 mb-12 leading-relaxed max-w-[700px] mx-auto" style={{
-            textShadow: '0 1px 4px rgba(0, 0, 0, 0.3)',
-            lineHeight: '1.5'
-          }}>
-            Book activities that push you forward—and connect with people who&apos;ll keep you accountable long after you get home.
+          <p className="text-xl md:text-2xl text-white/95 mb-10 leading-relaxed max-w-3xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+            Find local workouts, wellness hangs, and health-obsessed people who actually get it.
           </p>
 
           {/* Feature Box */}
-          <div className="max-w-[800px] mx-auto mb-12 rounded-2xl border border-white/20 bg-white/15 backdrop-blur-[10px] p-8 md:p-10 shadow-glass">
-            <ul className="text-left space-y-5">
+          <div className="max-w-3xl mx-auto mb-12 rounded-lg border border-white/20 bg-white/15 backdrop-blur-md p-8 md:p-10 shadow-glass">
+            <ul className="text-left space-y-4">
               <li className="flex items-start">
-                <span className="mr-2 mt-1 text-lg flex-shrink-0" style={{ color: '#FFA51F' }}>•</span>
-                <span className="text-white text-base md:text-[17px] leading-relaxed">
-                  Discover curated wellness experiences hosted by passionate communities—from weekend Hyrox camps to mindfulness getaways across Southeast Asia.
+                <span className="mr-3 mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                <span className="text-white/95 leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  Find local workouts and wellness hangs hosted by your community.
                 </span>
               </li>
               <li className="flex items-start">
-                <span className="mr-2 mt-1 text-lg flex-shrink-0" style={{ color: '#FFA51F' }}>•</span>
-                <span className="text-white text-base md:text-[17px] leading-relaxed">
-                  Connect with committed people who show up, push through, and become your accountability crew beyond the retreat.
+                <span className="mr-3 mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                <span className="text-white/95 leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  Connect with health-obsessed people in your area who actually show up and keep you consistent.
                 </span>
               </li>
               <li className="flex items-start">
-                <span className="mr-2 mt-1 text-lg flex-shrink-0" style={{ color: '#FFA51F' }}>•</span>
-                <span className="text-white text-base md:text-[17px] leading-relaxed">
-                  SweatBuddies is where transformation meets lasting friendship—move together, grow together, and build meaningful relationships.
+                <span className="mr-3 mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                <span className="text-white/95 leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  sweatbuddies is where wellness meets real friendship—move better, meet your people, and build something that lasts.
                 </span>
               </li>
             </ul>
@@ -154,12 +147,12 @@ export default function Home() {
 
       <main className="container mx-auto px-8 py-12 md:py-20">
 
-        {/* Explore Retreats Section */}
+        {/* Explore Activities Section */}
         <div>
           <div className="mb-6">
-            <h2 className="text-3xl md:text-4xl font-bold mb-2 text-black">Explore Retreats</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-2 text-black">Explore Activities</h2>
             <p className="text-base text-gray-500 mb-4 leading-relaxed">
-              Discover wellness retreats and fitness experiences across Southeast Asia
+              Discover local workouts, wellness hangs, and health experiences in your community
             </p>
 
             {/* Filters */}

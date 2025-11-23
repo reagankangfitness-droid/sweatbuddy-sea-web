@@ -11,22 +11,31 @@ export function Header() {
       <div className="max-w-container mx-auto flex h-20 items-center justify-between px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 text-2xl font-bold text-primary hover:text-primary-hover transition-all tracking-tight group">
-          {/* Orange Droplet Logo */}
+          {/* SweatBuddies Droplet Logo */}
           <svg
             width="32"
             height="32"
-            viewBox="0 0 24 24"
+            viewBox="0 0 100 140"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className="transition-transform group-hover:scale-105"
           >
+            {/* Main droplet shape */}
             <path
-              d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"
-              fill="#FFA51F"
+              d="M50 10 C70 30, 85 60, 85 85 C85 108, 68 125, 50 125 C32 125, 15 108, 15 85 C15 60, 30 30, 50 10 Z"
+              fill="none"
               stroke="#FFA51F"
-              strokeWidth="1.5"
+              strokeWidth="8"
               strokeLinecap="round"
               strokeLinejoin="round"
+            />
+            {/* Inner highlight curve */}
+            <path
+              d="M40 60 Q35 80, 45 100"
+              fill="none"
+              stroke="#FFA51F"
+              strokeWidth="8"
+              strokeLinecap="round"
             />
           </svg>
           <span>SweatBuddies</span>

@@ -5,6 +5,11 @@ export const activitySchema = z.object({
   description: z.string(),
   type: z.enum(['RUN', 'GYM', 'YOGA', 'HIKE', 'CYCLING', 'OTHER']),
   city: z.string(),
+  address: z.string().optional(),        // Full formatted address
+  streetAddress: z.string().optional(),  // Street address
+  postalCode: z.string().optional(),     // Postal/ZIP code
+  country: z.string().optional(),        // Country
+  placeId: z.string().optional(),        // Google Maps Place ID
   latitude: z.number(),
   longitude: z.number(),
   startTime: z.string(),

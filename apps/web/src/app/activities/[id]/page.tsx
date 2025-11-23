@@ -9,6 +9,9 @@ import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { AvatarStack } from '@/components/avatar-stack'
+import { ActivityMessaging } from '@/components/activity-messaging'
+import { generateGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
+import { Calendar, Download, MessageCircle } from 'lucide-react'
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 
@@ -62,6 +65,7 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
   const [isLoading, setIsLoading] = useState(true)
   const [isJoining, setIsJoining] = useState(false)
   const [hasJoined, setHasJoined] = useState(false)
+  const [isMessagingOpen, setIsMessagingOpen] = useState(false)
 
   useEffect(() => {
     async function fetchActivity() {
@@ -154,6 +158,76 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
     }
   }
 
+  const handleAddToGoogleCalendar = () => {
+    if (!activity || !activity.startTime) {
+      toast.error('Activity details are incomplete')
+      return
+    }
+
+    const joinedCount = activity.userActivities.filter(ua => ua.status === 'JOINED').length
+    const location = activity.city
+    const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`
+
+    const description = `${activity.description || ''}
+
+📍 Location: ${location}
+🔗 Maps: ${mapsLink}
+
+👤 Host: ${activity.user.name || 'Anonymous'} (${activity.user.email})
+💰 Price: ${activity.currency} ${activity.price.toFixed(2)}
+👥 Participants: ${joinedCount}${activity.maxPeople ? ` of ${activity.maxPeople}` : ''}
+
+Organized via SweatBuddy - Find local workouts and wellness activities
+`.trim()
+
+    const calendarUrl = generateGoogleCalendarUrl({
+      title: activity.title,
+      description,
+      location,
+      startTime: new Date(activity.startTime),
+      endTime: activity.endTime ? new Date(activity.endTime) : new Date(new Date(activity.startTime).getTime() + 60 * 60 * 1000), // Default 1 hour if no end time
+    })
+
+    window.open(calendarUrl, '_blank')
+    toast.success('Opening Google Calendar...')
+  }
+
+  const handleDownloadIcs = () => {
+    if (!activity || !activity.startTime) {
+      toast.error('Activity details are incomplete')
+      return
+    }
+
+    const joinedCount = activity.userActivities.filter(ua => ua.status === 'JOINED').length
+    const location = activity.city
+    const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`
+
+    const description = `${activity.description || ''}
+
+Location: ${location}
+Maps: ${mapsLink}
+
+Host: ${activity.user.name || 'Anonymous'} (${activity.user.email})
+Price: ${activity.currency} ${activity.price.toFixed(2)}
+Participants: ${joinedCount}${activity.maxPeople ? ` of ${activity.maxPeople}` : ''}
+
+Organized via SweatBuddy
+`.trim()
+
+    downloadIcsFile(
+      {
+        title: activity.title,
+        description,
+        location,
+        startTime: new Date(activity.startTime),
+        endTime: activity.endTime ? new Date(activity.endTime) : new Date(new Date(activity.startTime).getTime() + 60 * 60 * 1000),
+      },
+      `${activity.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.ics`
+    )
+
+    toast.success('Calendar event downloaded!')
+  }
+
   if (isLoading) {
     return (
       <>
@@ -187,7 +261,14 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
               <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
                 {activity.type}
               </span>
-              <span>📍 {activity.city}</span>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activity.city)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary transition-colors inline-flex items-center gap-1"
+              >
+                📍 {activity.city}
+              </a>
               {activity.startTime && (
                 <span>
                   🕒 {new Date(activity.startTime).toLocaleDateString()}
@@ -331,19 +412,48 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
                     </p>
                   </div>
                 ) : hasJoined ? (
-                  <div className="flex gap-4">
-                    <Button
-                      size="lg"
-                      variant="outline"
-                      onClick={handleLeave}
-                      disabled={isJoining}
-                      className="flex-1"
-                    >
-                      {isJoining ? 'Leaving...' : 'Leave Activity'}
-                    </Button>
-                    <p className="text-sm text-green-600 font-medium flex items-center">
-                      ✓ Joined
-                    </p>
+                  <div className="space-y-3">
+                    <div className="flex gap-3">
+                      <Button
+                        size="lg"
+                        onClick={() => setIsMessagingOpen(true)}
+                        className="flex-1"
+                      >
+                        <MessageCircle className="w-4 h-4 mr-2" />
+                        Message Host
+                      </Button>
+                    </div>
+                    <div className="flex gap-3">
+                      <Button
+                        size="lg"
+                        onClick={handleAddToGoogleCalendar}
+                        className="flex-1"
+                      >
+                        <Calendar className="w-4 h-4 mr-2" />
+                        Add to Google Calendar
+                      </Button>
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        onClick={handleDownloadIcs}
+                      >
+                        <Download className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="flex gap-3">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleLeave}
+                        disabled={isJoining}
+                        className="flex-1"
+                      >
+                        {isJoining ? 'Leaving...' : 'Leave Activity'}
+                      </Button>
+                      <p className="text-sm text-green-600 font-medium flex items-center">
+                        ✓ Joined
+                      </p>
+                    </div>
                   </div>
                 ) : (
                   <Button
@@ -359,6 +469,15 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
             </div>
           )}
         </div>
+
+        {activity && (
+          <ActivityMessaging
+            activityId={activity.id}
+            hostName={activity.user.name}
+            open={isMessagingOpen}
+            onOpenChange={setIsMessagingOpen}
+          />
+        )}
       </main>
     </>
   )

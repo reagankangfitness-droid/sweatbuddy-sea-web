@@ -117,86 +117,91 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
         </div>
       </div>
 
-      {/* List View */}
+      {/* List View - Airbnb Style Grid */}
       {viewMode === 'list' && (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {activities.map((activity) => (
             <Link key={activity.id} href={`/activities/${activity.id}`}>
-              <div className="rounded-lg border overflow-hidden hover:border-primary transition-all hover:shadow-lg">
-                {activity.imageUrl && (
-                  <div className="w-full h-48 overflow-hidden">
+              <div className="group relative h-[280px] rounded-2xl overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02]">
+                {/* Full Background Image */}
+                <div className="absolute inset-0">
+                  {activity.imageUrl ? (
                     <img
                       src={activity.imageUrl}
                       alt={activity.title}
                       className="w-full h-full object-cover"
                     />
-                  </div>
-                )}
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-xl font-semibold">{activity.title}</h3>
-                    <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary font-medium">
-                      {activity.type}
-                    </span>
-                  </div>
-                  <p className="text-sm font-medium text-primary mb-3">
-                    📍 {activity.city}
-                  </p>
-                  {activity.description && (
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                      {activity.description}
-                    </p>
-                  )}
-                  {activity.price !== undefined && activity.price > 0 && (
-                    <p className="text-sm font-semibold text-green-600 mb-3">
-                      💰 {activity.currency || 'USD'} {activity.price.toFixed(2)}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-2 mb-3">
-                    {activity.user.imageUrl ? (
-                      <img
-                        src={activity.user.imageUrl}
-                        alt={activity.user.name || 'User'}
-                        className="w-6 h-6 rounded-full"
-                      />
-                    ) : (
-                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs">
-                        {activity.user.name?.[0] || '?'}
-                      </div>
-                    )}
-                    <span className="text-sm text-muted-foreground">
-                      {activity.user.name || 'Anonymous'}
-                    </span>
-                  </div>
-                  <div className="flex gap-4 text-sm text-muted-foreground mb-3">
-                    {activity.startTime && (
-                      <span className="flex items-center gap-1">
-                        🕒 {new Date(activity.startTime).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                        })}
-                      </span>
-                    )}
-                  </div>
-                  {activity.userActivities && activity.userActivities.length > 0 ? (
-                    <div className="mb-3">
-                      <AvatarStack
-                        participants={activity.userActivities.map(ua => ua.user)}
-                        maxPeople={activity.maxPeople}
-                      />
+                  ) : (
+                    <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground">
+                      No image
                     </div>
-                  ) : activity.maxPeople ? (
-                    <p className="text-xs text-muted-foreground mb-3">
-                      0/{activity.maxPeople} spots filled
-                    </p>
-                  ) : null}
-                  <p className="text-xs text-muted-foreground">
-                    Created {new Date(activity.createdAt).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </p>
+                  )}
+                </div>
+
+                {/* Dark Gradient Overlay for Text Readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                {/* Activity Type Badge - Top Left */}
+                <div className="absolute top-3 left-3">
+                  <span className="px-3 py-1.5 rounded-lg bg-white/95 backdrop-blur-sm text-gray-900 text-xs font-bold uppercase tracking-wide shadow-lg">
+                    {activity.type}
+                  </span>
+                </div>
+
+                {/* Content Overlay - Bottom */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                  {/* Location */}
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-sm font-semibold drop-shadow-lg">{activity.city}</span>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-lg font-bold mb-2 line-clamp-2 drop-shadow-lg leading-tight">
+                    {activity.title}
+                  </h3>
+
+                  {/* Bottom Row: Price, Date, Participants */}
+                  <div className="flex items-center justify-between gap-3">
+                    {/* Price */}
+                    {activity.price !== undefined && activity.price > 0 ? (
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-xl font-bold drop-shadow-lg">
+                          {activity.currency || 'SGD'} {activity.price.toFixed(2)}
+                        </span>
+                      </div>
+                    ) : (
+                      <div />
+                    )}
+
+                    {/* Date & Participants */}
+                    <div className="flex items-center gap-3 text-xs">
+                      {activity.startTime && (
+                        <span className="font-medium drop-shadow-lg">
+                          {new Date(activity.startTime).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </span>
+                      )}
+                      {activity.maxPeople && (
+                        <span className="font-medium drop-shadow-lg">
+                          👥 {activity.userActivities?.length || 0}/{activity.maxPeople}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Host Info - Small at very bottom */}
+                  {activity.user.name && (
+                    <div className="mt-2 pt-2 border-t border-white/20">
+                      <span className="text-xs font-medium drop-shadow-lg opacity-90">
+                        Hosted by {activity.user.name}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </Link>

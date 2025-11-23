@@ -43,7 +43,7 @@ const AUTOCOMPLETE_OPTIONS = {
   componentRestrictions: {
     country: ['sg', 'th', 'id', 'my', 'ph', 'vn'],
   },
-  types: ['(cities)'],
+  types: ['address'],  // Changed from '(cities)' to 'address' to support full addresses
 }
 
 const MAP_CONTAINER_STYLE = {
@@ -87,6 +87,11 @@ export default function EditActivityPage({ params }: { params: { id: string } })
       description: '',
       type: 'RUN',
       city: '',
+      address: '',
+      streetAddress: '',
+      postalCode: '',
+      country: '',
+      placeId: '',
       latitude: 0,
       longitude: 0,
       startTime: '',
@@ -113,6 +118,11 @@ export default function EditActivityPage({ params }: { params: { id: string } })
           description: data.description || '',
           type: data.type || 'RUN',
           city: data.city || '',
+          address: data.address || '',
+          streetAddress: data.streetAddress || '',
+          postalCode: data.postalCode || '',
+          country: data.country || '',
+          placeId: data.placeId || '',
           latitude: data.latitude || 0,
           longitude: data.longitude || 0,
           startTime: data.startTime ? new Date(data.startTime).toISOString().slice(0, 16) : '',
@@ -177,9 +187,40 @@ export default function EditActivityPage({ params }: { params: { id: string } })
         setMapCenter(newPosition)
         setMarkerPosition(newPosition)
 
+        // Extract address components
+        let streetAddress = ''
+        let city = ''
+        let postalCode = ''
+        let country = ''
+
+        place.address_components?.forEach((component) => {
+          const types = component.types
+          if (types.includes('street_number')) {
+            streetAddress = component.long_name + ' '
+          }
+          if (types.includes('route')) {
+            streetAddress += component.long_name
+          }
+          if (types.includes('locality')) {
+            city = component.long_name
+          }
+          if (types.includes('postal_code')) {
+            postalCode = component.long_name
+          }
+          if (types.includes('country')) {
+            country = component.long_name
+          }
+        })
+
+        // Set all form values
         form.setValue('latitude', lat, { shouldValidate: true })
         form.setValue('longitude', lng, { shouldValidate: true })
-        form.setValue('city', place.name || '', { shouldValidate: true, shouldDirty: true })
+        form.setValue('address', place.formatted_address || '', { shouldValidate: true, shouldDirty: true })
+        form.setValue('city', city || place.name || '', { shouldValidate: true, shouldDirty: true })
+        form.setValue('streetAddress', streetAddress.trim() || '', { shouldValidate: true })
+        form.setValue('postalCode', postalCode || '', { shouldValidate: true })
+        form.setValue('country', country || '', { shouldValidate: true })
+        form.setValue('placeId', place.place_id || '', { shouldValidate: true })
       }
     }
   }
@@ -505,7 +546,7 @@ export default function EditActivityPage({ params }: { params: { id: string } })
                 name="city"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>City</FormLabel>
+                    <FormLabel>Location Address</FormLabel>
                     <FormControl>
                       <Autocomplete
                         onLoad={setAutocomplete}
@@ -513,13 +554,14 @@ export default function EditActivityPage({ params }: { params: { id: string } })
                         options={AUTOCOMPLETE_OPTIONS}
                       >
                         <Input
-                          placeholder="Search for a city (SG, TH, ID, MY, PH, VN)"
+                          placeholder="Search for a specific address (e.g., 123 Orchard Road, Singapore)"
                           {...field}
+                          value={form.watch('address') || field.value}
                         />
                       </Autocomplete>
                     </FormControl>
                     <FormDescription>
-                      Search and select a city in Southeast Asia
+                      Search and select a specific address in Southeast Asia
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

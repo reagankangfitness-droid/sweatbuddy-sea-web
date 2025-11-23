@@ -81,6 +81,7 @@ export function ActivityFilter({
               variant={selectedCity === city.value ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleCitySelect(city.value)}
+              className="rounded-pill"
             >
               {city.label}
             </Button>
@@ -112,6 +113,7 @@ export function ActivityFilter({
               variant={selectedType === type.value ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleTypeSelect(type.value)}
+              className="rounded-pill"
             >
               {type.label}
             </Button>

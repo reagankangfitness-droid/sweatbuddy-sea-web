@@ -4,39 +4,39 @@
 
 @layer base {
   :root {
-    /* Airbnb-inspired with #FF8E26 brand color */
+    /* Airbnb-inspired with #FFD483 Golden Yellow brand color */
     --background: 0 0% 100%;
     --foreground: 0 0% 13%;
 
-    /* Brand Orange - Use sparingly! */
-    --primary: 24 100% 57%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 24 88% 51%;
+    /* Brand Golden Yellow - Use sparingly for CTAs, prices, active states! */
+    --primary: 45 100% 76%;           /* #FFD483 golden yellow */
+    --primary-foreground: 0 0% 13%;   /* Dark text for accessibility */
+    --primary-hover: 45 92% 68%;      /* #F5C563 hover state */
 
     /* Neutrals - 90% of UI */
     --card: 0 0% 100%;
     --card-foreground: 0 0% 13%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 13%;
-    --secondary: 0 0% 96%;
+    --secondary: 0 0% 96%;            /* #F7F7F7 off-white */
     --secondary-foreground: 0 0% 13%;
-    --muted: 0 0% 92%;
-    --muted-foreground: 0 0% 44%;
+    --muted: 0 0% 92%;                /* #EBEBEB light gray */
+    --muted-foreground: 0 0% 44%;     /* #717171 medium gray */
     --accent: 0 0% 96%;
     --accent-foreground: 0 0% 13%;
 
     /* Borders */
-    --border: 0 0% 87%;
-    --input: 0 0% 69%;
+    --border: 0 0% 87%;               /* #DDDDDD */
+    --input: 0 0% 69%;                /* #B0B0B0 */
 
     /* Semantic */
-    --destructive: 5 78% 42%;
+    --destructive: 5 78% 42%;         /* #C13515 error red */
     --destructive-foreground: 0 0% 100%;
-    --success: 123 100% 27%;
+    --success: 123 100% 27%;          /* #008A05 success green */
 
     /* Effects */
-    --ring: 24 100% 57%;
-    --radius: 0.75rem;
+    --ring: 45 100% 76%;              /* Golden yellow focus ring */
+    --radius: 0.5rem;                 /* 8px border radius */
   }
 }
 
@@ -57,7 +57,7 @@
 
   body {
     @apply bg-background;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     font-size: 16px;
     font-weight: 400;
     line-height: 1.6;
@@ -66,7 +66,7 @@
 
   /* Heading Styles */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     font-weight: 700;
     line-height: 1.2;
     margin: 0;

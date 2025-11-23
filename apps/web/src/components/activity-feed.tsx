@@ -158,14 +158,14 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                     }}
                     className="absolute top-3 right-3 p-2 rounded-full hover:bg-black/20 transition-colors duration-200 group/heart"
                   >
-                    <Heart className="w-5 h-5 text-white stroke-2 group-hover/heart:fill-white transition-all duration-200" />
+                    <Heart className="w-5 h-5 text-white stroke-2 group-hover/heart:fill-[#FFD483] group-hover/heart:text-[#FFD483] transition-all duration-200" />
                   </button>
 
                   {/* Content Overlay - Bottom */}
                   <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                     {/* Location */}
                     <div className="flex items-center gap-1 mb-1">
-                      <MapPin className="w-3.5 h-3.5 text-white" />
+                      <MapPin className="w-3.5 h-3.5" style={{ color: '#FFD483' }} />
                       <span className="text-sm font-medium text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{activity.city}</span>
                     </div>
 
@@ -178,7 +178,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                     <div className="flex items-center justify-between">
                       {activity.price !== undefined && activity.price > 0 ? (
                         <div className="flex items-baseline gap-1">
-                          <span className="text-primary text-xl font-bold drop-shadow-lg">
+                          <span className="text-xl font-bold drop-shadow-lg" style={{ color: '#FFD483' }}>
                             {activity.currency || 'SGD'} {activity.price.toFixed(2)}
                           </span>
                         </div>

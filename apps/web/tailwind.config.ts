@@ -19,6 +19,7 @@ const config: Config = {
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
+          hover: 'hsl(var(--primary-hover))',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -27,6 +28,10 @@ const config: Config = {
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
+        },
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(0 0% 100%)',
         },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
@@ -46,9 +51,20 @@ const config: Config = {
         },
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        lg: '16px',
+        md: '12px',
+        sm: '8px',
+        pill: '40px',
+      },
+      boxShadow: {
+        'airbnb': '0 6px 16px rgba(0, 0, 0, 0.12)',
+        'airbnb-hover': '0 8px 28px rgba(0, 0, 0, 0.15)',
+      },
+      transitionTimingFunction: {
+        'airbnb': 'cubic-bezier(0.4, 0, 0.2, 1)',
+      },
+      maxWidth: {
+        'container': '1280px',
       },
     },
   },

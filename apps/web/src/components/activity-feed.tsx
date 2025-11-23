@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api'
 import { AvatarStack } from '@/components/avatar-stack'
+import { Heart, MapPin, Users, Calendar } from 'lucide-react'
 
 interface Participant {
   id: string
@@ -121,90 +122,105 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
       {viewMode === 'list' && (
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {activities.map((activity) => (
-            <Link key={activity.id} href={`/activities/${activity.id}`}>
-              <div className="group relative h-[280px] rounded-2xl overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02]">
-                {/* Full Background Image */}
-                <div className="absolute inset-0">
-                  {activity.imageUrl ? (
-                    <img
-                      src={activity.imageUrl}
-                      alt={activity.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground">
-                      No image
-                    </div>
-                  )}
-                </div>
-
-                {/* Dark Gradient Overlay for Text Readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-                {/* Activity Type Badge - Top Left */}
-                <div className="absolute top-3 left-3">
-                  <span className="px-3 py-1.5 rounded-lg bg-white/95 backdrop-blur-sm text-gray-900 text-xs font-bold uppercase tracking-wide shadow-lg">
-                    {activity.type}
-                  </span>
-                </div>
-
-                {/* Content Overlay - Bottom */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                  {/* Location */}
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                    </svg>
-                    <span className="text-sm font-semibold drop-shadow-lg">{activity.city}</span>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-lg font-bold mb-2 line-clamp-2 drop-shadow-lg leading-tight">
-                    {activity.title}
-                  </h3>
-
-                  {/* Bottom Row: Price, Date, Participants */}
-                  <div className="flex items-center justify-between gap-3">
-                    {/* Price */}
-                    {activity.price !== undefined && activity.price > 0 ? (
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-xl font-bold drop-shadow-lg">
-                          {activity.currency || 'SGD'} {activity.price.toFixed(2)}
-                        </span>
-                      </div>
+            <div key={activity.id} className="group">
+              <Link href={`/activities/${activity.id}`}>
+                <div className="relative h-[280px] rounded-md overflow-hidden cursor-pointer transition-all duration-200 ease-airbnb hover:-translate-y-1 hover:shadow-airbnb-hover shadow-airbnb">
+                  {/* Full Background Image */}
+                  <div className="absolute inset-0">
+                    {activity.imageUrl ? (
+                      <img
+                        src={activity.imageUrl}
+                        alt={activity.title}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
-                      <div />
+                      <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground">
+                        <span className="text-sm">No image</span>
+                      </div>
                     )}
+                  </div>
 
-                    {/* Date & Participants */}
-                    <div className="flex items-center gap-3 text-xs">
-                      {activity.startTime && (
-                        <span className="font-medium drop-shadow-lg">
-                          {new Date(activity.startTime).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                          })}
-                        </span>
+                  {/* Dark Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
+                  {/* Activity Type Badge - Top Left */}
+                  <div className="absolute top-3 left-3">
+                    <span className="px-3 py-1.5 rounded-pill bg-white text-foreground text-xs font-semibold shadow-md">
+                      {activity.type}
+                    </span>
+                  </div>
+
+                  {/* Heart Icon - Top Right */}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault()
+                      // TODO: Implement favorite functionality
+                    }}
+                    className="absolute top-3 right-3 p-2 rounded-full hover:bg-black/20 transition-colors duration-200 group/heart"
+                  >
+                    <Heart className="w-5 h-5 text-white stroke-2 group-hover/heart:fill-white transition-all duration-200" />
+                  </button>
+
+                  {/* Content Overlay - Bottom */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                    {/* Location */}
+                    <div className="flex items-center gap-1 mb-1">
+                      <MapPin className="w-3.5 h-3.5 text-primary" />
+                      <span className="text-sm font-medium drop-shadow-lg">{activity.city}</span>
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-lg font-semibold mb-3 line-clamp-2 drop-shadow-lg">
+                      {activity.title}
+                    </h3>
+
+                    {/* Bottom Row: Price */}
+                    <div className="flex items-center justify-between">
+                      {activity.price !== undefined && activity.price > 0 ? (
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-primary text-xl font-bold drop-shadow-lg">
+                            {activity.currency || 'SGD'} {activity.price.toFixed(2)}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-white/90 text-sm font-medium">Free</span>
                       )}
+
+                      {/* Participants */}
                       {activity.maxPeople && (
-                        <span className="font-medium drop-shadow-lg">
-                          👥 {activity.userActivities?.length || 0}/{activity.maxPeople}
-                        </span>
+                        <div className="flex items-center gap-1 text-white/90 text-xs">
+                          <Users className="w-3.5 h-3.5" />
+                          <span className="font-medium">
+                            {activity.userActivities?.length || 0}/{activity.maxPeople}
+                          </span>
+                        </div>
                       )}
                     </div>
                   </div>
-
-                  {/* Host Info - Small at very bottom */}
-                  {activity.user.name && (
-                    <div className="mt-2 pt-2 border-t border-white/20">
-                      <span className="text-xs font-medium drop-shadow-lg opacity-90">
-                        Hosted by {activity.user.name}
-                      </span>
-                    </div>
-                  )}
                 </div>
+              </Link>
+
+              {/* Info below card */}
+              <div className="mt-3 px-1">
+                {activity.user.name && (
+                  <p className="text-sm text-muted-foreground">
+                    Hosted by <span className="font-medium text-foreground">{activity.user.name}</span>
+                  </p>
+                )}
+                {activity.startTime && (
+                  <div className="flex items-center gap-1 mt-1">
+                    <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">
+                      {new Date(activity.startTime).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </span>
+                  </div>
+                )}
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}

@@ -58,7 +58,7 @@ export function Header() {
               strokeLinecap="round"
             />
           </svg>
-          <span className="hidden sm:inline">sweatbuddies</span>
+          <span>sweatbuddies</span>
         </Link>
 
         {/* Right side actions - Premium layout */}

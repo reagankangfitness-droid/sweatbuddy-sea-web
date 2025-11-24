@@ -141,7 +141,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
             <Link key={activity.id} href={`/activities/${activity.id}`}>
               <div className="group bg-white rounded-xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 cursor-pointer">
                 {/* Image Section */}
-                <div className="relative h-36 sm:h-56 overflow-hidden bg-muted">
+                <div className="relative h-48 sm:h-56 overflow-hidden bg-muted">
                   {activity.imageUrl ? (
                     <img
                       src={activity.imageUrl}
@@ -197,7 +197,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                 </div>
 
                 {/* Content Section - White Background */}
-                <div className="p-3 sm:p-4">
+                <div className="p-4">
                   {/* Location */}
                   <div className="flex items-center gap-1 mb-1.5 sm:mb-2">
                     <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />

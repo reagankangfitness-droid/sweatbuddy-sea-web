@@ -84,9 +84,9 @@ export default function Home() {
       <Header />
 
       {/* Hero Section - TripBFF/ClassPass Inspired Split Layout */}
-      <section className="relative min-h-[85vh] md:min-h-[600px] flex items-center bg-gradient-to-br from-[#FDFCE9] to-[#FFF9E6] overflow-hidden">
+      <section className="relative min-h-[75vh] md:min-h-[600px] flex items-center bg-gradient-to-br from-[#FDFCE9] to-[#FFF9E6] overflow-hidden">
         {/* Hero Container */}
-        <div className="max-w-container mx-auto w-full px-6 lg:px-10 py-16 md:py-20">
+        <div className="max-w-container mx-auto w-full px-4 sm:px-6 lg:px-10 py-12 sm:py-16 md:py-20">
           <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
 
             {/* Left Column - Content */}
@@ -97,19 +97,19 @@ export default function Home() {
               </span>
 
               {/* Headline */}
-              <h1 className="font-display font-bold text-foreground mb-6" style={{ fontSize: '48px', lineHeight: '1.1', letterSpacing: '-0.02em' }}>
-                <span className="block md:hidden" style={{ fontSize: '36px' }}>Turn Sweat Into Connection</span>
+              <h1 className="font-display font-bold text-foreground mb-5 sm:mb-6" style={{ fontSize: '48px', lineHeight: '1.1', letterSpacing: '-0.02em' }}>
+                <span className="block md:hidden" style={{ fontSize: '32px' }}>Turn Sweat Into Connection</span>
                 <span className="hidden md:block">Turn Sweat Into Connection</span>
               </h1>
 
               {/* Description */}
-              <p className="text-muted-foreground mb-8 leading-relaxed" style={{ fontSize: '17px', lineHeight: '1.6' }}>
-                <span className="block md:hidden" style={{ fontSize: '16px' }}>From sunrise yoga to sunset runs. Find the people who move like you.</span>
+              <p className="text-muted-foreground mb-6 sm:mb-8 leading-relaxed" style={{ fontSize: '17px', lineHeight: '1.6' }}>
+                <span className="block md:hidden" style={{ fontSize: '15px' }}>From sunrise yoga to sunset runs. Find the people who move like you.</span>
                 <span className="hidden md:block">From sunrise yoga to sunset runs, your city is alive with movement. Find the activities that move you, and build real friendships through shared sweat.</span>
               </p>
 
               {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-3 mb-10 justify-center md:justify-start">
+              <div className="flex flex-col sm:flex-row gap-3 mb-8 sm:mb-10 justify-center md:justify-start">
                 <Link href="/activities/new">
                   <Button size="lg" className="w-full sm:w-auto shadow-premium hover:shadow-premium-hover transition-all">
                     Host an Activity
@@ -144,47 +144,47 @@ export default function Home() {
             <div className="order-1 md:order-2">
               <div className="relative">
                 {/* Main Image Grid */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-4">
-                    <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden shadow-premium">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="relative h-40 sm:h-48 md:h-56 rounded-xl sm:rounded-2xl overflow-hidden shadow-premium">
                       <Image
                         src="/images/hero/running.png"
                         alt="Running activity"
                         fill
                         className="object-cover"
-                        sizes="(max-width: 768px) 50vw, 25vw"
+                        sizes="(max-width: 640px) 45vw, (max-width: 768px) 50vw, 25vw"
                         priority
                       />
                     </div>
-                    <div className="relative h-32 md:h-40 rounded-2xl overflow-hidden shadow-premium">
+                    <div className="relative h-28 sm:h-32 md:h-40 rounded-xl sm:rounded-2xl overflow-hidden shadow-premium">
                       <Image
                         src="/images/hero/meditation.png"
                         alt="Meditation and yoga"
                         fill
                         className="object-cover"
-                        sizes="(max-width: 768px) 50vw, 25vw"
+                        sizes="(max-width: 640px) 45vw, (max-width: 768px) 50vw, 25vw"
                         priority
                       />
                     </div>
                   </div>
-                  <div className="space-y-4 pt-8">
-                    <div className="relative h-32 md:h-40 rounded-2xl overflow-hidden shadow-premium">
+                  <div className="space-y-3 sm:space-y-4 pt-6 sm:pt-8">
+                    <div className="relative h-28 sm:h-32 md:h-40 rounded-xl sm:rounded-2xl overflow-hidden shadow-premium">
                       <Image
                         src="/images/hero/run-club.jpg"
                         alt="Group fitness"
                         fill
                         className="object-cover"
-                        sizes="(max-width: 768px) 50vw, 25vw"
+                        sizes="(max-width: 640px) 45vw, (max-width: 768px) 50vw, 25vw"
                         priority
                       />
                     </div>
-                    <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden shadow-premium">
+                    <div className="relative h-40 sm:h-48 md:h-56 rounded-xl sm:rounded-2xl overflow-hidden shadow-premium">
                       <Image
                         src="/images/hero/ice-bath.webp"
                         alt="Ice bath recovery"
                         fill
                         className="object-cover"
-                        sizes="(max-width: 768px) 50vw, 25vw"
+                        sizes="(max-width: 640px) 45vw, (max-width: 768px) 50vw, 25vw"
                         priority
                       />
                     </div>
@@ -432,7 +432,7 @@ export default function Home() {
         </div>
       </section> */}
 
-      <main className="container mx-auto px-8 py-12 md:py-20">
+      <main className="container mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-20">
 
         {/* Explore Activities Section - Refined typography */}
         <div>

@@ -136,12 +136,12 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
 
       {/* List View - Premium Airbnb/Meetup Style Grid */}
       {viewMode === 'list' && (
-        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {activities.map((activity) => (
             <Link key={activity.id} href={`/activities/${activity.id}`}>
               <div className="group bg-white rounded-xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 cursor-pointer">
                 {/* Image Section */}
-                <div className="relative h-48 sm:h-56 overflow-hidden bg-muted">
+                <div className="relative h-40 sm:h-48 lg:h-56 overflow-hidden bg-muted">
                   {activity.imageUrl ? (
                     <img
                       src={activity.imageUrl}
@@ -197,7 +197,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                 </div>
 
                 {/* Content Section - White Background */}
-                <div className="p-4">
+                <div className="p-3 sm:p-4">
                   {/* Location */}
                   <div className="flex items-center gap-1 mb-1.5 sm:mb-2">
                     <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />

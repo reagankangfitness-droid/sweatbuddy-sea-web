@@ -180,8 +180,8 @@ export default function Home() {
                     </div>
                     <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden shadow-premium">
                       <Image
-                        src="/images/hero/pickleball.jpg"
-                        alt="Pickleball and sports"
+                        src="/images/hero/ice-bath.webp"
+                        alt="Ice bath recovery"
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 50vw, 25vw"

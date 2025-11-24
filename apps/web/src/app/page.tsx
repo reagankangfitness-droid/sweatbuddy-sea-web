@@ -146,26 +146,34 @@ export default function Home() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-4">
                     <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden shadow-premium">
-                      <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-4xl">
-                        🏃
-                      </div>
+                      <img
+                        src="/images/hero/running.png"
+                        alt="Running activity"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div className="relative h-32 md:h-40 rounded-2xl overflow-hidden shadow-premium">
-                      <div className="w-full h-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white text-4xl">
-                        🧘
-                      </div>
+                      <img
+                        src="/images/hero/meditation.png"
+                        alt="Meditation and yoga"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   </div>
                   <div className="space-y-4 pt-8">
                     <div className="relative h-32 md:h-40 rounded-2xl overflow-hidden shadow-premium">
-                      <div className="w-full h-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white text-4xl">
-                        💪
-                      </div>
+                      <img
+                        src="/images/hero/run-club.jpg"
+                        alt="Group fitness"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden shadow-premium">
-                      <div className="w-full h-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-4xl">
-                        🚴
-                      </div>
+                      <img
+                        src="/images/hero/pickleball.jpg"
+                        alt="Pickleball and sports"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   </div>
                 </div>

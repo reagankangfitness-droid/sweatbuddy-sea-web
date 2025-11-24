@@ -115,7 +115,7 @@ export default function Home() {
                     Host an Activity
                   </Button>
                 </Link>
-                <Link href="/dashboard">
+                <a href="#explore">
                   <Button
                     size="lg"
                     variant="outline"
@@ -123,7 +123,7 @@ export default function Home() {
                   >
                     Discover Workouts
                   </Button>
-                </Link>
+                </a>
               </div>
 
               {/* Social Proof */}
@@ -432,7 +432,7 @@ export default function Home() {
         </div>
       </section> */}
 
-      <main className="container mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-20">
+      <main id="explore" className="container mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-20">
 
         {/* Explore Activities Section - Refined typography */}
         <div>

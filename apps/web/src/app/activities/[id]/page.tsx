@@ -10,8 +10,9 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 import { AvatarStack } from '@/components/avatar-stack'
 import { ActivityMessaging } from '@/components/activity-messaging'
+import { ActivityGroupChat } from '@/components/activity-group-chat'
 import { generateGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
-import { Calendar, MessageCircle } from 'lucide-react'
+import { Calendar, MessageCircle, Users } from 'lucide-react'
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 
@@ -67,6 +68,7 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
   const [isJoining, setIsJoining] = useState(false)
   const [hasJoined, setHasJoined] = useState(false)
   const [isMessagingOpen, setIsMessagingOpen] = useState(false)
+  const [isGroupChatOpen, setIsGroupChatOpen] = useState(false)
 
   // Handle payment status from URL params
   useEffect(() => {
@@ -467,15 +469,28 @@ Organized via sweatbuddies
                     <div className="flex gap-3">
                       <Button
                         size="sm"
+                        onClick={() => setIsGroupChatOpen(true)}
+                        variant="default"
+                        className="flex-1"
+                      >
+                        <Users className="w-4 h-4 mr-2" />
+                        Group Chat
+                      </Button>
+                      <Button
+                        size="sm"
                         onClick={() => setIsMessagingOpen(true)}
+                        variant="outline"
                         className="flex-1"
                       >
                         <MessageCircle className="w-4 h-4 mr-2" />
                         Message Host
                       </Button>
+                    </div>
+                    <div className="flex gap-3">
                       <Button
                         size="sm"
                         onClick={handleAddToGoogleCalendar}
+                        variant="outline"
                         className="flex-1"
                       >
                         <Calendar className="w-4 h-4 mr-2" />
@@ -518,12 +533,19 @@ Organized via sweatbuddies
         </div>
 
         {activity && (
-          <ActivityMessaging
-            activityId={activity.id}
-            hostName={activity.user.name}
-            open={isMessagingOpen}
-            onOpenChange={setIsMessagingOpen}
-          />
+          <>
+            <ActivityMessaging
+              activityId={activity.id}
+              hostName={activity.user.name}
+              open={isMessagingOpen}
+              onOpenChange={setIsMessagingOpen}
+            />
+            <ActivityGroupChat
+              activityId={activity.id}
+              open={isGroupChatOpen}
+              onOpenChange={setIsGroupChatOpen}
+            />
+          </>
         )}
       </main>
     </>

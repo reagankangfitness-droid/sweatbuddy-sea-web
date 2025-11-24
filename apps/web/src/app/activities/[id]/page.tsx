@@ -11,6 +11,7 @@ import Link from 'next/link'
 import { AvatarStack } from '@/components/avatar-stack'
 import { ActivityMessaging } from '@/components/activity-messaging'
 import { ActivityGroupChat } from '@/components/activity-group-chat'
+import { InviteFriendButton } from '@/components/invite-friend-button'
 import { generateGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
 import { Calendar, MessageCircle, Users } from 'lucide-react'
 
@@ -496,6 +497,13 @@ Organized via sweatbuddies
                         <Calendar className="w-4 h-4 mr-2" />
                         Add to Calendar
                       </Button>
+                      <InviteFriendButton
+                        activityId={activity.id}
+                        activityTitle={activity.title}
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                      />
                     </div>
                     <div className="flex gap-3">
                       <Button

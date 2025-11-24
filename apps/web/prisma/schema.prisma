@@ -59,6 +59,11 @@ model User {
   sentConversations       Conversation[]        @relation("SentConversations")
   receivedConversations   Conversation[]        @relation("ReceivedConversations")
   conversationMessages    ConversationMessage[]
+  referralInvitesSent     ReferralInvite[]      @relation("ReferralInvitesSent")
+  referralConversions     ReferralConversion[]  @relation("ReferralConversions")
+  referralStats           UserReferralStats?
+  workoutBuddiesAsUser    WorkoutBuddy[]        @relation("WorkoutBuddiesAsUser")
+  workoutBuddiesAsBuddy   WorkoutBuddy[]        @relation("WorkoutBuddiesAsBuddy")
 
   @@map("users")
 }
@@ -89,6 +94,8 @@ model Activity {
   userActivities UserActivity[]
   groups         Group[]
   conversations  Conversation[]
+  referralInvites ReferralInvite[]
+  workoutBuddies WorkoutBuddy[]
 
   @@index([userId])
   @@index([hostId])
@@ -209,4 +216,121 @@ model ConversationMessage {
   @@index([conversationId])
   @@index([userId])
   @@map("conversation_messages")
+}
+
+// Referral System Models
+enum ReferralInviteStatus {
+  PENDING
+  CLICKED
+  CONVERTED
+  EXPIRED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+  FREE
+}
+
+model ReferralInvite {
+  id         String                @id @default(cuid())
+  referrerId String
+  activityId String
+  inviteCode String                @unique
+  inviteLink String
+  status     ReferralInviteStatus  @default(PENDING)
+
+  friendEmail String?
+  friendName  String?
+
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime
+  clickedAt   DateTime?
+  convertedAt DateTime?
+  deletedAt   DateTime?
+
+  referrerRewardClaimed  Boolean @default(false)
+  friendDiscountApplied  Boolean @default(false)
+
+  referrer    User                  @relation("ReferralInvitesSent", fields: [referrerId], references: [id])
+  activity    Activity              @relation(fields: [activityId], references: [id])
+  conversions ReferralConversion[]
+
+  @@index([referrerId])
+  @@index([activityId])
+  @@index([inviteCode])
+  @@index([status])
+  @@map("referral_invites")
+}
+
+model ReferralConversion {
+  id             String       @id @default(cuid())
+  inviteId       String
+  friendUserId   String
+  userActivityId String?
+
+  discountType   DiscountType
+  discountValue  Float
+  discountAmount Float
+
+  convertedAt DateTime @default(now())
+  deletedAt   DateTime?
+
+  invite       ReferralInvite @relation(fields: [inviteId], references: [id])
+  friendUser   User           @relation("ReferralConversions", fields: [friendUserId], references: [id])
+
+  @@index([inviteId])
+  @@index([friendUserId])
+  @@map("referral_conversions")
+}
+
+model UserReferralStats {
+  userId String @id
+
+  totalInvitesSent Int @default(0)
+  totalClicks      Int @default(0)
+  totalConversions Int @default(0)
+
+  totalCreditsEarned   Float @default(0)
+  currentCreditBalance Float @default(0)
+
+  badges Json  @default("[]")
+
+  currentStreak Int @default(0)
+  longestStreak Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("user_referral_stats")
+}
+
+model WorkoutBuddy {
+  id String @id @default(cuid())
+
+  userId  String
+  buddyId String
+
+  firstActivityId String
+  connectedVia    String @default("referral")
+
+  activitiesTogether Int      @default(1)
+  firstWorkoutDate   DateTime @default(now())
+  lastWorkoutDate    DateTime @default(now())
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  user          User     @relation("WorkoutBuddiesAsUser", fields: [userId], references: [id])
+  buddy         User     @relation("WorkoutBuddiesAsBuddy", fields: [buddyId], references: [id])
+  firstActivity Activity @relation(fields: [firstActivityId], references: [id])
+
+  @@unique([userId, buddyId])
+  @@index([userId])
+  @@index([buddyId])
+  @@map("workout_buddies")
 }

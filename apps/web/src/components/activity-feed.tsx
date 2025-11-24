@@ -94,11 +94,11 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
       <div className="rounded-lg border p-12 text-center">
         <p className="text-muted-foreground mb-6" style={{ fontSize: '16px' }}>
           <span role="img" aria-label="search" className="mr-2">🔍</span>
-          No activities yet. Be the first to create one!
+          No sessions yet. Build what moves you
           <span role="img" aria-label="sparkles" className="ml-2">✨</span>
         </p>
         <Link href="/activities/new">
-          <Button size="lg">Create First Activity</Button>
+          <Button size="lg">Host Your First Session</Button>
         </Link>
       </div>
     )

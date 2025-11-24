@@ -92,26 +92,26 @@ export default function Home() {
             <div className="text-center md:text-left order-2 md:order-1">
               {/* Tagline */}
               <span className="inline-block text-xs font-semibold uppercase tracking-wider text-primary mb-4">
-                Your Fitness Community
+                Where Movement Meets Belonging
               </span>
 
               {/* Headline */}
               <h1 className="font-display font-bold text-foreground mb-6" style={{ fontSize: '48px', lineHeight: '1.1', letterSpacing: '-0.02em' }}>
-                <span className="block md:hidden" style={{ fontSize: '36px' }}>Find Your Sweat Squad</span>
-                <span className="hidden md:block">Find Your Sweat Squad</span>
+                <span className="block md:hidden" style={{ fontSize: '36px' }}>Turn Sweat Into Connection</span>
+                <span className="hidden md:block">Turn Sweat Into Connection</span>
               </h1>
 
               {/* Description */}
               <p className="text-muted-foreground mb-8 leading-relaxed" style={{ fontSize: '17px', lineHeight: '1.6' }}>
-                <span className="block md:hidden" style={{ fontSize: '16px' }}>Discover local workouts, wellness hangs, and health-obsessed people who actually show up.</span>
-                <span className="hidden md:block">Discover local workouts, wellness hangs, and health-obsessed people who actually show up and keep you consistent.</span>
+                <span className="block md:hidden" style={{ fontSize: '16px' }}>From sunrise yoga to sunset runs. Find the people who move like you.</span>
+                <span className="hidden md:block">From sunrise yoga to sunset runs, your city is alive with movement. Find the activities that move you, and build real friendships through shared sweat.</span>
               </p>
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-3 mb-10 justify-center md:justify-start">
                 <Link href="/activities/new">
                   <Button size="lg" className="w-full sm:w-auto shadow-premium hover:shadow-premium-hover transition-all">
-                    Create Activity
+                    Host an Activity
                   </Button>
                 </Link>
                 <Link href="/dashboard">
@@ -120,7 +120,7 @@ export default function Home() {
                     variant="outline"
                     className="w-full sm:w-auto border-2 border-foreground/20 hover:bg-foreground hover:text-background transition-all"
                   >
-                    Browse Activities
+                    Discover Workouts
                   </Button>
                 </Link>
               </div>
@@ -134,7 +134,7 @@ export default function Home() {
                   <div className="w-10 h-10 rounded-full border-3 border-white bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-sm font-semibold">+</div>
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  <strong className="text-foreground font-semibold">1,000+</strong> active members
+                  <strong className="text-foreground font-semibold">1,000+</strong> people building their crew
                 </div>
               </div>
             </div>
@@ -195,14 +195,14 @@ export default function Home() {
           {/* Section Header */}
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="inline-block text-xs font-semibold uppercase tracking-wider text-primary mb-3">
-              How It Works
+              Building Community
             </span>
             <h2 className="font-display font-bold text-foreground mb-4" style={{ fontSize: '36px', lineHeight: '1.2', letterSpacing: '-0.02em' }}>
-              <span className="block md:hidden" style={{ fontSize: '28px' }}>Three Simple Steps</span>
-              <span className="hidden md:block">Get Moving in Three Simple Steps</span>
+              <span className="block md:hidden" style={{ fontSize: '28px' }}>Start Moving Together</span>
+              <span className="hidden md:block">Start Moving Together</span>
             </h2>
             <p className="text-muted-foreground" style={{ fontSize: '16px', lineHeight: '1.6' }}>
-              Join thousands of fitness enthusiasts finding their perfect workout partners
+              Every experience is a doorway to belonging. Here&apos;s how it works
             </p>
           </div>
 
@@ -217,10 +217,10 @@ export default function Home() {
                 Step 1
               </div>
               <h3 className="font-display font-semibold text-foreground mb-3" style={{ fontSize: '20px' }}>
-                Discover Activities
+                Discover What Moves You
               </h3>
               <p className="text-muted-foreground leading-relaxed" style={{ fontSize: '15px', lineHeight: '1.6' }}>
-                Browse local workouts, wellness sessions, and fitness events in your area
+                From group runs to yoga flows, explore activities where you belong
               </p>
             </div>
 
@@ -233,10 +233,10 @@ export default function Home() {
                 Step 2
               </div>
               <h3 className="font-display font-semibold text-foreground mb-3" style={{ fontSize: '20px' }}>
-                Join or Create
+                Join or Lead Your Crew
               </h3>
               <p className="text-muted-foreground leading-relaxed" style={{ fontSize: '15px', lineHeight: '1.6' }}>
-                Sign up for activities you love or host your own sessions and build your community
+                Show up to existing sessions or create your own. Either way, you&apos;re building community
               </p>
             </div>
 
@@ -249,10 +249,10 @@ export default function Home() {
                 Step 3
               </div>
               <h3 className="font-display font-semibold text-foreground mb-3" style={{ fontSize: '20px' }}>
-                Show Up & Connect
+                Move Together, Grow Together
               </h3>
               <p className="text-muted-foreground leading-relaxed" style={{ fontSize: '15px', lineHeight: '1.6' }}>
-                Meet amazing people, crush your fitness goals, and build lasting friendships
+                The post-workout high hits different when you&apos;re sharing it with your people
               </p>
             </div>
           </div>
@@ -261,7 +261,7 @@ export default function Home() {
           <div className="text-center mt-12">
             <Link href="/activities/new">
               <Button size="lg" className="shadow-premium hover:shadow-premium-hover transition-all">
-                Get Started Now
+                Start Building Your Crew
               </Button>
             </Link>
           </div>
@@ -274,11 +274,11 @@ export default function Home() {
           {/* Section Header */}
           <div className="mb-10">
             <h2 className="font-display font-bold text-foreground mb-3" style={{ fontSize: '32px', lineHeight: '1.2', letterSpacing: '-0.02em' }}>
-              <span className="block md:hidden" style={{ fontSize: '24px' }}>Browse by Category</span>
-              <span className="hidden md:block">Browse by Category</span>
+              <span className="block md:hidden" style={{ fontSize: '24px' }}>How Do You Want to Move?</span>
+              <span className="hidden md:block">How Do You Want to Move?</span>
             </h2>
             <p className="text-muted-foreground max-w-2xl" style={{ fontSize: '15px', lineHeight: '1.6' }}>
-              Find the perfect activity for your fitness goals
+              Pick your vibe. We&apos;ll connect you with your people
             </p>
           </div>
 
@@ -409,11 +409,11 @@ export default function Home() {
         <div>
           <div className="mb-6">
             <h2 className="font-semibold mb-2 text-black inline-flex items-center gap-2.5" style={{ fontSize: '20px', lineHeight: '1.3', letterSpacing: '-0.01em' }}>
-              <span className="md:hidden"><span role="img" aria-label="sparkles">✨</span> Explore Activities</span>
-              <span className="hidden md:inline" style={{ fontSize: '24px' }}><span role="img" aria-label="sparkles">✨</span> Explore Activities</span>
+              <span className="md:hidden"><span role="img" aria-label="sparkles">✨</span> Ready to Move?</span>
+              <span className="hidden md:inline" style={{ fontSize: '24px' }}><span role="img" aria-label="sparkles">✨</span> Ready to Move?</span>
             </h2>
             <p className="text-gray-500 mb-4 leading-relaxed" style={{ fontSize: '14px', lineHeight: '1.5' }}>
-              Discover local workouts, wellness hangs, and health experiences in your community
+              Join a session, build your crew, and feel the energy of moving together
             </p>
 
             {/* Filters */}
@@ -432,14 +432,17 @@ export default function Home() {
             <div className="text-center py-12">
               <p className="text-muted-foreground">
                 <span role="img" aria-label="loading" className="mr-2">⏳</span>
-                Loading activities...
+                Finding your crew...
               </p>
             </div>
           ) : filteredActivities.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground mb-2">
                 <span role="img" aria-label="search" className="mr-2">🔍</span>
-                No activities found {selectedCity !== 'all' && `in ${selectedCity.replace('-', ' ')}`}
+                No sessions yet{selectedCity !== 'all' && ` in ${selectedCity.replace(/-/g, ' ')}`}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Be the first to bring your crew together
               </p>
             </div>
           ) : (

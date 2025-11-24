@@ -81,71 +81,192 @@ export default function Home() {
   return (
     <>
       <Header />
-      {/* Hero Section with Video Background */}
-      <div className="relative w-full min-h-[600px] md:min-h-[700px] -mt-8 mb-16 overflow-hidden">
-        {/* Video Background */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src="/hero-video.mp4" type="video/mp4" />
-        </video>
 
-        {/* Dark Overlay for Text Readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
+      {/* Hero Section - TripBFF/ClassPass Inspired Split Layout */}
+      <section className="relative min-h-[85vh] md:min-h-[600px] flex items-center bg-gradient-to-br from-[#FDFCE9] to-[#FFF9E6] overflow-hidden">
+        {/* Hero Container */}
+        <div className="max-w-container mx-auto w-full px-6 lg:px-10 py-16 md:py-20">
+          <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-        {/* Hero Content - Refined premium typography */}
-        <div className="relative z-10 max-w-container mx-auto px-8 py-28 md:py-36 text-center">
-          <h1 className="font-bold mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]" style={{ color: '#0066FF', fontSize: '30px', lineHeight: '1.2', letterSpacing: '-0.02em' }}>
-            <span className="md:hidden">sweatbuddies</span>
-            <span className="hidden md:inline" style={{ fontSize: '40px' }}>sweatbuddies</span>
-          </h1>
-          <p className="text-white/95 mb-10 leading-relaxed max-w-2xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" style={{ fontSize: '15px', lineHeight: '1.6' }}>
-            <span className="md:hidden">Find local workouts, wellness hangs, and health-obsessed people who actually get it.</span>
-            <span className="hidden md:inline" style={{ fontSize: '16px' }}>Find local workouts, wellness hangs, and health-obsessed people who actually get it.</span>
-          </p>
+            {/* Left Column - Content */}
+            <div className="text-center md:text-left order-2 md:order-1">
+              {/* Tagline */}
+              <span className="inline-block text-xs font-semibold uppercase tracking-wider text-primary mb-4">
+                Your Fitness Community
+              </span>
 
-          {/* Feature Box */}
-          <div className="max-w-3xl mx-auto mb-12 rounded-lg border border-white/20 bg-white/15 backdrop-blur-md p-8 md:p-10 shadow-glass">
-            <ul className="text-left space-y-4">
-              <li className="flex items-start">
-                <span role="img" aria-label="running" className="mr-3 mt-1 text-xl flex-shrink-0">🏃</span>
-                <span className="text-white/95 leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                  Find local workouts and wellness hangs hosted by your community.
-                </span>
-              </li>
-              <li className="flex items-start">
-                <span role="img" aria-label="handshake" className="mr-3 mt-1 text-xl flex-shrink-0">🤝</span>
-                <span className="text-white/95 leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                  Connect with health-obsessed people in your area who actually show up and keep you consistent.
-                </span>
-              </li>
-              <li className="flex items-start">
-                <span role="img" aria-label="flexed bicep" className="mr-3 mt-1 text-xl flex-shrink-0">💪</span>
-                <span className="text-white/95 leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                  sweatbuddies is where wellness meets real friendship—move better, meet your people, and build something that lasts.
-                </span>
-              </li>
-            </ul>
+              {/* Headline */}
+              <h1 className="font-display font-bold text-foreground mb-6" style={{ fontSize: '48px', lineHeight: '1.1', letterSpacing: '-0.02em' }}>
+                <span className="block md:hidden" style={{ fontSize: '36px' }}>Find Your Sweat Squad</span>
+                <span className="hidden md:block">Find Your Sweat Squad</span>
+              </h1>
+
+              {/* Description */}
+              <p className="text-muted-foreground mb-8 leading-relaxed" style={{ fontSize: '17px', lineHeight: '1.6' }}>
+                <span className="block md:hidden" style={{ fontSize: '16px' }}>Discover local workouts, wellness hangs, and health-obsessed people who actually show up.</span>
+                <span className="hidden md:block">Discover local workouts, wellness hangs, and health-obsessed people who actually show up and keep you consistent.</span>
+              </p>
+
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row gap-3 mb-10 justify-center md:justify-start">
+                <Link href="/activities/new">
+                  <Button size="lg" className="w-full sm:w-auto shadow-premium hover:shadow-premium-hover transition-all">
+                    Create Activity
+                  </Button>
+                </Link>
+                <Link href="/dashboard">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto border-2 border-foreground/20 hover:bg-foreground hover:text-background transition-all"
+                  >
+                    Browse Activities
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Social Proof */}
+              <div className="flex items-center gap-4 justify-center md:justify-start">
+                <div className="flex -space-x-2">
+                  <div className="w-10 h-10 rounded-full border-3 border-white bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-sm font-semibold">A</div>
+                  <div className="w-10 h-10 rounded-full border-3 border-white bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white text-sm font-semibold">B</div>
+                  <div className="w-10 h-10 rounded-full border-3 border-white bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white text-sm font-semibold">C</div>
+                  <div className="w-10 h-10 rounded-full border-3 border-white bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-sm font-semibold">+</div>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  <strong className="text-foreground font-semibold">1,000+</strong> active members
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Visual */}
+            <div className="order-1 md:order-2">
+              <div className="relative">
+                {/* Main Image Grid */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden shadow-premium">
+                      <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-4xl">
+                        🏃
+                      </div>
+                    </div>
+                    <div className="relative h-32 md:h-40 rounded-2xl overflow-hidden shadow-premium">
+                      <div className="w-full h-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white text-4xl">
+                        🧘
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-4 pt-8">
+                    <div className="relative h-32 md:h-40 rounded-2xl overflow-hidden shadow-premium">
+                      <div className="w-full h-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white text-4xl">
+                        💪
+                      </div>
+                    </div>
+                    <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden shadow-premium">
+                      <div className="w-full h-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-4xl">
+                        🚴
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating Badge */}
+                <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-premium p-4 hidden md:block">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <span className="text-2xl">✨</span>
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold text-foreground">New Activities</div>
+                      <div className="text-xs text-muted-foreground">Posted daily</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section - TripBFF Inspired */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="max-w-container mx-auto px-6 lg:px-10">
+          {/* Section Header */}
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="inline-block text-xs font-semibold uppercase tracking-wider text-primary mb-3">
+              How It Works
+            </span>
+            <h2 className="font-display font-bold text-foreground mb-4" style={{ fontSize: '36px', lineHeight: '1.2', letterSpacing: '-0.02em' }}>
+              <span className="block md:hidden" style={{ fontSize: '28px' }}>Three Simple Steps</span>
+              <span className="hidden md:block">Get Moving in Three Simple Steps</span>
+            </h2>
+            <p className="text-muted-foreground" style={{ fontSize: '16px', lineHeight: '1.6' }}>
+              Join thousands of fitness enthusiasts finding their perfect workout partners
+            </p>
           </div>
 
-          <div className="flex gap-4 justify-center flex-wrap">
+          {/* Steps Grid */}
+          <div className="grid md:grid-cols-3 gap-8 md:gap-12">
+            {/* Step 1 */}
+            <div className="text-center">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <span className="text-4xl">🔍</span>
+              </div>
+              <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider mb-4">
+                Step 1
+              </div>
+              <h3 className="font-display font-semibold text-foreground mb-3" style={{ fontSize: '20px' }}>
+                Discover Activities
+              </h3>
+              <p className="text-muted-foreground leading-relaxed" style={{ fontSize: '15px', lineHeight: '1.6' }}>
+                Browse local workouts, wellness sessions, and fitness events in your area
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="text-center">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <span className="text-4xl">✅</span>
+              </div>
+              <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider mb-4">
+                Step 2
+              </div>
+              <h3 className="font-display font-semibold text-foreground mb-3" style={{ fontSize: '20px' }}>
+                Join or Create
+              </h3>
+              <p className="text-muted-foreground leading-relaxed" style={{ fontSize: '15px', lineHeight: '1.6' }}>
+                Sign up for activities you love or host your own sessions and build your community
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="text-center">
+              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <span className="text-4xl">🎉</span>
+              </div>
+              <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider mb-4">
+                Step 3
+              </div>
+              <h3 className="font-display font-semibold text-foreground mb-3" style={{ fontSize: '20px' }}>
+                Show Up & Connect
+              </h3>
+              <p className="text-muted-foreground leading-relaxed" style={{ fontSize: '15px', lineHeight: '1.6' }}>
+                Meet amazing people, crush your fitness goals, and build lasting friendships
+              </p>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="text-center mt-12">
             <Link href="/activities/new">
-              <Button size="lg" className="shadow-button-glow hover:shadow-button-glow-hover">
-                Create Activity
-              </Button>
-            </Link>
-            <Link href="/dashboard">
-              <Button size="lg" variant="outline" className="bg-white/20 backdrop-blur-sm border-2 border-white/40 text-white hover:bg-white/30 hover:border-white/60 shadow-glass">
-                My Dashboard
+              <Button size="lg" className="shadow-premium hover:shadow-premium-hover transition-all">
+                Get Started Now
               </Button>
             </Link>
           </div>
         </div>
-      </div>
+      </section>
 
       <main className="container mx-auto px-8 py-12 md:py-20">
 

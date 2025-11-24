@@ -17,6 +17,7 @@ const config: Config = {
       colors: {
         border: 'hsl(var(--border))',
         'border-light': 'hsl(var(--border-light))',
+        'border-subtle': 'hsl(var(--border-subtle))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
@@ -62,12 +63,18 @@ const config: Config = {
         pill: '40px',
       },
       boxShadow: {
-        // Premium depth system - Enhanced for cream background
+        // Premium depth system - Airbnb/ClassPass inspired
+        'xs': '0 1px 2px rgba(0, 0, 0, 0.05)',
+        'sm': '0 1px 3px rgba(0, 0, 0, 0.08)',
         'card': '0 2px 8px rgba(0, 0, 0, 0.12)',
-        'card-hover': '0 8px 24px rgba(0, 0, 0, 0.18)',
+        'card-hover': '0 12px 32px rgba(0, 0, 0, 0.16)',
+        'premium': '0 8px 20px rgba(0, 0, 0, 0.12)',
+        'premium-hover': '0 16px 40px rgba(0, 0, 0, 0.16)',
+        'soft': '0 2px 12px rgba(0, 0, 0, 0.08)',
+        'lifted': '0 4px 16px rgba(0, 0, 0, 0.10)',
         'button-glow': '0 2px 4px rgba(0, 102, 255, 0.3)',
         'button-glow-hover': '0 4px 12px rgba(0, 102, 255, 0.4)',
-        'header-scroll': '0 1px 3px rgba(0, 0, 0, 0.12)',
+        'header-scroll': '0 2px 8px rgba(0, 0, 0, 0.08)',
         'glass': '0 8px 32px rgba(0, 0, 0, 0.12)',
         // Legacy Airbnb shadows (keeping for compatibility)
         'airbnb': '0 6px 16px rgba(0, 0, 0, 0.14)',

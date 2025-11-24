@@ -28,6 +28,7 @@
     /* Cream-toned borders */
     --border: 54 30% 85%;             /* #E8E7CD cream border */
     --border-light: 54 40% 90%;       /* #F0EFD6 subtle cream border */
+    --border-subtle: 0 0% 92%;        /* #EBEBEB neutral border for premium UI */
     --input: 0 0% 69%;                /* #B0B0B0 */
 
     /* Semantic */

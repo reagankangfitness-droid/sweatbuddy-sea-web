@@ -1,10 +1,18 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, League_Spartan } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Toaster } from 'sonner'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+})
+
+const leagueSpartan = League_Spartan({
+  subsets: ['latin'],
+  variable: '--font-league-spartan',
+})
 
 export const metadata: Metadata = {
   title: 'sweatbuddies',
@@ -22,7 +30,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={inter.className}>
+        <body className={`${inter.variable} ${leagueSpartan.variable}`}>
           {children}
           <Toaster />
         </body>

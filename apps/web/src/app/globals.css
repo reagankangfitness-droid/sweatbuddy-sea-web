@@ -4,14 +4,14 @@
 
 @layer base {
   :root {
-    /* Warm cream aesthetic with #FFA51F Vibrant Orange brand color */
+    /* Warm cream aesthetic with #FF2828 Cherry Red brand color */
     --background: 57 67% 95%;         /* #FDFCE9 warm cream */
     --foreground: 0 0% 13%;           /* #222222 dark gray */
 
-    /* Brand Vibrant Orange - Use sparingly for CTAs, prices, active states! */
-    --primary: 38 100% 56%;           /* #FFA51F vibrant orange */
+    /* Brand Cherry Red - Use sparingly for CTAs, prices, active states! */
+    --primary: 0 100% 58%;            /* #FF2828 cherry red */
     --primary-foreground: 0 0% 100%;  /* White text for accessibility */
-    --primary-hover: 38 85% 50%;      /* #E69419 hover state */
+    --primary-hover: 0 73% 49%;       /* #D92222 hover state */
 
     /* Neutrals - 90% of UI */
     --card: 0 0% 100%;                /* #FFFFFF white cards pop on cream */
@@ -36,7 +36,7 @@
     --success: 123 100% 27%;          /* #008A05 success green */
 
     /* Effects */
-    --ring: 38 100% 56%;              /* Vibrant orange focus ring */
+    --ring: 0 100% 58%;               /* Cherry red focus ring */
     --radius: 0.5rem;                 /* 8px border radius */
   }
 }
@@ -60,7 +60,7 @@
 
   body {
     @apply bg-background;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     font-size: 16px;
     font-weight: 400;
     line-height: 1.6;
@@ -69,9 +69,9 @@
     background-color: #FDFCE9;
   }
 
-  /* Heading Styles */
+  /* Heading Styles - League Spartan for bold, modern look */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-league-spartan), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     font-weight: 700;
     line-height: 1.2;
     margin: 0;

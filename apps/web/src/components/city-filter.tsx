@@ -1,13 +1,5 @@
 'use client'
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-
 interface Activity {
   city: string
   type: string
@@ -29,12 +21,15 @@ const CITY_EMOJI_MAP: Record<string, string> = {
 }
 
 const ACTIVITY_TYPES = [
-  { value: 'all', label: 'All Types', emoji: '' },
+  { value: 'all', label: 'All Types', emoji: '✨' },
   { value: 'RUN', label: 'Run', emoji: '🏃' },
   { value: 'GYM', label: 'Gym', emoji: '💪' },
   { value: 'YOGA', label: 'Yoga', emoji: '🧘' },
   { value: 'HIKE', label: 'Hike', emoji: '🥾' },
   { value: 'CYCLING', label: 'Cycling', emoji: '🚴' },
+  { value: 'COMBAT', label: 'Combat', emoji: '🥊' },
+  { value: 'SWIM', label: 'Swim', emoji: '🏊' },
+  { value: 'SPORTS', label: 'Sports', emoji: '🏀' },
   { value: 'OTHER', label: 'Other', emoji: '✨' },
 ]
 
@@ -57,8 +52,8 @@ export function ActivityFilter({
   const uniqueCities = ['all', ...new Set((activities || []).map(a => a.city).filter(Boolean))]
   const cityOptions = uniqueCities.map(city => ({
     value: city.toLowerCase().replace(/\s+/g, '-'),
-    label: city === 'all' ? 'All Cities' : city,
-    emoji: city === 'all' ? '' : CITY_EMOJI_MAP[city.toLowerCase()] || '🌏'
+    label: city === 'all' ? 'All' : city,
+    emoji: city === 'all' ? '🌏' : CITY_EMOJI_MAP[city.toLowerCase()] || '🌏'
   }))
 
   const handleCitySelect = (cityValue: string) => {
@@ -85,53 +80,71 @@ export function ActivityFilter({
   }
 
   return (
-    <div className="flex flex-col gap-4 md:flex-row md:gap-6">
-      {/* City Filter */}
-      <div className="filter-section flex-1">
-        <label className="font-semibold mb-2 block text-foreground" style={{ fontSize: '13px' }}>City</label>
-        <Select value={selectedCity} onValueChange={handleCitySelect}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a city" />
-          </SelectTrigger>
-          <SelectContent className="max-h-[300px]">
-            {cityOptions.map((city) => (
-              <SelectItem key={city.value} value={city.value}>
-                <div className="flex items-center gap-2">
-                  {city.emoji && (
-                    <span role="img" aria-label={city.label}>
-                      {city.emoji}
-                    </span>
-                  )}
+    <div className="space-y-5">
+      {/* City Filter - Horizontal Scrollable Pills (Nomad List Style) */}
+      <div className="filter-section">
+        <label className="font-semibold mb-3 block text-foreground" style={{ fontSize: '13px' }}>
+          City
+        </label>
+        <div className="relative">
+          <div className="overflow-x-auto filter-pills-scroll pb-1">
+            <div className="flex gap-2">
+              {cityOptions.map((city) => (
+                <button
+                  key={city.value}
+                  onClick={() => handleCitySelect(city.value)}
+                  className={`
+                    flex-shrink-0 px-4 py-2 rounded-pill font-medium transition-all duration-200
+                    inline-flex items-center gap-2 whitespace-nowrap
+                    ${selectedCity === city.value
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'bg-white text-foreground border border-border hover:border-primary/40 hover:shadow-sm'
+                    }
+                  `}
+                  style={{ fontSize: '13px' }}
+                >
+                  <span role="img" aria-label={city.label}>
+                    {city.emoji}
+                  </span>
                   <span>{city.label}</span>
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Activity Type Filter */}
-      <div className="filter-section flex-1">
-        <label className="font-semibold mb-2 block text-foreground" style={{ fontSize: '13px' }}>Activity Type</label>
-        <Select value={selectedType} onValueChange={handleTypeSelect}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select activity type" />
-          </SelectTrigger>
-          <SelectContent className="max-h-[300px]">
-            {ACTIVITY_TYPES.map((type) => (
-              <SelectItem key={type.value} value={type.value}>
-                <div className="flex items-center gap-2">
-                  {type.emoji && (
-                    <span role="img" aria-label={type.label}>
-                      {type.emoji}
-                    </span>
-                  )}
+      {/* Activity Type Filter - Horizontal Scrollable Pills (Nomad List Style) */}
+      <div className="filter-section">
+        <label className="font-semibold mb-3 block text-foreground" style={{ fontSize: '13px' }}>
+          Activity Type
+        </label>
+        <div className="relative">
+          <div className="overflow-x-auto filter-pills-scroll pb-1">
+            <div className="flex gap-2">
+              {ACTIVITY_TYPES.map((type) => (
+                <button
+                  key={type.value}
+                  onClick={() => handleTypeSelect(type.value)}
+                  className={`
+                    flex-shrink-0 px-4 py-2 rounded-pill font-medium transition-all duration-200
+                    inline-flex items-center gap-2 whitespace-nowrap
+                    ${selectedType === type.value
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'bg-white text-foreground border border-border hover:border-primary/40 hover:shadow-sm'
+                    }
+                  `}
+                  style={{ fontSize: '13px' }}
+                >
+                  <span role="img" aria-label={type.label}>
+                    {type.emoji}
+                  </span>
                   <span>{type.label}</span>
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

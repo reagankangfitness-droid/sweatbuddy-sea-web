@@ -97,13 +97,15 @@ export default function Home() {
         {/* Dark Overlay for Text Readability */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
 
-        {/* Hero Content */}
+        {/* Hero Content - Refined premium typography */}
         <div className="relative z-10 max-w-container mx-auto px-8 py-28 md:py-36 text-center">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]" style={{ color: '#FF2828' }}>
-            sweatbuddies
+          <h1 className="font-bold mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]" style={{ color: '#FF2828', fontSize: '30px', lineHeight: '1.2', letterSpacing: '-0.02em' }}>
+            <span className="md:hidden">sweatbuddies</span>
+            <span className="hidden md:inline" style={{ fontSize: '40px' }}>sweatbuddies</span>
           </h1>
-          <p className="text-xl md:text-2xl text-white/95 mb-10 leading-relaxed max-w-3xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-            Find local workouts, wellness hangs, and health-obsessed people who actually get it.
+          <p className="text-white/95 mb-10 leading-relaxed max-w-2xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" style={{ fontSize: '15px', lineHeight: '1.6' }}>
+            <span className="md:hidden">Find local workouts, wellness hangs, and health-obsessed people who actually get it.</span>
+            <span className="hidden md:inline" style={{ fontSize: '16px' }}>Find local workouts, wellness hangs, and health-obsessed people who actually get it.</span>
           </p>
 
           {/* Feature Box */}
@@ -147,14 +149,14 @@ export default function Home() {
 
       <main className="container mx-auto px-8 py-12 md:py-20">
 
-        {/* Explore Activities Section */}
+        {/* Explore Activities Section - Refined typography */}
         <div>
           <div className="mb-6">
-            <h2 className="text-3xl md:text-4xl font-bold mb-2 text-black inline-flex items-center gap-3">
-              <span role="img" aria-label="sparkles">✨</span>
-              Explore Activities
+            <h2 className="font-semibold mb-2 text-black inline-flex items-center gap-2.5" style={{ fontSize: '20px', lineHeight: '1.3', letterSpacing: '-0.01em' }}>
+              <span className="md:hidden"><span role="img" aria-label="sparkles">✨</span> Explore Activities</span>
+              <span className="hidden md:inline" style={{ fontSize: '24px' }}><span role="img" aria-label="sparkles">✨</span> Explore Activities</span>
             </h2>
-            <p className="text-base text-gray-500 mb-4 leading-relaxed">
+            <p className="text-gray-500 mb-4 leading-relaxed" style={{ fontSize: '14px', lineHeight: '1.5' }}>
               Discover local workouts, wellness hangs, and health experiences in your community
             </p>
 

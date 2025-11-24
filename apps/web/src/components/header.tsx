@@ -8,13 +8,13 @@ import { Button } from '@/components/ui/button'
 export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border-light bg-white shadow-sm">
-      <div className="max-w-container mx-auto flex h-20 items-center justify-between px-6">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 text-2xl font-bold text-primary hover:text-primary-hover transition-all tracking-tight group">
-          {/* sweatbuddies Droplet Logo */}
+      <div className="max-w-container mx-auto flex h-16 items-center justify-between px-6">
+        {/* Logo - Refined premium size */}
+        <Link href="/" className="flex items-center gap-2.5 font-bold text-primary hover:text-primary-hover transition-all tracking-tight group" style={{ fontSize: '22px' }}>
+          {/* sweatbuddies Droplet Logo - Refined size */}
           <svg
-            width="32"
-            height="32"
+            width="28"
+            height="28"
             viewBox="0 0 100 140"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"

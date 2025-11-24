@@ -34,33 +34,49 @@ export const colors = {
 };
 
 export const typography = {
-  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
-
-  // Font Sizes
-  sizes: {
-    hero: '48px',
-    h1: '48px',
-    h2: '32px',
-    h3: '24px',
-    h4: '18px',
-    body: '16px',
-    caption: '14px',
-    small: '12px',
+  fontFamily: {
+    body: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
+    display: "'League Spartan', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
   },
 
-  // Font Weights
+  // Premium Font Sizes - Airbnb/ClassPass inspired
+  sizes: {
+    hero: '40px',        // Reduced from 48px - premium restraint
+    h1: '36px',          // Reduced from 48px
+    h2: '24px',          // Reduced from 32px
+    h3: '18px',          // Reduced from 24px
+    h4: '15px',          // Reduced from 18px
+    bodyLarge: '16px',
+    body: '15px',        // Reduced from 16px
+    bodySmall: '14px',
+    caption: '13px',     // Reduced from 14px
+    small: '12px',
+    xs: '11px',
+    logo: '22px',        // Refined logo size
+  },
+
+  // Font Weights - Refined for premium feel
   weights: {
     regular: 400,
     medium: 500,
-    semibold: 600,
-    bold: 700,
+    semibold: 600,      // Headings use this instead of bold
+    bold: 700,          // Logo only
   },
 
-  // Line Heights
+  // Line Heights - Premium spacing
   lineHeights: {
-    tight: 1.2,
-    normal: 1.5,
-    relaxed: 1.6,
+    tight: 1.2,         // Headlines
+    snug: 1.3,          // Subheads
+    normal: 1.5,        // Compact text
+    relaxed: 1.6,       // Body text
+  },
+
+  // Letter Spacing - Refined
+  letterSpacing: {
+    tight: '-0.02em',   // Large headings
+    snug: '-0.01em',    // Medium headings
+    normal: '0',        // Body text
+    wide: '0.04em',     // Labels, badges
   },
 };
 

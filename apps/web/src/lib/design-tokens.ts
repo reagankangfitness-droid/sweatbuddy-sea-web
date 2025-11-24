@@ -1,12 +1,12 @@
 // Airbnb-inspired Design System with #FF2828 Cherry Red Brand Color
 
 export const colors = {
-  // Brand Cherry Red - Use SPARINGLY for CTAs, prices, active states (like Airbnb uses pink)
+  // Brand Vivid Blue - Use SPARINGLY for CTAs, prices, active states (like Airbnb uses pink)
   brand: {
-    primary: '#FF2828',        // Cherry red
-    primaryHover: '#D92222',   // Darker for hover states
-    primaryLight: 'rgba(255, 40, 40, 0.1)',
-    primaryText: '#FFFFFF',    // White text on cherry red (for accessibility)
+    primary: '#0066FF',        // Vivid blue
+    primaryHover: '#0052CC',   // Darker for hover states
+    primaryLight: 'rgba(0, 102, 255, 0.1)',
+    primaryText: '#FFFFFF',    // White text on vivid blue (for accessibility)
   },
 
   // Neutrals - 90% of the UI

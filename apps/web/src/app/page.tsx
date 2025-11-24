@@ -99,7 +99,7 @@ export default function Home() {
 
         {/* Hero Content - Refined premium typography */}
         <div className="relative z-10 max-w-container mx-auto px-8 py-28 md:py-36 text-center">
-          <h1 className="font-bold mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]" style={{ color: '#FF2828', fontSize: '30px', lineHeight: '1.2', letterSpacing: '-0.02em' }}>
+          <h1 className="font-bold mb-6 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]" style={{ color: '#0066FF', fontSize: '30px', lineHeight: '1.2', letterSpacing: '-0.02em' }}>
             <span className="md:hidden">sweatbuddies</span>
             <span className="hidden md:inline" style={{ fontSize: '40px' }}>sweatbuddies</span>
           </h1>

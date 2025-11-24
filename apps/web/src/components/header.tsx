@@ -24,7 +24,7 @@ export function Header() {
             <path
               d="M50 10 C70 30, 85 60, 85 85 C85 108, 68 125, 50 125 C32 125, 15 108, 15 85 C15 60, 30 30, 50 10 Z"
               fill="none"
-              stroke="#FF2828"
+              stroke="#0066FF"
               strokeWidth="8"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -33,7 +33,7 @@ export function Header() {
             <path
               d="M40 60 Q35 80, 45 100"
               fill="none"
-              stroke="#FF2828"
+              stroke="#0066FF"
               strokeWidth="8"
               strokeLinecap="round"
             />

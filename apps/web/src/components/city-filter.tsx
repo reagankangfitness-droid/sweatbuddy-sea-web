@@ -88,7 +88,7 @@ export function ActivityFilter({
     <div className="flex flex-col gap-4 md:flex-row md:gap-6">
       {/* City Filter */}
       <div className="filter-section flex-1">
-        <label className="text-sm font-semibold mb-2 block text-foreground">City</label>
+        <label className="font-semibold mb-2 block text-foreground" style={{ fontSize: '13px' }}>City</label>
         <Select value={selectedCity} onValueChange={handleCitySelect}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select a city" />
@@ -112,7 +112,7 @@ export function ActivityFilter({
 
       {/* Activity Type Filter */}
       <div className="filter-section flex-1">
-        <label className="text-sm font-semibold mb-2 block text-foreground">Activity Type</label>
+        <label className="font-semibold mb-2 block text-foreground" style={{ fontSize: '13px' }}>Activity Type</label>
         <Select value={selectedType} onValueChange={handleTypeSelect}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select activity type" />

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b bg-white shadow-sm">
+    <header className="sticky top-0 z-50 border-b border-border-light bg-white shadow-sm">
       <div className="max-w-container mx-auto flex h-20 items-center justify-between px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 text-2xl font-bold text-primary hover:text-primary-hover transition-all tracking-tight group">

@@ -15,6 +15,7 @@ const config: Config = {
       },
       colors: {
         border: 'hsl(var(--border))',
+        'border-light': 'hsl(var(--border-light))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
@@ -60,16 +61,16 @@ const config: Config = {
         pill: '40px',
       },
       boxShadow: {
-        // Premium depth system
-        'card': '0 2px 8px rgba(0, 0, 0, 0.08)',
-        'card-hover': '0 8px 24px rgba(0, 0, 0, 0.15)',
+        // Premium depth system - Enhanced for cream background
+        'card': '0 2px 8px rgba(0, 0, 0, 0.12)',
+        'card-hover': '0 8px 24px rgba(0, 0, 0, 0.18)',
         'button-glow': '0 2px 4px rgba(255, 165, 31, 0.3)',
         'button-glow-hover': '0 4px 12px rgba(255, 165, 31, 0.4)',
-        'header-scroll': '0 1px 3px rgba(0, 0, 0, 0.1)',
-        'glass': '0 8px 32px rgba(0, 0, 0, 0.1)',
+        'header-scroll': '0 1px 3px rgba(0, 0, 0, 0.12)',
+        'glass': '0 8px 32px rgba(0, 0, 0, 0.12)',
         // Legacy Airbnb shadows (keeping for compatibility)
-        'airbnb': '0 6px 16px rgba(0, 0, 0, 0.12)',
-        'airbnb-hover': '0 8px 28px rgba(0, 0, 0, 0.15)',
+        'airbnb': '0 6px 16px rgba(0, 0, 0, 0.14)',
+        'airbnb-hover': '0 8px 28px rgba(0, 0, 0, 0.18)',
       },
       transitionTimingFunction: {
         'airbnb': 'cubic-bezier(0.4, 0, 0.2, 1)',

@@ -4,9 +4,9 @@
 
 @layer base {
   :root {
-    /* Airbnb-inspired with #FFA51F Vibrant Orange brand color */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 13%;
+    /* Warm cream aesthetic with #FFA51F Vibrant Orange brand color */
+    --background: 57 67% 95%;         /* #FDFCE9 warm cream */
+    --foreground: 0 0% 13%;           /* #222222 dark gray */
 
     /* Brand Vibrant Orange - Use sparingly for CTAs, prices, active states! */
     --primary: 38 100% 56%;           /* #FFA51F vibrant orange */
@@ -14,9 +14,9 @@
     --primary-hover: 38 85% 50%;      /* #E69419 hover state */
 
     /* Neutrals - 90% of UI */
-    --card: 0 0% 100%;
+    --card: 0 0% 100%;                /* #FFFFFF white cards pop on cream */
     --card-foreground: 0 0% 13%;
-    --popover: 0 0% 100%;
+    --popover: 0 0% 100%;             /* #FFFFFF white for elevation */
     --popover-foreground: 0 0% 13%;
     --secondary: 0 0% 96%;            /* #F7F7F7 off-white */
     --secondary-foreground: 0 0% 13%;
@@ -25,8 +25,9 @@
     --accent: 0 0% 96%;
     --accent-foreground: 0 0% 13%;
 
-    /* Borders */
-    --border: 0 0% 87%;               /* #DDDDDD */
+    /* Cream-toned borders */
+    --border: 54 30% 85%;             /* #E8E7CD cream border */
+    --border-light: 54 40% 90%;       /* #F0EFD6 subtle cream border */
     --input: 0 0% 69%;                /* #B0B0B0 */
 
     /* Semantic */
@@ -53,6 +54,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    /* Warm cream background - ensures no white gaps */
+    background-color: #FDFCE9;
   }
 
   body {
@@ -62,6 +65,8 @@
     font-weight: 400;
     line-height: 1.6;
     color: #222222;
+    /* Warm cream background */
+    background-color: #FDFCE9;
   }
 
   /* Heading Styles */

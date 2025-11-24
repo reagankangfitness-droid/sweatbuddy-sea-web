@@ -1,6 +1,9 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Filter, X } from 'lucide-react'
+import { useState } from 'react'
 
 interface Activity {
   city: string
@@ -47,6 +50,8 @@ export function ActivityFilter({
   onCityChange,
   onTypeChange
 }: ActivityFilterProps) {
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+
   // Extract unique cities from activities
   const uniqueCities = ['all', ...new Set((activities || []).map(a => a.city).filter(Boolean))]
   const cityOptions = uniqueCities.map(city => ({
@@ -78,7 +83,8 @@ export function ActivityFilter({
     }
   }
 
-  return (
+  // Filter content component (reused in both mobile and desktop)
+  const FilterContent = () => (
     <div className="flex flex-col gap-6">
       {/* City Filter */}
       <div className="filter-section">
@@ -126,6 +132,50 @@ export function ActivityFilter({
         </div>
       </div>
     </div>
+  )
+
+  return (
+    <>
+      {/* Mobile Filter Button - Shows only on mobile */}
+      <div className="md:hidden mb-4">
+        <Dialog open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm" className="w-full">
+              <Filter className="w-4 h-4 mr-2" />
+              Filters
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center justify-between">
+                <span>Filters</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsFilterOpen(false)}
+                  className="h-8 w-8 p-0"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </DialogTitle>
+            </DialogHeader>
+            <div className="py-4">
+              <FilterContent />
+            </div>
+            <div className="flex justify-end pt-4 border-t">
+              <Button onClick={() => setIsFilterOpen(false)}>
+                Apply Filters
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Desktop Filters - Shows only on desktop */}
+      <div className="hidden md:block">
+        <FilterContent />
+      </div>
+    </>
   )
 }
 

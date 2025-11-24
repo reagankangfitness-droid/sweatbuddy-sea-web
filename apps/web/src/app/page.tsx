@@ -210,10 +210,21 @@ export default function Home() {
         </div>
       </section>
 
+      {/*
+        ============================================
+        REMOVED: "Start Moving Together" / How It Works Section
+        Commented out on 2025-01-24 for cleaner UX
+
+        Reason: Users can discover "how it works" organically
+        through the experience itself. Removing this simplifies
+        the page and creates a more direct path to discovery.
+
+        To restore: uncomment this entire block
+        ============================================
+      */}
       {/* How It Works Section - TripBFF Inspired */}
-      <section className="py-16 md:py-24 bg-white">
+      {/* <section className="py-16 md:py-24 bg-white">
         <div className="max-w-container mx-auto px-6 lg:px-10">
-          {/* Section Header */}
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="inline-block text-xs font-semibold uppercase tracking-wider text-primary mb-3">
               Building Community
@@ -227,9 +238,7 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Steps Grid */}
           <div className="grid md:grid-cols-3 gap-8 md:gap-12">
-            {/* Step 1 */}
             <div className="text-center">
               <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
                 <span className="text-4xl">🔍</span>
@@ -245,7 +254,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Step 2 */}
             <div className="text-center">
               <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
                 <span className="text-4xl">✅</span>
@@ -261,7 +269,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Step 3 */}
             <div className="text-center">
               <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
                 <span className="text-4xl">🎉</span>
@@ -278,7 +285,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* CTA */}
           <div className="text-center mt-12">
             <Link href="/activities/new">
               <Button size="lg" className="shadow-premium hover:shadow-premium-hover transition-all">
@@ -287,12 +293,23 @@ export default function Home() {
             </Link>
           </div>
         </div>
-      </section>
+      </section> */}
 
+      {/*
+        ============================================
+        REMOVED: "How Do You Want to Move?" Section
+        Commented out on 2025-01-24 for cleaner UX
+
+        Reason: Simplifies the user journey by reducing scrolling
+        to reach actual activities. Activity type filtering already
+        exists in the Explore section below.
+
+        To restore: uncomment this entire block
+        ============================================
+      */}
       {/* Browse by Category Section - Airbnb Experiences Inspired */}
-      <section className="py-16 md:py-20 bg-white">
+      {/* <section className="py-16 md:py-20 bg-white">
         <div className="max-w-container mx-auto px-6 lg:px-10">
-          {/* Section Header */}
           <div className="mb-10">
             <h2 className="font-display font-bold text-foreground mb-3" style={{ fontSize: '32px', lineHeight: '1.2', letterSpacing: '-0.02em' }}>
               <span className="block md:hidden" style={{ fontSize: '24px' }}>How Do You Want to Move?</span>
@@ -303,11 +320,9 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Horizontal Scrollable Categories */}
           <div className="relative">
             <div className="overflow-x-auto filter-pills-scroll pb-4">
               <div className="flex gap-4 md:gap-5">
-                {/* Running Category */}
                 <button
                   onClick={() => setSelectedType('RUN')}
                   className="flex-shrink-0 group"
@@ -321,7 +336,6 @@ export default function Home() {
                   </div>
                 </button>
 
-                {/* Gym Category */}
                 <button
                   onClick={() => setSelectedType('GYM')}
                   className="flex-shrink-0 group"
@@ -335,7 +349,6 @@ export default function Home() {
                   </div>
                 </button>
 
-                {/* Yoga Category */}
                 <button
                   onClick={() => setSelectedType('YOGA')}
                   className="flex-shrink-0 group"
@@ -349,7 +362,6 @@ export default function Home() {
                   </div>
                 </button>
 
-                {/* Hiking Category */}
                 <button
                   onClick={() => setSelectedType('HIKE')}
                   className="flex-shrink-0 group"
@@ -363,7 +375,6 @@ export default function Home() {
                   </div>
                 </button>
 
-                {/* Cycling Category */}
                 <button
                   onClick={() => setSelectedType('CYCLING')}
                   className="flex-shrink-0 group"
@@ -377,7 +388,6 @@ export default function Home() {
                   </div>
                 </button>
 
-                {/* Combat Category */}
                 <button
                   onClick={() => setSelectedType('COMBAT')}
                   className="flex-shrink-0 group"
@@ -391,7 +401,6 @@ export default function Home() {
                   </div>
                 </button>
 
-                {/* Swimming Category */}
                 <button
                   onClick={() => setSelectedType('SWIM')}
                   className="flex-shrink-0 group"
@@ -405,7 +414,6 @@ export default function Home() {
                   </div>
                 </button>
 
-                {/* Sports Category */}
                 <button
                   onClick={() => setSelectedType('SPORTS')}
                   className="flex-shrink-0 group"
@@ -422,7 +430,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <main className="container mx-auto px-8 py-12 md:py-20">
 

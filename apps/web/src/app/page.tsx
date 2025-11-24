@@ -4,6 +4,7 @@ import { Header } from '@/components/header'
 import { ActivityFeed } from '@/components/activity-feed'
 import { ActivityFilter } from '@/components/city-filter'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
 
@@ -146,33 +147,45 @@ export default function Home() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-4">
                     <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden shadow-premium">
-                      <img
+                      <Image
                         src="/images/hero/running.png"
                         alt="Running activity"
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        priority
                       />
                     </div>
                     <div className="relative h-32 md:h-40 rounded-2xl overflow-hidden shadow-premium">
-                      <img
+                      <Image
                         src="/images/hero/meditation.png"
                         alt="Meditation and yoga"
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        priority
                       />
                     </div>
                   </div>
                   <div className="space-y-4 pt-8">
                     <div className="relative h-32 md:h-40 rounded-2xl overflow-hidden shadow-premium">
-                      <img
+                      <Image
                         src="/images/hero/run-club.jpg"
                         alt="Group fitness"
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        priority
                       />
                     </div>
                     <div className="relative h-48 md:h-56 rounded-2xl overflow-hidden shadow-premium">
-                      <img
+                      <Image
                         src="/images/hero/pickleball.jpg"
                         alt="Pickleball and sports"
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        priority
                       />
                     </div>
                   </div>

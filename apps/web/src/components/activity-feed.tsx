@@ -134,34 +134,47 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
         </div>
       </div>
 
-      {/* List View - Airbnb Style Grid */}
+      {/* List View - Premium Airbnb/Meetup Style Grid */}
       {viewMode === 'list' && (
-        <div className="grid gap-3 sm:gap-4 md:gap-5 lg:gap-8 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-5 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {activities.map((activity) => (
-            <div key={activity.id} className="group">
-              <Link href={`/activities/${activity.id}`}>
-                <div className="relative h-[220px] sm:h-[240px] md:h-[260px] lg:h-[280px] rounded-md overflow-hidden cursor-pointer transition-all duration-300 ease-airbnb hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-card-hover shadow-card">
-                  {/* Full Background Image */}
-                  <div className="absolute inset-0">
-                    {activity.imageUrl ? (
-                      <img
-                        src={activity.imageUrl}
-                        alt={activity.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground">
-                        <span className="text-sm">No image</span>
+            <Link key={activity.id} href={`/activities/${activity.id}`}>
+              <div className="group bg-white rounded-xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                {/* Image Section */}
+                <div className="relative h-52 sm:h-56 overflow-hidden bg-muted">
+                  {activity.imageUrl ? (
+                    <img
+                      src={activity.imageUrl}
+                      alt={activity.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      <span style={{ fontSize: '13px' }}>No image</span>
+                    </div>
+                  )}
+
+                  {/* Date Badge - Top Left (Meetup Style) */}
+                  {activity.startTime && (
+                    <div className="absolute top-3 left-3">
+                      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div className="bg-primary px-2 py-0.5 text-center">
+                          <span className="text-white font-bold uppercase" style={{ fontSize: '10px', letterSpacing: '0.05em' }}>
+                            {new Date(activity.startTime).toLocaleDateString('en-US', { month: 'short' })}
+                          </span>
+                        </div>
+                        <div className="px-2 py-1 text-center">
+                          <span className="text-foreground font-bold" style={{ fontSize: '18px', lineHeight: '1' }}>
+                            {new Date(activity.startTime).getDate()}
+                          </span>
+                        </div>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
-                  {/* Dark Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-
-                  {/* Activity Type Badge - Top Left */}
-                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-                    <span className="px-2 py-1 sm:px-3 sm:py-1.5 rounded-pill bg-white text-foreground font-semibold shadow-md inline-flex items-center gap-1" style={{ fontSize: '11px' }}>
+                  {/* Activity Type Badge - Top Right */}
+                  <div className="absolute top-3 right-3">
+                    <span className="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-sm text-foreground font-semibold shadow-sm inline-flex items-center gap-1" style={{ fontSize: '11px' }}>
                       {ACTIVITY_TYPE_EMOJI[activity.type] && (
                         <span role="img" aria-label={activity.type}>
                           {ACTIVITY_TYPE_EMOJI[activity.type]}
@@ -171,77 +184,79 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                     </span>
                   </div>
 
-                  {/* Heart Icon - Top Right */}
+                  {/* Heart Icon - Bottom Right on Image */}
                   <button
                     onClick={(e) => {
                       e.preventDefault()
                       // TODO: Implement favorite functionality
                     }}
-                    className="absolute top-2 right-2 sm:top-3 sm:right-3 p-2.5 sm:p-2 rounded-full hover:bg-black/20 transition-colors duration-200 group/heart min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center"
+                    className="absolute bottom-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-all duration-200 shadow-sm group/heart"
                   >
-                    <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-white stroke-2 group-hover/heart:fill-[#0066FF] group-hover/heart:text-[#0066FF] transition-all duration-200" />
+                    <Heart className="w-4 h-4 text-foreground stroke-2 group-hover/heart:fill-primary group-hover/heart:text-primary transition-colors duration-200" />
                   </button>
-
-                  {/* Content Overlay - Bottom */}
-                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 text-white">
-                    {/* Location */}
-                    <div className="flex items-center gap-1 mb-0.5 sm:mb-1">
-                      <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" style={{ color: '#0066FF' }} />
-                      <span className="font-medium text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] truncate" style={{ fontSize: '13px' }}>{activity.city}</span>
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="font-semibold mb-2 sm:mb-3 line-clamp-2 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] leading-tight" style={{ fontSize: '15px', lineHeight: '1.3' }}>
-                      {activity.title}
-                    </h3>
-
-                    {/* Bottom Row: Price */}
-                    <div className="flex items-center justify-between">
-                      {activity.price !== undefined && activity.price > 0 ? (
-                        <div className="flex items-baseline gap-1">
-                          <span className="font-bold drop-shadow-lg" style={{ color: '#0066FF', fontSize: '16px' }}>
-                            {activity.currency || 'SGD'} {activity.price.toFixed(2)}
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-white/90 font-medium" style={{ fontSize: '13px' }}>Free</span>
-                      )}
-
-                      {/* Participants */}
-                      {activity.maxPeople && (
-                        <div className="flex items-center gap-0.5 sm:gap-1 text-white/90" style={{ fontSize: '12px' }}>
-                          <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                          <span className="font-medium">
-                            {activity.userActivities?.length || 0}/{activity.maxPeople}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
                 </div>
-              </Link>
 
-              {/* Info below card */}
-              <div className="mt-2 sm:mt-3 px-0.5 sm:px-1">
-                {activity.user.name && (
-                  <p className="text-muted-foreground truncate" style={{ fontSize: '13px' }}>
-                    Hosted by <span className="font-medium text-foreground">{activity.user.name}</span>
-                  </p>
-                )}
-                {activity.startTime && (
-                  <div className="flex items-center gap-1 mt-0.5 sm:mt-1">
-                    <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-muted-foreground flex-shrink-0" />
-                    <span className="text-muted-foreground truncate" style={{ fontSize: '13px' }}>
-                      {new Date(activity.startTime).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
+                {/* Content Section - White Background */}
+                <div className="p-4">
+                  {/* Location */}
+                  <div className="flex items-center gap-1 mb-2">
+                    <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                    <span className="font-medium text-muted-foreground truncate" style={{ fontSize: '13px' }}>
+                      {activity.city}
                     </span>
                   </div>
-                )}
+
+                  {/* Title */}
+                  <h3 className="font-semibold text-foreground mb-3 line-clamp-2 leading-snug" style={{ fontSize: '16px', lineHeight: '1.4' }}>
+                    {activity.title}
+                  </h3>
+
+                  {/* Host Info with Avatar */}
+                  <div className="flex items-center gap-2 mb-3 pb-3 border-b border-border-subtle">
+                    {activity.user.imageUrl ? (
+                      <img
+                        src={activity.user.imageUrl}
+                        alt={activity.user.name || 'Host'}
+                        className="w-6 h-6 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center">
+                        <span className="text-muted-foreground" style={{ fontSize: '10px' }}>
+                          {activity.user.name?.charAt(0).toUpperCase() || '?'}
+                        </span>
+                      </div>
+                    )}
+                    <span className="text-muted-foreground truncate" style={{ fontSize: '13px' }}>
+                      Hosted by <span className="font-medium text-foreground">{activity.user.name || 'Unknown'}</span>
+                    </span>
+                  </div>
+
+                  {/* Bottom Row: Price & Participants */}
+                  <div className="flex items-center justify-between">
+                    {/* Price */}
+                    {activity.price !== undefined && activity.price > 0 ? (
+                      <div className="flex items-baseline gap-1">
+                        <span className="font-bold text-primary" style={{ fontSize: '18px' }}>
+                          {activity.currency || 'SGD'} {activity.price.toFixed(2)}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-foreground font-semibold" style={{ fontSize: '14px' }}>Free</span>
+                    )}
+
+                    {/* Participants */}
+                    {activity.maxPeople && (
+                      <div className="flex items-center gap-1.5 text-muted-foreground">
+                        <Users className="w-4 h-4" />
+                        <span className="font-medium" style={{ fontSize: '13px' }}>
+                          {activity.userActivities?.length || 0}/{activity.maxPeople}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

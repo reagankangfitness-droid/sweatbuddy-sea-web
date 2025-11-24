@@ -7,6 +7,18 @@ import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/ap
 import { AvatarStack } from '@/components/avatar-stack'
 import { Heart, MapPin, Users, Calendar } from 'lucide-react'
 
+const ACTIVITY_TYPE_EMOJI: Record<string, string> = {
+  'RUN': '🏃',
+  'GYM': '💪',
+  'YOGA': '🧘',
+  'HIKE': '🥾',
+  'CYCLING': '🚴',
+  'COMBAT': '🥊',
+  'SWIM': '🏊',
+  'SPORTS': '🏀',
+  'OTHER': '✨',
+}
+
 interface Participant {
   id: string
   name: string | null
@@ -81,7 +93,9 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
     return (
       <div className="rounded-lg border p-12 text-center">
         <p className="text-xl text-muted-foreground mb-6">
+          <span role="img" aria-label="search" className="mr-2">🔍</span>
           No activities yet. Be the first to create one!
+          <span role="img" aria-label="sparkles" className="ml-2">✨</span>
         </p>
         <Link href="/activities/new">
           <Button size="lg">Create First Activity</Button>
@@ -145,7 +159,12 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
 
                   {/* Activity Type Badge - Top Left */}
                   <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-                    <span className="px-2 py-1 sm:px-3 sm:py-1.5 rounded-pill bg-white text-foreground text-[10px] sm:text-xs font-semibold shadow-md">
+                    <span className="px-2 py-1 sm:px-3 sm:py-1.5 rounded-pill bg-white text-foreground text-[10px] sm:text-xs font-semibold shadow-md inline-flex items-center gap-1">
+                      {ACTIVITY_TYPE_EMOJI[activity.type] && (
+                        <span role="img" aria-label={activity.type}>
+                          {ACTIVITY_TYPE_EMOJI[activity.type]}
+                        </span>
+                      )}
                       {activity.type}
                     </span>
                   </div>

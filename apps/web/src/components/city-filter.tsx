@@ -14,14 +14,29 @@ interface Activity {
   type: string
 }
 
+const CITY_EMOJI_MAP: Record<string, string> = {
+  'singapore': '🇸🇬',
+  'bangkok': '🇹🇭',
+  'kuala lumpur': '🇲🇾',
+  'kl': '🇲🇾',
+  'manila': '🇵🇭',
+  'jakarta': '🇮🇩',
+  'ho chi minh city': '🇻🇳',
+  'hcmc': '🇻🇳',
+  'hanoi': '🇻🇳',
+  'bali': '🇮🇩',
+  'phuket': '🇹🇭',
+  'chiang mai': '🇹🇭',
+}
+
 const ACTIVITY_TYPES = [
-  { value: 'all', label: 'All Types' },
-  { value: 'RUN', label: 'Run' },
-  { value: 'GYM', label: 'Gym' },
-  { value: 'YOGA', label: 'Yoga' },
-  { value: 'HIKE', label: 'Hike' },
-  { value: 'CYCLING', label: 'Cycling' },
-  { value: 'OTHER', label: 'Other' },
+  { value: 'all', label: 'All Types', emoji: '' },
+  { value: 'RUN', label: 'Run', emoji: '🏃' },
+  { value: 'GYM', label: 'Gym', emoji: '💪' },
+  { value: 'YOGA', label: 'Yoga', emoji: '🧘' },
+  { value: 'HIKE', label: 'Hike', emoji: '🥾' },
+  { value: 'CYCLING', label: 'Cycling', emoji: '🚴' },
+  { value: 'OTHER', label: 'Other', emoji: '✨' },
 ]
 
 interface ActivityFilterProps {
@@ -43,7 +58,8 @@ export function ActivityFilter({
   const uniqueCities = ['all', ...new Set((activities || []).map(a => a.city).filter(Boolean))]
   const cityOptions = uniqueCities.map(city => ({
     value: city.toLowerCase().replace(/\s+/g, '-'),
-    label: city === 'all' ? 'All Cities' : city
+    label: city === 'all' ? 'All Cities' : city,
+    emoji: city === 'all' ? '' : CITY_EMOJI_MAP[city.toLowerCase()] || '🌏'
   }))
 
   const handleCitySelect = (cityValue: string) => {
@@ -83,6 +99,11 @@ export function ActivityFilter({
               onClick={() => handleCitySelect(city.value)}
               className="rounded-pill"
             >
+              {city.emoji && (
+                <span role="img" aria-label={city.label} className="mr-1.5">
+                  {city.emoji}
+                </span>
+              )}
               {city.label}
             </Button>
           ))}
@@ -95,6 +116,11 @@ export function ActivityFilter({
             <SelectContent>
               {cityOptions.map((city) => (
                 <SelectItem key={city.value} value={city.value}>
+                  {city.emoji && (
+                    <span role="img" aria-label={city.label} className="mr-1.5">
+                      {city.emoji}
+                    </span>
+                  )}
                   {city.label}
                 </SelectItem>
               ))}
@@ -115,6 +141,11 @@ export function ActivityFilter({
               onClick={() => handleTypeSelect(type.value)}
               className="rounded-pill"
             >
+              {type.emoji && (
+                <span role="img" aria-label={type.label} className="mr-1.5">
+                  {type.emoji}
+                </span>
+              )}
               {type.label}
             </Button>
           ))}
@@ -127,6 +158,11 @@ export function ActivityFilter({
             <SelectContent>
               {ACTIVITY_TYPES.map((type) => (
                 <SelectItem key={type.value} value={type.value}>
+                  {type.emoji && (
+                    <span role="img" aria-label={type.label} className="mr-1.5">
+                      {type.emoji}
+                    </span>
+                  )}
                   {type.label}
                 </SelectItem>
               ))}

@@ -268,6 +268,141 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Browse by Category Section - Airbnb Experiences Inspired */}
+      <section className="py-16 md:py-20 bg-white">
+        <div className="max-w-container mx-auto px-6 lg:px-10">
+          {/* Section Header */}
+          <div className="mb-10">
+            <h2 className="font-display font-bold text-foreground mb-3" style={{ fontSize: '32px', lineHeight: '1.2', letterSpacing: '-0.02em' }}>
+              <span className="block md:hidden" style={{ fontSize: '24px' }}>Browse by Category</span>
+              <span className="hidden md:block">Browse by Category</span>
+            </h2>
+            <p className="text-muted-foreground max-w-2xl" style={{ fontSize: '15px', lineHeight: '1.6' }}>
+              Find the perfect activity for your fitness goals
+            </p>
+          </div>
+
+          {/* Horizontal Scrollable Categories */}
+          <div className="relative">
+            <div className="overflow-x-auto filter-pills-scroll pb-4">
+              <div className="flex gap-4 md:gap-5">
+                {/* Running Category */}
+                <button
+                  onClick={() => setSelectedType('RUN')}
+                  className="flex-shrink-0 group"
+                >
+                  <div className="relative w-44 h-52 md:w-52 md:h-60 rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                      <span className="text-5xl md:text-6xl mb-3">🏃</span>
+                      <span className="font-semibold" style={{ fontSize: '18px' }}>Running</span>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Gym Category */}
+                <button
+                  onClick={() => setSelectedType('GYM')}
+                  className="flex-shrink-0 group"
+                >
+                  <div className="relative w-44 h-52 md:w-52 md:h-60 rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
+                    <div className="absolute inset-0 bg-gradient-to-br from-red-400 to-red-600 group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                      <span className="text-5xl md:text-6xl mb-3">💪</span>
+                      <span className="font-semibold" style={{ fontSize: '18px' }}>Gym</span>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Yoga Category */}
+                <button
+                  onClick={() => setSelectedType('YOGA')}
+                  className="flex-shrink-0 group"
+                >
+                  <div className="relative w-44 h-52 md:w-52 md:h-60 rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-purple-600 group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                      <span className="text-5xl md:text-6xl mb-3">🧘</span>
+                      <span className="font-semibold" style={{ fontSize: '18px' }}>Yoga</span>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Hiking Category */}
+                <button
+                  onClick={() => setSelectedType('HIKE')}
+                  className="flex-shrink-0 group"
+                >
+                  <div className="relative w-44 h-52 md:w-52 md:h-60 rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
+                    <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-green-600 group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                      <span className="text-5xl md:text-6xl mb-3">🥾</span>
+                      <span className="font-semibold" style={{ fontSize: '18px' }}>Hiking</span>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Cycling Category */}
+                <button
+                  onClick={() => setSelectedType('CYCLING')}
+                  className="flex-shrink-0 group"
+                >
+                  <div className="relative w-44 h-52 md:w-52 md:h-60 rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
+                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 to-orange-500 group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                      <span className="text-5xl md:text-6xl mb-3">🚴</span>
+                      <span className="font-semibold" style={{ fontSize: '18px' }}>Cycling</span>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Combat Category */}
+                <button
+                  onClick={() => setSelectedType('COMBAT')}
+                  className="flex-shrink-0 group"
+                >
+                  <div className="relative w-44 h-52 md:w-52 md:h-60 rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
+                    <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-red-500 group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                      <span className="text-5xl md:text-6xl mb-3">🥊</span>
+                      <span className="font-semibold" style={{ fontSize: '18px' }}>Combat</span>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Swimming Category */}
+                <button
+                  onClick={() => setSelectedType('SWIM')}
+                  className="flex-shrink-0 group"
+                >
+                  <div className="relative w-44 h-52 md:w-52 md:h-60 rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
+                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 to-blue-500 group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                      <span className="text-5xl md:text-6xl mb-3">🏊</span>
+                      <span className="font-semibold" style={{ fontSize: '18px' }}>Swimming</span>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Sports Category */}
+                <button
+                  onClick={() => setSelectedType('SPORTS')}
+                  className="flex-shrink-0 group"
+                >
+                  <div className="relative w-44 h-52 md:w-52 md:h-60 rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
+                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-400 to-purple-500 group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                      <span className="text-5xl md:text-6xl mb-3">🏀</span>
+                      <span className="font-semibold" style={{ fontSize: '18px' }}>Sports</span>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <main className="container mx-auto px-8 py-12 md:py-20">
 
         {/* Explore Activities Section - Refined typography */}

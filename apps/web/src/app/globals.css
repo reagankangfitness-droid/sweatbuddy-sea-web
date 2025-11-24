@@ -161,3 +161,19 @@
 .pac-matched {
   font-weight: 600;
 }
+
+/* Horizontal Scrollable Filter Pills */
+.filter-pills-scroll {
+  /* Hide scrollbar but keep functionality */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+
+  /* Smooth momentum scrolling on mobile */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for Chrome/Safari */
+.filter-pills-scroll::-webkit-scrollbar {
+  display: none;
+}

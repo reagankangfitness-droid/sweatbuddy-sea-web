@@ -1,13 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 
 interface Activity {
   city: string
@@ -86,18 +79,18 @@ export function ActivityFilter({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       {/* City Filter */}
-      <div>
-        <label className="text-sm font-medium mb-2 block">City</label>
-        <div className="hidden md:flex flex-wrap gap-2">
+      <div className="filter-section">
+        <label className="text-sm font-semibold mb-3 block text-foreground">City</label>
+        <div className="flex flex-row gap-3 overflow-x-auto overflow-y-hidden pb-2 -mb-2 filter-pills-scroll">
           {cityOptions.map((city) => (
             <Button
               key={city.value}
               variant={selectedCity === city.value ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleCitySelect(city.value)}
-              className="rounded-pill"
+              className="rounded-pill whitespace-nowrap flex-shrink-0"
             >
               {city.emoji && (
                 <span role="img" aria-label={city.label} className="mr-1.5">
@@ -108,38 +101,19 @@ export function ActivityFilter({
             </Button>
           ))}
         </div>
-        <div className="w-full md:hidden">
-          <Select value={selectedCity} onValueChange={handleCitySelect}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a city" />
-            </SelectTrigger>
-            <SelectContent>
-              {cityOptions.map((city) => (
-                <SelectItem key={city.value} value={city.value}>
-                  {city.emoji && (
-                    <span role="img" aria-label={city.label} className="mr-1.5">
-                      {city.emoji}
-                    </span>
-                  )}
-                  {city.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
       </div>
 
       {/* Activity Type Filter */}
-      <div>
-        <label className="text-sm font-medium mb-2 block">Activity Type</label>
-        <div className="hidden md:flex flex-wrap gap-2">
+      <div className="filter-section">
+        <label className="text-sm font-semibold mb-3 block text-foreground">Activity Type</label>
+        <div className="flex flex-row gap-3 overflow-x-auto overflow-y-hidden pb-2 -mb-2 filter-pills-scroll">
           {ACTIVITY_TYPES.map((type) => (
             <Button
               key={type.value}
               variant={selectedType === type.value ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleTypeSelect(type.value)}
-              className="rounded-pill"
+              className="rounded-pill whitespace-nowrap flex-shrink-0"
             >
               {type.emoji && (
                 <span role="img" aria-label={type.label} className="mr-1.5">
@@ -149,25 +123,6 @@ export function ActivityFilter({
               {type.label}
             </Button>
           ))}
-        </div>
-        <div className="w-full md:hidden">
-          <Select value={selectedType} onValueChange={handleTypeSelect}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select activity type" />
-            </SelectTrigger>
-            <SelectContent>
-              {ACTIVITY_TYPES.map((type) => (
-                <SelectItem key={type.value} value={type.value}>
-                  {type.emoji && (
-                    <span role="img" aria-label={type.label} className="mr-1.5">
-                      {type.emoji}
-                    </span>
-                  )}
-                  {type.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
       </div>
     </div>

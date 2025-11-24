@@ -129,7 +129,7 @@ export function InviteModal({
             Invite a Friend
           </DialogTitle>
           <DialogDescription>
-            Share this activity with a friend and they'll get 50% off! You'll earn $5 credit when they join.
+            Share this activity with a friend and they&apos;ll get 50% off! You&apos;ll earn $5 credit when they join.
           </DialogDescription>
         </DialogHeader>
 
@@ -138,7 +138,7 @@ export function InviteModal({
             <>
               <div>
                 <label className="text-sm font-medium mb-2 block">
-                  Friend's Email (Optional)
+                  Friend&apos;s Email (Optional)
                 </label>
                 <input
                   type="email"
@@ -151,7 +151,7 @@ export function InviteModal({
 
               <div>
                 <label className="text-sm font-medium mb-2 block">
-                  Friend's Name (Optional)
+                  Friend&apos;s Name (Optional)
                 </label>
                 <input
                   type="text"

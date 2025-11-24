@@ -1,5 +1,8 @@
 'use client'
 
+import { useState, useRef, useEffect } from 'react'
+import { ChevronDown, X, Check } from 'lucide-react'
+
 interface Activity {
   city: string
   type: string
@@ -41,6 +44,234 @@ interface ActivityFilterProps {
   onTypeChange: (type: string) => void
 }
 
+interface FilterDropdownProps {
+  label: string
+  options: Array<{ value: string; label: string; emoji: string }>
+  selectedValue: string
+  onSelect: (value: string) => void
+  placeholder: string
+}
+
+function FilterDropdown({ label, options, selectedValue, onSelect, placeholder }: FilterDropdownProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
+  // Close dropdown on escape key
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape)
+    }
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [isOpen])
+
+  // Prevent body scroll when mobile dropdown is open
+  useEffect(() => {
+    if (isOpen && typeof window !== 'undefined' && window.innerWidth <= 767) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
+
+  const selectedOption = options.find(opt => opt.value === selectedValue)
+  const hasSelection = selectedValue && selectedValue !== 'all'
+
+  const handleSelect = (optionValue: string) => {
+    onSelect(optionValue)
+    setIsOpen(false)
+  }
+
+  return (
+    <>
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-[99] md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      <div ref={dropdownRef} className="relative">
+        {/* Dropdown Trigger Button */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className={`
+            flex items-center justify-between gap-2 px-4 py-2.5 rounded-pill
+            font-medium transition-all duration-200 border
+            ${hasSelection
+              ? 'bg-primary text-primary-foreground border-primary'
+              : 'bg-white text-foreground border-border hover:border-foreground/40'
+            }
+            ${isOpen && !hasSelection ? 'border-primary ring-1 ring-primary' : ''}
+            w-full md:w-auto md:min-w-[180px]
+          `}
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
+          style={{ fontSize: '14px' }}
+        >
+          <span className="flex items-center gap-2">
+            {selectedOption ? (
+              <>
+                <span role="img" aria-label={selectedOption.label} style={{ fontSize: '16px' }}>
+                  {selectedOption.emoji}
+                </span>
+                <span>{selectedOption.label}</span>
+              </>
+            ) : (
+              <span>{placeholder}</span>
+            )}
+          </span>
+
+          <ChevronDown
+            className={`w-4 h-4 transition-transform duration-200 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}
+          />
+        </button>
+
+        {/* Dropdown Panel - Desktop */}
+        {isOpen && (
+          <div
+            className={`
+              hidden md:block
+              absolute top-[calc(100%+8px)] left-0 min-w-[240px] max-h-[320px]
+              bg-white border border-border rounded-2xl shadow-premium
+              overflow-hidden z-[100]
+              animate-in fade-in slide-in-from-top-2 duration-200
+            `}
+            role="listbox"
+          >
+            <div className="p-3 max-h-[320px] overflow-y-auto custom-scrollbar">
+              <div className="flex flex-col gap-1.5">
+                {options.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => handleSelect(option.value)}
+                    className={`
+                      flex items-center gap-3 w-full px-3.5 py-2.5 rounded-xl
+                      transition-all duration-150 text-left
+                      ${selectedValue === option.value
+                        ? 'bg-primary/10 border border-primary'
+                        : 'border border-transparent hover:bg-muted'
+                      }
+                    `}
+                    role="option"
+                    aria-selected={selectedValue === option.value}
+                    style={{ fontSize: '14px' }}
+                  >
+                    <span className="text-lg flex-shrink-0" role="img" aria-label={option.label}>
+                      {option.emoji}
+                    </span>
+                    <span className={`flex-1 ${selectedValue === option.value ? 'font-semibold text-primary' : 'font-medium text-foreground'}`}>
+                      {option.label}
+                    </span>
+                    {selectedValue === option.value && (
+                      <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                        <Check className="w-3 h-3 text-white" />
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Dropdown Panel - Mobile (Bottom Sheet) */}
+        {isOpen && (
+          <div
+            className={`
+              md:hidden
+              fixed bottom-0 left-0 right-0
+              bg-white rounded-t-3xl shadow-premium
+              z-[100]
+              max-h-[70vh]
+              animate-in slide-in-from-bottom duration-300
+            `}
+            role="listbox"
+          >
+            {/* Mobile Handle */}
+            <div className="pt-3 pb-2 flex justify-center">
+              <div className="w-10 h-1 bg-border rounded-full" />
+            </div>
+
+            {/* Mobile Header */}
+            <div className="flex items-center justify-between px-5 pb-4 border-b border-border">
+              <h3 className="font-display font-semibold text-foreground" style={{ fontSize: '18px' }}>
+                {label}
+              </h3>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5 text-foreground" />
+              </button>
+            </div>
+
+            {/* Mobile Content */}
+            <div className="p-5 pb-8 max-h-[calc(70vh-80px)] overflow-y-auto custom-scrollbar">
+              <div className="flex flex-col gap-2">
+                {options.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => handleSelect(option.value)}
+                    className={`
+                      flex items-center gap-4 w-full px-4 py-3.5 rounded-xl
+                      transition-all duration-150 text-left
+                      ${selectedValue === option.value
+                        ? 'bg-primary/10 border border-primary'
+                        : 'border border-transparent hover:bg-muted'
+                      }
+                    `}
+                    role="option"
+                    aria-selected={selectedValue === option.value}
+                    style={{ fontSize: '15px' }}
+                  >
+                    <span className="text-2xl flex-shrink-0" role="img" aria-label={option.label}>
+                      {option.emoji}
+                    </span>
+                    <span className={`flex-1 ${selectedValue === option.value ? 'font-semibold text-primary' : 'font-medium text-foreground'}`}>
+                      {option.label}
+                    </span>
+                    {selectedValue === option.value && (
+                      <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  )
+}
+
 export function ActivityFilter({
   activities = [],
   selectedCity,
@@ -52,7 +283,7 @@ export function ActivityFilter({
   const uniqueCities = ['all', ...new Set((activities || []).map(a => a.city).filter(Boolean))]
   const cityOptions = uniqueCities.map(city => ({
     value: city.toLowerCase().replace(/\s+/g, '-'),
-    label: city === 'all' ? 'All' : city,
+    label: city === 'all' ? 'All Cities' : city,
     emoji: city === 'all' ? '🌏' : CITY_EMOJI_MAP[city.toLowerCase()] || '🌏'
   }))
 
@@ -79,72 +310,41 @@ export function ActivityFilter({
     }
   }
 
-  return (
-    <div className="space-y-5">
-      {/* City Filter - Horizontal Scrollable Pills (Nomad List Style) */}
-      <div className="filter-section">
-        <label className="font-semibold mb-3 block text-foreground" style={{ fontSize: '13px' }}>
-          City
-        </label>
-        <div className="relative">
-          <div className="overflow-x-auto filter-pills-scroll pb-1">
-            <div className="flex gap-2">
-              {cityOptions.map((city) => (
-                <button
-                  key={city.value}
-                  onClick={() => handleCitySelect(city.value)}
-                  className={`
-                    flex-shrink-0 px-4 py-2 rounded-pill font-medium transition-all duration-200
-                    inline-flex items-center gap-2 whitespace-nowrap
-                    ${selectedCity === city.value
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'bg-white text-foreground border border-border hover:border-primary/40 hover:shadow-sm'
-                    }
-                  `}
-                  style={{ fontSize: '13px' }}
-                >
-                  <span role="img" aria-label={city.label}>
-                    {city.emoji}
-                  </span>
-                  <span>{city.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+  const hasActiveFilters = selectedCity !== 'all' || selectedType !== 'all'
 
-      {/* Activity Type Filter - Horizontal Scrollable Pills (Nomad List Style) */}
-      <div className="filter-section">
-        <label className="font-semibold mb-3 block text-foreground" style={{ fontSize: '13px' }}>
-          Activity Type
-        </label>
-        <div className="relative">
-          <div className="overflow-x-auto filter-pills-scroll pb-1">
-            <div className="flex gap-2">
-              {ACTIVITY_TYPES.map((type) => (
-                <button
-                  key={type.value}
-                  onClick={() => handleTypeSelect(type.value)}
-                  className={`
-                    flex-shrink-0 px-4 py-2 rounded-pill font-medium transition-all duration-200
-                    inline-flex items-center gap-2 whitespace-nowrap
-                    ${selectedType === type.value
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'bg-white text-foreground border border-border hover:border-primary/40 hover:shadow-sm'
-                    }
-                  `}
-                  style={{ fontSize: '13px' }}
-                >
-                  <span role="img" aria-label={type.label}>
-                    {type.emoji}
-                  </span>
-                  <span>{type.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+  return (
+    <div className="space-y-4">
+      {/* Filter Dropdowns Row */}
+      <div className="flex flex-col md:flex-row gap-3 md:gap-4">
+        <FilterDropdown
+          label="City"
+          options={cityOptions}
+          selectedValue={selectedCity}
+          onSelect={handleCitySelect}
+          placeholder="Select City"
+        />
+
+        <FilterDropdown
+          label="Activity Type"
+          options={ACTIVITY_TYPES}
+          selectedValue={selectedType}
+          onSelect={handleTypeSelect}
+          placeholder="Select Activity"
+        />
+
+        {/* Clear Filters Button */}
+        {hasActiveFilters && (
+          <button
+            onClick={() => {
+              handleCitySelect('all')
+              handleTypeSelect('all')
+            }}
+            className="px-4 py-2.5 rounded-lg font-medium text-primary hover:bg-primary/10 transition-colors duration-200 md:ml-auto"
+            style={{ fontSize: '13px' }}
+          >
+            Clear filters
+          </button>
+        )}
       </div>
     </div>
   )

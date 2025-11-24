@@ -243,3 +243,27 @@
 .filter-pills-scroll::-webkit-scrollbar {
   display: none;
 }
+
+/* Custom Scrollbar for Dropdown Content - Premium Airbnb Style */
+.custom-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #DDDDDD transparent; /* Firefox thumb and track colors */
+  -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling on iOS */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #DDDDDD;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #BBBBBB;
+}

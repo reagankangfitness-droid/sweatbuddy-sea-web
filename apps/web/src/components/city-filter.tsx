@@ -1,9 +1,12 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Filter, X } from 'lucide-react'
-import { useState } from 'react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 interface Activity {
   city: string
@@ -50,8 +53,6 @@ export function ActivityFilter({
   onCityChange,
   onTypeChange
 }: ActivityFilterProps) {
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
-
   // Extract unique cities from activities
   const uniqueCities = ['all', ...new Set((activities || []).map(a => a.city).filter(Boolean))]
   const cityOptions = uniqueCities.map(city => ({
@@ -83,99 +84,56 @@ export function ActivityFilter({
     }
   }
 
-  // Filter content component (reused in both mobile and desktop)
-  const FilterContent = () => (
-    <div className="flex flex-col gap-6">
+  return (
+    <div className="flex flex-col gap-4 md:flex-row md:gap-6">
       {/* City Filter */}
-      <div className="filter-section">
-        <label className="text-sm font-semibold mb-3 block text-foreground">City</label>
-        <div className="flex flex-row gap-3 overflow-x-auto overflow-y-hidden pb-2 -mb-2 filter-pills-scroll">
-          {cityOptions.map((city) => (
-            <Button
-              key={city.value}
-              variant={selectedCity === city.value ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleCitySelect(city.value)}
-              className="rounded-pill whitespace-nowrap flex-shrink-0"
-            >
-              {city.emoji && (
-                <span role="img" aria-label={city.label} className="mr-1.5">
-                  {city.emoji}
-                </span>
-              )}
-              {city.label}
-            </Button>
-          ))}
-        </div>
+      <div className="filter-section flex-1">
+        <label className="text-sm font-semibold mb-2 block text-foreground">City</label>
+        <Select value={selectedCity} onValueChange={handleCitySelect}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a city" />
+          </SelectTrigger>
+          <SelectContent className="max-h-[300px]">
+            {cityOptions.map((city) => (
+              <SelectItem key={city.value} value={city.value}>
+                <div className="flex items-center gap-2">
+                  {city.emoji && (
+                    <span role="img" aria-label={city.label}>
+                      {city.emoji}
+                    </span>
+                  )}
+                  <span>{city.label}</span>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Activity Type Filter */}
-      <div className="filter-section">
-        <label className="text-sm font-semibold mb-3 block text-foreground">Activity Type</label>
-        <div className="flex flex-row gap-3 overflow-x-auto overflow-y-hidden pb-2 -mb-2 filter-pills-scroll">
-          {ACTIVITY_TYPES.map((type) => (
-            <Button
-              key={type.value}
-              variant={selectedType === type.value ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => handleTypeSelect(type.value)}
-              className="rounded-pill whitespace-nowrap flex-shrink-0"
-            >
-              {type.emoji && (
-                <span role="img" aria-label={type.label} className="mr-1.5">
-                  {type.emoji}
-                </span>
-              )}
-              {type.label}
-            </Button>
-          ))}
-        </div>
+      <div className="filter-section flex-1">
+        <label className="text-sm font-semibold mb-2 block text-foreground">Activity Type</label>
+        <Select value={selectedType} onValueChange={handleTypeSelect}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select activity type" />
+          </SelectTrigger>
+          <SelectContent className="max-h-[300px]">
+            {ACTIVITY_TYPES.map((type) => (
+              <SelectItem key={type.value} value={type.value}>
+                <div className="flex items-center gap-2">
+                  {type.emoji && (
+                    <span role="img" aria-label={type.label}>
+                      {type.emoji}
+                    </span>
+                  )}
+                  <span>{type.label}</span>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
-  )
-
-  return (
-    <>
-      {/* Mobile Filter Button - Shows only on mobile */}
-      <div className="md:hidden mb-4">
-        <Dialog open={isFilterOpen} onOpenChange={setIsFilterOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="w-full">
-              <Filter className="w-4 h-4 mr-2" />
-              Filters
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="flex items-center justify-between">
-                <span>Filters</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsFilterOpen(false)}
-                  className="h-8 w-8 p-0"
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              </DialogTitle>
-            </DialogHeader>
-            <div className="py-4">
-              <FilterContent />
-            </div>
-            <div className="flex justify-end pt-4 border-t">
-              <Button onClick={() => setIsFilterOpen(false)}>
-                Apply Filters
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {/* Desktop Filters - Shows only on desktop */}
-      <div className="hidden md:block">
-        <FilterContent />
-      </div>
-    </>
   )
 }
 

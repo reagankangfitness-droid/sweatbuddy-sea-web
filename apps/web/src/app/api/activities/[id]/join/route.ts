@@ -77,16 +77,39 @@ export async function POST(
       }
     }
 
-    // Create UserActivity record
-    const userActivity = await prisma.userActivity.create({
-      data: {
-        userId,
-        activityId,
-        status: 'JOINED',
-      },
+    // Create UserActivity record and add to group chat
+    const result = await prisma.$transaction(async (tx) => {
+      const userActivity = await tx.userActivity.create({
+        data: {
+          userId,
+          activityId,
+          status: 'JOINED',
+        },
+      })
+
+      // Find the activity's group chat
+      const group = await tx.group.findFirst({
+        where: {
+          activityId,
+          deletedAt: null,
+        },
+      })
+
+      // Add user to group chat if it exists
+      if (group) {
+        await tx.userGroup.create({
+          data: {
+            userId,
+            groupId: group.id,
+            role: 'MEMBER',
+          },
+        })
+      }
+
+      return userActivity
     })
 
-    return NextResponse.json(userActivity, { status: 201 })
+    return NextResponse.json(result, { status: 201 })
   } catch (error) {
     console.error('Error joining activity:', error)
     return NextResponse.json(
@@ -126,13 +149,34 @@ export async function DELETE(
       )
     }
 
-    await prisma.userActivity.delete({
-      where: {
-        userId_activityId: {
-          userId,
-          activityId,
+    // Delete UserActivity and remove from group chat
+    await prisma.$transaction(async (tx) => {
+      await tx.userActivity.delete({
+        where: {
+          userId_activityId: {
+            userId,
+            activityId,
+          },
         },
-      },
+      })
+
+      // Find the activity's group chat
+      const group = await tx.group.findFirst({
+        where: {
+          activityId,
+          deletedAt: null,
+        },
+      })
+
+      // Remove user from group chat if they're a member
+      if (group) {
+        await tx.userGroup.deleteMany({
+          where: {
+            userId,
+            groupId: group.id,
+          },
+        })
+      }
     })
 
     return NextResponse.json({ message: 'Successfully left activity' })

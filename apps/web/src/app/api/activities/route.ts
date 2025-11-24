@@ -35,28 +35,52 @@ export async function POST(request: Request) {
     const body = await request.json()
     const validatedData = activitySchema.parse(body)
 
-    // Create activity in database
-    const activity = await prisma.activity.create({
-      data: {
-        title: validatedData.title,
-        description: validatedData.description || null,
-        type: validatedData.type,
-        city: validatedData.city,
-        latitude: validatedData.latitude,
-        longitude: validatedData.longitude,
-        startTime: validatedData.startTime ? new Date(validatedData.startTime) : null,
-        endTime: validatedData.endTime ? new Date(validatedData.endTime) : null,
-        maxPeople: validatedData.maxPeople || null,
-        imageUrl: validatedData.imageUrl || null,
-        price: validatedData.price ?? 0,
-        currency: validatedData.currency || 'USD',
-        status: validatedData.status || 'PUBLISHED',
-        userId,
-        hostId: userId, // Creator is the host by default
-      },
+    // Create activity and group chat in a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Create activity in database
+      const activity = await tx.activity.create({
+        data: {
+          title: validatedData.title,
+          description: validatedData.description || null,
+          type: validatedData.type,
+          city: validatedData.city,
+          latitude: validatedData.latitude,
+          longitude: validatedData.longitude,
+          startTime: validatedData.startTime ? new Date(validatedData.startTime) : null,
+          endTime: validatedData.endTime ? new Date(validatedData.endTime) : null,
+          maxPeople: validatedData.maxPeople || null,
+          imageUrl: validatedData.imageUrl || null,
+          price: validatedData.price ?? 0,
+          currency: validatedData.currency || 'USD',
+          status: validatedData.status || 'PUBLISHED',
+          userId,
+          hostId: userId, // Creator is the host by default
+        },
+      })
+
+      // Create group chat for the activity
+      const group = await tx.group.create({
+        data: {
+          name: `${validatedData.title} - Group Chat`,
+          description: `Group chat for ${validatedData.title} activity`,
+          privacy: 'PRIVATE',
+          activityId: activity.id,
+        },
+      })
+
+      // Add host as first member with ADMIN role
+      await tx.userGroup.create({
+        data: {
+          userId,
+          groupId: group.id,
+          role: 'ADMIN',
+        },
+      })
+
+      return activity
     })
 
-    return NextResponse.json(activity, { status: 201 })
+    return NextResponse.json(result, { status: 201 })
   } catch (error) {
     console.error('Error creating activity:', error)
 

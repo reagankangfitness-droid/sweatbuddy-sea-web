@@ -73,7 +73,7 @@ export default function Home() {
 
   // Filter activities by city and type
   const filteredActivities = activities.filter(activity => {
-    const cityMatch = selectedCity === 'all' || activity.city.toLowerCase().includes(selectedCity.replace('-', ' '))
+    const cityMatch = selectedCity === 'all' || activity.city.toLowerCase().includes(selectedCity.replace(/-/g, ' '))
     const typeMatch = selectedType === 'all' || activity.type === selectedType
     return cityMatch && typeMatch
   })

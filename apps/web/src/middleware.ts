@@ -7,6 +7,9 @@ const isPublicRoute = createRouteMatcher([
   '/api/webhooks(.*)',
   '/api/uploadthing',
   '/api/activities(.*)',
+  '/api/invites(.*)',  // Allow public access to invite links
+  '/booking/success',
+  '/join/(.*)',
 ])
 
 export default clerkMiddleware(async (auth, request) => {

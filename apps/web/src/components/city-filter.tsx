@@ -184,12 +184,12 @@ function FilterDropdown({ label, options, selectedValue, onSelect, placeholder }
                     <span className="text-lg flex-shrink-0" role="img" aria-label={option.label}>
                       {option.emoji}
                     </span>
-                    <span className={`flex-1 ${selectedValue === option.value ? 'font-semibold text-primary' : 'font-medium text-foreground'}`}>
+                    <span className={`flex-1 ${selectedValue === option.value ? 'font-semibold text-primary-dark' : 'font-medium text-foreground'}`}>
                       {option.label}
                     </span>
                     {selectedValue === option.value && (
                       <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                        <Check className="w-3 h-3 text-white" />
+                        <Check className="w-3 h-3 text-primary-foreground" />
                       </div>
                     )}
                   </button>
@@ -253,12 +253,12 @@ function FilterDropdown({ label, options, selectedValue, onSelect, placeholder }
                     <span className="text-2xl flex-shrink-0" role="img" aria-label={option.label}>
                       {option.emoji}
                     </span>
-                    <span className={`flex-1 ${selectedValue === option.value ? 'font-semibold text-primary' : 'font-medium text-foreground'}`}>
+                    <span className={`flex-1 ${selectedValue === option.value ? 'font-semibold text-primary-dark' : 'font-medium text-foreground'}`}>
                       {option.label}
                     </span>
                     {selectedValue === option.value && (
                       <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                        <Check className="w-4 h-4 text-white" />
+                        <Check className="w-4 h-4 text-primary-foreground" />
                       </div>
                     )}
                   </button>
@@ -339,7 +339,7 @@ export function ActivityFilter({
               handleCitySelect('all')
               handleTypeSelect('all')
             }}
-            className="px-4 py-2.5 rounded-lg font-medium text-primary hover:bg-primary/10 transition-colors duration-200 md:ml-auto"
+            className="px-4 py-2.5 rounded-lg font-medium text-primary-dark hover:bg-primary/10 transition-colors duration-200 md:ml-auto"
             style={{ fontSize: '13px' }}
           >
             Clear filters

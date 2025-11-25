@@ -159,7 +159,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                     <div className="absolute top-3 left-3">
                       <div className="bg-white rounded-lg shadow-md overflow-hidden">
                         <div className="bg-primary px-2 py-0.5 text-center">
-                          <span className="text-white font-bold uppercase" style={{ fontSize: '10px', letterSpacing: '0.05em' }}>
+                          <span className="text-primary-foreground font-bold uppercase" style={{ fontSize: '10px', letterSpacing: '0.05em' }}>
                             {new Date(activity.startTime).toLocaleDateString('en-US', { month: 'short' })}
                           </span>
                         </div>
@@ -212,7 +212,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                   </h3>
 
                   {/* Host Info with Avatar */}
-                  <div className="flex items-center gap-2 mb-3 pb-3 border-b border-border-subtle">
+                  <div className="flex items-center gap-2 mb-3">
                     {activity.user.imageUrl ? (
                       <img
                         src={activity.user.imageUrl}
@@ -231,12 +231,37 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                     </span>
                   </div>
 
-                  {/* Bottom Row: Price & Participants */}
+                  {/* Attendee Avatars - Social Proof */}
+                  {activity.userActivities && activity.userActivities.length > 0 && (
+                    <div className="mb-3 pb-3 border-b border-border-subtle">
+                      {/* Show 3 avatars on mobile, 4 on larger screens */}
+                      <div className="sm:hidden">
+                        <AvatarStack
+                          participants={activity.userActivities.map(ua => ua.user)}
+                          maxDisplay={3}
+                          size="xs"
+                          showGoingText={true}
+                          showEmptyState={false}
+                        />
+                      </div>
+                      <div className="hidden sm:block">
+                        <AvatarStack
+                          participants={activity.userActivities.map(ua => ua.user)}
+                          maxDisplay={4}
+                          size="sm"
+                          showGoingText={true}
+                          showEmptyState={false}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Bottom Row: Price & Spots */}
                   <div className="flex items-center justify-between">
                     {/* Price */}
                     {activity.price !== undefined && activity.price > 0 ? (
                       <div className="flex items-baseline gap-1">
-                        <span className="font-bold text-primary" style={{ fontSize: '18px' }}>
+                        <span className="font-bold text-primary-dark" style={{ fontSize: '18px' }}>
                           {activity.currency || 'SGD'} {activity.price.toFixed(2)}
                         </span>
                       </div>
@@ -244,12 +269,11 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                       <span className="text-foreground font-semibold" style={{ fontSize: '14px' }}>Free</span>
                     )}
 
-                    {/* Participants */}
+                    {/* Spots remaining */}
                     {activity.maxPeople && (
                       <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <Users className="w-4 h-4" />
-                        <span className="font-medium" style={{ fontSize: '13px' }}>
-                          {activity.userActivities?.length || 0}/{activity.maxPeople}
+                        <span className="font-medium" style={{ fontSize: '12px' }}>
+                          {Math.max(0, activity.maxPeople - (activity.userActivities?.length || 0))} spots left
                         </span>
                       </div>
                     )}
@@ -293,7 +317,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                         {selectedActivity.type} • {selectedActivity.city}
                       </p>
                       {selectedActivity.price !== undefined && selectedActivity.price > 0 && (
-                        <p className="font-semibold mb-2" style={{ fontSize: '13px', color: '#0066FF' }}>
+                        <p className="font-semibold mb-2" style={{ fontSize: '13px', color: '#CC9900' }}>
                           {selectedActivity.currency || 'USD'} {selectedActivity.price.toFixed(2)}
                         </p>
                       )}

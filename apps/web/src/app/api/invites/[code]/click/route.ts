@@ -5,10 +5,10 @@ import { isValidInviteCodeFormat } from '@/lib/invite-code'
 // POST /api/invites/[code]/click - Track invite link clicks
 export async function POST(
   request: Request,
-  { params }: { params: { code: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
-    const inviteCode = params.code
+    const { code: inviteCode } = await params
 
     // Validate code format
     if (!isValidInviteCodeFormat(inviteCode)) {

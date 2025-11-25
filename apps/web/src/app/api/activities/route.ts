@@ -46,6 +46,12 @@ export async function POST(request: Request) {
           city: validatedData.city,
           latitude: validatedData.latitude,
           longitude: validatedData.longitude,
+          // Additional location fields from Google Places
+          address: validatedData.address || null,
+          streetAddress: validatedData.streetAddress || null,
+          postalCode: validatedData.postalCode || null,
+          country: validatedData.country || null,
+          placeId: validatedData.placeId || null,
           startTime: validatedData.startTime ? new Date(validatedData.startTime) : null,
           endTime: validatedData.endTime ? new Date(validatedData.endTime) : null,
           maxPeople: validatedData.maxPeople || null,

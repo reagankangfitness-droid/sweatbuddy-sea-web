@@ -1,13 +1,20 @@
 'use client'
 
-import { UserButton, SignedIn, SignedOut, SignInButton } from '@clerk/nextjs'
+import { UserButton, SignedIn, SignedOut, SignInButton, useAuth } from '@clerk/nextjs'
 import Link from 'next/link'
-import { Plus } from 'lucide-react'
+import { Plus, LayoutDashboard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const { isLoaded } = useAuth()
+
+  // Ensure component only renders auth buttons after mount and auth load
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +24,11 @@ export function Header() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // Auth skeleton placeholder
+  const AuthSkeleton = () => (
+    <div className="w-20 h-9 bg-primary/10 rounded-lg animate-pulse" />
+  )
 
   return (
     <header
@@ -44,7 +56,7 @@ export function Header() {
             <path
               d="M50 10 C70 30, 85 60, 85 85 C85 108, 68 125, 50 125 C32 125, 15 108, 15 85 C15 60, 30 30, 50 10 Z"
               fill="none"
-              stroke="#0066FF"
+              stroke="#FFD230"
               strokeWidth="8"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -53,7 +65,7 @@ export function Header() {
             <path
               d="M40 60 Q35 80, 45 100"
               fill="none"
-              stroke="#0066FF"
+              stroke="#FFD230"
               strokeWidth="8"
               strokeLinecap="round"
             />
@@ -63,49 +75,57 @@ export function Header() {
 
         {/* Right side actions - Premium layout */}
         <div className="flex items-center gap-2">
-          <SignedIn>
-            {/* Dashboard link - Desktop only */}
-            <Link href="/dashboard" className="hidden md:block">
-              <button
-                className="px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors"
-              >
-                Dashboard
-              </button>
-            </Link>
+          {/* Show skeleton while auth is loading */}
+          {(!mounted || !isLoaded) ? (
+            <AuthSkeleton />
+          ) : (
+            <>
+              <SignedIn>
+                {/* Dashboard link - Icon on mobile, text on desktop */}
+                <Link href="/dashboard">
+                  <button
+                    className="p-2 md:px-3 md:py-2 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors flex items-center gap-1.5"
+                  >
+                    <LayoutDashboard className="w-5 h-5 md:hidden" />
+                    <span className="hidden md:inline">Dashboard</span>
+                  </button>
+                </Link>
 
-            {/* Create Activity - Primary CTA */}
-            <Link href="/activities/new">
-              <Button
-                size="sm"
-                className="gap-2 shadow-sm hover:shadow-md transition-all"
-              >
-                <Plus className="w-4 h-4" />
-                <span className="hidden sm:inline">Create Activity</span>
-                <span className="sm:hidden">Create</span>
-              </Button>
-            </Link>
+                {/* Create Activity - Primary CTA */}
+                <Link href="/activities/new">
+                  <Button
+                    size="sm"
+                    className="gap-1.5 shadow-sm hover:shadow-md transition-all"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span className="hidden sm:inline">Create Activity</span>
+                    <span className="sm:hidden">Create</span>
+                  </Button>
+                </Link>
 
-            {/* User Profile */}
-            <div className="ml-1">
-              <UserButton
-                afterSignOutUrl="/"
-                appearance={{
-                  elements: {
-                    avatarBox: 'w-9 h-9'
-                  }
-                }}
-              />
-            </div>
-          </SignedIn>
+                {/* User Profile */}
+                <div className="ml-1">
+                  <UserButton
+                    afterSignOutUrl="/"
+                    appearance={{
+                      elements: {
+                        avatarBox: 'w-9 h-9'
+                      }
+                    }}
+                  />
+                </div>
+              </SignedIn>
 
-          <SignedOut>
-            {/* Sign In Button */}
-            <SignInButton mode="modal">
-              <Button size="sm" className="shadow-sm hover:shadow-md transition-all">
-                Sign In
-              </Button>
-            </SignInButton>
-          </SignedOut>
+              <SignedOut>
+                {/* Sign In Button */}
+                <SignInButton mode="modal">
+                  <Button size="sm" className="shadow-sm hover:shadow-md transition-all">
+                    Sign In
+                  </Button>
+                </SignInButton>
+              </SignedOut>
+            </>
+          )}
         </div>
       </div>
     </header>

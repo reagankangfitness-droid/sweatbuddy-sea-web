@@ -89,7 +89,7 @@ export function DashboardActivities({ initialActivities }: DashboardActivitiesPr
 
   return (
     <>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {activities.map((activity) => (
           <div key={activity.id} className="relative group">
             <Link href={`/activities/${activity.id}`}>
@@ -106,7 +106,7 @@ export function DashboardActivities({ initialActivities }: DashboardActivitiesPr
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="text-lg font-semibold">{activity.title}</h3>
-                    <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                    <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary-dark">
                       {activity.type}
                     </span>
                   </div>
@@ -135,7 +135,7 @@ export function DashboardActivities({ initialActivities }: DashboardActivitiesPr
             <Button
               variant="destructive"
               size="sm"
-              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+              className="absolute top-2 right-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity z-10"
               onClick={(e) => handleDeleteClick(activity.id, e)}
             >
               Delete

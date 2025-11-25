@@ -92,7 +92,7 @@ export default function Home() {
             {/* Left Column - Content */}
             <div className="text-center md:text-left order-2 md:order-1">
               {/* Tagline */}
-              <span className="inline-block text-xs font-semibold uppercase tracking-wider text-primary mb-4">
+              <span className="inline-block text-xs font-semibold uppercase tracking-wider text-primary-dark mb-4">
                 Where Movement Meets Belonging
               </span>
 

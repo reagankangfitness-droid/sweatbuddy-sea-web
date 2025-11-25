@@ -9,6 +9,14 @@ const config: Config = {
     '../../packages/ui/src/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    screens: {
+      'xs': '475px',
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     extend: {
       fontFamily: {
         sans: ['var(--font-inter)', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica Neue', 'Arial', 'sans-serif'],
@@ -26,6 +34,7 @@ const config: Config = {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
           hover: 'hsl(var(--primary-hover))',
+          dark: 'hsl(var(--primary-dark))',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -72,8 +81,8 @@ const config: Config = {
         'premium-hover': '0 16px 40px rgba(0, 0, 0, 0.16)',
         'soft': '0 2px 12px rgba(0, 0, 0, 0.08)',
         'lifted': '0 4px 16px rgba(0, 0, 0, 0.10)',
-        'button-glow': '0 2px 4px rgba(0, 102, 255, 0.3)',
-        'button-glow-hover': '0 4px 12px rgba(0, 102, 255, 0.4)',
+        'button-glow': '0 2px 4px rgba(255, 210, 48, 0.3)',
+        'button-glow-hover': '0 4px 12px rgba(255, 210, 48, 0.4)',
         'header-scroll': '0 2px 8px rgba(0, 0, 0, 0.08)',
         'glass': '0 8px 32px rgba(0, 0, 0, 0.12)',
         // Legacy Airbnb shadows (keeping for compatibility)

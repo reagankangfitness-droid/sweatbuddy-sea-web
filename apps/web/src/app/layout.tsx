@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, League_Spartan } from 'next/font/google'
-import { ClerkProvider } from '@clerk/nextjs'
+import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
 import './globals.css'
 
@@ -28,13 +28,18 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={`${inter.variable} ${leagueSpartan.variable}`}>
+    <html lang="en">
+      <head>
+        {/* Preconnect to Clerk to speed up auth */}
+        <link rel="preconnect" href="https://clerk.sweatbuddies.co" />
+        <link rel="dns-prefetch" href="https://clerk.sweatbuddies.co" />
+      </head>
+      <body className={`${inter.variable} ${leagueSpartan.variable}`}>
+        <Providers>
           {children}
           <Toaster />
-        </body>
-      </html>
-    </ClerkProvider>
+        </Providers>
+      </body>
+    </html>
   )
 }

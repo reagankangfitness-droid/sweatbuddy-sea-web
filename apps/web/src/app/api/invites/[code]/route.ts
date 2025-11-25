@@ -5,10 +5,10 @@ import { isValidInviteCodeFormat } from '@/lib/invite-code'
 // GET /api/invites/[code] - Get invite details by code
 export async function GET(
   request: Request,
-  { params }: { params: { code: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
-    const inviteCode = params.code
+    const { code: inviteCode } = await params
 
     // Validate code format
     if (!isValidInviteCodeFormat(inviteCode)) {

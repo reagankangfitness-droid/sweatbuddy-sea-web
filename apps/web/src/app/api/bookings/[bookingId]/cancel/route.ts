@@ -1,12 +1,11 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from '@/lib/prisma'
+import { stripe, calculateRefundAmount, toStripeAmount } from '@/lib/stripe'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { bookingId: string } }
+  { params }: { params: Promise<{ bookingId: string }> }
 ) {
   try {
     // Authenticate user
@@ -19,6 +18,8 @@ export async function POST(
       )
     }
 
+    const { bookingId } = await params
+
     // Get user from database
     const user = await prisma.user.findUnique({
       where: { id: clerkUserId },
@@ -30,8 +31,6 @@ export async function POST(
         { status: 404 }
       )
     }
-
-    const { bookingId } = params
 
     // Verify the booking exists and belongs to the user
     const booking = await prisma.userActivity.findUnique({
@@ -74,6 +73,56 @@ export async function POST(
       )
     }
 
+    // Handle refund for paid bookings
+    let refundResult = {
+      status: 'not_applicable' as 'full' | 'partial' | 'none' | 'not_applicable',
+      amount: 0,
+      percentage: 0,
+    }
+
+    if (
+      booking.paymentStatus === 'PAID' &&
+      booking.stripePaymentIntentId &&
+      booking.amountPaid &&
+      booking.amountPaid > 0
+    ) {
+      // Calculate refund based on cancellation policy
+      const activityStartTime = booking.activity.startTime || new Date()
+      const refundCalc = calculateRefundAmount(booking.amountPaid, activityStartTime)
+
+      refundResult = {
+        status: refundCalc.policy,
+        amount: refundCalc.amount,
+        percentage: refundCalc.percentage,
+      }
+
+      // Process refund if applicable
+      if (refundCalc.amount > 0) {
+        try {
+          const currency = booking.currency || 'SGD'
+          await stripe.refunds.create({
+            payment_intent: booking.stripePaymentIntentId,
+            amount: toStripeAmount(refundCalc.amount, currency),
+            reason: 'requested_by_customer',
+          })
+
+          // Update booking with refund info
+          await prisma.userActivity.update({
+            where: { id: bookingId },
+            data: {
+              refundAmount: refundCalc.amount,
+              refundedAt: new Date(),
+              paymentStatus: 'REFUNDED',
+            },
+          })
+        } catch (refundError) {
+          console.error('Refund error:', refundError)
+          // Continue with cancellation even if refund fails
+          // The refund can be processed manually later
+        }
+      }
+    }
+
     // Update booking status to CANCELLED
     const updatedBooking = await prisma.userActivity.update({
       where: {
@@ -98,6 +147,23 @@ export async function POST(
         },
       },
     })
+
+    // Remove user from activity group chat
+    const activityGroup = await prisma.group.findFirst({
+      where: { activityId: booking.activityId },
+    })
+
+    if (activityGroup) {
+      await prisma.userGroup.updateMany({
+        where: {
+          userId: clerkUserId,
+          groupId: activityGroup.id,
+        },
+        data: {
+          deletedAt: new Date(),
+        },
+      })
+    }
 
     // Format the response
     const formattedBooking = {
@@ -129,6 +195,12 @@ export async function POST(
     return NextResponse.json({
       message: 'Booking cancelled successfully',
       booking: formattedBooking,
+      refund: refundResult.status !== 'not_applicable' ? {
+        status: refundResult.status,
+        amount: refundResult.amount,
+        percentage: refundResult.percentage,
+        currency: booking.currency || 'SGD',
+      } : null,
     })
   } catch (error) {
     console.error('Error cancelling booking:', error)

@@ -111,7 +111,7 @@ export function JoinedActivitiesSection({
                 <div className="absolute top-3 left-3">
                   <div className="bg-white rounded-lg shadow-md overflow-hidden">
                     <div className="bg-primary px-2 py-0.5 text-center">
-                      <span className="text-white font-bold uppercase" style={{ fontSize: '10px', letterSpacing: '0.05em' }}>
+                      <span className="text-primary-foreground font-bold uppercase" style={{ fontSize: '10px', letterSpacing: '0.05em' }}>
                         {new Date(activity.startTime).toLocaleDateString('en-US', { month: 'short' })}
                       </span>
                     </div>
@@ -141,7 +141,7 @@ export function JoinedActivitiesSection({
             <div className="p-4">
               {/* Location */}
               <div className="flex items-center gap-1 mb-2">
-                <MapPin className="w-3.5 h-3.5" style={{ color: '#FF2828' }} />
+                <MapPin className="w-3.5 h-3.5 text-primary" />
                 <span className="font-medium text-muted-foreground truncate" style={{ fontSize: '13px' }}>
                   {activity.city}
                 </span>
@@ -197,7 +197,7 @@ export function JoinedActivitiesSection({
               </div>
 
               {/* Actions */}
-              <div className="flex gap-2">
+              <div className="flex flex-col xs:flex-row gap-2">
                 <Link href={`/activities/${activity.id}`} className="flex-1">
                   <Button variant="outline" className="w-full" style={{ fontSize: '13px' }}>
                     View Details
@@ -209,14 +209,15 @@ export function JoinedActivitiesSection({
                     size="sm"
                     onClick={() => handleCancel(booking.id)}
                     disabled={cancellingId === booking.id}
+                    className="w-full xs:w-auto"
                     style={{ fontSize: '13px' }}
                   >
                     {cancellingId === booking.id ? 'Canceling...' : 'Cancel'}
                   </Button>
                 )}
                 {isPast && (
-                  <Link href="/">
-                    <Button size="sm" style={{ fontSize: '13px' }}>
+                  <Link href="/" className="w-full xs:w-auto">
+                    <Button size="sm" className="w-full" style={{ fontSize: '13px' }}>
                       Book Again
                     </Button>
                   </Link>

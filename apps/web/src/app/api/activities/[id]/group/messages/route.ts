@@ -36,6 +36,9 @@ export async function GET(
       return NextResponse.json({ error: 'Group chat not found' }, { status: 404 })
     }
 
+    // Check if user is the host
+    const isHost = activity.userId === userId
+
     // Check if user is a member of the group
     const membership = await prisma.userGroup.findFirst({
       where: {
@@ -45,7 +48,8 @@ export async function GET(
       },
     })
 
-    if (!membership) {
+    // Allow access if user is host OR a group member
+    if (!membership && !isHost) {
       return NextResponse.json(
         { error: 'You must join this activity to view the group chat' },
         { status: 403 }
@@ -126,6 +130,9 @@ export async function POST(
       return NextResponse.json({ error: 'Group chat not found' }, { status: 404 })
     }
 
+    // Check if user is the host
+    const isHost = activity.userId === userId
+
     // Check if user is a member of the group
     const membership = await prisma.userGroup.findFirst({
       where: {
@@ -135,7 +142,8 @@ export async function POST(
       },
     })
 
-    if (!membership) {
+    // Allow access if user is host OR a group member
+    if (!membership && !isHost) {
       return NextResponse.json(
         { error: 'You must join this activity to send messages' },
         { status: 403 }

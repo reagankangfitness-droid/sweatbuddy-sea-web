@@ -43,7 +43,8 @@ const AUTOCOMPLETE_OPTIONS = {
   componentRestrictions: {
     country: ['sg', 'th', 'id', 'my', 'ph', 'vn'],
   },
-  types: ['address'],  // Changed from '(cities)' to 'address' to support full addresses
+  types: ['establishment', 'geocode'],  // Search for places (gyms, museums, parks) and addresses
+  fields: ['formatted_address', 'geometry', 'name', 'place_id', 'address_components'],
 }
 
 const DEFAULT_CENTER = {
@@ -160,8 +161,8 @@ export default function NewActivityPage() {
           if (types.includes('route')) {
             streetAddress += component.long_name
           }
-          if (types.includes('locality')) {
-            city = component.long_name
+          if (types.includes('locality') || types.includes('administrative_area_level_1')) {
+            if (!city) city = component.long_name
           }
           if (types.includes('postal_code')) {
             postalCode = component.long_name
@@ -171,12 +172,22 @@ export default function NewActivityPage() {
           }
         })
 
+        // For establishments, use place name + formatted address
+        // For addresses, just use the formatted address
+        const isEstablishment = place.types?.some(type =>
+          ['establishment', 'point_of_interest', 'gym', 'park', 'museum', 'restaurant', 'cafe', 'stadium', 'health'].includes(type)
+        )
+
+        const displayAddress = isEstablishment && place.name
+          ? `${place.name}, ${place.formatted_address || ''}`
+          : place.formatted_address || ''
+
         // Set all form values
         form.setValue('latitude', lat, { shouldValidate: true })
         form.setValue('longitude', lng, { shouldValidate: true })
-        form.setValue('address', place.formatted_address || '', { shouldValidate: true, shouldDirty: true })
-        form.setValue('city', city || place.name || '', { shouldValidate: true, shouldDirty: true })
-        form.setValue('streetAddress', streetAddress.trim() || '', { shouldValidate: true })
+        form.setValue('address', displayAddress, { shouldValidate: true, shouldDirty: true })
+        form.setValue('city', city || '', { shouldValidate: true, shouldDirty: true })
+        form.setValue('streetAddress', streetAddress.trim() || place.name || '', { shouldValidate: true })
         form.setValue('postalCode', postalCode || '', { shouldValidate: true })
         form.setValue('country', country || '', { shouldValidate: true })
         form.setValue('placeId', place.place_id || '', { shouldValidate: true })
@@ -501,14 +512,14 @@ export default function NewActivityPage() {
                           options={AUTOCOMPLETE_OPTIONS}
                         >
                           <Input
-                            placeholder="Search for a specific address (e.g., 123 Orchard Road, Singapore)"
+                            placeholder="Search for a place or address (e.g., Red Dot Design Museum)"
                             {...field}
                             value={form.watch('address') || field.value}
                           />
                         </Autocomplete>
                       </FormControl>
                       <FormDescription>
-                        Search and select a specific address in Southeast Asia
+                        Search for gyms, parks, museums, or enter an address
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

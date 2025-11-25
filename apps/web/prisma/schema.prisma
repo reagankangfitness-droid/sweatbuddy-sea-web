@@ -76,6 +76,12 @@ model Activity {
   city        String
   latitude    Float
   longitude   Float
+  // Additional location fields for Google Places data
+  address       String?        // Full formatted address (e.g., "Red Dot Design Museum, 11 Marina Blvd, Singapore 018940")
+  streetAddress String?        // Street portion (e.g., "11 Marina Blvd")
+  postalCode    String?        // Postal/ZIP code
+  country       String?        // Country name
+  placeId       String?        // Google Places ID for reference
   startTime   DateTime?
   endTime     DateTime?
   maxPeople   Int?
@@ -104,6 +110,7 @@ model Activity {
   @@index([startTime])
   @@index([title])
   @@index([status])
+  @@index([placeId])
   @@map("activities")
 }
 
@@ -161,6 +168,16 @@ model UserGroup {
   @@map("user_groups")
 }
 
+// Payment status enum
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  FREE
+  EXPIRED
+}
+
 model UserActivity {
   id         String             @id @default(cuid())
   userId     String
@@ -170,14 +187,75 @@ model UserActivity {
   updatedAt  DateTime           @updatedAt
   deletedAt  DateTime?
 
-  user     User     @relation(fields: [userId], references: [id])
-  activity Activity @relation(fields: [activityId], references: [id])
+  // Payment tracking fields
+  paymentStatus             PaymentStatus? @default(PENDING)
+  stripeCheckoutSessionId   String?
+  stripePaymentIntentId     String?
+  amountPaid                Float?
+  currency                  String?        @default("SGD")
+  paidAt                    DateTime?
+  refundedAt                DateTime?
+  refundAmount              Float?
+
+  user     User      @relation(fields: [userId], references: [id])
+  activity Activity  @relation(fields: [activityId], references: [id])
+  payment  Payment?
 
   @@unique([userId, activityId])
   @@index([userId])
   @@index([activityId])
   @@index([status])
+  @@index([stripeCheckoutSessionId])
   @@map("user_activities")
+}
+
+// Detailed payment tracking for audit trail
+model Payment {
+  id             String        @id @default(cuid())
+  userActivityId String        @unique
+  userId         String
+  activityId     String
+  hostId         String?
+
+  // Stripe IDs
+  stripeCheckoutSessionId String?
+  stripePaymentIntentId   String?
+  stripeCustomerId        String?
+
+  // Payment details
+  amount         Float
+  currency       String        @default("SGD")
+  status         PaymentStatus @default(PENDING)
+
+  // Fees tracking (for future use)
+  stripeFee      Float?
+  platformFee    Float?
+  hostPayout     Float?
+
+  // Discount tracking
+  originalAmount  Float?
+  discountAmount  Float?
+  discountCode    String?
+  referralInviteId String?
+
+  // Metadata
+  description    String?
+  metadata       Json?
+
+  // Timestamps
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  paidAt         DateTime?
+  refundedAt     DateTime?
+
+  userActivity   UserActivity  @relation(fields: [userActivityId], references: [id])
+
+  @@index([userId])
+  @@index([activityId])
+  @@index([stripeCheckoutSessionId])
+  @@index([stripePaymentIntentId])
+  @@index([status])
+  @@map("payments")
 }
 
 model Conversation {

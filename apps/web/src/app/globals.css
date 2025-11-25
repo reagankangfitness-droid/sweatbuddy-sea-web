@@ -4,14 +4,15 @@
 
 @layer base {
   :root {
-    /* Warm cream aesthetic with #0066FF Vivid Blue brand color */
+    /* Warm cream aesthetic with #FFD230 Golden Yellow brand color */
     --background: 57 67% 95%;         /* #FDFCE9 warm cream */
     --foreground: 0 0% 13%;           /* #222222 dark gray */
 
-    /* Brand Vivid Blue - Use sparingly for CTAs, prices, active states! */
-    --primary: 217 100% 50%;          /* #0066FF vivid blue */
-    --primary-foreground: 0 0% 100%;  /* White text for accessibility */
-    --primary-hover: 217 100% 40%;    /* #0052CC hover state */
+    /* Brand Golden Yellow - Use sparingly for CTAs, prices, active states! */
+    --primary: 45 100% 56%;           /* #FFD230 golden yellow */
+    --primary-foreground: 0 0% 13%;   /* #222222 Dark text for accessibility - CRITICAL! */
+    --primary-hover: 45 82% 54%;      /* #E6BD2B darker golden hover state */
+    --primary-dark: 40 100% 40%;      /* #CC9900 dark gold for text on light backgrounds */
 
     /* Neutrals - 90% of UI */
     --card: 0 0% 100%;                /* #FFFFFF white cards pop on cream */
@@ -37,7 +38,7 @@
     --success: 123 100% 27%;          /* #008A05 success green */
 
     /* Effects */
-    --ring: 217 100% 50%;             /* Vivid blue focus ring */
+    --ring: 45 100% 56%;              /* Golden yellow focus ring */
     --radius: 0.5rem;                 /* 8px border radius */
 
     /* Premium Typography Scale - Airbnb/ClassPass inspired */
@@ -266,4 +267,20 @@
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #BBBBBB;
+}
+
+/* Auth Loading Spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 0.8s linear infinite;
+}
+
+/* Custom border width for spinner */
+.border-3 {
+  border-width: 3px;
 }

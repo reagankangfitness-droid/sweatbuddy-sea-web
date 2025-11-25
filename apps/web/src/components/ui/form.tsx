@@ -32,9 +32,11 @@ const FormField = <
 >({
   ...props
 }: ControllerProps<TFieldValues, TName>) => {
+  // Type assertion to work around React 18/19 type conflicts in monorepo
+  const ControllerComponent = Controller as React.ComponentType<ControllerProps<TFieldValues, TName>>
   return (
     <FormFieldContext.Provider value={{ name: props.name }}>
-      <Controller {...props} />
+      <ControllerComponent {...props} />
     </FormFieldContext.Provider>
   )
 }

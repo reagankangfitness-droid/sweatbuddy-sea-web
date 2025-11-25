@@ -74,8 +74,11 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
   // Handle payment status from URL params
   useEffect(() => {
     const paymentStatus = searchParams.get('payment')
-    if (paymentStatus === 'success') {
+    const sessionId = searchParams.get('session_id')
+
+    if (paymentStatus === 'success' || sessionId) {
       toast.success('Payment successful! You have joined the activity.')
+      setHasJoined(true)
       // Remove the query param
       router.replace(`/activities/${params.id}`)
     } else if (paymentStatus === 'cancelled') {
@@ -121,38 +124,14 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
       return
     }
 
-    // If activity is free, join directly without payment
-    if (activity && activity.price === 0) {
-      setIsJoining(true)
-      try {
-        const response = await fetch(`/api/activities/${params.id}/join`, {
-          method: 'POST',
-        })
-
-        if (!response.ok) {
-          const error = await response.json()
-          throw new Error(error.message || 'Failed to join activity')
-        }
-
-        toast.success('Successfully joined the activity!')
-        setHasJoined(true)
-
-        // Refresh activity data
-        const activityResponse = await fetch(`/api/activities/${params.id}`)
-        const data = await activityResponse.json()
-        setActivity(data)
-      } catch (error) {
-        console.error('Error joining activity:', error)
-        toast.error(error instanceof Error ? error.message : 'Failed to join activity')
-      } finally {
-        setIsJoining(false)
-      }
-      return
-    }
-
-    // For paid activities, redirect to Stripe Checkout
     setIsJoining(true)
+
+    // Get invite code from URL if present (for referral discounts)
+    const inviteCode = searchParams.get('invite') || searchParams.get('code')
+
     try {
+      // Use the checkout session API for both free and paid activities
+      // This ensures consistent handling and proper referral tracking
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
@@ -160,25 +139,39 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
         },
         body: JSON.stringify({
           activityId: params.id,
+          inviteCode: inviteCode || undefined,
         }),
       })
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.error || 'Failed to create checkout session')
+        throw new Error(error.error || 'Failed to process booking')
       }
 
-      const { url } = await response.json()
+      const data = await response.json()
 
-      // Redirect to Stripe Checkout
-      if (url) {
-        window.location.href = url
+      // Handle free activities (no Stripe redirect)
+      if (data.isFree) {
+        toast.success('Successfully joined the activity!')
+        setHasJoined(true)
+
+        // Refresh activity data
+        const activityResponse = await fetch(`/api/activities/${params.id}`)
+        const activityData = await activityResponse.json()
+        setActivity(activityData)
+        setIsJoining(false)
+        return
+      }
+
+      // For paid activities, redirect to Stripe Checkout
+      if (data.url) {
+        window.location.href = data.url
       } else {
         throw new Error('No checkout URL received')
       }
     } catch (error) {
-      console.error('Error creating checkout session:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to start payment')
+      console.error('Error processing booking:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to process booking')
       setIsJoining(false)
     }
   }
@@ -312,14 +305,14 @@ Organized via sweatbuddies
           <div className="mb-6">
             <h1 className="text-4xl font-bold mb-2">{activity.title}</h1>
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
+              <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary-dark font-medium">
                 {activity.type}
               </span>
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activity.city)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-primary transition-colors inline-flex items-center gap-1"
+                className="hover:text-primary-dark transition-colors inline-flex items-center gap-1"
               >
                 📍 {activity.city}
               </a>

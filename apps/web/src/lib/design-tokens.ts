@@ -1,12 +1,14 @@
-// Airbnb-inspired Design System with #FF2828 Cherry Red Brand Color
+// Airbnb-inspired Design System with #FFD230 Golden Yellow Brand Color
 
 export const colors = {
-  // Brand Vivid Blue - Use SPARINGLY for CTAs, prices, active states (like Airbnb uses pink)
+  // Brand Golden Yellow - Use SPARINGLY for CTAs, prices, active states (like Airbnb uses pink)
   brand: {
-    primary: '#0066FF',        // Vivid blue
-    primaryHover: '#0052CC',   // Darker for hover states
-    primaryLight: 'rgba(0, 102, 255, 0.1)',
-    primaryText: '#FFFFFF',    // White text on vivid blue (for accessibility)
+    primary: '#FFD230',        // Golden Yellow
+    primaryHover: '#E6BD2B',   // Darker golden for hover states (10% darker)
+    primaryDark: '#CC9900',    // Dark gold for text on light backgrounds
+    primaryLight: 'rgba(255, 210, 48, 0.15)',
+    primaryLighter: 'rgba(255, 210, 48, 0.08)',
+    primaryText: '#222222',    // Dark text on golden yellow (CRITICAL for accessibility)
   },
 
   // Neutrals - 90% of the UI

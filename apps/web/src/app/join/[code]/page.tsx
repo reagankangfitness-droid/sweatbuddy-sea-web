@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
 import { Header } from '@/components/header'
 import { Button } from '@/components/ui/button'
@@ -40,7 +40,9 @@ interface InviteData {
   }
 }
 
-export default function JoinInvitePage({ params }: { params: { code: string } }) {
+export default function JoinInvitePage() {
+  const params = useParams<{ code: string }>()
+  const code = params.code
   const router = useRouter()
   const { user, isLoaded: userLoaded } = useUser()
   const [inviteData, setInviteData] = useState<InviteData | null>(null)
@@ -48,13 +50,15 @@ export default function JoinInvitePage({ params }: { params: { code: string } })
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (!code) return
+
     const fetchInviteAndTrackClick = async () => {
       try {
         // Track the click
-        await fetch(`/api/invites/${params.code}/click`, { method: 'POST' })
+        await fetch(`/api/invites/${code}/click`, { method: 'POST' })
 
         // Fetch invite details
-        const response = await fetch(`/api/invites/${params.code}`)
+        const response = await fetch(`/api/invites/${code}`)
         if (!response.ok) {
           if (response.status === 404) {
             setError('Invite not found')
@@ -79,7 +83,7 @@ export default function JoinInvitePage({ params }: { params: { code: string } })
     }
 
     fetchInviteAndTrackClick()
-  }, [params.code])
+  }, [code])
 
   const handleJoinActivity = () => {
     if (!inviteData) return

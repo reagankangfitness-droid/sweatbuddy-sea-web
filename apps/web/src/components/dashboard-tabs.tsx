@@ -86,16 +86,16 @@ export function DashboardTabs({
   return (
     <div>
       {/* Main Tab Navigation */}
-      <div className="mb-6 border-b border-border">
-        <div className="flex gap-8">
+      <div className="mb-6 border-b border-border overflow-x-auto">
+        <div className="flex gap-4 sm:gap-8 min-w-max">
           <button
             onClick={() => setMainTab('joined')}
-            className={`pb-3 px-1 font-semibold transition-colors relative ${
+            className={`pb-3 px-1 font-semibold transition-colors relative whitespace-nowrap ${
               mainTab === 'joined'
                 ? 'text-primary'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
-            style={{ fontSize: '16px' }}
+            style={{ fontSize: '15px' }}
           >
             My Activities
             {mainTab === 'joined' && (
@@ -104,12 +104,12 @@ export function DashboardTabs({
           </button>
           <button
             onClick={() => setMainTab('hosting')}
-            className={`pb-3 px-1 font-semibold transition-colors relative ${
+            className={`pb-3 px-1 font-semibold transition-colors relative whitespace-nowrap ${
               mainTab === 'hosting'
                 ? 'text-primary'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
-            style={{ fontSize: '16px' }}
+            style={{ fontSize: '15px' }}
           >
             Hosting
             {mainTab === 'hosting' && (
@@ -120,12 +120,12 @@ export function DashboardTabs({
       </div>
 
       {/* Time Filter & Action Button Row */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-center mb-6">
         {/* Time Sub-tabs */}
-        <div className="inline-flex rounded-lg border bg-background p-1 shadow-sm">
+        <div className="inline-flex rounded-lg border bg-background p-1 shadow-sm w-fit">
           <button
             onClick={() => setTimeTab('upcoming')}
-            className={`px-4 py-2 rounded-md font-semibold transition-colors ${
+            className={`px-3 sm:px-4 py-2 rounded-md font-semibold transition-colors ${
               timeTab === 'upcoming'
                 ? 'bg-primary text-primary-foreground'
                 : 'text-muted-foreground hover:text-foreground'
@@ -136,7 +136,7 @@ export function DashboardTabs({
           </button>
           <button
             onClick={() => setTimeTab('past')}
-            className={`px-4 py-2 rounded-md font-semibold transition-colors ${
+            className={`px-3 sm:px-4 py-2 rounded-md font-semibold transition-colors ${
               timeTab === 'past'
                 ? 'bg-primary text-primary-foreground'
                 : 'text-muted-foreground hover:text-foreground'
@@ -149,8 +149,8 @@ export function DashboardTabs({
 
         {/* Action Button (only show for Hosting tab) */}
         {mainTab === 'hosting' && (
-          <Link href="/activities/new">
-            <Button size="lg">+ Host an Activity</Button>
+          <Link href="/activities/new" className="w-full sm:w-auto">
+            <Button size="default" className="w-full sm:w-auto">+ Host an Activity</Button>
           </Link>
         )}
       </div>

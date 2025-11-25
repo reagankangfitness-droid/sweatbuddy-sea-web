@@ -448,13 +448,24 @@ Organized via sweatbuddies
             <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-8 bg-background border-t md:border md:rounded-lg p-4 shadow-lg md:shadow-none z-50">
               <div className="container mx-auto max-w-4xl">
                 {user.id === activity.hostId || user.id === activity.user.id ? (
-                  <div className="flex gap-4">
-                    <Link href={`/activities/${activity.id}/edit`} className="flex-1">
-                      <Button size="lg" className="w-full">
-                        Edit Activity
+                  <div className="space-y-3">
+                    <div className="flex gap-3">
+                      <Link href={`/activities/${activity.id}/edit`} className="flex-1">
+                        <Button size="sm" className="w-full">
+                          Edit Activity
+                        </Button>
+                      </Link>
+                      <Button
+                        size="sm"
+                        onClick={() => setIsGroupChatOpen(true)}
+                        variant="default"
+                        className="flex-1"
+                      >
+                        <Users className="w-4 h-4 mr-2" />
+                        Group Chat
                       </Button>
-                    </Link>
-                    <p className="text-sm text-muted-foreground flex items-center">
+                    </div>
+                    <p className="text-sm text-muted-foreground text-center">
                       You are the host
                     </p>
                   </div>

@@ -2,10 +2,24 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
+import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
-import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api'
 import { AvatarStack } from '@/components/avatar-stack'
-import { Heart, MapPin, Users, Calendar } from 'lucide-react'
+import { Heart, MapPin } from 'lucide-react'
+
+// Lazy load Google Maps (heavy component - only load when needed)
+const GoogleMapSection = dynamic(
+  () => import('@/components/google-map-section'),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center h-96 bg-muted rounded-lg">
+        <p className="text-muted-foreground">Loading map...</p>
+      </div>
+    ),
+    ssr: false,
+  }
+)
 
 const ACTIVITY_TYPE_EMOJI: Record<string, string> = {
   'RUN': '🏃',
@@ -54,20 +68,10 @@ interface ActivityFeedProps {
   activities: Activity[]
 }
 
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
-
-const MAP_CONTAINER_STYLE = {
-  width: '100%',
-  height: '600px',
-  borderRadius: '0.5rem',
-}
-
 const DEFAULT_CENTER = {
   lat: 13.7563, // Bangkok
   lng: 100.5018,
 }
-
-const LIBRARIES: ('places')[] = ['places']
 
 export function ActivityFeed({ activities }: ActivityFeedProps) {
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
@@ -143,10 +147,13 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                 {/* Image Section */}
                 <div className="relative h-40 sm:h-48 lg:h-56 overflow-hidden bg-muted">
                   {activity.imageUrl ? (
-                    <img
+                    <Image
                       src={activity.imageUrl}
                       alt={activity.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground">
@@ -214,13 +221,18 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                   {/* Host Info with Avatar */}
                   <div className="flex items-center gap-2 mb-3">
                     {activity.user.imageUrl ? (
-                      <img
-                        src={activity.user.imageUrl}
-                        alt={activity.user.name || 'Host'}
-                        className="w-6 h-6 rounded-full object-cover"
-                      />
+                      <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                        <Image
+                          src={activity.user.imageUrl}
+                          alt={activity.user.name || 'Host'}
+                          fill
+                          sizes="24px"
+                          className="object-cover"
+                          loading="lazy"
+                        />
+                      </div>
                     ) : (
-                      <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center">
+                      <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
                         <span className="text-muted-foreground" style={{ fontSize: '10px' }}>
                           {activity.user.name?.charAt(0).toUpperCase() || '?'}
                         </span>
@@ -285,65 +297,15 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
         </div>
       )}
 
-      {/* Map View */}
+      {/* Map View - Lazy loaded */}
       {viewMode === 'map' && (
-        <div className="rounded-lg border overflow-hidden">
-          {GOOGLE_MAPS_API_KEY && GOOGLE_MAPS_API_KEY !== 'YOUR_GOOGLE_MAPS_API_KEY' ? (
-            <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={LIBRARIES}>
-              <GoogleMap
-                mapContainerStyle={MAP_CONTAINER_STYLE}
-                center={mapCenter}
-                zoom={activities.length === 1 ? 12 : 6}
-              >
-                {activities.map((activity) => (
-                  <Marker
-                    key={activity.id}
-                    position={{ lat: activity.latitude, lng: activity.longitude }}
-                    onClick={() => handleMarkerClick(activity)}
-                  />
-                ))}
-
-                {selectedActivity && (
-                  <InfoWindow
-                    position={{
-                      lat: selectedActivity.latitude,
-                      lng: selectedActivity.longitude,
-                    }}
-                    onCloseClick={() => setSelectedActivity(null)}
-                  >
-                    <div className="p-2 max-w-xs">
-                      <h3 className="font-semibold mb-1" style={{ fontSize: '15px' }}>{selectedActivity.title}</h3>
-                      <p className="text-gray-600 mb-2" style={{ fontSize: '12px' }}>
-                        {selectedActivity.type} • {selectedActivity.city}
-                      </p>
-                      {selectedActivity.price !== undefined && selectedActivity.price > 0 && (
-                        <p className="font-semibold mb-2" style={{ fontSize: '13px', color: '#CC9900' }}>
-                          {selectedActivity.currency || 'USD'} {selectedActivity.price.toFixed(2)}
-                        </p>
-                      )}
-                      {selectedActivity.description && (
-                        <p className="text-gray-700 mb-3 line-clamp-2" style={{ fontSize: '12px' }}>
-                          {selectedActivity.description}
-                        </p>
-                      )}
-                      <Link href={`/activities/${selectedActivity.id}`}>
-                        <Button size="sm" className="w-full">
-                          View Details
-                        </Button>
-                      </Link>
-                    </div>
-                  </InfoWindow>
-                )}
-              </GoogleMap>
-            </LoadScript>
-          ) : (
-            <div className="flex items-center justify-center h-96 bg-muted">
-              <p className="text-muted-foreground">
-                Google Maps API key required for map view
-              </p>
-            </div>
-          )}
-        </div>
+        <GoogleMapSection
+          activities={activities}
+          selectedActivity={selectedActivity}
+          mapCenter={mapCenter}
+          onMarkerClick={handleMarkerClick}
+          onInfoWindowClose={() => setSelectedActivity(null)}
+        />
       )}
     </div>
   )

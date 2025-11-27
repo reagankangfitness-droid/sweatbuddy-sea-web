@@ -2,26 +2,20 @@
 
 import { Header } from '@/components/header'
 import { notFound, useRouter, useSearchParams } from 'next/navigation'
-import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { AvatarStack } from '@/components/avatar-stack'
-import { ActivityMessaging } from '@/components/activity-messaging'
-import { ActivityGroupChat } from '@/components/activity-group-chat'
-import { InviteFriendButton } from '@/components/invite-friend-button'
+import { ShareButton } from '@/components/share-button'
 import { generateGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
 import { Calendar, MessageCircle, Users } from 'lucide-react'
 
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
-
-const MAP_CONTAINER_STYLE = {
-  width: '100%',
-  height: '400px',
-  borderRadius: '0.5rem',
-}
+// Lazy load heavy components
+const ActivityMessaging = lazy(() => import('@/components/activity-messaging').then(m => ({ default: m.ActivityMessaging })))
+const ActivityGroupChat = lazy(() => import('@/components/activity-group-chat').then(m => ({ default: m.ActivityGroupChat })))
+const GoogleMapLazy = lazy(() => import('@/components/google-map-lazy').then(m => ({ default: m.GoogleMapLazy })))
 
 interface Activity {
   id: string
@@ -61,9 +55,6 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, isLoaded: userLoaded } = useUser()
-  const { isLoaded: mapLoaded } = useLoadScript({
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-  })
   const [activity, setActivity] = useState<Activity | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isJoining, setIsJoining] = useState(false)
@@ -88,6 +79,7 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
     }
   }, [searchParams, router, params.id])
 
+  // Fetch activity data immediately (don't wait for auth)
   useEffect(() => {
     async function fetchActivity() {
       try {
@@ -98,14 +90,6 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
         }
         const data = await response.json()
         setActivity(data)
-
-        // Check if current user has joined
-        if (user && data.userActivities) {
-          const userRsvp = data.userActivities.find(
-            (ua: any) => ua.userId === user.id && ua.status === 'JOINED'
-          )
-          setHasJoined(!!userRsvp)
-        }
       } catch (error) {
         console.error('Error fetching activity:', error)
         setActivity(null)
@@ -113,10 +97,18 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
         setIsLoading(false)
       }
     }
-    if (userLoaded) {
-      fetchActivity()
+    fetchActivity()
+  }, [params.id])
+
+  // Check if user has joined (separate effect that runs when user loads)
+  useEffect(() => {
+    if (user && activity?.userActivities) {
+      const userRsvp = activity.userActivities.find(
+        (ua: any) => ua.userId === user.id && ua.status === 'JOINED'
+      )
+      setHasJoined(!!userRsvp)
     }
-  }, [params.id, user, userLoaded])
+  }, [user, activity])
 
   const handleJoin = async () => {
     if (!user) {
@@ -292,19 +284,25 @@ Organized via sweatbuddies
     notFound()
   }
 
-  const mapCenter = {
-    lat: activity.latitude,
-    lng: activity.longitude,
-  }
-
   return (
     <>
       <Header />
-      <main className="container mx-auto p-8">
+      <main className="container mx-auto px-4 py-4 sm:p-8 pb-32 sm:pb-8">
         <div className="max-w-4xl mx-auto">
-          <div className="mb-6">
-            <h1 className="text-4xl font-bold mb-2">{activity.title}</h1>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="mb-4 sm:mb-6">
+            <div className="flex items-start justify-between gap-2 sm:gap-4">
+              <h1 className="text-xl sm:text-2xl md:text-4xl font-bold leading-tight">{activity.title}</h1>
+              {/* Share button in header - hidden on mobile since it's in bottom bar */}
+              <ShareButton
+                activityId={activity.id}
+                activityTitle={activity.title}
+                activityDescription={activity.description}
+                variant="outline"
+                size="sm"
+                className="shrink-0 hidden sm:flex"
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mt-2">
               <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary-dark font-medium">
                 {activity.type}
               </span>
@@ -415,149 +413,217 @@ Organized via sweatbuddies
 
             <div className="rounded-lg border p-6">
               <h2 className="text-xl font-semibold mb-3">Location</h2>
-              {GOOGLE_MAPS_API_KEY && GOOGLE_MAPS_API_KEY !== 'YOUR_GOOGLE_MAPS_API_KEY' && mapLoaded ? (
-                <GoogleMap
-                  mapContainerStyle={MAP_CONTAINER_STYLE}
-                  center={mapCenter}
-                  zoom={15}
-                >
-                  <Marker position={mapCenter} />
-                </GoogleMap>
-              ) : (
-                <div className="aspect-video bg-muted rounded-md flex items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-sm text-muted-foreground mb-2">
-                      📍 {activity.city}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {activity.latitude.toFixed(4)}, {activity.longitude.toFixed(4)}
-                    </p>
-                    {GOOGLE_MAPS_API_KEY && !mapLoaded && (
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Loading map...
-                      </p>
-                    )}
-                  </div>
+              <Suspense fallback={
+                <div className="w-full h-[300px] bg-muted rounded-lg animate-pulse flex items-center justify-center">
+                  <p className="text-muted-foreground text-sm">Loading map...</p>
                 </div>
-              )}
+              }>
+                <GoogleMapLazy
+                  latitude={activity.latitude}
+                  longitude={activity.longitude}
+                  title={activity.title}
+                />
+              </Suspense>
             </div>
           </div>
 
-          {/* RSVP Action Section - Sticky on mobile */}
+          {/* RSVP Action Section - Sticky on mobile with safe area */}
           {user && (
-            <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-8 bg-background border-t md:border md:rounded-lg p-4 shadow-lg md:shadow-none z-50">
+            <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-8 bg-background border-t md:border md:rounded-lg p-3 sm:p-4 shadow-lg md:shadow-none z-50 safe-area-inset-bottom">
               <div className="container mx-auto max-w-4xl">
                 {user.id === activity.hostId || user.id === activity.user.id ? (
-                  <div className="space-y-3">
-                    <div className="flex gap-3">
+                  // Host view - simplified for mobile
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="flex gap-2 sm:gap-3">
                       <Link href={`/activities/${activity.id}/edit`} className="flex-1">
-                        <Button size="sm" className="w-full">
-                          Edit Activity
+                        <Button size="sm" className="w-full h-10 sm:h-9 text-xs sm:text-sm">
+                          Edit
                         </Button>
                       </Link>
                       <Button
                         size="sm"
                         onClick={() => setIsGroupChatOpen(true)}
                         variant="default"
-                        className="flex-1"
+                        className="flex-1 h-10 sm:h-9 text-xs sm:text-sm"
                       >
-                        <Users className="w-4 h-4 mr-2" />
-                        Group Chat
+                        <Users className="w-4 h-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Group Chat</span>
+                        <span className="sm:hidden">Chat</span>
                       </Button>
+                      <ShareButton
+                        activityId={activity.id}
+                        activityTitle={activity.title}
+                        activityDescription={activity.description}
+                        variant="outline"
+                        size="icon"
+                        className="shrink-0 h-10 w-10 sm:hidden"
+                        showLabel={false}
+                      />
+                      <ShareButton
+                        activityId={activity.id}
+                        activityTitle={activity.title}
+                        activityDescription={activity.description}
+                        variant="outline"
+                        size="sm"
+                        className="hidden sm:flex flex-1"
+                      />
                     </div>
-                    <p className="text-sm text-muted-foreground text-center">
+                    <p className="text-xs sm:text-sm text-muted-foreground text-center">
                       You are the host
                     </p>
                   </div>
                 ) : hasJoined ? (
-                  <div className="space-y-3">
-                    <div className="flex gap-3">
+                  // Joined user view - compact for mobile
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="flex gap-2 sm:gap-3">
                       <Button
                         size="sm"
                         onClick={() => setIsGroupChatOpen(true)}
                         variant="default"
-                        className="flex-1"
+                        className="flex-1 h-10 sm:h-9 text-xs sm:text-sm"
                       >
-                        <Users className="w-4 h-4 mr-2" />
-                        Group Chat
+                        <Users className="w-4 h-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Group Chat</span>
+                        <span className="sm:hidden">Chat</span>
                       </Button>
                       <Button
                         size="sm"
                         onClick={() => setIsMessagingOpen(true)}
                         variant="outline"
-                        className="flex-1"
+                        className="flex-1 h-10 sm:h-9 text-xs sm:text-sm"
                       >
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        Message Host
+                        <MessageCircle className="w-4 h-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Message Host</span>
+                        <span className="sm:hidden">Host</span>
                       </Button>
+                      <ShareButton
+                        activityId={activity.id}
+                        activityTitle={activity.title}
+                        activityDescription={activity.description}
+                        variant="outline"
+                        size="icon"
+                        className="shrink-0 h-10 w-10"
+                        showLabel={false}
+                      />
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex gap-2 sm:gap-3 items-center">
                       <Button
                         size="sm"
                         onClick={handleAddToGoogleCalendar}
                         variant="outline"
-                        className="flex-1"
+                        className="flex-1 h-10 sm:h-9 text-xs sm:text-sm"
                       >
-                        <Calendar className="w-4 h-4 mr-2" />
-                        Add to Calendar
+                        <Calendar className="w-4 h-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Add to Calendar</span>
+                        <span className="sm:hidden">Calendar</span>
                       </Button>
-                      <InviteFriendButton
-                        activityId={activity.id}
-                        activityTitle={activity.title}
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                      />
-                    </div>
-                    <div className="flex gap-3">
                       <Button
                         size="sm"
-                        variant="outline"
+                        variant="ghost"
                         onClick={handleLeave}
                         disabled={isJoining}
-                        className="flex-1"
+                        className="text-xs sm:text-sm text-muted-foreground"
                       >
-                        {isJoining ? 'Leaving...' : 'Leave Activity'}
+                        {isJoining ? 'Leaving...' : 'Leave'}
                       </Button>
-                      <p className="text-sm text-green-600 font-medium flex items-center">
-                        ✓ Joined
-                      </p>
+                      <span className="text-xs sm:text-sm text-green-600 font-medium flex items-center gap-1">
+                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                        Joined
+                      </span>
                     </div>
                   </div>
                 ) : (
+                  // Not joined - simple CTA with share
+                  <div className="flex gap-2 sm:gap-3 items-center">
+                    <ShareButton
+                      activityId={activity.id}
+                      activityTitle={activity.title}
+                      activityDescription={activity.description}
+                      variant="outline"
+                      size="icon"
+                      className="shrink-0 h-12 w-12 sm:h-11 sm:w-11 touch-manipulation"
+                      showLabel={false}
+                    />
+                    <Button
+                      size="lg"
+                      onClick={handleJoin}
+                      disabled={isJoining}
+                      className="flex-1 h-12 sm:h-11 text-sm sm:text-base touch-manipulation"
+                    >
+                      {isJoining
+                        ? 'Processing...'
+                        : activity.price > 0
+                          ? `Pay ${activity.currency} ${activity.price.toFixed(2)} & Join`
+                          : 'Join Activity'
+                      }
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Action bar for non-logged-in users */}
+          {!user && userLoaded && (
+            <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-8 bg-background border-t md:border md:rounded-lg p-3 sm:p-4 shadow-lg md:shadow-none z-50 safe-area-inset-bottom">
+              <div className="container mx-auto max-w-4xl">
+                <div className="flex gap-2 sm:gap-3 items-center">
+                  {/* Icon-only on mobile, with label on desktop */}
+                  <ShareButton
+                    activityId={activity.id}
+                    activityTitle={activity.title}
+                    activityDescription={activity.description}
+                    variant="outline"
+                    size="icon"
+                    className="shrink-0 h-11 w-11 sm:hidden"
+                    showLabel={false}
+                  />
+                  <ShareButton
+                    activityId={activity.id}
+                    activityTitle={activity.title}
+                    activityDescription={activity.description}
+                    variant="outline"
+                    size="default"
+                    className="shrink-0 hidden sm:flex"
+                  />
                   <Button
                     size="lg"
-                    onClick={handleJoin}
-                    disabled={isJoining}
-                    className="w-full"
+                    onClick={() => {
+                      // Redirect to sign in with return URL
+                      const returnUrl = encodeURIComponent(window.location.pathname)
+                      window.location.href = `/sign-in?redirect_url=${returnUrl}`
+                    }}
+                    className="flex-1 h-11 text-sm sm:text-base"
                   >
-                    {isJoining
-                      ? 'Processing...'
-                      : activity.price > 0
-                        ? `Pay ${activity.currency} ${activity.price.toFixed(2)} & Join`
-                        : 'Join Activity'
+                    {activity.price > 0
+                      ? `Sign in (${activity.currency} ${activity.price.toFixed(2)})`
+                      : 'Sign in to Join'
                     }
                   </Button>
-                )}
+                </div>
               </div>
             </div>
           )}
         </div>
 
         {activity && (
-          <>
-            <ActivityMessaging
-              activityId={activity.id}
-              hostName={activity.user.name}
-              open={isMessagingOpen}
-              onOpenChange={setIsMessagingOpen}
-            />
-            <ActivityGroupChat
-              activityId={activity.id}
-              open={isGroupChatOpen}
-              onOpenChange={setIsGroupChatOpen}
-            />
-          </>
+          <Suspense fallback={null}>
+            {isMessagingOpen && (
+              <ActivityMessaging
+                activityId={activity.id}
+                hostName={activity.user.name}
+                open={isMessagingOpen}
+                onOpenChange={setIsMessagingOpen}
+              />
+            )}
+            {isGroupChatOpen && (
+              <ActivityGroupChat
+                activityId={activity.id}
+                open={isGroupChatOpen}
+                onOpenChange={setIsGroupChatOpen}
+              />
+            )}
+          </Suspense>
         )}
       </main>
     </>

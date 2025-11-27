@@ -102,7 +102,7 @@ export default function GoogleMapSection({
                   {selectedActivity.type} • {selectedActivity.city}
                 </p>
                 {selectedActivity.price !== undefined && selectedActivity.price > 0 && (
-                  <p className="font-semibold mb-2" style={{ fontSize: '13px', color: '#CC9900' }}>
+                  <p className="font-semibold mb-2" style={{ fontSize: '13px', color: '#0025CC' }}>
                     {selectedActivity.currency || 'USD'} {selectedActivity.price.toFixed(2)}
                   </p>
                 )}

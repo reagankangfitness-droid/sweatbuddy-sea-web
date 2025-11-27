@@ -41,6 +41,14 @@ enum UserRole {
   ADMIN
 }
 
+enum NotificationType {
+  MENTION
+  MESSAGE
+  ACTIVITY_UPDATE
+  JOIN_REQUEST
+  SYSTEM
+}
+
 // Models
 model User {
   id        String    @id @default(cuid())
@@ -51,11 +59,15 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  activities       Activity[]       @relation("CreatedActivities")
-  hostedActivities Activity[]       @relation("HostedActivities")
-  groups           UserGroup[]
-  messages         Message[]
-  userActivities   UserActivity[]
+  activities              Activity[]              @relation("CreatedActivities")
+  hostedActivities        Activity[]              @relation("HostedActivities")
+  groups                  UserGroup[]
+  messages                Message[]
+  userActivities          UserActivity[]
+  notifications           Notification[]          @relation("UserNotifications")
+  mentionsSent            Mention[]               @relation("MentionsSent")
+  mentionsReceived        Mention[]               @relation("MentionsReceived")
+  notificationPreferences NotificationPreference?
 
   @@map("users")
 }
@@ -128,8 +140,9 @@ model Message {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  group Group @relation(fields: [groupId], references: [id])
-  user  User  @relation(fields: [userId], references: [id])
+  group    Group     @relation(fields: [groupId], references: [id])
+  user     User      @relation(fields: [userId], references: [id])
+  mentions Mention[]
 
   @@index([groupId])
   @@index([userId])
@@ -172,4 +185,58 @@ model UserActivity {
   @@index([activityId])
   @@index([status])
   @@map("user_activities")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  content   String
+  link      String?
+  isRead    Boolean          @default(false)
+  metadata  Json?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  user User @relation("UserNotifications", fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model Mention {
+  id                String   @id @default(cuid())
+  messageId         String
+  mentionedUserId   String
+  mentionedByUserId String
+  mentionText       String
+  createdAt         DateTime @default(now())
+
+  message       Message @relation(fields: [messageId], references: [id])
+  mentionedUser User    @relation("MentionsReceived", fields: [mentionedUserId], references: [id])
+  mentionedBy   User    @relation("MentionsSent", fields: [mentionedByUserId], references: [id])
+
+  @@index([messageId])
+  @@index([mentionedUserId])
+  @@index([mentionedByUserId])
+  @@map("mentions")
+}
+
+model NotificationPreference {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  mentionEnabled   Boolean  @default(true)
+  messageEnabled   Boolean  @default(true)
+  activityEnabled  Boolean  @default(true)
+  emailEnabled     Boolean  @default(false)
+  pushEnabled      Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("notification_preferences")
 }

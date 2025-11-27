@@ -1,0 +1,21 @@
+{
+  "name": "SweatBuddies",
+  "short_name": "SweatBuddies",
+  "description": "Find your sweat tribe - connect with fitness enthusiasts for group workouts",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFF",
+  "theme_color": "#0025CC",
+  "icons": [
+    {
+      "src": "/images/logo/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

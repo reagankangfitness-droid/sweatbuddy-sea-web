@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter, League_Spartan } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
@@ -20,11 +20,17 @@ const leagueSpartan = League_Spartan({
 })
 
 export const metadata: Metadata = {
-  title: 'sweatbuddies',
-  description: 'Find a workout experience near you',
+  title: 'SweatBuddies - Find Your Sweat Tribe',
+  description: 'Find a workout experience near you - connect with fitness enthusiasts for group workouts',
   icons: {
     icon: '/favicon.svg',
+    apple: '/images/logo/favicon.svg',
   },
+  manifest: '/manifest.json',
+}
+
+export const viewport: Viewport = {
+  themeColor: '#0025CC',
 }
 
 export default function RootLayout({

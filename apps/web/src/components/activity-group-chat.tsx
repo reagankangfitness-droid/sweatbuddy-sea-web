@@ -11,6 +11,9 @@ import {
 } from '@/components/ui/dialog'
 import { Send, Users } from 'lucide-react'
 import { toast } from 'sonner'
+import { MentionInput } from '@/components/mention-input'
+import { renderMentionedContent, type MentionableUser } from '@/lib/mentions'
+import { cn } from '@/lib/utils'
 
 interface GroupMessage {
   id: string
@@ -21,6 +24,11 @@ interface GroupMessage {
     name: string | null
     imageUrl: string | null
   }
+  mentions?: Array<{
+    id: string
+    mentionedUserId: string
+    mentionText: string
+  }>
 }
 
 interface ActivityGroupChatProps {
@@ -36,6 +44,7 @@ export function ActivityGroupChat({
 }: ActivityGroupChatProps) {
   const { user } = useUser()
   const [messages, setMessages] = useState<GroupMessage[]>([])
+  const [mentionableUsers, setMentionableUsers] = useState<MentionableUser[]>([])
   const [newMessage, setNewMessage] = useState('')
   const [isSending, setIsSending] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -56,6 +65,7 @@ export function ActivityGroupChat({
       if (response.ok) {
         const data = await response.json()
         setMessages(data.messages || [])
+        setMentionableUsers(data.mentionableUsers || [])
       } else if (response.status === 403) {
         toast.error('You must join this activity to view the group chat')
       }
@@ -84,8 +94,7 @@ export function ActivityGroupChat({
     return () => clearInterval(interval)
   }, [open, activityId])
 
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSend = async () => {
     if (!newMessage.trim() || isSending) return
 
     setIsSending(true)
@@ -138,6 +147,37 @@ export function ActivityGroupChat({
     }
   }
 
+  // Render message content with highlighted mentions
+  const renderMessageContent = (content: string, isOwnMessage: boolean) => {
+    const segments = renderMentionedContent(content, mentionableUsers)
+
+    return (
+      <p className="text-sm whitespace-pre-wrap break-words">
+        {segments.map((segment, index) => {
+          if (segment.isMention) {
+            const isMentioningCurrentUser = segment.userId === user?.id
+            return (
+              <span
+                key={index}
+                className={cn(
+                  'font-semibold rounded px-0.5',
+                  isOwnMessage
+                    ? 'text-primary-foreground/90 bg-primary-foreground/20'
+                    : isMentioningCurrentUser
+                    ? 'text-primary bg-primary/20'
+                    : 'text-primary'
+                )}
+              >
+                {segment.text}
+              </span>
+            )
+          }
+          return <span key={index}>{segment.text}</span>
+        })}
+      </p>
+    )
+  }
+
   // Group messages by date
   const groupedMessages = messages.reduce((groups, message) => {
     const date = formatDate(message.createdAt)
@@ -157,7 +197,7 @@ export function ActivityGroupChat({
             Group Chat
           </DialogTitle>
           <p className="text-sm text-muted-foreground mt-1">
-            Chat with all activity participants
+            Chat with all activity participants. Use @ to mention someone.
           </p>
         </DialogHeader>
 
@@ -182,12 +222,18 @@ export function ActivityGroupChat({
                 </div>
                 {dateMessages.map((message) => {
                   const isOwnMessage = user?.id === message.user.id
+                  const hasMentionOfCurrentUser = message.mentions?.some(
+                    m => m.mentionedUserId === user?.id
+                  )
+
                   return (
                     <div
                       key={message.id}
-                      className={`flex gap-3 mb-4 ${
-                        isOwnMessage ? 'flex-row-reverse' : ''
-                      }`}
+                      className={cn(
+                        'flex gap-3 mb-4',
+                        isOwnMessage ? 'flex-row-reverse' : '',
+                        hasMentionOfCurrentUser && !isOwnMessage && 'bg-primary/5 -mx-2 px-2 py-1 rounded-lg'
+                      )}
                     >
                       {message.user.imageUrl ? (
                         <img
@@ -224,9 +270,7 @@ export function ActivityGroupChat({
                               : 'bg-muted'
                           }`}
                         >
-                          <p className="text-sm whitespace-pre-wrap break-words">
-                            {message.content}
-                          </p>
+                          {renderMessageContent(message.content, isOwnMessage)}
                         </div>
                       </div>
                     </div>
@@ -238,22 +282,23 @@ export function ActivityGroupChat({
           <div ref={messagesEndRef} />
         </div>
 
-        <form
-          onSubmit={handleSend}
-          className="px-6 py-4 border-t flex gap-2"
-        >
-          <input
-            type="text"
+        <div className="px-6 py-4 border-t flex gap-2">
+          <MentionInput
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type your message..."
-            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            onChange={setNewMessage}
+            onSubmit={handleSend}
+            mentionableUsers={mentionableUsers}
             disabled={isSending}
+            placeholder="Type your message... Use @ to mention someone"
+            className="flex-1"
           />
-          <Button type="submit" disabled={isSending || !newMessage.trim()}>
+          <Button
+            onClick={handleSend}
+            disabled={isSending || !newMessage.trim()}
+          >
             <Send className="w-4 h-4" />
           </Button>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   )

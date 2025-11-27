@@ -4,41 +4,45 @@
 
 @layer base {
   :root {
-    /* Warm cream aesthetic with #FFD230 Golden Yellow brand color */
-    --background: 57 67% 95%;         /* #FDFCE9 warm cream */
-    --foreground: 0 0% 13%;           /* #222222 dark gray */
+    /* Clean modern aesthetic with #0025CC Deep Blue brand color */
+    --background: 225 100% 99%;       /* #F8FAFF soft blue-white */
+    --foreground: 0 0% 9%;            /* #171717 dark gray */
 
-    /* Brand Golden Yellow - Use sparingly for CTAs, prices, active states! */
-    --primary: 45 100% 56%;           /* #FFD230 golden yellow */
-    --primary-foreground: 0 0% 13%;   /* #222222 Dark text for accessibility - CRITICAL! */
-    --primary-hover: 45 82% 54%;      /* #E6BD2B darker golden hover state */
-    --primary-dark: 40 100% 40%;      /* #CC9900 dark gold for text on light backgrounds */
+    /* Brand Deep Blue - Primary brand color for CTAs, links, active states */
+    --primary: 228 100% 40%;          /* #0025CC deep blue */
+    --primary-foreground: 0 0% 100%;  /* #FFFFFF white text on blue */
+    --primary-hover: 228 100% 35%;    /* #001EB3 darker blue hover */
+    --primary-dark: 228 100% 30%;     /* #001799 darkest blue */
+
+    /* Accent Yellow - Keep for energy: stars, featured badges, special CTAs */
+    --accent-yellow: 45 100% 56%;     /* #FFD230 golden yellow */
+    --accent-yellow-hover: 45 82% 54%; /* #E6BD2B darker yellow */
 
     /* Neutrals - 90% of UI */
-    --card: 0 0% 100%;                /* #FFFFFF white cards pop on cream */
-    --card-foreground: 0 0% 13%;
+    --card: 0 0% 100%;                /* #FFFFFF white cards */
+    --card-foreground: 0 0% 9%;
     --popover: 0 0% 100%;             /* #FFFFFF white for elevation */
-    --popover-foreground: 0 0% 13%;
-    --secondary: 0 0% 96%;            /* #F7F7F7 off-white */
-    --secondary-foreground: 0 0% 13%;
-    --muted: 0 0% 92%;                /* #EBEBEB light gray */
-    --muted-foreground: 0 0% 44%;     /* #717171 medium gray */
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 13%;
+    --popover-foreground: 0 0% 9%;
+    --secondary: 0 0% 96%;            /* #F5F5F5 off-white */
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96%;                /* #F5F5F5 light gray */
+    --muted-foreground: 0 0% 45%;     /* #737373 medium gray */
+    --accent: 225 100% 95%;           /* #E6EBFF light blue tint */
+    --accent-foreground: 228 100% 40%;
 
-    /* Cream-toned borders */
-    --border: 54 30% 85%;             /* #E8E7CD cream border */
-    --border-light: 54 40% 90%;       /* #F0EFD6 subtle cream border */
+    /* Clean borders */
+    --border: 0 0% 90%;               /* #E5E5E5 neutral border */
+    --border-light: 0 0% 96%;         /* #F5F5F5 subtle border */
     --border-subtle: 0 0% 92%;        /* #EBEBEB neutral border for premium UI */
-    --input: 0 0% 69%;                /* #B0B0B0 */
+    --input: 0 0% 80%;                /* #CCCCCC */
 
     /* Semantic */
-    --destructive: 5 78% 42%;         /* #C13515 error red */
+    --destructive: 0 84% 60%;         /* #EF4444 error red */
     --destructive-foreground: 0 0% 100%;
-    --success: 123 100% 27%;          /* #008A05 success green */
+    --success: 160 84% 39%;           /* #10B981 success green */
 
     /* Effects */
-    --ring: 45 100% 56%;              /* Golden yellow focus ring */
+    --ring: 228 100% 40%;             /* Deep blue focus ring */
     --radius: 0.5rem;                 /* 8px border radius */
 
     /* Premium Typography Scale - Airbnb/ClassPass inspired */
@@ -88,8 +92,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    /* Warm cream background - ensures no white gaps */
-    background-color: #FDFCE9;
+    /* Clean blue-white background */
+    background-color: #F8FAFF;
   }
 
   body {
@@ -98,9 +102,9 @@
     font-size: var(--text-body);
     font-weight: var(--weight-regular);
     line-height: var(--leading-relaxed);
-    color: #222222;
-    /* Warm cream background */
-    background-color: #FDFCE9;
+    color: #171717;
+    /* Clean blue-white background */
+    background-color: #F8FAFF;
   }
 
   /* Premium Heading Styles - Refined for Airbnb/ClassPass feel */
@@ -109,7 +113,7 @@
     font-weight: var(--weight-semibold);
     line-height: var(--leading-tight);
     margin: 0;
-    color: #222222;
+    color: #171717;
   }
 
   h1 {
@@ -184,6 +188,15 @@
     button {
       font-size: 13px;
     }
+  }
+
+  /* Safe area support for iOS devices with notches/home indicators */
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top, 0);
   }
 
   /* Tablet typography */

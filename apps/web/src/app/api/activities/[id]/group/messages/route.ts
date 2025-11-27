@@ -1,6 +1,8 @@
 import { auth, clerkClient } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { parseMentions } from '@/lib/mentions'
+import { createMentionNotifications } from '@/lib/notifications'
 
 // GET /api/activities/[id]/group/messages - Fetch all group messages
 export async function GET(
@@ -76,13 +78,77 @@ export async function GET(
       },
     })
 
+    // Try to fetch mentions separately (may not exist in DB yet)
+    let messagesWithMentions = messages.map(m => ({ ...m, mentions: [] as any[] }))
+    try {
+      const messageIds = messages.map(m => m.id)
+      const mentions = await prisma.mention.findMany({
+        where: { messageId: { in: messageIds } },
+        select: {
+          id: true,
+          messageId: true,
+          mentionedUserId: true,
+          mentionText: true,
+        },
+      })
+
+      // Group mentions by messageId
+      const mentionsByMessage = mentions.reduce((acc, mention) => {
+        if (!acc[mention.messageId]) acc[mention.messageId] = []
+        acc[mention.messageId].push(mention)
+        return acc
+      }, {} as Record<string, typeof mentions>)
+
+      messagesWithMentions = messages.map(m => ({
+        ...m,
+        mentions: mentionsByMessage[m.id] || [],
+      }))
+    } catch (e) {
+      // Mentions table may not exist yet, continue without them
+      console.log('Mentions table not available:', e)
+    }
+
+    // Fetch group members for mention autocomplete
+    const members = await prisma.userGroup.findMany({
+      where: {
+        groupId: group.id,
+        deletedAt: null,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            imageUrl: true,
+          },
+        },
+      },
+    })
+
+    // Also include the host in mentionable users
+    const host = await prisma.user.findUnique({
+      where: { id: activity.userId },
+      select: {
+        id: true,
+        name: true,
+        imageUrl: true,
+      },
+    })
+
+    // Combine members and host (avoid duplicates)
+    const memberUsers = members.map(m => m.user)
+    const mentionableUsers = host
+      ? [host, ...memberUsers.filter(m => m.id !== host.id)]
+      : memberUsers
+
     return NextResponse.json({
       group: {
         id: group.id,
         name: group.name,
         description: group.description,
       },
-      messages,
+      messages: messagesWithMentions,
+      mentionableUsers,
     })
   } catch (error) {
     console.error('Error fetching group messages:', error)
@@ -169,7 +235,7 @@ export async function POST(
       },
     })
 
-    // Create the message
+    // Create the message (mentions are created async, so don't include them here)
     const message = await prisma.message.create({
       data: {
         content: content.trim(),
@@ -187,7 +253,64 @@ export async function POST(
       },
     })
 
-    return NextResponse.json(message, { status: 201 })
+    // Parse mentions and create notifications
+    const trimmedContent = content.trim()
+
+    // Fetch group members for mention resolution
+    const members = await prisma.userGroup.findMany({
+      where: {
+        groupId: group.id,
+        deletedAt: null,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            imageUrl: true,
+          },
+        },
+      },
+    })
+
+    // Also include the host
+    const host = await prisma.user.findUnique({
+      where: { id: activity.userId },
+      select: {
+        id: true,
+        name: true,
+        imageUrl: true,
+      },
+    })
+
+    // Combine members and host
+    const memberUsers = members.map(m => m.user)
+    const mentionableUsers = host
+      ? [host, ...memberUsers.filter(m => m.id !== host.id)]
+      : memberUsers
+
+    // Parse mentions from the message
+    const mentions = parseMentions(trimmedContent, mentionableUsers)
+
+    // Create notifications for mentioned users (async, don't block response)
+    if (mentions.length > 0) {
+      const senderName = clerkUser.fullName || clerkUser.firstName || 'Someone'
+
+      createMentionNotifications({
+        messageId: message.id,
+        senderId: userId,
+        senderName,
+        mentions,
+        activityId,
+        activityTitle: activity.title,
+        messagePreview: trimmedContent,
+      }).catch(err => {
+        console.error('Error creating mention notifications:', err)
+      })
+    }
+
+    // Return message with empty mentions array (mentions are created async)
+    return NextResponse.json({ ...message, mentions: [] }, { status: 201 })
   } catch (error) {
     console.error('Error sending group message:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

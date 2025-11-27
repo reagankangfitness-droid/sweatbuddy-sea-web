@@ -3,6 +3,7 @@ import { headers } from 'next/headers'
 import Stripe from 'stripe'
 import { prisma } from '@/lib/prisma'
 import { stripe, fromStripeAmount } from '@/lib/stripe'
+import { onBookingConfirmed, onBookingPaid, onBookingCancelled } from '@/lib/stats/realtime'
 
 // Disable body parsing - Stripe requires raw body for signature verification
 export const runtime = 'nodejs'
@@ -202,6 +203,30 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
 
     console.log(`✅ Booking confirmed for session ${sessionId}`)
 
+    // Update real-time stats (async, don't block)
+    try {
+      const bookingData = await prisma.userActivity.findFirst({
+        where: { stripeCheckoutSessionId: sessionId },
+      })
+      const activityData = await prisma.activity.findUnique({
+        where: { id: activityId },
+      })
+
+      if (bookingData && activityData) {
+        // Update stats for booking confirmation and payment
+        await onBookingConfirmed(bookingData, activityData)
+        if (amountTotal > 0) {
+          await onBookingPaid(
+            bookingData,
+            activityData,
+            fromStripeAmount(amountTotal, currency)
+          )
+        }
+      }
+    } catch (statsError) {
+      console.error('Error updating stats (non-blocking):', statsError)
+    }
+
     // TODO: Send confirmation email to user
     // TODO: Send notification to host
   } catch (error) {
@@ -329,6 +354,19 @@ async function handleRefund(charge: Stripe.Charge) {
     }
 
     console.log(`💸 Refund processed: ${paymentIntentId} - Amount: ${refundAmount} ${currency}`)
+
+    // Update real-time stats for cancellation (async, don't block)
+    try {
+      if (booking && booking.activity) {
+        await onBookingCancelled(
+          booking,
+          booking.activity,
+          refundAmount
+        )
+      }
+    } catch (statsError) {
+      console.error('Error updating stats for refund (non-blocking):', statsError)
+    }
   } catch (error) {
     console.error('Error handling refund:', error)
   }

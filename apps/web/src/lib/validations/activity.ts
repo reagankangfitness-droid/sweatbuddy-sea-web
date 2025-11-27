@@ -3,7 +3,10 @@ import { z } from 'zod'
 export const activitySchema = z.object({
   title: z.string().min(3, 'Activity title must be at least 3 characters').max(100),
   description: z.string(),
+  // Legacy type field - kept for backwards compatibility
   type: z.enum(['RUN', 'GYM', 'YOGA', 'HIKE', 'CYCLING', 'OTHER']),
+  // New category system - will be mapped to legacy type automatically
+  categorySlug: z.string().optional(),
   city: z.string(),
   address: z.string().optional(),        // Full formatted address
   streetAddress: z.string().optional(),  // Street address

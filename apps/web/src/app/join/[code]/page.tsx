@@ -88,14 +88,17 @@ export default function JoinInvitePage() {
   const handleJoinActivity = () => {
     if (!inviteData) return
 
+    // Add invite code to URL for discount tracking
+    const activityUrl = `/activities/${inviteData.activity.id}?invite=${code}`
+
     if (!user) {
-      // Redirect to sign in, then back to activity
-      router.push(`/sign-in?redirect_url=/activities/${inviteData.activity.id}`)
+      // Redirect to sign in, then back to activity with invite code
+      router.push(`/sign-in?redirect_url=${encodeURIComponent(activityUrl)}`)
       return
     }
 
-    // Redirect to activity page
-    router.push(`/activities/${inviteData.activity.id}`)
+    // Redirect to activity page with invite code
+    router.push(activityUrl)
   }
 
   if (isLoading) {

@@ -2,6 +2,7 @@ import { auth, clerkClient } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { activitySchema } from '@/lib/validations/activity'
+import { mapCategoryToLegacyType, getCategoriesByGroup } from '@/lib/categories'
 
 export async function POST(request: Request) {
   try {
@@ -37,12 +38,19 @@ export async function POST(request: Request) {
 
     // Create activity and group chat in a transaction
     const result = await prisma.$transaction(async (tx) => {
+      // Determine legacy type from categorySlug for backwards compatibility
+      const categorySlug = validatedData.categorySlug || null
+      const legacyType = categorySlug
+        ? mapCategoryToLegacyType(categorySlug)
+        : validatedData.type
+
       // Create activity in database
       const activity = await tx.activity.create({
         data: {
           title: validatedData.title,
           description: validatedData.description || null,
-          type: validatedData.type,
+          type: legacyType as 'RUN' | 'GYM' | 'YOGA' | 'HIKE' | 'CYCLING' | 'OTHER',
+          categorySlug: categorySlug,
           city: validatedData.city,
           latitude: validatedData.latitude,
           longitude: validatedData.longitude,
@@ -99,12 +107,52 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url)
+
+    // Filter params
+    const categories = searchParams.get('categories') // comma-separated
+    const group = searchParams.get('group')
+    const city = searchParams.get('city')
+    const upcoming = searchParams.get('upcoming')
+    const limit = searchParams.get('limit')
+    const offset = searchParams.get('offset')
+
+    // Build where clause
+    const where: Record<string, unknown> = {
+      deletedAt: null,
+    }
+
+    // Filter by categories (comma-separated slugs)
+    if (categories) {
+      const categoryList = categories.split(',').filter(Boolean)
+      if (categoryList.length > 0) {
+        where.categorySlug = { in: categoryList }
+      }
+    }
+
+    // Filter by category group
+    if (group) {
+      const groupCategories = getCategoriesByGroup(group)
+      if (groupCategories.length > 0) {
+        where.categorySlug = { in: groupCategories.map((c) => c.slug) }
+      }
+    }
+
+    // Filter by city
+    if (city) {
+      where.city = { contains: city, mode: 'insensitive' }
+    }
+
+    // Filter to upcoming activities only
+    if (upcoming === 'true') {
+      where.startTime = { gte: new Date() }
+      where.status = 'PUBLISHED'
+    }
+
     const activities = await prisma.activity.findMany({
-      where: {
-        deletedAt: null,
-      },
+      where,
       include: {
         user: {
           select: {
@@ -129,9 +177,11 @@ export async function GET() {
           },
         },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: upcoming === 'true'
+        ? { startTime: 'asc' }
+        : { createdAt: 'desc' },
+      take: limit ? parseInt(limit, 10) : undefined,
+      skip: offset ? parseInt(offset, 10) : undefined,
     })
 
     return NextResponse.json(activities)

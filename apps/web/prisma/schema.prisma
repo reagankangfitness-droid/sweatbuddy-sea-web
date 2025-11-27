@@ -17,6 +17,56 @@ enum ActivityType {
   OTHER
 }
 
+// =====================================================
+// ACTIVITY CATEGORY TAXONOMY SYSTEM
+// =====================================================
+
+model CategoryGroup {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  emoji       String?
+  color       String?  // hex color
+  displayOrder Int     @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  categories  ActivityCategory[]
+
+  @@index([slug])
+  @@index([isActive, displayOrder])
+  @@map("category_groups")
+}
+
+model ActivityCategory {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  emoji       String?
+  icon        String?  // lucide icon name
+  color       String?  // hex color
+  groupSlug   String?
+  displayOrder Int     @default(0)
+  isActive    Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  group       CategoryGroup? @relation(fields: [groupSlug], references: [slug])
+  // Note: Activities use categorySlug as a plain string, not a foreign key
+  // This allows us to manage categories as code constants while still
+  // having the option to store category metadata in the database if needed
+
+  @@index([slug])
+  @@index([groupSlug])
+  @@index([isActive, displayOrder])
+  @@index([isFeatured])
+  @@map("activity_categories")
+}
+
 enum ActivityStatus {
   DRAFT
   PUBLISHED
@@ -41,6 +91,14 @@ enum UserRole {
   ADMIN
 }
 
+enum NotificationType {
+  MENTION
+  MESSAGE
+  ACTIVITY_UPDATE
+  JOIN_REQUEST
+  SYSTEM
+}
+
 // Models
 model User {
   id        String    @id @default(cuid())
@@ -50,6 +108,43 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+
+  // Profile fields
+  username    String?   @unique
+  slug        String?   @unique
+  firstName   String?
+  bio         String?
+  headline    String?   @db.VarChar(200)
+  location    String?   @db.VarChar(200)
+
+  // Social links
+  website     String?   @db.VarChar(500)
+  instagram   String?   @db.VarChar(100)
+  twitter     String?   @db.VarChar(100)
+  linkedin    String?   @db.VarChar(200)
+  tiktok      String?   @db.VarChar(100)
+
+  // Profile settings
+  isHost                  Boolean   @default(false)
+  isVerified              Boolean   @default(false)
+  isPublic                Boolean   @default(true)
+  showActivitiesAttended  Boolean   @default(true)
+  showStats               Boolean   @default(true)
+
+  // Host-specific fields
+  hostSince       DateTime?
+  specialties     String[]  @default([])
+  certifications  String[]  @default([])
+  coverImage      String?   @db.VarChar(500)
+
+  // Profile timestamps
+  profileUpdatedAt DateTime?
+
+  // Beta access fields
+  betaAccessGranted     Boolean   @default(false)
+  betaInviteCodeUsed    String?   @db.VarChar(20)
+  betaInvitesRemaining  Int       @default(3)
+  betaJoinedAt          DateTime?
 
   activities              Activity[]            @relation("CreatedActivities")
   hostedActivities        Activity[]            @relation("HostedActivities")
@@ -64,7 +159,34 @@ model User {
   referralStats           UserReferralStats?
   workoutBuddiesAsUser    WorkoutBuddy[]        @relation("WorkoutBuddiesAsUser")
   workoutBuddiesAsBuddy   WorkoutBuddy[]        @relation("WorkoutBuddiesAsBuddy")
+  notifications           Notification[]        @relation("UserNotifications")
+  mentionsSent            Mention[]             @relation("MentionsSent")
+  mentionsReceived        Mention[]             @relation("MentionsReceived")
+  notificationPreferences NotificationPreference?
 
+  // Host statistics relations
+  hostStats             HostStats?           @relation("HostStats")
+  hostActivityStats     ActivityStats[]      @relation("HostActivityStats")
+  hostStatsDaily        HostStatsDaily[]     @relation("HostStatsDaily")
+  hostStatsMonthly      HostStatsMonthly[]   @relation("HostStatsMonthly")
+  hostAttendeeHistory   AttendeeHistory[]    @relation("HostAttendeeHistory")
+  attendeeHistory       AttendeeHistory[]    @relation("AttendeeHistory")
+  activityViews         ActivityView[]       @relation("UserActivityViews")
+
+  // Profile relations
+  followers       UserFollower[]  @relation("UserFollowers")
+  following       UserFollower[]  @relation("UserFollowing")
+  profileViews    ProfileView[]   @relation("ProfileViews")
+  profileViewedBy ProfileView[]   @relation("ProfileViewers")
+
+  // Beta system relations
+  betaCodesCreated  BetaInviteCode[]  @relation("BetaCodesCreated")
+  betaAccessLogs    BetaAccessLog[]   @relation("BetaAccessLogs")
+
+  @@index([slug])
+  @@index([username])
+  @@index([isHost])
+  @@index([isPublic])
   @@map("users")
 }
 
@@ -72,7 +194,8 @@ model Activity {
   id          String         @id @default(cuid())
   title       String
   description String?
-  type        ActivityType
+  type        ActivityType   // Legacy field - kept for backwards compatibility
+  categorySlug String?       // New category system
   city        String
   latitude    Float
   longitude   Float
@@ -97,15 +220,22 @@ model Activity {
 
   user           User             @relation("CreatedActivities", fields: [userId], references: [id])
   host           User?            @relation("HostedActivities", fields: [hostId], references: [id])
+  // Note: categorySlug is NOT a foreign key - categories are managed in code as constants
+  // This allows flexibility to add/remove categories without database migrations
   userActivities UserActivity[]
   groups         Group[]
   conversations  Conversation[]
   referralInvites ReferralInvite[]
   workoutBuddies WorkoutBuddy[]
 
+  // Statistics relations
+  activityStats  ActivityStats?   @relation("ActivityStats")
+  activityViews  ActivityView[]   @relation("ActivityViews")
+
   @@index([userId])
   @@index([hostId])
   @@index([type])
+  @@index([categorySlug])
   @@index([city])
   @@index([startTime])
   @@index([title])
@@ -141,8 +271,9 @@ model Message {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  group Group @relation(fields: [groupId], references: [id])
-  user  User  @relation(fields: [userId], references: [id])
+  group    Group     @relation(fields: [groupId], references: [id])
+  user     User      @relation(fields: [userId], references: [id])
+  mentions Mention[]
 
   @@index([groupId])
   @@index([userId])
@@ -411,4 +542,492 @@ model WorkoutBuddy {
   @@index([userId])
   @@index([buddyId])
   @@map("workout_buddies")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  content   String
+  link      String?
+  isRead    Boolean          @default(false)
+  metadata  Json?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  user User @relation("UserNotifications", fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model Mention {
+  id                String   @id @default(cuid())
+  messageId         String
+  mentionedUserId   String
+  mentionedByUserId String
+  mentionText       String
+  createdAt         DateTime @default(now())
+
+  message       Message @relation(fields: [messageId], references: [id])
+  mentionedUser User    @relation("MentionsReceived", fields: [mentionedUserId], references: [id])
+  mentionedBy   User    @relation("MentionsSent", fields: [mentionedByUserId], references: [id])
+
+  @@index([messageId])
+  @@index([mentionedUserId])
+  @@index([mentionedByUserId])
+  @@map("mentions")
+}
+
+model NotificationPreference {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  mentionEnabled   Boolean  @default(true)
+  messageEnabled   Boolean  @default(true)
+  activityEnabled  Boolean  @default(true)
+  emailEnabled     Boolean  @default(false)
+  pushEnabled      Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("notification_preferences")
+}
+
+// =====================================================
+// HOST STATISTICS SYSTEM
+// =====================================================
+
+// Denormalized host stats table (fast reads)
+model HostStats {
+  id        String   @id @default(cuid())
+  hostId    String   @unique
+
+  // Event counts
+  totalEvents          Int @default(0)
+  totalEventsThisMonth Int @default(0)
+  totalEventsThisYear  Int @default(0)
+  upcomingEvents       Int @default(0)
+  completedEvents      Int @default(0)
+  cancelledEvents      Int @default(0)
+
+  // Attendee counts
+  totalBookings              Int @default(0)
+  totalBookingsThisMonth     Int @default(0)
+  totalUniqueAttendees       Int @default(0)
+  totalUniqueAttendeesThisMonth Int @default(0)
+
+  // Capacity & attendance
+  totalSpotsOffered       Int     @default(0)
+  totalSpotsFilled        Int     @default(0)
+  averageAttendanceRate   Decimal @default(0) @db.Decimal(5, 2)
+  averageAttendeesPerEvent Decimal @default(0) @db.Decimal(5, 2)
+
+  // Repeat attendees
+  repeatAttendees     Int     @default(0)
+  repeatAttendeeRate  Decimal @default(0) @db.Decimal(5, 2)
+
+  // Revenue (for paid events)
+  totalRevenue            Decimal @default(0) @db.Decimal(12, 2)
+  totalRevenueThisMonth   Decimal @default(0) @db.Decimal(12, 2)
+  totalRevenueThisYear    Decimal @default(0) @db.Decimal(12, 2)
+  averageRevenuePerEvent  Decimal @default(0) @db.Decimal(10, 2)
+
+  // Ratings
+  averageRating    Decimal @default(0) @db.Decimal(3, 2)
+  totalReviews     Int     @default(0)
+  fiveStarReviews  Int     @default(0)
+
+  // Engagement
+  totalProfileViews     Int     @default(0)
+  totalActivityViews    Int     @default(0)
+  bookingConversionRate Decimal @default(0) @db.Decimal(5, 2)
+
+  // Streaks & milestones
+  currentStreakWeeks Int @default(0)
+  longestStreakWeeks Int @default(0)
+
+  // Timestamps
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  lastAggregatedAt DateTime?
+
+  host User @relation("HostStats", fields: [hostId], references: [id], onDelete: Cascade)
+
+  @@index([hostId])
+  @@index([updatedAt])
+  @@map("host_stats")
+}
+
+// Activity stats table (per-activity performance)
+model ActivityStats {
+  id         String @id @default(cuid())
+  activityId String @unique
+  hostId     String
+
+  // Capacity
+  totalSpots     Int     @default(0)
+  spotsFilled    Int     @default(0)
+  spotsRemaining Int     @default(0)
+  fillRate       Decimal @default(0) @db.Decimal(5, 2)
+
+  // Bookings
+  totalBookings     Int @default(0)
+  confirmedBookings Int @default(0)
+  cancelledBookings Int @default(0)
+
+  // Engagement
+  viewCount     Int @default(0)
+  uniqueViewers Int @default(0)
+  shareCount    Int @default(0)
+  saveCount     Int @default(0)
+
+  // Conversion
+  viewToBookingRate Decimal @default(0) @db.Decimal(5, 2)
+
+  // Revenue
+  totalRevenue Decimal @default(0) @db.Decimal(10, 2)
+
+  // Ratings (post-event)
+  averageRating Decimal @default(0) @db.Decimal(3, 2)
+  reviewCount   Int     @default(0)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  activity Activity @relation("ActivityStats", fields: [activityId], references: [id], onDelete: Cascade)
+  host     User     @relation("HostActivityStats", fields: [hostId], references: [id], onDelete: Cascade)
+
+  @@index([activityId])
+  @@index([hostId])
+  @@map("activity_stats")
+}
+
+// Daily stats snapshot (for historical trends)
+model HostStatsDaily {
+  id     String   @id @default(cuid())
+  hostId String
+  date   DateTime @db.Date
+
+  // Daily counts
+  eventsHosted  Int @default(0)
+  newBookings   Int @default(0)
+  cancellations Int @default(0)
+  newAttendees  Int @default(0)
+
+  // Revenue
+  revenue Decimal @default(0) @db.Decimal(10, 2)
+
+  // Engagement
+  profileViews  Int @default(0)
+  activityViews Int @default(0)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+
+  host User @relation("HostStatsDaily", fields: [hostId], references: [id], onDelete: Cascade)
+
+  @@unique([hostId, date])
+  @@index([hostId, date])
+  @@map("host_stats_daily")
+}
+
+// Monthly stats snapshot (for dashboards)
+model HostStatsMonthly {
+  id     String @id @default(cuid())
+  hostId String
+  year   Int
+  month  Int
+
+  // Monthly aggregates
+  eventsHosted    Int @default(0)
+  totalBookings   Int @default(0)
+  uniqueAttendees Int @default(0)
+  newAttendees    Int @default(0)
+  repeatAttendees Int @default(0)
+
+  // Capacity
+  totalSpotsOffered Int     @default(0)
+  totalSpotsFilled  Int     @default(0)
+  averageFillRate   Decimal @default(0) @db.Decimal(5, 2)
+
+  // Revenue
+  totalRevenue           Decimal @default(0) @db.Decimal(10, 2)
+  averageRevenuePerEvent Decimal @default(0) @db.Decimal(10, 2)
+
+  // Ratings
+  averageRating Decimal @default(0) @db.Decimal(3, 2)
+  newReviews    Int     @default(0)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  host User @relation("HostStatsMonthly", fields: [hostId], references: [id], onDelete: Cascade)
+
+  @@unique([hostId, year, month])
+  @@index([hostId, year, month])
+  @@map("host_stats_monthly")
+}
+
+// Attendee history (for repeat attendee tracking)
+model AttendeeHistory {
+  id         String @id @default(cuid())
+  hostId     String
+  attendeeId String
+
+  // Attendance counts
+  totalEventsAttended Int       @default(1)
+  firstEventDate      DateTime?
+  lastEventDate       DateTime?
+
+  // Revenue from this attendee
+  totalSpent Decimal @default(0) @db.Decimal(10, 2)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  host     User @relation("HostAttendeeHistory", fields: [hostId], references: [id], onDelete: Cascade)
+  attendee User @relation("AttendeeHistory", fields: [attendeeId], references: [id], onDelete: Cascade)
+
+  @@unique([hostId, attendeeId])
+  @@index([hostId])
+  @@index([attendeeId])
+  @@map("attendee_history")
+}
+
+// Activity view tracking (for conversion stats)
+model ActivityView {
+  id         String  @id @default(cuid())
+  activityId String
+  viewerId   String?
+
+  // View metadata
+  source   String? // 'explore', 'search', 'direct', 'share'
+  referrer String?
+
+  // Device info
+  deviceType String? // 'mobile', 'desktop', 'tablet'
+
+  // Timestamps
+  viewedAt DateTime @default(now())
+
+  activity Activity @relation("ActivityViews", fields: [activityId], references: [id], onDelete: Cascade)
+  viewer   User?    @relation("UserActivityViews", fields: [viewerId], references: [id], onDelete: SetNull)
+
+  @@index([activityId])
+  @@index([viewedAt])
+  @@map("activity_views")
+}
+
+// Aggregation job tracking
+model StatsAggregationJob {
+  id      String @id @default(cuid())
+  jobType String // 'host_stats', 'activity_stats', 'daily', 'monthly'
+  status  String @default("pending") // 'pending', 'running', 'completed', 'failed'
+
+  // Scope
+  hostId String?
+
+  // Progress
+  startedAt        DateTime?
+  completedAt      DateTime?
+  recordsProcessed Int       @default(0)
+
+  // Error tracking
+  errorMessage String?
+  retryCount   Int     @default(0)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+
+  @@index([status, createdAt])
+  @@map("stats_aggregation_jobs")
+}
+
+// =====================================================
+// USER PROFILE & COMMUNITY SYSTEM
+// =====================================================
+
+// User followers table (for follow functionality)
+model UserFollower {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+  @@map("user_followers")
+}
+
+// Profile views table (for analytics)
+model ProfileView {
+  id        String   @id @default(cuid())
+  profileId String
+  viewerId  String?
+  viewedAt  DateTime @default(now())
+  source    String?  // 'activity', 'search', 'direct'
+
+  profile User  @relation("ProfileViews", fields: [profileId], references: [id], onDelete: Cascade)
+  viewer  User? @relation("ProfileViewers", fields: [viewerId], references: [id], onDelete: SetNull)
+
+  @@index([profileId, viewedAt])
+  @@index([viewerId])
+  @@map("profile_views")
+}
+
+// User reviews table (for host reviews)
+model UserReview {
+  id          String   @id @default(cuid())
+  reviewerId  String
+  revieweeId  String
+  activityId  String?
+  rating      Int      // 1-5
+  comment     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([reviewerId, revieweeId, activityId])
+  @@index([revieweeId])
+  @@index([reviewerId])
+  @@index([activityId])
+  @@map("user_reviews")
+}
+
+// =====================================================
+// INVITE-ONLY BETA SYSTEM
+// =====================================================
+
+enum BetaCodeType {
+  SINGLE
+  MULTI
+  UNLIMITED
+}
+
+enum WaitlistStatus {
+  WAITING
+  INVITED
+  JOINED
+}
+
+// Beta invite codes table
+model BetaInviteCode {
+  id            String       @id @default(cuid())
+  code          String       @unique
+  codeType      BetaCodeType @default(SINGLE)
+
+  // Usage limits
+  maxUses       Int          @default(1)
+  currentUses   Int          @default(0)
+
+  // Who created it
+  createdByUserId String?
+  createdByAdmin  Boolean    @default(false)
+
+  // Metadata
+  label         String?      @db.VarChar(100)
+  notes         String?
+
+  // Status
+  isActive      Boolean      @default(true)
+  expiresAt     DateTime?
+
+  // Timestamps
+  createdAt     DateTime     @default(now())
+  firstUsedAt   DateTime?
+  lastUsedAt    DateTime?
+
+  // Relations
+  createdByUser User?          @relation("BetaCodesCreated", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  accessLogs    BetaAccessLog[]
+
+  @@index([code])
+  @@index([isActive, currentUses, maxUses])
+  @@index([createdByUserId])
+  @@map("beta_invite_codes")
+}
+
+// Beta access log (who used which code)
+model BetaAccessLog {
+  id            String   @id @default(cuid())
+  inviteCodeId  String?
+  codeUsed      String
+
+  // Who used it
+  userId        String?
+  email         String?  @db.VarChar(255)
+
+  // Access info
+  ipAddress     String?  @db.VarChar(45)
+  userAgent     String?
+
+  // Outcome
+  accessGranted       Boolean @default(true)
+  convertedToSignup   Boolean @default(false)
+
+  createdAt     DateTime @default(now())
+
+  // Relations
+  inviteCode    BetaInviteCode? @relation(fields: [inviteCodeId], references: [id], onDelete: SetNull)
+  user          User?           @relation("BetaAccessLogs", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([inviteCodeId])
+  @@index([userId])
+  @@index([codeUsed])
+  @@map("beta_access_log")
+}
+
+// Beta waitlist
+model BetaWaitlist {
+  id              String         @id @default(cuid())
+  email           String         @unique @db.VarChar(255)
+  name            String?        @db.VarChar(200)
+
+  // Interest info
+  interestedAs    String         @default("member") @db.VarChar(20)
+  referralSource  String?        @db.VarChar(100)
+
+  // Status
+  status          WaitlistStatus @default(WAITING)
+  inviteCodeSent  String?        @db.VarChar(20)
+  invitedAt       DateTime?
+
+  // Priority (for sorting waitlist)
+  priorityScore   Int            @default(0)
+
+  createdAt       DateTime       @default(now())
+
+  @@index([email])
+  @@index([status, priorityScore])
+  @@map("beta_waitlist")
+}
+
+// Beta settings (singleton table)
+model BetaSettings {
+  id                    Int      @id @default(1)
+  isBetaActive          Boolean  @default(true)
+  maxBetaUsers          Int      @default(500)
+  currentBetaUsers      Int      @default(0)
+
+  // Invite settings
+  invitesPerUser        Int      @default(3)
+
+  // Display settings
+  showSpotsRemaining    Boolean  @default(true)
+  showWaitlistPosition  Boolean  @default(true)
+
+  updatedAt             DateTime @updatedAt
+
+  @@map("beta_settings")
 }

@@ -2,6 +2,7 @@
 
 import { useAuth } from '@clerk/nextjs'
 import { useEffect, useState } from 'react'
+import { Logo } from '@/components/logo'
 
 interface AuthLoadingProps {
   children: React.ReactNode
@@ -27,30 +28,8 @@ export function AuthLoading({ children }: AuthLoadingProps) {
       <div className="fixed inset-0 bg-background flex items-center justify-center z-[9999]">
         <div className="text-center">
           {/* SweatBuddies Logo */}
-          <div className="flex items-center justify-center gap-2.5 mb-6">
-            <svg
-              width="40"
-              height="40"
-              viewBox="0 0 100 140"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M50 10 C70 30, 85 60, 85 85 C85 108, 68 125, 50 125 C32 125, 15 108, 15 85 C15 60, 30 30, 50 10 Z"
-                fill="none"
-                stroke="#FFD230"
-                strokeWidth="8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M40 60 Q35 80, 45 100"
-                fill="none"
-                stroke="#FFD230"
-                strokeWidth="8"
-                strokeLinecap="round"
-              />
-            </svg>
+          <div className="flex items-center justify-center gap-2.5 mb-6 animate-pulse">
+            <Logo size={48} />
             <span className="text-primary font-bold text-2xl tracking-tight">sweatbuddies</span>
           </div>
 

@@ -1,6 +1,7 @@
 import { auth, clerkClient } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { onBookingConfirmed, onBookingCancelled } from '@/lib/stats/realtime'
 
 export async function POST(
   request: Request,
@@ -109,6 +110,13 @@ export async function POST(
       return userActivity
     })
 
+    // Update real-time stats (async, don't block)
+    try {
+      await onBookingConfirmed(result, activity)
+    } catch (statsError) {
+      console.error('Error updating stats (non-blocking):', statsError)
+    }
+
     return NextResponse.json(result, { status: 201 })
   } catch (error) {
     console.error('Error joining activity:', error)
@@ -131,6 +139,11 @@ export async function DELETE(
     }
 
     const activityId = params.id
+
+    // Find the activity first (for stats update)
+    const activity = await prisma.activity.findUnique({
+      where: { id: activityId },
+    })
 
     // Find and delete the UserActivity record
     const existingRsvp = await prisma.userActivity.findUnique({
@@ -178,6 +191,15 @@ export async function DELETE(
         })
       }
     })
+
+    // Update real-time stats (async, don't block)
+    try {
+      if (activity) {
+        await onBookingCancelled(existingRsvp, activity)
+      }
+    } catch (statsError) {
+      console.error('Error updating stats (non-blocking):', statsError)
+    }
 
     return NextResponse.json({ message: 'Successfully left activity' })
   } catch (error) {

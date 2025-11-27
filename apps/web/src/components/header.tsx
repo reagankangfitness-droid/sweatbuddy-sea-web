@@ -4,6 +4,8 @@ import { UserButton, SignedIn, SignedOut, SignInButton, useAuth } from '@clerk/n
 import Link from 'next/link'
 import { Plus, LayoutDashboard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { NotificationBell } from '@/components/notification-bell'
+import { Logo } from '@/components/logo'
 import { useEffect, useState } from 'react'
 
 export function Header() {
@@ -37,39 +39,15 @@ export function Header() {
       }`}
     >
       <div className="max-w-container mx-auto flex h-16 items-center justify-between px-6 lg:px-10">
-        {/* Logo - Premium Airbnb style */}
+        {/* Logo - SweatBuddies Smiley */}
         <Link
           href="/"
           className="flex items-center gap-2.5 font-bold text-primary hover:text-primary-hover transition-all tracking-tight group"
           style={{ fontSize: '22px' }}
         >
-          {/* sweatbuddies Droplet Logo */}
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 100 140"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="transition-transform group-hover:scale-105 duration-200"
-          >
-            {/* Main droplet shape */}
-            <path
-              d="M50 10 C70 30, 85 60, 85 85 C85 108, 68 125, 50 125 C32 125, 15 108, 15 85 C15 60, 30 30, 50 10 Z"
-              fill="none"
-              stroke="#FFD230"
-              strokeWidth="8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            {/* Inner highlight curve */}
-            <path
-              d="M40 60 Q35 80, 45 100"
-              fill="none"
-              stroke="#FFD230"
-              strokeWidth="8"
-              strokeLinecap="round"
-            />
-          </svg>
+          <span className="transition-transform group-hover:scale-105 duration-200">
+            <Logo size={28} />
+          </span>
           <span>sweatbuddies</span>
         </Link>
 
@@ -102,6 +80,9 @@ export function Header() {
                     <span className="sm:hidden">Create</span>
                   </Button>
                 </Link>
+
+                {/* Notifications */}
+                <NotificationBell />
 
                 {/* User Profile */}
                 <div className="ml-1">

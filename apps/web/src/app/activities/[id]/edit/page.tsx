@@ -73,7 +73,9 @@ export default function EditActivityPage({ params }: { params: { id: string } })
   const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null)
   const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -268,6 +270,29 @@ export default function EditActivityPage({ params }: { params: { id: string } })
       console.error('Error updating activity:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to update activity')
       setIsSubmitting(false)
+    }
+  }
+
+  const handleDeleteActivity = async () => {
+    setIsDeleting(true)
+
+    try {
+      const response = await fetch(`/api/activities/${params.id}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to delete activity')
+      }
+
+      toast.success('Activity deleted successfully!')
+      router.push('/dashboard')
+    } catch (error) {
+      console.error('Error deleting activity:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to delete activity')
+      setIsDeleting(false)
+      setShowDeleteDialog(false)
     }
   }
 
@@ -591,18 +616,28 @@ export default function EditActivityPage({ params }: { params: { id: string } })
                 </GoogleMap>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex gap-4 justify-between">
                 <Button
                   type="button"
-                  variant="outline"
-                  onClick={() => router.back()}
-                  disabled={isSubmitting}
+                  variant="destructive"
+                  onClick={() => setShowDeleteDialog(true)}
+                  disabled={isSubmitting || isDeleting}
                 >
-                  Cancel
+                  Delete Activity
                 </Button>
-                <Button type="submit" disabled={isSubmitting || !markerPosition}>
-                  {isSubmitting ? 'Updating...' : 'Update Activity'}
-                </Button>
+                <div className="flex gap-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => router.back()}
+                    disabled={isSubmitting || isDeleting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting || isDeleting || !markerPosition}>
+                    {isSubmitting ? 'Updating...' : 'Update Activity'}
+                  </Button>
+                </div>
               </div>
             </form>
           </Form>
@@ -645,6 +680,39 @@ export default function EditActivityPage({ params }: { params: { id: string } })
                 </Button>
                 <Button onClick={handleConfirmSubmit} disabled={isSubmitting}>
                   {isSubmitting ? 'Updating...' : 'Confirm'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="text-destructive">Delete Activity</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this activity? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="py-4">
+                <p className="text-sm text-muted-foreground">
+                  Deleting <strong>{form.getValues('title')}</strong> will remove it permanently.
+                  All participants will be notified and any payments will need to be refunded manually.
+                </p>
+              </div>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDeleteDialog(false)}
+                  disabled={isDeleting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleDeleteActivity}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? 'Deleting...' : 'Delete Activity'}
                 </Button>
               </DialogFooter>
             </DialogContent>

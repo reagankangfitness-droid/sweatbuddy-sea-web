@@ -145,6 +145,7 @@ export async function DELETE(
       },
       select: {
         userId: true,
+        hostId: true,
       },
     })
 
@@ -152,7 +153,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
     }
 
-    if (activity.userId !== userId) {
+    if (activity.userId !== userId && activity.hostId !== userId) {
       return NextResponse.json({ error: 'Forbidden: You can only delete your own activities' }, { status: 403 })
     }
 

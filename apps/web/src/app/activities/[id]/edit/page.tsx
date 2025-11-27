@@ -543,7 +543,7 @@ export default function EditActivityPage({ params }: { params: { id: string } })
 
               <FormField
                 control={form.control}
-                name="city"
+                name="address"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Location Address</FormLabel>
@@ -555,13 +555,19 @@ export default function EditActivityPage({ params }: { params: { id: string } })
                       >
                         <Input
                           placeholder="Search for a specific address (e.g., 123 Orchard Road, Singapore)"
-                          {...field}
-                          value={form.watch('address') || field.value}
+                          value={field.value || ''}
+                          onChange={(e) => {
+                            field.onChange(e.target.value)
+                            // Also update city if user is manually typing
+                            if (!form.getValues('city')) {
+                              form.setValue('city', e.target.value)
+                            }
+                          }}
                         />
                       </Autocomplete>
                     </FormControl>
                     <FormDescription>
-                      Search and select a specific address in Southeast Asia
+                      Search and select a specific address. You can edit after selecting.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

@@ -36,6 +36,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { activitySchema, type ActivityFormData } from '@/lib/validations/activity'
+import { CategoryPicker } from '@/components/category-picker'
+import { getCategoryBySlug, mapCategoryToLegacyType } from '@/lib/categories'
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 
@@ -59,15 +61,6 @@ const MAP_CONTAINER_STYLE = {
 }
 
 const LIBRARIES: ('places')[] = ['places']
-
-const ACTIVITY_TYPES = [
-  { value: 'RUN', label: 'Run' },
-  { value: 'GYM', label: 'Gym' },
-  { value: 'YOGA', label: 'Yoga' },
-  { value: 'HIKE', label: 'Hike' },
-  { value: 'CYCLING', label: 'Cycling' },
-  { value: 'OTHER', label: 'Other' },
-]
 
 export default function NewActivityPage() {
   const router = useRouter()
@@ -118,7 +111,8 @@ export default function NewActivityPage() {
     defaultValues: {
       title: '',
       description: '',
-      type: 'RUN',
+      type: 'OTHER', // Will be auto-set based on categorySlug
+      categorySlug: '',
       city: '',
       address: '',
       streetAddress: '',
@@ -135,6 +129,16 @@ export default function NewActivityPage() {
       currency: 'USD',
     },
   })
+
+  // Handle category selection - automatically updates legacy type field
+  const handleCategoryChange = (slug: string | string[]) => {
+    const categorySlug = Array.isArray(slug) ? slug[0] : slug
+    form.setValue('categorySlug', categorySlug, { shouldValidate: true })
+
+    // Auto-set the legacy type based on category for backwards compatibility
+    const legacyType = mapCategoryToLegacyType(categorySlug)
+    form.setValue('type', legacyType as 'RUN' | 'GYM' | 'YOGA' | 'HIKE' | 'CYCLING' | 'OTHER', { shouldValidate: true })
+  }
 
   const onPlaceChanged = () => {
     if (autocomplete !== null) {
@@ -291,26 +295,20 @@ export default function NewActivityPage() {
 
                 <FormField
                   control={form.control}
-                  name="type"
+                  name="categorySlug"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Activity Type</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select activity type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {ACTIVITY_TYPES.map((type) => (
-                            <SelectItem key={type.value} value={type.value}>
-                              {type.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <FormLabel>Activity Category</FormLabel>
+                      <FormControl>
+                        <CategoryPicker
+                          value={field.value || ''}
+                          onChange={handleCategoryChange}
+                          placeholder="Select activity category"
+                          showGroups={true}
+                        />
+                      </FormControl>
                       <FormDescription>
-                        What type of activity is this?
+                        Choose the type of activity you are organizing
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -501,7 +499,7 @@ export default function NewActivityPage() {
 
                 <FormField
                   control={form.control}
-                  name="city"
+                  name="address"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Location Address</FormLabel>
@@ -513,13 +511,19 @@ export default function NewActivityPage() {
                         >
                           <Input
                             placeholder="Search for a place or address (e.g., Red Dot Design Museum)"
-                            {...field}
-                            value={form.watch('address') || field.value}
+                            value={field.value || ''}
+                            onChange={(e) => {
+                              field.onChange(e.target.value)
+                              // Also update city if user is manually typing
+                              if (!form.getValues('city')) {
+                                form.setValue('city', e.target.value)
+                              }
+                            }}
                           />
                         </Autocomplete>
                       </FormControl>
                       <FormDescription>
-                        Search for gyms, parks, museums, or enter an address
+                        Search for gyms, parks, museums, or enter an address. You can edit after selecting.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -573,7 +577,15 @@ export default function NewActivityPage() {
                   <strong>Title:</strong> {form.getValues('title')}
                 </div>
                 <div>
-                  <strong>Type:</strong> {form.getValues('type')}
+                  <strong>Category:</strong>{' '}
+                  {(() => {
+                    const categorySlug = form.getValues('categorySlug')
+                    if (categorySlug) {
+                      const category = getCategoryBySlug(categorySlug)
+                      return category ? `${category.emoji} ${category.name}` : categorySlug
+                    }
+                    return form.getValues('type')
+                  })()}
                 </div>
                 <div>
                   <strong>City:</strong> {form.getValues('city')}

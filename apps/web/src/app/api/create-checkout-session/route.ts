@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth, clerkClient } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { stripe, toStripeAmount, STRIPE_CONFIG } from '@/lib/stripe'
+import { calculateFees } from '@/lib/constants/fees'
 
 export async function POST(request: NextRequest) {
   try {
@@ -261,6 +262,9 @@ export async function POST(request: NextRequest) {
     const clerkUser = await client.users.getUser(clerkUserId)
     const userEmail = clerkUser.emailAddresses[0]?.emailAddress
 
+    // Calculate fees using new fee structure (3.7% + $1.79 per ticket)
+    const fees = calculateFees(finalPrice, 1)
+
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
@@ -268,7 +272,7 @@ export async function POST(request: NextRequest) {
       // Customer info
       customer_email: userEmail,
 
-      // Line items
+      // Line items - ticket price + service fee
       line_items: [
         {
           price_data: {
@@ -282,6 +286,22 @@ export async function POST(request: NextRequest) {
           },
           quantity: 1,
         },
+        // Service fee as separate line item for transparency
+        ...(fees.serviceFee > 0
+          ? [
+              {
+                price_data: {
+                  currency: currency.toLowerCase(),
+                  product_data: {
+                    name: 'Service Fee',
+                    description: 'Platform and payment processing fee',
+                  },
+                  unit_amount: toStripeAmount(fees.serviceFee, currency),
+                },
+                quantity: 1,
+              },
+            ]
+          : []),
       ],
 
       // Metadata for webhook processing
@@ -292,6 +312,9 @@ export async function POST(request: NextRequest) {
         original_price: activity.price.toString(),
         discount_amount: discountAmount.toString(),
         final_price: finalPrice.toString(),
+        service_fee: fees.serviceFee.toString(),
+        attendee_pays: fees.attendeePays.toString(),
+        host_receives: fees.hostReceives.toString(),
         currency: currency,
         invite_code: inviteCode || '',
         referral_invite_id: referralInvite?.id || '',
@@ -307,6 +330,8 @@ export async function POST(request: NextRequest) {
     })
 
     // 11. Create or update pending booking record
+    // Note: amountPaid is the ticket price (what host receives)
+    // Total paid by attendee = amountPaid + serviceFee
     await prisma.userActivity.upsert({
       where: {
         userId_activityId: {
@@ -318,7 +343,7 @@ export async function POST(request: NextRequest) {
         status: 'INTERESTED', // Will be updated to JOINED after payment
         paymentStatus: 'PENDING',
         stripeCheckoutSessionId: checkoutSession.id,
-        amountPaid: finalPrice,
+        amountPaid: fees.attendeePays, // Total amount attendee pays
         currency: currency,
         deletedAt: null,
       },
@@ -328,7 +353,7 @@ export async function POST(request: NextRequest) {
         status: 'INTERESTED',
         paymentStatus: 'PENDING',
         stripeCheckoutSessionId: checkoutSession.id,
-        amountPaid: finalPrice,
+        amountPaid: fees.attendeePays, // Total amount attendee pays
         currency: currency,
       },
     })

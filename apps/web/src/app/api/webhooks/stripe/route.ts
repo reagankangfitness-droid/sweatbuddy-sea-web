@@ -96,6 +96,9 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     referral_invite_id: referralInviteId,
     original_price: originalPrice,
     discount_amount: discountAmount,
+    service_fee: serviceFee,
+    attendee_pays: attendeePays,
+    host_receives: hostReceives,
   } = metadata
 
   if (!activityId || !userId) {
@@ -134,6 +137,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       })
 
       // 3. Create payment record for audit trail
+      // Note: amount is total paid by attendee, serviceFee is platform fee, hostReceives is net to host
       await tx.payment.create({
         data: {
           userActivityId: booking.id,
@@ -149,6 +153,8 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
           discountAmount: discountAmount ? parseFloat(discountAmount) : null,
           discountCode: inviteCode || null,
           referralInviteId: referralInviteId || null,
+          platformFee: serviceFee ? parseFloat(serviceFee) : null,
+          hostPayout: hostReceives ? parseFloat(hostReceives) : null,
           paidAt: new Date(),
         },
       })

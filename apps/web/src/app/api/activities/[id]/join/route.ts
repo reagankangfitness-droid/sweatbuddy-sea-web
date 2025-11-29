@@ -2,6 +2,8 @@ import { auth, clerkClient } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { onBookingConfirmed, onBookingCancelled } from '@/lib/stats/realtime'
+import { processWaitlistForSpot, convertWaitlistToBooking } from '@/lib/waitlist'
+import { scheduleRemindersForBooking, cancelRemindersForBooking } from '@/lib/reminders'
 
 export async function POST(
   request: Request,
@@ -117,6 +119,29 @@ export async function POST(
       console.error('Error updating stats (non-blocking):', statsError)
     }
 
+    // Convert waitlist entry if user was on waitlist (async, don't block)
+    try {
+      const clerkUser = await (await clerkClient()).users.getUser(userId)
+      await convertWaitlistToBooking(
+        activityId,
+        userId,
+        clerkUser.emailAddresses[0]?.emailAddress,
+        result.id
+      )
+    } catch (waitlistError) {
+      // Don't fail if waitlist conversion fails
+      console.error('Error converting waitlist (non-blocking):', waitlistError)
+    }
+
+    // Schedule reminders for this booking (async, don't block)
+    try {
+      const reminderResult = await scheduleRemindersForBooking(result.id)
+      console.log(`Scheduled ${reminderResult.scheduled} reminders for booking ${result.id}`)
+    } catch (reminderError) {
+      // Don't fail if reminder scheduling fails
+      console.error('Error scheduling reminders (non-blocking):', reminderError)
+    }
+
     return NextResponse.json(result, { status: 201 })
   } catch (error) {
     console.error('Error joining activity:', error)
@@ -199,6 +224,22 @@ export async function DELETE(
       }
     } catch (statsError) {
       console.error('Error updating stats (non-blocking):', statsError)
+    }
+
+    // Process waitlist - notify next person that a spot opened up
+    try {
+      const waitlistResult = await processWaitlistForSpot(activityId, 1)
+      console.log(`Waitlist processed: ${waitlistResult.notified} person(s) notified`)
+    } catch (waitlistError) {
+      console.error('Error processing waitlist (non-blocking):', waitlistError)
+    }
+
+    // Cancel scheduled reminders for this booking (async, don't block)
+    try {
+      const cancelledCount = await cancelRemindersForBooking(existingRsvp.id)
+      console.log(`Cancelled ${cancelledCount} reminders for booking ${existingRsvp.id}`)
+    } catch (reminderError) {
+      console.error('Error cancelling reminders (non-blocking):', reminderError)
     }
 
     return NextResponse.json({ message: 'Successfully left activity' })

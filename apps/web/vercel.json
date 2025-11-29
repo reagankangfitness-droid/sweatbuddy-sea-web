@@ -2,8 +2,8 @@
   "framework": "nextjs",
   "crons": [
     {
-      "path": "/api/cron/aggregate-stats?job=full",
-      "schedule": "0 0 * * *"
+      "path": "/api/cron/daily-jobs",
+      "schedule": "0 8 * * *"
     }
   ]
 }

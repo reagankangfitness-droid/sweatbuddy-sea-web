@@ -2,6 +2,8 @@ import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { stripe, calculateRefundAmount, toStripeAmount } from '@/lib/stripe'
+import { processWaitlistForSpot } from '@/lib/waitlist'
+import { cancelRemindersForBooking } from '@/lib/reminders'
 
 export async function POST(
   request: NextRequest,
@@ -163,6 +165,24 @@ export async function POST(
           deletedAt: new Date(),
         },
       })
+    }
+
+    // Process waitlist - notify next person that a spot opened up
+    try {
+      const waitlistResult = await processWaitlistForSpot(booking.activityId, 1)
+      console.log(`Waitlist processed: ${waitlistResult.notified} person(s) notified`)
+    } catch (waitlistError) {
+      // Don't fail the cancellation if waitlist processing fails
+      console.error('Error processing waitlist (non-blocking):', waitlistError)
+    }
+
+    // Cancel scheduled reminders for this booking
+    try {
+      const cancelledCount = await cancelRemindersForBooking(bookingId)
+      console.log(`Cancelled ${cancelledCount} reminders for booking ${bookingId}`)
+    } catch (reminderError) {
+      // Don't fail the cancellation if reminder cancellation fails
+      console.error('Error cancelling reminders (non-blocking):', reminderError)
     }
 
     // Format the response

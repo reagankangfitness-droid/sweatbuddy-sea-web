@@ -9,8 +9,32 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 import { AvatarStack } from '@/components/avatar-stack'
 import { ShareButton } from '@/components/share-button'
+import { SpotsIndicator } from '@/components/spots-indicator'
+import { WaitlistButton } from '@/components/waitlist-button'
 import { generateGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
 import { Calendar, MessageCircle, Users } from 'lucide-react'
+import type { UrgencyLevel } from '@/lib/waitlist'
+
+interface SpotsInfo {
+  totalSpots: number
+  spotsRemaining: number
+  spotsTaken: number
+  percentFilled: number
+  urgencyLevel: UrgencyLevel
+  showSpotsRemaining: boolean
+  urgencyThreshold: number
+  waitlistEnabled: boolean
+  waitlistLimit: number
+  waitlistCount: number
+  isFull: boolean
+  userWaitlistStatus?: {
+    isOnWaitlist: boolean
+    position: number
+    status: string
+    notifiedAt: Date | null
+    expiresAt: Date | null
+  } | null
+}
 
 // Lazy load heavy components
 const ActivityMessaging = lazy(() => import('@/components/activity-messaging').then(m => ({ default: m.ActivityMessaging })))
@@ -61,6 +85,7 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
   const [hasJoined, setHasJoined] = useState(false)
   const [isMessagingOpen, setIsMessagingOpen] = useState(false)
   const [isGroupChatOpen, setIsGroupChatOpen] = useState(false)
+  const [spotsInfo, setSpotsInfo] = useState<SpotsInfo | null>(null)
 
   // Handle payment status from URL params
   useEffect(() => {
@@ -109,6 +134,40 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
       setHasJoined(!!userRsvp)
     }
   }, [user, activity])
+
+  // Fetch spots info including waitlist status
+  useEffect(() => {
+    async function fetchSpotsInfo() {
+      if (!activity?.id) return
+
+      try {
+        const response = await fetch(`/api/waitlist/status?activityId=${activity.id}`)
+        if (response.ok) {
+          const data = await response.json()
+          setSpotsInfo(data)
+        }
+      } catch (error) {
+        console.error('Error fetching spots info:', error)
+      }
+    }
+
+    fetchSpotsInfo()
+  }, [activity?.id])
+
+  // Refresh spots info when waitlist status changes
+  const handleWaitlistChange = async () => {
+    if (!activity?.id) return
+
+    try {
+      const response = await fetch(`/api/waitlist/status?activityId=${activity.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        setSpotsInfo(data)
+      }
+    } catch (error) {
+      console.error('Error refreshing spots info:', error)
+    }
+  }
 
   const handleJoin = async () => {
     if (!user) {
@@ -532,31 +591,83 @@ Organized via sweatbuddies
                       </span>
                     </div>
                   </div>
+                ) : spotsInfo?.isFull && spotsInfo.waitlistEnabled ? (
+                  // Activity is full - show waitlist option
+                  <div className="space-y-3">
+                    {/* Spots indicator */}
+                    <SpotsIndicator
+                      spotsRemaining={spotsInfo.spotsRemaining}
+                      totalSpots={spotsInfo.totalSpots}
+                      waitlistCount={spotsInfo.waitlistCount}
+                      urgencyLevel={spotsInfo.urgencyLevel}
+                      variant="detailed"
+                      showProgress
+                    />
+
+                    {/* Waitlist button */}
+                    <div className="flex gap-2 sm:gap-3 items-center">
+                      <ShareButton
+                        activityId={activity.id}
+                        activityTitle={activity.title}
+                        activityDescription={activity.description}
+                        variant="outline"
+                        size="icon"
+                        className="shrink-0 h-12 w-12 sm:h-11 sm:w-11 touch-manipulation"
+                        showLabel={false}
+                      />
+                      <div className="flex-1">
+                        <WaitlistButton
+                          activityId={activity.id}
+                          activityTitle={activity.title}
+                          userWaitlistStatus={spotsInfo.userWaitlistStatus}
+                          waitlistCount={spotsInfo.waitlistCount}
+                          onStatusChange={handleWaitlistChange}
+                          variant="large"
+                        />
+                      </div>
+                    </div>
+                    <p className="text-xs text-center text-muted-foreground">
+                      We&apos;ll notify you immediately when a spot opens up
+                    </p>
+                  </div>
                 ) : (
                   // Not joined - simple CTA with share
-                  <div className="flex gap-2 sm:gap-3 items-center">
-                    <ShareButton
-                      activityId={activity.id}
-                      activityTitle={activity.title}
-                      activityDescription={activity.description}
-                      variant="outline"
-                      size="icon"
-                      className="shrink-0 h-12 w-12 sm:h-11 sm:w-11 touch-manipulation"
-                      showLabel={false}
-                    />
-                    <Button
-                      size="lg"
-                      onClick={handleJoin}
-                      disabled={isJoining}
-                      className="flex-1 h-12 sm:h-11 text-sm sm:text-base touch-manipulation"
-                    >
-                      {isJoining
-                        ? 'Processing...'
-                        : activity.price > 0
-                          ? `Pay ${activity.currency} ${activity.price.toFixed(2)} & Join`
-                          : 'Join Activity'
-                      }
-                    </Button>
+                  <div className="space-y-3">
+                    {/* Show urgency if low spots */}
+                    {spotsInfo && spotsInfo.urgencyLevel !== 'none' && spotsInfo.urgencyLevel !== 'full' && (
+                      <SpotsIndicator
+                        spotsRemaining={spotsInfo.spotsRemaining}
+                        totalSpots={spotsInfo.totalSpots}
+                        urgencyLevel={spotsInfo.urgencyLevel}
+                        variant="detailed"
+                        showProgress
+                      />
+                    )}
+
+                    <div className="flex gap-2 sm:gap-3 items-center">
+                      <ShareButton
+                        activityId={activity.id}
+                        activityTitle={activity.title}
+                        activityDescription={activity.description}
+                        variant="outline"
+                        size="icon"
+                        className="shrink-0 h-12 w-12 sm:h-11 sm:w-11 touch-manipulation"
+                        showLabel={false}
+                      />
+                      <Button
+                        size="lg"
+                        onClick={handleJoin}
+                        disabled={isJoining}
+                        className="flex-1 h-12 sm:h-11 text-sm sm:text-base touch-manipulation"
+                      >
+                        {isJoining
+                          ? 'Processing...'
+                          : activity.price > 0
+                            ? `Pay ${activity.currency} ${activity.price.toFixed(2)} & Join`
+                            : 'Join Activity'
+                        }
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>

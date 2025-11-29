@@ -23,6 +23,10 @@ const isPublicRoute = createRouteMatcher([
 const isBetaExemptRoute = createRouteMatcher([
   '/beta(.*)',
   '/api/beta(.*)',
+  '/api/activities(.*)',
+  '/api/invites(.*)',
+  '/api/profiles(.*)',
+  '/api/cron(.*)',
   '/sign-in(.*)',
   '/sign-up(.*)',
   '/api/webhooks(.*)',

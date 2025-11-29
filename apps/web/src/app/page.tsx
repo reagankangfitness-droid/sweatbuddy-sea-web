@@ -35,6 +35,10 @@ interface Activity {
       imageUrl: string | null
     }
   }>
+  ratingSummary?: {
+    averageRating: number
+    totalReviews: number
+  } | null
 }
 
 export default function Home() {

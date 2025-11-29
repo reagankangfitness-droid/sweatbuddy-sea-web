@@ -6,7 +6,10 @@ import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
 import { AvatarStack } from '@/components/avatar-stack'
+import { SpotsIndicator, SpotsBadge } from '@/components/spots-indicator'
+import { RatingBadge } from '@/components/star-rating'
 import { Heart, MapPin } from 'lucide-react'
+import type { UrgencyLevel } from '@/lib/waitlist'
 
 // Lazy load Google Maps (heavy component - only load when needed)
 const GoogleMapSection = dynamic(
@@ -62,6 +65,28 @@ interface Activity {
   userActivities?: Array<{
     user: Participant
   }>
+  // Waitlist/urgency fields
+  waitlistCount?: number
+  // Rating fields
+  ratingSummary?: {
+    averageRating: number
+    totalReviews: number
+  } | null
+}
+
+// Helper to calculate urgency level
+function getUrgencyLevel(activity: Activity): UrgencyLevel {
+  if (!activity.maxPeople) return 'none'
+
+  const joinedCount = activity.userActivities?.length || 0
+  const spotsRemaining = Math.max(0, activity.maxPeople - joinedCount)
+  const percentFilled = (joinedCount / activity.maxPeople) * 100
+
+  if (spotsRemaining === 0) return 'full'
+  if (spotsRemaining <= 3) return 'critical'
+  if (spotsRemaining <= 5) return 'high'
+  if (percentFilled >= 70) return 'medium'
+  return 'none'
 }
 
 interface ActivityFeedProps {
@@ -191,6 +216,29 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                     </span>
                   </div>
 
+                  {/* Urgency Badge - Bottom Left on Image */}
+                  {(() => {
+                    const urgencyLevel = getUrgencyLevel(activity)
+                    const spotsRemaining = activity.maxPeople
+                      ? Math.max(0, activity.maxPeople - (activity.userActivities?.length || 0))
+                      : 0
+
+                    if (urgencyLevel !== 'none' && activity.maxPeople) {
+                      return (
+                        <div className="absolute bottom-3 left-3">
+                          <SpotsIndicator
+                            spotsRemaining={spotsRemaining}
+                            totalSpots={activity.maxPeople}
+                            waitlistCount={activity.waitlistCount}
+                            urgencyLevel={urgencyLevel}
+                            variant="badge"
+                          />
+                        </div>
+                      )
+                    }
+                    return null
+                  })()}
+
                   {/* Heart Icon - Bottom Right on Image */}
                   <button
                     onClick={(e) => {
@@ -205,12 +253,20 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
 
                 {/* Content Section - White Background */}
                 <div className="p-3 sm:p-4">
-                  {/* Location */}
-                  <div className="flex items-center gap-1 mb-1.5 sm:mb-2">
-                    <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                    <span className="font-medium text-muted-foreground truncate" style={{ fontSize: '13px' }}>
-                      {activity.city}
-                    </span>
+                  {/* Location & Rating Row */}
+                  <div className="flex items-center justify-between gap-2 mb-1.5 sm:mb-2">
+                    <div className="flex items-center gap-1 min-w-0">
+                      <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                      <span className="font-medium text-muted-foreground truncate" style={{ fontSize: '13px' }}>
+                        {activity.city}
+                      </span>
+                    </div>
+                    {activity.ratingSummary && activity.ratingSummary.totalReviews > 0 && (
+                      <RatingBadge
+                        rating={activity.ratingSummary.averageRating}
+                        count={activity.ratingSummary.totalReviews}
+                      />
+                    )}
                   </div>
 
                   {/* Title */}
@@ -283,11 +339,11 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
 
                     {/* Spots remaining */}
                     {activity.maxPeople && (
-                      <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <span className="font-medium" style={{ fontSize: '12px' }}>
-                          {Math.max(0, activity.maxPeople - (activity.userActivities?.length || 0))} spots left
-                        </span>
-                      </div>
+                      <SpotsBadge
+                        spotsRemaining={Math.max(0, activity.maxPeople - (activity.userActivities?.length || 0))}
+                        totalSpots={activity.maxPeople}
+                        urgencyLevel={getUrgencyLevel(activity)}
+                      />
                     )}
                   </div>
                 </div>

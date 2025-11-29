@@ -183,6 +183,14 @@ model User {
   betaCodesCreated  BetaInviteCode[]  @relation("BetaCodesCreated")
   betaAccessLogs    BetaAccessLog[]   @relation("BetaAccessLogs")
 
+  // Waitlist relations
+  waitlistEntries   ActivityWaitlist[] @relation("UserWaitlistEntries")
+
+  // Review relations
+  reviewsWritten      Review[]            @relation("ReviewsWritten")
+  reviewsReceived     Review[]            @relation("ReviewsReceived")
+  hostRatingSummary   HostRatingSummary?  @relation("HostRatingSummary")
+
   @@index([slug])
   @@index([username])
   @@index([isHost])
@@ -231,6 +239,14 @@ model Activity {
   // Statistics relations
   activityStats  ActivityStats?   @relation("ActivityStats")
   activityViews  ActivityView[]   @relation("ActivityViews")
+
+  // Waitlist relations
+  waitlistEntries    ActivityWaitlist[]       @relation("ActivityWaitlist")
+  urgencySettings    ActivityUrgencySettings? @relation("ActivityUrgencySettings")
+
+  // Review relations
+  reviews              Review[]                 @relation("ActivityReviews")
+  ratingSummary        ActivityRatingSummary?   @relation("ActivityRatingSummary")
 
   @@index([userId])
   @@index([hostId])
@@ -331,6 +347,12 @@ model UserActivity {
   user     User      @relation(fields: [userId], references: [id])
   activity Activity  @relation(fields: [activityId], references: [id])
   payment  Payment?
+
+  // Waitlist conversion tracking
+  waitlistEntry ActivityWaitlist? @relation("WaitlistBooking")
+
+  // Review relation (one review per booking)
+  review   Review?   @relation("BookingReview")
 
   @@unique([userId, activityId])
   @@index([userId])
@@ -1030,4 +1052,507 @@ model BetaSettings {
   updatedAt             DateTime @updatedAt
 
   @@map("beta_settings")
+}
+
+// =====================================================
+// ACTIVITY WAITLIST & URGENCY SYSTEM
+// =====================================================
+
+enum ActivityWaitlistStatus {
+  WAITING
+  NOTIFIED
+  BOOKED
+  EXPIRED
+  CANCELLED
+}
+
+enum WaitlistNotificationType {
+  SPOT_AVAILABLE
+  REMINDER
+  EXPIRED
+  POSITION_UPDATE
+  CONFIRMATION
+}
+
+// Activity waitlist entries
+model ActivityWaitlist {
+  id          String                 @id @default(cuid())
+
+  // Activity reference
+  activityId  String
+
+  // Who's waiting (user or email for non-logged-in)
+  userId      String?
+  email       String?                @db.VarChar(255)
+  name        String?                @db.VarChar(200)
+
+  // Position and status
+  position    Int
+  status      ActivityWaitlistStatus @default(WAITING)
+
+  // Notification tracking
+  notifiedAt            DateTime?
+  notificationExpiresAt DateTime?    // 24-hour window to book
+  reminderSent          Boolean      @default(false)
+
+  // Outcome
+  convertedToBooking    Boolean      @default(false)
+  userActivityId        String?      @unique // Reference to booking if converted
+
+  // Timestamps
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+
+  // Relations
+  activity    Activity               @relation("ActivityWaitlist", fields: [activityId], references: [id], onDelete: Cascade)
+  user        User?                  @relation("UserWaitlistEntries", fields: [userId], references: [id], onDelete: Cascade)
+  userActivity UserActivity?         @relation("WaitlistBooking", fields: [userActivityId], references: [id], onDelete: SetNull)
+  notifications WaitlistNotification[]
+
+  // Ensure one entry per user per activity
+  @@unique([activityId, userId])
+  @@unique([activityId, email])
+  @@index([activityId, status, position])
+  @@index([userId])
+  @@index([status, notifiedAt])
+  @@index([notificationExpiresAt])
+  @@map("activity_waitlists")
+}
+
+// Waitlist notification log
+model WaitlistNotification {
+  id                String                   @id @default(cuid())
+
+  waitlistEntryId   String
+  activityId        String
+  userId            String?
+  email             String?                  @db.VarChar(255)
+
+  // Notification details
+  notificationType  WaitlistNotificationType
+  channel           String                   @default("email") @db.VarChar(20) // 'email', 'push', 'sms'
+
+  // Status
+  sentAt            DateTime                 @default(now())
+  openedAt          DateTime?
+  clickedAt         DateTime?
+
+  // Metadata
+  metadata          Json?
+
+  // Relations
+  waitlistEntry     ActivityWaitlist         @relation(fields: [waitlistEntryId], references: [id], onDelete: Cascade)
+
+  @@index([waitlistEntryId])
+  @@index([activityId])
+  @@index([userId])
+  @@map("waitlist_notifications")
+}
+
+// Activity urgency settings (extend Activity model)
+model ActivityUrgencySettings {
+  id                String   @id @default(cuid())
+  activityId        String   @unique
+
+  // Urgency display settings
+  showSpotsRemaining Boolean @default(true)
+  urgencyThreshold   Int     @default(5)  // Show urgency when <= X spots
+
+  // Waitlist settings
+  waitlistEnabled    Boolean @default(true)
+  waitlistLimit      Int     @default(50) // Max waitlist size
+  notificationWindowHours Int @default(24) // Hours to book after notification
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  activity    Activity @relation("ActivityUrgencySettings", fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@index([activityId])
+  @@map("activity_urgency_settings")
+}
+
+// =====================================================
+// AUTOMATED REMINDER SYSTEM
+// =====================================================
+
+enum ReminderType {
+  ONE_WEEK       // 7 days before (optional)
+  ONE_DAY        // 24 hours before
+  TWO_HOURS      // 2 hours before
+}
+
+enum ReminderStatus {
+  PENDING
+  SENT
+  FAILED
+  CANCELLED
+  SKIPPED
+}
+
+enum ReminderChannel {
+  EMAIL
+  PUSH
+  SMS
+  IN_APP
+}
+
+// Scheduled reminders for bookings
+model ScheduledReminder {
+  id              String         @id @default(cuid())
+
+  // What this reminder is for
+  userActivityId  String
+  activityId      String
+  userId          String
+
+  // Reminder configuration
+  reminderType    ReminderType
+  channel         ReminderChannel @default(EMAIL)
+  scheduledFor    DateTime        // When to send
+
+  // Status tracking
+  status          ReminderStatus  @default(PENDING)
+  sentAt          DateTime?
+  openedAt        DateTime?
+  clickedAt       DateTime?
+  errorMessage    String?
+
+  // Retry tracking
+  retryCount      Int            @default(0)
+  lastRetryAt     DateTime?
+
+  // Message customization (optional host overrides)
+  customSubject   String?        @db.VarChar(200)
+  customMessage   String?        @db.Text
+
+  // Timestamps
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@unique([userActivityId, reminderType, channel])
+  @@index([status, scheduledFor])
+  @@index([userId])
+  @@index([activityId])
+  @@map("scheduled_reminders")
+}
+
+// Reminder delivery log (for analytics)
+model ReminderDeliveryLog {
+  id              String         @id @default(cuid())
+
+  reminderId      String?
+  userActivityId  String
+  activityId      String
+  userId          String
+
+  // Delivery details
+  reminderType    ReminderType
+  channel         ReminderChannel
+
+  // Status
+  deliveredAt     DateTime       @default(now())
+  openedAt        DateTime?
+  clickedAt       DateTime?
+
+  // Email-specific tracking
+  emailMessageId  String?        @db.VarChar(255)
+  emailProvider   String?        @db.VarChar(50) // 'resend', 'sendgrid', etc.
+
+  // Push-specific tracking
+  pushEndpoint    String?
+
+  // Metadata
+  metadata        Json?
+
+  @@index([reminderId])
+  @@index([userActivityId])
+  @@index([activityId])
+  @@index([userId])
+  @@index([deliveredAt])
+  @@map("reminder_delivery_logs")
+}
+
+// Host reminder settings (customization per activity)
+model HostReminderSettings {
+  id                  String   @id @default(cuid())
+  activityId          String   @unique
+  hostId              String
+
+  // Enable/disable reminders
+  enableOneWeekReminder   Boolean @default(false)
+  enableOneDayReminder    Boolean @default(true)
+  enableTwoHourReminder   Boolean @default(true)
+
+  // Custom messages (optional)
+  oneDaySubject       String?  @db.VarChar(200)
+  oneDayMessage       String?  @db.Text
+  twoHourSubject      String?  @db.VarChar(200)
+  twoHourMessage      String?  @db.Text
+  oneWeekSubject      String?  @db.VarChar(200)
+  oneWeekMessage      String?  @db.Text
+
+  // Additional info to include
+  includeMapLink      Boolean  @default(true)
+  includeCalendarLink Boolean  @default(true)
+  includeHostContact  Boolean  @default(false)
+  customInstructions  String?  @db.Text // "Bring a towel", "Park in lot B", etc.
+
+  // Timestamps
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([activityId])
+  @@index([hostId])
+  @@map("host_reminder_settings")
+}
+
+// User push notification subscriptions
+model PushSubscription {
+  id              String   @id @default(cuid())
+  userId          String
+
+  // Web Push subscription details
+  endpoint        String   @db.Text
+  p256dh          String   @db.VarChar(255)
+  auth            String   @db.VarChar(255)
+
+  // Device info
+  userAgent       String?  @db.VarChar(500)
+  deviceType      String?  @db.VarChar(50) // 'desktop', 'mobile', 'tablet'
+
+  // Status
+  isActive        Boolean  @default(true)
+  lastUsedAt      DateTime @default(now())
+  failureCount    Int      @default(0)
+
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([userId, endpoint])
+  @@index([userId, isActive])
+  @@map("push_subscriptions")
+}
+
+// Extended notification preferences for reminders
+model ReminderPreferences {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+
+  // Reminder type preferences
+  enableOneWeekReminder Boolean  @default(false)
+  enableOneDayReminder  Boolean  @default(true)
+  enableTwoHourReminder Boolean  @default(true)
+
+  // Channel preferences
+  emailReminders        Boolean  @default(true)
+  pushReminders         Boolean  @default(true)
+  smsReminders          Boolean  @default(false)
+
+  // Quiet hours (don't send during these times)
+  quietHoursStart       Int?     // Hour of day (0-23)
+  quietHoursEnd         Int?     // Hour of day (0-23)
+  timezone              String   @default("Asia/Singapore") @db.VarChar(50)
+
+  // Timestamps
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("reminder_preferences")
+}
+
+// =====================================================
+// REVIEWS & RATINGS SYSTEM
+// =====================================================
+
+enum ReviewStatus {
+  PENDING      // Just submitted, awaiting moderation (if enabled)
+  PUBLISHED    // Visible to everyone
+  HIDDEN       // Hidden by admin/moderation
+  DELETED      // Soft deleted
+}
+
+enum ReviewPromptStatus {
+  PENDING      // Scheduled but not sent yet
+  SENT         // Email sent
+  COMPLETED    // Review submitted
+  EXPIRED      // Past reminder period
+  SKIPPED      // User opted out
+}
+
+// Activity reviews from attendees
+model Review {
+  id              String        @id @default(cuid())
+
+  // What's being reviewed
+  activityId      String
+  userActivityId  String        @unique // Ensures one review per booking
+
+  // Who's reviewing
+  reviewerId      String
+
+  // Who's being reviewed (the host)
+  hostId          String
+
+  // Review content
+  rating          Int           // 1-5 stars
+  title           String?       @db.VarChar(200)
+  content         String?       @db.Text
+
+  // Photo attachments (up to 5 URLs)
+  photos          String[]      @default([])
+
+  // Status
+  status          ReviewStatus  @default(PUBLISHED)
+  isVerified      Boolean       @default(true) // Verified attendee
+
+  // Engagement
+  helpfulCount    Int           @default(0)
+
+  // Edit tracking
+  editedAt        DateTime?
+  editCount       Int           @default(0)
+
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  activity        Activity      @relation("ActivityReviews", fields: [activityId], references: [id], onDelete: Cascade)
+  userActivity    UserActivity  @relation("BookingReview", fields: [userActivityId], references: [id], onDelete: Cascade)
+  reviewer        User          @relation("ReviewsWritten", fields: [reviewerId], references: [id], onDelete: Cascade)
+  host            User          @relation("ReviewsReceived", fields: [hostId], references: [id], onDelete: Cascade)
+  hostResponse    ReviewResponse?
+  helpfulVotes    ReviewHelpfulVote[]
+
+  @@index([activityId, status, createdAt])
+  @@index([hostId, status, createdAt])
+  @@index([reviewerId, status])
+  @@index([status, helpfulCount])
+  @@index([rating])
+  @@map("reviews")
+}
+
+// Host responses to reviews
+model ReviewResponse {
+  id          String   @id @default(cuid())
+  reviewId    String   @unique
+  hostId      String
+  content     String   @db.Text
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  editedAt    DateTime?
+
+  review      Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([hostId])
+  @@map("review_responses")
+}
+
+// Track helpful votes on reviews
+model ReviewHelpfulVote {
+  id        String   @id @default(cuid())
+  reviewId  String
+  userId    String
+  createdAt DateTime @default(now())
+
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewId, userId])
+  @@index([reviewId])
+  @@index([userId])
+  @@map("review_helpful_votes")
+}
+
+// Scheduled review prompts
+model ReviewPrompt {
+  id              String             @id @default(cuid())
+  userActivityId  String
+  activityId      String
+  userId          String
+
+  // Scheduling
+  scheduledFor    DateTime           // When to send first prompt
+  reminderAt      DateTime?          // When to send reminder
+
+  // Status tracking
+  status          ReviewPromptStatus @default(PENDING)
+  sentAt          DateTime?
+  reminderSentAt  DateTime?
+  completedAt     DateTime?
+
+  // Email tracking
+  emailMessageId  String?            @db.VarChar(255)
+  openedAt        DateTime?
+  clickedAt       DateTime?
+
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@unique([userActivityId])
+  @@index([status, scheduledFor])
+  @@index([status, reminderAt])
+  @@index([userId, status])
+  @@index([activityId])
+  @@map("review_prompts")
+}
+
+// Denormalized activity rating summary (for fast queries)
+model ActivityRatingSummary {
+  id              String   @id @default(cuid())
+  activityId      String   @unique
+
+  // Aggregate stats
+  averageRating   Decimal  @default(0) @db.Decimal(3, 2)
+  totalReviews    Int      @default(0)
+
+  // Rating distribution
+  fiveStarCount   Int      @default(0)
+  fourStarCount   Int      @default(0)
+  threeStarCount  Int      @default(0)
+  twoStarCount    Int      @default(0)
+  oneStarCount    Int      @default(0)
+
+  // Last updated
+  lastReviewAt    DateTime?
+  updatedAt       DateTime @updatedAt
+
+  activity        Activity @relation("ActivityRatingSummary", fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@index([averageRating])
+  @@map("activity_rating_summaries")
+}
+
+// Denormalized host rating summary
+model HostRatingSummary {
+  id              String   @id @default(cuid())
+  hostId          String   @unique
+
+  // Aggregate stats
+  averageRating   Decimal  @default(0) @db.Decimal(3, 2)
+  totalReviews    Int      @default(0)
+
+  // Rating distribution
+  fiveStarCount   Int      @default(0)
+  fourStarCount   Int      @default(0)
+  threeStarCount  Int      @default(0)
+  twoStarCount    Int      @default(0)
+  oneStarCount    Int      @default(0)
+
+  // Response stats
+  totalResponses  Int      @default(0)
+  responseRate    Decimal  @default(0) @db.Decimal(5, 2)
+
+  // Last updated
+  lastReviewAt    DateTime?
+  updatedAt       DateTime @updatedAt
+
+  host            User     @relation("HostRatingSummary", fields: [hostId], references: [id], onDelete: Cascade)
+
+  @@index([averageRating])
+  @@map("host_rating_summaries")
 }

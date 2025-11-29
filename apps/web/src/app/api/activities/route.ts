@@ -193,8 +193,6 @@ export async function GET(request: Request) {
     return NextResponse.json(activities)
   } catch (error) {
     console.error('Error fetching activities:', error)
-    // Return more details in production for debugging
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    return NextResponse.json({ error: 'Internal server error', details: errorMessage }, { status: 500 })
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

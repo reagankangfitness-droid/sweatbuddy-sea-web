@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 
 /**
  * SweatBuddies Logo Component
- * A smiley face icon representing community and positivity
+ * A minimalist smiley face icon representing community and positivity
  *
  * @param size - Size in pixels (default 40)
  * @param color - Logo color (default #0025CC)
@@ -26,7 +26,7 @@ export function Logo({
   onClick,
 }: LogoProps) {
   // Determine color based on variant
-  const fillColor = variant === 'white' ? '#FFFFFF'
+  const strokeColor = variant === 'white' ? '#FFFFFF'
     : variant === 'mono' ? 'currentColor'
     : color
 
@@ -43,24 +43,35 @@ export function Logo({
         width={size}
         height={size}
       >
-        {/* Outer ring */}
-        <path
-          d="M50 8C26.804 8 8 26.804 8 50C8 73.196 26.804 92 50 92C73.196 92 92 73.196 92 50C92 26.804 73.196 8 50 8ZM2 50C2 23.49 23.49 2 50 2C76.51 2 98 23.49 98 50C98 76.51 76.51 98 50 98C23.49 98 2 76.51 2 50Z"
-          fill={fillColor}
-          fillRule="evenodd"
+        {/* Left eye - vertical line */}
+        <line
+          x1="36"
+          y1="18"
+          x2="36"
+          y2="36"
+          stroke={strokeColor}
+          strokeWidth="7"
+          strokeLinecap="round"
         />
 
-        {/* Left eye */}
-        <circle cx="36" cy="42" r="6" fill={fillColor} />
+        {/* Right eye - vertical line */}
+        <line
+          x1="64"
+          y1="18"
+          x2="64"
+          y2="36"
+          stroke={strokeColor}
+          strokeWidth="7"
+          strokeLinecap="round"
+        />
 
-        {/* Right eye */}
-        <circle cx="64" cy="42" r="6" fill={fillColor} />
-
-        {/* Smile */}
+        {/* Smile - curved arc */}
         <path
-          d="M28 58C30.5 58 34 58.5 36 62C40 69.5 44 74 50 74C56 74 60 69.5 64 62C66 58.5 69.5 58 72 58C76 58 78.5 61 76.5 66C72.5 76 62 84 50 84C38 84 27.5 76 23.5 66C21.5 61 24 58 28 58Z"
-          fill={fillColor}
-          fillRule="evenodd"
+          d="M18 52 Q50 92 82 52"
+          stroke={strokeColor}
+          strokeWidth="7"
+          strokeLinecap="round"
+          fill="none"
         />
       </svg>
     </span>
@@ -134,21 +145,36 @@ export function LogoIcon({
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        width={size * 0.6}
-        height={size * 0.6}
+        width={size * 0.65}
+        height={size * 0.65}
       >
-        {/* Outer ring */}
-        <path
-          d="M50 8C26.804 8 8 26.804 8 50C8 73.196 26.804 92 50 92C73.196 92 92 73.196 92 50C92 26.804 73.196 8 50 8ZM2 50C2 23.49 23.49 2 50 2C76.51 2 98 23.49 98 50C98 76.51 76.51 98 50 98C23.49 98 2 76.51 2 50Z"
-          fill={iconColor}
-          fillRule="evenodd"
+        {/* Left eye - vertical line */}
+        <line
+          x1="36"
+          y1="18"
+          x2="36"
+          y2="36"
+          stroke={iconColor}
+          strokeWidth="7"
+          strokeLinecap="round"
         />
-        <circle cx="36" cy="42" r="6" fill={iconColor} />
-        <circle cx="64" cy="42" r="6" fill={iconColor} />
+        {/* Right eye - vertical line */}
+        <line
+          x1="64"
+          y1="18"
+          x2="64"
+          y2="36"
+          stroke={iconColor}
+          strokeWidth="7"
+          strokeLinecap="round"
+        />
+        {/* Smile - curved arc */}
         <path
-          d="M28 58C30.5 58 34 58.5 36 62C40 69.5 44 74 50 74C56 74 60 69.5 64 62C66 58.5 69.5 58 72 58C76 58 78.5 61 76.5 66C72.5 76 62 84 50 84C38 84 27.5 76 23.5 66C21.5 61 24 58 28 58Z"
-          fill={iconColor}
-          fillRule="evenodd"
+          d="M18 52 Q50 92 82 52"
+          stroke={iconColor}
+          strokeWidth="7"
+          strokeLinecap="round"
+          fill="none"
         />
       </svg>
     </div>

@@ -42,11 +42,11 @@ export function Header() {
         {/* Logo - SweatBuddies Smiley */}
         <Link
           href="/"
-          className="flex items-center gap-2.5 font-bold text-primary hover:text-primary-hover transition-all tracking-tight group"
-          style={{ fontSize: '22px' }}
+          className="flex items-center gap-2 font-bold text-primary hover:text-primary-hover transition-all tracking-tight group"
+          style={{ fontSize: '20px' }}
         >
           <span className="transition-transform group-hover:scale-105 duration-200">
-            <Logo size={28} />
+            <Logo size={32} />
           </span>
           <span>sweatbuddies</span>
         </Link>

@@ -1,6 +1,8 @@
 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M50 8C26.804 8 8 26.804 8 50C8 73.196 26.804 92 50 92C73.196 92 92 73.196 92 50C92 26.804 73.196 8 50 8ZM2 50C2 23.49 23.49 2 50 2C76.51 2 98 23.49 98 50C98 76.51 76.51 98 50 98C23.49 98 2 76.51 2 50Z" fill="#0025CC" fill-rule="evenodd"/>
-  <circle cx="36" cy="42" r="6" fill="#0025CC"/>
-  <circle cx="64" cy="42" r="6" fill="#0025CC"/>
-  <path d="M28 58C30.5 58 34 58.5 36 62C40 69.5 44 74 50 74C56 74 60 69.5 64 62C66 58.5 69.5 58 72 58C76 58 78.5 61 76.5 66C72.5 76 62 84 50 84C38 84 27.5 76 23.5 66C21.5 61 24 58 28 58Z" fill="#0025CC" fill-rule="evenodd"/>
+  <!-- Left eye - vertical line -->
+  <line x1="36" y1="18" x2="36" y2="36" stroke="#0025CC" stroke-width="7" stroke-linecap="round"/>
+  <!-- Right eye - vertical line -->
+  <line x1="64" y1="18" x2="64" y2="36" stroke="#0025CC" stroke-width="7" stroke-linecap="round"/>
+  <!-- Smile - curved arc -->
+  <path d="M18 52 Q50 92 82 52" stroke="#0025CC" stroke-width="7" stroke-linecap="round" fill="none"/>
 </svg>

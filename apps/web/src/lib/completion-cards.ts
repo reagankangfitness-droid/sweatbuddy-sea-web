@@ -121,6 +121,13 @@ export async function createCompletionCard(
                 imageUrl: true,
               },
             },
+            user: {
+              select: {
+                id: true,
+                name: true,
+                imageUrl: true,
+              },
+            },
           },
         },
         user: {
@@ -141,7 +148,8 @@ export async function createCompletionCard(
     }
 
     const activity = userActivity.activity
-    const host = activity.host
+    // Use host if available, otherwise fall back to activity creator
+    const host = activity.host || activity.user
 
     if (!host) {
       return { success: false, error: 'Activity host not found' }

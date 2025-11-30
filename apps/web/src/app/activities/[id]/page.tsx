@@ -14,6 +14,7 @@ import { WaitlistButton } from '@/components/waitlist-button'
 import { generateGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
 import { Calendar, MessageCircle, Users } from 'lucide-react'
 import type { UrgencyLevel } from '@/lib/waitlist'
+import { PostActivityPrompt } from '@/components/post-activity-prompt'
 
 interface SpotsInfo {
   totalSpots: number
@@ -86,6 +87,8 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
   const [isMessagingOpen, setIsMessagingOpen] = useState(false)
   const [isGroupChatOpen, setIsGroupChatOpen] = useState(false)
   const [spotsInfo, setSpotsInfo] = useState<SpotsInfo | null>(null)
+  const [userBookingId, setUserBookingId] = useState<string | null>(null)
+  const [showCompletionPrompt, setShowCompletionPrompt] = useState(true)
 
   // Handle payment status from URL params
   useEffect(() => {
@@ -132,6 +135,7 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
         (ua: any) => ua.userId === user.id && ua.status === 'JOINED'
       )
       setHasJoined(!!userRsvp)
+      setUserBookingId(userRsvp?.id || null)
     }
   }, [user, activity])
 
@@ -387,6 +391,30 @@ Organized via sweatbuddies
                 src={activity.imageUrl}
                 alt={activity.title}
                 className="w-full h-auto max-h-96 object-cover"
+              />
+            </div>
+          )}
+
+          {/* Post-activity completion card prompt */}
+          {hasJoined &&
+            userBookingId &&
+            showCompletionPrompt &&
+            activity.startTime &&
+            new Date(activity.startTime) < new Date() && (
+            <div className="mb-6">
+              <PostActivityPrompt
+                userActivityId={userBookingId}
+                activityTitle={activity.title}
+                activityImage={activity.imageUrl}
+                hostName={activity.user.name || 'Host'}
+                hostAvatar={activity.user.imageUrl}
+                completedAt={new Date(activity.startTime)}
+                durationMinutes={
+                  activity.endTime && activity.startTime
+                    ? Math.round((new Date(activity.endTime).getTime() - new Date(activity.startTime).getTime()) / 60000)
+                    : null
+                }
+                onDismiss={() => setShowCompletionPrompt(false)}
               />
             </div>
           )}

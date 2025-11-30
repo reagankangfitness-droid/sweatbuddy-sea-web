@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Calendar, MapPin, Users, Clock } from 'lucide-react'
+import { Calendar, MapPin, Users, Clock, Camera } from 'lucide-react'
+import { PostActivityPromptCompact } from '@/components/post-activity-prompt'
 
 const ACTIVITY_TYPE_EMOJI: Record<string, string> = {
   'RUN': '🏃',
@@ -216,11 +217,26 @@ export function JoinedActivitiesSection({
                   </Button>
                 )}
                 {isPast && (
-                  <Link href="/" className="w-full xs:w-auto">
-                    <Button size="sm" className="w-full" style={{ fontSize: '13px' }}>
-                      Book Again
-                    </Button>
-                  </Link>
+                  <>
+                    <PostActivityPromptCompact
+                      userActivityId={booking.id}
+                      activityTitle={activity.title}
+                      activityImage={activity.imageUrl}
+                      hostName={activity.user.name || 'Host'}
+                      hostAvatar={activity.user.imageUrl}
+                      completedAt={new Date(activity.startTime)}
+                      durationMinutes={
+                        activity.endTime && activity.startTime
+                          ? Math.round((new Date(activity.endTime).getTime() - new Date(activity.startTime).getTime()) / 60000)
+                          : null
+                      }
+                    />
+                    <Link href="/" className="w-full xs:w-auto">
+                      <Button size="sm" className="w-full" style={{ fontSize: '13px' }}>
+                        Book Again
+                      </Button>
+                    </Link>
+                  </>
                 )}
               </div>
             </div>

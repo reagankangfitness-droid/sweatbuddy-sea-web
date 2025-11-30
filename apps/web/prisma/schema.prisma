@@ -191,6 +191,10 @@ model User {
   reviewsReceived     Review[]            @relation("ReviewsReceived")
   hostRatingSummary   HostRatingSummary?  @relation("HostRatingSummary")
 
+  // Completion card relations
+  completionCards     CompletionCard[]    @relation("UserCompletionCards")
+  userStreaks         UserStreak[]        @relation("UserStreaks")
+
   @@index([slug])
   @@index([username])
   @@index([isHost])
@@ -353,6 +357,9 @@ model UserActivity {
 
   // Review relation (one review per booking)
   review   Review?   @relation("BookingReview")
+
+  // Completion card relation
+  completionCard CompletionCard? @relation("BookingCompletionCard")
 
   @@unique([userId, activityId])
   @@index([userId])
@@ -1555,4 +1562,112 @@ model HostRatingSummary {
 
   @@index([averageRating])
   @@map("host_rating_summaries")
+}
+
+// =====================================================
+// COMPLETION CARDS & SHARING SYSTEM
+// =====================================================
+
+enum CompletionCardStatus {
+  DRAFT
+  GENERATED
+  SHARED
+}
+
+enum CompletionCardTemplate {
+  CLASSIC
+  MINIMAL
+  BOLD
+  GRADIENT
+  DARK
+  ENERGY
+}
+
+// Shareable completion cards for social media
+model CompletionCard {
+  id              String                @id @default(cuid())
+
+  // References
+  userId          String
+  userActivityId  String                @unique
+  activityId      String
+  hostId          String
+
+  // User's uploaded photo
+  photoUrl        String                @db.VarChar(500)
+  photoWidth      Int?
+  photoHeight     Int?
+
+  // Card customization
+  template        CompletionCardTemplate @default(CLASSIC)
+  caption         String?               @db.Text
+  showHost        Boolean               @default(true)
+  showDate        Boolean               @default(true)
+  showDuration    Boolean               @default(true)
+  showStreak      Boolean               @default(false)
+
+  // Generated card image
+  cardUrl         String?               @db.VarChar(500)
+  cardGeneratedAt DateTime?
+
+  // Activity snapshot (in case activity is deleted)
+  activityTitle   String                @db.VarChar(200)
+  activityImage   String?               @db.VarChar(500)
+  hostName        String                @db.VarChar(100)
+  hostAvatar      String?               @db.VarChar(500)
+  completedAt     DateTime
+  durationMinutes Int?
+
+  // Sharing stats
+  downloadedCount Int                   @default(0)
+  sharedCount     Int                   @default(0)
+  sharePlatforms  String[]              @default([])
+
+  // QR code and link
+  qrCodeUrl       String?               @db.VarChar(500)
+  activityLink    String?               @db.VarChar(500)
+
+  // Status
+  status          CompletionCardStatus  @default(DRAFT)
+
+  // Timestamps
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  // Relations
+  user            User                  @relation("UserCompletionCards", fields: [userId], references: [id], onDelete: Cascade)
+  userActivity    UserActivity          @relation("BookingCompletionCard", fields: [userActivityId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userActivityId])
+  @@index([hostId])
+  @@index([status])
+  @@map("completion_cards")
+}
+
+// User streak tracking (for showing on completion cards)
+model UserStreak {
+  id              String   @id @default(cuid())
+  userId          String
+  hostId          String?  // NULL = platform-wide streak, set = per-host streak
+
+  // Streak type
+  streakType      String   @default("weekly") @db.VarChar(30) // 'weekly', 'daily', 'monthly'
+
+  // Streak counts
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  lastActivityAt  DateTime?
+
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  user            User     @relation("UserStreaks", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, hostId, streakType])
+  @@index([userId, hostId])
+  @@index([currentStreak])
+  @@map("user_streaks")
 }

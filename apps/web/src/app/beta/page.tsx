@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
-import { ArrowRight, Lock, Dumbbell, Users, MapPin } from 'lucide-react'
+import { ArrowRight, Lock, Dumbbell, Users, MapPin, Sparkles, ChevronRight } from 'lucide-react'
 
 export default function BetaAccessPage() {
   const router = useRouter()
@@ -131,10 +132,29 @@ export default function BetaAccessPage() {
             </Button>
           </form>
 
-          {/* Info */}
-          <p className="text-xs text-gray-400 text-center mt-6">
-            Don&apos;t have a passcode? Contact the SweatBuddies team.
-          </p>
+          {/* Divider */}
+          <div className="flex items-center gap-4 my-6">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs text-gray-400">Don&apos;t have a passcode?</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          {/* Waitlist CTA */}
+          <Link
+            href="/beta/waitlist"
+            className="flex items-center justify-between p-4 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-xl hover:from-indigo-100 hover:to-purple-100 transition-colors group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#0025CC] to-indigo-500 text-white flex items-center justify-center">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900 text-sm">Join the Waitlist</p>
+                <p className="text-xs text-gray-500">Be first to know when we launch</p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#0025CC] transition-colors" />
+          </Link>
         </div>
 
         {/* Features Preview */}

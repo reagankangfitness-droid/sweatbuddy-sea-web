@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { ArrowLeft, Check, Sparkles } from 'lucide-react'
+import { ArrowLeft, Check, Sparkles, Mail, Dumbbell, Users, MapPin } from 'lucide-react'
 
 type InterestedAs = 'member' | 'host' | 'both'
 
@@ -56,29 +56,38 @@ export default function WaitlistPage() {
     }
   }
 
-  const interestOptions: { value: InterestedAs; title: string; desc: string }[] = [
-    { value: 'member', title: 'Joining activities', desc: 'Find workouts and meet people' },
-    { value: 'host', title: 'Hosting activities', desc: 'Lead sessions & earn money' },
-    { value: 'both', title: 'Both!', desc: 'Join and host activities' },
+  const interestOptions: { value: InterestedAs; title: string; desc: string; icon: React.ReactNode }[] = [
+    { value: 'member', title: 'Joining activities', desc: 'Find workouts and meet people', icon: <Dumbbell className="w-5 h-5" /> },
+    { value: 'host', title: 'Hosting activities', desc: 'Lead sessions & earn money', icon: <MapPin className="w-5 h-5" /> },
+    { value: 'both', title: 'Both!', desc: 'Join and host activities', icon: <Users className="w-5 h-5" /> },
   ]
 
   return (
-    <div className="min-h-screen bg-[#0A1628] p-4 sm:p-6">
-      <div className="max-w-md mx-auto">
+    <div className="min-h-screen bg-[#0A1628] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
+      {/* Background glow effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#0025CC]/20 rounded-full blur-[128px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-purple-500/15 rounded-full blur-[96px]" />
+      </div>
+
+      <div className="relative z-10 w-full max-w-md mx-auto">
         {/* Back Link */}
         <Link
           href="/beta"
-          className="inline-flex items-center gap-2 text-sm text-indigo-300 hover:text-white transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-sm text-indigo-300 hover:text-white transition-colors mb-6"
         >
           <ArrowLeft size={18} />
           Back
         </Link>
 
-        {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg">
-            <span className="text-2xl">😊</span>
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center mb-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-[#0025CC] to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg">
+              <Sparkles className="w-7 h-7 text-white" />
+            </div>
           </div>
+          <h1 className="text-xl font-bold text-white">SweatBuddies Waitlist</h1>
         </div>
 
         {/* Main Card */}
@@ -86,11 +95,11 @@ export default function WaitlistPage() {
           {!success ? (
             <>
               <div className="text-center mb-6">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-                  Join the Waitlist
-                </h1>
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                  Get Early Access
+                </h2>
                 <p className="text-gray-600 text-sm sm:text-base">
-                  Be the first to know when new spots open up. We&apos;ll send you an exclusive invite code.
+                  Join the waitlist and be the first to know when SweatBuddies launches in your area.
                 </p>
               </div>
 
@@ -99,20 +108,23 @@ export default function WaitlistPage() {
                   <Label htmlFor="email" className="text-sm font-medium">
                     Email <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    required
-                    className="h-12 rounded-xl"
-                  />
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      required
+                      className="h-12 pl-10 rounded-xl"
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="name" className="text-sm font-medium">
-                    Name <span className="text-gray-400">(optional)</span>
+                    Name <span className="text-gray-400 font-normal">(optional)</span>
                   </Label>
                   <Input
                     id="name"
@@ -139,15 +151,13 @@ export default function WaitlistPage() {
                         }`}
                       >
                         <div
-                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
                             interestedAs === option.value
-                              ? 'border-[#0025CC] bg-[#0025CC]'
-                              : 'border-gray-300'
+                              ? 'bg-[#0025CC] text-white'
+                              : 'bg-gray-100 text-gray-500'
                           }`}
                         >
-                          {interestedAs === option.value && (
-                            <div className="w-2 h-2 rounded-full bg-white" />
-                          )}
+                          {option.icon}
                         </div>
                         <div>
                           <p className="font-medium text-gray-900 text-sm">{option.title}</p>
@@ -171,41 +181,58 @@ export default function WaitlistPage() {
                 >
                   {loading ? 'Joining...' : 'Join Waitlist'}
                 </Button>
+
+                <p className="text-xs text-gray-400 text-center">
+                  We&apos;ll only email you about SweatBuddies updates. No spam, ever.
+                </p>
               </form>
             </>
           ) : (
             <div className="text-center py-6">
-              <div className="w-20 h-20 rounded-full bg-green-500 text-white flex items-center justify-center mx-auto mb-6">
-                <Check size={40} />
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 text-white flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Check size={40} strokeWidth={3} />
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
                 You&apos;re on the list!
               </h2>
               {position && (
-                <p className="text-lg text-gray-600 mb-2">
-                  Your position: <span className="font-bold text-[#0025CC]">#{position}</span>
-                </p>
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 px-4 py-2 rounded-full mb-4">
+                  <Sparkles className="w-4 h-4 text-[#0025CC]" />
+                  <span className="text-sm font-medium text-gray-700">
+                    Position <span className="font-bold text-[#0025CC]">#{position}</span>
+                  </span>
+                </div>
               )}
               <p className="text-sm text-gray-500 mb-8">
-                We&apos;ll email you when a spot opens up. Keep an eye on your inbox!
+                We&apos;ll email you as soon as SweatBuddies is ready for you.
+                <br />Keep an eye on your inbox!
               </p>
 
-              <div className="inline-flex items-center gap-2 text-sm font-medium text-[#0025CC] bg-blue-50 px-4 py-3 rounded-xl">
-                <Sparkles size={18} />
-                <span>Move up the list by sharing with friends!</span>
+              <div className="bg-blue-50 rounded-xl p-4 mb-6">
+                <p className="text-sm font-medium text-gray-700 mb-1">
+                  Want to move up the list?
+                </p>
+                <p className="text-xs text-gray-500">
+                  Share SweatBuddies with friends and get priority access!
+                </p>
               </div>
 
-              <div className="mt-8 pt-6 border-t">
-                <Link href="/beta">
-                  <Button variant="outline" className="w-full h-12 rounded-xl">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back to Beta Access
-                  </Button>
-                </Link>
-              </div>
+              <Link href="/beta">
+                <Button variant="outline" className="w-full h-12 rounded-xl">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Beta Access
+                </Button>
+              </Link>
             </div>
           )}
         </div>
+
+        {/* Footer */}
+        <footer className="mt-8 text-center">
+          <p className="text-xs text-gray-500">
+            © 2025 SweatBuddies. All rights reserved.
+          </p>
+        </footer>
       </div>
     </div>
   )

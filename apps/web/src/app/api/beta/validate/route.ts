@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { validateInviteCode, consumeInviteCode } from '@/lib/beta'
+
+// Single beta passcode for testers
+const BETA_PASSCODE = 'SWEAT2025'
 
 export async function POST(request: Request) {
   try {
@@ -9,42 +11,22 @@ export async function POST(request: Request) {
 
     if (!code) {
       return NextResponse.json(
-        { success: false, error: 'Invite code is required' },
+        { success: false, error: 'Passcode is required' },
         { status: 400 }
       )
     }
 
-    // Validate the code first
-    const validation = await validateInviteCode(code)
-
-    if (!validation.valid) {
+    // Check if passcode matches (case-insensitive)
+    if (code.toUpperCase() !== BETA_PASSCODE) {
       return NextResponse.json(
-        { success: false, error: validation.error },
-        { status: 400 }
-      )
-    }
-
-    // Get request metadata
-    const forwardedFor = request.headers.get('x-forwarded-for')
-    const ipAddress = forwardedFor ? forwardedFor.split(',')[0].trim() : undefined
-    const userAgent = request.headers.get('user-agent') || undefined
-
-    // Use the code (increment usage, log access)
-    const result = await consumeInviteCode(code, {
-      ipAddress,
-      userAgent,
-    })
-
-    if (!result.success) {
-      return NextResponse.json(
-        { success: false, error: result.error },
+        { success: false, error: 'Invalid passcode' },
         { status: 400 }
       )
     }
 
     // Set beta access cookie (30 days)
     const cookieStore = await cookies()
-    cookieStore.set('sb_beta_access', code.toUpperCase(), {
+    cookieStore.set('sb_beta_access', 'verified', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -54,13 +36,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: 'Welcome to the SweatBuddies beta!',
-      spotsRemaining: result.spotsRemaining,
+      message: 'Welcome to SweatBuddies!',
     })
   } catch (error) {
     console.error('Beta validation error:', error)
     return NextResponse.json(
-      { success: false, error: 'Failed to validate code' },
+      { success: false, error: 'Failed to validate passcode' },
       { status: 500 }
     )
   }

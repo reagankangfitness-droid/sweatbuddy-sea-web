@@ -19,14 +19,51 @@ const isPublicRoute = createRouteMatcher([
   '/host/(.*)',  // Public host profile pages
   '/user/(.*)',  // Public user profile pages
   '/activities/(.*)',  // Public activity pages
+  '/beta(.*)',   // Beta access page
+])
+
+// Routes that bypass beta check entirely
+const isBetaExemptRoute = createRouteMatcher([
+  '/beta(.*)',
+  '/api/beta(.*)',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/api/webhooks(.*)',
+  '/_next(.*)',
+  '/favicon.ico',
 ])
 
 export default clerkMiddleware(async (auth, request) => {
-  // Simple auth check - no beta gating
-  if (!isPublicRoute(request)) {
-    await auth.protect()
+  const { pathname } = request.nextUrl
+
+  // Skip beta check for exempt routes
+  if (isBetaExemptRoute(request)) {
+    if (!isPublicRoute(request)) {
+      await auth.protect()
+    }
+    return NextResponse.next()
   }
-  return NextResponse.next()
+
+  // Check for beta access cookie
+  const betaAccessCookie = request.cookies.get('sb_beta_access')
+
+  // If they have valid beta access, allow through
+  if (betaAccessCookie?.value === 'verified') {
+    if (!isPublicRoute(request)) {
+      await auth.protect()
+    }
+    return NextResponse.next()
+  }
+
+  // No beta access - redirect to beta gate
+  const url = request.nextUrl.clone()
+  url.pathname = '/beta'
+
+  if (pathname !== '/') {
+    url.searchParams.set('redirect', pathname)
+  }
+
+  return NextResponse.redirect(url)
 })
 
 export const config = {

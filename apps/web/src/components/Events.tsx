@@ -185,12 +185,12 @@ export function Events() {
             More events added every Wednesday
           </p>
           <a
-            href="https://instagram.com/sweatbuddies"
+            href="https://instagram.com/foundersrc"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-[#3CCFBB] font-medium hover:underline underline-offset-4"
           >
-            Follow @sweatbuddies for updates
+            Follow @foundersrc for updates
             <span className="text-lg">→</span>
           </a>
         </div>

@@ -45,14 +45,14 @@ export function ForOrganizers() {
             </div>
 
             <h2
-              className="font-extrabold text-white mb-6"
+              className="font-heading font-extrabold text-white mb-6 tracking-wide"
               style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
             >
               You Host. <br />
               <span className="text-gradient">We Amplify.</span>
             </h2>
 
-            <p className="text-white/60 text-lg mb-10 max-w-lg leading-relaxed">
+            <p className="font-body text-white/60 text-lg mb-10 max-w-lg leading-relaxed">
               Running an open session? Get discovered by hundreds of fitness enthusiasts actively looking for their next workout.
             </p>
 
@@ -79,10 +79,10 @@ export function ForOrganizers() {
                   <benefit.icon className="w-5 h-5 text-[#3CCFBB]" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-lg mb-2">
+                  <h3 className="font-heading font-bold text-white text-lg mb-2 tracking-wide">
                     {benefit.title}
                   </h3>
-                  <p className="text-white/50 leading-relaxed">
+                  <p className="font-body text-white/50 leading-relaxed">
                     {benefit.description}
                   </p>
                 </div>

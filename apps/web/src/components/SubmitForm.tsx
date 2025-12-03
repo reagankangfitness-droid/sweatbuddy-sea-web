@@ -226,10 +226,10 @@ export function SubmitForm() {
               <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-[#3CCFBB]/20 flex items-center justify-center">
                 <Check className="w-10 h-10 text-[#3CCFBB]" />
               </div>
-              <h2 className="font-bold text-white text-2xl mb-3">
+              <h2 className="font-heading font-bold text-white text-2xl mb-3 tracking-wide">
                 Thanks for submitting!
               </h2>
-              <p className="text-white/50">
+              <p className="font-body text-white/50">
                 We&apos;ll review your event and feature it within 48 hours.
               </p>
             </div>
@@ -253,12 +253,12 @@ export function SubmitForm() {
               <span>Free Listing</span>
             </div>
             <h2
-              className="font-extrabold text-white mb-4"
+              className="font-heading font-extrabold text-white mb-4 tracking-wide"
               style={{ fontSize: 'clamp(28px, 5vw, 40px)' }}
             >
               Submit Your <span className="text-gradient">Event</span>
             </h2>
-            <p className="text-white/50">
+            <p className="font-body text-white/50">
               We review submissions within 48 hours.
             </p>
           </div>
@@ -267,7 +267,7 @@ export function SubmitForm() {
           <form onSubmit={handleSubmit} className="glass-card rounded-2xl p-6 md:p-8 space-y-6">
             {/* Event Name */}
             <div>
-              <label htmlFor="eventName" className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="eventName" className="block text-sm font-body font-medium text-white/80 mb-2">
                 Event Name *
               </label>
               <input
@@ -282,7 +282,7 @@ export function SubmitForm() {
 
             {/* Category */}
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="category" className="block text-sm font-body font-medium text-white/80 mb-2">
                 Category *
               </label>
               <select
@@ -301,7 +301,7 @@ export function SubmitForm() {
             {/* Day and Time Row */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="day" className="block text-sm font-medium text-white/80 mb-2">
+                <label htmlFor="day" className="block text-sm font-body font-medium text-white/80 mb-2">
                   Day *
                 </label>
                 <input
@@ -314,7 +314,7 @@ export function SubmitForm() {
                 />
               </div>
               <div>
-                <label htmlFor="time" className="block text-sm font-medium text-white/80 mb-2">
+                <label htmlFor="time" className="block text-sm font-body font-medium text-white/80 mb-2">
                   Time *
                 </label>
                 <input
@@ -336,14 +336,14 @@ export function SubmitForm() {
                 name="recurring"
                 className="w-5 h-5 rounded bg-white/5 border-white/20 text-[#3CCFBB] focus:ring-[#3CCFBB] focus:ring-offset-0"
               />
-              <label htmlFor="recurring" className="text-sm text-white/70">
+              <label htmlFor="recurring" className="text-sm font-body text-white/70">
                 This is a recurring event
               </label>
             </div>
 
             {/* Location with Google Places */}
             <div>
-              <label htmlFor="location" className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="location" className="block text-sm font-body font-medium text-white/80 mb-2">
                 Location *
               </label>
               <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={LIBRARIES}>
@@ -389,7 +389,7 @@ export function SubmitForm() {
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="description" className="block text-sm font-body font-medium text-white/80 mb-2">
                 Description (150 chars max)
               </label>
               <textarea
@@ -404,7 +404,7 @@ export function SubmitForm() {
 
             {/* Organizer Name */}
             <div>
-              <label htmlFor="organizerName" className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="organizerName" className="block text-sm font-body font-medium text-white/80 mb-2">
                 Organizer Name *
               </label>
               <input
@@ -419,7 +419,7 @@ export function SubmitForm() {
 
             {/* Organizer Instagram */}
             <div>
-              <label htmlFor="organizerInstagram" className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="organizerInstagram" className="block text-sm font-body font-medium text-white/80 mb-2">
                 Instagram Handle *
               </label>
               <div className="relative">
@@ -437,7 +437,7 @@ export function SubmitForm() {
 
             {/* Contact Email */}
             <div>
-              <label htmlFor="contactEmail" className="block text-sm font-medium text-white/80 mb-2">
+              <label htmlFor="contactEmail" className="block text-sm font-body font-medium text-white/80 mb-2">
                 Contact Email *
               </label>
               <input

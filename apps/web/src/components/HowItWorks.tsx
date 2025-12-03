@@ -46,7 +46,7 @@ export function HowItWorks() {
             <span>Super Simple</span>
           </div>
           <h2
-            className="font-extrabold text-white"
+            className="font-heading font-extrabold text-white tracking-wide"
             style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
           >
             Show Up. <span className="text-gradient-warm">That&apos;s It.</span>
@@ -92,10 +92,10 @@ export function HowItWorks() {
                 </div>
 
                 {/* Content */}
-                <h3 className="font-bold text-white text-xl mb-3">
+                <h3 className="font-heading font-bold text-white text-xl mb-3 tracking-wide">
                   {step.title}
                 </h3>
-                <p className="text-white/50 leading-relaxed">
+                <p className="font-body text-white/50 leading-relaxed">
                   {step.description}
                 </p>
               </div>

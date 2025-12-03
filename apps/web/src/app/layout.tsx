@@ -1,20 +1,23 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, League_Spartan } from 'next/font/google'
+import { Inter, Exo_2 } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
 import './globals.css'
 
-// Optimized font loading with display swap to prevent FOIT
+// Body font - clean, readable, versatile
 const inter = Inter({
   subsets: ['latin'],
+  weight: ['400', '500', '600'],
   variable: '--font-inter',
   display: 'swap',
   preload: true,
 })
 
-const leagueSpartan = League_Spartan({
+// Heading font - energetic, futuristic, dynamic
+const exo2 = Exo_2({
   subsets: ['latin'],
-  variable: '--font-league-spartan',
+  weight: ['600', '700', '800', '900'],
+  variable: '--font-exo2',
   display: 'swap',
   preload: true,
 })
@@ -30,7 +33,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#1A2B3C',
+  themeColor: '#080A0F',
 }
 
 export default function RootLayout({
@@ -50,7 +53,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://js.stripe.com" />
         */}
       </head>
-      <body className={`${inter.variable} ${leagueSpartan.variable}`}>
+      <body className={`${inter.variable} ${exo2.variable}`}>
         <Providers>
           {children}
           <Toaster />

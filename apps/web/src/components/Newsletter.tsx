@@ -62,13 +62,13 @@ export function Newsletter() {
           </div>
 
           <h2
-            className="font-extrabold text-white mb-4"
+            className="font-heading font-extrabold text-white mb-4 tracking-wide"
             style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
           >
             Get the <span className="text-gradient-energy">Weekly Drop</span>
           </h2>
 
-          <p className="text-white/50 text-lg mb-10">
+          <p className="font-body text-white/50 text-lg mb-10">
             Every Wednesday. The best events. Your inbox.
           </p>
 
@@ -77,8 +77,8 @@ export function Newsletter() {
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#3CCFBB]/20 flex items-center justify-center">
                 <Check className="w-8 h-8 text-[#3CCFBB]" />
               </div>
-              <h3 className="font-bold text-white text-xl mb-2">You&apos;re in!</h3>
-              <p className="text-white/50">Check your inbox for a confirmation.</p>
+              <h3 className="font-heading font-bold text-white text-xl mb-2 tracking-wide">You&apos;re in!</h3>
+              <p className="font-body text-white/50">Check your inbox for a confirmation.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="max-w-md mx-auto">

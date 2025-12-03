@@ -20,7 +20,8 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['var(--font-inter)', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica Neue', 'Arial', 'sans-serif'],
-        display: ['var(--font-league-spartan)', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        heading: ['var(--font-exo2)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        body: ['var(--font-inter)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
       colors: {
         // Dark theme base

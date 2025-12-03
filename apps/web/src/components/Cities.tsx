@@ -56,7 +56,7 @@ export function Cities() {
             <span>Expanding Across SEA</span>
           </div>
           <h2
-            className="font-extrabold text-white"
+            className="font-heading font-extrabold text-white tracking-wide"
             style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
           >
             Where We&apos;re <span className="text-gradient">Live</span>
@@ -90,12 +90,12 @@ export function Cities() {
               </div>
 
               {/* City Name */}
-              <h3 className="font-bold text-white text-2xl mb-2">
+              <h3 className="font-heading font-bold text-white text-2xl mb-2 tracking-wide">
                 {city.name}
               </h3>
 
               {/* Status */}
-              <p className={`text-sm mb-4 ${
+              <p className={`font-body text-sm mb-4 ${
                 city.status === 'active' ? 'text-white/70' : 'text-white/40'
               }`}>
                 {city.subtitle}

@@ -72,12 +72,12 @@ export function Events() {
             <span>Updated Weekly</span>
           </div>
           <h2
-            className="font-extrabold text-white mb-4"
+            className="font-heading font-extrabold text-white mb-4 tracking-wide"
             style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
           >
             What&apos;s On <span className="text-gradient">This Week</span>
           </h2>
-          <p className="text-white/50 text-lg">
+          <p className="font-body text-white/50 text-lg">
             Singapore • {getCurrentWeekRange()}
           </p>
         </div>
@@ -168,8 +168,8 @@ export function Events() {
             <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-white/5 flex items-center justify-center text-3xl">
               🔍
             </div>
-            <h3 className="font-bold text-white mb-3 text-xl">No events found</h3>
-            <p className="text-white/50 mb-6">Try adjusting your search or filters</p>
+            <h3 className="font-heading font-bold text-white mb-3 text-xl tracking-wide">No events found</h3>
+            <p className="font-body text-white/50 mb-6">Try adjusting your search or filters</p>
             <button
               onClick={clearFilters}
               className="btn-primary"

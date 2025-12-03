@@ -73,20 +73,18 @@
     --category-outdoor: 168 58% 52%;      /* Teal */
     --category-outdoor-text: 0 0% 100%;
 
-    /* Typography Scale */
-    --text-xs: 11px;
-    --text-sm: 12px;
-    --text-caption: 13px;
-    --text-body-sm: 14px;
-    --text-body: 15px;
-    --text-body-lg: 16px;
-    --text-h4: 15px;
-    --text-h3: 18px;
-    --text-h2: 24px;
-    --text-h1: 36px;
-    --text-hero: 56px;
-    --text-display: 72px;
-    --text-logo: 22px;
+    /* Typography Scale - Updated for Exo 2 + Inter system */
+    --text-tiny: 12px;
+    --text-small: 14px;
+    --text-body: 16px;
+    --text-body-mobile: 15px;
+    --text-card-title: 24px;
+    --text-card-title-mobile: 20px;
+    --text-section: 36px;
+    --text-section-mobile: 28px;
+    --text-hero: 48px;
+    --text-hero-mobile: 32px;
+    --text-button: 16px;
 
     /* Font Weights */
     --weight-regular: 400;
@@ -94,20 +92,21 @@
     --weight-semibold: 600;
     --weight-bold: 700;
     --weight-extrabold: 800;
+    --weight-black: 900;
 
     /* Line Heights */
     --leading-none: 1;
     --leading-tight: 1.1;
-    --leading-snug: 1.3;
-    --leading-normal: 1.5;
+    --leading-snug: 1.2;
+    --leading-normal: 1.4;
     --leading-relaxed: 1.6;
 
-    /* Letter Spacing */
-    --tracking-tighter: -0.03em;
+    /* Letter Spacing - Updated for energetic headings */
     --tracking-tight: -0.02em;
-    --tracking-snug: -0.01em;
     --tracking-normal: 0;
-    --tracking-wide: 0.04em;
+    --tracking-wide: 0.02em;
+    --tracking-wider: 0.03em;
+    --tracking-widest: 0.05em;
 
     /* Animation Durations */
     --duration-fast: 150ms;
@@ -150,39 +149,41 @@
     overflow-x: hidden;
   }
 
-  /* Heading Styles */
+  /* Heading Styles - Using Exo 2 */
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-league-spartan), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-family: var(--font-exo2), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     font-weight: var(--weight-bold);
     line-height: var(--leading-tight);
     margin: 0;
     color: hsl(0 0% 98%);
+    letter-spacing: var(--tracking-wide);
   }
 
   h1 {
     font-size: var(--text-hero);
-    letter-spacing: var(--tracking-tighter);
+    letter-spacing: var(--tracking-widest);
     font-weight: var(--weight-extrabold);
   }
 
   h2 {
-    font-size: var(--text-h2);
+    font-size: var(--text-section);
     line-height: var(--leading-snug);
-    letter-spacing: var(--tracking-tight);
+    letter-spacing: var(--tracking-wider);
   }
 
   h3 {
-    font-size: var(--text-h3);
-    line-height: 1.4;
-    letter-spacing: var(--tracking-snug);
+    font-size: var(--text-card-title);
+    line-height: var(--leading-normal);
+    letter-spacing: var(--tracking-wide);
   }
 
   h4 {
-    font-size: var(--text-h4);
-    line-height: 1.4;
+    font-size: 18px;
+    line-height: var(--leading-normal);
   }
 
   p {
+    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     font-size: var(--text-body);
     line-height: var(--leading-relaxed);
     margin: 0;
@@ -191,12 +192,6 @@
 
   button, input, select, textarea {
     font-family: inherit;
-  }
-
-  button {
-    font-weight: var(--weight-semibold);
-    font-size: var(--text-body-sm);
-    letter-spacing: var(--tracking-normal);
   }
 
   /* Selection styling */
@@ -208,28 +203,104 @@
   /* Mobile typography */
   @media (max-width: 767px) {
     h1 {
-      font-size: 36px;
+      font-size: var(--text-hero-mobile);
     }
 
     h2 {
-      font-size: 28px;
+      font-size: var(--text-section-mobile);
     }
 
     h3 {
-      font-size: 20px;
+      font-size: var(--text-card-title-mobile);
+    }
+
+    body, p {
+      font-size: var(--text-body-mobile);
     }
   }
 
   /* Tablet typography */
   @media (min-width: 768px) and (max-width: 1023px) {
     h1 {
-      font-size: 48px;
+      font-size: 40px;
     }
 
     h2 {
       font-size: 32px;
     }
   }
+}
+
+/* ================================
+   FONT UTILITY CLASSES
+   ================================ */
+.font-heading {
+  font-family: var(--font-exo2), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.font-body {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Hero headline style */
+.heading-hero {
+  font-family: var(--font-exo2), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: var(--text-hero);
+  font-weight: var(--weight-extrabold);
+  letter-spacing: var(--tracking-widest);
+  line-height: var(--leading-tight);
+}
+
+/* Section heading style */
+.heading-section {
+  font-family: var(--font-exo2), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: var(--text-section);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-wider);
+  line-height: var(--leading-snug);
+}
+
+/* Card title style */
+.heading-card {
+  font-family: var(--font-exo2), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-wide);
+  line-height: var(--leading-snug);
+}
+
+/* Body text style */
+.text-body {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-relaxed);
+}
+
+/* Small text style */
+.text-small {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: var(--text-small);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  letter-spacing: 0.01em;
+}
+
+/* Button text style */
+.text-button {
+  font-family: var(--font-exo2), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: var(--text-button);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+}
+
+/* Mobile overrides */
+@media (max-width: 768px) {
+  .heading-hero { font-size: var(--text-hero-mobile); }
+  .heading-section { font-size: var(--text-section-mobile); }
+  .heading-card { font-size: var(--text-card-title-mobile); }
+  .text-body { font-size: var(--text-body-mobile); }
 }
 
 /* ================================
@@ -372,8 +443,11 @@
   align-items: center;
   justify-content: center;
   padding: 16px 32px;
-  font-weight: 600;
+  font-family: var(--font-exo2), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
   font-size: 16px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: hsl(220 20% 4%);
   background: linear-gradient(135deg, hsl(168 58% 52%), hsl(168 58% 45%));
   border: none;
@@ -415,8 +489,11 @@
   align-items: center;
   justify-content: center;
   padding: 16px 32px;
-  font-weight: 600;
+  font-family: var(--font-exo2), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
   font-size: 16px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: hsl(0 0% 100%);
   background: transparent;
   border: none;
@@ -458,8 +535,11 @@
   align-items: center;
   justify-content: center;
   padding: 14px 28px;
-  font-weight: 600;
+  font-family: var(--font-exo2), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
   font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: hsl(0 0% 100%);
   background: transparent;
   border: 2px solid hsl(0 0% 100% / 0.2);
@@ -538,10 +618,11 @@
   display: inline-flex;
   align-items: center;
   padding: 6px 14px;
-  font-size: 12px;
+  font-family: var(--font-exo2), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   border-radius: 20px;
   transition: all 0.3s;
 }
@@ -730,6 +811,7 @@
   background: hsl(0 0% 100% / 0.05);
   border: 1px solid hsl(0 0% 100% / 0.1);
   color: hsl(0 0% 100%);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
   transition: all 0.3s;
 }
 

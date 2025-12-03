@@ -79,21 +79,19 @@ export function Hero() {
             }`}
           >
             <h1
-              className="font-extrabold text-white mb-2"
+              className="font-heading font-extrabold text-white mb-2 tracking-wide"
               style={{
                 fontSize: 'clamp(40px, 10vw, 80px)',
                 lineHeight: '1',
-                letterSpacing: '-0.03em',
               }}
             >
               {slide.headline}
             </h1>
             <h1
-              className={`font-extrabold mb-8 text-gradient`}
+              className="font-heading font-extrabold mb-8 text-gradient tracking-wide"
               style={{
                 fontSize: 'clamp(40px, 10vw, 80px)',
                 lineHeight: '1',
-                letterSpacing: '-0.03em',
               }}
             >
               {slide.subline}
@@ -102,7 +100,7 @@ export function Hero() {
 
           {/* Subhead */}
           <p
-            className={`text-white/70 mb-10 max-w-xl transition-all duration-1000 delay-200 ${
+            className={`font-body text-white/70 mb-10 max-w-xl transition-all duration-1000 delay-200 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
             style={{
@@ -134,18 +132,18 @@ export function Hero() {
             }`}
           >
             <div className="flex items-center gap-2">
-              <span className="text-3xl font-bold text-gradient">50+</span>
-              <span className="text-white/60 text-sm">events</span>
+              <span className="text-3xl font-heading font-bold text-gradient">50+</span>
+              <span className="text-white/60 text-sm font-body">events</span>
             </div>
             <div className="w-px h-6 bg-white/20 hidden sm:block" />
             <div className="flex items-center gap-2">
-              <span className="text-3xl font-bold text-gradient">3</span>
-              <span className="text-white/60 text-sm">cities</span>
+              <span className="text-3xl font-heading font-bold text-gradient">3</span>
+              <span className="text-white/60 text-sm font-body">cities</span>
             </div>
             <div className="w-px h-6 bg-white/20 hidden sm:block" />
             <div className="flex items-center gap-2">
-              <span className="text-3xl font-bold text-gradient">20+</span>
-              <span className="text-white/60 text-sm">organizers</span>
+              <span className="text-3xl font-heading font-bold text-gradient">20+</span>
+              <span className="text-white/60 text-sm font-body">organizers</span>
             </div>
           </div>
         </div>

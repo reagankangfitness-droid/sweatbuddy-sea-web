@@ -42,7 +42,7 @@ export function Mission() {
               <span>Our Mission</span>
             </div>
             <h2
-              className="font-extrabold text-white mb-6"
+              className="font-heading font-extrabold text-white mb-6 tracking-wide"
               style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
             >
               Movement Without <br className="hidden sm:block" />
@@ -57,10 +57,10 @@ export function Mission() {
                 key={index}
                 className="glass-card rounded-xl p-4 text-center"
               >
-                <div className="text-2xl md:text-3xl font-bold text-gradient-warm mb-1">
+                <div className="font-heading text-2xl md:text-3xl font-bold text-gradient-warm mb-1">
                   {stat.value}
                 </div>
-                <div className="text-xs md:text-sm text-white/40">
+                <div className="font-body text-xs md:text-sm text-white/40">
                   {stat.label}
                 </div>
               </div>

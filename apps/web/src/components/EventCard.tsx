@@ -156,13 +156,13 @@ export function EventCard({ event, index = 0 }: EventCardProps) {
         )}
 
         {/* Event Name */}
-        <h3 className="font-bold text-white mb-3 text-lg leading-tight group-hover:text-[#3CCFBB] transition-colors duration-300">
+        <h3 className="font-heading font-bold text-white mb-3 text-lg leading-tight tracking-wide group-hover:text-[#3CCFBB] transition-colors duration-300">
           {event.name}
         </h3>
 
         {/* Meta info */}
         <div className="space-y-2 mb-4">
-          <div className="flex items-center gap-2 text-white/60 text-sm">
+          <div className="flex items-center gap-2 text-white/60 text-sm font-body">
             <Calendar className="w-4 h-4 text-[#3CCFBB]" />
             <span>{event.day}</span>
             <span className="text-white/30">•</span>
@@ -170,7 +170,7 @@ export function EventCard({ event, index = 0 }: EventCardProps) {
             <span>{event.time}</span>
           </div>
 
-          <div className="flex items-start gap-2 text-white/60 text-sm">
+          <div className="flex items-start gap-2 text-white/60 text-sm font-body">
             <MapPin className="w-4 h-4 text-[#3CCFBB] flex-shrink-0 mt-0.5" />
             <span className="line-clamp-1">{event.location}</span>
           </div>
@@ -178,7 +178,7 @@ export function EventCard({ event, index = 0 }: EventCardProps) {
 
         {/* Description */}
         {event.description && (
-          <p className="text-white/50 text-sm mb-4 line-clamp-2 leading-relaxed">
+          <p className="font-body text-white/50 text-sm mb-4 line-clamp-2 leading-relaxed">
             {event.description}
           </p>
         )}

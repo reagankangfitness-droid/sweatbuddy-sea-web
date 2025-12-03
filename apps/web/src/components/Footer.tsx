@@ -52,9 +52,9 @@ export function Footer() {
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2.5 text-white mb-4">
               <Logo size={32} />
-              <span className="font-bold text-xl">sweatbuddies</span>
+              <span className="font-heading font-bold text-xl tracking-wide">sweatbuddies</span>
             </div>
-            <p className="text-white/40 text-sm leading-relaxed mb-6">
+            <p className="font-body text-white/40 text-sm leading-relaxed mb-6">
               Your city&apos;s moving. Know where.
             </p>
 
@@ -78,7 +78,7 @@ export function Footer() {
           {/* Link columns */}
           {footerLinks.map((group) => (
             <div key={group.title}>
-              <h4 className="font-semibold text-white text-sm mb-4 uppercase tracking-wider">
+              <h4 className="font-heading font-semibold text-white text-sm mb-4 uppercase tracking-widest">
                 {group.title}
               </h4>
               <ul className="space-y-3">
@@ -86,7 +86,7 @@ export function Footer() {
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="text-white/40 text-sm hover:text-white transition-colors"
+                      className="font-body text-white/40 text-sm hover:text-white transition-colors"
                     >
                       {link.label}
                     </a>
@@ -100,14 +100,14 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-white/10">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-white/30 text-sm">
+            <p className="font-body text-white/30 text-sm">
               © {new Date().getFullYear()} SweatBuddies. All events listed are open to attend.
             </p>
             <div className="flex items-center gap-6">
-              <a href="#" className="text-white/30 text-sm hover:text-white transition-colors">
+              <a href="#" className="font-body text-white/30 text-sm hover:text-white transition-colors">
                 Privacy Policy
               </a>
-              <a href="#" className="text-white/30 text-sm hover:text-white transition-colors">
+              <a href="#" className="font-body text-white/30 text-sm hover:text-white transition-colors">
                 Terms of Service
               </a>
             </div>
@@ -117,8 +117,7 @@ export function Footer() {
         {/* Large background text */}
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none select-none overflow-hidden">
           <div
-            className="text-[15vw] font-extrabold text-white/[0.02] whitespace-nowrap"
-            style={{ letterSpacing: '-0.05em' }}
+            className="font-heading text-[15vw] font-extrabold text-white/[0.02] whitespace-nowrap tracking-wider"
           >
             SWEAT
           </div>

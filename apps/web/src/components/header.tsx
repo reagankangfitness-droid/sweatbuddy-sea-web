@@ -31,7 +31,7 @@ export function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2.5 font-bold text-white hover:text-[#3CCFBB] transition-all tracking-tight group"
+            className="flex items-center gap-2.5 font-heading font-bold text-white hover:text-[#3CCFBB] transition-all tracking-wide group"
             style={{ fontSize: '22px' }}
           >
             <span className="transition-transform group-hover:scale-110 duration-300">
@@ -44,19 +44,19 @@ export function Header() {
           <nav className="hidden md:flex items-center gap-8">
             <a
               href="#events"
-              className="text-white/70 hover:text-white text-sm font-medium transition-colors"
+              className="font-body text-white/70 hover:text-white text-sm font-medium transition-colors"
             >
               Events
             </a>
             <a
               href="#cities"
-              className="text-white/70 hover:text-white text-sm font-medium transition-colors"
+              className="font-body text-white/70 hover:text-white text-sm font-medium transition-colors"
             >
               Cities
             </a>
             <a
               href="#mission"
-              className="text-white/70 hover:text-white text-sm font-medium transition-colors"
+              className="font-body text-white/70 hover:text-white text-sm font-medium transition-colors"
             >
               About
             </a>
@@ -94,21 +94,21 @@ export function Header() {
             <a
               href="#events"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-white/70 hover:text-white text-lg font-medium transition-colors py-2"
+              className="font-body text-white/70 hover:text-white text-lg font-medium transition-colors py-2"
             >
               Events
             </a>
             <a
               href="#cities"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-white/70 hover:text-white text-lg font-medium transition-colors py-2"
+              className="font-body text-white/70 hover:text-white text-lg font-medium transition-colors py-2"
             >
               Cities
             </a>
             <a
               href="#mission"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-white/70 hover:text-white text-lg font-medium transition-colors py-2"
+              className="font-body text-white/70 hover:text-white text-lg font-medium transition-colors py-2"
             >
               About
             </a>

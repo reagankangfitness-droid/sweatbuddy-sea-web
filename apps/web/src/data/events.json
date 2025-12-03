@@ -119,6 +119,18 @@
       "organizer": "lskd",
       "imageUrl": "https://utfs.io/f/wzDAnQf7ZjQkucgpX8V61jAmb09xwYt4RFalHLXDcd58EWoT",
       "recurring": false
+    },
+    {
+      "id": "11",
+      "name": "Maximum Wellness at Maxwell Market",
+      "category": "Fitness Social",
+      "day": "Fridays",
+      "time": "11:00 AM",
+      "location": "Maxwell Food Centre, Kadayanallur St",
+      "description": "True wellness is holistic: artisanal soaps, handmade bakes, and good vibes.",
+      "organizer": "marketatmaxwell",
+      "imageUrl": "",
+      "recurring": false
     }
   ]
 }

@@ -124,12 +124,12 @@
       "id": "11",
       "name": "Maximum Wellness at Maxwell Market",
       "category": "Fitness Social",
-      "day": "Fridays",
-      "time": "11:00 AM",
-      "location": "Maxwell Food Centre, Kadayanallur St",
+      "day": "Dec 6 & 7",
+      "time": "11:00 AM - 5:00 PM",
+      "location": "AIBI HQ, 30 Maxwell Road",
       "description": "True wellness is holistic: artisanal soaps, handmade bakes, and good vibes.",
       "organizer": "marketatmaxwell",
-      "imageUrl": "",
+      "imageUrl": "https://cdn.evbuc.com/images/920742289/349498516795/1/original.png",
       "recurring": false
     }
   ]

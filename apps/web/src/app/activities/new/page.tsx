@@ -221,12 +221,15 @@ export default function NewActivityPage() {
 
     try {
       const data = form.getValues()
+      // Include timezone offset so the server can properly convert datetime-local to UTC
+      // getTimezoneOffset() returns minutes, negative for east of UTC (e.g., -480 for UTC+8)
+      const timezoneOffset = new Date().getTimezoneOffset()
       const response = await fetch('/api/activities', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, timezoneOffset }),
       })
 
       if (!response.ok) {
@@ -234,10 +237,8 @@ export default function NewActivityPage() {
         throw new Error(error.error || 'Failed to create activity')
       }
 
-      const activity = await response.json()
-
-      toast.success('Activity created successfully!')
-      router.push(`/activities/${activity.id}`)
+      toast.success('Event submitted for review! You will be notified once it is approved (typically within 24 hours).')
+      router.push('/dashboard')
     } catch (error) {
       console.error('Error creating activity:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to create activity')
@@ -557,7 +558,7 @@ export default function NewActivityPage() {
                     Cancel
                   </Button>
                   <Button type="submit" disabled={isSubmitting || !markerPosition}>
-                    {isSubmitting ? 'Creating...' : 'Create Activity'}
+                    {isSubmitting ? 'Submitting...' : 'Submit Event'}
                   </Button>
                 </div>
               </form>
@@ -567,9 +568,9 @@ export default function NewActivityPage() {
           <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Confirm Activity Creation</DialogTitle>
+                <DialogTitle>Submit Event for Review</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to create this activity?
+                  Your event will be reviewed by our team before going live. This typically takes up to 24 hours.
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-2 py-4">
@@ -600,6 +601,12 @@ export default function NewActivityPage() {
                   {form.getValues('longitude').toFixed(4)}
                 </div>
               </div>
+              {/* Approval Notice */}
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 my-4">
+                <p className="text-sm text-amber-800">
+                  <strong>Note:</strong> All events are reviewed before being published to ensure quality and safety for our community. You will receive a notification once your event is approved.
+                </p>
+              </div>
               <DialogFooter>
                 <Button
                   variant="outline"
@@ -609,7 +616,7 @@ export default function NewActivityPage() {
                   Cancel
                 </Button>
                 <Button onClick={handleConfirmSubmit} disabled={isSubmitting}>
-                  {isSubmitting ? 'Creating...' : 'Confirm'}
+                  {isSubmitting ? 'Submitting...' : 'Submit for Review'}
                 </Button>
               </DialogFooter>
             </DialogContent>

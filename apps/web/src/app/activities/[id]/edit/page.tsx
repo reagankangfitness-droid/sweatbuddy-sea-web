@@ -63,6 +63,21 @@ const ACTIVITY_TYPES = [
   { value: 'OTHER', label: 'Other' },
 ]
 
+/**
+ * Converts a UTC date to a datetime-local string in the user's local timezone.
+ * datetime-local format: "YYYY-MM-DDTHH:MM"
+ */
+function utcToLocalDateTimeString(utcDate: Date | string): string {
+  const date = new Date(utcDate)
+  // Get local date/time components
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  return `${year}-${month}-${day}T${hours}:${minutes}`
+}
+
 export default function EditActivityPage({ params }: { params: { id: string } }) {
   const router = useRouter()
   const { isLoaded: mapLoaded } = useLoadScript({
@@ -127,8 +142,8 @@ export default function EditActivityPage({ params }: { params: { id: string } })
           placeId: data.placeId || '',
           latitude: data.latitude || 0,
           longitude: data.longitude || 0,
-          startTime: data.startTime ? new Date(data.startTime).toISOString().slice(0, 16) : '',
-          endTime: data.endTime ? new Date(data.endTime).toISOString().slice(0, 16) : '',
+          startTime: data.startTime ? utcToLocalDateTimeString(data.startTime) : '',
+          endTime: data.endTime ? utcToLocalDateTimeString(data.endTime) : '',
           maxPeople: data.maxPeople || undefined,
           imageUrl: data.imageUrl || '',
           price: data.price || 0,
@@ -249,12 +264,14 @@ export default function EditActivityPage({ params }: { params: { id: string } })
 
     try {
       const data = form.getValues()
+      // Include timezone offset so the server can properly convert datetime-local to UTC
+      const timezoneOffset = new Date().getTimezoneOffset()
       const response = await fetch(`/api/activities/${params.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, timezoneOffset }),
       })
 
       if (!response.ok) {

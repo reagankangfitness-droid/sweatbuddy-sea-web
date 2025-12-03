@@ -422,9 +422,9 @@ Organized via sweatbuddies
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-6">
               {activity.description && (
-                <div className="rounded-lg border p-6">
+                <div className="rounded-lg border p-6 overflow-hidden">
                   <h2 className="text-xl font-semibold mb-3">Description</h2>
-                  <p className="text-muted-foreground">{activity.description}</p>
+                  <p className="text-muted-foreground whitespace-pre-wrap break-words overflow-wrap-anywhere">{activity.description}</p>
                 </div>
               )}
 

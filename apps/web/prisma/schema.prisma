@@ -69,6 +69,7 @@ model ActivityCategory {
 
 enum ActivityStatus {
   DRAFT
+  PENDING_APPROVAL
   PUBLISHED
   CANCELLED
   COMPLETED
@@ -1562,6 +1563,51 @@ model HostRatingSummary {
 
   @@index([averageRating])
   @@map("host_rating_summaries")
+}
+
+// =====================================================
+// EVENT SUBMISSIONS (Public form submissions)
+// =====================================================
+
+enum EventSubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model EventSubmission {
+  id                String                @id @default(cuid())
+
+  // Event details
+  eventName         String                @db.VarChar(200)
+  category          String                @db.VarChar(50)
+  day               String                @db.VarChar(50)
+  time              String                @db.VarChar(50)
+  recurring         Boolean               @default(true)
+  location          String                @db.VarChar(300)
+  latitude          Float?
+  longitude         Float?
+  placeId           String?               @db.VarChar(100)
+  description       String?               @db.Text
+
+  // Organizer details
+  organizerName     String                @db.VarChar(200)
+  organizerInstagram String               @db.VarChar(100)
+  contactEmail      String                @db.VarChar(255)
+
+  // Status
+  status            EventSubmissionStatus @default(PENDING)
+  reviewedAt        DateTime?
+  reviewedBy        String?               // Admin user ID who reviewed
+  rejectionReason   String?               @db.Text
+
+  // Timestamps
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  @@index([status, createdAt])
+  @@index([contactEmail])
+  @@map("event_submissions")
 }
 
 // =====================================================

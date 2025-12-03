@@ -4,6 +4,45 @@ import { prisma } from '@/lib/prisma'
 import { activitySchema } from '@/lib/validations/activity'
 import { mapCategoryToLegacyType, getCategoriesByGroup } from '@/lib/categories'
 
+/**
+ * Converts a datetime-local string (e.g., "2024-12-15T14:00") to a proper UTC Date.
+ * datetime-local inputs don't include timezone info, so we need to interpret them
+ * as the user's local time and convert to UTC.
+ *
+ * @param dateTimeLocal - String like "2024-12-15T18:30" from datetime-local input
+ * @param timezoneOffset - Client's timezone offset in minutes (e.g., -480 for UTC+8)
+ *                         This is the value from new Date().getTimezoneOffset()
+ */
+function parseLocalDateTime(dateTimeLocal: string, timezoneOffset?: number): Date {
+  // If already has timezone info, parse directly
+  if (/Z$|[+-]\d{2}:\d{2}$/.test(dateTimeLocal)) {
+    return new Date(dateTimeLocal)
+  }
+
+  // If no timezone offset provided, treat as UTC (backwards compatibility)
+  if (timezoneOffset === undefined) {
+    return new Date(dateTimeLocal + 'Z')
+  }
+
+  // Parse the datetime-local string components directly to avoid timezone issues
+  // Format: "YYYY-MM-DDTHH:MM" or "YYYY-MM-DDTHH:MM:SS"
+  const [datePart, timePart] = dateTimeLocal.split('T')
+  const [year, month, day] = datePart.split('-').map(Number)
+  const timeParts = timePart.split(':').map(Number)
+  const hours = timeParts[0]
+  const minutes = timeParts[1]
+  const seconds = timeParts[2] || 0
+
+  // Create a UTC date from the local time components
+  // Then adjust by the client's timezone offset
+  // timezoneOffset is negative for east of UTC (e.g., -480 for UTC+8)
+  // So for UTC+8, we need to SUBTRACT 8 hours to get UTC
+  const utcDate = Date.UTC(year, month - 1, day, hours, minutes, seconds)
+  const adjustedUtc = utcDate + (timezoneOffset * 60 * 1000)
+
+  return new Date(adjustedUtc)
+}
+
 export async function POST(request: Request) {
   try {
     // Authenticate with Clerk
@@ -36,6 +75,10 @@ export async function POST(request: Request) {
     const body = await request.json()
     const validatedData = activitySchema.parse(body)
 
+    // Get timezone offset from request body (sent by client)
+    // This is the offset in minutes from UTC (e.g., -480 for UTC+8 Singapore)
+    const timezoneOffset = typeof body.timezoneOffset === 'number' ? body.timezoneOffset : undefined
+
     // Create activity and group chat in a transaction
     const result = await prisma.$transaction(async (tx) => {
       // Determine legacy type from categorySlug for backwards compatibility
@@ -60,13 +103,13 @@ export async function POST(request: Request) {
           postalCode: validatedData.postalCode || null,
           country: validatedData.country || null,
           placeId: validatedData.placeId || null,
-          startTime: validatedData.startTime ? new Date(validatedData.startTime) : null,
-          endTime: validatedData.endTime ? new Date(validatedData.endTime) : null,
+          startTime: validatedData.startTime ? parseLocalDateTime(validatedData.startTime, timezoneOffset) : null,
+          endTime: validatedData.endTime ? parseLocalDateTime(validatedData.endTime, timezoneOffset) : null,
           maxPeople: validatedData.maxPeople || null,
           imageUrl: validatedData.imageUrl || null,
           price: validatedData.price ?? 0,
           currency: validatedData.currency || 'USD',
-          status: validatedData.status || 'PUBLISHED',
+          status: 'PENDING_APPROVAL', // All new activities require approval
           userId,
           hostId: userId, // Creator is the host by default
         },
@@ -119,9 +162,10 @@ export async function GET(request: Request) {
     const limit = searchParams.get('limit')
     const offset = searchParams.get('offset')
 
-    // Build where clause
+    // Build where clause - only show PUBLISHED activities to public
     const where: Record<string, unknown> = {
       deletedAt: null,
+      status: 'PUBLISHED', // Only show approved/published activities
     }
 
     // Filter by categories (comma-separated slugs)
@@ -148,7 +192,6 @@ export async function GET(request: Request) {
     // Filter to upcoming activities only
     if (upcoming === 'true') {
       where.startTime = { gte: new Date() }
-      where.status = 'PUBLISHED'
     }
 
     const activities = await prisma.activity.findMany({

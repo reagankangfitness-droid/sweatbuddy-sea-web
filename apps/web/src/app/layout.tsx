@@ -20,8 +20,8 @@ const leagueSpartan = League_Spartan({
 })
 
 export const metadata: Metadata = {
-  title: 'SweatBuddies - Find Your Sweat Tribe',
-  description: 'Find a workout experience near you - connect with fitness enthusiasts for group workouts',
+  title: 'SweatBuddies - Discover Fitness Events in Singapore',
+  description: 'Discover the best fitness events in Singapore. Run clubs, outdoor yoga, community bootcamps, and more—curated in one place.',
   icons: {
     icon: '/favicon.svg',
     apple: '/images/logo/favicon.svg',
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0025CC',
+  themeColor: '#1A2B3C',
 }
 
 export default function RootLayout({
@@ -41,15 +41,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Preconnect to critical third-party origins */}
+        {/* TODO: Re-enable for marketplace phase (Year 2)
         <link rel="preconnect" href="https://clerk.sweatbuddies.co" />
         <link rel="preconnect" href="https://utfs.io" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://img.clerk.com" crossOrigin="anonymous" />
-
-        {/* DNS prefetch for services used later */}
         <link rel="dns-prefetch" href="https://clerk.sweatbuddies.co" />
         <link rel="dns-prefetch" href="https://maps.googleapis.com" />
         <link rel="dns-prefetch" href="https://js.stripe.com" />
+        */}
       </head>
       <body className={`${inter.variable} ${leagueSpartan.variable}`}>
         <Providers>

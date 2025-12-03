@@ -2,6 +2,45 @@ import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+/**
+ * Converts a datetime-local string (e.g., "2024-12-15T14:00") to a proper UTC Date.
+ * datetime-local inputs don't include timezone info, so we need to interpret them
+ * as the user's local time and convert to UTC.
+ *
+ * @param dateTimeLocal - String like "2024-12-15T18:30" from datetime-local input
+ * @param timezoneOffset - Client's timezone offset in minutes (e.g., -480 for UTC+8)
+ *                         This is the value from new Date().getTimezoneOffset()
+ */
+function parseLocalDateTime(dateTimeLocal: string, timezoneOffset?: number): Date {
+  // If already has timezone info, parse directly
+  if (/Z$|[+-]\d{2}:\d{2}$/.test(dateTimeLocal)) {
+    return new Date(dateTimeLocal)
+  }
+
+  // If no timezone offset provided, treat as UTC (backwards compatibility)
+  if (timezoneOffset === undefined) {
+    return new Date(dateTimeLocal + 'Z')
+  }
+
+  // Parse the datetime-local string components directly to avoid timezone issues
+  // Format: "YYYY-MM-DDTHH:MM" or "YYYY-MM-DDTHH:MM:SS"
+  const [datePart, timePart] = dateTimeLocal.split('T')
+  const [year, month, day] = datePart.split('-').map(Number)
+  const timeParts = timePart.split(':').map(Number)
+  const hours = timeParts[0]
+  const minutes = timeParts[1]
+  const seconds = timeParts[2] || 0
+
+  // Create a UTC date from the local time components
+  // Then adjust by the client's timezone offset
+  // timezoneOffset is negative for east of UTC (e.g., -480 for UTC+8)
+  // So for UTC+8, we need to SUBTRACT 8 hours to get UTC
+  const utcDate = Date.UTC(year, month - 1, day, hours, minutes, seconds)
+  const adjustedUtc = utcDate + (timezoneOffset * 60 * 1000)
+
+  return new Date(adjustedUtc)
+}
+
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
@@ -99,6 +138,9 @@ export async function PUT(
     // Parse and update activity
     const body = await request.json()
 
+    // Get timezone offset from request body (sent by client)
+    const timezoneOffset = typeof body.timezoneOffset === 'number' ? body.timezoneOffset : undefined
+
     const updatedActivity = await prisma.activity.update({
       where: {
         id: params.id,
@@ -110,8 +152,8 @@ export async function PUT(
         city: body.city,
         latitude: body.latitude,
         longitude: body.longitude,
-        startTime: body.startTime ? new Date(body.startTime) : null,
-        endTime: body.endTime ? new Date(body.endTime) : null,
+        startTime: body.startTime ? parseLocalDateTime(body.startTime, timezoneOffset) : null,
+        endTime: body.endTime ? parseLocalDateTime(body.endTime, timezoneOffset) : null,
         maxPeople: body.maxPeople || null,
         imageUrl: body.imageUrl || null,
         price: body.price ?? 0,

@@ -1,114 +1,130 @@
 'use client'
 
-import { UserButton, SignedIn, SignedOut, SignInButton, useAuth } from '@clerk/nextjs'
 import Link from 'next/link'
-import { Plus, LayoutDashboard } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { NotificationBell } from '@/components/notification-bell'
 import { Logo } from '@/components/logo'
 import { useEffect, useState } from 'react'
+import { Menu, X } from 'lucide-react'
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const { isLoaded } = useAuth()
-
-  // Ensure component only renders auth buttons after mount and auth load
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 10)
+      setScrolled(window.scrollY > 50)
     }
 
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Auth skeleton placeholder
-  const AuthSkeleton = () => (
-    <div className="w-20 h-9 bg-primary/10 rounded-lg animate-pulse" />
-  )
-
   return (
-    <header
-      className={`sticky top-0 z-50 bg-white transition-shadow duration-200 ${
-        scrolled ? 'shadow-header-scroll' : 'border-b border-border-subtle'
-      }`}
-    >
-      <div className="max-w-container mx-auto flex h-16 items-center justify-between px-6 lg:px-10">
-        {/* Logo - SweatBuddies Smiley */}
-        <Link
-          href="/"
-          className="flex items-center gap-2 font-bold text-primary hover:text-primary-hover transition-all tracking-tight group"
-          style={{ fontSize: '20px' }}
-        >
-          <span className="transition-transform group-hover:scale-105 duration-200">
-            <Logo size={32} />
-          </span>
-          <span>sweatbuddies</span>
-        </Link>
+    <>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? 'bg-[#080A0F]/90 backdrop-blur-xl border-b border-white/10 py-3'
+            : 'bg-transparent py-5'
+        }`}
+      >
+        <div className="max-w-container mx-auto flex items-center justify-between px-6 lg:px-10">
+          {/* Logo */}
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 font-bold text-white hover:text-[#3CCFBB] transition-all tracking-tight group"
+            style={{ fontSize: '22px' }}
+          >
+            <span className="transition-transform group-hover:scale-110 duration-300">
+              <Logo size={36} />
+            </span>
+            <span className="hidden sm:inline">sweatbuddies</span>
+          </Link>
 
-        {/* Right side actions - Premium layout */}
-        <div className="flex items-center gap-2">
-          {/* Show skeleton while auth is loading */}
-          {(!mounted || !isLoaded) ? (
-            <AuthSkeleton />
-          ) : (
-            <>
-              <SignedIn>
-                {/* Dashboard link - Icon on mobile, text on desktop */}
-                <Link href="/dashboard">
-                  <button
-                    className="p-2 md:px-3 md:py-2 rounded-lg text-sm font-medium text-foreground hover:bg-secondary transition-colors flex items-center gap-1.5"
-                  >
-                    <LayoutDashboard className="w-5 h-5 md:hidden" />
-                    <span className="hidden md:inline">Dashboard</span>
-                  </button>
-                </Link>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-8">
+            <a
+              href="#events"
+              className="text-white/70 hover:text-white text-sm font-medium transition-colors"
+            >
+              Events
+            </a>
+            <a
+              href="#cities"
+              className="text-white/70 hover:text-white text-sm font-medium transition-colors"
+            >
+              Cities
+            </a>
+            <a
+              href="#mission"
+              className="text-white/70 hover:text-white text-sm font-medium transition-colors"
+            >
+              About
+            </a>
+          </nav>
 
-                {/* Create Activity - Primary CTA */}
-                <Link href="/activities/new">
-                  <Button
-                    size="sm"
-                    className="gap-1.5 shadow-sm hover:shadow-md transition-all"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span className="hidden sm:inline">Create Activity</span>
-                    <span className="sm:hidden">Create</span>
-                  </Button>
-                </Link>
+          {/* Right side actions */}
+          <div className="flex items-center gap-3">
+            {/* Submit Event CTA */}
+            <a href="#submit" className="hidden sm:block">
+              <button className="btn-primary text-sm py-3 px-6">
+                <span>Submit Event</span>
+              </button>
+            </a>
 
-                {/* Notifications */}
-                <NotificationBell />
-
-                {/* User Profile */}
-                <div className="ml-1">
-                  <UserButton
-                    afterSignOutUrl="/"
-                    appearance={{
-                      elements: {
-                        avatarBox: 'w-9 h-9'
-                      }
-                    }}
-                  />
-                </div>
-              </SignedIn>
-
-              <SignedOut>
-                {/* Sign In Button */}
-                <SignInButton mode="modal">
-                  <Button size="sm" className="shadow-sm hover:shadow-md transition-all">
-                    Sign In
-                  </Button>
-                </SignInButton>
-              </SignedOut>
-            </>
-          )}
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 text-white/70 hover:text-white transition-colors"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
-      </div>
-    </header>
+
+        {/* Mobile Menu */}
+        <div
+          className={`md:hidden absolute top-full left-0 right-0 bg-[#080A0F]/95 backdrop-blur-xl border-b border-white/10 transition-all duration-300 ${
+            mobileMenuOpen
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 -translate-y-4 pointer-events-none'
+          }`}
+        >
+          <nav className="flex flex-col p-6 gap-4">
+            <a
+              href="#events"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-white/70 hover:text-white text-lg font-medium transition-colors py-2"
+            >
+              Events
+            </a>
+            <a
+              href="#cities"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-white/70 hover:text-white text-lg font-medium transition-colors py-2"
+            >
+              Cities
+            </a>
+            <a
+              href="#mission"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-white/70 hover:text-white text-lg font-medium transition-colors py-2"
+            >
+              About
+            </a>
+            <a
+              href="#submit"
+              onClick={() => setMobileMenuOpen(false)}
+              className="btn-primary text-center mt-2"
+            >
+              <span>Submit Event</span>
+            </a>
+          </nav>
+        </div>
+      </header>
+
+      {/* Spacer to prevent content from going under fixed header */}
+      <div className="h-0" />
+    </>
   )
 }

@@ -1,0 +1,124 @@
+{
+  "events": [
+    {
+      "id": "1",
+      "name": "Fast&Free Running Club",
+      "category": "Run Club",
+      "day": "Tuesdays",
+      "time": "7:30 PM",
+      "location": "National Stadium, Gate 4",
+      "description": "Weekly run at the National Stadium. All paces welcome.",
+      "organizer": "fastandfree.rc",
+      "imageUrl": "https://utfs.io/f/wzDAnQf7ZjQktWnayQp83JuQoMgWvXzLhbUFEmP4NA0qnIZV",
+      "recurring": true
+    },
+    {
+      "id": "2",
+      "name": "Running Department",
+      "category": "Run Club",
+      "day": "Wednesdays",
+      "time": "6:30 PM",
+      "location": "Red Dot Design Museum, Marina Blvd",
+      "description": "Free community runs since 2013. No sign-ups, just show up!",
+      "organizer": "runningdepartment",
+      "imageUrl": "https://utfs.io/f/wzDAnQf7ZjQk6lFlp0ASaQPGhKLpwze3uEsj8BnHf5IlFU4V",
+      "recurring": true
+    },
+    {
+      "id": "3",
+      "name": "Big Boyz Run Club",
+      "category": "Run Club",
+      "day": "Saturdays",
+      "time": "8:00 AM",
+      "location": "Punggol Central",
+      "description": "Run Club that doesn't run.. very fast.",
+      "organizer": "bigboyz.runclub",
+      "imageUrl": "https://utfs.io/f/wzDAnQf7ZjQkF581uhKtTQElqgWuxYV0ynpASiR8vUOjI1Dz",
+      "recurring": true
+    },
+    {
+      "id": "4",
+      "name": "Founders Running Club",
+      "category": "Run Club",
+      "day": "Saturdays",
+      "time": "4:00 PM",
+      "location": "Open Sourced, 10A Perak Road",
+      "description": "Weekly 5K for founders, investors, operators, and creators.",
+      "organizer": "foundersrunningclub",
+      "imageUrl": "https://utfs.io/f/wzDAnQf7ZjQkmdLYgn0pyE7CViBZ8qSNXlzIUOfm5GwtdRn2",
+      "recurring": true
+    },
+    {
+      "id": "5",
+      "name": "lululemon Run Club - MBS",
+      "category": "Run Club",
+      "day": "Sundays",
+      "time": "7:15 AM",
+      "location": "lululemon MBS (B2-111)",
+      "description": "Community shakeout run. Bag drop available.",
+      "organizer": "lululemonsoutheastasia",
+      "imageUrl": "https://utfs.io/f/wzDAnQf7ZjQk6Q4hIUASaQPGhKLpwze3uEsj8BnHf5IlFU4V",
+      "recurring": true
+    },
+    {
+      "id": "6",
+      "name": "Pickleball by The Slowcial Club",
+      "category": "Outdoor",
+      "day": "Monthly",
+      "time": "10:00 PM",
+      "location": "Suntec City",
+      "description": "Beginner-friendly pickleball sessions. Zero pressure!",
+      "organizer": "the.slowcialclub",
+      "imageUrl": "https://utfs.io/f/wzDAnQf7ZjQkBrImgnuFqW9J3oEKhfHCdVwrtjZPsI6m1cuk",
+      "recurring": true
+    },
+    {
+      "id": "7",
+      "name": "OFF:FORM Fashion Run",
+      "category": "Run Club",
+      "day": "Monthly",
+      "time": "8:00 AM",
+      "location": "Various (Joo Chiat area)",
+      "description": "5K fashion run. Come dressed. Come bold. Run in style.",
+      "organizer": "offform.rc",
+      "imageUrl": "https://utfs.io/f/wzDAnQf7ZjQkoNci4nxkyUPNwitETO195enLuSZp3l6JYDVF",
+      "recurring": true
+    },
+    {
+      "id": "8",
+      "name": "adidas Runners Singapore",
+      "category": "Run Club",
+      "day": "Various",
+      "time": "6:30 PM",
+      "location": "Singapore Sports Hub",
+      "description": "Free runs led by IRONMAN and community captains.",
+      "organizer": "adidasrunners_sg",
+      "imageUrl": "https://utfs.io/f/wzDAnQf7ZjQkxlRWj9I8GDRHw0s5Y3CenyvJZS4KfbMQkgEl",
+      "recurring": true
+    },
+    {
+      "id": "9",
+      "name": "5KM GAJA Social Run",
+      "category": "Run Club",
+      "day": "Monthly",
+      "time": "11:00 PM",
+      "location": "Joo Bar",
+      "description": "Night run with post-run drinks. Calories burned = free drinks!",
+      "organizer": "consciousclubbing",
+      "imageUrl": "https://utfs.io/f/wzDAnQf7ZjQkYOfmI8Z1FaZLROsxQj2CHUgivcf5M8hGbS9T",
+      "recurring": true
+    },
+    {
+      "id": "10",
+      "name": "LSKD Shakeout Run",
+      "category": "Run Club",
+      "day": "Special Events",
+      "time": "6:00 PM",
+      "location": "Marina East, Under The Bridge",
+      "description": "Community run with exclusive LSKD merch drops.",
+      "organizer": "lskd",
+      "imageUrl": "https://utfs.io/f/wzDAnQf7ZjQkucgpX8V61jAmb09xwYt4RFalHLXDcd58EWoT",
+      "recurring": false
+    }
+  ]
+}

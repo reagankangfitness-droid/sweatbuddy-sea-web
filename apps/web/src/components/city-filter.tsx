@@ -11,6 +11,7 @@ interface Activity {
 const CITY_EMOJI_MAP: Record<string, string> = {
   'singapore': '🇸🇬',
   'bangkok': '🇹🇭',
+  'krung thep maha nakhon': '🇹🇭',
   'kuala lumpur': '🇲🇾',
   'kl': '🇲🇾',
   'manila': '🇵🇭',
@@ -21,6 +22,42 @@ const CITY_EMOJI_MAP: Record<string, string> = {
   'bali': '🇮🇩',
   'phuket': '🇹🇭',
   'chiang mai': '🇹🇭',
+  'thailand': '🇹🇭',
+}
+
+// Normalize city names - extract just the city from full addresses
+const normalizeCityName = (city: string): string => {
+  const cityLower = city.toLowerCase().trim()
+
+  // Direct matches for known cities
+  if (cityLower.includes('singapore')) return 'Singapore'
+  if (cityLower.includes('bangkok') || cityLower.includes('krung thep')) return 'Bangkok'
+  if (cityLower.includes('kuala lumpur') || cityLower === 'kl') return 'Kuala Lumpur'
+  if (cityLower.includes('manila')) return 'Manila'
+  if (cityLower.includes('jakarta')) return 'Jakarta'
+  if (cityLower.includes('ho chi minh') || cityLower === 'hcmc') return 'Ho Chi Minh City'
+  if (cityLower.includes('hanoi')) return 'Hanoi'
+  if (cityLower.includes('bali')) return 'Bali'
+  if (cityLower.includes('phuket')) return 'Phuket'
+  if (cityLower.includes('chiang mai')) return 'Chiang Mai'
+  if (cityLower.includes('thailand')) return 'Thailand'
+
+  // If it's a long address (contains comma or is too long), try to extract city
+  if (city.includes(',')) {
+    // Take the first part before comma, or look for known city names
+    const parts = city.split(',').map(p => p.trim())
+    for (const part of parts) {
+      const normalized = normalizeCityName(part)
+      if (normalized !== part) return normalized
+    }
+    // If no known city found, return first meaningful part
+    return parts[0].length > 30 ? 'Other' : parts[0]
+  }
+
+  // If it's too long (likely an address), return 'Other'
+  if (city.length > 30) return 'Other'
+
+  return city
 }
 
 const ACTIVITY_TYPES = [
@@ -279,8 +316,12 @@ export function ActivityFilter({
   onCityChange,
   onTypeChange
 }: ActivityFilterProps) {
-  // Extract unique cities from activities
-  const uniqueCities = ['all', ...new Set((activities || []).map(a => a.city).filter(Boolean))]
+  // Extract unique cities from activities and normalize them
+  const normalizedCities = (activities || [])
+    .map(a => a.city)
+    .filter(Boolean)
+    .map(normalizeCityName)
+  const uniqueCities = ['all', ...new Set(normalizedCities)]
   const cityOptions = uniqueCities.map(city => ({
     value: city.toLowerCase().replace(/\s+/g, '-'),
     label: city === 'all' ? 'All Cities' : city,

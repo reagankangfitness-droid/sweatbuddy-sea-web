@@ -1,3 +1,29 @@
+// TODO: Re-enable for marketplace phase (Year 2)
+// - Clerk: user accounts, organizer dashboards
+// - Beta access gating
+//
+// Original middleware commented out below for Phase 2 re-enablement
+
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+
+// Phase 1: All routes are public - no auth required
+export function middleware(request: NextRequest) {
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: [
+    // Skip Next.js internals and all static files
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+  ],
+}
+
+/*
+// =============================================================================
+// ORIGINAL CLERK MIDDLEWARE - COMMENTED OUT FOR PHASE 1
+// =============================================================================
+
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 
@@ -9,26 +35,28 @@ const isPublicRoute = createRouteMatcher([
   '/api/webhooks(.*)',
   '/api/uploadthing',
   '/api/activities(.*)',
-  '/api/invites(.*)',  // Allow public access to invite links
-  '/api/profiles(.*)', // Allow public access to profile endpoints
-  '/api/beta(.*)',     // Beta API endpoints
-  '/api/categories(.*)', // Allow public access to categories
-  '/api/reviews(.*)',  // Allow public access to reviews
+  '/api/invites(.*)',
+  '/api/profiles(.*)',
+  '/api/beta(.*)',
+  '/api/categories(.*)',
+  '/api/reviews(.*)',
   '/booking/success',
   '/join/(.*)',
-  '/host/(.*)',  // Public host profile pages
-  '/user/(.*)',  // Public user profile pages
-  '/activities/(.*)',  // Public activity pages
-  '/beta(.*)',   // Beta access page
+  '/host/(.*)',
+  '/user/(.*)',
+  '/activities/(.*)',
+  '/beta(.*)',
 ])
 
 // Routes that bypass beta check entirely
 const isBetaExemptRoute = createRouteMatcher([
+  '/',
   '/beta(.*)',
   '/api/beta(.*)',
   '/sign-in(.*)',
   '/sign-up(.*)',
   '/api/webhooks(.*)',
+  '/api/activities(.*)',
   '/_next(.*)',
   '/favicon.ico',
 ])
@@ -68,9 +96,8 @@ export default clerkMiddleware(async (auth, request) => {
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
     '/(api|trpc)(.*)',
   ],
 }
+*/

@@ -31,8 +31,8 @@ const footerLinks = [
 ]
 
 const socialLinks = [
-  { icon: Instagram, href: 'https://instagram.com/foundersrc', label: 'Instagram' },
-  { icon: Twitter, href: 'https://twitter.com/foundersrc', label: 'Twitter' },
+  { icon: Instagram, href: 'https://instagram.com/adidassg', label: 'Instagram' },
+  { icon: Twitter, href: 'https://twitter.com/adidassg', label: 'Twitter' },
   { icon: Mail, href: 'mailto:hello@sweatbuddies.com', label: 'Email' },
 ]
 

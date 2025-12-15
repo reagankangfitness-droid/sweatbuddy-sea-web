@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 
 // Simple admin check
@@ -37,6 +38,11 @@ export async function PATCH(
         rejectionReason: action === 'reject' ? rejectionReason : null,
       },
     })
+
+    // Revalidate homepage cache so approved events appear immediately
+    if (action === 'approve') {
+      revalidatePath('/')
+    }
 
     return NextResponse.json({
       success: true,

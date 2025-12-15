@@ -1,140 +1,200 @@
 'use client'
 
-import { MapPin, Globe } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Globe } from 'lucide-react'
+import Image from 'next/image'
 
 const cities = [
   {
     name: 'Singapore',
     status: 'active' as const,
     subtitle: '50+ events live',
-    gradient: 'from-[#3CCFBB] to-[#0EA5E9]',
-    flag: '🇸🇬',
+    image: '/images/cities/singapore.jpg',
   },
   {
     name: 'Kuala Lumpur',
     status: 'coming' as const,
     subtitle: 'January 2025',
-    gradient: 'from-[#B292E7] to-[#EC4899]',
-    flag: '🇲🇾',
+    image: '/images/cities/malaysia.jpg',
   },
   {
     name: 'Bangkok',
     status: 'coming' as const,
     subtitle: 'Q1 2025',
-    gradient: 'from-[#F97316] to-[#FACC15]',
-    flag: '🇹🇭',
+    image: '/images/cities/bangkok.jpg',
   },
 ]
 
 export function Cities() {
   return (
-    <section id="cities" className="relative py-20 md:py-32 overflow-hidden">
+    <section id="cities" className="relative py-24 md:py-36 overflow-hidden" style={{ background: '#FFFFFF' }}>
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#080A0F] via-[#0A0F18] to-[#080A0F]" />
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at top, rgba(37, 99, 235, 0.03) 0%, transparent 50%)' }} />
 
       {/* Gradient accents */}
       <div
-        className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-20 pointer-events-none"
+        className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-15 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, hsl(168 58% 52% / 0.4), transparent 70%)',
+          background: 'radial-gradient(circle, rgba(56, 189, 248, 0.2), transparent 70%)',
           filter: 'blur(100px)',
         }}
       />
       <div
-        className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full opacity-20 pointer-events-none"
+        className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full opacity-15 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, hsl(262 80% 74% / 0.4), transparent 70%)',
+          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.2), transparent 70%)',
           filter: 'blur(100px)',
         }}
       />
 
       <div className="relative z-10 max-w-container mx-auto px-6 lg:px-10">
         {/* Header */}
-        <div className="text-center mb-12 md:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm font-medium mb-6">
-            <Globe className="w-4 h-4 text-[#3CCFBB]" />
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12 md:mb-20"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold mb-8"
+            style={{
+              background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(56, 189, 248, 0.1))',
+              border: '1px solid rgba(37, 99, 235, 0.2)',
+              color: '#2563EB',
+            }}
+          >
+            <Globe className="w-4 h-4" />
             <span>Expanding Across SEA</span>
-          </div>
+          </motion.div>
           <h2
-            className="font-heading font-extrabold text-white tracking-wide"
-            style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
+            className="font-heading font-extrabold tracking-wide"
+            style={{
+              fontSize: 'clamp(32px, 6vw, 56px)',
+              color: '#0A1628',
+            }}
           >
             Where We&apos;re <span className="text-gradient">Live</span>
           </h2>
-        </div>
+        </motion.div>
 
         {/* City Cards */}
-        <div className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          {cities.map((city) => (
-            <div
+        <div className="grid sm:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {cities.map((city, index) => (
+            <motion.div
               key={city.name}
-              className={`group relative rounded-2xl p-8 text-center transition-all duration-500 overflow-hidden ${
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.5, delay: index * 0.15 }}
+              whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              className={`group relative rounded-3xl overflow-hidden bg-white shadow-lg transition-shadow duration-500 hover:shadow-2xl ${
                 city.status === 'active'
-                  ? 'glass-card border-[#3CCFBB]/30'
-                  : 'glass-card opacity-70 hover:opacity-100'
+                  ? ''
+                  : 'opacity-80 hover:opacity-100'
               }`}
+              style={{
+                border: city.status === 'active' ? '2px solid #2563EB' : '1px solid rgba(10, 22, 40, 0.1)',
+              }}
             >
-              {/* Gradient background for active city */}
-              {city.status === 'active' && (
+              {/* City Image */}
+              <div className="relative w-full aspect-[4/3] overflow-hidden">
+                <motion.div
+                  className="absolute inset-0"
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                >
+                  <Image
+                    src={city.image}
+                    alt={city.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 100vw, 33vw"
+                  />
+                </motion.div>
+
+                {/* Overlay gradient */}
                 <div
-                  className="absolute inset-0 opacity-10"
+                  className="absolute inset-0"
                   style={{
-                    background: `linear-gradient(135deg, ${city.gradient.split(' ')[0].replace('from-[', '').replace(']', '')}, ${city.gradient.split(' ')[1].replace('to-[', '').replace(']', '')})`,
+                    background: 'linear-gradient(to top, rgba(10, 22, 40, 0.85) 0%, rgba(10, 22, 40, 0.3) 50%, transparent 100%)'
                   }}
                 />
-              )}
 
-              {/* Flag */}
-              <div className="text-5xl mb-4 transition-transform duration-500 group-hover:scale-110">
-                {city.flag}
+                {/* City name on image */}
+                <div className="absolute bottom-5 left-5 right-5">
+                  <h3 className="font-heading font-bold text-white text-2xl mb-1 tracking-wide drop-shadow-lg">
+                    {city.name}
+                  </h3>
+                  <p className="text-white/70 text-sm font-body">
+                    {city.subtitle}
+                  </p>
+                </div>
+
+                {/* Status badge */}
+                <div className="absolute top-4 right-4">
+                  {city.status === 'active' ? (
+                    <span
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-white shadow-lg"
+                      style={{
+                        background: 'linear-gradient(135deg, #2563EB, #38BDF8)',
+                        boxShadow: '0 4px 20px -5px rgba(37, 99, 235, 0.5)',
+                      }}
+                    >
+                      <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                      Live
+                    </span>
+                  ) : (
+                    <span
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold shadow-lg"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.95)',
+                        color: '#0A1628',
+                        backdropFilter: 'blur(10px)',
+                      }}
+                    >
+                      Coming Soon
+                    </span>
+                  )}
+                </div>
               </div>
-
-              {/* City Name */}
-              <h3 className="font-heading font-bold text-white text-2xl mb-2 tracking-wide">
-                {city.name}
-              </h3>
-
-              {/* Status */}
-              <p className={`font-body text-sm mb-4 ${
-                city.status === 'active' ? 'text-white/70' : 'text-white/40'
-              }`}>
-                {city.subtitle}
-              </p>
-
-              {/* Badge */}
-              {city.status === 'active' ? (
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#3CCFBB]/20 border border-[#3CCFBB]/30 text-[#3CCFBB] text-sm font-medium">
-                  <span className="w-2 h-2 rounded-full bg-[#3CCFBB] animate-pulse" />
-                  Live Now
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/40 text-sm font-medium">
-                  Coming Soon
-                </span>
-              )}
 
               {/* Hover glow for active */}
               {city.status === 'active' && (
                 <div
-                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                   style={{
-                    boxShadow: '0 0 60px -15px rgba(60, 207, 187, 0.3)',
+                    boxShadow: '0 0 60px -15px rgba(37, 99, 235, 0.4)',
                   }}
                 />
               )}
-            </div>
+            </motion.div>
           ))}
         </div>
 
         {/* CTA */}
-        <div className="text-center mt-12">
-          <p className="text-white/40 text-sm">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="text-center mt-16"
+        >
+          <p style={{ color: '#0A1628', opacity: 0.6 }} className="text-sm">
             Want SweatBuddies in your city?{' '}
-            <a href="#submit" className="text-[#3CCFBB] hover:underline underline-offset-4">
+            <a
+              href="#submit"
+              className="font-semibold hover:underline underline-offset-4 transition-colors"
+              style={{ color: '#2563EB' }}
+            >
               Let us know
             </a>
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   )

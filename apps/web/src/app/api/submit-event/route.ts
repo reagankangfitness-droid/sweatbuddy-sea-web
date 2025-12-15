@@ -5,6 +5,7 @@ interface EventSubmission {
   eventName: string
   category: string
   day: string
+  eventDate?: string // ISO date string (e.g., "2024-01-15")
   time: string
   recurring: boolean
   location: string
@@ -12,6 +13,7 @@ interface EventSubmission {
   longitude?: number
   placeId?: string
   description?: string
+  imageUrl?: string
   organizerName: string
   organizerInstagram: string
   contactEmail: string
@@ -51,8 +53,16 @@ export async function POST(request: Request) {
       )
     }
 
-    // Clean up Instagram handle (remove @ if present)
-    const cleanInstagram = data.organizerInstagram.replace(/^@/, '')
+    // Clean up Instagram handle (remove @ prefix and extract from full URLs)
+    let cleanInstagram = data.organizerInstagram
+      .replace(/^@/, '') // Remove @ prefix
+      .replace(/^https?:\/\/(www\.)?instagram\.com\//, '') // Remove Instagram URL prefix
+      .replace(/\/$/, '') // Remove trailing slash
+
+    // If it still looks like a URL, try to extract the handle
+    if (cleanInstagram.includes('/')) {
+      cleanInstagram = cleanInstagram.split('/')[0]
+    }
 
     // Save to database
     const submission = await prisma.eventSubmission.create({
@@ -60,6 +70,7 @@ export async function POST(request: Request) {
         eventName: data.eventName,
         category: data.category,
         day: data.day,
+        eventDate: data.eventDate ? new Date(data.eventDate) : null,
         time: data.time,
         recurring: data.recurring ?? true,
         location: data.location,
@@ -67,6 +78,7 @@ export async function POST(request: Request) {
         longitude: data.longitude || null,
         placeId: data.placeId || null,
         description: data.description || null,
+        imageUrl: data.imageUrl || null,
         organizerName: data.organizerName,
         organizerInstagram: cleanInstagram,
         contactEmail: data.contactEmail,

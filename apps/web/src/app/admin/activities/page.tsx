@@ -103,30 +103,30 @@ export default function AdminActivitiesPage() {
 
   if (!isLoaded || loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-[#0A1628] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#38BDF8]"></div>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-[#0A1628] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-destructive mb-2">Access Denied</h1>
-          <p className="text-muted-foreground">{error}</p>
+          <h1 className="text-2xl font-bold text-red-400 mb-2">Access Denied</h1>
+          <p className="text-white/60">{error}</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0A1628]">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Event Approval Queue</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-3xl font-bold text-white">Event Approval Queue</h1>
+          <p className="text-white/60 mt-2">
             Review and approve submitted events before they go live
           </p>
         </div>
@@ -137,8 +137,8 @@ export default function AdminActivitiesPage() {
             onClick={() => setFilter('PENDING_APPROVAL')}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               filter === 'PENDING_APPROVAL'
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                ? 'bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white'
+                : 'bg-white/10 text-white hover:bg-white/20'
             }`}
           >
             Pending Approval
@@ -147,8 +147,8 @@ export default function AdminActivitiesPage() {
             onClick={() => setFilter('PUBLISHED')}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               filter === 'PUBLISHED'
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                ? 'bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white'
+                : 'bg-white/10 text-white hover:bg-white/20'
             }`}
           >
             Published
@@ -157,10 +157,10 @@ export default function AdminActivitiesPage() {
 
         {/* Activities List */}
         {activities.length === 0 ? (
-          <div className="text-center py-12 bg-card rounded-2xl border border-border">
-            <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-foreground mb-2">No events to review</h2>
-            <p className="text-muted-foreground">
+          <div className="text-center py-12 bg-white/5 rounded-2xl border border-white/10">
+            <Clock className="w-12 h-12 text-white/40 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-white mb-2">No events to review</h2>
+            <p className="text-white/60">
               {filter === 'PENDING_APPROVAL'
                 ? 'All submitted events have been reviewed.'
                 : 'No published events yet.'}
@@ -171,7 +171,7 @@ export default function AdminActivitiesPage() {
             {activities.map((activity) => (
               <div
                 key={activity.id}
-                className="bg-card rounded-2xl border border-border overflow-hidden"
+                className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 overflow-hidden"
               >
                 <div className="flex flex-col lg:flex-row">
                   {/* Image */}
@@ -184,7 +184,7 @@ export default function AdminActivitiesPage() {
                         className="object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-muted flex items-center justify-center">
+                      <div className="w-full h-full bg-white/5 flex items-center justify-center">
                         <span className="text-4xl">
                           {activity.type === 'RUN' ? '🏃' :
                            activity.type === 'GYM' ? '💪' :
@@ -202,7 +202,7 @@ export default function AdminActivitiesPage() {
                       <div className="flex-1">
                         {/* Title and Status */}
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-xl font-semibold text-foreground">
+                          <h3 className="text-xl font-semibold text-white">
                             {activity.title}
                           </h3>
                           <span className={`px-2 py-1 text-xs font-medium rounded-full ${
@@ -218,7 +218,7 @@ export default function AdminActivitiesPage() {
 
                         {/* Description */}
                         {activity.description && (
-                          <p className="text-muted-foreground mb-4 line-clamp-2">
+                          <p className="text-white/60 mb-4 line-clamp-2">
                             {activity.description}
                           </p>
                         )}
@@ -227,20 +227,20 @@ export default function AdminActivitiesPage() {
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
                           {/* Date/Time */}
                           {activity.startTime && (
-                            <div className="flex items-center gap-2 text-muted-foreground">
+                            <div className="flex items-center gap-2 text-white/60">
                               <Calendar className="w-4 h-4" />
                               <span>{format(new Date(activity.startTime), 'MMM d, yyyy h:mm a')}</span>
                             </div>
                           )}
 
                           {/* Location */}
-                          <div className="flex items-center gap-2 text-muted-foreground">
+                          <div className="flex items-center gap-2 text-white/60">
                             <MapPin className="w-4 h-4" />
                             <span>{activity.city}</span>
                           </div>
 
                           {/* Price */}
-                          <div className="flex items-center gap-2 text-muted-foreground">
+                          <div className="flex items-center gap-2 text-white/60">
                             <DollarSign className="w-4 h-4" />
                             <span>
                               {activity.price === 0 ? 'Free' : `${activity.currency} ${activity.price}`}
@@ -249,7 +249,7 @@ export default function AdminActivitiesPage() {
 
                           {/* Capacity */}
                           {activity.maxPeople && (
-                            <div className="flex items-center gap-2 text-muted-foreground">
+                            <div className="flex items-center gap-2 text-white/60">
                               <User className="w-4 h-4" />
                               <span>Max {activity.maxPeople} people</span>
                             </div>
@@ -257,7 +257,7 @@ export default function AdminActivitiesPage() {
                         </div>
 
                         {/* Submitter Info */}
-                        <div className="mt-4 pt-4 border-t border-border">
+                        <div className="mt-4 pt-4 border-t border-white/10">
                           <div className="flex items-center gap-3">
                             {activity.user.imageUrl ? (
                               <Image
@@ -268,15 +268,15 @@ export default function AdminActivitiesPage() {
                                 className="rounded-full"
                               />
                             ) : (
-                              <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                                <User className="w-4 h-4 text-muted-foreground" />
+                              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                                <User className="w-4 h-4 text-white/60" />
                               </div>
                             )}
                             <div>
-                              <p className="text-sm font-medium text-foreground">
+                              <p className="text-sm font-medium text-white">
                                 {activity.user.name || 'Anonymous'}
                               </p>
-                              <p className="text-xs text-muted-foreground">
+                              <p className="text-xs text-white/50">
                                 {activity.user.email} | Submitted {format(new Date(activity.createdAt), 'MMM d, yyyy')}
                               </p>
                             </div>
@@ -307,7 +307,7 @@ export default function AdminActivitiesPage() {
                             href={`/activities/${activity.id}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-2 px-4 py-2 bg-muted text-foreground rounded-lg font-medium hover:bg-muted/80 transition-colors"
+                            className="flex items-center justify-center gap-2 px-4 py-2 bg-white/10 text-white rounded-lg font-medium hover:bg-white/20 transition-colors"
                           >
                             <ExternalLink className="w-4 h-4" />
                             Preview

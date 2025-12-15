@@ -5,6 +5,17 @@ import { UploadThingError } from "uploadthing/server"
 const f = createUploadthing()
 
 export const ourFileRouter = {
+  // Event submission image upload - no auth required (public submission)
+  eventImage: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
+    .middleware(async () => {
+      // No auth required for event submissions
+      return {}
+    })
+    .onUploadComplete(async ({ file }) => {
+      console.log("Event image upload complete:", file.url)
+      return { url: file.url }
+    }),
+
   activityImage: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
     .middleware(async () => {
       const { userId } = await auth()

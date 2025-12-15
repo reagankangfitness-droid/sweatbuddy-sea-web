@@ -12,9 +12,12 @@ import { ShareButton } from '@/components/share-button'
 import { SpotsIndicator } from '@/components/spots-indicator'
 import { WaitlistButton } from '@/components/waitlist-button'
 import { generateGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
-import { Calendar, MessageCircle, Users } from 'lucide-react'
+import { Calendar, MessageCircle, Users, ChevronDown, ChevronUp } from 'lucide-react'
 import type { UrgencyLevel } from '@/lib/waitlist'
 import { PostActivityPrompt } from '@/components/post-activity-prompt'
+
+// Character limit for description before showing "Read More"
+const DESCRIPTION_CHAR_LIMIT = 300
 
 interface SpotsInfo {
   totalSpots: number
@@ -89,6 +92,7 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
   const [spotsInfo, setSpotsInfo] = useState<SpotsInfo | null>(null)
   const [userBookingId, setUserBookingId] = useState<string | null>(null)
   const [showCompletionPrompt, setShowCompletionPrompt] = useState(true)
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
 
   // Handle payment status from URL params
   useEffect(() => {
@@ -424,7 +428,38 @@ Organized via sweatbuddies
               {activity.description && (
                 <div className="rounded-lg border p-6 overflow-hidden">
                   <h2 className="text-xl font-semibold mb-3">Description</h2>
-                  <p className="text-muted-foreground whitespace-pre-wrap break-words overflow-wrap-anywhere">{activity.description}</p>
+                  <div className="relative">
+                    <p className={`text-muted-foreground whitespace-pre-wrap break-words overflow-wrap-anywhere ${
+                      !isDescriptionExpanded && activity.description.length > DESCRIPTION_CHAR_LIMIT
+                        ? 'line-clamp-4'
+                        : ''
+                    }`}>
+                      {activity.description}
+                    </p>
+                    {activity.description.length > DESCRIPTION_CHAR_LIMIT && (
+                      <>
+                        {!isDescriptionExpanded && (
+                          <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+                        )}
+                        <button
+                          onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                          className="mt-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
+                        >
+                          {isDescriptionExpanded ? (
+                            <>
+                              Show less
+                              <ChevronUp className="w-4 h-4" />
+                            </>
+                          ) : (
+                            <>
+                              Read more
+                              <ChevronDown className="w-4 h-4" />
+                            </>
+                          )}
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
               )}
 

@@ -20,10 +20,20 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['var(--font-inter)', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica Neue', 'Arial', 'sans-serif'],
-        heading: ['var(--font-exo2)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        heading: ['var(--font-clash)', 'var(--font-inter)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        display: ['var(--font-clash)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
         body: ['var(--font-inter)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
       colors: {
+        // Neo-Brutalist Color Palette
+        navy: '#0F172A',
+        sand: '#FAF7F2',
+        terracotta: '#E07A5F',
+        coral: '#FF6B6B',
+        electric: '#4F46E5',
+        mint: '#10B981',
+        cream: '#FFFBEB',
+
         // Dark theme base
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
@@ -92,6 +102,15 @@ const config: Config = {
         '3xl': '24px',
       },
       boxShadow: {
+        // Neo-Brutalist hard shadows
+        'brutal': '4px 4px 0px 0px #0F172A',
+        'brutal-sm': '2px 2px 0px 0px #0F172A',
+        'brutal-lg': '6px 6px 0px 0px #0F172A',
+        'brutal-xl': '8px 8px 0px 0px #0F172A',
+        'brutal-terracotta': '4px 4px 0px 0px #E07A5F',
+        'brutal-electric': '4px 4px 0px 0px #4F46E5',
+        'brutal-mint': '4px 4px 0px 0px #10B981',
+
         // Dark theme shadows with glow effects
         'glow-teal': '0 0 30px -5px rgba(60, 207, 187, 0.4)',
         'glow-purple': '0 0 30px -5px rgba(178, 146, 231, 0.4)',
@@ -110,6 +129,7 @@ const config: Config = {
         'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
         'out-back': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
         'in-out-expo': 'cubic-bezier(0.87, 0, 0.13, 1)',
+        'brutal': 'cubic-bezier(0.2, 0, 0, 1)',
       },
       transitionDuration: {
         '400': '400ms',
@@ -123,12 +143,15 @@ const config: Config = {
       animation: {
         'scroll': 'scroll 40s linear infinite',
         'scroll-reverse': 'scroll-reverse 40s linear infinite',
+        'marquee': 'marquee 25s linear infinite',
+        'marquee-reverse': 'marquee-reverse 25s linear infinite',
         'fade-in': 'fadeIn 0.6s ease-out forwards',
         'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         'scale-in': 'scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         'slide-in': 'slideIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         'pulse-glow': 'pulse-glow 4s ease-in-out infinite',
         'gradient-shift': 'gradient-shift 3s linear infinite',
+        'bounce-subtle': 'bounceSubtle 2s ease-in-out infinite',
       },
       keyframes: {
         scroll: {
@@ -138,6 +161,14 @@ const config: Config = {
         'scroll-reverse': {
           '0%': { transform: 'translateX(-50%)' },
           '100%': { transform: 'translateX(0)' },
+        },
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        },
+        'marquee-reverse': {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(0%)' },
         },
         fadeIn: {
           from: { opacity: '0' },
@@ -164,6 +195,10 @@ const config: Config = {
           '50%': { backgroundPosition: '100% 50%' },
           '100%': { backgroundPosition: '0% 50%' },
         },
+        bounceSubtle: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-5px)' },
+        },
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -171,7 +206,20 @@ const config: Config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    function({ addUtilities }: { addUtilities: (utilities: Record<string, Record<string, string>>) => void }) {
+      addUtilities({
+        '.no-scrollbar': {
+          '-ms-overflow-style': 'none',
+          'scrollbar-width': 'none',
+        },
+        '.no-scrollbar::-webkit-scrollbar': {
+          display: 'none',
+        },
+      })
+    }
+  ],
 }
 
 export default config

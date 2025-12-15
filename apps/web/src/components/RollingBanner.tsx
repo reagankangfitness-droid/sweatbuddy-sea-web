@@ -15,14 +15,14 @@ export function RollingBanner() {
   const images = [...bannerImages, ...bannerImages]
 
   return (
-    <section className="relative py-12 md:py-16 overflow-hidden">
+    <section className="relative py-12 md:py-16 overflow-hidden" style={{ background: '#f0f4fa' }}>
       {/* Background */}
-      <div className="absolute inset-0 bg-[#080A0F]" />
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(52, 119, 248, 0.04) 0%, transparent 70%)' }} />
 
       <div className="relative">
         {/* Gradient overlays for fade effect */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 md:w-48 bg-gradient-to-r from-[#080A0F] to-transparent z-10" />
-        <div className="absolute right-0 top-0 bottom-0 w-32 md:w-48 bg-gradient-to-l from-[#080A0F] to-transparent z-10" />
+        <div className="absolute left-0 top-0 bottom-0 w-32 md:w-48 z-10" style={{ background: 'linear-gradient(to right, #f0f4fa, transparent)' }} />
+        <div className="absolute right-0 top-0 bottom-0 w-32 md:w-48 z-10" style={{ background: 'linear-gradient(to left, #f0f4fa, transparent)' }} />
 
         {/* Rolling banner */}
         <div className="flex animate-scroll">
@@ -42,10 +42,10 @@ export function RollingBanner() {
                 />
 
                 {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 {/* Border glow on hover */}
-                <div className="absolute inset-0 rounded-2xl border border-white/0 group-hover:border-white/20 transition-colors duration-500" />
+                <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-[#3477f8]/30 transition-colors duration-500" />
 
                 {/* Category tag */}
                 <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">

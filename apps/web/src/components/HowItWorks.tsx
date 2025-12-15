@@ -1,105 +1,112 @@
 'use client'
 
-import { MapPin, Search, Check, Zap } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { IPhoneMockup } from './IPhoneMockup'
+import { CitySelector } from './screens/CitySelector'
+import { EventBrowser } from './screens/EventBrowser'
+import { EventDetail } from './screens/EventDetail'
 
 const steps = [
   {
-    icon: MapPin,
+    number: '01',
     title: 'Pick Your City',
-    description: 'Singapore, KL, Bangkok. More coming soon.',
-    color: '#3CCFBB',
+    description: 'Select where you\'re based. We\'re live in Singapore with more cities coming soon.',
+    screen: <CitySelector />,
+    color: '#E07A5F', // terracotta
   },
   {
-    icon: Search,
+    number: '02',
     title: 'Browse What\'s On',
-    description: 'Filter by vibe: morning, weekend, after-work.',
-    color: '#B292E7',
+    description: 'Filter by category, day, or vibe. Find events that match your style.',
+    screen: <EventBrowser />,
+    color: '#4F46E5', // electric
   },
   {
-    icon: Check,
+    number: '03',
     title: 'Just Show Up',
-    description: 'No sign-ups. No apps. No excuses.',
-    color: '#F97316',
+    description: 'No bookings, no sign-ups. Mark yourself as going and show up.',
+    screen: <EventDetail />,
+    color: '#10B981', // mint
   },
 ]
 
 export function HowItWorks() {
   return (
-    <section className="relative py-20 md:py-32 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-[#080A0F]" />
-
-      {/* Subtle gradient accent */}
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-20 pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle, hsl(262 80% 74% / 0.3), transparent 70%)',
-          filter: 'blur(100px)',
-        }}
-      />
+    <section className="relative py-24 md:py-36 overflow-hidden bg-cream">
+      {/* Decorative elements */}
+      <div className="absolute top-20 right-10 w-20 h-20 border-4 border-navy/10 rotate-12" />
+      <div className="absolute bottom-32 left-16 w-16 h-16 bg-terracotta/10 rotate-45" />
+      <div className="absolute top-1/2 right-1/4 w-8 h-8 bg-mint/20" />
 
       <div className="relative z-10 max-w-container mx-auto px-6 lg:px-10">
         {/* Header */}
-        <div className="text-center mb-16 md:mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-sm font-medium mb-6">
-            <Zap className="w-4 h-4 text-[#F97316]" />
-            <span>Super Simple</span>
-          </div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] }}
+          className="text-center mb-16 md:mb-24"
+        >
           <h2
-            className="font-heading font-extrabold text-white tracking-wide"
-            style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
+            className="font-display font-semibold"
+            style={{
+              fontSize: 'clamp(36px, 7vw, 64px)',
+              letterSpacing: '-0.03em',
+              color: '#0F172A',
+            }}
           >
-            Show Up. <span className="text-gradient-warm">That&apos;s It.</span>
+            How It <span className="text-terracotta">Works</span>
           </h2>
-        </div>
+          <p className="text-lg mt-4 max-w-xl mx-auto text-navy/60">
+            Three steps to your next workout buddy
+          </p>
+        </motion.div>
 
-        {/* Steps */}
-        <div className="grid md:grid-cols-3 gap-8 md:gap-6 lg:gap-12">
+        {/* Steps with iPhone Mockups */}
+        <div className="grid md:grid-cols-3 gap-12 md:gap-6 lg:gap-12">
           {steps.map((step, index) => (
-            <div
+            <motion.div
               key={index}
-              className="group relative"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.4, delay: index * 0.1, ease: [0.2, 0, 0, 1] }}
+              className="flex flex-col items-center text-center"
             >
-              {/* Connecting line for desktop */}
-              {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-12 left-[60%] w-[80%] h-px bg-gradient-to-r from-white/20 to-transparent" />
-              )}
+              {/* iPhone Mockup */}
+              <motion.div
+                whileHover={{ y: -8 }}
+                transition={{ duration: 0.2 }}
+                className="mb-8"
+              >
+                <IPhoneMockup>
+                  {step.screen}
+                </IPhoneMockup>
+              </motion.div>
 
-              <div className="relative glass-card rounded-2xl p-8 text-center h-full">
-                {/* Step number */}
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span
-                    className="inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold"
-                    style={{
-                      background: `linear-gradient(135deg, ${step.color}40, ${step.color}20)`,
-                      color: step.color,
-                      border: `1px solid ${step.color}40`,
-                    }}
-                  >
-                    {index + 1}
-                  </span>
-                </div>
-
-                {/* Icon */}
-                <div
-                  className="w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center transition-transform duration-500 group-hover:scale-110"
-                  style={{
-                    background: `linear-gradient(135deg, ${step.color}20, ${step.color}10)`,
-                    border: `1px solid ${step.color}30`,
-                  }}
-                >
-                  <step.icon className="w-7 h-7" style={{ color: step.color }} />
-                </div>
-
-                {/* Content */}
-                <h3 className="font-heading font-bold text-white text-xl mb-3 tracking-wide">
-                  {step.title}
-                </h3>
-                <p className="font-body text-white/50 leading-relaxed">
-                  {step.description}
-                </p>
+              {/* Step Number - Neo-Brutalist */}
+              <div
+                className="inline-flex items-center justify-center w-16 h-16 mb-4 border-2 border-navy font-display font-semibold text-2xl text-navy"
+                style={{
+                  boxShadow: `4px 4px 0px 0px ${step.color}`,
+                }}
+              >
+                {step.number}
               </div>
-            </div>
+
+              {/* Title */}
+              <h3
+                className="font-display font-semibold text-xl mb-3 text-navy"
+                style={{ letterSpacing: '-0.02em' }}
+              >
+                {step.title}
+              </h3>
+
+              {/* Description */}
+              <p className="font-body leading-relaxed max-w-[280px] text-navy/60">
+                {step.description}
+              </p>
+            </motion.div>
           ))}
         </div>
       </div>

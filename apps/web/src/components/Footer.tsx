@@ -1,125 +1,75 @@
-'use client'
-
-import { Logo } from './logo'
-import { Instagram, Twitter, Mail } from 'lucide-react'
-
-const footerLinks = [
-  {
-    title: 'Discover',
-    links: [
-      { label: 'Events', href: '#events' },
-      { label: 'Cities', href: '#cities' },
-      { label: 'Categories', href: '#events' },
-    ],
-  },
-  {
-    title: 'Organizers',
-    links: [
-      { label: 'Submit Event', href: '#submit' },
-      { label: 'Guidelines', href: '#' },
-      { label: 'Partner With Us', href: '#' },
-    ],
-  },
-  {
-    title: 'Company',
-    links: [
-      { label: 'About', href: '#mission' },
-      { label: 'Contact', href: 'mailto:hello@sweatbuddies.com' },
-      { label: 'Privacy', href: '#' },
-    ],
-  },
-]
-
-const socialLinks = [
-  { icon: Instagram, href: 'https://instagram.com/adidassg', label: 'Instagram' },
-  { icon: Twitter, href: 'https://twitter.com/adidassg', label: 'Twitter' },
-  { icon: Mail, href: 'mailto:hello@sweatbuddies.com', label: 'Email' },
-]
+import { Logo } from '@/components/logo'
+import { Instagram, Mail, ArrowUpRight } from 'lucide-react'
 
 export function Footer() {
   return (
-    <footer className="relative pt-20 pb-10 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-[#080A0F]" />
-
-      {/* Top gradient border */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-
-      <div className="relative z-10 max-w-container mx-auto px-6 lg:px-10">
-        {/* Main footer content */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-8 mb-16">
-          {/* Brand column */}
-          <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-2.5 text-white mb-4">
-              <Logo size={32} />
-              <span className="font-heading font-bold text-xl tracking-wide">sweatbuddies</span>
+    <footer className="bg-navy border-t-2 border-sand/20">
+      <div className="max-w-container mx-auto px-6 lg:px-10 py-16">
+        <div className="grid md:grid-cols-3 gap-12 md:gap-8">
+          {/* Brand */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Logo size={28} />
+              <span className="font-display font-semibold text-xl text-sand" style={{ letterSpacing: '-0.02em' }}>
+                sweatbuddies
+              </span>
             </div>
-            <p className="font-body text-white/40 text-sm leading-relaxed mb-6">
-              Your city&apos;s moving. Know where.
+            <p className="text-sand/60 text-sm max-w-xs leading-relaxed">
+              Find your crew. Sweat together. The best friendships start at 6am.
             </p>
-
-            {/* Social links */}
-            <div className="flex items-center gap-3">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={social.label}
-                  className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-[#3CCFBB] hover:border-[#3CCFBB]/30 transition-all duration-300"
-                >
-                  <social.icon className="w-4 h-4" />
-                </a>
-              ))}
-            </div>
           </div>
 
-          {/* Link columns */}
-          {footerLinks.map((group) => (
-            <div key={group.title}>
-              <h4 className="font-heading font-semibold text-white text-sm mb-4 uppercase tracking-widest">
-                {group.title}
-              </h4>
-              <ul className="space-y-3">
-                {group.links.map((link) => (
-                  <li key={link.label}>
-                    <a
-                      href={link.href}
-                      className="font-body text-white/40 text-sm hover:text-white transition-colors"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+          {/* Links */}
+          <div>
+            <h4 className="font-display font-semibold text-sand mb-4">Quick Links</h4>
+            <nav className="flex flex-col gap-3">
+              <a href="#events" className="text-sand/60 hover:text-terracotta transition-colors text-sm flex items-center gap-1">
+                Browse Events
+              </a>
+              <a href="#mission" className="text-sand/60 hover:text-terracotta transition-colors text-sm flex items-center gap-1">
+                About Us
+              </a>
+              <a href="/organizer" className="text-sand/60 hover:text-terracotta transition-colors text-sm flex items-center gap-1">
+                For Hosts
+              </a>
+              <a href="/privacy" className="text-sand/60 hover:text-terracotta transition-colors text-sm flex items-center gap-1">
+                Privacy Policy
+              </a>
+            </nav>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h4 className="font-display font-semibold text-sand mb-4">Connect</h4>
+            <div className="flex flex-col gap-3">
+              <a
+                href="https://instagram.com/_sweatbuddies"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sand/60 hover:text-terracotta transition-colors text-sm"
+              >
+                <Instagram className="w-4 h-4" />
+                @_sweatbuddies
+                <ArrowUpRight className="w-3 h-3" />
+              </a>
+              <a
+                href="mailto:hello@sweatbuddies.com"
+                className="inline-flex items-center gap-2 text-sand/60 hover:text-terracotta transition-colors text-sm"
+              >
+                <Mail className="w-4 h-4" />
+                hello@sweatbuddies.com
+              </a>
             </div>
-          ))}
+          </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-8 border-t border-white/10">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="font-body text-white/30 text-sm">
-              © {new Date().getFullYear()} SweatBuddies. All events listed are open to attend.
-            </p>
-            <div className="flex items-center gap-6">
-              <a href="#" className="font-body text-white/30 text-sm hover:text-white transition-colors">
-                Privacy Policy
-              </a>
-              <a href="#" className="font-body text-white/30 text-sm hover:text-white transition-colors">
-                Terms of Service
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Large background text */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none select-none overflow-hidden">
-          <div
-            className="font-heading text-[15vw] font-extrabold text-white/[0.02] whitespace-nowrap tracking-wider"
-          >
-            SWEAT
+        <div className="mt-12 pt-8 border-t border-sand/10 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-sand/40">
+            © {new Date().getFullYear()} SweatBuddies. Made with 💪 in Singapore.
+          </p>
+          <div className="flex items-center gap-4">
+            <span className="text-xs text-sand/40">Built for the community</span>
           </div>
         </div>
       </div>

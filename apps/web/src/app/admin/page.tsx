@@ -1,0 +1,498 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { format, subDays, startOfDay, eachDayOfInterval } from 'date-fns'
+import {
+  Calendar,
+  Users,
+  Mail,
+  TrendingUp,
+  Clock,
+  CheckCircle,
+  ArrowUpRight,
+  ArrowDownRight,
+  Loader2,
+  RefreshCw
+} from 'lucide-react'
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell
+} from 'recharts'
+
+const ADMIN_SECRET = 'sweatbuddies-admin-2024'
+
+interface Attendee {
+  id: string
+  eventId: string
+  eventName: string
+  email: string
+  name: string | null
+  subscribe: boolean
+  timestamp: string
+  confirmed: boolean
+}
+
+interface NewsletterSubscriber {
+  email: string
+  name: string | null
+  subscribedAt: string
+  source: string
+}
+
+interface Stats {
+  totalEvents: number
+  pendingEvents: number
+  totalAttendees: number
+  totalSubscribers: number
+  attendeesThisWeek: number
+  subscribersThisWeek: number
+  optInRate: number
+}
+
+const COLORS = ['#2563EB', '#38BDF8', '#10B981', '#F59E0B', '#EF4444']
+
+export default function AdminDashboardPage() {
+  const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
+  const [attendees, setAttendees] = useState<Attendee[]>([])
+  const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([])
+  const [stats, setStats] = useState<Stats>({
+    totalEvents: 0,
+    pendingEvents: 0,
+    totalAttendees: 0,
+    totalSubscribers: 0,
+    attendeesThisWeek: 0,
+    subscribersThisWeek: 0,
+    optInRate: 0,
+  })
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  const fetchData = async () => {
+    setLoading(true)
+    try {
+      const [attendeesRes, subscribersRes] = await Promise.all([
+        fetch('/api/attendance', { headers: { 'x-admin-secret': ADMIN_SECRET } }),
+        fetch('/api/newsletter/subscribers', { headers: { 'x-admin-secret': ADMIN_SECRET } }),
+      ])
+
+      const attendeesData = attendeesRes.ok ? await attendeesRes.json() : { attendees: [] }
+      const subscribersData = subscribersRes.ok ? await subscribersRes.json() : { subscribers: [] }
+
+      const attendeesList = attendeesData.attendees || []
+      const subscribersList = subscribersData.subscribers || []
+
+      setAttendees(attendeesList)
+      setSubscribers(subscribersList)
+
+      // Calculate stats
+      const weekAgo = startOfDay(subDays(new Date(), 7))
+      const attendeesThisWeek = attendeesList.filter(
+        (a: Attendee) => new Date(a.timestamp) >= weekAgo
+      ).length
+      const subscribersThisWeek = subscribersList.filter(
+        (s: NewsletterSubscriber) => new Date(s.subscribedAt) >= weekAgo
+      ).length
+      const uniqueEvents = new Set(attendeesList.map((a: Attendee) => a.eventId)).size
+      const optInRate = attendeesList.length > 0
+        ? Math.round((attendeesList.filter((a: Attendee) => a.subscribe).length / attendeesList.length) * 100)
+        : 0
+
+      setStats({
+        totalEvents: uniqueEvents,
+        pendingEvents: 0,
+        totalAttendees: attendeesList.length,
+        totalSubscribers: subscribersList.length,
+        attendeesThisWeek,
+        subscribersThisWeek,
+        optInRate,
+      })
+    } catch (error) {
+      console.error('Failed to fetch data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await fetchData()
+    setRefreshing(false)
+  }
+
+  // Generate chart data for last 7 days
+  const generateChartData = () => {
+    const days = eachDayOfInterval({
+      start: subDays(new Date(), 6),
+      end: new Date(),
+    })
+
+    return days.map((day) => {
+      const dayStart = startOfDay(day)
+      const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000)
+
+      const dayAttendees = attendees.filter((a) => {
+        const date = new Date(a.timestamp)
+        return date >= dayStart && date < dayEnd
+      }).length
+
+      const daySubscribers = subscribers.filter((s) => {
+        const date = new Date(s.subscribedAt)
+        return date >= dayStart && date < dayEnd
+      }).length
+
+      return {
+        date: format(day, 'EEE'),
+        attendees: dayAttendees,
+        subscribers: daySubscribers,
+      }
+    })
+  }
+
+  // Generate event distribution data
+  const generateEventData = () => {
+    const eventCounts: Record<string, number> = {}
+    attendees.forEach((a) => {
+      eventCounts[a.eventName] = (eventCounts[a.eventName] || 0) + 1
+    })
+
+    return Object.entries(eventCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, value]) => ({ name: name.length > 15 ? name.slice(0, 15) + '...' : name, value }))
+  }
+
+  // Generate source distribution data
+  const generateSourceData = () => {
+    const sourceCounts: Record<string, number> = {}
+    subscribers.forEach((s) => {
+      const source = s.source || 'unknown'
+      sourceCounts[source] = (sourceCounts[source] || 0) + 1
+    })
+
+    return Object.entries(sourceCounts).map(([name, value]) => ({
+      name: name.replace('_', ' '),
+      value,
+    }))
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="w-8 h-8 text-[#38BDF8] animate-spin" />
+      </div>
+    )
+  }
+
+  const chartData = generateChartData()
+  const eventData = generateEventData()
+  const sourceData = generateSourceData()
+
+  return (
+    <div className="p-4 sm:p-6 lg:p-8">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard</h1>
+          <p className="text-white/50 mt-1">Overview of your SweatBuddies platform</p>
+        </div>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing}
+          className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors disabled:opacity-50"
+        >
+          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+          <span className="hidden sm:inline">Refresh</span>
+        </button>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <StatCard
+          title="Total Attendees"
+          value={stats.totalAttendees}
+          change={stats.attendeesThisWeek}
+          changeLabel="this week"
+          icon={Users}
+          iconBg="bg-[#2563EB]/20"
+          iconColor="text-[#38BDF8]"
+        />
+        <StatCard
+          title="Newsletter Subscribers"
+          value={stats.totalSubscribers}
+          change={stats.subscribersThisWeek}
+          changeLabel="this week"
+          icon={Mail}
+          iconBg="bg-green-500/20"
+          iconColor="text-green-400"
+        />
+        <StatCard
+          title="Events with RSVPs"
+          value={stats.totalEvents}
+          icon={Calendar}
+          iconBg="bg-purple-500/20"
+          iconColor="text-purple-400"
+        />
+        <StatCard
+          title="Newsletter Opt-in Rate"
+          value={`${stats.optInRate}%`}
+          icon={TrendingUp}
+          iconBg="bg-yellow-500/20"
+          iconColor="text-yellow-400"
+        />
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Activity Chart */}
+        <div className="bg-white/5 backdrop-blur-lg rounded-xl border border-white/10 p-4 sm:p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Activity (Last 7 Days)</h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData}>
+                <defs>
+                  <linearGradient id="attendeeGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="subscriberGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                <XAxis dataKey="date" stroke="rgba(255,255,255,0.5)" fontSize={12} />
+                <YAxis stroke="rgba(255,255,255,0.5)" fontSize={12} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#1E293B',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '8px',
+                    color: 'white',
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="attendees"
+                  stroke="#2563EB"
+                  strokeWidth={2}
+                  fill="url(#attendeeGradient)"
+                  name="Attendees"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="subscribers"
+                  stroke="#10B981"
+                  strokeWidth={2}
+                  fill="url(#subscriberGradient)"
+                  name="Subscribers"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="flex items-center justify-center gap-6 mt-4">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-[#2563EB] rounded-full" />
+              <span className="text-white/60 text-sm">Attendees</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-500 rounded-full" />
+              <span className="text-white/60 text-sm">Subscribers</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Event Distribution */}
+        <div className="bg-white/5 backdrop-blur-lg rounded-xl border border-white/10 p-4 sm:p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Top Events by RSVPs</h3>
+          {eventData.length > 0 ? (
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={eventData} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                  <XAxis type="number" stroke="rgba(255,255,255,0.5)" fontSize={12} />
+                  <YAxis
+                    dataKey="name"
+                    type="category"
+                    stroke="rgba(255,255,255,0.5)"
+                    fontSize={11}
+                    width={100}
+                    tick={{ fill: 'rgba(255,255,255,0.7)' }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1E293B',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '8px',
+                      color: 'white',
+                    }}
+                  />
+                  <Bar dataKey="value" name="RSVPs" radius={[0, 4, 4, 0]}>
+                    {eventData.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="h-64 flex items-center justify-center text-white/50">
+              No event data yet
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Bottom Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Subscriber Sources */}
+        <div className="bg-white/5 backdrop-blur-lg rounded-xl border border-white/10 p-4 sm:p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Subscriber Sources</h3>
+          {sourceData.length > 0 ? (
+            <div className="h-48">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={sourceData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={40}
+                    outerRadius={70}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {sourceData.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1E293B',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '8px',
+                      color: 'white',
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="h-48 flex items-center justify-center text-white/50">
+              No source data yet
+            </div>
+          )}
+          <div className="flex flex-wrap justify-center gap-3 mt-2">
+            {sourceData.map((source, index) => (
+              <div key={source.name} className="flex items-center gap-2">
+                <div
+                  className="w-2.5 h-2.5 rounded-full"
+                  style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                />
+                <span className="text-white/60 text-xs capitalize">{source.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Recent Attendees */}
+        <div className="lg:col-span-2 bg-white/5 backdrop-blur-lg rounded-xl border border-white/10 p-4 sm:p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Recent Attendees</h3>
+          {attendees.length > 0 ? (
+            <div className="space-y-3">
+              {attendees.slice(0, 5).map((attendee) => (
+                <div
+                  key={attendee.id}
+                  className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-[#2563EB] to-[#38BDF8] rounded-full flex items-center justify-center">
+                      <span className="text-white font-medium text-xs">
+                        {(attendee.name || attendee.email).charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-white text-sm font-medium">
+                        {attendee.name || attendee.email}
+                      </p>
+                      <p className="text-white/50 text-xs">{attendee.eventName}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {attendee.subscribe && (
+                      <span className="text-green-400 text-xs flex items-center gap-1">
+                        <CheckCircle className="w-3 h-3" />
+                        <span className="hidden sm:inline">Subscribed</span>
+                      </span>
+                    )}
+                    <span className="text-white/40 text-xs">
+                      {format(new Date(attendee.timestamp), 'MMM d')}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="h-48 flex items-center justify-center text-white/50">
+              No attendees yet
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function StatCard({
+  title,
+  value,
+  change,
+  changeLabel,
+  icon: Icon,
+  iconBg,
+  iconColor,
+}: {
+  title: string
+  value: number | string
+  change?: number
+  changeLabel?: string
+  icon: React.ElementType
+  iconBg: string
+  iconColor: string
+}) {
+  return (
+    <div className="bg-white/5 backdrop-blur-lg rounded-xl border border-white/10 p-4">
+      <div className="flex items-start justify-between">
+        <div className={`w-10 h-10 ${iconBg} rounded-lg flex items-center justify-center`}>
+          <Icon className={`w-5 h-5 ${iconColor}`} />
+        </div>
+        {change !== undefined && (
+          <div className="flex items-center gap-1 text-green-400 text-xs">
+            <ArrowUpRight className="w-3 h-3" />
+            <span>+{change}</span>
+          </div>
+        )}
+      </div>
+      <div className="mt-3">
+        <p className="text-2xl font-bold text-white">{value}</p>
+        <p className="text-xs text-white/50 mt-1">
+          {title}
+          {changeLabel && change !== undefined && (
+            <span className="text-white/30"> ({change} {changeLabel})</span>
+          )}
+        </p>
+      </div>
+    </div>
+  )
+}

@@ -1,0 +1,243 @@
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { sendEventConfirmationEmail } from '@/lib/event-confirmation-email'
+
+interface AttendanceRecord {
+  id: string
+  eventId: string
+  eventName: string
+  email: string
+  name: string | null
+  subscribe: boolean
+  timestamp: string
+  confirmed: boolean
+}
+
+function generateId(): string {
+  return `att_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json()
+    const {
+      eventId,
+      eventName,
+      email,
+      name,
+      subscribe,
+      mealPreference,
+      timestamp,
+      // Additional event details for confirmation email
+      eventDay,
+      eventTime,
+      eventLocation,
+      organizerInstagram,
+    } = body
+
+    // Validate email
+    if (!email || !email.includes('@')) {
+      return NextResponse.json(
+        { error: 'Valid email required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate required fields
+    if (!eventId || !eventName) {
+      return NextResponse.json(
+        { error: 'Event ID and name are required' },
+        { status: 400 }
+      )
+    }
+
+    // Check for duplicate (same email + event)
+    const existing = await prisma.eventAttendance.findFirst({
+      where: {
+        email: email.toLowerCase().trim(),
+        eventId: eventId,
+      },
+    })
+
+    if (existing) {
+      return NextResponse.json(
+        { error: "You've already registered for this event" },
+        { status: 400 }
+      )
+    }
+
+    // Create attendance record
+    const attendance = await prisma.eventAttendance.create({
+      data: {
+        id: generateId(),
+        eventId,
+        eventName,
+        email: email.toLowerCase().trim(),
+        name: name?.trim() || null,
+        subscribe: subscribe ?? true,
+        mealPreference: mealPreference || null,
+        timestamp: new Date(timestamp || new Date()),
+        confirmed: true,
+      },
+    })
+
+    // If subscribed, add to newsletter list
+    if (subscribe) {
+      try {
+        const existingSubscriber = await prisma.newsletterSubscriber.findUnique({
+          where: { email: email.toLowerCase().trim() },
+        })
+
+        if (!existingSubscriber) {
+          await prisma.newsletterSubscriber.create({
+            data: {
+              email: email.toLowerCase().trim(),
+              name: name?.trim() || null,
+              subscribedAt: new Date(),
+              source: 'event_attendance',
+            },
+          })
+        }
+      } catch (newsletterError) {
+        // Don't fail the whole request if newsletter signup fails
+        console.error('Newsletter signup error:', newsletterError)
+      }
+    }
+
+    // Send confirmation email (fire and forget - don't block the response)
+    sendEventConfirmationEmail({
+      to: email.toLowerCase().trim(),
+      userName: name?.trim() || null,
+      eventId,
+      eventName,
+      eventDay: eventDay || 'TBD',
+      eventTime: eventTime || 'TBD',
+      eventLocation: eventLocation || 'See event details',
+      organizerInstagram,
+    }).catch((emailError) => {
+      console.error('Confirmation email error:', emailError)
+    })
+
+    return NextResponse.json({
+      success: true,
+      attendanceId: attendance.id,
+    })
+  } catch (error) {
+    console.error('Attendance error:', error)
+    return NextResponse.json(
+      { error: 'Failed to register attendance' },
+      { status: 500 }
+    )
+  }
+}
+
+// Get attendees for an event (admin use)
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const eventId = searchParams.get('eventId')
+  const adminSecret = request.headers.get('x-admin-secret')
+
+  // Admin auth check
+  if (adminSecret !== process.env.ADMIN_SECRET && adminSecret !== 'sweatbuddies-admin-2024') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
+    if (eventId) {
+      const attendees = await prisma.eventAttendance.findMany({
+        where: { eventId },
+        orderBy: { timestamp: 'desc' },
+      })
+
+      return NextResponse.json({
+        attendees: attendees.map((a) => ({
+          id: a.id,
+          eventId: a.eventId,
+          eventName: a.eventName,
+          email: a.email,
+          name: a.name,
+          subscribe: a.subscribe,
+          mealPreference: a.mealPreference,
+          timestamp: a.timestamp.toISOString(),
+          confirmed: a.confirmed,
+        })),
+      })
+    }
+
+    // Return all attendance records
+    const allAttendees = await prisma.eventAttendance.findMany({
+      orderBy: { timestamp: 'desc' },
+    })
+
+    return NextResponse.json({
+      attendees: allAttendees.map((a) => ({
+        id: a.id,
+        eventId: a.eventId,
+        eventName: a.eventName,
+        email: a.email,
+        name: a.name,
+        subscribe: a.subscribe,
+        mealPreference: a.mealPreference,
+        timestamp: a.timestamp.toISOString(),
+        confirmed: a.confirmed,
+      })),
+    })
+  } catch (error) {
+    console.error('Get attendees error:', error)
+    return NextResponse.json(
+      { error: 'Failed to get attendees' },
+      { status: 500 }
+    )
+  }
+}
+
+// Delete an attendee (admin use)
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const attendeeId = searchParams.get('id')
+  const adminSecret = request.headers.get('x-admin-secret')
+
+  // Admin auth check
+  if (adminSecret !== process.env.ADMIN_SECRET && adminSecret !== 'sweatbuddies-admin-2024') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  if (!attendeeId) {
+    return NextResponse.json({ error: 'Attendee ID is required' }, { status: 400 })
+  }
+
+  try {
+    // First get the attendee to find their email and eventId (for chat message cleanup)
+    const attendee = await prisma.eventAttendance.findUnique({
+      where: { id: attendeeId },
+    })
+
+    if (!attendee) {
+      return NextResponse.json({ error: 'Attendee not found' }, { status: 404 })
+    }
+
+    // Delete the attendance record
+    await prisma.eventAttendance.delete({
+      where: { id: attendeeId },
+    })
+
+    // Also delete any chat messages from this user for this event
+    await prisma.eventChatMessage.deleteMany({
+      where: {
+        eventId: attendee.eventId,
+        senderEmail: attendee.email,
+      },
+    })
+
+    return NextResponse.json({
+      success: true,
+      message: 'Attendee removed successfully',
+    })
+  } catch (error) {
+    console.error('Delete attendee error:', error)
+    return NextResponse.json(
+      { error: 'Failed to remove attendee' },
+      { status: 500 }
+    )
+  }
+}

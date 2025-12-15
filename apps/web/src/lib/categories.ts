@@ -126,10 +126,10 @@ export const ACTIVITY_CATEGORIES: ActivityCategory[] = [
   { slug: 'trail_running', name: 'Trail Running', description: 'Off-road running and trail adventures', emoji: '🏞️', icon: 'map', color: '#A7F3D0', groupSlug: 'outdoor', displayOrder: 34, featured: false },
 
   // SPORTS
-  { slug: 'volleyball', name: 'Volleyball', description: 'Beach volleyball and indoor volleyball', emoji: '🏐', icon: 'circle', color: '#14B8A6', groupSlug: 'outdoor', displayOrder: 40, featured: true },
-  { slug: 'pickleball', name: 'Pickleball', description: 'Pickleball games and social play', emoji: '🏓', icon: 'target', color: '#2DD4BF', groupSlug: 'outdoor', displayOrder: 41, featured: true },
-  { slug: 'tennis', name: 'Tennis', description: 'Tennis sessions and racquet sports', emoji: '🎾', icon: 'circle-dot', color: '#5EEAD4', groupSlug: 'outdoor', displayOrder: 42, featured: false },
-  { slug: 'badminton', name: 'Badminton', description: 'Badminton games and shuttlecock sessions', emoji: '🏸', icon: 'feather', color: '#99F6E4', groupSlug: 'outdoor', displayOrder: 43, featured: false },
+  { slug: 'volleyball', name: 'Volleyball', description: 'Beach volleyball and indoor volleyball', emoji: '🏐', icon: 'circle', color: '#F97316', groupSlug: 'outdoor', displayOrder: 40, featured: true },
+  { slug: 'pickleball', name: 'Pickleball', description: 'Pickleball games and social play', emoji: '🏓', icon: 'target', color: '#FB923C', groupSlug: 'outdoor', displayOrder: 41, featured: true },
+  { slug: 'tennis', name: 'Tennis', description: 'Tennis sessions and racquet sports', emoji: '🎾', icon: 'circle-dot', color: '#FDBA74', groupSlug: 'outdoor', displayOrder: 42, featured: false },
+  { slug: 'badminton', name: 'Badminton', description: 'Badminton games and shuttlecock sessions', emoji: '🏸', icon: 'feather', color: '#FED7AA', groupSlug: 'outdoor', displayOrder: 43, featured: false },
   { slug: 'basketball', name: 'Basketball', description: 'Pickup basketball and hoops sessions', emoji: '🏀', icon: 'circle', color: '#F97316', groupSlug: 'outdoor', displayOrder: 44, featured: false },
   { slug: 'soccer', name: 'Soccer', description: 'Football/soccer games and futsal', emoji: '⚽', icon: 'circle', color: '#22C55E', groupSlug: 'outdoor', displayOrder: 45, featured: false },
   { slug: 'frisbee', name: 'Frisbee', description: 'Ultimate frisbee and disc sports', emoji: '🥏', icon: 'disc', color: '#3B82F6', groupSlug: 'outdoor', displayOrder: 46, featured: false },

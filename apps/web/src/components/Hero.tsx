@@ -1,43 +1,35 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { GradientBackground } from './GradientBackground'
-import { ChevronDown } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ArrowDown, ArrowRight } from 'lucide-react'
+import Image from 'next/image'
 
 const heroSlides = [
   {
-    headline: "Your City's Moving.",
-    subline: "Know Where.",
-    video: '/hero-video.mp4',
-    accent: 'teal' as const,
+    headline: "Find Your Crew.",
+    subline: "Sweat Together.",
+    image: "/images/hero-2.jpg",
+    alt: "Outdoor yoga class in the park",
   },
   {
     headline: "Run Clubs.",
-    subline: "Yoga. HIIT. Dance.",
-    video: '/hero-video.mp4',
-    accent: 'orange' as const,
+    subline: "New Friends. Same Pace.",
+    image: "/images/hero-1.webp",
+    alt: "Group fitness workout outdoors",
   },
   {
-    headline: "No Memberships.",
-    subline: "Just Movement.",
-    video: '/hero-video.mp4',
-    accent: 'purple' as const,
+    headline: "Solo Gets Old.",
+    subline: "Move With Others.",
+    image: "/images/hero-3.jpg",
+    alt: "Community workout session",
   },
 ]
 
-const accentColors = {
-  teal: 'from-[#3CCFBB]',
-  orange: 'from-[#F97316]',
-  purple: 'from-[#B292E7]',
-}
-
 export function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
-    setIsVisible(true)
-
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
     }, 5000)
@@ -48,116 +40,178 @@ export function Hero() {
   const slide = heroSlides[currentSlide]
 
   return (
-    <section className="relative min-h-[100svh] flex items-center overflow-hidden">
-      {/* Video Background with overlay */}
+    <section className="relative min-h-[100svh] flex items-center overflow-hidden bg-sand">
+      {/* Navy background base */}
+      <div className="absolute inset-0 bg-navy" />
+
+      {/* Image Background Slideshow */}
       <div className="absolute inset-0">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover scale-105"
-          style={{ filter: 'brightness(0.3)' }}
-        >
-          <source src={slide.video} type="video/mp4" />
-        </video>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: [0.2, 0, 0, 1] }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={slide.image}
+              alt={slide.alt}
+              fill
+              priority={currentSlide === 0}
+              loading={currentSlide === 0 ? 'eager' : 'lazy'}
+              className="object-cover"
+              sizes="100vw"
+            />
+          </motion.div>
+        </AnimatePresence>
 
-        {/* Dark gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#080A0F]/80 via-[#080A0F]/60 to-[#080A0F]" />
+        {/* Neo-Brutalist overlay - stronger left side for text */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(to right, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.85) 35%, rgba(15, 23, 42, 0.4) 65%, rgba(15, 23, 42, 0.2) 100%)'
+          }}
+        />
+
+        {/* Terracotta accent glow */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-30"
+          style={{
+            background: 'radial-gradient(ellipse at 15% 60%, rgba(224, 122, 95, 0.4) 0%, transparent 50%)'
+          }}
+        />
       </div>
-
-      {/* Animated gradient blobs */}
-      <GradientBackground variant="hero" />
 
       {/* Content */}
       <div className="relative z-10 max-w-container mx-auto w-full px-6 lg:px-10 py-20 md:py-32">
         <div className="max-w-4xl">
           {/* Animated headline */}
-          <div
-            className={`transition-all duration-1000 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-          >
-            <h1
-              className="font-heading font-extrabold text-white mb-2 tracking-wide"
-              style={{
-                fontSize: 'clamp(40px, 10vw, 80px)',
-                lineHeight: '1',
-              }}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlide}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
             >
-              {slide.headline}
-            </h1>
-            <h1
-              className="font-heading font-extrabold mb-8 text-gradient tracking-wide"
-              style={{
-                fontSize: 'clamp(40px, 10vw, 80px)',
-                lineHeight: '1',
-              }}
-            >
-              {slide.subline}
-            </h1>
-          </div>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1, ease: [0.2, 0, 0, 1] }}
+                className="font-display font-semibold text-sand mb-2"
+                style={{
+                  fontSize: 'clamp(48px, 12vw, 96px)',
+                  lineHeight: '1',
+                  letterSpacing: '-0.04em',
+                }}
+              >
+                {slide.headline}
+              </motion.h1>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2, ease: [0.2, 0, 0, 1] }}
+                className="font-display font-semibold text-terracotta mb-8"
+                style={{
+                  fontSize: 'clamp(48px, 12vw, 96px)',
+                  lineHeight: '1',
+                  letterSpacing: '-0.04em',
+                }}
+              >
+                {slide.subline}
+              </motion.h1>
+            </motion.div>
+          </AnimatePresence>
 
           {/* Subhead */}
-          <p
-            className={`font-body text-white/70 mb-10 max-w-xl transition-all duration-1000 delay-200 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="font-body text-sand/70 mb-10 max-w-xl"
             style={{
               fontSize: 'clamp(16px, 2vw, 20px)',
               lineHeight: '1.6',
             }}
           >
-            The best open-access fitness events in Southeast Asia — curated weekly. No memberships. No bookings. Just show up.
-          </p>
+            Meet people who move like you. Open fitness events across Southeast Asia — where strangers become workout buddies.
+          </motion.p>
 
-          {/* CTAs */}
-          <div
-            className={`flex flex-col sm:flex-row gap-4 mb-16 transition-all duration-1000 delay-300 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
+          {/* Stats - Neo-Brutalist style */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="flex flex-wrap items-center gap-4 sm:gap-6 mb-10"
           >
-            <a href="#events" className="btn-primary">
-              <span>See What&apos;s On</span>
-            </a>
-            <a href="#submit" className="btn-gradient-border">
-              <span>Submit an Event</span>
-            </a>
-          </div>
+            {[
+              { value: '50+', label: 'events weekly' },
+              { value: '3', label: 'cities' },
+              { value: '1000+', label: 'connections' },
+            ].map((stat, idx) => (
+              <div
+                key={idx}
+                className="flex items-baseline gap-2 px-4 py-2 bg-sand/10 border-2 border-sand/20"
+              >
+                <span className="text-2xl sm:text-3xl font-display font-semibold text-sand">{stat.value}</span>
+                <span className="text-sand/50 text-sm font-body">{stat.label}</span>
+              </div>
+            ))}
+          </motion.div>
 
-          {/* Trust bar */}
-          <div
-            className={`flex flex-wrap items-center gap-x-8 gap-y-3 transition-all duration-1000 delay-400 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
+          {/* CTAs - Neo-Brutalist */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="flex flex-col sm:flex-row items-start gap-4"
           >
-            <div className="flex items-center gap-2">
-              <span className="text-3xl font-heading font-bold text-gradient">50+</span>
-              <span className="text-white/60 text-sm font-body">events</span>
-            </div>
-            <div className="w-px h-6 bg-white/20 hidden sm:block" />
-            <div className="flex items-center gap-2">
-              <span className="text-3xl font-heading font-bold text-gradient">3</span>
-              <span className="text-white/60 text-sm font-body">cities</span>
-            </div>
-            <div className="w-px h-6 bg-white/20 hidden sm:block" />
-            <div className="flex items-center gap-2">
-              <span className="text-3xl font-heading font-bold text-gradient">20+</span>
-              <span className="text-white/60 text-sm font-body">organizers</span>
-            </div>
-          </div>
+            <motion.a
+              href="#events"
+              whileHover={{ x: -2, y: -2 }}
+              whileTap={{ x: 2, y: 2 }}
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-terracotta text-white font-semibold text-base border-2 border-sand transition-all duration-150"
+              style={{
+                boxShadow: '4px 4px 0px 0px #FAF7F2',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '6px 6px 0px 0px #FAF7F2'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = '4px 4px 0px 0px #FAF7F2'
+              }}
+            >
+              Browse Events
+              <ArrowRight className="w-5 h-5" />
+            </motion.a>
+
+            {/* Secondary as text link */}
+            <p className="text-sm text-sand/50 font-body sm:self-center">
+              Are you an organizer?{' '}
+              <a
+                href="#submit"
+                className="text-terracotta hover:text-coral underline underline-offset-4 transition-colors"
+              >
+                Submit your event
+              </a>
+            </p>
+          </motion.div>
         </div>
 
-        {/* Slide indicators */}
+        {/* Slide indicators - Neo-Brutalist */}
         <div className="absolute bottom-32 left-6 lg:left-10 flex gap-2">
           {heroSlides.map((_, index) => (
-            <button
+            <motion.button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`h-1 rounded-full transition-all duration-500 ${
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className={`h-3 transition-all duration-300 border-2 ${
                 index === currentSlide
-                  ? 'w-8 bg-[#3CCFBB]'
-                  : 'w-2 bg-white/30 hover:bg-white/50'
+                  ? 'w-10 bg-terracotta border-sand'
+                  : 'w-3 bg-transparent border-sand/30 hover:border-sand/60'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
@@ -166,13 +220,24 @@ export function Hero() {
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
-        <span className="text-white/40 text-xs uppercase tracking-widest">Scroll</span>
-        <ChevronDown className="w-5 h-5 text-white/40" />
-      </div>
+      <motion.div
+        animate={{ y: [0, 6, 0] }}
+        transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+      >
+        <span className="text-sand/40 text-xs uppercase tracking-widest font-medium">Scroll</span>
+        <div className="w-8 h-8 border-2 border-sand/30 flex items-center justify-center">
+          <ArrowDown className="w-4 h-4 text-sand/40" />
+        </div>
+      </motion.div>
 
-      {/* Bottom gradient fade to next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#080A0F] to-transparent pointer-events-none" />
+      {/* Bottom transition to sand */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+        style={{
+          background: 'linear-gradient(to top, #FAF7F2, transparent)'
+        }}
+      />
     </section>
   )
 }

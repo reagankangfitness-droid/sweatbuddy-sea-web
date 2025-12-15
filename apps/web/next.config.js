@@ -21,6 +21,16 @@ const nextConfig = {
         hostname: "images.clerk.dev",
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.evbuc.com",
+        pathname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "**",
+      },
     ],
     // Modern formats for better compression
     formats: ['image/avif', 'image/webp'],

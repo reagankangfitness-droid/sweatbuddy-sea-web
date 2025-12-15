@@ -1,19 +1,64 @@
 'use client'
 
+import { useState, useEffect, lazy, Suspense } from 'react'
 import Image from 'next/image'
-import { MapPin, Clock, Calendar, Instagram, Users } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Heart, MapPin, Calendar, ArrowRight } from 'lucide-react'
+
+// Lazy load the bottom sheet - only loaded when user taps a card
+const EventDetailSheet = lazy(() => import('./EventDetailSheet').then(mod => ({ default: mod.EventDetailSheet })))
 
 interface Event {
   id: string
   name: string
   category: string
   day: string
+  eventDate?: string | null  // ISO date string (e.g., "2024-01-15")
   time: string
   location: string
-  description: string
+  description?: string | null
   organizer: string
-  imageUrl?: string
+  imageUrl?: string | null
   recurring: boolean
+  goingCount?: number
+}
+
+// Format date for display (e.g., "Sat, Dec 14")
+function formatEventDate(dateStr: string | null | undefined, dayName: string): string {
+  if (!dateStr) {
+    // For recurring events, show the next occurrence day
+    const dayMap: Record<string, number> = {
+      'Sundays': 0, 'Mondays': 1, 'Tuesdays': 2, 'Wednesdays': 3,
+      'Thursdays': 4, 'Fridays': 5, 'Saturdays': 6
+    }
+    const dayNum = dayMap[dayName]
+    if (dayNum !== undefined) {
+      const today = new Date()
+      const daysUntil = (dayNum - today.getDay() + 7) % 7 || 7 // Next occurrence
+      const nextDate = new Date(today)
+      nextDate.setDate(today.getDate() + daysUntil)
+      return nextDate.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric'
+      })
+    }
+    return dayName // Fallback for "Monthly", "Various", etc.
+  }
+
+  try {
+    const date = new Date(dateStr)
+    // Check if date is valid
+    if (isNaN(date.getTime())) return dayName
+
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric'
+    })
+  } catch {
+    return dayName
+  }
 }
 
 interface EventCardProps {
@@ -21,190 +66,222 @@ interface EventCardProps {
   index?: number
 }
 
-const categoryStyles: Record<string, { gradient: string; glow: string; badge: string }> = {
-  'Run Club': {
-    gradient: 'from-emerald-500/20 to-emerald-600/10',
-    glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(16,185,129,0.4)]',
-    badge: 'badge-run',
-  },
-  'Running': {
-    gradient: 'from-emerald-500/20 to-emerald-600/10',
-    glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(16,185,129,0.4)]',
-    badge: 'badge-run',
-  },
-  'Yoga': {
-    gradient: 'from-violet-500/20 to-violet-600/10',
-    glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(139,92,246,0.4)]',
-    badge: 'badge-yoga',
-  },
-  'HIIT': {
-    gradient: 'from-orange-500/20 to-orange-600/10',
-    glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(249,115,22,0.4)]',
-    badge: 'badge-hiit',
-  },
-  'Bootcamp': {
-    gradient: 'from-orange-500/20 to-orange-600/10',
-    glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(249,115,22,0.4)]',
-    badge: 'badge-hiit',
-  },
-  'Dance': {
-    gradient: 'from-yellow-500/20 to-amber-600/10',
-    glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(250,204,21,0.4)]',
-    badge: 'badge-dance',
-  },
-  'Dance Fitness': {
-    gradient: 'from-yellow-500/20 to-amber-600/10',
-    glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(250,204,21,0.4)]',
-    badge: 'badge-dance',
-  },
-  'Combat': {
-    gradient: 'from-pink-500/20 to-rose-600/10',
-    glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(236,72,153,0.4)]',
-    badge: 'badge-combat',
-  },
-  'Outdoor': {
-    gradient: 'from-teal-500/20 to-cyan-600/10',
-    glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(20,184,166,0.4)]',
-    badge: 'badge-outdoor',
-  },
-  'Outdoor Fitness': {
-    gradient: 'from-teal-500/20 to-cyan-600/10',
-    glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(20,184,166,0.4)]',
-    badge: 'badge-outdoor',
-  },
-  'Hiking': {
-    gradient: 'from-teal-500/20 to-cyan-600/10',
-    glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(20,184,166,0.4)]',
-    badge: 'badge-outdoor',
-  },
-  'Meditation': {
-    gradient: 'from-violet-500/20 to-violet-600/10',
-    glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(139,92,246,0.4)]',
-    badge: 'badge-yoga',
-  },
-  'Breathwork': {
-    gradient: 'from-violet-500/20 to-violet-600/10',
-    glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(139,92,246,0.4)]',
-    badge: 'badge-yoga',
-  },
+const categoryEmojis: Record<string, string> = {
+  'Run Club': '🏃',
+  'Running': '🏃',
+  'Yoga': '🧘',
+  'HIIT': '🔥',
+  'Bootcamp': '💪',
+  'Dance': '💃',
+  'Dance Fitness': '💃',
+  'Combat': '🥊',
+  'Outdoor': '🌳',
+  'Outdoor Fitness': '🌳',
+  'Hiking': '🥾',
+  'Meditation': '🧘',
+  'Breathwork': '🌬️',
 }
 
-const defaultStyle = {
-  gradient: 'from-slate-500/20 to-slate-600/10',
-  glow: 'group-hover:shadow-[0_0_40px_-10px_rgba(100,116,139,0.4)]',
-  badge: 'bg-white/10 text-white/80 border border-white/20',
-}
+// Color variations for brutal cards
+const cardColors = [
+  { shadow: '#E07A5F', accent: 'terracotta' },  // terracotta
+  { shadow: '#4F46E5', accent: 'electric' },     // electric
+  { shadow: '#10B981', accent: 'mint' },         // mint
+  { shadow: '#0F172A', accent: 'navy' },         // navy
+]
 
 export function EventCard({ event, index = 0 }: EventCardProps) {
-  const style = categoryStyles[event.category] || defaultStyle
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
+  const [isGoing, setIsGoing] = useState(false)
+  const [goingCount, setGoingCount] = useState(event.goingCount || 0)
+
+  const emoji = categoryEmojis[event.category] || '✨'
+  const colorScheme = cardColors[index % cardColors.length]
+
+  // Load saved/going state from localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
+      setIsSaved(saved.includes(event.id))
+
+      const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
+      setIsGoing(going.includes(event.id))
+    }
+  }, [event.id])
+
+  const handleSaveClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
+
+    if (isSaved) {
+      const newSaved = saved.filter((id: string) => id !== event.id)
+      localStorage.setItem('sweatbuddies_saved', JSON.stringify(newSaved))
+    } else {
+      localStorage.setItem('sweatbuddies_saved', JSON.stringify([...saved, event.id]))
+    }
+
+    setIsSaved(!isSaved)
+    window.dispatchEvent(new Event('savedEventsUpdated'))
+  }
+
+  const handleGoingClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+
+    if (isGoing) {
+      // Toggle off
+      const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
+      const newGoing = going.filter((id: string) => id !== event.id)
+      localStorage.setItem('sweatbuddies_going', JSON.stringify(newGoing))
+      setIsGoing(false)
+      setGoingCount(Math.max(0, goingCount - 1))
+    } else {
+      // Open sheet to collect info
+      setIsSheetOpen(true)
+    }
+  }
+
+  const handleGoingSuccess = () => {
+    setIsGoing(true)
+    setGoingCount(goingCount + 1)
+  }
 
   return (
-    <div
-      className={`group relative rounded-2xl overflow-hidden transition-all duration-500 ease-out
-        bg-gradient-to-br ${style.gradient} backdrop-blur-xl
-        border border-white/10 hover:border-white/20
-        ${style.glow}
-        hover:-translate-y-2`}
-      style={{
-        animationDelay: `${index * 100}ms`,
-      }}
-    >
-      {/* Subtle gradient overlay on hover */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-50px' }}
+        transition={{ duration: 0.4, delay: index * 0.05, ease: [0.2, 0, 0, 1] }}
+        whileHover={{ x: -3, y: -3 }}
+        onClick={() => setIsSheetOpen(true)}
+        className="h-full flex flex-col bg-white border-2 border-navy cursor-pointer transition-all duration-150"
+        style={{
+          boxShadow: `4px 4px 0px 0px ${colorScheme.shadow}`,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.boxShadow = `6px 6px 0px 0px ${colorScheme.shadow}`
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.boxShadow = `4px 4px 0px 0px ${colorScheme.shadow}`
+        }}
+      >
+        {/* Image Section */}
+        <div className="relative aspect-[4/3] border-b-2 border-navy">
+          {event.imageUrl ? (
+            <Image
+              src={event.imageUrl}
+              alt={event.name}
+              fill
+              loading="lazy"
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+            />
+          ) : (
+            <div className="w-full h-full bg-cream flex items-center justify-center">
+              <span className="text-6xl">{emoji}</span>
+            </div>
+          )}
 
-      {/* Event Image */}
-      {event.imageUrl && (
-        <div className="relative w-full aspect-[16/10] overflow-hidden">
-          <Image
-            src={event.imageUrl}
-            alt={event.name}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-110"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-          {/* Image overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#080A0F] via-[#080A0F]/20 to-transparent" />
-
-          {/* Category Badge on image */}
-          <div className="absolute top-4 left-4">
-            <span className={`badge ${style.badge}`}>
-              {event.category}
+          {/* Category Badge - Top Left */}
+          <div className="absolute top-3 left-3">
+            <span className="px-3 py-1.5 bg-sand border-2 border-navy text-xs font-semibold text-navy"
+              style={{ boxShadow: '2px 2px 0px 0px #0F172A' }}
+            >
+              {emoji} {event.category}
             </span>
           </div>
 
-          {/* Recurring indicator */}
+          {/* Save Button - Top Right */}
+          <button
+            onClick={handleSaveClick}
+            className={`absolute top-3 right-3 w-9 h-9 border-2 border-navy flex items-center justify-center transition-all active:scale-90 ${
+              isSaved
+                ? 'bg-coral text-white'
+                : 'bg-sand text-navy hover:bg-white'
+            }`}
+            style={{ boxShadow: '2px 2px 0px 0px #0F172A' }}
+          >
+            <Heart className={`w-4 h-4 ${isSaved ? 'fill-white' : ''}`} />
+          </button>
+
+          {/* Live Badge - Bottom Right (on image) */}
           {event.recurring && (
-            <div className="absolute top-4 right-4">
-              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-sm text-white/80 text-xs font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#3CCFBB] animate-pulse" />
-                Weekly
+            <div className="absolute bottom-3 right-3">
+              <span className="bg-mint text-navy px-3 py-1.5 border-2 border-navy text-xs font-bold flex items-center gap-1.5"
+                style={{ boxShadow: '2px 2px 0px 0px #0F172A' }}
+              >
+                <span className="w-2 h-2 bg-navy rounded-full animate-pulse" />
+                Recurring
               </span>
             </div>
           )}
         </div>
-      )}
 
-      {/* Card Content */}
-      <div className="relative p-5">
-        {/* No image fallback badge */}
-        {!event.imageUrl && (
-          <div className="mb-4">
-            <span className={`badge ${style.badge}`}>
-              {event.category}
-            </span>
-          </div>
-        )}
+        {/* Content Section */}
+        <div className="flex-1 flex flex-col p-4">
+          {/* Event Name - fixed height for 2 lines */}
+          <h3 className="font-display font-semibold text-lg text-navy mb-3 line-clamp-2 leading-tight min-h-[3rem]"
+            style={{ letterSpacing: '-0.02em' }}
+          >
+            {event.name}
+          </h3>
 
-        {/* Event Name */}
-        <h3 className="font-heading font-bold text-white mb-3 text-lg leading-tight tracking-wide group-hover:text-[#3CCFBB] transition-colors duration-300">
-          {event.name}
-        </h3>
-
-        {/* Meta info */}
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center gap-2 text-white/60 text-sm font-body">
-            <Calendar className="w-4 h-4 text-[#3CCFBB]" />
-            <span>{event.day}</span>
-            <span className="text-white/30">•</span>
-            <Clock className="w-4 h-4 text-[#3CCFBB]" />
+          {/* Date & Time */}
+          <div className="flex items-center gap-2 text-sm text-navy/70 mb-1">
+            <Calendar className="w-4 h-4 text-terracotta flex-shrink-0" />
+            <span className="font-medium">{formatEventDate(event.eventDate, event.day)}</span>
+            <span className="text-navy/30">•</span>
             <span>{event.time}</span>
           </div>
 
-          <div className="flex items-start gap-2 text-white/60 text-sm font-body">
-            <MapPin className="w-4 h-4 text-[#3CCFBB] flex-shrink-0 mt-0.5" />
+          {/* Location */}
+          <div className="flex items-center gap-2 text-sm text-navy/70 mb-4">
+            <MapPin className="w-4 h-4 text-terracotta flex-shrink-0" />
             <span className="line-clamp-1">{event.location}</span>
           </div>
-        </div>
 
-        {/* Description */}
-        {event.description && (
-          <p className="font-body text-white/50 text-sm mb-4 line-clamp-2 leading-relaxed">
-            {event.description}
-          </p>
-        )}
+          {/* Spacer to push button to bottom */}
+          <div className="flex-1" />
 
-        {/* Footer: Organizer */}
-        <div className="pt-4 border-t border-white/10">
-          <a
-            href={`https://instagram.com/${event.organizer}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm font-medium text-white/70 hover:text-[#3CCFBB] transition-colors group/link"
+          {/* CTA - Full Width Neo-Brutalist */}
+          <button
+            onClick={handleGoingClick}
+            className={`w-full py-3 font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-150 border-2 border-navy ${
+              isGoing
+                ? 'bg-mint text-navy'
+                : 'bg-terracotta text-white hover:translate-x-[-1px] hover:translate-y-[-1px]'
+            }`}
+            style={{
+              boxShadow: isGoing ? '2px 2px 0px 0px #0F172A' : '3px 3px 0px 0px #0F172A',
+            }}
           >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#F77737] flex items-center justify-center">
-              <Instagram className="w-4 h-4 text-white" />
-            </div>
-            <span className="group-hover/link:underline underline-offset-2">@{event.organizer}</span>
-          </a>
+            {isGoing ? (
+              <>
+                <span>✓</span>
+                <span>You&apos;re Going</span>
+              </>
+            ) : (
+              <>
+                <span>I&apos;m Going{goingCount > 0 && ` • ${goingCount}`}</span>
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Hover glow effect */}
-      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at 50% 50%, rgba(60, 207, 187, 0.1), transparent 70%)',
-        }}
-      />
-    </div>
+      {/* Bottom Sheet - Only rendered when opened (lazy loaded) */}
+      {isSheetOpen && (
+        <Suspense fallback={null}>
+          <EventDetailSheet
+            event={event}
+            isOpen={isSheetOpen}
+            onClose={() => setIsSheetOpen(false)}
+            onGoingSuccess={handleGoingSuccess}
+          />
+        </Suspense>
+      )}
+    </>
   )
 }

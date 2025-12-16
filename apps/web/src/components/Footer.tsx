@@ -53,11 +53,11 @@ export function Footer() {
                 <ArrowUpRight className="w-3 h-3" />
               </a>
               <a
-                href="mailto:hello@sweatbuddies.com"
+                href="mailto:hello@sweatbuddies.co"
                 className="inline-flex items-center gap-2 text-sand/60 hover:text-terracotta transition-colors text-sm"
               >
                 <Mail className="w-4 h-4" />
-                hello@sweatbuddies.com
+                hello@sweatbuddies.co
               </a>
             </div>
           </div>

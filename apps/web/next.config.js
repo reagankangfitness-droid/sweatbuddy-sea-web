@@ -3,6 +3,12 @@ const nextConfig = {
   // Enable compression
   compress: true,
 
+  // Experimental features for performance
+  experimental: {
+    // Optimize package imports for smaller bundles
+    optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts', 'date-fns'],
+  },
+
   // Optimized image settings
   images: {
     remotePatterns: [
@@ -136,6 +142,26 @@ const nextConfig = {
           {
             key: 'Cache-Control',
             value: 'public, s-maxage=30, stale-while-revalidate=120',
+          },
+        ],
+      },
+      {
+        // Events API - cache for 60s with stale-while-revalidate
+        source: '/api/events',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=60, stale-while-revalidate=300',
+          },
+        ],
+      },
+      {
+        // Event attendees - shorter cache
+        source: '/api/events/:eventId/attendees',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=30, stale-while-revalidate=60',
           },
         ],
       },

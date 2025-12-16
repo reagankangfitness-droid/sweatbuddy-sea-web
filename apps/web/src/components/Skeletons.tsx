@@ -1,0 +1,101 @@
+// Skeleton loading components for better perceived performance
+
+export function EventCardSkeleton() {
+  return (
+    <div className="h-full flex flex-col bg-white border-2 border-navy animate-pulse">
+      {/* Image placeholder */}
+      <div className="aspect-[4/3] border-b-2 border-navy bg-sand/50" />
+
+      {/* Content */}
+      <div className="flex-1 flex flex-col p-4">
+        {/* Title skeleton */}
+        <div className="h-6 bg-sand/70 mb-2 w-3/4" />
+        <div className="h-6 bg-sand/50 mb-3 w-1/2" />
+
+        {/* Date skeleton */}
+        <div className="h-4 bg-sand/40 mb-1 w-2/3" />
+
+        {/* Location skeleton */}
+        <div className="h-4 bg-sand/40 mb-4 w-1/2" />
+
+        <div className="flex-1" />
+
+        {/* Button skeleton */}
+        <div className="h-12 bg-terracotta/30 border-2 border-navy" />
+      </div>
+    </div>
+  )
+}
+
+export function EventListCardSkeleton() {
+  return (
+    <div className="flex gap-4 p-4 bg-white border-2 border-navy animate-pulse">
+      {/* Image skeleton */}
+      <div className="flex-shrink-0 w-20 h-20 bg-sand/50 border-2 border-navy" />
+
+      {/* Content skeleton */}
+      <div className="flex-1 min-w-0">
+        <div className="h-3 bg-terracotta/30 w-16 mb-2" />
+        <div className="h-5 bg-sand/70 w-3/4 mb-2" />
+        <div className="h-4 bg-sand/50 w-1/2 mb-2" />
+        <div className="h-3 bg-sand/40 w-2/3" />
+      </div>
+    </div>
+  )
+}
+
+export function CarouselCardSkeleton() {
+  return (
+    <div className="flex-shrink-0 w-[85vw] snap-start">
+      <div className="relative aspect-[4/5] overflow-hidden border-2 border-navy bg-sand/50 animate-pulse">
+        {/* Content placeholder */}
+        <div className="absolute bottom-0 left-0 right-0 p-5">
+          <div className="h-8 bg-white/20 w-3/4 mb-2" />
+          <div className="h-6 bg-white/20 w-1/2 mb-4" />
+          <div className="h-12 bg-terracotta/30 w-full" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export function MobileHeroSkeleton() {
+  return (
+    <div className="md:hidden pt-20 px-4 pb-8 bg-sand animate-pulse">
+      <div className="h-10 bg-navy/20 w-2/3 mb-2" />
+      <div className="h-10 bg-terracotta/30 w-1/2 mb-6" />
+      <div className="h-5 bg-navy/10 w-full mb-6" />
+
+      <div className="flex gap-3 mb-6">
+        <div className="flex-1 h-20 bg-white border-2 border-navy" />
+        <div className="flex-1 h-20 bg-white border-2 border-navy" />
+        <div className="flex-1 h-20 bg-white border-2 border-navy" />
+      </div>
+
+      <div className="flex gap-3">
+        <div className="flex-1 h-14 bg-terracotta/30 border-2 border-navy" />
+        <div className="flex-1 h-14 bg-white border-2 border-navy" />
+      </div>
+    </div>
+  )
+}
+
+export function EventsGridSkeleton({ count = 6 }: { count?: number }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      {Array.from({ length: count }).map((_, i) => (
+        <EventCardSkeleton key={i} />
+      ))}
+    </div>
+  )
+}
+
+export function MobileEventsListSkeleton({ count = 5 }: { count?: number }) {
+  return (
+    <div className="px-4 space-y-3">
+      {Array.from({ length: count }).map((_, i) => (
+        <EventListCardSkeleton key={i} />
+      ))}
+    </div>
+  )
+}

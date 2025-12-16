@@ -59,7 +59,9 @@ export default async function Home() {
         <MobileHeader />
         <MobileHero />
         <MobileEventsSection events={events} />
-        <SubmitForm />
+        <div id="submit">
+          <SubmitForm />
+        </div>
         <Newsletter />
         <Footer />
         <BottomNav />
@@ -76,7 +78,9 @@ export default async function Home() {
           <Cities />
           <Mission />
           <ForOrganizers />
-          <SubmitForm />
+          <div id="submit">
+            <SubmitForm />
+          </div>
           <Newsletter />
         </main>
         <Footer />

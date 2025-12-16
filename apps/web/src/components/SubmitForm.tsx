@@ -215,7 +215,7 @@ export function SubmitForm() {
 
   if (isSubmitted) {
     return (
-      <section id="submit" className="relative py-20 md:py-32 overflow-hidden" style={{ background: '#ffffff' }}>
+      <section className="relative py-20 md:py-32 overflow-hidden" style={{ background: '#ffffff' }}>
         <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(52, 119, 248, 0.04) 0%, transparent 60%)' }} />
         <SectionGradient />
         <div className="relative z-10 max-w-container mx-auto px-6 lg:px-10">
@@ -250,7 +250,7 @@ export function SubmitForm() {
   }
 
   return (
-    <section id="submit" className="relative py-20 md:py-32 overflow-hidden" style={{ background: '#ffffff' }}>
+    <section className="relative py-20 md:py-32 overflow-hidden" style={{ background: '#ffffff' }}>
       <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(52, 119, 248, 0.04) 0%, transparent 60%)' }} />
       <SectionGradient />
 

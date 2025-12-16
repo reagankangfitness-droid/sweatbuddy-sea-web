@@ -1053,3 +1053,57 @@
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
+
+/* ================================
+   MOBILE APP UTILITIES
+   ================================ */
+
+/* Hide scrollbar for horizontal scroll */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Snap scroll for carousel */
+.snap-x {
+  scroll-snap-type: x mandatory;
+}
+.snap-start {
+  scroll-snap-align: start;
+}
+.snap-mandatory {
+  scroll-snap-type: x mandatory;
+}
+
+/* Safe area for notch/home indicator */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 8px);
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Activity Marquee Animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+/* Touch feedback for mobile */
+.touch-feedback {
+  transition: transform 0.1s ease;
+}
+.touch-feedback:active {
+  transform: scale(0.98);
+}

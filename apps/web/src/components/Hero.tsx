@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect, memo } from 'react'
 import { ArrowDown, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 
@@ -26,10 +25,13 @@ const heroSlides = [
   },
 ]
 
-export function Hero() {
+// Memoized Hero component
+export const Hero = memo(function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
+    setIsLoaded(true)
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
     }, 5000)
@@ -44,28 +46,29 @@ export function Hero() {
       {/* Navy background base */}
       <div className="absolute inset-0 bg-navy" />
 
-      {/* Image Background Slideshow */}
+      {/* Image Background Slideshow - Using CSS transitions instead of Framer Motion */}
       <div className="absolute inset-0">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSlide}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: [0.2, 0, 0, 1] }}
-            className="absolute inset-0"
+        {heroSlides.map((s, index) => (
+          <div
+            key={index}
+            className="absolute inset-0 transition-opacity duration-700 ease-out"
+            style={{
+              opacity: currentSlide === index ? 1 : 0,
+              transform: currentSlide === index ? 'scale(1)' : 'scale(1.05)',
+              transition: 'opacity 0.7s ease-out, transform 0.7s ease-out',
+            }}
           >
             <Image
-              src={slide.image}
-              alt={slide.alt}
+              src={s.image}
+              alt={s.alt}
               fill
-              priority={currentSlide === 0}
-              loading={currentSlide === 0 ? 'eager' : 'lazy'}
+              priority={index === 0}
+              loading={index === 0 ? 'eager' : 'lazy'}
               className="object-cover"
               sizes="100vw"
             />
-          </motion.div>
-        </AnimatePresence>
+          </div>
+        ))}
 
         {/* Neo-Brutalist overlay - stronger left side for text */}
         <div
@@ -87,64 +90,51 @@ export function Hero() {
       {/* Content */}
       <div className="relative z-10 max-w-container mx-auto w-full px-6 lg:px-10 py-20 md:py-32">
         <div className="max-w-4xl">
-          {/* Animated headline */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentSlide}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
+          {/* Animated headline - CSS animations */}
+          <div
+            key={currentSlide}
+            className={`transition-opacity duration-400 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+          >
+            <h1
+              className="font-display font-semibold text-sand mb-2"
+              style={{
+                fontSize: 'clamp(48px, 12vw, 96px)',
+                lineHeight: '1',
+                letterSpacing: '-0.04em',
+                animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.1s both' : 'none',
+              }}
             >
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1, ease: [0.2, 0, 0, 1] }}
-                className="font-display font-semibold text-sand mb-2"
-                style={{
-                  fontSize: 'clamp(48px, 12vw, 96px)',
-                  lineHeight: '1',
-                  letterSpacing: '-0.04em',
-                }}
-              >
-                {slide.headline}
-              </motion.h1>
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2, ease: [0.2, 0, 0, 1] }}
-                className="font-display font-semibold text-terracotta mb-8"
-                style={{
-                  fontSize: 'clamp(48px, 12vw, 96px)',
-                  lineHeight: '1',
-                  letterSpacing: '-0.04em',
-                }}
-              >
-                {slide.subline}
-              </motion.h1>
-            </motion.div>
-          </AnimatePresence>
+              {slide.headline}
+            </h1>
+            <h1
+              className="font-display font-semibold text-terracotta mb-8"
+              style={{
+                fontSize: 'clamp(48px, 12vw, 96px)',
+                lineHeight: '1',
+                letterSpacing: '-0.04em',
+                animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.2s both' : 'none',
+              }}
+            >
+              {slide.subline}
+            </h1>
+          </div>
 
           {/* Subhead */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+          <p
             className="font-body text-sand/70 mb-10 max-w-xl"
             style={{
               fontSize: 'clamp(16px, 2vw, 20px)',
               lineHeight: '1.6',
+              animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.3s both' : 'none',
             }}
           >
             Meet people who move like you. Open fitness events across Southeast Asia — where strangers become workout buddies.
-          </motion.p>
+          </p>
 
           {/* Stats - Neo-Brutalist style */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+          <div
             className="flex flex-wrap items-center gap-4 sm:gap-6 mb-10"
+            style={{ animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.4s both' : 'none' }}
           >
             {[
               { value: '50+', label: 'events weekly' },
@@ -159,20 +149,16 @@ export function Hero() {
                 <span className="text-sand/50 text-sm font-body">{stat.label}</span>
               </div>
             ))}
-          </motion.div>
+          </div>
 
           {/* CTAs - Neo-Brutalist */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
+          <div
             className="flex flex-col sm:flex-row items-start gap-4"
+            style={{ animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.5s both' : 'none' }}
           >
-            <motion.a
+            <a
               href="#events"
-              whileHover={{ x: -2, y: -2 }}
-              whileTap={{ x: 2, y: 2 }}
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-terracotta text-white font-semibold text-base border-2 border-sand transition-all duration-150"
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-terracotta text-white font-semibold text-base border-2 border-sand transition-all duration-150 hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-[2px] active:translate-y-[2px]"
               style={{
                 boxShadow: '4px 4px 0px 0px #FAF7F2',
               }}
@@ -185,7 +171,7 @@ export function Hero() {
             >
               Browse Events
               <ArrowRight className="w-5 h-5" />
-            </motion.a>
+            </a>
 
             {/* Secondary as text link */}
             <p className="text-sm text-sand/50 font-body sm:self-center">
@@ -197,18 +183,16 @@ export function Hero() {
                 Submit your event
               </a>
             </p>
-          </motion.div>
+          </div>
         </div>
 
         {/* Slide indicators - Neo-Brutalist */}
         <div className="absolute bottom-32 left-6 lg:left-10 flex gap-2">
           {heroSlides.map((_, index) => (
-            <motion.button
+            <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className={`h-3 transition-all duration-300 border-2 ${
+              className={`h-3 transition-all duration-300 border-2 hover:scale-110 active:scale-95 ${
                 index === currentSlide
                   ? 'w-10 bg-terracotta border-sand'
                   : 'w-3 bg-transparent border-sand/30 hover:border-sand/60'
@@ -219,17 +203,16 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        animate={{ y: [0, 6, 0] }}
-        transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+      {/* Scroll indicator - CSS animation */}
+      <div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce"
+        style={{ animationDuration: '1.5s' }}
       >
         <span className="text-sand/40 text-xs uppercase tracking-widest font-medium">Scroll</span>
         <div className="w-8 h-8 border-2 border-sand/30 flex items-center justify-center">
           <ArrowDown className="w-4 h-4 text-sand/40" />
         </div>
-      </motion.div>
+      </div>
 
       {/* Bottom transition to sand */}
       <div
@@ -240,4 +223,4 @@ export function Hero() {
       />
     </section>
   )
-}
+})

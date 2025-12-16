@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect, lazy, Suspense } from 'react'
+import { useState, useEffect, lazy, Suspense, memo } from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
 import { Heart, MapPin, Calendar, ArrowRight } from 'lucide-react'
 
 // Lazy load the bottom sheet - only loaded when user taps a card
@@ -90,7 +89,8 @@ const cardColors = [
   { shadow: '#0F172A', accent: 'navy' },         // navy
 ]
 
-export function EventCard({ event, index = 0 }: EventCardProps) {
+// Memoized component to prevent unnecessary re-renders
+export const EventCard = memo(function EventCard({ event, index = 0 }: EventCardProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
   const [isGoing, setIsGoing] = useState(false)
@@ -99,14 +99,23 @@ export function EventCard({ event, index = 0 }: EventCardProps) {
   const emoji = categoryEmojis[event.category] || '✨'
   const colorScheme = cardColors[index % cardColors.length]
 
-  // Load saved/going state from localStorage
+  // Load saved/going state from localStorage - deferred to avoid blocking render
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
-      setIsSaved(saved.includes(event.id))
+    // Use requestIdleCallback for non-critical localStorage reads
+    const loadState = () => {
+      if (typeof window !== 'undefined') {
+        const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
+        setIsSaved(saved.includes(event.id))
 
-      const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
-      setIsGoing(going.includes(event.id))
+        const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
+        setIsGoing(going.includes(event.id))
+      }
+    }
+
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(loadState)
+    } else {
+      setTimeout(loadState, 0)
     }
   }, [event.id])
 
@@ -148,16 +157,13 @@ export function EventCard({ event, index = 0 }: EventCardProps) {
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-50px' }}
-        transition={{ duration: 0.4, delay: index * 0.05, ease: [0.2, 0, 0, 1] }}
-        whileHover={{ x: -3, y: -3 }}
+      <div
         onClick={() => setIsSheetOpen(true)}
-        className="h-full flex flex-col bg-white border-2 border-navy cursor-pointer transition-all duration-150"
+        className="h-full flex flex-col bg-white border-2 border-navy cursor-pointer transition-all duration-150 hover:translate-x-[-3px] hover:translate-y-[-3px] active:translate-x-[2px] active:translate-y-[2px]"
         style={{
           boxShadow: `4px 4px 0px 0px ${colorScheme.shadow}`,
+          // CSS animation for staggered fade-in
+          animation: `fadeInUp 0.4s ease-out ${index * 0.05}s both`,
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.boxShadow = `6px 6px 0px 0px ${colorScheme.shadow}`
@@ -269,7 +275,7 @@ export function EventCard({ event, index = 0 }: EventCardProps) {
             )}
           </button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Bottom Sheet - Only rendered when opened (lazy loaded) */}
       {isSheetOpen && (
@@ -284,4 +290,4 @@ export function EventCard({ event, index = 0 }: EventCardProps) {
       )}
     </>
   )
-}
+})

@@ -66,14 +66,14 @@ export function MobileHero() {
           Browse Events
           <ArrowRight className="w-5 h-5" />
         </button>
-        <button
-          onClick={() => handleClick('submit')}
+        <a
+          href="#submit"
           className="flex-1 bg-white text-navy py-3.5 font-bold text-center border-2 border-navy flex items-center justify-center gap-2 active:translate-x-[2px] active:translate-y-[2px] transition-transform"
           style={{ boxShadow: '4px 4px 0px 0px #0F172A' }}
         >
           <Calendar className="w-5 h-5" />
           Submit
-        </button>
+        </a>
       </div>
     </div>
   )

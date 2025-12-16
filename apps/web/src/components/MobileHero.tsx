@@ -7,7 +7,9 @@ export function MobileHero() {
     const scrollToElement = (attempts = 0) => {
       const element = document.getElementById(href)
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        // Use window.scrollTo for better mobile compatibility
+        const top = element.getBoundingClientRect().top + window.scrollY - 20
+        window.scrollTo({ top, behavior: 'smooth' })
       } else if (attempts < 10) {
         // Retry after 100ms if element not found (dynamic import loading)
         setTimeout(() => scrollToElement(attempts + 1), 100)

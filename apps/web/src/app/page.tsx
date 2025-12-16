@@ -45,8 +45,9 @@ const Footer = dynamic(() => import('@/components/Footer').then(mod => ({ defaul
 const ClientComponents = dynamic(() => import('@/components/ClientComponents').then(mod => ({ default: mod.ClientComponents })))
 const StickyNewsletterBar = dynamic(() => import('@/components/StickyNewsletterBar').then(mod => ({ default: mod.StickyNewsletterBar })))
 
-// Revalidate every 60 seconds for faster updates after edits
-export const revalidate = 60
+// Force dynamic rendering to ensure fresh data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function Home() {
   // Server-side data fetching - no loading spinner needed

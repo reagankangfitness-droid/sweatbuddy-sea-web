@@ -236,8 +236,8 @@ importers:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@18.3.1)(react@18.3.1)
       stripe:
-        specifier: ^20.0.0
-        version: 20.0.0(@types/node@20.19.25)
+        specifier: ^20.1.0
+        version: 20.1.0(@types/node@20.19.25)
       svix:
         specifier: ^1.81.0
         version: 1.81.0
@@ -13493,8 +13493,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /stripe@20.0.0(@types/node@20.19.25):
-    resolution: {integrity: sha512-EaZeWpbJOCcDytdjKSwdrL5BxzbDGNueiCfHjHXlPdBQvLqoxl6AAivC35SPzTmVXJb5duXQlXFGS45H0+e6Gg==}
+  /stripe@20.1.0(@types/node@20.19.25):
+    resolution: {integrity: sha512-o1VNRuMkY76ZCq92U3EH3/XHm/WHp7AerpzDs4Zyo8uE5mFL4QUcv/2SudWsSnhBSp4moO2+ZoGCZ7mT8crPmQ==}
     engines: {node: '>=16'}
     peerDependencies:
       '@types/node': '>=16'

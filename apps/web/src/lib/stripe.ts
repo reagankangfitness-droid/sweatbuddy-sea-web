@@ -12,7 +12,7 @@ function getStripeInstance(): Stripe {
       throw new Error('STRIPE_SECRET_KEY is not configured. Stripe payments will not work.')
     }
     stripeInstance = new Stripe(secretKey, {
-      apiVersion: '2025-11-17.clover',
+      apiVersion: '2025-12-15.clover',
       typescript: true,
     })
   }

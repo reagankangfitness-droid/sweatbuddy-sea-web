@@ -34,9 +34,9 @@ export function HowItWorks() {
   return (
     <section className="relative py-24 md:py-36 overflow-hidden bg-cream">
       {/* Decorative elements */}
-      <div className="absolute top-20 right-10 w-20 h-20 border-4 border-navy/10 rotate-12" />
-      <div className="absolute bottom-32 left-16 w-16 h-16 bg-terracotta/10 rotate-45" />
-      <div className="absolute top-1/2 right-1/4 w-8 h-8 bg-mint/20" />
+      <div className="absolute top-20 right-10 w-20 h-20 rounded-full bg-coral/5" />
+      <div className="absolute bottom-32 left-16 w-16 h-16 rounded-full bg-teal/10" />
+      <div className="absolute top-1/2 right-1/4 w-8 h-8 rounded-full bg-ocean/10" />
 
       <div className="relative z-10 max-w-container mx-auto px-6 lg:px-10">
         {/* Header */}
@@ -48,16 +48,15 @@ export function HowItWorks() {
           className="text-center mb-16 md:mb-24"
         >
           <h2
-            className="font-display font-semibold"
+            className="font-display font-semibold text-forest-900"
             style={{
               fontSize: 'clamp(36px, 7vw, 64px)',
               letterSpacing: '-0.03em',
-              color: '#0F172A',
             }}
           >
-            How It <span className="text-terracotta">Works</span>
+            How It <span className="text-coral">Works</span>
           </h2>
-          <p className="text-lg mt-4 max-w-xl mx-auto text-navy/60">
+          <p className="text-lg mt-4 max-w-xl mx-auto text-forest-600">
             Three steps to your next workout buddy
           </p>
         </motion.div>
@@ -84,11 +83,11 @@ export function HowItWorks() {
                 </IPhoneMockup>
               </motion.div>
 
-              {/* Step Number - Neo-Brutalist */}
+              {/* Step Number - Rounded */}
               <div
-                className="inline-flex items-center justify-center w-16 h-16 mb-4 border-2 border-navy font-display font-semibold text-2xl text-navy"
+                className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-2xl font-display font-semibold text-2xl text-white shadow-md"
                 style={{
-                  boxShadow: `4px 4px 0px 0px ${step.color}`,
+                  backgroundColor: step.color,
                 }}
               >
                 {step.number}
@@ -96,14 +95,14 @@ export function HowItWorks() {
 
               {/* Title */}
               <h3
-                className="font-display font-semibold text-xl mb-3 text-navy"
+                className="font-display font-semibold text-xl mb-3 text-forest-900"
                 style={{ letterSpacing: '-0.02em' }}
               >
                 {step.title}
               </h3>
 
               {/* Description */}
-              <p className="font-body leading-relaxed max-w-[280px] text-navy/60">
+              <p className="font-body leading-relaxed max-w-[280px] text-forest-600">
                 {step.description}
               </p>
             </motion.div>

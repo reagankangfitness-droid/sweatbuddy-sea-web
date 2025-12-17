@@ -86,19 +86,18 @@ export default function SavedPage() {
   return (
     <div className="min-h-screen bg-sand">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-sand border-b-2 border-navy">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-sand/95 backdrop-blur-lg border-b border-forest-200">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center gap-4 px-4 py-3">
             <Link
               href="/"
-              className="w-10 h-10 flex items-center justify-center border-2 border-navy bg-white"
-              style={{ boxShadow: '2px 2px 0px 0px #0F172A' }}
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-cream border border-forest-200"
             >
-              <ArrowLeft className="w-5 h-5 text-navy" />
+              <ArrowLeft className="w-5 h-5 text-forest-900" />
             </Link>
             <div>
-              <h1 className="font-display font-bold text-xl text-navy">Saved Events</h1>
-              <p className="text-sm text-navy/50">{savedEvents.length} events saved</p>
+              <h1 className="font-display font-bold text-xl text-forest-900">Saved Events</h1>
+              <p className="text-sm text-forest-500">{savedEvents.length} events saved</p>
             </div>
           </div>
         </div>
@@ -109,32 +108,28 @@ export default function SavedPage() {
         {isLoading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse bg-white border-2 border-navy p-4 flex gap-4">
-                <div className="w-20 h-20 bg-sand/50" />
+              <div key={i} className="animate-pulse bg-cream rounded-2xl border border-forest-100 shadow-card p-4 flex gap-4">
+                <div className="w-20 h-20 bg-sand/50 rounded-xl" />
                 <div className="flex-1">
-                  <div className="h-4 bg-sand/70 w-1/4 mb-2" />
-                  <div className="h-5 bg-sand/50 w-3/4 mb-2" />
-                  <div className="h-4 bg-sand/40 w-1/2" />
+                  <div className="h-4 bg-coral/20 rounded w-1/4 mb-2" />
+                  <div className="h-5 bg-forest-100 rounded w-3/4 mb-2" />
+                  <div className="h-4 bg-forest-50 rounded w-1/2" />
                 </div>
               </div>
             ))}
           </div>
         ) : savedEvents.length === 0 ? (
           <div className="text-center py-20">
-            <div
-              className="inline-flex items-center justify-center w-20 h-20 bg-white border-2 border-navy mb-6"
-              style={{ boxShadow: '4px 4px 0px 0px #E07A5F' }}
-            >
-              <Heart className="w-10 h-10 text-navy/30" />
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-cream rounded-2xl border border-forest-100 shadow-card mb-6">
+              <Heart className="w-10 h-10 text-forest-300" />
             </div>
-            <h2 className="font-display font-bold text-2xl text-navy mb-2">No saved events yet</h2>
-            <p className="text-navy/60 mb-6">
+            <h2 className="font-display font-bold text-2xl text-forest-900 mb-2">No saved events yet</h2>
+            <p className="text-forest-600 mb-6">
               Tap the heart icon on events you&apos;re interested in to save them here.
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-terracotta text-sand px-6 py-3 font-bold border-2 border-navy"
-              style={{ boxShadow: '4px 4px 0px 0px #0F172A' }}
+              className="inline-flex items-center gap-2 bg-coral text-white px-6 py-3 font-bold rounded-full shadow-md hover:bg-coral-600 transition-colors"
             >
               Browse Events
             </Link>
@@ -144,11 +139,10 @@ export default function SavedPage() {
             {savedEvents.map((event) => (
               <div
                 key={event.id}
-                className="bg-white border-2 border-navy flex gap-4 p-4"
-                style={{ boxShadow: '4px 4px 0px 0px #0F172A' }}
+                className="bg-cream rounded-2xl border border-forest-100 shadow-card flex gap-4 p-4"
               >
                 {/* Image */}
-                <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-sand relative border-2 border-navy">
+                <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-sand relative rounded-xl">
                   {event.imageUrl ? (
                     <Image
                       src={event.imageUrl}
@@ -157,7 +151,7 @@ export default function SavedPage() {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-3xl bg-gradient-to-br from-sand to-cream">
+                    <div className="w-full h-full flex items-center justify-center text-3xl bg-gradient-to-br from-sand to-mist">
                       {getCategoryEmoji(event.category)}
                     </div>
                   )}
@@ -165,17 +159,17 @@ export default function SavedPage() {
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <span className="text-xs font-bold text-terracotta uppercase tracking-wide">
+                  <span className="text-xs font-medium text-coral">
                     {event.category}
                   </span>
-                  <h3 className="font-bold text-base text-navy line-clamp-1 mt-0.5">
+                  <h3 className="font-semibold text-base text-forest-900 line-clamp-1 mt-0.5">
                     {event.name}
                   </h3>
-                  <div className="flex items-center gap-1 text-sm text-navy/60 mt-1">
+                  <div className="flex items-center gap-1 text-sm text-forest-600 mt-1">
                     <Calendar className="w-3.5 h-3.5" />
                     <span>{event.day} • {event.time}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-navy/40 mt-1">
+                  <div className="flex items-center gap-1 text-xs text-forest-400 mt-1">
                     <MapPin className="w-3 h-3" />
                     <span className="line-clamp-1">{event.location}</span>
                   </div>
@@ -184,7 +178,7 @@ export default function SavedPage() {
                 {/* Remove button */}
                 <button
                   onClick={() => handleRemove(event.id)}
-                  className="flex-shrink-0 w-10 h-10 flex items-center justify-center text-coral hover:bg-coral/10 transition-colors"
+                  className="flex-shrink-0 w-10 h-10 flex items-center justify-center text-coral hover:bg-coral/10 rounded-full transition-colors"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>

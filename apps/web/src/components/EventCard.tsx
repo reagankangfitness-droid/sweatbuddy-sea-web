@@ -81,12 +81,12 @@ const categoryEmojis: Record<string, string> = {
   'Breathwork': '🌬️',
 }
 
-// Color variations for brutal cards
+// Color variations for cards (soft shadows)
 const cardColors = [
-  { shadow: '#E07A5F', accent: 'terracotta' },  // terracotta
-  { shadow: '#4F46E5', accent: 'electric' },     // electric
-  { shadow: '#10B981', accent: 'mint' },         // mint
-  { shadow: '#0F172A', accent: 'navy' },         // navy
+  { accent: 'coral' },
+  { accent: 'teal' },
+  { accent: 'ocean' },
+  { accent: 'amber' },
 ]
 
 // Memoized component to prevent unnecessary re-renders
@@ -159,21 +159,14 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
     <>
       <div
         onClick={() => setIsSheetOpen(true)}
-        className="h-full flex flex-col bg-white border-2 border-navy cursor-pointer transition-all duration-150 hover:translate-x-[-3px] hover:translate-y-[-3px] active:translate-x-[2px] active:translate-y-[2px]"
+        className="h-full flex flex-col bg-cream rounded-2xl border border-forest-100 cursor-pointer transition-all duration-200 hover:shadow-card-hover hover:scale-[1.02] active:scale-[0.98] shadow-card"
         style={{
-          boxShadow: `4px 4px 0px 0px ${colorScheme.shadow}`,
           // CSS animation for staggered fade-in
           animation: `fadeInUp 0.4s ease-out ${index * 0.05}s both`,
         }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.boxShadow = `6px 6px 0px 0px ${colorScheme.shadow}`
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.boxShadow = `4px 4px 0px 0px ${colorScheme.shadow}`
-        }}
       >
         {/* Image Section */}
-        <div className="relative aspect-[4/3] border-b-2 border-navy">
+        <div className="relative aspect-[4/3] rounded-t-2xl overflow-hidden">
           {event.imageUrl ? (
             <Image
               src={event.imageUrl}
@@ -184,16 +177,14 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
             />
           ) : (
-            <div className="w-full h-full bg-cream flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-sand to-mist flex items-center justify-center">
               <span className="text-6xl">{emoji}</span>
             </div>
           )}
 
           {/* Category Badge - Top Left */}
           <div className="absolute top-3 left-3">
-            <span className="px-3 py-1.5 bg-sand border-2 border-navy text-xs font-semibold text-navy"
-              style={{ boxShadow: '2px 2px 0px 0px #0F172A' }}
-            >
+            <span className="px-3 py-1.5 bg-cream/90 backdrop-blur-sm text-xs font-medium text-forest-900 rounded-full">
               {emoji} {event.category}
             </span>
           </div>
@@ -201,24 +192,21 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
           {/* Save Button - Top Right */}
           <button
             onClick={handleSaveClick}
-            className={`absolute top-3 right-3 w-9 h-9 border-2 border-navy flex items-center justify-center transition-all active:scale-90 ${
+            className={`absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90 ${
               isSaved
-                ? 'bg-coral text-white'
-                : 'bg-sand text-navy hover:bg-white'
+                ? 'bg-coral text-white shadow-md'
+                : 'bg-cream/90 backdrop-blur-sm text-forest-600 hover:bg-cream'
             }`}
-            style={{ boxShadow: '2px 2px 0px 0px #0F172A' }}
           >
             <Heart className={`w-4 h-4 ${isSaved ? 'fill-white' : ''}`} />
           </button>
 
-          {/* Live Badge - Bottom Right (on image) */}
+          {/* Weekly Badge - Bottom Right (on image) */}
           {event.recurring && (
             <div className="absolute bottom-3 right-3">
-              <span className="bg-mint text-navy px-3 py-1.5 border-2 border-navy text-xs font-bold flex items-center gap-1.5"
-                style={{ boxShadow: '2px 2px 0px 0px #0F172A' }}
-              >
-                <span className="w-2 h-2 bg-navy rounded-full animate-pulse" />
-                Recurring
+              <span className="bg-ocean text-white px-3 py-1.5 text-xs font-medium rounded-full flex items-center gap-1.5">
+                <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                Weekly
               </span>
             </div>
           )}
@@ -227,40 +215,37 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
         {/* Content Section */}
         <div className="flex-1 flex flex-col p-4">
           {/* Event Name - fixed height for 2 lines */}
-          <h3 className="font-display font-semibold text-lg text-navy mb-3 line-clamp-2 leading-tight min-h-[3rem]"
+          <h3 className="font-display font-semibold text-lg text-forest-900 mb-3 line-clamp-2 leading-tight min-h-[3rem]"
             style={{ letterSpacing: '-0.02em' }}
           >
             {event.name}
           </h3>
 
           {/* Date & Time */}
-          <div className="flex items-center gap-2 text-sm text-navy/70 mb-1">
-            <Calendar className="w-4 h-4 text-terracotta flex-shrink-0" />
+          <div className="flex items-center gap-2 text-sm text-forest-600 mb-1">
+            <Calendar className="w-4 h-4 text-coral flex-shrink-0" />
             <span className="font-medium">{formatEventDate(event.eventDate, event.day)}</span>
-            <span className="text-navy/30">•</span>
+            <span className="text-forest-300">•</span>
             <span>{event.time}</span>
           </div>
 
           {/* Location */}
-          <div className="flex items-center gap-2 text-sm text-navy/70 mb-4">
-            <MapPin className="w-4 h-4 text-terracotta flex-shrink-0" />
+          <div className="flex items-center gap-2 text-sm text-forest-600 mb-4">
+            <MapPin className="w-4 h-4 text-coral flex-shrink-0" />
             <span className="line-clamp-1">{event.location}</span>
           </div>
 
           {/* Spacer to push button to bottom */}
           <div className="flex-1" />
 
-          {/* CTA - Full Width Neo-Brutalist */}
+          {/* CTA - Full Width Rounded */}
           <button
             onClick={handleGoingClick}
-            className={`w-full py-3 font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-150 border-2 border-navy ${
+            className={`w-full py-3 font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 rounded-full ${
               isGoing
-                ? 'bg-mint text-navy'
-                : 'bg-terracotta text-white hover:translate-x-[-1px] hover:translate-y-[-1px]'
+                ? 'bg-teal text-white shadow-md'
+                : 'bg-coral text-white hover:bg-coral-600 shadow-md active:scale-95'
             }`}
-            style={{
-              boxShadow: isGoing ? '2px 2px 0px 0px #0F172A' : '3px 3px 0px 0px #0F172A',
-            }}
           >
             {isGoing ? (
               <>

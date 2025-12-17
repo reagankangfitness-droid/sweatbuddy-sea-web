@@ -26,8 +26,8 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-sand flex items-center justify-center">
         <div className="animate-pulse">
-          <div className="w-20 h-20 bg-navy/20 rounded-full mb-4" />
-          <div className="h-4 bg-navy/20 w-32 mx-auto" />
+          <div className="w-20 h-20 bg-forest-100 rounded-full mb-4" />
+          <div className="h-4 bg-forest-100 rounded-lg w-32 mx-auto" />
         </div>
       </div>
     )
@@ -38,17 +38,16 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-sand">
         {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-40 bg-sand border-b-2 border-navy">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-sand/95 backdrop-blur-lg border-b border-forest-200">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="flex items-center gap-4 px-4 py-3">
               <Link
                 href="/"
-                className="w-10 h-10 flex items-center justify-center border-2 border-navy bg-white"
-                style={{ boxShadow: '2px 2px 0px 0px #0F172A' }}
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-cream border border-forest-200"
               >
-                <ArrowLeft className="w-5 h-5 text-navy" />
+                <ArrowLeft className="w-5 h-5 text-forest-900" />
               </Link>
-              <h1 className="font-display font-bold text-xl text-navy">Profile</h1>
+              <h1 className="font-display font-bold text-xl text-forest-900">Profile</h1>
             </div>
           </div>
         </header>
@@ -56,41 +55,29 @@ export default function ProfilePage() {
         {/* Content */}
         <main className="pt-24 pb-24 px-4">
           <div className="text-center py-12">
-            <div
-              className="inline-flex items-center justify-center w-24 h-24 bg-white border-2 border-navy mb-6"
-              style={{ boxShadow: '4px 4px 0px 0px #E07A5F' }}
-            >
-              <User className="w-12 h-12 text-navy/30" />
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-cream rounded-2xl border border-forest-100 shadow-card mb-6">
+              <User className="w-12 h-12 text-forest-300" />
             </div>
-            <h2 className="font-display font-bold text-2xl text-navy mb-2">Join SweatBuddies</h2>
-            <p className="text-navy/60 mb-8 max-w-xs mx-auto">
+            <h2 className="font-display font-bold text-2xl text-forest-900 mb-2">Join SweatBuddies</h2>
+            <p className="text-forest-600 mb-8 max-w-xs mx-auto">
               Sign in to save events, track your fitness journey, and connect with your workout crew.
             </p>
 
             <SignInButton mode="modal">
-              <button
-                className="w-full max-w-xs bg-terracotta text-sand py-4 font-bold border-2 border-navy"
-                style={{ boxShadow: '4px 4px 0px 0px #0F172A' }}
-              >
+              <button className="w-full max-w-xs bg-coral text-white py-4 font-bold rounded-full shadow-md hover:bg-coral-600 transition-colors">
                 Sign In / Sign Up
               </button>
             </SignInButton>
 
             {/* Stats Preview */}
             <div className="mt-12 grid grid-cols-2 gap-4 max-w-xs mx-auto">
-              <div
-                className="bg-white p-4 border-2 border-navy text-center"
-                style={{ boxShadow: '3px 3px 0px 0px #4F46E5' }}
-              >
-                <span className="font-display text-2xl font-bold text-navy block">{savedCount}</span>
-                <span className="text-xs text-navy/60">Saved Events</span>
+              <div className="bg-cream p-4 rounded-2xl border border-forest-100 shadow-card text-center">
+                <span className="font-display text-2xl font-bold text-coral block">{savedCount}</span>
+                <span className="text-xs text-forest-600">Saved Events</span>
               </div>
-              <div
-                className="bg-white p-4 border-2 border-navy text-center"
-                style={{ boxShadow: '3px 3px 0px 0px #10B981' }}
-              >
-                <span className="font-display text-2xl font-bold text-navy block">{goingCount}</span>
-                <span className="text-xs text-navy/60">Going To</span>
+              <div className="bg-cream p-4 rounded-2xl border border-forest-100 shadow-card text-center">
+                <span className="font-display text-2xl font-bold text-teal block">{goingCount}</span>
+                <span className="text-xs text-forest-600">Going To</span>
               </div>
             </div>
           </div>
@@ -105,17 +92,16 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-sand">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-sand border-b-2 border-navy">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-sand/95 backdrop-blur-lg border-b border-forest-200">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center gap-4 px-4 py-3">
             <Link
               href="/"
-              className="w-10 h-10 flex items-center justify-center border-2 border-navy bg-white"
-              style={{ boxShadow: '2px 2px 0px 0px #0F172A' }}
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-cream border border-forest-200"
             >
-              <ArrowLeft className="w-5 h-5 text-navy" />
+              <ArrowLeft className="w-5 h-5 text-forest-900" />
             </Link>
-            <h1 className="font-display font-bold text-xl text-navy">Profile</h1>
+            <h1 className="font-display font-bold text-xl text-forest-900">Profile</h1>
           </div>
         </div>
       </header>
@@ -123,12 +109,9 @@ export default function ProfilePage() {
       {/* Content */}
       <main className="pt-24 pb-24 px-4">
         {/* Profile Card */}
-        <div
-          className="bg-white border-2 border-navy p-6 mb-6"
-          style={{ boxShadow: '4px 4px 0px 0px #0F172A' }}
-        >
+        <div className="bg-cream rounded-2xl border border-forest-100 shadow-card p-6 mb-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-navy bg-sand">
+            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-forest-100 bg-sand">
               {user?.imageUrl ? (
                 <Image
                   src={user.imageUrl}
@@ -139,15 +122,15 @@ export default function ProfilePage() {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <User className="w-8 h-8 text-navy/30" />
+                  <User className="w-8 h-8 text-forest-300" />
                 </div>
               )}
             </div>
             <div>
-              <h2 className="font-display font-bold text-xl text-navy">
+              <h2 className="font-display font-bold text-xl text-forest-900">
                 {user?.fullName || user?.firstName || 'SweatBuddy'}
               </h2>
-              <p className="text-sm text-navy/50">{user?.primaryEmailAddress?.emailAddress}</p>
+              <p className="text-sm text-forest-500">{user?.primaryEmailAddress?.emailAddress}</p>
             </div>
           </div>
         </div>
@@ -156,59 +139,52 @@ export default function ProfilePage() {
         <div className="grid grid-cols-2 gap-4 mb-6">
           <Link
             href="/saved"
-            className="bg-white p-4 border-2 border-navy text-center block"
-            style={{ boxShadow: '3px 3px 0px 0px #E07A5F' }}
+            className="bg-cream p-4 rounded-2xl border border-forest-100 shadow-card text-center block"
           >
             <Heart className="w-6 h-6 text-coral mx-auto mb-2" />
-            <span className="font-display text-2xl font-bold text-navy block">{savedCount}</span>
-            <span className="text-xs text-navy/60">Saved</span>
+            <span className="font-display text-2xl font-bold text-forest-900 block">{savedCount}</span>
+            <span className="text-xs text-forest-600">Saved</span>
           </Link>
-          <div
-            className="bg-white p-4 border-2 border-navy text-center"
-            style={{ boxShadow: '3px 3px 0px 0px #10B981' }}
-          >
-            <Calendar className="w-6 h-6 text-mint mx-auto mb-2" />
-            <span className="font-display text-2xl font-bold text-navy block">{goingCount}</span>
-            <span className="text-xs text-navy/60">Going</span>
+          <div className="bg-cream p-4 rounded-2xl border border-forest-100 shadow-card text-center">
+            <Calendar className="w-6 h-6 text-teal mx-auto mb-2" />
+            <span className="font-display text-2xl font-bold text-forest-900 block">{goingCount}</span>
+            <span className="text-xs text-forest-600">Going</span>
           </div>
         </div>
 
         {/* Menu Items */}
-        <div
-          className="bg-white border-2 border-navy overflow-hidden"
-          style={{ boxShadow: '4px 4px 0px 0px #0F172A' }}
-        >
+        <div className="bg-cream rounded-2xl border border-forest-100 shadow-card overflow-hidden">
           <Link
             href="/dashboard"
-            className="flex items-center justify-between px-4 py-4 border-b border-navy/10"
+            className="flex items-center justify-between px-4 py-4 border-b border-forest-100"
           >
-            <span className="flex items-center gap-3 text-navy font-medium">
-              <Calendar className="w-5 h-5 text-terracotta" />
+            <span className="flex items-center gap-3 text-forest-900 font-medium">
+              <Calendar className="w-5 h-5 text-coral" />
               My Dashboard
             </span>
-            <ChevronRight className="w-5 h-5 text-navy/30" />
+            <ChevronRight className="w-5 h-5 text-forest-300" />
           </Link>
 
           <Link
             href="/saved"
-            className="flex items-center justify-between px-4 py-4 border-b border-navy/10"
+            className="flex items-center justify-between px-4 py-4 border-b border-forest-100"
           >
-            <span className="flex items-center gap-3 text-navy font-medium">
-              <Heart className="w-5 h-5 text-terracotta" />
+            <span className="flex items-center gap-3 text-forest-900 font-medium">
+              <Heart className="w-5 h-5 text-coral" />
               Saved Events
             </span>
-            <ChevronRight className="w-5 h-5 text-navy/30" />
+            <ChevronRight className="w-5 h-5 text-forest-300" />
           </Link>
 
           <Link
             href="/settings/profile"
-            className="flex items-center justify-between px-4 py-4 border-b border-navy/10"
+            className="flex items-center justify-between px-4 py-4 border-b border-forest-100"
           >
-            <span className="flex items-center gap-3 text-navy font-medium">
-              <Settings className="w-5 h-5 text-terracotta" />
+            <span className="flex items-center gap-3 text-forest-900 font-medium">
+              <Settings className="w-5 h-5 text-coral" />
               Settings
             </span>
-            <ChevronRight className="w-5 h-5 text-navy/30" />
+            <ChevronRight className="w-5 h-5 text-forest-300" />
           </Link>
 
           <button

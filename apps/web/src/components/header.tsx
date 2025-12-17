@@ -33,7 +33,7 @@ export function Header() {
         transition={{ duration: 0.4, ease: [0.2, 0, 0, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? 'py-3 bg-sand border-b-2 border-navy'
+            ? 'py-3 bg-sand/95 backdrop-blur-lg border-b border-forest-200 shadow-sm'
             : 'bg-transparent py-5'
         }`}
       >
@@ -42,7 +42,7 @@ export function Header() {
           <Link
             href="/"
             className={`flex items-center gap-2.5 font-display font-semibold transition-all group ${
-              scrolled ? 'text-navy hover:text-terracotta' : 'text-sand hover:text-terracotta'
+              scrolled ? 'text-forest-900 hover:text-coral' : 'text-sand hover:text-coral'
             }`}
             style={{ fontSize: '20px', letterSpacing: '-0.02em' }}
           >
@@ -69,12 +69,12 @@ export function Header() {
                   transition={{ delay: 0.1 * index }}
                   whileHover={{ y: -2 }}
                   className={`font-body text-sm font-medium transition-colors relative group ${
-                    scrolled ? 'text-navy/70 hover:text-terracotta' : 'text-sand/70 hover:text-sand'
+                    scrolled ? 'text-forest-600 hover:text-coral' : 'text-sand/70 hover:text-sand'
                   }`}
                 >
                   {link.label}
                   <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
-                    scrolled ? 'bg-terracotta' : 'bg-sand'
+                    scrolled ? 'bg-coral' : 'bg-sand'
                   }`} />
                 </Component>
               )
@@ -91,10 +91,7 @@ export function Header() {
               transition={{ delay: 0.3 }}
               whileHover={{ x: -2, y: -2 }}
               whileTap={{ x: 1, y: 1 }}
-              className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-terracotta text-white font-semibold text-sm border-2 border-navy transition-all duration-150"
-              style={{
-                boxShadow: scrolled ? '3px 3px 0px 0px #0F172A' : '3px 3px 0px 0px #FAF7F2',
-              }}
+              className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-coral text-white font-semibold text-sm rounded-full transition-all duration-150 hover:bg-coral-600 shadow-md"
             >
               Submit Event
               <ArrowRight className="w-4 h-4" />
@@ -105,10 +102,10 @@ export function Header() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`md:hidden p-2 border-2 transition-colors ${
+              className={`md:hidden p-2 rounded-full transition-colors ${
                 scrolled
-                  ? 'text-navy border-navy hover:bg-navy hover:text-sand'
-                  : 'text-sand border-sand/50 hover:bg-sand/10'
+                  ? 'text-forest-900 border border-forest-200 bg-cream hover:bg-forest-100'
+                  : 'text-sand border border-sand/50 hover:bg-sand/10'
               }`}
               aria-label="Toggle menu"
             >
@@ -147,7 +144,7 @@ export function Header() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
-              className="md:hidden absolute top-full left-0 right-0 bg-sand border-b-2 border-navy overflow-hidden"
+              className="md:hidden absolute top-full left-0 right-0 bg-sand/95 backdrop-blur-lg border-b border-forest-200 shadow-lg overflow-hidden"
             >
               <nav className="flex flex-col p-6 gap-1">
                 {navLinks.map((link, index) => {
@@ -161,7 +158,7 @@ export function Header() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.05 * index }}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="font-body text-navy hover:text-terracotta text-lg font-medium transition-colors py-3 border-b-2 border-navy/10 last:border-0"
+                      className="font-body text-forest-900 hover:text-coral text-lg font-medium transition-colors py-3 border-b border-forest-100 last:border-0"
                     >
                       {link.label}
                     </Component>
@@ -173,10 +170,7 @@ export function Header() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center gap-2 mt-4 px-6 py-4 bg-terracotta text-white font-semibold border-2 border-navy"
-                  style={{
-                    boxShadow: '4px 4px 0px 0px #0F172A',
-                  }}
+                  className="flex items-center justify-center gap-2 mt-4 px-6 py-4 bg-coral text-white font-semibold rounded-full shadow-md hover:bg-coral-600 transition-colors"
                 >
                   Submit Event
                   <ArrowRight className="w-4 h-4" />

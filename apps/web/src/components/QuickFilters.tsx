@@ -38,20 +38,12 @@ export function QuickFilters({ onSelect, activeFilter = 'all' }: Props) {
               font-medium text-sm
               transition-all duration-200
               active:scale-95
-              border-2 border-navy
+              rounded-full
               ${active === filter.id
-                ? 'bg-navy text-sand'
-                : 'bg-white text-navy'
+                ? 'bg-forest-900 text-cream border border-forest-900 shadow-md'
+                : 'bg-cream text-forest-700 border border-forest-200 hover:border-forest-300'
               }
             `}
-            style={{
-              boxShadow: active === filter.id
-                ? 'none'
-                : '3px 3px 0px 0px #0F172A',
-              transform: active === filter.id
-                ? 'translate(2px, 2px)'
-                : 'none',
-            }}
           >
             <span>{filter.emoji}</span>
             <span>{filter.label}</span>

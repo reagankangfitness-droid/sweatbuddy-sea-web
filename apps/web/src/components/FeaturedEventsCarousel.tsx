@@ -32,13 +32,6 @@ function getCategoryEmoji(category: string): string {
   return categoryEmojis[category] || '✨'
 }
 
-const cardColors = [
-  '#E07A5F', // terracotta
-  '#4F46E5', // electric
-  '#10B981', // mint
-  '#0F172A', // navy
-]
-
 export function FeaturedEventsCarousel({ events, onSelect }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
@@ -61,7 +54,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
     <div className="md:hidden">
       {/* Section Header */}
       <div className="flex items-center justify-between px-4 mb-4">
-        <h2 className="font-display text-xl font-bold text-navy">🔥 Trending</h2>
+        <h2 className="font-display text-xl font-bold text-forest-900">🔥 Trending</h2>
         <button
           onClick={() => {
             const eventsSection = document.getElementById('events')
@@ -69,7 +62,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
               eventsSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
             }
           }}
-          className="text-sm text-terracotta font-semibold"
+          className="text-sm text-coral font-semibold"
         >
           See all →
         </button>
@@ -88,10 +81,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
             onClick={() => onSelect(event)}
             className="flex-shrink-0 w-[85vw] snap-start cursor-pointer"
           >
-            <div
-              className="relative aspect-[4/5] overflow-hidden border-2 border-navy bg-white"
-              style={{ boxShadow: `6px 6px 0px 0px ${cardColors[index % cardColors.length]}` }}
-            >
+            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-cream shadow-lg">
               {/* Image or Placeholder */}
               {event.imageUrl ? (
                 <Image
@@ -104,7 +94,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
                   className="object-cover"
                 />
               ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-sand to-cream flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-sand to-mist flex items-center justify-center">
                   <span className="text-8xl">{getCategoryEmoji(event.category)}</span>
                 </div>
               )}
@@ -114,10 +104,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
 
               {/* Category Badge */}
               <div className="absolute top-4 left-4">
-                <span
-                  className="bg-sand px-3 py-1.5 text-xs font-bold text-navy border-2 border-navy"
-                  style={{ boxShadow: '2px 2px 0px 0px #0F172A' }}
-                >
+                <span className="bg-cream/90 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-forest-900 rounded-full">
                   {event.category}
                 </span>
               </div>
@@ -125,10 +112,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
               {/* Weekly Badge */}
               {event.recurring && (
                 <div className="absolute top-4 right-4">
-                  <span
-                    className="bg-electric text-white px-3 py-1.5 text-xs font-bold border-2 border-navy"
-                    style={{ boxShadow: '2px 2px 0px 0px #0F172A' }}
-                  >
+                  <span className="bg-ocean text-white px-3 py-1.5 text-xs font-medium rounded-full">
                     WEEKLY
                   </span>
                 </div>
@@ -144,10 +128,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
                 </p>
 
                 {/* CTA */}
-                <button
-                  className="w-full bg-terracotta text-sand py-3 font-bold text-base active:scale-95 transition-transform border-2 border-sand"
-                  style={{ boxShadow: '3px 3px 0px 0px #FAF7F2' }}
-                >
+                <button className="w-full bg-coral text-white py-3 font-semibold text-base rounded-full active:scale-95 transition-transform shadow-md">
                   🙋 I&apos;m Going
                 </button>
               </div>
@@ -162,7 +143,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
           <div
             key={index}
             className={`
-              h-1.5 transition-all duration-300 bg-navy
+              h-1.5 rounded-full transition-all duration-300 bg-forest-900
               ${activeIndex === index
                 ? 'w-6'
                 : 'w-1.5 opacity-30'

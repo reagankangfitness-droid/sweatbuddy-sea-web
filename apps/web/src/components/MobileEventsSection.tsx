@@ -107,12 +107,12 @@ export function MobileEventsSection({ events }: Props) {
       />
 
       {/* Divider */}
-      <div className="h-0.5 bg-navy/10 mx-4 my-6" />
+      <div className="h-px bg-forest-200 mx-4 my-6" />
 
       {/* Section Header */}
       <div className="px-4 mb-4">
-        <h2 className="font-display text-xl font-bold text-navy">This Week</h2>
-        <p className="text-sm text-navy/50">{getWeekDateRange()}</p>
+        <h2 className="font-display text-xl font-bold text-forest-900">This Week</h2>
+        <p className="text-sm text-forest-500">{getWeekDateRange()}</p>
       </div>
 
       {/* Quick Filters */}
@@ -129,12 +129,12 @@ export function MobileEventsSection({ events }: Props) {
         ))}
 
         {filteredEvents.length === 0 && (
-          <div className="text-center py-12 text-navy/40">
+          <div className="text-center py-12 text-forest-400">
             <p className="text-4xl mb-2">🔍</p>
             <p className="font-medium">No events match this filter</p>
             <button
               onClick={() => setFilter('all')}
-              className="mt-3 text-terracotta font-semibold text-sm"
+              className="mt-3 text-coral font-semibold text-sm"
             >
               Show all events
             </button>
@@ -144,18 +144,15 @@ export function MobileEventsSection({ events }: Props) {
 
       {/* More events prompt */}
       <div className="px-4 mt-6">
-        <div
-          className="bg-sand p-4 text-center border-2 border-navy"
-          style={{ boxShadow: '4px 4px 0px 0px #0F172A' }}
-        >
-          <p className="text-sm text-navy/70 mb-3">
+        <div className="bg-cream p-4 text-center rounded-2xl border border-forest-100 shadow-card">
+          <p className="text-sm text-forest-600 mb-3">
             More events added every Wednesday
           </p>
           <a
             href="https://instagram.com/_sweatbuddies"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-terracotta font-semibold text-sm"
+            className="text-coral font-semibold text-sm"
           >
             📸 Follow @_sweatbuddies for updates
           </a>

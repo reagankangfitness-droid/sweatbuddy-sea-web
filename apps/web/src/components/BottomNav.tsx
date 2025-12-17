@@ -32,7 +32,7 @@ export function BottomNav() {
       {/* Bottom Nav */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
         {/* Background with blur */}
-        <div className="absolute inset-0 bg-sand/95 backdrop-blur-lg border-t-2 border-navy" />
+        <div className="absolute inset-0 bg-cream/95 backdrop-blur-lg border-t border-forest-200" />
 
         {/* Safe area padding for iOS */}
         <div className="relative flex items-center justify-around px-2 pt-2 pb-[env(safe-area-inset-bottom,8px)]">
@@ -48,11 +48,8 @@ export function BottomNav() {
                   onClick={() => handleHashClick(item.href)}
                   className="relative -mt-6"
                 >
-                  <div
-                    className="w-14 h-14 bg-terracotta flex items-center justify-center border-2 border-navy"
-                    style={{ boxShadow: '3px 3px 0px 0px #0F172A' }}
-                  >
-                    <Icon className="w-6 h-6 text-sand" />
+                  <div className="w-14 h-14 bg-coral rounded-full flex items-center justify-center shadow-lg">
+                    <Icon className="w-6 h-6 text-white" />
                   </div>
                 </button>
               )
@@ -69,8 +66,8 @@ export function BottomNav() {
                     w-16 h-14
                     transition-colors relative
                     ${isActive
-                      ? 'text-terracotta'
-                      : 'text-navy/50 active:text-navy'
+                      ? 'text-coral'
+                      : 'text-forest-400 active:text-forest-600'
                     }
                   `}
                 >
@@ -89,8 +86,8 @@ export function BottomNav() {
                   w-16 h-14
                   transition-colors relative
                   ${isActive
-                    ? 'text-terracotta'
-                    : 'text-navy/50 active:text-navy'
+                    ? 'text-coral'
+                    : 'text-forest-400 active:text-forest-600'
                   }
                 `}
               >
@@ -99,7 +96,7 @@ export function BottomNav() {
 
                 {/* Active indicator */}
                 {isActive && (
-                  <div className="absolute bottom-1 w-4 h-1 bg-terracotta" />
+                  <div className="absolute bottom-1 w-4 h-1 bg-coral rounded-full" />
                 )}
               </Link>
             )

@@ -34,64 +34,61 @@ export function Newsletter() {
   }
 
   return (
-    <section className="relative py-20 md:py-32 overflow-hidden" style={{ background: '#f7faff' }}>
-      {/* Background */}
-      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at top center, rgba(52, 119, 248, 0.04) 0%, transparent 50%)' }} />
-
-      {/* Gradient accents */}
+    <section className="relative py-20 md:py-32 overflow-hidden bg-mist">
+      {/* Background gradient accents */}
       <div
-        className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full opacity-10 pointer-events-none"
+        className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full opacity-20 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(52, 119, 248, 0.15), transparent 70%)',
+          background: 'radial-gradient(circle, rgba(224, 122, 95, 0.15), transparent 70%)',
           filter: 'blur(100px)',
         }}
       />
       <div
-        className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full opacity-10 pointer-events-none"
+        className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full opacity-20 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(79, 143, 255, 0.15), transparent 70%)',
+          background: 'radial-gradient(circle, rgba(42, 157, 143, 0.15), transparent 70%)',
           filter: 'blur(100px)',
         }}
       />
 
       <div className="relative z-10 max-w-container mx-auto px-6 lg:px-10">
         <div className="max-w-2xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#3477f8]/10 border border-[#3477f8]/20 text-[#3477f8] text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-coral/10 border border-coral/20 text-coral text-sm font-medium mb-6">
             <Mail className="w-4 h-4" />
             <span>Newsletter</span>
           </div>
 
           <h2
-            className="font-heading font-extrabold text-[#0d1520] mb-4 tracking-wide"
-            style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
+            className="font-heading font-bold text-forest-900 mb-4"
+            style={{ fontSize: 'clamp(28px, 5vw, 48px)', letterSpacing: '-0.02em' }}
           >
-            Get the <span className="text-gradient-warm">Weekly Drop</span>
+            Get the <span className="text-coral">Weekly Drop</span>
           </h2>
 
-          <p className="font-body text-[#5a6b7a] text-lg mb-10">
+          <p className="font-body text-forest-600 text-lg mb-10">
             Every Wednesday. The best events. Your inbox.
           </p>
 
           {isSubmitted ? (
-            <div className="bg-white rounded-2xl p-8 max-w-md mx-auto shadow-sm border border-[#e8eef5]">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-500/10 flex items-center justify-center">
-                <Check className="w-8 h-8 text-green-500" />
+            <div className="bg-cream rounded-2xl p-8 max-w-md mx-auto shadow-card border border-forest-100">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-teal/10 flex items-center justify-center">
+                <Check className="w-8 h-8 text-teal" />
               </div>
-              <h3 className="font-heading font-bold text-[#0d1520] text-xl mb-2 tracking-wide">You&apos;re in!</h3>
-              <p className="font-body text-[#5a6b7a]">Check your inbox for a confirmation.</p>
+              <h3 className="font-heading font-bold text-forest-900 text-xl mb-2">You&apos;re in!</h3>
+              <p className="font-body text-forest-600">Check your inbox for a confirmation.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="max-w-md mx-auto">
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="relative flex-1">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#5a6b7a]" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-forest-400" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     placeholder="your@email.com"
-                    className="w-full h-14 pl-12 pr-4 rounded-2xl bg-white border border-[#e0e7ef] text-[#0d1520] placeholder:text-[#a0b0c0] focus:outline-none focus:border-[#3477f8] text-base shadow-sm"
+                    className="w-full h-14 pl-12 pr-4 rounded-full bg-cream border border-forest-200 text-forest-900 placeholder:text-forest-400 focus:outline-none focus:border-coral focus:ring-2 focus:ring-coral/20 text-base shadow-sm"
                   />
                 </div>
                 <button
@@ -111,7 +108,7 @@ export function Newsletter() {
                 <p className="text-red-500 text-sm mt-4">{error}</p>
               )}
 
-              <p className="text-[#a0b0c0] text-xs mt-4">
+              <p className="text-forest-400 text-xs mt-4">
                 No spam. Unsubscribe anytime.
               </p>
             </form>

@@ -5,73 +5,93 @@
 @layer base {
   :root {
     /* ========================================
-       SWEATBUDDIES NEO-BRUTALIST DESIGN SYSTEM
-       Bold, Tactile, Energetic
+       SWEATBUDDIES WARM DUSK DESIGN SYSTEM
+       Premium, Approachable, Sophisticated
        ======================================== */
 
-    /* NEO-BRUTALIST COLOR PALETTE */
+    /* ═══════════════════════════════════════════════
+       WARM DUSK COLOR PALETTE
+       ═══════════════════════════════════════════════ */
+
+    /* NEUTRALS (Forest-tinted warm grayscale) */
+    --forest-950: #0F1A17;
+    --forest-900: #1B2B27;
+    --forest-800: #2A3F39;
+    --forest-700: #3D5A54;
+    --forest-600: #527069;
+    --forest-500: #6B8F87;
+    --forest-400: #8AADA5;
+    --forest-300: #A8C5BE;
+    --forest-200: #D0E0DB;
+    --forest-100: #E8EFEC;
+    --forest-50: #F4F7F6;
+
+    /* BACKGROUNDS */
+    --sand: #F7F4F0;
+    --cream: #FFFDFB;
+    --mist: #E8EFEC;
+
+    /* PRIMARY ACCENT - Burnt Coral */
+    --coral: #E07A5F;
+    --coral-light: #F4A89A;
+    --coral-dark: #C65D45;
+
+    /* SECONDARY ACCENTS */
+    --amber: #F4A261;
+    --teal: #2A9D8F;
+    --ocean: #264653;
+
+    /* Legacy compatibility */
     --navy: #0F172A;
-    --sand: #FAF7F2;
     --terracotta: #E07A5F;
-    --coral: #FF6B6B;
     --electric: #4F46E5;
     --mint: #10B981;
-    --cream: #FFFBEB;
-
-    /* Legacy brand colors (for compatibility) */
-    --brand-deep-blue: #0F172A;
-    --brand-navy: #0F172A;
-    --brand-royal: #1E3A5F;
-    --brand-electric: #4F46E5;
-    --brand-sky: #38BDF8;
-    --brand-white: #FAF7F2;
-    --brand-ice: #FAF7F2;
 
     /* Light Background Palette */
-    --background: 40 33% 97%;             /* Sand #FAF7F2 */
-    --background-soft: 40 30% 95%;
-    --background-warm: 45 100% 96%;       /* Cream */
-    --background-card: 0 0% 100%;
-    --foreground: 222 47% 11%;            /* Navy */
+    --background: 35 30% 95%;             /* Sand #F7F4F0 */
+    --background-soft: 140 14% 92%;       /* Mist */
+    --background-warm: 40 100% 99%;       /* Cream */
+    --background-card: 40 100% 99%;
+    --foreground: 160 21% 14%;            /* Forest-900 */
 
-    /* Primary - Terracotta */
-    --accent-primary: 11 70% 63%;         /* Terracotta #E07A5F */
-    --accent-light: 0 100% 71%;           /* Coral #FF6B6B */
-    --accent-dark: 222 47% 11%;           /* Navy */
-    --accent-glow: 11 70% 63%;
+    /* Primary - Coral */
+    --accent-primary: 14 66% 63%;         /* Coral #E07A5F */
+    --accent-light: 14 80% 78%;           /* Coral light */
+    --accent-dark: 14 55% 52%;            /* Coral dark */
+    --accent-glow: 14 66% 63%;
 
     /* Primary Button Colors */
-    --primary: 11 70% 63%;                /* Terracotta */
+    --primary: 14 66% 63%;                /* Coral */
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 11 70% 55%;
-    --primary-glow: 0 100% 71%;
+    --primary-hover: 14 55% 52%;
+    --primary-glow: 14 80% 78%;
 
-    /* Secondary - Navy */
-    --secondary: 222 47% 11%;
-    --secondary-foreground: 40 33% 97%;
+    /* Secondary - Forest */
+    --secondary: 160 21% 14%;
+    --secondary-foreground: 40 100% 99%;
 
     /* Neutrals */
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --muted: 40 20% 94%;
-    --muted-foreground: 222 20% 40%;
+    --card: 40 100% 99%;
+    --card-foreground: 160 21% 14%;
+    --popover: 40 100% 99%;
+    --popover-foreground: 160 21% 14%;
+    --muted: 140 14% 92%;
+    --muted-foreground: 160 18% 38%;
 
     /* Borders */
-    --border: 222 47% 11%;                /* Navy for brutal borders */
-    --border-light: 40 20% 88%;
-    --border-subtle: 40 15% 85%;
-    --input: 40 25% 96%;
+    --border: 150 18% 82%;                /* Soft forest border */
+    --border-light: 150 20% 88%;
+    --border-subtle: 150 15% 90%;
+    --input: 35 30% 97%;
 
     /* Semantic */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --success: 160 84% 39%;               /* Mint */
+    --success: 168 55% 39%;               /* Teal */
 
     /* Effects */
-    --ring: 11 70% 63%;
-    --radius: 0px;                        /* No border radius for brutal look */
+    --ring: 14 66% 63%;
+    --radius: 12px;                       /* Soft rounded corners */
 
     /* Typography Scale - Clash Display + Inter */
     --text-tiny: 12px;
@@ -116,10 +136,17 @@
     --duration-slowest: 1000ms;
 
     /* Animation Easings */
-    --ease-brutal: cubic-bezier(0.2, 0, 0, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
     --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
     --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
+
+    /* Shadows - Warm tinted */
+    --shadow-sm: 0 1px 2px 0 rgba(27, 43, 39, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(27, 43, 39, 0.1), 0 2px 4px -2px rgba(27, 43, 39, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(27, 43, 39, 0.1), 0 4px 6px -4px rgba(27, 43, 39, 0.1);
+    --shadow-card: 0 2px 8px -2px rgba(27, 43, 39, 0.08), 0 4px 16px -4px rgba(27, 43, 39, 0.12);
+    --shadow-card-hover: 0 8px 24px -4px rgba(27, 43, 39, 0.12), 0 4px 8px -2px rgba(27, 43, 39, 0.08);
   }
 }
 
@@ -139,7 +166,7 @@
   }
 
   body {
-    @apply bg-sand text-navy;
+    @apply bg-sand text-forest-900;
     font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     font-size: var(--text-body);
     font-weight: var(--weight-regular);
@@ -153,7 +180,7 @@
     font-weight: var(--weight-semibold);
     line-height: var(--leading-tight);
     margin: 0;
-    color: var(--navy);
+    color: var(--forest-900);
     letter-spacing: var(--tracking-tight);
   }
 
@@ -186,7 +213,7 @@
     font-size: var(--text-body);
     line-height: var(--leading-relaxed);
     margin: 0;
-    color: #475569;
+    color: var(--forest-700);
   }
 
   button, input, select, textarea {
@@ -439,11 +466,12 @@
 }
 
 /* ================================
-   NEO-BRUTALIST BUTTON STYLES
+   WARM DUSK BUTTON STYLES
+   Premium, Rounded, Elevated
    ================================ */
 
 /* ========================================
-   PRIMARY BUTTON - Terracotta with Hard Shadow
+   PRIMARY BUTTON - Coral with Soft Shadow
    ======================================== */
 .btn-primary {
   position: relative;
@@ -451,29 +479,30 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 16px 32px;
+  padding: 14px 28px;
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 600;
   font-size: 15px;
   letter-spacing: 0;
   text-transform: none;
   color: #FFFFFF;
-  background: #E07A5F;
-  border: 2px solid #0F172A;
-  border-radius: 0;
+  background: var(--coral);
+  border: none;
+  border-radius: 52px;
   cursor: pointer;
-  transition: all 0.15s var(--ease-brutal);
-  box-shadow: 4px 4px 0px 0px #0F172A;
+  transition: all 0.3s var(--ease-out-expo);
+  box-shadow: 0 2px 8px -2px rgba(224, 122, 95, 0.4);
 }
 
 .btn-primary:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px #0F172A;
+  background: var(--coral-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -4px rgba(224, 122, 95, 0.5);
 }
 
 .btn-primary:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px 0px #0F172A;
+  transform: translateY(0);
+  box-shadow: 0 2px 6px -2px rgba(224, 122, 95, 0.4);
 }
 
 .btn-primary span {
@@ -482,188 +511,310 @@
 }
 
 /* ========================================
-   SECONDARY BUTTON - Navy Outline with Hard Shadow
+   SECONDARY BUTTON - Forest Outline
    ======================================== */
 .btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 16px 32px;
+  padding: 14px 28px;
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 600;
   font-size: 15px;
   letter-spacing: 0;
   text-transform: none;
-  color: #0F172A;
-  background: #FAF7F2;
-  border: 2px solid #0F172A;
-  border-radius: 0;
+  color: var(--forest-900);
+  background: var(--cream);
+  border: 1.5px solid var(--forest-200);
+  border-radius: 52px;
   cursor: pointer;
-  transition: all 0.15s var(--ease-brutal);
-  box-shadow: 4px 4px 0px 0px #0F172A;
+  transition: all 0.3s var(--ease-out-expo);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px #0F172A;
   background: #FFFFFF;
+  border-color: var(--forest-300);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .btn-secondary:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px 0px #0F172A;
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 /* ========================================
-   MINT BUTTON - For success/go actions
+   TEAL BUTTON - For success/go actions
    ======================================== */
+.btn-teal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: #FFFFFF;
+  background: var(--teal);
+  border: none;
+  border-radius: 52px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-expo);
+  box-shadow: 0 2px 8px -2px rgba(42, 157, 143, 0.4);
+}
+
+.btn-teal:hover {
+  background: #228176;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -4px rgba(42, 157, 143, 0.5);
+}
+
+.btn-teal:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px -2px rgba(42, 157, 143, 0.4);
+}
+
+/* Legacy alias */
 .btn-mint {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 16px 32px;
+  padding: 14px 28px;
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 600;
   font-size: 15px;
-  color: #0F172A;
-  background: #10B981;
-  border: 2px solid #0F172A;
-  border-radius: 0;
+  color: #FFFFFF;
+  background: var(--teal);
+  border: none;
+  border-radius: 52px;
   cursor: pointer;
-  transition: all 0.15s var(--ease-brutal);
-  box-shadow: 4px 4px 0px 0px #0F172A;
+  transition: all 0.3s var(--ease-out-expo);
+  box-shadow: 0 2px 8px -2px rgba(42, 157, 143, 0.4);
 }
 
 .btn-mint:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px #0F172A;
+  background: #228176;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -4px rgba(42, 157, 143, 0.5);
 }
 
 .btn-mint:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px 0px #0F172A;
+  transform: translateY(0);
+  box-shadow: 0 2px 6px -2px rgba(42, 157, 143, 0.4);
 }
 
 /* ========================================
-   ELECTRIC BUTTON - For featured actions
+   OCEAN BUTTON - For premium actions
    ======================================== */
+.btn-ocean {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: #FFFFFF;
+  background: var(--ocean);
+  border: none;
+  border-radius: 52px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-expo);
+  box-shadow: 0 2px 8px -2px rgba(38, 70, 83, 0.4);
+}
+
+.btn-ocean:hover {
+  background: #1A323C;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -4px rgba(38, 70, 83, 0.5);
+}
+
+.btn-ocean:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px -2px rgba(38, 70, 83, 0.4);
+}
+
+/* Legacy alias */
 .btn-electric {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 16px 32px;
+  padding: 14px 28px;
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 600;
   font-size: 15px;
   color: #FFFFFF;
-  background: #4F46E5;
-  border: 2px solid #0F172A;
-  border-radius: 0;
+  background: var(--ocean);
+  border: none;
+  border-radius: 52px;
   cursor: pointer;
-  transition: all 0.15s var(--ease-brutal);
-  box-shadow: 4px 4px 0px 0px #0F172A;
+  transition: all 0.3s var(--ease-out-expo);
+  box-shadow: 0 2px 8px -2px rgba(38, 70, 83, 0.4);
 }
 
 .btn-electric:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px #0F172A;
+  background: #1A323C;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -4px rgba(38, 70, 83, 0.5);
 }
 
 .btn-electric:active {
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px 0px #0F172A;
+  transform: translateY(0);
+  box-shadow: 0 2px 6px -2px rgba(38, 70, 83, 0.4);
 }
 
 /* ========================================
-   GRADIENT BORDER BUTTON - For Dark Backgrounds (legacy)
+   GHOST BUTTON - For dark backgrounds
    ======================================== */
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--cream);
+  background: transparent;
+  border: 1.5px solid var(--forest-300);
+  border-radius: 52px;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-expo);
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 253, 251, 0.1);
+  border-color: var(--cream);
+}
+
+/* Legacy alias */
 .btn-gradient-border {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 16px 32px;
+  padding: 14px 28px;
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 600;
   font-size: 15px;
-  color: #FAF7F2;
+  color: var(--cream);
   background: transparent;
-  border: 2px solid #FAF7F2;
-  border-radius: 0;
+  border: 1.5px solid var(--forest-300);
+  border-radius: 52px;
   cursor: pointer;
-  transition: all 0.15s var(--ease-brutal);
-  box-shadow: 4px 4px 0px 0px #FAF7F2;
+  transition: all 0.3s var(--ease-out-expo);
 }
 
 .btn-gradient-border:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px #FAF7F2;
-  background: rgba(250, 247, 242, 0.1);
+  background: rgba(255, 253, 251, 0.1);
+  border-color: var(--cream);
 }
 
 /* ================================
-   NEO-BRUTALIST CARD STYLES
+   WARM DUSK CARD STYLES
+   Premium, Rounded, Elevated
    ================================ */
+
+/* Standard card */
+.card {
+  background: var(--cream);
+  border: 1px solid var(--forest-200);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s var(--ease-out-expo);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Event card style */
+.card-event {
+  background: var(--cream);
+  border: 1px solid var(--forest-100);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s var(--ease-out-expo);
+  overflow: hidden;
+}
+
+.card-event:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--forest-200);
+}
+
+/* Legacy aliases for backward compatibility */
 .card-brutal {
-  background: #FFFFFF;
-  border: 2px solid #0F172A;
-  box-shadow: 4px 4px 0px 0px #0F172A;
-  transition: all 0.15s var(--ease-brutal);
+  background: var(--cream);
+  border: 1px solid var(--forest-200);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s var(--ease-out-expo);
 }
 
 .card-brutal:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px #0F172A;
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .card-brutal-terracotta {
-  background: #FFFFFF;
-  border: 2px solid #0F172A;
-  box-shadow: 4px 4px 0px 0px #E07A5F;
-  transition: all 0.15s var(--ease-brutal);
+  background: var(--cream);
+  border: 1px solid var(--forest-200);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s var(--ease-out-expo);
 }
 
 .card-brutal-terracotta:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px #E07A5F;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px -4px rgba(224, 122, 95, 0.2);
 }
 
 .card-brutal-mint {
-  background: #FFFFFF;
-  border: 2px solid #0F172A;
-  box-shadow: 4px 4px 0px 0px #10B981;
-  transition: all 0.15s var(--ease-brutal);
+  background: var(--cream);
+  border: 1px solid var(--forest-200);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s var(--ease-out-expo);
 }
 
 .card-brutal-mint:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px #10B981;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px -4px rgba(42, 157, 143, 0.2);
 }
 
 .card-brutal-electric {
-  background: #FFFFFF;
-  border: 2px solid #0F172A;
-  box-shadow: 4px 4px 0px 0px #4F46E5;
-  transition: all 0.15s var(--ease-brutal);
+  background: var(--cream);
+  border: 1px solid var(--forest-200);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s var(--ease-out-expo);
 }
 
 .card-brutal-electric:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px #4F46E5;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px -4px rgba(38, 70, 83, 0.2);
 }
 
-/* Legacy card styles */
+/* Card lift effect */
 .card-lift {
-  transition: all 0.15s var(--ease-brutal);
+  transition: all 0.3s var(--ease-out-expo);
 }
 
 .card-lift:hover {
-  transform: translate(-2px, -2px);
+  transform: translateY(-4px);
 }
 
+/* Card glow effect */
 .card-glow {
   position: relative;
 }
@@ -675,7 +826,7 @@
   border-radius: inherit;
   opacity: 0;
   transition: opacity 0.5s;
-  box-shadow: 0 0 40px 10px rgba(100, 150, 255, 0.15);
+  box-shadow: 0 0 40px 10px rgba(224, 122, 95, 0.15);
   pointer-events: none;
 }
 
@@ -723,55 +874,89 @@
 }
 
 /* ================================
-   CATEGORY BADGES - Dark Theme with Bright Colors
+   CATEGORY BADGES - Warm Dusk Theme
    ================================ */
 .badge {
   display: inline-flex;
   align-items: center;
   padding: 6px 14px;
-  font-family: var(--font-exo2), -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
   border-radius: 20px;
   transition: all 0.3s;
 }
 
 .badge-run {
-  background: rgba(100, 200, 255, 0.2);
-  color: #80D0FF;
-  border: 1px solid rgba(100, 200, 255, 0.4);
+  background: rgba(42, 157, 143, 0.12);
+  color: var(--teal);
 }
 
 .badge-yoga {
-  background: rgba(200, 150, 255, 0.2);
-  color: #D0A0FF;
-  border: 1px solid rgba(200, 150, 255, 0.4);
+  background: rgba(178, 146, 231, 0.15);
+  color: #9B7BC7;
 }
 
 .badge-hiit {
-  background: rgba(255, 100, 100, 0.2);
-  color: #FF8080;
-  border: 1px solid rgba(255, 100, 100, 0.4);
+  background: rgba(224, 122, 95, 0.12);
+  color: var(--coral);
 }
 
 .badge-dance {
-  background: rgba(255, 100, 200, 0.2);
-  color: #FF80C0;
-  border: 1px solid rgba(255, 100, 200, 0.4);
+  background: rgba(236, 72, 153, 0.12);
+  color: #D63D8C;
 }
 
 .badge-combat {
-  background: rgba(255, 180, 100, 0.2);
-  color: #FFB060;
-  border: 1px solid rgba(255, 180, 100, 0.4);
+  background: rgba(244, 162, 97, 0.15);
+  color: #D88B42;
 }
 
 .badge-outdoor {
-  background: rgba(100, 255, 180, 0.2);
-  color: #80FFB0;
-  border: 1px solid rgba(100, 255, 180, 0.4);
+  background: rgba(42, 157, 143, 0.12);
+  color: var(--teal);
+}
+
+.badge-social {
+  background: rgba(38, 70, 83, 0.1);
+  color: var(--ocean);
+}
+
+/* ================================
+   FILTER PILLS - Warm Dusk Theme
+   ================================ */
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--forest-700);
+  background: var(--cream);
+  border: 1.5px solid var(--forest-200);
+  border-radius: 52px;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-out-expo);
+  white-space: nowrap;
+}
+
+.filter-pill:hover {
+  background: var(--forest-50);
+  border-color: var(--forest-300);
+}
+
+.filter-pill.active {
+  background: var(--forest-900);
+  color: var(--cream);
+  border-color: var(--forest-900);
+}
+
+.filter-pill.active:hover {
+  background: var(--forest-800);
 }
 
 /* ================================
@@ -924,25 +1109,48 @@
 }
 
 /* ================================
-   INPUT STYLES - Light Theme
+   INPUT STYLES - Warm Dusk Theme
    ================================ */
-.input-light {
-  background: #ffffff;
-  border: 1px solid #e0e7ef;
-  color: #0d1520;
+.input-field {
+  width: 100%;
+  background: var(--cream);
+  border: 1.5px solid var(--forest-200);
+  color: var(--forest-900);
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
-  transition: all 0.3s;
+  font-size: 15px;
+  padding: 14px 18px;
+  transition: all 0.2s var(--ease-out-expo);
+  border-radius: 12px;
+}
+
+.input-field::placeholder {
+  color: var(--forest-400);
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.15);
+}
+
+/* Legacy alias */
+.input-light {
+  background: var(--cream);
+  border: 1.5px solid var(--forest-200);
+  color: var(--forest-900);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  transition: all 0.2s var(--ease-out-expo);
   border-radius: 12px;
 }
 
 .input-light::placeholder {
-  color: #9ca8b8;
+  color: var(--forest-400);
 }
 
 .input-light:focus {
   outline: none;
-  border-color: #3477f8;
-  box-shadow: 0 0 0 3px rgba(52, 119, 248, 0.15);
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px rgba(224, 122, 95, 0.15);
 }
 
 /* ================================

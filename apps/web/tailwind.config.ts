@@ -25,14 +25,69 @@ const config: Config = {
         body: ['var(--font-inter)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
       colors: {
-        // Neo-Brutalist Color Palette
+        // ═══════════════════════════════════════════════
+        // WARM DUSK COLOR PALETTE
+        // ═══════════════════════════════════════════════
+
+        // NEUTRALS (Warm forest-tinted grayscale)
+        'forest': {
+          950: '#0F1A17',  // Darkest - footer bg, dark overlays
+          900: '#1B2B27',  // Primary text, headers
+          800: '#2A3F39',  // Strong emphasis
+          700: '#3D5A54',  // Secondary text, subheadings
+          600: '#527069',  // Medium emphasis
+          500: '#6B8F87',  // Tertiary text, placeholders, icons
+          400: '#8AADA5',  // Muted elements
+          300: '#A8C5BE',  // Borders, dividers, disabled
+          200: '#D0E0DB',  // Light borders, hover states
+          100: '#E8EFEC',  // Subtle backgrounds, hover fills
+          50:  '#F4F7F6',  // Lightest tint
+        },
+
+        // BACKGROUNDS
+        'sand': '#F7F4F0',     // Main page background
+        'cream': '#FFFDFB',    // Card backgrounds, elevated surfaces
+        'mist': '#E8EFEC',     // Subtle section backgrounds
+
+        // PRIMARY ACCENT - Burnt Coral
+        'coral': {
+          DEFAULT: '#E07A5F',  // Primary CTA, main accent
+          50:  '#FEF5F2',      // Lightest tint (backgrounds)
+          100: '#FCE8E2',      // Light tint
+          200: '#F9CFC3',      // Soft accent
+          300: '#F4A89A',      // Light accent
+          400: '#EA9177',      // Medium
+          500: '#E07A5F',      // DEFAULT - Primary buttons
+          600: '#C65D45',      // Hover state
+          700: '#A84A36',      // Pressed state
+          800: '#8A3D2D',      // Dark accent
+          900: '#6E3326',      // Darkest
+        },
+
+        // SECONDARY ACCENTS
+        'amber': {
+          DEFAULT: '#F4A261',  // Badges, highlights, warnings
+          light: '#F8C291',
+          dark: '#E08A3C',
+        },
+
+        'teal': {
+          DEFAULT: '#2A9D8F',  // Success, "Going" state, positive
+          light: '#3DB9A9',
+          dark: '#228176',
+        },
+
+        'ocean': {
+          DEFAULT: '#264653',  // Premium, special events, deep accent
+          light: '#3A6375',
+          dark: '#1A323C',
+        },
+
+        // Legacy colors (keeping for compatibility)
         navy: '#0F172A',
-        sand: '#FAF7F2',
         terracotta: '#E07A5F',
-        coral: '#FF6B6B',
         electric: '#4F46E5',
         mint: '#10B981',
-        cream: '#FFFBEB',
 
         // Dark theme base
         background: 'hsl(var(--background))',
@@ -40,13 +95,13 @@ const config: Config = {
 
         // Accent colors
         accent: {
-          teal: '#3CCFBB',
+          teal: '#2A9D8F',
           purple: '#B292E7',
-          orange: '#F97316',
+          orange: '#F4A261',
           yellow: '#FACC15',
           pink: '#EC4899',
-          green: '#22C55E',
-          blue: '#3B82F6',
+          green: '#2A9D8F',
+          blue: '#264653',
         },
 
         // Borders
@@ -75,7 +130,7 @@ const config: Config = {
           foreground: 'hsl(var(--destructive-foreground))',
         },
         success: {
-          DEFAULT: 'hsl(var(--success))',
+          DEFAULT: '#2A9D8F',
           foreground: 'hsl(0 0% 100%)',
         },
         muted: {
@@ -93,6 +148,25 @@ const config: Config = {
           foreground: 'hsl(var(--card-foreground))',
         },
       },
+
+      // Semantic background colors
+      backgroundColor: {
+        'page': '#F7F4F0',
+        'card-surface': '#FFFDFB',
+        'elevated': '#FFFFFF',
+        'muted-bg': '#E8EFEC',
+        'footer': '#0F1A17',
+      },
+
+      // Semantic text colors
+      textColor: {
+        'primary-text': '#1B2B27',
+        'secondary-text': '#3D5A54',
+        'tertiary-text': '#6B8F87',
+        'muted-text': '#A8C5BE',
+        'inverse-text': '#FFFDFB',
+      },
+
       borderRadius: {
         lg: '16px',
         md: '12px',
@@ -102,28 +176,28 @@ const config: Config = {
         '3xl': '24px',
       },
       boxShadow: {
-        // Neo-Brutalist hard shadows
-        'brutal': '4px 4px 0px 0px #0F172A',
-        'brutal-sm': '2px 2px 0px 0px #0F172A',
-        'brutal-lg': '6px 6px 0px 0px #0F172A',
-        'brutal-xl': '8px 8px 0px 0px #0F172A',
-        'brutal-terracotta': '4px 4px 0px 0px #E07A5F',
-        'brutal-electric': '4px 4px 0px 0px #4F46E5',
-        'brutal-mint': '4px 4px 0px 0px #10B981',
+        // Warm-tinted shadows
+        'sm': '0 1px 2px 0 rgba(27, 43, 39, 0.05)',
+        'DEFAULT': '0 1px 3px 0 rgba(27, 43, 39, 0.1), 0 1px 2px -1px rgba(27, 43, 39, 0.1)',
+        'md': '0 4px 6px -1px rgba(27, 43, 39, 0.1), 0 2px 4px -2px rgba(27, 43, 39, 0.1)',
+        'lg': '0 10px 15px -3px rgba(27, 43, 39, 0.1), 0 4px 6px -4px rgba(27, 43, 39, 0.1)',
+        'xl': '0 20px 25px -5px rgba(27, 43, 39, 0.1), 0 8px 10px -6px rgba(27, 43, 39, 0.1)',
+        'card': '0 2px 8px -2px rgba(27, 43, 39, 0.08), 0 4px 16px -4px rgba(27, 43, 39, 0.12)',
+        'card-hover': '0 8px 24px -4px rgba(27, 43, 39, 0.12), 0 4px 8px -2px rgba(27, 43, 39, 0.08)',
 
-        // Dark theme shadows with glow effects
-        'glow-teal': '0 0 30px -5px rgba(60, 207, 187, 0.4)',
-        'glow-purple': '0 0 30px -5px rgba(178, 146, 231, 0.4)',
-        'glow-orange': '0 0 30px -5px rgba(249, 115, 22, 0.4)',
-        'glow-pink': '0 0 30px -5px rgba(236, 72, 153, 0.4)',
+        // Legacy shadows
+        'brutal': '4px 4px 0px 0px #1B2B27',
+        'brutal-sm': '2px 2px 0px 0px #1B2B27',
+        'brutal-lg': '6px 6px 0px 0px #1B2B27',
+        'brutal-coral': '4px 4px 0px 0px #E07A5F',
+        'brutal-teal': '4px 4px 0px 0px #2A9D8F',
 
-        // Card shadows
-        'card': '0 4px 20px rgba(0, 0, 0, 0.3)',
-        'card-hover': '0 20px 40px rgba(0, 0, 0, 0.4), 0 0 60px -15px rgba(60, 207, 187, 0.2)',
-        'glass': '0 8px 32px rgba(0, 0, 0, 0.3)',
+        // Glow effects
+        'glow-coral': '0 0 30px -5px rgba(224, 122, 95, 0.4)',
+        'glow-teal': '0 0 30px -5px rgba(42, 157, 143, 0.4)',
 
         // Header
-        'header-scroll': '0 4px 20px rgba(0, 0, 0, 0.3)',
+        'header-scroll': '0 4px 20px rgba(27, 43, 39, 0.1)',
       },
       transitionTimingFunction: {
         'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
@@ -149,6 +223,7 @@ const config: Config = {
         'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         'scale-in': 'scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         'slide-in': 'slideIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
         'pulse-glow': 'pulse-glow 4s ease-in-out infinite',
         'gradient-shift': 'gradient-shift 3s linear infinite',
         'bounce-subtle': 'bounceSubtle 2s ease-in-out infinite',
@@ -186,6 +261,10 @@ const config: Config = {
           from: { opacity: '0', transform: 'scale(1.1)' },
           to: { opacity: '1', transform: 'scale(1)' },
         },
+        pulseSoft: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.6' },
+        },
         'pulse-glow': {
           '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
           '50%': { opacity: '0.7', transform: 'scale(1.05)' },
@@ -203,6 +282,8 @@ const config: Config = {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 0deg, var(--tw-gradient-stops))',
+        'gradient-warm': 'linear-gradient(to bottom right, #FEF5F2, rgba(244, 162, 97, 0.1))',
+        'gradient-hero': 'linear-gradient(to bottom, #F7F4F0, #F7F4F0, #E8EFEC)',
       },
     },
   },

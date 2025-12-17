@@ -47,7 +47,7 @@ export function MobileHeader() {
         fixed top-0 left-0 right-0 z-40 md:hidden
         transition-all duration-300
         ${isScrolled
-          ? 'bg-sand/95 backdrop-blur-lg border-b-2 border-navy'
+          ? 'bg-sand/95 backdrop-blur-lg border-b border-forest-200 shadow-sm'
           : 'bg-transparent'
         }
       `}
@@ -59,8 +59,8 @@ export function MobileHeader() {
           <div className="flex items-center gap-2">
             <Logo size={24} />
             <span className="font-display font-bold text-lg">
-              <span className="text-terracotta">SWEAT</span>
-              <span className="text-navy">BUDDIES</span>
+              <span className="text-coral">SWEAT</span>
+              <span className="text-forest-900">BUDDIES</span>
             </span>
           </div>
 
@@ -68,30 +68,26 @@ export function MobileHeader() {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-1 bg-white px-3 py-1.5 border-2 border-navy text-sm font-medium active:translate-x-[1px] active:translate-y-[1px] transition-transform"
-              style={{ boxShadow: isDropdownOpen ? '1px 1px 0px 0px #0F172A' : '2px 2px 0px 0px #0F172A' }}
+              className="flex items-center gap-1.5 bg-cream px-3.5 py-2 rounded-full border border-forest-200 text-sm font-medium shadow-sm transition-all hover:shadow-md hover:border-forest-300"
             >
               <span>{selectedCity.flag}</span>
-              <span className="text-navy">{selectedCity.name}</span>
-              <ChevronDown className={`w-4 h-4 text-navy/50 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+              <span className="text-forest-900">{selectedCity.name}</span>
+              <ChevronDown className={`w-4 h-4 text-forest-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div
-                className="absolute right-0 top-full mt-2 w-48 bg-white border-2 border-navy z-50"
-                style={{ boxShadow: '4px 4px 0px 0px #0F172A' }}
-              >
+              <div className="absolute right-0 top-full mt-2 w-48 bg-cream rounded-2xl border border-forest-200 shadow-lg overflow-hidden z-50">
                 {cities.map((city) => (
                   <button
                     key={city.id}
                     onClick={() => handleCitySelect(city)}
                     className={`
                       w-full flex items-center justify-between px-4 py-3 text-left
-                      transition-colors border-b border-navy/10 last:border-b-0
+                      transition-colors border-b border-forest-100 last:border-b-0
                       ${selectedCity.id === city.id
-                        ? 'bg-sand text-navy font-semibold'
-                        : 'text-navy/70 hover:bg-sand/50'
+                        ? 'bg-forest-50 text-forest-900 font-semibold'
+                        : 'text-forest-700 hover:bg-forest-50'
                       }
                     `}
                   >
@@ -100,7 +96,7 @@ export function MobileHeader() {
                       <span>{city.name}</span>
                     </span>
                     {selectedCity.id === city.id && (
-                      <Check className="w-4 h-4 text-terracotta" />
+                      <Check className="w-4 h-4 text-coral" />
                     )}
                   </button>
                 ))}

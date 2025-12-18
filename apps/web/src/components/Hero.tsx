@@ -86,11 +86,11 @@ export const Hero = memo(function Hero() {
   const slide = heroSlides[currentSlide]
 
   return (
-    <section className="relative min-h-[100svh] flex items-center overflow-hidden bg-sand">
-      {/* Navy background base */}
-      <div className="absolute inset-0 bg-navy" />
+    <section className="relative min-h-[100svh] flex items-center overflow-hidden bg-white">
+      {/* Dark background base */}
+      <div className="absolute inset-0 bg-gray-900" />
 
-      {/* Image Background Slideshow - Using CSS transitions instead of Framer Motion */}
+      {/* Image Background Slideshow */}
       <div className="absolute inset-0">
         {heroSlides.map((s, index) => (
           <div
@@ -114,48 +114,40 @@ export const Hero = memo(function Hero() {
           </div>
         ))}
 
-        {/* Neo-Brutalist overlay - stronger left side for text */}
+        {/* Airbnb-style gradient overlay - softer, more balanced */}
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(to right, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.85) 35%, rgba(15, 23, 42, 0.4) 65%, rgba(15, 23, 42, 0.2) 100%)'
-          }}
-        />
-
-        {/* Terracotta accent glow */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-30"
-          style={{
-            background: 'radial-gradient(ellipse at 15% 60%, rgba(224, 122, 95, 0.4) 0%, transparent 50%)'
+            background: 'linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 40%, rgba(0, 0, 0, 0.3) 70%, rgba(0, 0, 0, 0.2) 100%)'
           }}
         />
       </div>
 
       {/* Content */}
       <div className="relative z-10 max-w-container mx-auto w-full px-6 lg:px-10 py-20 md:py-32">
-        <div className="max-w-4xl">
-          {/* Animated headline - CSS animations */}
+        <div className="max-w-3xl">
+          {/* Animated headline */}
           <div
             key={currentSlide}
             className={`transition-opacity duration-400 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
           >
             <h1
-              className="font-display font-semibold text-sand mb-2"
+              className="font-semibold text-white mb-2"
               style={{
-                fontSize: 'clamp(48px, 12vw, 96px)',
-                lineHeight: '1',
-                letterSpacing: '-0.04em',
+                fontSize: 'clamp(40px, 10vw, 72px)',
+                lineHeight: '1.05',
+                letterSpacing: '-0.02em',
                 animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.1s both' : 'none',
               }}
             >
               {slide.headline}
             </h1>
             <h1
-              className="font-display font-semibold text-terracotta mb-8"
+              className="font-semibold text-primary mb-8"
               style={{
-                fontSize: 'clamp(48px, 12vw, 96px)',
-                lineHeight: '1',
-                letterSpacing: '-0.04em',
+                fontSize: 'clamp(40px, 10vw, 72px)',
+                lineHeight: '1.05',
+                letterSpacing: '-0.02em',
                 animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.2s both' : 'none',
               }}
             >
@@ -165,9 +157,9 @@ export const Hero = memo(function Hero() {
 
           {/* Subhead */}
           <p
-            className="font-body text-sand/70 mb-10 max-w-xl"
+            className="text-white/70 mb-10 max-w-xl"
             style={{
-              fontSize: 'clamp(16px, 2vw, 20px)',
+              fontSize: 'clamp(16px, 2vw, 18px)',
               lineHeight: '1.6',
               animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.3s both' : 'none',
             }}
@@ -175,9 +167,9 @@ export const Hero = memo(function Hero() {
             Meet people who move like you. Open fitness events across Southeast Asia — where strangers become workout buddies.
           </p>
 
-          {/* Stats - Neo-Brutalist style */}
+          {/* Stats - Clean Airbnb style */}
           <div
-            className="flex flex-wrap items-center gap-4 sm:gap-6 mb-10"
+            className="flex flex-wrap items-center gap-6 mb-10"
             style={{ animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.4s both' : 'none' }}
           >
             {[
@@ -185,44 +177,32 @@ export const Hero = memo(function Hero() {
               { value: '3', label: 'cities' },
               { value: '1000+', label: 'connections' },
             ].map((stat, idx) => (
-              <div
-                key={idx}
-                className="flex items-baseline gap-2 px-4 py-2 bg-sand/10 border-2 border-sand/20"
-              >
-                <span className="text-2xl sm:text-3xl font-display font-semibold text-sand">{stat.value}</span>
-                <span className="text-sand/50 text-sm font-body">{stat.label}</span>
+              <div key={idx} className="flex items-baseline gap-2">
+                <span className="text-2xl sm:text-3xl font-semibold text-white">{stat.value}</span>
+                <span className="text-white/50 text-sm">{stat.label}</span>
               </div>
             ))}
           </div>
 
-          {/* CTAs - Neo-Brutalist */}
+          {/* CTAs - Airbnb style buttons */}
           <div
             className="flex flex-col sm:flex-row items-start gap-4"
             style={{ animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.5s both' : 'none' }}
           >
             <button
               onClick={(e) => handleHashClick(e, '#events')}
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-terracotta text-white font-semibold text-base border-2 border-sand transition-all duration-150 hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-[2px] active:translate-y-[2px]"
-              style={{
-                boxShadow: '4px 4px 0px 0px #FAF7F2',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '6px 6px 0px 0px #FAF7F2'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '4px 4px 0px 0px #FAF7F2'
-              }}
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-primary text-white font-semibold text-base rounded-lg transition-all duration-250 hover:bg-primary-hover hover:scale-[1.02] active:scale-[0.98]"
             >
               Browse Events
               <ArrowRight className="w-5 h-5" />
             </button>
 
             {/* Secondary as text link */}
-            <p className="text-sm text-sand/50 font-body sm:self-center">
+            <p className="text-sm text-white/50 sm:self-center">
               Are you an organizer?{' '}
               <button
                 onClick={(e) => handleHashClick(e, '#submit')}
-                className="text-terracotta hover:text-coral underline underline-offset-4 transition-colors"
+                className="text-white hover:text-primary underline underline-offset-4 transition-colors"
               >
                 Submit your event
               </button>
@@ -230,16 +210,16 @@ export const Hero = memo(function Hero() {
           </div>
         </div>
 
-        {/* Slide indicators - Neo-Brutalist */}
+        {/* Slide indicators - Airbnb style pills */}
         <div className="absolute bottom-32 left-6 lg:left-10 flex gap-2">
           {heroSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`h-3 transition-all duration-300 border-2 hover:scale-110 active:scale-95 ${
+              className={`h-2 rounded-full transition-all duration-300 ${
                 index === currentSlide
-                  ? 'w-10 bg-terracotta border-sand'
-                  : 'w-3 bg-transparent border-sand/30 hover:border-sand/60'
+                  ? 'w-8 bg-white'
+                  : 'w-2 bg-white/40 hover:bg-white/60'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
@@ -247,22 +227,22 @@ export const Hero = memo(function Hero() {
         </div>
       </div>
 
-      {/* Scroll indicator - CSS animation */}
+      {/* Scroll indicator */}
       <div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce"
         style={{ animationDuration: '1.5s' }}
       >
-        <span className="text-sand/40 text-xs uppercase tracking-widest font-medium">Scroll</span>
-        <div className="w-8 h-8 border-2 border-sand/30 flex items-center justify-center">
-          <ArrowDown className="w-4 h-4 text-sand/40" />
+        <span className="text-white/40 text-xs uppercase tracking-wider font-medium">Scroll</span>
+        <div className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center">
+          <ArrowDown className="w-4 h-4 text-white/40" />
         </div>
       </div>
 
-      {/* Bottom transition to sand */}
+      {/* Bottom transition to white */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+        className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none"
         style={{
-          background: 'linear-gradient(to top, #FAF7F2, transparent)'
+          background: 'linear-gradient(to top, #FFFFFF, transparent)'
         }}
       />
     </section>

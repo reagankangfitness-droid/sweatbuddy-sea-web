@@ -1,24 +1,15 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Space_Grotesk } from 'next/font/google'
+import { Plus_Jakarta_Sans } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
 import './globals.css'
 
-// Body font - clean, readable, versatile
-const inter = Inter({
+// Plus Jakarta Sans - closest free alternative to Airbnb Cereal
+// Geometric, warm, modern, excellent legibility
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-inter',
-  display: 'swap',
-  preload: true,
-})
-
-// Heading font - Space Grotesk as Clash Display alternative (available on Google Fonts)
-// This gives a similar neo-brutalist geometric feel
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  weight: ['500', '600', '700'],
-  variable: '--font-clash',
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-plus-jakarta',
   display: 'swap',
   preload: true,
 })
@@ -99,7 +90,7 @@ export default function RootLayout({
         {/* Prefetch events API for faster data loading */}
         <link rel="prefetch" href="/api/events" as="fetch" crossOrigin="anonymous" />
       </head>
-      <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
+      <body className={`${plusJakarta.variable} font-sans antialiased`}>
         <Providers>
           {children}
           <Toaster />

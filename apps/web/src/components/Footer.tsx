@@ -3,36 +3,36 @@ import { Instagram, Mail, ArrowUpRight } from 'lucide-react'
 
 export function Footer() {
   return (
-    <footer className="bg-forest-950">
+    <footer className="bg-gray-50 border-t border-gray-200">
       <div className="max-w-container mx-auto px-6 lg:px-10 py-16">
         <div className="grid md:grid-cols-3 gap-12 md:gap-8">
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Logo size={28} />
-              <span className="font-display font-semibold text-xl text-cream" style={{ letterSpacing: '-0.02em' }}>
+              <span className="font-semibold text-lg text-gray-800" style={{ letterSpacing: '-0.02em' }}>
                 sweatbuddies
               </span>
             </div>
-            <p className="text-forest-400 text-sm max-w-xs leading-relaxed">
+            <p className="text-gray-500 text-sm max-w-xs leading-relaxed">
               Find your crew. Sweat together. The best friendships start at 6am.
             </p>
           </div>
 
           {/* Links */}
           <div>
-            <h4 className="font-display font-semibold text-cream mb-4">Quick Links</h4>
+            <h4 className="font-semibold text-gray-800 mb-4">Quick Links</h4>
             <nav className="flex flex-col gap-3">
-              <a href="#events" className="text-forest-400 hover:text-coral transition-colors text-sm flex items-center gap-1">
+              <a href="#events" className="text-gray-500 hover:text-gray-800 transition-colors text-sm">
                 Browse Events
               </a>
-              <a href="#mission" className="text-forest-400 hover:text-coral transition-colors text-sm flex items-center gap-1">
+              <a href="#mission" className="text-gray-500 hover:text-gray-800 transition-colors text-sm">
                 About Us
               </a>
-              <a href="/host" className="text-forest-400 hover:text-coral transition-colors text-sm flex items-center gap-1">
+              <a href="/host" className="text-gray-500 hover:text-gray-800 transition-colors text-sm">
                 For Hosts
               </a>
-              <a href="/privacy" className="text-forest-400 hover:text-coral transition-colors text-sm flex items-center gap-1">
+              <a href="/privacy" className="text-gray-500 hover:text-gray-800 transition-colors text-sm">
                 Privacy Policy
               </a>
             </nav>
@@ -40,13 +40,13 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-display font-semibold text-cream mb-4">Connect</h4>
+            <h4 className="font-semibold text-gray-800 mb-4">Connect</h4>
             <div className="flex flex-col gap-3">
               <a
                 href="https://instagram.com/_sweatbuddies"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-forest-400 hover:text-coral transition-colors text-sm"
+                className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors text-sm"
               >
                 <Instagram className="w-4 h-4" />
                 @_sweatbuddies
@@ -54,7 +54,7 @@ export function Footer() {
               </a>
               <a
                 href="mailto:hello@sweatbuddies.co"
-                className="inline-flex items-center gap-2 text-forest-400 hover:text-coral transition-colors text-sm"
+                className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors text-sm"
               >
                 <Mail className="w-4 h-4" />
                 hello@sweatbuddies.co
@@ -64,12 +64,12 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-forest-800 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-forest-500">
-            © {new Date().getFullYear()} SweatBuddies. Made with 💪 in Singapore.
+        <div className="mt-12 pt-8 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-gray-400">
+            © {new Date().getFullYear()} SweatBuddies. Made with love in Singapore.
           </p>
           <div className="flex items-center gap-4">
-            <span className="text-xs text-forest-500">Built for the community</span>
+            <span className="text-xs text-gray-400">Built for the community</span>
           </div>
         </div>
       </div>

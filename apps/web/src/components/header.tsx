@@ -83,9 +83,9 @@ export function Header() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.4, ease: [0.2, 0, 0, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-250 ${
           scrolled
-            ? 'py-3 bg-sand/95 backdrop-blur-lg border-b border-forest-200 shadow-sm'
+            ? 'py-3 bg-white/95 backdrop-blur-lg border-b border-gray-200'
             : 'bg-transparent py-5'
         }`}
       >
@@ -93,10 +93,10 @@ export function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className={`flex items-center gap-2.5 font-display font-semibold transition-all group ${
-              scrolled ? 'text-forest-900 hover:text-coral' : 'text-sand hover:text-coral'
+            className={`flex items-center gap-2.5 font-semibold transition-colors ${
+              scrolled ? 'text-gray-800 hover:text-primary' : 'text-white hover:text-primary-200'
             }`}
-            style={{ fontSize: '20px', letterSpacing: '-0.02em' }}
+            style={{ fontSize: '18px', letterSpacing: '-0.02em' }}
           >
             <motion.span
               whileHover={{ rotate: -5 }}
@@ -104,7 +104,7 @@ export function Header() {
             >
               <Logo size={scrolled ? 28 : 32} />
             </motion.span>
-            <span>sweatbuddies</span>
+            <span className="font-semibold">sweatbuddies</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -119,15 +119,13 @@ export function Header() {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 * index }}
-                    whileHover={{ y: -2 }}
-                    className={`font-body text-sm font-medium transition-colors relative group ${
-                      scrolled ? 'text-forest-600 hover:text-coral' : 'text-sand/70 hover:text-sand'
+                    className={`text-sm font-medium transition-colors ${
+                      scrolled
+                        ? 'text-gray-600 hover:text-gray-800'
+                        : 'text-white/80 hover:text-white'
                     }`}
                   >
                     {link.label}
-                    <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
-                      scrolled ? 'bg-coral' : 'bg-sand'
-                    }`} />
                   </motion.button>
                 )
               }
@@ -135,14 +133,13 @@ export function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`font-body text-sm font-medium transition-colors relative group ${
-                    scrolled ? 'text-forest-600 hover:text-coral' : 'text-sand/70 hover:text-sand'
+                  className={`text-sm font-medium transition-colors ${
+                    scrolled
+                      ? 'text-gray-600 hover:text-gray-800'
+                      : 'text-white/80 hover:text-white'
                   }`}
                 >
                   {link.label}
-                  <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
-                    scrolled ? 'bg-coral' : 'bg-sand'
-                  }`} />
                 </Link>
               )
             })}
@@ -156,9 +153,7 @@ export function Header() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 }}
-              whileHover={{ x: -2, y: -2 }}
-              whileTap={{ x: 1, y: 1 }}
-              className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-coral text-white font-semibold text-sm rounded-full transition-all duration-150 hover:bg-coral-600 shadow-md"
+              className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-primary text-white font-semibold text-sm rounded-lg transition-all duration-250 hover:bg-primary-hover active:scale-[0.98]"
             >
               Submit Event
               <ArrowRight className="w-4 h-4" />
@@ -166,13 +161,12 @@ export function Header() {
 
             {/* Mobile menu button */}
             <motion.button
-              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`md:hidden p-2 rounded-full transition-colors ${
+              className={`md:hidden p-2 rounded-lg transition-colors ${
                 scrolled
-                  ? 'text-forest-900 border border-forest-200 bg-cream hover:bg-forest-100'
-                  : 'text-sand border border-sand/50 hover:bg-sand/10'
+                  ? 'text-gray-800 border border-gray-200 bg-white hover:bg-gray-50'
+                  : 'text-white border border-white/30 hover:bg-white/10'
               }`}
               aria-label="Toggle menu"
             >
@@ -211,7 +205,7 @@ export function Header() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
-              className="md:hidden absolute top-full left-0 right-0 bg-sand/95 backdrop-blur-lg border-b border-forest-200 shadow-lg overflow-hidden"
+              className="md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-lg border-b border-gray-200 overflow-hidden"
             >
               <nav className="flex flex-col p-6 gap-1">
                 {navLinks.map((link, index) => {
@@ -227,7 +221,7 @@ export function Header() {
                           setMobileMenuOpen(false)
                           handleHashClick(e, link.href)
                         }}
-                        className="font-body text-forest-900 hover:text-coral text-lg font-medium transition-colors py-3 border-b border-forest-100 last:border-0 text-left"
+                        className="text-gray-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-gray-100 last:border-0 text-left"
                       >
                         {link.label}
                       </motion.button>
@@ -238,7 +232,7 @@ export function Header() {
                       key={link.href}
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="font-body text-forest-900 hover:text-coral text-lg font-medium transition-colors py-3 border-b border-forest-100 last:border-0"
+                      className="text-gray-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-gray-100 last:border-0"
                     >
                       {link.label}
                     </Link>
@@ -252,7 +246,7 @@ export function Header() {
                     setMobileMenuOpen(false)
                     handleHashClick(e, '#submit')
                   }}
-                  className="flex items-center justify-center gap-2 mt-4 px-6 py-4 bg-coral text-white font-semibold rounded-full shadow-md hover:bg-coral-600 transition-colors"
+                  className="flex items-center justify-center gap-2 mt-4 px-6 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-hover transition-colors"
                 >
                   Submit Event
                   <ArrowRight className="w-4 h-4" />

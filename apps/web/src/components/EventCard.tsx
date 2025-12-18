@@ -81,14 +81,6 @@ const categoryEmojis: Record<string, string> = {
   'Breathwork': '🌬️',
 }
 
-// Color variations for cards (soft shadows)
-const cardColors = [
-  { accent: 'coral' },
-  { accent: 'teal' },
-  { accent: 'ocean' },
-  { accent: 'amber' },
-]
-
 // Memoized component to prevent unnecessary re-renders
 export const EventCard = memo(function EventCard({ event, index = 0 }: EventCardProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false)
@@ -97,7 +89,6 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
   const [goingCount, setGoingCount] = useState(event.goingCount || 0)
 
   const emoji = categoryEmojis[event.category] || '✨'
-  const colorScheme = cardColors[index % cardColors.length]
 
   // Load saved/going state from localStorage - deferred to avoid blocking render
   useEffect(() => {
@@ -159,104 +150,97 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
     <>
       <div
         onClick={() => setIsSheetOpen(true)}
-        className="h-full flex flex-col bg-cream rounded-2xl border border-forest-100 cursor-pointer transition-all duration-200 hover:shadow-card-hover hover:scale-[1.02] active:scale-[0.98] shadow-card"
+        className="h-full flex flex-col bg-white rounded-xl cursor-pointer transition-all duration-250 hover:shadow-card-hover active:scale-[0.98]"
         style={{
           // CSS animation for staggered fade-in
           animation: `fadeInUp 0.4s ease-out ${index * 0.05}s both`,
         }}
       >
-        {/* Image Section */}
-        <div className="relative aspect-[4/3] rounded-t-2xl overflow-hidden">
+        {/* Image Section - Square aspect ratio like Airbnb */}
+        <div className="relative aspect-square rounded-xl overflow-hidden">
           {event.imageUrl ? (
             <Image
               src={event.imageUrl}
               alt={event.name}
               fill
               loading="lazy"
-              className="object-cover"
+              className="object-cover transition-transform duration-250 hover:scale-105"
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-sand to-mist flex items-center justify-center">
+            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
               <span className="text-6xl">{emoji}</span>
             </div>
           )}
 
-          {/* Category Badge - Top Left (neutral styling) */}
-          <div className="absolute top-3 left-3">
-            <span className="px-3 py-1.5 bg-cream/95 backdrop-blur-sm text-xs font-medium text-forest-700 rounded-full border border-forest-100/50">
-              {emoji} {event.category}
-            </span>
-          </div>
-
-          {/* Save Button - Top Right (neutral, coral only when active) */}
+          {/* Save Button - Top Right (Airbnb heart style) */}
           <button
             onClick={handleSaveClick}
-            className={`absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90 ${
+            className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90 ${
               isSaved
-                ? 'bg-coral text-white shadow-md'
-                : 'bg-cream/95 backdrop-blur-sm text-forest-400 hover:text-forest-600 border border-forest-100/50'
+                ? 'text-primary'
+                : 'text-white hover:text-white/80'
             }`}
+            style={{
+              filter: isSaved ? 'none' : 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))',
+            }}
           >
-            <Heart className={`w-4 h-4 ${isSaved ? 'fill-white' : ''}`} />
+            <Heart className={`w-6 h-6 ${isSaved ? 'fill-primary stroke-primary' : 'stroke-2'}`} />
           </button>
 
-          {/* Weekly Badge - Bottom Right (neutral styling) */}
+          {/* Weekly Badge - Bottom Left */}
           {event.recurring && (
-            <div className="absolute bottom-3 right-3">
-              <span className="bg-forest-900/90 backdrop-blur-sm text-cream px-3 py-1.5 text-xs font-medium rounded-full flex items-center gap-1.5 border border-forest-700/50">
-                <span className="w-1.5 h-1.5 bg-cream rounded-full opacity-80" />
+            <div className="absolute bottom-3 left-3">
+              <span className="bg-white px-2.5 py-1 text-xs font-semibold text-gray-800 rounded-md shadow-sm">
                 Weekly
               </span>
             </div>
           )}
         </div>
 
-        {/* Content Section */}
-        <div className="flex-1 flex flex-col p-4">
-          {/* Event Name - fixed height for 2 lines, premium typography */}
-          <h3 className="text-display-card mb-3 line-clamp-2 min-h-[3rem]">
+        {/* Content Section - Airbnb style typography */}
+        <div className="flex-1 flex flex-col pt-3 pb-2">
+          {/* Category & Location Row */}
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-semibold text-gray-800 uppercase tracking-wide">
+              {event.category}
+            </span>
+          </div>
+
+          {/* Event Name */}
+          <h3 className="text-[15px] font-semibold text-gray-800 leading-tight line-clamp-1 mb-1">
             {event.name}
           </h3>
 
-          {/* Date & Time - neutral icons */}
-          <div className="flex items-center gap-2 text-sm text-forest-600 mb-1">
-            <Calendar className="w-4 h-4 text-forest-400 flex-shrink-0" />
-            <span className="font-medium">{formatEventDate(event.eventDate, event.day)}</span>
-            <span className="text-forest-300">•</span>
-            <span>{event.time}</span>
-          </div>
+          {/* Date & Time */}
+          <p className="text-sm text-gray-500 mb-0.5">
+            {formatEventDate(event.eventDate, event.day)} · {event.time}
+          </p>
 
-          {/* Location - neutral icons */}
-          <div className="flex items-center gap-2 text-sm text-forest-500 mb-4">
-            <MapPin className="w-4 h-4 text-forest-400 flex-shrink-0" />
-            <span className="line-clamp-1">{event.location}</span>
-          </div>
+          {/* Location */}
+          <p className="text-sm text-gray-500 line-clamp-1 mb-3">
+            {event.location}
+          </p>
 
-          {/* Spacer to push button to bottom */}
-          <div className="flex-1" />
-
-          {/* CTA - Full Width Rounded */}
-          <button
-            onClick={handleGoingClick}
-            className={`w-full py-3 font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 rounded-full ${
-              isGoing
-                ? 'bg-teal text-white shadow-md'
-                : 'bg-coral text-white hover:bg-coral-600 shadow-md active:scale-95'
-            }`}
-          >
+          {/* Going Count / CTA */}
+          <div className="mt-auto">
             {isGoing ? (
-              <>
-                <span>✓</span>
-                <span>You&apos;re Going</span>
-              </>
+              <button
+                onClick={handleGoingClick}
+                className="w-full py-2.5 font-semibold text-sm flex items-center justify-center gap-2 bg-success-light text-success rounded-lg transition-all"
+              >
+                <span>✓ You&apos;re Going</span>
+              </button>
             ) : (
-              <>
-                <span>I&apos;m Going{goingCount > 0 && ` • ${goingCount}`}</span>
+              <button
+                onClick={handleGoingClick}
+                className="w-full py-2.5 font-semibold text-sm flex items-center justify-center gap-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-all active:scale-[0.98]"
+              >
+                <span>Join{goingCount > 0 && ` · ${goingCount} going`}</span>
                 <ArrowRight className="w-4 h-4" />
-              </>
+              </button>
             )}
-          </button>
+          </div>
         </div>
       </div>
 

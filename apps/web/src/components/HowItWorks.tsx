@@ -12,21 +12,18 @@ const steps = [
     title: 'Pick Your City',
     description: 'Select where you\'re based. We\'re live in Singapore with more cities coming soon.',
     screen: <CitySelector />,
-    color: '#E07A5F', // terracotta
   },
   {
     number: '02',
     title: 'Browse What\'s On',
     description: 'Filter by category, day, or vibe. Find events that match your style.',
     screen: <EventBrowser />,
-    color: '#4F46E5', // electric
   },
   {
     number: '03',
     title: 'Just Show Up',
     description: 'No bookings, no sign-ups. Mark yourself as going and show up.',
     screen: <EventDetail />,
-    color: '#10B981', // mint
   },
 ]
 
@@ -39,7 +36,7 @@ export function HowItWorks() {
       <div className="absolute top-1/2 right-1/4 w-8 h-8 rounded-full bg-ocean/10" />
 
       <div className="relative z-10 max-w-container mx-auto px-6 lg:px-10">
-        {/* Header */}
+        {/* Header - Premium Typography */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -47,17 +44,12 @@ export function HowItWorks() {
           transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] }}
           className="text-center mb-16 md:mb-24"
         >
-          <h2
-            className="font-display font-semibold text-forest-900"
-            style={{
-              fontSize: 'clamp(36px, 7vw, 64px)',
-              letterSpacing: '-0.03em',
-            }}
-          >
-            How It <span className="text-coral">Works</span>
+          <span className="text-label text-forest-500 mb-4 block">HOW IT WORKS</span>
+          <h2 className="text-display-section md:text-display-hero">
+            Three Simple Steps
           </h2>
-          <p className="text-lg mt-4 max-w-xl mx-auto text-forest-600">
-            Three steps to your next workout buddy
+          <p className="text-body-large mt-4 max-w-xl mx-auto">
+            From discovery to workout buddy in minutes
           </p>
         </motion.div>
 
@@ -83,26 +75,18 @@ export function HowItWorks() {
                 </IPhoneMockup>
               </motion.div>
 
-              {/* Step Number - Rounded */}
-              <div
-                className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-2xl font-display font-semibold text-2xl text-white shadow-md"
-                style={{
-                  backgroundColor: step.color,
-                }}
-              >
+              {/* Step Number - Neutral rounded badge */}
+              <div className="inline-flex items-center justify-center w-14 h-14 mb-4 rounded-2xl bg-forest-900 text-cream font-display font-semibold text-xl shadow-sm">
                 {step.number}
               </div>
 
-              {/* Title */}
-              <h3
-                className="font-display font-semibold text-xl mb-3 text-forest-900"
-                style={{ letterSpacing: '-0.02em' }}
-              >
+              {/* Title - Premium typography */}
+              <h3 className="text-display-card mb-3">
                 {step.title}
               </h3>
 
               {/* Description */}
-              <p className="font-body leading-relaxed max-w-[280px] text-forest-600">
+              <p className="text-body-small max-w-[280px]">
                 {step.description}
               </p>
             </motion.div>

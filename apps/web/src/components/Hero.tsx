@@ -1,8 +1,37 @@
 'use client'
 
-import { useState, useEffect, memo } from 'react'
+import { useState, useEffect, memo, useCallback } from 'react'
 import { ArrowDown, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
+import { usePathname, useRouter } from 'next/navigation'
+
+// Helper to scroll to element with retry for dynamic content
+const scrollToElement = (elementId: string, maxAttempts = 10) => {
+  let attempts = 0
+
+  const tryScroll = () => {
+    const element = document.getElementById(elementId)
+    if (element) {
+      const headerOffset = 80
+      const elementPosition = element.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+      return true
+    }
+
+    attempts++
+    if (attempts < maxAttempts) {
+      setTimeout(tryScroll, 100)
+    }
+    return false
+  }
+
+  tryScroll()
+}
 
 const heroSlides = [
   {
@@ -29,6 +58,8 @@ const heroSlides = [
 export const Hero = memo(function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
+  const pathname = usePathname()
+  const router = useRouter()
 
   useEffect(() => {
     setIsLoaded(true)
@@ -38,6 +69,19 @@ export const Hero = memo(function Hero() {
 
     return () => clearInterval(interval)
   }, [])
+
+  const handleHashClick = useCallback((e: React.MouseEvent, href: string) => {
+    e.preventDefault()
+    if (href.startsWith('#')) {
+      const elementId = href.slice(1)
+
+      if (pathname === '/') {
+        scrollToElement(elementId)
+      } else {
+        router.push('/' + href)
+      }
+    }
+  }, [pathname, router])
 
   const slide = heroSlides[currentSlide]
 
@@ -156,8 +200,8 @@ export const Hero = memo(function Hero() {
             className="flex flex-col sm:flex-row items-start gap-4"
             style={{ animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.5s both' : 'none' }}
           >
-            <a
-              href="#events"
+            <button
+              onClick={(e) => handleHashClick(e, '#events')}
               className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-terracotta text-white font-semibold text-base border-2 border-sand transition-all duration-150 hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-[2px] active:translate-y-[2px]"
               style={{
                 boxShadow: '4px 4px 0px 0px #FAF7F2',
@@ -171,17 +215,17 @@ export const Hero = memo(function Hero() {
             >
               Browse Events
               <ArrowRight className="w-5 h-5" />
-            </a>
+            </button>
 
             {/* Secondary as text link */}
             <p className="text-sm text-sand/50 font-body sm:self-center">
               Are you an organizer?{' '}
-              <a
-                href="#submit"
+              <button
+                onClick={(e) => handleHashClick(e, '#submit')}
                 className="text-terracotta hover:text-coral underline underline-offset-4 transition-colors"
               >
                 Submit your event
-              </a>
+              </button>
             </p>
           </div>
         </div>

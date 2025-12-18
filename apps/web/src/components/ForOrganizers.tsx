@@ -1,8 +1,38 @@
 'use client'
 
+import { useCallback } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Megaphone, Users, Heart, Star, ArrowRight } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+
+// Helper to scroll to element with retry for dynamic content
+const scrollToElement = (elementId: string, maxAttempts = 10) => {
+  let attempts = 0
+
+  const tryScroll = () => {
+    const element = document.getElementById(elementId)
+    if (element) {
+      const headerOffset = 80
+      const elementPosition = element.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+      return true
+    }
+
+    attempts++
+    if (attempts < maxAttempts) {
+      setTimeout(tryScroll, 100)
+    }
+    return false
+  }
+
+  tryScroll()
+}
 
 const benefits = [
   {
@@ -35,6 +65,22 @@ const benefits = [
 ]
 
 export function ForOrganizers() {
+  const pathname = usePathname()
+  const router = useRouter()
+
+  const handleHashClick = useCallback((e: React.MouseEvent, href: string) => {
+    e.preventDefault()
+    if (href.startsWith('#')) {
+      const elementId = href.slice(1)
+
+      if (pathname === '/') {
+        scrollToElement(elementId)
+      } else {
+        router.push('/' + href)
+      }
+    }
+  }, [pathname, router])
+
   return (
     <section className="relative py-24 md:py-36 overflow-hidden">
       {/* Background Image */}
@@ -120,15 +166,15 @@ export function ForOrganizers() {
               Running an open session? Connect with people looking for their tribe — folks who&apos;ll become your regulars, your cheerleaders, your community.
             </p>
 
-            <motion.a
-              href="#submit"
+            <motion.button
+              onClick={(e) => handleHashClick(e, '#submit')}
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.98 }}
               className="btn-primary inline-flex items-center gap-2"
             >
               <span>Grow Your Tribe</span>
               <ArrowRight className="w-4 h-4" />
-            </motion.a>
+            </motion.button>
           </motion.div>
 
           {/* Right: Benefits */}

@@ -63,22 +63,22 @@ export function EventListCard({ event, onSelect }: Props) {
       {/* Content */}
       <div className="flex-1 min-w-0">
         {/* Category */}
-        <span className="text-xs font-medium text-coral">
+        <span className="text-label-sm font-medium text-coral uppercase tracking-wide">
           {event.category}
         </span>
 
         {/* Title */}
-        <h3 className="font-semibold text-base text-forest-900 line-clamp-1 mt-0.5">
+        <h3 className="font-display font-semibold text-display-card text-forest-900 line-clamp-1 mt-0.5">
           {event.name}
         </h3>
 
         {/* Time */}
-        <p className="text-sm text-forest-600 mt-1 font-medium">
+        <p className="text-body-small text-forest-600 mt-1 font-medium">
           {event.day} • {event.time}
         </p>
 
         {/* Location */}
-        <p className="text-xs text-forest-400 mt-1 line-clamp-1">
+        <p className="text-meta-sm text-forest-400 mt-1 line-clamp-1">
           📍 {event.location}
         </p>
       </div>

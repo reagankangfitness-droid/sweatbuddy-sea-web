@@ -43,8 +43,9 @@ export default function SavedPage() {
     const fetchEvents = async () => {
       try {
         const response = await fetch('/api/events')
-        const events = await response.json()
-        setAllEvents(events)
+        const data = await response.json()
+        // API returns { events: [...] }
+        setAllEvents(data.events || [])
       } catch (error) {
         console.error('Error fetching events:', error)
       }
@@ -93,11 +94,11 @@ export default function SavedPage() {
               href="/"
               className="w-10 h-10 flex items-center justify-center rounded-full bg-cream border border-forest-200"
             >
-              <ArrowLeft className="w-5 h-5 text-forest-900" />
+              <ArrowLeft className="w-5 h-5 text-forest-700" />
             </Link>
             <div>
-              <h1 className="font-display font-bold text-xl text-forest-900">Saved Events</h1>
-              <p className="text-sm text-forest-500">{savedEvents.length} events saved</p>
+              <h1 className="text-display-card">Saved Events</h1>
+              <p className="text-meta-sm">{savedEvents.length} events saved</p>
             </div>
           </div>
         </div>
@@ -123,13 +124,13 @@ export default function SavedPage() {
             <div className="inline-flex items-center justify-center w-20 h-20 bg-cream rounded-2xl border border-forest-100 shadow-card mb-6">
               <Heart className="w-10 h-10 text-forest-300" />
             </div>
-            <h2 className="font-display font-bold text-2xl text-forest-900 mb-2">No saved events yet</h2>
-            <p className="text-forest-600 mb-6">
+            <h2 className="text-display-section mb-2">No saved events yet</h2>
+            <p className="text-body-default mb-6">
               Tap the heart icon on events you&apos;re interested in to save them here.
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-coral text-white px-6 py-3 font-bold rounded-full shadow-md hover:bg-coral-600 transition-colors"
+              className="inline-flex items-center gap-2 bg-coral text-white px-6 py-3 text-ui-lg font-semibold rounded-full shadow-md hover:bg-coral-600 transition-colors"
             >
               Browse Events
             </Link>
@@ -159,26 +160,26 @@ export default function SavedPage() {
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <span className="text-xs font-medium text-coral">
-                    {event.category}
+                  <span className="text-label-sm text-forest-500">
+                    {event.category.toUpperCase()}
                   </span>
-                  <h3 className="font-semibold text-base text-forest-900 line-clamp-1 mt-0.5">
+                  <h3 className="text-display-card text-base line-clamp-1 mt-0.5">
                     {event.name}
                   </h3>
                   <div className="flex items-center gap-1 text-sm text-forest-600 mt-1">
-                    <Calendar className="w-3.5 h-3.5" />
+                    <Calendar className="w-3.5 h-3.5 text-forest-400" />
                     <span>{event.day} • {event.time}</span>
                   </div>
                   <div className="flex items-center gap-1 text-xs text-forest-400 mt-1">
-                    <MapPin className="w-3 h-3" />
+                    <MapPin className="w-3 h-3 text-forest-300" />
                     <span className="line-clamp-1">{event.location}</span>
                   </div>
                 </div>
 
-                {/* Remove button */}
+                {/* Remove button - neutral, coral on hover */}
                 <button
                   onClick={() => handleRemove(event.id)}
-                  className="flex-shrink-0 w-10 h-10 flex items-center justify-center text-coral hover:bg-coral/10 rounded-full transition-colors"
+                  className="flex-shrink-0 w-10 h-10 flex items-center justify-center text-forest-400 hover:text-coral hover:bg-coral/10 rounded-full transition-colors"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>

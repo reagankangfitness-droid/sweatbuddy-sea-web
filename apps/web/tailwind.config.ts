@@ -23,6 +23,52 @@ const config: Config = {
         heading: ['var(--font-clash)', 'var(--font-inter)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
         display: ['var(--font-clash)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
         body: ['var(--font-inter)', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        mono: ['var(--font-clash)', 'monospace'],
+      },
+      // Premium Typography Scale
+      fontSize: {
+        // Display sizes (for headlines) - tight leading, negative tracking
+        'display-2xl': ['4.5rem', { lineHeight: '0.95', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'display-xl': ['3.75rem', { lineHeight: '0.95', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'display-lg': ['3rem', { lineHeight: '1', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'display-md': ['2.25rem', { lineHeight: '1.1', letterSpacing: '-0.01em', fontWeight: '600' }],
+        'display-sm': ['1.875rem', { lineHeight: '1.2', letterSpacing: '-0.01em', fontWeight: '600' }],
+        'display-xs': ['1.5rem', { lineHeight: '1.2', letterSpacing: '-0.01em', fontWeight: '600' }],
+
+        // Body sizes - relaxed leading for readability
+        'body-xl': ['1.25rem', { lineHeight: '1.6', letterSpacing: '0' }],
+        'body-lg': ['1.125rem', { lineHeight: '1.6', letterSpacing: '0' }],
+        'body-md': ['1rem', { lineHeight: '1.6', letterSpacing: '0' }],
+        'body-sm': ['0.875rem', { lineHeight: '1.5', letterSpacing: '0' }],
+        'body-xs': ['0.75rem', { lineHeight: '1.5', letterSpacing: '0' }],
+
+        // UI sizes - snug leading for buttons/labels
+        'ui-lg': ['1rem', { lineHeight: '1.25', letterSpacing: '0.01em', fontWeight: '500' }],
+        'ui-md': ['0.875rem', { lineHeight: '1.25', letterSpacing: '0.01em', fontWeight: '500' }],
+        'ui-sm': ['0.75rem', { lineHeight: '1.25', letterSpacing: '0.01em', fontWeight: '500' }],
+
+        // Label sizes (uppercase eyebrows) - wide tracking
+        'label-lg': ['0.875rem', { lineHeight: '1', letterSpacing: '0.08em', fontWeight: '600' }],
+        'label-md': ['0.75rem', { lineHeight: '1', letterSpacing: '0.08em', fontWeight: '600' }],
+        'label-sm': ['0.625rem', { lineHeight: '1', letterSpacing: '0.1em', fontWeight: '600' }],
+      },
+      letterSpacing: {
+        'tightest': '-0.03em',
+        'tighter': '-0.02em',
+        'tight': '-0.01em',
+        'normal': '0',
+        'wide': '0.01em',
+        'wider': '0.05em',
+        'widest': '0.1em',
+      },
+      lineHeight: {
+        'none': '1',
+        'tightest': '0.95',
+        'tight': '1.1',
+        'snug': '1.25',
+        'normal': '1.5',
+        'relaxed': '1.6',
+        'loose': '1.75',
       },
       colors: {
         // ═══════════════════════════════════════════════

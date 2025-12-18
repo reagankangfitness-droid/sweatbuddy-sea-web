@@ -333,6 +333,167 @@
 }
 
 /* ================================
+   PREMIUM TYPOGRAPHY SYSTEM
+   Tight tracking on headlines, relaxed on body
+   ================================ */
+
+/* Display Headlines - Clash Display with tight tracking */
+.text-display-hero {
+  font-family: var(--font-clash), var(--font-inter), sans-serif;
+  font-size: 3.75rem;
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--forest-900);
+}
+
+.text-display-section {
+  font-family: var(--font-clash), var(--font-inter), sans-serif;
+  font-size: 2.25rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--forest-900);
+}
+
+.text-display-card {
+  font-family: var(--font-clash), var(--font-inter), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--forest-900);
+}
+
+/* Body Text - Inter with relaxed line-height */
+.text-body-large {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0;
+  color: var(--forest-700);
+}
+
+.text-body-default {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0;
+  color: var(--forest-700);
+}
+
+.text-body-small {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--forest-600);
+}
+
+/* Label/Eyebrow - Uppercase with wide tracking */
+.text-label {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--forest-500);
+}
+
+.text-label-sm {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.625rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--forest-500);
+}
+
+/* Meta/Detail text - Tabular numbers for stats */
+.text-meta {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: 0;
+  color: var(--forest-500);
+  font-variant-numeric: tabular-nums;
+}
+
+.text-meta-sm {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: 0;
+  color: var(--forest-400);
+  font-variant-numeric: tabular-nums;
+}
+
+/* UI Text - For buttons and interactive elements */
+.text-ui {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+}
+
+.text-ui-lg {
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+}
+
+/* Stats - Large numbers with tabular formatting */
+.text-stat {
+  font-family: var(--font-clash), var(--font-inter), sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--forest-900);
+}
+
+.text-stat-sm {
+  font-family: var(--font-clash), var(--font-inter), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--forest-900);
+}
+
+/* Premium responsive overrides */
+@media (max-width: 768px) {
+  .text-display-hero {
+    font-size: 2.5rem;
+    line-height: 1;
+  }
+  .text-display-section {
+    font-size: 1.875rem;
+  }
+  .text-display-card {
+    font-size: 1.25rem;
+  }
+  .text-body-large {
+    font-size: 1rem;
+  }
+  .text-stat {
+    font-size: 1.5rem;
+  }
+}
+
+/* ================================
    GRADIENT BLOB ANIMATIONS
    ================================ */
 @keyframes moveVertical {

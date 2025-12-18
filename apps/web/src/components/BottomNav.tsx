@@ -1,8 +1,9 @@
 'use client'
 
+import { useEffect, useCallback } from 'react'
 import { Home, Search, Heart, PlusCircle, User } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 const navItems = [
   { id: 'home', label: 'Home', icon: Home, href: '/', isHash: false },
@@ -12,17 +13,61 @@ const navItems = [
   { id: 'profile', label: 'Profile', icon: User, href: '/profile', isHash: false },
 ]
 
+// Helper to scroll to element with retry for dynamic content
+const scrollToElement = (elementId: string, maxAttempts = 10) => {
+  let attempts = 0
+
+  const tryScroll = () => {
+    const element = document.getElementById(elementId)
+    if (element) {
+      // Add offset for fixed header
+      const headerOffset = 80
+      const elementPosition = element.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+      return true
+    }
+
+    attempts++
+    if (attempts < maxAttempts) {
+      setTimeout(tryScroll, 100)
+    }
+    return false
+  }
+
+  tryScroll()
+}
+
 export function BottomNav() {
   const pathname = usePathname()
+  const router = useRouter()
 
-  const handleHashClick = (href: string) => {
+  // Handle hash on page load/navigation
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const hash = window.location.hash.slice(1)
+      // Small delay to ensure dynamic content is loaded
+      setTimeout(() => scrollToElement(hash), 300)
+    }
+  }, [pathname])
+
+  const handleHashClick = useCallback((href: string) => {
     if (href.startsWith('#')) {
-      const element = document.getElementById(href.slice(1))
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      const elementId = href.slice(1)
+
+      if (pathname === '/') {
+        // On home page, scroll to element (with retry for dynamic content)
+        scrollToElement(elementId)
+      } else {
+        // On different page, navigate to home with hash
+        router.push('/' + href)
       }
     }
-  }
+  }, [pathname, router])
 
   return (
     <>

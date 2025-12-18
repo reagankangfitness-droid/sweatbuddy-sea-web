@@ -29,7 +29,7 @@ export function Footer() {
               <a href="#mission" className="text-forest-400 hover:text-coral transition-colors text-sm flex items-center gap-1">
                 About Us
               </a>
-              <a href="/organizer" className="text-forest-400 hover:text-coral transition-colors text-sm flex items-center gap-1">
+              <a href="/host" className="text-forest-400 hover:text-coral transition-colors text-sm flex items-center gap-1">
                 For Hosts
               </a>
               <a href="/privacy" className="text-forest-400 hover:text-coral transition-colors text-sm flex items-center gap-1">

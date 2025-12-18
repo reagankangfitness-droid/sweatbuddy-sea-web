@@ -59,7 +59,8 @@ interface Stats {
   optInRate: number
 }
 
-const COLORS = ['#2563EB', '#38BDF8', '#10B981', '#F59E0B', '#EF4444']
+// Warm dusk color palette for charts
+const COLORS = ['#E07A5F', '#2A9D8F', '#F4A261', '#264653', '#A84A36']
 
 export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true)
@@ -191,7 +192,7 @@ export default function AdminDashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 text-[#38BDF8] animate-spin" />
+        <Loader2 className="w-8 h-8 text-coral animate-spin" />
       </div>
     )
   }
@@ -205,16 +206,16 @@ export default function AdminDashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard</h1>
-          <p className="text-white/50 mt-1">Overview of your SweatBuddies platform</p>
+          <h1 className="font-display text-display-section text-cream">Dashboard</h1>
+          <p className="text-body-small text-forest-400 mt-1">Overview of your SweatBuddies platform</p>
         </div>
         <button
           onClick={handleRefresh}
           disabled={refreshing}
-          className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 bg-forest-800 text-cream rounded-xl hover:bg-forest-700 transition-colors disabled:opacity-50"
         >
           <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-          <span className="hidden sm:inline">Refresh</span>
+          <span className="hidden sm:inline text-ui">Refresh</span>
         </button>
       </div>
 
@@ -226,8 +227,8 @@ export default function AdminDashboardPage() {
           change={stats.attendeesThisWeek}
           changeLabel="this week"
           icon={Users}
-          iconBg="bg-[#2563EB]/20"
-          iconColor="text-[#38BDF8]"
+          iconBg="bg-coral/20"
+          iconColor="text-coral"
         />
         <StatCard
           title="Newsletter Subscribers"
@@ -235,58 +236,58 @@ export default function AdminDashboardPage() {
           change={stats.subscribersThisWeek}
           changeLabel="this week"
           icon={Mail}
-          iconBg="bg-green-500/20"
-          iconColor="text-green-400"
+          iconBg="bg-teal/20"
+          iconColor="text-teal"
         />
         <StatCard
           title="Events with RSVPs"
           value={stats.totalEvents}
           icon={Calendar}
-          iconBg="bg-purple-500/20"
-          iconColor="text-purple-400"
+          iconBg="bg-ocean/20"
+          iconColor="text-ocean-light"
         />
         <StatCard
           title="Newsletter Opt-in Rate"
           value={`${stats.optInRate}%`}
           icon={TrendingUp}
-          iconBg="bg-yellow-500/20"
-          iconColor="text-yellow-400"
+          iconBg="bg-amber/20"
+          iconColor="text-amber"
         />
       </div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Activity Chart */}
-        <div className="bg-white/5 backdrop-blur-lg rounded-xl border border-white/10 p-4 sm:p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Activity (Last 7 Days)</h3>
+        <div className="bg-forest-900/50 backdrop-blur-lg rounded-2xl border border-forest-800 p-4 sm:p-6">
+          <h3 className="font-display text-display-card text-cream mb-4">Activity (Last 7 Days)</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="attendeeGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#E07A5F" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#E07A5F" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="subscriberGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#2A9D8F" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#2A9D8F" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                <XAxis dataKey="date" stroke="rgba(255,255,255,0.5)" fontSize={12} />
-                <YAxis stroke="rgba(255,255,255,0.5)" fontSize={12} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(168, 197, 190, 0.15)" />
+                <XAxis dataKey="date" stroke="#8AADA5" fontSize={12} />
+                <YAxis stroke="#8AADA5" fontSize={12} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#1E293B',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '8px',
-                    color: 'white',
+                    backgroundColor: '#1B2B27',
+                    border: '1px solid #3D5A54',
+                    borderRadius: '12px',
+                    color: '#FFFDFB',
                   }}
                 />
                 <Area
                   type="monotone"
                   dataKey="attendees"
-                  stroke="#2563EB"
+                  stroke="#E07A5F"
                   strokeWidth={2}
                   fill="url(#attendeeGradient)"
                   name="Attendees"
@@ -294,7 +295,7 @@ export default function AdminDashboardPage() {
                 <Area
                   type="monotone"
                   dataKey="subscribers"
-                  stroke="#10B981"
+                  stroke="#2A9D8F"
                   strokeWidth={2}
                   fill="url(#subscriberGradient)"
                   name="Subscribers"
@@ -304,42 +305,42 @@ export default function AdminDashboardPage() {
           </div>
           <div className="flex items-center justify-center gap-6 mt-4">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-[#2563EB] rounded-full" />
-              <span className="text-white/60 text-sm">Attendees</span>
+              <div className="w-3 h-3 bg-coral rounded-full" />
+              <span className="text-forest-400 text-body-small">Attendees</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full" />
-              <span className="text-white/60 text-sm">Subscribers</span>
+              <div className="w-3 h-3 bg-teal rounded-full" />
+              <span className="text-forest-400 text-body-small">Subscribers</span>
             </div>
           </div>
         </div>
 
         {/* Event Distribution */}
-        <div className="bg-white/5 backdrop-blur-lg rounded-xl border border-white/10 p-4 sm:p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Top Events by RSVPs</h3>
+        <div className="bg-forest-900/50 backdrop-blur-lg rounded-2xl border border-forest-800 p-4 sm:p-6">
+          <h3 className="font-display text-display-card text-cream mb-4">Top Events by RSVPs</h3>
           {eventData.length > 0 ? (
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={eventData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                  <XAxis type="number" stroke="rgba(255,255,255,0.5)" fontSize={12} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(168, 197, 190, 0.15)" />
+                  <XAxis type="number" stroke="#8AADA5" fontSize={12} />
                   <YAxis
                     dataKey="name"
                     type="category"
-                    stroke="rgba(255,255,255,0.5)"
+                    stroke="#8AADA5"
                     fontSize={11}
                     width={100}
-                    tick={{ fill: 'rgba(255,255,255,0.7)' }}
+                    tick={{ fill: '#A8C5BE' }}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#1E293B',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '8px',
-                      color: 'white',
+                      backgroundColor: '#1B2B27',
+                      border: '1px solid #3D5A54',
+                      borderRadius: '12px',
+                      color: '#FFFDFB',
                     }}
                   />
-                  <Bar dataKey="value" name="RSVPs" radius={[0, 4, 4, 0]}>
+                  <Bar dataKey="value" name="RSVPs" radius={[0, 6, 6, 0]}>
                     {eventData.map((_, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
@@ -348,7 +349,7 @@ export default function AdminDashboardPage() {
               </ResponsiveContainer>
             </div>
           ) : (
-            <div className="h-64 flex items-center justify-center text-white/50">
+            <div className="h-64 flex items-center justify-center text-forest-400">
               No event data yet
             </div>
           )}
@@ -358,8 +359,8 @@ export default function AdminDashboardPage() {
       {/* Bottom Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Subscriber Sources */}
-        <div className="bg-white/5 backdrop-blur-lg rounded-xl border border-white/10 p-4 sm:p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Subscriber Sources</h3>
+        <div className="bg-forest-900/50 backdrop-blur-lg rounded-2xl border border-forest-800 p-4 sm:p-6">
+          <h3 className="font-display text-display-card text-cream mb-4">Subscriber Sources</h3>
           {sourceData.length > 0 ? (
             <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
@@ -379,17 +380,17 @@ export default function AdminDashboardPage() {
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#1E293B',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '8px',
-                      color: 'white',
+                      backgroundColor: '#1B2B27',
+                      border: '1px solid #3D5A54',
+                      borderRadius: '12px',
+                      color: '#FFFDFB',
                     }}
                   />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           ) : (
-            <div className="h-48 flex items-center justify-center text-white/50">
+            <div className="h-48 flex items-center justify-center text-forest-400">
               No source data yet
             </div>
           )}
@@ -400,43 +401,43 @@ export default function AdminDashboardPage() {
                   className="w-2.5 h-2.5 rounded-full"
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 />
-                <span className="text-white/60 text-xs capitalize">{source.name}</span>
+                <span className="text-forest-400 text-body-xs capitalize">{source.name}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Recent Attendees */}
-        <div className="lg:col-span-2 bg-white/5 backdrop-blur-lg rounded-xl border border-white/10 p-4 sm:p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Recent Attendees</h3>
+        <div className="lg:col-span-2 bg-forest-900/50 backdrop-blur-lg rounded-2xl border border-forest-800 p-4 sm:p-6">
+          <h3 className="font-display text-display-card text-cream mb-4">Recent Attendees</h3>
           {attendees.length > 0 ? (
             <div className="space-y-3">
               {attendees.slice(0, 5).map((attendee) => (
                 <div
                   key={attendee.id}
-                  className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
+                  className="flex items-center justify-between p-3 bg-forest-800/50 rounded-xl"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-br from-[#2563EB] to-[#38BDF8] rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-coral rounded-full flex items-center justify-center">
                       <span className="text-white font-medium text-xs">
                         {(attendee.name || attendee.email).charAt(0).toUpperCase()}
                       </span>
                     </div>
                     <div>
-                      <p className="text-white text-sm font-medium">
+                      <p className="text-cream text-ui font-medium">
                         {attendee.name || attendee.email}
                       </p>
-                      <p className="text-white/50 text-xs">{attendee.eventName}</p>
+                      <p className="text-forest-400 text-body-xs">{attendee.eventName}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     {attendee.subscribe && (
-                      <span className="text-green-400 text-xs flex items-center gap-1">
+                      <span className="text-teal text-body-xs flex items-center gap-1">
                         <CheckCircle className="w-3 h-3" />
                         <span className="hidden sm:inline">Subscribed</span>
                       </span>
                     )}
-                    <span className="text-white/40 text-xs">
+                    <span className="text-forest-500 text-body-xs">
                       {format(new Date(attendee.timestamp), 'MMM d')}
                     </span>
                   </div>
@@ -444,7 +445,7 @@ export default function AdminDashboardPage() {
               ))}
             </div>
           ) : (
-            <div className="h-48 flex items-center justify-center text-white/50">
+            <div className="h-48 flex items-center justify-center text-forest-400">
               No attendees yet
             </div>
           )}
@@ -472,24 +473,24 @@ function StatCard({
   iconColor: string
 }) {
   return (
-    <div className="bg-white/5 backdrop-blur-lg rounded-xl border border-white/10 p-4">
+    <div className="bg-forest-900/50 backdrop-blur-lg rounded-2xl border border-forest-800 p-4">
       <div className="flex items-start justify-between">
-        <div className={`w-10 h-10 ${iconBg} rounded-lg flex items-center justify-center`}>
+        <div className={`w-10 h-10 ${iconBg} rounded-xl flex items-center justify-center`}>
           <Icon className={`w-5 h-5 ${iconColor}`} />
         </div>
         {change !== undefined && (
-          <div className="flex items-center gap-1 text-green-400 text-xs">
+          <div className="flex items-center gap-1 text-teal text-body-xs">
             <ArrowUpRight className="w-3 h-3" />
             <span>+{change}</span>
           </div>
         )}
       </div>
       <div className="mt-3">
-        <p className="text-2xl font-bold text-white">{value}</p>
-        <p className="text-xs text-white/50 mt-1">
+        <p className="text-stat-sm text-cream">{value}</p>
+        <p className="text-body-xs text-forest-400 mt-1">
           {title}
           {changeLabel && change !== undefined && (
-            <span className="text-white/30"> ({change} {changeLabel})</span>
+            <span className="text-forest-500"> ({change} {changeLabel})</span>
           )}
         </p>
       </div>

@@ -1,8 +1,38 @@
 'use client'
 
+import { useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { Globe } from 'lucide-react'
 import Image from 'next/image'
+import { usePathname, useRouter } from 'next/navigation'
+
+// Helper to scroll to element with retry for dynamic content
+const scrollToElement = (elementId: string, maxAttempts = 10) => {
+  let attempts = 0
+
+  const tryScroll = () => {
+    const element = document.getElementById(elementId)
+    if (element) {
+      const headerOffset = 80
+      const elementPosition = element.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+      return true
+    }
+
+    attempts++
+    if (attempts < maxAttempts) {
+      setTimeout(tryScroll, 100)
+    }
+    return false
+  }
+
+  tryScroll()
+}
 
 const cities = [
   {
@@ -26,6 +56,22 @@ const cities = [
 ]
 
 export function Cities() {
+  const pathname = usePathname()
+  const router = useRouter()
+
+  const handleHashClick = useCallback((e: React.MouseEvent, href: string) => {
+    e.preventDefault()
+    if (href.startsWith('#')) {
+      const elementId = href.slice(1)
+
+      if (pathname === '/') {
+        scrollToElement(elementId)
+      } else {
+        router.push('/' + href)
+      }
+    }
+  }, [pathname, router])
+
   return (
     <section id="cities" className="relative py-24 md:py-36 overflow-hidden" style={{ background: '#FFFFFF' }}>
       {/* Background */}
@@ -186,13 +232,13 @@ export function Cities() {
         >
           <p style={{ color: '#0A1628', opacity: 0.6 }} className="text-sm">
             Want SweatBuddies in your city?{' '}
-            <a
-              href="#submit"
+            <button
+              onClick={(e) => handleHashClick(e, '#submit')}
               className="font-semibold hover:underline underline-offset-4 transition-colors"
               style={{ color: '#2563EB' }}
             >
               Let us know
-            </a>
+            </button>
           </p>
         </motion.div>
       </div>

@@ -1681,6 +1681,50 @@ model EventChatMessage {
 }
 
 // =====================================================
+// HOST APPLICATION WAITLIST SYSTEM
+// =====================================================
+
+enum HostApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// Host applications from waitlist/intake form
+model HostApplication {
+  id                String                @id @default(cuid())
+
+  // Organizer details
+  organizerName     String                @db.VarChar(200)
+  instagramHandle   String                @db.VarChar(100)
+  email             String                @db.VarChar(255)
+
+  // Event details
+  eventName         String                @db.VarChar(200)
+  eventType         String                @db.VarChar(50) // Run Club, Yoga, HIIT, Cold Plunge, Bootcamp, Other
+  eventDay          String                @db.VarChar(100) // e.g., "Saturdays" or "Every Tuesday"
+  eventTime         String                @db.VarChar(50)
+  location          String                @db.VarChar(300)
+  description       String?               @db.Text
+
+  // Status
+  status            HostApplicationStatus @default(PENDING)
+  reviewedAt        DateTime?
+  reviewedBy        String?
+  rejectionReason   String?               @db.Text
+  notes             String?               @db.Text // Internal admin notes
+
+  // Timestamps
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  @@index([status, createdAt])
+  @@index([email])
+  @@index([instagramHandle])
+  @@map("host_applications")
+}
+
+// =====================================================
 // ORGANIZER & DIRECT MESSAGING SYSTEM
 // =====================================================
 

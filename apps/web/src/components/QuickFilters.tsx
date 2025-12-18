@@ -33,19 +33,19 @@ export function QuickFilters({ onSelect, activeFilter = 'all' }: Props) {
             key={filter.id}
             onClick={() => handleSelect(filter.id)}
             className={`
-              flex-shrink-0 flex items-center gap-2
+              flex-shrink-0 flex items-center gap-1.5
               px-4 py-2.5
-              font-medium text-sm
+              text-ui
               transition-all duration-200
               active:scale-95
               rounded-full
               ${active === filter.id
-                ? 'bg-forest-900 text-cream border border-forest-900 shadow-md'
-                : 'bg-cream text-forest-700 border border-forest-200 hover:border-forest-300'
+                ? 'bg-forest-900 text-cream shadow-sm'
+                : 'bg-cream text-forest-600 border border-forest-200 hover:bg-forest-50 hover:border-forest-300'
               }
             `}
           >
-            <span>{filter.emoji}</span>
+            <span className="text-base">{filter.emoji}</span>
             <span>{filter.label}</span>
           </button>
         ))}

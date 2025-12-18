@@ -182,30 +182,30 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
             </div>
           )}
 
-          {/* Category Badge - Top Left */}
+          {/* Category Badge - Top Left (neutral styling) */}
           <div className="absolute top-3 left-3">
-            <span className="px-3 py-1.5 bg-cream/90 backdrop-blur-sm text-xs font-medium text-forest-900 rounded-full">
+            <span className="px-3 py-1.5 bg-cream/95 backdrop-blur-sm text-xs font-medium text-forest-700 rounded-full border border-forest-100/50">
               {emoji} {event.category}
             </span>
           </div>
 
-          {/* Save Button - Top Right */}
+          {/* Save Button - Top Right (neutral, coral only when active) */}
           <button
             onClick={handleSaveClick}
             className={`absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90 ${
               isSaved
                 ? 'bg-coral text-white shadow-md'
-                : 'bg-cream/90 backdrop-blur-sm text-forest-600 hover:bg-cream'
+                : 'bg-cream/95 backdrop-blur-sm text-forest-400 hover:text-forest-600 border border-forest-100/50'
             }`}
           >
             <Heart className={`w-4 h-4 ${isSaved ? 'fill-white' : ''}`} />
           </button>
 
-          {/* Weekly Badge - Bottom Right (on image) */}
+          {/* Weekly Badge - Bottom Right (neutral styling) */}
           {event.recurring && (
             <div className="absolute bottom-3 right-3">
-              <span className="bg-ocean text-white px-3 py-1.5 text-xs font-medium rounded-full flex items-center gap-1.5">
-                <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+              <span className="bg-forest-900/90 backdrop-blur-sm text-cream px-3 py-1.5 text-xs font-medium rounded-full flex items-center gap-1.5 border border-forest-700/50">
+                <span className="w-1.5 h-1.5 bg-cream rounded-full opacity-80" />
                 Weekly
               </span>
             </div>
@@ -214,24 +214,22 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
 
         {/* Content Section */}
         <div className="flex-1 flex flex-col p-4">
-          {/* Event Name - fixed height for 2 lines */}
-          <h3 className="font-display font-semibold text-lg text-forest-900 mb-3 line-clamp-2 leading-tight min-h-[3rem]"
-            style={{ letterSpacing: '-0.02em' }}
-          >
+          {/* Event Name - fixed height for 2 lines, premium typography */}
+          <h3 className="text-display-card mb-3 line-clamp-2 min-h-[3rem]">
             {event.name}
           </h3>
 
-          {/* Date & Time */}
+          {/* Date & Time - neutral icons */}
           <div className="flex items-center gap-2 text-sm text-forest-600 mb-1">
-            <Calendar className="w-4 h-4 text-coral flex-shrink-0" />
+            <Calendar className="w-4 h-4 text-forest-400 flex-shrink-0" />
             <span className="font-medium">{formatEventDate(event.eventDate, event.day)}</span>
             <span className="text-forest-300">•</span>
             <span>{event.time}</span>
           </div>
 
-          {/* Location */}
-          <div className="flex items-center gap-2 text-sm text-forest-600 mb-4">
-            <MapPin className="w-4 h-4 text-coral flex-shrink-0" />
+          {/* Location - neutral icons */}
+          <div className="flex items-center gap-2 text-sm text-forest-500 mb-4">
+            <MapPin className="w-4 h-4 text-forest-400 flex-shrink-0" />
             <span className="line-clamp-1">{event.location}</span>
           </div>
 

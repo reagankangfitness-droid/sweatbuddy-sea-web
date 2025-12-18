@@ -52,9 +52,12 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
 
   return (
     <div className="md:hidden">
-      {/* Section Header */}
+      {/* Section Header - Premium typography */}
       <div className="flex items-center justify-between px-4 mb-4">
-        <h2 className="font-display text-xl font-bold text-forest-900">🔥 Trending</h2>
+        <div>
+          <span className="text-label-sm text-forest-500 block mb-1">FEATURED</span>
+          <h2 className="text-display-card">Trending This Week</h2>
+        </div>
         <button
           onClick={() => {
             const eventsSection = document.getElementById('events')
@@ -62,7 +65,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
               eventsSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
             }
           }}
-          className="text-sm text-coral font-semibold"
+          className="text-ui text-forest-600 hover:text-forest-800"
         >
           See all →
         </button>
@@ -102,34 +105,34 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
               {/* Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-              {/* Category Badge */}
+              {/* Category Badge - Neutral */}
               <div className="absolute top-4 left-4">
-                <span className="bg-cream/90 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-forest-900 rounded-full">
+                <span className="bg-cream/95 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-forest-700 rounded-full border border-forest-100/50">
                   {event.category}
                 </span>
               </div>
 
-              {/* Weekly Badge */}
+              {/* Weekly Badge - Neutral dark */}
               {event.recurring && (
                 <div className="absolute top-4 right-4">
-                  <span className="bg-ocean text-white px-3 py-1.5 text-xs font-medium rounded-full">
+                  <span className="bg-forest-900/90 backdrop-blur-sm text-cream px-3 py-1.5 text-xs font-medium rounded-full">
                     WEEKLY
                   </span>
                 </div>
               )}
 
-              {/* Content */}
+              {/* Content - Premium typography */}
               <div className="absolute bottom-0 left-0 right-0 p-5">
-                <h3 className="text-white font-display text-2xl font-bold mb-2 line-clamp-2">
+                <h3 className="text-white font-display text-2xl font-semibold mb-2 line-clamp-2" style={{ letterSpacing: '-0.01em' }}>
                   {event.name}
                 </h3>
-                <p className="text-white/80 text-sm mb-4">
+                <p className="text-white/70 text-sm mb-4">
                   {event.day} • {event.time}
                 </p>
 
-                {/* CTA */}
-                <button className="w-full bg-coral text-white py-3 font-semibold text-base rounded-full active:scale-95 transition-transform shadow-md">
-                  🙋 I&apos;m Going
+                {/* CTA - Primary coral */}
+                <button className="w-full bg-coral text-white py-3 text-ui-lg font-semibold rounded-full active:scale-95 transition-transform shadow-md">
+                  I&apos;m Going
                 </button>
               </div>
             </div>

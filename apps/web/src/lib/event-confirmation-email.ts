@@ -2,6 +2,88 @@ import { sendEmail, generateMapsLink } from './email'
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://sweatbuddies.co'
 
+interface EventCancellationParams {
+  to: string
+  userName: string | null
+  eventName: string
+}
+
+/**
+ * Send cancellation email when user removes themselves from an event
+ */
+export async function sendEventCancellationEmail(
+  params: EventCancellationParams
+): Promise<{ success: boolean; error?: string }> {
+  const { to, userName, eventName } = params
+  const displayName = userName || 'there'
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #FAF7F2;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px; background-color: #f1f5f9; border-radius: 16px 16px 0 0; text-align: center;">
+              <h1 style="margin: 0; color: #1B4332; font-size: 24px; font-weight: 700;">
+                RSVP Cancelled
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding: 32px; background-color: white; border-radius: 0 0 16px 16px;">
+              <p style="margin: 0 0 20px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Hey ${displayName},
+              </p>
+
+              <p style="margin: 0 0 20px; color: #374151; font-size: 16px; line-height: 1.6;">
+                You've cancelled your RSVP for <strong>${eventName}</strong>.
+              </p>
+
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                No worries — we hope to see you at another event soon! 💪
+              </p>
+
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                <tr>
+                  <td align="center">
+                    <a href="${BASE_URL}" style="display: inline-block; padding: 16px 32px; background-color: #E07A5F; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 50px;">
+                      Browse More Events
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0; color: #6B7280; font-size: 14px; text-align: center;">
+                Questions? Reply to this email or DM us <a href="https://instagram.com/_sweatbuddies" style="color: #E07A5F;">@_sweatbuddies</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim()
+
+  return sendEmail({
+    to,
+    subject: `RSVP Cancelled: ${eventName}`,
+    html,
+    tags: [{ name: 'type', value: 'event_cancellation' }],
+  })
+}
+
 interface EventConfirmationParams {
   to: string
   userName: string | null

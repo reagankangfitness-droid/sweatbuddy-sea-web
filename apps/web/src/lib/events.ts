@@ -16,10 +16,9 @@ export interface Event {
   goingCount?: number
 }
 
-// Direct database fetch for events (no caching issues)
-export async function getEvents(): Promise<Event[]> {
-  try {
-    // Get approved events from database only - select only needed fields
+// Cached database fetch for events - revalidates every 60s
+const getCachedEvents = unstable_cache(
+  async () => {
     const approvedSubmissions = await prisma.eventSubmission.findMany({
       where: { status: 'APPROVED' },
       orderBy: { createdAt: 'desc' },
@@ -38,7 +37,6 @@ export async function getEvents(): Promise<Event[]> {
       },
     })
 
-    // Convert approved submissions to Event format
     return approvedSubmissions.map(submission => ({
       id: submission.id,
       name: submission.eventName,
@@ -52,6 +50,14 @@ export async function getEvents(): Promise<Event[]> {
       imageUrl: submission.imageUrl,
       recurring: submission.recurring,
     }))
+  },
+  ['events-list-home'],
+  { revalidate: 60, tags: ['events'] }
+)
+
+export async function getEvents(): Promise<Event[]> {
+  try {
+    return await getCachedEvents()
   } catch (error) {
     console.error('Error fetching events:', error)
     return []

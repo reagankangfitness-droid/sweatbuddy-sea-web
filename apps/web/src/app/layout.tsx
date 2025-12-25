@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: '%s | SweatBuddies',
   },
   description: 'Find run clubs, yoga, HIIT, cold plunge and more. No membership. Just show up.',
-  keywords: ['fitness events', 'Singapore', 'run club', 'yoga', 'bootcamp', 'outdoor fitness', 'open events', 'workout', 'HIIT', 'cold plunge'],
+  keywords: ['fitness events', 'Singapore', 'run club', 'yoga', 'bootcamp', 'outdoor fitness', 'community events', 'workout', 'HIIT', 'cold plunge'],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
   icons: {

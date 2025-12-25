@@ -405,7 +405,7 @@ export default async function EventDetailPage({ params }: Props) {
       <footer className="bg-white border-t border-neutral-200 py-8">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <p className="text-sm text-neutral-500 mb-4">
-            Discover open fitness events in Singapore
+            Discover community fitness events in Singapore
           </p>
           <div className="flex items-center justify-center gap-6 text-sm">
             <Link href="/" className="text-neutral-600 hover:text-neutral-900">

@@ -35,7 +35,7 @@ const scrollToElement = (elementId: string, maxAttempts = 10) => {
 
 const heroSlides = [
   {
-    headline: "Every Open Workout.",
+    headline: "Every Community Workout.",
     subline: "One Place.",
     image: "/images/hero-2.jpg",
     alt: "Outdoor yoga class in the park",

@@ -163,7 +163,7 @@ export function ForOrganizers() {
             </h2>
 
             <p className="font-sans text-white/70 text-lg mb-10 max-w-lg leading-relaxed">
-              Running open sessions? Get discovered by people actively looking for their next workout.
+              Running community sessions? Get discovered by people actively looking for their next workout.
             </p>
 
             <motion.button

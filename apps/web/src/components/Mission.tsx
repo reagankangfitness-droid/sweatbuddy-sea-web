@@ -81,7 +81,7 @@ export function Mission() {
             className="text-lg mb-8"
             style={{ color: 'rgba(255, 255, 255, 0.7)' }}
           >
-            Hundreds of <span className="text-white font-medium">open workouts</span> happen every week — scattered across Instagram stories and Facebook groups.
+            Hundreds of <span className="text-white font-medium">community workouts</span> happen every week — scattered across Instagram stories and Facebook groups.
           </motion.p>
 
           {/* Divider - subtle coral */}

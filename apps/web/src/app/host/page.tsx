@@ -408,7 +408,7 @@ export default function HostApplicationPage() {
                     className="w-5 h-5 text-neutral-900"
                   />
                   <div>
-                    <span className="font-medium text-neutral-900">Open event</span>
+                    <span className="font-medium text-neutral-900">Community event</span>
                     <p className="text-sm text-neutral-500">Anyone can join</p>
                   </div>
                 </label>

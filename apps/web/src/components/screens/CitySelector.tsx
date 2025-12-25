@@ -24,8 +24,8 @@ export function CitySelector() {
     <div className="h-full bg-white px-4 py-6 flex flex-col">
       {/* Header */}
       <div className="text-center mb-6">
-        <h2 className="text-lg font-bold text-gray-900">Pick Your City</h2>
-        <p className="text-xs text-gray-500 mt-1">Where are you working out?</p>
+        <h2 className="text-lg font-bold text-neutral-900">Pick Your City</h2>
+        <p className="text-xs text-neutral-500 mt-1">Where are you working out?</p>
       </div>
 
       {/* City Cards */}
@@ -38,8 +38,8 @@ export function CitySelector() {
               selected === city.id
                 ? "border-[#2563EB] bg-[#2563EB]/5"
                 : city.status === "active"
-                ? "border-gray-200 hover:border-gray-300"
-                : "border-gray-100 opacity-50 cursor-not-allowed"
+                ? "border-neutral-200 hover:border-neutral-300"
+                : "border-neutral-100 opacity-50 cursor-not-allowed"
             }`}
             disabled={city.status === "coming-soon"}
           >
@@ -48,11 +48,11 @@ export function CitySelector() {
                 <span className="text-2xl">{city.flag}</span>
                 <div>
                   <p className={`font-semibold text-sm ${
-                    city.status === "coming-soon" ? "text-gray-400" : "text-gray-900"
+                    city.status === "coming-soon" ? "text-neutral-400" : "text-neutral-900"
                   }`}>
                     {city.name}
                   </p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-neutral-400">
                     {city.status === "active"
                       ? `${city.eventCount} events live`
                       : `Coming ${city.launchDate}`

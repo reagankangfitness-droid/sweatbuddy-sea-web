@@ -8,7 +8,7 @@ import { usePathname, useRouter } from 'next/navigation'
 const navItems = [
   { id: 'home', label: 'Home', icon: Home, href: '/', isHash: false },
   { id: 'explore', label: 'Explore', icon: Search, href: '#events', isHash: true },
-  { id: 'submit', label: 'Submit', icon: PlusCircle, href: '#submit', isHash: true, isAction: true },
+  { id: 'submit', label: 'Submit', icon: PlusCircle, href: '#submit-mobile', isHash: true, isAction: true },
   { id: 'saved', label: 'Saved', icon: Heart, href: '/saved', isHash: false },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile', isHash: false },
 ]
@@ -77,7 +77,7 @@ export function BottomNav() {
       {/* Bottom Nav */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
         {/* Background with blur */}
-        <div className="absolute inset-0 bg-cream/95 backdrop-blur-lg border-t border-forest-200" />
+        <div className="absolute inset-0 bg-white/95 backdrop-blur-lg border-t border-neutral-200" />
 
         {/* Safe area padding for iOS */}
         <div className="relative flex items-center justify-around px-2 pt-2 pb-[env(safe-area-inset-bottom,8px)]">
@@ -93,7 +93,7 @@ export function BottomNav() {
                   onClick={() => handleHashClick(item.href)}
                   className="relative -mt-6"
                 >
-                  <div className="w-14 h-14 bg-coral rounded-full flex items-center justify-center shadow-lg">
+                  <div className="w-14 h-14 bg-neutral-900 rounded-full flex items-center justify-center shadow-lg">
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                 </button>
@@ -111,8 +111,8 @@ export function BottomNav() {
                     w-16 h-14
                     transition-colors relative
                     ${isActive
-                      ? 'text-coral'
-                      : 'text-forest-400 active:text-forest-600'
+                      ? 'text-neutral-900'
+                      : 'text-neutral-400 active:text-neutral-600'
                     }
                   `}
                 >
@@ -131,8 +131,8 @@ export function BottomNav() {
                   w-16 h-14
                   transition-colors relative
                   ${isActive
-                    ? 'text-coral'
-                    : 'text-forest-400 active:text-forest-600'
+                    ? 'text-neutral-900'
+                    : 'text-neutral-400 active:text-neutral-600'
                   }
                 `}
               >
@@ -141,7 +141,7 @@ export function BottomNav() {
 
                 {/* Active indicator */}
                 {isActive && (
-                  <div className="absolute bottom-1 w-4 h-1 bg-coral rounded-full" />
+                  <div className="absolute bottom-1 w-4 h-1 bg-neutral-900 rounded-full" />
                 )}
               </Link>
             )

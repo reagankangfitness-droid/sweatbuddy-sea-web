@@ -6,14 +6,25 @@ export interface Activity {
   description: string | null
   type: string
   city: string
+  address: string | null
   latitude: number
   longitude: number
   startTime: string | null
   endTime: string | null
   maxPeople: number | null
   imageUrl: string | null
+  // Pricing fields
+  isFree: boolean
   price: number
   currency: string
+  // PayNow payment fields
+  paynowEnabled: boolean
+  paynowNumber: string | null
+  paynowName: string | null
+  paynowQrCode: string | null
+  // Stripe payment fields
+  stripeEnabled: boolean
+  stripePriceId: string | null
   status: string
   hostId: string | null
   userId: string

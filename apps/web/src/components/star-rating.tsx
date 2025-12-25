@@ -93,7 +93,7 @@ export function StarRating({
               <Star
                 className={cn(
                   sizeClasses[size],
-                  'text-gray-300 stroke-gray-300'
+                  'text-neutral-300 stroke-gray-300'
                 )}
                 fill="currentColor"
               />
@@ -193,7 +193,7 @@ export function InteractiveStarRating({
                   'transition-colors duration-150',
                   filled
                     ? 'text-amber-400 stroke-amber-400'
-                    : 'text-gray-300 stroke-gray-300 hover:text-amber-200 hover:stroke-amber-200'
+                    : 'text-neutral-300 stroke-gray-300 hover:text-amber-200 hover:stroke-amber-200'
                 )}
                 fill="currentColor"
               />
@@ -295,7 +295,7 @@ export function RatingDistribution({
               {stars}
             </span>
             <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-            <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="flex-1 h-2 bg-neutral-100 rounded-full overflow-hidden">
               <div
                 className={cn(
                   'h-full rounded-full transition-all',

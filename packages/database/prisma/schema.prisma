@@ -89,8 +89,22 @@ model Activity {
   endTime     DateTime?
   maxPeople   Int?
   imageUrl    String?
-  price       Float          @default(0)
-  currency    String         @default("USD")
+
+  // Pricing fields
+  isFree      Boolean        @default(true)
+  price       Float          @default(0)  // Amount in cents (e.g., 1500 = $15.00)
+  currency    String         @default("SGD")
+
+  // PayNow payment fields
+  paynowEnabled  Boolean     @default(false)
+  paynowNumber   String?     // Phone number for PayNow
+  paynowName     String?     // Name for PayNow verification
+  paynowQrCode   String?     // URL to PayNow QR code image
+
+  // Stripe payment fields
+  stripeEnabled  Boolean     @default(false)
+  stripePriceId  String?     // Stripe Price ID for checkout
+
   status      ActivityStatus @default(PUBLISHED)
   userId      String
   hostId      String?

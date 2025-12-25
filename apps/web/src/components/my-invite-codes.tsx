@@ -104,10 +104,10 @@ export function MyInviteCodes() {
     return (
       <div className="bg-white rounded-2xl border p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4" />
-          <div className="h-4 bg-gray-200 rounded w-2/3 mb-6" />
-          <div className="h-20 bg-gray-100 rounded-xl mb-4" />
-          <div className="h-12 bg-gray-200 rounded-xl" />
+          <div className="h-6 bg-neutral-200 rounded w-1/3 mb-4" />
+          <div className="h-4 bg-neutral-200 rounded w-2/3 mb-6" />
+          <div className="h-20 bg-neutral-100 rounded-xl mb-4" />
+          <div className="h-12 bg-neutral-200 rounded-xl" />
         </div>
       </div>
     )
@@ -121,8 +121,8 @@ export function MyInviteCodes() {
           <Gift size={24} />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Invite Friends</h3>
-          <p className="text-sm text-gray-500">
+          <h3 className="text-lg font-semibold text-neutral-900">Invite Friends</h3>
+          <p className="text-sm text-neutral-500">
             Share SweatBuddies with friends and grow the community
           </p>
         </div>
@@ -132,12 +132,12 @@ export function MyInviteCodes() {
       <div className="flex bg-blue-50 rounded-xl p-4 mb-5">
         <div className="flex-1 text-center">
           <p className="text-3xl font-bold text-[#0025CC]">{invitesRemaining}</p>
-          <p className="text-xs text-gray-500">Invites remaining</p>
+          <p className="text-xs text-neutral-500">Invites remaining</p>
         </div>
-        <div className="w-px bg-gray-200 mx-4" />
+        <div className="w-px bg-neutral-200 mx-4" />
         <div className="flex-1 text-center">
           <p className="text-3xl font-bold text-[#0025CC]">{codes.filter((c) => c.used).length}</p>
-          <p className="text-xs text-gray-500">Friends joined</p>
+          <p className="text-xs text-neutral-500">Friends joined</p>
         </div>
       </div>
 
@@ -156,28 +156,28 @@ export function MyInviteCodes() {
       {/* Codes List */}
       {codes.length > 0 && (
         <div>
-          <h4 className="text-sm font-medium text-gray-500 mb-3">Your Invite Codes</h4>
+          <h4 className="text-sm font-medium text-neutral-500 mb-3">Your Invite Codes</h4>
           <div className="space-y-2">
             {codes.map((codeData) => (
               <div
                 key={codeData.code}
                 className={`flex items-center justify-between p-3 rounded-xl border ${
                   codeData.used
-                    ? 'bg-gray-50 border-gray-200 opacity-60'
+                    ? 'bg-neutral-50 border-neutral-200 opacity-60'
                     : 'bg-white border-blue-100'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <code
                     className={`font-mono text-sm font-semibold tracking-wider ${
-                      codeData.used ? 'text-gray-400' : 'text-gray-900'
+                      codeData.used ? 'text-neutral-400' : 'text-neutral-900'
                     }`}
                   >
                     {codeData.code}
                   </code>
                   <span
                     className={`text-[10px] font-medium uppercase px-2 py-1 rounded-md ${
-                      codeData.used ? 'bg-gray-200 text-gray-500' : 'bg-green-100 text-green-700'
+                      codeData.used ? 'bg-neutral-200 text-neutral-500' : 'bg-green-100 text-green-700'
                     }`}
                   >
                     {codeData.used ? 'Used' : 'Available'}
@@ -191,7 +191,7 @@ export function MyInviteCodes() {
                       className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${
                         copiedCode === codeData.code
                           ? 'bg-green-100 text-green-600'
-                          : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                          : 'bg-neutral-100 text-neutral-500 hover:bg-neutral-200'
                       }`}
                       title="Copy invite link"
                     >
@@ -216,17 +216,17 @@ export function MyInviteCodes() {
       {/* Empty State */}
       {codes.length === 0 && invitesRemaining > 0 && (
         <div className="text-center py-8">
-          <Users className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <p className="font-medium text-gray-600 mb-1">No codes yet</p>
-          <p className="text-sm text-gray-400">Generate an invite code to share with friends</p>
+          <Users className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
+          <p className="font-medium text-neutral-600 mb-1">No codes yet</p>
+          <p className="text-sm text-neutral-400">Generate an invite code to share with friends</p>
         </div>
       )}
 
       {/* No Invites Left */}
       {invitesRemaining === 0 && codes.length === 0 && (
         <div className="text-center py-8">
-          <p className="font-medium text-gray-600 mb-1">No invites available</p>
-          <p className="text-sm text-gray-400">
+          <p className="font-medium text-neutral-600 mb-1">No invites available</p>
+          <p className="text-sm text-neutral-400">
             You&apos;ve used all your invites. Thanks for spreading the word!
           </p>
         </div>

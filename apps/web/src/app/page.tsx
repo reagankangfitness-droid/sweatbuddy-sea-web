@@ -55,11 +55,11 @@ export default async function Home() {
   return (
     <>
       {/* Mobile Layout - Native App Feel */}
-      <div className="md:hidden min-h-screen bg-sand">
+      <div className="md:hidden min-h-screen bg-neutral-50">
         <MobileHeader />
         <MobileHero />
         <MobileEventsSection events={events} />
-        <div id="submit">
+        <div id="submit-mobile">
           <SubmitForm />
         </div>
         <Newsletter />
@@ -78,7 +78,7 @@ export default async function Home() {
           <Cities />
           <Mission />
           <ForOrganizers />
-          <div id="submit">
+          <div id="submit-desktop">
             <SubmitForm />
           </div>
           <Newsletter />

@@ -93,6 +93,7 @@ interface EventConfirmationParams {
   eventTime: string
   eventLocation: string
   organizerInstagram?: string
+  communityLink?: string | null
 }
 
 /**
@@ -110,6 +111,7 @@ export async function sendEventConfirmationEmail(
     eventTime,
     eventLocation,
     organizerInstagram,
+    communityLink,
   } = params
 
   const displayName = userName || 'there'
@@ -126,6 +128,7 @@ export async function sendEventConfirmationEmail(
 
   const html = buildConfirmationEmailHtml({
     userName: displayName,
+    userEmail: to,
     eventName,
     eventDay,
     eventTime,
@@ -134,6 +137,7 @@ export async function sendEventConfirmationEmail(
     calendarLink,
     mapsLink,
     organizerInstagram,
+    communityLink,
   })
 
   const result = await sendEmail({
@@ -221,6 +225,7 @@ function generateEventCalendarLink(params: {
  */
 function buildConfirmationEmailHtml(params: {
   userName: string
+  userEmail: string
   eventName: string
   eventDay: string
   eventTime: string
@@ -229,9 +234,11 @@ function buildConfirmationEmailHtml(params: {
   calendarLink: string
   mapsLink: string
   organizerInstagram?: string
+  communityLink?: string | null
 }): string {
   const {
     userName,
+    userEmail,
     eventName,
     eventDay,
     eventTime,
@@ -240,7 +247,10 @@ function buildConfirmationEmailHtml(params: {
     calendarLink,
     mapsLink,
     organizerInstagram,
+    communityLink,
   } = params
+
+  const myEventsLink = `${BASE_URL}/my-events?email=${encodeURIComponent(userEmail)}`
 
   const instagramLink = organizerInstagram
     ? `https://instagram.com/${organizerInstagram.replace('@', '')}`
@@ -326,6 +336,19 @@ function buildConfirmationEmailHtml(params: {
                 </tr>
               </table>
 
+              ${communityLink ? `
+              <!-- Community Link -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${communityLink}" style="display: inline-block; padding: 14px 28px; background-color: ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? '#25D366' : communityLink.includes('t.me') || communityLink.includes('telegram') ? '#0088cc' : '#3477f8'}; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                      💬 Join ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? 'WhatsApp' : communityLink.includes('t.me') || communityLink.includes('telegram') ? 'Telegram' : 'Community'} Group
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              ` : ''}
+
               <!-- Quick Links -->
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
@@ -367,6 +390,9 @@ function buildConfirmationEmailHtml(params: {
           <!-- Footer -->
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
+              <a href="${myEventsLink}" style="display: inline-block; margin-bottom: 16px; color: #3477f8; text-decoration: none; font-size: 14px; font-weight: 500;">
+                View all your upcoming events &rarr;
+              </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
                 Find more events at
               </p>

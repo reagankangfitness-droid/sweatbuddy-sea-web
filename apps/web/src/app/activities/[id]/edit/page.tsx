@@ -161,7 +161,7 @@ export default function EditActivityPage({ params }: { params: { id: string } })
       } catch (error) {
         console.error('Error fetching activity:', error)
         toast.error('Failed to load activity')
-        router.push('/dashboard')
+        router.push('/host/dashboard')
       }
     }
 
@@ -304,7 +304,7 @@ export default function EditActivityPage({ params }: { params: { id: string } })
       }
 
       toast.success('Activity deleted successfully!')
-      router.push('/dashboard')
+      router.push('/host/dashboard')
     } catch (error) {
       console.error('Error deleting activity:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to delete activity')

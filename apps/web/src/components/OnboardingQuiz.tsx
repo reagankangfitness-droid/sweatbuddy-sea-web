@@ -111,10 +111,10 @@ export function OnboardingQuiz() {
         {step === 1 && (
           <div className="space-y-6">
             <div>
-              <h2 className="font-heading text-2xl font-bold text-[#0d1520]">
+              <h2 className="font-sans text-2xl font-bold text-[#0d1520]">
                 Welcome to SweatBuddies 👋
               </h2>
-              <p className="font-body text-[#5a6b7a] mt-2">
+              <p className="font-sans text-[#5a6b7a] mt-2">
                 Let&apos;s personalize your experience. Where are you based?
               </p>
             </div>
@@ -134,7 +134,7 @@ export function OnboardingQuiz() {
                     }
                   }}
                   disabled={!city.active}
-                  className={`w-full p-4 rounded-xl border text-left font-body transition-all ${
+                  className={`w-full p-4 rounded-xl border text-left font-sans transition-all ${
                     city.active
                       ? 'hover:border-[#3477f8]/40 hover:bg-[#3477f8]/5 cursor-pointer'
                       : 'opacity-50 cursor-not-allowed'
@@ -160,10 +160,10 @@ export function OnboardingQuiz() {
         {step === 2 && (
           <div className="space-y-6">
             <div>
-              <h2 className="font-heading text-2xl font-bold text-[#0d1520]">
+              <h2 className="font-sans text-2xl font-bold text-[#0d1520]">
                 What gets you moving?
               </h2>
-              <p className="font-body text-[#5a6b7a] mt-2">
+              <p className="font-sans text-[#5a6b7a] mt-2">
                 Pick up to 3. We&apos;ll show you relevant events first.
               </p>
             </div>
@@ -173,7 +173,7 @@ export function OnboardingQuiz() {
                 <button
                   key={cat.id}
                   onClick={() => toggleCategory(cat.id)}
-                  className={`p-4 rounded-xl border text-center font-body transition-all ${
+                  className={`p-4 rounded-xl border text-center font-sans transition-all ${
                     preferences.categories?.includes(cat.id)
                       ? 'border-[#3477f8] bg-[#3477f8]/10'
                       : 'border-[#e0e7ef] hover:border-[#3477f8]/40'
@@ -188,13 +188,13 @@ export function OnboardingQuiz() {
             <div className="flex gap-3">
               <button
                 onClick={() => setStep(1)}
-                className="flex-1 py-3 rounded-xl font-heading font-semibold border border-[#e0e7ef] text-[#5a6b7a] hover:bg-[#f0f4fa] transition-colors"
+                className="flex-1 py-3 rounded-xl font-sans font-semibold border border-[#e0e7ef] text-[#5a6b7a] hover:bg-[#f0f4fa] transition-colors"
               >
                 Back
               </button>
               <button
                 onClick={() => setStep(3)}
-                className="flex-1 bg-[#3477f8] text-white py-3 rounded-xl font-heading font-bold hover:bg-[#2563eb] transition-colors"
+                className="flex-1 bg-[#3477f8] text-white py-3 rounded-xl font-sans font-bold hover:bg-[#2563eb] transition-colors"
               >
                 Next
               </button>
@@ -206,10 +206,10 @@ export function OnboardingQuiz() {
         {step === 3 && (
           <div className="space-y-6">
             <div>
-              <h2 className="font-heading text-2xl font-bold text-[#0d1520]">
+              <h2 className="font-sans text-2xl font-bold text-[#0d1520]">
                 When do you usually work out?
               </h2>
-              <p className="font-body text-[#5a6b7a] mt-2">
+              <p className="font-sans text-[#5a6b7a] mt-2">
                 We&apos;ll highlight sessions that fit your schedule.
               </p>
             </div>
@@ -221,7 +221,7 @@ export function OnboardingQuiz() {
                   onClick={() => {
                     setPreferences({ ...preferences, timePreference: time.id })
                   }}
-                  className={`w-full p-4 rounded-xl border text-left font-body transition-all ${
+                  className={`w-full p-4 rounded-xl border text-left font-sans transition-all ${
                     preferences.timePreference === time.id
                       ? 'border-[#3477f8] bg-[#3477f8]/10'
                       : 'border-[#e0e7ef] hover:border-[#3477f8]/40'
@@ -238,13 +238,13 @@ export function OnboardingQuiz() {
             <div className="flex gap-3">
               <button
                 onClick={() => setStep(2)}
-                className="flex-1 py-3 rounded-xl font-heading font-semibold border border-[#e0e7ef] text-[#5a6b7a] hover:bg-[#f0f4fa] transition-colors"
+                className="flex-1 py-3 rounded-xl font-sans font-semibold border border-[#e0e7ef] text-[#5a6b7a] hover:bg-[#f0f4fa] transition-colors"
               >
                 Back
               </button>
               <button
                 onClick={handleComplete}
-                className="flex-1 bg-[#3477f8] text-white py-3 rounded-xl font-heading font-bold hover:bg-[#2563eb] transition-colors"
+                className="flex-1 bg-[#3477f8] text-white py-3 rounded-xl font-sans font-bold hover:bg-[#2563eb] transition-colors"
               >
                 Show Me Events
               </button>

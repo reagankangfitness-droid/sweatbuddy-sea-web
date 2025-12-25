@@ -118,7 +118,7 @@ export function Cities() {
             <span>Expanding Across SEA</span>
           </motion.div>
           <h2
-            className="font-heading font-extrabold tracking-wide"
+            className="font-sans font-extrabold tracking-wide"
             style={{
               fontSize: 'clamp(32px, 6vw, 56px)',
               color: '#0A1628',
@@ -173,10 +173,10 @@ export function Cities() {
 
                 {/* City name on image */}
                 <div className="absolute bottom-5 left-5 right-5">
-                  <h3 className="font-heading font-bold text-white text-2xl mb-1 tracking-wide drop-shadow-lg">
+                  <h3 className="font-sans font-bold text-white text-2xl mb-1 tracking-wide drop-shadow-lg">
                     {city.name}
                   </h3>
-                  <p className="text-white/70 text-sm font-body">
+                  <p className="text-white/70 text-sm font-sans">
                     {city.subtitle}
                   </p>
                 </div>
@@ -233,7 +233,7 @@ export function Cities() {
           <p style={{ color: '#0A1628', opacity: 0.6 }} className="text-sm">
             Want SweatBuddies in your city?{' '}
             <button
-              onClick={(e) => handleHashClick(e, '#submit')}
+              onClick={(e) => handleHashClick(e, '#submit-desktop')}
               className="font-semibold hover:underline underline-offset-4 transition-colors"
               style={{ color: '#2563EB' }}
             >

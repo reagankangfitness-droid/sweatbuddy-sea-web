@@ -256,7 +256,7 @@ function FilterDropdown({ label, options, selectedValue, onSelect, placeholder }
 
             {/* Mobile Header */}
             <div className="flex items-center justify-between px-5 pb-4 border-b border-border">
-              <h3 className="font-display font-semibold text-foreground" style={{ fontSize: '18px' }}>
+              <h3 className="font-sans font-semibold text-foreground" style={{ fontSize: '18px' }}>
                 {label}
               </h3>
               <button

@@ -45,7 +45,7 @@ export function SaveEventButton({ eventId, className = '', iconOnly = false }: S
     ? `w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-all duration-200 ${
         isSaved
           ? 'bg-red-100 text-red-500'
-          : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+          : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-600'
       }`
     : `w-6 h-6 sm:w-7 sm:h-7 rounded-full transition-all duration-200 ${
         isSaved
@@ -55,7 +55,7 @@ export function SaveEventButton({ eventId, className = '', iconOnly = false }: S
 
   const iconStyles = iconOnly
     ? `w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${
-        isSaved ? 'text-red-500 fill-red-500' : 'text-gray-600'
+        isSaved ? 'text-red-500 fill-red-500' : 'text-neutral-600'
       }`
     : `w-3 h-3 sm:w-3.5 sm:h-3.5 transition-colors ${
         isSaved ? 'text-pink-400 fill-pink-400' : 'text-white/60'

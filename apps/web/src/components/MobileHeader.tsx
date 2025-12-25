@@ -47,7 +47,7 @@ export function MobileHeader() {
         fixed top-0 left-0 right-0 z-40 md:hidden
         transition-all duration-250
         ${isScrolled
-          ? 'bg-white/95 backdrop-blur-lg border-b border-gray-200'
+          ? 'bg-white/95 backdrop-blur-lg border-b border-neutral-200'
           : 'bg-transparent'
         }
       `}
@@ -55,39 +55,42 @@ export function MobileHeader() {
       {/* Safe area for notch */}
       <div className="pt-[env(safe-area-inset-top,0px)]">
         <div className="flex items-center justify-between px-4 py-3">
-          {/* Logo */}
+          {/* Logo - clean, minimal */}
           <div className="flex items-center gap-2">
-            <Logo size={24} />
-            <span className="font-semibold text-lg tracking-tight">
-              <span className="text-primary">SWEAT</span>
-              <span className="text-gray-800">BUDDIES</span>
+            <Logo size={24} variant={isScrolled ? 'default' : 'white'} />
+            <span className={`font-semibold text-lg tracking-tight transition-colors ${isScrolled ? 'text-neutral-900' : 'text-white'}`}>
+              sweatbuddies
             </span>
           </div>
 
-          {/* City Selector Dropdown */}
+          {/* City Selector Dropdown - minimal */}
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center gap-1.5 bg-white px-3.5 py-2 rounded-full border border-gray-200 text-sm font-medium transition-all hover:border-gray-400"
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium transition-all ${
+                isScrolled
+                  ? 'bg-white border border-neutral-200 hover:border-neutral-400'
+                  : 'bg-white/10 backdrop-blur-sm border border-white/30 hover:bg-white/20'
+              }`}
             >
               <span>{selectedCity.flag}</span>
-              <span className="text-gray-800">{selectedCity.name}</span>
-              <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+              <span className={isScrolled ? 'text-neutral-900' : 'text-white'}>{selectedCity.name}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform ${isScrolled ? 'text-neutral-400' : 'text-white/70'} ${isDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden z-50">
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl border border-neutral-200 shadow-lg overflow-hidden z-50">
                 {cities.map((city) => (
                   <button
                     key={city.id}
                     onClick={() => handleCitySelect(city)}
                     className={`
                       w-full flex items-center justify-between px-4 py-3 text-left
-                      transition-colors border-b border-gray-100 last:border-b-0
+                      transition-colors border-b border-neutral-100 last:border-b-0
                       ${selectedCity.id === city.id
-                        ? 'bg-gray-50 text-gray-800 font-semibold'
-                        : 'text-gray-600 hover:bg-gray-50'
+                        ? 'bg-neutral-50 text-neutral-900 font-semibold'
+                        : 'text-neutral-600 hover:bg-neutral-50'
                       }
                     `}
                   >
@@ -96,7 +99,7 @@ export function MobileHeader() {
                       <span>{city.name}</span>
                     </span>
                     {selectedCity.id === city.id && (
-                      <Check className="w-4 h-4 text-primary" />
+                      <Check className="w-4 h-4 text-neutral-900" />
                     )}
                   </button>
                 ))}

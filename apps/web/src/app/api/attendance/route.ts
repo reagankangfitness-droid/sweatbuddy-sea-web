@@ -33,6 +33,7 @@ export async function POST(request: Request) {
       eventTime,
       eventLocation,
       organizerInstagram,
+      communityLink,
     } = body
 
     // Validate email
@@ -114,6 +115,7 @@ export async function POST(request: Request) {
       eventTime: eventTime || 'TBD',
       eventLocation: eventLocation || 'See event details',
       organizerInstagram,
+      communityLink: communityLink || null,
     }).catch((emailError) => {
       console.error('Confirmation email error:', emailError)
     })

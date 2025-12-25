@@ -9,6 +9,7 @@ import { GoingButton } from './GoingButton'
 import { ShareButton } from './ShareButton'
 import { EventAttendees } from './EventAttendees'
 import { DirectChatWindow } from './DirectChatWindow'
+import { detectPlatform } from '@/lib/community'
 
 interface Event {
   id: string
@@ -21,8 +22,10 @@ interface Event {
   description?: string | null
   organizer: string
   imageUrl?: string | null
+  communityLink?: string | null
   recurring: boolean
   goingCount?: number
+  isFull?: boolean
 }
 
 // Format date for display (e.g., "Sat, Dec 14")
@@ -192,15 +195,15 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
           >
             {/* Drag Handle */}
             <div className="flex justify-center py-3 flex-shrink-0 cursor-grab active:cursor-grabbing">
-              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+              <div className="w-10 h-1 bg-neutral-300 rounded-full" />
             </div>
 
             {/* Close button */}
             <button
               onClick={onClose}
-              className="absolute top-3 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors z-10"
+              className="absolute top-3 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors z-10"
             >
-              <X className="w-4 h-4 text-gray-600" />
+              <X className="w-4 h-4 text-neutral-600" />
             </button>
 
             {/* Scrollable Content */}
@@ -217,14 +220,13 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
 
                   {/* Category on image */}
-                  <span className="absolute top-3 left-3 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold">
+                  <span className="absolute top-3 left-3 px-3 py-1 bg-white/95 backdrop-blur-sm rounded-md text-[11px] font-medium text-neutral-700">
                     {emoji} {event.category}
                   </span>
 
                   {/* Recurring badge */}
                   {event.recurring && (
-                    <span className="absolute top-3 right-3 px-3 py-1 bg-[#1800ad] text-white rounded-full text-xs font-medium flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                    <span className="absolute top-3 right-3 px-3 py-1 bg-neutral-900 text-white rounded-md text-[11px] font-medium flex items-center gap-1">
                       Weekly
                     </span>
                   )}
@@ -235,18 +237,18 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
               <div className="px-5 py-4">
                 {/* No image - show category badge */}
                 {!event.imageUrl && (
-                  <span className="inline-flex px-3 py-1 bg-gray-100 rounded-full text-xs font-semibold mb-3">
+                  <span className="inline-flex px-3 py-1 bg-neutral-100 rounded-md text-[11px] font-medium text-neutral-700 mb-3">
                     {emoji} {event.category}
                   </span>
                 )}
 
                 {/* Title */}
-                <h2 className="text-xl sm:text-2xl font-heading font-bold text-gray-900 mb-1">
+                <h2 className="text-xl sm:text-2xl font-semibold text-neutral-900 mb-1">
                   {event.name}
                 </h2>
 
                 {/* Time & Location Summary */}
-                <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 mb-6">
+                <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-500 mb-6">
                   <span className="flex items-center gap-1">
                     <span>📅</span> {formatEventDate(event.eventDate, event.day)}
                   </span>
@@ -254,7 +256,7 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                     <span>🕐</span> {event.time}
                   </span>
                   {event.recurring && (
-                    <span className="flex items-center gap-1 text-[#1800ad] font-medium">
+                    <span className="flex items-center gap-1 text-neutral-900 font-medium">
                       <span>🔄</span> Weekly
                     </span>
                   )}
@@ -262,43 +264,38 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
 
                 {/* Sections */}
                 <div className="space-y-6">
-                  {/* Who's Going - Social proof section */}
-                  <div>
-                    <h3 className="text-sm font-heading font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                      <span className="text-base">👥</span> Who&apos;s Going
-                    </h3>
-                    <EventAttendees eventId={event.id} refreshTrigger={attendeesRefresh} />
-                  </div>
+                  {/* Who's Going - Social proof section (hidden when empty) */}
+                  <EventAttendees eventId={event.id} refreshTrigger={attendeesRefresh} />
 
                   {/* About */}
                   <div>
-                    <h3 className="text-sm font-heading font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-neutral-900 mb-2 flex items-center gap-2">
                       <span className="text-base">📝</span> About
                     </h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <p className="text-sm text-neutral-500 leading-relaxed">
                       {event.description || 'Join us for an amazing fitness session! All levels welcome.'}
                     </p>
                   </div>
 
                   {/* Location */}
                   <div>
-                    <h3 className="text-sm font-heading font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-neutral-900 mb-2 flex items-center gap-2">
                       <span className="text-base">📍</span> Location
                     </h3>
-                    <p className="text-sm text-gray-600">{event.location}</p>
+                    <p className="text-sm text-neutral-500">{event.location}</p>
                   </div>
 
                   {/* Organizer */}
                   <div>
-                    <h3 className="text-sm font-heading font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-neutral-900 mb-3 flex items-center gap-2">
                       <span className="text-base">👤</span> Organizer
                     </h3>
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#F77737] flex items-center justify-center text-white font-bold text-lg">
+                      <div className="w-12 h-12 rounded-full bg-neutral-900 flex items-center justify-center text-white font-semibold text-lg">
                         {event.organizer?.charAt(0).toUpperCase() || '?'}
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">@{event.organizer}</p>
+                        <p className="font-semibold text-neutral-900">@{event.organizer}</p>
                       </div>
                     </div>
                   </div>
@@ -307,17 +304,17 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
             </div>
 
             {/* Secondary Actions Row */}
-            <div className="flex items-center justify-center gap-6 py-4 border-t border-gray-100 bg-gray-50/50">
+            <div className="flex items-center justify-center gap-6 py-4 border-t border-neutral-100 bg-neutral-50/50">
               {/* Chat button - only visible when user is going */}
               {isGoing && (
                 <button
                   onClick={() => setShowChat(true)}
-                  className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-gray-700 transition-colors"
+                  className="flex flex-col items-center gap-1.5 text-neutral-500 hover:text-neutral-900 transition-colors"
                 >
-                  <span className="w-11 h-11 bg-gradient-to-r from-[#2563EB] to-[#38BDF8] rounded-full flex items-center justify-center shadow-sm">
+                  <span className="w-11 h-11 bg-neutral-900 rounded-full flex items-center justify-center">
                     <MessageCircle className="w-5 h-5 text-white" />
                   </span>
-                  <span className="text-xs font-medium text-[#2563EB]">Chat</span>
+                  <span className="text-xs font-medium text-neutral-900">Chat</span>
                 </button>
               )}
 
@@ -325,15 +322,15 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                 href={`https://instagram.com/${event.organizer}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-gray-700 transition-colors"
+                className="flex flex-col items-center gap-1.5 text-neutral-500 hover:text-neutral-900 transition-colors"
               >
-                <span className="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100">
+                <span className="w-11 h-11 bg-white rounded-full flex items-center justify-center border border-neutral-200">
                   <Instagram className="w-5 h-5" />
                 </span>
                 <span className="text-xs font-medium">Instagram</span>
               </a>
 
-              <div className="flex flex-col items-center gap-1.5 text-gray-500">
+              <div className="flex flex-col items-center gap-1.5 text-neutral-500">
                 <ShareButton
                   eventId={event.id}
                   eventName={event.name}
@@ -346,17 +343,53 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                 href={`https://maps.google.com/?q=${encodeURIComponent(event.location)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col items-center gap-1.5 text-gray-500 hover:text-gray-700 transition-colors"
+                className="flex flex-col items-center gap-1.5 text-neutral-500 hover:text-neutral-900 transition-colors"
               >
-                <span className="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100">
+                <span className="w-11 h-11 bg-white rounded-full flex items-center justify-center border border-neutral-200">
                   <MapPin className="w-5 h-5" />
                 </span>
                 <span className="text-xs font-medium">Directions</span>
               </a>
+
+              {/* Community Link - visible after RSVP, hint before */}
+              {event.communityLink && (
+                isGoing ? (
+                  <a
+                    href={event.communityLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col items-center gap-1.5 text-neutral-500 hover:text-neutral-900 transition-colors"
+                  >
+                    <span className={`w-11 h-11 rounded-full flex items-center justify-center ${
+                      detectPlatform(event.communityLink) === 'whatsapp'
+                        ? 'bg-[#25D366]'
+                        : detectPlatform(event.communityLink) === 'telegram'
+                        ? 'bg-[#0088cc]'
+                        : 'bg-blue-600'
+                    }`}>
+                      <MessageCircle className="w-5 h-5 text-white" />
+                    </span>
+                    <span className="text-xs font-medium">
+                      {detectPlatform(event.communityLink) === 'whatsapp'
+                        ? 'WhatsApp'
+                        : detectPlatform(event.communityLink) === 'telegram'
+                        ? 'Telegram'
+                        : 'Community'}
+                    </span>
+                  </a>
+                ) : (
+                  <div className="flex flex-col items-center gap-1.5 text-neutral-400">
+                    <span className="w-11 h-11 bg-neutral-100 rounded-full flex items-center justify-center border border-neutral-200">
+                      <MessageCircle className="w-5 h-5" />
+                    </span>
+                    <span className="text-[10px] font-medium text-center leading-tight">RSVP to<br/>join group</span>
+                  </div>
+                )
+              )}
             </div>
 
             {/* Sticky Footer CTA */}
-            <div className="flex-shrink-0 p-4 border-t border-gray-100 bg-white">
+            <div className="flex-shrink-0 p-4 border-t border-neutral-100 bg-white">
               <GoingButton
                 eventId={event.id}
                 eventName={event.name}
@@ -364,9 +397,12 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                 eventTime={event.time}
                 eventLocation={event.location}
                 eventOrganizer={event.organizer}
+                eventDate={event.eventDate}
+                communityLink={event.communityLink}
                 initialCount={event.goingCount || 0}
                 fullWidth
                 onSuccess={handleGoingSuccess}
+                isFull={event.isFull}
               />
 
               {/* Safe area padding for iOS */}

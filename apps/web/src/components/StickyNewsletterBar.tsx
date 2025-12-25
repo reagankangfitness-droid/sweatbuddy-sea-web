@@ -69,7 +69,7 @@ export function StickyNewsletterBar() {
   if (isDismissed || !isVisible) return null
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg safe-area-bottom">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 shadow-lg safe-area-bottom">
       <div className="max-w-container mx-auto px-4 py-3">
         {isSubmitted ? (
           <div className="flex items-center justify-center gap-2 text-green-600">
@@ -82,17 +82,17 @@ export function StickyNewsletterBar() {
             <button
               type="button"
               onClick={handleDismiss}
-              className="p-1.5 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+              className="p-1.5 text-neutral-400 hover:text-neutral-600 transition-colors flex-shrink-0"
               aria-label="Dismiss"
             >
               <X className="w-4 h-4" />
             </button>
 
             {/* Text */}
-            <span className="text-sm text-gray-600 hidden sm:block flex-shrink-0">
+            <span className="text-sm text-neutral-600 hidden sm:block flex-shrink-0">
               Get weekly events in your inbox
             </span>
-            <span className="text-sm text-gray-600 sm:hidden flex-shrink-0">
+            <span className="text-sm text-neutral-600 sm:hidden flex-shrink-0">
               Weekly events
             </span>
 
@@ -103,7 +103,7 @@ export function StickyNewsletterBar() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="Email"
-              className="flex-1 min-w-0 h-10 px-3 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#3477f8] focus:ring-1 focus:ring-[#3477f8]/20"
+              className="flex-1 min-w-0 h-10 px-3 rounded-lg bg-neutral-50 border border-neutral-200 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-[#3477f8] focus:ring-1 focus:ring-[#3477f8]/20"
             />
 
             {/* Subscribe button */}

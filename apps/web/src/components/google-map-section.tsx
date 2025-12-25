@@ -98,7 +98,7 @@ export default function GoogleMapSection({
                 <h3 className="font-semibold mb-1" style={{ fontSize: '15px' }}>
                   {selectedActivity.title}
                 </h3>
-                <p className="text-gray-600 mb-2" style={{ fontSize: '12px' }}>
+                <p className="text-neutral-600 mb-2" style={{ fontSize: '12px' }}>
                   {selectedActivity.type} • {selectedActivity.city}
                 </p>
                 {selectedActivity.price !== undefined && selectedActivity.price > 0 && (
@@ -107,7 +107,7 @@ export default function GoogleMapSection({
                   </p>
                 )}
                 {selectedActivity.description && (
-                  <p className="text-gray-700 mb-3 line-clamp-2" style={{ fontSize: '12px' }}>
+                  <p className="text-neutral-700 mb-3 line-clamp-2" style={{ fontSize: '12px' }}>
                     {selectedActivity.description}
                   </p>
                 )}

@@ -35,15 +35,16 @@ export function QuickFilters({ onSelect, activeFilter = 'all' }: Props) {
             className={`
               flex-shrink-0 flex items-center gap-1.5
               px-4 py-2.5
-              text-ui
+              text-sm font-medium
               transition-all duration-200
               active:scale-95
               rounded-full
               ${active === filter.id
-                ? 'bg-forest-900 text-cream shadow-sm'
-                : 'bg-cream text-forest-600 border border-forest-200 hover:bg-forest-50 hover:border-forest-300'
+                ? 'bg-neutral-900 shadow-sm'
+                : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50 hover:border-neutral-300'
               }
             `}
+            style={active === filter.id ? { color: '#FFFFFF' } : undefined}
           >
             <span className="text-base">{filter.emoji}</span>
             <span>{filter.label}</span>

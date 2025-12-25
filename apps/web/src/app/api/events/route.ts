@@ -16,12 +16,16 @@ interface Event {
   description: string | null
   organizer: string
   imageUrl: string | null
+  communityLink: string | null
   recurring: boolean
+  isFull: boolean
+  goingCount: number
 }
 
 // Cached database query - revalidates every 60s
 const getCachedEvents = unstable_cache(
   async () => {
+    // Get approved events
     const approvedSubmissions = await prisma.eventSubmission.findMany({
       where: { status: 'APPROVED' },
       orderBy: { createdAt: 'desc' },
@@ -36,9 +40,22 @@ const getCachedEvents = unstable_cache(
         description: true,
         organizerInstagram: true,
         imageUrl: true,
+        communityLink: true,
         recurring: true,
+        isFull: true,
       },
     })
+
+    // Get attendance counts for all events in one query
+    const attendanceCounts = await prisma.eventAttendance.groupBy({
+      by: ['eventId'],
+      _count: { id: true },
+    })
+
+    // Create a map for quick lookup
+    const countMap = new Map(
+      attendanceCounts.map(item => [item.eventId, item._count.id])
+    )
 
     return approvedSubmissions.map(submission => ({
       id: submission.id,
@@ -51,7 +68,10 @@ const getCachedEvents = unstable_cache(
       description: submission.description,
       organizer: submission.organizerInstagram,
       imageUrl: submission.imageUrl,
+      communityLink: submission.communityLink,
       recurring: submission.recurring,
+      isFull: submission.isFull,
+      goingCount: countMap.get(submission.id) || 0,
     }))
   },
   ['events-list'],

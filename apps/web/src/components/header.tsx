@@ -85,7 +85,7 @@ export function Header() {
         transition={{ duration: 0.4, ease: [0.2, 0, 0, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-250 ${
           scrolled
-            ? 'py-3 bg-white/95 backdrop-blur-lg border-b border-gray-200'
+            ? 'py-3 bg-white/95 backdrop-blur-lg border-b border-neutral-200'
             : 'bg-transparent py-5'
         }`}
       >
@@ -94,7 +94,7 @@ export function Header() {
           <Link
             href="/"
             className={`flex items-center gap-2.5 font-semibold transition-colors ${
-              scrolled ? 'text-gray-800 hover:text-primary' : 'text-white hover:text-primary-200'
+              scrolled ? 'text-neutral-800 hover:text-primary' : 'text-white hover:text-primary-200'
             }`}
             style={{ fontSize: '18px', letterSpacing: '-0.02em' }}
           >
@@ -121,7 +121,7 @@ export function Header() {
                     transition={{ delay: 0.1 * index }}
                     className={`text-sm font-medium transition-colors ${
                       scrolled
-                        ? 'text-gray-600 hover:text-gray-800'
+                        ? 'text-neutral-600 hover:text-neutral-800'
                         : 'text-white/80 hover:text-white'
                     }`}
                   >
@@ -135,7 +135,7 @@ export function Header() {
                   href={link.href}
                   className={`text-sm font-medium transition-colors ${
                     scrolled
-                      ? 'text-gray-600 hover:text-gray-800'
+                      ? 'text-neutral-600 hover:text-neutral-800'
                       : 'text-white/80 hover:text-white'
                   }`}
                 >
@@ -149,7 +149,7 @@ export function Header() {
           <div className="flex items-center gap-3">
             {/* Submit Event CTA */}
             <motion.button
-              onClick={(e) => handleHashClick(e, '#submit')}
+              onClick={(e) => handleHashClick(e, '#submit-desktop')}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 }}
@@ -165,7 +165,7 @@ export function Header() {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`md:hidden p-2 rounded-lg transition-colors ${
                 scrolled
-                  ? 'text-gray-800 border border-gray-200 bg-white hover:bg-gray-50'
+                  ? 'text-neutral-800 border border-neutral-200 bg-white hover:bg-neutral-50'
                   : 'text-white border border-white/30 hover:bg-white/10'
               }`}
               aria-label="Toggle menu"
@@ -205,7 +205,7 @@ export function Header() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
-              className="md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-lg border-b border-gray-200 overflow-hidden"
+              className="md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-lg border-b border-neutral-200 overflow-hidden"
             >
               <nav className="flex flex-col p-6 gap-1">
                 {navLinks.map((link, index) => {
@@ -221,7 +221,7 @@ export function Header() {
                           setMobileMenuOpen(false)
                           handleHashClick(e, link.href)
                         }}
-                        className="text-gray-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-gray-100 last:border-0 text-left"
+                        className="text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100 last:border-0 text-left"
                       >
                         {link.label}
                       </motion.button>
@@ -232,7 +232,7 @@ export function Header() {
                       key={link.href}
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="text-gray-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-gray-100 last:border-0"
+                      className="text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100 last:border-0"
                     >
                       {link.label}
                     </Link>
@@ -244,7 +244,7 @@ export function Header() {
                   transition={{ delay: 0.2 }}
                   onClick={(e) => {
                     setMobileMenuOpen(false)
-                    handleHashClick(e, '#submit')
+                    handleHashClick(e, '#submit-mobile')
                   }}
                   className="flex items-center justify-center gap-2 mt-4 px-6 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-hover transition-colors"
                 >

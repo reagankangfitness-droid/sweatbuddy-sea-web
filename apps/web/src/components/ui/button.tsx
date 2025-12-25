@@ -5,19 +5,19 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-all duration-200 ease-airbnb focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold transition-all duration-250 ease-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground shadow-button-glow hover:bg-primary-hover hover:shadow-button-glow-hover hover:scale-[1.02] active:scale-[0.98]",
+        default: "bg-neutral-900 text-white hover:bg-neutral-700 active:scale-[0.98]",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-md active:scale-[0.98]",
+          "bg-red-600 text-white hover:bg-red-700 active:scale-[0.98]",
         outline:
-          "border-2 border-foreground bg-background text-foreground hover:bg-foreground hover:text-background transition-all active:scale-[0.98]",
+          "border border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 hover:border-neutral-400 active:scale-[0.98]",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-muted hover:shadow-sm active:scale-[0.98]",
-        ghost: "hover:bg-muted transition-colors active:scale-[0.98]",
-        link: "text-foreground underline-offset-4 hover:underline",
+          "bg-neutral-100 text-neutral-900 hover:bg-neutral-200 active:scale-[0.98]",
+        ghost: "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 active:scale-[0.98]",
+        link: "text-neutral-900 underline-offset-4 hover:underline",
       },
       size: {
         default: "h-12 px-6 py-3",

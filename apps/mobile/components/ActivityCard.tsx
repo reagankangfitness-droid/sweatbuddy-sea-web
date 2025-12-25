@@ -105,33 +105,51 @@ export function ActivityCard({ activity }: ActivityCardProps) {
   )
 }
 
+// Design tokens matching web app
+const colors = {
+  neutral900: '#171717',
+  neutral800: '#262626',
+  neutral700: '#404040',
+  neutral600: '#525252',
+  neutral500: '#737373',
+  neutral400: '#A3A3A3',
+  neutral300: '#D4D4D4',
+  neutral200: '#E5E5E5',
+  neutral100: '#F5F5F5',
+  neutral50: '#FAFAFA',
+  white: '#FFFFFF',
+  success: '#16A34A',
+}
+
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     borderRadius: 12,
     marginHorizontal: 16,
     marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
     elevation: 3,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.neutral100,
   },
   image: {
     width: '100%',
     height: 200,
-    backgroundColor: '#e0e0e0',
+    backgroundColor: colors.neutral200,
   },
   placeholderImage: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: colors.neutral100,
   },
   placeholderText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#999',
+    color: colors.neutral400,
   },
   content: {
     padding: 16,
@@ -147,21 +165,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flex: 1,
     marginRight: 8,
+    color: colors.neutral900,
   },
   badge: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: colors.neutral900,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
   },
   badgeText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 12,
     fontWeight: '600',
   },
   description: {
     fontSize: 14,
-    color: '#666',
+    color: colors.neutral500,
     marginBottom: 12,
     lineHeight: 20,
   },
@@ -172,11 +191,11 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 14,
-    color: '#444',
+    color: colors.neutral700,
   },
   time: {
     fontSize: 14,
-    color: '#666',
+    color: colors.neutral500,
   },
   footer: {
     flexDirection: 'row',
@@ -199,19 +218,19 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#3b82f6',
+    backgroundColor: colors.neutral900,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 8,
   },
   avatarText: {
-    color: 'white',
+    color: colors.white,
     fontSize: 14,
     fontWeight: 'bold',
   },
   hostName: {
     fontSize: 14,
-    color: '#444',
+    color: colors.neutral700,
     fontWeight: '500',
   },
   priceContainer: {
@@ -220,12 +239,12 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#22c55e',
+    color: colors.success,
   },
   free: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#3b82f6',
+    color: colors.neutral900,
   },
   stats: {
     flexDirection: 'row',
@@ -233,10 +252,10 @@ const styles = StyleSheet.create({
   },
   participants: {
     fontSize: 12,
-    color: '#666',
+    color: colors.neutral500,
   },
   capacity: {
     fontSize: 12,
-    color: '#999',
+    color: colors.neutral400,
   },
 })

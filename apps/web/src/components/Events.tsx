@@ -46,8 +46,10 @@ interface Event {
   description: string | null
   organizer: string
   imageUrl: string | null
+  communityLink?: string | null
   recurring: boolean
   goingCount?: number
+  isFull?: boolean
 }
 
 interface EventsProps {
@@ -207,14 +209,14 @@ export function Events({ initialEvents = [] }: EventsProps) {
   const hasActiveFilters = searchQuery !== '' || selectedCategory !== 'all' || selectedTime !== 'all'
 
   return (
-    <section id="events" className="relative py-20 md:py-32 overflow-hidden" style={{ background: '#f0f4fa' }}>
+    <section id="events" className="relative py-20 md:py-32 overflow-hidden bg-neutral-50">
       {/* Shared Event Handler - wrapped in Suspense for useSearchParams */}
       <Suspense fallback={null}>
         <SharedEventHandler events={events} onEventFound={handleSharedEventFound} />
       </Suspense>
 
-      {/* Subtle blue glow accent */}
-      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at top right, rgba(52, 119, 248, 0.06) 0%, transparent 50%)' }} />
+      {/* Subtle neutral glow accent */}
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at top right, rgba(0, 0, 0, 0.02) 0%, transparent 50%)' }} />
       <SectionGradient />
 
       <div className="relative z-10 max-w-container mx-auto px-6 lg:px-10">
@@ -223,12 +225,12 @@ export function Events({ initialEvents = [] }: EventsProps) {
 
         {/* Header */}
         <div className="text-center mb-12 md:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#3477f8]/10 border border-[#3477f8]/20 text-[#3477f8] text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-900/10 border border-neutral-900/20 text-neutral-900 text-sm font-medium mb-6">
             <Sparkles className="w-4 h-4" />
             <span>{isPersonalized ? 'Personalized For You' : 'Updated Weekly'}</span>
           </div>
           <h2
-            className="font-heading font-extrabold text-[#0d1520] mb-4 tracking-wide"
+            className="font-sans font-extrabold text-neutral-900 mb-4 tracking-wide"
             style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
           >
             {isPersonalized ? (
@@ -237,7 +239,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
               <>What&apos;s On <span className="text-gradient">This Week</span></>
             )}
           </h2>
-          <p className="font-body text-[#5a6b7a] text-lg">
+          <p className="font-sans text-neutral-500 text-lg">
             Singapore • {getCurrentWeekRange()}
           </p>
         </div>
@@ -246,7 +248,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
         <div className="mb-10 space-y-4">
           {/* Search Bar */}
           <div className="relative max-w-2xl mx-auto">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#5a6b7a]" />
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
             <input
               type="text"
               value={searchQuery}
@@ -257,7 +259,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-5 top-1/2 -translate-y-1/2 text-[#5a6b7a] hover:text-[#3477f8] transition-colors"
+                className="absolute right-5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-900 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -270,7 +272,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="h-11 px-4 rounded-lg bg-white border border-[#e0e7ef] text-sm font-medium text-[#0d1520] focus:outline-none focus:border-[#3477f8] focus:ring-2 focus:ring-[#3477f8]/20 cursor-pointer transition-colors hover:border-[#c0cad5] shadow-sm"
+              className="h-11 px-4 rounded-lg bg-white border border-neutral-200 text-sm font-medium text-neutral-900 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20 cursor-pointer transition-colors hover:border-neutral-300 shadow-sm"
             >
               <option value="all">All Categories</option>
               {categories.map(category => (
@@ -282,7 +284,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
             <select
               value={selectedTime}
               onChange={(e) => setSelectedTime(e.target.value as TimeFilter)}
-              className="h-11 px-4 rounded-lg bg-white border border-[#e0e7ef] text-sm font-medium text-[#0d1520] focus:outline-none focus:border-[#3477f8] focus:ring-2 focus:ring-[#3477f8]/20 cursor-pointer transition-colors hover:border-[#c0cad5] shadow-sm"
+              className="h-11 px-4 rounded-lg bg-white border border-neutral-200 text-sm font-medium text-neutral-900 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20 cursor-pointer transition-colors hover:border-neutral-300 shadow-sm"
             >
               <option value="all">All Times</option>
               <option value="this-week">This Week</option>
@@ -294,7 +296,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="h-11 px-5 rounded-lg bg-[#3477f8] text-white text-sm font-semibold hover:bg-[#2563eb] transition-all flex items-center gap-2 shadow-sm"
+                className="h-11 px-5 rounded-lg bg-neutral-900 text-white text-sm font-semibold hover:bg-neutral-700 transition-all flex items-center gap-2 shadow-sm"
               >
                 <X className="w-4 h-4" />
                 Clear
@@ -304,7 +306,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
 
           {/* Results Count */}
           {hasActiveFilters && (
-            <p className="text-center text-sm text-[#5a6b7a]">
+            <p className="text-center text-sm text-neutral-500">
               Showing {filteredEvents.length} of {events.length} events
             </p>
           )}
@@ -319,11 +321,11 @@ export function Events({ initialEvents = [] }: EventsProps) {
           </div>
         ) : (
           <div className="text-center py-20 glass-card rounded-2xl max-w-md mx-auto">
-            <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-[#3477f8]/10 flex items-center justify-center text-3xl">
+            <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-neutral-100 flex items-center justify-center text-3xl">
               🔍
             </div>
-            <h3 className="font-heading font-bold text-[#0d1520] mb-3 text-xl tracking-wide">No events found</h3>
-            <p className="font-body text-[#5a6b7a] mb-6">Try adjusting your search or filters</p>
+            <h3 className="font-sans font-bold text-neutral-900 mb-3 text-xl tracking-wide">No events found</h3>
+            <p className="font-sans text-neutral-500 mb-6">Try adjusting your search or filters</p>
             <button
               onClick={clearFilters}
               className="btn-primary"
@@ -335,14 +337,14 @@ export function Events({ initialEvents = [] }: EventsProps) {
 
         {/* CTA */}
         <div className="text-center mt-16">
-          <p className="text-[#5a6b7a] mb-3">
+          <p className="text-neutral-500 mb-3">
             More events added every Wednesday
           </p>
           <a
             href="https://www.instagram.com/_sweatbuddies/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-[#3477f8] font-medium hover:underline underline-offset-4"
+            className="inline-flex items-center gap-2 text-neutral-900 font-medium hover:underline underline-offset-4"
           >
             Follow @_sweatbuddies for updates
             <span className="text-lg">→</span>

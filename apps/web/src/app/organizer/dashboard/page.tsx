@@ -81,8 +81,8 @@ export default function OrganizerDashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-sand">
-        <Loader2 className="w-8 h-8 animate-spin text-coral" />
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-900" />
       </div>
     )
   }
@@ -94,28 +94,28 @@ export default function OrganizerDashboardPage() {
   const totalAttendees = events.reduce((sum, e) => sum + e.attendeeCount, 0)
 
   return (
-    <div className="min-h-screen bg-sand">
+    <div className="min-h-screen bg-neutral-50">
       {/* Header */}
-      <header className="bg-cream/95 backdrop-blur-lg border-b border-forest-200 sticky top-0 z-50">
+      <header className="bg-white/95 backdrop-blur-lg border-b border-neutral-200 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-2">
               <Logo size={24} />
-              <span className="font-display font-semibold text-lg text-forest-900">SweatBuddies</span>
+              <span className="font-sans font-semibold text-lg text-neutral-900">SweatBuddies</span>
             </Link>
-            <span className="text-forest-300">|</span>
-            <span className="text-body-small text-forest-600">Organizer Dashboard</span>
+            <span className="text-neutral-300">|</span>
+            <span className="text-body-small text-neutral-600">Organizer Dashboard</span>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Instagram className="w-4 h-4 text-forest-500" />
-              <span className="text-ui text-forest-700">
+              <Instagram className="w-4 h-4 text-neutral-500" />
+              <span className="text-ui text-neutral-700">
                 @{organizer.instagramHandle}
               </span>
             </div>
             <button
               onClick={handleLogout}
-              className="p-2 text-forest-500 hover:text-coral hover:bg-coral/10 rounded-xl transition"
+              className="p-2 text-neutral-500 hover:text-neutral-900 hover:bg-neutral-900/10 rounded-xl transition"
               title="Logout"
             >
               <LogOut className="w-5 h-5" />
@@ -131,10 +131,10 @@ export default function OrganizerDashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="font-display text-display-section text-forest-900 mb-2">
+          <h1 className="font-sans text-display-section text-neutral-900 mb-2">
             Welcome back{organizer.name ? `, ${organizer.name}` : ''}!
           </h1>
-          <p className="text-body-default text-forest-600">
+          <p className="text-body-default text-neutral-600">
             Here&apos;s an overview of your events and attendees
           </p>
         </motion.div>
@@ -146,34 +146,34 @@ export default function OrganizerDashboardPage() {
           transition={{ delay: 0.1 }}
           className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8"
         >
-          <div className="bg-cream rounded-2xl p-5 border border-forest-100 shadow-card">
+          <div className="bg-white rounded-2xl p-5 border border-neutral-100 shadow-card">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-coral/10 flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-coral" />
+              <div className="w-10 h-10 rounded-xl bg-neutral-900/10 flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-neutral-900" />
               </div>
-              <span className="text-stat-sm text-forest-900">{events.length}</span>
+              <span className="text-stat-sm text-neutral-900">{events.length}</span>
             </div>
-            <p className="text-body-small text-forest-600">Active Events</p>
+            <p className="text-body-small text-neutral-600">Active Events</p>
           </div>
 
-          <div className="bg-cream rounded-2xl p-5 border border-forest-100 shadow-card">
+          <div className="bg-white rounded-2xl p-5 border border-neutral-100 shadow-card">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-teal/10 flex items-center justify-center">
-                <Users className="w-5 h-5 text-teal" />
+              <div className="w-10 h-10 rounded-xl bg-neutral-900/10 flex items-center justify-center">
+                <Users className="w-5 h-5 text-neutral-900" />
               </div>
-              <span className="text-stat-sm text-forest-900">{totalAttendees}</span>
+              <span className="text-stat-sm text-neutral-900">{totalAttendees}</span>
             </div>
-            <p className="text-body-small text-forest-600">Total Attendees</p>
+            <p className="text-body-small text-neutral-600">Total Attendees</p>
           </div>
 
-          <div className="bg-cream rounded-2xl p-5 border border-forest-100 shadow-card col-span-2 md:col-span-1">
+          <div className="bg-white rounded-2xl p-5 border border-neutral-100 shadow-card col-span-2 md:col-span-1">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-ocean/10 flex items-center justify-center">
-                <MessageCircle className="w-5 h-5 text-ocean" />
+              <div className="w-10 h-10 rounded-xl bg-neutral-900/10 flex items-center justify-center">
+                <MessageCircle className="w-5 h-5 text-neutral-900" />
               </div>
-              <span className="text-stat-sm text-forest-900">Direct</span>
+              <span className="text-stat-sm text-neutral-900">Direct</span>
             </div>
-            <p className="text-body-small text-forest-600">1:1 Chat Available</p>
+            <p className="text-body-small text-neutral-600">1:1 Chat Available</p>
           </div>
         </motion.div>
 
@@ -183,26 +183,27 @@ export default function OrganizerDashboardPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <h2 className="font-display text-display-card text-forest-900 mb-4">
+          <h2 className="font-sans text-display-card text-neutral-900 mb-4">
             Your Events
           </h2>
 
           {error && (
-            <div className="p-4 bg-coral/10 border border-coral/20 rounded-2xl text-coral mb-4">
+            <div className="p-4 bg-neutral-900/10 border border-neutral-900/20 rounded-2xl text-neutral-900 mb-4">
               {error}
             </div>
           )}
 
           {events.length === 0 ? (
-            <div className="bg-cream rounded-2xl p-8 text-center border border-forest-100 shadow-card">
-              <Calendar className="w-12 h-12 text-forest-300 mx-auto mb-4" />
-              <h3 className="font-display text-display-card text-forest-900 mb-2">No events found</h3>
-              <p className="text-body-small text-forest-600 mb-4">
+            <div className="bg-white rounded-2xl p-8 text-center border border-neutral-100 shadow-card">
+              <Calendar className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
+              <h3 className="font-sans text-display-card text-neutral-900 mb-2">No events found</h3>
+              <p className="text-body-small text-neutral-600 mb-4">
                 Events matching your Instagram handle (@{organizer.instagramHandle}) will appear here.
               </p>
               <Link
-                href="/#submit"
-                className="inline-block px-6 py-3 bg-coral text-white rounded-full text-ui font-semibold hover:bg-coral-600 transition shadow-md"
+                href="/#submit-desktop"
+                className="inline-block px-6 py-3 bg-neutral-900 rounded-full text-sm font-semibold hover:bg-neutral-700 transition shadow-md"
+                style={{ color: '#FFFFFF' }}
               >
                 Submit an Event
               </Link>
@@ -213,7 +214,7 @@ export default function OrganizerDashboardPage() {
                 <Link
                   key={event.id}
                   href={`/organizer/dashboard/${event.id}`}
-                  className="block bg-cream rounded-2xl border border-forest-100 hover:border-coral/30 hover:shadow-card-hover transition overflow-hidden"
+                  className="block bg-white rounded-2xl border border-neutral-100 hover:border-neutral-900/30 hover:shadow-card-hover transition overflow-hidden"
                 >
                   <div className="flex items-center p-4 gap-4">
                     {/* Event Image */}
@@ -223,18 +224,18 @@ export default function OrganizerDashboardPage() {
                         style={{ backgroundImage: `url(${event.imageUrl})` }}
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-xl bg-mist flex items-center justify-center flex-shrink-0">
-                        <Calendar className="w-6 h-6 text-forest-400" />
+                      <div className="w-16 h-16 rounded-xl bg-neutral-100 flex items-center justify-center flex-shrink-0">
+                        <Calendar className="w-6 h-6 text-neutral-400" />
                       </div>
                     )}
 
                     {/* Event Info */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-display font-semibold text-forest-900 truncate">
+                      <h3 className="font-sans font-semibold text-neutral-900 truncate">
                         {event.name}
                       </h3>
-                      <div className="flex flex-wrap items-center gap-2 mt-1 text-body-small text-forest-600">
-                        <span className="bg-forest-50 text-forest-700 px-2 py-0.5 rounded-lg text-label-sm">
+                      <div className="flex flex-wrap items-center gap-2 mt-1 text-body-small text-neutral-600">
+                        <span className="bg-neutral-50 text-neutral-700 px-2 py-0.5 rounded-lg text-label-sm">
                           {event.category}
                         </span>
                         {event.status === 'pending' && (
@@ -243,19 +244,19 @@ export default function OrganizerDashboardPage() {
                           </span>
                         )}
                         {event.status === 'approved' && (
-                          <span className="bg-teal/10 text-teal px-2 py-0.5 rounded-lg text-label-sm font-medium flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 bg-teal rounded-full animate-pulse" />
+                          <span className="bg-neutral-900/10 text-neutral-900 px-2 py-0.5 rounded-lg text-label-sm font-medium flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 bg-neutral-900 rounded-full animate-pulse" />
                             Live
                           </span>
                         )}
                         {event.status === 'rejected' && (
-                          <span className="bg-coral/10 text-coral px-2 py-0.5 rounded-lg text-label-sm font-medium">
+                          <span className="bg-neutral-900/10 text-neutral-900 px-2 py-0.5 rounded-lg text-label-sm font-medium">
                             Rejected
                           </span>
                         )}
                         <span>{event.day} {event.time}</span>
                       </div>
-                      <div className="flex items-center gap-1 mt-1 text-body-small text-forest-500">
+                      <div className="flex items-center gap-1 mt-1 text-body-small text-neutral-500">
                         <MapPin className="w-3.5 h-3.5" />
                         <span className="truncate">{event.location}</span>
                       </div>
@@ -264,13 +265,13 @@ export default function OrganizerDashboardPage() {
                     {/* Attendee Count */}
                     <div className="flex items-center gap-3">
                       <div className="text-center">
-                        <div className="flex items-center gap-1 text-coral">
+                        <div className="flex items-center gap-1 text-neutral-900">
                           <Users className="w-4 h-4" />
                           <span className="font-bold">{event.attendeeCount}</span>
                         </div>
-                        <span className="text-label-sm text-forest-500">going</span>
+                        <span className="text-label-sm text-neutral-500">going</span>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-forest-400" />
+                      <ChevronRight className="w-5 h-5 text-neutral-400" />
                     </div>
                   </div>
                 </Link>

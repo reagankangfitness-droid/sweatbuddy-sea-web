@@ -41,15 +41,15 @@ export default function OrganizerVerifyPage() {
   }, [token, router])
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-neutral-50 flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-white rounded-2xl p-8 shadow-lg text-center">
         {status === 'loading' && (
           <>
             <Loader2 className="w-12 h-12 animate-spin text-[#1800ad] mx-auto mb-4" />
-            <h1 className="text-xl font-semibold text-gray-900 mb-2">
+            <h1 className="text-xl font-semibold text-neutral-900 mb-2">
               Verifying your link...
             </h1>
-            <p className="text-gray-600">
+            <p className="text-neutral-600">
               Please wait while we log you in
             </p>
           </>
@@ -60,13 +60,13 @@ export default function OrganizerVerifyPage() {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
-            <h1 className="text-xl font-semibold text-gray-900 mb-2">
+            <h1 className="text-xl font-semibold text-neutral-900 mb-2">
               Welcome back!
             </h1>
-            <p className="text-gray-600 mb-4">
+            <p className="text-neutral-600 mb-4">
               Redirecting to your dashboard...
             </p>
-            <Loader2 className="w-5 h-5 animate-spin text-gray-400 mx-auto" />
+            <Loader2 className="w-5 h-5 animate-spin text-neutral-400 mx-auto" />
           </>
         )}
 
@@ -75,10 +75,10 @@ export default function OrganizerVerifyPage() {
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <XCircle className="w-8 h-8 text-red-600" />
             </div>
-            <h1 className="text-xl font-semibold text-gray-900 mb-2">
+            <h1 className="text-xl font-semibold text-neutral-900 mb-2">
               Verification Failed
             </h1>
-            <p className="text-gray-600 mb-6">
+            <p className="text-neutral-600 mb-6">
               {error}
             </p>
             <Link

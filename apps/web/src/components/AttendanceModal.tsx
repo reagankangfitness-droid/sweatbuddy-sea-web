@@ -3,7 +3,18 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Check, Loader2, Calendar } from 'lucide-react'
+import { X, Check, Loader2, Calendar, MessageCircle } from 'lucide-react'
+
+// Helper to detect platform from community link
+const detectPlatform = (url: string): 'whatsapp' | 'telegram' | 'other' => {
+  if (url.includes('wa.me') || url.includes('whatsapp') || url.includes('chat.whatsapp')) {
+    return 'whatsapp'
+  }
+  if (url.includes('t.me') || url.includes('telegram')) {
+    return 'telegram'
+  }
+  return 'other'
+}
 
 interface AttendanceModalProps {
   isOpen: boolean
@@ -15,6 +26,8 @@ interface AttendanceModalProps {
     time: string
     location: string
     organizer?: string
+    eventDate?: string | null
+    communityLink?: string | null
   }
   onSuccess: () => void
   showMealPreference?: boolean // Show meal preference selector for specific events
@@ -77,6 +90,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
           eventTime: event.time,
           eventLocation: event.location,
           organizerInstagram: event.organizer,
+          communityLink: event.communityLink,
         }),
       })
 
@@ -189,14 +203,14 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
               {step === 'form' ? (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <p className="text-gray-600 text-sm mb-4">
+                    <p className="text-neutral-600 text-sm mb-4">
                       Drop your email to confirm your spot and get a reminder before the event.
                     </p>
                   </div>
 
                   {/* Email Field */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-neutral-700 mb-1">
                       Email *
                     </label>
                     <input
@@ -205,28 +219,28 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="you@example.com"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition"
+                      className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition"
                     />
                   </div>
 
                   {/* Name Field (Optional) */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Name <span className="text-gray-400">(optional)</span>
+                    <label className="block text-sm font-medium text-neutral-700 mb-1">
+                      Name <span className="text-neutral-400">(optional)</span>
                     </label>
                     <input
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="What should we call you?"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition"
+                      className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition"
                     />
                   </div>
 
                   {/* Meal Preference (Only for specific events) */}
                   {showMealPreference && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-neutral-700 mb-2">
                         Meal Preference *
                       </label>
                       <div className="grid grid-cols-3 gap-2">
@@ -242,7 +256,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                             className={`p-3 rounded-xl border-2 transition-all text-center ${
                               formData.mealPreference === option.value
                                 ? 'border-[#2563EB] bg-blue-50 text-[#2563EB]'
-                                : 'border-gray-200 hover:border-gray-300'
+                                : 'border-neutral-200 hover:border-neutral-300'
                             }`}
                           >
                             <span className="text-xl block mb-1">{option.emoji}</span>
@@ -251,7 +265,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                         ))}
                       </div>
                       {!formData.mealPreference && (
-                        <p className="text-xs text-gray-500 mt-1">Please select your meal preference</p>
+                        <p className="text-xs text-neutral-500 mt-1">Please select your meal preference</p>
                       )}
                     </div>
                   )}
@@ -262,9 +276,9 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                       type="checkbox"
                       checked={formData.subscribe}
                       onChange={(e) => setFormData({ ...formData, subscribe: e.target.checked })}
-                      className="mt-1 w-4 h-4 text-[#2563EB] border-gray-300 rounded focus:ring-[#2563EB]"
+                      className="mt-1 w-4 h-4 text-[#2563EB] border-neutral-300 rounded focus:ring-[#2563EB]"
                     />
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-neutral-600">
                       Send me the weekly drop — the best events in Singapore, every Wednesday.
                     </span>
                   </label>
@@ -297,7 +311,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                     )}
                   </button>
 
-                  <p className="text-xs text-center text-gray-400">
+                  <p className="text-xs text-center text-neutral-400">
                     We&apos;ll only email you about this event and our weekly newsletter.
                   </p>
                 </form>
@@ -307,30 +321,80 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Check className="w-8 h-8 text-green-600" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">You&apos;re in!</h3>
-                  <p className="text-gray-600 mb-6">
-                    We&apos;ll send you a reminder before {event.name}.
-                  </p>
+                  <h3 className="text-xl font-bold text-neutral-900 mb-1">
+                    You&apos;re in for {event.name}! 🎉
+                  </h3>
 
-                  {/* Add to Calendar */}
+                  {/* Event Summary Card */}
+                  <div className="bg-neutral-50 rounded-xl p-4 my-4 text-left">
+                    <div className="flex items-center gap-2 text-sm text-neutral-600">
+                      <span>📅</span>
+                      <span>{event.day} · {event.time}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-neutral-500 mt-1">
+                      <span>📍</span>
+                      <span>{event.location}</span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
                   <div className="space-y-3">
                     <button
                       onClick={() => {
                         const calendarUrl = generateCalendarUrl()
                         window.open(calendarUrl, '_blank')
                       }}
-                      className="w-full py-3 border border-gray-200 rounded-xl font-medium hover:bg-gray-50 transition flex items-center justify-center gap-2"
+                      className="w-full py-3 border border-neutral-200 rounded-xl font-medium hover:bg-neutral-50 transition flex items-center justify-center gap-2"
                     >
                       <Calendar className="w-5 h-5" />
                       Add to Calendar
                     </button>
 
+                    {/* Reminder Notice */}
+                    <p className="text-sm text-neutral-500 flex items-center justify-center gap-2">
+                      <span>🔔</span>
+                      We&apos;ll remind you 24 hours before
+                    </p>
+
+                    {/* Community Link - Only show if host has one */}
+                    {event.communityLink && (
+                      <div className="pt-3 border-t border-neutral-100">
+                        <p className="text-sm text-neutral-600 mb-3">Join the community</p>
+                        <a
+                          href={event.communityLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`w-full py-3 rounded-xl font-medium transition flex items-center justify-center gap-2 text-white ${
+                            detectPlatform(event.communityLink) === 'whatsapp'
+                              ? 'bg-[#25D366] hover:bg-[#1da851]'
+                              : detectPlatform(event.communityLink) === 'telegram'
+                              ? 'bg-[#0088cc] hover:bg-[#0077b3]'
+                              : 'bg-blue-600 hover:bg-blue-700'
+                          }`}
+                        >
+                          <MessageCircle className="w-5 h-5" />
+                          {detectPlatform(event.communityLink) === 'whatsapp'
+                            ? 'Join WhatsApp Group'
+                            : detectPlatform(event.communityLink) === 'telegram'
+                            ? 'Join Telegram Group'
+                            : 'Join Community'}
+                        </a>
+                      </div>
+                    )}
+
                     <button
                       onClick={handleClose}
-                      className="w-full py-3 text-gray-500 hover:text-gray-700 transition"
+                      className="w-full py-3 bg-neutral-900 text-white rounded-xl font-medium hover:bg-neutral-800 transition"
                     >
                       Done
                     </button>
+
+                    <a
+                      href={`/my-events?email=${encodeURIComponent(formData.email)}`}
+                      className="block text-sm text-neutral-500 hover:text-neutral-900 transition"
+                    >
+                      View all my events &rarr;
+                    </a>
                   </div>
                 </div>
               )}

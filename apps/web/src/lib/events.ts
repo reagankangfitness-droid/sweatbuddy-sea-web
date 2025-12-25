@@ -12,13 +12,24 @@ export interface Event {
   description: string | null
   organizer: string
   imageUrl: string | null
+  communityLink?: string | null
   recurring: boolean
   goingCount?: number
+  isFull?: boolean
+  // Pricing fields
+  isFree?: boolean
+  price?: number | null
+  paynowEnabled?: boolean
+  paynowQrCode?: string | null
+  paynowNumber?: string | null
+  paynowName?: string | null
+  stripeEnabled?: boolean
 }
 
 // Cached database fetch for events - revalidates every 60s
 const getCachedEvents = unstable_cache(
   async () => {
+    // Get approved events
     const approvedSubmissions = await prisma.eventSubmission.findMany({
       where: { status: 'APPROVED' },
       orderBy: { createdAt: 'desc' },
@@ -33,9 +44,22 @@ const getCachedEvents = unstable_cache(
         description: true,
         organizerInstagram: true,
         imageUrl: true,
+        communityLink: true,
         recurring: true,
+        isFull: true,
       },
     })
+
+    // Get attendance counts for all events in one query
+    const attendanceCounts = await prisma.eventAttendance.groupBy({
+      by: ['eventId'],
+      _count: { id: true },
+    })
+
+    // Create a map for quick lookup
+    const countMap = new Map(
+      attendanceCounts.map(item => [item.eventId, item._count.id])
+    )
 
     return approvedSubmissions.map(submission => ({
       id: submission.id,
@@ -48,7 +72,10 @@ const getCachedEvents = unstable_cache(
       description: submission.description,
       organizer: submission.organizerInstagram,
       imageUrl: submission.imageUrl,
+      communityLink: submission.communityLink,
       recurring: submission.recurring,
+      isFull: submission.isFull,
+      goingCount: countMap.get(submission.id) || 0,
     }))
   },
   ['events-list-home'],
@@ -64,54 +91,68 @@ export async function getEvents(): Promise<Event[]> {
   }
 }
 
-// Cached single event fetch - used for OG metadata generation
-export const getEventById = async (id: string): Promise<Event | null> => {
-  return unstable_cache(
-    async () => {
-      try {
-        const submission = await prisma.eventSubmission.findFirst({
-          where: {
-            id: id,
-            status: 'APPROVED'
-          },
-          select: {
-            id: true,
-            eventName: true,
-            category: true,
-            day: true,
-            eventDate: true,
-            time: true,
-            location: true,
-            description: true,
-            organizerInstagram: true,
-            imageUrl: true,
-            recurring: true,
-          },
-        })
+// Fetch single event by ID - no caching for dynamic rendering
+export async function getEventById(id: string): Promise<Event | null> {
+  try {
+    const submission = await prisma.eventSubmission.findFirst({
+      where: {
+        id: id,
+        status: 'APPROVED'
+      },
+      select: {
+        id: true,
+        eventName: true,
+        category: true,
+        day: true,
+        eventDate: true,
+        time: true,
+        location: true,
+        description: true,
+        organizerInstagram: true,
+        imageUrl: true,
+        communityLink: true,
+        recurring: true,
+        isFull: true,
+        // Pricing fields
+        isFree: true,
+        price: true,
+        paynowEnabled: true,
+        paynowQrCode: true,
+        paynowNumber: true,
+        paynowName: true,
+        stripeEnabled: true,
+      },
+    })
 
-        if (submission) {
-          return {
-            id: submission.id,
-            name: submission.eventName,
-            category: submission.category,
-            day: submission.day,
-            eventDate: submission.eventDate?.toISOString().split('T')[0] || null,
-            time: submission.time,
-            location: submission.location,
-            description: submission.description,
-            organizer: submission.organizerInstagram,
-            imageUrl: submission.imageUrl,
-            recurring: submission.recurring,
-          }
-        }
-
-        return null
-      } catch (error) {
-        console.error('Error fetching event by ID:', error)
-        return null
+    if (submission) {
+      return {
+        id: submission.id,
+        name: submission.eventName,
+        category: submission.category,
+        day: submission.day,
+        eventDate: submission.eventDate?.toISOString().split('T')[0] || null,
+        time: submission.time,
+        location: submission.location,
+        description: submission.description,
+        organizer: submission.organizerInstagram,
+        imageUrl: submission.imageUrl,
+        communityLink: submission.communityLink,
+        recurring: submission.recurring,
+        isFull: submission.isFull,
+        // Pricing fields
+        isFree: submission.isFree,
+        price: submission.price,
+        paynowEnabled: submission.paynowEnabled,
+        paynowQrCode: submission.paynowQrCode,
+        paynowNumber: submission.paynowNumber,
+        paynowName: submission.paynowName,
+        stripeEnabled: submission.stripeEnabled,
       }
-    },
-    [`event-${id}`],
-    { revalidate: 60, tags: ['events', `event-${id}`] }
-  )()
+    }
+
+    return null
+  } catch (error) {
+    console.error('Error fetching event by ID:', error)
+    return null
+  }
 }

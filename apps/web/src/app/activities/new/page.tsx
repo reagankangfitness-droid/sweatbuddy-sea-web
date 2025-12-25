@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { GoogleMap, LoadScript, Marker, Autocomplete } from '@react-google-maps/api'
 import { toast } from 'sonner'
+import { useUser } from '@clerk/nextjs'
 import { Header } from '@/components/header'
 import { Button } from '@/components/ui/button'
 import { useUploadThing } from '@/lib/uploadthing'
@@ -64,15 +65,24 @@ const LIBRARIES: ('places')[] = ['places']
 
 export default function NewActivityPage() {
   const router = useRouter()
+  const { isLoaded, isSignedIn, user } = useUser()
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER)
   const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null)
   const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
+  const [organizerInstagram, setOrganizerInstagram] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { startUpload } = useUploadThing("activityImage")
+
+  // Redirect to sign-in if not authenticated
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push('/sign-in?redirect_url=/activities/new')
+    }
+  }, [isLoaded, isSignedIn, router])
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldOnChange: (url: string) => void) => {
     const file = e.target.files?.[0]
@@ -221,29 +231,92 @@ export default function NewActivityPage() {
 
     try {
       const data = form.getValues()
-      // Include timezone offset so the server can properly convert datetime-local to UTC
-      // getTimezoneOffset() returns minutes, negative for east of UTC (e.g., -480 for UTC+8)
-      const timezoneOffset = new Date().getTimezoneOffset()
-      const response = await fetch('/api/activities', {
+
+      // Extract date and time from startTime (format: "2024-01-15T10:00")
+      let eventDate: string | undefined
+      let time = ''
+      let day = ''
+
+      if (data.startTime) {
+        const startDate = new Date(data.startTime)
+        eventDate = startDate.toISOString().split('T')[0] // YYYY-MM-DD
+
+        // Format time as HH:MM AM/PM
+        const hours = startDate.getHours()
+        const minutes = startDate.getMinutes()
+        const ampm = hours >= 12 ? 'PM' : 'AM'
+        const formattedHours = hours % 12 || 12
+        time = `${formattedHours}:${minutes.toString().padStart(2, '0')} ${ampm}`
+
+        // Get day of week
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        day = days[startDate.getDay()]
+      } else {
+        // If no specific date, default to today
+        day = new Date().toLocaleDateString('en-US', { weekday: 'long' })
+        time = 'TBD'
+      }
+
+      // Get category name from slug
+      const category = data.categorySlug ? getCategoryBySlug(data.categorySlug) : null
+      const categoryName = category?.name || data.categorySlug || 'Other'
+
+      // Map to EventSubmission format
+      const eventSubmissionData = {
+        eventName: data.title,
+        category: categoryName,
+        day,
+        eventDate,
+        time,
+        recurring: false, // Dashboard submissions are for specific events
+        location: data.address || data.city,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        placeId: data.placeId,
+        description: data.description,
+        imageUrl: data.imageUrl,
+        organizerName: user?.fullName || user?.firstName || 'Event Organizer',
+        organizerInstagram: organizerInstagram || user?.username || '',
+        contactEmail: user?.primaryEmailAddress?.emailAddress || '',
+        // Pricing
+        isFree: !data.price || data.price === 0,
+        price: data.price ? Math.round(data.price * 100) : null, // Convert to cents
+      }
+
+      const response = await fetch('/api/submit-event', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...data, timezoneOffset }),
+        body: JSON.stringify(eventSubmissionData),
       })
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.error || 'Failed to create activity')
+        throw new Error(error.error || 'Failed to submit event')
       }
 
       toast.success('Event submitted for review! You will be notified once it is approved (typically within 24 hours).')
-      router.push('/dashboard')
+      router.push('/host/dashboard')
     } catch (error) {
-      console.error('Error creating activity:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to create activity')
+      console.error('Error submitting event:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to submit event')
       setIsSubmitting(false)
     }
+  }
+
+  // Show loading while checking auth
+  if (!isLoaded) {
+    return (
+      <>
+        <Header />
+        <main className="container mx-auto p-8">
+          <div className="max-w-2xl mx-auto flex items-center justify-center py-20">
+            <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
+          </div>
+        </main>
+      </>
+    )
   }
 
   if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === 'YOUR_GOOGLE_MAPS_API_KEY') {
@@ -498,6 +571,54 @@ export default function NewActivityPage() {
                   />
                 </div>
 
+                {/* Organizer Info Section */}
+                <div className="border-t pt-6 mt-6">
+                  <h3 className="text-lg font-medium mb-4">Organizer Information</h3>
+
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm font-medium">Your Name</label>
+                        <Input
+                          value={user?.fullName || user?.firstName || ''}
+                          disabled
+                          className="mt-1.5 bg-muted"
+                        />
+                        <p className="text-sm text-muted-foreground mt-1">
+                          From your account profile
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium">Email</label>
+                        <Input
+                          value={user?.primaryEmailAddress?.emailAddress || ''}
+                          disabled
+                          className="mt-1.5 bg-muted"
+                        />
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Where attendees can reach you
+                        </p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-medium">Instagram Handle *</label>
+                      <div className="relative mt-1.5">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">@</span>
+                        <Input
+                          placeholder="yourusername"
+                          value={organizerInstagram}
+                          onChange={(e) => setOrganizerInstagram(e.target.value.replace(/^@/, ''))}
+                          className="pl-8"
+                        />
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Your Instagram handle for attendees to find and follow you
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 <FormField
                   control={form.control}
                   name="address"
@@ -557,10 +678,15 @@ export default function NewActivityPage() {
                   >
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={isSubmitting || !markerPosition}>
+                  <Button type="submit" disabled={isSubmitting || !markerPosition || !organizerInstagram}>
                     {isSubmitting ? 'Submitting...' : 'Submit Event'}
                   </Button>
                 </div>
+                {!organizerInstagram && (
+                  <p className="text-sm text-amber-600">
+                    Please enter your Instagram handle above to submit.
+                  </p>
+                )}
               </form>
             </Form>
           </LoadScript>
@@ -589,16 +715,23 @@ export default function NewActivityPage() {
                   })()}
                 </div>
                 <div>
-                  <strong>City:</strong> {form.getValues('city')}
+                  <strong>Location:</strong> {form.getValues('address') || form.getValues('city')}
                 </div>
+                {form.getValues('startTime') && (
+                  <div>
+                    <strong>Date/Time:</strong> {new Date(form.getValues('startTime')).toLocaleString()}
+                  </div>
+                )}
                 {form.getValues('description') && (
                   <div>
                     <strong>Description:</strong> {form.getValues('description')}
                   </div>
                 )}
+                <div className="border-t pt-2 mt-2">
+                  <strong>Organizer:</strong> {user?.fullName || user?.firstName} (@{organizerInstagram})
+                </div>
                 <div>
-                  <strong>Location:</strong> {form.getValues('latitude').toFixed(4)},{' '}
-                  {form.getValues('longitude').toFixed(4)}
+                  <strong>Contact:</strong> {user?.primaryEmailAddress?.emailAddress}
                 </div>
               </div>
               {/* Approval Notice */}

@@ -85,16 +85,16 @@ export default function SavedPage() {
   }
 
   return (
-    <div className="min-h-screen bg-sand">
+    <div className="min-h-screen bg-neutral-50">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-sand/95 backdrop-blur-lg border-b border-forest-200">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center gap-4 px-4 py-3">
             <Link
               href="/"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-cream border border-forest-200"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
             >
-              <ArrowLeft className="w-5 h-5 text-forest-700" />
+              <ArrowLeft className="w-5 h-5 text-neutral-700" />
             </Link>
             <div>
               <h1 className="text-display-card">Saved Events</h1>
@@ -109,20 +109,20 @@ export default function SavedPage() {
         {isLoading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse bg-cream rounded-2xl border border-forest-100 shadow-card p-4 flex gap-4">
-                <div className="w-20 h-20 bg-sand/50 rounded-xl" />
+              <div key={i} className="animate-pulse bg-white rounded-2xl border border-neutral-100 shadow-card p-4 flex gap-4">
+                <div className="w-20 h-20 bg-neutral-50/50 rounded-xl" />
                 <div className="flex-1">
-                  <div className="h-4 bg-coral/20 rounded w-1/4 mb-2" />
-                  <div className="h-5 bg-forest-100 rounded w-3/4 mb-2" />
-                  <div className="h-4 bg-forest-50 rounded w-1/2" />
+                  <div className="h-4 bg-neutral-900/20 rounded w-1/4 mb-2" />
+                  <div className="h-5 bg-neutral-100 rounded w-3/4 mb-2" />
+                  <div className="h-4 bg-neutral-50 rounded w-1/2" />
                 </div>
               </div>
             ))}
           </div>
         ) : savedEvents.length === 0 ? (
           <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-cream rounded-2xl border border-forest-100 shadow-card mb-6">
-              <Heart className="w-10 h-10 text-forest-300" />
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl border border-neutral-100 shadow-card mb-6">
+              <Heart className="w-10 h-10 text-neutral-300" />
             </div>
             <h2 className="text-display-section mb-2">No saved events yet</h2>
             <p className="text-body-default mb-6">
@@ -130,7 +130,8 @@ export default function SavedPage() {
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-coral text-white px-6 py-3 text-ui-lg font-semibold rounded-full shadow-md hover:bg-coral-600 transition-colors"
+              className="inline-flex items-center gap-2 bg-neutral-900 px-6 py-3 text-base font-semibold rounded-full shadow-md hover:bg-neutral-700 transition-colors"
+              style={{ color: '#FFFFFF' }}
             >
               Browse Events
             </Link>
@@ -140,10 +141,10 @@ export default function SavedPage() {
             {savedEvents.map((event) => (
               <div
                 key={event.id}
-                className="bg-cream rounded-2xl border border-forest-100 shadow-card flex gap-4 p-4"
+                className="bg-white rounded-2xl border border-neutral-100 shadow-card flex gap-4 p-4"
               >
                 {/* Image */}
-                <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-sand relative rounded-xl">
+                <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-neutral-50 relative rounded-xl">
                   {event.imageUrl ? (
                     <Image
                       src={event.imageUrl}
@@ -160,18 +161,18 @@ export default function SavedPage() {
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <span className="text-label-sm text-forest-500">
+                  <span className="text-label-sm text-neutral-500">
                     {event.category.toUpperCase()}
                   </span>
                   <h3 className="text-display-card text-base line-clamp-1 mt-0.5">
                     {event.name}
                   </h3>
-                  <div className="flex items-center gap-1 text-sm text-forest-600 mt-1">
-                    <Calendar className="w-3.5 h-3.5 text-forest-400" />
+                  <div className="flex items-center gap-1 text-sm text-neutral-600 mt-1">
+                    <Calendar className="w-3.5 h-3.5 text-neutral-400" />
                     <span>{event.day} • {event.time}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-forest-400 mt-1">
-                    <MapPin className="w-3 h-3 text-forest-300" />
+                  <div className="flex items-center gap-1 text-xs text-neutral-400 mt-1">
+                    <MapPin className="w-3 h-3 text-neutral-300" />
                     <span className="line-clamp-1">{event.location}</span>
                   </div>
                 </div>
@@ -179,7 +180,7 @@ export default function SavedPage() {
                 {/* Remove button - neutral, coral on hover */}
                 <button
                   onClick={() => handleRemove(event.id)}
-                  className="flex-shrink-0 w-10 h-10 flex items-center justify-center text-forest-400 hover:text-coral hover:bg-coral/10 rounded-full transition-colors"
+                  className="flex-shrink-0 w-10 h-10 flex items-center justify-center text-neutral-400 hover:text-neutral-900 hover:bg-neutral-900/10 rounded-full transition-colors"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>

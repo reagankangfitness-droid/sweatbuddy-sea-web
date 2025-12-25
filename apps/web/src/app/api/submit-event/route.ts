@@ -14,9 +14,18 @@ interface EventSubmission {
   placeId?: string
   description?: string
   imageUrl?: string
+  communityLink?: string | null
   organizerName: string
   organizerInstagram: string
   contactEmail: string
+  // Pricing fields
+  isFree?: boolean
+  price?: number | null // Amount in cents
+  paynowEnabled?: boolean
+  paynowQrCode?: string | null
+  paynowNumber?: string | null
+  paynowName?: string | null
+  stripeEnabled?: boolean
 }
 
 export async function POST(request: Request) {
@@ -79,10 +88,19 @@ export async function POST(request: Request) {
         placeId: data.placeId || null,
         description: data.description || null,
         imageUrl: data.imageUrl || null,
+        communityLink: data.communityLink || null,
         organizerName: data.organizerName,
         organizerInstagram: cleanInstagram,
         contactEmail: data.contactEmail,
         status: 'PENDING',
+        // Pricing fields
+        isFree: data.isFree ?? true,
+        price: data.price || null,
+        paynowEnabled: data.paynowEnabled ?? false,
+        paynowQrCode: data.paynowQrCode || null,
+        paynowNumber: data.paynowNumber || null,
+        paynowName: data.paynowName || null,
+        stripeEnabled: data.stripeEnabled ?? false,
       },
     })
 

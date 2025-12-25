@@ -65,19 +65,32 @@ export function DirectChatWindow({
 
   // Fetch messages
   const fetchMessages = async () => {
-    if (!userEmail) return
+    if (!userEmail) {
+      setError('Please register for this event first to chat with the organizer')
+      setIsLoading(false)
+      return
+    }
 
     try {
       const response = await fetch(
         `/api/events/${eventId}/dm?email=${encodeURIComponent(userEmail)}`
       )
-      if (response.ok) {
-        const data = await response.json()
-        setOrganizerRegistered(data.organizerRegistered)
-        setMessages(data.messages || [])
+      const data = await response.json()
+
+      if (!response.ok) {
+        // Handle "not an attendee" error
+        if (response.status === 403) {
+          setError(data.error || 'Only attendees can message the organizer')
+        }
+        return
       }
+
+      setOrganizerRegistered(data.organizerRegistered)
+      setMessages(data.messages || [])
+      setError('') // Clear any previous errors
     } catch (err) {
       console.error('Failed to fetch messages:', err)
+      setError('Failed to load messages')
     } finally {
       setIsLoading(false)
     }
@@ -194,28 +207,40 @@ export function DirectChatWindow({
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-neutral-50">
             {isLoading ? (
               <div className="flex items-center justify-center h-full">
-                <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
+              </div>
+            ) : error && error.includes('attendee') ? (
+              <div className="flex flex-col items-center justify-center h-full text-neutral-500 px-4">
+                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4">
+                  <MessageCircle className="w-8 h-8 text-red-300" />
+                </div>
+                <p className="text-center text-sm text-red-600 mb-2">
+                  {error}
+                </p>
+                <p className="text-xs text-neutral-400 text-center">
+                  Click &quot;I&apos;m Going&quot; first to chat with the organizer
+                </p>
               </div>
             ) : !organizerRegistered ? (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500 px-4">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <MessageCircle className="w-8 h-8 text-gray-300" />
+              <div className="flex flex-col items-center justify-center h-full text-neutral-500 px-4">
+                <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
+                  <MessageCircle className="w-8 h-8 text-neutral-300" />
                 </div>
                 <p className="text-center text-sm mb-2">
                   The organizer hasn&apos;t set up their messaging yet.
                 </p>
-                <p className="text-xs text-gray-400 text-center">
+                <p className="text-xs text-neutral-400 text-center">
                   You can contact them via Instagram @{organizerHandle}
                 </p>
               </div>
             ) : messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                <MessageCircle className="w-12 h-12 mb-3 text-gray-300" />
+              <div className="flex flex-col items-center justify-center h-full text-neutral-500">
+                <MessageCircle className="w-12 h-12 mb-3 text-neutral-300" />
                 <p className="text-sm">No messages yet</p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-neutral-400">
                   Send a message to @{organizerHandle}
                 </p>
               </div>
@@ -232,7 +257,7 @@ export function DirectChatWindow({
                     <div key={msg.id}>
                       {showDate && (
                         <div className="flex justify-center my-3">
-                          <span className="text-xs text-gray-400 bg-white px-3 py-1 rounded-full shadow-sm">
+                          <span className="text-xs text-neutral-400 bg-white px-3 py-1 rounded-full shadow-sm">
                             {formatDate(msg.createdAt)}
                           </span>
                         </div>
@@ -253,7 +278,7 @@ export function DirectChatWindow({
                           }`}
                         >
                           {!isOwnMessage && (
-                            <p className="text-xs text-gray-500 mb-1 ml-1">
+                            <p className="text-xs text-neutral-500 mb-1 ml-1">
                               @{organizerHandle}
                             </p>
                           )}
@@ -261,7 +286,7 @@ export function DirectChatWindow({
                             className={`px-3 py-2 rounded-2xl ${
                               isOwnMessage
                                 ? 'bg-[#1800ad] text-white rounded-br-md'
-                                : 'bg-white text-gray-800 shadow-sm rounded-bl-md'
+                                : 'bg-white text-neutral-800 shadow-sm rounded-bl-md'
                             }`}
                           >
                             <p className="text-sm whitespace-pre-wrap break-words">
@@ -269,7 +294,7 @@ export function DirectChatWindow({
                             </p>
                           </div>
                           <p
-                            className={`text-[10px] text-gray-400 mt-1 ${
+                            className={`text-[10px] text-neutral-400 mt-1 ${
                               isOwnMessage ? 'text-right mr-1' : 'ml-1'
                             }`}
                           >
@@ -285,8 +310,8 @@ export function DirectChatWindow({
             )}
           </div>
 
-          {/* Input */}
-          {organizerRegistered && (
+          {/* Input - hide when user is not an attendee */}
+          {organizerRegistered && !(error && error.includes('attendee')) && (
             <form onSubmit={handleSend} className="p-4 border-t bg-white">
               {error && <p className="text-red-500 text-xs mb-2">{error}</p>}
               <div className="flex gap-2">
@@ -296,7 +321,7 @@ export function DirectChatWindow({
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Type a message..."
                   maxLength={500}
-                  className="flex-1 px-4 py-2.5 border border-gray-200 rounded-full focus:ring-2 focus:ring-[#1800ad] focus:border-transparent outline-none text-sm"
+                  className="flex-1 px-4 py-2.5 border border-neutral-200 rounded-full focus:ring-2 focus:ring-[#1800ad] focus:border-transparent outline-none text-sm"
                 />
                 <button
                   type="submit"

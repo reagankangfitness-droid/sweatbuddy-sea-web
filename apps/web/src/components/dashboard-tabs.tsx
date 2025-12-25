@@ -65,11 +65,11 @@ export function DashboardTabs({
                 key={tab.id}
                 onClick={() => setMainTab(tab.id)}
                 className={`
-                  inline-flex items-center gap-2 px-5 py-3 rounded-xl font-heading font-semibold text-sm
-                  transition-all duration-300
+                  inline-flex items-center gap-2 px-5 py-3 rounded-xl font-sans font-semibold text-sm
+                  transition-all duration-200
                   ${isActive
-                    ? 'bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white shadow-lg shadow-blue-500/25'
-                    : 'bg-[#F0F9FF] text-[#0A1628]/70 hover:bg-[#e0f2fe] hover:text-[#0A1628]'
+                    ? 'bg-neutral-900 text-white'
+                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900'
                   }
                 `}
               >
@@ -85,15 +85,15 @@ export function DashboardTabs({
       {mainTab !== 'stats' && (
         <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center mb-8">
           {/* Time Sub-tabs */}
-          <div className="inline-flex rounded-xl bg-[#F0F9FF] p-1.5 shadow-inner">
+          <div className="inline-flex rounded-xl bg-neutral-100 p-1.5">
             <button
               onClick={() => setTimeTab('upcoming')}
               className={`
-                px-5 py-2.5 rounded-lg font-heading font-semibold text-sm
-                transition-all duration-300
+                px-5 py-2.5 rounded-lg font-sans font-semibold text-sm
+                transition-all duration-200
                 ${timeTab === 'upcoming'
-                  ? 'bg-white text-[#0A1628] shadow-md'
-                  : 'text-[#0A1628]/60 hover:text-[#0A1628]'
+                  ? 'bg-white text-neutral-900 shadow-sm'
+                  : 'text-neutral-500 hover:text-neutral-900'
                 }
               `}
             >
@@ -102,11 +102,11 @@ export function DashboardTabs({
             <button
               onClick={() => setTimeTab('past')}
               className={`
-                px-5 py-2.5 rounded-lg font-heading font-semibold text-sm
-                transition-all duration-300
+                px-5 py-2.5 rounded-lg font-sans font-semibold text-sm
+                transition-all duration-200
                 ${timeTab === 'past'
-                  ? 'bg-white text-[#0A1628] shadow-md'
-                  : 'text-[#0A1628]/60 hover:text-[#0A1628]'
+                  ? 'bg-white text-neutral-900 shadow-sm'
+                  : 'text-neutral-500 hover:text-neutral-900'
                 }
               `}
             >
@@ -117,7 +117,7 @@ export function DashboardTabs({
           {/* Action Button (only show for Hosting tab) */}
           {mainTab === 'hosting' && (
             <Link href="/activities/new" className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white font-heading font-bold text-sm rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-300 hover:-translate-y-0.5">
+              <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-neutral-900 text-white font-sans font-semibold text-sm rounded-xl hover:bg-neutral-700 transition-all duration-200 active:scale-[0.98]">
                 <Plus className="w-4 h-4" />
                 Host an Activity
               </button>
@@ -181,17 +181,17 @@ function EmptyState({
 }) {
   return (
     <div className="text-center py-16 px-4">
-      <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-[#F0F9FF] to-[#e0f2fe] flex items-center justify-center">
-        <Calendar className="w-10 h-10 text-[#2563EB]" />
+      <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-neutral-100 flex items-center justify-center">
+        <Calendar className="w-10 h-10 text-neutral-400" />
       </div>
-      <h3 className="font-heading font-bold text-xl text-[#0A1628] mb-2">
+      <h3 className="font-sans font-semibold text-xl text-neutral-900 mb-2">
         {title}
       </h3>
-      <p className="font-body text-[#0A1628]/60 mb-6 max-w-sm mx-auto">
+      <p className="font-sans text-neutral-500 mb-6 max-w-sm mx-auto">
         {description}
       </p>
       <Link href={actionHref}>
-        <button className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#2563EB] to-[#1D4ED8] text-white font-heading font-bold text-sm rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-300 hover:-translate-y-0.5">
+        <button className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-neutral-900 text-white font-sans font-semibold text-sm rounded-xl hover:bg-neutral-700 transition-all duration-200 active:scale-[0.98]">
           {actionLabel}
         </button>
       </Link>

@@ -30,9 +30,9 @@ export function CategoryBadge({
           size === 'small' && 'text-[10px] px-1.5 py-0.5',
           size === 'medium' && 'text-xs px-2 py-1',
           size === 'large' && 'text-sm px-3 py-1.5',
-          variant === 'default' && 'bg-gray-100 text-gray-600',
-          variant === 'filled' && 'bg-gray-500 text-white',
-          variant === 'outline' && 'border border-gray-300 text-gray-600',
+          variant === 'default' && 'bg-neutral-100 text-neutral-600',
+          variant === 'filled' && 'bg-neutral-500 text-white',
+          variant === 'outline' && 'border border-neutral-300 text-neutral-600',
           className
         )}
       >
@@ -94,7 +94,7 @@ export function CategoryPill({
     return (
       <span
         className={cn(
-          'inline-flex items-center gap-1 text-xs font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full',
+          'inline-flex items-center gap-1 text-xs font-medium text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded-full',
           className
         )}
       >

@@ -19,14 +19,25 @@ interface CreateActivityDto {
   description?: string
   type: 'RUN' | 'GYM' | 'YOGA' | 'HIKE' | 'CYCLING' | 'OTHER'
   city: string
+  address?: string
   latitude: number
   longitude: number
   startTime?: string
   endTime?: string
   maxPeople?: number
   imageUrl?: string
+  // Pricing fields
+  isFree?: boolean
   price?: number
   currency?: string
+  // PayNow fields
+  paynowEnabled?: boolean
+  paynowNumber?: string
+  paynowName?: string
+  paynowQrCode?: string
+  // Stripe fields
+  stripeEnabled?: boolean
+  stripePriceId?: string
   status?: 'DRAFT' | 'PUBLISHED' | 'CANCELLED' | 'COMPLETED'
 }
 
@@ -66,14 +77,25 @@ export class ActivityController {
       description: data.description,
       type: data.type,
       city: data.city,
+      address: data.address,
       latitude: data.latitude,
       longitude: data.longitude,
       startTime: data.startTime ? new Date(data.startTime) : undefined,
       endTime: data.endTime ? new Date(data.endTime) : undefined,
       maxPeople: data.maxPeople,
       imageUrl: data.imageUrl,
+      // Pricing fields
+      isFree: data.isFree,
       price: data.price,
       currency: data.currency,
+      // PayNow fields
+      paynowEnabled: data.paynowEnabled,
+      paynowNumber: data.paynowNumber,
+      paynowName: data.paynowName,
+      paynowQrCode: data.paynowQrCode,
+      // Stripe fields
+      stripeEnabled: data.stripeEnabled,
+      stripePriceId: data.stripePriceId,
       status: data.status,
     }
 
@@ -104,27 +126,5 @@ export class ActivityController {
     await this.activityService.remove(id)
   }
 
-  @Post(':id/join')
-  @HttpCode(HttpStatus.CREATED)
-  async join(
-    @Param('id') activityId: string,
-    @Headers('x-user-id') userId?: string,
-  ) {
-    if (!userId) {
-      throw new UnauthorizedException('User ID is required')
-    }
-    return this.activityService.joinActivity(activityId, userId)
-  }
-
-  @Delete(':id/join')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async leave(
-    @Param('id') activityId: string,
-    @Headers('x-user-id') userId?: string,
-  ): Promise<void> {
-    if (!userId) {
-      throw new UnauthorizedException('User ID is required')
-    }
-    await this.activityService.leaveActivity(activityId, userId)
-  }
+  // TODO: Add join and leave endpoints when UserActivity model is added to schema
 }

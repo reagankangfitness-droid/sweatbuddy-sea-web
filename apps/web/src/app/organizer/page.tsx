@@ -107,24 +107,24 @@ export default function OrganizerPage() {
 
   if (isCheckingSession) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-sand">
-        <Loader2 className="w-8 h-8 animate-spin text-coral" />
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-900" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-sand">
+    <div className="min-h-screen bg-neutral-50">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-cream/95 backdrop-blur-lg border-b border-forest-200">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Logo size={24} />
-            <span className="font-display font-semibold text-lg text-forest-900">SweatBuddies</span>
+            <span className="font-sans font-semibold text-lg text-neutral-900">SweatBuddies</span>
           </Link>
           <Link
             href="/"
-            className="text-ui text-forest-600 hover:text-coral transition-colors"
+            className="text-ui text-neutral-600 hover:text-neutral-900 transition-colors"
           >
             Back to Events
           </Link>
@@ -138,7 +138,7 @@ export default function OrganizerPage() {
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="font-display text-display-lg md:text-display-xl text-forest-900 mb-4"
+              className="font-sans text-display-lg md:text-display-xl text-neutral-900 mb-4"
             >
               Organizer Dashboard
             </motion.h1>
@@ -146,7 +146,7 @@ export default function OrganizerPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-body-lg text-forest-600 max-w-2xl mx-auto"
+              className="text-body-lg text-neutral-600 max-w-2xl mx-auto"
             >
               Manage your events, connect with attendees, and grow your fitness community
             </motion.p>
@@ -160,42 +160,42 @@ export default function OrganizerPage() {
               transition={{ delay: 0.2 }}
               className="space-y-6"
             >
-              <div className="bg-cream rounded-2xl p-6 shadow-card border border-forest-100">
+              <div className="bg-white rounded-2xl p-6 shadow-card border border-neutral-100">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-coral/10 flex items-center justify-center flex-shrink-0">
-                    <Calendar className="w-6 h-6 text-coral" />
+                  <div className="w-12 h-12 rounded-xl bg-neutral-900/10 flex items-center justify-center flex-shrink-0">
+                    <Calendar className="w-6 h-6 text-neutral-900" />
                   </div>
                   <div>
-                    <h3 className="font-display font-semibold text-forest-900 mb-1">View Your Events</h3>
-                    <p className="text-body-small text-forest-600">
+                    <h3 className="font-sans font-semibold text-neutral-900 mb-1">View Your Events</h3>
+                    <p className="text-body-small text-neutral-600">
                       See all events you&apos;re organizing with attendance counts and details
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-cream rounded-2xl p-6 shadow-card border border-forest-100">
+              <div className="bg-white rounded-2xl p-6 shadow-card border border-neutral-100">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-teal/10 flex items-center justify-center flex-shrink-0">
-                    <Users className="w-6 h-6 text-teal" />
+                  <div className="w-12 h-12 rounded-xl bg-neutral-900/10 flex items-center justify-center flex-shrink-0">
+                    <Users className="w-6 h-6 text-neutral-900" />
                   </div>
                   <div>
-                    <h3 className="font-display font-semibold text-forest-900 mb-1">Manage Attendees</h3>
-                    <p className="text-body-small text-forest-600">
+                    <h3 className="font-sans font-semibold text-neutral-900 mb-1">Manage Attendees</h3>
+                    <p className="text-body-small text-neutral-600">
                       View who&apos;s signed up for your events and their contact information
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-cream rounded-2xl p-6 shadow-card border border-forest-100">
+              <div className="bg-white rounded-2xl p-6 shadow-card border border-neutral-100">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-ocean/10 flex items-center justify-center flex-shrink-0">
-                    <MessageCircle className="w-6 h-6 text-ocean" />
+                  <div className="w-12 h-12 rounded-xl bg-neutral-900/10 flex items-center justify-center flex-shrink-0">
+                    <MessageCircle className="w-6 h-6 text-neutral-900" />
                   </div>
                   <div>
-                    <h3 className="font-display font-semibold text-forest-900 mb-1">Direct Messaging</h3>
-                    <p className="text-body-small text-forest-600">
+                    <h3 className="font-sans font-semibold text-neutral-900 mb-1">Direct Messaging</h3>
+                    <p className="text-body-small text-neutral-600">
                       Chat directly with attendees to answer questions and share updates
                     </p>
                   </div>
@@ -208,40 +208,42 @@ export default function OrganizerPage() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-cream rounded-2xl p-8 shadow-card border border-forest-100"
+              className="bg-white rounded-2xl p-8 shadow-card border border-neutral-100"
             >
               {/* Tabs */}
               <div className="flex gap-4 mb-6">
                 <button
                   onClick={() => { setMode('login'); setError(''); setSuccess('') }}
-                  className={`flex-1 py-2.5 text-ui font-medium rounded-full transition ${
+                  className={`flex-1 py-2.5 text-sm font-medium rounded-full transition ${
                     mode === 'login'
-                      ? 'bg-coral text-white shadow-md'
-                      : 'bg-forest-100 text-forest-600 hover:bg-forest-200'
+                      ? 'bg-neutral-900 shadow-md'
+                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                   }`}
+                  style={mode === 'login' ? { color: '#FFFFFF' } : undefined}
                 >
                   Login
                 </button>
                 <button
                   onClick={() => { setMode('register'); setError(''); setSuccess('') }}
-                  className={`flex-1 py-2.5 text-ui font-medium rounded-full transition ${
+                  className={`flex-1 py-2.5 text-sm font-medium rounded-full transition ${
                     mode === 'register'
-                      ? 'bg-coral text-white shadow-md'
-                      : 'bg-forest-100 text-forest-600 hover:bg-forest-200'
+                      ? 'bg-neutral-900 shadow-md'
+                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                   }`}
+                  style={mode === 'register' ? { color: '#FFFFFF' } : undefined}
                 >
                   Register
                 </button>
               </div>
 
               {error && (
-                <div className="mb-4 p-3 bg-coral/10 border border-coral/20 rounded-xl text-coral text-body-small">
+                <div className="mb-4 p-3 bg-neutral-900/10 border border-neutral-900/20 rounded-xl text-neutral-900 text-body-small">
                   {error}
                 </div>
               )}
 
               {success && (
-                <div className="mb-4 p-3 bg-teal/10 border border-teal/20 rounded-xl text-teal text-body-small">
+                <div className="mb-4 p-3 bg-neutral-900/10 border border-neutral-900/20 rounded-xl text-neutral-900 text-body-small">
                   {success}
                 </div>
               )}
@@ -249,18 +251,18 @@ export default function OrganizerPage() {
               {mode === 'login' ? (
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div>
-                    <label className="block text-ui text-forest-700 mb-1.5">
+                    <label className="block text-ui text-neutral-700 mb-1.5">
                       Email Address
                     </label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-forest-400" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="you@example.com"
                         required
-                        className="w-full pl-10 pr-4 py-3 bg-sand border border-forest-200 rounded-xl focus:ring-2 focus:ring-coral/50 focus:border-coral outline-none text-forest-900 placeholder:text-forest-400"
+                        className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 outline-none text-neutral-900 placeholder:text-neutral-400"
                       />
                     </div>
                   </div>
@@ -268,7 +270,7 @@ export default function OrganizerPage() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full py-3 bg-coral text-white font-semibold rounded-full hover:bg-coral-600 transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-md"
+                    className="w-full py-3 bg-neutral-900 text-white font-semibold rounded-full hover:bg-neutral-900-600 transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-md"
                   >
                     {isLoading ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -280,14 +282,14 @@ export default function OrganizerPage() {
                     )}
                   </button>
 
-                  <p className="text-body-xs text-forest-500 text-center">
+                  <p className="text-body-xs text-neutral-500 text-center">
                     We&apos;ll send a magic link to your email
                   </p>
                 </form>
               ) : (
                 <form onSubmit={handleRegister} className="space-y-4">
                   <div>
-                    <label className="block text-ui text-forest-700 mb-1.5">
+                    <label className="block text-ui text-neutral-700 mb-1.5">
                       Your Name
                     </label>
                     <input
@@ -295,43 +297,43 @@ export default function OrganizerPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="John Doe"
-                      className="w-full px-4 py-3 bg-sand border border-forest-200 rounded-xl focus:ring-2 focus:ring-coral/50 focus:border-coral outline-none text-forest-900 placeholder:text-forest-400"
+                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 outline-none text-neutral-900 placeholder:text-neutral-400"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-ui text-forest-700 mb-1.5">
+                    <label className="block text-ui text-neutral-700 mb-1.5">
                       Instagram Handle
                     </label>
                     <div className="relative">
-                      <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-forest-400" />
+                      <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
                       <input
                         type="text"
                         value={instagramHandle}
                         onChange={(e) => setInstagramHandle(e.target.value)}
                         placeholder="yourhandle"
                         required
-                        className="w-full pl-10 pr-4 py-3 bg-sand border border-forest-200 rounded-xl focus:ring-2 focus:ring-coral/50 focus:border-coral outline-none text-forest-900 placeholder:text-forest-400"
+                        className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 outline-none text-neutral-900 placeholder:text-neutral-400"
                       />
                     </div>
-                    <p className="mt-1 text-body-xs text-forest-500">
+                    <p className="mt-1 text-body-xs text-neutral-500">
                       Must match the handle on your events
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-ui text-forest-700 mb-1.5">
+                    <label className="block text-ui text-neutral-700 mb-1.5">
                       Email Address
                     </label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-forest-400" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="you@example.com"
                         required
-                        className="w-full pl-10 pr-4 py-3 bg-sand border border-forest-200 rounded-xl focus:ring-2 focus:ring-coral/50 focus:border-coral outline-none text-forest-900 placeholder:text-forest-400"
+                        className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 outline-none text-neutral-900 placeholder:text-neutral-400"
                       />
                     </div>
                   </div>
@@ -339,7 +341,7 @@ export default function OrganizerPage() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full py-3 bg-coral text-white font-semibold rounded-full hover:bg-coral-600 transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-md"
+                    className="w-full py-3 bg-neutral-900 text-white font-semibold rounded-full hover:bg-neutral-900-600 transition disabled:opacity-50 flex items-center justify-center gap-2 shadow-md"
                   >
                     {isLoading ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -351,7 +353,7 @@ export default function OrganizerPage() {
                     )}
                   </button>
 
-                  <p className="text-body-xs text-forest-500 text-center">
+                  <p className="text-body-xs text-neutral-500 text-center">
                     By registering, you confirm you organize events with this Instagram handle
                   </p>
                 </form>

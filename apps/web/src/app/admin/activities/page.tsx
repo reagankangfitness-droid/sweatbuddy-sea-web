@@ -210,7 +210,7 @@ export default function AdminActivitiesPage() {
                               ? 'bg-yellow-100 text-yellow-800'
                               : activity.status === 'PUBLISHED'
                               ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-100 text-gray-800'
+                              : 'bg-neutral-100 text-neutral-800'
                           }`}>
                             {activity.status.replace('_', ' ')}
                           </span>

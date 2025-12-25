@@ -35,10 +35,10 @@ export function EventListCard({ event, onSelect }: Props) {
   return (
     <div
       onClick={() => onSelect(event)}
-      className="flex gap-4 p-4 bg-cream rounded-2xl border border-forest-100 shadow-card hover:shadow-card-hover active:scale-[0.98] transition-all cursor-pointer"
+      className="flex gap-4 p-4 bg-white rounded-2xl border border-neutral-100 shadow-card hover:shadow-card-hover active:scale-[0.98] transition-all cursor-pointer"
     >
       {/* Image */}
-      <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-sand relative rounded-xl">
+      <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-neutral-50 relative rounded-xl">
         {event.imageUrl ? (
           <Image
             src={event.imageUrl}
@@ -54,7 +54,7 @@ export function EventListCard({ event, onSelect }: Props) {
 
         {/* Weekly badge */}
         {event.recurring && (
-          <div className="absolute bottom-0 left-0 right-0 bg-ocean text-white text-[9px] font-medium py-0.5 text-center">
+          <div className="absolute bottom-0 left-0 right-0 bg-neutral-900 text-white text-[9px] font-medium py-0.5 text-center">
             WEEKLY
           </div>
         )}
@@ -63,29 +63,29 @@ export function EventListCard({ event, onSelect }: Props) {
       {/* Content */}
       <div className="flex-1 min-w-0">
         {/* Category */}
-        <span className="text-label-sm font-medium text-coral uppercase tracking-wide">
+        <span className="text-label-sm font-medium text-neutral-900 uppercase tracking-wide">
           {event.category}
         </span>
 
         {/* Title */}
-        <h3 className="font-display font-semibold text-display-card text-forest-900 line-clamp-1 mt-0.5">
+        <h3 className="font-sans font-semibold text-display-card text-neutral-900 line-clamp-1 mt-0.5">
           {event.name}
         </h3>
 
         {/* Time */}
-        <p className="text-body-small text-forest-600 mt-1 font-medium">
+        <p className="text-body-small text-neutral-600 mt-1 font-medium">
           {event.day} • {event.time}
         </p>
 
         {/* Location */}
-        <p className="text-meta-sm text-forest-400 mt-1 line-clamp-1">
+        <p className="text-meta-sm text-neutral-400 mt-1 line-clamp-1">
           📍 {event.location}
         </p>
       </div>
 
       {/* Arrow */}
       <div className="flex-shrink-0 flex items-center">
-        <span className="text-forest-300 text-xl font-bold">›</span>
+        <span className="text-neutral-300 text-xl font-bold">›</span>
       </div>
     </div>
   )

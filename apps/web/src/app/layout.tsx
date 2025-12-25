@@ -19,11 +19,11 @@ const BASE_URL = 'https://www.sweatbuddies.co'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'SweatBuddies - Discover Fitness Events in Singapore',
+    default: 'SweatBuddies — Discover Fitness Events in Singapore',
     template: '%s | SweatBuddies',
   },
-  description: 'Discover the best fitness events in Singapore. Run clubs, outdoor yoga, community bootcamps, and more—curated in one place.',
-  keywords: ['fitness events', 'Singapore', 'run club', 'yoga', 'bootcamp', 'outdoor fitness', 'free events', 'workout'],
+  description: 'Find run clubs, yoga, HIIT, cold plunge and more. No membership. Just show up.',
+  keywords: ['fitness events', 'Singapore', 'run club', 'yoga', 'bootcamp', 'outdoor fitness', 'open events', 'workout', 'HIIT', 'cold plunge'],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
   icons: {
@@ -36,22 +36,22 @@ export const metadata: Metadata = {
     locale: 'en_SG',
     url: BASE_URL,
     siteName: 'SweatBuddies',
-    title: 'SweatBuddies - Discover Fitness Events in Singapore',
-    description: 'Discover the best fitness events in Singapore. Run clubs, outdoor yoga, community bootcamps, and more—curated in one place.',
+    title: 'SweatBuddies — Discover Fitness Events in Singapore',
+    description: 'Find run clubs, yoga, HIIT, cold plunge and more. No membership. Just show up.',
     images: [
       {
-        url: '/api/og',
+        url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SweatBuddies - Free Fitness Events in Singapore',
+        alt: 'SweatBuddies — Discover Fitness Events in Singapore',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SweatBuddies - Discover Fitness Events in Singapore',
-    description: 'Discover the best fitness events in Singapore. Run clubs, outdoor yoga, community bootcamps, and more.',
-    images: ['/api/og'],
+    title: 'SweatBuddies — Discover Fitness Events in Singapore',
+    description: 'Find run clubs, yoga, HIIT, cold plunge and more. No membership. Just show up.',
+    images: ['/images/og-image.jpg'],
   },
   robots: {
     index: true,

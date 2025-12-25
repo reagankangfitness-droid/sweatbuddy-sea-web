@@ -60,6 +60,7 @@ export async function POST(request: Request) {
             organizer: staticEvent.organizer,
             imageUrl: staticEvent.imageUrl || null,
             recurring: staticEvent.recurring,
+            communityLink: (staticEvent as any).communityLink || null,
           },
         }
       }
@@ -84,6 +85,7 @@ export async function POST(request: Request) {
             organizer: submission.organizerInstagram,
             imageUrl: submission.imageUrl || null,
             recurring: submission.recurring,
+            communityLink: submission.communityLink || null,
           },
         }
       }

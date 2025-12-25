@@ -206,30 +206,30 @@ export default function OrganizerEventDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
         <Loader2 className="w-8 h-8 animate-spin text-[#3477f8]" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-white border-b border-neutral-200 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center gap-4">
           <Link
             href="/organizer/dashboard"
-            className="p-2 -ml-2 hover:bg-gray-100 rounded-lg transition"
+            className="p-2 -ml-2 hover:bg-neutral-100 rounded-lg transition"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <ArrowLeft className="w-5 h-5 text-neutral-600" />
           </Link>
           <div className="flex-1">
-            <h1 className="font-semibold text-gray-900">Event Attendees</h1>
-            <p className="text-sm text-gray-500">{attendees.length} people going</p>
+            <h1 className="font-semibold text-neutral-900">Event Attendees</h1>
+            <p className="text-sm text-neutral-500">{attendees.length} people going</p>
           </div>
           <Link
             href={`/organizer/dashboard/${eventId}/edit`}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition font-medium text-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-lg transition font-medium text-sm"
           >
             <Edit3 className="w-4 h-4" />
             Edit Event
@@ -247,9 +247,9 @@ export default function OrganizerEventDetailPage() {
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Attendees List */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl border border-gray-200">
-              <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-                <h2 className="font-semibold text-gray-900 flex items-center gap-2">
+            <div className="bg-white rounded-xl border border-neutral-200">
+              <div className="p-4 border-b border-neutral-100 flex items-center justify-between">
+                <h2 className="font-semibold text-neutral-900 flex items-center gap-2">
                   <Users className="w-5 h-5 text-[#3477f8]" />
                   Attendees
                 </h2>
@@ -257,7 +257,7 @@ export default function OrganizerEventDetailPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={handleCopyEmails}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-neutral-600 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition"
                     >
                       {copied ? (
                         <>
@@ -284,29 +284,29 @@ export default function OrganizerEventDetailPage() {
 
               {attendees.length === 0 ? (
                 <div className="p-8 text-center">
-                  <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600">No attendees yet</p>
+                  <Users className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
+                  <p className="text-neutral-600">No attendees yet</p>
                 </div>
               ) : (
                 <div className="divide-y divide-gray-100">
                   {attendees.map((attendee) => (
                     <div
                       key={attendee.id}
-                      className="p-4 flex items-center justify-between hover:bg-gray-50 transition"
+                      className="p-4 flex items-center justify-between hover:bg-neutral-50 transition"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#3477f8] to-[#2563eb] flex items-center justify-center text-white font-semibold flex-shrink-0">
                           {(attendee.name || attendee.email).charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-medium text-gray-900 truncate">
+                          <p className="font-medium text-neutral-900 truncate">
                             {attendee.name || 'Anonymous'}
                           </p>
-                          <p className="text-sm text-gray-500 truncate flex items-center gap-1">
+                          <p className="text-sm text-neutral-500 truncate flex items-center gap-1">
                             <Mail className="w-3.5 h-3.5" />
                             {attendee.email}
                           </p>
-                          <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
+                          <p className="text-xs text-neutral-400 flex items-center gap-1 mt-0.5">
                             <Clock className="w-3 h-3" />
                             Signed up {formatDate(attendee.timestamp)}
                           </p>
@@ -318,7 +318,7 @@ export default function OrganizerEventDetailPage() {
                         className={`p-2 rounded-lg transition flex items-center gap-2 ${
                           selectedAttendee?.id === attendee.id
                             ? 'bg-[#3477f8] text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                         }`}
                       >
                         <MessageCircle className="w-4 h-4" />
@@ -333,11 +333,11 @@ export default function OrganizerEventDetailPage() {
 
           {/* Chat Panel */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl border border-gray-200 sticky top-24 overflow-hidden">
+            <div className="bg-white rounded-xl border border-neutral-200 sticky top-24 overflow-hidden">
               {selectedAttendee ? (
                 <>
                   {/* Chat Header */}
-                  <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-[#3477f8] to-[#2563eb] text-white">
+                  <div className="p-4 border-b border-neutral-100 flex items-center justify-between bg-gradient-to-r from-[#3477f8] to-[#2563eb] text-white">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-semibold">
                         {(selectedAttendee.name || selectedAttendee.email).charAt(0).toUpperCase()}
@@ -358,16 +358,16 @@ export default function OrganizerEventDetailPage() {
                   </div>
 
                   {/* Messages */}
-                  <div className="h-80 overflow-y-auto p-4 space-y-3 bg-gray-50">
+                  <div className="h-80 overflow-y-auto p-4 space-y-3 bg-neutral-50">
                     {isChatLoading ? (
                       <div className="flex items-center justify-center h-full">
-                        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                        <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
                       </div>
                     ) : messages.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                        <MessageCircle className="w-10 h-10 text-gray-300 mb-2" />
+                      <div className="flex flex-col items-center justify-center h-full text-neutral-500">
+                        <MessageCircle className="w-10 h-10 text-neutral-300 mb-2" />
                         <p className="text-sm">No messages yet</p>
-                        <p className="text-xs text-gray-400">Send the first message!</p>
+                        <p className="text-xs text-neutral-400">Send the first message!</p>
                       </div>
                     ) : (
                       <>
@@ -382,7 +382,7 @@ export default function OrganizerEventDetailPage() {
                                 className={`max-w-[80%] px-3 py-2 rounded-2xl ${
                                   isOrganizer
                                     ? 'bg-[#3477f8] text-white rounded-br-sm'
-                                    : 'bg-white text-gray-800 shadow-sm rounded-bl-sm'
+                                    : 'bg-white text-neutral-800 shadow-sm rounded-bl-sm'
                                 }`}
                               >
                                 <p className="text-sm whitespace-pre-wrap break-words">
@@ -390,7 +390,7 @@ export default function OrganizerEventDetailPage() {
                                 </p>
                                 <p
                                   className={`text-[10px] mt-1 ${
-                                    isOrganizer ? 'text-white/60' : 'text-gray-400'
+                                    isOrganizer ? 'text-white/60' : 'text-neutral-400'
                                   }`}
                                 >
                                   {formatTime(msg.createdAt)}
@@ -405,7 +405,7 @@ export default function OrganizerEventDetailPage() {
                   </div>
 
                   {/* Input */}
-                  <form onSubmit={handleSendMessage} className="p-3 border-t border-gray-100">
+                  <form onSubmit={handleSendMessage} className="p-3 border-t border-neutral-100">
                     <div className="flex gap-2">
                       <input
                         type="text"
@@ -413,7 +413,7 @@ export default function OrganizerEventDetailPage() {
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Type a message..."
                         maxLength={500}
-                        className="flex-1 px-3 py-2 border border-gray-200 rounded-full text-sm focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
+                        className="flex-1 px-3 py-2 border border-neutral-200 rounded-full text-sm focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
                       />
                       <button
                         type="submit"
@@ -431,11 +431,11 @@ export default function OrganizerEventDetailPage() {
                 </>
               ) : (
                 <div className="p-8 text-center">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <MessageCircle className="w-8 h-8 text-gray-400" />
+                  <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <MessageCircle className="w-8 h-8 text-neutral-400" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Direct Messages</h3>
-                  <p className="text-sm text-gray-500">
+                  <h3 className="font-semibold text-neutral-900 mb-1">Direct Messages</h3>
+                  <p className="text-sm text-neutral-500">
                     Select an attendee to start chatting
                   </p>
                 </div>

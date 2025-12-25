@@ -196,7 +196,7 @@ export function WaitlistButton({
   // Show email input for non-logged-in users
   if (showEmailInput) {
     return (
-      <form onSubmit={handleJoinWaitlist} className={cn('bg-gray-100 rounded-xl p-4', className)}>
+      <form onSubmit={handleJoinWaitlist} className={cn('bg-neutral-100 rounded-xl p-4', className)}>
         <div className="flex flex-col gap-2.5 mb-3">
           <Input
             type="email"
@@ -227,13 +227,13 @@ export function WaitlistButton({
           <Button
             type="submit"
             disabled={loading || !email}
-            className="flex-[2] bg-gray-900 hover:bg-gray-800 text-white"
+            className="flex-[2] bg-neutral-900 hover:bg-neutral-800 text-white"
           >
             {loading ? <Loader2 size={16} className="animate-spin mr-2" /> : null}
             Join Waitlist
           </Button>
         </div>
-        <p className="text-xs text-gray-500 text-center mt-3">
+        <p className="text-xs text-neutral-500 text-center mt-3">
           We&apos;ll notify you when a spot opens up
         </p>
       </form>
@@ -252,7 +252,7 @@ export function WaitlistButton({
       onClick={handleJoinWaitlist}
       disabled={loading}
       className={cn(
-        'w-full flex items-center justify-center gap-2.5 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl transition-colors',
+        'w-full flex items-center justify-center gap-2.5 bg-neutral-900 hover:bg-neutral-800 text-white font-semibold rounded-xl transition-colors',
         buttonSizeClasses[variant],
         className
       )}

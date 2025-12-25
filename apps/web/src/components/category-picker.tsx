@@ -87,7 +87,7 @@ export function CategoryPicker({
         className={cn(
           'w-full flex items-center justify-between gap-3 px-4 py-3',
           'bg-white border rounded-xl text-left transition-all',
-          isOpen ? 'border-primary ring-2 ring-primary/20' : 'border-gray-200 hover:border-gray-300'
+          isOpen ? 'border-primary ring-2 ring-primary/20' : 'border-neutral-200 hover:border-neutral-300'
         )}
       >
         {selectedCategories.length > 0 ? (
@@ -95,33 +95,33 @@ export function CategoryPicker({
             {selectedCategories.slice(0, 3).map((cat) => (
               <span
                 key={cat.slug}
-                className="inline-flex items-center gap-1 text-sm font-medium bg-gray-100 text-gray-800 px-2.5 py-1 rounded-md"
+                className="inline-flex items-center gap-1 text-sm font-medium bg-neutral-100 text-neutral-800 px-2.5 py-1 rounded-md"
               >
                 {cat.emoji} {cat.name}
               </span>
             ))}
             {selectedCategories.length > 3 && (
-              <span className="text-sm text-gray-500 px-2 py-1">
+              <span className="text-sm text-neutral-500 px-2 py-1">
                 +{selectedCategories.length - 3}
               </span>
             )}
           </div>
         ) : (
-          <span className="text-gray-400 text-sm">{placeholder}</span>
+          <span className="text-neutral-400 text-sm">{placeholder}</span>
         )}
         <div className="flex items-center gap-2">
           {selectedCategories.length > 0 && (
             <button
               type="button"
               onClick={handleClear}
-              className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-1 hover:bg-neutral-100 rounded-full transition-colors"
             >
-              <X className="w-4 h-4 text-gray-400" />
+              <X className="w-4 h-4 text-neutral-400" />
             </button>
           )}
           <ChevronDown
             className={cn(
-              'w-5 h-5 text-gray-400 transition-transform',
+              'w-5 h-5 text-neutral-400 transition-transform',
               isOpen && 'rotate-180'
             )}
           />
@@ -138,16 +138,16 @@ export function CategoryPicker({
               setSearch('')
             }}
           />
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 overflow-hidden">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-neutral-200 rounded-2xl shadow-xl z-50 overflow-hidden">
             {/* Search */}
-            <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
-              <Search className="w-4 h-4 text-gray-400" />
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-neutral-100">
+              <Search className="w-4 h-4 text-neutral-400" />
               <input
                 type="text"
                 placeholder="Search activities..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="flex-1 text-sm outline-none placeholder:text-gray-400"
+                className="flex-1 text-sm outline-none placeholder:text-neutral-400"
                 autoFocus
               />
             </div>
@@ -166,31 +166,31 @@ export function CategoryPicker({
                   const isExpanded = expandedGroup === group.slug
 
                   return (
-                    <div key={group.slug} className="border-b border-gray-50 last:border-b-0">
+                    <div key={group.slug} className="border-b border-neutral-50 last:border-b-0">
                       <button
                         type="button"
                         onClick={() =>
                           setExpandedGroup(isExpanded ? null : group.slug)
                         }
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 transition-colors"
                       >
                         <span className="text-lg">{group.emoji}</span>
-                        <span className="flex-1 text-left font-medium text-sm text-gray-800">
+                        <span className="flex-1 text-left font-medium text-sm text-neutral-800">
                           {group.name}
                         </span>
-                        <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                        <span className="text-xs text-neutral-400 bg-neutral-100 px-2 py-0.5 rounded-full">
                           {groupCategories.length}
                         </span>
                         <ChevronDown
                           className={cn(
-                            'w-4 h-4 text-gray-400 transition-transform',
+                            'w-4 h-4 text-neutral-400 transition-transform',
                             isExpanded && 'rotate-180'
                           )}
                         />
                       </button>
 
                       {isExpanded && (
-                        <div className="bg-gray-50/50 py-1">
+                        <div className="bg-neutral-50/50 py-1">
                           {groupCategories.map((category) => (
                             <button
                               key={category.slug}
@@ -200,11 +200,11 @@ export function CategoryPicker({
                                 'w-full flex items-center gap-3 px-4 py-2.5 pl-12 transition-colors',
                                 isSelected(category.slug)
                                   ? 'bg-primary/10'
-                                  : 'hover:bg-gray-100'
+                                  : 'hover:bg-neutral-100'
                               )}
                             >
                               <span className="text-base">{category.emoji}</span>
-                              <span className="flex-1 text-left text-sm text-gray-700">
+                              <span className="flex-1 text-left text-sm text-neutral-700">
                                 {category.name}
                               </span>
                               {isSelected(category.slug) && (
@@ -232,16 +232,16 @@ export function CategoryPicker({
                         'w-full flex items-center gap-3 px-4 py-3 transition-colors',
                         isSelected(category.slug)
                           ? 'bg-primary/10'
-                          : 'hover:bg-gray-50'
+                          : 'hover:bg-neutral-50'
                       )}
                     >
                       <span className="text-lg">{category.emoji}</span>
                       <div className="flex-1 text-left">
-                        <div className="text-sm font-medium text-gray-800">
+                        <div className="text-sm font-medium text-neutral-800">
                           {category.name}
                         </div>
                         {group && (
-                          <div className="text-xs text-gray-400">
+                          <div className="text-xs text-neutral-400">
                             {group.name}
                           </div>
                         )}
@@ -255,7 +255,7 @@ export function CategoryPicker({
               )}
 
               {categories.length === 0 && (
-                <div className="py-8 text-center text-gray-400 text-sm">
+                <div className="py-8 text-center text-neutral-400 text-sm">
                   No activities found
                 </div>
               )}

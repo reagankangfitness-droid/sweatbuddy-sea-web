@@ -18,8 +18,10 @@ interface Event {
   description?: string | null
   organizer: string
   imageUrl?: string | null
+  communityLink?: string | null
   recurring: boolean
   goingCount?: number
+  isFull?: boolean
 }
 
 // Format date for display (e.g., "Sat, Dec 14")
@@ -156,7 +158,7 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
           animation: `fadeInUp 0.4s ease-out ${index * 0.05}s both`,
         }}
       >
-        {/* Image Section - Square aspect ratio like Airbnb */}
+        {/* Image Section - Clean square aspect ratio */}
         <div className="relative aspect-square rounded-xl overflow-hidden">
           {event.imageUrl ? (
             <Image
@@ -168,61 +170,66 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
             />
           ) : (
-            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+            <div className="w-full h-full bg-neutral-100 flex items-center justify-center">
               <span className="text-6xl">{emoji}</span>
             </div>
           )}
 
-          {/* Save Button - Top Right (Airbnb heart style) */}
+          {/* FULL Badge - Top Left */}
+          {event.isFull && (
+            <div className="absolute top-2 left-2 px-2.5 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-sm">
+              FULL
+            </div>
+          )}
+
+          {/* Save Button - Top Right (minimal heart) */}
           <button
             onClick={handleSaveClick}
             className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90 ${
               isSaved
-                ? 'text-primary'
+                ? 'text-neutral-900'
                 : 'text-white hover:text-white/80'
             }`}
             style={{
               filter: isSaved ? 'none' : 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))',
             }}
           >
-            <Heart className={`w-6 h-6 ${isSaved ? 'fill-primary stroke-primary' : 'stroke-2'}`} />
+            <Heart className={`w-6 h-6 ${isSaved ? 'fill-neutral-900 stroke-neutral-900' : 'stroke-2'}`} />
           </button>
 
-          {/* Weekly Badge - Bottom Left */}
+          {/* Weekly Badge - Bottom Left (subtle) */}
           {event.recurring && (
             <div className="absolute bottom-3 left-3">
-              <span className="bg-white px-2.5 py-1 text-xs font-semibold text-gray-800 rounded-md shadow-sm">
+              <span className="bg-white/95 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-neutral-700 rounded-md">
                 Weekly
               </span>
             </div>
           )}
         </div>
 
-        {/* Content Section - Airbnb style typography */}
+        {/* Content Section - Clean minimalist typography */}
         <div className="flex-1 flex flex-col pt-3 pb-2">
-          {/* Category & Location Row */}
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-xs font-semibold text-gray-800 uppercase tracking-wide">
-              {event.category}
-            </span>
-          </div>
+          {/* Category - subtle, uppercase */}
+          <span className="text-[11px] font-medium text-neutral-500 uppercase tracking-wider mb-1.5">
+            {event.category}
+          </span>
 
           {/* Event Name */}
-          <h3 className="text-[15px] font-semibold text-gray-800 leading-tight line-clamp-1 mb-1">
+          <h3 className="text-[15px] font-semibold text-neutral-900 leading-tight line-clamp-1 mb-1">
             {event.name}
           </h3>
 
           {/* Date & Time */}
-          <p className="text-sm text-gray-500 mb-0.5">
+          <p className="text-sm text-neutral-500 mb-0.5">
             {formatEventDate(event.eventDate, event.day)} · {event.time}
           </p>
 
           {/* Location */}
-          <p className="text-sm text-gray-500 line-clamp-1 mb-3">
+          <p className="text-sm text-neutral-500 line-clamp-1 mb-4">
             {event.location}
           </p>
 
-          {/* Going Count / CTA */}
+          {/* Going Count / CTA - clean black button */}
           <div className="mt-auto">
             {isGoing ? (
               <button
@@ -234,7 +241,7 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
             ) : (
               <button
                 onClick={handleGoingClick}
-                className="w-full py-2.5 font-semibold text-sm flex items-center justify-center gap-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-all active:scale-[0.98]"
+                className="w-full py-2.5 font-semibold text-sm flex items-center justify-center gap-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-700 transition-all active:scale-[0.98]"
               >
                 <span>Join{goingCount > 0 && ` · ${goingCount} going`}</span>
                 <ArrowRight className="w-4 h-4" />

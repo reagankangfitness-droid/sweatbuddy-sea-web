@@ -25,14 +25,36 @@ model User {
 
 model Activity {
   id          String   @id @default(cuid())
-  name        String
+  title       String
   description String?
-  duration    Int?     // in minutes
-  calories    Int?
+  type        String   @default("OTHER") // RUN, GYM, YOGA, HIKE, CYCLING, OTHER
   city        String
+  address     String?
   latitude    Float
   longitude   Float
+  startTime   DateTime?
+  endTime     DateTime?
+  maxPeople   Int?
+  imageUrl    String?
+
+  // Pricing fields
+  isFree         Boolean  @default(true)
+  price          Float    @default(0)  // Amount in cents
+  currency       String   @default("SGD")
+
+  // PayNow payment fields
+  paynowEnabled  Boolean  @default(false)
+  paynowNumber   String?
+  paynowName     String?
+  paynowQrCode   String?
+
+  // Stripe payment fields
+  stripeEnabled  Boolean  @default(false)
+  stripePriceId  String?
+
+  status      String   @default("PUBLISHED") // DRAFT, PUBLISHED, CANCELLED, COMPLETED
   userId      String?
+  hostId      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

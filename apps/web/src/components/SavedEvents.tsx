@@ -53,14 +53,14 @@ export function SavedEvents({ allEvents }: SavedEventsProps) {
     <section className="mb-12 bg-gradient-to-r from-white/5 to-white/10 rounded-2xl p-6 border border-white/10">
       <div className="flex items-center gap-2 mb-4">
         <Heart className="w-5 h-5 text-pink-400 fill-pink-400" />
-        <h2 className="font-heading text-xl font-bold text-white">
+        <h2 className="font-sans text-xl font-bold text-white">
           Your Saved Events
         </h2>
         <span className="ml-2 px-2 py-0.5 rounded-full bg-white/10 text-white text-xs font-medium">
           {savedEvents.length}
         </span>
       </div>
-      <p className="font-body text-sm text-white/50 mb-6">
+      <p className="font-sans text-sm text-white/50 mb-6">
         Events you&apos;re interested in
       </p>
 
@@ -94,12 +94,12 @@ export function SavedEvents({ allEvents }: SavedEventsProps) {
 
             <div className="p-4">
               {/* Category */}
-              <span className="inline-block text-xs font-heading font-semibold uppercase tracking-wide px-2 py-1 rounded-full bg-white/10 text-white/80 mb-2">
+              <span className="inline-block text-xs font-sans font-semibold uppercase tracking-wide px-2 py-1 rounded-full bg-white/10 text-white/80 mb-2">
                 {event.category}
               </span>
 
               {/* Name */}
-              <h3 className="font-heading font-bold text-white text-sm mb-2 line-clamp-1">
+              <h3 className="font-sans font-bold text-white text-sm mb-2 line-clamp-1">
                 {event.name}
               </h3>
 

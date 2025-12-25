@@ -135,13 +135,13 @@ export default async function DashboardPage() {
         {/* Content */}
         <div className="relative z-10 max-w-container mx-auto px-6 lg:px-10">
           <h1
-            className="font-heading font-extrabold text-white mb-3 tracking-wide"
+            className="font-sans font-extrabold text-white mb-3 tracking-wide"
             style={{ fontSize: 'clamp(32px, 6vw, 48px)' }}
           >
             My Dashboard
           </h1>
           <p
-            className="font-body text-white/70 max-w-xl"
+            className="font-sans text-white/70 max-w-xl"
             style={{ fontSize: '17px', lineHeight: '1.6' }}
           >
             Track your sessions, manage your activities, and see what you&apos;re hosting

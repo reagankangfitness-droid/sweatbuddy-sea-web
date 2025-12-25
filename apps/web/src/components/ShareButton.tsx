@@ -101,31 +101,31 @@ export function ShareButton({ eventId, eventName, compact = false, iconOnly = fa
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-100">
-          <h3 className="font-semibold text-gray-900">Share Event</h3>
+        <div className="flex items-center justify-between p-4 border-b border-neutral-100">
+          <h3 className="font-semibold text-neutral-900">Share Event</h3>
           <button
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
               setShowMenu(false)
             }}
-            className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+            className="p-1.5 rounded-full hover:bg-neutral-100 transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-neutral-500" />
           </button>
         </div>
 
         {/* Event Preview */}
-        <div className="px-4 py-3 bg-gray-50">
-          <p className="text-sm font-medium text-gray-900 line-clamp-1">{eventName}</p>
-          <p className="text-xs text-gray-500 mt-0.5 truncate">{shareUrl}</p>
+        <div className="px-4 py-3 bg-neutral-50">
+          <p className="text-sm font-medium text-neutral-900 line-clamp-1">{eventName}</p>
+          <p className="text-xs text-neutral-500 mt-0.5 truncate">{shareUrl}</p>
         </div>
 
         {/* Share Options */}
         <div className="p-2">
           <button
             onClick={copyLink}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-colors"
           >
             {copied ? (
               <>
@@ -136,8 +136,8 @@ export function ShareButton({ eventId, eventName, compact = false, iconOnly = fa
               </>
             ) : (
               <>
-                <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                  <Copy className="w-5 h-5 text-gray-600" />
+                <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center">
+                  <Copy className="w-5 h-5 text-neutral-600" />
                 </div>
                 <span className="font-medium">Copy Link</span>
               </>
@@ -146,7 +146,7 @@ export function ShareButton({ eventId, eventName, compact = false, iconOnly = fa
 
           <button
             onClick={shareToWhatsApp}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-colors"
           >
             <div className="w-10 h-10 rounded-full bg-[#25D366]/10 flex items-center justify-center">
               <svg className="w-5 h-5 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor">
@@ -158,7 +158,7 @@ export function ShareButton({ eventId, eventName, compact = false, iconOnly = fa
 
           <button
             onClick={shareToTelegram}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-colors"
           >
             <div className="w-10 h-10 rounded-full bg-[#0088cc]/10 flex items-center justify-center">
               <svg className="w-5 h-5 text-[#0088cc]" viewBox="0 0 24 24" fill="currentColor">
@@ -177,7 +177,7 @@ export function ShareButton({ eventId, eventName, compact = false, iconOnly = fa
               e.stopPropagation()
               setShowMenu(false)
             }}
-            className="w-full py-3 rounded-xl text-gray-500 font-medium hover:bg-gray-50 transition-colors"
+            className="w-full py-3 rounded-xl text-neutral-500 font-medium hover:bg-neutral-50 transition-colors"
           >
             Cancel
           </button>
@@ -189,16 +189,16 @@ export function ShareButton({ eventId, eventName, compact = false, iconOnly = fa
 
   // Different button styles based on context
   const buttonStyles = iconOnly
-    ? 'w-11 h-11 bg-white hover:bg-gray-50 text-gray-500 shadow-sm border border-gray-100'
+    ? 'w-11 h-11 bg-white hover:bg-neutral-50 text-neutral-500 shadow-sm border border-neutral-100'
     : compact
       ? 'w-6 h-6 sm:w-7 sm:h-7 bg-black/30 backdrop-blur-sm hover:bg-black/50'
       : 'w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg'
 
   const iconStyles = iconOnly
-    ? 'w-5 h-5 text-gray-500'
+    ? 'w-5 h-5 text-neutral-500'
     : compact
       ? 'w-3 h-3 sm:w-3.5 sm:h-3.5 text-white'
-      : 'w-5 h-5 text-gray-700'
+      : 'w-5 h-5 text-neutral-700'
 
   return (
     <>

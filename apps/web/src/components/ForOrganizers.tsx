@@ -3,7 +3,7 @@
 import { useCallback } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Megaphone, Users, Heart, Star, ArrowRight } from 'lucide-react'
+import { Megaphone, Users, Star, ArrowRight, Mail } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 
 // Helper to scroll to element with retry for dynamic content
@@ -37,30 +37,30 @@ const scrollToElement = (elementId: string, maxAttempts = 10) => {
 const benefits = [
   {
     icon: Users,
-    title: 'Connect With Your People',
-    description: 'Meet fitness enthusiasts who are ready to become regulars in your community.',
+    title: 'Get Discovered',
+    description: 'Show up when people search for events in your area.',
     hasImage: true,
     image: '/images/connect-people.webp',
-    badge: 'your tribe awaits',
+    badge: 'reach new people',
     accentColor: 'cyan',
-  },
-  {
-    icon: Heart,
-    title: 'Build Lasting Bonds',
-    description: 'Your events become the place where friendships form and people belong.',
-    hasImage: true,
-    image: '/images/community-bonds.jpg',
-    badge: 'community vibes',
-    accentColor: 'pink',
   },
   {
     icon: Star,
-    title: 'Always Free to List',
-    description: "No fees, no catch. Because community shouldn't cost a thing.",
+    title: 'List in Minutes',
+    description: "No forms, no approval delays. Your event goes live the same day.",
     hasImage: true,
-    image: '/images/free-to-list.jpg',
-    badge: 'zero cost',
+    image: '/images/list-in-minutes.jpeg',
+    badge: 'no hassle',
     accentColor: 'cyan',
+  },
+  {
+    icon: Mail,
+    title: 'Collect Emails Automatically',
+    description: "Every \"I'm Going\" click captures their email. Build your community list without extra tools.",
+    hasImage: true,
+    image: '/images/attendees-dashboard.png',
+    badge: 'build your list',
+    accentColor: 'pink',
   },
 ]
 
@@ -146,7 +146,7 @@ export function ForOrganizers() {
             </motion.div>
 
             <h2
-              className="font-heading font-extrabold text-white mb-6 tracking-wide"
+              className="font-sans font-extrabold text-white mb-6 tracking-wide"
               style={{ fontSize: 'clamp(32px, 6vw, 56px)' }}
             >
               You Bring the Energy. <br />
@@ -162,17 +162,17 @@ export function ForOrganizers() {
               </span>
             </h2>
 
-            <p className="font-body text-white/70 text-lg mb-10 max-w-lg leading-relaxed">
-              Running an open session? Connect with people looking for their tribe — folks who&apos;ll become your regulars, your cheerleaders, your community.
+            <p className="font-sans text-white/70 text-lg mb-10 max-w-lg leading-relaxed">
+              Running open sessions? Get discovered by people actively looking for their next workout.
             </p>
 
             <motion.button
-              onClick={(e) => handleHashClick(e, '#submit')}
+              onClick={(e) => handleHashClick(e, '#submit-desktop')}
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.98 }}
               className="btn-primary inline-flex items-center gap-2"
             >
-              <span>Grow Your Tribe</span>
+              <span>List Your Event</span>
               <ArrowRight className="w-4 h-4" />
             </motion.button>
           </motion.div>
@@ -257,10 +257,10 @@ export function ForOrganizers() {
                           }`} />
                         </motion.div>
                         <div>
-                          <h3 className="font-heading font-bold text-white text-base mb-1 tracking-wide">
+                          <h3 className="font-sans font-bold text-white text-base mb-1 tracking-wide">
                             {benefit.title}
                           </h3>
-                          <p className="font-body text-white/60 text-sm leading-relaxed">
+                          <p className="font-sans text-white/60 text-sm leading-relaxed">
                             {benefit.description}
                           </p>
                         </div>
@@ -282,10 +282,10 @@ export function ForOrganizers() {
                       <benefit.icon className="w-5 h-5 text-[#38BDF8]" />
                     </motion.div>
                     <div>
-                      <h3 className="font-heading font-bold text-white text-lg mb-1.5 tracking-wide">
+                      <h3 className="font-sans font-bold text-white text-lg mb-1.5 tracking-wide">
                         {benefit.title}
                       </h3>
-                      <p className="font-body text-white/60 text-sm leading-relaxed">
+                      <p className="font-sans text-white/60 text-sm leading-relaxed">
                         {benefit.description}
                       </p>
                     </div>

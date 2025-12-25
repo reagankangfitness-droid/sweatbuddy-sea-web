@@ -37,38 +37,38 @@ export function EventDetail() {
       <div className="flex-1 px-4 py-4 space-y-4 overflow-y-auto">
         {/* Time & Location */}
         <div className="flex gap-4">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-neutral-600">
             <span className="text-base">&#128197;</span>
             <span>Saturdays</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-neutral-600">
             <span className="text-base">&#128336;</span>
             <span>6:30 AM</span>
           </div>
         </div>
 
         {/* Location Detail */}
-        <div className="flex items-center gap-2 text-sm text-gray-600">
+        <div className="flex items-center gap-2 text-sm text-neutral-600">
           <span className="text-base">&#128205;</span>
           <span>Carpark C, East Coast Park</span>
         </div>
 
         {/* Description */}
-        <p className="text-sm text-gray-600 leading-relaxed">
+        <p className="text-sm text-neutral-600 leading-relaxed">
           5K group run along the coast. All paces welcome. We meet at Carpark C and run together as a group.
         </p>
 
         {/* Organizer */}
-        <div className="flex items-center gap-3 py-3 border-t border-gray-100">
+        <div className="flex items-center gap-3 py-3 border-t border-neutral-100">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2563EB] to-[#38BDF8]" />
           <div>
             <p className="text-sm font-semibold">@runnerssg</p>
-            <p className="text-xs text-gray-400">Organizer</p>
+            <p className="text-xs text-neutral-400">Organizer</p>
           </div>
         </div>
 
         {/* Going Section */}
-        <div className="flex items-center justify-between py-3 border-t border-gray-100">
+        <div className="flex items-center justify-between py-3 border-t border-neutral-100">
           <div className="flex items-center gap-2">
             <div className="flex -space-x-2">
               {[1, 2, 3, 4].map((i) => (
@@ -77,17 +77,17 @@ export function EventDetail() {
                   className="w-7 h-7 rounded-full bg-gradient-to-br from-[#2563EB] to-[#38BDF8] border-2 border-white"
                 />
               ))}
-              <div className="w-7 h-7 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-gray-500">
+              <div className="w-7 h-7 rounded-full bg-neutral-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-neutral-500">
                 +20
               </div>
             </div>
           </div>
-          <span className="text-sm text-gray-500">24 going</span>
+          <span className="text-sm text-neutral-500">24 going</span>
         </div>
       </div>
 
       {/* CTA Button */}
-      <div className="p-4 border-t border-gray-100">
+      <div className="p-4 border-t border-neutral-100">
         <button
           onClick={() => setIsGoing(!isGoing)}
           className={`w-full py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all ${

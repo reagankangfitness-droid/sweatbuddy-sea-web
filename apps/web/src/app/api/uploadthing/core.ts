@@ -16,6 +16,17 @@ export const ourFileRouter = {
       return { url: file.url }
     }),
 
+  // PayNow QR code upload - no auth required (public submission)
+  paynowQrUploader: f({ image: { maxFileSize: "2MB", maxFileCount: 1 } })
+    .middleware(async () => {
+      // No auth required for event submissions
+      return {}
+    })
+    .onUploadComplete(async ({ file }) => {
+      console.log("PayNow QR upload complete:", file.url)
+      return { url: file.url }
+    }),
+
   activityImage: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
     .middleware(async () => {
       const { userId } = await auth()

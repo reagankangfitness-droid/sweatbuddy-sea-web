@@ -29,11 +29,11 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="relative py-24 md:py-36 overflow-hidden bg-cream">
+    <section className="relative py-24 md:py-36 overflow-hidden bg-white">
       {/* Decorative elements */}
-      <div className="absolute top-20 right-10 w-20 h-20 rounded-full bg-coral/5" />
-      <div className="absolute bottom-32 left-16 w-16 h-16 rounded-full bg-teal/10" />
-      <div className="absolute top-1/2 right-1/4 w-8 h-8 rounded-full bg-ocean/10" />
+      <div className="absolute top-20 right-10 w-20 h-20 rounded-full bg-neutral-900/5" />
+      <div className="absolute bottom-32 left-16 w-16 h-16 rounded-full bg-neutral-900/10" />
+      <div className="absolute top-1/2 right-1/4 w-8 h-8 rounded-full bg-neutral-900/10" />
 
       <div className="relative z-10 max-w-container mx-auto px-6 lg:px-10">
         {/* Header - Premium Typography */}
@@ -44,12 +44,12 @@ export function HowItWorks() {
           transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] }}
           className="text-center mb-16 md:mb-24"
         >
-          <span className="text-label text-forest-500 mb-4 block">HOW IT WORKS</span>
+          <span className="text-label text-neutral-500 mb-4 block">HOW IT WORKS</span>
           <h2 className="text-display-section md:text-display-hero">
             Three Simple Steps
           </h2>
           <p className="text-body-large mt-4 max-w-xl mx-auto">
-            From discovery to workout buddy in minutes
+            From discovery to workout in minutes
           </p>
         </motion.div>
 
@@ -76,7 +76,7 @@ export function HowItWorks() {
               </motion.div>
 
               {/* Step Number - Neutral rounded badge */}
-              <div className="inline-flex items-center justify-center w-14 h-14 mb-4 rounded-2xl bg-forest-900 text-cream font-display font-semibold text-xl shadow-sm">
+              <div className="inline-flex items-center justify-center w-14 h-14 mb-4 rounded-2xl bg-neutral-900 text-white font-sans font-semibold text-xl shadow-sm">
                 {step.number}
               </div>
 

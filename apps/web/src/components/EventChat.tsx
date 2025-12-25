@@ -159,7 +159,7 @@ export function EventChat({ eventId, eventName, isOpen, onClose, userEmail: prop
       'bg-pink-500',
       'bg-indigo-500',
       'bg-orange-500',
-      'bg-teal-500',
+      'bg-neutral-900-500',
       'bg-red-500',
     ]
     let hash = 0
@@ -206,16 +206,16 @@ export function EventChat({ eventId, eventName, isOpen, onClose, userEmail: prop
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-neutral-50">
             {isLoading ? (
               <div className="flex items-center justify-center h-full">
-                <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
               </div>
             ) : messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                <MessageCircle className="w-12 h-12 mb-3 text-gray-300" />
+              <div className="flex flex-col items-center justify-center h-full text-neutral-500">
+                <MessageCircle className="w-12 h-12 mb-3 text-neutral-300" />
                 <p className="text-sm">No messages yet</p>
-                <p className="text-xs text-gray-400">Be the first to say hi!</p>
+                <p className="text-xs text-neutral-400">Be the first to say hi!</p>
               </div>
             ) : (
               <>
@@ -228,7 +228,7 @@ export function EventChat({ eventId, eventName, isOpen, onClose, userEmail: prop
                     <div key={msg.id}>
                       {showDate && (
                         <div className="flex justify-center my-3">
-                          <span className="text-xs text-gray-400 bg-white px-3 py-1 rounded-full shadow-sm">
+                          <span className="text-xs text-neutral-400 bg-white px-3 py-1 rounded-full shadow-sm">
                             {formatDate(msg.createdAt)}
                           </span>
                         </div>
@@ -243,18 +243,18 @@ export function EventChat({ eventId, eventName, isOpen, onClose, userEmail: prop
                         )}
                         <div className={`max-w-[75%] ${isOwnMessage ? 'items-end' : 'items-start'}`}>
                           {!isOwnMessage && (
-                            <p className="text-xs text-gray-500 mb-1 ml-1">{msg.senderName}</p>
+                            <p className="text-xs text-neutral-500 mb-1 ml-1">{msg.senderName}</p>
                           )}
                           <div
                             className={`px-3 py-2 rounded-2xl ${
                               isOwnMessage
                                 ? 'bg-[#2563EB] text-white rounded-br-md'
-                                : 'bg-white text-gray-800 shadow-sm rounded-bl-md'
+                                : 'bg-white text-neutral-800 shadow-sm rounded-bl-md'
                             }`}
                           >
                             <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
                           </div>
-                          <p className={`text-[10px] text-gray-400 mt-1 ${isOwnMessage ? 'text-right mr-1' : 'ml-1'}`}>
+                          <p className={`text-[10px] text-neutral-400 mt-1 ${isOwnMessage ? 'text-right mr-1' : 'ml-1'}`}>
                             {formatTime(msg.createdAt)}
                           </p>
                         </div>
@@ -279,7 +279,7 @@ export function EventChat({ eventId, eventName, isOpen, onClose, userEmail: prop
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Type a message..."
                 maxLength={500}
-                className="flex-1 px-4 py-2.5 border border-gray-200 rounded-full focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none text-sm"
+                className="flex-1 px-4 py-2.5 border border-neutral-200 rounded-full focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none text-sm"
               />
               <button
                 type="submit"

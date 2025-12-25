@@ -159,7 +159,7 @@ function BookingSuccessContent() {
           <h1 className="text-2xl font-bold text-foreground mb-2">Something went wrong</h1>
           <p className="text-muted-foreground mb-6">{error}</p>
           <div className="space-y-3">
-            <Button onClick={() => router.push('/dashboard')} className="w-full">
+            <Button onClick={() => router.push('/host/dashboard')} className="w-full">
               Go to Dashboard
             </Button>
             <Button onClick={() => router.push('/')} variant="outline" className="w-full">
@@ -325,7 +325,7 @@ function BookingSuccessContent() {
               </Link>
             )}
 
-            <Link href="/dashboard" className="block">
+            <Link href="/host/dashboard" className="block">
               <Button variant="outline" className="w-full gap-2">
                 <ExternalLink className="w-4 h-4" />
                 Go to Dashboard
@@ -337,7 +337,7 @@ function BookingSuccessContent() {
           <div className="mt-6 p-4 bg-primary/5 rounded-xl">
             <p className="text-sm font-medium text-foreground mb-1">Quick tip</p>
             <p className="text-sm text-muted-foreground">
-              Say hi in the group chat! It&apos;s a great way to meet your crew before the workout.
+              Say hi in the group chat! It&apos;s a great way to connect with others before the workout.
             </p>
           </div>
         </div>

@@ -1,8 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { Check } from 'lucide-react'
 import { AttendanceModal } from './AttendanceModal'
+
+// Lazy load PaymentModal to reduce bundle size
+const PaymentModal = lazy(() => import('./event/PaymentModal').then(mod => ({ default: mod.PaymentModal })))
 
 // Event IDs that require meal preference selection
 const EVENTS_WITH_MEAL_PREFERENCE = [
@@ -23,10 +26,21 @@ interface GoingButtonProps {
   eventTime?: string
   eventLocation?: string
   eventOrganizer?: string
+  eventDate?: string | null
+  communityLink?: string | null
   initialCount?: number
   compact?: boolean
   fullWidth?: boolean
   onSuccess?: () => void
+  isFull?: boolean
+  // Pricing props
+  isFree?: boolean
+  price?: number | null // Amount in cents
+  paynowEnabled?: boolean
+  paynowQrCode?: string | null
+  paynowNumber?: string | null
+  paynowName?: string | null
+  stripeEnabled?: boolean
 }
 
 export function GoingButton({
@@ -36,15 +50,31 @@ export function GoingButton({
   eventTime = '',
   eventLocation = '',
   eventOrganizer = '',
+  eventDate = null,
+  communityLink = null,
   initialCount = 0,
   compact = false,
   fullWidth = false,
-  onSuccess
+  onSuccess,
+  isFull = false,
+  // Pricing props
+  isFree = true,
+  price = null,
+  paynowEnabled = false,
+  paynowQrCode = null,
+  paynowNumber = null,
+  paynowName = null,
+  stripeEnabled = false,
 }: GoingButtonProps) {
   const [isGoing, setIsGoing] = useState(false)
   const [count, setCount] = useState(initialCount)
   const [isAnimating, setIsAnimating] = useState(false)
   const [showModal, setShowModal] = useState(false)
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+
+  // Determine if this is a paid event
+  const isPaidEvent = !isFree && price && price > 0 && (paynowEnabled || stripeEnabled)
+  const formattedPrice = price ? (price / 100).toFixed(0) : '0'
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -67,8 +97,12 @@ export function GoingButton({
       return
     }
 
-    // Not going yet - show modal for email collection
-    setShowModal(true)
+    // Not going yet - show appropriate modal
+    if (isPaidEvent) {
+      setShowPaymentModal(true)
+    } else {
+      setShowModal(true)
+    }
   }
 
   const handleSuccess = () => {
@@ -81,14 +115,31 @@ export function GoingButton({
 
   // Full width button for back of card
   if (fullWidth) {
+    // Show "Event Full" if event is full and user hasn't already RSVP'd
+    if (isFull && !isGoing) {
+      return (
+        <button
+          disabled
+          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-lg text-sm font-semibold bg-neutral-200 text-neutral-500 cursor-not-allowed"
+        >
+          <span>Event Full</span>
+          {count > 0 && (
+            <span className="text-neutral-400 ml-1">• {count} attending</span>
+          )}
+        </button>
+      )
+    }
+
     return (
       <>
         <button
           onClick={handleClick}
-          className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-heading font-semibold transition-all ${
+          className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-lg text-sm font-semibold transition-all ${
             isGoing
-              ? 'bg-green-500 text-white shadow-lg shadow-green-500/25'
-              : 'bg-gradient-to-r from-[#1800ad] to-[#4A3DE6] text-white hover:opacity-90'
+              ? 'bg-green-500 text-white'
+              : isPaidEvent
+              ? 'bg-purple-600 text-white hover:bg-purple-700'
+              : 'bg-neutral-900 text-white hover:bg-neutral-700'
           } ${isAnimating ? 'scale-[1.02]' : 'scale-100'}`}
         >
           {isGoing ? (
@@ -96,12 +147,19 @@ export function GoingButton({
               <Check className="w-4 h-4" />
               <span>You&apos;re Going!</span>
             </>
+          ) : isPaidEvent ? (
+            <>
+              <span>Join · ${formattedPrice}</span>
+              {count > 0 && (
+                <span className="text-white/70 ml-1">• {count} attending</span>
+              )}
+            </>
           ) : (
             <>
               <span className="text-base">🙋</span>
-              <span>I&apos;m Going</span>
+              <span>I&apos;m Going — Get Reminder</span>
               {count > 0 && (
-                <span className="text-white/80 ml-1">• {count} attending</span>
+                <span className="text-white/70 ml-1">• {count} attending</span>
               )}
             </>
           )}
@@ -117,32 +175,67 @@ export function GoingButton({
             time: eventTime,
             location: eventLocation,
             organizer: eventOrganizer,
+            eventDate: eventDate,
+            communityLink: communityLink,
           }}
           onSuccess={handleSuccess}
           showMealPreference={checkMealPreference(eventId)}
         />
+
+        {isPaidEvent && showPaymentModal && (
+          <Suspense fallback={null}>
+            <PaymentModal
+              event={{
+                id: eventId,
+                name: eventName,
+                price: price || 0,
+                paynowEnabled,
+                paynowQrCode,
+                paynowNumber,
+                paynowName,
+                stripeEnabled,
+              }}
+              onClose={() => setShowPaymentModal(false)}
+              onSuccess={handleSuccess}
+            />
+          </Suspense>
+        )}
       </>
     )
   }
 
   // Compact button for card footer
   if (compact) {
+    // Show "Full" if event is full and user hasn't already RSVP'd
+    if (isFull && !isGoing) {
+      return (
+        <button
+          disabled
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-neutral-200 text-neutral-500 cursor-not-allowed"
+        >
+          <span>Full</span>
+        </button>
+      )
+    }
+
     return (
       <>
         <button
           onClick={handleClick}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-heading font-semibold transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
             isGoing
               ? 'bg-green-500 text-white'
-              : 'bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white hover:opacity-90'
+              : isPaidEvent
+              ? 'bg-purple-600 text-white hover:bg-purple-700'
+              : 'bg-neutral-900 text-white hover:bg-neutral-700'
           } ${isAnimating ? 'scale-105' : 'scale-100'}`}
         >
           {isGoing ? (
             <Check className="w-3 h-3" />
-          ) : (
+          ) : isPaidEvent ? null : (
             <span className="text-sm">🙋</span>
           )}
-          <span>{isGoing ? 'Going' : "I'm Going"}</span>
+          <span>{isGoing ? 'Going' : isPaidEvent ? `$${formattedPrice}` : "I'm Going — Reminder"}</span>
           {count > 0 && (
             <span
               className={`px-1.5 py-0.5 rounded-full text-[10px] ${
@@ -164,11 +257,45 @@ export function GoingButton({
             time: eventTime,
             location: eventLocation,
             organizer: eventOrganizer,
+            eventDate: eventDate,
+            communityLink: communityLink,
           }}
           onSuccess={handleSuccess}
           showMealPreference={checkMealPreference(eventId)}
         />
+
+        {isPaidEvent && showPaymentModal && (
+          <Suspense fallback={null}>
+            <PaymentModal
+              event={{
+                id: eventId,
+                name: eventName,
+                price: price || 0,
+                paynowEnabled,
+                paynowQrCode,
+                paynowNumber,
+                paynowName,
+                stripeEnabled,
+              }}
+              onClose={() => setShowPaymentModal(false)}
+              onSuccess={handleSuccess}
+            />
+          </Suspense>
+        )}
       </>
+    )
+  }
+
+  // Default button
+  // Show "Event Full" if event is full and user hasn't already RSVP'd
+  if (isFull && !isGoing) {
+    return (
+      <button
+        disabled
+        className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-neutral-200 text-neutral-500 cursor-not-allowed"
+      >
+        <span>Event Full</span>
+      </button>
     )
   }
 
@@ -176,18 +303,20 @@ export function GoingButton({
     <>
       <button
         onClick={handleClick}
-        className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-heading font-semibold transition-all ${
+        className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
           isGoing
-            ? 'bg-green-500 text-white shadow-lg shadow-green-500/25'
-            : 'bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white hover:opacity-90'
+            ? 'bg-green-500 text-white'
+            : isPaidEvent
+            ? 'bg-purple-600 text-white hover:bg-purple-700'
+            : 'bg-neutral-900 text-white hover:bg-neutral-700'
         } ${isAnimating ? 'scale-105' : 'scale-100'}`}
       >
         {isGoing ? (
           <Check className="w-4 h-4" />
-        ) : (
+        ) : isPaidEvent ? null : (
           <span className="text-base">&#128587;</span>
         )}
-        <span>{isGoing ? "I'm Going!" : "I'm Going"}</span>
+        <span>{isGoing ? "You're Going!" : isPaidEvent ? `Join · $${formattedPrice}` : "I'm Going — Get Reminder"}</span>
         {count > 0 && (
           <span
             className={`px-2 py-0.5 rounded-full text-xs ${
@@ -209,10 +338,31 @@ export function GoingButton({
           time: eventTime,
           location: eventLocation,
           organizer: eventOrganizer,
+          eventDate: eventDate,
+          communityLink: communityLink,
         }}
         onSuccess={handleSuccess}
         showMealPreference={checkMealPreference(eventId)}
       />
+
+      {isPaidEvent && showPaymentModal && (
+        <Suspense fallback={null}>
+          <PaymentModal
+            event={{
+              id: eventId,
+              name: eventName,
+              price: price || 0,
+              paynowEnabled,
+              paynowQrCode,
+              paynowNumber,
+              paynowName,
+              stripeEnabled,
+            }}
+            onClose={() => setShowPaymentModal(false)}
+            onSuccess={handleSuccess}
+          />
+        </Suspense>
+      )}
     </>
   )
 }

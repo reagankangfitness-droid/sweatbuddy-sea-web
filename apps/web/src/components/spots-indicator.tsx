@@ -172,7 +172,7 @@ export function SpotsIndicator({
             )}
           </div>
           <div className="flex-1">
-            <div className={cn('text-[15px] font-semibold', urgencyLevel === 'full' || urgencyLevel === 'critical' ? colors.text : 'text-gray-900')}>
+            <div className={cn('text-[15px] font-semibold', urgencyLevel === 'full' || urgencyLevel === 'critical' ? colors.text : 'text-neutral-900')}>
               {urgencyLevel === 'full' ? (
                 'This activity is sold out'
               ) : urgencyLevel === 'critical' ? (
@@ -183,7 +183,7 @@ export function SpotsIndicator({
                 `${spotsRemaining} of ${totalSpots} spots available`
               )}
             </div>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-neutral-500">
               {urgencyLevel === 'full' && waitlistCount > 0 && (
                 <>{waitlistCount} people on the waitlist</>
               )}
@@ -196,7 +196,7 @@ export function SpotsIndicator({
 
         {showProgress && urgencyLevel !== 'full' && totalSpots > 0 && (
           <div className="mt-3.5">
-            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-neutral-200 rounded-full overflow-hidden">
               <div
                 className={cn('h-full rounded-full transition-all duration-500', colors.fill)}
                 style={{ width: `${percentFilled}%` }}
@@ -206,7 +206,7 @@ export function SpotsIndicator({
         )}
 
         {urgencyLevel === 'full' && waitlistCount > 0 && (
-          <div className="flex items-center gap-2 text-sm text-gray-600 mt-3 pt-3 border-t border-slate-200">
+          <div className="flex items-center gap-2 text-sm text-neutral-600 mt-3 pt-3 border-t border-slate-200">
             <Users size={14} />
             <span>{waitlistCount} people waiting for a spot</span>
           </div>
@@ -250,7 +250,7 @@ export function SpotsIndicator({
           )}
         </span>
         {waitlistCount > 0 && urgencyLevel === 'full' && (
-          <span className="block text-xs text-gray-500">
+          <span className="block text-xs text-neutral-500">
             {waitlistCount} on waitlist
           </span>
         )}
@@ -275,7 +275,7 @@ export function SpotsBadge({
 
   if (urgencyLevel === 'none') {
     return (
-      <span className={cn('text-xs text-gray-500 flex items-center gap-1', className)}>
+      <span className={cn('text-xs text-neutral-500 flex items-center gap-1', className)}>
         <Users size={12} />
         {spotsRemaining} spots
       </span>

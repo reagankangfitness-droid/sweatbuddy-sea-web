@@ -9,7 +9,7 @@ export const HomeScreen = () => {
   if (isLoading) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#3b82f6" />
+        <ActivityIndicator size="large" color="#171717" />
         <Text style={styles.loadingText}>Loading activities...</Text>
       </View>
     )
@@ -51,25 +51,39 @@ export const HomeScreen = () => {
   )
 }
 
+// Design tokens matching web app
+const colors = {
+  neutral900: '#171717',
+  neutral700: '#404040',
+  neutral500: '#737373',
+  neutral400: '#A3A3A3',
+  neutral200: '#E5E5E5',
+  neutral100: '#F5F5F5',
+  neutral50: '#FAFAFA',
+  white: '#FFFFFF',
+  error: '#DC2626',
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.neutral50,
   },
   header: {
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: colors.neutral200,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 4,
+    color: colors.neutral900,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: colors.neutral500,
   },
   listContainer: {
     paddingTop: 16,
@@ -80,32 +94,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#666',
+    color: colors.neutral500,
   },
   errorText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ef4444',
+    color: colors.error,
     marginBottom: 8,
   },
   errorSubtext: {
     fontSize: 14,
-    color: '#666',
+    color: colors.neutral500,
     textAlign: 'center',
   },
   emptyText: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 8,
+    color: colors.neutral900,
   },
   emptySubtext: {
     fontSize: 16,
-    color: '#666',
+    color: colors.neutral500,
     textAlign: 'center',
   },
 })

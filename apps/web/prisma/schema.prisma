@@ -1591,6 +1591,7 @@ model EventSubmission {
   placeId           String?               @db.VarChar(100)
   description       String?               @db.Text
   imageUrl          String?               @db.VarChar(500) // Event image uploaded via UploadThing
+  communityLink     String?               @db.VarChar(500) // WhatsApp/Telegram/Discord group link
 
   // Organizer details
   organizerName     String                @db.VarChar(200)
@@ -1602,6 +1603,23 @@ model EventSubmission {
   reviewedAt        DateTime?
   reviewedBy        String?               // Admin user ID who reviewed
   rejectionReason   String?               @db.Text
+
+  // Capacity
+  isFull            Boolean               @default(false)  // Mark event as full
+
+  // Pricing
+  isFree            Boolean               @default(true)
+  price             Int?                  // Amount in cents (e.g., 1500 = $15.00)
+  currency          String?               @default("SGD") @db.VarChar(3)
+
+  // PayNow details (for manual verification)
+  paynowEnabled     Boolean               @default(false)
+  paynowQrCode      String?               @db.VarChar(500) // URL to uploaded QR image
+  paynowNumber      String?               @db.VarChar(50)  // UEN or phone number
+  paynowName        String?               @db.VarChar(200) // Name that appears on PayNow
+
+  // Stripe (for automatic payment)
+  stripeEnabled     Boolean               @default(false)
 
   // Timestamps
   createdAt         DateTime              @default(now())
@@ -1628,10 +1646,21 @@ model EventAttendance {
   confirmed      Boolean  @default(true)
   mealPreference String?  @db.VarChar(50) // Optional meal choice: 'vegetarian', 'chicken', 'beef'
 
+  // Payment fields
+  paymentStatus    String?  @default("free") @db.VarChar(20) // 'free', 'pending', 'paid', 'failed', 'refunded'
+  paymentMethod    String?  @db.VarChar(20) // 'stripe', 'paynow'
+  paymentAmount    Int?     // Amount in cents
+  paymentReference String?  @db.VarChar(100) // Transaction ref for PayNow
+  stripePaymentId  String?  @db.VarChar(100) // Stripe payment intent ID
+  paidAt           DateTime?
+  verifiedBy       String?  @db.VarChar(255) // Host email who verified
+  verifiedAt       DateTime?
+
   @@unique([email, eventId])
   @@index([eventId])
   @@index([email])
   @@index([timestamp])
+  @@index([paymentStatus])
   @@map("event_attendances")
 }
 

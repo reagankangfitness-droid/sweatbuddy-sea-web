@@ -212,7 +212,7 @@ export default function EditEventPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
         <Loader2 className="w-8 h-8 animate-spin text-[#3477f8]" />
       </div>
     )
@@ -220,9 +220,9 @@ export default function EditEventPage() {
 
   if (!event) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Event not found</h2>
+          <h2 className="text-xl font-semibold text-neutral-900 mb-2">Event not found</h2>
           <Link href="/organizer/dashboard" className="text-[#3477f8] hover:underline">
             Back to Dashboard
           </Link>
@@ -234,11 +234,11 @@ export default function EditEventPage() {
   // Static events can't be edited
   if (event.status === 'static') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
         <div className="text-center max-w-md">
           <AlertTriangle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Cannot Edit This Event</h2>
-          <p className="text-gray-600 mb-4">
+          <h2 className="text-xl font-semibold text-neutral-900 mb-2">Cannot Edit This Event</h2>
+          <p className="text-neutral-600 mb-4">
             This event is managed by SweatBuddies and cannot be edited directly.
             Please contact us if you need to make changes.
           </p>
@@ -251,19 +251,19 @@ export default function EditEventPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-white border-b border-neutral-200 sticky top-0 z-50">
         <div className="max-w-3xl mx-auto px-4 h-16 flex items-center gap-4">
           <Link
             href="/organizer/dashboard"
-            className="p-2 -ml-2 hover:bg-gray-100 rounded-lg transition"
+            className="p-2 -ml-2 hover:bg-neutral-100 rounded-lg transition"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <ArrowLeft className="w-5 h-5 text-neutral-600" />
           </Link>
           <div className="flex-1">
-            <h1 className="font-semibold text-gray-900">Edit Event</h1>
-            <p className="text-sm text-gray-500">{event.eventName}</p>
+            <h1 className="font-semibold text-neutral-900">Edit Event</h1>
+            <p className="text-sm text-neutral-500">{event.eventName}</p>
           </div>
         </div>
       </header>
@@ -298,8 +298,8 @@ export default function EditEventPage() {
 
         <form onSubmit={handleSave} className="space-y-6">
           {/* Event Details Card */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-xl border border-neutral-200 p-6">
+            <h2 className="font-semibold text-neutral-900 mb-4 flex items-center gap-2">
               <Calendar className="w-5 h-5 text-[#3477f8]" />
               Event Details
             </h2>
@@ -307,7 +307,7 @@ export default function EditEventPage() {
             <div className="space-y-4">
               {/* Event Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 mb-1">
                   Event Name *
                 </label>
                 <input
@@ -315,20 +315,20 @@ export default function EditEventPage() {
                   value={formData.eventName}
                   onChange={(e) => setFormData({ ...formData, eventName: e.target.value })}
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
                 />
               </div>
 
               {/* Category */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 mb-1">
                   Category *
                 </label>
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
                 >
                   <option value="">Select category</option>
                   {CATEGORIES.map((cat) => (
@@ -339,7 +339,7 @@ export default function EditEventPage() {
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 mb-1">
                   Description
                 </label>
                 <textarea
@@ -347,10 +347,10 @@ export default function EditEventPage() {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   maxLength={150}
                   rows={3}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none resize-none"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none resize-none"
                   placeholder="Brief description of your event..."
                 />
-                <span className="text-xs text-gray-400 mt-1 block text-right">
+                <span className="text-xs text-neutral-400 mt-1 block text-right">
                   {formData.description.length}/150
                 </span>
               </div>
@@ -358,8 +358,8 @@ export default function EditEventPage() {
           </div>
 
           {/* Date & Time Card */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-xl border border-neutral-200 p-6">
+            <h2 className="font-semibold text-neutral-900 mb-4 flex items-center gap-2">
               <Clock className="w-5 h-5 text-[#3477f8]" />
               Date & Time
             </h2>
@@ -367,14 +367,14 @@ export default function EditEventPage() {
             <div className="grid grid-cols-2 gap-4">
               {/* Day */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 mb-1">
                   Day *
                 </label>
                 <select
                   value={formData.day}
                   onChange={(e) => setFormData({ ...formData, day: e.target.value })}
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
                 >
                   <option value="">Select day</option>
                   {DAYS.map((day) => (
@@ -385,7 +385,7 @@ export default function EditEventPage() {
 
               {/* Time */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 mb-1">
                   Time *
                 </label>
                 <input
@@ -394,20 +394,20 @@ export default function EditEventPage() {
                   onChange={(e) => setFormData({ ...formData, time: e.target.value })}
                   required
                   placeholder="e.g., 7:00 AM"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
                 />
               </div>
 
               {/* Event Date (optional) */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-700 mb-1">
                   Next Date
                 </label>
                 <input
                   type="date"
                   value={formData.eventDate}
                   onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
                 />
               </div>
 
@@ -418,9 +418,9 @@ export default function EditEventPage() {
                   id="recurring"
                   checked={formData.recurring}
                   onChange={(e) => setFormData({ ...formData, recurring: e.target.checked })}
-                  className="w-5 h-5 rounded border-gray-300 text-[#3477f8] focus:ring-[#3477f8]"
+                  className="w-5 h-5 rounded border-neutral-300 text-[#3477f8] focus:ring-[#3477f8]"
                 />
-                <label htmlFor="recurring" className="text-sm font-medium text-gray-700">
+                <label htmlFor="recurring" className="text-sm font-medium text-neutral-700">
                   Recurring weekly
                 </label>
               </div>
@@ -428,14 +428,14 @@ export default function EditEventPage() {
           </div>
 
           {/* Location Card */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-xl border border-neutral-200 p-6">
+            <h2 className="font-semibold text-neutral-900 mb-4 flex items-center gap-2">
               <MapPin className="w-5 h-5 text-[#3477f8]" />
               Location
             </h2>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-neutral-700 mb-1">
                 Location *
               </label>
               {isLoaded ? (
@@ -453,7 +453,7 @@ export default function EditEventPage() {
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     required
                     placeholder="Search for a location..."
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
+                    className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
                   />
                 </Autocomplete>
               ) : (
@@ -462,7 +462,7 @@ export default function EditEventPage() {
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#3477f8] focus:border-transparent outline-none"
                 />
               )}
             </div>
@@ -508,8 +508,8 @@ export default function EditEventPage() {
                 <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Trash2 className="w-6 h-6 text-red-600" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Delete Event?</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="text-lg font-semibold text-neutral-900 mb-2">Delete Event?</h3>
+                <p className="text-sm text-neutral-600">
                   This will permanently delete &quot;{event.eventName}&quot; and remove all attendee data. This cannot be undone.
                 </p>
               </div>
@@ -517,7 +517,7 @@ export default function EditEventPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="flex-1 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition"
+                  className="flex-1 py-2.5 bg-neutral-100 text-neutral-700 font-medium rounded-xl hover:bg-neutral-200 transition"
                 >
                   Cancel
                 </button>

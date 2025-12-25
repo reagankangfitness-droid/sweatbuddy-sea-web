@@ -44,7 +44,7 @@ export function MobileFloatingCTA() {
     <div className="fixed bottom-4 left-4 right-4 z-50 md:hidden">
       <button
         onClick={handleClick}
-        className="w-full bg-coral text-white py-4 font-semibold rounded-full flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 hover:bg-coral-600"
+        className="w-full bg-neutral-900 text-white py-4 font-semibold rounded-full flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 hover:bg-neutral-900-600"
       >
         Browse Events
         <ArrowRight className="w-5 h-5" />

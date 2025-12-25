@@ -50,29 +50,26 @@ export function Mission() {
     }
   }, [pathname, router])
   return (
-    <section id="mission" className="relative py-24 md:py-36 overflow-hidden bg-forest-950">
+    <section id="mission" className="relative py-24 md:py-36 overflow-hidden bg-neutral-950">
       {/* Decorative elements - subtle */}
-      <div className="absolute top-20 right-10 w-20 h-20 rounded-full bg-cream/5" />
-      <div className="absolute bottom-32 left-16 w-16 h-16 rounded-full bg-coral/10" />
+      <div className="absolute top-20 right-10 w-20 h-20 rounded-full bg-white/5" />
+      <div className="absolute bottom-32 left-16 w-16 h-16 rounded-full bg-neutral-900/10" />
 
       <div className="relative z-10 max-w-container mx-auto px-6 lg:px-10">
         <div className="max-w-3xl mx-auto text-center">
-          {/* Stats - Premium rounded cards */}
+          {/* Event types - Premium rounded cards */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="flex flex-wrap justify-center gap-4 mb-10"
+            className="flex flex-wrap justify-center gap-3 mb-10"
           >
-            <div className="px-6 py-4 bg-cream/10 backdrop-blur-sm rounded-2xl border border-cream/10">
-              <span className="text-stat-sm text-cream">$200+</span>
-              <span className="text-cream/50 text-sm ml-2">gym/month</span>
-            </div>
-            <div className="px-6 py-4 bg-cream/10 backdrop-blur-sm rounded-2xl border border-cream/10">
-              <span className="text-stat-sm text-cream">$40+</span>
-              <span className="text-cream/50 text-sm ml-2">per class</span>
-            </div>
+            {['Run clubs', 'Yoga flows', 'HIIT sessions', 'Beach bootcamps'].map((type) => (
+              <div key={type} className="px-5 py-3 bg-white/10 backdrop-blur-sm rounded-2xl border border-cream/10">
+                <span className="text-white font-medium">{type}</span>
+              </div>
+            ))}
           </motion.div>
 
           {/* Main message */}
@@ -81,13 +78,14 @@ export function Mission() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-body-large text-cream/70 mb-8"
+            className="text-lg mb-8"
+            style={{ color: 'rgba(255, 255, 255, 0.7)' }}
           >
-            But <span className="text-cream font-medium">100s of free sessions</span> happen every week — invisible, scattered across Facebook groups.
+            Hundreds of <span className="text-white font-medium">open workouts</span> happen every week — scattered across Instagram stories and Facebook groups.
           </motion.p>
 
           {/* Divider - subtle coral */}
-          <div className="w-16 h-0.5 bg-coral/50 mx-auto my-10" />
+          <div className="w-16 h-0.5 bg-neutral-900/50 mx-auto my-10" />
 
           {/* SweatBuddies value prop - Premium card */}
           <motion.div
@@ -95,24 +93,13 @@ export function Mission() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="inline-flex items-center gap-4 px-8 py-5 bg-coral rounded-2xl shadow-lg mb-10"
+            className="inline-flex items-center gap-4 px-8 py-5 bg-neutral-900 rounded-2xl shadow-lg mb-10"
           >
             <Zap className="w-6 h-6 text-white" />
-            <span className="text-white font-display font-semibold text-lg md:text-xl" style={{ letterSpacing: '-0.01em' }}>
+            <span className="text-white font-sans font-semibold text-lg md:text-xl" style={{ letterSpacing: '-0.01em' }}>
               SweatBuddies finds them all. One place.
             </span>
           </motion.div>
-
-          {/* Closing line - premium typography */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="text-display-section text-cream mb-10"
-          >
-            The best friendships start at 6am.
-          </motion.p>
 
           {/* CTA - Premium rounded */}
           <motion.button
@@ -123,7 +110,7 @@ export function Mission() {
             transition={{ duration: 0.5, delay: 0.4 }}
             whileHover={{ y: -2 }}
             whileTap={{ scale: 0.98 }}
-            className="inline-flex items-center gap-3 px-8 py-4 bg-cream text-forest-900 text-ui-lg font-semibold rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-white text-neutral-900 text-ui-lg font-semibold rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
           >
             Just Show Up
             <ArrowRight className="w-5 h-5" />

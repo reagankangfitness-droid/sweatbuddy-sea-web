@@ -38,21 +38,9 @@ export function EventAttendees({ eventId, refreshTrigger = 0 }: EventAttendeesPr
     fetchAttendees()
   }, [fetchAttendees, refreshTrigger])
 
-  // Show nothing while loading
-  if (isLoading) {
+  // Show nothing while loading or if no attendees
+  if (isLoading || count === 0) {
     return null
-  }
-
-  // Show nothing if no attendees
-  if (count === 0) {
-    return (
-      <div className="flex items-center gap-2 text-gray-500">
-        <div className="flex items-center gap-1.5">
-          <span className="text-base">👋</span>
-          <span className="text-sm">Be the first to join!</span>
-        </div>
-      </div>
-    )
   }
 
   const maxDisplay = 10
@@ -60,40 +48,47 @@ export function EventAttendees({ eventId, refreshTrigger = 0 }: EventAttendeesPr
   const surplus = count - maxDisplay
 
   return (
-    <div className="flex items-center gap-3">
-      {/* Avatar Stack */}
-      <div className="flex -space-x-2 flex-wrap">
-        {displayedAttendees.map((attendee, index) => (
-          <div
-            key={attendee.id}
-            className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-semibold shadow-sm transition-transform hover:scale-110 hover:z-20"
-            style={{
-              backgroundColor: attendee.color,
-              zIndex: maxDisplay - index,
-            }}
-            title={attendee.name}
-          >
-            {attendee.name[0]?.toUpperCase() || '?'}
-          </div>
-        ))}
+    <div>
+      {/* Section Header */}
+      <h3 className="text-sm font-semibold text-neutral-900 mb-3 flex items-center gap-2">
+        <span className="text-base">👥</span> Who&apos;s Going
+      </h3>
 
-        {surplus > 0 && (
-          <div
-            className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 text-gray-600 flex items-center justify-center text-xs font-semibold shadow-sm"
-            style={{ zIndex: 0 }}
-            title={`${surplus} more people`}
-          >
-            +{surplus}
-          </div>
-        )}
-      </div>
+      <div className="flex items-center gap-3">
+        {/* Avatar Stack */}
+        <div className="flex -space-x-2 flex-wrap">
+          {displayedAttendees.map((attendee, index) => (
+            <div
+              key={attendee.id}
+              className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-semibold shadow-sm transition-transform hover:scale-110 hover:z-20"
+              style={{
+                backgroundColor: attendee.color,
+                zIndex: maxDisplay - index,
+              }}
+              title={attendee.name}
+            >
+              {attendee.name[0]?.toUpperCase() || '?'}
+            </div>
+          ))}
 
-      {/* Count text */}
-      <div className="flex items-center gap-1.5 text-gray-600">
-        <Users className="w-4 h-4 text-[#1800ad]" />
-        <span className="text-sm font-medium">
-          {count} {count === 1 ? 'person' : 'people'} going
-        </span>
+          {surplus > 0 && (
+            <div
+              className="w-8 h-8 rounded-full border-2 border-white bg-neutral-200 text-neutral-600 flex items-center justify-center text-xs font-semibold shadow-sm"
+              style={{ zIndex: 0 }}
+              title={`${surplus} more people`}
+            >
+              +{surplus}
+            </div>
+          )}
+        </div>
+
+        {/* Count text */}
+        <div className="flex items-center gap-1.5 text-neutral-600">
+          <Users className="w-4 h-4 text-[#1800ad]" />
+          <span className="text-sm font-medium">
+            {count} {count === 1 ? 'person' : 'people'} going
+          </span>
+        </div>
       </div>
     </div>
   )
@@ -151,7 +146,7 @@ export function EventAttendeesCompact({ eventId, refreshTrigger = 0 }: EventAtte
 
         {surplus > 0 && (
           <div
-            className="w-6 h-6 rounded-full border-2 border-white bg-gray-100 text-gray-500 flex items-center justify-center text-[10px] font-medium shadow-sm"
+            className="w-6 h-6 rounded-full border-2 border-white bg-neutral-100 text-neutral-500 flex items-center justify-center text-[10px] font-medium shadow-sm"
             style={{ zIndex: 0 }}
           >
             +{surplus}
@@ -159,7 +154,7 @@ export function EventAttendeesCompact({ eventId, refreshTrigger = 0 }: EventAtte
         )}
       </div>
 
-      <span className="text-xs text-gray-500 font-medium">
+      <span className="text-xs text-neutral-500 font-medium">
         {count} going
       </span>
     </div>

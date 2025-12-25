@@ -55,7 +55,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
       {/* Section Header - Premium typography */}
       <div className="flex items-center justify-between px-4 mb-4">
         <div>
-          <span className="text-label-sm text-forest-500 block mb-1">FEATURED</span>
+          <span className="text-label-sm text-neutral-500 block mb-1">FEATURED</span>
           <h2 className="text-display-card">Trending This Week</h2>
         </div>
         <button
@@ -65,7 +65,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
               eventsSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
             }
           }}
-          className="text-ui text-forest-600 hover:text-forest-800"
+          className="text-ui text-neutral-600 hover:text-neutral-800"
         >
           See all →
         </button>
@@ -84,7 +84,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
             onClick={() => onSelect(event)}
             className="flex-shrink-0 w-[85vw] snap-start cursor-pointer"
           >
-            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-cream shadow-lg">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-white shadow-lg">
               {/* Image or Placeholder */}
               {event.imageUrl ? (
                 <Image
@@ -107,7 +107,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
 
               {/* Category Badge - Neutral */}
               <div className="absolute top-4 left-4">
-                <span className="bg-cream/95 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-forest-700 rounded-full border border-forest-100/50">
+                <span className="bg-white/95 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-neutral-700 rounded-full border border-neutral-100/50">
                   {event.category}
                 </span>
               </div>
@@ -115,7 +115,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
               {/* Weekly Badge - Neutral dark */}
               {event.recurring && (
                 <div className="absolute top-4 right-4">
-                  <span className="bg-forest-900/90 backdrop-blur-sm text-cream px-3 py-1.5 text-xs font-medium rounded-full">
+                  <span className="bg-neutral-900/90 backdrop-blur-sm text-white px-3 py-1.5 text-xs font-medium rounded-full">
                     WEEKLY
                   </span>
                 </div>
@@ -123,15 +123,15 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
 
               {/* Content - Premium typography */}
               <div className="absolute bottom-0 left-0 right-0 p-5">
-                <h3 className="text-white font-display text-2xl font-semibold mb-2 line-clamp-2" style={{ letterSpacing: '-0.01em' }}>
+                <h3 className="text-white font-sans text-2xl font-semibold mb-2 line-clamp-2" style={{ letterSpacing: '-0.01em' }}>
                   {event.name}
                 </h3>
                 <p className="text-white/70 text-sm mb-4">
                   {event.day} • {event.time}
                 </p>
 
-                {/* CTA - Primary coral */}
-                <button className="w-full bg-coral text-white py-3 text-ui-lg font-semibold rounded-full active:scale-95 transition-transform shadow-md">
+                {/* CTA - Primary black */}
+                <button className="w-full bg-neutral-900 py-3 text-base font-semibold rounded-full active:scale-95 transition-transform shadow-md" style={{ color: '#FFFFFF' }}>
                   I&apos;m Going
                 </button>
               </div>
@@ -146,7 +146,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
           <div
             key={index}
             className={`
-              h-1.5 rounded-full transition-all duration-300 bg-forest-900
+              h-1.5 rounded-full transition-all duration-300 bg-neutral-900
               ${activeIndex === index
                 ? 'w-6'
                 : 'w-1.5 opacity-30'

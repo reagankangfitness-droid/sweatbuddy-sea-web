@@ -1595,7 +1595,7 @@ model EventSubmission {
 
   // Organizer details
   organizerName     String                @db.VarChar(200)
-  organizerInstagram String               @db.VarChar(100)
+  organizerInstagram String               @db.VarChar(500)
   contactEmail      String                @db.VarChar(255)
 
   // Status

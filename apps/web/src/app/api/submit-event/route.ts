@@ -31,6 +31,7 @@ interface EventSubmission {
 export async function POST(request: Request) {
   try {
     const data: EventSubmission = await request.json()
+    console.log('Event submission received:', JSON.stringify(data, null, 2))
 
     // Validate required fields
     const requiredFields: (keyof EventSubmission)[] = [
@@ -118,8 +119,9 @@ export async function POST(request: Request) {
     })
   } catch (error) {
     console.error('Error submitting event:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
-      { error: 'Failed to submit event' },
+      { error: `Failed to submit event: ${errorMessage}` },
       { status: 500 }
     )
   }

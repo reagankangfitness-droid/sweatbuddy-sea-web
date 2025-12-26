@@ -229,10 +229,14 @@ export function SubmitForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
-      if (!response.ok) throw new Error('Failed to submit')
+      const result = await response.json()
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to submit')
+      }
       setIsSubmitted(true)
-    } catch {
-      setError('Something went wrong. Please try again.')
+    } catch (err) {
+      console.error('Submit error:', err)
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -415,36 +419,49 @@ export function SubmitForm() {
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
                     Location *
                   </label>
-                  <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={LIBRARIES}>
-                    <div className="space-y-3">
-                      <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged} options={AUTOCOMPLETE_OPTIONS}>
-                        <div className="relative">
-                          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                          <input
-                            type="text"
-                            value={locationData.location}
-                            onChange={(e) => setLocationData(prev => ({ ...prev, location: e.target.value }))}
-                            className="w-full h-12 pl-12 pr-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
-                            placeholder="Search for a location..."
-                          />
-                        </div>
-                      </Autocomplete>
+                  {GOOGLE_MAPS_API_KEY ? (
+                    <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={LIBRARIES}>
+                      <div className="space-y-3">
+                        <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged} options={AUTOCOMPLETE_OPTIONS}>
+                          <div className="relative">
+                            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                            <input
+                              type="text"
+                              value={locationData.location}
+                              onChange={(e) => setLocationData(prev => ({ ...prev, location: e.target.value }))}
+                              className="w-full h-12 pl-12 pr-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
+                              placeholder="Search for a location..."
+                            />
+                          </div>
+                        </Autocomplete>
 
-                      <GoogleMap
-                        mapContainerStyle={MAP_CONTAINER_STYLE}
-                        center={mapCenter}
-                        zoom={markerPosition ? 15 : 11}
-                        onClick={onMapClick}
-                        options={MAP_OPTIONS}
-                      >
-                        {markerPosition && <Marker position={markerPosition} />}
-                      </GoogleMap>
+                        <GoogleMap
+                          mapContainerStyle={MAP_CONTAINER_STYLE}
+                          center={mapCenter}
+                          zoom={markerPosition ? 15 : 11}
+                          onClick={onMapClick}
+                          options={MAP_OPTIONS}
+                        >
+                          {markerPosition && <Marker position={markerPosition} />}
+                        </GoogleMap>
 
-                      <p className="text-xs text-neutral-400">
-                        Search for a venue or click on the map to pin location
-                      </p>
+                        <p className="text-xs text-neutral-400">
+                          Search for a venue or click on the map to pin location
+                        </p>
+                      </div>
+                    </LoadScript>
+                  ) : (
+                    <div className="relative">
+                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                      <input
+                        type="text"
+                        value={locationData.location}
+                        onChange={(e) => setLocationData(prev => ({ ...prev, location: e.target.value }))}
+                        className="w-full h-12 pl-12 pr-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
+                        placeholder="Enter location address..."
+                      />
                     </div>
-                  </LoadScript>
+                  )}
                 </div>
 
                 <div>

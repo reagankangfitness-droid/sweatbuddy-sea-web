@@ -14,18 +14,8 @@ interface CreateActivityData {
   endTime?: Date
   maxPeople?: number
   imageUrl?: string
-  // Pricing fields
-  isFree?: boolean
   price?: number
   currency?: string
-  // PayNow fields
-  paynowEnabled?: boolean
-  paynowNumber?: string
-  paynowName?: string
-  paynowQrCode?: string
-  // Stripe fields
-  stripeEnabled?: boolean
-  stripePriceId?: string
   status?: 'DRAFT' | 'PUBLISHED' | 'CANCELLED' | 'COMPLETED'
 }
 
@@ -70,18 +60,8 @@ export class ActivityService {
         endTime: data.endTime,
         maxPeople: data.maxPeople,
         imageUrl: data.imageUrl,
-        // Pricing fields
-        isFree: data.isFree ?? true,
         price: data.price ?? 0,
         currency: data.currency ?? 'SGD',
-        // PayNow fields
-        paynowEnabled: data.paynowEnabled ?? false,
-        paynowNumber: data.paynowNumber,
-        paynowName: data.paynowName,
-        paynowQrCode: data.paynowQrCode,
-        // Stripe fields
-        stripeEnabled: data.stripeEnabled ?? false,
-        stripePriceId: data.stripePriceId,
         status: data.status ?? 'PUBLISHED',
         userId,
         hostId: userId,

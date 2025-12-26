@@ -194,12 +194,14 @@ export function SubmitForm() {
     setError('')
 
     const eventDate = formData.eventDate ? new Date(formData.eventDate + 'T00:00:00') : null
-    const dayName = eventDate ? eventDate.toLocaleDateString('en-US', { weekday: 'long' }) + 's' : ''
+    const dayName = eventDate && !isNaN(eventDate.getTime())
+      ? eventDate.toLocaleDateString('en-US', { weekday: 'long' }) + 's'
+      : 'Weekly'
 
     const data = {
       eventName: formData.eventName,
       category: formData.category,
-      day: dayName,
+      day: dayName || 'Weekly',
       eventDate: formData.eventDate,
       time: formData.time,
       recurring: formData.recurring,
@@ -223,6 +225,8 @@ export function SubmitForm() {
       stripeEnabled: !formData.isFree && formData.stripeEnabled,
     }
 
+    console.log('Submitting event data:', data)
+
     try {
       const response = await fetch('/api/submit-event', {
         method: 'POST',
@@ -230,6 +234,7 @@ export function SubmitForm() {
         body: JSON.stringify(data),
       })
       const result = await response.json()
+      console.log('API response:', response.status, result)
       if (!response.ok) {
         throw new Error(result.error || 'Failed to submit')
       }

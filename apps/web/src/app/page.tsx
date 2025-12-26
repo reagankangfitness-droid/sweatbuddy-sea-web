@@ -19,10 +19,6 @@ const MobileEventsSection = dynamicImport(() => import('@/components/MobileEvent
   loading: () => <MobileEventsListSkeleton count={3} />,
   ssr: true,
 })
-const BottomNav = dynamicImport(() => import('@/components/BottomNav').then(mod => ({ default: mod.BottomNav })), {
-  ssr: false, // No SSR needed for bottom nav
-})
-
 // Dynamically import below-the-fold components for better initial load
 const Cities = dynamicImport(() => import('@/components/Cities').then(mod => ({ default: mod.Cities })), {
   loading: () => <div className="py-20" />,
@@ -64,7 +60,6 @@ export default async function Home() {
         </div>
         <Newsletter />
         <Footer />
-        <BottomNav />
       </div>
 
       {/* Desktop Layout - Original Design */}

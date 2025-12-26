@@ -185,63 +185,79 @@ export function SubmitForm() {
   }
 
   async function handleSubmit() {
+    // Validate step 3 first
     if (!validateStep(3)) {
-      setError('Please fill in all required fields')
+      setError('Please fill in all required fields in step 3')
+      return
+    }
+
+    // Also validate that earlier steps have data
+    if (!formData.eventName || !formData.category || !formData.time) {
+      setError('Missing event details. Please go back and fill in Event Name, Category, and Time.')
+      return
+    }
+
+    if (!locationData.location) {
+      setError('Missing location. Please go back to step 2 and enter a location.')
       return
     }
 
     setIsSubmitting(true)
     setError('')
 
-    const eventDate = formData.eventDate ? new Date(formData.eventDate + 'T00:00:00') : null
-    const dayName = eventDate && !isNaN(eventDate.getTime())
-      ? eventDate.toLocaleDateString('en-US', { weekday: 'long' }) + 's'
-      : 'Weekly'
-
-    const data = {
-      eventName: formData.eventName,
-      category: formData.category,
-      day: dayName || 'Weekly',
-      eventDate: formData.eventDate,
-      time: formData.time,
-      recurring: formData.recurring,
-      location: locationData.location,
-      latitude: locationData.latitude,
-      longitude: locationData.longitude,
-      placeId: locationData.placeId,
-      description: formData.description,
-      imageUrl: imageUrl,
-      organizerName: formData.organizerName,
-      organizerInstagram: formData.organizerInstagram,
-      contactEmail: formData.contactEmail,
-      communityLink: formData.communityLink || null,
-      // Pricing
-      isFree: formData.isFree,
-      price: formData.isFree ? null : Math.round(parseFloat(formData.price || '0') * 100), // Convert to cents
-      paynowEnabled: !formData.isFree && formData.paynowEnabled,
-      paynowQrCode: paynowQrCode,
-      paynowNumber: formData.paynowNumber || null,
-      paynowName: formData.paynowName || null,
-      stripeEnabled: !formData.isFree && formData.stripeEnabled,
-    }
-
-    console.log('Submitting event data:', data)
-
     try {
+      const eventDate = formData.eventDate ? new Date(formData.eventDate + 'T00:00:00') : null
+      const dayName = eventDate && !isNaN(eventDate.getTime())
+        ? eventDate.toLocaleDateString('en-US', { weekday: 'long' }) + 's'
+        : 'Weekly'
+
+      const data = {
+        eventName: formData.eventName,
+        category: formData.category,
+        day: dayName || 'Weekly',
+        eventDate: formData.eventDate || null,
+        time: formData.time,
+        recurring: formData.recurring,
+        location: locationData.location,
+        latitude: locationData.latitude || null,
+        longitude: locationData.longitude || null,
+        placeId: locationData.placeId || null,
+        description: formData.description || null,
+        imageUrl: imageUrl || null,
+        organizerName: formData.organizerName,
+        organizerInstagram: formData.organizerInstagram,
+        contactEmail: formData.contactEmail,
+        communityLink: formData.communityLink || null,
+        // Pricing
+        isFree: formData.isFree,
+        price: formData.isFree ? null : Math.round(parseFloat(formData.price || '0') * 100),
+        paynowEnabled: !formData.isFree && formData.paynowEnabled,
+        paynowQrCode: paynowQrCode || null,
+        paynowNumber: formData.paynowNumber || null,
+        paynowName: formData.paynowName || null,
+        stripeEnabled: !formData.isFree && formData.stripeEnabled,
+      }
+
+      console.log('[SubmitForm] Submitting:', JSON.stringify(data))
+
       const response = await fetch('/api/submit-event', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
+
       const result = await response.json()
-      console.log('API response:', response.status, result)
+      console.log('[SubmitForm] Response:', response.status, JSON.stringify(result))
+
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to submit')
+        throw new Error(result.error || `Server error: ${response.status}`)
       }
+
       setIsSubmitted(true)
     } catch (err) {
-      console.error('Submit error:', err)
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+      console.error('[SubmitForm] Error:', err)
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred'
+      setError(errorMessage)
     } finally {
       setIsSubmitting(false)
     }

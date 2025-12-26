@@ -90,31 +90,48 @@ export default function HostApplicationPage() {
         isFree: formData.isFree,
         price: formData.isFree ? null : Math.round(parseFloat(formData.price || '0') * 100),
         paynowEnabled: !formData.isFree && formData.paynowEnabled,
-        paynowQrCode: paynowQrCode,
+        paynowQrCode: paynowQrCode || null,
         paynowNumber: formData.paynowNumber || null,
         paynowName: formData.paynowName || null,
         stripeEnabled: !formData.isFree && formData.stripeEnabled,
       }
 
-      console.log('Submitting event:', eventSubmissionData)
+      console.log('[Host] Submitting event:', JSON.stringify(eventSubmissionData))
 
-      const response = await fetch('/api/submit-event', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(eventSubmissionData),
-      })
-
-      const data = await response.json()
-      console.log('API response:', response.status, data)
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to submit application')
+      let response: Response
+      try {
+        response = await fetch('/api/submit-event', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(eventSubmissionData),
+        })
+      } catch (fetchErr) {
+        console.error('[Host] Network error:', fetchErr)
+        throw new Error('Network error. Please check your connection and try again.')
       }
 
+      console.log('[Host] Response status:', response.status)
+
+      let data
+      try {
+        const text = await response.text()
+        console.log('[Host] Response body:', text)
+        data = text ? JSON.parse(text) : {}
+      } catch (parseErr) {
+        console.error('[Host] JSON parse error:', parseErr)
+        throw new Error(`Server returned invalid response (status ${response.status})`)
+      }
+
+      if (!response.ok) {
+        throw new Error(data.error || `Server error: ${response.status}`)
+      }
+
+      console.log('[Host] Success:', data)
       setIsSubmitted(true)
     } catch (err) {
-      console.error('Submit error:', err)
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+      console.error('[Host] Submit error:', err)
+      const errorMessage = err instanceof Error ? err.message : String(err)
+      setError(errorMessage || 'An unexpected error occurred. Please try again.')
     } finally {
       setIsLoading(false)
     }

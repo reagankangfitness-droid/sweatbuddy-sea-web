@@ -22,8 +22,8 @@ export async function POST(
       return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
     }
 
-    // Simple share URL
-    const shareUrl = `https://sweatbuddies.co/activities/${activity.id}`
+    // Simple share URL (use www for proper OG scraping)
+    const shareUrl = `https://www.sweatbuddies.co/activities/${activity.id}`
 
     return NextResponse.json({
       share_url: shareUrl,

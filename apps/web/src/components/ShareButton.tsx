@@ -21,8 +21,8 @@ export function ShareButton({ eventId, eventName, compact = false, iconOnly = fa
     setMounted(true)
   }, [])
 
-  // Short, clean URL for sharing: sweatbuddies.co/e/[id]
-  const shareUrl = `https://sweatbuddies.co/e/${eventId}`
+  // Use www subdomain for proper OG meta tag scraping
+  const shareUrl = `https://www.sweatbuddies.co/e/${eventId}`
 
   const shareText = `Join me at ${eventName} on SweatBuddies!`
 

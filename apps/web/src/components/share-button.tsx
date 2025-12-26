@@ -41,9 +41,9 @@ export function ShareButton({
   const [modalOpen, setModalOpen] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  // Generate share URL client-side
+  // Generate share URL client-side (use www for proper OG scraping)
   const getShareUrl = useCallback(() => {
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://sweatbuddies.co'
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://www.sweatbuddies.co'
     return `${baseUrl}/activities/${activityId}`
   }, [activityId])
 

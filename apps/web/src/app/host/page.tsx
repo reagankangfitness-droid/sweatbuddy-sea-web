@@ -56,12 +56,29 @@ export default function HostApplicationPage() {
     setIsLoading(true)
     setError('')
 
+    // Validate required fields before submission
+    const missingFields = []
+    if (!formData.organizerName) missingFields.push('Your Name')
+    if (!formData.instagramHandle) missingFields.push('Instagram Handle')
+    if (!formData.email) missingFields.push('Email')
+    if (!formData.eventName) missingFields.push('Event Name')
+    if (!formData.eventType) missingFields.push('Event Type')
+    if (!formData.eventDay) missingFields.push('Day')
+    if (!formData.eventTime) missingFields.push('Time')
+    if (!formData.location) missingFields.push('Location')
+
+    if (missingFields.length > 0) {
+      setError(`Please fill in: ${missingFields.join(', ')}`)
+      setIsLoading(false)
+      return
+    }
+
     try {
       // Map form data to EventSubmission format for unified submission system
       const eventSubmissionData = {
         eventName: formData.eventName,
         category: formData.eventType,
-        day: formData.eventDay,
+        day: formData.eventDay || 'Weekly',
         time: formData.eventTime,
         recurring: true, // Host applications are typically for recurring events
         location: formData.location,
@@ -79,6 +96,8 @@ export default function HostApplicationPage() {
         stripeEnabled: !formData.isFree && formData.stripeEnabled,
       }
 
+      console.log('Submitting event:', eventSubmissionData)
+
       const response = await fetch('/api/submit-event', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -86,6 +105,7 @@ export default function HostApplicationPage() {
       })
 
       const data = await response.json()
+      console.log('API response:', response.status, data)
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to submit application')
@@ -93,6 +113,7 @@ export default function HostApplicationPage() {
 
       setIsSubmitted(true)
     } catch (err) {
+      console.error('Submit error:', err)
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
     } finally {
       setIsLoading(false)

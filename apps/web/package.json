@@ -2,6 +2,9 @@
   "name": "sweatbuddies-web",
   "version": "1.0.0",
   "private": true,
+  "prisma": {
+    "schema": "prisma/schema.prisma"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",

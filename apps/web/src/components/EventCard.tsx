@@ -240,9 +240,11 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
               </button>
             ) : (
               <div className="flex items-center justify-between gap-3">
-                <span className="text-xs text-neutral-400">
-                  {goingCount === 0 ? 'Be the first' : goingCount === 1 ? '1 going' : `${goingCount} going`}
-                </span>
+                {goingCount > 0 && (
+                  <span className="text-xs text-neutral-400">
+                    {goingCount === 1 ? '1 going' : `${goingCount} going`}
+                  </span>
+                )}
                 <button
                   onClick={handleGoingClick}
                   className="flex-1 py-2.5 font-semibold text-sm flex items-center justify-center gap-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-700 transition-all active:scale-[0.98]"

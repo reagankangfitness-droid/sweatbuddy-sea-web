@@ -343,9 +343,11 @@ function EventCard({ event, goingCount }: { event: Event; goingCount: number }) 
 
           {/* Footer */}
           <div className="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between">
-            <span className="text-xs text-neutral-400">
-              {goingCount === 0 ? 'Be the first' : goingCount === 1 ? '1 going' : `${goingCount} going`}
-            </span>
+            {goingCount > 0 && (
+              <span className="text-xs text-neutral-400">
+                {goingCount === 1 ? '1 going' : `${goingCount} going`}
+              </span>
+            )}
             <span className="text-sm font-medium text-neutral-900 group-hover:text-blue-600 transition-colors">
               View →
             </span>

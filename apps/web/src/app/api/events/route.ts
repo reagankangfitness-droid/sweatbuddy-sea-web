@@ -7,6 +7,7 @@ export const revalidate = 60
 
 interface Event {
   id: string
+  slug: string | null
   name: string
   category: string
   day: string
@@ -31,6 +32,7 @@ const getCachedEvents = unstable_cache(
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
+        slug: true,
         eventName: true,
         category: true,
         day: true,
@@ -59,6 +61,7 @@ const getCachedEvents = unstable_cache(
 
     return approvedSubmissions.map(submission => ({
       id: submission.id,
+      slug: submission.slug,
       name: submission.eventName,
       category: submission.category,
       day: submission.day,

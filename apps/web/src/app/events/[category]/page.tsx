@@ -5,6 +5,9 @@ import { ArrowLeft, MapPin, Clock, Calendar } from 'lucide-react'
 import { getEvents, Event } from '@/lib/events'
 import { prisma } from '@/lib/prisma'
 
+// Force dynamic rendering since we need database access
+export const dynamic = 'force-dynamic'
+
 // Category configuration
 const categoryConfig: Record<string, {
   title: string
@@ -129,13 +132,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [`https://www.sweatbuddies.co/api/og?title=${encodeURIComponent(config.title)}&category=${encodeURIComponent(config.title)}`],
     },
   }
-}
-
-// Generate static params for common categories
-export async function generateStaticParams() {
-  return Object.keys(categoryConfig).map((category) => ({
-    category,
-  }))
 }
 
 export default async function CategoryPage({ params }: Props) {

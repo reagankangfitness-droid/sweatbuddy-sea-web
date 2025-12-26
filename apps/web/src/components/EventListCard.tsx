@@ -38,13 +38,13 @@ export function EventListCard({ event, onSelect }: Props) {
       className="flex gap-4 p-4 bg-white rounded-2xl border border-neutral-100 shadow-card hover:shadow-card-hover active:scale-[0.98] transition-all cursor-pointer"
     >
       {/* Image */}
-      <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-neutral-50 relative rounded-xl">
+      <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-neutral-100 relative rounded-xl">
         {event.imageUrl ? (
           <Image
             src={event.imageUrl}
             alt={event.name}
             fill
-            className="object-cover"
+            className="object-contain"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-3xl bg-gradient-to-br from-sand to-mist">

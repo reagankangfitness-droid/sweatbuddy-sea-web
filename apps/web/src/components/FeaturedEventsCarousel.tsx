@@ -84,7 +84,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
             onClick={() => onSelect(event)}
             className="flex-shrink-0 w-[85vw] snap-start cursor-pointer"
           >
-            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-white shadow-lg">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-neutral-100 shadow-lg">
               {/* Image or Placeholder */}
               {event.imageUrl ? (
                 <Image
@@ -94,7 +94,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
                   priority={index === 0}
                   loading={index === 0 ? 'eager' : 'lazy'}
                   sizes="85vw"
-                  className="object-cover"
+                  className="object-contain"
                 />
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-br from-sand to-mist flex items-center justify-center">

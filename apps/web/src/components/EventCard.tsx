@@ -158,19 +158,19 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
           animation: `fadeInUp 0.4s ease-out ${index * 0.05}s both`,
         }}
       >
-        {/* Image Section - Clean square aspect ratio */}
-        <div className="relative aspect-square rounded-xl overflow-hidden">
+        {/* Image Section - Clean square aspect ratio, contain to show full image */}
+        <div className="relative aspect-square rounded-xl overflow-hidden bg-neutral-100">
           {event.imageUrl ? (
             <Image
               src={event.imageUrl}
               alt={event.name}
               fill
               loading="lazy"
-              className="object-cover transition-transform duration-250 hover:scale-105"
+              className="object-contain transition-transform duration-250 group-hover:scale-105"
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
             />
           ) : (
-            <div className="w-full h-full bg-neutral-100 flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center">
               <span className="text-6xl">{emoji}</span>
             </div>
           )}

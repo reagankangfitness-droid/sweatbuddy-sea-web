@@ -9,6 +9,7 @@ import { detectPlatform, getJoinButtonText } from '@/lib/community'
 interface EventPageClientProps {
   event: {
     id: string
+    slug?: string | null  // URL-friendly slug
     name: string
     day: string
     time: string
@@ -36,7 +37,9 @@ export function EventPageClient({ event, initialGoingCount }: EventPageClientPro
   const isPaidEvent = !event.isFree && event.price && event.price > 0
 
   const handleShare = async () => {
-    const url = `https://www.sweatbuddies.co/e/${event.id}`
+    // Use slug for cleaner URLs if available, otherwise fall back to ID
+    const urlPath = event.slug || event.id
+    const url = `https://www.sweatbuddies.co/e/${urlPath}`
     const text = `Join me at ${event.name}! 🏃‍♂️`
 
     if (navigator.share) {

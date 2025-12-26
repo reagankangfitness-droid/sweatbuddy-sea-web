@@ -6,12 +6,13 @@ import { Share2, Check, Copy, X } from 'lucide-react'
 
 interface ShareButtonProps {
   eventId: string
+  eventSlug?: string | null  // URL-friendly slug
   eventName: string
   compact?: boolean
   iconOnly?: boolean
 }
 
-export function ShareButton({ eventId, eventName, compact = false, iconOnly = false }: ShareButtonProps) {
+export function ShareButton({ eventId, eventSlug, eventName, compact = false, iconOnly = false }: ShareButtonProps) {
   const [showMenu, setShowMenu] = useState(false)
   const [copied, setCopied] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -21,8 +22,9 @@ export function ShareButton({ eventId, eventName, compact = false, iconOnly = fa
     setMounted(true)
   }, [])
 
-  // Use www subdomain for proper OG meta tag scraping
-  const shareUrl = `https://www.sweatbuddies.co/e/${eventId}`
+  // Use slug for cleaner URLs if available, otherwise fall back to ID
+  const urlPath = eventSlug || eventId
+  const shareUrl = `https://www.sweatbuddies.co/e/${urlPath}`
 
   const shareText = `Join me at ${eventName} on SweatBuddies!`
 

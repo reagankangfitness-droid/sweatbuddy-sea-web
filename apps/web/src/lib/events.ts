@@ -3,6 +3,7 @@ import { unstable_cache } from 'next/cache'
 
 export interface Event {
   id: string
+  slug?: string | null  // URL-friendly slug (e.g., "coffee-run-dec-27")
   name: string
   category: string
   day: string
@@ -26,6 +27,27 @@ export interface Event {
   stripeEnabled?: boolean
 }
 
+// Generate URL-friendly slug from event name and date
+export function generateSlug(name: string, eventDate?: string | null): string {
+  const baseSlug = name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special chars
+    .replace(/\s+/g, '-')     // Replace spaces with hyphens
+    .replace(/-+/g, '-')      // Remove consecutive hyphens
+    .substring(0, 50)         // Limit length
+
+  // Add date suffix if available for uniqueness
+  if (eventDate) {
+    const date = new Date(eventDate)
+    const month = date.toLocaleDateString('en-US', { month: 'short' }).toLowerCase()
+    const day = date.getDate()
+    return `${baseSlug}-${month}-${day}`
+  }
+
+  return baseSlug
+}
+
 // Cached database fetch for events - revalidates every 60s
 const getCachedEvents = unstable_cache(
   async () => {
@@ -35,6 +57,7 @@ const getCachedEvents = unstable_cache(
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
+        slug: true,
         eventName: true,
         category: true,
         day: true,
@@ -63,6 +86,7 @@ const getCachedEvents = unstable_cache(
 
     return approvedSubmissions.map(submission => ({
       id: submission.id,
+      slug: submission.slug,
       name: submission.eventName,
       category: submission.category,
       day: submission.day,
@@ -91,16 +115,21 @@ export async function getEvents(): Promise<Event[]> {
   }
 }
 
-// Fetch single event by ID - no caching for dynamic rendering
-export async function getEventById(id: string): Promise<Event | null> {
+// Fetch single event by ID or slug - no caching for dynamic rendering
+export async function getEventById(idOrSlug: string): Promise<Event | null> {
   try {
+    // Try to find by ID first, then by slug
     const submission = await prisma.eventSubmission.findFirst({
       where: {
-        id: id,
+        OR: [
+          { id: idOrSlug },
+          { slug: idOrSlug }
+        ],
         status: 'APPROVED'
       },
       select: {
         id: true,
+        slug: true,
         eventName: true,
         category: true,
         day: true,
@@ -127,6 +156,7 @@ export async function getEventById(id: string): Promise<Event | null> {
     if (submission) {
       return {
         id: submission.id,
+        slug: submission.slug,
         name: submission.eventName,
         category: submission.category,
         day: submission.day,
@@ -152,7 +182,7 @@ export async function getEventById(id: string): Promise<Event | null> {
 
     return null
   } catch (error) {
-    console.error('Error fetching event by ID:', error)
+    console.error('Error fetching event by ID or slug:', error)
     return null
   }
 }

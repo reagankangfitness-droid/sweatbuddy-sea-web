@@ -1577,6 +1577,7 @@ enum EventSubmissionStatus {
 
 model EventSubmission {
   id                String                @id @default(cuid())
+  slug              String?               @unique @db.VarChar(250) // URL-friendly slug (e.g., "coffee-run-dec-27")
 
   // Event details
   eventName         String                @db.VarChar(200)
@@ -1627,6 +1628,7 @@ model EventSubmission {
 
   @@index([status, createdAt])
   @@index([contactEmail])
+  @@index([slug])
   @@map("event_submissions")
 }
 

@@ -159,13 +159,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ogImageUrl = dynamicOgUrl.toString()
   }
 
+  // Use slug for canonical URL if available, otherwise use ID
+  const canonicalPath = event.slug || id
+
   return {
     title: pageTitle,
     description: ogDescription,
     openGraph: {
       title: ogTitle,
       description: ogDescription,
-      url: `${BASE_URL}/e/${id}`,
+      url: `${BASE_URL}/e/${canonicalPath}`,
       siteName: 'SweatBuddies',
       type: 'website',
       locale: 'en_SG',
@@ -368,6 +371,7 @@ export default async function EventDetailPage({ params }: Props) {
                 <EventPageClient
                   event={{
                     id: event.id,
+                    slug: event.slug,
                     name: event.name,
                     day: event.day,
                     time: event.time,

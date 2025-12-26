@@ -13,6 +13,7 @@ import { detectPlatform } from '@/lib/community'
 
 interface Event {
   id: string
+  slug?: string | null  // URL-friendly slug
   name: string
   category: string
   day: string
@@ -333,6 +334,7 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
               <div className="flex flex-col items-center gap-1.5 text-neutral-500">
                 <ShareButton
                   eventId={event.id}
+                  eventSlug={event.slug}
                   eventName={event.name}
                   iconOnly
                 />

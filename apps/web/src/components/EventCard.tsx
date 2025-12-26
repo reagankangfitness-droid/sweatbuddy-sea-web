@@ -9,6 +9,7 @@ const EventDetailSheet = lazy(() => import('./EventDetailSheet').then(mod => ({ 
 
 interface Event {
   id: string
+  slug?: string | null  // URL-friendly slug
   name: string
   category: string
   day: string

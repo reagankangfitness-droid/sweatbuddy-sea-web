@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { generateSlug } from '@/lib/events'
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET || 'sweatbuddies-admin-2024'
 
@@ -22,6 +23,10 @@ export async function PUT(
     const { id } = await params
     const body = await request.json()
 
+    // Generate slug from event name and date
+    const eventDate = body.eventDate ? new Date(body.eventDate).toISOString().split('T')[0] : null
+    const slug = generateSlug(body.name, eventDate)
+
     // Update database event
     const updated = await prisma.eventSubmission.update({
       where: { id },
@@ -36,6 +41,7 @@ export async function PUT(
         organizerInstagram: body.organizer,
         imageUrl: body.imageUrl || null,
         recurring: body.recurring,
+        slug: slug,
       },
     })
 

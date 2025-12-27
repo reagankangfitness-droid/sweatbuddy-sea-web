@@ -27,25 +27,16 @@ export interface Event {
   stripeEnabled?: boolean
 }
 
-// Generate URL-friendly slug from event name and date
-export function generateSlug(name: string, eventDate?: string | null): string {
-  const baseSlug = name
+// Generate URL-friendly slug from event name
+export function generateSlug(name: string): string {
+  return name
     .toLowerCase()
     .trim()
     .replace(/[^\w\s-]/g, '') // Remove special chars
     .replace(/\s+/g, '-')     // Replace spaces with hyphens
     .replace(/-+/g, '-')      // Remove consecutive hyphens
+    .replace(/^-|-$/g, '')    // Remove leading/trailing hyphens
     .substring(0, 50)         // Limit length
-
-  // Add date suffix if available for uniqueness
-  if (eventDate) {
-    const date = new Date(eventDate)
-    const month = date.toLocaleDateString('en-US', { month: 'short' }).toLowerCase()
-    const day = date.getDate()
-    return `${baseSlug}-${month}-${day}`
-  }
-
-  return baseSlug
 }
 
 // Cached database fetch for events - revalidates every 60s

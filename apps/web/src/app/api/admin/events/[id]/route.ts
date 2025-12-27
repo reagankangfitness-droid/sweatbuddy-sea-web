@@ -23,9 +23,8 @@ export async function PUT(
     const { id } = await params
     const body = await request.json()
 
-    // Generate slug from event name and date
-    const eventDate = body.eventDate ? new Date(body.eventDate).toISOString().split('T')[0] : null
-    const slug = generateSlug(body.name, eventDate)
+    // Generate slug from event name
+    const slug = generateSlug(body.name)
 
     // Update database event
     const updated = await prisma.eventSubmission.update({

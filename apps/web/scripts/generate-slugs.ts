@@ -1,74 +1,47 @@
 import { PrismaClient } from '@prisma/client'
 
-// Generate URL-friendly slug from event name and date
-function generateSlug(name: string, eventDate?: string | null): string {
-  const baseSlug = name
+// Generate URL-friendly slug from event name (no dates)
+function generateSlug(name: string): string {
+  return name
     .toLowerCase()
     .trim()
     .replace(/[^\w\s-]/g, '') // Remove special chars
     .replace(/\s+/g, '-')     // Replace spaces with hyphens
     .replace(/-+/g, '-')      // Remove consecutive hyphens
+    .replace(/^-|-$/g, '')    // Remove leading/trailing hyphens
     .substring(0, 50)         // Limit length
-
-  // Add date suffix if available for uniqueness
-  if (eventDate) {
-    const date = new Date(eventDate)
-    const month = date.toLocaleDateString('en-US', { month: 'short' }).toLowerCase()
-    const day = date.getDate()
-    return `${baseSlug}-${month}-${day}`
-  }
-
-  return baseSlug
 }
 
 async function main() {
   const prisma = new PrismaClient()
 
   try {
-    // Get all events without slugs
-    const eventsWithoutSlugs = await prisma.eventSubmission.findMany({
-      where: {
-        OR: [
-          { slug: null },
-          { slug: '' }
-        ]
-      },
+    // Get ALL events to regenerate slugs without dates
+    const allEvents = await prisma.eventSubmission.findMany({
       select: {
         id: true,
         eventName: true,
-        eventDate: true,
       },
+      orderBy: { createdAt: 'asc' }, // Oldest first so they get the base slug
     })
 
-    console.log(`Found ${eventsWithoutSlugs.length} events without slugs`)
+    console.log(`Regenerating slugs for ${allEvents.length} events (removing dates)...`)
 
-    const existingSlugs = new Set<string>()
-
-    // Get all existing slugs to avoid duplicates
-    const existingEvents = await prisma.eventSubmission.findMany({
-      where: {
-        slug: { not: null }
-      },
-      select: { slug: true }
-    })
-    existingEvents.forEach(e => {
-      if (e.slug) existingSlugs.add(e.slug)
-    })
+    const usedSlugs = new Set<string>()
 
     // Generate unique slugs for each event
-    for (const event of eventsWithoutSlugs) {
-      const eventDate = event.eventDate?.toISOString().split('T')[0] || null
-      let slug = generateSlug(event.eventName, eventDate)
+    for (const event of allEvents) {
+      let slug = generateSlug(event.eventName)
 
       // Ensure uniqueness by adding a suffix if needed
       let uniqueSlug = slug
-      let counter = 1
-      while (existingSlugs.has(uniqueSlug)) {
+      let counter = 2
+      while (usedSlugs.has(uniqueSlug)) {
         uniqueSlug = `${slug}-${counter}`
         counter++
       }
 
-      existingSlugs.add(uniqueSlug)
+      usedSlugs.add(uniqueSlug)
 
       // Update the event
       await prisma.eventSubmission.update({
@@ -76,10 +49,10 @@ async function main() {
         data: { slug: uniqueSlug },
       })
 
-      console.log(`Updated event "${event.eventName}" with slug: ${uniqueSlug}`)
+      console.log(`"${event.eventName}" → ${uniqueSlug}`)
     }
 
-    console.log(`\nDone! Generated slugs for ${eventsWithoutSlugs.length} events`)
+    console.log(`\nDone! Regenerated slugs for ${allEvents.length} events`)
   } catch (error) {
     console.error('Error:', error)
   } finally {

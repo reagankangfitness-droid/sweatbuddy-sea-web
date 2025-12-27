@@ -23,6 +23,14 @@ export function DashboardHeader() {
 
         {/* Right side */}
         <div className="flex items-center gap-4">
+          {/* Earnings Link */}
+          <Link
+            href="/host/earnings"
+            className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors font-medium"
+          >
+            Earnings
+          </Link>
+
           {/* New Event Button */}
           <Link
             href="/#submit-desktop"

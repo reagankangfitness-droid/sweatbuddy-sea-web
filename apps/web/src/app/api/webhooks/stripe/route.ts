@@ -658,10 +658,6 @@ async function handleEventSubmissionRefund(
     // Find the transaction
     const transaction = await prisma.eventTransaction.findFirst({
       where: { stripePaymentIntentId: paymentIntentId },
-      include: {
-        eventSubmission: true,
-        attendance: true,
-      },
     })
 
     if (!transaction) {
@@ -675,6 +671,7 @@ async function handleEventSubmissionRefund(
       data: {
         status: 'REFUNDED',
         refundedAt: new Date(),
+        refundAmount: amountRefunded,
       },
     })
 
@@ -684,7 +681,6 @@ async function handleEventSubmissionRefund(
         where: { id: transaction.attendanceId },
         data: {
           paymentStatus: 'refunded',
-          refundedAt: new Date(),
         },
       })
     }

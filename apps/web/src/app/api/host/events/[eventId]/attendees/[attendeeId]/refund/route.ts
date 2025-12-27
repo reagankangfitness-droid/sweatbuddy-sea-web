@@ -80,7 +80,6 @@ export async function POST(
       where: { id: attendeeId },
       data: {
         paymentStatus: 'refunded',
-        refundedAt: new Date(),
       },
     })
 
@@ -90,7 +89,7 @@ export async function POST(
       data: {
         status: 'REFUNDED',
         refundedAt: new Date(),
-        stripeRefundId: refund.id,
+        refundAmount: refund.amount,
       },
     })
 

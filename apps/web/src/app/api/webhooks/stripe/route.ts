@@ -66,6 +66,15 @@ export async function POST(request: NextRequest) {
         await handleRefund(event.data.object as Stripe.Charge)
         break
 
+      // Stripe Connect events
+      case 'account.updated':
+        await handleAccountUpdated(event.data.object as Stripe.Account)
+        break
+
+      case 'account.application.deauthorized':
+        await handleAccountDeauthorized(event.data.object as Stripe.Application)
+        break
+
       default:
         console.log(`Unhandled event type: ${event.type}`)
     }
@@ -88,6 +97,13 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   const amountTotal = session.amount_total || 0
   const currency = session.currency?.toUpperCase() || 'SGD'
 
+  // Check if this is an EventSubmission payment (public events)
+  if (metadata.eventId) {
+    await handleEventSubmissionPayment(session)
+    return
+  }
+
+  // Otherwise, handle Activity payment (internal bookings)
   const {
     activity_id: activityId,
     user_id: userId,
@@ -289,6 +305,175 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
     })
   } catch (error) {
     console.error('Error handling payment failure:', error)
+  }
+}
+
+// Handle Stripe Connect account updates
+async function handleAccountUpdated(account: Stripe.Account) {
+  const accountId = account.id
+  const chargesEnabled = account.charges_enabled
+  const payoutsEnabled = account.payouts_enabled
+  const detailsSubmitted = account.details_submitted
+
+  console.log(`🔄 Account updated: ${accountId}`, {
+    chargesEnabled,
+    payoutsEnabled,
+    detailsSubmitted,
+  })
+
+  try {
+    // Update our database with the latest account status
+    await prisma.hostStripeAccount.updateMany({
+      where: { stripeConnectAccountId: accountId },
+      data: {
+        chargesEnabled,
+        payoutsEnabled,
+        stripeOnboardingComplete: chargesEnabled && payoutsEnabled && detailsSubmitted,
+        email: account.email || undefined,
+        updatedAt: new Date(),
+      },
+    })
+
+    console.log(`✅ Account ${accountId} updated in database`)
+  } catch (error) {
+    console.error('Error updating account in database:', error)
+  }
+}
+
+// Handle Stripe Connect account deauthorization
+async function handleAccountDeauthorized(application: Stripe.Application) {
+  console.log(`⚠️ Application deauthorized:`, application.id)
+  // The connected account has disconnected from your platform
+  // You might want to notify the host or update their account status
+}
+
+// Handle EventSubmission payment (public events with Stripe Connect)
+async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
+  const sessionId = session.id
+  const paymentIntentId = session.payment_intent as string | null
+  const metadata = session.metadata || {}
+  const amountTotal = session.amount_total || 0
+  const currency = session.currency?.toUpperCase() || 'SGD'
+
+  const {
+    eventId,
+    attendeeEmail,
+    attendeeName,
+    quantity,
+    ticketPrice,
+    platformFee,
+    feeHandling,
+  } = metadata
+
+  if (!eventId || !attendeeEmail) {
+    console.error('[EventSubmission] Missing metadata in checkout session:', sessionId)
+    return
+  }
+
+  console.log(`[EventSubmission] Processing payment for event ${eventId}, session ${sessionId}`)
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      // 1. Get the event
+      const event = await tx.eventSubmission.findUnique({
+        where: { id: eventId },
+      })
+
+      if (!event) {
+        console.error('[EventSubmission] Event not found:', eventId)
+        throw new Error('Event not found')
+      }
+
+      // 2. Get the host's Stripe account
+      const hostStripeAccount = await tx.hostStripeAccount.findUnique({
+        where: { eventSubmissionId: eventId },
+      })
+
+      const ticketQty = parseInt(quantity || '1', 10)
+      const ticketPriceNum = parseInt(ticketPrice || '0', 10)
+      const platformFeeNum = parseInt(platformFee || '0', 10)
+
+      // 3. Create or update EventAttendance record
+      const existingAttendance = await tx.eventAttendance.findFirst({
+        where: {
+          eventId,
+          email: attendeeEmail,
+        },
+      })
+
+      let attendance
+      if (existingAttendance) {
+        // Update existing attendance
+        attendance = await tx.eventAttendance.update({
+          where: { id: existingAttendance.id },
+          data: {
+            paymentStatus: 'paid',
+            paymentMethod: 'stripe',
+            paymentAmount: amountTotal,
+            stripePaymentId: paymentIntentId,
+            paidAt: new Date(),
+          },
+        })
+      } else {
+        // Create new attendance
+        attendance = await tx.eventAttendance.create({
+          data: {
+            eventId,
+            eventName: event.eventName,
+            name: attendeeName || attendeeEmail.split('@')[0],
+            email: attendeeEmail,
+            paymentStatus: 'paid',
+            paymentMethod: 'stripe',
+            paymentAmount: amountTotal,
+            stripePaymentId: paymentIntentId,
+            paidAt: new Date(),
+          },
+        })
+      }
+
+      // 4. Create EventTransaction record for audit trail
+      if (hostStripeAccount) {
+        // Calculate Stripe fee (approximately 2.9% + $0.30)
+        const stripeFeeEstimate = Math.round(amountTotal * 0.029) + 30
+        const netPayoutToHost = amountTotal - platformFeeNum - stripeFeeEstimate
+        const feeHandlingValue = feeHandling === 'PASS' ? 'PASS' : 'ABSORB'
+
+        await tx.eventTransaction.create({
+          data: {
+            eventSubmissionId: eventId,
+            attendanceId: attendance.id,
+            hostStripeAccountId: hostStripeAccount.id,
+            stripePaymentIntentId: paymentIntentId,
+            ticketPrice: ticketPriceNum,
+            platformFee: platformFeeNum,
+            stripeFee: stripeFeeEstimate,
+            netPayoutToHost,
+            totalCharged: amountTotal,
+            currency,
+            feeHandling: feeHandlingValue,
+            status: 'SUCCEEDED',
+          },
+        })
+      }
+
+      // 5. Update ticketsSold count
+      await tx.eventSubmission.update({
+        where: { id: eventId },
+        data: {
+          ticketsSold: {
+            increment: ticketQty,
+          },
+        },
+      })
+
+      console.log(`[EventSubmission] ✅ Payment processed for ${attendeeEmail} - Event: ${event.eventName}`)
+    })
+
+    // TODO: Send confirmation email to attendee
+    // TODO: Notify host of new booking
+  } catch (error) {
+    console.error('[EventSubmission] Error handling payment:', error)
+    throw error
   }
 }
 

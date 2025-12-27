@@ -24,6 +24,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/submit-event(.*)',
   '/api/my-events(.*)',
   '/api/organizer(.*)',
+  '/api/stripe(.*)',
   '/booking/success',
   '/join/(.*)',
   '/host',

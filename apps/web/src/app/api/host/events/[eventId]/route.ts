@@ -33,14 +33,11 @@ export async function GET(
         communityLink: true,
         recurring: true,
         organizerInstagram: true,
+        contactEmail: true,
         status: true,
         // Pricing fields
         isFree: true,
         price: true,
-        paynowEnabled: true,
-        paynowQrCode: true,
-        paynowNumber: true,
-        paynowName: true,
         stripeEnabled: true,
       },
     })
@@ -66,14 +63,11 @@ export async function GET(
       imageUrl: event.imageUrl,
       communityLink: event.communityLink,
       recurring: event.recurring,
+      contactEmail: event.contactEmail,
       status: event.status,
       // Pricing fields
       isFree: event.isFree,
       price: event.price,
-      paynowEnabled: event.paynowEnabled,
-      paynowQrCode: event.paynowQrCode,
-      paynowNumber: event.paynowNumber,
-      paynowName: event.paynowName,
       stripeEnabled: event.stripeEnabled,
     })
   } catch (error) {
@@ -132,10 +126,6 @@ export async function PUT(
     // Pricing fields
     if (updates.isFree !== undefined) updateData.isFree = updates.isFree
     if (updates.price !== undefined) updateData.price = updates.price
-    if (updates.paynowEnabled !== undefined) updateData.paynowEnabled = updates.paynowEnabled
-    if (updates.paynowQrCode !== undefined) updateData.paynowQrCode = updates.paynowQrCode || null
-    if (updates.paynowNumber !== undefined) updateData.paynowNumber = updates.paynowNumber || null
-    if (updates.paynowName !== undefined) updateData.paynowName = updates.paynowName || null
     if (updates.stripeEnabled !== undefined) updateData.stripeEnabled = updates.stripeEnabled
 
     const updatedEvent = await prisma.eventSubmission.update({
@@ -155,13 +145,10 @@ export async function PUT(
       imageUrl: updatedEvent.imageUrl,
       communityLink: updatedEvent.communityLink,
       recurring: updatedEvent.recurring,
+      contactEmail: updatedEvent.contactEmail,
       // Pricing fields
       isFree: updatedEvent.isFree,
       price: updatedEvent.price,
-      paynowEnabled: updatedEvent.paynowEnabled,
-      paynowQrCode: updatedEvent.paynowQrCode,
-      paynowNumber: updatedEvent.paynowNumber,
-      paynowName: updatedEvent.paynowName,
       stripeEnabled: updatedEvent.stripeEnabled,
     })
   } catch (error) {

@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, ImageIcon, X } from 'lucide-react'
-import { UploadButton } from '@/lib/uploadthing'
+import { StripeConnectSetup } from './StripeConnectSetup'
 
 interface Event {
   id: string
@@ -17,13 +16,10 @@ interface Event {
   recurring?: boolean
   imageUrl?: string | null
   communityLink?: string | null
+  contactEmail?: string
   // Pricing fields
   isFree?: boolean
   price?: number | null
-  paynowEnabled?: boolean
-  paynowQrCode?: string | null
-  paynowNumber?: string | null
-  paynowName?: string | null
   stripeEnabled?: boolean
 }
 
@@ -74,13 +70,8 @@ export function EditEventForm({ event }: EditEventFormProps) {
     // Pricing fields
     isFree: event.isFree ?? true,
     price: event.price ? (event.price / 100).toFixed(2) : '',
-    paynowEnabled: event.paynowEnabled || false,
-    paynowNumber: event.paynowNumber || '',
-    paynowName: event.paynowName || '',
     stripeEnabled: event.stripeEnabled || false,
   })
-  const [paynowQrCode, setPaynowQrCode] = useState<string | null>(event.paynowQrCode || null)
-  const [isUploadingQr, setIsUploadingQr] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target
@@ -100,8 +91,6 @@ export function EditEventForm({ event }: EditEventFormProps) {
         ...formData,
         // Convert price to cents
         price: formData.isFree ? null : Math.round(parseFloat(formData.price || '0') * 100),
-        paynowEnabled: !formData.isFree && formData.paynowEnabled,
-        paynowQrCode: paynowQrCode,
         stripeEnabled: !formData.isFree && formData.stripeEnabled,
       }
 
@@ -321,130 +310,33 @@ export function EditEventForm({ event }: EditEventFormProps) {
 
             {/* Payment Methods */}
             <div className="space-y-3">
-              <p className="text-sm font-medium text-neutral-700">Payment methods</p>
+              <p className="text-sm font-medium text-neutral-700">Payment method</p>
 
-              {/* PayNow Option */}
-              <label className="flex items-start gap-3 p-4 border border-neutral-200 rounded-xl cursor-pointer hover:border-neutral-400 transition-colors">
+              {/* Card payments via Stripe */}
+              <label className="flex items-start gap-3 p-4 bg-white border border-neutral-200 rounded-xl cursor-pointer hover:border-neutral-400 transition-colors">
                 <input
                   type="checkbox"
-                  checked={formData.paynowEnabled}
-                  onChange={(e) => setFormData(prev => ({ ...prev, paynowEnabled: e.target.checked }))}
+                  checked={formData.stripeEnabled}
+                  onChange={(e) => setFormData(prev => ({ ...prev, stripeEnabled: e.target.checked }))}
                   className="w-5 h-5 mt-0.5 rounded border-neutral-300 text-neutral-900"
                 />
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-neutral-900">PayNow</span>
-                    <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">Singapore</span>
+                    <span className="font-medium text-neutral-900">Card payments</span>
+                    <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">Stripe</span>
                   </div>
-                  <p className="text-sm text-neutral-500 mt-0.5">Bank transfer via QR code (you verify manually)</p>
+                  <p className="text-sm text-neutral-500 mt-0.5">Accept credit/debit cards - funds go directly to your bank</p>
                 </div>
               </label>
 
-              {/* Card payments - Coming Soon */}
-              <div className="flex items-start gap-3 p-4 border border-neutral-100 rounded-xl bg-neutral-50 opacity-60">
-                <input
-                  type="checkbox"
-                  disabled
-                  className="w-5 h-5 mt-0.5 rounded border-neutral-300"
+              {/* Stripe Connect Setup */}
+              {formData.stripeEnabled && (
+                <StripeConnectSetup
+                  eventId={event.id}
+                  contactEmail={event.contactEmail || ''}
                 />
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-neutral-500">Card payments</span>
-                    <span className="px-2 py-0.5 bg-neutral-200 text-neutral-500 text-xs rounded-full font-medium">Coming Soon</span>
-                  </div>
-                  <p className="text-sm text-neutral-400 mt-0.5">Accept credit/debit cards via Stripe</p>
-                </div>
-              </div>
+              )}
             </div>
-
-            {/* PayNow Details */}
-            {formData.paynowEnabled && (
-              <div className="p-4 bg-purple-50 rounded-xl space-y-4 border border-purple-100">
-                <p className="text-sm font-medium text-purple-900">PayNow Details</p>
-
-                <div>
-                  <label className="block text-sm text-purple-800 mb-1">
-                    PayNow Number (UEN or Mobile) *
-                  </label>
-                  <input
-                    type="text"
-                    name="paynowNumber"
-                    value={formData.paynowNumber}
-                    onChange={handleChange}
-                    placeholder="+65 9XXX XXXX or UEN"
-                    className="w-full h-10 px-4 rounded-lg bg-white border border-purple-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-purple-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm text-purple-800 mb-1">
-                    Name shown on PayNow *
-                  </label>
-                  <input
-                    type="text"
-                    name="paynowName"
-                    value={formData.paynowName}
-                    onChange={handleChange}
-                    placeholder="JOHN DOE or COMPANY PTE LTD"
-                    className="w-full h-10 px-4 rounded-lg bg-white border border-purple-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-purple-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm text-purple-800 mb-1">
-                    PayNow QR Code <span className="text-purple-500">(optional)</span>
-                  </label>
-                  <div className="border-2 border-dashed border-purple-200 rounded-lg p-4 text-center bg-white">
-                    {paynowQrCode ? (
-                      <div className="space-y-2">
-                        <img
-                          src={paynowQrCode}
-                          alt="PayNow QR"
-                          className="w-32 h-32 mx-auto object-contain"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setPaynowQrCode(null)}
-                          className="text-sm text-red-600 hover:underline"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ) : isUploadingQr ? (
-                      <div className="py-4">
-                        <Loader2 className="w-6 h-6 animate-spin mx-auto text-purple-500" />
-                        <p className="text-sm text-purple-600 mt-2">Uploading...</p>
-                      </div>
-                    ) : (
-                      <div>
-                        <ImageIcon className="w-8 h-8 mx-auto text-purple-300 mb-2" />
-                        <UploadButton
-                          endpoint="paynowQrUploader"
-                          onClientUploadComplete={(res) => {
-                            if (res?.[0]?.url) {
-                              setPaynowQrCode(res[0].url)
-                            }
-                            setIsUploadingQr(false)
-                          }}
-                          onUploadBegin={() => setIsUploadingQr(true)}
-                          onUploadError={(error: Error) => {
-                            setIsUploadingQr(false)
-                            setError(`QR upload failed: ${error.message}`)
-                          }}
-                          appearance={{
-                            button: "bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-full text-sm transition-colors",
-                            allowedContent: "hidden",
-                          }}
-                        />
-                        <p className="text-xs text-purple-500 mt-2">
-                          Screenshot from your banking app
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         )}
       </div>

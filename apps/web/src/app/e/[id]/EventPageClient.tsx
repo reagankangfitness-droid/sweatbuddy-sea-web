@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { MapPin, Share2, Check, Instagram, MessageCircle, ExternalLink } from 'lucide-react'
 import { GoingButton } from '@/components/GoingButton'
 import { PaymentModal } from '@/components/event/PaymentModal'
+import { PaymentStatus } from '@/components/event/PaymentStatus'
 import { detectPlatform, getJoinButtonText } from '@/lib/community'
 
 interface EventPageClientProps {
@@ -21,20 +22,24 @@ interface EventPageClientProps {
     // Pricing fields
     isFree?: boolean
     price?: number | null
-    paynowEnabled?: boolean
-    paynowQrCode?: string | null
-    paynowNumber?: string | null
-    paynowName?: string | null
     stripeEnabled?: boolean
   }
   initialGoingCount: number
 }
+
+// Platform fee percentage
+const PLATFORM_FEE_PERCENT = 5
 
 export function EventPageClient({ event, initialGoingCount }: EventPageClientProps) {
   const [copied, setCopied] = useState(false)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
 
   const isPaidEvent = !event.isFree && event.price && event.price > 0
+
+  // Calculate total with platform fee
+  const totalPrice = isPaidEvent && event.price
+    ? event.price + Math.round(event.price * (PLATFORM_FEE_PERCENT / 100))
+    : 0
 
   const handleShare = async () => {
     // Use slug for cleaner URLs if available, otherwise fall back to ID
@@ -57,6 +62,9 @@ export function EventPageClient({ event, initialGoingCount }: EventPageClientPro
 
   return (
     <div className="space-y-3">
+      {/* Payment Status Banner */}
+      <PaymentStatus />
+
       {/* Join/Pay Button */}
       {isPaidEvent ? (
         <>
@@ -75,7 +83,7 @@ export function EventPageClient({ event, initialGoingCount }: EventPageClientPro
               <>
                 <span>Join & Pay</span>
                 <span className="text-purple-200">•</span>
-                <span>${((event.price || 0) / 100).toFixed(2)}</span>
+                <span>${(totalPrice / 100).toFixed(2)}</span>
               </>
             )}
           </button>
@@ -86,16 +94,11 @@ export function EventPageClient({ event, initialGoingCount }: EventPageClientPro
                 id: event.id,
                 name: event.name,
                 price: event.price || 0,
-                paynowEnabled: event.paynowEnabled,
-                paynowQrCode: event.paynowQrCode,
-                paynowNumber: event.paynowNumber,
-                paynowName: event.paynowName,
                 stripeEnabled: event.stripeEnabled,
               }}
               onClose={() => setShowPaymentModal(false)}
               onSuccess={() => {
                 setShowPaymentModal(false)
-                // Optionally reload to update the count
                 window.location.reload()
               }}
             />

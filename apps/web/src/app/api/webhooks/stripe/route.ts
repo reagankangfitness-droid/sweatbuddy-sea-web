@@ -564,7 +564,17 @@ async function handleRefund(charge: Stripe.Charge) {
   console.log(`💸 Processing refund for payment intent: ${paymentIntentId}`)
 
   try {
-    // Find the booking by payment intent
+    // First, check if this is an EventSubmission refund
+    const eventTransaction = await prisma.eventTransaction.findFirst({
+      where: { stripePaymentIntentId: paymentIntentId },
+    })
+
+    if (eventTransaction) {
+      await handleEventSubmissionRefund(paymentIntentId, amountRefunded, currency)
+      return
+    }
+
+    // Otherwise, check for Activity booking refund
     const booking = await prisma.userActivity.findFirst({
       where: { stripePaymentIntentId: paymentIntentId },
       include: { activity: true },
@@ -633,5 +643,68 @@ async function handleRefund(charge: Stripe.Charge) {
     }
   } catch (error) {
     console.error('Error handling refund:', error)
+  }
+}
+
+// Handle refund for EventSubmission payments
+async function handleEventSubmissionRefund(
+  paymentIntentId: string,
+  amountRefunded: number,
+  currency: string
+) {
+  console.log(`[EventSubmission] Processing refund for payment intent: ${paymentIntentId}`)
+
+  try {
+    // Find the transaction
+    const transaction = await prisma.eventTransaction.findFirst({
+      where: { stripePaymentIntentId: paymentIntentId },
+      include: {
+        eventSubmission: true,
+        attendance: true,
+      },
+    })
+
+    if (!transaction) {
+      console.error('[EventSubmission] Transaction not found for refund:', paymentIntentId)
+      return
+    }
+
+    // Update transaction record
+    await prisma.eventTransaction.update({
+      where: { id: transaction.id },
+      data: {
+        status: 'REFUNDED',
+        refundedAt: new Date(),
+      },
+    })
+
+    // Update attendance record
+    if (transaction.attendanceId) {
+      await prisma.eventAttendance.update({
+        where: { id: transaction.attendanceId },
+        data: {
+          paymentStatus: 'refunded',
+          refundedAt: new Date(),
+        },
+      })
+    }
+
+    // Decrement ticketsSold
+    if (transaction.eventSubmissionId) {
+      await prisma.eventSubmission.update({
+        where: { id: transaction.eventSubmissionId },
+        data: {
+          ticketsSold: {
+            decrement: 1,
+          },
+        },
+      })
+    }
+
+    console.log(`[EventSubmission] 💸 Refund processed: ${paymentIntentId} - Amount: ${amountRefunded / 100} ${currency}`)
+
+    // TODO: Send refund notification email to attendee
+  } catch (error) {
+    console.error('[EventSubmission] Error handling refund:', error)
   }
 }

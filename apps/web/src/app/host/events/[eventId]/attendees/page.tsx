@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Logo } from '@/components/logo'
-import { Loader2, Check, X, Clock, Download, Mail, User } from 'lucide-react'
+import { Loader2, Check, X, Clock, Download, User, RefreshCcw } from 'lucide-react'
 
 interface Attendee {
   id: string
@@ -37,6 +37,7 @@ export default function AttendeesPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [verifyingId, setVerifyingId] = useState<string | null>(null)
+  const [refundingId, setRefundingId] = useState<string | null>(null)
 
   // Fetch attendees
   useEffect(() => {
@@ -108,6 +109,41 @@ export default function AttendeesPage() {
       alert(err instanceof Error ? err.message : 'Failed to verify payment')
     } finally {
       setVerifyingId(null)
+    }
+  }
+
+  const handleRefund = async (attendeeId: string) => {
+    if (!confirm('Are you sure you want to refund this payment? This action cannot be undone.')) {
+      return
+    }
+
+    setRefundingId(attendeeId)
+    try {
+      const res = await fetch(`/api/host/events/${eventId}/attendees/${attendeeId}/refund`, {
+        method: 'POST',
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Failed to process refund')
+      }
+
+      // Update local state
+      setAttendees(prev => prev.map(a => {
+        if (a.id === attendeeId) {
+          return {
+            ...a,
+            paymentStatus: 'refunded',
+          }
+        }
+        return a
+      }))
+
+      alert('Refund processed successfully!')
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to process refund')
+    } finally {
+      setRefundingId(null)
     }
   }
 
@@ -283,18 +319,42 @@ export default function AttendeesPage() {
                       <p className="text-sm text-neutral-500">{attendee.email}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    {attendee.paymentStatus === 'paid' ? (
+                  <div className="text-right flex flex-col items-end gap-1">
+                    {attendee.paymentStatus === 'paid' && attendee.paymentMethod === 'stripe' ? (
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                          <Check className="w-3 h-3" />
+                          Paid ${((attendee.paymentAmount || 0) / 100).toFixed(2)}
+                        </span>
+                        <button
+                          onClick={() => handleRefund(attendee.id)}
+                          disabled={refundingId === attendee.id}
+                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+                        >
+                          {refundingId === attendee.id ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <RefreshCcw className="w-3 h-3" />
+                          )}
+                          Refund
+                        </button>
+                      </div>
+                    ) : attendee.paymentStatus === 'paid' ? (
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
                         <Check className="w-3 h-3" />
                         Paid
+                      </span>
+                    ) : attendee.paymentStatus === 'refunded' ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-neutral-100 text-neutral-500 text-xs font-medium rounded-full">
+                        <RefreshCcw className="w-3 h-3" />
+                        Refunded
                       </span>
                     ) : (
                       <span className="text-sm text-neutral-400">
                         Free
                       </span>
                     )}
-                    <p className="text-xs text-neutral-400 mt-1">
+                    <p className="text-xs text-neutral-400">
                       {new Date(attendee.timestamp).toLocaleDateString()}
                     </p>
                   </div>

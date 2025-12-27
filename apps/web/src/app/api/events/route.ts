@@ -21,6 +21,9 @@ interface Event {
   recurring: boolean
   isFull: boolean
   goingCount: number
+  // Pricing
+  isFree: boolean
+  price: number | null  // in cents
 }
 
 // Cached database query - revalidates every 60s
@@ -45,6 +48,9 @@ const getCachedEvents = unstable_cache(
         communityLink: true,
         recurring: true,
         isFull: true,
+        // Pricing
+        isFree: true,
+        price: true,
       },
     })
 
@@ -75,6 +81,9 @@ const getCachedEvents = unstable_cache(
       recurring: submission.recurring,
       isFull: submission.isFull,
       goingCount: countMap.get(submission.id) || 0,
+      // Pricing
+      isFree: submission.isFree,
+      price: submission.price,
     }))
   },
   ['events-list'],

@@ -27,6 +27,9 @@ interface Event {
   recurring: boolean
   goingCount?: number
   isFull?: boolean
+  // Pricing
+  isFree?: boolean
+  price?: number | null  // in cents
 }
 
 // Format date for display (e.g., "Sat, Dec 14")

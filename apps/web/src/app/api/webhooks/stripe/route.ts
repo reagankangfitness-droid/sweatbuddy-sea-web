@@ -4,6 +4,7 @@ import Stripe from 'stripe'
 import { prisma } from '@/lib/prisma'
 import { stripe, fromStripeAmount } from '@/lib/stripe'
 import { onBookingConfirmed, onBookingPaid, onBookingCancelled } from '@/lib/stats/realtime'
+import { sendPaidEventConfirmationEmail, sendHostBookingNotificationEmail } from '@/lib/event-confirmation-email'
 
 // Disable body parsing - Stripe requires raw body for signature verification
 export const runtime = 'nodejs'
@@ -373,7 +374,7 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
   console.log(`[EventSubmission] Processing payment for event ${eventId}, session ${sessionId}`)
 
   try {
-    await prisma.$transaction(async (tx) => {
+    const emailData = await prisma.$transaction(async (tx) => {
       // 1. Get the event
       const event = await tx.eventSubmission.findUnique({
         where: { id: eventId },
@@ -467,10 +468,82 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
       })
 
       console.log(`[EventSubmission] ✅ Payment processed for ${attendeeEmail} - Event: ${event.eventName}`)
+
+      // Send confirmation emails (async, don't block transaction)
+      const emailData = {
+        eventId,
+        eventName: event.eventName,
+        eventDay: event.day || 'TBD',
+        eventTime: event.time || 'TBD',
+        eventLocation: event.location,
+        organizerInstagram: event.organizerInstagram,
+        communityLink: event.communityLink,
+        attendeeName: attendeeName || attendeeEmail.split('@')[0],
+        attendeeEmail,
+        amountPaid: amountTotal,
+        currency,
+        ticketQuantity: ticketQty,
+        stripePaymentId: paymentIntentId,
+        hostEmail: event.contactEmail,
+        netPayoutToHost: hostStripeAccount ? amountTotal - platformFeeNum - (Math.round(amountTotal * 0.029) + 30) : 0,
+      }
+
+      // Store for use outside transaction
+      return emailData
     })
 
-    // TODO: Send confirmation email to attendee
-    // TODO: Notify host of new booking
+    // Send confirmation email to attendee
+    try {
+      const attendeeEmailResult = await sendPaidEventConfirmationEmail({
+        to: metadata.attendeeEmail!,
+        attendeeName: metadata.attendeeName || metadata.attendeeEmail!.split('@')[0],
+        eventId,
+        eventName: emailData.eventName,
+        eventDay: emailData.eventDay,
+        eventTime: emailData.eventTime,
+        eventLocation: emailData.eventLocation,
+        organizerInstagram: emailData.organizerInstagram,
+        communityLink: emailData.communityLink,
+        amountPaid: emailData.amountPaid,
+        currency: emailData.currency,
+        ticketQuantity: emailData.ticketQuantity,
+        stripePaymentId: emailData.stripePaymentId,
+      })
+
+      if (attendeeEmailResult.success) {
+        console.log(`[EventSubmission] ✅ Confirmation email sent to ${metadata.attendeeEmail}`)
+      } else {
+        console.error(`[EventSubmission] Failed to send confirmation email:`, attendeeEmailResult.error)
+      }
+    } catch (emailError) {
+      console.error('[EventSubmission] Error sending confirmation email:', emailError)
+    }
+
+    // Notify host of new booking
+    if (emailData.hostEmail) {
+      try {
+        const hostEmailResult = await sendHostBookingNotificationEmail({
+          to: emailData.hostEmail,
+          hostName: emailData.organizerInstagram || 'Host',
+          eventId,
+          eventName: emailData.eventName,
+          attendeeName: emailData.attendeeName,
+          attendeeEmail: emailData.attendeeEmail,
+          amountPaid: emailData.amountPaid,
+          currency: emailData.currency,
+          ticketQuantity: emailData.ticketQuantity,
+          hostPayout: emailData.netPayoutToHost,
+        })
+
+        if (hostEmailResult.success) {
+          console.log(`[EventSubmission] ✅ Host notification sent to ${emailData.hostEmail}`)
+        } else {
+          console.error(`[EventSubmission] Failed to send host notification:`, hostEmailResult.error)
+        }
+      } catch (emailError) {
+        console.error('[EventSubmission] Error sending host notification:', emailError)
+      }
+    }
   } catch (error) {
     console.error('[EventSubmission] Error handling payment:', error)
     throw error

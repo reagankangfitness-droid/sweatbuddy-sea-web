@@ -137,6 +137,27 @@ export function StripeConnectSetup({ eventId, contactEmail, onStatusChange }: St
     )
   }
 
+  const openDashboard = async () => {
+    try {
+      const res = await fetch('/api/stripe/connect/dashboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Failed to open dashboard')
+      }
+
+      const { url } = await res.json()
+      window.open(url, '_blank')
+    } catch (err) {
+      console.error('Dashboard error:', err)
+      setError(err instanceof Error ? err.message : 'Failed to open dashboard')
+    }
+  }
+
   // Account exists and is fully set up
   if (status?.chargesEnabled && status?.payoutsEnabled) {
     return (
@@ -148,8 +169,17 @@ export function StripeConnectSetup({ eventId, contactEmail, onStatusChange }: St
             <p className="text-sm text-green-700 mt-0.5">
               Your account is set up and ready to receive payments.
             </p>
+            <button
+              onClick={openDashboard}
+              className="mt-2 text-sm text-green-700 hover:text-green-900 font-medium underline"
+            >
+              View Stripe Dashboard →
+            </button>
           </div>
         </div>
+        {error && (
+          <p className="mt-2 text-sm text-red-600">{error}</p>
+        )}
       </div>
     )
   }

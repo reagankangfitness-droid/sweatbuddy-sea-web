@@ -28,7 +28,6 @@ export async function POST(request: Request) {
       select: {
         id: true,
         eventName: true,
-        eventDate: true,
       },
     })
 
@@ -48,12 +47,11 @@ export async function POST(request: Request) {
 
     // Generate unique slugs for each event
     for (const event of eventsWithoutSlugs) {
-      const eventDate = event.eventDate?.toISOString().split('T')[0] || null
-      let slug = generateSlug(event.eventName, eventDate)
+      let slug = generateSlug(event.eventName)
 
       // Ensure uniqueness by adding a suffix if needed
       let uniqueSlug = slug
-      let counter = 1
+      let counter = 2
       while (existingSlugs.has(uniqueSlug)) {
         uniqueSlug = `${slug}-${counter}`
         counter++

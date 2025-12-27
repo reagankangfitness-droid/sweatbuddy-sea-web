@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Loader2, CreditCard, ChevronRight } from 'lucide-react'
+import { Loader2, DollarSign } from 'lucide-react'
 import { DashboardHeader } from '@/components/host/DashboardHeader'
 import { StatCard } from '@/components/host/StatCard'
 import { UpcomingEventRow } from '@/components/host/UpcomingEventRow'
@@ -28,7 +28,9 @@ interface DashboardData {
   stats: {
     activeEvents: number
     totalSignups: number
-    pendingPayments?: number
+    totalEarnings?: number  // in cents
+    totalRevenue?: number   // in cents
+    paidAttendees?: number
   }
   upcoming: DashboardEvent[]
   past: DashboardEvent[]
@@ -111,36 +113,33 @@ export default function HostDashboard() {
           Welcome back!
         </h1>
 
-        {/* Pending Payments Banner */}
-        {data.stats.pendingPayments && data.stats.pendingPayments > 0 && (
-          <Link
-            href="/host/payments"
-            className="block mb-8 p-4 bg-amber-50 border border-amber-200 rounded-xl hover:bg-amber-100 transition-colors"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                  <CreditCard className="w-5 h-5 text-amber-600" />
-                </div>
-                <div>
-                  <p className="font-semibold text-amber-900">
-                    {data.stats.pendingPayments} payment{data.stats.pendingPayments > 1 ? 's' : ''} awaiting verification
-                  </p>
-                  <p className="text-sm text-amber-700">
-                    Review PayNow payments from attendees
-                  </p>
-                </div>
+        {/* Earnings Banner */}
+        {data.stats.totalEarnings && data.stats.totalEarnings > 0 && (
+          <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-xl">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <DollarSign className="w-5 h-5 text-green-600" />
               </div>
-              <ChevronRight className="w-5 h-5 text-amber-400" />
+              <div>
+                <p className="font-semibold text-green-900">
+                  ${(data.stats.totalEarnings / 100).toFixed(2)} earned
+                </p>
+                <p className="text-sm text-green-700">
+                  From {data.stats.paidAttendees || 0} paid attendee{(data.stats.paidAttendees || 0) !== 1 ? 's' : ''} via Stripe
+                </p>
+              </div>
             </div>
-          </Link>
+          </div>
         )}
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-12">
           <StatCard value={data.stats.activeEvents} label="Active Events" />
-          <StatCard value={data.stats.totalSignups} label="Total Signups" />
-          <StatCard value="—" label="Views (soon)" />
+          <StatCard value={data.stats.totalSignups} label="Total RSVPs" />
+          <StatCard
+            value={data.stats.totalEarnings ? `$${(data.stats.totalEarnings / 100).toFixed(0)}` : '—'}
+            label="Earnings"
+          />
         </div>
 
         {/* Upcoming Events */}

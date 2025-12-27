@@ -103,12 +103,29 @@ export async function GET() {
     // Calculate stats
     const totalSignups = allEvents.reduce((sum, e) => sum + e.goingCount, 0)
 
-    // Get pending payments count for this organizer's events
-    const pendingPaymentsCount = await prisma.eventAttendance.count({
+    // Get total Stripe earnings for this organizer's events
+    const eventTransactions = await prisma.eventTransaction.findMany({
+      where: {
+        eventSubmissionId: { in: eventIds },
+        status: 'SUCCEEDED',
+      },
+      select: {
+        netPayoutToHost: true,
+        totalCharged: true,
+        currency: true,
+      },
+    })
+
+    // Calculate totals (in cents)
+    const totalEarnings = eventTransactions.reduce((sum, t) => sum + (t.netPayoutToHost || 0), 0)
+    const totalRevenue = eventTransactions.reduce((sum, t) => sum + (t.totalCharged || 0), 0)
+
+    // Get count of paid attendees
+    const paidAttendeesCount = await prisma.eventAttendance.count({
       where: {
         eventId: { in: eventIds },
-        paymentMethod: 'paynow',
-        paymentStatus: 'pending',
+        paymentStatus: 'paid',
+        paymentMethod: 'stripe',
       },
     })
 
@@ -116,7 +133,9 @@ export async function GET() {
       stats: {
         activeEvents: upcoming.length,
         totalSignups,
-        pendingPayments: pendingPaymentsCount,
+        totalEarnings, // in cents
+        totalRevenue,  // in cents
+        paidAttendees: paidAttendeesCount,
       },
       upcoming,
       past,

@@ -3,9 +3,18 @@
 import { useState, useEffect, lazy, Suspense, memo } from 'react'
 import Image from 'next/image'
 import { Heart, MapPin, Calendar, ArrowRight } from 'lucide-react'
+import { Confetti, useConfetti } from './ui/Confetti'
+import { LiveCounter } from './ui/AnimatedCounter'
+import { AvatarStack } from './ui/AvatarStack'
 
 // Lazy load the bottom sheet - only loaded when user taps a card
 const EventDetailSheet = lazy(() => import('./EventDetailSheet').then(mod => ({ default: mod.EventDetailSheet })))
+
+interface AttendeePreview {
+  id: string
+  name: string
+  imageUrl?: string | null
+}
 
 interface Event {
   id: string
@@ -22,6 +31,7 @@ interface Event {
   communityLink?: string | null
   recurring: boolean
   goingCount?: number
+  attendeesPreview?: AttendeePreview[]
   isFull?: boolean
   // Pricing
   isFree?: boolean
@@ -93,6 +103,8 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
   const [isSaved, setIsSaved] = useState(false)
   const [isGoing, setIsGoing] = useState(false)
   const [goingCount, setGoingCount] = useState(event.goingCount || 0)
+  const [heartAnimate, setHeartAnimate] = useState(false)
+  const confetti = useConfetti()
 
   const emoji = categoryEmojis[event.category] || '✨'
 
@@ -125,6 +137,9 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
       localStorage.setItem('sweatbuddies_saved', JSON.stringify(newSaved))
     } else {
       localStorage.setItem('sweatbuddies_saved', JSON.stringify([...saved, event.id]))
+      // Trigger heartbeat animation when saving
+      setHeartAnimate(true)
+      setTimeout(() => setHeartAnimate(false), 600)
     }
 
     setIsSaved(!isSaved)
@@ -150,27 +165,29 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
   const handleGoingSuccess = () => {
     setIsGoing(true)
     setGoingCount(goingCount + 1)
+    // Trigger confetti celebration
+    confetti.trigger()
   }
 
   return (
     <>
       <div
         onClick={() => setIsSheetOpen(true)}
-        className="h-full flex flex-col bg-white rounded-xl cursor-pointer transition-all duration-250 hover:shadow-card-hover active:scale-[0.98]"
+        className="group h-full flex flex-col bg-white rounded-xl cursor-pointer card-hover-lift card-hover-glow active:scale-[0.98]"
         style={{
           // CSS animation for staggered fade-in
           animation: `fadeInUp 0.4s ease-out ${index * 0.05}s both`,
         }}
       >
         {/* Image Section - Clean square aspect ratio, contain to show full image */}
-        <div className="relative aspect-square rounded-xl overflow-hidden bg-neutral-100">
+        <div className="relative aspect-square rounded-xl overflow-hidden bg-neutral-100 image-zoom-container">
           {event.imageUrl ? (
             <Image
               src={event.imageUrl}
               alt={event.name}
               fill
               loading="lazy"
-              className="object-contain transition-transform duration-250 group-hover:scale-105"
+              className="object-contain image-zoom"
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
             />
           ) : (
@@ -200,7 +217,7 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
               isSaved
                 ? 'text-neutral-900'
                 : 'text-white hover:text-white/80'
-            }`}
+            } ${heartAnimate ? 'animate-heartbeat' : ''}`}
             style={{
               filter: isSaved ? 'none' : 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))',
             }}
@@ -240,8 +257,32 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
             {event.location}
           </p>
 
-          {/* Going Count / CTA - clean black button */}
-          <div className="mt-auto">
+          {/* Attendees Preview & CTA */}
+          <div className="mt-auto space-y-3">
+            {/* Avatar stack with count */}
+            {(event.attendeesPreview && event.attendeesPreview.length > 0) || goingCount > 0 ? (
+              <div className="flex items-center gap-2">
+                {event.attendeesPreview && event.attendeesPreview.length > 0 && (
+                  <AvatarStack
+                    attendees={event.attendeesPreview}
+                    maxDisplay={4}
+                    size="sm"
+                    showCount={goingCount > 4}
+                  />
+                )}
+                <span className="text-xs text-neutral-500">
+                  {goingCount > 0 ? (
+                    <>
+                      <LiveCounter value={goingCount} className="font-medium text-neutral-700" /> going
+                    </>
+                  ) : (
+                    'Be the first to join!'
+                  )}
+                </span>
+              </div>
+            ) : null}
+
+            {/* CTA Button */}
             {isGoing ? (
               <button
                 onClick={handleGoingClick}
@@ -250,20 +291,13 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
                 <span>✓ You&apos;re Going</span>
               </button>
             ) : (
-              <div className="flex items-center justify-between gap-3">
-                {goingCount > 0 && (
-                  <span className="text-xs text-neutral-400">
-                    {goingCount === 1 ? '1 going' : `${goingCount} going`}
-                  </span>
-                )}
-                <button
-                  onClick={handleGoingClick}
-                  className="flex-1 py-2.5 font-semibold text-sm flex items-center justify-center gap-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-700 transition-all active:scale-[0.98]"
-                >
-                  <span>Join</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
+              <button
+                onClick={handleGoingClick}
+                className="w-full py-2.5 font-semibold text-sm flex items-center justify-center gap-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-700 transition-all btn-press ripple overflow-hidden relative"
+              >
+                <span>Join</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             )}
           </div>
         </div>
@@ -280,6 +314,9 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
           />
         </Suspense>
       )}
+
+      {/* Confetti celebration on successful join */}
+      <Confetti isActive={confetti.isActive} onComplete={confetti.reset} />
     </>
   )
 })

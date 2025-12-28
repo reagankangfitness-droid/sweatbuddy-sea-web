@@ -24,14 +24,35 @@ export async function GET(
       select: {
         id: true,
         name: true,
+        email: true,
         timestamp: true,
-        // Intentionally NOT selecting email for privacy
+        // Intentionally NOT exposing email in response
       },
     })
 
+    // Try to match attendees with user profiles by email for photos
+    const emails = attendees.map(a => a.email).filter(Boolean)
+    const users = emails.length > 0 ? await prisma.user.findMany({
+      where: { email: { in: emails } },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        firstName: true,
+        imageUrl: true,
+      }
+    }) : []
+
+    const userByEmail = new Map(users.map(u => [u.email, u]))
+
     // Format for display - only expose first name and initial
     const publicAttendees = attendees.map((a) => {
-      const name = a.name?.trim()
+      const user = userByEmail.get(a.email)
+      const userName = user
+        ? (user.firstName || user.name || '').trim()
+        : null
+      const name = userName || a.name?.trim()
+
       let displayName = 'Anonymous'
 
       if (name) {
@@ -45,8 +66,9 @@ export async function GET(
       }
 
       return {
-        id: a.id,
+        id: user?.id || a.id,
         name: displayName,
+        imageUrl: user?.imageUrl || null,
         // Generate a consistent color based on the id
         color: getColorFromId(a.id),
       }

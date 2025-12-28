@@ -9,6 +9,7 @@ import { GoingButton } from './GoingButton'
 import { ShareButton } from './ShareButton'
 import { EventAttendees } from './EventAttendees'
 import { DirectChatWindow } from './DirectChatWindow'
+import { OrganizerProfile } from './OrganizerProfile'
 import { detectPlatform } from '@/lib/community'
 
 interface Event {
@@ -294,14 +295,7 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                     <h3 className="text-sm font-semibold text-neutral-900 mb-3 flex items-center gap-2">
                       <span className="text-base">👤</span> Organizer
                     </h3>
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-neutral-900 flex items-center justify-center text-white font-semibold text-lg">
-                        {event.organizer?.charAt(0).toUpperCase() || '?'}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-neutral-900">@{event.organizer}</p>
-                      </div>
-                    </div>
+                    <OrganizerProfile handle={event.organizer} />
                   </div>
                 </div>
               </div>

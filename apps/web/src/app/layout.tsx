@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import type { PropsWithChildren } from 'react'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
@@ -68,11 +69,7 @@ export const viewport: Viewport = {
   themeColor: '#0F172A',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <head>

@@ -2,10 +2,12 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { Users } from 'lucide-react'
+import Image from 'next/image'
 
 interface Attendee {
   id: string
   name: string
+  imageUrl?: string | null
   color: string
 }
 
@@ -60,20 +62,32 @@ export function EventAttendees({ eventId, refreshTrigger = 0 }: EventAttendeesPr
           {displayedAttendees.map((attendee, index) => (
             <div
               key={attendee.id}
-              className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-white text-xs font-semibold shadow-sm transition-transform hover:scale-110 hover:z-20"
-              style={{
-                backgroundColor: attendee.color,
-                zIndex: maxDisplay - index,
-              }}
+              className="relative w-9 h-9 rounded-full border-2 border-white shadow-sm transition-transform hover:scale-110 hover:z-20 overflow-hidden"
+              style={{ zIndex: maxDisplay - index }}
               title={attendee.name}
             >
-              {attendee.name[0]?.toUpperCase() || '?'}
+              {attendee.imageUrl ? (
+                <Image
+                  src={attendee.imageUrl}
+                  alt={attendee.name}
+                  fill
+                  className="object-cover"
+                  sizes="36px"
+                />
+              ) : (
+                <div
+                  className="w-full h-full flex items-center justify-center text-white text-xs font-semibold"
+                  style={{ backgroundColor: attendee.color }}
+                >
+                  {attendee.name[0]?.toUpperCase() || '?'}
+                </div>
+              )}
             </div>
           ))}
 
           {surplus > 0 && (
             <div
-              className="w-8 h-8 rounded-full border-2 border-white bg-neutral-200 text-neutral-600 flex items-center justify-center text-xs font-semibold shadow-sm"
+              className="w-9 h-9 rounded-full border-2 border-white bg-neutral-100 text-neutral-600 flex items-center justify-center text-xs font-semibold shadow-sm"
               style={{ zIndex: 0 }}
               title={`${surplus} more people`}
             >
@@ -84,7 +98,7 @@ export function EventAttendees({ eventId, refreshTrigger = 0 }: EventAttendeesPr
 
         {/* Count text */}
         <div className="flex items-center gap-1.5 text-neutral-600">
-          <Users className="w-4 h-4 text-[#1800ad]" />
+          <Users className="w-4 h-4 text-neutral-400" />
           <span className="text-sm font-medium">
             {count} {count === 1 ? 'person' : 'people'} going
           </span>
@@ -133,14 +147,26 @@ export function EventAttendeesCompact({ eventId, refreshTrigger = 0 }: EventAtte
         {displayedAttendees.map((attendee, index) => (
           <div
             key={attendee.id}
-            className="w-6 h-6 rounded-full border-2 border-white flex items-center justify-center text-white text-[10px] font-semibold shadow-sm"
-            style={{
-              backgroundColor: attendee.color,
-              zIndex: 10 - index,
-            }}
+            className="relative w-6 h-6 rounded-full border-2 border-white shadow-sm overflow-hidden"
+            style={{ zIndex: 10 - index }}
             title={attendee.name}
           >
-            {attendee.name[0]?.toUpperCase() || '?'}
+            {attendee.imageUrl ? (
+              <Image
+                src={attendee.imageUrl}
+                alt={attendee.name}
+                fill
+                className="object-cover"
+                sizes="24px"
+              />
+            ) : (
+              <div
+                className="w-full h-full flex items-center justify-center text-white text-[10px] font-semibold"
+                style={{ backgroundColor: attendee.color }}
+              >
+                {attendee.name[0]?.toUpperCase() || '?'}
+              </div>
+            )}
           </div>
         ))}
 

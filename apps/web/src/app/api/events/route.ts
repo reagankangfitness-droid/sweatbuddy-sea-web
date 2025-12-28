@@ -5,6 +5,12 @@ import { unstable_cache } from 'next/cache'
 // Revalidate every 60 seconds - allows Vercel edge caching
 export const revalidate = 60
 
+interface AttendeePreview {
+  id: string
+  name: string
+  imageUrl: string | null
+}
+
 interface Event {
   id: string
   slug: string | null
@@ -21,6 +27,7 @@ interface Event {
   recurring: boolean
   isFull: boolean
   goingCount: number
+  attendeesPreview: AttendeePreview[]
   // Pricing
   isFree: boolean
   price: number | null  // in cents
@@ -54,16 +61,38 @@ const getCachedEvents = unstable_cache(
       },
     })
 
-    // Get attendance counts for all events in one query
+    // Get attendance counts and previews for all events
+    const eventIds = approvedSubmissions.map(s => s.id)
+
     const attendanceCounts = await prisma.eventAttendance.groupBy({
       by: ['eventId'],
       _count: { id: true },
     })
 
-    // Create a map for quick lookup
     const countMap = new Map(
       attendanceCounts.map(item => [item.eventId, item._count.id])
     )
+
+    // Get first 5 attendees for each event
+    const attendeePreviews = await prisma.eventAttendance.findMany({
+      where: { eventId: { in: eventIds } },
+      orderBy: { timestamp: 'desc' },
+      select: {
+        id: true,
+        eventId: true,
+        name: true,
+      },
+    })
+
+    // Group attendees by event
+    const attendeesByEvent = new Map<string, typeof attendeePreviews>()
+    for (const a of attendeePreviews) {
+      const list = attendeesByEvent.get(a.eventId) || []
+      if (list.length < 5) {
+        list.push(a)
+        attendeesByEvent.set(a.eventId, list)
+      }
+    }
 
     return approvedSubmissions.map(submission => ({
       id: submission.id,
@@ -81,6 +110,18 @@ const getCachedEvents = unstable_cache(
       recurring: submission.recurring,
       isFull: submission.isFull,
       goingCount: countMap.get(submission.id) || 0,
+      attendeesPreview: (attendeesByEvent.get(submission.id) || []).map(a => {
+        const name = a.name?.trim() || 'Anonymous'
+        const parts = name.split(' ').filter(Boolean)
+        const displayName = parts.length >= 2
+          ? `${parts[0]} ${parts[1][0]}.`
+          : parts[0] || 'Anonymous'
+        return {
+          id: a.id,
+          name: displayName,
+          imageUrl: null, // Will be fetched by the detail view
+        }
+      }),
       // Pricing
       isFree: submission.isFree,
       price: submission.price,

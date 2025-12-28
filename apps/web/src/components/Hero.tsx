@@ -4,6 +4,7 @@ import { useState, useEffect, memo, useCallback } from 'react'
 import { ArrowDown, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
+import { AnimatedCounter } from './ui/AnimatedCounter'
 
 // Helper to scroll to element with retry for dynamic content
 const scrollToElement = (elementId: string, maxAttempts = 10) => {
@@ -90,6 +91,13 @@ export const Hero = memo(function Hero() {
       {/* Dark background base */}
       <div className="absolute inset-0 bg-neutral-950" />
 
+      {/* Floating Orbs - Ambient animation */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="floating-orb floating-orb-1 absolute -top-20 -left-20" />
+        <div className="floating-orb floating-orb-2 absolute top-1/3 right-10" />
+        <div className="floating-orb floating-orb-3 absolute bottom-20 left-1/3" />
+      </div>
+
       {/* Image Background Slideshow */}
       <div className="absolute inset-0">
         {heroSlides.map((s, index) => (
@@ -113,6 +121,9 @@ export const Hero = memo(function Hero() {
             />
           </div>
         ))}
+
+        {/* Animated gradient overlay */}
+        <div className="absolute inset-0 animated-gradient-dark opacity-60" />
 
         {/* Premium minimalist gradient overlay - elegant, refined */}
         <div
@@ -167,21 +178,27 @@ export const Hero = memo(function Hero() {
             50+ fitness events happening in Singapore this week. Run clubs, yoga, HIIT, and more. No memberships. Just show up.
           </p>
 
-          {/* Stats - clean, typographic hierarchy */}
+          {/* Stats - clean, typographic hierarchy with animated counters */}
           <div
             className="flex flex-wrap items-center gap-8 mb-12"
             style={{ animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.4s both' : 'none' }}
           >
-            {[
-              { value: '50+', label: 'events weekly' },
-              { value: '3', label: 'cities' },
-              { value: 'Updated', label: 'weekly' },
-            ].map((stat, idx) => (
-              <div key={idx} className="flex items-baseline gap-2">
-                <span className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">{stat.value}</span>
-                <span className="text-white/40 text-sm">{stat.label}</span>
-              </div>
-            ))}
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+                <AnimatedCounter value={50} duration={1500} suffix="+" />
+              </span>
+              <span className="text-white/40 text-sm">events weekly</span>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
+                <AnimatedCounter value={3} duration={1000} />
+              </span>
+              <span className="text-white/40 text-sm">cities</span>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">Updated</span>
+              <span className="text-white/40 text-sm">weekly</span>
+            </div>
           </div>
 
           {/* CTAs - clean, confident black button */}

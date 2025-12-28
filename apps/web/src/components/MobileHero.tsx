@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { ArrowRight, ArrowDown } from 'lucide-react'
 import Image from 'next/image'
+import { AnimatedCounter } from './ui/AnimatedCounter'
 
 const heroSlides = [
   {
@@ -57,6 +58,13 @@ export function MobileHero() {
       {/* Dark background base */}
       <div className="absolute inset-0 bg-neutral-950" />
 
+      {/* Floating Orbs - Ambient animation */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="floating-orb floating-orb-1 absolute -top-10 -right-10 scale-75" />
+        <div className="floating-orb floating-orb-2 absolute top-1/2 -left-10 scale-50" />
+        <div className="floating-orb floating-orb-3 absolute bottom-1/4 right-0 scale-50" />
+      </div>
+
       {/* Image Background Slideshow */}
       <div className="absolute inset-0">
         {heroSlides.map((s, index) => (
@@ -80,6 +88,9 @@ export function MobileHero() {
             />
           </div>
         ))}
+
+        {/* Animated gradient overlay */}
+        <div className="absolute inset-0 animated-gradient-dark opacity-50" />
 
         {/* Gradient overlay - matches desktop */}
         <div
@@ -132,21 +143,27 @@ export function MobileHero() {
           50+ fitness events in Singapore this week. Run clubs, yoga, HIIT, and more. Just show up.
         </p>
 
-        {/* Stats - matches desktop inline style */}
+        {/* Stats - matches desktop inline style with animated counters */}
         <div
           className="flex flex-wrap items-center gap-6 mb-8"
           style={{ animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.4s both' : 'none' }}
         >
-          {[
-            { value: '50+', label: 'events weekly' },
-            { value: '3', label: 'cities' },
-            { value: 'Updated', label: 'weekly' },
-          ].map((stat, idx) => (
-            <div key={idx} className="flex items-baseline gap-2">
-              <span className="text-2xl font-semibold text-white tracking-tight">{stat.value}</span>
-              <span className="text-white/40 text-sm">{stat.label}</span>
-            </div>
-          ))}
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-semibold text-white tracking-tight">
+              <AnimatedCounter value={50} duration={1500} suffix="+" />
+            </span>
+            <span className="text-white/40 text-sm">events weekly</span>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-semibold text-white tracking-tight">
+              <AnimatedCounter value={3} duration={1000} />
+            </span>
+            <span className="text-white/40 text-sm">cities</span>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-semibold text-white tracking-tight">Updated</span>
+            <span className="text-white/40 text-sm">weekly</span>
+          </div>
         </div>
 
         {/* CTAs - matches desktop */}

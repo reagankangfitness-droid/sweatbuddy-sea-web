@@ -1,6 +1,52 @@
 import { prisma } from './prisma'
 import { unstable_cache } from 'next/cache'
 
+export interface SocialProofStats {
+  peopleMovedThisWeek: number
+  eventsLive: number
+  activeHosts: number
+}
+
+// Cached social proof stats - revalidates every 60s
+const getCachedSocialProofStats = unstable_cache(
+  async (): Promise<SocialProofStats> => {
+    const oneWeekAgo = new Date()
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+
+    const [peopleMovedThisWeek, eventsLive, activeHosts] = await Promise.all([
+      // Count RSVPs in the last 7 days
+      prisma.eventAttendance.count({
+        where: {
+          timestamp: { gte: oneWeekAgo },
+        },
+      }),
+      // Count approved events
+      prisma.eventSubmission.count({
+        where: { status: 'APPROVED' },
+      }),
+      // Count unique hosts with approved events
+      prisma.eventSubmission.findMany({
+        where: { status: 'APPROVED' },
+        select: { organizerInstagram: true },
+        distinct: ['organizerInstagram'],
+      }).then(hosts => hosts.length),
+    ])
+
+    return { peopleMovedThisWeek, eventsLive, activeHosts }
+  },
+  ['social-proof-stats'],
+  { revalidate: 60, tags: ['events'] }
+)
+
+export async function getSocialProofStats(): Promise<SocialProofStats> {
+  try {
+    return await getCachedSocialProofStats()
+  } catch (error) {
+    console.error('Error fetching social proof stats:', error)
+    return { peopleMovedThisWeek: 0, eventsLive: 0, activeHosts: 0 }
+  }
+}
+
 export interface Event {
   id: string
   slug?: string | null  // URL-friendly slug (e.g., "coffee-run-dec-27")

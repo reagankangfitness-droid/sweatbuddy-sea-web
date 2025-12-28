@@ -11,19 +11,19 @@ const steps = [
     number: '01',
     title: 'Find something that fits',
     description: 'Filter by activity, day, or neighborhood. Morning runner? Weekend yogi? There\'s something for you.',
-    screen: <CitySelector />,
+    screen: <EventBrowser />,
   },
   {
     number: '02',
     title: 'Just show up',
     description: 'No sign-ups, no commitments. Show up at the time and place. The host will take it from there.',
-    screen: <EventBrowser />,
+    screen: <EventDetail />,
   },
   {
     number: '03',
     title: 'Find your crew',
     description: 'Come for the workout, stay for the people. Most regulars started exactly where you are.',
-    screen: <EventDetail />,
+    screen: <CitySelector />,
   },
 ]
 

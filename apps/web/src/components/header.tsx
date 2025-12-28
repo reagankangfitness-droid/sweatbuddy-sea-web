@@ -72,9 +72,9 @@ export function Header() {
   }, [pathname, router])
 
   const navLinks = [
-    { href: '#events', label: "What's On" },
+    { href: '#events', label: 'Find a Workout' },
     { href: '#mission', label: 'About' },
-    { href: '/host', label: 'For Hosts' },
+    { href: '/host', label: 'Host With Us' },
   ]
 
   return (
@@ -147,7 +147,7 @@ export function Header() {
 
           {/* Right side actions */}
           <div className="flex items-center gap-3">
-            {/* Submit Event CTA */}
+            {/* Share Event CTA */}
             <motion.button
               onClick={(e) => handleHashClick(e, '#submit-desktop')}
               initial={{ opacity: 0, scale: 0.9 }}
@@ -155,7 +155,7 @@ export function Header() {
               transition={{ delay: 0.3 }}
               className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-primary text-white font-semibold text-sm rounded-lg transition-all duration-250 hover:bg-primary-hover active:scale-[0.98]"
             >
-              Submit Event
+              Share Your Event
               <ArrowRight className="w-4 h-4" />
             </motion.button>
 
@@ -248,7 +248,7 @@ export function Header() {
                   }}
                   className="flex items-center justify-center gap-2 mt-4 px-6 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-hover transition-colors"
                 >
-                  Submit Event
+                  Share Your Event
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </nav>

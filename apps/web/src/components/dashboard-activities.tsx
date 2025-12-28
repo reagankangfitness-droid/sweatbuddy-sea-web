@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
@@ -95,11 +96,13 @@ export function DashboardActivities({ initialActivities }: DashboardActivitiesPr
             <Link href={`/activities/${activity.id}`}>
               <div className="rounded-lg border overflow-hidden card-hover-lift card-hover-glow">
                 {activity.imageUrl && (
-                  <div className="w-full h-48 overflow-hidden">
-                    <img
+                  <div className="relative w-full h-48 overflow-hidden">
+                    <Image
                       src={activity.imageUrl}
                       alt={activity.title}
-                      className="w-full h-full object-cover"
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover"
                     />
                   </div>
                 )}

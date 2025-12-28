@@ -350,22 +350,38 @@ export default async function EventDetailPage({ params }: Props) {
             <div className="md:col-span-1">
               <div className="sticky top-24 bg-white rounded-2xl border border-neutral-200 p-6 space-y-4">
                 {/* Going count */}
-                {goingCount > 0 && (
-                  <div className="text-center pb-4 border-b border-neutral-100">
-                    <p className="text-3xl font-bold text-neutral-900">{goingCount}</p>
-                    <p className="text-sm text-neutral-500">people going</p>
-                  </div>
-                )}
+                <div className="text-center pb-4 border-b border-neutral-100">
+                  {goingCount === 0 ? (
+                    <>
+                      <p className="text-lg font-medium text-neutral-500">Be the first to join!</p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-3xl font-bold text-neutral-900">{goingCount}</p>
+                      <p className="text-sm text-neutral-500">
+                        {goingCount === 1 ? 'person going' : 'people going'}
+                      </p>
+                    </>
+                  )}
+                </div>
 
                 {/* Price display for paid events */}
-                {!event.isFree && event.price && (
-                  <div className="text-center pb-4 border-b border-neutral-100">
-                    <p className="text-sm text-neutral-500 mb-1">Price</p>
-                    <p className="text-2xl font-bold text-neutral-900">
-                      ${(event.price / 100).toFixed(2)} <span className="text-sm font-normal text-neutral-500">SGD</span>
-                    </p>
-                  </div>
-                )}
+                {!event.isFree && event.price && (() => {
+                  const basePrice = event.price
+                  const platformFee = Math.round(basePrice * 0.05)
+                  const total = basePrice + platformFee
+                  return (
+                    <div className="text-center pb-4 border-b border-neutral-100">
+                      <p className="text-sm text-neutral-500 mb-1">Price</p>
+                      <p className="text-2xl font-bold text-neutral-900">
+                        ${(total / 100).toFixed(2)} <span className="text-sm font-normal text-neutral-500">SGD</span>
+                      </p>
+                      <p className="text-xs text-neutral-400 mt-1">
+                        Ticket ${(basePrice / 100).toFixed(2)} + ${(platformFee / 100).toFixed(2)} fee
+                      </p>
+                    </div>
+                  )
+                })()}
 
                 {/* Client-side interactive buttons */}
                 <EventPageClient
@@ -383,10 +399,6 @@ export default async function EventDetailPage({ params }: Props) {
                     // Pricing fields
                     isFree: event.isFree,
                     price: event.price,
-                    paynowEnabled: event.paynowEnabled,
-                    paynowQrCode: event.paynowQrCode,
-                    paynowNumber: event.paynowNumber,
-                    paynowName: event.paynowName,
                     stripeEnabled: event.stripeEnabled,
                   }}
                   initialGoingCount={goingCount}
@@ -409,7 +421,7 @@ export default async function EventDetailPage({ params }: Props) {
       <footer className="bg-white border-t border-neutral-200 py-8">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <p className="text-sm text-neutral-500 mb-4">
-            Discover community fitness events in Singapore
+            Discover community fitness events near you
           </p>
           <div className="flex items-center justify-center gap-6 text-sm">
             <Link href="/" className="text-neutral-600 hover:text-neutral-900">
@@ -431,7 +443,7 @@ export default async function EventDetailPage({ params }: Props) {
             </a>
           </div>
           <p className="text-xs text-neutral-400 mt-6">
-            © {new Date().getFullYear()} SweatBuddies. Made with love in Singapore.
+            © {new Date().getFullYear()} SweatBuddies. Made with 💪 for the community.
           </p>
         </div>
       </footer>

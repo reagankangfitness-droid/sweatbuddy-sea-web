@@ -12,8 +12,10 @@ import {
   Calendar,
   Clock,
   MapPin,
-  AlertTriangle
+  AlertTriangle,
+  CreditCard
 } from 'lucide-react'
+import { StripeConnectOnboarding } from '@/components/StripeConnectOnboarding'
 import { useLoadScript, Autocomplete } from '@react-google-maps/api'
 
 const libraries: ('places')[] = ['places']
@@ -178,7 +180,7 @@ export default function EditEventPage() {
         throw new Error(data.error || 'Failed to update event')
       }
 
-      setSuccess('Event updated successfully!')
+      setSuccess('Changes saved ✓ Your update is live.')
       setTimeout(() => {
         router.push('/organizer/dashboard')
       }, 1500)
@@ -468,6 +470,22 @@ export default function EditEventPage() {
             </div>
           </div>
 
+          {/* Payment Settings Card */}
+          <div className="bg-white rounded-xl border border-neutral-200 p-6">
+            <h2 className="font-semibold text-neutral-900 mb-4 flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-[#3477f8]" />
+              Payment Settings
+            </h2>
+            <p className="text-sm text-neutral-600 mb-4">
+              Connect your Stripe account to accept payments for this event.
+              Funds will be deposited directly to your bank account.
+            </p>
+            <StripeConnectOnboarding
+              eventSubmissionId={eventId}
+              hostEmail={event?.contactEmail || ''}
+            />
+          </div>
+
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-4">
             <button
@@ -491,7 +509,7 @@ export default function EditEventPage() {
               className="py-3 px-6 bg-red-50 text-red-600 font-semibold rounded-xl hover:bg-red-100 transition flex items-center justify-center gap-2"
             >
               <Trash2 className="w-5 h-5" />
-              Delete Event
+              Remove Event
             </button>
           </div>
         </form>
@@ -508,9 +526,9 @@ export default function EditEventPage() {
                 <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Trash2 className="w-6 h-6 text-red-600" />
                 </div>
-                <h3 className="text-lg font-semibold text-neutral-900 mb-2">Delete Event?</h3>
+                <h3 className="text-lg font-semibold text-neutral-900 mb-2">Remove this event?</h3>
                 <p className="text-sm text-neutral-600">
-                  This will permanently delete &quot;{event.eventName}&quot; and remove all attendee data. This cannot be undone.
+                  &quot;{event.eventName}&quot; will be removed from SweatBuddies. Anyone who RSVP&apos;d won&apos;t be notified automatically—you might want to reach out to them.
                 </p>
               </div>
 
@@ -519,7 +537,7 @@ export default function EditEventPage() {
                   onClick={() => setShowDeleteConfirm(false)}
                   className="flex-1 py-2.5 bg-neutral-100 text-neutral-700 font-medium rounded-xl hover:bg-neutral-200 transition"
                 >
-                  Cancel
+                  Keep It
                 </button>
                 <button
                   onClick={handleDelete}
@@ -529,7 +547,7 @@ export default function EditEventPage() {
                   {isDeleting ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
-                    'Delete'
+                    'Remove Event'
                   )}
                 </button>
               </div>

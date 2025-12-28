@@ -1,71 +1,76 @@
 'use client'
 
-import { useState } from 'react'
-import { X, Loader2, Check, ChevronLeft } from 'lucide-react'
+import { useState, useMemo } from 'react'
+import { X, Loader2, ChevronLeft } from 'lucide-react'
+
+// Platform fee percentage
+const PLATFORM_FEE_PERCENT = 5
 
 interface PaymentModalProps {
   event: {
     id: string
     name: string
     price: number
-    paynowEnabled?: boolean
-    paynowQrCode?: string | null
-    paynowNumber?: string | null
-    paynowName?: string | null
     stripeEnabled?: boolean
   }
   onClose: () => void
   onSuccess: () => void
 }
 
-type PaymentStep = 'select' | 'paynow' | 'paynow-confirm' | 'processing' | 'success'
-
-export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
-  const [step, setStep] = useState<PaymentStep>('select')
+export function PaymentModal({ event, onClose }: PaymentModalProps) {
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
-  const [transactionRef, setTransactionRef] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  const formattedPrice = (event.price / 100).toFixed(2)
+  // Calculate fees
+  const fees = useMemo(() => {
+    const basePrice = event.price // in cents
+    const platformFee = Math.round(basePrice * (PLATFORM_FEE_PERCENT / 100))
+    const total = basePrice + platformFee
+    return {
+      basePrice,
+      platformFee,
+      total,
+      basePriceFormatted: (basePrice / 100).toFixed(2),
+      platformFeeFormatted: (platformFee / 100).toFixed(2),
+      totalFormatted: (total / 100).toFixed(2),
+    }
+  }, [event.price])
 
-  const handlePaynowSubmit = async () => {
+  const handleStripeCheckout = async () => {
     if (!email) {
-      setError('Please enter your email')
+      setError('We need your email to save your spot')
       return
     }
-    if (!transactionRef || transactionRef.length < 4) {
-      setError('Please enter the last 4 characters of your transaction reference')
-      return
-    }
-
-    setIsSubmitting(true)
     setError('')
+    setIsSubmitting(true)
 
     try {
-      const res = await fetch('/api/checkout/paynow', {
+      const res = await fetch('/api/stripe/checkout/create-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           eventId: event.id,
-          eventName: event.name,
-          email,
-          name,
-          transactionRef,
-          amount: event.price,
+          attendeeEmail: email,
+          attendeeName: name || email.split('@')[0],
+          quantity: 1,
         }),
       })
 
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.error || 'Failed to submit payment')
+        throw new Error(data.error?.message || 'Failed to create checkout')
       }
 
-      setStep('success')
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        throw new Error('No checkout URL returned')
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong')
-    } finally {
+      setError(err instanceof Error ? err.message : 'Failed to start checkout')
       setIsSubmitting(false)
     }
   }
@@ -85,254 +90,88 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
           <X className="w-5 h-5 text-neutral-500" />
         </button>
 
-        {/* Step: Select Payment Method */}
-        {step === 'select' && (
-          <div>
-            <h2 className="text-xl font-bold text-neutral-900 mb-2">
-              Join {event.name}
-            </h2>
-            <p className="text-neutral-500 mb-6">
-              Total: <span className="font-semibold text-neutral-900">${formattedPrice} SGD</span>
-            </p>
+        <h2 className="text-xl font-bold text-neutral-900 mb-2">
+          Join {event.name}
+        </h2>
 
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm mb-4">
-                {error}
-              </div>
+        {/* Price breakdown */}
+        <div className="bg-neutral-50 rounded-xl p-4 mb-6 space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-neutral-600">Ticket price</span>
+            <span className="text-neutral-900">${fees.basePriceFormatted}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-neutral-600">Service fee ({PLATFORM_FEE_PERCENT}%)</span>
+            <span className="text-neutral-900">${fees.platformFeeFormatted}</span>
+          </div>
+          <div className="border-t border-neutral-200 pt-2 flex justify-between font-semibold">
+            <span className="text-neutral-900">Total</span>
+            <span className="text-neutral-900">${fees.totalFormatted} SGD</span>
+          </div>
+        </div>
+
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm mb-4">
+            {error}
+          </div>
+        )}
+
+        {/* Email Input */}
+        <div className="mb-3">
+          <label className="block text-sm font-medium text-neutral-700 mb-1">
+            Email *
+          </label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="your@email.com"
+            className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:border-neutral-900"
+          />
+        </div>
+
+        {/* Name Input */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-neutral-700 mb-1">
+            Name (optional)
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Your name"
+            className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:border-neutral-900"
+          />
+        </div>
+
+        {/* Stripe Checkout Button */}
+        {event.stripeEnabled ? (
+          <button
+            onClick={handleStripeCheckout}
+            disabled={isSubmitting}
+            className="w-full flex items-center justify-center gap-3 py-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span>Redirecting to checkout...</span>
+              </>
+            ) : (
+              <>
+                <span className="text-xl">💳</span>
+                <span>Pay ${fees.totalFormatted} SGD</span>
+              </>
             )}
-
-            {/* Email Input */}
-            <div className="mb-3">
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
-                Email *
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:border-neutral-900"
-              />
-            </div>
-
-            {/* Name Input */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
-                Name (optional)
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-                className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:border-neutral-900"
-              />
-            </div>
-
-            <p className="text-sm font-medium text-neutral-700 mb-3">Payment method</p>
-
-            <div className="space-y-3">
-              {/* PayNow Option */}
-              {event.paynowEnabled && (
-                <button
-                  onClick={() => {
-                    if (!email) {
-                      setError('Please enter your email')
-                      return
-                    }
-                    setError('')
-                    setStep('paynow')
-                  }}
-                  className="w-full flex items-center gap-4 p-4 border border-neutral-200 rounded-xl hover:border-purple-400 hover:bg-purple-50 transition-colors text-left"
-                >
-                  <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">PayNow</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-neutral-900">PayNow</p>
-                    <p className="text-sm text-neutral-500">Bank transfer via QR code</p>
-                  </div>
-                  <ChevronLeft className="w-5 h-5 text-neutral-400 rotate-180" />
-                </button>
-              )}
-
-              {/* Card payments - Coming Soon */}
-              <div className="flex items-center gap-4 p-4 border border-neutral-100 rounded-xl bg-neutral-50 opacity-60">
-                <div className="w-12 h-12 bg-neutral-200 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">💳</span>
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium text-neutral-500">Card payments</p>
-                    <span className="px-2 py-0.5 bg-neutral-200 text-neutral-500 text-xs rounded-full font-medium">Coming Soon</span>
-                  </div>
-                  <p className="text-sm text-neutral-400">Visa, Mastercard, Amex</p>
-                </div>
-              </div>
-            </div>
+          </button>
+        ) : (
+          <div className="text-center py-6 bg-neutral-50 rounded-xl">
+            <p className="text-neutral-500">Payments not available for this event</p>
           </div>
         )}
 
-        {/* Step: PayNow Instructions */}
-        {step === 'paynow' && (
-          <div>
-            <button
-              onClick={() => setStep('select')}
-              className="flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-900 mb-4"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Back
-            </button>
-
-            <h2 className="text-xl font-bold text-neutral-900 mb-2">
-              Pay with PayNow
-            </h2>
-            <p className="text-neutral-500 mb-6">
-              Transfer <span className="font-semibold text-neutral-900">${formattedPrice} SGD</span>
-            </p>
-
-            {/* QR Code */}
-            {event.paynowQrCode && (
-              <div className="bg-neutral-50 rounded-xl p-6 mb-4 text-center">
-                <img
-                  src={event.paynowQrCode}
-                  alt="PayNow QR Code"
-                  className="w-48 h-48 mx-auto mb-3 object-contain"
-                />
-                <p className="text-sm text-neutral-500">Scan with your banking app</p>
-              </div>
-            )}
-
-            {/* PayNow Details */}
-            <div className="bg-purple-50 rounded-xl p-4 mb-6 space-y-2 border border-purple-100">
-              {event.paynowName && (
-                <div className="flex justify-between">
-                  <span className="text-purple-700">PayNow to:</span>
-                  <span className="font-medium text-purple-900">{event.paynowName}</span>
-                </div>
-              )}
-              {event.paynowNumber && (
-                <div className="flex justify-between">
-                  <span className="text-purple-700">Number:</span>
-                  <span className="font-mono font-medium text-purple-900">{event.paynowNumber}</span>
-                </div>
-              )}
-              <div className="flex justify-between">
-                <span className="text-purple-700">Amount:</span>
-                <span className="font-medium text-purple-900">${formattedPrice} SGD</span>
-              </div>
-            </div>
-
-            {/* Instructions */}
-            <div className="mb-6">
-              <p className="text-sm font-medium text-neutral-700 mb-2">How to pay:</p>
-              <ol className="text-sm text-neutral-600 space-y-1 list-decimal list-inside">
-                <li>Open your banking app (DBS, OCBC, UOB, etc.)</li>
-                <li>Scan the QR code or enter PayNow number</li>
-                <li>Transfer exactly ${formattedPrice}</li>
-                <li>Note the transaction reference</li>
-              </ol>
-            </div>
-
-            <button
-              onClick={() => setStep('paynow-confirm')}
-              className="w-full py-3.5 bg-purple-600 text-white rounded-full font-semibold hover:bg-purple-700 transition-colors"
-            >
-              I&apos;ve made the payment
-            </button>
-          </div>
-        )}
-
-        {/* Step: PayNow Confirmation */}
-        {step === 'paynow-confirm' && (
-          <div>
-            <button
-              onClick={() => setStep('paynow')}
-              className="flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-900 mb-4"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Back
-            </button>
-
-            <h2 className="text-xl font-bold text-neutral-900 mb-2">
-              Confirm your payment
-            </h2>
-            <p className="text-neutral-500 mb-6">
-              Enter the last 4 characters of your transaction reference
-            </p>
-
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm mb-4">
-                {error}
-              </div>
-            )}
-
-            {/* Transaction Reference */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
-                Last 4 characters of transaction reference
-              </label>
-              <input
-                type="text"
-                value={transactionRef}
-                onChange={(e) => setTransactionRef(e.target.value.toUpperCase())}
-                placeholder="e.g. AB12"
-                maxLength={6}
-                className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-center text-lg font-mono tracking-widest focus:outline-none focus:border-neutral-900"
-              />
-              <p className="text-xs text-neutral-400 mt-2">
-                Find this in your bank&apos;s transaction confirmation
-              </p>
-            </div>
-
-            <button
-              onClick={handlePaynowSubmit}
-              disabled={isSubmitting}
-              className="w-full py-3.5 bg-purple-600 text-white rounded-full font-semibold hover:bg-purple-700 transition-colors disabled:opacity-50"
-            >
-              {isSubmitting ? (
-                <span className="flex items-center justify-center gap-2">
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Submitting...
-                </span>
-              ) : (
-                'Submit for verification'
-              )}
-            </button>
-          </div>
-        )}
-
-        {/* Step: Processing */}
-        {step === 'processing' && (
-          <div className="text-center py-8">
-            <Loader2 className="w-12 h-12 animate-spin mx-auto text-neutral-400 mb-4" />
-            <p className="text-neutral-600">Processing...</p>
-          </div>
-        )}
-
-        {/* Step: Success */}
-        {step === 'success' && (
-          <div className="text-center py-8">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Check className="w-8 h-8 text-green-600" />
-            </div>
-            <h2 className="text-xl font-bold text-neutral-900 mb-2">
-              Payment submitted!
-            </h2>
-            <p className="text-neutral-500 mb-6">
-              The host will verify your payment and confirm your spot. You&apos;ll receive an email once confirmed.
-            </p>
-            <button
-              onClick={() => {
-                onSuccess()
-                onClose()
-              }}
-              className="px-6 py-3 bg-neutral-900 text-white rounded-full font-semibold hover:bg-neutral-700 transition-colors"
-            >
-              Done
-            </button>
-          </div>
-        )}
+        <p className="text-xs text-neutral-400 text-center mt-4">
+          Secure payment powered by Stripe
+        </p>
       </div>
     </div>
   )

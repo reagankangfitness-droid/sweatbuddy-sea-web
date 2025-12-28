@@ -228,7 +228,10 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
           {/* Weekly Badge - Bottom Left (subtle) */}
           {event.recurring && (
             <div className="absolute bottom-3 left-3">
-              <span className="bg-white/95 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-neutral-700 rounded-md">
+              <span
+                className="bg-white/95 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-neutral-700 rounded-md"
+                title="This happens every week—same time, same place"
+              >
                 Weekly
               </span>
             </div>
@@ -270,12 +273,16 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
                 />
               )}
               <span className="text-xs text-neutral-500">
-                {goingCount > 0 ? (
+                {goingCount === 0 ? (
+                  'Be the first'
+                ) : goingCount === 1 ? (
                   <>
-                    <LiveCounter value={goingCount} className="font-medium text-neutral-700" /> going
+                    <LiveCounter value={1} className="font-medium text-neutral-700" /> person going
                   </>
                 ) : (
-                  'Be the first'
+                  <>
+                    <LiveCounter value={goingCount} className="font-medium text-neutral-700" /> people going
+                  </>
                 )}
               </span>
             </div>

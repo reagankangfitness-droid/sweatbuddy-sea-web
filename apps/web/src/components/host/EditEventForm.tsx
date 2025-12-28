@@ -102,7 +102,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
 
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.error || 'Failed to update event')
+        throw new Error(data.error || 'Couldn\'t save your changes. Try again?')
       }
 
       router.push('/host/dashboard')
@@ -125,7 +125,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
       {/* Event Name */}
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-neutral-700 mb-2">
-          Event Name *
+          What&apos;s your event called? *
         </label>
         <input
           type="text"
@@ -134,14 +134,16 @@ export function EditEventForm({ event }: EditEventFormProps) {
           value={formData.name}
           onChange={handleChange}
           required
+          placeholder="e.g., Saturday Morning Run Club"
           className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
         />
+        <p className="text-xs text-neutral-400 mt-1">Keep it short and specific</p>
       </div>
 
       {/* Category */}
       <div>
         <label htmlFor="category" className="block text-sm font-medium text-neutral-700 mb-2">
-          Category *
+          What kind of workout is this? *
         </label>
         <select
           id="category"
@@ -151,17 +153,18 @@ export function EditEventForm({ event }: EditEventFormProps) {
           required
           className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:border-neutral-900 transition-colors bg-white"
         >
-          <option value="">Select a category</option>
+          <option value="">Pick a category</option>
           {CATEGORIES.map(cat => (
             <option key={cat} value={cat}>{cat}</option>
           ))}
         </select>
+        <p className="text-xs text-neutral-400 mt-1">This helps people find you</p>
       </div>
 
       {/* Day */}
       <div>
         <label htmlFor="day" className="block text-sm font-medium text-neutral-700 mb-2">
-          Day *
+          When does it happen? *
         </label>
         <input
           type="text"
@@ -169,7 +172,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
           name="day"
           value={formData.day}
           onChange={handleChange}
-          placeholder="e.g. Saturdays, 20/12/2025"
+          placeholder="e.g., Saturdays or Dec 20"
           required
           className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
         />
@@ -210,7 +213,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
       {/* Location */}
       <div>
         <label htmlFor="location" className="block text-sm font-medium text-neutral-700 mb-2">
-          Location *
+          Where should people meet? *
         </label>
         <input
           type="text"
@@ -218,15 +221,17 @@ export function EditEventForm({ event }: EditEventFormProps) {
           name="location"
           value={formData.location}
           onChange={handleChange}
+          placeholder="e.g., East Coast Park, Carpark C"
           required
           className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
         />
+        <p className="text-xs text-neutral-400 mt-1">Be specific—it helps people find you</p>
       </div>
 
       {/* Description */}
       <div>
         <label htmlFor="description" className="block text-sm font-medium text-neutral-700 mb-2">
-          Description
+          Tell people what to expect
         </label>
         <textarea
           id="description"
@@ -234,6 +239,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
           value={formData.description}
           onChange={handleChange}
           rows={4}
+          placeholder="What will you do? Who's it for? What should they bring?"
           className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors resize-none"
         />
       </div>
@@ -241,7 +247,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
       {/* Community Link */}
       <div>
         <label htmlFor="communityLink" className="block text-sm font-medium text-neutral-700 mb-2">
-          Community Link (optional)
+          Community group link
         </label>
         <input
           type="url"
@@ -253,7 +259,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
           className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
         />
         <p className="text-xs text-neutral-400 mt-1">
-          WhatsApp, Telegram, or Discord group link for attendees
+          WhatsApp or Telegram group for attendees to join
         </p>
       </div>
 
@@ -352,8 +358,9 @@ export function EditEventForm({ event }: EditEventFormProps) {
           className="w-5 h-5 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900"
         />
         <label htmlFor="recurring" className="text-sm text-neutral-700">
-          This event repeats weekly
+          This happens every week
         </label>
+        <span className="text-xs text-neutral-400">(Regular events build loyal attendees)</span>
       </div>
 
       {/* Submit */}
@@ -370,7 +377,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
           disabled={isSubmitting}
           className="flex-1 px-6 py-3.5 bg-neutral-900 text-white rounded-full font-semibold hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? 'Saving...' : 'Save Changes'}
+          {isSubmitting ? 'Saving your changes...' : 'Save Changes'}
         </button>
       </div>
     </form>

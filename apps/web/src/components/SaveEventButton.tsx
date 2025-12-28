@@ -66,7 +66,7 @@ export function SaveEventButton({ eventId, className = '', iconOnly = false }: S
       onClick={toggleSave}
       className={`flex items-center justify-center ${buttonStyles} ${isAnimating ? 'scale-125' : 'scale-100'} ${className}`}
       aria-label={isSaved ? 'Remove from saved' : 'Save event'}
-      title={isSaved ? 'Saved' : 'Save'}
+      title={isSaved ? 'Saved to your list' : 'Save for later'}
     >
       <Heart className={iconStyles} />
     </button>

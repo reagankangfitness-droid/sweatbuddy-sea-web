@@ -181,7 +181,7 @@ export function EventAttendeesCompact({ eventId, refreshTrigger = 0 }: EventAtte
       </div>
 
       <span className="text-xs text-neutral-500 font-medium">
-        {count} going
+        {count === 1 ? '1 person going' : `${count} people going`}
       </span>
     </div>
   )

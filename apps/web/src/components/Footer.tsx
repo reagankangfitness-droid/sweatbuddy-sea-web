@@ -69,7 +69,7 @@ export function Footer() {
         {/* Bottom bar - subtle divider */}
         <div className="mt-16 pt-8 border-t border-neutral-200 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-neutral-400">
-            © {new Date().getFullYear()} SweatBuddies. Made with love in Singapore.
+            © {new Date().getFullYear()} SweatBuddies. Made with 💪 for the community.
           </p>
           <div className="flex items-center gap-4">
             <span className="text-xs text-neutral-400">Built for the community</span>

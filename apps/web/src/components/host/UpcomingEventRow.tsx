@@ -94,8 +94,11 @@ export function UpcomingEventRow({ event }: UpcomingEventRowProps) {
             <h3 className="font-semibold text-neutral-900 truncate">
               {event.name}
             </h3>
-            <span className="text-sm text-neutral-500 whitespace-nowrap flex-shrink-0">
-              {event.goingCount} going
+            <span
+              className="text-sm text-neutral-500 whitespace-nowrap flex-shrink-0"
+              title="People who saved their spot"
+            >
+              {event.goingCount === 0 ? 'No one yet' : event.goingCount === 1 ? '1 person going' : `${event.goingCount} people going`}
             </span>
           </div>
 
@@ -118,6 +121,7 @@ export function UpcomingEventRow({ event }: UpcomingEventRowProps) {
             <Link
               href={`/host/events/${event.id}/edit`}
               className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
+              title="Make changes to this event"
             >
               Edit
             </Link>

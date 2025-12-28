@@ -240,7 +240,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
             )}
           </h2>
           <p className="font-sans text-neutral-500 text-lg">
-            Singapore • {getCurrentWeekRange()}
+            {getCurrentWeekRange()}
           </p>
         </div>
 
@@ -253,7 +253,8 @@ export function Events({ initialEvents = [] }: EventsProps) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search events, locations, organizers..."
+              placeholder="Search by event, host, or location..."
+              aria-label="Search events"
               className="w-full h-14 pl-14 pr-14 rounded-2xl input-light text-base shadow-sm"
             />
             {searchQuery && (
@@ -286,7 +287,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
               onChange={(e) => setSelectedTime(e.target.value as TimeFilter)}
               className="h-11 px-4 rounded-lg bg-white border border-neutral-200 text-sm font-medium text-neutral-900 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20 cursor-pointer transition-colors hover:border-neutral-300 shadow-sm"
             >
-              <option value="all">All Times</option>
+              <option value="all">Any Day</option>
               <option value="this-week">This Week</option>
               <option value="this-weekend">This Weekend</option>
               <option value="next-week">Next Week</option>
@@ -320,17 +321,20 @@ export function Events({ initialEvents = [] }: EventsProps) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 glass-card rounded-2xl max-w-md mx-auto">
-            <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-neutral-100 flex items-center justify-center text-3xl">
-              🔍
-            </div>
-            <h3 className="font-sans font-bold text-neutral-900 mb-3 text-xl tracking-wide">No events found</h3>
-            <p className="font-sans text-neutral-500 mb-6">Try adjusting your search or filters</p>
+          <div className="text-center py-16 glass-card rounded-2xl max-w-md mx-auto">
+            <span className="text-5xl mb-4 block">🔍</span>
+            <h3 className="font-sans font-semibold text-neutral-900 mb-2 text-lg">Nothing here yet</h3>
+            <p className="font-sans text-neutral-500 mb-6 max-w-sm mx-auto px-4">
+              {searchQuery
+                ? `No matches for "${searchQuery}". Try a different search or browse what's on this week.`
+                : "No events match that filter right now. Try a different category or check back soon—new events drop every week."
+              }
+            </p>
             <button
               onClick={clearFilters}
-              className="btn-primary"
+              className="inline-block text-neutral-900 font-medium hover:underline underline-offset-4"
             >
-              <span>Clear all filters</span>
+              See all events →
             </button>
           </div>
         )}

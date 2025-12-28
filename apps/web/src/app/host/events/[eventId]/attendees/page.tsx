@@ -223,18 +223,19 @@ export default function AttendeesPage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-neutral-900">
-              Attendees
+              Who&apos;s Coming
             </h1>
             <p className="text-neutral-500">
-              {event?.name} • {attendees.length} registered
+              {event?.name} • {attendees.length === 0 ? 'No one yet' : attendees.length === 1 ? '1 person' : `${attendees.length} people`}
             </p>
           </div>
           <button
             onClick={downloadCsv}
             className="flex items-center gap-2 px-4 py-2 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+            title="Download attendee list as spreadsheet"
           >
             <Download className="w-4 h-4" />
-            Export CSV
+            Export List
           </button>
         </div>
 
@@ -363,7 +364,9 @@ export default function AttendeesPage() {
             </div>
           ) : (
             <div className="p-8 bg-neutral-50 rounded-xl text-center">
-              <p className="text-neutral-500">No attendees yet</p>
+              <span className="text-4xl mb-3 block">👋</span>
+              <p className="font-medium text-neutral-900 mb-1">No RSVPs yet</p>
+              <p className="text-sm text-neutral-500">Share your event to get the word out!</p>
             </div>
           )}
         </div>

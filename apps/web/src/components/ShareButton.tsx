@@ -104,7 +104,10 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-neutral-100">
-          <h3 className="font-semibold text-neutral-900">Share Event</h3>
+          <div>
+            <h3 className="font-semibold text-neutral-900">Spread the word</h3>
+            <p className="text-sm text-neutral-500">Know someone who&apos;d love this?</p>
+          </div>
           <button
             onClick={(e) => {
               e.preventDefault()
@@ -134,7 +137,10 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
                 <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
                   <Check className="w-5 h-5 text-green-600" />
                 </div>
-                <span className="text-green-600 font-medium">Link Copied!</span>
+                <div className="flex flex-col items-start">
+                  <span className="text-green-600 font-medium">Link copied!</span>
+                  <span className="text-xs text-green-500">Paste anywhere to share</span>
+                </div>
               </>
             ) : (
               <>
@@ -181,7 +187,7 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
             }}
             className="w-full py-3 rounded-xl text-neutral-500 font-medium hover:bg-neutral-50 transition-colors"
           >
-            Cancel
+            Never Mind
           </button>
         </div>
       </div>
@@ -209,7 +215,7 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
         onClick={handleShare}
         className={`flex items-center justify-center rounded-full transition-all ${buttonStyles}`}
         aria-label="Share event"
-        title="Share"
+        title="Share this with your community"
       >
         <Share2 className={iconStyles} />
       </button>

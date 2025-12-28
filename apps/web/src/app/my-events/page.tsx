@@ -96,7 +96,7 @@ export default function MyEventsPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Something went wrong')
+        throw new Error(data.error || 'Something went wrong. Try again?')
       }
 
       setEvents(data.events)
@@ -105,7 +105,7 @@ export default function MyEventsPage() {
       // Save email for future use
       localStorage.setItem('sweatbuddies_user', JSON.stringify({ email: data.email }))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to get events')
+      setError(err instanceof Error ? err.message : 'Couldn\'t load your events. Try again?')
       setEvents(null)
     } finally {
       setIsLoading(false)
@@ -193,8 +193,8 @@ export default function MyEventsPage() {
         {/* Loading State */}
         {isLoading && events === null ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-[#3477f8] mb-4" />
-            <p className="text-neutral-600">Loading your events...</p>
+            <span className="text-4xl mb-4 animate-pulse">📅</span>
+            <p className="text-neutral-400">Grabbing your events...</p>
           </div>
         ) : events === null ? (
           /* Email Form */
@@ -248,20 +248,18 @@ export default function MyEventsPage() {
 
             {activeEvents.length === 0 && pastEvents.length === 0 ? (
               <div className="bg-white rounded-2xl shadow-sm border border-neutral-100 p-8 text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-neutral-100 flex items-center justify-center text-3xl">
-                  📅
-                </div>
+                <span className="text-5xl mb-4 block">🏃</span>
                 <h2 className="font-sans font-semibold text-lg text-neutral-900 mb-2">
-                  No events yet
+                  Your calendar&apos;s wide open
                 </h2>
-                <p className="text-neutral-600 text-sm mb-6">
-                  You haven&apos;t signed up for any events with this email yet.
+                <p className="text-neutral-500 text-sm mb-6 max-w-sm mx-auto">
+                  Find your first workout and tap &quot;Count Me In.&quot; We&apos;ll keep track of everything here.
                 </p>
                 <Link
                   href="/#events"
-                  className="inline-flex items-center justify-center h-10 px-5 rounded-full bg-[#3477f8] text-white font-semibold text-sm hover:bg-[#2563eb] transition-all"
+                  className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-neutral-900 text-white font-medium hover:bg-neutral-700 transition-colors"
                 >
-                  Browse Events
+                  Find a Workout
                 </Link>
               </div>
             ) : (

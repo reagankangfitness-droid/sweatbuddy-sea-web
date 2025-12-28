@@ -47,14 +47,14 @@ export default function EditEventPage() {
             return
           }
           if (eventRes.status === 404) {
-            setError('Event not found')
+            setError('We couldn\'t find that event')
             return
           }
           if (eventRes.status === 403) {
-            setError('You do not have permission to edit this event')
+            setError('You don\'t have permission to edit this event')
             return
           }
-          throw new Error('Failed to load event')
+          throw new Error('Couldn\'t load the event. Try again?')
         }
 
         const eventData = await eventRes.json()
@@ -129,9 +129,10 @@ export default function EditEventPage() {
           ← Back to Dashboard
         </Link>
 
-        <h1 className="text-2xl font-bold text-neutral-900 mb-8">
+        <h1 className="text-2xl font-bold text-neutral-900 mb-2">
           Edit Event
         </h1>
+        <p className="text-neutral-500 mb-8">Make changes and save when you&apos;re done</p>
 
         <EditEventForm event={event} />
       </main>

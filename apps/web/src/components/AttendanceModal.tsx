@@ -202,16 +202,10 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
             <div className="p-6">
               {step === 'form' ? (
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <p className="text-neutral-600 text-sm mb-4">
-                      Drop your email to confirm your spot and get a reminder before the event.
-                    </p>
-                  </div>
-
                   {/* Email Field */}
                   <div>
                     <label className="block text-sm font-medium text-neutral-700 mb-1">
-                      Email *
+                      Your email
                     </label>
                     <input
                       type="email"
@@ -221,12 +215,13 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                       placeholder="you@example.com"
                       className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition"
                     />
+                    <span className="text-xs text-neutral-400 mt-1 block">We&apos;ll send you a reminder before the event</span>
                   </div>
 
                   {/* Name Field (Optional) */}
                   <div>
                     <label className="block text-sm font-medium text-neutral-700 mb-1">
-                      Name <span className="text-neutral-400">(optional)</span>
+                      Your name <span className="text-neutral-400">(optional)</span>
                     </label>
                     <input
                       type="text"
@@ -279,7 +274,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                       className="mt-1 w-4 h-4 text-[#2563EB] border-neutral-300 rounded focus:ring-[#2563EB]"
                     />
                     <span className="text-sm text-neutral-600">
-                      Send me the weekly drop — the best events in Singapore, every Wednesday.
+                      Send me the weekly drop — the best local events, every Wednesday.
                     </span>
                   </label>
 
@@ -301,19 +296,12 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                     {isSubmitting ? (
                       <>
                         <Loader2 className="w-5 h-5 animate-spin" />
-                        Confirming...
+                        Saving your spot...
                       </>
                     ) : (
-                      <>
-                        <span>&#128587;</span>
-                        Confirm I&apos;m Going
-                      </>
+                      'Save My Spot'
                     )}
                   </button>
-
-                  <p className="text-xs text-center text-neutral-400">
-                    We&apos;ll only email you about this event and our weekly newsletter.
-                  </p>
                 </form>
               ) : (
                 /* Success State */
@@ -345,6 +333,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                         window.open(calendarUrl, '_blank')
                       }}
                       className="w-full py-3 border border-neutral-200 rounded-xl font-medium hover:bg-neutral-50 transition flex items-center justify-center gap-2"
+                      title="Add this to your calendar so you don't forget"
                     >
                       <Calendar className="w-5 h-5" />
                       Add to Calendar
@@ -386,7 +375,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                       onClick={handleClose}
                       className="w-full py-3 bg-neutral-900 text-white rounded-xl font-medium hover:bg-neutral-800 transition"
                     >
-                      Done
+                      Got It
                     </button>
 
                     <a

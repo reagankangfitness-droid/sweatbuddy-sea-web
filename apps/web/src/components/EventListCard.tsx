@@ -90,25 +90,32 @@ export function EventListCard({ event, onSelect }: Props) {
         </p>
 
         {/* Attendees Preview */}
-        {(event.attendeesPreview && event.attendeesPreview.length > 0) || (event.goingCount && event.goingCount > 0) ? (
-          <div className="flex items-center gap-2 mt-2">
-            {event.attendeesPreview && event.attendeesPreview.length > 0 && (
-              <AvatarStack
-                attendees={event.attendeesPreview}
-                maxDisplay={3}
-                size="sm"
-                showCount={false}
-              />
-            )}
-            <span className="text-xs text-neutral-500">
-              {event.goingCount || event.attendeesPreview?.length || 0} going
-            </span>
-          </div>
-        ) : (
-          <p className="text-meta-sm text-neutral-400 mt-1 line-clamp-1">
-            📍 {event.location}
-          </p>
-        )}
+        {(() => {
+          const count = event.goingCount || event.attendeesPreview?.length || 0
+          return count > 0 || (event.attendeesPreview && event.attendeesPreview.length > 0) ? (
+            <div className="flex items-center gap-2 mt-2">
+              {event.attendeesPreview && event.attendeesPreview.length > 0 && (
+                <AvatarStack
+                  attendees={event.attendeesPreview}
+                  maxDisplay={3}
+                  size="sm"
+                  showCount={false}
+                />
+              )}
+              <span className="text-xs text-neutral-500">
+                {count === 0
+                  ? 'Be the first'
+                  : count === 1
+                  ? '1 person going'
+                  : `${count} people going`}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 mt-2">
+              <span className="text-xs text-neutral-500">Be the first</span>
+            </div>
+          )
+        })()}
       </div>
 
       {/* Arrow */}

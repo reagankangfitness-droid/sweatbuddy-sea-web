@@ -59,13 +59,13 @@ export default function HostDashboard() {
             router.push('/organizer')
             return
           }
-          throw new Error('Failed to load dashboard')
+          throw new Error('Couldn\'t load your dashboard')
         }
 
         const dashboardData = await dashboardRes.json()
         setData(dashboardData)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Something went wrong')
+        setError(err instanceof Error ? err.message : 'Something went wrong. Try again?')
       } finally {
         setIsLoading(false)
       }
@@ -77,7 +77,10 @@ export default function HostDashboard() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+        <div className="text-center animate-pulse">
+          <span className="text-4xl mb-4 block">📊</span>
+          <p className="text-neutral-400">Loading your dashboard...</p>
+        </div>
       </div>
     )
   }
@@ -109,9 +112,14 @@ export default function HostDashboard() {
 
       <main className="max-w-4xl mx-auto px-6 py-12">
         {/* Welcome */}
-        <h1 className="text-2xl font-bold text-neutral-900 mb-8">
-          Welcome back!
+        <h1 className="text-2xl font-bold text-neutral-900 mb-2">
+          Hey! Here&apos;s how things are going.
         </h1>
+        {data.stats.totalSignups > 0 ? (
+          <p className="text-neutral-500 mb-8">Your events are bringing people together.</p>
+        ) : (
+          <p className="text-neutral-500 mb-8">Ready to bring people together? Create your first event.</p>
+        )}
 
         {/* Earnings Banner */}
         {data.stats.totalEarnings && data.stats.totalEarnings > 0 && (
@@ -134,8 +142,8 @@ export default function HostDashboard() {
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-12">
-          <StatCard value={data.stats.activeEvents} label="Active Events" />
-          <StatCard value={data.stats.totalSignups} label="Total RSVPs" />
+          <StatCard value={data.stats.activeEvents || 'None yet'} label="Events Hosted" />
+          <StatCard value={data.stats.totalSignups || 'Post your first event!'} label="People Joined" />
           <StatCard
             value={data.stats.totalEarnings ? `$${(data.stats.totalEarnings / 100).toFixed(0)}` : '—'}
             label="Earnings"
@@ -145,7 +153,7 @@ export default function HostDashboard() {
         {/* Upcoming Events */}
         <section className="mb-12">
           <h2 className="text-lg font-semibold text-neutral-900 mb-4">
-            Upcoming Events
+            Coming Up
           </h2>
 
           {data.upcoming.length === 0 ? (

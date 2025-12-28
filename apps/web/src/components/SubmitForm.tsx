@@ -64,9 +64,9 @@ const MAP_OPTIONS = {
 const LIBRARIES: ('places')[] = ['places']
 
 const STEPS = [
-  { id: 1, title: 'Event Details', description: 'Name, category, date & time' },
-  { id: 2, title: 'Location', description: 'Where is it happening?' },
-  { id: 3, title: 'Organizer', description: 'Your info & image' },
+  { id: 1, title: 'The Basics', description: 'Name, category, date & time' },
+  { id: 2, title: 'Location', description: 'Where should people meet?' },
+  { id: 3, title: 'Your Info', description: 'Contact & image' },
 ]
 
 export function SubmitForm() {
@@ -92,13 +92,8 @@ export function SubmitForm() {
     // Pricing fields
     isFree: true,
     price: '',
-    paynowEnabled: false,
-    paynowNumber: '',
-    paynowName: '',
     stripeEnabled: false,
   })
-  const [paynowQrCode, setPaynowQrCode] = useState<string | null>(null)
-  const [isUploadingQr, setIsUploadingQr] = useState(false)
 
   // Location state
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER)
@@ -175,7 +170,7 @@ export function SubmitForm() {
       setCurrentStep(prev => Math.min(prev + 1, 3))
       setError('')
     } else {
-      setError('Please fill in all required fields')
+      setError('Don\'t forget to fill in all the required fields')
     }
   }
 
@@ -187,18 +182,18 @@ export function SubmitForm() {
   async function handleSubmit() {
     // Validate step 3 first
     if (!validateStep(3)) {
-      setError('Please fill in all required fields in step 3')
+      setError('Almost there! Fill in the remaining fields to submit')
       return
     }
 
     // Also validate that earlier steps have data
     if (!formData.eventName || !formData.category || !formData.time) {
-      setError('Missing event details. Please go back and fill in Event Name, Category, and Time.')
+      setError('Missing event details—go back and fill in Event Name, Category, and Time')
       return
     }
 
     if (!locationData.location) {
-      setError('Missing location. Please go back to step 2 and enter a location.')
+      setError('Where\'s this happening? Go back and add a location')
       return
     }
 
@@ -231,10 +226,6 @@ export function SubmitForm() {
         // Pricing
         isFree: formData.isFree,
         price: formData.isFree ? null : Math.round(parseFloat(formData.price || '0') * 100),
-        paynowEnabled: !formData.isFree && formData.paynowEnabled,
-        paynowQrCode: paynowQrCode || null,
-        paynowNumber: formData.paynowNumber || null,
-        paynowName: formData.paynowName || null,
         stripeEnabled: !formData.isFree && formData.stripeEnabled,
       }
 
@@ -270,24 +261,24 @@ export function SubmitForm() {
         <div className="relative z-10 max-w-container mx-auto px-6 lg:px-10">
           <div className="max-w-md mx-auto text-center">
             <div className="bg-white rounded-2xl p-10 shadow-card border border-neutral-100">
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-neutral-900/10 flex items-center justify-center">
-                <Check className="w-10 h-10 text-neutral-900" />
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center">
+                <Check className="w-10 h-10 text-green-600" />
               </div>
               <h2 className="font-sans font-bold text-neutral-900 text-2xl mb-3">
-                Thanks for submitting!
+                Your event is live! 🎉
               </h2>
               <p className="font-sans text-neutral-600 mb-6">
-                We&apos;ll review your event and email you at <span className="font-medium text-neutral-900">{formData.contactEmail}</span> within 24 hours.
+                <span className="font-medium text-neutral-900">{formData.eventName}</span> is now on SweatBuddies. We&apos;ll email you at <span className="font-medium text-neutral-900">{formData.contactEmail}</span> once it&apos;s approved.
               </p>
               <div className="pt-4 border-t border-neutral-100">
                 <p className="text-sm text-neutral-600 mb-3">
-                  Want to manage your events and see who&apos;s attending?
+                  Want to manage your events and see who&apos;s coming?
                 </p>
                 <a
                   href="/organizer"
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-neutral-900 text-white font-medium rounded-full hover:bg-neutral-900-600 transition shadow-md"
                 >
-                  Access Host Dashboard
+                  Go to Host Dashboard
                   <ChevronRight className="w-4 h-4" />
                 </a>
               </div>
@@ -364,27 +355,28 @@ export function SubmitForm() {
               <div className="space-y-5">
                 <div>
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
-                    Event Name *
+                    Event name *
                   </label>
                   <input
                     type="text"
                     value={formData.eventName}
                     onChange={(e) => updateFormData('eventName', e.target.value)}
                     className="w-full h-12 px-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
-                    placeholder="e.g., Sunrise Run @ East Coast"
+                    placeholder="e.g., Sunrise Run at East Coast"
                   />
+                  <span className="text-xs text-neutral-400 mt-1 block">Keep it short and clear</span>
                 </div>
 
                 <div>
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
-                    Category *
+                    What kind of workout? *
                   </label>
                   <select
                     value={formData.category}
                     onChange={(e) => updateFormData('category', e.target.value)}
                     className="w-full h-12 px-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
                   >
-                    <option value="">Select a category</option>
+                    <option value="">Pick a category</option>
                     {categories.map((cat) => (
                       <option key={cat.value} value={cat.value}>{cat.label}</option>
                     ))}
@@ -438,7 +430,7 @@ export function SubmitForm() {
               <div className="space-y-5">
                 <div>
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
-                    Location *
+                    Where&apos;s it happening? *
                   </label>
                   {GOOGLE_MAPS_API_KEY ? (
                     <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={LIBRARIES}>
@@ -451,7 +443,7 @@ export function SubmitForm() {
                               value={locationData.location}
                               onChange={(e) => setLocationData(prev => ({ ...prev, location: e.target.value }))}
                               className="w-full h-12 pl-12 pr-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
-                              placeholder="Search for a location..."
+                              placeholder="e.g., East Coast Park, Carpark C"
                             />
                           </div>
                         </Autocomplete>
@@ -467,7 +459,7 @@ export function SubmitForm() {
                         </GoogleMap>
 
                         <p className="text-xs text-neutral-400">
-                          Search for a venue or click on the map to pin location
+                          Be specific so people can find you
                         </p>
                       </div>
                     </LoadScript>
@@ -479,15 +471,16 @@ export function SubmitForm() {
                         value={locationData.location}
                         onChange={(e) => setLocationData(prev => ({ ...prev, location: e.target.value }))}
                         className="w-full h-12 pl-12 pr-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
-                        placeholder="Enter location address..."
+                        placeholder="e.g., East Coast Park, Carpark C"
                       />
+                      <span className="text-xs text-neutral-400 mt-1 block">Be specific so people can find you</span>
                     </div>
                   )}
                 </div>
 
                 <div>
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
-                    Description (optional)
+                    Tell people what to expect
                   </label>
                   <textarea
                     value={formData.description}
@@ -495,7 +488,7 @@ export function SubmitForm() {
                     maxLength={150}
                     rows={3}
                     className="w-full px-4 py-3 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20 resize-none"
-                    placeholder="e.g., 5K group run. All paces welcome."
+                    placeholder="What's the vibe? What should people bring?"
                   />
                   <span className="text-xs text-neutral-400 mt-1 block text-right">
                     {formData.description.length}/150
@@ -556,20 +549,20 @@ export function SubmitForm() {
 
                 <div>
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
-                    Organizer Name *
+                    Your name or community name *
                   </label>
                   <input
                     type="text"
                     value={formData.organizerName}
                     onChange={(e) => updateFormData('organizerName', e.target.value)}
                     className="w-full h-12 px-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
-                    placeholder="Your name or crew name"
+                    placeholder="e.g., RunSG or Sarah Chen"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
-                    Instagram Handle *
+                    Your Instagram handle *
                   </label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">@</span>
@@ -581,24 +574,26 @@ export function SubmitForm() {
                       placeholder="yourhandle"
                     />
                   </div>
+                  <span className="text-xs text-neutral-400 mt-1 block">So people can find and follow you</span>
                 </div>
 
                 <div>
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
-                    Contact Email *
+                    Your email *
                   </label>
                   <input
                     type="email"
                     value={formData.contactEmail}
                     onChange={(e) => updateFormData('contactEmail', e.target.value)}
                     className="w-full h-12 px-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
-                    placeholder="your@email.com"
+                    placeholder="you@example.com"
                   />
+                  <span className="text-xs text-neutral-400 mt-1 block">We&apos;ll send event updates here</span>
                 </div>
 
                 <div>
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
-                    Community Link (optional)
+                    Community group link
                   </label>
                   <input
                     type="url"
@@ -608,7 +603,7 @@ export function SubmitForm() {
                     placeholder="e.g., https://chat.whatsapp.com/..."
                   />
                   <p className="text-xs text-neutral-400 mt-1">
-                    WhatsApp, Telegram, or Discord group link for attendees
+                    WhatsApp or Telegram group for attendees to join
                   </p>
                 </div>
 
@@ -664,128 +659,41 @@ export function SubmitForm() {
 
                       {/* Payment Methods */}
                       <div className="space-y-3">
-                        <p className="text-sm font-medium text-neutral-700">Payment methods</p>
+                        <p className="text-sm font-medium text-neutral-700">Payment method</p>
 
-                        {/* PayNow Option */}
-                        <label className="flex items-start gap-3 p-4 border border-neutral-200 rounded-xl cursor-pointer hover:border-neutral-400 transition-colors">
+                        {/* Card payments via Stripe */}
+                        <label className="flex items-start gap-3 p-4 bg-white border border-neutral-200 rounded-xl cursor-pointer hover:border-neutral-400 transition-colors">
                           <input
                             type="checkbox"
-                            checked={formData.paynowEnabled}
-                            onChange={(e) => setFormData(prev => ({ ...prev, paynowEnabled: e.target.checked }))}
+                            checked={formData.stripeEnabled}
+                            onChange={(e) => setFormData(prev => ({ ...prev, stripeEnabled: e.target.checked }))}
                             className="w-5 h-5 mt-0.5 rounded border-neutral-300 text-neutral-900"
                           />
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
-                              <span className="font-medium text-neutral-900">PayNow</span>
-                              <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">Singapore</span>
+                              <span className="font-medium text-neutral-900">Card payments</span>
+                              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">Stripe</span>
                             </div>
-                            <p className="text-sm text-neutral-500 mt-0.5">Bank transfer via QR code (you verify manually)</p>
+                            <p className="text-sm text-neutral-500 mt-0.5">Accept credit/debit cards - funds go directly to your bank</p>
                           </div>
                         </label>
 
-                        {/* Card payments - Coming Soon */}
-                        <div className="flex items-start gap-3 p-4 border border-neutral-100 rounded-xl bg-neutral-50 opacity-60">
-                          <input
-                            type="checkbox"
-                            disabled
-                            className="w-5 h-5 mt-0.5 rounded border-neutral-300"
-                          />
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium text-neutral-500">Card payments</span>
-                              <span className="px-2 py-0.5 bg-neutral-200 text-neutral-500 text-xs rounded-full font-medium">Coming Soon</span>
-                            </div>
-                            <p className="text-sm text-neutral-400 mt-0.5">Accept credit/debit cards via Stripe</p>
+                        {/* Stripe info */}
+                        {formData.stripeEnabled && (
+                          <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                            <p className="text-sm text-blue-800">
+                              <strong>How it works:</strong> After your event is approved, you&apos;ll complete a quick Stripe setup to connect your bank account. Payments go directly to you with a 5% platform fee.
+                            </p>
                           </div>
-                        </div>
+                        )}
+
+                        {/* Fee Notice */}
+                        {formData.stripeEnabled && (
+                          <p className="text-xs text-neutral-400">
+                            5% platform fee + Stripe processing fees (~2.9% + $0.30).
+                          </p>
+                        )}
                       </div>
-
-                      {/* PayNow Details */}
-                      {formData.paynowEnabled && (
-                        <div className="p-4 bg-purple-50 rounded-xl space-y-4 border border-purple-100">
-                          <p className="text-sm font-medium text-purple-900">PayNow Details</p>
-
-                          <div>
-                            <label className="block text-sm text-purple-800 mb-1">
-                              PayNow Number (UEN or Mobile) *
-                            </label>
-                            <input
-                              type="text"
-                              value={formData.paynowNumber}
-                              onChange={(e) => updateFormData('paynowNumber', e.target.value)}
-                              placeholder="+65 9XXX XXXX or UEN"
-                              className="w-full h-10 px-4 rounded-lg bg-white border border-purple-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-purple-500"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm text-purple-800 mb-1">
-                              Name shown on PayNow *
-                            </label>
-                            <input
-                              type="text"
-                              value={formData.paynowName}
-                              onChange={(e) => updateFormData('paynowName', e.target.value)}
-                              placeholder="JOHN DOE or COMPANY PTE LTD"
-                              className="w-full h-10 px-4 rounded-lg bg-white border border-purple-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-purple-500"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm text-purple-800 mb-1">
-                              PayNow QR Code <span className="text-purple-500">(optional)</span>
-                            </label>
-                            <div className="border-2 border-dashed border-purple-200 rounded-lg p-4 text-center bg-white">
-                              {paynowQrCode ? (
-                                <div className="space-y-2">
-                                  <img
-                                    src={paynowQrCode}
-                                    alt="PayNow QR"
-                                    className="w-32 h-32 mx-auto object-contain"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => setPaynowQrCode(null)}
-                                    className="text-sm text-red-600 hover:underline"
-                                  >
-                                    Remove
-                                  </button>
-                                </div>
-                              ) : isUploadingQr ? (
-                                <div className="py-4">
-                                  <Loader2 className="w-6 h-6 animate-spin mx-auto text-purple-500" />
-                                  <p className="text-sm text-purple-600 mt-2">Uploading...</p>
-                                </div>
-                              ) : (
-                                <div>
-                                  <ImageIcon className="w-8 h-8 mx-auto text-purple-300 mb-2" />
-                                  <UploadButton
-                                    endpoint="paynowQrUploader"
-                                    onClientUploadComplete={(res) => {
-                                      if (res?.[0]?.url) {
-                                        setPaynowQrCode(res[0].url)
-                                      }
-                                      setIsUploadingQr(false)
-                                    }}
-                                    onUploadBegin={() => setIsUploadingQr(true)}
-                                    onUploadError={(error: Error) => {
-                                      setIsUploadingQr(false)
-                                      setError(`QR upload failed: ${error.message}`)
-                                    }}
-                                    appearance={{
-                                      button: "bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-full text-sm transition-colors",
-                                      allowedContent: "hidden",
-                                    }}
-                                  />
-                                  <p className="text-xs text-purple-500 mt-2">
-                                    Screenshot from your banking app
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   )}
                 </div>
@@ -816,7 +724,7 @@ export function SubmitForm() {
                   onClick={nextStep}
                   className="flex-1 h-12 rounded-full bg-neutral-900 text-white font-semibold flex items-center justify-center gap-2 hover:bg-neutral-900-600 transition-colors shadow-md"
                 >
-                  Next
+                  Continue
                   <ChevronRight className="w-5 h-5" />
                 </button>
               ) : (
@@ -827,10 +735,13 @@ export function SubmitForm() {
                   className="flex-1 h-12 rounded-full bg-neutral-900 text-white font-semibold flex items-center justify-center gap-2 hover:bg-neutral-900-600 transition-colors disabled:opacity-50 shadow-md"
                 >
                   {isSubmitting ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Publishing...
+                    </>
                   ) : (
                     <>
-                      Submit Event
+                      Publish Event
                       <Send className="w-4 h-4" />
                     </>
                   )}

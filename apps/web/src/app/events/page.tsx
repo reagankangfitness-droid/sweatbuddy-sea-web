@@ -4,10 +4,10 @@ import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { getEvents } from '@/lib/events'
 
 export const metadata: Metadata = {
-  title: 'All Fitness Events in Singapore | SweatBuddies',
+  title: 'All Fitness Events | SweatBuddies',
   description: 'Browse all fitness events in Singapore. Run clubs, yoga, HIIT, bootcamp, dance, meditation and more. No memberships, just show up.',
   openGraph: {
-    title: 'Fitness Events in Singapore | SweatBuddies',
+    title: 'All Fitness Events | SweatBuddies',
     description: 'Browse all fitness events in Singapore. No memberships, just show up.',
     url: 'https://www.sweatbuddies.co/events',
   },
@@ -65,7 +65,7 @@ export default async function EventsPage() {
             Explore by Category
           </h1>
           <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-            {events.length}+ fitness events happening in Singapore this week. Find your tribe.
+            {events.length}+ fitness events happening this week. Find your tribe.
           </p>
         </div>
       </section>

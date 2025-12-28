@@ -36,8 +36,8 @@ const scrollToElement = (elementId: string, maxAttempts = 10) => {
 
 const heroSlides = [
   {
-    headline: "Every Community Workout.",
-    subline: "One Place.",
+    headline: "Find Your Crew.",
+    subline: "Show Up.",
     image: "/images/hero-2.jpg",
     alt: "Outdoor yoga class in the park",
   },
@@ -48,8 +48,8 @@ const heroSlides = [
     alt: "Group fitness workout outdoors",
   },
   {
-    headline: "No Memberships.",
-    subline: "Just Show Up.",
+    headline: "Real People.",
+    subline: "Open Workouts.",
     image: "/images/hero-3.jpg",
     alt: "Community workout session",
   },
@@ -175,7 +175,7 @@ export const Hero = memo(function Hero() {
               animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.3s both' : 'none',
             }}
           >
-            50+ fitness events happening in Singapore this week. Run clubs, yoga, HIIT, and more. No memberships. Just show up.
+            Run clubs. Yoga circles. HIIT squads. Real people hosting open workouts in your city. No memberships. No sign-ups. Just show up.
           </p>
 
           {/* Stats - clean, typographic hierarchy with animated counters */}
@@ -210,18 +210,18 @@ export const Hero = memo(function Hero() {
               onClick={(e) => handleHashClick(e, '#events')}
               className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-neutral-900 font-semibold text-base rounded-lg transition-all duration-250 hover:bg-neutral-100 active:scale-[0.98]"
             >
-              Browse Events
+              See What's On
               <ArrowRight className="w-5 h-5" />
             </button>
 
             {/* Secondary as subtle text link */}
             <p className="text-sm text-white/40 sm:self-center">
-              Are you an organizer?{' '}
+              Already hosting?{' '}
               <button
                 onClick={(e) => handleHashClick(e, '#submit-desktop')}
                 className="text-white/70 hover:text-white underline underline-offset-4 transition-colors"
               >
-                Host your event
+                Share your event
               </button>
             </p>
           </div>

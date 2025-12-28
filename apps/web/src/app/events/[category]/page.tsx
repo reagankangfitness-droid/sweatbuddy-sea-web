@@ -17,13 +17,13 @@ const categoryConfig: Record<string, {
 }> = {
   'run-club': {
     title: 'Run Club',
-    description: 'Join running groups across Singapore. All paces welcome.',
+    description: 'Join running groups near you. All paces welcome.',
     emoji: '🏃',
     color: 'bg-amber-100 text-amber-800',
   },
   'running': {
     title: 'Running',
-    description: 'Running events and group runs in Singapore.',
+    description: 'Running events and group runs near you.',
     emoji: '🏃',
     color: 'bg-amber-100 text-amber-800',
   },
@@ -118,12 +118,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category } = await params
   const config = categoryConfig[category] || {
     title: getCategoryFromSlug(category),
-    description: `${getCategoryFromSlug(category)} events in Singapore`,
+    description: `${getCategoryFromSlug(category)} events near you`,
     emoji: '✨',
   }
 
   return {
-    title: `${config.title} Events in Singapore | SweatBuddies`,
+    title: `${config.title} Events | SweatBuddies`,
     description: config.description,
     openGraph: {
       title: `${config.emoji} ${config.title} Events | SweatBuddies`,
@@ -263,7 +263,7 @@ export default async function CategoryPage({ params }: Props) {
             Host a {config.title} Event?
           </h2>
           <p className="text-neutral-600 mb-6">
-            List your event for free and reach fitness enthusiasts in Singapore.
+            List your event for free and reach fitness enthusiasts in your area.
           </p>
           <Link
             href="/#submit-desktop"

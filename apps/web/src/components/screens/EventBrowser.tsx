@@ -53,7 +53,7 @@ export function EventBrowser() {
       {/* Header */}
       <div className="bg-white px-4 pt-3 pb-2">
         <h2 className="text-lg font-bold text-neutral-900">What&apos;s On</h2>
-        <p className="text-[10px] text-neutral-500">Singapore &middot; This Week</p>
+        <p className="text-[10px] text-neutral-500">This Week</p>
       </div>
 
       {/* Filter Pills */}

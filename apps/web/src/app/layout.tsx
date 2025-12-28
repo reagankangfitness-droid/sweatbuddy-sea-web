@@ -21,10 +21,10 @@ const BASE_URL = 'https://www.sweatbuddies.co'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'SweatBuddies — Discover Fitness Events in Singapore',
+    default: 'SweatBuddies — Find Your Crew. Show Up.',
     template: '%s | SweatBuddies',
   },
-  description: 'Find run clubs, yoga, HIIT, cold plunge and more. No membership. Just show up.',
+  description: 'Find run clubs, yoga, HIIT, cold plunge and more in Singapore. No membership. Just show up.',
   keywords: ['fitness events', 'Singapore', 'run club', 'yoga', 'bootcamp', 'outdoor fitness', 'community events', 'workout', 'HIIT', 'cold plunge'],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
@@ -38,21 +38,21 @@ export const metadata: Metadata = {
     locale: 'en_SG',
     url: BASE_URL,
     siteName: 'SweatBuddies',
-    title: 'SweatBuddies — Discover Fitness Events in Singapore',
-    description: 'Find run clubs, yoga, HIIT, cold plunge and more. No membership. Just show up.',
+    title: 'SweatBuddies — Find Your Crew. Show Up.',
+    description: 'Find run clubs, yoga, HIIT, cold plunge and more in Singapore. No membership. Just show up.',
     images: [
       {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SweatBuddies — Discover Fitness Events in Singapore',
+        alt: 'SweatBuddies — Find Your Crew. Show Up.',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SweatBuddies — Discover Fitness Events in Singapore',
-    description: 'Find run clubs, yoga, HIIT, cold plunge and more. No membership. Just show up.',
+    title: 'SweatBuddies — Find Your Crew. Show Up.',
+    description: 'Find run clubs, yoga, HIIT, cold plunge and more in Singapore. No membership. Just show up.',
     images: ['/images/og-image.jpg'],
   },
   robots: {

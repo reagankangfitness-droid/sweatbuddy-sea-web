@@ -66,7 +66,7 @@ export function DirectChatWindow({
   // Fetch messages
   const fetchMessages = async () => {
     if (!userEmail) {
-      setError('Please register for this event first to chat with the organizer')
+      setError('RSVP to this event first to chat with the host')
       setIsLoading(false)
       return
     }
@@ -90,7 +90,7 @@ export function DirectChatWindow({
       setError('') // Clear any previous errors
     } catch (err) {
       console.error('Failed to fetch messages:', err)
-      setError('Failed to load messages')
+      setError('Couldn\'t load messages. Try again?')
     } finally {
       setIsLoading(false)
     }

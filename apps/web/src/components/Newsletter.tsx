@@ -27,7 +27,7 @@ export function Newsletter() {
 
       setIsSubmitted(true)
     } catch {
-      setError('Something went wrong. Please try again.')
+      setError('Something went wrong. Try again?')
     } finally {
       setIsSubmitting(false)
     }
@@ -74,8 +74,8 @@ export function Newsletter() {
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-neutral-900/10 flex items-center justify-center">
                 <Check className="w-8 h-8 text-neutral-900" />
               </div>
-              <h3 className="font-sans font-bold text-neutral-900 text-xl mb-2">You&apos;re in!</h3>
-              <p className="font-sans text-neutral-600">Check your inbox for a confirmation.</p>
+              <h3 className="font-sans font-bold text-neutral-900 text-xl mb-2">You&apos;re on the list!</h3>
+              <p className="font-sans text-neutral-600">The Weekly Drop lands every Wednesday.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="max-w-md mx-auto">
@@ -99,7 +99,7 @@ export function Newsletter() {
                   {isSubmitting ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
-                    <span>Subscribe</span>
+                    <span>I&apos;m In</span>
                   )}
                 </button>
               </div>
@@ -109,7 +109,7 @@ export function Newsletter() {
               )}
 
               <p className="text-neutral-400 text-xs mt-4">
-                No spam. Unsubscribe anytime.
+                Every Wednesday. No spam. Unsubscribe anytime.
               </p>
             </form>
           )}

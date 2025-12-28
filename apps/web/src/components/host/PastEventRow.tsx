@@ -36,7 +36,7 @@ export function PastEventRow({ event }: PastEventRowProps) {
         )}
       </div>
       <span className="text-sm text-neutral-500">
-        {event.goingCount} attended
+        {event.goingCount === 0 ? 'No one joined' : event.goingCount === 1 ? '1 person joined' : `${event.goingCount} people joined`}
       </span>
     </Link>
   )

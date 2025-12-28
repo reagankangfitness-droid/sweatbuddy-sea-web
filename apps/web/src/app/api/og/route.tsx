@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
               marginBottom: 16,
             }}
           >
-            Discover Fitness Events in Singapore
+            Find Your Crew. Show Up.
           </span>
           <span
             style={{

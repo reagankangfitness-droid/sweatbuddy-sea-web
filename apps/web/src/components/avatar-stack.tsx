@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Users } from 'lucide-react'
 
@@ -7,6 +8,23 @@ interface Participant {
   id: string
   name: string | null
   imageUrl: string | null
+}
+
+// Generate consistent color based on name
+function getAvatarColor(name: string | null): string {
+  const colors = [
+    'from-rose-400 to-rose-500',
+    'from-amber-400 to-amber-500',
+    'from-emerald-400 to-emerald-500',
+    'from-sky-400 to-sky-500',
+    'from-violet-400 to-violet-500',
+    'from-pink-400 to-pink-500',
+    'from-teal-400 to-teal-500',
+    'from-orange-400 to-orange-500',
+  ]
+  const str = name || 'anonymous'
+  const index = str.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  return colors[index % colors.length]
 }
 
 interface AvatarStackProps {
@@ -63,21 +81,26 @@ export function AvatarStack({
             key={participant.id}
             className={cn(
               avatarSize,
-              'rounded-full border-2 border-white bg-muted flex items-center justify-center overflow-hidden',
+              'relative rounded-full border-2 border-white bg-muted flex items-center justify-center overflow-hidden',
               'shadow-sm',
-              'transition-transform hover:scale-110 hover:z-20'
+              'transition-all duration-200 hover:scale-110 hover:z-20 hover:shadow-md'
             )}
             style={{ zIndex: maxDisplay - index }}
             title={participant.name || 'Anonymous'}
           >
             {participant.imageUrl ? (
-              <img
+              <Image
                 src={participant.imageUrl}
                 alt={participant.name || 'Participant'}
-                className="w-full h-full object-cover"
+                fill
+                sizes="28px"
+                className="object-cover"
               />
             ) : (
-              <span className="font-semibold bg-gradient-to-br from-primary to-primary/80 text-primary-foreground w-full h-full flex items-center justify-center">
+              <span className={cn(
+                'font-semibold bg-gradient-to-br text-white w-full h-full flex items-center justify-center',
+                getAvatarColor(participant.name)
+              )}>
                 {participant.name?.[0]?.toUpperCase() || '?'}
               </span>
             )}

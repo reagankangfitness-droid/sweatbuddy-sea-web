@@ -93,7 +93,7 @@ export function DashboardActivities({ initialActivities }: DashboardActivitiesPr
         {activities.map((activity) => (
           <div key={activity.id} className="relative group">
             <Link href={`/activities/${activity.id}`}>
-              <div className="rounded-lg border overflow-hidden hover:border-primary transition-colors hover:shadow-lg">
+              <div className="rounded-lg border overflow-hidden card-hover-lift card-hover-glow">
                 {activity.imageUrl && (
                   <div className="w-full h-48 overflow-hidden">
                     <img

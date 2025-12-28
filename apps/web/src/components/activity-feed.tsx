@@ -168,16 +168,16 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
         <div className="grid gap-4 sm:gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {activities.map((activity) => (
             <Link key={activity.id} href={`/activities/${activity.id}`}>
-              <div className="group bg-white rounded-xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+              <div className="group bg-white rounded-xl overflow-hidden card-hover-lift card-hover-glow cursor-pointer">
                 {/* Image Section */}
-                <div className="relative h-40 sm:h-48 lg:h-56 overflow-hidden bg-muted">
+                <div className="relative h-40 sm:h-48 lg:h-56 overflow-hidden bg-muted image-zoom-container">
                   {activity.imageUrl ? (
                     <Image
                       src={activity.imageUrl}
                       alt={activity.title}
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="object-cover image-zoom"
                       loading="lazy"
                     />
                   ) : (

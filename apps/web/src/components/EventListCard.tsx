@@ -2,10 +2,22 @@
 
 import Image from 'next/image'
 import type { Event } from '@/lib/events'
+import { AvatarStack } from './ui/AvatarStack'
+
+interface AttendeePreview {
+  id: string
+  name: string
+  imageUrl?: string | null
+}
+
+interface ExtendedEvent extends Event {
+  goingCount?: number
+  attendeesPreview?: AttendeePreview[]
+}
 
 interface Props {
-  event: Event
-  onSelect: (event: Event) => void
+  event: ExtendedEvent
+  onSelect: (event: ExtendedEvent) => void
 }
 
 const categoryEmojis: Record<string, string> = {
@@ -35,16 +47,16 @@ export function EventListCard({ event, onSelect }: Props) {
   return (
     <div
       onClick={() => onSelect(event)}
-      className="flex gap-4 p-4 bg-white rounded-2xl border border-neutral-100 shadow-card hover:shadow-card-hover active:scale-[0.98] transition-all cursor-pointer"
+      className="group flex gap-4 p-4 bg-white rounded-2xl border border-neutral-100 shadow-card card-hover-lift active:scale-[0.98] cursor-pointer"
     >
       {/* Image */}
-      <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-neutral-100 relative rounded-xl">
+      <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-neutral-100 relative rounded-xl image-zoom-container">
         {event.imageUrl ? (
           <Image
             src={event.imageUrl}
             alt={event.name}
             fill
-            className="object-contain"
+            className="object-contain image-zoom"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-3xl bg-gradient-to-br from-sand to-mist">
@@ -77,10 +89,26 @@ export function EventListCard({ event, onSelect }: Props) {
           {event.day} • {event.time}
         </p>
 
-        {/* Location */}
-        <p className="text-meta-sm text-neutral-400 mt-1 line-clamp-1">
-          📍 {event.location}
-        </p>
+        {/* Attendees Preview */}
+        {(event.attendeesPreview && event.attendeesPreview.length > 0) || (event.goingCount && event.goingCount > 0) ? (
+          <div className="flex items-center gap-2 mt-2">
+            {event.attendeesPreview && event.attendeesPreview.length > 0 && (
+              <AvatarStack
+                attendees={event.attendeesPreview}
+                maxDisplay={3}
+                size="sm"
+                showCount={false}
+              />
+            )}
+            <span className="text-xs text-neutral-500">
+              {event.goingCount || event.attendeesPreview?.length || 0} going
+            </span>
+          </div>
+        ) : (
+          <p className="text-meta-sm text-neutral-400 mt-1 line-clamp-1">
+            📍 {event.location}
+          </p>
+        )}
       </div>
 
       {/* Arrow */}

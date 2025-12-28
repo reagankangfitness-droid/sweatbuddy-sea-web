@@ -36,10 +36,6 @@ interface GoingButtonProps {
   // Pricing props
   isFree?: boolean
   price?: number | null // Amount in cents
-  paynowEnabled?: boolean
-  paynowQrCode?: string | null
-  paynowNumber?: string | null
-  paynowName?: string | null
   stripeEnabled?: boolean
 }
 
@@ -60,10 +56,6 @@ export function GoingButton({
   // Pricing props
   isFree = true,
   price = null,
-  paynowEnabled = false,
-  paynowQrCode = null,
-  paynowNumber = null,
-  paynowName = null,
   stripeEnabled = false,
 }: GoingButtonProps) {
   const [isGoing, setIsGoing] = useState(false)
@@ -73,7 +65,7 @@ export function GoingButton({
   const [showPaymentModal, setShowPaymentModal] = useState(false)
 
   // Determine if this is a paid event
-  const isPaidEvent = !isFree && price && price > 0 && (paynowEnabled || stripeEnabled)
+  const isPaidEvent = !isFree && price && price > 0 && stripeEnabled
   const formattedPrice = price ? (price / 100).toFixed(0) : '0'
 
   useEffect(() => {
@@ -156,14 +148,18 @@ export function GoingButton({
             </>
           ) : (
             <>
-              <span className="text-base">🙋</span>
-              <span>I&apos;m Going — Get Reminder</span>
+              <span>Count Me In</span>
               {count > 0 && (
-                <span className="text-white/70 ml-1">• {count} attending</span>
+                <span className="text-white/70 ml-1">• {count} going</span>
               )}
             </>
           )}
         </button>
+        {!isGoing && !isPaidEvent && (
+          <p className="text-xs text-neutral-400 mt-2 text-center">
+            Free · No account needed · Just show up
+          </p>
+        )}
 
         <AttendanceModal
           isOpen={showModal}
@@ -189,10 +185,6 @@ export function GoingButton({
                 id: eventId,
                 name: eventName,
                 price: price || 0,
-                paynowEnabled,
-                paynowQrCode,
-                paynowNumber,
-                paynowName,
                 stripeEnabled,
               }}
               onClose={() => setShowPaymentModal(false)}
@@ -230,12 +222,8 @@ export function GoingButton({
               : 'bg-neutral-900 text-white hover:bg-neutral-700'
           } ${isAnimating ? 'scale-105' : 'scale-100'}`}
         >
-          {isGoing ? (
-            <Check className="w-3 h-3" />
-          ) : isPaidEvent ? null : (
-            <span className="text-sm">🙋</span>
-          )}
-          <span>{isGoing ? 'Going' : isPaidEvent ? `$${formattedPrice}` : "I'm Going — Reminder"}</span>
+          {isGoing && <Check className="w-3 h-3" />}
+          <span>{isGoing ? 'Going' : isPaidEvent ? `$${formattedPrice}` : "Count Me In"}</span>
           {count > 0 && (
             <span
               className={`px-1.5 py-0.5 rounded-full text-[10px] ${
@@ -271,10 +259,6 @@ export function GoingButton({
                 id: eventId,
                 name: eventName,
                 price: price || 0,
-                paynowEnabled,
-                paynowQrCode,
-                paynowNumber,
-                paynowName,
                 stripeEnabled,
               }}
               onClose={() => setShowPaymentModal(false)}
@@ -311,12 +295,8 @@ export function GoingButton({
             : 'bg-neutral-900 text-white hover:bg-neutral-700'
         } ${isAnimating ? 'scale-105' : 'scale-100'}`}
       >
-        {isGoing ? (
-          <Check className="w-4 h-4" />
-        ) : isPaidEvent ? null : (
-          <span className="text-base">&#128587;</span>
-        )}
-        <span>{isGoing ? "You're Going!" : isPaidEvent ? `Join · $${formattedPrice}` : "I'm Going — Get Reminder"}</span>
+        {isGoing && <Check className="w-4 h-4" />}
+        <span>{isGoing ? "You're Going!" : isPaidEvent ? `Join · $${formattedPrice}` : "Count Me In"}</span>
         {count > 0 && (
           <span
             className={`px-2 py-0.5 rounded-full text-xs ${
@@ -352,10 +332,6 @@ export function GoingButton({
               id: eventId,
               name: eventName,
               price: price || 0,
-              paynowEnabled,
-              paynowQrCode,
-              paynowNumber,
-              paynowName,
               stripeEnabled,
             }}
             onClose={() => setShowPaymentModal(false)}

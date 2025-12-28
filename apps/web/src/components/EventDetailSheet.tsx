@@ -253,7 +253,7 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                 </h2>
 
                 {/* Time & Location Summary */}
-                <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-500 mb-6">
+                <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-500 mb-4">
                   <span className="flex items-center gap-1">
                     <span>📅</span> {formatEventDate(event.eventDate, event.day)}
                   </span>
@@ -267,35 +267,38 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                   )}
                 </div>
 
+                {/* Host Block - Prominent placement */}
+                <div className="flex items-center gap-4 p-4 bg-neutral-50 rounded-2xl mb-6">
+                  <div className="w-12 h-12 bg-neutral-200 rounded-full flex items-center justify-center text-xl">
+                    👤
+                  </div>
+                  <div>
+                    <p className="text-sm text-neutral-500">Hosted by</p>
+                    <p className="font-semibold text-neutral-900">@{event.organizer}</p>
+                  </div>
+                </div>
+
                 {/* Sections */}
                 <div className="space-y-6">
                   {/* Who's Going - Social proof section (hidden when empty) */}
                   <EventAttendees eventId={event.id} refreshTrigger={attendeesRefresh} />
 
-                  {/* About */}
+                  {/* What to Expect */}
                   <div>
                     <h3 className="text-sm font-semibold text-neutral-900 mb-2 flex items-center gap-2">
-                      <span className="text-base">📝</span> About
+                      <span className="text-base">✨</span> What to Expect
                     </h3>
                     <p className="text-sm text-neutral-500 leading-relaxed">
                       {event.description || 'Join us for an amazing fitness session! All levels welcome.'}
                     </p>
                   </div>
 
-                  {/* Location */}
+                  {/* Where to Meet */}
                   <div>
                     <h3 className="text-sm font-semibold text-neutral-900 mb-2 flex items-center gap-2">
-                      <span className="text-base">📍</span> Location
+                      <span className="text-base">📍</span> Where to Meet
                     </h3>
                     <p className="text-sm text-neutral-500">{event.location}</p>
-                  </div>
-
-                  {/* Organizer */}
-                  <div>
-                    <h3 className="text-sm font-semibold text-neutral-900 mb-3 flex items-center gap-2">
-                      <span className="text-base">👤</span> Organizer
-                    </h3>
-                    <OrganizerProfile handle={event.organizer} />
                   </div>
                 </div>
               </div>
@@ -335,7 +338,7 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                   eventName={event.name}
                   iconOnly
                 />
-                <span className="text-xs font-medium">Share</span>
+                <span className="text-[10px] font-medium text-center leading-tight">Know someone<br/>who&apos;d love this?</span>
               </div>
 
               <a

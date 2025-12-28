@@ -237,13 +237,13 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
 
         {/* Content Section - Clean minimalist typography */}
         <div className="flex-1 flex flex-col pt-3 pb-2">
-          {/* Category - subtle, uppercase */}
-          <span className="text-[11px] font-medium text-neutral-500 uppercase tracking-wider mb-1.5">
-            {event.category}
-          </span>
+          {/* Host - Lead with the people */}
+          <p className="text-sm text-neutral-500 mb-1">
+            Hosted by @{event.organizer}
+          </p>
 
           {/* Event Name */}
-          <h3 className="text-[15px] font-semibold text-neutral-900 leading-tight line-clamp-1 mb-1">
+          <h3 className="text-[15px] font-semibold text-neutral-900 leading-tight line-clamp-1 mb-1.5">
             {event.name}
           </h3>
 
@@ -259,28 +259,26 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
 
           {/* Attendees Preview & CTA */}
           <div className="mt-auto space-y-3">
-            {/* Avatar stack with count */}
-            {(event.attendeesPreview && event.attendeesPreview.length > 0) || goingCount > 0 ? (
-              <div className="flex items-center gap-2">
-                {event.attendeesPreview && event.attendeesPreview.length > 0 && (
-                  <AvatarStack
-                    attendees={event.attendeesPreview}
-                    maxDisplay={4}
-                    size="sm"
-                    showCount={goingCount > 4}
-                  />
+            {/* Avatar stack with count - always visible */}
+            <div className="flex items-center gap-2">
+              {event.attendeesPreview && event.attendeesPreview.length > 0 && (
+                <AvatarStack
+                  attendees={event.attendeesPreview}
+                  maxDisplay={4}
+                  size="sm"
+                  showCount={goingCount > 4}
+                />
+              )}
+              <span className="text-xs text-neutral-500">
+                {goingCount > 0 ? (
+                  <>
+                    <LiveCounter value={goingCount} className="font-medium text-neutral-700" /> going
+                  </>
+                ) : (
+                  'Be the first'
                 )}
-                <span className="text-xs text-neutral-500">
-                  {goingCount > 0 ? (
-                    <>
-                      <LiveCounter value={goingCount} className="font-medium text-neutral-700" /> going
-                    </>
-                  ) : (
-                    'Be the first to join!'
-                  )}
-                </span>
-              </div>
-            ) : null}
+              </span>
+            </div>
 
             {/* CTA Button */}
             {isGoing ? (
@@ -295,7 +293,7 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
                 onClick={handleGoingClick}
                 className="w-full py-2.5 font-semibold text-sm flex items-center justify-center gap-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-700 transition-all btn-press ripple overflow-hidden relative"
               >
-                <span>Join</span>
+                <span>I'm In</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             )}

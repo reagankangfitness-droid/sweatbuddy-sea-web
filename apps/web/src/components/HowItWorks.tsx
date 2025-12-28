@@ -9,20 +9,20 @@ import { EventDetail } from './screens/EventDetail'
 const steps = [
   {
     number: '01',
-    title: 'Pick Your City',
-    description: 'Select where you\'re based. We\'re live in Singapore with more cities coming soon.',
+    title: 'Find something that fits',
+    description: 'Filter by activity, day, or neighborhood. Morning runner? Weekend yogi? There\'s something for you.',
     screen: <CitySelector />,
   },
   {
     number: '02',
-    title: 'Browse What\'s On',
-    description: 'Filter by category, day, or vibe. Find events that match your style.',
+    title: 'Just show up',
+    description: 'No sign-ups, no commitments. Show up at the time and place. The host will take it from there.',
     screen: <EventBrowser />,
   },
   {
     number: '03',
-    title: 'Just Show Up',
-    description: 'No bookings, no sign-ups. Mark yourself as going and show up.',
+    title: 'Find your crew',
+    description: 'Come for the workout, stay for the people. Most regulars started exactly where you are.',
     screen: <EventDetail />,
   },
 ]
@@ -46,11 +46,8 @@ export function HowItWorks() {
         >
           <span className="text-label text-neutral-500 mb-4 block">HOW IT WORKS</span>
           <h2 className="text-display-section md:text-display-hero">
-            Three Simple Steps
+            Three steps. Zero friction.
           </h2>
-          <p className="text-body-large mt-4 max-w-xl mx-auto">
-            From discovery to workout in minutes
-          </p>
         </motion.div>
 
         {/* Steps with iPhone Mockups */}

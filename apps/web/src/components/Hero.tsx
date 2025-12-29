@@ -201,29 +201,26 @@ export const Hero = memo(function Hero() {
             </div>
           </div>
 
-          {/* CTAs - clean, confident black button */}
+          {/* CTAs - Two equal buttons */}
           <div
-            className="flex flex-col sm:flex-row items-start gap-5"
+            className="flex flex-col sm:flex-row gap-4"
             style={{ animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.5s both' : 'none' }}
           >
+            {/* Attendee CTA - White/Primary */}
             <button
               onClick={(e) => handleHashClick(e, '#events')}
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-neutral-900 font-semibold text-base rounded-lg transition-all duration-250 hover:bg-neutral-100 active:scale-[0.98]"
+              className="px-8 py-4 bg-white text-neutral-900 rounded-full font-medium text-lg hover:bg-neutral-100 transition-colors text-center"
             >
-              See What's On
-              <ArrowRight className="w-5 h-5" />
+              Find a Workout
             </button>
 
-            {/* Secondary as subtle text link */}
-            <p className="text-sm text-white/40 sm:self-center">
-              Already hosting?{' '}
-              <button
-                onClick={(e) => handleHashClick(e, '#submit-desktop')}
-                className="text-white/70 hover:text-white underline underline-offset-4 transition-colors"
-              >
-                Share your event
-              </button>
-            </p>
+            {/* Host CTA - Outline/Secondary */}
+            <button
+              onClick={(e) => handleHashClick(e, '#submit-desktop')}
+              className="px-8 py-4 bg-transparent text-white rounded-full font-medium text-lg border-2 border-white hover:bg-white hover:text-neutral-900 transition-colors text-center"
+            >
+              Host an Event
+            </button>
           </div>
         </div>
 

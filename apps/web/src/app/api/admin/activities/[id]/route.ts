@@ -77,7 +77,7 @@ export async function PATCH(
         content: action === 'approve'
           ? `Great news! Your event "${activity.title}" has been approved and is now live on SweatBuddies.`
           : `Unfortunately, your event "${activity.title}" was not approved. Please review our guidelines and try again.`,
-        link: action === 'approve' ? `/activities/${activity.id}` : '/activities/new',
+        link: action === 'approve' ? `/activities/${activity.id}` : '/activities/create',
       },
     })
 

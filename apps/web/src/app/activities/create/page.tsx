@@ -80,7 +80,7 @@ export default function NewActivityPage() {
   // Redirect to sign-in if not authenticated
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      router.push('/sign-in?redirect_url=/activities/new')
+      router.push('/sign-in?redirect_url=/activities/create')
     }
   }, [isLoaded, isSignedIn, router])
 

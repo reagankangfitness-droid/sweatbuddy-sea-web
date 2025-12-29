@@ -81,7 +81,7 @@ export function DashboardActivities({ initialActivities }: DashboardActivitiesPr
         <p className="text-muted-foreground mb-4">
           No activities yet. Create your first one!
         </p>
-        <Link href="/activities/new">
+        <Link href="/activities/create">
           <Button>Create Activity</Button>
         </Link>
       </div>

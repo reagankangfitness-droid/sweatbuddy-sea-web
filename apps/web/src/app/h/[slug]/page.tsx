@@ -213,7 +213,7 @@ export default function HostProfilePage() {
   }
 
   const handleShare = async () => {
-    const url = `${window.location.origin}/host/${slug}`
+    const url = `${window.location.origin}/h/${slug}`
 
     if (navigator.share) {
       try {
@@ -679,7 +679,7 @@ export default function HostProfilePage() {
             </h2>
             {hostStats && hostStats.totalReviews > 5 && (
               <Link
-                href={`/host/${slug}/reviews`}
+                href={`/h/${slug}/reviews`}
                 className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
               >
                 View all <ChevronRight className="h-4 w-4" />

@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       },
     })
 
-    const magicLink = `${BASE_URL}/organizer/${token}`
+    const magicLink = `${BASE_URL}/organizer/verify/${token}`
 
     // Send magic link email
     console.log(`[Organizer Login] Sending magic link to ${normalizedEmail}`)

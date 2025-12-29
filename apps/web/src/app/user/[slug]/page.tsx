@@ -87,7 +87,7 @@ export default function UserProfilePage() {
 
       // Redirect hosts to host profile page
       if (data.profile.isHost) {
-        router.replace(`/host/${slug}`)
+        router.replace(`/h/${slug}`)
         return
       }
 

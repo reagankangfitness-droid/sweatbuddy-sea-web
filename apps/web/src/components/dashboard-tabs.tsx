@@ -116,7 +116,7 @@ export function DashboardTabs({
 
           {/* Action Button (only show for Hosting tab) */}
           {mainTab === 'hosting' && (
-            <Link href="/activities/new" className="w-full sm:w-auto">
+            <Link href="/activities/create" className="w-full sm:w-auto">
               <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-neutral-900 text-white font-sans font-semibold text-sm rounded-xl hover:bg-neutral-700 transition-all duration-200 active:scale-[0.98]">
                 <Plus className="w-4 h-4" />
                 Host an Activity
@@ -155,7 +155,7 @@ export function DashboardTabs({
                 : "You haven't hosted any activities yet."
               }
               actionLabel="Host an Activity"
-              actionHref="/activities/new"
+              actionHref="/activities/create"
             />
           ) : (
             <DashboardActivities initialActivities={hostedToShow} />

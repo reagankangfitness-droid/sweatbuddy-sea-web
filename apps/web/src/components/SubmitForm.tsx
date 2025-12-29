@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useCallback } from 'react'
-import { GoogleMap, LoadScript, Marker, Autocomplete } from '@react-google-maps/api'
+import { useState, useCallback, useMemo, memo } from 'react'
+import { GoogleMap, Marker, Autocomplete, useJsApiLoader } from '@react-google-maps/api'
 import { Send, Check, MapPin, Loader2, X, ImageIcon, ChevronRight, ChevronLeft } from 'lucide-react'
 import { SectionGradient } from './GradientBackground'
 import { UploadButton } from '@/lib/uploadthing'
@@ -69,7 +69,94 @@ const STEPS = [
   { id: 3, title: 'Your Info', description: 'Contact & image' },
 ]
 
+// Debounced input component - handles local state to prevent parent re-renders
+const DebouncedInput = memo(function DebouncedInput({
+  value,
+  onChange,
+  debounceMs = 150,
+  className,
+  ...props
+}: {
+  value: string
+  onChange: (value: string) => void
+  debounceMs?: number
+  className?: string
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'>) {
+  const [localValue, setLocalValue] = useState(value)
+  const timeoutRef = useState<NodeJS.Timeout | null>(null)
+
+  // Sync local value when parent value changes (e.g., form reset)
+  useMemo(() => {
+    setLocalValue(value)
+  }, [value])
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value
+    setLocalValue(newValue) // Update local state immediately for responsive UI
+
+    // Debounce the parent state update
+    if (timeoutRef[0]) clearTimeout(timeoutRef[0])
+    timeoutRef[0] = setTimeout(() => {
+      onChange(newValue)
+    }, debounceMs)
+  }, [onChange, debounceMs, timeoutRef])
+
+  return (
+    <input
+      {...props}
+      value={localValue}
+      onChange={handleChange}
+      className={className}
+    />
+  )
+})
+
+// Debounced textarea component
+const DebouncedTextarea = memo(function DebouncedTextarea({
+  value,
+  onChange,
+  debounceMs = 150,
+  className,
+  ...props
+}: {
+  value: string
+  onChange: (value: string) => void
+  debounceMs?: number
+  className?: string
+} & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange' | 'value'>) {
+  const [localValue, setLocalValue] = useState(value)
+  const timeoutRef = useState<NodeJS.Timeout | null>(null)
+
+  useMemo(() => {
+    setLocalValue(value)
+  }, [value])
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value
+    setLocalValue(newValue)
+
+    if (timeoutRef[0]) clearTimeout(timeoutRef[0])
+    timeoutRef[0] = setTimeout(() => {
+      onChange(newValue)
+    }, debounceMs)
+  }, [onChange, debounceMs, timeoutRef])
+
+  return (
+    <textarea
+      {...props}
+      value={localValue}
+      onChange={handleChange}
+      className={className}
+    />
+  )
+})
+
 export function SubmitForm() {
+  // Load Google Maps API once at component mount
+  const { isLoaded: mapsLoaded } = useJsApiLoader({
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+    libraries: LIBRARIES,
+  })
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -106,9 +193,9 @@ export function SubmitForm() {
     placeId: '',
   })
 
-  const updateFormData = (field: string, value: string | boolean) => {
+  const updateFormData = useCallback((field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
-  }
+  }, [])
 
   const onLoad = useCallback((autocompleteInstance: google.maps.places.Autocomplete) => {
     setAutocomplete(autocompleteInstance)
@@ -357,10 +444,10 @@ export function SubmitForm() {
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
                     Event name *
                   </label>
-                  <input
+                  <DebouncedInput
                     type="text"
                     value={formData.eventName}
-                    onChange={(e) => updateFormData('eventName', e.target.value)}
+                    onChange={(val) => updateFormData('eventName', val)}
                     className="w-full h-12 px-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
                     placeholder="e.g., Sunrise Run at East Coast"
                   />
@@ -400,10 +487,10 @@ export function SubmitForm() {
                     <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
                       Time *
                     </label>
-                    <input
+                    <DebouncedInput
                       type="text"
                       value={formData.time}
-                      onChange={(e) => updateFormData('time', e.target.value)}
+                      onChange={(val) => updateFormData('time', val)}
                       className="w-full h-12 px-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
                       placeholder="e.g., 6:30 AM"
                     />
@@ -432,43 +519,41 @@ export function SubmitForm() {
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
                     Where&apos;s it happening? *
                   </label>
-                  {GOOGLE_MAPS_API_KEY ? (
-                    <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY} libraries={LIBRARIES}>
-                      <div className="space-y-3">
-                        <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged} options={AUTOCOMPLETE_OPTIONS}>
-                          <div className="relative">
-                            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                            <input
-                              type="text"
-                              value={locationData.location}
-                              onChange={(e) => setLocationData(prev => ({ ...prev, location: e.target.value }))}
-                              className="w-full h-12 pl-12 pr-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
-                              placeholder="e.g., East Coast Park, Carpark C"
-                            />
-                          </div>
-                        </Autocomplete>
+                  {mapsLoaded ? (
+                    <div className="space-y-3">
+                      <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged} options={AUTOCOMPLETE_OPTIONS}>
+                        <div className="relative">
+                          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                          <input
+                            type="text"
+                            defaultValue={locationData.location}
+                            onChange={(e) => setLocationData(prev => ({ ...prev, location: e.target.value }))}
+                            className="w-full h-12 pl-12 pr-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
+                            placeholder="e.g., East Coast Park, Carpark C"
+                          />
+                        </div>
+                      </Autocomplete>
 
-                        <GoogleMap
-                          mapContainerStyle={MAP_CONTAINER_STYLE}
-                          center={mapCenter}
-                          zoom={markerPosition ? 15 : 11}
-                          onClick={onMapClick}
-                          options={MAP_OPTIONS}
-                        >
-                          {markerPosition && <Marker position={markerPosition} />}
-                        </GoogleMap>
+                      <GoogleMap
+                        mapContainerStyle={MAP_CONTAINER_STYLE}
+                        center={mapCenter}
+                        zoom={markerPosition ? 15 : 11}
+                        onClick={onMapClick}
+                        options={MAP_OPTIONS}
+                      >
+                        {markerPosition && <Marker position={markerPosition} />}
+                      </GoogleMap>
 
-                        <p className="text-xs text-neutral-400">
-                          Be specific so people can find you
-                        </p>
-                      </div>
-                    </LoadScript>
+                      <p className="text-xs text-neutral-400">
+                        Be specific so people can find you
+                      </p>
+                    </div>
                   ) : (
                     <div className="relative">
                       <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
                       <input
                         type="text"
-                        value={locationData.location}
+                        defaultValue={locationData.location}
                         onChange={(e) => setLocationData(prev => ({ ...prev, location: e.target.value }))}
                         className="w-full h-12 pl-12 pr-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
                         placeholder="e.g., East Coast Park, Carpark C"
@@ -482,9 +567,9 @@ export function SubmitForm() {
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
                     Tell people what to expect
                   </label>
-                  <textarea
+                  <DebouncedTextarea
                     value={formData.description}
-                    onChange={(e) => updateFormData('description', e.target.value)}
+                    onChange={(val) => updateFormData('description', val)}
                     maxLength={150}
                     rows={3}
                     className="w-full px-4 py-3 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20 resize-none"
@@ -551,10 +636,10 @@ export function SubmitForm() {
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
                     Your name or community name *
                   </label>
-                  <input
+                  <DebouncedInput
                     type="text"
                     value={formData.organizerName}
-                    onChange={(e) => updateFormData('organizerName', e.target.value)}
+                    onChange={(val) => updateFormData('organizerName', val)}
                     className="w-full h-12 px-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
                     placeholder="e.g., RunSG or Sarah Chen"
                   />
@@ -566,10 +651,10 @@ export function SubmitForm() {
                   </label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">@</span>
-                    <input
+                    <DebouncedInput
                       type="text"
                       value={formData.organizerInstagram}
-                      onChange={(e) => updateFormData('organizerInstagram', e.target.value)}
+                      onChange={(val) => updateFormData('organizerInstagram', val)}
                       className="w-full h-12 pl-10 pr-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
                       placeholder="yourhandle"
                     />
@@ -581,10 +666,10 @@ export function SubmitForm() {
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
                     Your email *
                   </label>
-                  <input
+                  <DebouncedInput
                     type="email"
                     value={formData.contactEmail}
-                    onChange={(e) => updateFormData('contactEmail', e.target.value)}
+                    onChange={(val) => updateFormData('contactEmail', val)}
                     className="w-full h-12 px-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
                     placeholder="you@example.com"
                   />
@@ -595,10 +680,10 @@ export function SubmitForm() {
                   <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
                     Community group link
                   </label>
-                  <input
+                  <DebouncedInput
                     type="url"
                     value={formData.communityLink}
-                    onChange={(e) => updateFormData('communityLink', e.target.value)}
+                    onChange={(val) => updateFormData('communityLink', val)}
                     className="w-full h-12 px-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
                     placeholder="e.g., https://chat.whatsapp.com/..."
                   />
@@ -645,12 +730,12 @@ export function SubmitForm() {
                         </label>
                         <div className="relative">
                           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500">$</span>
-                          <input
+                          <DebouncedInput
                             type="number"
-                            min="1"
-                            step="0.01"
+                            min={1}
+                            step={0.01}
                             value={formData.price}
-                            onChange={(e) => updateFormData('price', e.target.value)}
+                            onChange={(val) => updateFormData('price', val)}
                             placeholder="15.00"
                             className="w-full h-12 pl-8 pr-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
                           />

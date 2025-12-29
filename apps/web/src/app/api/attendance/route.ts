@@ -139,8 +139,8 @@ export async function GET(request: Request) {
   const eventId = searchParams.get('eventId')
   const adminSecret = request.headers.get('x-admin-secret')
 
-  // Admin auth check
-  if (adminSecret !== process.env.ADMIN_SECRET && adminSecret !== 'sweatbuddies-admin-2024') {
+  // Admin auth check - only use environment variable, no hardcoded fallback
+  if (!process.env.ADMIN_SECRET || adminSecret !== process.env.ADMIN_SECRET) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -199,8 +199,8 @@ export async function DELETE(request: Request) {
   const attendeeId = searchParams.get('id')
   const adminSecret = request.headers.get('x-admin-secret')
 
-  // Admin auth check
-  if (adminSecret !== process.env.ADMIN_SECRET && adminSecret !== 'sweatbuddies-admin-2024') {
+  // Admin auth check - only use environment variable, no hardcoded fallback
+  if (!process.env.ADMIN_SECRET || adminSecret !== process.env.ADMIN_SECRET) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

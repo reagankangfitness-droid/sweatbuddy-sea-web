@@ -31,7 +31,10 @@ export default function EarningsPage() {
   if (isVerifying) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+        <div className="text-center animate-pulse">
+          <span className="text-4xl mb-4 block">💰</span>
+          <p className="text-neutral-400">Loading your earnings...</p>
+        </div>
       </div>
     )
   }

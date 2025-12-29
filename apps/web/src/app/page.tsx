@@ -4,7 +4,8 @@ import { Hero } from '@/components/Hero'
 import { ActivityMarquee } from '@/components/ActivityMarquee'
 import { HowItWorks } from '@/components/HowItWorks'
 import { Events } from '@/components/Events'
-import { getEvents } from '@/lib/events'
+import { getEvents, getSocialProofStats } from '@/lib/events'
+import { SocialProofBar } from '@/components/SocialProofBar'
 import { MobileHeroSkeleton, MobileEventsListSkeleton } from '@/components/Skeletons'
 
 // Mobile-first components - with loading skeletons
@@ -46,7 +47,10 @@ export const revalidate = 60
 
 export default async function Home() {
   // Server-side data fetching - no loading spinner needed
-  const events = await getEvents()
+  const [events, socialProofStats] = await Promise.all([
+    getEvents(),
+    getSocialProofStats(),
+  ])
 
   return (
     <>
@@ -54,6 +58,7 @@ export default async function Home() {
       <div className="md:hidden min-h-screen bg-neutral-50">
         <MobileHeader />
         <MobileHero />
+        <SocialProofBar stats={socialProofStats} />
         <MobileEventsSection events={events} />
         <div id="submit-mobile">
           <SubmitForm />
@@ -67,6 +72,7 @@ export default async function Home() {
         <Header />
         <main>
           <Hero />
+          <SocialProofBar stats={socialProofStats} />
           <ActivityMarquee />
           <HowItWorks />
           <Events initialEvents={events} />

@@ -85,7 +85,7 @@ export function SkeletonText({
 }
 
 // Full page loading overlay
-export function PageLoader({ message = 'Loading...' }: { message?: string }) {
+export function PageLoader({ message = 'One sec...', emoji = '🏃' }: { message?: string; emoji?: string }) {
   const [dots, setDots] = useState('')
 
   useEffect(() => {
@@ -98,11 +98,31 @@ export function PageLoader({ message = 'Loading...' }: { message?: string }) {
   return (
     <div className="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="text-center">
-        <PulseRing size={56} className="mx-auto mb-4" />
-        <p className="text-neutral-600 font-medium">
+        <span className="text-4xl mb-4 block animate-pulse">{emoji}</span>
+        <p className="text-neutral-500 font-medium">
           {message}
           <span className="inline-block w-6 text-left">{dots}</span>
         </p>
+      </div>
+    </div>
+  )
+}
+
+// Reusable loading state with emoji
+export function LoadingState({
+  message = 'Loading...',
+  emoji = '⏳',
+  className = ''
+}: {
+  message?: string
+  emoji?: string
+  className?: string
+}) {
+  return (
+    <div className={`text-center py-12 ${className}`}>
+      <div className="animate-pulse">
+        <span className="text-4xl mb-4 block">{emoji}</span>
+        <p className="text-neutral-400">{message}</p>
       </div>
     </div>
   )

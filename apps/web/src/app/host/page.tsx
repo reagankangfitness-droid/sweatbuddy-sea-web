@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Calendar, MapPin, Clock, Instagram, Mail, User, FileText, Loader2, CheckCircle, Users, Sparkles, DollarSign, ImageIcon, X } from 'lucide-react'
-import { UploadButton } from '@/lib/uploadthing'
+import { ArrowLeft, Calendar, MapPin, Clock, Instagram, Mail, User, FileText, Loader2, CheckCircle, Users, Sparkles, DollarSign } from 'lucide-react'
 
 const eventTypes = [
   'Run Club',
@@ -25,6 +24,7 @@ export default function HostApplicationPage() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState('')
 
+  const [isRecurring, setIsRecurring] = useState(true)
   const [formData, setFormData] = useState({
     organizerName: '',
     instagramHandle: '',
@@ -32,19 +32,15 @@ export default function HostApplicationPage() {
     eventName: '',
     eventType: '',
     eventDay: '',
+    eventDate: '',
     eventTime: '',
     location: '',
     description: '',
     // Pricing fields
     isFree: true,
     price: '',
-    paynowEnabled: false,
-    paynowNumber: '',
-    paynowName: '',
     stripeEnabled: false,
   })
-  const [paynowQrCode, setPaynowQrCode] = useState<string | null>(null)
-  const [isUploadingQr, setIsUploadingQr] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -63,7 +59,8 @@ export default function HostApplicationPage() {
     if (!formData.email) missingFields.push('Email')
     if (!formData.eventName) missingFields.push('Event Name')
     if (!formData.eventType) missingFields.push('Event Type')
-    if (!formData.eventDay) missingFields.push('Day')
+    if (isRecurring && !formData.eventDay) missingFields.push('Day')
+    if (!isRecurring && !formData.eventDate) missingFields.push('Date')
     if (!formData.eventTime) missingFields.push('Time')
     if (!formData.location) missingFields.push('Location')
 
@@ -74,13 +71,24 @@ export default function HostApplicationPage() {
     }
 
     try {
+      // Format day display based on recurring vs one-time
+      let dayDisplay = ''
+      if (isRecurring) {
+        dayDisplay = formData.eventDay
+      } else {
+        // Format date for display (e.g., "Jan 15, 2025")
+        const date = new Date(formData.eventDate)
+        dayDisplay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      }
+
       // Map form data to EventSubmission format for unified submission system
       const eventSubmissionData = {
         eventName: formData.eventName,
         category: formData.eventType,
-        day: formData.eventDay || 'Weekly',
+        day: dayDisplay,
+        eventDate: isRecurring ? undefined : formData.eventDate,
         time: formData.eventTime,
-        recurring: true, // Host applications are typically for recurring events
+        recurring: isRecurring,
         location: formData.location,
         description: formData.description || '',
         organizerName: formData.organizerName,
@@ -89,10 +97,6 @@ export default function HostApplicationPage() {
         // Pricing fields
         isFree: formData.isFree,
         price: formData.isFree ? null : Math.round(parseFloat(formData.price || '0') * 100),
-        paynowEnabled: !formData.isFree && formData.paynowEnabled,
-        paynowQrCode: paynowQrCode || null,
-        paynowNumber: formData.paynowNumber || null,
-        paynowName: formData.paynowName || null,
         stripeEnabled: !formData.isFree && formData.stripeEnabled,
       }
 
@@ -352,23 +356,86 @@ export default function HostApplicationPage() {
                 </select>
               </div>
 
+              {/* Event Frequency Toggle */}
+              <div>
+                <label className="block text-ui text-neutral-700 mb-1.5">
+                  Event Schedule *
+                </label>
+                <div className="flex gap-2 mb-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsRecurring(true)}
+                    className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-medium transition-colors ${
+                      isRecurring
+                        ? 'bg-neutral-900 text-white'
+                        : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                    }`}
+                  >
+                    Recurring
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsRecurring(false)}
+                    className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-medium transition-colors ${
+                      !isRecurring
+                        ? 'bg-neutral-900 text-white'
+                        : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                    }`}
+                  >
+                    Specific Date
+                  </button>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-ui text-neutral-700 mb-1.5">
-                    Day *
-                  </label>
-                  <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                    <input
-                      type="text"
-                      name="eventDay"
-                      value={formData.eventDay}
-                      onChange={handleChange}
-                      required
-                      placeholder="Every Saturday"
-                      className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
-                    />
-                  </div>
+                  {isRecurring ? (
+                    <>
+                      <label className="block text-ui text-neutral-700 mb-1.5">
+                        Day *
+                      </label>
+                      <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                        <select
+                          name="eventDay"
+                          value={formData.eventDay}
+                          onChange={handleChange}
+                          required={isRecurring}
+                          className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 appearance-none"
+                        >
+                          <option value="">Select day...</option>
+                          <option value="Every Monday">Every Monday</option>
+                          <option value="Every Tuesday">Every Tuesday</option>
+                          <option value="Every Wednesday">Every Wednesday</option>
+                          <option value="Every Thursday">Every Thursday</option>
+                          <option value="Every Friday">Every Friday</option>
+                          <option value="Every Saturday">Every Saturday</option>
+                          <option value="Every Sunday">Every Sunday</option>
+                          <option value="Daily">Daily</option>
+                          <option value="Weekdays">Weekdays</option>
+                          <option value="Weekends">Weekends</option>
+                        </select>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <label className="block text-ui text-neutral-700 mb-1.5">
+                        Date *
+                      </label>
+                      <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                        <input
+                          type="date"
+                          name="eventDate"
+                          value={formData.eventDate}
+                          onChange={handleChange}
+                          required={!isRecurring}
+                          min={new Date().toISOString().split('T')[0]}
+                          className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900"
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <div>
@@ -492,140 +559,41 @@ export default function HostApplicationPage() {
 
                   {/* Payment Methods */}
                   <div className="space-y-3">
-                    <p className="text-sm font-medium text-neutral-700">Payment methods</p>
+                    <p className="text-sm font-medium text-neutral-700">Payment method</p>
 
-                    {/* PayNow Option */}
+                    {/* Card payments via Stripe */}
                     <label className="flex items-start gap-3 p-4 bg-white border border-neutral-200 rounded-xl cursor-pointer hover:border-neutral-400 transition-colors">
                       <input
                         type="checkbox"
-                        checked={formData.paynowEnabled}
-                        onChange={(e) => setFormData(prev => ({ ...prev, paynowEnabled: e.target.checked }))}
+                        checked={formData.stripeEnabled}
+                        onChange={(e) => setFormData(prev => ({ ...prev, stripeEnabled: e.target.checked }))}
                         className="w-5 h-5 mt-0.5 rounded border-neutral-300 text-neutral-900"
                       />
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-neutral-900">PayNow</span>
-                          <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">Singapore</span>
+                          <span className="font-medium text-neutral-900">Card payments</span>
+                          <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">Stripe</span>
                         </div>
-                        <p className="text-sm text-neutral-500 mt-0.5">Bank transfer via QR code (you verify manually)</p>
+                        <p className="text-sm text-neutral-500 mt-0.5">Accept credit/debit cards - funds go directly to your bank</p>
                       </div>
                     </label>
 
-                    {/* Card payments - Coming Soon */}
-                    <div className="flex items-start gap-3 p-4 bg-neutral-100 border border-neutral-100 rounded-xl opacity-60">
-                      <input
-                        type="checkbox"
-                        disabled
-                        className="w-5 h-5 mt-0.5 rounded border-neutral-300"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-neutral-500">Card payments</span>
-                          <span className="px-2 py-0.5 bg-neutral-200 text-neutral-500 text-xs rounded-full font-medium">Coming Soon</span>
-                        </div>
-                        <p className="text-sm text-neutral-400 mt-0.5">Accept credit/debit cards via Stripe</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* PayNow Details */}
-                  {formData.paynowEnabled && (
-                    <div className="p-4 bg-purple-50 rounded-xl space-y-4 border border-purple-100">
-                      <p className="text-sm font-medium text-purple-900">PayNow Details</p>
-
-                      <div>
-                        <label className="block text-sm text-purple-800 mb-1">
-                          PayNow Number (UEN or Mobile) *
-                        </label>
-                        <input
-                          type="text"
-                          name="paynowNumber"
-                          value={formData.paynowNumber}
-                          onChange={handleChange}
-                          placeholder="+65 9XXX XXXX or UEN"
-                          required={formData.paynowEnabled}
-                          className="w-full h-10 px-4 rounded-lg bg-white border border-purple-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-purple-500"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm text-purple-800 mb-1">
-                          Name shown on PayNow *
-                        </label>
-                        <input
-                          type="text"
-                          name="paynowName"
-                          value={formData.paynowName}
-                          onChange={handleChange}
-                          placeholder="JOHN DOE or COMPANY PTE LTD"
-                          required={formData.paynowEnabled}
-                          className="w-full h-10 px-4 rounded-lg bg-white border border-purple-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-purple-500"
-                        />
-                        <p className="text-xs text-purple-500 mt-1">
-                          This helps attendees verify they&apos;re paying the right person
+                    {/* Stripe info */}
+                    {formData.stripeEnabled && (
+                      <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                        <p className="text-sm text-blue-800">
+                          <strong>How it works:</strong> After your event is approved, you&apos;ll complete a quick Stripe setup to connect your bank account. Payments go directly to you with a 5% platform fee.
                         </p>
                       </div>
-
-                      <div>
-                        <label className="block text-sm text-purple-800 mb-1">
-                          PayNow QR Code <span className="text-purple-500">(optional)</span>
-                        </label>
-                        <div className="border-2 border-dashed border-purple-200 rounded-lg p-4 text-center bg-white">
-                          {paynowQrCode ? (
-                            <div className="space-y-2">
-                              <img
-                                src={paynowQrCode}
-                                alt="PayNow QR"
-                                className="w-32 h-32 mx-auto object-contain"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setPaynowQrCode(null)}
-                                className="text-sm text-red-600 hover:underline"
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          ) : isUploadingQr ? (
-                            <div className="py-4">
-                              <Loader2 className="w-6 h-6 animate-spin mx-auto text-purple-500" />
-                              <p className="text-sm text-purple-600 mt-2">Uploading...</p>
-                            </div>
-                          ) : (
-                            <div>
-                              <ImageIcon className="w-8 h-8 mx-auto text-purple-300 mb-2" />
-                              <UploadButton
-                                endpoint="paynowQrUploader"
-                                onClientUploadComplete={(res) => {
-                                  if (res?.[0]?.url) {
-                                    setPaynowQrCode(res[0].url)
-                                  }
-                                  setIsUploadingQr(false)
-                                }}
-                                onUploadBegin={() => setIsUploadingQr(true)}
-                                onUploadError={(error: Error) => {
-                                  setIsUploadingQr(false)
-                                  setError(`QR upload failed: ${error.message}`)
-                                }}
-                                appearance={{
-                                  button: "bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-full text-sm transition-colors",
-                                  allowedContent: "hidden",
-                                }}
-                              />
-                              <p className="text-xs text-purple-500 mt-2">
-                                Screenshot from your banking app
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
 
                   {/* Fee Notice */}
-                  <p className="text-xs text-neutral-400">
-                    PayNow: No platform fees. You verify payments manually in your dashboard.
-                  </p>
+                  {formData.stripeEnabled && (
+                    <p className="text-xs text-neutral-400">
+                      5% platform fee + Stripe processing fees (~2.9% + $0.30).
+                    </p>
+                  )}
                 </div>
               )}
             </div>

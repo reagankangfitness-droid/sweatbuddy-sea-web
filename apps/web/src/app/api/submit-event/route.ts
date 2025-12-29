@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { sendEventSubmittedEmail } from '@/lib/event-confirmation-email'
 
 interface EventSubmission {
   eventName: string
@@ -110,6 +111,16 @@ export async function POST(request: Request) {
       eventName: submission.eventName,
       category: submission.category,
       organizer: submission.organizerInstagram,
+    })
+
+    // Send confirmation email to host (fire and forget)
+    sendEventSubmittedEmail({
+      to: submission.contactEmail,
+      hostName: submission.organizerName,
+      eventName: submission.eventName,
+      eventId: submission.id,
+    }).catch((err) => {
+      console.error('Failed to send submission confirmation email:', err)
     })
 
     return NextResponse.json({

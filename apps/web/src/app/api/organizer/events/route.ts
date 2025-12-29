@@ -51,6 +51,53 @@ export async function GET() {
       attendanceCounts.map((a) => [a.eventId, a._count.id])
     )
 
+    // Get this week's signups count
+    const oneWeekAgo = new Date()
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+
+    const weeklySignups = await prisma.eventAttendance.count({
+      where: {
+        eventId: { in: eventIds },
+        timestamp: { gte: oneWeekAgo },
+      },
+    })
+
+    // Get recent activity (last 10 signups)
+    const recentActivity = await prisma.eventAttendance.findMany({
+      where: {
+        eventId: { in: eventIds },
+      },
+      orderBy: { timestamp: 'desc' },
+      take: 10,
+      select: {
+        id: true,
+        eventId: true,
+        eventName: true,
+        name: true,
+        email: true,
+        timestamp: true,
+        paymentStatus: true,
+        paymentAmount: true,
+      },
+    })
+
+    // Calculate total earnings from paid events
+    const paidAttendances = await prisma.eventAttendance.findMany({
+      where: {
+        eventId: { in: eventIds },
+        paymentStatus: 'paid',
+        paymentAmount: { gt: 0 },
+      },
+      select: {
+        paymentAmount: true,
+      },
+    })
+
+    const totalEarnings = paidAttendances.reduce(
+      (sum, a) => sum + (a.paymentAmount || 0),
+      0
+    )
+
     // Format response
     const events = [
       ...staticEvents.map((e) => ({
@@ -66,6 +113,8 @@ export async function GET() {
         attendeeCount: countMap.get(e.id) || 0,
         source: 'static' as const,
         status: 'approved' as const, // Static events are always live
+        isFree: true,
+        price: null,
       })),
       ...submissions.map((s) => ({
         id: s.id,
@@ -83,12 +132,29 @@ export async function GET() {
         status: s.status.toLowerCase() as 'pending' | 'approved' | 'rejected',
         rejectionReason: s.rejectionReason || null,
         createdAt: s.createdAt.toISOString(),
+        isFree: s.isFree,
+        price: s.price,
+        maxTickets: s.maxTickets,
+        ticketsSold: s.ticketsSold,
       })),
     ]
 
     return NextResponse.json({
       success: true,
       events,
+      stats: {
+        weeklySignups,
+        totalEarnings,
+      },
+      recentActivity: recentActivity.map((a) => ({
+        id: a.id,
+        eventId: a.eventId,
+        eventName: a.eventName,
+        attendeeName: a.name || a.email.split('@')[0],
+        timestamp: a.timestamp.toISOString(),
+        isPaid: a.paymentStatus === 'paid' && (a.paymentAmount || 0) > 0,
+        amount: a.paymentAmount || 0,
+      })),
     })
   } catch (error) {
     console.error('Get organizer events error:', error)

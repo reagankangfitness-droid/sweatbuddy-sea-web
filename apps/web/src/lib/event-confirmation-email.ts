@@ -1,6 +1,414 @@
 import { sendEmail, generateMapsLink } from './email'
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://sweatbuddies.co'
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
+
+// ============= HOST EVENT STATUS NOTIFICATIONS =============
+
+interface EventSubmissionNotificationParams {
+  to: string
+  hostName: string
+  eventName: string
+  eventId: string
+}
+
+/**
+ * Send notification when event is submitted and pending approval
+ */
+export async function sendEventSubmittedEmail(
+  params: EventSubmissionNotificationParams
+): Promise<{ success: boolean; error?: string }> {
+  const { to, hostName, eventName, eventId } = params
+  const displayName = hostName || 'there'
+  const dashboardUrl = `${BASE_URL}/host/dashboard`
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Submitted!</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 16px 16px 0 0; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">📝</div>
+              <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
+                Event Submitted!
+              </h1>
+              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
+                Pending review
+              </p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 32px; background-color: white;">
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Hey ${displayName}! 👋
+              </p>
+
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Thanks for submitting your event <strong>"${eventName}"</strong> to SweatBuddies!
+              </p>
+
+              <!-- Status Card -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #fef3c7; border-radius: 12px; border: 1px solid #fcd34d;">
+                <tr>
+                  <td style="padding: 20px; text-align: center;">
+                    <div style="font-size: 24px; margin-bottom: 8px;">⏳</div>
+                    <p style="margin: 0; color: #92400e; font-size: 16px; font-weight: 600;">
+                      Pending Review
+                    </p>
+                    <p style="margin: 8px 0 0; color: #a16207; font-size: 14px;">
+                      We'll review your event within 24-48 hours
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                <strong>What happens next?</strong>
+              </p>
+
+              <ul style="margin: 0 0 24px; padding: 0 0 0 20px; color: #374151; font-size: 15px; line-height: 2;">
+                <li>Our team will review your event details</li>
+                <li>You'll receive an email once it's approved</li>
+                <li>Your event will then be live on SweatBuddies!</li>
+              </ul>
+
+              <!-- Action Button -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${dashboardUrl}" style="display: inline-block; padding: 14px 28px; background-color: #f59e0b; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                      View Your Dashboard
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
+                Questions? Reply to this email or DM us <a href="https://instagram.com/_sweatbuddies" style="color: #f59e0b;">@_sweatbuddies</a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
+              <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
+                Host your fitness events at
+              </p>
+              <a href="${BASE_URL}" style="color: #f59e0b; text-decoration: none; font-size: 14px; font-weight: 600;">
+                sweatbuddies.co
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim()
+
+  return sendEmail({
+    to,
+    subject: `Event Submitted: ${eventName} - Pending Review`,
+    html,
+    tags: [
+      { name: 'type', value: 'event_submitted' },
+      { name: 'event_id', value: eventId },
+    ],
+  })
+}
+
+interface EventApprovedParams {
+  to: string
+  hostName: string
+  eventName: string
+  eventId: string
+  eventSlug?: string | null
+}
+
+/**
+ * Send notification when event is approved
+ */
+export async function sendEventApprovedEmail(
+  params: EventApprovedParams
+): Promise<{ success: boolean; error?: string }> {
+  const { to, hostName, eventName, eventId, eventSlug } = params
+  const displayName = hostName || 'there'
+  const eventUrl = eventSlug ? `${BASE_URL}/e/${eventSlug}` : `${BASE_URL}/e/${eventId}`
+  const dashboardUrl = `${BASE_URL}/host/dashboard`
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Approved!</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
+              <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
+                Event Approved!
+              </h1>
+              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
+                Your event is now live
+              </p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 32px; background-color: white;">
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Hey ${displayName}! 👋
+              </p>
+
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Great news! Your event <strong>"${eventName}"</strong> has been approved and is now live on SweatBuddies!
+              </p>
+
+              <!-- Success Card -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #d1fae5; border-radius: 12px; border: 1px solid #6ee7b7;">
+                <tr>
+                  <td style="padding: 20px; text-align: center;">
+                    <div style="font-size: 24px; margin-bottom: 8px;">✅</div>
+                    <p style="margin: 0; color: #065f46; font-size: 16px; font-weight: 600;">
+                      Your Event is Live!
+                    </p>
+                    <p style="margin: 8px 0 0; color: #047857; font-size: 14px;">
+                      People can now discover and join your event
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                <strong>Next steps:</strong>
+              </p>
+
+              <ul style="margin: 0 0 24px; padding: 0 0 0 20px; color: #374151; font-size: 15px; line-height: 2;">
+                <li>Share your event link with your community</li>
+                <li>Track RSVPs from your dashboard</li>
+                <li>Get notified when people join</li>
+              </ul>
+
+              <!-- Action Buttons -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 16px;">
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${eventUrl}" style="display: inline-block; padding: 14px 28px; background-color: #10b981; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                      View Your Event
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${dashboardUrl}" style="display: inline-block; padding: 14px 28px; background-color: #f3f4f6; color: #374151; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                      Go to Dashboard
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Share Link -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #f8fafc; border-radius: 8px;">
+                <tr>
+                  <td style="padding: 16px;">
+                    <p style="margin: 0 0 8px; color: #374151; font-size: 14px; font-weight: 600;">
+                      📤 Share your event:
+                    </p>
+                    <p style="margin: 0; color: #10b981; font-size: 14px; word-break: break-all;">
+                      ${eventUrl}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
+                Questions? Reply to this email or DM us <a href="https://instagram.com/_sweatbuddies" style="color: #10b981;">@_sweatbuddies</a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
+              <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
+                Host your fitness events at
+              </p>
+              <a href="${BASE_URL}" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 600;">
+                sweatbuddies.co
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim()
+
+  return sendEmail({
+    to,
+    subject: `🎉 Event Approved: ${eventName} is now live!`,
+    html,
+    tags: [
+      { name: 'type', value: 'event_approved' },
+      { name: 'event_id', value: eventId },
+    ],
+  })
+}
+
+interface EventRejectedParams {
+  to: string
+  hostName: string
+  eventName: string
+  eventId: string
+  rejectionReason?: string | null
+}
+
+/**
+ * Send notification when event is rejected
+ */
+export async function sendEventRejectedEmail(
+  params: EventRejectedParams
+): Promise<{ success: boolean; error?: string }> {
+  const { to, hostName, eventName, eventId, rejectionReason } = params
+  const displayName = hostName || 'there'
+  const submitUrl = `${BASE_URL}/host`
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Not Approved</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px; background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); border-radius: 16px 16px 0 0; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">📋</div>
+              <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
+                Event Not Approved
+              </h1>
+              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
+                We need a few changes
+              </p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 32px; background-color: white;">
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Hey ${displayName},
+              </p>
+
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Thanks for submitting your event <strong>"${eventName}"</strong>. Unfortunately, we weren't able to approve it at this time.
+              </p>
+
+              ${rejectionReason ? `
+              <!-- Reason Card -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #fef2f2; border-radius: 12px; border: 1px solid #fecaca;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <p style="margin: 0 0 8px; color: #991b1b; font-size: 14px; font-weight: 600;">
+                      Reason:
+                    </p>
+                    <p style="margin: 0; color: #dc2626; font-size: 15px; line-height: 1.6;">
+                      ${rejectionReason}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              ` : ''}
+
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                <strong>What you can do:</strong>
+              </p>
+
+              <ul style="margin: 0 0 24px; padding: 0 0 0 20px; color: #374151; font-size: 15px; line-height: 2;">
+                <li>Review the feedback above</li>
+                <li>Make the necessary changes</li>
+                <li>Resubmit your event</li>
+              </ul>
+
+              <!-- Action Button -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${submitUrl}" style="display: inline-block; padding: 14px 28px; background-color: #374151; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                      Submit Again
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
+                Need help? Reply to this email or DM us <a href="https://instagram.com/_sweatbuddies" style="color: #6b7280;">@_sweatbuddies</a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
+              <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
+                Host your fitness events at
+              </p>
+              <a href="${BASE_URL}" style="color: #6b7280; text-decoration: none; font-size: 14px; font-weight: 600;">
+                sweatbuddies.co
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim()
+
+  return sendEmail({
+    to,
+    subject: `Event Update: ${eventName}`,
+    html,
+    tags: [
+      { name: 'type', value: 'event_rejected' },
+      { name: 'event_id', value: eventId },
+    ],
+  })
+}
 
 // ============= PAID EVENT CONFIRMATION =============
 

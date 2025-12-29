@@ -1575,6 +1575,19 @@ enum EventSubmissionStatus {
   REJECTED
 }
 
+// Fee handling options for paid events
+enum FeeHandling {
+  PASS    // Attendee pays fees on top of ticket price
+  ABSORB  // Host absorbs fees (deducted from payout)
+}
+
+// Refund policy options
+enum RefundPolicy {
+  FULL_ANYTIME   // Full refund anytime before event
+  FULL_24H       // Full refund up to 24 hours before
+  NONE           // No refunds
+}
+
 model EventSubmission {
   id                String                @id @default(cuid())
   slug              String?               @unique @db.VarChar(250) // URL-friendly slug (e.g., "coffee-run-dec-27")
@@ -1621,6 +1634,13 @@ model EventSubmission {
 
   // Stripe (for automatic payment)
   stripeEnabled     Boolean               @default(false)
+
+  // Paid event capacity & settings
+  maxTickets        Int?                  // Max capacity (null = unlimited)
+  ticketsSold       Int                   @default(0) // Current sold count
+  feeHandling       FeeHandling?          // Who pays fees: PASS or ABSORB
+  salesEndDate      DateTime?             // When ticket sales close
+  refundPolicy      RefundPolicy?         // Refund policy
 
   // Timestamps
   createdAt         DateTime              @default(now())
@@ -1933,4 +1953,136 @@ model UserStreak {
   @@index([userId, hostId])
   @@index([currentStreak])
   @@map("user_streaks")
+}
+
+// =====================================================
+// PAID EVENTS & STRIPE CONNECT SYSTEM
+// =====================================================
+
+enum TransactionStatus {
+  PENDING       // Payment initiated
+  SUCCEEDED     // Payment completed
+  FAILED        // Payment failed
+  REFUNDED      // Full refund processed
+  PARTIAL_REFUND // Partial refund processed
+}
+
+enum SubscriptionTier {
+  FREE          // Default tier (5% platform fee)
+  PREMIUM       // Premium tier (2% platform fee)
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  PAST_DUE
+  EXPIRED
+}
+
+// Stripe Connect accounts for hosts
+model HostStripeAccount {
+  id                      String   @id @default(cuid())
+  eventSubmissionId       String   @unique // Links to the event/host
+
+  // Stripe Connect account info
+  stripeConnectAccountId  String   @unique @db.VarChar(100) // e.g., "acct_1234..."
+  stripeOnboardingComplete Boolean @default(false)
+  payoutsEnabled          Boolean  @default(false)
+  chargesEnabled          Boolean  @default(false)
+
+  // Account details (cached from Stripe)
+  email                   String?  @db.VarChar(255)
+  businessName            String?  @db.VarChar(200)
+  country                 String?  @db.VarChar(2) // ISO country code
+
+  // Timestamps
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  // Relations
+  transactions            EventTransaction[]
+
+  @@index([stripeConnectAccountId])
+  @@index([eventSubmissionId])
+  @@map("host_stripe_accounts")
+}
+
+// Transaction records for every ticket purchase
+model EventTransaction {
+  id                    String            @id @default(cuid())
+  eventSubmissionId     String            // Which event this is for
+  attendanceId          String            // Links to EventAttendance record
+
+  // Stripe payment info
+  stripePaymentIntentId String?           @unique @db.VarChar(100)
+  stripeChargeId        String?           @db.VarChar(100)
+
+  // Financial breakdown (all in cents)
+  ticketPrice           Int               // Base ticket price
+  platformFee           Int               // SweatBuddies fee (5% or 2%)
+  stripeFee             Int               // Stripe processing fee
+  netPayoutToHost       Int               // What host receives
+  currency              String            @default("SGD") @db.VarChar(3)
+
+  // Fee handling
+  feeHandling           FeeHandling       // PASS or ABSORB
+  totalCharged          Int               // Total charged to attendee
+
+  // Status tracking
+  status                TransactionStatus @default(PENDING)
+
+  // Refund tracking
+  refundAmount          Int?              // Amount refunded (if any)
+  refundedAt            DateTime?
+  refundReason          String?           @db.VarChar(500)
+
+  // Host account reference
+  hostStripeAccountId   String?
+
+  // Timestamps
+  createdAt             DateTime          @default(now())
+  paidOutAt             DateTime?         // When host received payout
+
+  // Relations
+  hostStripeAccount     HostStripeAccount? @relation(fields: [hostStripeAccountId], references: [id], onDelete: SetNull)
+
+  @@index([eventSubmissionId])
+  @@index([attendanceId])
+  @@index([stripePaymentIntentId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("event_transactions")
+}
+
+// Host subscription for Premium tier
+model HostSubscription {
+  id                    String             @id @default(cuid())
+  organizerEmail        String             @unique @db.VarChar(255) // Host's email
+
+  // Subscription details
+  tier                  SubscriptionTier   @default(FREE)
+  status                SubscriptionStatus @default(ACTIVE)
+
+  // Stripe subscription info (for Premium tier)
+  stripeSubscriptionId  String?            @unique @db.VarChar(100)
+  stripeCustomerId      String?            @db.VarChar(100)
+
+  // Billing period
+  startedAt             DateTime           @default(now())
+  currentPeriodStart    DateTime?
+  currentPeriodEnd      DateTime?
+  endsAt                DateTime?          // When subscription ends (if cancelled)
+
+  // Cancellation info
+  cancelledAt           DateTime?
+  cancellationReason    String?            @db.VarChar(500)
+
+  // Timestamps
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  @@index([organizerEmail])
+  @@index([tier, status])
+  @@index([stripeSubscriptionId])
+  @@map("host_subscriptions")
 }

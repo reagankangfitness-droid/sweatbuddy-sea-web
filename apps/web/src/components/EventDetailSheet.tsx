@@ -231,7 +231,10 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
 
                   {/* Recurring badge */}
                   {event.recurring && (
-                    <span className="absolute top-3 right-3 px-3 py-1 bg-neutral-900 text-white rounded-md text-[11px] font-medium flex items-center gap-1">
+                    <span
+                      className="absolute top-3 right-3 px-3 py-1 bg-neutral-900 text-white rounded-md text-[11px] font-medium flex items-center gap-1"
+                      title="This happens every week—same time, same place"
+                    >
                       Weekly
                     </span>
                   )}
@@ -346,11 +349,12 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex flex-col items-center gap-1.5 text-neutral-500 hover:text-neutral-900 transition-colors"
+                title="Get directions to this location"
               >
                 <span className="w-11 h-11 bg-white rounded-full flex items-center justify-center border border-neutral-200">
                   <MapPin className="w-5 h-5" />
                 </span>
-                <span className="text-xs font-medium">Directions</span>
+                <span className="text-xs font-medium">Open in Maps</span>
               </a>
 
               {/* Community Link - visible after RSVP, hint before */}

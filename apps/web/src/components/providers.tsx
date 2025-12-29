@@ -1,12 +1,10 @@
 'use client'
 
+import { PropsWithChildren } from 'react'
 import { ClerkProvider } from '@clerk/nextjs'
+import { StripeConnectProvider } from '@/contexts/StripeConnectContext'
 
-interface ProvidersProps {
-  children: React.ReactNode
-}
-
-export function Providers({ children }: ProvidersProps) {
+export function Providers({ children }: PropsWithChildren) {
   return (
     <ClerkProvider
       appearance={{
@@ -21,7 +19,9 @@ export function Providers({ children }: ProvidersProps) {
         },
       }}
     >
-      {children}
+      <StripeConnectProvider>
+        {children}
+      </StripeConnectProvider>
     </ClerkProvider>
   )
 }

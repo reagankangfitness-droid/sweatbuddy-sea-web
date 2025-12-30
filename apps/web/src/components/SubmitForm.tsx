@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useMemo, memo } from 'react'
+import { useState, useCallback, useEffect, useRef, memo } from 'react'
 import { GoogleMap, Marker, Autocomplete, useJsApiLoader } from '@react-google-maps/api'
 import { Send, Check, MapPin, Loader2, X, ImageIcon, ChevronRight, ChevronLeft } from 'lucide-react'
 import { SectionGradient } from './GradientBackground'
@@ -83,23 +83,30 @@ const DebouncedInput = memo(function DebouncedInput({
   className?: string
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'>) {
   const [localValue, setLocalValue] = useState(value)
-  const timeoutRef = useState<NodeJS.Timeout | null>(null)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Sync local value when parent value changes (e.g., form reset)
-  useMemo(() => {
+  useEffect(() => {
     setLocalValue(value)
   }, [value])
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
+  }, [])
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value
     setLocalValue(newValue) // Update local state immediately for responsive UI
 
     // Debounce the parent state update
-    if (timeoutRef[0]) clearTimeout(timeoutRef[0])
-    timeoutRef[0] = setTimeout(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    timeoutRef.current = setTimeout(() => {
       onChange(newValue)
     }, debounceMs)
-  }, [onChange, debounceMs, timeoutRef])
+  }, [onChange, debounceMs])
 
   return (
     <input
@@ -125,21 +132,28 @@ const DebouncedTextarea = memo(function DebouncedTextarea({
   className?: string
 } & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange' | 'value'>) {
   const [localValue, setLocalValue] = useState(value)
-  const timeoutRef = useState<NodeJS.Timeout | null>(null)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  useMemo(() => {
+  useEffect(() => {
     setLocalValue(value)
   }, [value])
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
+  }, [])
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value
     setLocalValue(newValue)
 
-    if (timeoutRef[0]) clearTimeout(timeoutRef[0])
-    timeoutRef[0] = setTimeout(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    timeoutRef.current = setTimeout(() => {
       onChange(newValue)
     }, debounceMs)
-  }, [onChange, debounceMs, timeoutRef])
+  }, [onChange, debounceMs])
 
   return (
     <textarea

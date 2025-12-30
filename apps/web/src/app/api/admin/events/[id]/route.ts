@@ -23,8 +23,26 @@ export async function PUT(
     const { id } = await params
     const body = await request.json()
 
-    // Generate slug from event name
-    const slug = generateSlug(body.name)
+    // Get existing event to check if name changed
+    const existing = await prisma.eventSubmission.findUnique({
+      where: { id },
+      select: { eventName: true, slug: true },
+    })
+
+    if (!existing) {
+      return NextResponse.json({ error: 'Event not found' }, { status: 404 })
+    }
+
+    // Only regenerate slug if name changed
+    let slug = existing.slug
+    if (body.name !== existing.eventName) {
+      const baseSlug = generateSlug(body.name)
+      // Check if slug exists for another event
+      const slugExists = await prisma.eventSubmission.findFirst({
+        where: { slug: baseSlug, id: { not: id } },
+      })
+      slug = slugExists ? `${baseSlug}-${id.slice(-6)}` : baseSlug
+    }
 
     // Update database event
     const updated = await prisma.eventSubmission.update({
@@ -55,7 +73,8 @@ export async function PUT(
     })
   } catch (error) {
     console.error('Error updating event:', error)
-    return NextResponse.json({ error: 'Failed to update event' }, { status: 500 })
+    const message = error instanceof Error ? error.message : 'Failed to update event'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 

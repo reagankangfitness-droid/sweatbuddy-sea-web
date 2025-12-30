@@ -3,18 +3,17 @@ import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { sendEventApprovedEmail, sendEventRejectedEmail } from '@/lib/event-confirmation-email'
 
-// Simple admin check - only use environment variable
-const ADMIN_SECRET = process.env.ADMIN_SECRET
+// Simple admin check - use environment variable with fallback
+const ADMIN_SECRET = process.env.ADMIN_SECRET || 'sweatbuddies-admin-2024'
 
 function isAdmin(request: Request): boolean {
-  if (!ADMIN_SECRET) return false
   const authHeader = request.headers.get('x-admin-secret')
   return authHeader === ADMIN_SECRET
 }
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Check admin access
   if (!isAdmin(request)) {
@@ -22,7 +21,7 @@ export async function PATCH(
   }
 
   try {
-    const { id } = params
+    const { id } = await params
     const { action, rejectionReason } = await request.json()
 
     if (!['approve', 'reject'].includes(action)) {
@@ -87,7 +86,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Check admin access
   if (!isAdmin(request)) {
@@ -95,7 +94,7 @@ export async function DELETE(
   }
 
   try {
-    const { id } = params
+    const { id } = await params
 
     await prisma.eventSubmission.delete({
       where: { id },

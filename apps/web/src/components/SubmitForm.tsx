@@ -108,11 +108,25 @@ const DebouncedInput = memo(function DebouncedInput({
     }, debounceMs)
   }, [onChange, debounceMs])
 
+  // Flush pending changes on blur to ensure value is synced before form submission
+  const handleBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+    // Sync immediately on blur
+    if (localValue !== value) {
+      onChange(localValue)
+    }
+    props.onBlur?.(e)
+  }, [localValue, value, onChange, props])
+
   return (
     <input
       {...props}
       value={localValue}
       onChange={handleChange}
+      onBlur={handleBlur}
       className={className}
     />
   )
@@ -155,11 +169,24 @@ const DebouncedTextarea = memo(function DebouncedTextarea({
     }, debounceMs)
   }, [onChange, debounceMs])
 
+  // Flush pending changes on blur to ensure value is synced before form submission
+  const handleBlur = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+    if (localValue !== value) {
+      onChange(localValue)
+    }
+    props.onBlur?.(e)
+  }, [localValue, value, onChange, props])
+
   return (
     <textarea
       {...props}
       value={localValue}
       onChange={handleChange}
+      onBlur={handleBlur}
       className={className}
     />
   )

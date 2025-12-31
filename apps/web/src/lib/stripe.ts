@@ -114,3 +114,103 @@ export function calculateRefundAmount(
     policy: 'none',
   }
 }
+
+// =====================================================
+// PAID EVENTS - FEE CALCULATIONS
+// =====================================================
+
+// Fee percentages for paid events
+const PLATFORM_FEE_PERCENT_FREE = 5 // Free tier hosts pay 5%
+const PLATFORM_FEE_PERCENT_PREMIUM = 2 // Premium tier hosts pay 2%
+const STRIPE_FEE_PERCENT = 2.9
+const STRIPE_FEE_FIXED_CENTS = 40 // 40 cents fixed Stripe fee
+
+export interface FeeCalculation {
+  priceInCents: number
+  platformFee: number
+  stripeFee: number
+  totalFees: number
+  hostPayout: number
+  platformFeePercent: number
+  // For PASS fee handling (attendee pays fees)
+  totalChargedToAttendee: number
+}
+
+/**
+ * Calculate fees for a ticket purchase
+ * @param priceInCents - The ticket price in cents (e.g., 1500 = $15.00)
+ * @param isPremiumHost - Whether the host is on Premium tier (lower fees)
+ * @param feeHandling - 'PASS' = attendee pays fees, 'ABSORB' = host absorbs fees
+ */
+export function calculateFees(
+  priceInCents: number,
+  isPremiumHost: boolean = false,
+  feeHandling: 'PASS' | 'ABSORB' = 'ABSORB'
+): FeeCalculation {
+  const platformFeePercent = isPremiumHost ? PLATFORM_FEE_PERCENT_PREMIUM : PLATFORM_FEE_PERCENT_FREE
+
+  if (feeHandling === 'ABSORB') {
+    // Host absorbs all fees - attendee pays exact ticket price
+    const platformFee = Math.round(priceInCents * platformFeePercent / 100)
+    const stripeFee = Math.round(priceInCents * STRIPE_FEE_PERCENT / 100) + STRIPE_FEE_FIXED_CENTS
+    const totalFees = platformFee + stripeFee
+    const hostPayout = Math.max(0, priceInCents - totalFees) // Ensure hostPayout is never negative
+
+    // Warn if ticket price is too low to cover fees
+    if (priceInCents - totalFees < 0) {
+      console.warn(`[Stripe] Warning: Ticket price ${priceInCents} cents is too low to cover fees ${totalFees} cents. Host payout set to 0.`)
+    }
+
+    return {
+      priceInCents,
+      platformFee,
+      stripeFee,
+      totalFees,
+      hostPayout,
+      platformFeePercent,
+      totalChargedToAttendee: priceInCents,
+    }
+  } else {
+    // PASS: Attendee pays fees on top of ticket price
+    // We need to calculate what to charge so host gets full ticket price after fees
+    // Formula: chargeAmount = (priceInCents + STRIPE_FEE_FIXED_CENTS) / (1 - totalFeePercent)
+    const totalFeePercent = (platformFeePercent + STRIPE_FEE_PERCENT) / 100
+    const chargeAmount = Math.round((priceInCents + STRIPE_FEE_FIXED_CENTS) / (1 - totalFeePercent))
+
+    const platformFee = Math.round(chargeAmount * platformFeePercent / 100)
+    const stripeFee = Math.round(chargeAmount * STRIPE_FEE_PERCENT / 100) + STRIPE_FEE_FIXED_CENTS
+    const totalFees = platformFee + stripeFee
+    const hostPayout = Math.max(0, chargeAmount - totalFees) // Ensure hostPayout is never negative
+
+    return {
+      priceInCents,
+      platformFee,
+      stripeFee,
+      totalFees,
+      hostPayout,
+      platformFeePercent,
+      totalChargedToAttendee: chargeAmount,
+    }
+  }
+}
+
+/**
+ * Format cents to price display string
+ * @param cents - Amount in cents
+ * @param currency - Currency code (default: SGD)
+ * @returns Formatted string like "$15.00"
+ */
+export function formatPrice(cents: number, currency: string = 'SGD'): string {
+  const currencySymbols: Record<string, string> = {
+    SGD: 'S$',
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    AUD: 'A$',
+    THB: '฿',
+    MYR: 'RM',
+  }
+  const symbol = currencySymbols[currency.toUpperCase()] || '$'
+  return `${symbol}${(cents / 100).toFixed(2)}`
+}
+

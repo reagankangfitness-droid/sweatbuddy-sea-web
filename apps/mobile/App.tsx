@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import * as SecureStore from 'expo-secure-store'
 import { View, Text, StyleSheet, Button } from 'react-native'
 import { StreamChatProvider } from './providers/StreamChatProvider'
+import { StripeProvider } from './providers/StripeProvider'
 import { AppNavigator } from './navigation/AppNavigator'
 import { config } from './config'
 
@@ -47,23 +48,25 @@ const SignInScreen = () => {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ClerkProvider
-        publishableKey={config.clerk.publishableKey}
-        tokenCache={tokenCache}
-      >
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <SignedIn>
-            <StreamChatProvider>
-              <AppNavigator />
+      <StripeProvider>
+        <ClerkProvider
+          publishableKey={config.clerk.publishableKey}
+          tokenCache={tokenCache}
+        >
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <SignedIn>
+              <StreamChatProvider>
+                <AppNavigator />
+                <StatusBar style="auto" />
+              </StreamChatProvider>
+            </SignedIn>
+            <SignedOut>
+              <SignInScreen />
               <StatusBar style="auto" />
-            </StreamChatProvider>
-          </SignedIn>
-          <SignedOut>
-            <SignInScreen />
-            <StatusBar style="auto" />
-          </SignedOut>
-        </GestureHandlerRootView>
-      </ClerkProvider>
+            </SignedOut>
+          </GestureHandlerRootView>
+        </ClerkProvider>
+      </StripeProvider>
     </QueryClientProvider>
   )
 }

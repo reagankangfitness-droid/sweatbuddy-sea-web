@@ -371,6 +371,17 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
     return
   }
 
+  // Idempotency check - prevent duplicate processing if webhook is retried
+  if (paymentIntentId) {
+    const existingTransaction = await prisma.eventTransaction.findFirst({
+      where: { stripePaymentIntentId: paymentIntentId },
+    })
+    if (existingTransaction) {
+      console.log(`[EventSubmission] Payment already processed for intent ${paymentIntentId}, skipping`)
+      return
+    }
+  }
+
   console.log(`[EventSubmission] Processing payment for event ${eventId}, session ${sessionId}`)
 
   try {

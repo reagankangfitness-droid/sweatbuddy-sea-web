@@ -93,6 +93,9 @@ importers:
       '@react-navigation/stack':
         specifier: ^7.6.4
         version: 7.6.4(@react-navigation/native@7.1.20)(react-native-gesture-handler@2.28.0)(react-native-safe-area-context@5.6.2)(react-native-screens@4.16.0)(react-native@0.81.5)(react@19.1.0)
+      '@stripe/stripe-react-native':
+        specifier: ^0.57.2
+        version: 0.57.2(expo@54.0.30)(react-native@0.81.5)(react@19.1.0)
       '@tanstack/react-query':
         specifier: ^5.90.10
         version: 5.90.10(react@19.1.0)
@@ -4887,6 +4890,24 @@ packages:
   /@stripe/stripe-js@8.5.3:
     resolution: {integrity: sha512-UM0GHAxlTN7v0lCK2P6t0VOlvBIdApIQxhnM3yZ2kupQ4PpSrLsK/n/NyYKtw2NJGMaNRRD1IicWS7fSL2sFtA==}
     engines: {node: '>=12.16'}
+    dev: false
+
+  /@stripe/stripe-react-native@0.57.2(expo@54.0.30)(react-native@0.81.5)(react@19.1.0):
+    resolution: {integrity: sha512-sSwyI/roYeYrq5VTDOWnh6bvCCCCpLfwbR/I6GMtrmtJT+d6pyZBrCgSEkVk4jfGqK6wJh84JLvoONcJinahcw==}
+    peerDependencies:
+      expo: '>=46.0.9'
+      react: '*'
+      react-native: '*'
+      react-native-webview: '*'
+    peerDependenciesMeta:
+      expo:
+        optional: true
+      react-native-webview:
+        optional: true
+    dependencies:
+      expo: 54.0.30(@babel/core@7.28.5)(react-native@0.81.5)(react@19.1.0)
+      react: 19.1.0
+      react-native: 0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0)
     dev: false
 
   /@swc/counter@0.1.3:

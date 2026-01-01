@@ -1,48 +1,157 @@
-import { auth, currentUser } from '@clerk/nextjs/server'
-import { redirect } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useUser, SignInButton } from '@clerk/nextjs'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, Calendar, Heart, Users, Settings, ChevronRight } from 'lucide-react'
+import {
+  ArrowLeft,
+  Calendar,
+  Heart,
+  Users,
+  Settings,
+  ChevronRight,
+  Plus,
+  DollarSign,
+  Loader2,
+} from 'lucide-react'
+import { UpcomingEventRow } from '@/components/host/UpcomingEventRow'
+import { PastEventRow } from '@/components/host/PastEventRow'
 
-// Fetch user's event RSVPs
-async function getUserEventRSVPs(email: string) {
-  try {
-    const rsvps = await prisma.eventAttendance.findMany({
-      where: {
-        email: email.toLowerCase(),
-        confirmed: true,
-      },
-      orderBy: {
-        timestamp: 'desc',
-      },
-      take: 10,
-      select: {
-        id: true,
-        eventId: true,
-        eventName: true,
-        timestamp: true,
-      },
-    })
-    return rsvps
-  } catch (error) {
-    console.error('Error fetching event RSVPs:', error)
-    return []
-  }
+interface AttendingEvent {
+  id: string
+  eventId: string
+  eventName: string
+  timestamp: string
+  category?: string
+  day?: string
+  time?: string
+  location?: string
+  imageUrl?: string | null
+  eventDate?: string | null
 }
 
-export default async function DashboardPage() {
-  const { userId } = await auth()
+interface HostingEvent {
+  id: string
+  name: string
+  day: string
+  date: string | null
+  time: string
+  location: string
+  imageUrl: string | null
+  category: string
+  recurring: boolean
+  goingCount: number
+  organizer: string
+}
 
-  if (!userId) {
-    redirect('/sign-in?redirect_url=/dashboard')
+interface DashboardData {
+  attending: {
+    events: AttendingEvent[]
+    count: number
+  }
+  hosting: {
+    events: HostingEvent[]
+    pastEvents: HostingEvent[]
+    stats: {
+      activeEvents: number
+      totalSignups: number
+      totalEarnings: number
+      paidAttendees: number
+    }
+  }
+  isHost: boolean
+}
+
+export default function DashboardPage() {
+  const { isLoaded, isSignedIn, user } = useUser()
+  const router = useRouter()
+  const [data, setData] = useState<DashboardData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push('/sign-in?redirect_url=/dashboard')
+      return
+    }
+
+    if (isSignedIn) {
+      fetch('/api/dashboard')
+        .then((res) => {
+          if (!res.ok) throw new Error('Failed to fetch dashboard data')
+          return res.json()
+        })
+        .then((data) => {
+          setData(data)
+          setIsLoading(false)
+        })
+        .catch((err) => {
+          console.error('Dashboard error:', err)
+          setError(err.message)
+          setIsLoading(false)
+        })
+    }
+  }, [isLoaded, isSignedIn, router])
+
+  if (!isLoaded || !isSignedIn) {
+    return (
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+      </div>
+    )
   }
 
-  const user = await currentUser()
-  const email = user?.primaryEmailAddress?.emailAddress
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-neutral-50">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-neutral-200">
+          <div className="max-w-2xl mx-auto px-4 h-16 flex items-center gap-4">
+            <Link
+              href="/"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-neutral-700" />
+            </Link>
+            <h1 className="text-xl font-semibold text-neutral-900">Dashboard</h1>
+          </div>
+        </header>
+        <main className="pt-24 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+        </main>
+      </div>
+    )
+  }
 
-  // Fetch RSVPs if we have an email
-  const rsvps = email ? await getUserEventRSVPs(email) : []
+  if (error) {
+    return (
+      <div className="min-h-screen bg-neutral-50">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-neutral-200">
+          <div className="max-w-2xl mx-auto px-4 h-16 flex items-center gap-4">
+            <Link
+              href="/"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-neutral-700" />
+            </Link>
+            <h1 className="text-xl font-semibold text-neutral-900">Dashboard</h1>
+          </div>
+        </header>
+        <main className="pt-24 px-4 text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-neutral-900 text-white rounded-lg"
+          >
+            Try Again
+          </button>
+        </main>
+      </div>
+    )
+  }
+
+  const email = user?.primaryEmailAddress?.emailAddress
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -89,30 +198,70 @@ export default async function DashboardPage() {
             </div>
           </div>
 
+          {/* Create New Event Button */}
+          <Link
+            href="/#submit-desktop"
+            className="flex items-center justify-center gap-2 w-full py-4 bg-neutral-900 text-white font-semibold rounded-2xl hover:bg-neutral-700 transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            Create New Event
+          </Link>
+
           {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white rounded-2xl border border-neutral-200 p-5 text-center">
               <Calendar className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-neutral-900">{rsvps.length}</p>
+              <p className="text-2xl font-bold text-neutral-900">
+                {data?.attending.count || 0}
+              </p>
               <p className="text-sm text-neutral-500">Events Joined</p>
             </div>
-            <Link
-              href="/saved"
-              className="bg-white rounded-2xl border border-neutral-200 p-5 text-center hover:border-neutral-300 transition-colors"
-            >
-              <Heart className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-neutral-900">-</p>
-              <p className="text-sm text-neutral-500">Saved</p>
-            </Link>
+            {data?.isHost ? (
+              <div className="bg-white rounded-2xl border border-neutral-200 p-5 text-center">
+                <Users className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
+                <p className="text-2xl font-bold text-neutral-900">
+                  {data.hosting.stats.activeEvents}
+                </p>
+                <p className="text-sm text-neutral-500">Events Hosting</p>
+              </div>
+            ) : (
+              <Link
+                href="/saved"
+                className="bg-white rounded-2xl border border-neutral-200 p-5 text-center hover:border-neutral-300 transition-colors"
+              >
+                <Heart className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
+                <p className="text-2xl font-bold text-neutral-900">-</p>
+                <p className="text-sm text-neutral-500">Saved</p>
+              </Link>
+            )}
           </div>
 
-          {/* My Events */}
+          {/* Host Stats (only if host with earnings) */}
+          {data?.isHost && data.hosting.stats.totalEarnings > 0 && (
+            <div className="bg-green-50 rounded-2xl border border-green-200 p-5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <DollarSign className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-green-700">
+                    ${(data.hosting.stats.totalEarnings / 100).toFixed(2)} SGD
+                  </p>
+                  <p className="text-sm text-green-600">
+                    Earned from {data.hosting.stats.paidAttendees} paid attendees
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Events I'm Attending */}
           <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
             <div className="px-5 py-4 border-b border-neutral-100">
-              <h3 className="font-semibold text-neutral-900">My Events</h3>
+              <h3 className="font-semibold text-neutral-900">Events I'm Attending</h3>
             </div>
 
-            {rsvps.length === 0 ? (
+            {!data?.attending.events.length ? (
               <div className="p-8 text-center">
                 <Calendar className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
                 <p className="text-neutral-500 mb-4">No events yet</p>
@@ -126,17 +275,43 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="divide-y divide-neutral-100">
-                {rsvps.map((rsvp) => (
+                {data.attending.events.map((event) => (
                   <Link
-                    key={rsvp.id}
-                    href={`/e/${rsvp.eventId}`}
+                    key={event.id}
+                    href={`/e/${event.eventId}`}
                     className="flex items-center justify-between px-5 py-4 hover:bg-neutral-50 transition-colors"
                   >
-                    <div>
-                      <p className="font-medium text-neutral-900 line-clamp-1">{rsvp.eventName}</p>
-                      <p className="text-sm text-neutral-500">
-                        Joined {new Date(rsvp.timestamp).toLocaleDateString()}
-                      </p>
+                    <div className="flex items-center gap-4">
+                      {event.imageUrl ? (
+                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-neutral-100 flex-shrink-0">
+                          <Image
+                            src={event.imageUrl}
+                            alt={event.eventName}
+                            width={48}
+                            height={48}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-neutral-100 flex items-center justify-center flex-shrink-0">
+                          <Calendar className="w-5 h-5 text-neutral-400" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-medium text-neutral-900 line-clamp-1">
+                          {event.eventName}
+                        </p>
+                        <p className="text-sm text-neutral-500">
+                          {event.eventDate
+                            ? new Date(event.eventDate).toLocaleDateString('en-US', {
+                                weekday: 'short',
+                                month: 'short',
+                                day: 'numeric',
+                              })
+                            : event.day}{' '}
+                          · {event.time}
+                        </p>
+                      </div>
                     </div>
                     <ChevronRight className="w-5 h-5 text-neutral-400 flex-shrink-0" />
                   </Link>
@@ -145,18 +320,68 @@ export default async function DashboardPage() {
             )}
           </div>
 
+          {/* Events I'm Hosting (only if host) */}
+          {data?.isHost && (
+            <>
+              <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+                <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between">
+                  <h3 className="font-semibold text-neutral-900">Events I'm Hosting</h3>
+                  <span className="text-sm text-neutral-500">
+                    {data.hosting.stats.totalSignups} total signups
+                  </span>
+                </div>
+
+                {!data.hosting.events.length ? (
+                  <div className="p-8 text-center">
+                    <Users className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
+                    <p className="text-neutral-500 mb-4">No upcoming events</p>
+                    <Link
+                      href="/#submit-desktop"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-lg text-sm font-medium hover:bg-neutral-700 transition-colors"
+                    >
+                      Create Event
+                      <Plus className="w-4 h-4" />
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-neutral-100">
+                    {data.hosting.events.map((event) => (
+                      <UpcomingEventRow key={event.id} event={event} />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Past Hosted Events */}
+              {data.hosting.pastEvents.length > 0 && (
+                <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
+                  <div className="px-5 py-4 border-b border-neutral-100">
+                    <h3 className="font-semibold text-neutral-900">Past Events</h3>
+                  </div>
+                  <div className="divide-y divide-neutral-100">
+                    {data.hosting.pastEvents.map((event) => (
+                      <PastEventRow key={event.id} event={event} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
           {/* Quick Links */}
           <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
-            <Link
-              href="/host/dashboard"
-              className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
-            >
-              <span className="flex items-center gap-3 text-neutral-800">
-                <Users className="w-5 h-5 text-neutral-400" />
-                Host Dashboard
-              </span>
-              <ChevronRight className="w-5 h-5 text-neutral-400" />
-            </Link>
+            {data?.isHost && (
+              <Link
+                href="/host/dashboard"
+                className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
+              >
+                <span className="flex items-center gap-3 text-neutral-800">
+                  <Users className="w-5 h-5 text-neutral-400" />
+                  Full Host Dashboard
+                </span>
+                <ChevronRight className="w-5 h-5 text-neutral-400" />
+              </Link>
+            )}
             <Link
               href="/saved"
               className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"

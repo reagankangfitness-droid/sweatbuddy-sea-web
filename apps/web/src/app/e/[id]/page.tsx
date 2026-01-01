@@ -2,14 +2,13 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { getEventById } from '@/lib/events'
-import { prisma } from '@/lib/prisma'
+import { getEventById, getEventGoingCount } from '@/lib/events'
 import { Logo } from '@/components/logo'
 import { EventPageClient } from './EventPageClient'
 import { EventAttendees } from '@/components/EventAttendees'
 
-// Force dynamic rendering for event detail pages
-export const dynamic = 'force-dynamic'
+// Use ISR - revalidate every 30 seconds for fresh data with caching
+export const revalidate = 30
 
 interface Props {
   params: Promise<{ id: string }>
@@ -198,16 +197,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // Dedicated Event Detail Page
 export default async function EventDetailPage({ params }: Props) {
   const { id } = await params
-  const event = await getEventById(id)
+
+  // Fetch event and going count in parallel with caching
+  const [event, goingCount] = await Promise.all([
+    getEventById(id),
+    getEventGoingCount(id)
+  ])
 
   if (!event) {
     notFound()
   }
-
-  // Get going count from database
-  const goingCount = await prisma.eventAttendance.count({
-    where: { eventId: id }
-  })
 
   const emoji = categoryEmojis[event.category] || '✨'
   const formattedDate = formatEventDate(event.eventDate, event.day)

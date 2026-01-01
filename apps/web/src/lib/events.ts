@@ -152,10 +152,9 @@ export async function getEvents(): Promise<Event[]> {
   }
 }
 
-// Fetch single event by ID or slug - no caching for dynamic rendering
-export async function getEventById(idOrSlug: string): Promise<Event | null> {
-  try {
-    // Try to find by ID first, then by slug
+// Cached event fetch - revalidates every 30 seconds
+const getCachedEventById = unstable_cache(
+  async (idOrSlug: string): Promise<Event | null> => {
     const submission = await prisma.eventSubmission.findFirst({
       where: {
         OR: [
@@ -218,8 +217,38 @@ export async function getEventById(idOrSlug: string): Promise<Event | null> {
     }
 
     return null
+  },
+  ['event-by-id'],
+  { revalidate: 30, tags: ['events'] }
+)
+
+// Fetch single event by ID or slug with caching
+export async function getEventById(idOrSlug: string): Promise<Event | null> {
+  try {
+    return await getCachedEventById(idOrSlug)
   } catch (error) {
     console.error('Error fetching event by ID or slug:', error)
     return null
+  }
+}
+
+// Cached going count - revalidates every 30 seconds
+const getCachedGoingCount = unstable_cache(
+  async (eventId: string): Promise<number> => {
+    return await prisma.eventAttendance.count({
+      where: { eventId }
+    })
+  },
+  ['event-going-count'],
+  { revalidate: 30, tags: ['attendance'] }
+)
+
+// Get event going count with caching
+export async function getEventGoingCount(eventId: string): Promise<number> {
+  try {
+    return await getCachedGoingCount(eventId)
+  } catch (error) {
+    console.error('Error fetching going count:', error)
+    return 0
   }
 }

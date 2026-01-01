@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Logo } from '@/components/logo'
 import { useEffect, useState, useCallback } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { Menu, X, ArrowRight } from 'lucide-react'
+import { Menu, X, ArrowRight, LayoutDashboard } from 'lucide-react'
+import { useUser, SignInButton } from '@clerk/nextjs'
 
 // Helper to scroll to element with retry for dynamic content
 const scrollToElement = (elementId: string, maxAttempts = 10) => {
@@ -40,6 +41,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
+  const { isSignedIn, isLoaded } = useUser()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -147,6 +149,35 @@ export function Header() {
 
           {/* Right side actions */}
           <div className="flex items-center gap-3">
+            {/* Login / Dashboard Button */}
+            {isLoaded && (
+              isSignedIn ? (
+                <Link
+                  href="/dashboard"
+                  className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    scrolled
+                      ? 'text-neutral-700 hover:bg-neutral-100'
+                      : 'text-white/90 hover:bg-white/10'
+                  }`}
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Dashboard
+                </Link>
+              ) : (
+                <SignInButton mode="modal">
+                  <button
+                    className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      scrolled
+                        ? 'text-neutral-700 hover:bg-neutral-100'
+                        : 'text-white/90 hover:bg-white/10'
+                    }`}
+                  >
+                    Log In
+                  </button>
+                </SignInButton>
+              )
+            )}
+
             {/* Share Event CTA */}
             <motion.button
               onClick={(e) => handleHashClick(e, '#submit-desktop')}
@@ -238,6 +269,30 @@ export function Header() {
                     </Link>
                   )
                 })}
+
+                {/* Login / Dashboard link in mobile menu */}
+                {isLoaded && (
+                  isSignedIn ? (
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100"
+                    >
+                      <LayoutDashboard className="w-5 h-5" />
+                      Dashboard
+                    </Link>
+                  ) : (
+                    <SignInButton mode="modal">
+                      <button
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100 text-left w-full"
+                      >
+                        Log In
+                      </button>
+                    </SignInButton>
+                  )
+                )}
+
                 <motion.button
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}

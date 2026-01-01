@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Check, Loader2, Calendar, MessageCircle } from 'lucide-react'
+import { useUser } from '@clerk/nextjs'
 
 // Helper to detect platform from community link
 const detectPlatform = (url: string): 'whatsapp' | 'telegram' | 'other' => {
@@ -37,6 +38,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
   // Debug log
   console.log('[AttendanceModal] eventId:', event.id, 'showMealPreference:', showMealPreference)
 
+  const { user, isSignedIn } = useUser()
   const [step, setStep] = useState<'form' | 'success'>('form')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -53,9 +55,19 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
     setMounted(true)
   }, [])
 
-  // Pre-fill from localStorage if exists
+  // Pre-fill from Clerk user data first, then localStorage
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (isSignedIn && user) {
+      // User is logged in - use their account email/name
+      const email = user.primaryEmailAddress?.emailAddress || ''
+      const name = user.firstName || user.fullName || ''
+      setFormData((prev) => ({
+        ...prev,
+        email: email,
+        name: name,
+      }))
+    } else if (typeof window !== 'undefined') {
+      // Not logged in - check localStorage
       const saved = localStorage.getItem('sweatbuddies_user')
       if (saved) {
         try {
@@ -66,7 +78,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
         }
       }
     }
-  }, [])
+  }, [isSignedIn, user])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -206,16 +218,24 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                   <div>
                     <label className="block text-sm font-medium text-neutral-700 mb-1">
                       Your email
+                      {isSignedIn && (
+                        <span className="ml-2 text-xs text-green-600 font-normal">Using your account</span>
+                      )}
                     </label>
                     <input
                       type="email"
                       required
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) => !isSignedIn && setFormData({ ...formData, email: e.target.value })}
+                      readOnly={isSignedIn}
                       placeholder="you@example.com"
-                      className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition"
+                      className={`w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition ${
+                        isSignedIn ? 'bg-neutral-50 cursor-not-allowed' : ''
+                      }`}
                     />
-                    <span className="text-xs text-neutral-400 mt-1 block">We&apos;ll send you a reminder before the event</span>
+                    <span className="text-xs text-neutral-400 mt-1 block">
+                      {isSignedIn ? 'Signed in with this email' : "We'll send you a reminder before the event"}
+                    </span>
                   </div>
 
                   {/* Name Field (Optional) */}

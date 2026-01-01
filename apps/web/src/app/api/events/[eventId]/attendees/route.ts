@@ -4,10 +4,10 @@ import { prisma } from '@/lib/prisma'
 // Public endpoint - returns attendee names (not emails) for display
 export async function GET(
   request: Request,
-  { params }: { params: { eventId: string } }
+  { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
-    const { eventId } = params
+    const { eventId } = await params
 
     if (!eventId) {
       return NextResponse.json(

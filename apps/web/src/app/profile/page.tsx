@@ -13,14 +13,31 @@ export default function ProfilePage() {
   const router = useRouter()
   const [savedCount, setSavedCount] = useState(0)
   const [goingCount, setGoingCount] = useState(0)
+  const [isLoadingStats, setIsLoadingStats] = useState(true)
 
   useEffect(() => {
-    // Load counts from localStorage
+    // Load saved count from localStorage (client-side only)
     const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
-    const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
     setSavedCount(saved.length)
-    setGoingCount(going.length)
-  }, [])
+
+    // Fetch going count from API for logged-in users
+    if (isSignedIn) {
+      fetch('/api/user/stats')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.goingCount !== undefined) {
+            setGoingCount(data.goingCount)
+          }
+        })
+        .catch(console.error)
+        .finally(() => setIsLoadingStats(false))
+    } else {
+      // Fallback to localStorage for non-logged-in users
+      const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
+      setGoingCount(going.length)
+      setIsLoadingStats(false)
+    }
+  }, [isSignedIn])
 
   if (!isLoaded) {
     return (

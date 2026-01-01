@@ -6,6 +6,7 @@ import { getEventById } from '@/lib/events'
 import { prisma } from '@/lib/prisma'
 import { Logo } from '@/components/logo'
 import { EventPageClient } from './EventPageClient'
+import { EventAttendees } from '@/components/EventAttendees'
 
 // Force dynamic rendering for event detail pages
 export const dynamic = 'force-dynamic'
@@ -344,6 +345,9 @@ export default async function EventDetailPage({ params }: Props) {
                   </div>
                 </div>
               </div>
+
+              {/* Attendees */}
+              <EventAttendees eventId={event.id} />
             </div>
 
             {/* Sidebar - Actions */}

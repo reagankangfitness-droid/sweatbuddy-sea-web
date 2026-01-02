@@ -611,13 +611,12 @@ export function SubmitForm() {
                   <DebouncedTextarea
                     value={formData.description}
                     onChange={(val) => updateFormData('description', val)}
-                    maxLength={150}
-                    rows={3}
+                    rows={4}
                     className="w-full px-4 py-3 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20 resize-none"
                     placeholder="What's the vibe? What should people bring?"
                   />
                   <span className="text-xs text-neutral-400 mt-1 block text-right">
-                    {formData.description.length}/150
+                    {formData.description.trim().split(/\s+/).filter(Boolean).length}/150 words
                   </span>
                 </div>
               </div>

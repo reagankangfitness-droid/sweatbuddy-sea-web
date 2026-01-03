@@ -4,6 +4,32 @@ import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
+// Generate URL-friendly slug from event name
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special chars
+    .replace(/\s+/g, '-')     // Replace spaces with hyphens
+    .replace(/-+/g, '-')      // Remove consecutive hyphens
+    .replace(/^-|-$/g, '')    // Remove leading/trailing hyphens
+    .substring(0, 50)         // Limit length
+}
+
+// Generate unique slug by checking existing ones
+async function generateUniqueSlug(eventName: string): Promise<string> {
+  const baseSlug = generateSlug(eventName)
+  let slug = baseSlug
+  let counter = 2
+
+  while (await prisma.eventSubmission.findUnique({ where: { slug } })) {
+    slug = `${baseSlug}-${counter}`
+    counter++
+  }
+
+  return slug
+}
+
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ eventId: string }> }
@@ -41,10 +67,15 @@ export async function POST(
       newEventDate = nextWeek
     }
 
+    // Generate slug for the duplicate
+    const newEventName = `${originalEvent.eventName} (Copy)`
+    const slug = await generateUniqueSlug(newEventName)
+
     // Create duplicate event
     const duplicatedEvent = await prisma.eventSubmission.create({
       data: {
-        eventName: `${originalEvent.eventName} (Copy)`,
+        eventName: newEventName,
+        slug,
         category: originalEvent.category,
         day: originalEvent.day,
         eventDate: newEventDate,

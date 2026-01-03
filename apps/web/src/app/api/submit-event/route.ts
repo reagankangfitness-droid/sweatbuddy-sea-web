@@ -2,6 +2,33 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendEventSubmittedEmail } from '@/lib/event-confirmation-email'
 
+// Generate URL-friendly slug from event name
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special chars
+    .replace(/\s+/g, '-')     // Replace spaces with hyphens
+    .replace(/-+/g, '-')      // Remove consecutive hyphens
+    .replace(/^-|-$/g, '')    // Remove leading/trailing hyphens
+    .substring(0, 50)         // Limit length
+}
+
+// Generate unique slug by checking existing ones
+async function generateUniqueSlug(eventName: string): Promise<string> {
+  const baseSlug = generateSlug(eventName)
+  let slug = baseSlug
+  let counter = 2
+
+  // Check if slug exists, if so add suffix
+  while (await prisma.eventSubmission.findUnique({ where: { slug } })) {
+    slug = `${baseSlug}-${counter}`
+    counter++
+  }
+
+  return slug
+}
+
 interface EventSubmission {
   eventName: string
   category: string
@@ -75,10 +102,14 @@ export async function POST(request: Request) {
       cleanInstagram = cleanInstagram.split('/')[0]
     }
 
+    // Generate URL-friendly slug for shareable links
+    const slug = await generateUniqueSlug(data.eventName)
+
     // Save to database
     const submission = await prisma.eventSubmission.create({
       data: {
         eventName: data.eventName,
+        slug,
         category: data.category,
         day: data.day,
         eventDate: data.eventDate ? new Date(data.eventDate) : null,

@@ -140,7 +140,7 @@ export default function HostDashboard() {
                   ${(data.stats.totalEarnings / 100).toFixed(2)} earned
                 </p>
                 <p className="text-sm text-green-700">
-                  From {data.stats.paidAttendees || 0} paid attendee{(data.stats.paidAttendees || 0) !== 1 ? 's' : ''} via Stripe
+                  From {data.stats.paidAttendees || 0} paid attendee{(data.stats.paidAttendees || 0) !== 1 ? 's' : ''} via PayNow
                 </p>
               </div>
             </div>

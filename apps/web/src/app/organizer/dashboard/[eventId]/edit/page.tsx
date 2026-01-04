@@ -13,9 +13,7 @@ import {
   Clock,
   MapPin,
   AlertTriangle,
-  CreditCard
 } from 'lucide-react'
-import { StripeConnectOnboarding } from '@/components/StripeConnectOnboarding'
 import { useLoadScript, Autocomplete } from '@react-google-maps/api'
 
 const libraries: ('places')[] = ['places']
@@ -468,22 +466,6 @@ export default function EditEventPage() {
                 />
               )}
             </div>
-          </div>
-
-          {/* Payment Settings Card */}
-          <div className="bg-white rounded-xl border border-neutral-200 p-6">
-            <h2 className="font-semibold text-neutral-900 mb-4 flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-[#3477f8]" />
-              Payment Settings
-            </h2>
-            <p className="text-sm text-neutral-600 mb-4">
-              Connect your Stripe account to accept payments for this event.
-              Funds will be deposited directly to your bank account.
-            </p>
-            <StripeConnectOnboarding
-              eventSubmissionId={eventId}
-              hostEmail={event?.contactEmail || ''}
-            />
           </div>
 
           {/* Actions */}

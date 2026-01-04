@@ -13,7 +13,7 @@ export async function GET() {
 
     const instagramHandle = session.instagramHandle
 
-    // Get all approved events for this host
+    // Get all approved paid events for this host
     const events = await prisma.eventSubmission.findMany({
       where: {
         organizerInstagram: {
@@ -21,6 +21,8 @@ export async function GET() {
           mode: 'insensitive',
         },
         status: 'APPROVED',
+        isFree: false,
+        price: { gt: 0 },
       },
       select: {
         id: true,
@@ -29,73 +31,19 @@ export async function GET() {
         price: true,
         ticketsSold: true,
         maxTickets: true,
-        isFree: true,
       },
     })
 
     const eventIds = events.map(e => e.id)
 
-    // Get Stripe account status
-    const stripeAccount = await prisma.hostStripeAccount.findFirst({
-      where: {
-        eventSubmissionId: { in: eventIds },
-      },
-      select: {
-        stripeConnectAccountId: true,
-        chargesEnabled: true,
-        payoutsEnabled: true,
-        stripeOnboardingComplete: true,
-      },
-    })
-
-    // Get all transactions for this host's events
-    const transactions = await prisma.eventTransaction.findMany({
-      where: {
-        eventSubmissionId: { in: eventIds },
-      },
-      orderBy: { createdAt: 'desc' },
-    })
-
-    // Calculate summary totals
-    const completedTransactions = transactions.filter(t => t.status === 'SUCCEEDED')
-    const refundedTransactions = transactions.filter(t => t.status === 'REFUNDED')
-
-    const totalRevenue = completedTransactions.reduce((sum, t) => sum + t.totalCharged, 0)
-    const totalPlatformFees = completedTransactions.reduce((sum, t) => sum + t.platformFee, 0)
-    const totalStripeFees = completedTransactions.reduce((sum, t) => sum + t.stripeFee, 0)
-    const totalHostEarnings = completedTransactions.reduce((sum, t) => sum + t.netPayoutToHost, 0)
-    const totalRefunded = refundedTransactions.reduce((sum, t) => sum + (t.refundAmount || t.totalCharged), 0)
-
-    // Get earnings grouped by event
-    const earningsByEvent = eventIds.map(eventId => {
-      const event = events.find(e => e.id === eventId)
-      const eventTransactions = completedTransactions.filter(t => t.eventSubmissionId === eventId)
-
-      return {
-        eventId,
-        eventName: event?.eventName || 'Unknown Event',
-        eventDate: event?.eventDate?.toISOString() || null,
-        ticketPrice: event?.price || 0,
-        ticketsSold: event?.ticketsSold || 0,
-        ticketLimit: event?.maxTickets || null,
-        isFree: event?.isFree || false,
-        totalRevenue: eventTransactions.reduce((sum, t) => sum + t.totalCharged, 0),
-        platformFees: eventTransactions.reduce((sum, t) => sum + t.platformFee, 0),
-        stripeFees: eventTransactions.reduce((sum, t) => sum + t.stripeFee, 0),
-        hostEarnings: eventTransactions.reduce((sum, t) => sum + t.netPayoutToHost, 0),
-        transactionCount: eventTransactions.length,
-      }
-    }).filter(e => !e.isFree && e.transactionCount > 0) // Only show paid events with transactions
-
-    // Get recent activity (last 10 transactions)
-    const recentActivity = await prisma.eventAttendance.findMany({
+    // Get all PayNow payments for this host's events
+    const paidAttendances = await prisma.eventAttendance.findMany({
       where: {
         eventId: { in: eventIds },
         paymentStatus: 'paid',
-        paymentMethod: 'stripe',
+        paymentMethod: 'paynow',
       },
       orderBy: { paidAt: 'desc' },
-      take: 10,
       select: {
         id: true,
         eventId: true,
@@ -107,51 +55,66 @@ export async function GET() {
       },
     })
 
+    // Calculate totals
+    const totalRevenue = paidAttendances.reduce((sum, a) => sum + (a.paymentAmount || 0), 0)
+    const totalRefunded = 0 // PayNow refunds handled manually outside the system
+
+    // Get earnings grouped by event
+    const eventEarnings = events.map(event => {
+      const eventPayments = paidAttendances.filter(a => a.eventId === event.id)
+      const eventRevenue = eventPayments.reduce((sum, a) => sum + (a.paymentAmount || 0), 0)
+
+      return {
+        eventId: event.id,
+        eventName: event.eventName,
+        eventDate: event.eventDate?.toISOString() || null,
+        ticketPrice: event.price || 0,
+        ticketsSold: eventPayments.length,
+        ticketLimit: event.maxTickets || null,
+        totalRevenue: eventRevenue,
+        transactionCount: eventPayments.length,
+      }
+    }).filter(e => e.transactionCount > 0) // Only show events with payments
+
+    // Recent activity (last 10 payments)
+    const recentActivity = paidAttendances.slice(0, 10).map(a => ({
+      id: a.id,
+      eventName: a.eventName,
+      attendeeEmail: a.email,
+      attendeeName: a.name,
+      amount: a.paymentAmount || 0,
+      date: a.paidAt?.toISOString() || null,
+    }))
+
+    // All transactions
+    const transactions = paidAttendances.map(a => ({
+      id: a.id,
+      eventId: a.eventId,
+      eventName: a.eventName,
+      amount: a.paymentAmount || 0,
+      status: 'SUCCEEDED',
+      date: a.paidAt?.toISOString() || new Date().toISOString(),
+      refundedAt: null,
+      refundAmount: null,
+    }))
+
     return NextResponse.json({
       host: {
         instagramHandle,
-        stripeConnected: !!stripeAccount?.stripeConnectAccountId,
-        stripeChargesEnabled: stripeAccount?.chargesEnabled || false,
-        stripePayoutsEnabled: stripeAccount?.payoutsEnabled || false,
       },
       summary: {
         totalRevenue,
-        totalPlatformFees,
-        totalStripeFees,
-        totalHostEarnings,
         totalRefunded,
-        transactionCount: completedTransactions.length,
+        transactionCount: paidAttendances.length,
         currency: 'SGD',
       },
-      eventEarnings: earningsByEvent.sort((a, b) => {
+      eventEarnings: eventEarnings.sort((a, b) => {
         const dateA = a.eventDate ? new Date(a.eventDate).getTime() : 0
         const dateB = b.eventDate ? new Date(b.eventDate).getTime() : 0
         return dateB - dateA
       }),
-      recentActivity: recentActivity.map(a => ({
-        id: a.id,
-        eventName: a.eventName,
-        attendeeEmail: a.email,
-        attendeeName: a.name,
-        amount: a.paymentAmount || 0,
-        date: a.paidAt?.toISOString() || null,
-      })),
-      transactions: transactions.map(t => {
-        const event = events.find(e => e.id === t.eventSubmissionId)
-        return {
-          id: t.id,
-          eventId: t.eventSubmissionId,
-          eventName: event?.eventName || 'Unknown',
-          amount: t.totalCharged,
-          platformFee: t.platformFee,
-          stripeFee: t.stripeFee,
-          hostPayout: t.netPayoutToHost,
-          status: t.status,
-          date: t.createdAt.toISOString(),
-          refundedAt: t.refundedAt?.toISOString() || null,
-          refundAmount: t.refundAmount,
-        }
-      }),
+      recentActivity,
+      transactions,
     })
   } catch (error) {
     console.error('Earnings API error:', error)

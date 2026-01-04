@@ -1,20 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Loader2, TrendingUp, Calendar, Receipt, AlertCircle, ExternalLink } from 'lucide-react'
+import { Loader2, TrendingUp, Calendar, Receipt, AlertCircle, QrCode } from 'lucide-react'
 
 interface EarningsData {
   host: {
     instagramHandle: string
-    stripeConnected: boolean
-    stripeChargesEnabled: boolean
-    stripePayoutsEnabled: boolean
   }
   summary: {
     totalRevenue: number
-    totalPlatformFees: number
-    totalStripeFees: number
-    totalHostEarnings: number
     totalRefunded: number
     transactionCount: number
     currency: string
@@ -27,9 +21,6 @@ interface EarningsData {
     ticketsSold: number
     ticketLimit: number | null
     totalRevenue: number
-    platformFees: number
-    stripeFees: number
-    hostEarnings: number
     transactionCount: number
   }>
   recentActivity: Array<{
@@ -45,9 +36,6 @@ interface EarningsData {
     eventId: string
     eventName: string
     amount: number
-    platformFee: number
-    stripeFee: number
-    hostPayout: number
     status: string
     date: string
     refundedAt: string | null
@@ -143,44 +131,28 @@ export function EarningsDashboard() {
         </p>
       </div>
 
-      {/* Stripe Status Warning */}
-      {!host.stripeConnected && (
-        <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5" />
-            <div>
-              <p className="font-medium text-amber-800">Connect Stripe to receive payouts</p>
-              <p className="text-sm text-amber-700 mt-1">
-                You need to connect your Stripe account before you can accept payments.
-              </p>
-            </div>
+      {/* PayNow Info */}
+      <div className="bg-green-50 border border-green-200 p-4 rounded-xl">
+        <div className="flex items-start gap-3">
+          <QrCode className="w-5 h-5 text-green-600 mt-0.5" />
+          <div>
+            <p className="font-medium text-green-800">Instant payments via PayNow</p>
+            <p className="text-sm text-green-700 mt-1">
+              Attendees pay you directly via PayNow QR code. No fees, instant transfer to your account.
+            </p>
           </div>
         </div>
-      )}
-
-      {host.stripeConnected && !host.stripePayoutsEnabled && (
-        <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5" />
-            <div>
-              <p className="font-medium text-amber-800">Complete Stripe setup</p>
-              <p className="text-sm text-amber-700 mt-1">
-                Your Stripe account needs additional information before you can receive payouts.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-green-50 p-6 rounded-xl border border-green-100">
           <div className="flex items-center gap-2 text-green-600 mb-2">
             <TrendingUp className="w-4 h-4" />
-            <span className="text-sm font-medium">Your Earnings</span>
+            <span className="text-sm font-medium">Total Revenue</span>
           </div>
           <p className="text-3xl font-bold text-green-700">
-            {formatCurrency(summary.totalHostEarnings)}
+            {formatCurrency(summary.totalRevenue)}
           </p>
           <p className="text-sm text-green-600 mt-1">
             from {summary.transactionCount} sale{summary.transactionCount !== 1 ? 's' : ''}
@@ -188,21 +160,11 @@ export function EarningsDashboard() {
         </div>
 
         <div className="bg-neutral-50 p-6 rounded-xl border border-neutral-200">
-          <p className="text-sm font-medium text-neutral-500 mb-2">Total Revenue</p>
+          <p className="text-sm font-medium text-neutral-500 mb-2">Total Sales</p>
           <p className="text-3xl font-bold text-neutral-900">
-            {formatCurrency(summary.totalRevenue)}
+            {summary.transactionCount}
           </p>
-          <p className="text-sm text-neutral-500 mt-1">before fees</p>
-        </div>
-
-        <div className="bg-neutral-50 p-6 rounded-xl border border-neutral-200">
-          <p className="text-sm font-medium text-neutral-500 mb-2">Total Fees</p>
-          <p className="text-3xl font-bold text-neutral-900">
-            {formatCurrency(summary.totalPlatformFees + summary.totalStripeFees)}
-          </p>
-          <p className="text-sm text-neutral-500 mt-1">
-            Platform: {formatCurrency(summary.totalPlatformFees)} · Stripe: {formatCurrency(summary.totalStripeFees)}
-          </p>
+          <p className="text-sm text-neutral-500 mt-1">recorded transactions</p>
         </div>
       </div>
 
@@ -295,15 +257,15 @@ export function EarningsDashboard() {
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-green-600 text-lg">
-                        {formatCurrency(event.hostEarnings)}
+                        {formatCurrency(event.totalRevenue)}
                       </p>
-                      <p className="text-xs text-neutral-400">your earnings</p>
+                      <p className="text-xs text-neutral-400">total revenue</p>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-4 gap-4 text-sm">
+                  <div className="grid grid-cols-3 gap-4 text-sm">
                     <div>
-                      <p className="text-neutral-500">Tickets</p>
+                      <p className="text-neutral-500">Tickets Sold</p>
                       <p className="font-semibold text-neutral-900">
                         {event.ticketsSold}
                         {event.ticketLimit && ` / ${event.ticketLimit}`}
@@ -316,15 +278,9 @@ export function EarningsDashboard() {
                       </p>
                     </div>
                     <div>
-                      <p className="text-neutral-500">Revenue</p>
-                      <p className="font-semibold text-neutral-900">
+                      <p className="text-neutral-500">Total Revenue</p>
+                      <p className="font-semibold text-green-600">
                         {formatCurrency(event.totalRevenue)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-neutral-500">Fees</p>
-                      <p className="font-semibold text-neutral-400">
-                        -{formatCurrency(event.platformFees + event.stripeFees)}
                       </p>
                     </div>
                   </div>
@@ -350,8 +306,6 @@ export function EarningsDashboard() {
                     <th className="text-left py-3 font-medium text-neutral-500">Date</th>
                     <th className="text-left py-3 font-medium text-neutral-500">Event</th>
                     <th className="text-right py-3 font-medium text-neutral-500">Amount</th>
-                    <th className="text-right py-3 font-medium text-neutral-500">Fees</th>
-                    <th className="text-right py-3 font-medium text-neutral-500">Payout</th>
                     <th className="text-left py-3 font-medium text-neutral-500">Status</th>
                   </tr>
                 </thead>
@@ -364,14 +318,8 @@ export function EarningsDashboard() {
                       <td className="py-3 font-medium text-neutral-900">
                         {tx.eventName}
                       </td>
-                      <td className="py-3 text-right text-neutral-900">
-                        {formatCurrency(tx.amount)}
-                      </td>
-                      <td className="py-3 text-right text-neutral-400">
-                        -{formatCurrency(tx.platformFee + tx.stripeFee)}
-                      </td>
                       <td className="py-3 text-right font-medium text-green-600">
-                        {formatCurrency(tx.hostPayout)}
+                        {formatCurrency(tx.amount)}
                       </td>
                       <td className="py-3">
                         <span
@@ -400,8 +348,8 @@ export function EarningsDashboard() {
       {/* Footer Info */}
       <div className="bg-neutral-50 p-4 rounded-xl text-sm text-neutral-600">
         <p>
-          <strong>How payouts work:</strong> Stripe automatically transfers your earnings to your
-          connected bank account. Payouts typically arrive 2-7 business days after a sale.
+          <strong>How payments work:</strong> Attendees pay you directly via PayNow QR code when they RSVP.
+          Payments are instant with no fees. This dashboard records all transactions for your reference.
         </p>
       </div>
     </div>

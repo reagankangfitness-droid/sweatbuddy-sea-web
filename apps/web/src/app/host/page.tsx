@@ -39,7 +39,6 @@ export default function HostApplicationPage() {
     // Pricing fields
     isFree: true,
     price: '',
-    stripeEnabled: false,
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -97,7 +96,6 @@ export default function HostApplicationPage() {
         // Pricing fields
         isFree: formData.isFree,
         price: formData.isFree ? null : Math.round(parseFloat(formData.price || '0') * 100),
-        stripeEnabled: !formData.isFree && formData.stripeEnabled,
       }
 
       console.log('[Host] Submitting event:', JSON.stringify(eventSubmissionData))
@@ -557,43 +555,16 @@ export default function HostApplicationPage() {
                     </div>
                   </div>
 
-                  {/* Payment Methods */}
-                  <div className="space-y-3">
-                    <p className="text-sm font-medium text-neutral-700">Payment method</p>
-
-                    {/* Card payments via Stripe */}
-                    <label className="flex items-start gap-3 p-4 bg-white border border-neutral-200 rounded-xl cursor-pointer hover:border-neutral-400 transition-colors">
-                      <input
-                        type="checkbox"
-                        checked={formData.stripeEnabled}
-                        onChange={(e) => setFormData(prev => ({ ...prev, stripeEnabled: e.target.checked }))}
-                        className="w-5 h-5 mt-0.5 rounded border-neutral-300 text-neutral-900"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-neutral-900">Card payments</span>
-                          <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">Stripe</span>
-                        </div>
-                        <p className="text-sm text-neutral-500 mt-0.5">Accept credit/debit cards - funds go directly to your bank</p>
-                      </div>
-                    </label>
-
-                    {/* Stripe info */}
-                    {formData.stripeEnabled && (
-                      <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
-                        <p className="text-sm text-blue-800">
-                          <strong>How it works:</strong> After your event is approved, you&apos;ll complete a quick Stripe setup to connect your bank account. Payments go directly to you with a 5% platform fee.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Fee Notice */}
-                  {formData.stripeEnabled && (
-                    <p className="text-xs text-neutral-400">
-                      5% platform fee + Stripe processing fees (~2.9% + $0.30).
+                  {/* PayNow Payment Info */}
+                  <div className="p-4 bg-green-50 rounded-xl border border-green-100">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="font-medium text-green-800">PayNow QR Code Payments</span>
+                      <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-medium">Instant</span>
+                    </div>
+                    <p className="text-sm text-green-700">
+                      After your event is approved, you&apos;ll be able to add your PayNow QR code. Attendees pay you directly with no fees - payments go straight to your account instantly.
                     </p>
-                  )}
+                  </div>
                 </div>
               )}
             </div>

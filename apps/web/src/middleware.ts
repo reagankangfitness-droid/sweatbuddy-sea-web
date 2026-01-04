@@ -19,6 +19,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/categories(.*)',
   '/api/reviews(.*)',
   '/api/attendance(.*)',
+  '/api/event-waitlist(.*)',
   '/api/newsletter(.*)',
   '/api/admin(.*)',
   '/api/submit-event(.*)',

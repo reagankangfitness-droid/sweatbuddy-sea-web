@@ -36,6 +36,16 @@ export async function GET(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
+    // Get all events by this host to count repeat attendees
+    const hostEvents = await prisma.eventSubmission.findMany({
+      where: {
+        organizerInstagram: { equals: session.instagramHandle, mode: 'insensitive' },
+        status: 'APPROVED',
+      },
+      select: { id: true },
+    })
+    const hostEventIds = hostEvents.map(e => e.id)
+
     // Fetch attendees with payment info
     const attendees = await prisma.eventAttendance.findMany({
       where: { eventId },
@@ -58,6 +68,28 @@ export async function GET(
       ],
     })
 
+    // Get repeat attendance counts for all attendee emails across host's events
+    const attendeeEmails = attendees.map(a => a.email.toLowerCase())
+    const attendanceCounts = await prisma.eventAttendance.groupBy({
+      by: ['email'],
+      where: {
+        eventId: { in: hostEventIds },
+        email: { in: attendeeEmails, mode: 'insensitive' },
+      },
+      _count: { id: true },
+    })
+
+    // Create lookup map for attendance counts
+    const countMap = new Map(
+      attendanceCounts.map(item => [item.email.toLowerCase(), item._count.id])
+    )
+
+    // Add attendance count to each attendee
+    const attendeesWithHistory = attendees.map(attendee => ({
+      ...attendee,
+      totalAttendance: countMap.get(attendee.email.toLowerCase()) || 1,
+    }))
+
     return NextResponse.json({
       event: {
         id: event.id,
@@ -65,7 +97,7 @@ export async function GET(
         isFree: event.isFree,
         price: event.price,
       },
-      attendees,
+      attendees: attendeesWithHistory,
     })
   } catch (error) {
     console.error('Fetch attendees error:', error)

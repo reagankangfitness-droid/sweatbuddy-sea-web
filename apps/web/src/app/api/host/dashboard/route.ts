@@ -129,6 +129,23 @@ export async function GET() {
       },
     })
 
+    // Get top regulars (repeat attendees)
+    const repeatAttendees = await prisma.eventAttendance.groupBy({
+      by: ['email', 'name'],
+      where: { eventId: { in: eventIds } },
+      _count: { id: true },
+      orderBy: { _count: { id: 'desc' } },
+      take: 5,
+    })
+
+    const topRegulars = repeatAttendees
+      .filter(a => a._count.id >= 2) // Only show people who've come 2+ times
+      .map(a => ({
+        email: a.email,
+        name: a.name,
+        attendanceCount: a._count.id,
+      }))
+
     return NextResponse.json({
       stats: {
         activeEvents: upcoming.length,
@@ -139,6 +156,7 @@ export async function GET() {
       },
       upcoming,
       past,
+      topRegulars,
     })
   } catch (error) {
     console.error('Dashboard API error:', error)

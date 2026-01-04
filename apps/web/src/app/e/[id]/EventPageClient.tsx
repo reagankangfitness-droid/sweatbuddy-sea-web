@@ -5,6 +5,7 @@ import { MapPin, Share2, Check, Instagram, MessageCircle, ExternalLink } from 'l
 import { GoingButton } from '@/components/GoingButton'
 import { PaymentModal } from '@/components/event/PaymentModal'
 import { PaymentStatus } from '@/components/event/PaymentStatus'
+import { WaitlistButton } from '@/components/WaitlistButton'
 import { detectPlatform, getJoinButtonText } from '@/lib/community'
 
 interface EventPageClientProps {
@@ -63,27 +64,22 @@ export function EventPageClient({ event, initialGoingCount }: EventPageClientPro
       {/* Payment Status Banner */}
       <PaymentStatus />
 
-      {/* Join/Pay Button */}
-      {isPaidEvent ? (
+      {/* Join/Pay Button or Waitlist */}
+      {event.isFull ? (
+        <WaitlistButton
+          eventId={event.id}
+          eventName={event.name}
+          fullWidth
+        />
+      ) : isPaidEvent ? (
         <>
           <button
             onClick={() => setShowPaymentModal(true)}
-            disabled={event.isFull}
-            className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-lg text-sm font-semibold transition-all ${
-              event.isFull
-                ? 'bg-neutral-200 text-neutral-500 cursor-not-allowed'
-                : 'bg-purple-600 text-white hover:bg-purple-700'
-            }`}
+            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-lg text-sm font-semibold transition-all bg-purple-600 text-white hover:bg-purple-700"
           >
-            {event.isFull ? (
-              <span>Event Full</span>
-            ) : (
-              <>
-                <span>Join & Pay</span>
-                <span className="text-purple-200">•</span>
-                <span>${priceFormatted}</span>
-              </>
-            )}
+            <span>Join & Pay</span>
+            <span className="text-purple-200">•</span>
+            <span>${priceFormatted}</span>
           </button>
 
           {showPaymentModal && (
@@ -116,7 +112,6 @@ export function EventPageClient({ event, initialGoingCount }: EventPageClientPro
           communityLink={event.communityLink}
           initialCount={initialGoingCount}
           fullWidth
-          isFull={event.isFull}
         />
       )}
 

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Loader2, DollarSign } from 'lucide-react'
+import { Loader2, DollarSign, Users, Star } from 'lucide-react'
 import { DashboardHeader } from '@/components/host/DashboardHeader'
 import { StatCard } from '@/components/host/StatCard'
 import { UpcomingEventRow } from '@/components/host/UpcomingEventRow'
@@ -24,6 +24,12 @@ interface DashboardEvent {
   organizer: string
 }
 
+interface TopRegular {
+  email: string
+  name: string | null
+  attendanceCount: number
+}
+
 interface DashboardData {
   stats: {
     activeEvents: number
@@ -34,6 +40,7 @@ interface DashboardData {
   }
   upcoming: DashboardEvent[]
   past: DashboardEvent[]
+  topRegulars?: TopRegular[]
 }
 
 export default function HostDashboard() {
@@ -149,6 +156,47 @@ export default function HostDashboard() {
             label="Earnings"
           />
         </div>
+
+        {/* Top Regulars */}
+        {data.topRegulars && data.topRegulars.length > 0 && (
+          <section className="mb-12">
+            <div className="flex items-center gap-2 mb-4">
+              <Users className="w-5 h-5 text-purple-600" />
+              <h2 className="text-lg font-semibold text-neutral-900">Your Regulars</h2>
+            </div>
+            <div className="bg-gradient-to-br from-purple-50 to-amber-50 border border-purple-100 rounded-xl p-4">
+              <div className="grid gap-3">
+                {data.topRegulars.map((regular, index) => (
+                  <div key={regular.email} className="flex items-center gap-3 bg-white/80 rounded-lg p-3">
+                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                      {index === 0 ? (
+                        <span className="text-lg">💎</span>
+                      ) : index === 1 ? (
+                        <span className="text-lg">🔥</span>
+                      ) : (
+                        <span className="text-lg">⭐</span>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-neutral-900 truncate">
+                        {regular.name || regular.email.split('@')[0]}
+                      </p>
+                      <p className="text-sm text-neutral-500 truncate">{regular.email}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-purple-100 text-purple-700 text-sm font-semibold rounded-full">
+                        {regular.attendanceCount}x
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-neutral-500 mt-3 text-center">
+                People who&apos;ve attended 2+ of your events
+              </p>
+            </div>
+          </section>
+        )}
 
         {/* Upcoming Events */}
         <section className="mb-12">

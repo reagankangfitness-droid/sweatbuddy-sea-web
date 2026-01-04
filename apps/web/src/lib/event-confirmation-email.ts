@@ -949,6 +949,135 @@ export async function sendEventCancellationEmail(
   })
 }
 
+// ============= WAITLIST NOTIFICATIONS =============
+
+interface WaitlistSpotAvailableParams {
+  to: string
+  userName: string | null
+  eventName: string
+  eventUrl: string
+  expiresAt: Date
+}
+
+/**
+ * Send notification when a spot opens up for someone on the waitlist
+ */
+export async function sendWaitlistSpotAvailableEmail(
+  params: WaitlistSpotAvailableParams
+): Promise<{ success: boolean; error?: string }> {
+  const { to, userName, eventName, eventUrl, expiresAt } = params
+  const displayName = userName || 'there'
+
+  // Format expiry time
+  const expiryTime = expiresAt.toLocaleString('en-SG', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Spot Opened Up!</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 16px 16px 0 0; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
+              <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
+                A Spot Opened Up!
+              </h1>
+              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
+                Quick, claim your spot
+              </p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 32px; background-color: white;">
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Hey ${displayName}! 👋
+              </p>
+
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Good news! A spot just opened up for <strong>${eventName}</strong> and you're first in line on the waitlist!
+              </p>
+
+              <!-- Urgency Card -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #fef3c7; border-radius: 12px; border: 1px solid #fcd34d;">
+                <tr>
+                  <td style="padding: 20px; text-align: center;">
+                    <div style="font-size: 24px; margin-bottom: 8px;">⏰</div>
+                    <p style="margin: 0; color: #92400e; font-size: 16px; font-weight: 600;">
+                      Claim your spot before
+                    </p>
+                    <p style="margin: 8px 0 0; color: #b45309; font-size: 18px; font-weight: 700;">
+                      ${expiryTime}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0 0 24px; color: #64748b; font-size: 14px; line-height: 1.6;">
+                After this time, the spot will be offered to the next person on the waitlist.
+              </p>
+
+              <!-- Action Button -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${eventUrl}" style="display: inline-block; padding: 16px 32px; background-color: #f59e0b; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
+                      Claim My Spot Now
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
+                Questions? Reply to this email or DM us <a href="https://instagram.com/_sweatbuddies" style="color: #f59e0b;">@_sweatbuddies</a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
+              <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
+                Find more events at
+              </p>
+              <a href="${BASE_URL}" style="color: #f59e0b; text-decoration: none; font-size: 14px; font-weight: 600;">
+                sweatbuddies.co
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim()
+
+  return sendEmail({
+    to,
+    subject: `A spot opened up for ${eventName}!`,
+    html,
+    tags: [{ name: 'type', value: 'waitlist_spot_available' }],
+  })
+}
+
 interface EventConfirmationParams {
   to: string
   userName: string | null

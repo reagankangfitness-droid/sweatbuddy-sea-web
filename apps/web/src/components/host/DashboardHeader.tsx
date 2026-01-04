@@ -23,6 +23,14 @@ export function DashboardHeader() {
 
         {/* Right side */}
         <div className="flex items-center gap-4">
+          {/* Analytics Link */}
+          <Link
+            href="/host/analytics"
+            className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors font-medium"
+          >
+            Analytics
+          </Link>
+
           {/* Earnings Link */}
           <Link
             href="/host/earnings"

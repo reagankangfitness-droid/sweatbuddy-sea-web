@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Logo } from '@/components/logo'
-import { Loader2, Check, X, Clock, Download, User, RefreshCcw } from 'lucide-react'
+import { Loader2, Check, X, Clock, Download, User, RefreshCcw, Mail } from 'lucide-react'
+import { EmailAttendeesModal } from '@/components/host/EmailAttendeesModal'
 
 interface Attendee {
   id: string
@@ -18,6 +19,16 @@ interface Attendee {
   paidAt: string | null
   verifiedBy: string | null
   verifiedAt: string | null
+  totalAttendance: number
+}
+
+// Get loyalty badge based on attendance count
+function getLoyaltyBadge(count: number): { label: string; color: string; emoji: string } | null {
+  if (count >= 20) return { label: 'Superfan', color: 'bg-purple-100 text-purple-700', emoji: '💎' }
+  if (count >= 10) return { label: 'Loyal', color: 'bg-amber-100 text-amber-700', emoji: '🔥' }
+  if (count >= 5) return { label: 'Regular', color: 'bg-blue-100 text-blue-700', emoji: '⭐' }
+  if (count === 1) return { label: 'First time!', color: 'bg-green-100 text-green-700', emoji: '👋' }
+  return null // 2-4 times, no badge
 }
 
 interface EventDetails {
@@ -38,6 +49,7 @@ export default function AttendeesPage() {
   const [error, setError] = useState('')
   const [verifyingId, setVerifyingId] = useState<string | null>(null)
   const [refundingId, setRefundingId] = useState<string | null>(null)
+  const [showEmailModal, setShowEmailModal] = useState(false)
 
   // Fetch attendees
   useEffect(() => {
@@ -229,14 +241,26 @@ export default function AttendeesPage() {
               {event?.name} • {attendees.length === 0 ? 'No one yet' : attendees.length === 1 ? '1 person' : `${attendees.length} people`}
             </p>
           </div>
-          <button
-            onClick={downloadCsv}
-            className="flex items-center gap-2 px-4 py-2 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
-            title="Download attendee list as spreadsheet"
-          >
-            <Download className="w-4 h-4" />
-            Export List
-          </button>
+          <div className="flex items-center gap-2">
+            {attendees.length > 0 && (
+              <button
+                onClick={() => setShowEmailModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors"
+                title="Send email to all attendees"
+              >
+                <Mail className="w-4 h-4" />
+                Email All
+              </button>
+            )}
+            <button
+              onClick={downloadCsv}
+              className="flex items-center gap-2 px-4 py-2 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+              title="Download attendee list as spreadsheet"
+            >
+              <Download className="w-4 h-4" />
+              Export
+            </button>
+          </div>
         </div>
 
         {/* Pending Payments - Show first if any */}
@@ -257,9 +281,20 @@ export default function AttendeesPage() {
                       <User className="w-5 h-5 text-amber-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-neutral-900">
-                        {attendee.name || 'Anonymous'}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-neutral-900">
+                          {attendee.name || 'Anonymous'}
+                        </p>
+                        {(() => {
+                          const badge = getLoyaltyBadge(attendee.totalAttendance)
+                          if (!badge) return null
+                          return (
+                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full ${badge.color}`}>
+                              {badge.emoji} {badge.label}
+                            </span>
+                          )
+                        })()}
+                      </div>
                       <p className="text-sm text-neutral-500">{attendee.email}</p>
                       <p className="text-xs text-amber-600 font-mono mt-0.5">
                         Ref: {attendee.paymentReference} • ${((attendee.paymentAmount || 0) / 100).toFixed(2)}
@@ -314,9 +349,20 @@ export default function AttendeesPage() {
                       </span>
                     </div>
                     <div>
-                      <p className="font-medium text-neutral-900">
-                        {attendee.name || 'Anonymous'}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-neutral-900">
+                          {attendee.name || 'Anonymous'}
+                        </p>
+                        {(() => {
+                          const badge = getLoyaltyBadge(attendee.totalAttendance)
+                          if (!badge) return null
+                          return (
+                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full ${badge.color}`}>
+                              {badge.emoji} {badge.label}
+                            </span>
+                          )
+                        })()}
+                      </div>
                       <p className="text-sm text-neutral-500">{attendee.email}</p>
                     </div>
                   </div>
@@ -371,6 +417,16 @@ export default function AttendeesPage() {
           )}
         </div>
       </main>
+
+      {/* Email Modal */}
+      {showEmailModal && event && (
+        <EmailAttendeesModal
+          eventId={eventId}
+          eventName={event.name}
+          attendees={attendees}
+          onClose={() => setShowEmailModal(false)}
+        />
+      )}
     </div>
   )
 }

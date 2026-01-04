@@ -1956,6 +1956,42 @@ model UserStreak {
 }
 
 // =====================================================
+// PUBLIC EVENT WAITLIST SYSTEM
+// =====================================================
+
+enum EventWaitlistStatus {
+  WAITING
+  NOTIFIED
+  BOOKED
+  EXPIRED
+}
+
+// Waitlist for when events are full
+model EventWaitlist {
+  id           String              @id @default(cuid())
+  eventId      String              // References EventSubmission.id
+  email        String              @db.VarChar(255)
+  name         String?             @db.VarChar(200)
+
+  // Position and status
+  position     Int
+  status       EventWaitlistStatus @default(WAITING)
+
+  // Notification tracking
+  notifiedAt           DateTime?
+  notificationExpires  DateTime?   // 24-hour window to book
+
+  // Timestamps
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  @@unique([eventId, email])
+  @@index([eventId, status, position])
+  @@index([status, notifiedAt])
+  @@map("event_waitlists")
+}
+
+// =====================================================
 // PAID EVENTS & STRIPE CONNECT SYSTEM
 // =====================================================
 

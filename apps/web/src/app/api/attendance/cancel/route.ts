@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { sendEventCancellationEmail } from '@/lib/event-confirmation-email'
+import { sendEventCancellationEmail, sendWaitlistSpotAvailableEmail } from '@/lib/event-confirmation-email'
 
 export async function POST(request: Request) {
   try {
@@ -52,6 +52,50 @@ export async function POST(request: Request) {
     }).catch((error) => {
       console.error('Failed to send cancellation email:', error)
     })
+
+    // Check if event was full and notify next person on waitlist
+    const event = await prisma.eventSubmission.findUnique({
+      where: { id: eventId },
+      select: { id: true, eventName: true, isFull: true, slug: true },
+    })
+
+    if (event?.isFull) {
+      // Get next person on waitlist
+      const nextInLine = await prisma.eventWaitlist.findFirst({
+        where: {
+          eventId,
+          status: 'WAITING',
+        },
+        orderBy: { position: 'asc' },
+      })
+
+      if (nextInLine) {
+        // Update their status to NOTIFIED
+        const expiresAt = new Date()
+        expiresAt.setHours(expiresAt.getHours() + 24) // 24-hour window
+
+        await prisma.eventWaitlist.update({
+          where: { id: nextInLine.id },
+          data: {
+            status: 'NOTIFIED',
+            notifiedAt: new Date(),
+            notificationExpires: expiresAt,
+          },
+        })
+
+        // Send notification email
+        const eventUrl = `https://www.sweatbuddies.co/e/${event.slug || event.id}`
+        sendWaitlistSpotAvailableEmail({
+          to: nextInLine.email,
+          userName: nextInLine.name,
+          eventName: event.eventName,
+          eventUrl,
+          expiresAt,
+        }).catch((error) => {
+          console.error('Failed to send waitlist notification:', error)
+        })
+      }
+    }
 
     return NextResponse.json({
       success: true,

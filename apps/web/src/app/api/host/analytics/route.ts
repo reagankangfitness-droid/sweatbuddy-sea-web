@@ -25,7 +25,7 @@ export async function GET() {
         day: true,
         eventDate: true,
         time: true,
-        maxSpots: true,
+        maxTickets: true,
         createdAt: true,
       },
     })
@@ -111,8 +111,8 @@ export async function GET() {
         name: e.eventName.length > 20 ? e.eventName.slice(0, 20) + '...' : e.eventName,
         fullName: e.eventName,
         attendees: attendanceByEvent[e.id] || 0,
-        maxSpots: e.maxSpots || null,
-        fillRate: e.maxSpots ? Math.round(((attendanceByEvent[e.id] || 0) / e.maxSpots) * 100) : null,
+        maxSpots: e.maxTickets || null,
+        fillRate: e.maxTickets ? Math.round(((attendanceByEvent[e.id] || 0) / e.maxTickets) * 100) : null,
       }))
       .sort((a, b) => b.attendees - a.attendees)
       .slice(0, 5)

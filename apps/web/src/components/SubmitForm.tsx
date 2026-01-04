@@ -204,6 +204,7 @@ export function SubmitForm() {
   const [error, setError] = useState('')
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [isUploadingQr, setIsUploadingQr] = useState(false)
 
   // Form data state
   const [formData, setFormData] = useState({
@@ -220,7 +221,9 @@ export function SubmitForm() {
     // Pricing fields
     isFree: true,
     price: '',
-    stripeEnabled: false,
+    // PayNow fields
+    paynowQrCode: '',
+    paynowNumber: '',
   })
 
   // Location state
@@ -354,7 +357,10 @@ export function SubmitForm() {
         // Pricing
         isFree: formData.isFree,
         price: formData.isFree ? null : Math.round(parseFloat(formData.price || '0') * 100),
-        stripeEnabled: !formData.isFree && formData.stripeEnabled,
+        // PayNow - enabled when QR code is uploaded
+        paynowEnabled: !formData.isFree && !!formData.paynowQrCode,
+        paynowQrCode: formData.paynowQrCode || null,
+        paynowNumber: formData.paynowNumber || null,
       }
 
       console.log('[SubmitForm] Submitting:', JSON.stringify(data))
@@ -782,42 +788,89 @@ export function SubmitForm() {
                         </div>
                       </div>
 
-                      {/* Payment Methods */}
-                      <div className="space-y-3">
-                        <p className="text-sm font-medium text-neutral-700">Payment method</p>
+                      {/* PayNow Payment Setup */}
+                      <div className="space-y-4">
+                        <p className="text-sm font-medium text-neutral-700">How will attendees pay?</p>
 
-                        {/* Card payments via Stripe */}
-                        <label className="flex items-start gap-3 p-4 bg-white border border-neutral-200 rounded-xl cursor-pointer hover:border-neutral-400 transition-colors">
-                          <input
-                            type="checkbox"
-                            checked={formData.stripeEnabled}
-                            onChange={(e) => setFormData(prev => ({ ...prev, stripeEnabled: e.target.checked }))}
-                            className="w-5 h-5 mt-0.5 rounded border-neutral-300 text-neutral-900"
-                          />
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium text-neutral-900">Card payments</span>
-                              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">Stripe</span>
+                        {/* PayNow QR Code Upload */}
+                        <div>
+                          <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
+                            PayNow QR Code *
+                          </label>
+                          {formData.paynowQrCode ? (
+                            <div className="relative rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200 w-48">
+                              <Image
+                                src={formData.paynowQrCode}
+                                alt="PayNow QR"
+                                width={192}
+                                height={192}
+                                className="w-48 h-48 object-contain bg-white"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, paynowQrCode: '' }))}
+                                className="absolute top-2 right-2 p-2 rounded-full bg-neutral-900/60 hover:bg-neutral-900/80 transition-colors"
+                              >
+                                <X className="w-4 h-4 text-white" />
+                              </button>
                             </div>
-                            <p className="text-sm text-neutral-500 mt-0.5">Accept credit/debit cards - funds go directly to your bank</p>
-                          </div>
-                        </label>
+                          ) : (
+                            <div className="rounded-xl bg-white border border-neutral-200 border-dashed p-5 w-48">
+                              {isUploadingQr ? (
+                                <div className="flex flex-col items-center gap-2 text-neutral-500">
+                                  <Loader2 className="w-6 h-6 animate-spin text-neutral-900" />
+                                  <span className="text-sm">Uploading...</span>
+                                </div>
+                              ) : (
+                                <div className="flex flex-col items-center gap-2">
+                                  <ImageIcon className="w-8 h-8 text-neutral-400" />
+                                  <UploadButton
+                                    endpoint="eventImage"
+                                    onUploadBegin={() => setIsUploadingQr(true)}
+                                    onClientUploadComplete={(res) => {
+                                      setIsUploadingQr(false)
+                                      if (res?.[0]?.url) {
+                                        setFormData(prev => ({ ...prev, paynowQrCode: res[0].url }))
+                                      }
+                                    }}
+                                    onUploadError={(error: Error) => {
+                                      setIsUploadingQr(false)
+                                      setError(`Upload failed: ${error.message}`)
+                                    }}
+                                    appearance={{
+                                      button: "bg-neutral-900 hover:bg-neutral-800 text-white font-medium px-3 py-1.5 rounded-full text-xs transition-colors",
+                                      allowedContent: "hidden",
+                                    }}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
 
-                        {/* Stripe info */}
-                        {formData.stripeEnabled && (
-                          <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
-                            <p className="text-sm text-blue-800">
-                              <strong>How it works:</strong> After your event is approved, you&apos;ll complete a quick Stripe setup to connect your bank account. Payments go directly to you with a 5% platform fee.
-                            </p>
-                          </div>
-                        )}
+                        {/* PayNow Number */}
+                        <div>
+                          <label className="block text-sm font-sans font-medium text-neutral-900 mb-2">
+                            PayNow Phone or UEN *
+                          </label>
+                          <DebouncedInput
+                            type="text"
+                            value={formData.paynowNumber}
+                            onChange={(val) => updateFormData('paynowNumber', val)}
+                            className="w-full h-12 px-4 rounded-xl bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20"
+                            placeholder="e.g., 91234567 or 202312345K"
+                          />
+                          <span className="text-xs text-neutral-400 mt-1 block">
+                            For attendees who prefer to transfer manually
+                          </span>
+                        </div>
 
-                        {/* Fee Notice */}
-                        {formData.stripeEnabled && (
-                          <p className="text-xs text-neutral-400">
-                            5% platform fee + Stripe processing fees (~2.9% + $0.30).
+                        {/* Info Box */}
+                        <div className="p-4 bg-amber-50 rounded-xl border border-amber-100">
+                          <p className="text-sm text-amber-800">
+                            <strong>How it works:</strong> Attendees will see your QR code and transfer the amount via PayNow. They&apos;ll enter their payment reference, and you&apos;ll verify it in your dashboard.
                           </p>
-                        )}
+                        </div>
                       </div>
                     </div>
                   )}

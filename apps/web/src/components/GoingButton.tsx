@@ -36,7 +36,9 @@ interface GoingButtonProps {
   // Pricing props
   isFree?: boolean
   price?: number | null // Amount in cents
-  stripeEnabled?: boolean
+  paynowEnabled?: boolean
+  paynowQrCode?: string | null
+  paynowNumber?: string | null
 }
 
 export function GoingButton({
@@ -56,7 +58,9 @@ export function GoingButton({
   // Pricing props
   isFree = true,
   price = null,
-  stripeEnabled = false,
+  paynowEnabled = false,
+  paynowQrCode = null,
+  paynowNumber = null,
 }: GoingButtonProps) {
   const [isGoing, setIsGoing] = useState(false)
   const [count, setCount] = useState(initialCount)
@@ -64,8 +68,8 @@ export function GoingButton({
   const [showModal, setShowModal] = useState(false)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
 
-  // Determine if this is a paid event
-  const isPaidEvent = !isFree && price && price > 0 && stripeEnabled
+  // Determine if this is a paid event (PayNow enabled)
+  const isPaidEvent = !isFree && price && price > 0 && paynowEnabled
   const formattedPrice = price ? (price / 100).toFixed(0) : '0'
 
   useEffect(() => {
@@ -185,7 +189,9 @@ export function GoingButton({
                 id: eventId,
                 name: eventName,
                 price: price || 0,
-                stripeEnabled,
+                paynowEnabled,
+                paynowQrCode,
+                paynowNumber,
               }}
               onClose={() => setShowPaymentModal(false)}
               onSuccess={handleSuccess}
@@ -259,7 +265,9 @@ export function GoingButton({
                 id: eventId,
                 name: eventName,
                 price: price || 0,
-                stripeEnabled,
+                paynowEnabled,
+                paynowQrCode,
+                paynowNumber,
               }}
               onClose={() => setShowPaymentModal(false)}
               onSuccess={handleSuccess}
@@ -332,7 +340,9 @@ export function GoingButton({
               id: eventId,
               name: eventName,
               price: price || 0,
-              stripeEnabled,
+              paynowEnabled,
+              paynowQrCode,
+              paynowNumber,
             }}
             onClose={() => setShowPaymentModal(false)}
             onSuccess={handleSuccess}

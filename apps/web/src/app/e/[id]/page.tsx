@@ -402,7 +402,9 @@ export default async function EventDetailPage({ params }: Props) {
                     // Pricing fields
                     isFree: event.isFree,
                     price: event.price,
-                    stripeEnabled: event.stripeEnabled,
+                    paynowEnabled: event.paynowEnabled,
+                    paynowQrCode: event.paynowQrCode,
+                    paynowNumber: event.paynowNumber,
                   }}
                   initialGoingCount={goingCount}
                 />

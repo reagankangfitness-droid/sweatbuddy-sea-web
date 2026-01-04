@@ -22,24 +22,22 @@ interface EventPageClientProps {
     // Pricing fields
     isFree?: boolean
     price?: number | null
-    stripeEnabled?: boolean
+    paynowEnabled?: boolean
+    paynowQrCode?: string | null
+    paynowNumber?: string | null
   }
   initialGoingCount: number
 }
-
-// Platform fee percentage
-const PLATFORM_FEE_PERCENT = 5
 
 export function EventPageClient({ event, initialGoingCount }: EventPageClientProps) {
   const [copied, setCopied] = useState(false)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
 
-  const isPaidEvent = !event.isFree && event.price && event.price > 0
+  // Paid event = has price AND PayNow is enabled
+  const isPaidEvent = !event.isFree && event.price && event.price > 0 && event.paynowEnabled
 
-  // Calculate total with platform fee
-  const totalPrice = isPaidEvent && event.price
-    ? event.price + Math.round(event.price * (PLATFORM_FEE_PERCENT / 100))
-    : 0
+  // Price in dollars (no platform fee for PayNow)
+  const priceFormatted = event.price ? (event.price / 100).toFixed(2) : '0'
 
   const handleShare = async () => {
     // Use slug for cleaner URLs if available, otherwise fall back to ID
@@ -83,7 +81,7 @@ export function EventPageClient({ event, initialGoingCount }: EventPageClientPro
               <>
                 <span>Join & Pay</span>
                 <span className="text-purple-200">•</span>
-                <span>${(totalPrice / 100).toFixed(2)}</span>
+                <span>${priceFormatted}</span>
               </>
             )}
           </button>
@@ -94,7 +92,9 @@ export function EventPageClient({ event, initialGoingCount }: EventPageClientPro
                 id: event.id,
                 name: event.name,
                 price: event.price || 0,
-                stripeEnabled: event.stripeEnabled,
+                paynowEnabled: event.paynowEnabled,
+                paynowQrCode: event.paynowQrCode,
+                paynowNumber: event.paynowNumber,
               }}
               onClose={() => setShowPaymentModal(false)}
               onSuccess={() => {

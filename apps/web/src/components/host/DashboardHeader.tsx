@@ -76,7 +76,7 @@ export function DashboardHeader() {
           </Link>
 
           {/* User Profile & Logout */}
-          <div className="flex items-center gap-3 pl-3 border-l border-neutral-200">
+          <div className="flex items-center gap-4 pl-4 border-l border-neutral-200">
             {session && (
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
@@ -89,7 +89,7 @@ export function DashboardHeader() {
             )}
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-red-500 hover:bg-red-600 rounded-full transition-colors shadow-sm"
             >
               <LogOut className="w-4 h-4" />
               Log out

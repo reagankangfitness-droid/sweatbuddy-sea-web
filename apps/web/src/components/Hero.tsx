@@ -1,10 +1,9 @@
 'use client'
 
 import { useState, useEffect, memo, useCallback } from 'react'
-import { ArrowDown, ArrowRight } from 'lucide-react'
+import { ArrowDown } from 'lucide-react'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { AnimatedCounter } from './ui/AnimatedCounter'
 
 // Helper to scroll to element with retry for dynamic content
 const scrollToElement = (elementId: string, maxAttempts = 10) => {
@@ -34,41 +33,14 @@ const scrollToElement = (elementId: string, maxAttempts = 10) => {
   tryScroll()
 }
 
-const heroSlides = [
-  {
-    headline: "Find Your Crew.",
-    subline: "Show Up.",
-    image: "/images/hero-2.jpg",
-    alt: "Outdoor yoga class in the park",
-  },
-  {
-    headline: "Run Clubs.",
-    subline: "Yoga. HIIT. More.",
-    image: "/images/hero-1.webp",
-    alt: "Group fitness workout outdoors",
-  },
-  {
-    headline: "Real People.",
-    subline: "Open Workouts.",
-    image: "/images/hero-3.jpg",
-    alt: "Community workout session",
-  },
-]
-
 // Memoized Hero component
 export const Hero = memo(function Hero() {
-  const [currentSlide, setCurrentSlide] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
 
   useEffect(() => {
     setIsLoaded(true)
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
-    }, 5000)
-
-    return () => clearInterval(interval)
   }, [])
 
   const handleHashClick = useCallback((e: React.MouseEvent, href: string) => {
@@ -84,8 +56,6 @@ export const Hero = memo(function Hero() {
     }
   }, [pathname, router])
 
-  const slide = heroSlides[currentSlide]
-
   return (
     <section className="relative min-h-[100svh] flex items-center overflow-hidden bg-neutral-950">
       {/* Dark background base */}
@@ -98,146 +68,78 @@ export const Hero = memo(function Hero() {
         <div className="floating-orb floating-orb-3 absolute bottom-20 left-1/3" />
       </div>
 
-      {/* Image Background Slideshow */}
+      {/* Image Background */}
       <div className="absolute inset-0">
-        {heroSlides.map((s, index) => (
-          <div
-            key={index}
-            className="absolute inset-0 transition-opacity duration-700 ease-out"
-            style={{
-              opacity: currentSlide === index ? 1 : 0,
-              transform: currentSlide === index ? 'scale(1)' : 'scale(1.05)',
-              transition: 'opacity 0.7s ease-out, transform 0.7s ease-out',
-            }}
-          >
-            <Image
-              src={s.image}
-              alt={s.alt}
-              fill
-              priority={index === 0}
-              loading={index === 0 ? 'eager' : 'lazy'}
-              className="object-cover"
-              sizes="100vw"
-            />
-          </div>
-        ))}
+        <Image
+          src="/images/hero-2.jpg"
+          alt="Group fitness workout outdoors"
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
 
         {/* Animated gradient overlay */}
         <div className="absolute inset-0 animated-gradient-dark opacity-60" />
 
-        {/* Premium minimalist gradient overlay - elegant, refined */}
+        {/* Premium minimalist gradient overlay */}
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(to right, rgba(10, 10, 10, 0.75) 0%, rgba(10, 10, 10, 0.5) 40%, rgba(10, 10, 10, 0.3) 70%, rgba(10, 10, 10, 0.2) 100%)'
+            background: 'linear-gradient(to right, rgba(10, 10, 10, 0.8) 0%, rgba(10, 10, 10, 0.6) 40%, rgba(10, 10, 10, 0.4) 70%, rgba(10, 10, 10, 0.3) 100%)'
           }}
         />
       </div>
 
       {/* Content */}
       <div className="relative z-10 max-w-content mx-auto w-full px-6 lg:px-10 py-20 md:py-32">
-        <div className="max-w-2xl">
-          {/* Animated headline - typography does all the work */}
-          <div
-            key={currentSlide}
-            className={`transition-opacity duration-400 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-          >
-            <h1
-              className="font-semibold text-white mb-2"
-              style={{
-                fontSize: 'clamp(40px, 10vw, 64px)',
-                lineHeight: '1.05',
-                letterSpacing: '-0.025em',
-                animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.1s both' : 'none',
-              }}
-            >
-              {slide.headline}
-            </h1>
-            <h1
-              className="font-semibold text-white/80 mb-10"
-              style={{
-                fontSize: 'clamp(40px, 10vw, 64px)',
-                lineHeight: '1.05',
-                letterSpacing: '-0.025em',
-                animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.2s both' : 'none',
-              }}
-            >
-              {slide.subline}
-            </h1>
-          </div>
-
-          {/* Subhead - clean, minimal */}
-          <p
-            className="text-white/60 mb-12 max-w-lg"
+        <div className="max-w-3xl">
+          {/* Main headline */}
+          <h1
+            className="font-bold text-white mb-6"
             style={{
-              fontSize: 'clamp(16px, 2vw, 18px)',
-              lineHeight: '1.7',
-              animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.3s both' : 'none',
+              fontSize: 'clamp(40px, 8vw, 72px)',
+              lineHeight: '1.05',
+              letterSpacing: '-0.025em',
+              opacity: isLoaded ? 1 : 0,
+              transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 0.5s ease-out 0.1s, transform 0.5s ease-out 0.1s',
             }}
           >
-            Run clubs. Yoga circles. HIIT squads. Real people hosting open workouts in your city. No memberships. No sign-ups. Just show up.
+            Show up alone.
+            <br />
+            <span className="text-white/90">Leave with a crew.</span>
+          </h1>
+
+          {/* Subheadline */}
+          <p
+            className="text-white/70 mb-10 max-w-xl"
+            style={{
+              fontSize: 'clamp(18px, 2.5vw, 22px)',
+              lineHeight: '1.6',
+              opacity: isLoaded ? 1 : 0,
+              transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 0.5s ease-out 0.2s, transform 0.5s ease-out 0.2s',
+            }}
+          >
+            Find fitness events across Singapore where strangers become friends.
           </p>
 
-          {/* Stats - clean, typographic hierarchy with animated counters */}
+          {/* CTA Button */}
           <div
-            className="flex flex-wrap items-center gap-8 mb-12"
-            style={{ animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.4s both' : 'none' }}
+            style={{
+              opacity: isLoaded ? 1 : 0,
+              transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+              transition: 'opacity 0.5s ease-out 0.3s, transform 0.5s ease-out 0.3s',
+            }}
           >
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
-                <AnimatedCounter value={50} duration={1500} suffix="+" />
-              </span>
-              <span className="text-white/40 text-sm">events weekly</span>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">
-                <AnimatedCounter value={3} duration={1000} />
-              </span>
-              <span className="text-white/40 text-sm">cities</span>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl sm:text-3xl font-semibold text-white tracking-tight">Updated</span>
-              <span className="text-white/40 text-sm">weekly</span>
-            </div>
-          </div>
-
-          {/* CTAs - Two equal buttons */}
-          <div
-            className="flex flex-col sm:flex-row gap-4"
-            style={{ animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.5s both' : 'none' }}
-          >
-            {/* Attendee CTA - White/Primary */}
             <button
               onClick={(e) => handleHashClick(e, '#events')}
-              className="px-8 py-4 bg-white text-neutral-900 rounded-full font-medium text-lg hover:bg-neutral-100 transition-colors text-center"
+              className="px-10 py-5 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 transition-colors shadow-lg"
             >
-              Find a Workout
-            </button>
-
-            {/* Host CTA - Outline/Secondary */}
-            <button
-              onClick={(e) => handleHashClick(e, '#submit-desktop')}
-              className="px-8 py-4 bg-transparent text-white rounded-full font-medium text-lg border-2 border-white hover:bg-white hover:text-neutral-900 transition-colors text-center"
-            >
-              Host an Event
+              Browse Events
             </button>
           </div>
-        </div>
-
-        {/* Slide indicators - minimal dots */}
-        <div className="absolute bottom-32 left-6 lg:left-10 flex gap-2">
-          {heroSlides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                index === currentSlide
-                  ? 'w-8 bg-white'
-                  : 'w-1.5 bg-white/30 hover:bg-white/50'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
         </div>
       </div>
 
@@ -252,7 +154,7 @@ export const Hero = memo(function Hero() {
         </div>
       </div>
 
-      {/* Bottom transition to white - subtle */}
+      {/* Bottom transition to white */}
       <div
         className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
         style={{

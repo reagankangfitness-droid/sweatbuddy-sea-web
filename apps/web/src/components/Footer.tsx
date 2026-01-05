@@ -15,7 +15,7 @@ export function Footer() {
               </span>
             </div>
             <p className="text-neutral-500 text-sm max-w-xs leading-relaxed">
-              Find your workout. Just show up.
+              Show up alone. Leave with a crew.
             </p>
           </div>
 
@@ -66,14 +66,14 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar - subtle divider */}
+        {/* Bottom bar */}
         <div className="mt-16 pt-8 border-t border-neutral-200 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-neutral-400">
-            © {new Date().getFullYear()} SweatBuddies. Made with 💪 for the community.
+            © {new Date().getFullYear()} SweatBuddies
           </p>
-          <div className="flex items-center gap-4">
-            <span className="text-xs text-neutral-400">Built for the community</span>
-          </div>
+          <p className="text-xs text-neutral-500 font-medium">
+            Show up alone. Leave with a crew.
+          </p>
         </div>
       </div>
     </footer>

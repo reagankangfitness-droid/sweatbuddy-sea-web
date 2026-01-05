@@ -1,41 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ArrowRight, ArrowDown } from 'lucide-react'
+import { ArrowDown } from 'lucide-react'
 import Image from 'next/image'
-import { AnimatedCounter } from './ui/AnimatedCounter'
-
-const heroSlides = [
-  {
-    headline: "Find Your Crew.",
-    subline: "Show Up.",
-    image: "/images/hero-2.jpg",
-    alt: "Outdoor yoga class in the park",
-  },
-  {
-    headline: "Run Clubs.",
-    subline: "Yoga. HIIT. More.",
-    image: "/images/hero-1.webp",
-    alt: "Group fitness workout outdoors",
-  },
-  {
-    headline: "Real People.",
-    subline: "Open Workouts.",
-    image: "/images/hero-3.jpg",
-    alt: "Community workout session",
-  },
-]
 
 export function MobileHero() {
-  const [currentSlide, setCurrentSlide] = useState(0)
   const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
     setIsLoaded(true)
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
-    }, 5000)
-    return () => clearInterval(interval)
   }, [])
 
   const handleClick = (href: string) => {
@@ -51,8 +24,6 @@ export function MobileHero() {
     scrollToElement()
   }
 
-  const slide = heroSlides[currentSlide]
-
   return (
     <div className="md:hidden relative min-h-[100svh] flex flex-col justify-end overflow-hidden bg-neutral-950">
       {/* Dark background base */}
@@ -65,143 +36,76 @@ export function MobileHero() {
         <div className="floating-orb floating-orb-3 absolute bottom-1/4 right-0 scale-50" />
       </div>
 
-      {/* Image Background Slideshow */}
+      {/* Image Background */}
       <div className="absolute inset-0">
-        {heroSlides.map((s, index) => (
-          <div
-            key={index}
-            className="absolute inset-0 transition-opacity duration-700 ease-out"
-            style={{
-              opacity: currentSlide === index ? 1 : 0,
-              transform: currentSlide === index ? 'scale(1)' : 'scale(1.05)',
-              transition: 'opacity 0.7s ease-out, transform 0.7s ease-out',
-            }}
-          >
-            <Image
-              src={s.image}
-              alt={s.alt}
-              fill
-              priority={index === 0}
-              loading={index === 0 ? 'eager' : 'lazy'}
-              className="object-cover"
-              sizes="100vw"
-            />
-          </div>
-        ))}
+        <Image
+          src="/images/hero-2.jpg"
+          alt="Group fitness workout outdoors"
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
 
         {/* Animated gradient overlay */}
         <div className="absolute inset-0 animated-gradient-dark opacity-50" />
 
-        {/* Gradient overlay - matches desktop */}
+        {/* Gradient overlay */}
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(to top, rgba(10, 10, 10, 0.85) 0%, rgba(10, 10, 10, 0.5) 40%, rgba(10, 10, 10, 0.3) 70%, rgba(10, 10, 10, 0.2) 100%)'
+            background: 'linear-gradient(to top, rgba(10, 10, 10, 0.9) 0%, rgba(10, 10, 10, 0.6) 40%, rgba(10, 10, 10, 0.4) 70%, rgba(10, 10, 10, 0.3) 100%)'
           }}
         />
       </div>
 
       {/* Content */}
       <div className="relative z-10 px-5 pb-24 pt-32">
-        {/* Animated headline */}
-        <div
-          key={currentSlide}
-          className={`transition-opacity duration-400 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-        >
-          <h1
-            className="font-semibold text-white mb-1"
-            style={{
-              fontSize: 'clamp(36px, 10vw, 48px)',
-              lineHeight: '1.1',
-              letterSpacing: '-0.02em',
-              animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.1s both' : 'none',
-            }}
-          >
-            {slide.headline}
-          </h1>
-          <h1
-            className="font-semibold text-white/80 mb-6"
-            style={{
-              fontSize: 'clamp(36px, 10vw, 48px)',
-              lineHeight: '1.1',
-              letterSpacing: '-0.02em',
-              animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.2s both' : 'none',
-            }}
-          >
-            {slide.subline}
-          </h1>
-        </div>
-
-        {/* Subhead */}
-        <p
-          className="text-white/60 text-base mb-8 max-w-xs"
+        {/* Main headline */}
+        <h1
+          className="font-bold text-white mb-4"
           style={{
-            lineHeight: '1.6',
-            animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.3s both' : 'none',
+            fontSize: 'clamp(36px, 10vw, 48px)',
+            lineHeight: '1.1',
+            letterSpacing: '-0.02em',
+            opacity: isLoaded ? 1 : 0,
+            transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'opacity 0.5s ease-out 0.1s, transform 0.5s ease-out 0.1s',
           }}
         >
-          Real people hosting open workouts in your city. No memberships. Just show up.
+          Show up alone.
+          <br />
+          <span className="text-white/90">Leave with a crew.</span>
+        </h1>
+
+        {/* Subheadline */}
+        <p
+          className="text-white/70 text-lg mb-8 max-w-xs"
+          style={{
+            lineHeight: '1.5',
+            opacity: isLoaded ? 1 : 0,
+            transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'opacity 0.5s ease-out 0.2s, transform 0.5s ease-out 0.2s',
+          }}
+        >
+          Find fitness events across Singapore where strangers become friends.
         </p>
 
-        {/* Stats - matches desktop inline style with animated counters */}
+        {/* CTA Button */}
         <div
-          className="flex flex-wrap items-center gap-6 mb-8"
-          style={{ animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.4s both' : 'none' }}
+          className="w-full"
+          style={{
+            opacity: isLoaded ? 1 : 0,
+            transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'opacity 0.5s ease-out 0.3s, transform 0.5s ease-out 0.3s',
+          }}
         >
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-semibold text-white tracking-tight">
-              <AnimatedCounter value={50} duration={1500} suffix="+" />
-            </span>
-            <span className="text-white/40 text-sm">events weekly</span>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-semibold text-white tracking-tight">
-              <AnimatedCounter value={3} duration={1000} />
-            </span>
-            <span className="text-white/40 text-sm">cities</span>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-semibold text-white tracking-tight">Updated</span>
-            <span className="text-white/40 text-sm">weekly</span>
-          </div>
-        </div>
-
-        {/* CTAs - Two equal buttons */}
-        <div
-          className="flex flex-col gap-3 w-full"
-          style={{ animation: isLoaded ? 'fadeInUp 0.5s ease-out 0.5s both' : 'none' }}
-        >
-          {/* Attendee CTA - White/Primary */}
           <button
             onClick={() => handleClick('events')}
-            className="w-full px-8 py-4 bg-white text-neutral-900 rounded-full font-medium text-lg hover:bg-neutral-100 transition-colors text-center"
+            className="w-full px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 transition-colors text-center shadow-lg"
           >
-            Find a Workout
+            Browse Events
           </button>
-
-          {/* Host CTA - Outline/Secondary */}
-          <button
-            onClick={() => handleClick('submit-mobile')}
-            className="w-full px-8 py-4 bg-transparent text-white rounded-full font-medium text-lg border-2 border-white hover:bg-white hover:text-neutral-900 transition-colors text-center"
-          >
-            Host an Event
-          </button>
-        </div>
-
-        {/* Slide indicators - minimal dots */}
-        <div className="flex gap-2 mt-8">
-          {heroSlides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                index === currentSlide
-                  ? 'w-8 bg-white'
-                  : 'w-1.5 bg-white/30'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
         </div>
       </div>
 
@@ -216,7 +120,7 @@ export function MobileHero() {
         </div>
       </div>
 
-      {/* Bottom transition to white - matches desktop */}
+      {/* Bottom transition to white */}
       <div
         className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none z-20"
         style={{

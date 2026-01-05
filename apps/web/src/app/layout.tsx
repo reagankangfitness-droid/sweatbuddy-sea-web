@@ -21,11 +21,11 @@ const BASE_URL = 'https://www.sweatbuddies.co'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'SweatBuddies — Find Your Crew. Show Up.',
+    default: 'SweatBuddies | Find Fitness Events in Singapore',
     template: '%s | SweatBuddies',
   },
-  description: 'Find run clubs, yoga, HIIT, cold plunge and more in Singapore. No membership. Just show up.',
-  keywords: ['fitness events', 'Singapore', 'run club', 'yoga', 'bootcamp', 'outdoor fitness', 'community events', 'workout', 'HIIT', 'cold plunge'],
+  description: 'Show up alone. Leave with a crew. Find run clubs, yoga, HIIT and fitness events across Singapore. No membership required.',
+  keywords: ['fitness events', 'Singapore', 'run club', 'yoga', 'bootcamp', 'outdoor fitness', 'community events', 'workout', 'HIIT', 'group fitness'],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
   icons: {
@@ -38,21 +38,21 @@ export const metadata: Metadata = {
     locale: 'en_SG',
     url: BASE_URL,
     siteName: 'SweatBuddies',
-    title: 'SweatBuddies — Find Your Crew. Show Up.',
-    description: 'Find run clubs, yoga, HIIT, cold plunge and more in Singapore. No membership. Just show up.',
+    title: 'SweatBuddies | Find Fitness Events in Singapore',
+    description: 'Show up alone. Leave with a crew. Find run clubs, yoga, HIIT and fitness events across Singapore.',
     images: [
       {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SweatBuddies — Find Your Crew. Show Up.',
+        alt: 'SweatBuddies — Show up alone. Leave with a crew.',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SweatBuddies — Find Your Crew. Show Up.',
-    description: 'Find run clubs, yoga, HIIT, cold plunge and more in Singapore. No membership. Just show up.',
+    title: 'SweatBuddies | Find Fitness Events in Singapore',
+    description: 'Show up alone. Leave with a crew. Find fitness events across Singapore.',
     images: ['/images/og-image.jpg'],
   },
   robots: {

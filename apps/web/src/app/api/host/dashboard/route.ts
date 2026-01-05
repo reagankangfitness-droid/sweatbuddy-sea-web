@@ -16,8 +16,22 @@ interface DashboardEvent {
   recurring: boolean
   goingCount: number
   organizer: string
-  showUpRate?: number | null // Percentage of actuallyAttended
+  showUpRate?: number | null
   attendedCount?: number
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED'
+  rejectionReason?: string | null
+  slug?: string | null
+}
+
+interface RecentActivity {
+  id: string
+  eventId: string
+  eventName: string
+  attendeeName: string | null
+  attendeeEmail: string
+  timestamp: string
+  type: 'rsvp' | 'paid'
+  amount?: number | null
 }
 
 export async function GET() {
@@ -30,14 +44,13 @@ export async function GET() {
 
     const instagramHandle = session.instagramHandle
 
-    // Get all events for this organizer from submissions
-    const submissions = await prisma.eventSubmission.findMany({
+    // Get ALL events for this organizer (approved, pending, rejected)
+    const allSubmissions = await prisma.eventSubmission.findMany({
       where: {
         organizerInstagram: {
           equals: instagramHandle,
           mode: 'insensitive',
         },
-        status: 'APPROVED',
       },
       orderBy: { eventDate: 'asc' },
       select: {
@@ -51,8 +64,14 @@ export async function GET() {
         imageUrl: true,
         recurring: true,
         organizerInstagram: true,
+        status: true,
+        rejectionReason: true,
+        slug: true,
       },
     })
+
+    // Filter approved submissions for stats calculations
+    const submissions = allSubmissions.filter(s => s.status === 'APPROVED')
 
     // Get attendance counts for all events
     const eventIds = submissions.map((s) => s.id)
@@ -83,7 +102,8 @@ export async function GET() {
     const now = new Date()
     now.setHours(0, 0, 0, 0)
 
-    const allEvents: DashboardEvent[] = submissions.map((s) => {
+    // Map ALL submissions (for tabs display)
+    const mapEvent = (s: typeof allSubmissions[0]): DashboardEvent => {
       const goingCount = countMap.get(s.id) || 0
       const attendedCount = attendedMap.get(s.id) || 0
       const showUpRate = goingCount > 0 && attendedCount > 0
@@ -104,8 +124,17 @@ export async function GET() {
         organizer: s.organizerInstagram,
         attendedCount,
         showUpRate,
+        status: s.status as 'PENDING' | 'APPROVED' | 'REJECTED',
+        rejectionReason: s.rejectionReason,
+        slug: s.slug,
       }
-    })
+    }
+
+    const allEvents: DashboardEvent[] = submissions.map(mapEvent)
+
+    // Pending and rejected events
+    const pendingEvents = allSubmissions.filter(s => s.status === 'PENDING').map(mapEvent)
+    const rejectedEvents = allSubmissions.filter(s => s.status === 'REJECTED').map(mapEvent)
 
     // For recurring events without a date, consider them as upcoming
     const upcoming = allEvents.filter((event) => {
@@ -171,16 +200,50 @@ export async function GET() {
         attendanceCount: a._count.id,
       }))
 
+    // Get recent activity (last 10 signups across all events)
+    const recentSignups = await prisma.eventAttendance.findMany({
+      where: {
+        eventId: { in: eventIds },
+      },
+      orderBy: { timestamp: 'desc' },
+      take: 10,
+      select: {
+        id: true,
+        eventId: true,
+        eventName: true,
+        name: true,
+        email: true,
+        timestamp: true,
+        paymentStatus: true,
+        paymentAmount: true,
+      },
+    })
+
+    const recentActivity: RecentActivity[] = recentSignups.map(s => ({
+      id: s.id,
+      eventId: s.eventId,
+      eventName: s.eventName,
+      attendeeName: s.name,
+      attendeeEmail: s.email,
+      timestamp: s.timestamp.toISOString(),
+      type: s.paymentStatus === 'paid' ? 'paid' : 'rsvp',
+      amount: s.paymentAmount,
+    }))
+
     return NextResponse.json({
       stats: {
         activeEvents: upcoming.length,
+        pendingEvents: pendingEvents.length,
         totalSignups,
-        totalEarnings, // in cents
-        totalRevenue,  // in cents
+        totalEarnings,
+        totalRevenue,
         paidAttendees: paidAttendeesCount,
       },
       upcoming,
       past,
+      pending: pendingEvents,
+      rejected: rejectedEvents,
+      recentActivity,
       topRegulars,
     })
   } catch (error) {

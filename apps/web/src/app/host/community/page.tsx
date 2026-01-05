@@ -57,8 +57,7 @@ export default function CommunityPage() {
 
   // Quick message modal
   const [showMessageModal, setShowMessageModal] = useState(false)
-  const [messageAudience, setMessageAudience] = useState<'all' | 'regulars' | 'event'>('all')
-  const [selectedEventId, setSelectedEventId] = useState<string>('')
+  const [messageAudience, setMessageAudience] = useState<'all' | 'regulars'>('all')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -141,17 +140,6 @@ export default function CommunityPage() {
     navigator.clipboard.writeText(generateMessage())
     alert('Message copied to clipboard!')
     setShowMessageModal(false)
-  }
-
-  const getAudienceCount = () => {
-    switch (messageAudience) {
-      case 'regulars':
-        return attendees.filter(a => a.eventsRSVPd >= 3).length
-      case 'event':
-        return selectedEventId ? 'varies' : 0
-      default:
-        return attendees.length
-    }
   }
 
   if (isLoading) {

@@ -21,6 +21,7 @@ interface Attendee {
   verifiedBy: string | null
   verifiedAt: string | null
   totalAttendance: number
+  isFirstTimer: boolean
   actuallyAttended: boolean | null
   markedAttendedAt: string | null
   markedAttendedBy: string | null
@@ -28,6 +29,8 @@ interface Attendee {
 
 interface AttendanceStats {
   totalRSVPs: number
+  firstTimerCount: number
+  returningCount: number
   markedAttended: number
   markedNoShow: number
   unmarked: number
@@ -56,6 +59,8 @@ export default function AttendeesPage() {
   const eventId = params.eventId as string
 
   const [attendees, setAttendees] = useState<Attendee[]>([])
+  const [firstTimers, setFirstTimers] = useState<Attendee[]>([])
+  const [returningAttendees, setReturningAttendees] = useState<Attendee[]>([])
   const [event, setEvent] = useState<EventDetails | null>(null)
   const [stats, setStats] = useState<AttendanceStats | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -94,6 +99,8 @@ export default function AttendeesPage() {
         }
         const attendeesData = await attendeesRes.json()
         setAttendees(attendeesData.attendees || [])
+        setFirstTimers(attendeesData.firstTimers || [])
+        setReturningAttendees(attendeesData.returning || [])
         setStats(attendeesData.stats || null)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong')
@@ -233,6 +240,16 @@ export default function AttendeesPage() {
   const pendingPayments = attendees.filter(a => a.paymentStatus === 'pending')
   const confirmedAttendees = attendees.filter(a => a.paymentStatus === 'paid' || a.paymentStatus === 'free' || !a.paymentStatus)
 
+  // Send welcome message to first-timers via WhatsApp
+  const handleSendWelcome = () => {
+    const names = firstTimers.map(a => a.name || a.email.split('@')[0]).slice(0, 5).join(', ')
+    const moreCount = firstTimers.length > 5 ? ` and ${firstTimers.length - 5} more` : ''
+    const message = encodeURIComponent(
+      `Hey! Welcome to the crew 🙌\n\nExcited to have ${names}${moreCount} joining us for ${event?.name || 'the event'}!\n\nHere's what to know:\n📍 Check the event page for location\n⏰ Arrive a few minutes early\n\nSee you there!`
+    )
+    window.open(`https://wa.me/?text=${message}`, '_blank')
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -344,6 +361,61 @@ export default function AttendeesPage() {
           </div>
         )}
 
+        {/* First-Timers Section */}
+        {firstTimers.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-neutral-900 flex items-center gap-2">
+                <span className="text-lg">🆕</span>
+                First-Timers ({firstTimers.length})
+              </h2>
+              <button
+                onClick={handleSendWelcome}
+                className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-full text-sm font-medium hover:bg-amber-600 transition-colors"
+              >
+                <Mail className="w-4 h-4" />
+                Send Welcome
+              </button>
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+              <p className="text-sm text-amber-700 mb-4">
+                These people are new to your events - a warm welcome goes a long way!
+              </p>
+              <div className="grid gap-2">
+                {firstTimers.map((attendee) => (
+                  <div
+                    key={attendee.id}
+                    className="flex items-center justify-between bg-white rounded-lg p-3 border border-amber-100"
+                  >
+                    <div className="flex items-center gap-3">
+                      <AttendanceToggleCompact
+                        attendeeId={attendee.id}
+                        eventId={eventId}
+                        initialValue={attendee.actuallyAttended}
+                        onUpdate={(value) => handleAttendanceUpdate(attendee.id, value)}
+                      />
+                      <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+                        <span className="text-amber-700 font-medium text-sm">
+                          {(attendee.name?.[0] || attendee.email[0]).toUpperCase()}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-neutral-900 text-sm">
+                          {attendee.name || 'Anonymous'}
+                        </p>
+                        <p className="text-xs text-neutral-500">{attendee.email}</p>
+                      </div>
+                    </div>
+                    <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-700">
+                      👋 First time!
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Pending Payments - Show first if any */}
         {pendingPayments.length > 0 && (
           <div className="mb-8">
@@ -410,15 +482,20 @@ export default function AttendeesPage() {
           </div>
         )}
 
-        {/* Confirmed Attendees */}
+        {/* Returning Attendees */}
         <div>
           <h2 className="text-lg font-semibold text-neutral-900 mb-4 flex items-center gap-2">
-            <Check className="w-5 h-5 text-green-500" />
-            Confirmed ({confirmedAttendees.length})
+            <Users className="w-5 h-5 text-blue-500" />
+            {returningAttendees.length > 0 ? `Returning (${returningAttendees.length})` : `All Attendees (${confirmedAttendees.length})`}
           </h2>
-          {confirmedAttendees.length > 0 ? (
+          {/* Show returning attendees (non-first-timers, excluding pending) */}
+          {(() => {
+            const displayAttendees = firstTimers.length > 0
+              ? confirmedAttendees.filter(a => !a.isFirstTimer)
+              : confirmedAttendees
+            return displayAttendees.length > 0 ? (
             <div className="border border-neutral-200 rounded-xl overflow-hidden">
-              {confirmedAttendees.map((attendee) => (
+              {displayAttendees.map((attendee) => (
                 <div
                   key={attendee.id}
                   className="flex items-center justify-between p-4 border-b border-neutral-100 last:border-0"
@@ -499,10 +576,15 @@ export default function AttendeesPage() {
           ) : (
             <div className="p-8 bg-neutral-50 rounded-xl text-center">
               <span className="text-4xl mb-3 block">👋</span>
-              <p className="font-medium text-neutral-900 mb-1">No RSVPs yet</p>
-              <p className="text-sm text-neutral-500">Share your event to get the word out!</p>
+              <p className="font-medium text-neutral-900 mb-1">
+                {firstTimers.length > 0 ? 'No returning attendees yet' : 'No RSVPs yet'}
+              </p>
+              <p className="text-sm text-neutral-500">
+                {firstTimers.length > 0 ? 'Everyone here is new!' : 'Share your event to get the word out!'}
+              </p>
             </div>
-          )}
+          )
+          })()}
         </div>
       </main>
 

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Copy, Loader2 } from 'lucide-react'
+import { Copy, Loader2, Users } from 'lucide-react'
 import { ShareEventButtons } from './ShareEventButtons'
 
 interface Event {
@@ -55,7 +55,6 @@ export function UpcomingEventRow({ event }: UpcomingEventRowProps) {
         throw new Error(data.error || 'Failed to duplicate event')
       }
 
-      // Show success and refresh the page to show the duplicated event
       alert(`Event duplicated! "${data.event.name}" will be reviewed before going live.`)
       router.refresh()
     } catch (error) {
@@ -67,10 +66,10 @@ export function UpcomingEventRow({ event }: UpcomingEventRowProps) {
   }
 
   return (
-    <div className="p-4">
-      <div className="flex gap-4">
+    <div className="p-3 sm:p-4">
+      <div className="flex gap-3 sm:gap-4">
         {/* Thumbnail */}
-        <div className="w-20 h-20 rounded-lg bg-neutral-100 overflow-hidden flex-shrink-0">
+        <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-lg bg-neutral-100 overflow-hidden flex-shrink-0">
           {event.imageUrl ? (
             <Image
               src={event.imageUrl}
@@ -81,7 +80,7 @@ export function UpcomingEventRow({ event }: UpcomingEventRowProps) {
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-neutral-300">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
@@ -90,55 +89,59 @@ export function UpcomingEventRow({ event }: UpcomingEventRowProps) {
 
         {/* Details */}
         <div className="flex-1 min-w-0">
+          {/* Title and going count */}
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold text-neutral-900 truncate">
+            <h3 className="font-semibold text-neutral-900 text-sm sm:text-base truncate">
               {event.name}
             </h3>
-            <span
-              className="text-sm text-neutral-500 whitespace-nowrap flex-shrink-0"
-              title="People who saved their spot"
-            >
-              {event.goingCount === 0 ? 'No one yet' : event.goingCount === 1 ? '1 person going' : `${event.goingCount} people going`}
+            {/* Desktop: text, Mobile: icon with count */}
+            <span className="hidden sm:inline text-sm text-neutral-500 whitespace-nowrap flex-shrink-0">
+              {event.goingCount === 0 ? 'No one yet' : event.goingCount === 1 ? '1 going' : `${event.goingCount} going`}
+            </span>
+            <span className="sm:hidden flex items-center gap-1 text-xs text-neutral-500 flex-shrink-0">
+              <Users className="w-3 h-3" />
+              {event.goingCount}
             </span>
           </div>
 
-          <p className="text-sm text-neutral-500 mt-1">
+          {/* Date and time */}
+          <p className="text-xs sm:text-sm text-neutral-500 mt-0.5 sm:mt-1">
             {formatDate(event.date, event.recurring)} · {event.time}
           </p>
 
-          <p className="text-sm text-neutral-400 truncate">
+          {/* Location - hidden on very small screens */}
+          <p className="text-xs sm:text-sm text-neutral-400 truncate hidden xs:block">
             {event.location}
           </p>
 
-          {/* Actions */}
-          <div className="flex items-center gap-4 mt-3">
+          {/* Actions - responsive layout */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 sm:mt-3">
             <Link
               href={`/host/events/${event.id}/attendees`}
-              className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
+              className="text-xs sm:text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
             >
-              View Attendees
+              Attendees
             </Link>
             <Link
               href={`/host/events/${event.id}/edit`}
-              className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
-              title="Make changes to this event"
+              className="text-xs sm:text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
             >
               Edit
             </Link>
             <button
               onClick={handleDuplicate}
               disabled={isDuplicating}
-              className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors disabled:opacity-50 flex items-center gap-1"
+              className="text-xs sm:text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors disabled:opacity-50 flex items-center gap-1"
             >
               {isDuplicating ? (
                 <>
                   <Loader2 className="w-3 h-3 animate-spin" />
-                  <span>Duplicating...</span>
+                  <span className="hidden sm:inline">Duplicating...</span>
                 </>
               ) : (
                 <>
                   <Copy className="w-3 h-3" />
-                  <span>Duplicate</span>
+                  <span className="hidden sm:inline">Duplicate</span>
                 </>
               )}
             </button>

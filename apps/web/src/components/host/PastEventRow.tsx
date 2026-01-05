@@ -37,25 +37,29 @@ export function PastEventRow({ event }: PastEventRowProps) {
   return (
     <Link
       href={`/host/events/${event.id}/attendees`}
-      className="px-4 py-3 flex items-center justify-between hover:bg-neutral-50 transition-colors"
+      className="px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between hover:bg-neutral-50 transition-colors gap-3"
     >
-      <div className="flex items-center gap-2">
-        <span className="font-medium text-neutral-900">{event.name}</span>
+      <div className="flex items-center gap-2 min-w-0 flex-1">
+        <span className="font-medium text-neutral-900 text-sm sm:text-base truncate">{event.name}</span>
         {event.date && (
           <>
-            <span className="text-neutral-300">·</span>
-            <span className="text-neutral-500">{formatDate(event.date)}</span>
+            <span className="text-neutral-300 hidden sm:inline">·</span>
+            <span className="text-neutral-500 text-xs sm:text-sm hidden sm:inline">{formatDate(event.date)}</span>
           </>
         )}
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
         {showUpBadge && (
-          <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${showUpBadge.color}`}>
-            {event.showUpRate}% showed
+          <span className={`inline-flex items-center px-1.5 sm:px-2 py-0.5 text-xs font-medium rounded-full ${showUpBadge.color}`}>
+            <span className="hidden sm:inline">{event.showUpRate}% showed</span>
+            <span className="sm:hidden">{event.showUpRate}%</span>
           </span>
         )}
-        <span className="text-sm text-neutral-500">
-          {event.goingCount === 0 ? 'No one joined' : event.goingCount === 1 ? '1 person' : `${event.goingCount} people`}
+        <span className="text-xs sm:text-sm text-neutral-500">
+          <span className="hidden sm:inline">
+            {event.goingCount === 0 ? 'No one joined' : event.goingCount === 1 ? '1 person' : `${event.goingCount} people`}
+          </span>
+          <span className="sm:hidden">{event.goingCount}</span>
         </span>
       </div>
     </Link>

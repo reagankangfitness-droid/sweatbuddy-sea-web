@@ -45,6 +45,7 @@ export async function GET(
       select: { id: true },
     })
     const hostEventIds = hostEvents.map(e => e.id)
+    const otherEventIds = hostEventIds.filter(id => id !== eventId)
 
     // Fetch attendees with payment info and attendance tracking
     const attendees = await prisma.eventAttendance.findMany({
@@ -82,16 +83,43 @@ export async function GET(
       _count: { id: true },
     })
 
-    // Create lookup map for attendance counts
+    // Get prior attendance (excluding current event) to identify true first-timers
+    const priorAttendance = otherEventIds.length > 0
+      ? await prisma.eventAttendance.groupBy({
+          by: ['email'],
+          where: {
+            eventId: { in: otherEventIds },
+            email: { in: attendeeEmails, mode: 'insensitive' },
+          },
+          _count: { id: true },
+        })
+      : []
+
+    // Create lookup maps
     const countMap = new Map(
       attendanceCounts.map(item => [item.email.toLowerCase(), item._count.id])
     )
+    const priorCountMap = new Map(
+      priorAttendance.map(item => [item.email.toLowerCase(), item._count.id])
+    )
 
-    // Add attendance count to each attendee
-    const attendeesWithHistory = attendees.map(attendee => ({
-      ...attendee,
-      totalAttendance: countMap.get(attendee.email.toLowerCase()) || 1,
-    }))
+    // Add attendance count and first-timer flag to each attendee
+    const attendeesWithHistory = attendees.map(attendee => {
+      const emailLower = attendee.email.toLowerCase()
+      const totalAttendance = countMap.get(emailLower) || 1
+      const priorCount = priorCountMap.get(emailLower) || 0
+      const isFirstTimer = priorCount === 0 // No prior attendance with this host
+
+      return {
+        ...attendee,
+        totalAttendance,
+        isFirstTimer,
+      }
+    })
+
+    // Separate first-timers from returning attendees
+    const firstTimers = attendeesWithHistory.filter(a => a.isFirstTimer)
+    const returning = attendeesWithHistory.filter(a => !a.isFirstTimer)
 
     // Calculate attendance stats
     const totalRSVPs = attendees.length
@@ -110,8 +138,12 @@ export async function GET(
         price: event.price,
       },
       attendees: attendeesWithHistory,
+      firstTimers,
+      returning,
       stats: {
         totalRSVPs,
+        firstTimerCount: firstTimers.length,
+        returningCount: returning.length,
         markedAttended,
         markedNoShow,
         unmarked,

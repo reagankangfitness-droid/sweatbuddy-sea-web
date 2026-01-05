@@ -34,6 +34,15 @@ interface RecentActivity {
   amount?: number | null
 }
 
+interface AtRiskMember {
+  email: string
+  name: string | null
+  totalAttendance: number
+  lastAttendedDate: string
+  daysSinceLastAttended: number
+  missedEventCount: number
+}
+
 export async function GET() {
   try {
     // Check authentication
@@ -230,6 +239,94 @@ export async function GET() {
       amount: s.paymentAmount,
     }))
 
+    // At-Risk Member Detection
+    // Flag members who:
+    // 1. Have attended 3+ events with this host (they're regulars)
+    // 2. Haven't attended in 30+ days
+    // 3. Have missed 2+ events since their last attendance
+    const atRiskMembers: AtRiskMember[] = []
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+    // Get all past events (events that have already happened)
+    const pastEventIds = submissions
+      .filter(s => s.eventDate && new Date(s.eventDate) < now)
+      .map(s => s.id)
+
+    if (pastEventIds.length > 0) {
+      // Get all regulars (3+ attendances)
+      const regulars = await prisma.eventAttendance.groupBy({
+        by: ['email'],
+        where: { eventId: { in: eventIds } },
+        _count: { id: true },
+        having: { id: { _count: { gte: 3 } } },
+      })
+
+      const regularEmails = regulars.map(r => r.email.toLowerCase())
+
+      if (regularEmails.length > 0) {
+        // Get last attendance for each regular
+        const lastAttendances = await prisma.eventAttendance.findMany({
+          where: {
+            email: { in: regularEmails, mode: 'insensitive' },
+            eventId: { in: pastEventIds },
+          },
+          orderBy: { timestamp: 'desc' },
+          select: {
+            email: true,
+            name: true,
+            timestamp: true,
+            eventId: true,
+          },
+        })
+
+        // Group by email and get most recent attendance
+        const lastAttendanceMap = new Map<string, { name: string | null; timestamp: Date; eventId: string }>()
+        for (const attendance of lastAttendances) {
+          const emailLower = attendance.email.toLowerCase()
+          if (!lastAttendanceMap.has(emailLower)) {
+            lastAttendanceMap.set(emailLower, {
+              name: attendance.name,
+              timestamp: attendance.timestamp,
+              eventId: attendance.eventId,
+            })
+          }
+        }
+
+        // Count events that happened after each regular's last attendance
+        for (const [email, lastAttendance] of lastAttendanceMap) {
+          const daysSince = Math.floor(
+            (now.getTime() - lastAttendance.timestamp.getTime()) / (1000 * 60 * 60 * 24)
+          )
+
+          // Skip if attended within last 30 days
+          if (daysSince < 30) continue
+
+          // Count events they missed (events after their last attendance)
+          const missedEvents = submissions.filter(s => {
+            if (!s.eventDate) return false
+            return new Date(s.eventDate) > lastAttendance.timestamp && new Date(s.eventDate) < now
+          }).length
+
+          // Only flag if they missed 2+ events
+          if (missedEvents >= 2) {
+            const totalAttendance = regulars.find(r => r.email.toLowerCase() === email)?._count.id || 0
+            atRiskMembers.push({
+              email,
+              name: lastAttendance.name,
+              totalAttendance,
+              lastAttendedDate: lastAttendance.timestamp.toISOString().split('T')[0],
+              daysSinceLastAttended: daysSince,
+              missedEventCount: missedEvents,
+            })
+          }
+        }
+
+        // Sort by most at-risk (most days since last attended)
+        atRiskMembers.sort((a, b) => b.daysSinceLastAttended - a.daysSinceLastAttended)
+      }
+    }
+
     return NextResponse.json({
       stats: {
         activeEvents: upcoming.length,
@@ -238,6 +335,7 @@ export async function GET() {
         totalEarnings,
         totalRevenue,
         paidAttendees: paidAttendeesCount,
+        atRiskCount: atRiskMembers.length,
       },
       upcoming,
       past,
@@ -245,6 +343,7 @@ export async function GET() {
       rejected: rejectedEvents,
       recentActivity,
       topRegulars,
+      atRiskMembers,
     })
   } catch (error) {
     console.error('Dashboard API error:', error)

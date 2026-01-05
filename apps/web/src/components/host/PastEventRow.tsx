@@ -5,6 +5,8 @@ interface Event {
   name: string
   date: string | null
   goingCount: number
+  showUpRate?: number | null
+  attendedCount?: number
 }
 
 interface PastEventRowProps {
@@ -20,7 +22,18 @@ function formatDate(dateString: string | null): string {
   })
 }
 
+function getShowUpBadge(rate: number): { color: string; text: string } {
+  if (rate >= 80) return { color: 'bg-green-100 text-green-700', text: 'Great' }
+  if (rate >= 60) return { color: 'bg-blue-100 text-blue-700', text: 'Good' }
+  if (rate >= 40) return { color: 'bg-amber-100 text-amber-700', text: 'Fair' }
+  return { color: 'bg-red-100 text-red-600', text: 'Low' }
+}
+
 export function PastEventRow({ event }: PastEventRowProps) {
+  const showUpBadge = event.showUpRate !== null && event.showUpRate !== undefined
+    ? getShowUpBadge(event.showUpRate)
+    : null
+
   return (
     <Link
       href={`/host/events/${event.id}/attendees`}
@@ -35,9 +48,16 @@ export function PastEventRow({ event }: PastEventRowProps) {
           </>
         )}
       </div>
-      <span className="text-sm text-neutral-500">
-        {event.goingCount === 0 ? 'No one joined' : event.goingCount === 1 ? '1 person joined' : `${event.goingCount} people joined`}
-      </span>
+      <div className="flex items-center gap-3">
+        {showUpBadge && (
+          <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${showUpBadge.color}`}>
+            {event.showUpRate}% showed
+          </span>
+        )}
+        <span className="text-sm text-neutral-500">
+          {event.goingCount === 0 ? 'No one joined' : event.goingCount === 1 ? '1 person' : `${event.goingCount} people`}
+        </span>
+      </div>
     </Link>
   )
 }

@@ -1678,12 +1678,31 @@ model EventAttendance {
   verifiedBy       String?  @db.VarChar(255) // Host email who verified
   verifiedAt       DateTime?
 
+  // Attendance tracking (did they actually show up?)
+  actuallyAttended  Boolean?   // null=unmarked, true=showed up, false=no-show
+  markedAttendedAt  DateTime?
+  markedAttendedBy  String?    @db.VarChar(255) // Host email who marked
+
   @@unique([email, eventId])
   @@index([eventId])
   @@index([email])
   @@index([timestamp])
   @@index([paymentStatus])
   @@map("event_attendances")
+}
+
+// Host notes about attendees (email-based, no user account required)
+model HostAttendeeNotes {
+  id              String   @id @default(cuid())
+  hostInstagram   String   @db.VarChar(500)  // Host identifier (Instagram handle)
+  attendeeEmail   String   @db.VarChar(255)  // Attendee email
+  notes           String?  @db.Text          // Host's notes about this person
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([hostInstagram, attendeeEmail])
+  @@index([hostInstagram])
+  @@map("host_attendee_notes")
 }
 
 // Newsletter subscribers from various sources

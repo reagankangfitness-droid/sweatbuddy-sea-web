@@ -16,6 +16,8 @@ interface DashboardEvent {
   recurring: boolean
   goingCount: number
   organizer: string
+  showUpRate?: number | null // Percentage of actuallyAttended
+  attendedCount?: number
 }
 
 export async function GET() {
@@ -64,23 +66,46 @@ export async function GET() {
       attendanceCounts.map((a) => [a.eventId, a._count.id])
     )
 
+    // Get attendance tracking stats (who actually showed up)
+    const attendanceStats = await prisma.eventAttendance.groupBy({
+      by: ['eventId'],
+      where: {
+        eventId: { in: eventIds },
+        actuallyAttended: true,
+      },
+      _count: { id: true },
+    })
+    const attendedMap = new Map(
+      attendanceStats.map((a) => [a.eventId, a._count.id])
+    )
+
     // Split into upcoming and past events
     const now = new Date()
     now.setHours(0, 0, 0, 0)
 
-    const allEvents: DashboardEvent[] = submissions.map((s) => ({
-      id: s.id,
-      name: s.eventName,
-      day: s.day,
-      date: s.eventDate?.toISOString().split('T')[0] || null,
-      time: s.time,
-      location: s.location,
-      imageUrl: s.imageUrl,
-      category: s.category,
-      recurring: s.recurring,
-      goingCount: countMap.get(s.id) || 0,
-      organizer: s.organizerInstagram,
-    }))
+    const allEvents: DashboardEvent[] = submissions.map((s) => {
+      const goingCount = countMap.get(s.id) || 0
+      const attendedCount = attendedMap.get(s.id) || 0
+      const showUpRate = goingCount > 0 && attendedCount > 0
+        ? Math.round((attendedCount / goingCount) * 100)
+        : null
+
+      return {
+        id: s.id,
+        name: s.eventName,
+        day: s.day,
+        date: s.eventDate?.toISOString().split('T')[0] || null,
+        time: s.time,
+        location: s.location,
+        imageUrl: s.imageUrl,
+        category: s.category,
+        recurring: s.recurring,
+        goingCount,
+        organizer: s.organizerInstagram,
+        attendedCount,
+        showUpRate,
+      }
+    })
 
     // For recurring events without a date, consider them as upcoming
     const upcoming = allEvents.filter((event) => {

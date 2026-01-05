@@ -46,7 +46,7 @@ export async function GET(
     })
     const hostEventIds = hostEvents.map(e => e.id)
 
-    // Fetch attendees with payment info
+    // Fetch attendees with payment info and attendance tracking
     const attendees = await prisma.eventAttendance.findMany({
       where: { eventId },
       select: {
@@ -61,6 +61,9 @@ export async function GET(
         paidAt: true,
         verifiedBy: true,
         verifiedAt: true,
+        actuallyAttended: true,
+        markedAttendedAt: true,
+        markedAttendedBy: true,
       },
       orderBy: [
         { paymentStatus: 'asc' }, // pending first
@@ -90,6 +93,15 @@ export async function GET(
       totalAttendance: countMap.get(attendee.email.toLowerCase()) || 1,
     }))
 
+    // Calculate attendance stats
+    const totalRSVPs = attendees.length
+    const markedAttended = attendees.filter(a => a.actuallyAttended === true).length
+    const markedNoShow = attendees.filter(a => a.actuallyAttended === false).length
+    const unmarked = attendees.filter(a => a.actuallyAttended === null).length
+    const showUpRate = markedAttended + markedNoShow > 0
+      ? Math.round((markedAttended / (markedAttended + markedNoShow)) * 100)
+      : null
+
     return NextResponse.json({
       event: {
         id: event.id,
@@ -98,6 +110,13 @@ export async function GET(
         price: event.price,
       },
       attendees: attendeesWithHistory,
+      stats: {
+        totalRSVPs,
+        markedAttended,
+        markedNoShow,
+        unmarked,
+        showUpRate,
+      },
     })
   } catch (error) {
     console.error('Fetch attendees error:', error)

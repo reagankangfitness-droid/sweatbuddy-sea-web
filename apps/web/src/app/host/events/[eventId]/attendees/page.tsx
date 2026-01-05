@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Logo } from '@/components/logo'
-import { Loader2, Check, X, Clock, Download, User, RefreshCcw, Mail } from 'lucide-react'
+import { Loader2, Check, X, Clock, Download, User, RefreshCcw, Mail, Users } from 'lucide-react'
 import { EmailAttendeesModal } from '@/components/host/EmailAttendeesModal'
+import { AttendanceToggleCompact } from '@/components/host/AttendanceToggle'
 
 interface Attendee {
   id: string
@@ -20,6 +21,17 @@ interface Attendee {
   verifiedBy: string | null
   verifiedAt: string | null
   totalAttendance: number
+  actuallyAttended: boolean | null
+  markedAttendedAt: string | null
+  markedAttendedBy: string | null
+}
+
+interface AttendanceStats {
+  totalRSVPs: number
+  markedAttended: number
+  markedNoShow: number
+  unmarked: number
+  showUpRate: number | null
 }
 
 // Get loyalty badge based on attendance count
@@ -45,6 +57,7 @@ export default function AttendeesPage() {
 
   const [attendees, setAttendees] = useState<Attendee[]>([])
   const [event, setEvent] = useState<EventDetails | null>(null)
+  const [stats, setStats] = useState<AttendanceStats | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [verifyingId, setVerifyingId] = useState<string | null>(null)
@@ -81,6 +94,7 @@ export default function AttendeesPage() {
         }
         const attendeesData = await attendeesRes.json()
         setAttendees(attendeesData.attendees || [])
+        setStats(attendeesData.stats || null)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong')
       } finally {
@@ -184,6 +198,38 @@ export default function AttendeesPage() {
     URL.revokeObjectURL(url)
   }
 
+  // Handle attendance toggle update
+  const handleAttendanceUpdate = (attendeeId: string, attended: boolean | null) => {
+    setAttendees(prev => prev.map(a => {
+      if (a.id === attendeeId) {
+        return { ...a, actuallyAttended: attended }
+      }
+      return a
+    }))
+    // Update stats locally
+    setStats(prev => {
+      if (!prev) return prev
+      const oldValue = attendees.find(a => a.id === attendeeId)?.actuallyAttended
+      let { markedAttended, markedNoShow, unmarked } = prev
+
+      // Remove from old category
+      if (oldValue === true) markedAttended--
+      else if (oldValue === false) markedNoShow--
+      else unmarked--
+
+      // Add to new category
+      if (attended === true) markedAttended++
+      else if (attended === false) markedNoShow++
+      else unmarked++
+
+      const showUpRate = markedAttended + markedNoShow > 0
+        ? Math.round((markedAttended / (markedAttended + markedNoShow)) * 100)
+        : null
+
+      return { ...prev, markedAttended, markedNoShow, unmarked, showUpRate }
+    })
+  }
+
   const pendingPayments = attendees.filter(a => a.paymentStatus === 'pending')
   const confirmedAttendees = attendees.filter(a => a.paymentStatus === 'paid' || a.paymentStatus === 'free' || !a.paymentStatus)
 
@@ -262,6 +308,41 @@ export default function AttendeesPage() {
             </button>
           </div>
         </div>
+
+        {/* Attendance Stats */}
+        {stats && attendees.length > 0 && (
+          <div className="mb-8 p-4 bg-neutral-50 rounded-xl border border-neutral-100">
+            <div className="flex items-center gap-2 mb-3">
+              <Users className="w-5 h-5 text-neutral-600" />
+              <h3 className="font-semibold text-neutral-900">Attendance Tracking</h3>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+              <div>
+                <p className="text-2xl font-bold text-neutral-900">{stats.totalRSVPs}</p>
+                <p className="text-xs text-neutral-500">RSVPs</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-green-600">{stats.markedAttended}</p>
+                <p className="text-xs text-neutral-500">Showed Up</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-red-500">{stats.markedNoShow}</p>
+                <p className="text-xs text-neutral-500">No-Show</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-neutral-900">
+                  {stats.showUpRate !== null ? `${stats.showUpRate}%` : '-'}
+                </p>
+                <p className="text-xs text-neutral-500">Show-up Rate</p>
+              </div>
+            </div>
+            {stats.unmarked > 0 && (
+              <p className="text-xs text-neutral-400 mt-3 text-center">
+                {stats.unmarked} attendee{stats.unmarked !== 1 ? 's' : ''} not yet marked
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Pending Payments - Show first if any */}
         {pendingPayments.length > 0 && (
@@ -343,6 +424,13 @@ export default function AttendeesPage() {
                   className="flex items-center justify-between p-4 border-b border-neutral-100 last:border-0"
                 >
                   <div className="flex items-center gap-3">
+                    {/* Attendance Toggle */}
+                    <AttendanceToggleCompact
+                      attendeeId={attendee.id}
+                      eventId={eventId}
+                      initialValue={attendee.actuallyAttended}
+                      onUpdate={(value) => handleAttendanceUpdate(attendee.id, value)}
+                    />
                     <div className="w-10 h-10 bg-neutral-100 rounded-full flex items-center justify-center">
                       <span className="font-medium text-neutral-600">
                         {(attendee.name?.[0] || attendee.email[0]).toUpperCase()}

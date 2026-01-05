@@ -24,7 +24,7 @@ export default function OrganizerPage() {
       try {
         const response = await fetch('/api/organizer/verify', { method: 'POST' })
         if (response.ok) {
-          router.push('/organizer/dashboard')
+          router.push('/host/dashboard')
         }
       } catch {
         // Not logged in

@@ -70,6 +70,25 @@ export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [savedCount, setSavedCount] = useState(0)
+
+  // Read saved count from localStorage
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
+    setSavedCount(saved.length)
+
+    // Listen for changes
+    const handleUpdate = () => {
+      const ids = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
+      setSavedCount(ids.length)
+    }
+    window.addEventListener('savedEventsUpdated', handleUpdate)
+    window.addEventListener('storage', handleUpdate)
+    return () => {
+      window.removeEventListener('savedEventsUpdated', handleUpdate)
+      window.removeEventListener('storage', handleUpdate)
+    }
+  }, [])
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -157,19 +176,19 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-neutral-50">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-neutral-200">
-        <div className="max-w-2xl mx-auto px-4 h-16 flex items-center gap-4">
+        <div className="max-w-2xl mx-auto px-4 h-14 sm:h-16 flex items-center gap-4">
           <Link
             href="/"
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors"
+            className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-neutral-700" />
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-700" />
           </Link>
-          <h1 className="text-xl font-semibold text-neutral-900">Dashboard</h1>
+          <h1 className="text-lg sm:text-xl font-semibold text-neutral-900">Dashboard</h1>
         </div>
       </header>
 
       {/* Content */}
-      <main className="pt-24 pb-24 px-4">
+      <main className="pt-20 sm:pt-24 pb-20 sm:pb-24 px-4">
         <div className="max-w-2xl mx-auto space-y-6">
           {/* Profile Card */}
           <div className="bg-white rounded-2xl border border-neutral-200 p-6">
@@ -200,7 +219,7 @@ export default function DashboardPage() {
 
           {/* Create New Event Button */}
           <Link
-            href="/#submit-desktop"
+            href="/host"
             className="flex items-center justify-center gap-2 w-full py-4 bg-neutral-900 text-white font-semibold rounded-2xl hover:bg-neutral-700 transition-colors"
           >
             <Plus className="w-5 h-5" />
@@ -230,11 +249,37 @@ export default function DashboardPage() {
                 className="bg-white rounded-2xl border border-neutral-200 p-5 text-center hover:border-neutral-300 transition-colors"
               >
                 <Heart className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
-                <p className="text-2xl font-bold text-neutral-900">-</p>
+                <p className="text-2xl font-bold text-neutral-900">{savedCount}</p>
                 <p className="text-sm text-neutral-500">Saved</p>
               </Link>
             )}
           </div>
+
+          {/* Start Hosting CTA - for non-hosts */}
+          {!data?.isHost && (
+            <div className="bg-gradient-to-r from-purple-50 to-amber-50 rounded-2xl border border-purple-100 p-4 sm:p-5">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                  <span className="text-xl sm:text-2xl">✨</span>
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-neutral-900 mb-1 text-sm sm:text-base">
+                    Become a Host
+                  </h3>
+                  <p className="text-xs sm:text-sm text-neutral-600 mb-3">
+                    Lead your own fitness events and build your community
+                  </p>
+                  <Link
+                    href="/host"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-neutral-700 transition-colors"
+                  >
+                    Learn More
+                    <ChevronRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Host Stats (only if host with earnings) */}
           {data?.isHost && data.hosting.stats.totalEarnings > 0 && (
@@ -256,20 +301,26 @@ export default function DashboardPage() {
           )}
 
           {/* Events I'm Attending */}
-          <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
-            <div className="px-5 py-4 border-b border-neutral-100">
-              <h3 className="font-semibold text-neutral-900">Events I'm Attending</h3>
+          <div className="bg-white rounded-2xl border border-blue-200 overflow-hidden">
+            <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-blue-100 bg-blue-50/50">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-blue-600" />
+                <h3 className="font-semibold text-neutral-900 text-sm sm:text-base">Events I'm Attending</h3>
+              </div>
             </div>
 
             {!data?.attending.events.length ? (
-              <div className="p-8 text-center">
-                <Calendar className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
-                <p className="text-neutral-500 mb-4">No events yet</p>
+              <div className="p-6 sm:p-8 text-center">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-4 bg-blue-50 rounded-full flex items-center justify-center">
+                  <span className="text-2xl sm:text-3xl">🏃</span>
+                </div>
+                <h4 className="font-medium text-neutral-900 mb-1 text-sm sm:text-base">No upcoming events</h4>
+                <p className="text-neutral-500 text-xs sm:text-sm mb-4">Find your next workout buddy!</p>
                 <Link
-                  href="/#events"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-lg text-sm font-medium hover:bg-neutral-700 transition-colors"
+                  href="/"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-neutral-700 transition-colors"
                 >
-                  Find Events
+                  Explore Events
                   <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -323,21 +374,27 @@ export default function DashboardPage() {
           {/* Events I'm Hosting (only if host) */}
           {data?.isHost && (
             <>
-              <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
-                <div className="px-5 py-4 border-b border-neutral-100 flex items-center justify-between">
-                  <h3 className="font-semibold text-neutral-900">Events I'm Hosting</h3>
-                  <span className="text-sm text-neutral-500">
-                    {data.hosting.stats.totalSignups} total signups
+              <div className="bg-white rounded-2xl border border-purple-200 overflow-hidden">
+                <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-purple-100 bg-purple-50/50 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4 text-purple-600" />
+                    <h3 className="font-semibold text-neutral-900 text-sm sm:text-base">Events I'm Hosting</h3>
+                  </div>
+                  <span className="text-xs sm:text-sm text-purple-600 font-medium">
+                    {data.hosting.stats.totalSignups} signups
                   </span>
                 </div>
 
                 {!data.hosting.events.length ? (
-                  <div className="p-8 text-center">
-                    <Users className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
-                    <p className="text-neutral-500 mb-4">No upcoming events</p>
+                  <div className="p-6 sm:p-8 text-center">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-4 bg-purple-50 rounded-full flex items-center justify-center">
+                      <span className="text-2xl sm:text-3xl">🎯</span>
+                    </div>
+                    <h4 className="font-medium text-neutral-900 mb-1 text-sm sm:text-base">No upcoming events</h4>
+                    <p className="text-neutral-500 text-xs sm:text-sm mb-4">Create your first event!</p>
                     <Link
-                      href="/#submit-desktop"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-lg text-sm font-medium hover:bg-neutral-700 transition-colors"
+                      href="/host"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-neutral-700 transition-colors"
                     >
                       Create Event
                       <Plus className="w-4 h-4" />

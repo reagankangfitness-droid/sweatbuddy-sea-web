@@ -11,7 +11,7 @@ export function EmptyState() {
         Time to create something! Your community&apos;s waiting.
       </p>
       <Link
-        href="/#submit-desktop"
+        href="/host"
         className="inline-flex items-center justify-center px-6 py-3 bg-neutral-900 text-white font-medium rounded-full hover:bg-neutral-700 transition-colors"
       >
         Create Event

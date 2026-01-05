@@ -1,14 +1,15 @@
 interface StatCardProps {
   value: number | string
   label: string
+  className?: string
 }
 
-export function StatCard({ value, label }: StatCardProps) {
+export function StatCard({ value, label, className = '' }: StatCardProps) {
   // Check if value is a long string (like "Post your first event!")
   const isLongValue = typeof value === 'string' && value.length > 10
 
   return (
-    <div className="bg-neutral-50 rounded-xl p-4 sm:p-6 text-center">
+    <div className={`bg-neutral-50 rounded-xl p-4 sm:p-6 text-center ${className}`}>
       <div className={`font-bold text-neutral-900 mb-1 ${
         isLongValue
           ? 'text-sm sm:text-base'

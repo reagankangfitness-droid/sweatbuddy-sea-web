@@ -1,14 +1,40 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, LogOut, User } from 'lucide-react'
 import { Logo } from '@/components/logo'
+
+interface HostSession {
+  instagramHandle: string
+  name: string | null
+  email: string
+}
 
 export function DashboardHeader() {
   const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [session, setSession] = useState<HostSession | null>(null)
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const res = await fetch('/api/organizer/verify', { method: 'POST' })
+        if (res.ok) {
+          const data = await res.json()
+          setSession({
+            instagramHandle: data.organizer.instagramHandle,
+            name: data.organizer.name,
+            email: data.organizer.email,
+          })
+        }
+      } catch {
+        // Session fetch failed
+      }
+    }
+    fetchSession()
+  }, [])
 
   const handleLogout = async () => {
     await fetch('/api/organizer/verify', { method: 'DELETE' })
@@ -43,24 +69,38 @@ export function DashboardHeader() {
           ))}
 
           <Link
-            href="/#submit-desktop"
+            href="/host"
             className="inline-flex items-center justify-center px-4 py-2 bg-neutral-900 text-white text-sm font-semibold rounded-full hover:bg-neutral-700 transition-colors"
           >
             + New Event
           </Link>
 
-          <button
-            onClick={handleLogout}
-            className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors"
-          >
-            Log out
-          </button>
+          {/* User Profile & Logout */}
+          <div className="flex items-center gap-3 pl-3 border-l border-neutral-200">
+            {session && (
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
+                  <User className="w-4 h-4 text-neutral-600" />
+                </div>
+                <span className="text-sm font-medium text-neutral-700">
+                  @{session.instagramHandle}
+                </span>
+              </div>
+            )}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-neutral-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              Log out
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
         <div className="flex items-center gap-3 md:hidden">
           <Link
-            href="/#submit-desktop"
+            href="/host"
             className="inline-flex items-center justify-center px-3 py-1.5 bg-neutral-900 text-white text-xs font-semibold rounded-full"
           >
             + New
@@ -78,6 +118,20 @@ export function DashboardHeader() {
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden border-t border-neutral-100 bg-white">
+          {/* User Info */}
+          {session && (
+            <div className="px-4 py-3 border-b border-neutral-100 bg-neutral-50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-neutral-200 flex items-center justify-center">
+                  <User className="w-5 h-5 text-neutral-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-neutral-900">@{session.instagramHandle}</p>
+                  <p className="text-xs text-neutral-500">{session.email}</p>
+                </div>
+              </div>
+            </div>
+          )}
           <nav className="px-4 py-3 space-y-1">
             {navLinks.map((link) => (
               <Link
@@ -89,15 +143,18 @@ export function DashboardHeader() {
                 {link.label}
               </Link>
             ))}
-            <button
-              onClick={() => {
-                setIsMenuOpen(false)
-                handleLogout()
-              }}
-              className="block w-full text-left px-3 py-2 text-sm font-medium text-neutral-500 hover:bg-neutral-50 rounded-lg transition-colors"
-            >
-              Log out
-            </button>
+            <div className="border-t border-neutral-100 mt-2 pt-2">
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false)
+                  handleLogout()
+                }}
+                className="flex items-center gap-2 w-full px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                Log out
+              </button>
+            </div>
           </nav>
         </div>
       )}

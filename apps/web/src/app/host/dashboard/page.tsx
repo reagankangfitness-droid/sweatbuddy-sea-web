@@ -211,13 +211,14 @@ export default function HostDashboard() {
           </div>
         )}
 
-        {/* Stats - stack on very small screens */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-10">
+        {/* Stats - 2 cols on very small screens, 3 cols on sm+ */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-10">
           <StatCard value={data.stats.activeEvents || 0} label="Events Live" />
           <StatCard value={data.stats.totalSignups || 0} label="People Joined" />
           <StatCard
             value={data.stats.totalEarnings ? `$${(data.stats.totalEarnings / 100).toFixed(0)}` : '—'}
             label="Earnings"
+            className="col-span-2 sm:col-span-1"
           />
         </div>
 
@@ -225,30 +226,34 @@ export default function HostDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Events Section */}
           <div className="lg:col-span-2 order-1">
-            {/* Tabs - horizontally scrollable on mobile */}
-            <div className="flex gap-1.5 sm:gap-2 mb-4 sm:mb-6 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
-                    activeTab === tab.id
-                      ? 'bg-neutral-900 text-white'
-                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-                  }`}
-                >
-                  {tab.icon}
-                  <span className="hidden sm:inline">{tab.label}</span>
-                  <span className="sm:hidden">{tab.shortLabel}</span>
-                  {tab.count > 0 && (
-                    <span className={`px-1.5 py-0.5 text-xs rounded-full ${
-                      activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-neutral-200 text-neutral-600'
-                    }`}>
-                      {tab.count}
-                    </span>
-                  )}
-                </button>
-              ))}
+            {/* Tabs - horizontally scrollable on mobile with fade indicator */}
+            <div className="relative mb-4 sm:mb-6">
+              <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                      activeTab === tab.id
+                        ? 'bg-neutral-900 text-white'
+                        : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                    }`}
+                  >
+                    {tab.icon}
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span className="sm:hidden">{tab.shortLabel}</span>
+                    {tab.count > 0 && (
+                      <span className={`px-1.5 py-0.5 text-xs rounded-full ${
+                        activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-neutral-200 text-neutral-600'
+                      }`}>
+                        {tab.count}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+              {/* Fade indicator for mobile scroll */}
+              <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none sm:hidden" />
             </div>
 
             {/* Events List */}
@@ -264,7 +269,7 @@ export default function HostDashboard() {
                   )}
                   {activeTab === 'rejected' && (
                     <div className="text-neutral-500">
-                      <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-300" />
+                      <XCircle className="w-8 h-8 mx-auto mb-2 text-neutral-300" />
                       <p className="text-sm">No rejected events</p>
                     </div>
                   )}
@@ -304,34 +309,44 @@ export default function HostDashboard() {
                   <p className="text-sm">No recent signups yet</p>
                 </div>
               ) : (
-                <div className="border border-neutral-200 rounded-xl divide-y divide-neutral-100">
-                  {data.recentActivity.slice(0, 6).map((activity) => (
-                    <div key={activity.id} className="p-2.5 sm:p-3 hover:bg-neutral-50 transition-colors">
-                      <div className="flex items-start gap-2.5 sm:gap-3">
-                        <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                          activity.type === 'paid' ? 'bg-green-100' : 'bg-blue-100'
-                        }`}>
-                          {activity.type === 'paid' ? (
-                            <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600" />
-                          ) : (
-                            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" />
-                          )}
+                <div className="border border-neutral-200 rounded-xl overflow-hidden">
+                  <div className="divide-y divide-neutral-100">
+                    {data.recentActivity.slice(0, 6).map((activity) => (
+                      <div key={activity.id} className="p-2.5 sm:p-3 hover:bg-neutral-50 transition-colors">
+                        <div className="flex items-start gap-2.5 sm:gap-3">
+                          <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                            activity.type === 'paid' ? 'bg-green-100' : 'bg-blue-100'
+                          }`}>
+                            {activity.type === 'paid' ? (
+                              <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600" />
+                            ) : (
+                              <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs sm:text-sm text-neutral-900 truncate">
+                              <span className="font-medium">
+                                {activity.attendeeName || activity.attendeeEmail.split('@')[0]}
+                              </span>
+                              {activity.type === 'paid' ? ' paid' : ' joined'}
+                            </p>
+                            <p className="text-xs text-neutral-500 truncate">{activity.eventName}</p>
+                          </div>
+                          <span className="text-xs text-neutral-400 whitespace-nowrap">
+                            {formatTimeAgo(activity.timestamp)}
+                          </span>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs sm:text-sm text-neutral-900 truncate">
-                            <span className="font-medium">
-                              {activity.attendeeName || activity.attendeeEmail.split('@')[0]}
-                            </span>
-                            {activity.type === 'paid' ? ' paid' : ' joined'}
-                          </p>
-                          <p className="text-xs text-neutral-500 truncate">{activity.eventName}</p>
-                        </div>
-                        <span className="text-xs text-neutral-400 whitespace-nowrap">
-                          {formatTimeAgo(activity.timestamp)}
-                        </span>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                  {data.recentActivity.length > 6 && (
+                    <Link
+                      href="/host/community"
+                      className="block text-xs text-neutral-600 hover:text-neutral-900 py-2.5 text-center font-medium border-t border-neutral-100 bg-neutral-50 hover:bg-neutral-100 transition-colors"
+                    >
+                      View all activity →
+                    </Link>
+                  )}
                 </div>
               )}
             </section>
@@ -442,7 +457,7 @@ function RejectedEventRow({ event }: { event: DashboardEvent }) {
             </div>
           )}
           <Link
-            href="/#submit-desktop"
+            href="/host"
             className="inline-block mt-2 text-xs sm:text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
           >
             Resubmit →
@@ -497,9 +512,12 @@ function AtRiskSection({ members }: { members: AtRiskMember[] }) {
           ))}
         </div>
         {members.length > 3 && (
-          <p className="text-xs text-orange-600 mt-3 text-center">
-            +{members.length - 3} more at-risk members
-          </p>
+          <Link
+            href="/host/community"
+            className="block text-xs text-orange-600 hover:text-orange-700 mt-3 text-center font-medium"
+          >
+            View all {members.length} at-risk members →
+          </Link>
         )}
       </div>
     </section>

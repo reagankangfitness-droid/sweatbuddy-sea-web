@@ -120,11 +120,11 @@ export function MobileHero() {
         </div>
       </div>
 
-      {/* Bottom transition to white */}
+      {/* Bottom transition to gray-50 (matches HowItWorks bg) */}
       <div
         className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none z-20"
         style={{
-          background: 'linear-gradient(to top, #FFFFFF, transparent)'
+          background: 'linear-gradient(to top, #F9FAFB, transparent)'
         }}
       />
     </div>

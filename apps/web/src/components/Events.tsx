@@ -1,12 +1,8 @@
 'use client'
 
-import { useState, useMemo, useEffect, lazy, Suspense, useCallback } from 'react'
+import { useState, useEffect, lazy, Suspense, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { EventCard } from './EventCard'
-import { SavedEvents } from './SavedEvents'
-import { SectionGradient } from './GradientBackground'
-import { Search, X, Sparkles } from 'lucide-react'
-import { sortEventsByPreference, getPersonalizedGreeting, hasCompletedOnboarding } from '@/lib/personalization'
 
 // Lazy load the detail sheet for shared events
 const EventDetailSheet = lazy(() => import('./EventDetailSheet').then(mod => ({ default: mod.EventDetailSheet })))
@@ -40,7 +36,7 @@ interface Event {
   name: string
   category: string
   day: string
-  eventDate?: string | null  // ISO date string (e.g., "2024-01-15")
+  eventDate?: string | null
   time: string
   location: string
   description: string | null
@@ -50,6 +46,8 @@ interface Event {
   recurring: boolean
   goingCount?: number
   isFull?: boolean
+  isFree?: boolean
+  price?: number | null
 }
 
 interface EventsProps {
@@ -70,80 +68,8 @@ function getCurrentWeekRange() {
   return `${formatDate(startOfWeek)} – ${formatDate(endOfWeek)}`
 }
 
-// Time filter options
-type TimeFilter = 'all' | 'this-week' | 'this-weekend' | 'next-week'
-
-function getDateRangeForFilter(filter: TimeFilter): { start: Date | null, end: Date | null } {
-  const now = new Date()
-  now.setHours(0, 0, 0, 0)
-
-  switch (filter) {
-    case 'this-week': {
-      const startOfWeek = new Date(now)
-      startOfWeek.setDate(now.getDate() - now.getDay())
-      const endOfWeek = new Date(startOfWeek)
-      endOfWeek.setDate(startOfWeek.getDate() + 6)
-      endOfWeek.setHours(23, 59, 59, 999)
-      return { start: startOfWeek, end: endOfWeek }
-    }
-    case 'this-weekend': {
-      const saturday = new Date(now)
-      saturday.setDate(now.getDate() + (6 - now.getDay()))
-      const sunday = new Date(saturday)
-      sunday.setDate(saturday.getDate() + 1)
-      sunday.setHours(23, 59, 59, 999)
-      return { start: saturday, end: sunday }
-    }
-    case 'next-week': {
-      const nextMonday = new Date(now)
-      nextMonday.setDate(now.getDate() + (7 - now.getDay() + 1))
-      const nextSunday = new Date(nextMonday)
-      nextSunday.setDate(nextMonday.getDate() + 6)
-      nextSunday.setHours(23, 59, 59, 999)
-      return { start: nextMonday, end: nextSunday }
-    }
-    default:
-      return { start: null, end: null }
-  }
-}
-
-function isEventInDateRange(event: { eventDate?: string | null, day: string }, filter: TimeFilter): boolean {
-  if (filter === 'all') return true
-
-  const { start, end } = getDateRangeForFilter(filter)
-  if (!start || !end) return true
-
-  // If event has a specific date, check if it's in range
-  if (event.eventDate) {
-    const eventDate = new Date(event.eventDate)
-    return eventDate >= start && eventDate <= end
-  }
-
-  // For recurring events without specific date, check if the day falls within the range
-  const dayMap: Record<string, number> = {
-    'Sundays': 0, 'Mondays': 1, 'Tuesdays': 2, 'Wednesdays': 3,
-    'Thursdays': 4, 'Fridays': 5, 'Saturdays': 6
-  }
-
-  const dayNum = dayMap[event.day]
-  if (dayNum === undefined) return true // Show "Monthly", "Various", etc in all filters
-
-  // Check if the day of week falls within the date range
-  const current = new Date(start)
-  while (current <= end) {
-    if (current.getDay() === dayNum) return true
-    current.setDate(current.getDate() + 1)
-  }
-  return false
-}
-
 export function Events({ initialEvents = [] }: EventsProps) {
   const [events] = useState<Event[]>(initialEvents)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [selectedTime, setSelectedTime] = useState<TimeFilter>('all')
-  const [greeting, setGreeting] = useState<string>("What's On This Week")
-  const [isPersonalized, setIsPersonalized] = useState(false)
 
   // Shared event handling
   const [sharedEvent, setSharedEvent] = useState<Event | null>(null)
@@ -154,60 +80,6 @@ export function Events({ initialEvents = [] }: EventsProps) {
     setIsSharedSheetOpen(true)
   }, [])
 
-  // Update greeting and personalization status
-  useEffect(() => {
-    const updateGreeting = () => {
-      if (hasCompletedOnboarding()) {
-        setGreeting(getPersonalizedGreeting())
-        setIsPersonalized(true)
-      } else {
-        setGreeting("What's On This Week")
-        setIsPersonalized(false)
-      }
-    }
-
-    updateGreeting()
-
-    // Listen for preference updates
-    window.addEventListener('preferencesUpdated', updateGreeting)
-    return () => window.removeEventListener('preferencesUpdated', updateGreeting)
-  }, [])
-
-  // Get unique categories from events
-  const categories = useMemo(() => {
-    return [...new Set(events.map(e => e.category))].sort()
-  }, [events])
-
-  const filteredEvents = useMemo(() => {
-    const filtered = events.filter(event => {
-      const searchLower = searchQuery.toLowerCase()
-      const matchesSearch = searchQuery === '' ||
-        event.name.toLowerCase().includes(searchLower) ||
-        event.location.toLowerCase().includes(searchLower) ||
-        (event.description?.toLowerCase().includes(searchLower)) ||
-        event.organizer.toLowerCase().includes(searchLower)
-
-      const matchesCategory = selectedCategory === 'all' || event.category === selectedCategory
-      const matchesTime = isEventInDateRange(event, selectedTime)
-
-      return matchesSearch && matchesCategory && matchesTime
-    })
-
-    // Sort by user preferences if personalized
-    if (isPersonalized) {
-      return sortEventsByPreference(filtered)
-    }
-    return filtered
-  }, [events, searchQuery, selectedCategory, selectedTime, isPersonalized])
-
-  const clearFilters = () => {
-    setSearchQuery('')
-    setSelectedCategory('all')
-    setSelectedTime('all')
-  }
-
-  const hasActiveFilters = searchQuery !== '' || selectedCategory !== 'all' || selectedTime !== 'all'
-
   return (
     <section id="events" className="relative py-20 md:py-32 overflow-hidden bg-neutral-50">
       {/* Shared Event Handler - wrapped in Suspense for useSearchParams */}
@@ -215,144 +87,39 @@ export function Events({ initialEvents = [] }: EventsProps) {
         <SharedEventHandler events={events} onEventFound={handleSharedEventFound} />
       </Suspense>
 
-      {/* Subtle neutral glow accent */}
-      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at top right, rgba(0, 0, 0, 0.02) 0%, transparent 50%)' }} />
-      <SectionGradient />
-
-      <div className="relative z-10 max-w-container mx-auto px-6 lg:px-10">
-        {/* Saved Events Section */}
-        <SavedEvents allEvents={events} />
-
-        {/* Header */}
-        <div className="text-center mb-12 md:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-900/10 border border-neutral-900/20 text-neutral-900 text-sm font-medium mb-6">
-            <Sparkles className="w-4 h-4" />
-            <span>{isPersonalized ? 'Personalized For You' : 'Updated Weekly'}</span>
-          </div>
-          <h2
-            className="font-sans font-extrabold text-neutral-900 mb-4 tracking-wide"
-            style={{ fontSize: 'clamp(28px, 5vw, 48px)' }}
-          >
-            {isPersonalized ? (
-              <>{greeting}</>
-            ) : (
-              <>What&apos;s On <span className="text-gradient">This Week</span></>
-            )}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
+        {/* Header - Simple */}
+        <div className="text-center mb-12">
+          <h2 className="font-bold text-3xl md:text-4xl text-neutral-900 mb-2">
+            This Week
           </h2>
-          <p className="font-sans text-neutral-500 text-lg">
+          <p className="text-neutral-500">
             {getCurrentWeekRange()}
           </p>
         </div>
 
-        {/* Search and Filters */}
-        <div className="mb-10 space-y-4">
-          {/* Search Bar */}
-          <div className="relative max-w-2xl mx-auto">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by event, host, or location..."
-              aria-label="Search events"
-              className="w-full h-14 pl-14 pr-14 rounded-2xl input-light text-base shadow-sm"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-900 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            )}
-          </div>
-
-          {/* Filter Dropdowns */}
-          <div className="flex flex-wrap justify-center gap-3">
-            {/* Category Filter */}
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="h-11 px-4 rounded-lg bg-white border border-neutral-200 text-sm font-medium text-neutral-900 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20 cursor-pointer transition-colors hover:border-neutral-300 shadow-sm"
-            >
-              <option value="all">All Categories</option>
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </select>
-
-            {/* Time Filter */}
-            <select
-              value={selectedTime}
-              onChange={(e) => setSelectedTime(e.target.value as TimeFilter)}
-              className="h-11 px-4 rounded-lg bg-white border border-neutral-200 text-sm font-medium text-neutral-900 focus:outline-none focus:border-neutral-900 focus:ring-2 focus:ring-neutral-900/20 cursor-pointer transition-colors hover:border-neutral-300 shadow-sm"
-            >
-              <option value="all">Any Day</option>
-              <option value="this-week">This Week</option>
-              <option value="this-weekend">This Weekend</option>
-              <option value="next-week">Next Week</option>
-            </select>
-
-            {/* Clear Filters */}
-            {hasActiveFilters && (
-              <button
-                onClick={clearFilters}
-                className="h-11 px-5 rounded-lg bg-neutral-900 text-white text-sm font-semibold hover:bg-neutral-700 transition-all flex items-center gap-2 shadow-sm"
-              >
-                <X className="w-4 h-4" />
-                Clear
-              </button>
-            )}
-          </div>
-
-          {/* Results Count */}
-          {hasActiveFilters && (
-            <p className="text-center text-sm text-neutral-500">
-              Showing {filteredEvents.length} of {events.length} events
-            </p>
-          )}
-        </div>
-
-        {/* Events Grid */}
-        {filteredEvents.length > 0 ? (
+        {/* Events Grid - No filters, just events */}
+        {events.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {filteredEvents.map((event, index) => (
+            {events.map((event, index) => (
               <EventCard key={event.id} event={event} index={index} />
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 glass-card rounded-2xl max-w-md mx-auto">
-            <span className="text-5xl mb-4 block">🔍</span>
-            <h3 className="font-sans font-semibold text-neutral-900 mb-2 text-lg">Nothing here yet</h3>
-            <p className="font-sans text-neutral-500 mb-6 max-w-sm mx-auto px-4">
-              {searchQuery
-                ? `No matches for "${searchQuery}". Try a different search or browse what's on this week.`
-                : "No events match that filter right now. Try a different category or check back soon—new events drop every week."
-              }
+          <div className="text-center py-16 bg-white rounded-2xl max-w-md mx-auto">
+            <span className="text-5xl mb-4 block">🏃</span>
+            <h3 className="font-semibold text-neutral-900 mb-2 text-lg">No events this week</h3>
+            <p className="text-neutral-500 max-w-sm mx-auto px-4">
+              Check back soon—new events drop every Wednesday.
             </p>
-            <button
-              onClick={clearFilters}
-              className="inline-block text-neutral-900 font-medium hover:underline underline-offset-4"
-            >
-              See all events →
-            </button>
           </div>
         )}
 
-        {/* CTA */}
-        <div className="text-center mt-16">
-          <p className="text-neutral-500 mb-3">
+        {/* Simple CTA */}
+        <div className="text-center mt-12">
+          <p className="text-neutral-500 text-sm">
             More events added every Wednesday
           </p>
-          <a
-            href="https://www.instagram.com/_sweatbuddies/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-neutral-900 font-medium hover:underline underline-offset-4"
-          >
-            Follow @_sweatbuddies for updates
-            <span className="text-lg">→</span>
-          </a>
         </div>
       </div>
 

@@ -26,11 +26,8 @@ export function Footer() {
               <a href="#events" className="text-neutral-500 hover:text-neutral-900 transition-colors text-sm">
                 Browse Events
               </a>
-              <a href="/my-events" className="text-neutral-500 hover:text-neutral-900 transition-colors text-sm">
-                My Events
-              </a>
-              <a href="#mission" className="text-neutral-500 hover:text-neutral-900 transition-colors text-sm">
-                About Us
+              <a href="/host" className="text-neutral-500 hover:text-neutral-900 transition-colors text-sm">
+                List Your Event
               </a>
               <a href="/host/dashboard" className="text-neutral-500 hover:text-neutral-900 transition-colors text-sm">
                 Host Dashboard

@@ -399,6 +399,7 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
               <GoingButton
                 eventId={event.id}
                 eventName={event.name}
+                eventSlug={event.slug}
                 eventDay={event.day}
                 eventTime={event.time}
                 eventLocation={event.location}
@@ -409,6 +410,8 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                 fullWidth
                 onSuccess={handleGoingSuccess}
                 isFull={event.isFull}
+                isFree={event.isFree}
+                price={event.price}
               />
 
               {/* Safe area padding for iOS */}

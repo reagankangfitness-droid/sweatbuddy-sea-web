@@ -2,7 +2,6 @@
 
 import { useState, useMemo, lazy, Suspense } from 'react'
 import { FeaturedEventsCarousel } from './FeaturedEventsCarousel'
-import { QuickFilters } from './QuickFilters'
 import { EventListCard } from './EventListCard'
 import type { Event } from '@/lib/events'
 
@@ -29,69 +28,8 @@ function getWeekDateRange(): string {
   return `${formatDate(startOfWeek)} – ${formatDate(endOfWeek)}`
 }
 
-// Check if event is today
-function isEventToday(event: Event): boolean {
-  const today = new Date()
-  const dayNames = ['sunday', 'sundays', 'monday', 'mondays', 'tuesday', 'tuesdays',
-    'wednesday', 'wednesdays', 'thursday', 'thursdays', 'friday', 'fridays',
-    'saturday', 'saturdays']
-  const todayDayName = dayNames[today.getDay() * 2].toLowerCase()
-  const eventDay = event.day.toLowerCase()
-
-  // Check recurring events
-  if (eventDay.includes(todayDayName) || eventDay.includes(todayDayName + 's')) {
-    return true
-  }
-
-  // Check specific date events
-  if (event.eventDate) {
-    const eventDate = new Date(event.eventDate)
-    return eventDate.toDateString() === today.toDateString()
-  }
-
-  return false
-}
-
-// Check if event is on weekend
-function isEventWeekend(event: Event): boolean {
-  const weekendDays = ['saturday', 'saturdays', 'sunday', 'sundays', 'sat', 'sun']
-  const eventDay = event.day.toLowerCase()
-
-  // Check recurring events
-  if (weekendDays.some(d => eventDay.includes(d))) {
-    return true
-  }
-
-  // Check specific date events
-  if (event.eventDate) {
-    const eventDate = new Date(event.eventDate)
-    const day = eventDate.getDay()
-    return day === 0 || day === 6
-  }
-
-  return false
-}
-
 export function MobileEventsSection({ events }: Props) {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
-  const [filter, setFilter] = useState('all')
-
-  const filteredEvents = useMemo(() => {
-    return events.filter((event) => {
-      if (filter === 'all') return true
-      if (filter === 'today') return isEventToday(event)
-      if (filter === 'weekend') return isEventWeekend(event)
-
-      // Category filters
-      const categoryLower = event.category.toLowerCase()
-      if (filter === 'run') return categoryLower.includes('run')
-      if (filter === 'yoga') return categoryLower.includes('yoga')
-      if (filter === 'hiit') return categoryLower.includes('hiit') || categoryLower.includes('bootcamp')
-      if (filter === 'social') return categoryLower.includes('social')
-
-      return true
-    })
-  }, [events, filter])
 
   // Featured events are first 5 with images
   const featuredEvents = useMemo(() => {
@@ -115,12 +53,9 @@ export function MobileEventsSection({ events }: Props) {
         <p className="text-sm text-neutral-500">{getWeekDateRange()}</p>
       </div>
 
-      {/* Quick Filters */}
-      <QuickFilters onSelect={setFilter} activeFilter={filter} />
-
-      {/* Event List */}
+      {/* Event List - No filters */}
       <div className="px-4 mt-4 space-y-3">
-        {filteredEvents.map((event) => (
+        {events.map((event) => (
           <EventListCard
             key={event.id}
             event={event}
@@ -128,16 +63,11 @@ export function MobileEventsSection({ events }: Props) {
           />
         ))}
 
-        {filteredEvents.length === 0 && (
+        {events.length === 0 && (
           <div className="text-center py-12 text-neutral-400">
-            <p className="text-4xl mb-2">🔍</p>
-            <p className="font-medium">No events match this filter</p>
-            <button
-              onClick={() => setFilter('all')}
-              className="mt-3 text-neutral-900 font-semibold text-sm"
-            >
-              Show all events
-            </button>
+            <p className="text-4xl mb-2">🏃</p>
+            <p className="font-medium">No events this week</p>
+            <p className="text-sm mt-2">Check back soon!</p>
           </div>
         )}
       </div>
@@ -145,17 +75,9 @@ export function MobileEventsSection({ events }: Props) {
       {/* More events prompt */}
       <div className="px-4 mt-6">
         <div className="bg-white p-4 text-center rounded-2xl border border-neutral-100 shadow-card">
-          <p className="text-sm text-neutral-600 mb-3">
+          <p className="text-sm text-neutral-600">
             More events added every Wednesday
           </p>
-          <a
-            href="https://instagram.com/_sweatbuddies"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-neutral-900 font-semibold text-sm"
-          >
-            📸 Follow @_sweatbuddies for updates
-          </a>
         </div>
       </div>
 

@@ -23,14 +23,10 @@ const MobileEventsSection = dynamicImport(() => import('@/components/MobileEvent
 const HostCTA = dynamicImport(() => import('@/components/HostCTA').then(mod => ({ default: mod.HostCTA })), {
   loading: () => <div className="py-16" />,
 })
-const Newsletter = dynamicImport(() => import('@/components/Newsletter').then(mod => ({ default: mod.Newsletter })), {
-  loading: () => <div className="py-16" />,
-})
 const Footer = dynamicImport(() => import('@/components/Footer').then(mod => ({ default: mod.Footer })), {
   loading: () => <div className="py-10" />,
 })
 const ClientComponents = dynamicImport(() => import('@/components/ClientComponents').then(mod => ({ default: mod.ClientComponents })))
-const StickyNewsletterBar = dynamicImport(() => import('@/components/StickyNewsletterBar').then(mod => ({ default: mod.StickyNewsletterBar })))
 
 // ISR - revalidate every 60 seconds for fresh data with caching
 export const revalidate = 60
@@ -48,7 +44,6 @@ export default async function Home() {
         <HowItWorks />
         <MobileEventsSection events={events} />
         <HostCTA />
-        <Newsletter />
         <Footer />
       </div>
 
@@ -60,11 +55,9 @@ export default async function Home() {
           <HowItWorks />
           <Events initialEvents={events} />
           <HostCTA />
-          <Newsletter />
         </main>
         <Footer />
         <ClientComponents />
-        <StickyNewsletterBar />
       </div>
     </>
   )

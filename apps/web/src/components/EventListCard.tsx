@@ -74,10 +74,21 @@ export function EventListCard({ event, onSelect }: Props) {
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        {/* Category */}
-        <span className="text-label-sm font-medium text-neutral-900 uppercase tracking-wide">
-          {event.category}
-        </span>
+        {/* Category + Price */}
+        <div className="flex items-center gap-2">
+          <span className="text-label-sm font-medium text-neutral-900 uppercase tracking-wide">
+            {event.category}
+          </span>
+          {event.isFree !== false ? (
+            <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded">
+              Free
+            </span>
+          ) : event.price && event.price > 0 && (
+            <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[10px] font-bold rounded">
+              ${(event.price / 100).toFixed(0)}
+            </span>
+          )}
+        </div>
 
         {/* Title */}
         <h3 className="font-sans font-semibold text-display-card text-neutral-900 line-clamp-1 mt-0.5">

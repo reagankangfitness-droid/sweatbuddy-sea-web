@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useUser } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
 import {
   Dialog,
   DialogContent,
@@ -11,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
-import { Send, MessageCircle } from 'lucide-react'
+import { Send, MessageCircle, LogIn } from 'lucide-react'
 
 interface Message {
   id: string
@@ -52,7 +53,8 @@ export function ActivityMessaging({
   open,
   onOpenChange,
 }: ActivityMessagingProps) {
-  const { user } = useUser()
+  const { user, isLoaded, isSignedIn } = useUser()
+  const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([])
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [newMessage, setNewMessage] = useState('')
@@ -134,6 +136,52 @@ export function ActivityMessaging({
         ? conversation.receiver
         : conversation.sender
     return otherPerson.name || 'User'
+  }
+
+  // Show sign-in prompt if not authenticated
+  if (isLoaded && !isSignedIn) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageCircle className="w-5 h-5" />
+              Message {hostName || 'Host'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="text-center py-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-neutral-100 rounded-full mb-4">
+              <LogIn className="w-8 h-8 text-neutral-400" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Sign in to message</h3>
+            <p className="text-sm text-neutral-500 mb-6">
+              Create an account to connect with hosts and ask questions about events.
+            </p>
+            <Button
+              onClick={() => {
+                onOpenChange(false)
+                router.push(`/sign-in?redirect_url=/activities/${activityId}`)
+              }}
+              className="w-full"
+            >
+              Sign in to continue
+            </Button>
+            <p className="text-xs text-neutral-400 mt-4">
+              Don&apos;t have an account?{' '}
+              <button
+                onClick={() => {
+                  onOpenChange(false)
+                  router.push(`/sign-up?redirect_url=/activities/${activityId}`)
+                }}
+                className="text-neutral-900 font-medium hover:underline"
+              >
+                Sign up
+              </button>
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
+    )
   }
 
   return (

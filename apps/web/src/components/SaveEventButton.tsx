@@ -1,15 +1,21 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useUser } from '@clerk/nextjs'
+import { useRouter } from 'next/navigation'
 import { Heart } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface SaveEventButtonProps {
   eventId: string
+  eventSlug?: string
   className?: string
   iconOnly?: boolean
 }
 
-export function SaveEventButton({ eventId, className = '', iconOnly = false }: SaveEventButtonProps) {
+export function SaveEventButton({ eventId, eventSlug, className = '', iconOnly = false }: SaveEventButtonProps) {
+  const { isSignedIn, isLoaded } = useUser()
+  const router = useRouter()
   const [isSaved, setIsSaved] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
 
@@ -22,15 +28,31 @@ export function SaveEventButton({ eventId, className = '', iconOnly = false }: S
     e.preventDefault()
     e.stopPropagation()
 
+    // Prompt login if not signed in
+    if (isLoaded && !isSignedIn) {
+      toast('Sign in to save events', {
+        description: 'Create an account to save events and access them anywhere.',
+        action: {
+          label: 'Sign in',
+          onClick: () => router.push(`/sign-in?redirect_url=/e/${eventSlug || eventId}`),
+        },
+      })
+      return
+    }
+
     const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
 
     let newSaved
     if (saved.includes(eventId)) {
       newSaved = saved.filter((id: string) => id !== eventId)
+      toast.success('Removed from saved events')
     } else {
       newSaved = [...saved, eventId]
       setIsAnimating(true)
       setTimeout(() => setIsAnimating(false), 300)
+      toast.success('Event saved!', {
+        description: 'View your saved events anytime.',
+      })
     }
 
     localStorage.setItem('sweatbuddies_saved', JSON.stringify(newSaved))

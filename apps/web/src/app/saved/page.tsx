@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ArrowLeft, Heart, Calendar, MapPin, Trash2 } from 'lucide-react'
+import { useUser } from '@clerk/nextjs'
+import { ArrowLeft, Heart, Calendar, MapPin, Trash2, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -14,6 +15,7 @@ interface SavedEvent {
   location: string
   imageUrl?: string | null
   recurring: boolean
+  slug?: string | null
 }
 
 const categoryEmojis: Record<string, string> = {
@@ -34,6 +36,7 @@ function getCategoryEmoji(category: string): string {
 }
 
 export default function SavedPage() {
+  const { isLoaded, isSignedIn } = useUser()
   const [savedEvents, setSavedEvents] = useState<SavedEvent[]>([])
   const [allEvents, setAllEvents] = useState<SavedEvent[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -82,6 +85,63 @@ export default function SavedPage() {
     localStorage.setItem('sweatbuddies_saved', JSON.stringify(newSavedIds))
     setSavedEvents(savedEvents.filter(e => e.id !== eventId))
     window.dispatchEvent(new Event('savedEventsUpdated'))
+  }
+
+  // Show loading while checking auth
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+      </div>
+    )
+  }
+
+  // Not signed in - show sign in prompt
+  if (!isSignedIn) {
+    return (
+      <div className="min-h-screen bg-neutral-50">
+        {/* Header */}
+        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+          <div className="pt-[env(safe-area-inset-top,0px)]">
+            <div className="flex items-center gap-4 px-4 py-3">
+              <Link
+                href="/"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
+              >
+                <ArrowLeft className="w-5 h-5 text-neutral-700" />
+              </Link>
+              <h1 className="text-display-card">Saved Events</h1>
+            </div>
+          </div>
+        </header>
+
+        {/* Sign in prompt */}
+        <main className="pt-24 pb-24 px-4">
+          <div className="text-center py-12">
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-2xl border border-neutral-100 shadow-card mb-6">
+              <Heart className="w-12 h-12 text-neutral-300" />
+            </div>
+            <h2 className="text-display-section mb-2">Save your favorite events</h2>
+            <p className="text-body-default mb-8 max-w-xs mx-auto">
+              Sign in to save events and access them from any device.
+            </p>
+            <Link
+              href="/sign-in?redirect_url=/saved"
+              className="inline-flex items-center gap-2 bg-neutral-900 px-6 py-3 text-base font-semibold rounded-full shadow-md hover:bg-neutral-700 transition-colors"
+              style={{ color: '#FFFFFF' }}
+            >
+              Sign in to continue
+            </Link>
+            <p className="text-sm text-neutral-500 mt-4">
+              Don&apos;t have an account?{' '}
+              <Link href="/sign-up?redirect_url=/saved" className="text-neutral-900 font-medium hover:underline">
+                Sign up
+              </Link>
+            </p>
+          </div>
+        </main>
+      </div>
+    )
   }
 
   return (
@@ -139,9 +199,10 @@ export default function SavedPage() {
         ) : (
           <div className="space-y-4">
             {savedEvents.map((event) => (
-              <div
+              <Link
                 key={event.id}
-                className="bg-white rounded-2xl border border-neutral-100 shadow-card flex gap-4 p-4"
+                href={`/e/${event.slug || event.id}`}
+                className="bg-white rounded-2xl border border-neutral-100 shadow-card flex gap-4 p-4 hover:shadow-md transition-shadow"
               >
                 {/* Image */}
                 <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-neutral-50 relative rounded-xl">
@@ -179,12 +240,16 @@ export default function SavedPage() {
 
                 {/* Remove button - neutral, coral on hover */}
                 <button
-                  onClick={() => handleRemove(event.id)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    handleRemove(event.id)
+                  }}
                   className="flex-shrink-0 w-10 h-10 flex items-center justify-center text-neutral-400 hover:text-neutral-900 hover:bg-neutral-900/10 rounded-full transition-colors"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
-              </div>
+              </Link>
             ))}
           </div>
         )}

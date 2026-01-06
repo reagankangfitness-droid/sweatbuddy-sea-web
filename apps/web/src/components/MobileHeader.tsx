@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback, KeyboardEvent } from 'react'
-import { ChevronDown, Check } from 'lucide-react'
+import { ChevronDown, Check, User } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Logo } from '@/components/logo'
+import Link from 'next/link'
+import { useUser } from '@clerk/nextjs'
 
 const cities = [
   { id: 'singapore', name: 'Singapore', flag: '🇸🇬' },
@@ -20,6 +22,7 @@ export function MobileHeader() {
   const dropdownRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const listboxRef = useRef<HTMLDivElement>(null)
+  const { isSignedIn, isLoaded } = useUser()
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50)
@@ -123,6 +126,8 @@ export function MobileHeader() {
             </span>
           </div>
 
+          {/* Right side: City Selector + Login/Profile */}
+          <div className="flex items-center gap-2">
           {/* City Selector Dropdown - accessible */}
           <div className="relative" ref={dropdownRef}>
             <button
@@ -203,6 +208,25 @@ export function MobileHeader() {
                 </motion.div>
               )}
             </AnimatePresence>
+          </div>
+
+          {/* Login/Profile Button */}
+          {isLoaded && (
+            <Link
+              href={isSignedIn ? '/profile' : '/sign-in'}
+              aria-label={isSignedIn ? 'Profile' : 'Sign in'}
+              className={`
+                flex items-center justify-center w-10 h-10 rounded-full
+                transition-all duration-200
+                ${isScrolled
+                  ? 'bg-white border border-neutral-200 hover:border-neutral-400'
+                  : 'bg-white/10 backdrop-blur-sm border border-white/30 hover:bg-white/20'
+                }
+              `}
+            >
+              <User className={`w-5 h-5 ${isScrolled ? 'text-neutral-700' : 'text-white'}`} />
+            </Link>
+          )}
           </div>
         </div>
       </div>

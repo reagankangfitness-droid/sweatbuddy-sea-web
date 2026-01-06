@@ -15,6 +15,7 @@ import { generateGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
 import { Calendar, MessageCircle, Users, ChevronDown, ChevronUp } from 'lucide-react'
 import type { UrgencyLevel } from '@/lib/waitlist'
 import { PostActivityPrompt } from '@/components/post-activity-prompt'
+import { getSignInUrl } from '@/lib/auth-utils'
 
 // Character limit for description before showing "Read More"
 const DESCRIPTION_CHAR_LIMIT = 300
@@ -763,9 +764,12 @@ Organized via sweatbuddies
                   <Button
                     size="lg"
                     onClick={() => {
-                      // Redirect to sign in with return URL
-                      const returnUrl = encodeURIComponent(window.location.pathname)
-                      window.location.href = `/sign-in?redirect_url=${returnUrl}`
+                      // Redirect to sign in with RSVP intent
+                      const signInUrl = getSignInUrl({
+                        intent: 'rsvp',
+                        eventId: params.id,
+                      })
+                      window.location.href = signInUrl
                     }}
                     className="flex-1 h-11 text-sm sm:text-base"
                   >

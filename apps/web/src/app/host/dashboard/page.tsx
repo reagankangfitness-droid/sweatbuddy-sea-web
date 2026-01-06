@@ -86,14 +86,15 @@ export default function HostDashboard() {
       try {
         const sessionRes = await fetch('/api/organizer/verify', { method: 'POST' })
         if (!sessionRes.ok) {
-          router.push('/organizer')
+          // Not authenticated or not a host - redirect to sign-in with host intent
+          router.push('/sign-in?intent=host')
           return
         }
 
         const dashboardRes = await fetch('/api/host/dashboard')
         if (!dashboardRes.ok) {
           if (dashboardRes.status === 401) {
-            router.push('/organizer')
+            router.push('/sign-in?intent=host')
             return
           }
           throw new Error('Couldn\'t load your dashboard')

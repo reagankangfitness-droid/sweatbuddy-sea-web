@@ -6,7 +6,7 @@ import { Logo } from '@/components/logo'
 import { useEffect, useState, useCallback } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { Menu, X, ArrowRight, LayoutDashboard } from 'lucide-react'
-import { useUser, SignInButton } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
 
 // Helper to scroll to element with retry for dynamic content
 const scrollToElement = (elementId: string, maxAttempts = 10) => {
@@ -164,17 +164,16 @@ export function Header() {
                   Dashboard
                 </Link>
               ) : (
-                <SignInButton mode="modal">
-                  <button
-                    className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      scrolled
-                        ? 'text-neutral-700 hover:bg-neutral-100'
-                        : 'text-white/90 hover:bg-white/10'
-                    }`}
-                  >
-                    Log In
-                  </button>
-                </SignInButton>
+                <Link
+                  href="/sign-in"
+                  className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    scrolled
+                      ? 'text-neutral-700 hover:bg-neutral-100'
+                      : 'text-white/90 hover:bg-white/10'
+                  }`}
+                >
+                  Log In
+                </Link>
               )
             )}
 
@@ -282,14 +281,13 @@ export function Header() {
                       Dashboard
                     </Link>
                   ) : (
-                    <SignInButton mode="modal">
-                      <button
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100 text-left w-full"
-                      >
-                        Log In
-                      </button>
-                    </SignInButton>
+                    <Link
+                      href="/sign-in"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100 block"
+                    >
+                      Log In
+                    </Link>
                   )
                 )}
 

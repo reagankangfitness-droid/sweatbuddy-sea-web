@@ -594,7 +594,7 @@ export default function HostApplicationPage() {
           <div className="mt-8 text-center">
             <p className="text-body-small text-neutral-600">
               Already a host?{' '}
-              <Link href="/organizer" className="text-neutral-900 font-medium hover:underline">
+              <Link href="/sign-in?intent=host" className="text-neutral-900 font-medium hover:underline">
                 Sign in to your dashboard
               </Link>
             </p>

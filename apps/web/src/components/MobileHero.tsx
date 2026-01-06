@@ -28,7 +28,7 @@ export function MobileHero() {
   return (
     <div className="md:hidden relative min-h-[100svh] flex flex-col justify-end overflow-hidden bg-neutral-950">
       {/* Dark background base */}
-      <div className="absolute inset-0 bg-neutral-950" />
+      <div className="absolute inset-0 bg-neutral-950 pointer-events-none" />
 
       {/* Floating Orbs - Ambient animation */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -38,7 +38,7 @@ export function MobileHero() {
       </div>
 
       {/* Image Background */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 pointer-events-none">
         <Image
           src="/images/hero-2.jpg"
           alt="Group fitness workout outdoors"

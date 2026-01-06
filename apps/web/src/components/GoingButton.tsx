@@ -116,7 +116,7 @@ export function GoingButton({
       return (
         <button
           disabled
-          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-lg text-sm font-semibold bg-neutral-200 text-neutral-500 cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold bg-neutral-200 text-neutral-500 cursor-not-allowed"
         >
           <span>Event Full</span>
           {count > 0 && (
@@ -130,12 +130,12 @@ export function GoingButton({
       <>
         <button
           onClick={handleClick}
-          className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-lg text-sm font-semibold transition-all ${
+          className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all ${
             isGoing
-              ? 'bg-green-500 text-white'
+              ? 'bg-success text-white'
               : isPaidEvent
-              ? 'bg-purple-600 text-white hover:bg-purple-700'
-              : 'bg-neutral-900 text-white hover:bg-neutral-700'
+              ? 'bg-neutral-800 text-white hover:bg-neutral-700'
+              : 'bg-neutral-900 text-white hover:bg-neutral-800'
           } ${isAnimating ? 'scale-[1.02]' : 'scale-100'}`}
         >
           {isGoing ? (
@@ -202,7 +202,7 @@ export function GoingButton({
     )
   }
 
-  // Compact button for card footer
+  // Compact button for card footer (pill style acceptable for compact)
   if (compact) {
     // Show "Full" if event is full and user hasn't already RSVP'd
     if (isFull && !isGoing) {
@@ -222,10 +222,10 @@ export function GoingButton({
           onClick={handleClick}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
             isGoing
-              ? 'bg-green-500 text-white'
+              ? 'bg-success text-white'
               : isPaidEvent
-              ? 'bg-purple-600 text-white hover:bg-purple-700'
-              : 'bg-neutral-900 text-white hover:bg-neutral-700'
+              ? 'bg-neutral-800 text-white hover:bg-neutral-700'
+              : 'bg-neutral-900 text-white hover:bg-neutral-800'
           } ${isAnimating ? 'scale-105' : 'scale-100'}`}
         >
           {isGoing && <Check className="w-3 h-3" />}
@@ -284,7 +284,7 @@ export function GoingButton({
     return (
       <button
         disabled
-        className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-neutral-200 text-neutral-500 cursor-not-allowed"
+        className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-neutral-200 text-neutral-500 cursor-not-allowed"
       >
         <span>Event Full</span>
       </button>
@@ -295,12 +295,12 @@ export function GoingButton({
     <>
       <button
         onClick={handleClick}
-        className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+        className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
           isGoing
-            ? 'bg-green-500 text-white'
+            ? 'bg-success text-white'
             : isPaidEvent
-            ? 'bg-purple-600 text-white hover:bg-purple-700'
-            : 'bg-neutral-900 text-white hover:bg-neutral-700'
+            ? 'bg-neutral-800 text-white hover:bg-neutral-700'
+            : 'bg-neutral-900 text-white hover:bg-neutral-800'
         } ${isAnimating ? 'scale-105' : 'scale-100'}`}
       >
         {isGoing && <Check className="w-4 h-4" />}

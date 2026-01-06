@@ -104,7 +104,7 @@ export function MobileHeader() {
   return (
     <header
       className={`
-        fixed top-0 left-0 right-0 z-40 md:hidden
+        fixed top-0 left-0 right-0 z-50 md:hidden
         transition-all duration-250
         ${isScrolled
           ? 'bg-white/95 backdrop-blur-lg border-b border-neutral-200'

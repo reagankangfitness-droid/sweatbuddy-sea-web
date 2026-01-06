@@ -4,6 +4,7 @@ import { useEffect, useCallback } from 'react'
 import { Home, Search, Heart, PlusCircle, User } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 
 const navItems = [
   { id: 'home', label: 'Home', icon: Home, href: '/', isHash: false },
@@ -75,7 +76,11 @@ export function BottomNav() {
       <div className="h-20 md:hidden" />
 
       {/* Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+      <nav
+        role="navigation"
+        aria-label="Main navigation"
+        className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
+      >
         {/* Background with blur */}
         <div className="absolute inset-0 bg-white/95 backdrop-blur-lg border-t border-neutral-200" />
 
@@ -85,20 +90,34 @@ export function BottomNav() {
             const isActive = pathname === item.href || (!item.isHash && item.href !== '/' && pathname.startsWith(item.href))
             const Icon = item.icon
 
-            // Special "Submit" button in center
+            // Special "Submit" button in center (FAB style)
             if (item.isAction) {
               return (
-                <button
+                <motion.button
                   key={item.id}
                   onClick={() => handleHashClick(item.href)}
-                  className="relative -mt-6"
+                  whileTap={{ scale: 0.9 }}
+                  aria-label={item.label}
+                  className="relative -mt-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 rounded-full"
                 >
-                  <div className="w-14 h-14 bg-neutral-900 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="w-14 h-14 bg-neutral-900 rounded-full flex items-center justify-center shadow-lg shadow-neutral-900/30 hover:bg-neutral-800 transition-colors">
                     <Icon className="w-6 h-6 text-white" />
                   </div>
-                </button>
+                </motion.button>
               )
             }
+
+            // Common styles for nav items
+            const navItemClasses = `
+              flex flex-col items-center justify-center
+              w-16 h-14
+              transition-all duration-200 relative
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 rounded-lg
+              ${isActive
+                ? 'text-neutral-900'
+                : 'text-neutral-400 hover:text-neutral-600 active:scale-95'
+              }
+            `
 
             // Hash links use button, regular links use Link
             if (item.isHash) {
@@ -106,18 +125,21 @@ export function BottomNav() {
                 <button
                   key={item.id}
                   onClick={() => handleHashClick(item.href)}
-                  className={`
-                    flex flex-col items-center justify-center
-                    w-16 h-14
-                    transition-colors relative
-                    ${isActive
-                      ? 'text-neutral-900'
-                      : 'text-neutral-400 active:text-neutral-600'
-                    }
-                  `}
+                  aria-label={item.label}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={navItemClasses}
                 >
-                  <Icon className={`w-6 h-6 ${isActive ? 'stroke-[2.5px]' : ''}`} />
+                  <Icon className={`w-6 h-6 transition-all duration-200 ${isActive ? 'stroke-[2.5px]' : ''}`} />
                   <span className="text-[10px] mt-1 font-medium">{item.label}</span>
+
+                  {/* Animated active indicator */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeIndicator"
+                      className="absolute bottom-1 w-4 h-1 bg-neutral-900 rounded-full"
+                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                    />
+                  )}
                 </button>
               )
             }
@@ -126,22 +148,20 @@ export function BottomNav() {
               <Link
                 key={item.id}
                 href={item.href}
-                className={`
-                  flex flex-col items-center justify-center
-                  w-16 h-14
-                  transition-colors relative
-                  ${isActive
-                    ? 'text-neutral-900'
-                    : 'text-neutral-400 active:text-neutral-600'
-                  }
-                `}
+                aria-label={item.label}
+                aria-current={isActive ? 'page' : undefined}
+                className={navItemClasses}
               >
-                <Icon className={`w-6 h-6 ${isActive ? 'stroke-[2.5px]' : ''}`} />
+                <Icon className={`w-6 h-6 transition-all duration-200 ${isActive ? 'stroke-[2.5px]' : ''}`} />
                 <span className="text-[10px] mt-1 font-medium">{item.label}</span>
 
-                {/* Active indicator */}
+                {/* Animated active indicator */}
                 {isActive && (
-                  <div className="absolute bottom-1 w-4 h-1 bg-neutral-900 rounded-full" />
+                  <motion.div
+                    layoutId="activeIndicator"
+                    className="absolute bottom-1 w-4 h-1 bg-neutral-900 rounded-full"
+                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                  />
                 )}
               </Link>
             )

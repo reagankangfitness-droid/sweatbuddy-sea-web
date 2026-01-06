@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ArrowDown } from 'lucide-react'
+import { ArrowDown, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export function MobileHero() {
   const [isLoaded, setIsLoaded] = useState(false)
@@ -88,12 +89,12 @@ export function MobileHero() {
             transition: 'opacity 0.5s ease-out 0.2s, transform 0.5s ease-out 0.2s',
           }}
         >
-          Find fitness events across Singapore where strangers become friends.
+          Discover fitness events hosted by real people. Or list your own — free while we&apos;re growing.
         </p>
 
-        {/* CTA Button */}
+        {/* Dual CTA Buttons */}
         <div
-          className="w-full"
+          className="w-full flex flex-col gap-3"
           style={{
             opacity: isLoaded ? 1 : 0,
             transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
@@ -104,8 +105,15 @@ export function MobileHero() {
             onClick={() => handleClick('events')}
             className="w-full px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 transition-colors text-center shadow-lg"
           >
-            Browse Events
+            Find Events
           </button>
+          <Link
+            href="/host"
+            className="w-full px-8 py-4 bg-transparent text-white border-2 border-white/30 rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/50 transition-colors text-center flex items-center justify-center gap-2"
+          >
+            List Your Event
+            <ArrowRight className="w-5 h-5" />
+          </Link>
         </div>
       </div>
 

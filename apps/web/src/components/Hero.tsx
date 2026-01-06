@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect, memo, useCallback } from 'react'
-import { ArrowDown } from 'lucide-react'
+import { ArrowDown, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
 // Helper to scroll to element with retry for dynamic content
@@ -122,11 +123,13 @@ export const Hero = memo(function Hero() {
               transition: 'opacity 0.5s ease-out 0.2s, transform 0.5s ease-out 0.2s',
             }}
           >
-            Find fitness events across Singapore where strangers become friends.
+            Discover fitness events hosted by real people.<br />
+            Or list your own — free while we&apos;re growing.
           </p>
 
-          {/* CTA Button */}
+          {/* Dual CTA Buttons */}
           <div
+            className="flex flex-wrap gap-4"
             style={{
               opacity: isLoaded ? 1 : 0,
               transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
@@ -137,8 +140,15 @@ export const Hero = memo(function Hero() {
               onClick={(e) => handleHashClick(e, '#events')}
               className="px-10 py-5 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 transition-colors shadow-lg"
             >
-              Browse Events
+              Find Events
             </button>
+            <Link
+              href="/host"
+              className="px-10 py-5 bg-transparent text-white border-2 border-white/30 rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/50 transition-colors flex items-center gap-2"
+            >
+              List Your Event
+              <ArrowRight className="w-5 h-5" />
+            </Link>
           </div>
         </div>
       </div>

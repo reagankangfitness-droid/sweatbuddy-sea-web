@@ -9,7 +9,7 @@ import { motion } from 'framer-motion'
 const navItems = [
   { id: 'home', label: 'Home', icon: Home, href: '/', isHash: false },
   { id: 'explore', label: 'Explore', icon: Search, href: '#events', isHash: true },
-  { id: 'submit', label: 'Submit', icon: PlusCircle, href: '#submit-mobile', isHash: true, isAction: true },
+  { id: 'list', label: 'List', icon: PlusCircle, href: '/host', isHash: false, isAction: true },
   { id: 'saved', label: 'Saved', icon: Heart, href: '/saved', isHash: false },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile', isHash: false },
 ]
@@ -90,20 +90,22 @@ export function BottomNav() {
             const isActive = pathname === item.href || (!item.isHash && item.href !== '/' && pathname.startsWith(item.href))
             const Icon = item.icon
 
-            // Special "Submit" button in center (FAB style)
+            // Special "List" button in center (FAB style)
             if (item.isAction) {
               return (
-                <motion.button
+                <Link
                   key={item.id}
-                  onClick={() => handleHashClick(item.href)}
-                  whileTap={{ scale: 0.9 }}
+                  href={item.href}
                   aria-label={item.label}
                   className="relative -mt-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 rounded-full"
                 >
-                  <div className="w-14 h-14 bg-neutral-900 rounded-full flex items-center justify-center shadow-lg shadow-neutral-900/30 hover:bg-neutral-800 transition-colors">
+                  <motion.div
+                    whileTap={{ scale: 0.9 }}
+                    className="w-14 h-14 bg-neutral-900 rounded-full flex items-center justify-center shadow-lg shadow-neutral-900/30 hover:bg-neutral-800 transition-colors"
+                  >
                     <Icon className="w-6 h-6 text-white" />
-                  </div>
-                </motion.button>
+                  </motion.div>
+                </Link>
               )
             }
 

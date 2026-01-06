@@ -78,10 +78,10 @@ export function Newsletter() {
                   </div>
 
                   <h3 className="text-xl font-bold text-gray-900">
-                    Get the best events in your inbox
+                    Never miss the good stuff
                   </h3>
                   <p className="text-gray-500 mt-2 text-sm">
-                    Every Wednesday. One email. The workouts worth showing up for.
+                    Weekly picks: the events people are actually showing up to.
                   </p>
 
                   <form onSubmit={handleSubmit} className="mt-6">

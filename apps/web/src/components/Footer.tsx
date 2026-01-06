@@ -32,8 +32,8 @@ export function Footer() {
               <a href="#mission" className="text-neutral-500 hover:text-neutral-900 transition-colors text-sm">
                 About Us
               </a>
-              <a href="/organizer" className="text-neutral-500 hover:text-neutral-900 transition-colors text-sm">
-                Host Login
+              <a href="/host/dashboard" className="text-neutral-500 hover:text-neutral-900 transition-colors text-sm">
+                Host Dashboard
               </a>
               <a href="/privacy" className="text-neutral-500 hover:text-neutral-900 transition-colors text-sm">
                 Privacy Policy
@@ -72,7 +72,7 @@ export function Footer() {
             © {new Date().getFullYear()} SweatBuddies
           </p>
           <p className="text-xs text-neutral-500 font-medium">
-            Show up alone. Leave with a crew.
+            Where fitness events live.
           </p>
         </div>
       </div>

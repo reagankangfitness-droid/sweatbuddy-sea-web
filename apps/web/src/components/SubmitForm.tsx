@@ -443,13 +443,13 @@ export function SubmitForm() {
             </h2>
           </div>
 
-          {/* Free Forever Reassurance */}
+          {/* Free During Beta */}
           <div className="text-center mb-10">
             <p className="font-sans font-semibold text-neutral-900 text-lg mb-1">
-              100% Free. No Catches.
+              Free while we&apos;re growing
             </p>
             <p className="font-sans text-neutral-500 text-sm">
-              No listing fees. No commissions. No &quot;freemium&quot; upsells. Free while we grow.
+              No fees, no commissions. Get in early.
             </p>
           </div>
 

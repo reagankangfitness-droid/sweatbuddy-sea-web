@@ -31,6 +31,9 @@ interface Event {
   // Pricing
   isFree: boolean
   price: number | null  // in cents
+  paynowEnabled: boolean
+  paynowQrCode: string | null
+  paynowNumber: string | null
 }
 
 // Cached database query - revalidates every 60s
@@ -58,6 +61,9 @@ const getCachedEvents = unstable_cache(
         // Pricing
         isFree: true,
         price: true,
+        paynowEnabled: true,
+        paynowQrCode: true,
+        paynowNumber: true,
       },
     })
 
@@ -125,6 +131,9 @@ const getCachedEvents = unstable_cache(
       // Pricing
       isFree: submission.isFree,
       price: submission.price,
+      paynowEnabled: submission.paynowEnabled,
+      paynowQrCode: submission.paynowQrCode,
+      paynowNumber: submission.paynowNumber,
     }))
   },
   ['events-list'],

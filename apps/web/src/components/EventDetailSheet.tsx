@@ -31,6 +31,9 @@ interface Event {
   // Pricing
   isFree?: boolean
   price?: number | null  // in cents
+  paynowEnabled?: boolean
+  paynowQrCode?: string | null
+  paynowNumber?: string | null
 }
 
 // Format date for display (e.g., "Sat, Dec 14")
@@ -412,6 +415,9 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                 isFull={event.isFull}
                 isFree={event.isFree}
                 price={event.price}
+                paynowEnabled={event.paynowEnabled}
+                paynowQrCode={event.paynowQrCode}
+                paynowNumber={event.paynowNumber}
               />
 
               {/* Safe area padding for iOS */}

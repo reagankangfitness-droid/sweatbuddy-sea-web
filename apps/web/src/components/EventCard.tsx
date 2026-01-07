@@ -36,6 +36,9 @@ interface Event {
   // Pricing
   isFree?: boolean
   price?: number | null  // in cents
+  paynowEnabled?: boolean
+  paynowQrCode?: string | null
+  paynowNumber?: string | null
 }
 
 // Format date for display (e.g., "Sat, Dec 14")

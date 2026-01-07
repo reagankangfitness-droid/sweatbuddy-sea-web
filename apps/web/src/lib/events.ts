@@ -107,6 +107,12 @@ const getCachedEvents = unstable_cache(
         communityLink: true,
         recurring: true,
         isFull: true,
+        // Pricing fields
+        isFree: true,
+        price: true,
+        paynowEnabled: true,
+        paynowQrCode: true,
+        paynowNumber: true,
       },
     })
 
@@ -137,6 +143,12 @@ const getCachedEvents = unstable_cache(
       recurring: submission.recurring,
       isFull: submission.isFull,
       goingCount: countMap.get(submission.id) || 0,
+      // Pricing fields
+      isFree: submission.isFree,
+      price: submission.price,
+      paynowEnabled: submission.paynowEnabled,
+      paynowQrCode: submission.paynowQrCode,
+      paynowNumber: submission.paynowNumber,
     }))
   },
   ['events-list-home'],

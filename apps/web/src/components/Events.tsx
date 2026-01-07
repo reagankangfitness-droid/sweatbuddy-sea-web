@@ -48,6 +48,9 @@ interface Event {
   isFull?: boolean
   isFree?: boolean
   price?: number | null
+  paynowEnabled?: boolean
+  paynowQrCode?: string | null
+  paynowNumber?: string | null
 }
 
 interface EventsProps {

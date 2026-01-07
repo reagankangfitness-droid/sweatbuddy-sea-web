@@ -159,6 +159,21 @@ export default function HostApplicationPage() {
       return
     }
 
+    // Validate paid event requirements
+    if (!formData.isFree) {
+      const price = parseFloat(formData.price || '0')
+      if (price <= 0) {
+        setError('Please enter a valid price for your paid event')
+        setIsLoading(false)
+        return
+      }
+      if (!formData.paynowQrCode) {
+        setError('Please upload a PayNow QR code so attendees can pay')
+        setIsLoading(false)
+        return
+      }
+    }
+
     try {
       // Format day display based on recurring vs one-time
       let dayDisplay = ''

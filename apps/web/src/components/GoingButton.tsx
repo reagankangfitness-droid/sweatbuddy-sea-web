@@ -54,7 +54,12 @@ export function GoingButton({
   const [isAnimating, setIsAnimating] = useState(false)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
 
-  const isPaidEvent = !isFree && price && price > 0 && paynowEnabled
+  // An event is paid if it has a price > 0 (regardless of isFree flag)
+  const hasPaidPrice = price && price > 0
+  // PayNow flow is available only if paynowEnabled and has QR code
+  const hasPaymentMethod = paynowEnabled && paynowQrCode
+  // Show paid button if event has a price
+  const isPaidEvent = hasPaidPrice
   const formattedPrice = price ? (price / 100).toFixed(0) : '0'
 
   useEffect(() => {
@@ -78,8 +83,14 @@ export function GoingButton({
       return
     }
 
-    // Paid event - show payment modal
+    // Paid event - show payment modal or error if no payment method
     if (isPaidEvent) {
+      if (!hasPaymentMethod) {
+        toast.error('Payment not yet set up. Contact the host to join.', {
+          duration: 4000,
+        })
+        return
+      }
       setShowPaymentModal(true)
       return
     }
@@ -195,7 +206,7 @@ export function GoingButton({
 
         <SharePrompt />
 
-        {isPaidEvent && showPaymentModal && (
+        {isPaidEvent && hasPaymentMethod && showPaymentModal && (
           <Suspense fallback={null}>
             <PaymentModal
               event={{
@@ -246,7 +257,7 @@ export function GoingButton({
           )}
         </button>
 
-        {isPaidEvent && showPaymentModal && (
+        {isPaidEvent && hasPaymentMethod && showPaymentModal && (
           <Suspense fallback={null}>
             <PaymentModal
               event={{
@@ -298,7 +309,7 @@ export function GoingButton({
 
       <SharePrompt />
 
-      {isPaidEvent && showPaymentModal && (
+      {isPaidEvent && hasPaymentMethod && showPaymentModal && (
         <Suspense fallback={null}>
           <PaymentModal
             event={{

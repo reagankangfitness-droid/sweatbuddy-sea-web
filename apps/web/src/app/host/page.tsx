@@ -81,6 +81,7 @@ export default function HostApplicationPage() {
     longitude: 0,
     placeId: '',
     description: '',
+    communityLink: '',
     // Pricing fields
     isFree: true,
     price: '',
@@ -182,6 +183,7 @@ export default function HostApplicationPage() {
         longitude: formData.longitude || null,
         placeId: formData.placeId || null,
         description: formData.description || '',
+        communityLink: formData.communityLink || null,
         imageUrl: imageUrl || null,
         organizerName: formData.organizerName,
         organizerInstagram: formData.instagramHandle.replace('@', ''),
@@ -617,6 +619,24 @@ export default function HostApplicationPage() {
                     className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 resize-none"
                   />
                 </div>
+              </div>
+
+              {/* Community Link */}
+              <div>
+                <label className="block text-ui text-neutral-700 mb-1.5">
+                  Community Group Link <span className="text-neutral-400">(optional)</span>
+                </label>
+                <input
+                  type="url"
+                  name="communityLink"
+                  value={formData.communityLink}
+                  onChange={handleChange}
+                  placeholder="https://chat.whatsapp.com/... or https://t.me/..."
+                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
+                />
+                <p className="text-xs text-neutral-500 mt-1">
+                  WhatsApp or Telegram group for attendees to join
+                </p>
               </div>
 
               {/* Event Image Upload */}

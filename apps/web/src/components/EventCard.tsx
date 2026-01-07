@@ -204,7 +204,7 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
           )}
 
           {/* Price Badge - Top Left (below FULL if present) */}
-          {!event.isFree && event.price && event.price > 0 ? (
+          {event.price && event.price > 0 ? (
             <div className={`absolute ${event.isFull ? 'top-10' : 'top-2'} left-2 px-2.5 py-1 bg-purple-600 text-white text-xs font-bold rounded-full shadow-sm`}>
               ${(event.price / 100).toFixed(0)}
             </div>

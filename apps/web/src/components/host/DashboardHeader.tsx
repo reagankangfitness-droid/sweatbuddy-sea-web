@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Menu, X, LogOut, User } from 'lucide-react'
 import { Logo } from '@/components/logo'
+import { useClerk } from '@clerk/nextjs'
 
 interface HostSession {
   instagramHandle: string
@@ -14,6 +15,7 @@ interface HostSession {
 
 export function DashboardHeader() {
   const router = useRouter()
+  const { signOut } = useClerk()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [session, setSession] = useState<HostSession | null>(null)
 
@@ -37,8 +39,10 @@ export function DashboardHeader() {
   }, [])
 
   const handleLogout = async () => {
+    // Clear legacy organizer session cookie
     await fetch('/api/organizer/verify', { method: 'DELETE' })
-    router.push('/organizer')
+    // Sign out from Clerk and redirect to homepage
+    await signOut(() => router.push('/'))
   }
 
   const navLinks = [

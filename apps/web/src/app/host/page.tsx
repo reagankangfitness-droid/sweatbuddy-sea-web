@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Calendar, MapPin, Clock, Instagram, Mail, User, FileText, Loader2, CheckCircle, Users, Sparkles, DollarSign } from 'lucide-react'
+import { ArrowLeft, Calendar, MapPin, Clock, Instagram, Mail, User, FileText, Loader2, CheckCircle, Users, Sparkles, DollarSign, ImageIcon, X } from 'lucide-react'
+import { UploadButton } from '@/lib/uploadthing'
 
 const eventTypes = [
   'Run Club',
@@ -23,6 +25,9 @@ export default function HostApplicationPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState('')
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [isUploadingQr, setIsUploadingQr] = useState(false)
 
   const [isRecurring, setIsRecurring] = useState(true)
   const [formData, setFormData] = useState({
@@ -39,6 +44,9 @@ export default function HostApplicationPage() {
     // Pricing fields
     isFree: true,
     price: '',
+    // PayNow fields
+    paynowQrCode: '',
+    paynowNumber: '',
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -90,12 +98,17 @@ export default function HostApplicationPage() {
         recurring: isRecurring,
         location: formData.location,
         description: formData.description || '',
+        imageUrl: imageUrl || null,
         organizerName: formData.organizerName,
         organizerInstagram: formData.instagramHandle.replace('@', ''),
         contactEmail: formData.email,
         // Pricing fields
         isFree: formData.isFree,
         price: formData.isFree ? null : Math.round(parseFloat(formData.price || '0') * 100),
+        // PayNow fields
+        paynowEnabled: !formData.isFree && !!formData.paynowQrCode,
+        paynowQrCode: formData.paynowQrCode || null,
+        paynowNumber: formData.paynowNumber || null,
       }
 
       console.log('[Host] Submitting event:', JSON.stringify(eventSubmissionData))
@@ -489,6 +502,55 @@ export default function HostApplicationPage() {
                   />
                 </div>
               </div>
+
+              {/* Event Image Upload */}
+              <div>
+                <label className="block text-ui text-neutral-700 mb-1.5">
+                  Event Image <span className="text-neutral-400">(optional)</span>
+                </label>
+                {imageUrl ? (
+                  <div className="relative rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200">
+                    <Image src={imageUrl} alt="Event preview" width={400} height={200} className="w-full h-48 object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setImageUrl(null)}
+                      className="absolute top-2 right-2 p-2 rounded-full bg-neutral-900/60 hover:bg-neutral-900/80 transition-colors"
+                    >
+                      <X className="w-4 h-4 text-white" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="rounded-xl bg-neutral-50 border border-neutral-200 border-dashed p-6">
+                    {isUploading ? (
+                      <div className="flex flex-col items-center gap-2 text-neutral-500">
+                        <Loader2 className="w-6 h-6 animate-spin text-neutral-900" />
+                        <span className="text-sm">Uploading...</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-3">
+                        <ImageIcon className="w-8 h-8 text-neutral-400" />
+                        <p className="text-sm text-neutral-500">Upload a photo for your event</p>
+                        <UploadButton
+                          endpoint="eventImage"
+                          onUploadBegin={() => setIsUploading(true)}
+                          onClientUploadComplete={(res) => {
+                            setIsUploading(false)
+                            if (res?.[0]?.url) setImageUrl(res[0].url)
+                          }}
+                          onUploadError={(error: Error) => {
+                            setIsUploading(false)
+                            setError(`Upload failed: ${error.message}`)
+                          }}
+                          appearance={{
+                            button: "bg-neutral-900 hover:bg-neutral-800 text-white font-medium px-4 py-2 rounded-full text-sm transition-colors",
+                            allowedContent: "hidden",
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="border-t border-neutral-200 my-6" />
@@ -555,14 +617,91 @@ export default function HostApplicationPage() {
                     </div>
                   </div>
 
-                  {/* PayNow Payment Info */}
+                  {/* PayNow QR Code Upload */}
+                  <div>
+                    <label className="block text-ui text-neutral-700 mb-1.5">
+                      PayNow QR Code *
+                    </label>
+                    <p className="text-xs text-neutral-500 mb-2">
+                      Upload your PayNow QR code so attendees can pay you directly
+                    </p>
+                    {formData.paynowQrCode ? (
+                      <div className="relative rounded-xl overflow-hidden bg-white border border-neutral-200 w-48">
+                        <Image
+                          src={formData.paynowQrCode}
+                          alt="PayNow QR"
+                          width={192}
+                          height={192}
+                          className="w-48 h-48 object-contain bg-white"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setFormData(prev => ({ ...prev, paynowQrCode: '' }))}
+                          className="absolute top-2 right-2 p-2 rounded-full bg-neutral-900/60 hover:bg-neutral-900/80 transition-colors"
+                        >
+                          <X className="w-4 h-4 text-white" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="rounded-xl bg-white border border-neutral-200 border-dashed p-5 w-48">
+                        {isUploadingQr ? (
+                          <div className="flex flex-col items-center gap-2 text-neutral-500">
+                            <Loader2 className="w-6 h-6 animate-spin text-neutral-900" />
+                            <span className="text-sm">Uploading...</span>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center gap-2">
+                            <ImageIcon className="w-8 h-8 text-neutral-400" />
+                            <UploadButton
+                              endpoint="eventImage"
+                              onUploadBegin={() => setIsUploadingQr(true)}
+                              onClientUploadComplete={(res) => {
+                                setIsUploadingQr(false)
+                                if (res?.[0]?.url) {
+                                  setFormData(prev => ({ ...prev, paynowQrCode: res[0].url }))
+                                }
+                              }}
+                              onUploadError={(error: Error) => {
+                                setIsUploadingQr(false)
+                                setError(`Upload failed: ${error.message}`)
+                              }}
+                              appearance={{
+                                button: "bg-neutral-900 hover:bg-neutral-800 text-white font-medium px-3 py-1.5 rounded-full text-xs transition-colors",
+                                allowedContent: "hidden",
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* PayNow Number */}
+                  <div>
+                    <label className="block text-ui text-neutral-700 mb-1.5">
+                      PayNow Phone or UEN <span className="text-neutral-400">(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="paynowNumber"
+                      value={formData.paynowNumber}
+                      onChange={handleChange}
+                      placeholder="e.g., 91234567 or 202312345K"
+                      className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
+                    />
+                    <p className="text-xs text-neutral-500 mt-1">
+                      For attendees who prefer to transfer manually
+                    </p>
+                  </div>
+
+                  {/* Info Box */}
                   <div className="p-4 bg-green-50 rounded-xl border border-green-100">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="font-medium text-green-800">PayNow QR Code Payments</span>
-                      <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-medium">Instant</span>
+                      <span className="font-medium text-green-800">PayNow Payments</span>
+                      <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-medium">No fees</span>
                     </div>
                     <p className="text-sm text-green-700">
-                      After your event is approved, you&apos;ll be able to add your PayNow QR code. Attendees pay you directly with no fees - payments go straight to your account instantly.
+                      Attendees scan your QR code and pay directly to your account. No platform fees!
                     </p>
                   </div>
                 </div>

@@ -92,39 +92,48 @@ function SignInContent() {
   const content = getContextualContent()
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4">
-      <div className="w-full max-w-sm">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-50 px-4 py-8">
+      <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex justify-center mb-6">
           <Logo size={40} />
         </div>
 
         {/* Contextual Header */}
-        <div className="text-center mb-8">
-          <span className="text-4xl mb-3 block">{content.emoji}</span>
+        <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-neutral-900">{content.title}</h1>
           <p className="text-neutral-500 mt-1">{content.subtitle}</p>
         </div>
 
         {/* Clerk Sign In */}
-        <SignIn
-          appearance={{
-            elements: {
-              rootBox: 'w-full',
-              card: 'shadow-none p-0 bg-transparent',
-              headerTitle: 'hidden',
-              headerSubtitle: 'hidden',
-              socialButtonsBlockButton: 'border border-neutral-200 hover:bg-neutral-50',
-              formFieldInput: 'border-neutral-200 focus:border-neutral-900 focus:ring-neutral-900',
-              formButtonPrimary: 'bg-neutral-900 hover:bg-neutral-800',
-              footerActionLink: 'text-neutral-900 hover:text-neutral-700',
-            }
-          }}
-          redirectUrl={redirectUrl || '/dashboard'}
-        />
+        <div className="bg-white rounded-2xl border border-neutral-200 p-6 shadow-sm">
+          <SignIn
+            appearance={{
+              elements: {
+                rootBox: 'w-full',
+                card: 'shadow-none p-0 bg-transparent border-none',
+                cardBox: 'shadow-none',
+                header: 'hidden',
+                headerTitle: 'hidden',
+                headerSubtitle: 'hidden',
+                socialButtonsBlockButton: 'border border-neutral-200 hover:bg-neutral-50 rounded-lg',
+                socialButtonsBlockButtonText: 'font-medium',
+                dividerLine: 'bg-neutral-200',
+                dividerText: 'text-neutral-400',
+                formFieldLabel: 'text-neutral-700 font-medium',
+                formFieldInput: 'border-neutral-200 focus:border-neutral-900 focus:ring-neutral-900 rounded-lg',
+                formButtonPrimary: 'bg-neutral-900 hover:bg-neutral-800 rounded-lg',
+                footerAction: 'pt-4',
+                footerActionLink: 'text-neutral-900 hover:text-neutral-700 font-medium',
+                footer: 'hidden',
+              }
+            }}
+            redirectUrl={redirectUrl || '/dashboard'}
+          />
+        </div>
 
         {/* Footer Note */}
-        <p className="text-center text-xs text-neutral-400 mt-8">
+        <p className="text-center text-xs text-neutral-400 mt-6">
           One account for everything — join events and host them.
         </p>
       </div>

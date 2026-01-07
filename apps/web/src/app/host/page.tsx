@@ -1,11 +1,37 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Calendar, MapPin, Clock, Instagram, Mail, User, FileText, Loader2, CheckCircle, Users, Sparkles, DollarSign, ImageIcon, X } from 'lucide-react'
 import { UploadButton } from '@/lib/uploadthing'
+import { GoogleMap, Marker, Autocomplete, useJsApiLoader } from '@react-google-maps/api'
+
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
+const LIBRARIES: ('places')[] = ['places']
+const DEFAULT_CENTER = { lat: 1.3521, lng: 103.8198 } // Singapore
+
+const AUTOCOMPLETE_OPTIONS = {
+  componentRestrictions: { country: ['sg', 'th', 'id', 'my', 'ph', 'vn'] },
+  types: ['establishment', 'geocode'],
+  fields: ['formatted_address', 'geometry', 'name', 'place_id'],
+}
+
+const MAP_CONTAINER_STYLE = { width: '100%', height: '180px', borderRadius: '12px' }
+
+const MAP_OPTIONS = {
+  streetViewControl: false,
+  mapTypeControl: false,
+  fullscreenControl: false,
+  styles: [
+    { elementType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
+    { elementType: 'labels.text.fill', stylers: [{ color: '#333333' }] },
+    { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#c9e4f6' }] },
+    { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
+    { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#c8e6c9' }] },
+  ],
+}
 
 const eventTypes = [
   'Run Club',
@@ -22,12 +48,23 @@ const eventTypes = [
 ]
 
 export default function HostApplicationPage() {
+  // Load Google Maps API
+  const { isLoaded: mapsLoaded } = useJsApiLoader({
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
+    libraries: LIBRARIES,
+  })
+
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState('')
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [isUploadingQr, setIsUploadingQr] = useState(false)
+
+  // Google Maps state
+  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null)
+  const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER)
+  const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null)
 
   const [isRecurring, setIsRecurring] = useState(true)
   const [formData, setFormData] = useState({
@@ -40,6 +77,9 @@ export default function HostApplicationPage() {
     eventDate: '',
     eventTime: '',
     location: '',
+    latitude: 0,
+    longitude: 0,
+    placeId: '',
     description: '',
     // Pricing fields
     isFree: true,
@@ -48,6 +88,47 @@ export default function HostApplicationPage() {
     paynowQrCode: '',
     paynowNumber: '',
   })
+
+  // Google Maps callbacks
+  const onAutocompleteLoad = useCallback((autocompleteInstance: google.maps.places.Autocomplete) => {
+    setAutocomplete(autocompleteInstance)
+  }, [])
+
+  const onPlaceChanged = useCallback(() => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace()
+      if (place.geometry?.location) {
+        const lat = place.geometry.location.lat()
+        const lng = place.geometry.location.lng()
+        const newPosition = { lat, lng }
+        setMapCenter(newPosition)
+        setMarkerPosition(newPosition)
+
+        const displayAddress = place.name && place.formatted_address
+          ? `${place.name}, ${place.formatted_address}`
+          : place.formatted_address || place.name || ''
+
+        setFormData(prev => ({
+          ...prev,
+          location: displayAddress,
+          latitude: lat,
+          longitude: lng,
+          placeId: place.place_id || '',
+        }))
+      }
+    }
+  }, [autocomplete])
+
+  const onMapClick = useCallback((e: google.maps.MapMouseEvent) => {
+    if (e.latLng) {
+      const lat = e.latLng.lat()
+      const lng = e.latLng.lng()
+      const newPosition = { lat, lng }
+      setMarkerPosition(newPosition)
+      setMapCenter(newPosition)
+      setFormData(prev => ({ ...prev, latitude: lat, longitude: lng }))
+    }
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -97,6 +178,9 @@ export default function HostApplicationPage() {
         time: formData.eventTime,
         recurring: isRecurring,
         location: formData.location,
+        latitude: formData.latitude || null,
+        longitude: formData.longitude || null,
+        placeId: formData.placeId || null,
         description: formData.description || '',
         imageUrl: imageUrl || null,
         organizerName: formData.organizerName,
@@ -472,18 +556,50 @@ export default function HostApplicationPage() {
                 <label className="block text-ui text-neutral-700 mb-1.5">
                   Location *
                 </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    required
-                    placeholder="Marina Bay Sands, Singapore"
-                    className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
-                  />
-                </div>
+                {mapsLoaded ? (
+                  <div className="space-y-3">
+                    <Autocomplete onLoad={onAutocompleteLoad} onPlaceChanged={onPlaceChanged} options={AUTOCOMPLETE_OPTIONS}>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                        <input
+                          type="text"
+                          defaultValue={formData.location}
+                          onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                          required
+                          placeholder="Search for a location..."
+                          className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
+                        />
+                      </div>
+                    </Autocomplete>
+
+                    <GoogleMap
+                      mapContainerStyle={MAP_CONTAINER_STYLE}
+                      center={mapCenter}
+                      zoom={markerPosition ? 15 : 11}
+                      onClick={onMapClick}
+                      options={MAP_OPTIONS}
+                    >
+                      {markerPosition && <Marker position={markerPosition} />}
+                    </GoogleMap>
+
+                    <p className="text-xs text-neutral-500">
+                      Search for a venue or click on the map to set location
+                    </p>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                    <input
+                      type="text"
+                      name="location"
+                      value={formData.location}
+                      onChange={handleChange}
+                      required
+                      placeholder="Marina Bay Sands, Singapore"
+                      className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
+                    />
+                  </div>
+                )}
               </div>
 
               <div>

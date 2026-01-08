@@ -6,16 +6,20 @@ const f = createUploadthing()
 
 export const ourFileRouter = {
   // Event submission image upload - no auth required (public submission)
-  eventImage: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
+  eventImage: f({
+    image: { maxFileSize: "16MB", maxFileCount: 1 },
+  })
     .middleware(async () => {
       // No auth required for event submissions
       return {}
     })
     .onUploadComplete(async ({ file }) => {
-      return { url: file.url }
+      return { url: file.ufsUrl || file.url }
     }),
 
-  activityImage: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
+  activityImage: f({
+    image: { maxFileSize: "16MB", maxFileCount: 1 },
+  })
     .middleware(async () => {
       const { userId } = await auth()
 
@@ -24,11 +28,13 @@ export const ourFileRouter = {
       return { userId }
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      return { uploadedBy: metadata.userId, url: file.url }
+      return { uploadedBy: metadata.userId, url: file.ufsUrl || file.url }
     }),
 
   // Completion card photo upload
-  completionCardPhoto: f({ image: { maxFileSize: "8MB", maxFileCount: 1 } })
+  completionCardPhoto: f({
+    image: { maxFileSize: "16MB", maxFileCount: 1 },
+  })
     .middleware(async () => {
       const { userId } = await auth()
 
@@ -37,11 +43,13 @@ export const ourFileRouter = {
       return { userId }
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      return { uploadedBy: metadata.userId, url: file.url }
+      return { uploadedBy: metadata.userId, url: file.ufsUrl || file.url }
     }),
 
   // Generated completion card image upload
-  completionCardGenerated: f({ image: { maxFileSize: "8MB", maxFileCount: 1 } })
+  completionCardGenerated: f({
+    image: { maxFileSize: "16MB", maxFileCount: 1 },
+  })
     .middleware(async () => {
       const { userId } = await auth()
 
@@ -50,7 +58,7 @@ export const ourFileRouter = {
       return { userId }
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      return { uploadedBy: metadata.userId, url: file.url }
+      return { uploadedBy: metadata.userId, url: file.ufsUrl || file.url }
     }),
 } satisfies FileRouter
 

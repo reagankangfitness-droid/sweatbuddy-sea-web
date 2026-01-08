@@ -608,9 +608,9 @@ export default function AdminEventsPage() {
                               setEditingEvent({ ...editingEvent, imageUrl: res[0].url })
                             }
                           }}
-                          onUploadError={() => {
+                          onUploadError={(error: Error) => {
                             setIsUploading(false)
-                            toast.error('Upload failed')
+                            toast.error(`Upload failed: ${error.message}`)
                           }}
                           appearance={{
                             button: "bg-neutral-900 hover:bg-neutral-700 text-white font-medium px-6 py-3 rounded-lg text-base transition-all",

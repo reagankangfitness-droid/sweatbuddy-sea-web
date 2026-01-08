@@ -1,15 +1,9 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-
-const ADMIN_SECRET = process.env.ADMIN_SECRET || 'sweatbuddies-admin-2024'
-
-function isAdmin(request: Request): boolean {
-  const authHeader = request.headers.get('x-admin-secret')
-  return authHeader === ADMIN_SECRET
-}
+import { isAdminRequest } from '@/lib/admin-auth'
 
 export async function GET(request: Request) {
-  if (!isAdmin(request)) {
+  if (!await isAdminRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

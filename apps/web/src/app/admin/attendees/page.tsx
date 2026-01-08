@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import {
@@ -34,9 +35,8 @@ interface NewsletterSubscriber {
   source: string
 }
 
-const ADMIN_SECRET = 'sweatbuddies-admin-2024'
-
 export default function AdminAttendeesPage() {
+  const { getToken } = useAuth()
   const [activeTab, setActiveTab] = useState<'attendees' | 'newsletter'>('attendees')
   const [attendees, setAttendees] = useState<Attendee[]>([])
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([])
@@ -49,6 +49,14 @@ export default function AdminAttendeesPage() {
     fetchData()
   }, [])
 
+  const getAuthHeaders = async () => {
+    const token = await getToken()
+    return {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  }
+
   const fetchData = async () => {
     setLoading(true)
     await Promise.all([fetchAttendees(), fetchSubscribers()])
@@ -57,9 +65,8 @@ export default function AdminAttendeesPage() {
 
   const fetchAttendees = async () => {
     try {
-      const response = await fetch('/api/attendance', {
-        headers: { 'x-admin-secret': ADMIN_SECRET },
-      })
+      const headers = await getAuthHeaders()
+      const response = await fetch('/api/attendance', { headers })
       if (response.ok) {
         const data = await response.json()
         setAttendees(data.attendees || [])
@@ -71,9 +78,8 @@ export default function AdminAttendeesPage() {
 
   const fetchSubscribers = async () => {
     try {
-      const response = await fetch('/api/newsletter/subscribers', {
-        headers: { 'x-admin-secret': ADMIN_SECRET },
-      })
+      const headers = await getAuthHeaders()
+      const response = await fetch('/api/newsletter/subscribers', { headers })
       if (response.ok) {
         const data = await response.json()
         setSubscribers(data.subscribers || [])
@@ -137,9 +143,10 @@ export default function AdminAttendeesPage() {
 
     setDeletingId(attendeeId)
     try {
+      const headers = await getAuthHeaders()
       const response = await fetch(`/api/attendance?id=${attendeeId}`, {
         method: 'DELETE',
-        headers: { 'x-admin-secret': ADMIN_SECRET },
+        headers,
       })
 
       if (response.ok) {

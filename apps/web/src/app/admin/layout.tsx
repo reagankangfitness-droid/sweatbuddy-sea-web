@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { useUser, SignOutButton } from '@clerk/nextjs'
 import {
   LayoutDashboard,
   Calendar,
@@ -13,11 +14,11 @@ import {
   Menu,
   X,
   Clock,
-  ChevronLeft
+  ChevronLeft,
+  Loader2
 } from 'lucide-react'
 import { Logo } from '@/components/logo'
-
-const ADMIN_SECRET = 'sweatbuddies-admin-2024'
+import { isAdminUser } from '@/lib/admin-auth-client'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -33,49 +34,55 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const [isAuthed, setIsAuthed] = useState<boolean | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
+  const { user, isLoaded } = useUser()
 
-  useEffect(() => {
-    const storedAuth = localStorage.getItem('admin-auth')
-    setIsAuthed(storedAuth === ADMIN_SECRET)
-  }, [])
-
-  const handleLogout = () => {
-    localStorage.removeItem('admin-auth')
-    setIsAuthed(false)
-    router.push('/admin/login')
-  }
-
-  // Show loading state while checking auth
-  if (isAuthed === null) {
+  // Show loading state while Clerk loads
+  if (!isLoaded) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin" />
+        <Loader2 className="w-8 h-8 text-neutral-500 animate-spin" />
       </div>
     )
   }
 
-  // If on login page, just show children
-  if (pathname === '/admin/login') {
-    return <>{children}</>
-  }
+  // Check if user is signed in and is an admin
+  const isAuthed = user && isAdminUser(user.id)
 
-  // If not authed and not on login page, redirect to login
+  // If not authed, show login prompt
   if (!isAuthed) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4">
         <div className="bg-white p-8 rounded-2xl border border-neutral-200 shadow-lg max-w-sm w-full text-center">
+          <div className="mb-6">
+            <Logo size={48} />
+          </div>
           <h1 className="font-semibold text-xl text-neutral-900 mb-4">Admin Access Required</h1>
-          <p className="text-neutral-500 text-sm mb-6">Please log in to access the admin dashboard.</p>
-          <Link
-            href="/admin/login"
-            className="inline-block w-full bg-neutral-900 text-white py-3 rounded-lg font-semibold hover:bg-neutral-700 transition-all"
-          >
-            Go to Login
-          </Link>
+          {!user ? (
+            <>
+              <p className="text-neutral-500 text-sm mb-6">Please sign in with an admin account to access the dashboard.</p>
+              <Link
+                href="/sign-in?redirect_url=/admin"
+                className="inline-block w-full bg-neutral-900 text-white py-3 rounded-lg font-semibold hover:bg-neutral-700 transition-all"
+              >
+                Sign In
+              </Link>
+            </>
+          ) : (
+            <>
+              <p className="text-neutral-500 text-sm mb-6">
+                Your account ({user.primaryEmailAddress?.emailAddress}) does not have admin access.
+              </p>
+              <Link
+                href="/"
+                className="inline-block w-full bg-neutral-900 text-white py-3 rounded-lg font-semibold hover:bg-neutral-700 transition-all"
+              >
+                Go to Homepage
+              </Link>
+            </>
+          )}
         </div>
       </div>
     )
@@ -133,6 +140,9 @@ export default function AdminLayout({
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-neutral-200">
+          <div className="px-3 py-2 mb-2">
+            <p className="text-xs text-neutral-400 truncate">{user.primaryEmailAddress?.emailAddress}</p>
+          </div>
           <Link
             href="/"
             className="flex items-center gap-3 px-3 py-2.5 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors mb-2"
@@ -140,13 +150,14 @@ export default function AdminLayout({
             <ChevronLeft className="w-5 h-5" />
             <span className="font-medium text-sm">Back to Site</span>
           </Link>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors w-full"
-          >
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium text-sm">Logout</span>
-          </button>
+          <SignOutButton>
+            <button
+              className="flex items-center gap-3 px-3 py-2.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors w-full"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="font-medium text-sm">Sign Out</span>
+            </button>
+          </SignOutButton>
         </div>
       </aside>
 

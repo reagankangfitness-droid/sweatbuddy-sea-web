@@ -1,28 +1,23 @@
 import { NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
+import { isAdminRequest } from '@/lib/admin-auth'
 import { sendEventApprovedEmail, sendEventRejectedEmail } from '@/lib/event-confirmation-email'
-
-// Simple admin check - use environment variable with fallback
-const ADMIN_SECRET = process.env.ADMIN_SECRET || 'sweatbuddies-admin-2024'
-
-function isAdmin(request: Request): boolean {
-  const authHeader = request.headers.get('x-admin-secret')
-  return authHeader === ADMIN_SECRET
-}
 
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   // Check admin access
-  if (!isAdmin(request)) {
+  if (!await isAdminRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
     const { id } = await params
-    const { action, rejectionReason } = await request.json()
+    const body = await request.json()
+    const action = body.action || (body.status === 'APPROVED' ? 'approve' : body.status === 'REJECTED' ? 'reject' : null)
+    const rejectionReason = body.rejectionReason
 
     if (!['approve', 'reject'].includes(action)) {
       return NextResponse.json(
@@ -89,7 +84,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   // Check admin access
-  if (!isAdmin(request)) {
+  if (!await isAdminRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

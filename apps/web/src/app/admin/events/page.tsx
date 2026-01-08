@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import Image from 'next/image'
 import { format } from 'date-fns'
@@ -38,8 +39,6 @@ interface Submission {
   createdAt: string
 }
 
-const ADMIN_SECRET = 'sweatbuddies-admin-2024'
-
 const categories = [
   'Run Club', 'Running', 'Cycling', 'HIIT', 'Swimming', 'Dance Fitness',
   'Strength Training', 'Bootcamp', 'CrossFit', 'Hyrox', 'Functional Fitness',
@@ -52,6 +51,7 @@ const categories = [
 ]
 
 export default function AdminEventsPage() {
+  const { getToken } = useAuth()
   const [activeTab, setActiveTab] = useState<'live' | 'pending'>('live')
   const [events, setEvents] = useState<Event[]>([])
   const [submissions, setSubmissions] = useState<Submission[]>([])
@@ -64,6 +64,14 @@ export default function AdminEventsPage() {
     fetchData()
   }, [])
 
+  const getAuthHeaders = async () => {
+    const token = await getToken()
+    return {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  }
+
   const fetchData = async () => {
     setLoading(true)
     await Promise.all([fetchEvents(), fetchSubmissions()])
@@ -72,9 +80,8 @@ export default function AdminEventsPage() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch('/api/admin/events', {
-        headers: { 'x-admin-secret': ADMIN_SECRET },
-      })
+      const headers = await getAuthHeaders()
+      const response = await fetch('/api/admin/events', { headers })
       if (response.ok) {
         const data = await response.json()
         setEvents(data.events)
@@ -86,12 +93,11 @@ export default function AdminEventsPage() {
 
   const fetchSubmissions = async () => {
     try {
-      const response = await fetch('/api/admin/event-submissions?status=PENDING', {
-        headers: { 'x-admin-secret': ADMIN_SECRET },
-      })
+      const headers = await getAuthHeaders()
+      const response = await fetch('/api/admin/event-submissions?status=PENDING', { headers })
       if (response.ok) {
         const data = await response.json()
-        setSubmissions(data)
+        setSubmissions(data.submissions || data || [])
       }
     } catch {
       toast.error('Failed to fetch submissions')
@@ -102,9 +108,10 @@ export default function AdminEventsPage() {
     if (!confirm(`Are you sure you want to delete "${event.name}"?`)) return
 
     try {
+      const headers = await getAuthHeaders()
       const response = await fetch(`/api/admin/events/${event.id}`, {
         method: 'DELETE',
-        headers: { 'x-admin-secret': ADMIN_SECRET },
+        headers,
       })
 
       if (response.ok) {
@@ -123,12 +130,10 @@ export default function AdminEventsPage() {
     if (!editingEvent) return
 
     try {
+      const headers = await getAuthHeaders()
       const response = await fetch(`/api/admin/events/${editingEvent.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-secret': ADMIN_SECRET,
-        },
+        headers,
         body: JSON.stringify(editingEvent),
       })
 
@@ -148,13 +153,11 @@ export default function AdminEventsPage() {
   const handleSubmissionAction = async (submissionId: string, action: 'approve' | 'reject') => {
     try {
       setProcessingId(submissionId)
+      const headers = await getAuthHeaders()
 
       const response = await fetch(`/api/admin/event-submissions/${submissionId}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-secret': ADMIN_SECRET,
-        },
+        headers,
         body: JSON.stringify({ action }),
       })
 

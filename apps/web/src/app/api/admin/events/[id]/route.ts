@@ -2,20 +2,14 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { generateSlug } from '@/lib/events'
-
-const ADMIN_SECRET = process.env.ADMIN_SECRET || 'sweatbuddies-admin-2024'
-
-function isAdmin(request: Request): boolean {
-  const authHeader = request.headers.get('x-admin-secret')
-  return authHeader === ADMIN_SECRET
-}
+import { isAdminRequest } from '@/lib/admin-auth'
 
 // UPDATE event (database only)
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!isAdmin(request)) {
+  if (!await isAdminRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -83,7 +77,7 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!isAdmin(request)) {
+  if (!await isAdminRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import {
@@ -14,8 +15,6 @@ import {
   Inbox
 } from 'lucide-react'
 
-const ADMIN_SECRET = 'sweatbuddies-admin-2024'
-
 interface NewsletterSubscriber {
   email: string
   name: string | null
@@ -24,6 +23,7 @@ interface NewsletterSubscriber {
 }
 
 export default function NewsletterPage() {
+  const { getToken } = useAuth()
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -35,8 +35,12 @@ export default function NewsletterPage() {
 
   const fetchSubscribers = async () => {
     try {
+      const token = await getToken()
       const response = await fetch('/api/newsletter/subscribers', {
-        headers: { 'x-admin-secret': ADMIN_SECRET },
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
       })
       if (response.ok) {
         const data = await response.json()

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { format, subDays, startOfDay, eachDayOfInterval } from 'date-fns'
 import {
   Calendar,
@@ -28,8 +29,6 @@ import {
   Pie,
   Cell
 } from 'recharts'
-
-const ADMIN_SECRET = 'sweatbuddies-admin-2024'
 
 interface Attendee {
   id: string
@@ -63,6 +62,7 @@ interface Stats {
 const COLORS = ['#E07A5F', '#2A9D8F', '#F4A261', '#264653', '#A84A36']
 
 export default function AdminDashboardPage() {
+  const { getToken } = useAuth()
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [attendees, setAttendees] = useState<Attendee[]>([])
@@ -84,9 +84,14 @@ export default function AdminDashboardPage() {
   const fetchData = async () => {
     setLoading(true)
     try {
+      const token = await getToken()
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
       const [attendeesRes, subscribersRes] = await Promise.all([
-        fetch('/api/attendance', { headers: { 'x-admin-secret': ADMIN_SECRET } }),
-        fetch('/api/newsletter/subscribers', { headers: { 'x-admin-secret': ADMIN_SECRET } }),
+        fetch('/api/attendance', { headers }),
+        fetch('/api/newsletter/subscribers', { headers }),
       ])
 
       const attendeesData = attendeesRes.ok ? await attendeesRes.json() : { attendees: [] }

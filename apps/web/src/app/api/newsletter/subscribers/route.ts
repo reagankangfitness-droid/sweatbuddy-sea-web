@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { isAdminRequest } from '@/lib/admin-auth'
 
 // Get newsletter subscribers (admin use)
 export async function GET(request: Request) {
-  const adminSecret = request.headers.get('x-admin-secret')
-
   // Admin auth check
-  if (adminSecret !== process.env.ADMIN_SECRET && adminSecret !== 'sweatbuddies-admin-2024') {
+  if (!await isAdminRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

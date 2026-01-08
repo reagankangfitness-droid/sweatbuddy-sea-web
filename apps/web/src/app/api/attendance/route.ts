@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendEventConfirmationEmail } from '@/lib/event-confirmation-email'
+import { scheduleEventReminder } from '@/lib/event-reminders'
+import { isAdminRequest } from '@/lib/admin-auth'
 
 interface AttendanceRecord {
   id: string
@@ -120,6 +122,25 @@ export async function POST(request: Request) {
       console.error('Confirmation email error:', emailError)
     })
 
+    // Schedule 24-hour reminder email (fire and forget)
+    // Get event date from database if not provided
+    prisma.eventSubmission.findUnique({
+      where: { id: eventId },
+      select: { eventDate: true },
+    }).then((event) => {
+      if (event?.eventDate) {
+        scheduleEventReminder({
+          attendanceId: attendance.id,
+          eventId,
+          eventDate: event.eventDate,
+        }).catch((err) => {
+          console.error('Failed to schedule reminder:', err)
+        })
+      }
+    }).catch((err) => {
+      console.error('Failed to fetch event for reminder:', err)
+    })
+
     return NextResponse.json({
       success: true,
       attendanceId: attendance.id,
@@ -137,10 +158,9 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const eventId = searchParams.get('eventId')
-  const adminSecret = request.headers.get('x-admin-secret')
 
-  // Admin auth check - only use environment variable, no hardcoded fallback
-  if (!process.env.ADMIN_SECRET || adminSecret !== process.env.ADMIN_SECRET) {
+  // Admin auth check
+  if (!await isAdminRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -197,10 +217,9 @@ export async function GET(request: Request) {
 export async function DELETE(request: Request) {
   const { searchParams } = new URL(request.url)
   const attendeeId = searchParams.get('id')
-  const adminSecret = request.headers.get('x-admin-secret')
 
-  // Admin auth check - only use environment variable, no hardcoded fallback
-  if (!process.env.ADMIN_SECRET || adminSecret !== process.env.ADMIN_SECRET) {
+  // Admin auth check
+  if (!await isAdminRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

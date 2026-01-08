@@ -1,9 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-import { useUser, SignOutButton } from '@clerk/nextjs'
+import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
   Calendar,
@@ -15,10 +14,10 @@ import {
   X,
   Clock,
   ChevronLeft,
-  Loader2
+  Loader2,
+  Lock
 } from 'lucide-react'
 import { Logo } from '@/components/logo'
-import { isAdminUser } from '@/lib/admin-auth-client'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -29,18 +28,46 @@ const navigation = [
   { name: 'Settings', href: '/admin/settings', icon: Settings },
 ]
 
+// Simple password check - the password is "sweatbuddies2024"
+const ADMIN_PASSWORD = 'sweatbuddies2024'
+
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isAuthed, setIsAuthed] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
   const pathname = usePathname()
-  const router = useRouter()
-  const { user, isLoaded } = useUser()
 
-  // Show loading state while Clerk loads
-  if (!isLoaded) {
+  // Check if already authenticated
+  useEffect(() => {
+    const authed = localStorage.getItem('admin_authed') === 'true'
+    setIsAuthed(authed)
+    setIsLoading(false)
+  }, [])
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (password === ADMIN_PASSWORD) {
+      localStorage.setItem('admin_authed', 'true')
+      setIsAuthed(true)
+      setError('')
+    } else {
+      setError('Incorrect password')
+    }
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_authed')
+    setIsAuthed(false)
+  }
+
+  // Show loading state
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-neutral-500 animate-spin" />
@@ -48,41 +75,45 @@ export default function AdminLayout({
     )
   }
 
-  // Check if user is signed in and is an admin
-  const isAuthed = user && isAdminUser(user.id)
-
-  // If not authed, show login prompt
+  // If not authed, show login form
   if (!isAuthed) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-2xl border border-neutral-200 shadow-lg max-w-sm w-full text-center">
-          <div className="mb-6">
-            <Logo size={48} />
+        <div className="bg-white p-8 rounded-2xl border border-neutral-200 shadow-lg max-w-sm w-full">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-neutral-100 rounded-full mb-4">
+              <Lock className="w-8 h-8 text-neutral-600" />
+            </div>
+            <h1 className="font-semibold text-xl text-neutral-900">Admin Login</h1>
+            <p className="text-neutral-500 text-sm mt-2">Enter the admin password to continue</p>
           </div>
-          <h1 className="font-semibold text-xl text-neutral-900 mb-4">Admin Access Required</h1>
-          {!user ? (
-            <>
-              <p className="text-neutral-500 text-sm mb-6">Please sign in with an admin account to access the dashboard.</p>
-              <Link
-                href="/sign-in?redirect_url=/admin"
-                className="inline-block w-full bg-neutral-900 text-white py-3 rounded-lg font-semibold hover:bg-neutral-700 transition-all"
-              >
-                Sign In
-              </Link>
-            </>
-          ) : (
-            <>
-              <p className="text-neutral-500 text-sm mb-6">
-                Your account ({user.primaryEmailAddress?.emailAddress}) does not have admin access.
-              </p>
-              <Link
-                href="/"
-                className="inline-block w-full bg-neutral-900 text-white py-3 rounded-lg font-semibold hover:bg-neutral-700 transition-all"
-              >
-                Go to Homepage
-              </Link>
-            </>
-          )}
+
+          <form onSubmit={handleLogin}>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password"
+              className="w-full px-4 py-3 border border-neutral-200 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              autoFocus
+            />
+            {error && (
+              <p className="text-red-500 text-sm mb-3">{error}</p>
+            )}
+            <button
+              type="submit"
+              className="w-full bg-neutral-900 text-white py-3 rounded-lg font-semibold hover:bg-neutral-700 transition-all"
+            >
+              Login
+            </button>
+          </form>
+
+          <Link
+            href="/"
+            className="block text-center text-neutral-500 text-sm mt-4 hover:text-neutral-700"
+          >
+            ← Back to site
+          </Link>
         </div>
       </div>
     )
@@ -140,9 +171,6 @@ export default function AdminLayout({
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-neutral-200">
-          <div className="px-3 py-2 mb-2">
-            <p className="text-xs text-neutral-400 truncate">{user.primaryEmailAddress?.emailAddress}</p>
-          </div>
           <Link
             href="/"
             className="flex items-center gap-3 px-3 py-2.5 text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors mb-2"
@@ -150,14 +178,13 @@ export default function AdminLayout({
             <ChevronLeft className="w-5 h-5" />
             <span className="font-medium text-sm">Back to Site</span>
           </Link>
-          <SignOutButton>
-            <button
-              className="flex items-center gap-3 px-3 py-2.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors w-full"
-            >
-              <LogOut className="w-5 h-5" />
-              <span className="font-medium text-sm">Sign Out</span>
-            </button>
-          </SignOutButton>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-3 py-2.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors w-full"
+          >
+            <LogOut className="w-5 h-5" />
+            <span className="font-medium text-sm">Logout</span>
+          </button>
         </div>
       </aside>
 

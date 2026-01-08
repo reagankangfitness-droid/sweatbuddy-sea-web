@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { sendEventSubmittedEmail } from '@/lib/event-confirmation-email'
 
@@ -54,12 +55,22 @@ interface EventSubmission {
   paynowNumber?: string | null
   paynowName?: string | null
   stripeEnabled?: boolean
+  // User account link
+  clerkUserId?: string | null
 }
 
 export async function POST(request: Request) {
   try {
+    // Require authentication
+    const { userId: clerkUserId } = await auth()
+    if (!clerkUserId) {
+      return NextResponse.json(
+        { error: 'Authentication required. Please sign in to submit an event.' },
+        { status: 401 }
+      )
+    }
+
     const data: EventSubmission = await request.json()
-    console.log('Event submission received:', JSON.stringify(data, null, 2))
 
     // Validate required fields
     const requiredFields: (keyof EventSubmission)[] = [
@@ -102,6 +113,45 @@ export async function POST(request: Request) {
       cleanInstagram = cleanInstagram.split('/')[0]
     }
 
+    // Get or create User record for this Clerk user
+    const clerkUser = await currentUser()
+    let dbUserId: string | null = null
+
+    if (clerkUser) {
+      const email = clerkUser.emailAddresses[0]?.emailAddress?.toLowerCase()
+      if (email) {
+        // Try to find existing user by email
+        let user = await prisma.user.findUnique({
+          where: { email },
+          select: { id: true },
+        })
+
+        // Create user if doesn't exist
+        if (!user) {
+          user = await prisma.user.create({
+            data: {
+              email,
+              name: clerkUser.fullName || `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || null,
+              imageUrl: clerkUser.imageUrl || null,
+              instagram: cleanInstagram || null,
+              isHost: true, // Mark as host since they're submitting an event
+            },
+          })
+        } else {
+          // Update user to mark as host and add instagram if not set
+          await prisma.user.update({
+            where: { id: user.id },
+            data: {
+              isHost: true,
+              instagram: cleanInstagram || undefined,
+            },
+          })
+        }
+
+        dbUserId = user.id
+      }
+    }
+
     // Generate URL-friendly slug for shareable links
     const slug = await generateUniqueSlug(data.eventName)
 
@@ -134,14 +184,9 @@ export async function POST(request: Request) {
         paynowNumber: data.paynowNumber || null,
         paynowName: data.paynowName || null,
         stripeEnabled: data.stripeEnabled ?? false,
+        // Link to user account
+        submittedByUserId: dbUserId,
       },
-    })
-
-    console.log('Event submission saved:', {
-      id: submission.id,
-      eventName: submission.eventName,
-      category: submission.category,
-      organizer: submission.organizerInstagram,
     })
 
     // Send confirmation email to host (fire and forget)

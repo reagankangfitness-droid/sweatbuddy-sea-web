@@ -113,16 +113,7 @@ export async function POST(request: Request) {
       },
     })
 
-    console.log('PayNow payment submitted:', {
-      attendanceId: attendance.id,
-      eventId: data.eventId,
-      eventName: data.eventName,
-      email: data.email,
-      reference: paymentReference,
-    })
-
-    // TODO: Send email to attendee confirming submission
-    // TODO: Notify host of pending payment to verify
+    // Payment submission logged for host verification
 
     return NextResponse.json({
       success: true,

@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
+import { useAuth, useUser } from '@clerk/nextjs'
 import { ArrowLeft, Calendar, MapPin, Clock, Instagram, Mail, User, FileText, Loader2, CheckCircle, Users, Sparkles, DollarSign, ImageIcon, X } from 'lucide-react'
 import { UploadButton } from '@/lib/uploadthing'
 import { GoogleMap, Marker, Autocomplete, useJsApiLoader } from '@react-google-maps/api'
@@ -48,6 +49,10 @@ const eventTypes = [
 ]
 
 export default function HostApplicationPage() {
+  const router = useRouter()
+  const { isLoaded: authLoaded, isSignedIn } = useAuth()
+  const { user } = useUser()
+
   // Load Google Maps API
   const { isLoaded: mapsLoaded } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
@@ -60,6 +65,7 @@ export default function HostApplicationPage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [isUploadingQr, setIsUploadingQr] = useState(false)
+  const [formInitialized, setFormInitialized] = useState(false)
 
   // Google Maps state
   const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null)
@@ -89,6 +95,40 @@ export default function HostApplicationPage() {
     paynowQrCode: '',
     paynowNumber: '',
   })
+
+  // Redirect to sign-in if not authenticated
+  useEffect(() => {
+    if (authLoaded && !isSignedIn) {
+      router.push('/sign-in?intent=host')
+    }
+  }, [authLoaded, isSignedIn, router])
+
+  // Pre-fill form with user data once authenticated
+  useEffect(() => {
+    if (user && !formInitialized) {
+      const userName = user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim()
+      const userEmail = user.primaryEmailAddress?.emailAddress || ''
+      // Try to get instagram from user metadata or unsafeMetadata
+      const userInstagram = (user.unsafeMetadata?.instagram as string) || ''
+
+      setFormData(prev => ({
+        ...prev,
+        organizerName: userName || prev.organizerName,
+        email: userEmail || prev.email,
+        instagramHandle: userInstagram || prev.instagramHandle,
+      }))
+      setFormInitialized(true)
+    }
+  }, [user, formInitialized])
+
+  // Show loading while checking auth
+  if (!authLoaded || !isSignedIn) {
+    return (
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+      </div>
+    )
+  }
 
   // Google Maps callbacks
   const onAutocompleteLoad = useCallback((autocompleteInstance: google.maps.places.Autocomplete) => {
@@ -210,9 +250,9 @@ export default function HostApplicationPage() {
         paynowEnabled: !formData.isFree && !!formData.paynowQrCode,
         paynowQrCode: formData.paynowQrCode || null,
         paynowNumber: formData.paynowNumber || null,
+        // Link to user account
+        clerkUserId: user?.id || null,
       }
-
-      console.log('[Host] Submitting event:', JSON.stringify(eventSubmissionData))
 
       let response: Response
       try {
@@ -221,20 +261,15 @@ export default function HostApplicationPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(eventSubmissionData),
         })
-      } catch (fetchErr) {
-        console.error('[Host] Network error:', fetchErr)
+      } catch {
         throw new Error('Network error. Please check your connection and try again.')
       }
-
-      console.log('[Host] Response status:', response.status)
 
       let data
       try {
         const text = await response.text()
-        console.log('[Host] Response body:', text)
         data = text ? JSON.parse(text) : {}
-      } catch (parseErr) {
-        console.error('[Host] JSON parse error:', parseErr)
+      } catch {
         throw new Error(`Server returned invalid response (status ${response.status})`)
       }
 
@@ -242,7 +277,6 @@ export default function HostApplicationPage() {
         throw new Error(data.error || `Server error: ${response.status}`)
       }
 
-      console.log('[Host] Success:', data)
       setIsSubmitted(true)
     } catch (err) {
       console.error('[Host] Submit error:', err)
@@ -272,11 +306,7 @@ export default function HostApplicationPage() {
         </header>
 
         <main className="pt-24 pb-12 px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-md mx-auto text-center"
-          >
+          <div className="max-w-md mx-auto text-center">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
@@ -292,7 +322,7 @@ export default function HostApplicationPage() {
             >
               Back to Home
             </Link>
-          </motion.div>
+          </div>
         </main>
       </div>
     )
@@ -318,11 +348,7 @@ export default function HostApplicationPage() {
       <main className="pt-24 pb-12 px-4">
         <div className="max-w-2xl mx-auto">
           {/* Hero Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8"
-          >
+          <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 bg-neutral-900/10 text-neutral-900 px-4 py-2 rounded-full text-label font-medium mb-4">
               <Sparkles className="w-4 h-4" />
               List in minutes
@@ -333,15 +359,10 @@ export default function HostApplicationPage() {
             <p className="text-body-lg text-neutral-600 max-w-md mx-auto">
               Get discovered by thousands of fitness enthusiasts in Southeast Asia.
             </p>
-          </motion.div>
+          </div>
 
           {/* Benefits */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="grid grid-cols-3 gap-4 mb-8"
-          >
+          <div className="grid grid-cols-3 gap-4 mb-8">
             <div className="bg-white rounded-2xl p-4 text-center border border-neutral-100 shadow-card">
               <Users className="w-6 h-6 text-neutral-900 mx-auto mb-2" />
               <span className="text-ui text-neutral-700">More Attendees</span>
@@ -354,13 +375,10 @@ export default function HostApplicationPage() {
               <Sparkles className="w-6 h-6 text-neutral-900 mx-auto mb-2" />
               <span className="text-ui text-neutral-700">100% Free</span>
             </div>
-          </motion.div>
+          </div>
 
           {/* Form */}
-          <motion.form
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <form
             onSubmit={handleSubmit}
             className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 space-y-5"
           >
@@ -878,14 +896,14 @@ export default function HostApplicationPage() {
             <p className="text-body-xs text-neutral-500 text-center">
               By submitting, you agree to our terms of service. We&apos;ll review your event and get back to you within 24 hours.
             </p>
-          </motion.form>
+          </form>
 
-          {/* Existing Host Login */}
+          {/* Link to Dashboard */}
           <div className="mt-8 text-center">
             <p className="text-body-small text-neutral-600">
-              Already a host?{' '}
-              <Link href="/sign-in?intent=host" className="text-neutral-900 font-medium hover:underline">
-                Sign in to your dashboard
+              Already have events?{' '}
+              <Link href="/host/dashboard" className="text-neutral-900 font-medium hover:underline">
+                Go to your dashboard
               </Link>
             </p>
           </div>

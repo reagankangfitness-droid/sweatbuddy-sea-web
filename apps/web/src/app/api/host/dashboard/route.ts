@@ -18,7 +18,7 @@ interface DashboardEvent {
   organizer: string
   showUpRate?: number | null
   attendedCount?: number
-  status?: 'PENDING' | 'APPROVED' | 'REJECTED'
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED'
   rejectionReason?: string | null
   slug?: string | null
 }
@@ -133,7 +133,7 @@ export async function GET() {
         organizer: s.organizerInstagram,
         attendedCount,
         showUpRate,
-        status: s.status as 'PENDING' | 'APPROVED' | 'REJECTED',
+        status: s.status as 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED',
         rejectionReason: s.rejectionReason,
         slug: s.slug,
       }
@@ -141,9 +141,10 @@ export async function GET() {
 
     const allEvents: DashboardEvent[] = submissions.map(mapEvent)
 
-    // Pending and rejected events
+    // Pending, rejected, and cancelled events
     const pendingEvents = allSubmissions.filter(s => s.status === 'PENDING').map(mapEvent)
     const rejectedEvents = allSubmissions.filter(s => s.status === 'REJECTED').map(mapEvent)
+    const cancelledEvents = allSubmissions.filter(s => s.status === 'CANCELLED').map(mapEvent)
 
     // For recurring events without a date, consider them as upcoming
     const upcoming = allEvents.filter((event) => {
@@ -189,6 +190,15 @@ export async function GET() {
         eventId: { in: eventIds },
         paymentStatus: 'paid',
         paymentMethod: 'stripe',
+      },
+    })
+
+    // Get count of pending PayNow payments that need verification
+    const pendingPaymentsCount = await prisma.eventAttendance.count({
+      where: {
+        eventId: { in: eventIds },
+        paymentStatus: 'pending',
+        paymentMethod: 'paynow',
       },
     })
 
@@ -335,12 +345,14 @@ export async function GET() {
         totalEarnings,
         totalRevenue,
         paidAttendees: paidAttendeesCount,
+        pendingPayments: pendingPaymentsCount,
         atRiskCount: atRiskMembers.length,
       },
       upcoming,
       past,
       pending: pendingEvents,
       rejected: rejectedEvents,
+      cancelled: cancelledEvents,
       recentActivity,
       topRegulars,
       atRiskMembers,

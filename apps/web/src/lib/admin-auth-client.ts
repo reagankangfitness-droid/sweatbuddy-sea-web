@@ -10,7 +10,9 @@ const getAdminUserIds = () => {
 export function isAdminUser(userId: string | null | undefined): boolean {
   if (!userId) return false
   const adminIds = getAdminUserIds()
-  // If no admin IDs configured, allow any authenticated user (for initial setup)
-  if (adminIds.length === 0) return true
+  // SECURITY: Require explicit admin IDs - no fallback access
+  if (adminIds.length === 0) {
+    return false
+  }
   return adminIds.includes(userId)
 }

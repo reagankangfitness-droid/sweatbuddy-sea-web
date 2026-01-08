@@ -196,6 +196,9 @@ model User {
   completionCards     CompletionCard[]    @relation("UserCompletionCards")
   userStreaks         UserStreak[]        @relation("UserStreaks")
 
+  // Event submissions (host applications)
+  eventSubmissions    EventSubmission[]   @relation("UserEventSubmissions")
+
   @@index([slug])
   @@index([username])
   @@index([isHost])
@@ -1573,6 +1576,7 @@ enum EventSubmissionStatus {
   PENDING
   APPROVED
   REJECTED
+  CANCELLED
 }
 
 // Fee handling options for paid events
@@ -1642,6 +1646,15 @@ model EventSubmission {
   salesEndDate      DateTime?             // When ticket sales close
   refundPolicy      RefundPolicy?         // Refund policy
 
+  // Cancellation (by host)
+  cancelledAt       DateTime?
+  cancelledBy       String?               @db.VarChar(255) // Host Instagram who cancelled
+  cancellationReason String?              @db.Text
+
+  // User account link (for authenticated hosts)
+  submittedByUserId String?               // Clerk user ID who submitted
+  submittedByUser   User?                 @relation("UserEventSubmissions", fields: [submittedByUserId], references: [id])
+
   // Timestamps
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
@@ -1649,6 +1662,7 @@ model EventSubmission {
   @@index([status, createdAt])
   @@index([contactEmail])
   @@index([slug])
+  @@index([submittedByUserId])
   @@map("event_submissions")
 }
 
@@ -1689,6 +1703,22 @@ model EventAttendance {
   @@index([timestamp])
   @@index([paymentStatus])
   @@map("event_attendances")
+}
+
+// Event reminders (24h before event)
+model EventReminder {
+  id           String   @id @default(cuid())
+  attendanceId String   @unique // References EventAttendance.id
+  eventId      String   // References EventSubmission.id
+  scheduledFor DateTime // When to send (24h before event)
+  status       String   @default("PENDING") @db.VarChar(20) // PENDING, SENT, SKIPPED, FAILED
+  sentAt       DateTime?
+  errorMessage String?  @db.Text
+  createdAt    DateTime @default(now())
+
+  @@index([status, scheduledFor])
+  @@index([eventId])
+  @@map("event_reminders")
 }
 
 // Host notes about attendees (email-based, no user account required)

@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, lazy, Suspense } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@clerk/nextjs'
 import { Check, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -49,6 +51,9 @@ export function GoingButton({
   paynowQrCode = null,
   paynowNumber = null,
 }: GoingButtonProps) {
+  const router = useRouter()
+  const { isSignedIn, isLoaded } = useAuth()
+
   const [isGoing, setIsGoing] = useState(false)
   const [count, setCount] = useState(initialCount)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -73,6 +78,7 @@ export function GoingButton({
     e.preventDefault()
     e.stopPropagation()
 
+    // If already going, allow toggle off without auth check
     if (isGoing) {
       // Toggle off
       const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
@@ -80,6 +86,24 @@ export function GoingButton({
       localStorage.setItem('sweatbuddies_going', JSON.stringify(newGoing))
       setIsGoing(false)
       setCount(Math.max(0, count - 1))
+      return
+    }
+
+    // Require authentication for new RSVPs
+    if (isLoaded && !isSignedIn) {
+      // Build redirect URL - use slug if available, otherwise eventId
+      const eventPath = eventSlug || eventId
+      const redirectUrl = `/e/${eventPath}`
+
+      // Store intent for post-login
+      sessionStorage.setItem('auth_intent', JSON.stringify({
+        intent: 'rsvp',
+        eventId,
+        eventSlug,
+        timestamp: Date.now()
+      }))
+
+      router.push(`/sign-in?intent=rsvp&eventSlug=${eventPath}&redirect_url=${encodeURIComponent(redirectUrl)}`)
       return
     }
 
@@ -95,7 +119,7 @@ export function GoingButton({
       return
     }
 
-    // FREE EVENT: One-tap RSVP
+    // FREE EVENT: One-tap RSVP (user is authenticated at this point)
     const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
     if (!going.includes(eventId)) {
       going.push(eventId)
@@ -200,7 +224,7 @@ export function GoingButton({
 
         {!isGoing && !isPaidEvent && (
           <p className="text-xs text-neutral-400 mt-2 text-center">
-            Free · No account needed
+            Free event
           </p>
         )}
 

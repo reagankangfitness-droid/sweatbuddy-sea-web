@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { DollarSign, Users, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { DollarSign, Users, Clock, CheckCircle, XCircle, AlertCircle, CreditCard, ChevronRight, Ban } from 'lucide-react'
 import { DashboardHeader } from '@/components/host/DashboardHeader'
 import { StatCard } from '@/components/host/StatCard'
 import { UpcomingEventRow } from '@/components/host/UpcomingEventRow'
@@ -22,7 +22,7 @@ interface DashboardEvent {
   recurring: boolean
   goingCount: number
   organizer: string
-  status?: 'PENDING' | 'APPROVED' | 'REJECTED'
+  status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED'
   rejectionReason?: string | null
   slug?: string | null
 }
@@ -61,18 +61,20 @@ interface DashboardData {
     totalEarnings?: number
     totalRevenue?: number
     paidAttendees?: number
+    pendingPayments?: number
     atRiskCount?: number
   }
   upcoming: DashboardEvent[]
   past: DashboardEvent[]
   pending: DashboardEvent[]
   rejected: DashboardEvent[]
+  cancelled: DashboardEvent[]
   recentActivity: RecentActivity[]
   topRegulars?: TopRegular[]
   atRiskMembers?: AtRiskMember[]
 }
 
-type TabType = 'live' | 'pending' | 'rejected' | 'past'
+type TabType = 'live' | 'pending' | 'rejected' | 'cancelled' | 'past'
 
 export default function HostDashboard() {
   const router = useRouter()
@@ -147,6 +149,7 @@ export default function HostDashboard() {
     { id: 'live', label: 'Live', shortLabel: 'Live', count: data.upcoming.length, icon: <CheckCircle className="w-4 h-4" /> },
     { id: 'pending', label: 'Pending', shortLabel: 'Pending', count: data.pending.length, icon: <Clock className="w-4 h-4" /> },
     { id: 'rejected', label: 'Rejected', shortLabel: 'Rej.', count: data.rejected.length, icon: <XCircle className="w-4 h-4" /> },
+    { id: 'cancelled', label: 'Cancelled', shortLabel: 'Canc.', count: data.cancelled?.length || 0, icon: <Ban className="w-4 h-4" /> },
     { id: 'past', label: 'Past', shortLabel: 'Past', count: data.past.length, icon: <AlertCircle className="w-4 h-4" /> },
   ]
 
@@ -155,6 +158,7 @@ export default function HostDashboard() {
       case 'live': return data.upcoming
       case 'pending': return data.pending
       case 'rejected': return data.rejected
+      case 'cancelled': return data.cancelled || []
       case 'past': return data.past
       default: return data.upcoming
     }
@@ -192,6 +196,30 @@ export default function HostDashboard() {
             ? 'Your events are bringing people together.'
             : 'Ready to bring people together? Create your first event.'}
         </p>
+
+        {/* Pending Payments Alert Banner */}
+        {data.stats.pendingPayments && data.stats.pendingPayments > 0 && (
+          <Link href="/host/payments" className="block mb-6 sm:mb-8">
+            <div className="p-3 sm:p-4 bg-amber-50 border border-amber-300 rounded-xl hover:bg-amber-100 transition-colors">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-amber-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-amber-700" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-amber-900 text-sm sm:text-base">
+                      {data.stats.pendingPayments} payment{data.stats.pendingPayments !== 1 ? 's' : ''} need{data.stats.pendingPayments === 1 ? 's' : ''} verification
+                    </p>
+                    <p className="text-xs sm:text-sm text-amber-700">
+                      Review PayNow payments to confirm attendees
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-amber-600 flex-shrink-0" />
+              </div>
+            </div>
+          </Link>
+        )}
 
         {/* Earnings Banner - more compact on mobile */}
         {data.stats.totalEarnings && data.stats.totalEarnings > 0 && (
@@ -274,6 +302,12 @@ export default function HostDashboard() {
                       <p className="text-sm">No rejected events</p>
                     </div>
                   )}
+                  {activeTab === 'cancelled' && (
+                    <div className="text-neutral-500">
+                      <Ban className="w-8 h-8 mx-auto mb-2 text-neutral-300" />
+                      <p className="text-sm">No cancelled events</p>
+                    </div>
+                  )}
                   {activeTab === 'past' && (
                     <div className="text-neutral-500">
                       <AlertCircle className="w-8 h-8 mx-auto mb-2 text-neutral-300" />
@@ -289,8 +323,10 @@ export default function HostDashboard() {
                     <PendingEventRow key={event.id} event={event} />
                   ) : activeTab === 'rejected' ? (
                     <RejectedEventRow key={event.id} event={event} />
+                  ) : activeTab === 'cancelled' ? (
+                    <CancelledEventRow key={event.id} event={event} />
                   ) : (
-                    <UpcomingEventRow key={event.id} event={event} />
+                    <UpcomingEventRow key={event.id} event={event} onCancelled={() => window.location.reload()} />
                   )
                 ))
               )}
@@ -463,6 +499,33 @@ function RejectedEventRow({ event }: { event: DashboardEvent }) {
           >
             Resubmit →
           </Link>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Cancelled event row - compact for mobile
+function CancelledEventRow({ event }: { event: DashboardEvent }) {
+  return (
+    <div className="p-3 sm:p-4 opacity-60">
+      <div className="flex items-start gap-3 sm:gap-4">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-neutral-200 flex items-center justify-center flex-shrink-0">
+          <Ban className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-500" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start gap-2 flex-wrap">
+            <h3 className="font-semibold text-neutral-500 text-sm sm:text-base truncate line-through">{event.name}</h3>
+            <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-neutral-200 text-neutral-600 flex-shrink-0">
+              Cancelled
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-neutral-400 mt-0.5 sm:mt-1">
+            {event.day} · {event.time}
+          </p>
+          <p className="text-xs text-neutral-400 mt-1">
+            All attendees were notified.
+          </p>
         </div>
       </div>
     </div>

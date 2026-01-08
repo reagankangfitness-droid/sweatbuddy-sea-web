@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Copy, Loader2, Users } from 'lucide-react'
+import { Copy, Loader2, Users, XCircle } from 'lucide-react'
 import { ShareEventButtons } from './ShareEventButtons'
 
 interface Event {
@@ -22,6 +22,7 @@ interface Event {
 
 interface UpcomingEventRowProps {
   event: Event
+  onCancelled?: () => void
 }
 
 function formatDate(dateString: string | null, recurring: boolean): string {
@@ -36,9 +37,12 @@ function formatDate(dateString: string | null, recurring: boolean): string {
   })
 }
 
-export function UpcomingEventRow({ event }: UpcomingEventRowProps) {
+export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) {
   const router = useRouter()
   const [isDuplicating, setIsDuplicating] = useState(false)
+  const [isCancelling, setIsCancelling] = useState(false)
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false)
+  const [cancelReason, setCancelReason] = useState('')
 
   const handleDuplicate = async () => {
     if (isDuplicating) return
@@ -62,6 +66,34 @@ export function UpcomingEventRow({ event }: UpcomingEventRowProps) {
       alert(error instanceof Error ? error.message : 'Failed to duplicate event')
     } finally {
       setIsDuplicating(false)
+    }
+  }
+
+  const handleCancel = async () => {
+    if (isCancelling) return
+
+    setIsCancelling(true)
+    try {
+      const response = await fetch(`/api/host/events/${event.id}/cancel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: cancelReason || undefined }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to cancel event')
+      }
+
+      alert(`Event cancelled. ${data.attendeesNotified} attendee(s) have been notified.`)
+      setShowCancelConfirm(false)
+      onCancelled?.()
+    } catch (error) {
+      console.error('Cancel error:', error)
+      alert(error instanceof Error ? error.message : 'Failed to cancel event')
+    } finally {
+      setIsCancelling(false)
     }
   }
 
@@ -145,6 +177,13 @@ export function UpcomingEventRow({ event }: UpcomingEventRowProps) {
                 </>
               )}
             </button>
+            <button
+              onClick={() => setShowCancelConfirm(true)}
+              className="text-xs sm:text-sm font-medium text-red-500 hover:text-red-700 transition-colors flex items-center gap-1"
+            >
+              <XCircle className="w-3 h-3" />
+              <span className="hidden sm:inline">Cancel</span>
+            </button>
             <div className="ml-auto">
               <ShareEventButtons
                 event={{
@@ -161,6 +200,52 @@ export function UpcomingEventRow({ event }: UpcomingEventRowProps) {
           </div>
         </div>
       </div>
+
+      {/* Cancel Confirmation Modal */}
+      {showCancelConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-neutral-900 mb-2">Cancel Event?</h3>
+            <p className="text-sm text-neutral-600 mb-4">
+              This will cancel <strong>{event.name}</strong> and notify all {event.goingCount > 0 ? `${event.goingCount} ` : ''}attendee{event.goingCount !== 1 ? 's' : ''} via email.
+            </p>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-neutral-700 mb-1">
+                Reason (optional)
+              </label>
+              <textarea
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                placeholder="e.g., Weather conditions, venue unavailable..."
+                className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
+                rows={2}
+              />
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowCancelConfirm(false)}
+                className="flex-1 px-4 py-2 text-sm font-medium text-neutral-600 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
+              >
+                Keep Event
+              </button>
+              <button
+                onClick={handleCancel}
+                disabled={isCancelling}
+                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isCancelling ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Cancelling...
+                  </>
+                ) : (
+                  'Cancel Event'
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getHostSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { sendPaymentVerifiedEmail, sendPaymentRejectedEmail } from '@/lib/event-confirmation-email'
+import { scheduleEventReminder } from '@/lib/event-reminders'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,12 +32,20 @@ export async function POST(
       return NextResponse.json({ error: 'Payment not found' }, { status: 404 })
     }
 
-    // Find the event to verify ownership
+    // Find the event to verify ownership and get details for email
     const event = await prisma.eventSubmission.findUnique({
       where: { id: attendance.eventId },
       select: {
         id: true,
+        slug: true,
+        eventName: true,
+        day: true,
+        eventDate: true,
+        time: true,
+        location: true,
+        price: true,
         organizerInstagram: true,
+        communityLink: true,
       },
     })
 
@@ -67,14 +77,49 @@ export async function POST(
       },
     })
 
-    console.log('Payment verified:', {
-      paymentId,
-      action,
-      verifiedBy: session.instagramHandle,
-      email: attendance.email,
-    })
+    // Send email to attendee about confirmation/rejection
+    if (attendance.email) {
+      try {
+        if (action === 'confirm') {
+          await sendPaymentVerifiedEmail({
+            to: attendance.email,
+            attendeeName: attendance.name,
+            eventName: event.eventName,
+            eventDay: event.day,
+            eventTime: event.time,
+            eventLocation: event.location,
+            amountPaid: event.price || 0,
+            organizerInstagram: event.organizerInstagram,
+            communityLink: event.communityLink,
+            eventSlug: event.slug,
+            eventId: event.id,
+          })
 
-    // TODO: Send email to attendee about confirmation/rejection
+          // Schedule 24-hour reminder for confirmed payment
+          if (event.eventDate) {
+            scheduleEventReminder({
+              attendanceId: paymentId,
+              eventId: event.id,
+              eventDate: event.eventDate,
+            }).catch((err) => {
+              console.error('Failed to schedule reminder:', err)
+            })
+          }
+        } else {
+          await sendPaymentRejectedEmail({
+            to: attendance.email,
+            attendeeName: attendance.name,
+            eventName: event.eventName,
+            eventId: event.id,
+            eventSlug: event.slug,
+            amountAttempted: event.price || 0,
+          })
+        }
+      } catch (emailError) {
+        // Log but don't fail the request if email fails
+        console.error('Failed to send payment verification email:', emailError)
+      }
+    }
 
     return NextResponse.json({
       success: true,

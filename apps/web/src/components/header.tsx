@@ -1,12 +1,13 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Logo } from '@/components/logo'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { Menu, X, ArrowRight, LayoutDashboard } from 'lucide-react'
-import { useUser } from '@clerk/nextjs'
+import { Menu, X, ArrowRight, LayoutDashboard, User, LogOut, ChevronDown } from 'lucide-react'
+import { useUser, useClerk } from '@clerk/nextjs'
 
 // Helper to scroll to element with retry for dynamic content
 const scrollToElement = (elementId: string, maxAttempts = 10) => {
@@ -39,9 +40,12 @@ const scrollToElement = (elementId: string, maxAttempts = 10) => {
 export function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const userMenuRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
   const router = useRouter()
-  const { isSignedIn, isLoaded } = useUser()
+  const { isSignedIn, isLoaded, user } = useUser()
+  const { signOut } = useClerk()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,6 +54,18 @@ export function Header() {
 
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
   // Handle hash on page load/navigation
@@ -149,20 +165,77 @@ export function Header() {
 
           {/* Right side actions */}
           <div className="flex items-center gap-3">
-            {/* Login / Dashboard Button */}
+            {/* Login / User Menu */}
             {isLoaded && (
               isSignedIn ? (
-                <Link
-                  href="/dashboard"
-                  className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    scrolled
-                      ? 'text-neutral-700 hover:bg-neutral-100'
-                      : 'text-white/90 hover:bg-white/10'
-                  }`}
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  Dashboard
-                </Link>
+                <div className="relative hidden sm:block" ref={userMenuRef}>
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      scrolled
+                        ? 'text-neutral-700 hover:bg-neutral-100'
+                        : 'text-white/90 hover:bg-white/10'
+                    }`}
+                  >
+                    {user?.imageUrl ? (
+                      <Image
+                        src={user.imageUrl}
+                        alt={user.fullName || 'Profile'}
+                        width={28}
+                        height={28}
+                        className="rounded-full"
+                      />
+                    ) : (
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
+                        scrolled ? 'bg-neutral-200' : 'bg-white/20'
+                      }`}>
+                        <User className="w-4 h-4" />
+                      </div>
+                    )}
+                    <ChevronDown className={`w-4 h-4 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  <AnimatePresence>
+                    {userMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-neutral-200 py-2 overflow-hidden"
+                      >
+                        <Link
+                          href="/profile"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        >
+                          <User className="w-4 h-4 text-neutral-400" />
+                          Profile
+                        </Link>
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        >
+                          <LayoutDashboard className="w-4 h-4 text-neutral-400" />
+                          Dashboard
+                        </Link>
+                        <div className="border-t border-neutral-100 my-1" />
+                        <button
+                          onClick={() => {
+                            setUserMenuOpen(false)
+                            signOut(() => router.push('/'))
+                          }}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors w-full"
+                        >
+                          <LogOut className="w-4 h-4 text-neutral-400" />
+                          Sign Out
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               ) : (
                 <Link
                   href="/sign-in"
@@ -266,17 +339,37 @@ export function Header() {
                   )
                 })}
 
-                {/* Login / Dashboard link in mobile menu */}
+                {/* Login / User links in mobile menu */}
                 {isLoaded && (
                   isSignedIn ? (
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center gap-2 text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100"
-                    >
-                      <LayoutDashboard className="w-5 h-5" />
-                      Dashboard
-                    </Link>
+                    <>
+                      <Link
+                        href="/profile"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-2 text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100"
+                      >
+                        <User className="w-5 h-5" />
+                        Profile
+                      </Link>
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-2 text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100"
+                      >
+                        <LayoutDashboard className="w-5 h-5" />
+                        Dashboard
+                      </Link>
+                      <button
+                        onClick={() => {
+                          setMobileMenuOpen(false)
+                          signOut(() => router.push('/'))
+                        }}
+                        className="flex items-center gap-2 text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100 w-full text-left"
+                      >
+                        <LogOut className="w-5 h-5" />
+                        Sign Out
+                      </button>
+                    </>
                   ) : (
                     <Link
                       href="/sign-in"

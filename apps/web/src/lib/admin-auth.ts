@@ -1,4 +1,5 @@
 import { auth } from '@clerk/nextjs/server'
+import crypto from 'crypto'
 
 // Admin user IDs - these Clerk user IDs have admin access
 const getAdminUserIds = () => {
@@ -9,8 +10,11 @@ const getAdminUserIds = () => {
 export function isAdminUser(userId: string | null | undefined): boolean {
   if (!userId) return false
   const adminIds = getAdminUserIds()
-  // If no admin IDs configured, allow any authenticated user (for initial setup)
-  if (adminIds.length === 0) return true
+  // SECURITY: Require explicit admin IDs - no fallback access
+  if (adminIds.length === 0) {
+    console.warn('[SECURITY] No admin user IDs configured. Set NEXT_PUBLIC_ADMIN_USER_IDS.')
+    return false
+  }
   return adminIds.includes(userId)
 }
 
@@ -19,12 +23,22 @@ export function getAdminSecret(): string {
   return process.env.ADMIN_SECRET || ''
 }
 
+// Timing-safe string comparison to prevent timing attacks
+function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) {
+    // Still do a comparison to maintain constant time
+    crypto.timingSafeEqual(Buffer.from(a), Buffer.from(a))
+    return false
+  }
+  return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b))
+}
+
 // Check admin secret header in API routes (legacy method)
 export function isValidAdminSecret(request: Request): boolean {
   const authHeader = request.headers.get('x-admin-secret')
   const secret = getAdminSecret()
-  if (!secret) return false
-  return authHeader === secret
+  if (!secret || !authHeader) return false
+  return timingSafeEqual(authHeader, secret)
 }
 
 // Check if the request is authenticated as admin (supports both Clerk and legacy secret)

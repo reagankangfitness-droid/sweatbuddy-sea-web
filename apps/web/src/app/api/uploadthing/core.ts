@@ -12,7 +12,6 @@ export const ourFileRouter = {
       return {}
     })
     .onUploadComplete(async ({ file }) => {
-      console.log("Event image upload complete:", file.url)
       return { url: file.url }
     }),
 
@@ -25,9 +24,6 @@ export const ourFileRouter = {
       return { userId }
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Upload complete for userId:", metadata.userId)
-      console.log("file url", file.url)
-
       return { uploadedBy: metadata.userId, url: file.url }
     }),
 
@@ -41,9 +37,6 @@ export const ourFileRouter = {
       return { userId }
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Completion card photo uploaded for userId:", metadata.userId)
-      console.log("file url", file.url)
-
       return { uploadedBy: metadata.userId, url: file.url }
     }),
 
@@ -57,9 +50,6 @@ export const ourFileRouter = {
       return { userId }
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Generated card uploaded for userId:", metadata.userId)
-      console.log("file url", file.url)
-
       return { uploadedBy: metadata.userId, url: file.url }
     }),
 } satisfies FileRouter

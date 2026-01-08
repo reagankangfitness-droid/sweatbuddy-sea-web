@@ -51,7 +51,6 @@ export async function POST(request: Request) {
     const magicLink = `${BASE_URL}/organizer/verify/${token}`
 
     // Send magic link email
-    console.log(`[Organizer Login] Sending magic link to ${normalizedEmail}`)
     const emailResult = await sendEmail({
       to: normalizedEmail,
       subject: 'Your SweatBuddies Organizer Login Link',
@@ -107,14 +106,11 @@ export async function POST(request: Request) {
     })
 
     if (!emailResult.success) {
-      console.error(`[Organizer Login] Email failed for ${normalizedEmail}:`, emailResult.error)
       return NextResponse.json(
         { error: `Failed to send email: ${emailResult.error}` },
         { status: 500 }
       )
     }
-
-    console.log(`[Organizer Login] Magic link sent successfully to ${normalizedEmail}, messageId: ${emailResult.messageId}`)
 
     return NextResponse.json({
       success: true,

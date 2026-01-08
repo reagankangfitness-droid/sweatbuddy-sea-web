@@ -58,7 +58,7 @@ function SignUpContent() {
         sessionStorage.removeItem('auth_intent')
       }
 
-      router.push(redirectUrl || '/dashboard')
+      router.push(redirectUrl || '/')
     }
   }, [isLoaded, isSignedIn, router, redirectUrl])
 
@@ -88,8 +88,8 @@ function SignUpContent() {
   const content = getContextualContent()
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-50 px-4 py-8">
-      <div className="w-full max-w-md">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-50 px-4 py-8 pb-24 md:pb-8">
+      <div className="w-full max-w-sm mx-auto">
         {/* Logo */}
         <div className="flex justify-center mb-6">
           <Logo size={40} />
@@ -102,29 +102,48 @@ function SignUpContent() {
         </div>
 
         {/* Clerk Sign Up */}
-        <div className="bg-white rounded-2xl border border-neutral-200 p-6 shadow-sm">
+        <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
           <SignUp
             appearance={{
+              layout: {
+                socialButtonsPlacement: 'top',
+                socialButtonsVariant: 'blockButton',
+                logoPlacement: 'none',
+              },
               elements: {
                 rootBox: 'w-full',
-                card: 'shadow-none p-0 bg-transparent border-none',
-                cardBox: 'shadow-none',
+                card: 'shadow-none p-5 bg-transparent border-none w-full',
+                cardBox: 'shadow-none w-full',
+                logoBox: 'hidden',
+                logoImage: 'hidden',
                 header: 'hidden',
                 headerTitle: 'hidden',
                 headerSubtitle: 'hidden',
-                socialButtonsBlockButton: 'border border-neutral-200 hover:bg-neutral-50 rounded-lg',
-                socialButtonsBlockButtonText: 'font-medium',
+                main: 'w-full gap-4',
+                form: 'w-full gap-4',
+                formFieldRow: 'w-full',
+                formField: 'w-full gap-1',
+                socialButtons: 'w-full',
+                socialButtonsBlockButton: 'border border-neutral-200 hover:bg-neutral-50 rounded-xl w-full py-3',
+                socialButtonsBlockButtonText: 'font-medium text-neutral-700',
+                socialButtonsProviderIcon: 'w-5 h-5',
+                dividerRow: 'my-4',
                 dividerLine: 'bg-neutral-200',
-                dividerText: 'text-neutral-400',
-                formFieldLabel: 'text-neutral-700 font-medium',
-                formFieldInput: 'border-neutral-200 focus:border-neutral-900 focus:ring-neutral-900 rounded-lg',
-                formButtonPrimary: 'bg-neutral-900 hover:bg-neutral-800 rounded-lg',
-                footerAction: 'pt-4',
+                dividerText: 'text-neutral-400 text-sm px-3',
+                formFieldLabel: 'text-neutral-700 font-medium text-sm',
+                formFieldInput: 'border-neutral-200 focus:border-neutral-900 focus:ring-neutral-900 rounded-xl w-full py-3',
+                formButtonPrimary: 'bg-neutral-900 hover:bg-neutral-800 rounded-xl w-full py-3 text-base font-semibold',
+                footerAction: 'pt-4 justify-center',
                 footerActionLink: 'text-neutral-900 hover:text-neutral-700 font-medium',
                 footer: 'hidden',
+                identityPreview: 'justify-center',
+                identityPreviewEditButton: 'text-neutral-600',
+                formFieldInputShowPasswordButton: 'text-neutral-500',
+                alert: 'rounded-xl',
+                alertText: 'text-sm',
               }
             }}
-            redirectUrl={redirectUrl || '/dashboard'}
+            redirectUrl={redirectUrl || '/'}
           />
         </div>
 

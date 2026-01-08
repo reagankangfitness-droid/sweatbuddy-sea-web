@@ -1078,6 +1078,558 @@ export async function sendWaitlistSpotAvailableEmail(
   })
 }
 
+// ============= PAYMENT VERIFICATION EMAILS =============
+
+interface PaymentVerifiedParams {
+  to: string
+  attendeeName: string | null
+  eventName: string
+  eventDay: string
+  eventTime: string
+  eventLocation: string
+  amountPaid: number // in cents
+  currency?: string
+  organizerInstagram?: string | null
+  communityLink?: string | null
+  eventSlug?: string | null
+  eventId: string
+}
+
+/**
+ * Send email when host verifies a PayNow payment
+ */
+export async function sendPaymentVerifiedEmail(
+  params: PaymentVerifiedParams
+): Promise<{ success: boolean; error?: string }> {
+  const {
+    to,
+    attendeeName,
+    eventName,
+    eventDay,
+    eventTime,
+    eventLocation,
+    amountPaid,
+    currency = 'SGD',
+    organizerInstagram,
+    communityLink,
+    eventSlug,
+    eventId,
+  } = params
+
+  const displayName = attendeeName || 'there'
+  const eventUrl = eventSlug ? `${BASE_URL}/e/${eventSlug}` : `${BASE_URL}/e/${eventId}`
+  const mapsLink = generateMapsLink({ address: eventLocation })
+
+  const formattedAmount = new Intl.NumberFormat('en-SG', {
+    style: 'currency',
+    currency,
+  }).format(amountPaid / 100)
+
+  const calendarLink = generateEventCalendarLink({
+    eventName,
+    eventDay,
+    eventTime,
+    eventLocation,
+  })
+
+  const instagramLink = organizerInstagram
+    ? `https://instagram.com/${organizerInstagram.replace('@', '')}`
+    : null
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Verified!</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+              <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
+                Payment Verified!
+              </h1>
+              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
+                You're confirmed for the event
+              </p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 32px; background-color: white;">
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Hey ${displayName}! 👋
+              </p>
+
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Great news! The host has verified your payment of <strong>${formattedAmount}</strong> for <strong>${eventName}</strong>.
+              </p>
+
+              <!-- Success Card -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #d1fae5; border-radius: 12px; border: 1px solid #6ee7b7;">
+                <tr>
+                  <td style="padding: 20px; text-align: center;">
+                    <p style="margin: 0; color: #065f46; font-size: 16px; font-weight: 600;">
+                      Your spot is confirmed!
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Event Card -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 12px; overflow: hidden;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <h2 style="margin: 0 0 20px; color: #0f172a; font-size: 22px; font-weight: 700;">
+                      ${eventName}
+                    </h2>
+                    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                      <tr>
+                        <td style="padding: 10px 0; color: #64748b; font-size: 15px; border-bottom: 1px solid #e2e8f0;">
+                          <span style="display: inline-block; width: 24px;">📅</span>
+                          <strong style="color: #0f172a;">${eventDay}</strong>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 10px 0; color: #64748b; font-size: 15px; border-bottom: 1px solid #e2e8f0;">
+                          <span style="display: inline-block; width: 24px;">🕐</span>
+                          <strong style="color: #0f172a;">${eventTime}</strong>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 10px 0; color: #64748b; font-size: 15px;">
+                          <span style="display: inline-block; width: 24px;">📍</span>
+                          <strong style="color: #0f172a;">${eventLocation}</strong>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Action Buttons -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${calendarLink}" style="display: inline-block; padding: 14px 28px; background-color: #10b981; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                      📅 Add to Calendar
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              ${communityLink ? `
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${communityLink}" style="display: inline-block; padding: 14px 28px; background-color: ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? '#25D366' : '#0088cc'}; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                      💬 Join Group Chat
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              ` : ''}
+
+              <!-- Quick Links -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${mapsLink}" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
+                      🗺️ Get Directions
+                    </a>
+                    ${instagramLink ? `
+                    <a href="${instagramLink}" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
+                      📸 Follow Organizer
+                    </a>
+                    ` : ''}
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
+                Questions? Reply to this email or DM us <a href="https://instagram.com/_sweatbuddies" style="color: #10b981;">@_sweatbuddies</a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
+              <a href="${eventUrl}" style="display: inline-block; margin-bottom: 16px; color: #10b981; text-decoration: none; font-size: 14px; font-weight: 500;">
+                View Event Details &rarr;
+              </a>
+              <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
+                Find more events at
+              </p>
+              <a href="${BASE_URL}" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 600;">
+                sweatbuddies.co
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim()
+
+  return sendEmail({
+    to,
+    subject: `Payment Verified: ${eventName}`,
+    html,
+    tags: [
+      { name: 'type', value: 'payment_verified' },
+      { name: 'event_id', value: eventId },
+    ],
+  })
+}
+
+interface PaymentRejectedParams {
+  to: string
+  attendeeName: string | null
+  eventName: string
+  eventId: string
+  eventSlug?: string | null
+  amountAttempted: number // in cents
+  currency?: string
+  rejectionReason?: string | null
+}
+
+/**
+ * Send email when host rejects a PayNow payment
+ */
+export async function sendPaymentRejectedEmail(
+  params: PaymentRejectedParams
+): Promise<{ success: boolean; error?: string }> {
+  const {
+    to,
+    attendeeName,
+    eventName,
+    eventId,
+    eventSlug,
+    amountAttempted,
+    currency = 'SGD',
+    rejectionReason,
+  } = params
+
+  const displayName = attendeeName || 'there'
+  const eventUrl = eventSlug ? `${BASE_URL}/e/${eventSlug}` : `${BASE_URL}/e/${eventId}`
+
+  const formattedAmount = new Intl.NumberFormat('en-SG', {
+    style: 'currency',
+    currency,
+  }).format(amountAttempted / 100)
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Not Verified</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 16px 16px 0 0; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+              <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
+                Payment Not Verified
+              </h1>
+              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
+                Action required
+              </p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 32px; background-color: white;">
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Hey ${displayName},
+              </p>
+
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Unfortunately, the host couldn't verify your payment of <strong>${formattedAmount}</strong> for <strong>${eventName}</strong>.
+              </p>
+
+              ${rejectionReason ? `
+              <!-- Reason Card -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #fef3c7; border-radius: 12px; border: 1px solid #fcd34d;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <p style="margin: 0 0 8px; color: #92400e; font-size: 14px; font-weight: 600;">
+                      Reason:
+                    </p>
+                    <p style="margin: 0; color: #b45309; font-size: 15px; line-height: 1.6;">
+                      ${rejectionReason}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              ` : ''}
+
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                <strong>What you can do:</strong>
+              </p>
+
+              <ul style="margin: 0 0 24px; padding: 0 0 0 20px; color: #374151; font-size: 15px; line-height: 2;">
+                <li>Double-check your PayNow reference number</li>
+                <li>Make sure you transferred the correct amount</li>
+                <li>Try registering again with the correct details</li>
+              </ul>
+
+              <!-- Action Button -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${eventUrl}" style="display: inline-block; padding: 14px 28px; background-color: #f59e0b; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                      Try Again
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
+                Need help? Reply to this email or DM us <a href="https://instagram.com/_sweatbuddies" style="color: #f59e0b;">@_sweatbuddies</a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
+              <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
+                Find more events at
+              </p>
+              <a href="${BASE_URL}" style="color: #f59e0b; text-decoration: none; font-size: 14px; font-weight: 600;">
+                sweatbuddies.co
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim()
+
+  return sendEmail({
+    to,
+    subject: `Payment Not Verified: ${eventName}`,
+    html,
+    tags: [
+      { name: 'type', value: 'payment_rejected' },
+      { name: 'event_id', value: eventId },
+    ],
+  })
+}
+
+// ============= EVENT CANCELLED BY HOST =============
+
+interface EventCancelledByHostParams {
+  to: string
+  attendeeName: string | null
+  eventName: string
+  eventDay: string
+  eventTime: string
+  eventLocation: string
+  cancellationReason?: string | null
+  hostInstagram?: string | null
+  // Payment info
+  wasPaid: boolean
+  paymentAmount?: number | null
+  paymentMethod?: 'stripe' | 'paynow' | null
+  refundStatus?: 'auto_refunded' | 'pending_manual' | null
+}
+
+/**
+ * Send email when host cancels an event
+ */
+export async function sendEventCancelledByHostEmail(
+  params: EventCancelledByHostParams
+): Promise<{ success: boolean; error?: string }> {
+  const {
+    to,
+    attendeeName,
+    eventName,
+    eventDay,
+    eventTime,
+    eventLocation,
+    cancellationReason,
+    hostInstagram,
+    wasPaid,
+    paymentAmount,
+    paymentMethod,
+    refundStatus,
+  } = params
+
+  const displayName = attendeeName || 'there'
+
+  const formattedAmount = paymentAmount
+    ? new Intl.NumberFormat('en-SG', { style: 'currency', currency: 'SGD' }).format(paymentAmount / 100)
+    : null
+
+  const instagramLink = hostInstagram
+    ? `https://instagram.com/${hostInstagram.replace('@', '')}`
+    : null
+
+  const refundMessage = wasPaid
+    ? refundStatus === 'auto_refunded'
+      ? `<p style="margin: 0; color: #065f46; font-size: 15px;">✅ Your payment of ${formattedAmount} has been automatically refunded to your original payment method.</p>`
+      : `<p style="margin: 0; color: #92400e; font-size: 15px;">💰 For your refund of ${formattedAmount}, please contact the host ${hostInstagram ? `(@${hostInstagram})` : ''} directly via ${paymentMethod === 'paynow' ? 'PayNow' : 'the original payment method'}.</p>`
+    : ''
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Cancelled</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px; background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); border-radius: 16px 16px 0 0; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">😔</div>
+              <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
+                Event Cancelled
+              </h1>
+              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
+                Sorry about that
+              </p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 32px; background-color: white;">
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Hey ${displayName},
+              </p>
+
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Unfortunately, <strong>${eventName}</strong> has been cancelled by the host.
+              </p>
+
+              <!-- Event Details (for reference) -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #f3f4f6; border-radius: 12px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <p style="margin: 0 0 8px; color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+                      Cancelled Event
+                    </p>
+                    <h3 style="margin: 0 0 12px; color: #374151; font-size: 18px; font-weight: 600; text-decoration: line-through;">
+                      ${eventName}
+                    </h3>
+                    <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                      ${eventDay} · ${eventTime} · ${eventLocation}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              ${cancellationReason ? `
+              <!-- Reason Card -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <p style="margin: 0 0 8px; color: #475569; font-size: 14px; font-weight: 600;">
+                      Reason from host:
+                    </p>
+                    <p style="margin: 0; color: #64748b; font-size: 15px; line-height: 1.6;">
+                      "${cancellationReason}"
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              ` : ''}
+
+              ${wasPaid ? `
+              <!-- Refund Info -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: ${refundStatus === 'auto_refunded' ? '#d1fae5' : '#fef3c7'}; border-radius: 12px; border: 1px solid ${refundStatus === 'auto_refunded' ? '#6ee7b7' : '#fcd34d'};">
+                <tr>
+                  <td style="padding: 20px;">
+                    <p style="margin: 0 0 8px; color: ${refundStatus === 'auto_refunded' ? '#065f46' : '#92400e'}; font-size: 14px; font-weight: 600;">
+                      💳 Refund Information
+                    </p>
+                    ${refundMessage}
+                  </td>
+                </tr>
+              </table>
+              ` : ''}
+
+              ${instagramLink ? `
+              <p style="margin: 0 0 24px; color: #64748b; font-size: 14px; line-height: 1.6;">
+                Questions about this cancellation? Contact the host: <a href="${instagramLink}" style="color: #3477f8;">@${hostInstagram}</a>
+              </p>
+              ` : ''}
+
+              <!-- Action Button -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${BASE_URL}" style="display: inline-block; padding: 14px 28px; background-color: #3477f8; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                      Browse Other Events
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
+                We hope to see you at another event soon! 💪
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
+              <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
+                Find more events at
+              </p>
+              <a href="${BASE_URL}" style="color: #3477f8; text-decoration: none; font-size: 14px; font-weight: 600;">
+                sweatbuddies.co
+              </a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim()
+
+  return sendEmail({
+    to,
+    subject: `Event Cancelled: ${eventName}`,
+    html,
+    tags: [{ name: 'type', value: 'event_cancelled_by_host' }],
+  })
+}
+
+// ============= ORIGINAL EVENT CONFIRMATION =============
+
 interface EventConfirmationParams {
   to: string
   userName: string | null

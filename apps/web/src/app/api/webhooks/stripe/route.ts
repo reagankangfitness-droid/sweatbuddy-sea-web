@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { stripe, fromStripeAmount } from '@/lib/stripe'
 import { onBookingConfirmed, onBookingPaid, onBookingCancelled } from '@/lib/stats/realtime'
 import { sendPaidEventConfirmationEmail, sendHostBookingNotificationEmail } from '@/lib/event-confirmation-email'
+import { scheduleEventReminder } from '@/lib/event-reminders'
 
 // Disable body parsing - Stripe requires raw body for signature verification
 export const runtime = 'nodejs'
@@ -483,8 +484,10 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
       // Send confirmation emails (async, don't block transaction)
       const emailData = {
         eventId,
+        attendanceId: attendance.id,
         eventName: event.eventName,
         eventDay: event.day || 'TBD',
+        eventDate: event.eventDate,
         eventTime: event.time || 'TBD',
         eventLocation: event.location,
         organizerInstagram: event.organizerInstagram,
@@ -553,6 +556,20 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
         }
       } catch (emailError) {
         console.error('[EventSubmission] Error sending host notification:', emailError)
+      }
+    }
+
+    // Schedule 24-hour reminder email
+    if (emailData.eventDate) {
+      try {
+        await scheduleEventReminder({
+          attendanceId: emailData.attendanceId,
+          eventId,
+          eventDate: emailData.eventDate,
+        })
+        console.log(`[EventSubmission] ✅ Event reminder scheduled for ${emailData.attendeeEmail}`)
+      } catch (reminderError) {
+        console.error('[EventSubmission] Failed to schedule reminder:', reminderError)
       }
     }
   } catch (error) {

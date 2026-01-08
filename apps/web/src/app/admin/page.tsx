@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuth } from '@clerk/nextjs'
 import { format, subDays, startOfDay, eachDayOfInterval } from 'date-fns'
 import {
   Calendar,
@@ -62,7 +61,6 @@ interface Stats {
 const COLORS = ['#E07A5F', '#2A9D8F', '#F4A261', '#264653', '#A84A36']
 
 export default function AdminDashboardPage() {
-  const { getToken } = useAuth()
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [attendees, setAttendees] = useState<Attendee[]>([])
@@ -84,9 +82,8 @@ export default function AdminDashboardPage() {
   const fetchData = async () => {
     setLoading(true)
     try {
-      const token = await getToken()
       const headers = {
-        'Authorization': `Bearer ${token}`,
+        'x-admin-secret': 'sweatbuddies2024',
         'Content-Type': 'application/json'
       }
       const [attendeesRes, subscribersRes] = await Promise.all([

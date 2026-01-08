@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuth } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import {
@@ -31,8 +30,12 @@ interface PendingEvent {
   imageUrl?: string
 }
 
+const getAuthHeaders = () => ({
+  'x-admin-secret': 'sweatbuddies2024',
+  'Content-Type': 'application/json'
+})
+
 export default function PendingEventsPage() {
-  const { getToken } = useAuth()
   const [events, setEvents] = useState<PendingEvent[]>([])
   const [loading, setLoading] = useState(true)
   const [processingId, setProcessingId] = useState<string | null>(null)
@@ -44,12 +47,8 @@ export default function PendingEventsPage() {
   const fetchPendingEvents = async () => {
     setLoading(true)
     try {
-      const token = await getToken()
       const res = await fetch('/api/admin/event-submissions?status=PENDING', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+        headers: getAuthHeaders(),
       })
       if (res.ok) {
         const data = await res.json()
@@ -66,13 +65,9 @@ export default function PendingEventsPage() {
   const handleApprove = async (eventId: string) => {
     setProcessingId(eventId)
     try {
-      const token = await getToken()
       const res = await fetch(`/api/admin/event-submissions/${eventId}`, {
         method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ status: 'APPROVED' })
       })
 
@@ -92,13 +87,9 @@ export default function PendingEventsPage() {
   const handleReject = async (eventId: string) => {
     setProcessingId(eventId)
     try {
-      const token = await getToken()
       const res = await fetch(`/api/admin/event-submissions/${eventId}`, {
         method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ status: 'REJECTED' })
       })
 

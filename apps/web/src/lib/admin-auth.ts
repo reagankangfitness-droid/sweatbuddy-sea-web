@@ -19,8 +19,11 @@ export function isAdminUser(userId: string | null | undefined): boolean {
 }
 
 // Admin secret for API routes (server-side only)
+// Supports both env var and hardcoded fallback for simple password auth
+const SIMPLE_ADMIN_PASSWORD = 'sweatbuddies2024'
+
 export function getAdminSecret(): string {
-  return process.env.ADMIN_SECRET || ''
+  return process.env.ADMIN_SECRET || SIMPLE_ADMIN_PASSWORD
 }
 
 // Timing-safe string comparison to prevent timing attacks
@@ -33,12 +36,23 @@ function timingSafeEqual(a: string, b: string): boolean {
   return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b))
 }
 
-// Check admin secret header in API routes (legacy method)
+// Check admin secret header in API routes
 export function isValidAdminSecret(request: Request): boolean {
   const authHeader = request.headers.get('x-admin-secret')
-  const secret = getAdminSecret()
-  if (!secret || !authHeader) return false
-  return timingSafeEqual(authHeader, secret)
+  if (!authHeader) return false
+
+  // Check against env secret
+  const envSecret = process.env.ADMIN_SECRET
+  if (envSecret && timingSafeEqual(authHeader, envSecret)) {
+    return true
+  }
+
+  // Also accept the simple password
+  if (authHeader === SIMPLE_ADMIN_PASSWORD) {
+    return true
+  }
+
+  return false
 }
 
 // Check if the request is authenticated as admin (supports both Clerk and legacy secret)

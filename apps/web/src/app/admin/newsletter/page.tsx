@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuth } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import {
@@ -22,8 +21,12 @@ interface NewsletterSubscriber {
   source: string
 }
 
+const getAuthHeaders = () => ({
+  'x-admin-secret': 'sweatbuddies2024',
+  'Content-Type': 'application/json'
+})
+
 export default function NewsletterPage() {
-  const { getToken } = useAuth()
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -35,12 +38,8 @@ export default function NewsletterPage() {
 
   const fetchSubscribers = async () => {
     try {
-      const token = await getToken()
       const response = await fetch('/api/newsletter/subscribers', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
+        headers: getAuthHeaders(),
       })
       if (response.ok) {
         const data = await response.json()

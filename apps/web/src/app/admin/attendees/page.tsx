@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuth } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import {
@@ -35,8 +34,12 @@ interface NewsletterSubscriber {
   source: string
 }
 
+const getAuthHeaders = () => ({
+  'x-admin-secret': 'sweatbuddies2024',
+  'Content-Type': 'application/json'
+})
+
 export default function AdminAttendeesPage() {
-  const { getToken } = useAuth()
   const [activeTab, setActiveTab] = useState<'attendees' | 'newsletter'>('attendees')
   const [attendees, setAttendees] = useState<Attendee[]>([])
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([])
@@ -49,14 +52,6 @@ export default function AdminAttendeesPage() {
     fetchData()
   }, [])
 
-  const getAuthHeaders = async () => {
-    const token = await getToken()
-    return {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  }
-
   const fetchData = async () => {
     setLoading(true)
     await Promise.all([fetchAttendees(), fetchSubscribers()])
@@ -65,8 +60,7 @@ export default function AdminAttendeesPage() {
 
   const fetchAttendees = async () => {
     try {
-      const headers = await getAuthHeaders()
-      const response = await fetch('/api/attendance', { headers })
+      const response = await fetch('/api/attendance', { headers: getAuthHeaders() })
       if (response.ok) {
         const data = await response.json()
         setAttendees(data.attendees || [])
@@ -78,8 +72,7 @@ export default function AdminAttendeesPage() {
 
   const fetchSubscribers = async () => {
     try {
-      const headers = await getAuthHeaders()
-      const response = await fetch('/api/newsletter/subscribers', { headers })
+      const response = await fetch('/api/newsletter/subscribers', { headers: getAuthHeaders() })
       if (response.ok) {
         const data = await response.json()
         setSubscribers(data.subscribers || [])

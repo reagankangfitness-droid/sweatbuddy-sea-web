@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuth } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import Image from 'next/image'
 import { format } from 'date-fns'
@@ -51,7 +50,6 @@ const categories = [
 ]
 
 export default function AdminEventsPage() {
-  const { getToken } = useAuth()
   const [activeTab, setActiveTab] = useState<'live' | 'pending'>('live')
   const [events, setEvents] = useState<Event[]>([])
   const [submissions, setSubmissions] = useState<Submission[]>([])
@@ -64,10 +62,9 @@ export default function AdminEventsPage() {
     fetchData()
   }, [])
 
-  const getAuthHeaders = async () => {
-    const token = await getToken()
+  const getAuthHeaders = () => {
     return {
-      'Authorization': `Bearer ${token}`,
+      'x-admin-secret': 'sweatbuddies2024',
       'Content-Type': 'application/json'
     }
   }
@@ -80,7 +77,7 @@ export default function AdminEventsPage() {
 
   const fetchEvents = async () => {
     try {
-      const headers = await getAuthHeaders()
+      const headers = getAuthHeaders()
       const response = await fetch('/api/admin/events', { headers })
       if (response.ok) {
         const data = await response.json()
@@ -93,7 +90,7 @@ export default function AdminEventsPage() {
 
   const fetchSubmissions = async () => {
     try {
-      const headers = await getAuthHeaders()
+      const headers = getAuthHeaders()
       const response = await fetch('/api/admin/event-submissions?status=PENDING', { headers })
       if (response.ok) {
         const data = await response.json()
@@ -108,7 +105,7 @@ export default function AdminEventsPage() {
     if (!confirm(`Are you sure you want to delete "${event.name}"?`)) return
 
     try {
-      const headers = await getAuthHeaders()
+      const headers = getAuthHeaders()
       const response = await fetch(`/api/admin/events/${event.id}`, {
         method: 'DELETE',
         headers,
@@ -130,7 +127,7 @@ export default function AdminEventsPage() {
     if (!editingEvent) return
 
     try {
-      const headers = await getAuthHeaders()
+      const headers = getAuthHeaders()
       const response = await fetch(`/api/admin/events/${editingEvent.id}`, {
         method: 'PUT',
         headers,
@@ -153,7 +150,7 @@ export default function AdminEventsPage() {
   const handleSubmissionAction = async (submissionId: string, action: 'approve' | 'reject') => {
     try {
       setProcessingId(submissionId)
-      const headers = await getAuthHeaders()
+      const headers = getAuthHeaders()
 
       const response = await fetch(`/api/admin/event-submissions/${submissionId}`, {
         method: 'PATCH',

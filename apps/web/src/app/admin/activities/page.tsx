@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuth } from '@clerk/nextjs'
 import { format } from 'date-fns'
 import { Check, X, Clock, MapPin, Calendar, User, DollarSign, ExternalLink } from 'lucide-react'
 import { toast } from 'sonner'
@@ -33,8 +32,12 @@ interface Activity {
   }
 }
 
+const getAuthHeaders = () => ({
+  'x-admin-secret': 'sweatbuddies2024',
+  'Content-Type': 'application/json'
+})
+
 export default function AdminActivitiesPage() {
-  const { isLoaded, userId } = useAuth()
   const [activities, setActivities] = useState<Activity[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -42,10 +45,8 @@ export default function AdminActivitiesPage() {
   const [filter, setFilter] = useState<'PENDING_APPROVAL' | 'PUBLISHED' | 'all'>('PENDING_APPROVAL')
 
   useEffect(() => {
-    if (isLoaded && userId) {
-      fetchActivities()
-    }
-  }, [isLoaded, userId, filter])
+    fetchActivities()
+  }, [filter])
 
   const fetchActivities = async () => {
     try {
@@ -101,7 +102,7 @@ export default function AdminActivitiesPage() {
     }
   }
 
-  if (!isLoaded || loading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-[#0A1628] flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#38BDF8]"></div>

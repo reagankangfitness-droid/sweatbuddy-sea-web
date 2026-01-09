@@ -369,22 +369,17 @@ export default async function EventDetailPage({ params }: Props) {
                 </div>
 
                 {/* Price display for paid events */}
-                {!event.isFree && event.price && (() => {
-                  const basePrice = event.price
-                  const platformFee = Math.round(basePrice * 0.05)
-                  const total = basePrice + platformFee
-                  return (
-                    <div className="text-center pb-4 border-b border-neutral-100">
-                      <p className="text-sm text-neutral-500 mb-1">Price</p>
-                      <p className="text-2xl font-bold text-neutral-900">
-                        ${(total / 100).toFixed(2)} <span className="text-sm font-normal text-neutral-500">SGD</span>
-                      </p>
-                      <p className="text-xs text-neutral-400 mt-1">
-                        Ticket ${(basePrice / 100).toFixed(2)} + ${(platformFee / 100).toFixed(2)} fee
-                      </p>
-                    </div>
-                  )
-                })()}
+                {!event.isFree && event.price && event.paynowEnabled && (
+                  <div className="text-center pb-4 border-b border-neutral-100">
+                    <p className="text-sm text-neutral-500 mb-1">Price</p>
+                    <p className="text-2xl font-bold text-neutral-900">
+                      ${(event.price / 100).toFixed(2)} <span className="text-sm font-normal text-neutral-500">SGD</span>
+                    </p>
+                    <p className="text-xs text-green-600 mt-1">
+                      PayNow - No fees
+                    </p>
+                  </div>
+                )}
 
                 {/* Client-side interactive buttons */}
                 <EventPageClient

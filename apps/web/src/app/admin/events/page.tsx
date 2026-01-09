@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import Image from 'next/image'
 import { format } from 'date-fns'
-import { Pencil, Trash2, X, Save, Calendar, Clock, MapPin, Instagram, ImageIcon, Check, Mail, User, Loader2 } from 'lucide-react'
+import { Pencil, Trash2, X, Save, Calendar, Clock, MapPin, Instagram, ImageIcon, Check, Mail, User, Loader2, Upload } from 'lucide-react'
+import { UploadButton } from '@/lib/uploadthing'
 
 interface Event {
   id: string
@@ -55,6 +56,7 @@ export default function AdminEventsPage() {
   const [loading, setLoading] = useState(true)
   const [editingEvent, setEditingEvent] = useState<Event | null>(null)
   const [processingId, setProcessingId] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -569,22 +571,15 @@ export default function AdminEventsPage() {
               </div>
 
               <div>
-                <label className="block text-sm text-neutral-600 mb-1">Event Image</label>
-                <input
-                  type="text"
-                  value={editingEvent.imageUrl || ''}
-                  onChange={(e) => setEditingEvent({ ...editingEvent, imageUrl: e.target.value || null })}
-                  placeholder="Paste image URL (e.g., from Instagram, Google Drive)"
-                  className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
-                />
-                {editingEvent.imageUrl && (
-                  <div className="relative mt-2 rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200">
+                <label className="block text-sm text-neutral-600 mb-2">Event Image</label>
+                {editingEvent.imageUrl ? (
+                  <div className="relative rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200">
                     <Image
                       src={editingEvent.imageUrl}
                       alt="Event preview"
                       width={400}
                       height={200}
-                      className="w-full h-32 object-cover"
+                      className="w-full h-40 object-cover"
                     />
                     <button
                       type="button"
@@ -593,6 +588,55 @@ export default function AdminEventsPage() {
                     >
                       <X className="w-4 h-4 text-white" />
                     </button>
+                    <div className="absolute bottom-2 left-2">
+                      <span className="text-xs text-white bg-black/60 px-2 py-1 rounded">Click × to change image</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="rounded-lg bg-neutral-50 border border-neutral-200 border-dashed p-6">
+                    {isUploading ? (
+                      <div className="flex flex-col items-center gap-2 text-neutral-500">
+                        <Loader2 className="w-6 h-6 animate-spin text-neutral-900" />
+                        <span className="text-sm">Uploading...</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-3">
+                        <ImageIcon className="w-8 h-8 text-neutral-400" />
+                        <p className="text-sm text-neutral-500">Upload an image for this event</p>
+                        <UploadButton
+                          endpoint="eventImage"
+                          onUploadBegin={() => setIsUploading(true)}
+                          onClientUploadComplete={(res) => {
+                            setIsUploading(false)
+                            if (res?.[0]?.url) {
+                              setEditingEvent({ ...editingEvent, imageUrl: res[0].url })
+                              toast.success('Image uploaded')
+                            }
+                          }}
+                          onUploadError={(err: Error) => {
+                            setIsUploading(false)
+                            toast.error(`Upload failed: ${err.message}`)
+                          }}
+                          appearance={{
+                            button: "bg-neutral-900 hover:bg-neutral-800 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors",
+                            allowedContent: "hidden",
+                          }}
+                        />
+                        <div className="text-center mt-2">
+                          <p className="text-xs text-neutral-400 mb-2">Or paste an image URL:</p>
+                          <input
+                            type="text"
+                            placeholder="https://example.com/image.jpg"
+                            onBlur={(e) => {
+                              if (e.target.value) {
+                                setEditingEvent({ ...editingEvent, imageUrl: e.target.value })
+                              }
+                            }}
+                            className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -618,10 +662,20 @@ export default function AdminEventsPage() {
                   </button>
                   <button
                     onClick={handleSave}
-                    className="flex-1 px-4 py-3.5 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-700 transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+                    disabled={isUploading}
+                    className="flex-1 px-4 py-3.5 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-700 transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Save className="w-5 h-5" />
-                    Save
+                    {isUploading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Uploading...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-5 h-5" />
+                        Save
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

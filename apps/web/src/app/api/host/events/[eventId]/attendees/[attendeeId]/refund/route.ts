@@ -73,8 +73,6 @@ export async function POST(
       reason: 'requested_by_customer',
     })
 
-    console.log(`[Refund] Created refund ${refund.id} for payment ${attendance.stripePaymentId}`)
-
     // Update attendance record
     await prisma.eventAttendance.update({
       where: { id: attendeeId },
@@ -102,8 +100,6 @@ export async function POST(
         },
       },
     })
-
-    console.log(`[Refund] ✅ Refund completed for ${attendance.email} - Event: ${event.eventName}`)
 
     return NextResponse.json({
       success: true,

@@ -598,7 +598,7 @@ export default function HostApplicationPage() {
                         <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
                         <input
                           type="text"
-                          defaultValue={formData.location}
+                          value={formData.location}
                           onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
                           required
                           placeholder="Search for a location..."
@@ -880,13 +880,18 @@ export default function HostApplicationPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || isUploading || isUploadingQr}
               className="w-full bg-neutral-900 text-white py-4 rounded-full font-semibold text-lg hover:bg-neutral-900-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
                   Submitting...
+                </>
+              ) : isUploading || isUploadingQr ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Uploading image...
                 </>
               ) : (
                 'Submit Application'

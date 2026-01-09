@@ -1,29 +1,17 @@
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
+import { getHostSession } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    // Verify organizer session
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get('organizer_session')
+    // Verify host session using secure auth
+    const session = await getHostSession()
 
-    if (!sessionCookie) {
+    if (!session) {
       return NextResponse.json(
         { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
-    // Decode session to get organizer email
-    let session: { email: string }
-    try {
-      session = JSON.parse(atob(sessionCookie.value))
-    } catch {
-      return NextResponse.json(
-        { error: 'Invalid session' },
         { status: 401 }
       )
     }

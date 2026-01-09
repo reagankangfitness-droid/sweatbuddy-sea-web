@@ -88,14 +88,20 @@ export function EventPageClient({ event, initialGoingCount }: EventPageClientPro
                 id: event.id,
                 name: event.name,
                 price: event.price || 0,
+                day: event.day,
+                time: event.time,
+                location: event.location,
+                communityLink: event.communityLink,
                 paynowEnabled: event.paynowEnabled,
                 paynowQrCode: event.paynowQrCode,
                 paynowNumber: event.paynowNumber,
               }}
-              onClose={() => setShowPaymentModal(false)}
-              onSuccess={() => {
+              onClose={() => {
                 setShowPaymentModal(false)
                 window.location.reload()
+              }}
+              onSuccess={() => {
+                // Don't close - let user see success state with calendar option
               }}
             />
           )}

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { X, Loader2, Check, Copy } from 'lucide-react'
+import { X, Loader2, Check, Copy, Calendar, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
 
 interface PaymentModalProps {
@@ -9,6 +9,10 @@ interface PaymentModalProps {
     id: string
     name: string
     price: number
+    day?: string
+    time?: string
+    location?: string
+    communityLink?: string | null
     paynowEnabled?: boolean
     paynowQrCode?: string | null
     paynowNumber?: string | null
@@ -24,7 +28,7 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [copied, setCopied] = useState(false)
-  const [step, setStep] = useState<'pay' | 'confirm'>('pay')
+  const [step, setStep] = useState<'pay' | 'confirm' | 'success'>('pay')
 
   // Calculate price (no platform fee for PayNow to keep it simple)
   const priceFormatted = useMemo(() => {
@@ -72,13 +76,28 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
         throw new Error(data.error || 'Failed to submit payment')
       }
 
-      // Success - show confirmation and close
+      // Success - show success step with calendar option
+      setStep('success')
       onSuccess()
-      onClose()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
       setIsSubmitting(false)
     }
+  }
+
+  // Generate Google Calendar URL
+  const generateCalendarUrl = () => {
+    const title = encodeURIComponent(event.name)
+    const location = encodeURIComponent(event.location || '')
+    const details = encodeURIComponent(`Event from SweatBuddies\n\n${event.day || ''} at ${event.time || ''}\n${event.location || ''}`)
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&location=${location}&details=${details}`
+  }
+
+  // Helper to detect platform from community link
+  const detectPlatform = (url: string): 'whatsapp' | 'telegram' | 'other' => {
+    if (url.includes('wa.me') || url.includes('whatsapp') || url.includes('chat.whatsapp')) return 'whatsapp'
+    if (url.includes('t.me') || url.includes('telegram')) return 'telegram'
+    return 'other'
   }
 
   // Check if PayNow is properly configured
@@ -192,7 +211,7 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
               After transferring, click above to enter your details
             </p>
           </>
-        ) : (
+        ) : step === 'confirm' ? (
           <>
             {/* Step 3: Enter details */}
             <div className="mb-4">
@@ -275,6 +294,78 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
               The host will verify your payment and confirm your spot
             </p>
           </>
+        ) : (
+          /* Success State */
+          <div className="text-center py-2">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Check className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="text-xl font-bold text-neutral-900 mb-1">
+              Payment Submitted! 🎉
+            </h3>
+            <p className="text-sm text-neutral-500 mb-4">
+              The host will verify your payment and confirm your spot.
+            </p>
+
+            {/* Event Summary Card */}
+            {(event.day || event.time || event.location) && (
+              <div className="bg-neutral-50 rounded-xl p-4 mb-4 text-left">
+                {(event.day || event.time) && (
+                  <div className="flex items-center gap-2 text-sm text-neutral-600">
+                    <span>📅</span>
+                    <span>{event.day} {event.time && `· ${event.time}`}</span>
+                  </div>
+                )}
+                {event.location && (
+                  <div className="flex items-center gap-2 text-sm text-neutral-500 mt-1">
+                    <span>📍</span>
+                    <span>{event.location}</span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="space-y-3">
+              <button
+                onClick={() => window.open(generateCalendarUrl(), '_blank')}
+                className="w-full py-3 border border-neutral-200 rounded-xl font-medium hover:bg-neutral-50 transition flex items-center justify-center gap-2"
+              >
+                <Calendar className="w-5 h-5" />
+                Add to Calendar
+              </button>
+
+              {/* Community Link */}
+              {event.communityLink && (
+                <a
+                  href={event.communityLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`w-full py-3 rounded-xl font-medium transition flex items-center justify-center gap-2 text-white ${
+                    detectPlatform(event.communityLink) === 'whatsapp'
+                      ? 'bg-[#25D366] hover:bg-[#1da851]'
+                      : detectPlatform(event.communityLink) === 'telegram'
+                      ? 'bg-[#0088cc] hover:bg-[#0077b3]'
+                      : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  {detectPlatform(event.communityLink) === 'whatsapp'
+                    ? 'Join WhatsApp Group'
+                    : detectPlatform(event.communityLink) === 'telegram'
+                    ? 'Join Telegram Group'
+                    : 'Join Community'}
+                </a>
+              )}
+
+              <button
+                onClick={onClose}
+                className="w-full py-3 bg-neutral-900 text-white rounded-xl font-medium hover:bg-neutral-800 transition"
+              >
+                Done
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>

@@ -5,7 +5,6 @@ import { toast } from 'sonner'
 import Image from 'next/image'
 import { format } from 'date-fns'
 import { Pencil, Trash2, X, Save, Calendar, Clock, MapPin, Instagram, ImageIcon, Check, Mail, User, Loader2 } from 'lucide-react'
-import { UploadButton } from '@/lib/uploadthing'
 
 interface Event {
   id: string
@@ -55,7 +54,6 @@ export default function AdminEventsPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [loading, setLoading] = useState(true)
   const [editingEvent, setEditingEvent] = useState<Event | null>(null)
-  const [isUploading, setIsUploading] = useState(false)
   const [processingId, setProcessingId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -572,61 +570,31 @@ export default function AdminEventsPage() {
 
               <div>
                 <label className="block text-sm text-neutral-600 mb-1">Event Image</label>
-                {editingEvent.imageUrl ? (
-                  <div className="relative rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200">
+                <input
+                  type="text"
+                  value={editingEvent.imageUrl || ''}
+                  onChange={(e) => setEditingEvent({ ...editingEvent, imageUrl: e.target.value || null })}
+                  placeholder="Paste image URL (e.g., from Instagram, Google Drive)"
+                  className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                />
+                {editingEvent.imageUrl && (
+                  <div className="relative mt-2 rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200">
                     <Image
                       src={editingEvent.imageUrl}
                       alt="Event preview"
                       width={400}
                       height={200}
-                      className="w-full h-40 object-cover"
+                      className="w-full h-32 object-cover"
                     />
                     <button
                       type="button"
                       onClick={() => setEditingEvent({ ...editingEvent, imageUrl: null })}
-                      className="absolute top-2 right-2 p-2.5 rounded-full bg-black/60 hover:bg-black/80 transition-colors active:scale-95"
+                      className="absolute top-2 right-2 p-2 rounded-full bg-black/60 hover:bg-black/80 transition-colors active:scale-95"
                     >
-                      <X className="w-5 h-5 text-white" />
+                      <X className="w-4 h-4 text-white" />
                     </button>
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-3 p-6 bg-neutral-50 border border-neutral-200 border-dashed rounded-lg">
-                    {isUploading ? (
-                      <Loader2 className="w-8 h-8 text-neutral-400 animate-spin" />
-                    ) : (
-                      <>
-                        <ImageIcon className="w-10 h-10 text-neutral-300" />
-                        <UploadButton
-                          endpoint="eventImage"
-                          onUploadBegin={() => setIsUploading(true)}
-                          onClientUploadComplete={(res) => {
-                            setIsUploading(false)
-                            if (res?.[0]?.url) {
-                              setEditingEvent({ ...editingEvent, imageUrl: res[0].url })
-                            }
-                          }}
-                          onUploadError={(error: Error) => {
-                            setIsUploading(false)
-                            toast.error(`Upload failed: ${error.message}`)
-                          }}
-                          appearance={{
-                            button: "bg-neutral-900 hover:bg-neutral-700 text-white font-medium px-6 py-3 rounded-lg text-base transition-all",
-                            allowedContent: "hidden",
-                          }}
-                        />
-                      </>
-                    )}
-                  </div>
                 )}
-                <div className="mt-2">
-                  <input
-                    type="text"
-                    value={editingEvent.imageUrl || ''}
-                    onChange={(e) => setEditingEvent({ ...editingEvent, imageUrl: e.target.value || null })}
-                    placeholder="Or paste image URL directly"
-                    className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
-                  />
-                </div>
               </div>
 
               <div className="flex items-center gap-3 py-2">

@@ -32,6 +32,7 @@
     "@radix-ui/react-toast": "^1.2.15",
     "@react-google-maps/api": "^2.20.7",
     "@stripe/stripe-js": "^8.5.3",
+    "@supabase/supabase-js": "^2.90.1",
     "@uploadthing/react": "^7.3.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",

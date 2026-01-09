@@ -123,6 +123,7 @@ export async function PUT(
     if (updates.description !== undefined) updateData.description = updates.description
     if (updates.recurring !== undefined) updateData.recurring = updates.recurring
     if (updates.communityLink !== undefined) updateData.communityLink = updates.communityLink || null
+    if (updates.imageUrl !== undefined) updateData.imageUrl = updates.imageUrl || null
     // Pricing fields
     if (updates.isFree !== undefined) updateData.isFree = updates.isFree
     if (updates.price !== undefined) updateData.price = updates.price

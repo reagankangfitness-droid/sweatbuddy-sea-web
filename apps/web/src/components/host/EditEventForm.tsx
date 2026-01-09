@@ -2,6 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import { X, Loader2, ImageIcon } from 'lucide-react'
+import { UploadButton } from '@/lib/uploadthing'
 
 interface Event {
   id: string
@@ -53,7 +56,9 @@ const CATEGORIES = [
 export function EditEventForm({ event }: EditEventFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [error, setError] = useState('')
+  const [imageUrl, setImageUrl] = useState<string | null>(event.imageUrl || null)
 
   const [formData, setFormData] = useState({
     name: event.name || '',
@@ -86,6 +91,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
     try {
       const submitData = {
         ...formData,
+        imageUrl,
         // Convert price to cents
         price: formData.isFree ? null : Math.round(parseFloat(formData.price || '0') * 100),
       }
@@ -240,6 +246,69 @@ export function EditEventForm({ event }: EditEventFormProps) {
         />
       </div>
 
+      {/* Event Image */}
+      <div>
+        <label className="block text-sm font-medium text-neutral-700 mb-2">
+          Event Image
+        </label>
+        {imageUrl ? (
+          <div className="relative rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200">
+            <Image
+              src={imageUrl}
+              alt="Event preview"
+              width={600}
+              height={300}
+              className="w-full h-48 object-cover"
+            />
+            <button
+              type="button"
+              onClick={() => setImageUrl(null)}
+              className="absolute top-3 right-3 p-2 rounded-full bg-neutral-900/70 hover:bg-neutral-900/90 transition-colors"
+            >
+              <X className="w-4 h-4 text-white" />
+            </button>
+            <div className="absolute bottom-3 left-3 right-3">
+              <p className="text-xs text-white bg-neutral-900/70 px-3 py-1.5 rounded-lg inline-block">
+                Click × to remove and upload a new image
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-xl bg-neutral-50 border border-neutral-200 border-dashed p-6">
+            {isUploading ? (
+              <div className="flex flex-col items-center gap-2 text-neutral-500">
+                <Loader2 className="w-6 h-6 animate-spin text-neutral-900" />
+                <span className="text-sm">Uploading...</span>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-3">
+                <ImageIcon className="w-8 h-8 text-neutral-400" />
+                <p className="text-sm text-neutral-500">Add a photo to make your event stand out</p>
+                <UploadButton
+                  endpoint="eventImage"
+                  onUploadBegin={() => setIsUploading(true)}
+                  onClientUploadComplete={(res) => {
+                    setIsUploading(false)
+                    if (res?.[0]?.url) setImageUrl(res[0].url)
+                  }}
+                  onUploadError={(uploadError: Error) => {
+                    setIsUploading(false)
+                    setError(`Upload failed: ${uploadError.message}`)
+                  }}
+                  appearance={{
+                    button: "bg-neutral-900 hover:bg-neutral-800 text-white font-medium px-4 py-2 rounded-full text-sm transition-colors",
+                    allowedContent: "hidden",
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        )}
+        <p className="text-xs text-neutral-400 mt-2">
+          Recommended: 1200×600px or larger, landscape orientation
+        </p>
+      </div>
+
       {/* Community Link */}
       <div>
         <label htmlFor="communityLink" className="block text-sm font-medium text-neutral-700 mb-2">
@@ -351,10 +420,10 @@ export function EditEventForm({ event }: EditEventFormProps) {
         </button>
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isUploading}
           className="flex-1 px-6 py-3.5 bg-neutral-900 text-white rounded-full font-semibold hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? 'Saving your changes...' : 'Save Changes'}
+          {isSubmitting ? 'Saving your changes...' : isUploading ? 'Uploading image...' : 'Save Changes'}
         </button>
       </div>
     </form>

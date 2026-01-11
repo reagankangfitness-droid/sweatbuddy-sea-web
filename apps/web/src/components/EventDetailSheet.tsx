@@ -1,16 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
-import { X, Instagram, MapPin, MessageCircle } from 'lucide-react'
+import { X, Instagram, MapPin, MessageCircle, Clock } from 'lucide-react'
 import { GoingButton } from './GoingButton'
 import { ShareButton } from './ShareButton'
 import { EventAttendees } from './EventAttendees'
 import { DirectChatWindow } from './DirectChatWindow'
 import { OrganizerProfile } from './OrganizerProfile'
 import { detectPlatform } from '@/lib/community'
+import { safeGetJSON } from '@/lib/safe-storage'
 
 interface Event {
   id: string
@@ -37,26 +38,22 @@ interface Event {
 }
 
 // Format date for display (e.g., "Sat, Dec 14")
-function formatEventDate(dateStr: string | null | undefined, dayName: string): string {
+// For recurring events: Always show "Every [Day]" format since they happen weekly
+// For one-time events: Show the actual event date
+function formatEventDate(dateStr: string | null | undefined, dayName: string, isRecurring: boolean = false): string {
+  // RECURRING EVENTS: Show "Every [Day]" format - the eventDate is just an anchor, not when it happens
+  if (isRecurring) {
+    const dayMap: Record<string, string> = {
+      'Sundays': 'Every Sun', 'Mondays': 'Every Mon', 'Tuesdays': 'Every Tue',
+      'Wednesdays': 'Every Wed', 'Thursdays': 'Every Thu', 'Fridays': 'Every Fri',
+      'Saturdays': 'Every Sat'
+    }
+    return dayMap[dayName] || dayName // Fallback to day name for "Monthly", "Various", etc.
+  }
+
+  // ONE-TIME EVENTS: Show the actual event date
   if (!dateStr) {
-    // For recurring events, show the next occurrence day
-    const dayMap: Record<string, number> = {
-      'Sundays': 0, 'Mondays': 1, 'Tuesdays': 2, 'Wednesdays': 3,
-      'Thursdays': 4, 'Fridays': 5, 'Saturdays': 6
-    }
-    const dayNum = dayMap[dayName]
-    if (dayNum !== undefined) {
-      const today = new Date()
-      const daysUntil = (dayNum - today.getDay() + 7) % 7 || 7 // Next occurrence
-      const nextDate = new Date(today)
-      nextDate.setDate(today.getDate() + daysUntil)
-      return nextDate.toLocaleDateString('en-US', {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric'
-      })
-    }
-    return dayName // Fallback for "Monthly", "Various", etc.
+    return dayName // Fallback for events without dates
   }
 
   try {
@@ -103,33 +100,66 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
   const [attendeesRefresh, setAttendeesRefresh] = useState(0)
   const [showChat, setShowChat] = useState(false)
   const [isGoing, setIsGoing] = useState(false)
+  const [paymentStatus, setPaymentStatus] = useState<string | null>(null)
   const [userCredentials, setUserCredentials] = useState<{ email: string; name: string } | null>(null)
+
+  // Determine if user can access community features
+  // Free events: just need to be going
+  // Paid events: need to have paid status confirmed
+  const isPaidEvent = event.price && event.price > 0
+  const canAccessCommunity = isGoing && (!isPaidEvent || paymentStatus === 'paid' || paymentStatus === 'free')
+  const isPendingPayment = isPaidEvent && paymentStatus === 'pending'
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
+  // Check attendance status from backend
+  const checkAttendanceStatus = useCallback(async (email: string) => {
+    try {
+      const res = await fetch('/api/attendance/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, eventIds: [event.id] }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        const status = data.status?.[event.id]
+        if (status?.isAttending) {
+          setIsGoing(true)
+          setPaymentStatus(status.paymentStatus)
+        }
+      }
+    } catch (err) {
+      console.error('Failed to check attendance status:', err)
+    }
+  }, [event.id])
+
   // Check if user is going to this event and get their credentials
   useEffect(() => {
     if (typeof window !== 'undefined' && isOpen) {
-      const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
+      // First check localStorage for quick UI response
+      const going = safeGetJSON<string[]>('sweatbuddies_going', [])
       const userIsGoing = going.includes(event.id)
       setIsGoing(userIsGoing)
 
       // Get user credentials from localStorage
-      if (userIsGoing) {
-        const savedUser = localStorage.getItem('sweatbuddies_user')
-        if (savedUser) {
-          try {
-            const { email, name } = JSON.parse(savedUser)
-            setUserCredentials({ email: email || '', name: name || '' })
-          } catch {
-            setUserCredentials(null)
+      const savedUser = localStorage.getItem('sweatbuddies_user')
+      if (savedUser) {
+        try {
+          const { email, name } = JSON.parse(savedUser)
+          setUserCredentials({ email: email || '', name: name || '' })
+
+          // For paid events, verify actual payment status from backend
+          if (userIsGoing && email) {
+            checkAttendanceStatus(email)
           }
+        } catch {
+          setUserCredentials(null)
         }
       }
     }
-  }, [isOpen, event.id, attendeesRefresh])
+  }, [isOpen, event.id, attendeesRefresh, checkAttendanceStatus])
 
   // Handler for when someone joins - refresh attendees list and get credentials
   const handleGoingSuccess = () => {
@@ -261,7 +291,7 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                 {/* Time & Location Summary */}
                 <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-500 mb-4">
                   <span className="flex items-center gap-1">
-                    <span>📅</span> {formatEventDate(event.eventDate, event.day)}
+                    <span>📅</span> {formatEventDate(event.eventDate, event.day, event.recurring)}
                   </span>
                   <span className="flex items-center gap-1">
                     <span>🕐</span> {event.time}
@@ -312,8 +342,8 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
 
             {/* Secondary Actions Row */}
             <div className="flex items-center justify-center gap-6 py-4 border-t border-neutral-100 bg-neutral-50/50">
-              {/* Chat button - only visible when user is going */}
-              {isGoing && (
+              {/* Chat button - only visible when user can access community */}
+              {canAccessCommunity && (
                 <button
                   onClick={() => setShowChat(true)}
                   className="flex flex-col items-center gap-1.5 text-neutral-500 hover:text-neutral-900 transition-colors"
@@ -360,9 +390,9 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                 <span className="text-xs font-medium">Open in Maps</span>
               </a>
 
-              {/* Community Link - visible after RSVP, hint before */}
+              {/* Community Link - visible after RSVP (free) or payment confirmed (paid) */}
               {event.communityLink && (
-                isGoing ? (
+                canAccessCommunity ? (
                   <a
                     href={event.communityLink}
                     target="_blank"
@@ -386,12 +416,19 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                         : 'Community'}
                     </span>
                   </a>
+                ) : isPendingPayment ? (
+                  <div className="flex flex-col items-center gap-1.5 text-amber-500">
+                    <span className="w-11 h-11 bg-amber-50 rounded-full flex items-center justify-center border border-amber-200">
+                      <Clock className="w-5 h-5" />
+                    </span>
+                    <span className="text-[10px] font-medium text-center leading-tight">Payment<br/>pending</span>
+                  </div>
                 ) : (
                   <div className="flex flex-col items-center gap-1.5 text-neutral-400">
                     <span className="w-11 h-11 bg-neutral-100 rounded-full flex items-center justify-center border border-neutral-200">
                       <MessageCircle className="w-5 h-5" />
                     </span>
-                    <span className="text-[10px] font-medium text-center leading-tight">RSVP to<br/>join group</span>
+                    <span className="text-[10px] font-medium text-center leading-tight">{isPaidEvent ? 'Pay to' : 'RSVP to'}<br/>join group</span>
                   </div>
                 )
               )}

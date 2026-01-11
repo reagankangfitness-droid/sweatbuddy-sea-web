@@ -5,6 +5,7 @@ import { useUser } from '@clerk/nextjs'
 import { ArrowLeft, Heart, Calendar, MapPin, Trash2, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { safeGetJSON, safeSetJSON, ensureArray } from '@/lib/safe-storage'
 
 interface SavedEvent {
   id: string
@@ -46,11 +47,15 @@ export default function SavedPage() {
     const fetchEvents = async () => {
       try {
         const response = await fetch('/api/events')
+        if (!response.ok) {
+          throw new Error('Failed to fetch events')
+        }
         const data = await response.json()
-        // API returns { events: [...] }
-        setAllEvents(data.events || [])
+        // API returns { events: [...] } - ensure it's an array
+        setAllEvents(ensureArray<SavedEvent>(data?.events))
       } catch (error) {
         console.error('Error fetching events:', error)
+        setAllEvents([])
       }
     }
 
@@ -61,7 +66,7 @@ export default function SavedPage() {
   useEffect(() => {
     if (allEvents.length === 0) return
 
-    const savedIds = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
+    const savedIds = safeGetJSON<string[]>('sweatbuddies_saved', [])
     const saved = allEvents.filter((event: SavedEvent) => savedIds.includes(event.id))
     setSavedEvents(saved)
     setIsLoading(false)
@@ -70,7 +75,7 @@ export default function SavedPage() {
   // Listen for changes to saved events
   useEffect(() => {
     const handleSavedUpdate = () => {
-      const savedIds = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
+      const savedIds = safeGetJSON<string[]>('sweatbuddies_saved', [])
       const saved = allEvents.filter((event: SavedEvent) => savedIds.includes(event.id))
       setSavedEvents(saved)
     }
@@ -80,9 +85,9 @@ export default function SavedPage() {
   }, [allEvents])
 
   const handleRemove = (eventId: string) => {
-    const savedIds = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
+    const savedIds = safeGetJSON<string[]>('sweatbuddies_saved', [])
     const newSavedIds = savedIds.filter((id: string) => id !== eventId)
-    localStorage.setItem('sweatbuddies_saved', JSON.stringify(newSavedIds))
+    safeSetJSON('sweatbuddies_saved', newSavedIds)
     setSavedEvents(savedEvents.filter(e => e.id !== eventId))
     window.dispatchEvent(new Event('savedEventsUpdated'))
   }

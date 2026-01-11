@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { sendHostNewAttendeeNotification } from '@/lib/event-confirmation-email'
 
 export const dynamic = 'force-dynamic'
 
@@ -113,7 +114,25 @@ export async function POST(request: Request) {
       },
     })
 
-    // Payment submission logged for host verification
+    // Notify host about new PayNow payment pending verification
+    if (event.contactEmail) {
+      const attendeeCount = await prisma.eventAttendance.count({
+        where: { eventId: data.eventId },
+      })
+
+      sendHostNewAttendeeNotification({
+        to: event.contactEmail,
+        hostName: event.organizerName || null,
+        eventId: data.eventId,
+        eventName: data.eventName || event.eventName,
+        eventSlug: event.slug || null,
+        attendeeName: data.name || null,
+        attendeeEmail: data.email.toLowerCase(),
+        currentAttendeeCount: attendeeCount,
+      }).catch((err) => {
+        console.error('Failed to send host notification:', err)
+      })
+    }
 
     return NextResponse.json({
       success: true,

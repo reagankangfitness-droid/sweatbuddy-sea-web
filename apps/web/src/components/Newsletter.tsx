@@ -10,9 +10,25 @@ export function Newsletter() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState('')
 
+  // Email validation helper
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!email) return
+
+    // Validate email
+    if (!email) {
+      setError('Please enter your email')
+      return
+    }
+
+    if (!isValidEmail(email)) {
+      setError('Please enter a valid email address')
+      return
+    }
 
     setIsSubmitting(true)
     setError('')

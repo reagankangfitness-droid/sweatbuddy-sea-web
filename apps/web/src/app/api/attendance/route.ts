@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { sendEventConfirmationEmail } from '@/lib/event-confirmation-email'
+import { sendEventConfirmationEmail, sendHostNewAttendeeNotification } from '@/lib/event-confirmation-email'
 import { scheduleEventReminder } from '@/lib/event-reminders'
+import { schedulePostEventFollowUp } from '@/lib/post-event-followup'
 import { isAdminRequest } from '@/lib/admin-auth'
 
 interface AttendanceRecord {
@@ -122,19 +123,57 @@ export async function POST(request: Request) {
       console.error('Confirmation email error:', emailError)
     })
 
-    // Schedule 24-hour reminder email (fire and forget)
-    // Get event date from database if not provided
+    // Schedule 24-hour reminder email, post-event follow-up, and notify host (fire and forget)
+    // Get event date and host info from database
     prisma.eventSubmission.findUnique({
       where: { id: eventId },
-      select: { eventDate: true },
-    }).then((event) => {
+      select: {
+        eventDate: true,
+        time: true,
+        contactEmail: true,
+        organizerName: true,
+        slug: true,
+      },
+    }).then(async (event) => {
       if (event?.eventDate) {
+        // Schedule 24-hour pre-event reminder
         scheduleEventReminder({
           attendanceId: attendance.id,
           eventId,
           eventDate: event.eventDate,
         }).catch((err) => {
           console.error('Failed to schedule reminder:', err)
+        })
+
+        // Schedule post-event follow-up (2 hours after event ends)
+        schedulePostEventFollowUp({
+          attendanceId: attendance.id,
+          eventId,
+          eventDate: event.eventDate,
+          eventTime: event.time || eventTime || '08:00',
+        }).catch((err) => {
+          console.error('Failed to schedule post-event follow-up:', err)
+        })
+      }
+
+      // Notify host about new attendee
+      if (event?.contactEmail) {
+        // Get current attendee count
+        const attendeeCount = await prisma.eventAttendance.count({
+          where: { eventId },
+        })
+
+        sendHostNewAttendeeNotification({
+          to: event.contactEmail,
+          hostName: event.organizerName || null,
+          eventId,
+          eventName,
+          eventSlug: event.slug || null,
+          attendeeName: name?.trim() || null,
+          attendeeEmail: email.toLowerCase().trim(),
+          currentAttendeeCount: attendeeCount,
+        }).catch((err) => {
+          console.error('Failed to send host notification:', err)
         })
       }
     }).catch((err) => {

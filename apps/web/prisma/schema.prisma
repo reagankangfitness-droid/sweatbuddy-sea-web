@@ -1721,6 +1721,22 @@ model EventReminder {
   @@map("event_reminders")
 }
 
+// Post-event follow-up (2h after event ends)
+model PostEventFollowUp {
+  id           String   @id @default(cuid())
+  attendanceId String   @unique // References EventAttendance.id
+  eventId      String   // References EventSubmission.id
+  scheduledFor DateTime // When to send (2h after event)
+  status       String   @default("PENDING") @db.VarChar(20) // PENDING, SENT, SKIPPED, FAILED
+  sentAt       DateTime?
+  errorMessage String?  @db.Text
+  createdAt    DateTime @default(now())
+
+  @@index([status, scheduledFor])
+  @@index([eventId])
+  @@map("post_event_followups")
+}
+
 // Host notes about attendees (email-based, no user account required)
 model HostAttendeeNotes {
   id              String   @id @default(cuid())

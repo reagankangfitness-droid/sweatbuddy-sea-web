@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Check, Loader2, Calendar, MessageCircle } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
+import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 
 // Helper to detect platform from community link
 const detectPlatform = (url: string): 'whatsapp' | 'telegram' | 'other' => {
@@ -66,16 +67,11 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
         email: email,
         name: name,
       }))
-    } else if (typeof window !== 'undefined') {
+    } else {
       // Not logged in - check localStorage
-      const saved = localStorage.getItem('sweatbuddies_user')
-      if (saved) {
-        try {
-          const { email, name } = JSON.parse(saved)
-          setFormData((prev) => ({ ...prev, email: email || '', name: name || '' }))
-        } catch (e) {
-          // Invalid data, ignore
-        }
+      const userData = safeGetJSON<{ email?: string; name?: string }>('sweatbuddies_user', {})
+      if (userData.email || userData.name) {
+        setFormData((prev) => ({ ...prev, email: userData.email || '', name: userData.name || '' }))
       }
     }
   }, [isSignedIn, user])
@@ -112,18 +108,15 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
         // Special case: if already registered, treat as success
         if (data.error?.includes('already registered')) {
           // Store in localStorage so they don't have to re-enter
-          localStorage.setItem(
-            'sweatbuddies_user',
-            JSON.stringify({
-              email: formData.email,
-              name: formData.name,
-            })
-          )
+          safeSetJSON('sweatbuddies_user', {
+            email: formData.email,
+            name: formData.name,
+          })
 
           // Add to going list in localStorage
-          const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
+          const going = safeGetJSON<string[]>('sweatbuddies_going', [])
           if (!going.includes(event.id)) {
-            localStorage.setItem('sweatbuddies_going', JSON.stringify([...going, event.id]))
+            safeSetJSON('sweatbuddies_going', [...going, event.id])
           }
 
           setStep('success')
@@ -137,18 +130,15 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
       onSuccess()
 
       // Store in localStorage so they don't have to re-enter
-      localStorage.setItem(
-        'sweatbuddies_user',
-        JSON.stringify({
-          email: formData.email,
-          name: formData.name,
-        })
-      )
+      safeSetJSON('sweatbuddies_user', {
+        email: formData.email,
+        name: formData.name,
+      })
 
       // Add to going list in localStorage
-      const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
+      const going = safeGetJSON<string[]>('sweatbuddies_going', [])
       if (!going.includes(event.id)) {
-        localStorage.setItem('sweatbuddies_going', JSON.stringify([...going, event.id]))
+        safeSetJSON('sweatbuddies_going', [...going, event.id])
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to register')

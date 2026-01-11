@@ -5,6 +5,7 @@ import {
   processReviewReminders,
   scheduleReviewPrompt,
 } from '@/lib/reviews'
+import { processPostEventFollowUps } from '@/lib/post-event-followup'
 
 const CRON_SECRET = process.env.CRON_SECRET
 
@@ -118,6 +119,13 @@ export async function POST(request: NextRequest) {
       results.stats = await statsResult.json()
     } catch (e) {
       results.stats = { error: String(e) }
+    }
+
+    // 7. Process post-event follow-up emails
+    try {
+      results.postEventFollowUps = await processPostEventFollowUps()
+    } catch (e) {
+      results.postEventFollowUps = { error: String(e) }
     }
 
     return NextResponse.json({

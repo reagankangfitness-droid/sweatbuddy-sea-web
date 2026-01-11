@@ -171,6 +171,15 @@ export default function HostApplicationPage() {
     }
   }, [])
 
+  // Convert 24-hour time to 12-hour format (e.g., "14:30" -> "2:30 PM")
+  const formatTime12Hour = (time24: string): string => {
+    if (!time24) return ''
+    const [hours, minutes] = time24.split(':').map(Number)
+    const period = hours >= 12 ? 'PM' : 'AM'
+    const hours12 = hours % 12 || 12
+    return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -231,7 +240,7 @@ export default function HostApplicationPage() {
         category: formData.eventType,
         day: dayDisplay,
         eventDate: isRecurring ? undefined : formData.eventDate,
-        time: formData.eventTime,
+        time: formatTime12Hour(formData.eventTime),
         recurring: isRecurring,
         location: formData.location,
         latitude: formData.latitude || null,
@@ -575,15 +584,15 @@ export default function HostApplicationPage() {
                   <div className="relative">
                     <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
                     <input
-                      type="text"
+                      type="time"
                       name="eventTime"
                       value={formData.eventTime}
                       onChange={handleChange}
                       required
-                      placeholder="7:30 AM"
-                      className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
+                      className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900"
                     />
                   </div>
+                  <p className="text-xs text-neutral-500 mt-1">Select event start time</p>
                 </div>
               </div>
 

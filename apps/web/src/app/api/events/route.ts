@@ -36,13 +36,50 @@ interface Event {
   paynowNumber: string | null
 }
 
+// Helper to check if an event should be shown
+// - Recurring events: ALWAYS show (they repeat weekly, eventDate is just an anchor)
+// - One-time events: Only show if within 7-day window from today
+function isUpcomingEvent(eventDate: Date | null, recurring: boolean): boolean {
+  // RECURRING EVENTS: Always show - they happen every week on their designated day
+  // The eventDate field is just when the event was created/anchored, not an expiration
+  if (recurring) return true
+
+  // Events without a date - show them (legacy data)
+  if (!eventDate) return true
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const eventDay = new Date(eventDate)
+  eventDay.setHours(0, 0, 0, 0)
+
+  // ONE-TIME EVENTS: Only show if within 7-day window (today to 7 days from now)
+  const sevenDaysFromNow = new Date(today)
+  sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7)
+
+  return eventDay >= today && eventDay <= sevenDaysFromNow
+}
+
 // Cached database query - revalidates every 60s
 const getCachedEvents = unstable_cache(
   async () => {
-    // Get approved events
+    // Get today's date at midnight for filtering
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    // Get approved events that are upcoming or recurring
     const approvedSubmissions = await prisma.eventSubmission.findMany({
-      where: { status: 'APPROVED' },
-      orderBy: { createdAt: 'desc' },
+      where: {
+        status: 'APPROVED',
+        OR: [
+          // Events with future dates
+          { eventDate: { gte: today } },
+          // Recurring events (always show)
+          { recurring: true },
+          // Events without dates (legacy, show them)
+          { eventDate: null }
+        ]
+      },
+      orderBy: { eventDate: 'asc' }, // Sort by event date, soonest first
       select: {
         id: true,
         slug: true,
@@ -67,8 +104,13 @@ const getCachedEvents = unstable_cache(
       },
     })
 
+    // Filter out past recurring events (recurring events with past specific dates)
+    const upcomingSubmissions = approvedSubmissions.filter(submission =>
+      isUpcomingEvent(submission.eventDate, submission.recurring)
+    )
+
     // Get attendance counts and previews for all events
-    const eventIds = approvedSubmissions.map(s => s.id)
+    const eventIds = upcomingSubmissions.map(s => s.id)
 
     const attendanceCounts = await prisma.eventAttendance.groupBy({
       by: ['eventId'],
@@ -100,7 +142,7 @@ const getCachedEvents = unstable_cache(
       }
     }
 
-    return approvedSubmissions.map(submission => ({
+    return upcomingSubmissions.map(submission => ({
       id: submission.id,
       slug: submission.slug,
       name: submission.eventName,
@@ -136,7 +178,7 @@ const getCachedEvents = unstable_cache(
       paynowNumber: submission.paynowNumber,
     }))
   },
-  ['events-list'],
+  ['events-list-v2'], // New cache key to invalidate old cache
   { revalidate: 60, tags: ['events'] }
 )
 

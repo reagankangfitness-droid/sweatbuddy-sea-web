@@ -136,9 +136,8 @@ export default function ProfileSettingsPage() {
       setProfile(data.profile)
     } catch (error) {
       console.error('Save error:', error)
-      toast.error(
-        error instanceof Error ? error.message : 'Failed to save profile'
-      )
+      const message = error instanceof Error ? error.message : 'Failed to update profile'
+      toast.error(message)
     } finally {
       setSaving(false)
     }

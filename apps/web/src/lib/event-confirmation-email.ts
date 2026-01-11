@@ -865,6 +865,172 @@ export async function sendHostBookingNotificationEmail(
   })
 }
 
+// ============= HOST NEW ATTENDEE NOTIFICATION =============
+
+interface HostNewAttendeeParams {
+  to: string
+  hostName: string | null
+  eventId: string
+  eventName: string
+  eventSlug?: string | null
+  attendeeName: string | null
+  attendeeEmail: string
+  currentAttendeeCount: number
+}
+
+/**
+ * Send notification to host when someone joins their event (free or PayNow)
+ */
+export async function sendHostNewAttendeeNotification(
+  params: HostNewAttendeeParams
+): Promise<{ success: boolean; error?: string }> {
+  const {
+    to,
+    hostName,
+    eventId,
+    eventName,
+    eventSlug,
+    attendeeName,
+    attendeeEmail,
+    currentAttendeeCount,
+  } = params
+
+  const displayHostName = hostName || 'there'
+  const displayAttendeeName = attendeeName || attendeeEmail.split('@')[0]
+  const dashboardUrl = `${BASE_URL}/host/events/${eventId}/attendees`
+  const eventUrl = eventSlug ? `${BASE_URL}/e/${eventSlug}` : `${BASE_URL}/e/${eventId}`
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Attendee!</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
+              <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
+                New Attendee!
+              </h1>
+              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
+                Someone just joined your event
+              </p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 32px; background-color: white;">
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Hey ${displayHostName}! 👋
+              </p>
+
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                <strong>${displayAttendeeName}</strong> just signed up for <strong>${eventName}</strong>!
+              </p>
+
+              <!-- Attendee Info Card -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #f0fdf4; border-radius: 12px; border: 1px solid #bbf7d0;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                      <tr>
+                        <td style="padding: 8px 0; color: #166534; font-size: 14px;">
+                          <strong>Name:</strong>
+                        </td>
+                        <td style="padding: 8px 0; color: #166534; font-size: 14px; text-align: right;">
+                          ${displayAttendeeName}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; color: #166534; font-size: 14px;">
+                          <strong>Email:</strong>
+                        </td>
+                        <td style="padding: 8px 0; color: #166534; font-size: 14px; text-align: right;">
+                          ${attendeeEmail}
+                        </td>
+                      </tr>
+                      <tr style="background-color: #10b981;">
+                        <td style="padding: 12px; color: white; font-size: 14px; font-weight: 600; border-radius: 0 0 0 8px;">
+                          Total Attendees:
+                        </td>
+                        <td style="padding: 12px; color: white; font-size: 20px; font-weight: 700; text-align: right; border-radius: 0 0 8px 0;">
+                          ${currentAttendeeCount}
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Action Button -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${dashboardUrl}" style="display: inline-block; padding: 14px 28px; background-color: #10b981; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                      View Attendees
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${eventUrl}" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 500;">
+                      View Event Page →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
+                Keep up the great work! 💪
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
+              <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
+                Manage your events at
+              </p>
+              <a href="${BASE_URL}/host/dashboard" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 600;">
+                sweatbuddies.co
+              </a>
+              <p style="margin: 16px 0 0; color: #94a3b8; font-size: 12px;">
+                You received this because you're hosting an event on SweatBuddies.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim()
+
+  return sendEmail({
+    to,
+    subject: `🎉 ${displayAttendeeName} joined ${eventName}!`,
+    html,
+    tags: [
+      { name: 'type', value: 'host_new_attendee' },
+      { name: 'event_id', value: eventId },
+    ],
+  })
+}
+
 // ============= ORIGINAL EVENT CONFIRMATION =============
 
 interface EventCancellationParams {

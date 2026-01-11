@@ -38,22 +38,34 @@ export async function PUT(
       slug = slugExists ? `${baseSlug}-${id.slice(-6)}` : baseSlug
     }
 
+    // Build update data
+    const updateData: Record<string, unknown> = {
+      eventName: body.name,
+      category: body.category,
+      day: body.day,
+      eventDate: body.eventDate ? new Date(body.eventDate) : null,
+      time: body.time,
+      location: body.location,
+      description: body.description || null,
+      organizerInstagram: body.organizer,
+      imageUrl: body.imageUrl || null,
+      recurring: body.recurring,
+      slug: slug,
+    }
+
+    // Payment fields (only update if provided)
+    if (body.isFree !== undefined) updateData.isFree = body.isFree
+    if (body.price !== undefined) updateData.price = body.price ? parseInt(body.price) : null
+    if (body.paynowEnabled !== undefined) updateData.paynowEnabled = body.paynowEnabled
+    if (body.paynowQrCode !== undefined) updateData.paynowQrCode = body.paynowQrCode || null
+    if (body.paynowNumber !== undefined) updateData.paynowNumber = body.paynowNumber || null
+    if (body.communityLink !== undefined) updateData.communityLink = body.communityLink || null
+    if (body.capacity !== undefined) updateData.maxTickets = body.capacity ? parseInt(body.capacity) : null
+
     // Update database event
     const updated = await prisma.eventSubmission.update({
       where: { id },
-      data: {
-        eventName: body.name,
-        category: body.category,
-        day: body.day,
-        eventDate: body.eventDate ? new Date(body.eventDate) : null,
-        time: body.time,
-        location: body.location,
-        description: body.description || null,
-        organizerInstagram: body.organizer,
-        imageUrl: body.imageUrl || null,
-        recurring: body.recurring,
-        slug: slug,
-      },
+      data: updateData,
     })
 
     // Revalidate the homepage and event pages to show updated data

@@ -13,6 +13,9 @@ const getCachedSocialProofStats = unstable_cache(
     const oneWeekAgo = new Date()
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
 
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
     const [peopleMovedThisWeek, eventsLive, activeHosts] = await Promise.all([
       // Count RSVPs in the last 7 days
       prisma.eventAttendance.count({
@@ -20,13 +23,27 @@ const getCachedSocialProofStats = unstable_cache(
           timestamp: { gte: oneWeekAgo },
         },
       }),
-      // Count approved events
+      // Count upcoming approved events only
       prisma.eventSubmission.count({
-        where: { status: 'APPROVED' },
+        where: {
+          status: 'APPROVED',
+          OR: [
+            { eventDate: { gte: today } },
+            { recurring: true },
+            { eventDate: null }
+          ]
+        },
       }),
-      // Count unique hosts with approved events
+      // Count unique hosts with upcoming approved events
       prisma.eventSubmission.findMany({
-        where: { status: 'APPROVED' },
+        where: {
+          status: 'APPROVED',
+          OR: [
+            { eventDate: { gte: today } },
+            { recurring: true },
+            { eventDate: null }
+          ]
+        },
         select: { organizerInstagram: true },
         distinct: ['organizerInstagram'],
       }).then(hosts => hosts.length),
@@ -34,7 +51,7 @@ const getCachedSocialProofStats = unstable_cache(
 
     return { peopleMovedThisWeek, eventsLive, activeHosts }
   },
-  ['social-proof-stats'],
+  ['social-proof-stats-v2'], // New cache key
   { revalidate: 60, tags: ['events'] }
 )
 
@@ -85,13 +102,50 @@ export function generateSlug(name: string): string {
     .substring(0, 50)         // Limit length
 }
 
+// Helper to check if an event should be shown
+// - Recurring events: ALWAYS show (they repeat weekly, eventDate is just an anchor)
+// - One-time events: Only show if within 7-day window from today
+function isUpcomingEvent(eventDate: Date | null, recurring: boolean): boolean {
+  // RECURRING EVENTS: Always show - they happen every week on their designated day
+  // The eventDate field is just when the event was created/anchored, not an expiration
+  if (recurring) return true
+
+  // Events without a date - show them (legacy data)
+  if (!eventDate) return true
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const eventDay = new Date(eventDate)
+  eventDay.setHours(0, 0, 0, 0)
+
+  // ONE-TIME EVENTS: Only show if within 7-day window (today to 7 days from now)
+  const sevenDaysFromNow = new Date(today)
+  sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7)
+
+  return eventDay >= today && eventDay <= sevenDaysFromNow
+}
+
 // Cached database fetch for events - revalidates every 60s
 const getCachedEvents = unstable_cache(
   async () => {
-    // Get approved events
+    // Get today's date at midnight for filtering
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    // Get approved events that are upcoming or recurring
     const approvedSubmissions = await prisma.eventSubmission.findMany({
-      where: { status: 'APPROVED' },
-      orderBy: { createdAt: 'desc' },
+      where: {
+        status: 'APPROVED',
+        OR: [
+          // Events with future dates
+          { eventDate: { gte: today } },
+          // Recurring events (always show)
+          { recurring: true },
+          // Events without dates (legacy, show them)
+          { eventDate: null }
+        ]
+      },
+      orderBy: { eventDate: 'asc' }, // Sort by event date, soonest first
       select: {
         id: true,
         slug: true,
@@ -127,7 +181,12 @@ const getCachedEvents = unstable_cache(
       attendanceCounts.map(item => [item.eventId, item._count.id])
     )
 
-    return approvedSubmissions.map(submission => ({
+    // Filter out past recurring events (recurring events with past specific dates)
+    const upcomingEvents = approvedSubmissions.filter(submission =>
+      isUpcomingEvent(submission.eventDate, submission.recurring)
+    )
+
+    return upcomingEvents.map(submission => ({
       id: submission.id,
       slug: submission.slug,
       name: submission.eventName,
@@ -151,7 +210,7 @@ const getCachedEvents = unstable_cache(
       paynowNumber: submission.paynowNumber,
     }))
   },
-  ['events-list-home'],
+  ['events-list-home-v2'], // New cache key to invalidate old cache
   { revalidate: 60, tags: ['events'] }
 )
 

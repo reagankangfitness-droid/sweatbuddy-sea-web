@@ -67,6 +67,11 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: '#0F172A',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: 'cover', // For iOS notch/safe areas
 }
 
 export default function RootLayout({ children }: PropsWithChildren) {

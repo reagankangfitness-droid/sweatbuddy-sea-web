@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import Image from 'next/image'
 import { format } from 'date-fns'
-import { Pencil, Trash2, X, Save, Calendar, Clock, MapPin, Instagram, ImageIcon, Check, Mail, User, Loader2, Upload } from 'lucide-react'
+import { Pencil, Trash2, X, Save, Calendar, Clock, MapPin, Instagram, ImageIcon, Check, Mail, User, Loader2, Upload, DollarSign, CreditCard, Link2, Users } from 'lucide-react'
 import { UploadButton } from '@/lib/uploadthing'
 
 interface Event {
@@ -17,8 +17,19 @@ interface Event {
   location: string
   description: string | null
   organizer: string
+  organizerName: string | null
+  contactEmail: string | null
   imageUrl: string | null
   recurring: boolean
+  // Payment fields
+  isFree: boolean
+  price: number | null
+  paynowEnabled: boolean
+  paynowQrCode: string | null
+  paynowNumber: string | null
+  // Community & capacity
+  communityLink: string | null
+  capacity: number | null
 }
 
 interface Submission {
@@ -650,6 +661,171 @@ export default function AdminEventsPage() {
                   className="w-5 h-5 rounded bg-white border-neutral-300 text-neutral-900 focus:ring-neutral-900"
                 />
                 <label htmlFor="recurring" className="text-base text-neutral-600">Recurring event</label>
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-neutral-200 pt-4 mt-2">
+                <h3 className="text-sm font-semibold text-neutral-900 mb-3 flex items-center gap-2">
+                  <CreditCard className="w-4 h-4" />
+                  Payment Settings
+                </h3>
+
+                {/* Free/Paid Toggle */}
+                <div className="flex items-center gap-3 mb-4">
+                  <input
+                    type="checkbox"
+                    id="isFree"
+                    checked={editingEvent.isFree}
+                    onChange={(e) => setEditingEvent({
+                      ...editingEvent,
+                      isFree: e.target.checked,
+                      // Reset price if marking as free
+                      price: e.target.checked ? null : editingEvent.price
+                    })}
+                    className="w-5 h-5 rounded bg-white border-neutral-300 text-neutral-900 focus:ring-neutral-900"
+                  />
+                  <label htmlFor="isFree" className="text-base text-neutral-600">Free event</label>
+                </div>
+
+                {/* Price (only show if not free) */}
+                {!editingEvent.isFree && (
+                  <div className="mb-4">
+                    <label className="block text-sm text-neutral-600 mb-1">Price (in cents, e.g., 1500 = $15.00)</label>
+                    <div className="relative">
+                      <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                      <input
+                        type="number"
+                        value={editingEvent.price || ''}
+                        onChange={(e) => setEditingEvent({ ...editingEvent, price: e.target.value ? parseInt(e.target.value) : null })}
+                        placeholder="1500"
+                        className="w-full pl-10 pr-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
+                      />
+                    </div>
+                    {editingEvent.price && (
+                      <p className="text-xs text-neutral-500 mt-1">
+                        Display price: ${(editingEvent.price / 100).toFixed(2)} SGD
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* PayNow Toggle */}
+                <div className="flex items-center gap-3 mb-4">
+                  <input
+                    type="checkbox"
+                    id="paynowEnabled"
+                    checked={editingEvent.paynowEnabled}
+                    onChange={(e) => setEditingEvent({ ...editingEvent, paynowEnabled: e.target.checked })}
+                    className="w-5 h-5 rounded bg-white border-neutral-300 text-neutral-900 focus:ring-neutral-900"
+                  />
+                  <label htmlFor="paynowEnabled" className="text-base text-neutral-600">Enable PayNow payments</label>
+                </div>
+
+                {/* PayNow Details (only show if enabled) */}
+                {editingEvent.paynowEnabled && (
+                  <div className="space-y-4 pl-4 border-l-2 border-purple-200 bg-purple-50/50 p-4 rounded-r-lg">
+                    <div>
+                      <label className="block text-sm text-neutral-600 mb-1">PayNow QR Code</label>
+                      {editingEvent.paynowQrCode ? (
+                        <div className="relative inline-block">
+                          <Image
+                            src={editingEvent.paynowQrCode}
+                            alt="PayNow QR"
+                            width={120}
+                            height={120}
+                            className="rounded-lg border border-neutral-200"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setEditingEvent({ ...editingEvent, paynowQrCode: null })}
+                            className="absolute -top-2 -right-2 p-1 rounded-full bg-red-500 text-white hover:bg-red-600"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col gap-2">
+                          <UploadButton
+                            endpoint="eventImage"
+                            onUploadBegin={() => setIsUploading(true)}
+                            onClientUploadComplete={(res) => {
+                              setIsUploading(false)
+                              if (res?.[0]?.url) {
+                                setEditingEvent({ ...editingEvent, paynowQrCode: res[0].url })
+                                toast.success('QR code uploaded')
+                              }
+                            }}
+                            onUploadError={(err: Error) => {
+                              setIsUploading(false)
+                              toast.error(`Upload failed: ${err.message}`)
+                            }}
+                            appearance={{
+                              button: "bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors",
+                              allowedContent: "hidden",
+                            }}
+                          />
+                          <span className="text-xs text-neutral-500">Or paste URL:</span>
+                          <input
+                            type="text"
+                            value={editingEvent.paynowQrCode || ''}
+                            onChange={(e) => setEditingEvent({ ...editingEvent, paynowQrCode: e.target.value })}
+                            placeholder="https://utfs.io/f/..."
+                            className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm text-neutral-600 mb-1">PayNow Number/UEN</label>
+                      <input
+                        type="text"
+                        value={editingEvent.paynowNumber || ''}
+                        onChange={(e) => setEditingEvent({ ...editingEvent, paynowNumber: e.target.value })}
+                        placeholder="91234567 or 12345678X"
+                        className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Community & Capacity Section */}
+              <div className="border-t border-neutral-200 pt-4 mt-2">
+                <h3 className="text-sm font-semibold text-neutral-900 mb-3 flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  Community & Capacity
+                </h3>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm text-neutral-600 mb-1">Community Link (WhatsApp/Telegram)</label>
+                    <div className="relative">
+                      <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                      <input
+                        type="text"
+                        value={editingEvent.communityLink || ''}
+                        onChange={(e) => setEditingEvent({ ...editingEvent, communityLink: e.target.value })}
+                        placeholder="https://chat.whatsapp.com/... or https://t.me/..."
+                        className="w-full pl-10 pr-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm text-neutral-600 mb-1">Capacity (leave empty for unlimited)</label>
+                    <div className="relative">
+                      <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                      <input
+                        type="number"
+                        value={editingEvent.capacity || ''}
+                        onChange={(e) => setEditingEvent({ ...editingEvent, capacity: e.target.value ? parseInt(e.target.value) : null })}
+                        placeholder="20"
+                        className="w-full pl-10 pr-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="sticky bottom-0 bg-white pt-4 pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:static border-t border-neutral-200 sm:border-0">

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@clerk/nextjs'
 import { Check, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 
 // Lazy load PaymentModal to reduce bundle size
 const PaymentModal = lazy(() => import('./event/PaymentModal').then(mod => ({ default: mod.PaymentModal })))
@@ -68,10 +69,8 @@ export function GoingButton({
   const formattedPrice = price ? (price / 100).toFixed(0) : '0'
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
-      setIsGoing(going.includes(eventId))
-    }
+    const going = safeGetJSON<string[]>('sweatbuddies_going', [])
+    setIsGoing(going.includes(eventId))
   }, [eventId])
 
   const handleClick = (e: React.MouseEvent) => {
@@ -81,9 +80,9 @@ export function GoingButton({
     // If already going, allow toggle off without auth check
     if (isGoing) {
       // Toggle off
-      const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
+      const going = safeGetJSON<string[]>('sweatbuddies_going', [])
       const newGoing = going.filter((id: string) => id !== eventId)
-      localStorage.setItem('sweatbuddies_going', JSON.stringify(newGoing))
+      safeSetJSON('sweatbuddies_going', newGoing)
       setIsGoing(false)
       setCount(Math.max(0, count - 1))
       return
@@ -120,10 +119,17 @@ export function GoingButton({
     }
 
     // FREE EVENT: One-tap RSVP (user is authenticated at this point)
-    const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
+    const going = safeGetJSON<string[]>('sweatbuddies_going', [])
     if (!going.includes(eventId)) {
-      going.push(eventId)
-      localStorage.setItem('sweatbuddies_going', JSON.stringify(going))
+      safeSetJSON('sweatbuddies_going', [...going, eventId])
+    }
+
+    // Also add to saved events for easy access later
+    const saved = safeGetJSON<string[]>('sweatbuddies_saved', [])
+    if (!saved.includes(eventId)) {
+      safeSetJSON('sweatbuddies_saved', [...saved, eventId])
+      // Dispatch event for other components to update
+      window.dispatchEvent(new CustomEvent('savedEventsUpdated'))
     }
 
     setIsGoing(true)
@@ -139,6 +145,19 @@ export function GoingButton({
   }
 
   const handlePaymentSuccess = () => {
+    // Add to going list
+    const going = safeGetJSON<string[]>('sweatbuddies_going', [])
+    if (!going.includes(eventId)) {
+      safeSetJSON('sweatbuddies_going', [...going, eventId])
+    }
+
+    // Also add to saved events for easy access later
+    const saved = safeGetJSON<string[]>('sweatbuddies_saved', [])
+    if (!saved.includes(eventId)) {
+      safeSetJSON('sweatbuddies_saved', [...saved, eventId])
+      window.dispatchEvent(new CustomEvent('savedEventsUpdated'))
+    }
+
     setIsGoing(true)
     setCount(count + 1)
     setIsAnimating(true)

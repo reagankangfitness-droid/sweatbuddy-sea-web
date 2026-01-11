@@ -25,8 +25,19 @@ export async function GET(request: Request) {
       location: event.location,
       description: event.description,
       organizer: event.organizerInstagram,
+      organizerName: event.organizerName,
+      contactEmail: event.contactEmail,
       imageUrl: event.imageUrl,
       recurring: event.recurring,
+      // Payment fields
+      isFree: event.isFree,
+      price: event.price,
+      paynowEnabled: event.paynowEnabled,
+      paynowQrCode: event.paynowQrCode,
+      paynowNumber: event.paynowNumber,
+      // Community & capacity
+      communityLink: event.communityLink,
+      capacity: event.maxTickets,
       source: 'database' as const,
     }))
 

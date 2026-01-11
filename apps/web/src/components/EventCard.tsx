@@ -6,6 +6,7 @@ import { Heart, MapPin, Calendar, ArrowRight } from 'lucide-react'
 import { Confetti, useConfetti } from './ui/Confetti'
 import { LiveCounter } from './ui/AnimatedCounter'
 import { AvatarStack } from './ui/AvatarStack'
+import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 
 // Lazy load the bottom sheet - only loaded when user taps a card
 const EventDetailSheet = lazy(() => import('./EventDetailSheet').then(mod => ({ default: mod.EventDetailSheet })))
@@ -42,26 +43,22 @@ interface Event {
 }
 
 // Format date for display (e.g., "Sat, Dec 14")
-function formatEventDate(dateStr: string | null | undefined, dayName: string): string {
+// For recurring events: Always show "Every [Day]" format since they happen weekly
+// For one-time events: Show the actual event date
+function formatEventDate(dateStr: string | null | undefined, dayName: string, isRecurring: boolean = false): string {
+  // RECURRING EVENTS: Show "Every [Day]" format - the eventDate is just an anchor, not when it happens
+  if (isRecurring) {
+    const dayMap: Record<string, string> = {
+      'Sundays': 'Every Sun', 'Mondays': 'Every Mon', 'Tuesdays': 'Every Tue',
+      'Wednesdays': 'Every Wed', 'Thursdays': 'Every Thu', 'Fridays': 'Every Fri',
+      'Saturdays': 'Every Sat'
+    }
+    return dayMap[dayName] || dayName // Fallback to day name for "Monthly", "Various", etc.
+  }
+
+  // ONE-TIME EVENTS: Show the actual event date
   if (!dateStr) {
-    // For recurring events, show the next occurrence day
-    const dayMap: Record<string, number> = {
-      'Sundays': 0, 'Mondays': 1, 'Tuesdays': 2, 'Wednesdays': 3,
-      'Thursdays': 4, 'Fridays': 5, 'Saturdays': 6
-    }
-    const dayNum = dayMap[dayName]
-    if (dayNum !== undefined) {
-      const today = new Date()
-      const daysUntil = (dayNum - today.getDay() + 7) % 7 || 7 // Next occurrence
-      const nextDate = new Date(today)
-      nextDate.setDate(today.getDate() + daysUntil)
-      return nextDate.toLocaleDateString('en-US', {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric'
-      })
-    }
-    return dayName // Fallback for "Monthly", "Various", etc.
+    return dayName // Fallback for events without dates
   }
 
   try {
@@ -115,16 +112,14 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
   useEffect(() => {
     // Use requestIdleCallback for non-critical localStorage reads
     const loadState = () => {
-      if (typeof window !== 'undefined') {
-        const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
-        setIsSaved(saved.includes(event.id))
+      const saved = safeGetJSON<string[]>('sweatbuddies_saved', [])
+      setIsSaved(saved.includes(event.id))
 
-        const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
-        setIsGoing(going.includes(event.id))
-      }
+      const going = safeGetJSON<string[]>('sweatbuddies_going', [])
+      setIsGoing(going.includes(event.id))
     }
 
-    if ('requestIdleCallback' in window) {
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
       requestIdleCallback(loadState)
     } else {
       setTimeout(loadState, 0)
@@ -133,13 +128,13 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
 
   const handleSaveClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
+    const saved = safeGetJSON<string[]>('sweatbuddies_saved', [])
 
     if (isSaved) {
       const newSaved = saved.filter((id: string) => id !== event.id)
-      localStorage.setItem('sweatbuddies_saved', JSON.stringify(newSaved))
+      safeSetJSON('sweatbuddies_saved', newSaved)
     } else {
-      localStorage.setItem('sweatbuddies_saved', JSON.stringify([...saved, event.id]))
+      safeSetJSON('sweatbuddies_saved', [...saved, event.id])
       // Trigger heartbeat animation when saving
       setHeartAnimate(true)
       setTimeout(() => setHeartAnimate(false), 600)
@@ -154,9 +149,9 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
 
     if (isGoing) {
       // Toggle off
-      const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
+      const going = safeGetJSON<string[]>('sweatbuddies_going', [])
       const newGoing = going.filter((id: string) => id !== event.id)
-      localStorage.setItem('sweatbuddies_going', JSON.stringify(newGoing))
+      safeSetJSON('sweatbuddies_going', newGoing)
       setIsGoing(false)
       setGoingCount(Math.max(0, goingCount - 1))
     } else {
@@ -259,7 +254,7 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
 
           {/* Date & Time */}
           <p className="text-sm text-neutral-500 mb-0.5">
-            {formatEventDate(event.eventDate, event.day)} · {event.time}
+            {formatEventDate(event.eventDate, event.day, event.recurring)} · {event.time}
           </p>
 
           {/* Location */}

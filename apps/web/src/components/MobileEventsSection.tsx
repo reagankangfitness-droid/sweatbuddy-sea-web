@@ -37,7 +37,7 @@ export function MobileEventsSection({ events }: Props) {
   }, [events])
 
   return (
-    <div id="events" className="md:hidden pt-4 pb-4">
+    <div id="events-mobile" className="md:hidden pt-4 pb-4">
       {/* Featured Carousel */}
       <FeaturedEventsCarousel
         events={featuredEvents.length > 0 ? featuredEvents : events.slice(0, 5)}

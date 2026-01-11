@@ -102,7 +102,7 @@ export function MobileHero() {
           }}
         >
           <button
-            onClick={() => handleClick('events')}
+            onClick={() => handleClick('events-mobile')}
             className="w-full px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 transition-colors text-center shadow-lg"
           >
             Find Events

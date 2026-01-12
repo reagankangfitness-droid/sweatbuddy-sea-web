@@ -7,6 +7,7 @@ import { Logo } from '@/components/logo'
 import { Loader2, Check, X, Clock, Download, User, RefreshCcw, Mail, Users } from 'lucide-react'
 import { EmailAttendeesModal } from '@/components/host/EmailAttendeesModal'
 import { AttendanceToggleCompact } from '@/components/host/AttendanceToggle'
+import { SignedWaiversSection } from '@/components/host/SignedWaiversSection'
 
 interface Attendee {
   id: string
@@ -360,6 +361,9 @@ export default function AttendeesPage() {
             )}
           </div>
         )}
+
+        {/* Signed Waivers Section */}
+        <SignedWaiversSection eventId={eventId} />
 
         {/* First-Timers Section */}
         {firstTimers.length > 0 && (

@@ -1651,9 +1651,18 @@ model EventSubmission {
   cancelledBy       String?               @db.VarChar(255) // Host Instagram who cancelled
   cancellationReason String?              @db.Text
 
+  // Waiver settings
+  waiverEnabled     Boolean               @default(false)
+  waiverTemplateId  String?               // Reference to WaiverTemplate
+  waiverCustomText  String?               @db.Text  // Custom waiver text if not using template
+
   // User account link (for authenticated hosts)
   submittedByUserId String?               // Clerk user ID who submitted
   submittedByUser   User?                 @relation("UserEventSubmissions", fields: [submittedByUserId], references: [id])
+
+  // Waiver relations
+  waiverTemplate    WaiverTemplate?       @relation("EventWaiverTemplate", fields: [waiverTemplateId], references: [id])
+  signedWaivers     SignedWaiver[]        @relation("EventSignedWaivers")
 
   // Timestamps
   createdAt         DateTime              @default(now())
@@ -1696,6 +1705,13 @@ model EventAttendance {
   actuallyAttended  Boolean?   // null=unmarked, true=showed up, false=no-show
   markedAttendedAt  DateTime?
   markedAttendedBy  String?    @db.VarChar(255) // Host email who marked
+
+  // Waiver tracking
+  waiverSignedAt    DateTime?  // When waiver was signed (if required)
+  waiverRequired    Boolean    @default(false) // Snapshot of event's waiver requirement at RSVP time
+
+  // Waiver relation
+  signedWaiver      SignedWaiver? @relation("AttendanceWaiver")
 
   @@unique([email, eventId])
   @@index([eventId])
@@ -2186,4 +2202,77 @@ model HostSubscription {
   @@index([tier, status])
   @@index([stripeSubscriptionId])
   @@map("host_subscriptions")
+}
+
+// =====================================================
+// WAIVER SYSTEM
+// =====================================================
+
+// Pre-made waiver templates (managed by admin)
+model WaiverTemplate {
+  id          String   @id @default(cuid())
+  name        String   @db.VarChar(200)  // "General Fitness Waiver"
+  slug        String   @unique @db.VarChar(100)  // "general-fitness"
+  description String?  @db.VarChar(500)  // Short description for hosts
+  content     String   @db.Text  // Full waiver legal text
+  category    String?  @db.VarChar(100)  // "fitness", "outdoor", "water-sports"
+  isActive    Boolean  @default(true)
+  isDefault   Boolean  @default(false)  // Default template for new events
+  version     Int      @default(1)  // Version tracking for legal compliance
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  events        EventSubmission[] @relation("EventWaiverTemplate")
+  signedWaivers SignedWaiver[]
+
+  @@index([slug])
+  @@index([isActive])
+  @@index([category])
+  @@map("waiver_templates")
+}
+
+// Signed waivers (legal records)
+model SignedWaiver {
+  id               String   @id @default(cuid())
+
+  // What was signed
+  eventId          String   // EventSubmission.id
+  attendanceId     String   @unique  // EventAttendance.id - one waiver per attendance
+
+  // Template reference (if using template)
+  templateId       String?  // WaiverTemplate.id
+  templateVersion  Int?     // Version at time of signing
+
+  // Custom waiver text (if host wrote custom text)
+  customWaiverText String?  @db.Text
+
+  // Signee info
+  signeeEmail      String   @db.VarChar(255)
+  signeeName       String?  @db.VarChar(200)
+
+  // Signature data
+  signatureType    String   @default("checkbox") @db.VarChar(20)  // "checkbox", "typed"
+  signatureData    String?  @db.Text  // For typed name
+  agreedText       String   @db.VarChar(500)  // "I agree to the terms..." - exact text they agreed to
+
+  // Legal metadata (for validity)
+  ipAddress        String?  @db.VarChar(45)   // IPv4 or IPv6
+  userAgent        String?  @db.Text
+  signedAt         DateTime @default(now())
+
+  // PDF generation
+  pdfUrl           String?  @db.VarChar(500)  // Stored PDF URL (generated on demand)
+  pdfGeneratedAt   DateTime?
+
+  // Relations
+  event            EventSubmission  @relation("EventSignedWaivers", fields: [eventId], references: [id], onDelete: Cascade)
+  template         WaiverTemplate?  @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  attendance       EventAttendance  @relation("AttendanceWaiver", fields: [attendanceId], references: [id], onDelete: Cascade)
+
+  @@index([eventId, signedAt])
+  @@index([signeeEmail])
+  @@index([templateId])
+  @@index([attendanceId])
+  @@map("signed_waivers")
 }

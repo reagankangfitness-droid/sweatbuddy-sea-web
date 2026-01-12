@@ -2,6 +2,7 @@ import dynamicImport from 'next/dynamic'
 import { Header } from '@/components/header'
 import { Hero } from '@/components/Hero'
 import { HowItWorks } from '@/components/HowItWorks'
+import { Mission } from '@/components/Mission'
 import { Events } from '@/components/Events'
 import { getEvents } from '@/lib/events'
 import { MobileHeroSkeleton, MobileEventsListSkeleton } from '@/components/Skeletons'
@@ -42,6 +43,7 @@ export default async function Home() {
         <MobileHeader />
         <MobileHero />
         <HowItWorks />
+        <Mission />
         <MobileEventsSection events={events} />
         <HostCTA />
         <Footer />
@@ -53,6 +55,7 @@ export default async function Home() {
         <main>
           <Hero />
           <HowItWorks />
+          <Mission />
           <Events initialEvents={events} />
           <HostCTA />
         </main>

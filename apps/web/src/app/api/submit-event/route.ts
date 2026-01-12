@@ -55,10 +55,6 @@ interface EventSubmission {
   paynowNumber?: string | null
   paynowName?: string | null
   stripeEnabled?: boolean
-  // Waiver fields
-  waiverEnabled?: boolean
-  waiverTemplateId?: string | null
-  waiverCustomText?: string | null
   // User account link
   clerkUserId?: string | null
 }
@@ -188,10 +184,6 @@ export async function POST(request: Request) {
         paynowNumber: data.paynowNumber || null,
         paynowName: data.paynowName || null,
         stripeEnabled: data.stripeEnabled ?? false,
-        // Waiver fields
-        waiverEnabled: data.waiverEnabled ?? false,
-        waiverTemplateId: data.waiverTemplateId || null,
-        waiverCustomText: data.waiverCustomText || null,
         // Link to user account
         submittedByUserId: dbUserId,
       },

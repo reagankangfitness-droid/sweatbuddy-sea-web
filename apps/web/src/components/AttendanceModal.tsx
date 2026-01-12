@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Check, Loader2, Calendar, MessageCircle } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
 import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
-import { WaiverModal } from '@/components/waiver/WaiverModal'
 
 // Helper to detect platform from community link
 const detectPlatform = (url: string): 'whatsapp' | 'telegram' | 'other' => {
@@ -31,7 +30,6 @@ interface AttendanceModalProps {
     organizer?: string
     eventDate?: string | null
     communityLink?: string | null
-    waiverEnabled?: boolean
   }
   onSuccess: () => void
   showMealPreference?: boolean // Show meal preference selector for specific events
@@ -52,11 +50,6 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
     mealPreference: '',
   })
   const [error, setError] = useState('')
-
-  // Waiver state
-  const [showWaiver, setShowWaiver] = useState(false)
-  const [attendanceId, setAttendanceId] = useState<string | null>(null)
-  const [waiverRequired, setWaiverRequired] = useState(false)
 
   // Mount check for portal
   useEffect(() => {
@@ -83,21 +76,6 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
     }
   }, [isSignedIn, user])
 
-  // Check if waiver is required for this event
-  useEffect(() => {
-    if (isOpen && event.id) {
-      // Check via API if waiver is enabled for this event
-      fetch(`/api/events/${event.id}/waiver`)
-        .then(res => res.json())
-        .then(data => {
-          setWaiverRequired(data.enabled === true)
-        })
-        .catch(() => {
-          setWaiverRequired(false)
-        })
-    }
-  }, [isOpen, event.id])
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -121,8 +99,6 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
           eventLocation: event.location,
           organizerInstagram: event.organizer,
           communityLink: event.communityLink,
-          // Waiver flag
-          waiverRequired: waiverRequired,
         }),
       })
 
@@ -150,18 +126,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
         throw new Error(data.error || 'Something went wrong')
       }
 
-      // Store attendance ID for waiver signing
-      const newAttendanceId = data.attendanceId
-
-      // If waiver is required, show waiver modal before completing
-      if (waiverRequired && newAttendanceId) {
-        setAttendanceId(newAttendanceId)
-        setShowWaiver(true)
-        setIsSubmitting(false)
-        return
-      }
-
-      // No waiver required - complete registration
+      // Complete registration
       completeRegistration()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to register')
@@ -169,7 +134,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
     }
   }
 
-  // Complete registration after waiver (if any)
+  // Complete registration
   const completeRegistration = () => {
     setStep('success')
     onSuccess()
@@ -189,17 +154,9 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
     setIsSubmitting(false)
   }
 
-  // Handler for when waiver is signed
-  const handleWaiverSigned = () => {
-    setShowWaiver(false)
-    completeRegistration()
-  }
-
   const handleClose = () => {
     setStep('form')
     setError('')
-    setShowWaiver(false)
-    setAttendanceId(null)
     onClose()
   }
 
@@ -455,23 +412,5 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
   )
 
   // Use portal to render modal at document body level
-  return (
-    <>
-      {createPortal(modalContent, document.body)}
-
-      {/* Waiver Modal */}
-      {attendanceId && (
-        <WaiverModal
-          isOpen={showWaiver}
-          onClose={() => setShowWaiver(false)}
-          eventId={event.id}
-          eventName={event.name}
-          attendanceId={attendanceId}
-          signeeEmail={formData.email}
-          signeeName={formData.name || undefined}
-          onSuccess={handleWaiverSigned}
-        />
-      )}
-    </>
-  )
+  return createPortal(modalContent, document.body)
 }

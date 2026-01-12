@@ -22,8 +22,6 @@ const isPublicRoute = createRouteMatcher([
   '/api/event-waitlist(.*)',
   '/api/newsletter(.*)',
   '/api/admin(.*)',
-  '/api/waiver(.*)',
-  '/api/waiver-templates(.*)',
   '/api/submit-event(.*)',
   '/api/my-events(.*)',
   '/api/organizer(.*)',

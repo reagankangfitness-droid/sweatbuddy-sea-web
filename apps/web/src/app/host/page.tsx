@@ -6,7 +6,6 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'
 import { ArrowLeft, Calendar, MapPin, Clock, Instagram, Mail, User, FileText, Loader2, CheckCircle, Users, Sparkles, DollarSign, ImageIcon, X } from 'lucide-react'
-import { WaiverSection } from '@/components/waiver/WaiverSection'
 import { UploadButton } from '@/lib/uploadthing'
 import { GoogleMap, Marker, Autocomplete, useJsApiLoader } from '@react-google-maps/api'
 
@@ -95,10 +94,6 @@ export default function HostApplicationPage() {
     // PayNow fields
     paynowQrCode: '',
     paynowNumber: '',
-    // Waiver fields
-    waiverEnabled: false,
-    waiverTemplateId: null as string | null,
-    waiverCustomText: '',
   })
 
   // Redirect to sign-in if not authenticated
@@ -264,10 +259,6 @@ export default function HostApplicationPage() {
         paynowEnabled: !formData.isFree && !!formData.paynowQrCode,
         paynowQrCode: formData.paynowQrCode || null,
         paynowNumber: formData.paynowNumber || null,
-        // Waiver fields
-        waiverEnabled: formData.waiverEnabled,
-        waiverTemplateId: formData.waiverTemplateId || null,
-        waiverCustomText: formData.waiverCustomText || null,
         // Link to user account
         clerkUserId: user?.id || null,
       }
@@ -894,16 +885,6 @@ export default function HostApplicationPage() {
                 </div>
               )}
             </div>
-
-            {/* Waiver Section */}
-            <WaiverSection
-              enabled={formData.waiverEnabled}
-              onToggle={(enabled) => setFormData(prev => ({ ...prev, waiverEnabled: enabled }))}
-              templateId={formData.waiverTemplateId}
-              onTemplateChange={(id) => setFormData(prev => ({ ...prev, waiverTemplateId: id }))}
-              customText={formData.waiverCustomText}
-              onCustomTextChange={(text) => setFormData(prev => ({ ...prev, waiverCustomText: text }))}
-            />
 
             {/* Submit Button */}
             <button

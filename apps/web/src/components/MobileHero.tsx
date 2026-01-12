@@ -105,13 +105,13 @@ export function MobileHero() {
             onClick={() => handleClick('events-mobile')}
             className="w-full px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 transition-colors text-center shadow-lg"
           >
-            See what&apos;s happening
+            Explore events
           </button>
           <Link
             href="/host"
             className="w-full px-8 py-4 bg-transparent text-white border-2 border-white/30 rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/50 transition-colors text-center flex items-center justify-center gap-2"
           >
-            Share what moves you
+            Host your event
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>

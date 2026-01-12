@@ -255,7 +255,7 @@ export function Header() {
               href="/host"
               className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-primary text-white font-semibold text-sm rounded-lg transition-all duration-250 hover:bg-primary-hover active:scale-[0.98]"
             >
-              List an Event
+              Be A Host
               <ArrowRight className="w-4 h-4" />
             </Link>
 
@@ -386,7 +386,7 @@ export function Header() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-center gap-2 mt-4 px-6 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-hover transition-colors"
                 >
-                  List an Event
+                  Be A Host
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </nav>

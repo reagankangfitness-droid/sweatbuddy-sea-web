@@ -37,7 +37,15 @@ export async function POST(request: Request) {
       eventLocation,
       organizerInstagram,
       communityLink,
+      // Waiver fields
+      waiverAccepted,
+      waiverVersion,
     } = body
+
+    // Get user IP address for waiver record
+    const forwardedFor = request.headers.get('x-forwarded-for')
+    const realIp = request.headers.get('x-real-ip')
+    const userIp = forwardedFor?.split(',')[0]?.trim() || realIp || null
 
     // Validate email
     if (!email || !email.includes('@')) {
@@ -82,6 +90,11 @@ export async function POST(request: Request) {
         mealPreference: mealPreference || null,
         timestamp: new Date(timestamp || new Date()),
         confirmed: true,
+        // Waiver acceptance (one-time, covers all future events)
+        waiverAccepted: waiverAccepted ?? false,
+        waiverVersion: waiverVersion || null,
+        waiverAcceptedAt: waiverAccepted ? new Date() : null,
+        waiverAcceptedIp: waiverAccepted ? userIp : null,
       },
     })
 

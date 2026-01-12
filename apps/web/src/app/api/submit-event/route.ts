@@ -175,7 +175,7 @@ export async function POST(request: Request) {
         organizerName: data.organizerName,
         organizerInstagram: cleanInstagram,
         contactEmail: data.contactEmail,
-        status: 'PENDING',
+        status: 'APPROVED', // Auto-approve events (no review workflow needed)
         // Pricing fields
         isFree: data.isFree ?? true,
         price: data.price || null,

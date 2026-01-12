@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Check, Loader2, Calendar, MessageCircle } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
 import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
+import { WaiverText, CURRENT_WAIVER_VERSION } from '@/components/waiver/WaiverText'
 
 // Helper to detect platform from community link
 const detectPlatform = (url: string): 'whatsapp' | 'telegram' | 'other' => {
@@ -35,6 +36,15 @@ interface AttendanceModalProps {
   showMealPreference?: boolean // Show meal preference selector for specific events
 }
 
+// User data stored in localStorage
+interface StoredUserData {
+  email?: string
+  name?: string
+  waiverAccepted?: boolean
+  waiverVersion?: string
+  waiverAcceptedAt?: string
+}
+
 export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPreference = false }: AttendanceModalProps) {
   // Debug log
   console.log('[AttendanceModal] eventId:', event.id, 'showMealPreference:', showMealPreference)
@@ -43,11 +53,14 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
   const [step, setStep] = useState<'form' | 'success'>('form')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [isNewUser, setIsNewUser] = useState(true) // Determines if we show waiver
+  const [showWaiverText, setShowWaiverText] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     name: '',
     subscribe: true,
     mealPreference: '',
+    waiverAccepted: false,
   })
   const [error, setError] = useState('')
 
@@ -62,16 +75,36 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
       // User is logged in - use their account email/name
       const email = user.primaryEmailAddress?.emailAddress || ''
       const name = user.firstName || user.fullName || ''
+
+      // Check localStorage for waiver acceptance
+      const userData = safeGetJSON<StoredUserData>('sweatbuddies_user', {})
+      const hasAcceptedWaiver = userData.waiverAccepted && userData.waiverVersion === CURRENT_WAIVER_VERSION
+
       setFormData((prev) => ({
         ...prev,
         email: email,
         name: name,
+        waiverAccepted: hasAcceptedWaiver || false,
       }))
+
+      // If they have waiver acceptance, they're not a new user
+      setIsNewUser(!hasAcceptedWaiver)
     } else {
       // Not logged in - check localStorage
-      const userData = safeGetJSON<{ email?: string; name?: string }>('sweatbuddies_user', {})
+      const userData = safeGetJSON<StoredUserData>('sweatbuddies_user', {})
       if (userData.email || userData.name) {
-        setFormData((prev) => ({ ...prev, email: userData.email || '', name: userData.name || '' }))
+        const hasAcceptedWaiver = userData.waiverAccepted && userData.waiverVersion === CURRENT_WAIVER_VERSION
+        setFormData((prev) => ({
+          ...prev,
+          email: userData.email || '',
+          name: userData.name || '',
+          waiverAccepted: hasAcceptedWaiver || false,
+        }))
+        // If they have previous data with waiver, they're returning
+        setIsNewUser(!hasAcceptedWaiver)
+      } else {
+        // Truly new user
+        setIsNewUser(true)
       }
     }
   }, [isSignedIn, user])
@@ -99,6 +132,9 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
           eventLocation: event.location,
           organizerInstagram: event.organizer,
           communityLink: event.communityLink,
+          // Waiver data
+          waiverAccepted: formData.waiverAccepted || !isNewUser, // True if accepted or returning user
+          waiverVersion: CURRENT_WAIVER_VERSION,
         }),
       })
 
@@ -111,6 +147,9 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
           safeSetJSON('sweatbuddies_user', {
             email: formData.email,
             name: formData.name,
+            waiverAccepted: true,
+            waiverVersion: CURRENT_WAIVER_VERSION,
+            waiverAcceptedAt: new Date().toISOString(),
           })
 
           // Add to going list in localStorage
@@ -140,9 +179,13 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
     onSuccess()
 
     // Store in localStorage so they don't have to re-enter
+    // Include waiver acceptance
     safeSetJSON('sweatbuddies_user', {
       email: formData.email,
       name: formData.name,
+      waiverAccepted: true,
+      waiverVersion: CURRENT_WAIVER_VERSION,
+      waiverAcceptedAt: new Date().toISOString(),
     })
 
     // Add to going list in localStorage
@@ -157,6 +200,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
   const handleClose = () => {
     setStep('form')
     setError('')
+    setShowWaiverText(false)
     onClose()
   }
 
@@ -167,6 +211,15 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
     const details = encodeURIComponent(`Event from SweatBuddies - ${event.location}\n\n${event.day} at ${event.time}`)
 
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&location=${location}&details=${details}`
+  }
+
+  // Check if submit should be disabled
+  const isSubmitDisabled = () => {
+    if (isSubmitting) return true
+    if (showMealPreference && !formData.mealPreference) return true
+    // New users must accept waiver
+    if (isNewUser && !formData.waiverAccepted) return true
+    return false
   }
 
   // Don't render on server or before mount
@@ -187,10 +240,10 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl"
+            className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="relative bg-gradient-to-br from-[#2563EB] to-[#38BDF8] p-6 text-white">
+            <div className="relative bg-gradient-to-br from-[#2563EB] to-[#38BDF8] p-6 text-white flex-shrink-0">
               <button
                 onClick={handleClose}
                 className="absolute top-4 right-4 p-1 hover:bg-white/20 rounded-full transition"
@@ -208,7 +261,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
             </div>
 
             {/* Content */}
-            <div className="p-6">
+            <div className="p-6 overflow-y-auto flex-1">
               {step === 'form' ? (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   {/* Email Field */}
@@ -282,6 +335,46 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                     </div>
                   )}
 
+                  {/* Waiver Checkbox - Only for new users */}
+                  {isNewUser && (
+                    <div className="space-y-2">
+                      <label className="flex items-start gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={formData.waiverAccepted}
+                          onChange={(e) => setFormData({ ...formData, waiverAccepted: e.target.checked })}
+                          className="mt-1 w-4 h-4 text-[#2563EB] border-neutral-300 rounded focus:ring-[#2563EB]"
+                        />
+                        <span className="text-sm text-neutral-600">
+                          I have read and agree to the{' '}
+                          <button
+                            type="button"
+                            onClick={() => setShowWaiverText(!showWaiverText)}
+                            className="text-[#2563EB] hover:underline font-medium"
+                          >
+                            Participation Waiver
+                          </button>
+                        </span>
+                      </label>
+
+                      {/* Expandable Waiver Text */}
+                      <AnimatePresence>
+                        {showWaiverText && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-4 mt-2">
+                              <WaiverText expandable={false} compact />
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )}
+
                   {/* Newsletter Checkbox */}
                   <label className="flex items-start gap-3 cursor-pointer">
                     <input
@@ -307,8 +400,8 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                   {/* Submit Button */}
                   <button
                     type="submit"
-                    disabled={isSubmitting || (showMealPreference && !formData.mealPreference)}
-                    className="w-full bg-gradient-to-r from-[#2563EB] to-[#38BDF8] hover:opacity-90 text-white py-3.5 rounded-xl font-semibold transition flex items-center justify-center gap-2 disabled:opacity-70"
+                    disabled={isSubmitDisabled()}
+                    className="w-full bg-gradient-to-r from-[#2563EB] to-[#38BDF8] hover:opacity-90 text-white py-3.5 rounded-xl font-semibold transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? (
                       <>
@@ -319,6 +412,13 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                       'Save My Spot'
                     )}
                   </button>
+
+                  {/* Waiver reminder if not checked */}
+                  {isNewUser && !formData.waiverAccepted && (
+                    <p className="text-xs text-neutral-400 text-center">
+                      Please accept the participation waiver to continue
+                    </p>
+                  )}
                 </form>
               ) : (
                 /* Success State */

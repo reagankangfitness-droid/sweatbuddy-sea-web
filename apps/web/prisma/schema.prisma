@@ -1697,6 +1697,12 @@ model EventAttendance {
   markedAttendedAt  DateTime?
   markedAttendedBy  String?    @db.VarChar(255) // Host email who marked
 
+  // One-time waiver acceptance (per user, covers all future events)
+  waiverAccepted    Boolean    @default(false)
+  waiverVersion     String?    @db.VarChar(10)  // e.g., "1.0"
+  waiverAcceptedAt  DateTime?
+  waiverAcceptedIp  String?    @db.VarChar(45)  // IPv4 or IPv6
+
   @@unique([email, eventId])
   @@index([eventId])
   @@index([email])

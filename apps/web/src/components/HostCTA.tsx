@@ -21,13 +21,13 @@ export function HostCTA() {
 
         {/* Headline - clean white text */}
         <h2 className="text-3xl md:text-4xl font-bold text-white leading-tight">
-          Turn your passion into a community.
+          Share what moves you.
         </h2>
 
         {/* Subheadline */}
         <p className="mt-4 text-lg text-neutral-300">
-          Lead runs, yoga sessions, or bootcamps.<br className="hidden sm:block" />
-          We handle the signups — you bring the energy.
+          You bring the energy. We bring the people.<br className="hidden sm:block" />
+          List your event in 5 minutes.
         </p>
 
         {/* CTA Button */}
@@ -40,7 +40,7 @@ export function HostCTA() {
             href="/host"
             className="inline-flex items-center gap-2 bg-white text-neutral-900 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-neutral-100 transition-colors"
           >
-            Start Hosting
+            List your event
             <ArrowRight className="w-5 h-5" />
           </Link>
         </motion.div>

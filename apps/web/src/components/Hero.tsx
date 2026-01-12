@@ -123,8 +123,8 @@ export const Hero = memo(function Hero() {
               transition: 'opacity 0.5s ease-out 0.2s, transform 0.5s ease-out 0.2s',
             }}
           >
-            Discover fitness events hosted by real people.<br />
-            Or list your own — free while we&apos;re growing.
+            Morning runs. Sunset yoga. Weekend hikes.<br />
+            Find what moves you.
           </p>
 
           {/* Dual CTA Buttons */}
@@ -140,13 +140,13 @@ export const Hero = memo(function Hero() {
               onClick={(e) => handleHashClick(e, '#events')}
               className="px-10 py-5 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 transition-colors shadow-lg"
             >
-              Find Events
+              See what&apos;s happening
             </button>
             <Link
               href="/host"
               className="px-10 py-5 bg-transparent text-white border-2 border-white/30 rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/50 transition-colors flex items-center gap-2"
             >
-              List Your Event
+              Share what moves you
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>

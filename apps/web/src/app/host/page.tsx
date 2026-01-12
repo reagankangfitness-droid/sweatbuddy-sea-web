@@ -320,10 +320,10 @@ export default function HostApplicationPage() {
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
             <h2 className="font-sans text-display-section text-neutral-900 mb-4">
-              Application Submitted!
+              You&apos;re all set.
             </h2>
             <p className="text-body-default text-neutral-600 mb-8">
-              Thanks for your interest in listing your event on SweatBuddies! We&apos;ll review your submission and get back to you within 24 hours.
+              Your event is live. Share the link and start building your crew.
             </p>
             <Link
               href="/"
@@ -360,13 +360,13 @@ export default function HostApplicationPage() {
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 bg-neutral-900/10 text-neutral-900 px-4 py-2 rounded-full text-label font-medium mb-4">
               <Sparkles className="w-4 h-4" />
-              List in minutes
+              Takes 5 minutes
             </div>
             <h2 className="font-sans text-display-lg md:text-display-xl text-neutral-900 mb-3">
-              Grow Your Fitness Community
+              Share what moves you.
             </h2>
             <p className="text-body-lg text-neutral-600 max-w-md mx-auto">
-              Get discovered by thousands of fitness enthusiasts in Southeast Asia.
+              You bring the energy. We bring the people.
             </p>
           </div>
 
@@ -374,15 +374,15 @@ export default function HostApplicationPage() {
           <div className="grid grid-cols-3 gap-4 mb-8">
             <div className="bg-white rounded-2xl p-4 text-center border border-neutral-100 shadow-card">
               <Users className="w-6 h-6 text-neutral-900 mx-auto mb-2" />
-              <span className="text-ui text-neutral-700">More Attendees</span>
+              <span className="text-ui text-neutral-700">Find your crew</span>
             </div>
             <div className="bg-white rounded-2xl p-4 text-center border border-neutral-100 shadow-card">
               <Calendar className="w-6 h-6 text-neutral-900 mx-auto mb-2" />
-              <span className="text-ui text-neutral-700">Easy RSVPs</span>
+              <span className="text-ui text-neutral-700">Track RSVPs</span>
             </div>
             <div className="bg-white rounded-2xl p-4 text-center border border-neutral-100 shadow-card">
               <Sparkles className="w-6 h-6 text-neutral-900 mx-auto mb-2" />
-              <span className="text-ui text-neutral-700">100% Free</span>
+              <span className="text-ui text-neutral-700">Always free</span>
             </div>
           </div>
 
@@ -903,21 +903,21 @@ export default function HostApplicationPage() {
                   Uploading image...
                 </>
               ) : (
-                'Submit Application'
+                'List my event'
               )}
             </button>
 
             <p className="text-body-xs text-neutral-500 text-center">
-              By submitting, you agree to our terms of service. We&apos;ll review your event and get back to you within 24 hours.
+              Free to list. No platform fees. Your event goes live instantly.
             </p>
           </form>
 
           {/* Link to Dashboard */}
           <div className="mt-8 text-center">
             <p className="text-body-small text-neutral-600">
-              Already have events?{' '}
+              Already hosting?{' '}
               <Link href="/host/dashboard" className="text-neutral-900 font-medium hover:underline">
-                Go to your dashboard
+                Manage your events
               </Link>
             </p>
           </div>

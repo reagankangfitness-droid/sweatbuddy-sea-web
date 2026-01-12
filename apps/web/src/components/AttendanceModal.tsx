@@ -427,7 +427,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                     <Check className="w-8 h-8 text-green-600" />
                   </div>
                   <h3 className="text-xl font-bold text-neutral-900 mb-1">
-                    You&apos;re in for {event.name}! 🎉
+                    You&apos;re in. See you there.
                   </h3>
 
                   {/* Event Summary Card */}
@@ -459,7 +459,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                     {/* Reminder Notice */}
                     <p className="text-sm text-neutral-500 flex items-center justify-center gap-2">
                       <span>🔔</span>
-                      We&apos;ll remind you 24 hours before
+                      We&apos;ll send you a reminder
                     </p>
 
                     {/* Community Link - Only show if host has one */}

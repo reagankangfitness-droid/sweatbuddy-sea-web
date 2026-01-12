@@ -9,20 +9,20 @@ import { CitySelector } from './screens/CitySelector'
 const steps = [
   {
     number: '1',
-    title: 'Pick an event',
-    description: "Run clubs, yoga, HIIT, beach workouts — filter by what you're into.",
+    title: 'Browse',
+    description: "Runs, yoga, HIIT, hikes — something new every week.",
     screen: <EventBrowser />,
   },
   {
     number: '2',
     title: 'Show up',
-    description: 'No tryouts. No commitments. Just arrive at the time and place.',
+    description: 'No tryouts. No commitments. Just you and the crew.',
     screen: <EventDetail />,
   },
   {
     number: '3',
-    title: 'Come back',
-    description: 'The people you meet will make you want to.',
+    title: 'Keep going',
+    description: 'The people you meet will bring you back.',
     screen: <CitySelector />,
   },
 ]

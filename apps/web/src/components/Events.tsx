@@ -94,7 +94,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
         {/* Header - Simple */}
         <div className="text-center mb-12">
           <h2 className="font-bold text-3xl md:text-4xl text-neutral-900 mb-2">
-            This Week
+            This week in Singapore
           </h2>
           <p className="text-neutral-500">
             {getCurrentWeekRange()}
@@ -111,9 +111,9 @@ export function Events({ initialEvents = [] }: EventsProps) {
         ) : (
           <div className="text-center py-16 bg-white rounded-2xl max-w-md mx-auto">
             <span className="text-5xl mb-4 block">🏃</span>
-            <h3 className="font-semibold text-neutral-900 mb-2 text-lg">No events this week</h3>
+            <h3 className="font-semibold text-neutral-900 mb-2 text-lg">Nothing here yet</h3>
             <p className="text-neutral-500 max-w-sm mx-auto px-4">
-              Check back soon—new events drop every Wednesday.
+              Be the first to host something this week.
             </p>
           </div>
         )}
@@ -121,7 +121,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
         {/* Simple CTA */}
         <div className="text-center mt-12">
           <p className="text-neutral-500 text-sm">
-            More events added every Wednesday
+            New events added weekly
           </p>
         </div>
       </div>

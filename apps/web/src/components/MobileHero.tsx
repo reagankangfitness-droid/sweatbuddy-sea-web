@@ -89,7 +89,7 @@ export function MobileHero() {
             transition: 'opacity 0.5s ease-out 0.2s, transform 0.5s ease-out 0.2s',
           }}
         >
-          Discover fitness events hosted by real people. Or list your own — free while we&apos;re growing.
+          Morning runs. Sunset yoga. Weekend hikes. Find what moves you.
         </p>
 
         {/* Dual CTA Buttons */}
@@ -105,13 +105,13 @@ export function MobileHero() {
             onClick={() => handleClick('events-mobile')}
             className="w-full px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 transition-colors text-center shadow-lg"
           >
-            Find Events
+            See what&apos;s happening
           </button>
           <Link
             href="/host"
             className="w-full px-8 py-4 bg-transparent text-white border-2 border-white/30 rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/50 transition-colors text-center flex items-center justify-center gap-2"
           >
-            List Your Event
+            Share what moves you
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>

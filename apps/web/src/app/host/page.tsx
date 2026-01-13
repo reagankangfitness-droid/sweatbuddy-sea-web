@@ -582,14 +582,14 @@ export default function HostApplicationPage() {
                     Time *
                   </label>
                   <div className="relative">
-                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400 pointer-events-none z-10" />
                     <input
                       type="time"
                       name="eventTime"
                       value={formData.eventTime}
                       onChange={handleChange}
                       required
-                      className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900"
+                      className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 appearance-none min-h-[50px]"
                     />
                   </div>
                   <p className="text-xs text-neutral-500 mt-1">Select event start time</p>

@@ -314,7 +314,7 @@ export default function HostApplicationPage() {
           </div>
         </header>
 
-        <main className="pt-24 pb-12 px-4">
+        <main className="pt-24 pb-32 md:pb-12 px-4">
           <div className="max-w-md mx-auto text-center">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-green-600" />
@@ -354,7 +354,7 @@ export default function HostApplicationPage() {
         </div>
       </header>
 
-      <main className="pt-24 pb-12 px-4">
+      <main className="pt-24 pb-32 md:pb-12 px-4">
         <div className="max-w-2xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-8">

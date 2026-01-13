@@ -62,6 +62,7 @@ export default function HostApplicationPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({})
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [isUploadingQr, setIsUploadingQr] = useState(false)
@@ -189,22 +190,34 @@ export default function HostApplicationPage() {
     e.preventDefault()
     setIsLoading(true)
     setError('')
+    setFieldErrors({})
 
     // Validate required fields before submission
-    const missingFields = []
-    if (!formData.organizerName) missingFields.push('Your Name')
-    if (!formData.instagramHandle) missingFields.push('Instagram Handle')
-    if (!formData.email) missingFields.push('Email')
-    if (!formData.eventName) missingFields.push('Event Name')
-    if (!formData.eventType) missingFields.push('Event Type')
-    if (isRecurring && !formData.eventDay) missingFields.push('Day')
-    if (!isRecurring && !formData.eventDate) missingFields.push('Date')
-    if (!formData.eventTime) missingFields.push('Time')
-    if (!formData.location) missingFields.push('Location')
+    const errors: Record<string, boolean> = {}
+    const missingFields: string[] = []
+
+    if (!formData.organizerName) { errors.organizerName = true; missingFields.push('Your Name') }
+    if (!formData.instagramHandle) { errors.instagramHandle = true; missingFields.push('Instagram Handle') }
+    if (!formData.email) { errors.email = true; missingFields.push('Email') }
+    if (!formData.eventName) { errors.eventName = true; missingFields.push('Event Name') }
+    if (!formData.eventType) { errors.eventType = true; missingFields.push('Event Type') }
+    if (isRecurring && !formData.eventDay) { errors.eventDay = true; missingFields.push('Day') }
+    if (!isRecurring && !formData.eventDate) { errors.eventDate = true; missingFields.push('Date') }
+    if (!formData.eventTime) { errors.eventTime = true; missingFields.push('Time') }
+    if (!formData.location) { errors.location = true; missingFields.push('Location') }
 
     if (missingFields.length > 0) {
+      setFieldErrors(errors)
       setError(`Please fill in: ${missingFields.join(', ')}`)
       setIsLoading(false)
+
+      // Scroll to first error field
+      const firstErrorField = Object.keys(errors)[0]
+      const element = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        element.focus()
+      }
       return
     }
 
@@ -212,8 +225,11 @@ export default function HostApplicationPage() {
     if (!formData.isFree) {
       const price = parseFloat(formData.price || '0')
       if (price <= 0) {
+        setFieldErrors({ price: true })
         setError('Please enter a valid price for your paid event')
         setIsLoading(false)
+        const priceEl = document.querySelector('[name="price"]') as HTMLElement
+        if (priceEl) { priceEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); priceEl.focus() }
         return
       }
       if (!formData.paynowQrCode) {
@@ -414,7 +430,7 @@ export default function HostApplicationPage() {
                     onChange={handleChange}
                     required
                     placeholder="John Doe"
-                    className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
+                    className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.organizerName ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
                   />
                 </div>
               </div>
@@ -432,7 +448,7 @@ export default function HostApplicationPage() {
                     onChange={handleChange}
                     required
                     placeholder="@yourhandle"
-                    className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
+                    className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.instagramHandle ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
                   />
                 </div>
               </div>
@@ -450,7 +466,7 @@ export default function HostApplicationPage() {
                     onChange={handleChange}
                     required
                     placeholder="you@example.com"
-                    className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
+                    className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.email ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
                   />
                 </div>
               </div>
@@ -473,7 +489,7 @@ export default function HostApplicationPage() {
                   onChange={handleChange}
                   required
                   placeholder="Saturday Morning Run Club"
-                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
+                  className={`w-full px-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.eventName ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
                 />
               </div>
 
@@ -486,7 +502,7 @@ export default function HostApplicationPage() {
                   value={formData.eventType}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 appearance-none"
+                  className={`w-full px-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 appearance-none ${fieldErrors.eventType ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
                 >
                   <option value="">Select a type...</option>
                   {eventTypes.map(type => (
@@ -540,7 +556,7 @@ export default function HostApplicationPage() {
                           value={formData.eventDay}
                           onChange={handleChange}
                           required={isRecurring}
-                          className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 appearance-none"
+                          className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 appearance-none ${fieldErrors.eventDay ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
                         >
                           <option value="">Select day...</option>
                           <option value="Every Monday">Every Monday</option>
@@ -570,7 +586,7 @@ export default function HostApplicationPage() {
                           onChange={handleChange}
                           required={!isRecurring}
                           min={new Date().toISOString().split('T')[0]}
-                          className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900"
+                          className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 ${fieldErrors.eventDate ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
                         />
                       </div>
                     </>
@@ -589,7 +605,7 @@ export default function HostApplicationPage() {
                       value={formData.eventTime}
                       onChange={handleChange}
                       required
-                      className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 appearance-none min-h-[50px]"
+                      className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 appearance-none min-h-[50px] ${fieldErrors.eventTime ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
                     />
                   </div>
                   <p className="text-xs text-neutral-500 mt-1">Select event start time</p>
@@ -607,11 +623,12 @@ export default function HostApplicationPage() {
                         <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
                         <input
                           type="text"
+                          name="location"
                           value={formData.location}
                           onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
                           required
                           placeholder="Search for a location..."
-                          className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
+                          className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.location ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
                         />
                       </div>
                     </Autocomplete>
@@ -640,7 +657,7 @@ export default function HostApplicationPage() {
                       onChange={handleChange}
                       required
                       placeholder="Marina Bay Sands, Singapore"
-                      className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
+                      className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.location ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
                     />
                   </div>
                 )}

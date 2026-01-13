@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, Component, ReactNode } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -8,6 +8,26 @@ import { useAuth, useUser } from '@clerk/nextjs'
 import { ArrowLeft, Calendar, MapPin, Clock, Instagram, Mail, User, FileText, Loader2, CheckCircle, Users, Sparkles, DollarSign, ImageIcon, X } from 'lucide-react'
 import { UploadButton } from '@/lib/uploadthing'
 import { GoogleMap, Marker, Autocomplete, useJsApiLoader } from '@react-google-maps/api'
+
+// Error boundary to catch Google Maps initialization errors
+class MapErrorBoundary extends Component<{ children: ReactNode, fallback: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode, fallback: ReactNode }) {
+    super(props)
+    this.state = { hasError: false }
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+  componentDidCatch(error: Error) {
+    console.warn('Google Maps error caught:', error)
+  }
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback
+    }
+    return this.props.children
+  }
+}
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 const LIBRARIES: ('places')[] = ['places']
@@ -80,9 +100,10 @@ export default function HostApplicationPage() {
   }, [])
 
   // Google Maps state
-  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null)
+  // Use generic type to avoid SSR issues with google.maps types
+  const [autocomplete, setAutocomplete] = useState<any>(null)
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER)
-  const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null)
+  const [markerPosition, setMarkerPosition] = useState<{ lat: number; lng: number } | null>(null)
 
   const [isRecurring, setIsRecurring] = useState(true)
   const [formData, setFormData] = useState({
@@ -628,36 +649,51 @@ export default function HostApplicationPage() {
                   Location *
                 </label>
                 {mapsLoaded && !mapsError ? (
-                  <div className="space-y-3">
-                    <Autocomplete onLoad={onAutocompleteLoad} onPlaceChanged={onPlaceChanged} options={AUTOCOMPLETE_OPTIONS}>
-                      <div className="relative">
-                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                        <input
-                          type="text"
-                          name="location"
-                          value={formData.location}
-                          onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                          required
-                          placeholder="Search for a location..."
-                          className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.location ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
-                        />
-                      </div>
-                    </Autocomplete>
+                  <MapErrorBoundary fallback={
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                      <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleChange}
+                        required
+                        placeholder="Marina Bay Sands, Singapore"
+                        className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.location ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
+                      />
+                    </div>
+                  }>
+                    <div className="space-y-3">
+                      <Autocomplete onLoad={onAutocompleteLoad} onPlaceChanged={onPlaceChanged} options={AUTOCOMPLETE_OPTIONS}>
+                        <div className="relative">
+                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                          <input
+                            type="text"
+                            name="location"
+                            value={formData.location}
+                            onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                            required
+                            placeholder="Search for a location..."
+                            className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.location ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
+                          />
+                        </div>
+                      </Autocomplete>
 
-                    <GoogleMap
-                      mapContainerStyle={MAP_CONTAINER_STYLE}
-                      center={mapCenter}
-                      zoom={markerPosition ? 15 : 11}
-                      onClick={onMapClick}
-                      options={MAP_OPTIONS}
-                    >
-                      {markerPosition && <Marker position={markerPosition} />}
-                    </GoogleMap>
+                      <GoogleMap
+                        mapContainerStyle={MAP_CONTAINER_STYLE}
+                        center={mapCenter}
+                        zoom={markerPosition ? 15 : 11}
+                        onClick={onMapClick}
+                        options={MAP_OPTIONS}
+                      >
+                        {markerPosition && <Marker position={markerPosition} />}
+                      </GoogleMap>
 
-                    <p className="text-xs text-neutral-500">
-                      Search for a venue or click on the map to set location
-                    </p>
-                  </div>
+                      <p className="text-xs text-neutral-500">
+                        Search for a venue or click on the map to set location
+                      </p>
+                    </div>
+                  </MapErrorBoundary>
                 ) : (
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />

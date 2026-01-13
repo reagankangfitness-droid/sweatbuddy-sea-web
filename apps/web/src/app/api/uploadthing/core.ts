@@ -6,8 +6,9 @@ const f = createUploadthing()
 
 export const ourFileRouter = {
   // Event submission image upload - no auth required (public submission)
+  // 8MB limit to support phone photos which are typically 3-10MB
   eventImage: f({
-    image: { maxFileSize: "2MB", maxFileCount: 1 },
+    image: { maxFileSize: "8MB", maxFileCount: 1 },
   })
     .middleware(async () => {
       // No auth required for event submissions
@@ -18,7 +19,7 @@ export const ourFileRouter = {
     }),
 
   activityImage: f({
-    image: { maxFileSize: "2MB", maxFileCount: 1 },
+    image: { maxFileSize: "8MB", maxFileCount: 1 },
   })
     .middleware(async () => {
       const { userId } = await auth()
@@ -33,7 +34,7 @@ export const ourFileRouter = {
 
   // Completion card photo upload
   completionCardPhoto: f({
-    image: { maxFileSize: "2MB", maxFileCount: 1 },
+    image: { maxFileSize: "8MB", maxFileCount: 1 },
   })
     .middleware(async () => {
       const { userId } = await auth()
@@ -48,7 +49,7 @@ export const ourFileRouter = {
 
   // Generated completion card image upload
   completionCardGenerated: f({
-    image: { maxFileSize: "2MB", maxFileCount: 1 },
+    image: { maxFileSize: "8MB", maxFileCount: 1 },
   })
     .middleware(async () => {
       const { userId } = await auth()

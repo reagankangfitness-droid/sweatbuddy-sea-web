@@ -734,7 +734,12 @@ export default function HostApplicationPage() {
                           }}
                           onUploadError={(error: Error) => {
                             setIsUploading(false)
-                            setError(`Upload failed: ${error.message}`)
+                            const msg = error.message.toLowerCase()
+                            if (msg.includes('size') || msg.includes('large')) {
+                              setError('Image too large. Please use a smaller photo (max 8MB).')
+                            } else {
+                              setError('Upload failed. Please try again or use a different image.')
+                            }
                           }}
                           appearance={{
                             button: "bg-neutral-900 hover:bg-neutral-800 text-white font-medium px-4 py-2 rounded-full text-sm transition-colors",
@@ -858,7 +863,12 @@ export default function HostApplicationPage() {
                               }}
                               onUploadError={(error: Error) => {
                                 setIsUploadingQr(false)
-                                setError(`Upload failed: ${error.message}`)
+                                const msg = error.message.toLowerCase()
+                                if (msg.includes('size') || msg.includes('large')) {
+                                  setError('QR code image too large. Please use a smaller image (max 8MB).')
+                                } else {
+                                  setError('Upload failed. Please try again or use a different image.')
+                                }
                               }}
                               appearance={{
                                 button: "bg-neutral-900 hover:bg-neutral-800 text-white font-medium px-3 py-1.5 rounded-full text-xs transition-colors",

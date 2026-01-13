@@ -55,6 +55,11 @@ export function HostCTA() {
             <span>Track attendance</span>
           </div>
         </div>
+
+        {/* Social proof */}
+        <p className="mt-8 text-sm text-neutral-500">
+          Join trainers, run clubs, and fitness communities already using SweatBuddies
+        </p>
       </motion.div>
     </section>
   )

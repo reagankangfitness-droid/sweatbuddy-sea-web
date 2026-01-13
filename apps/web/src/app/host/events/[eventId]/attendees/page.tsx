@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Logo } from '@/components/logo'
-import { Loader2, Check, X, Clock, Download, User, RefreshCcw, Mail, Users } from 'lucide-react'
+import { Loader2, Check, X, Clock, Download, User, RefreshCcw, Mail, Users, QrCode } from 'lucide-react'
 import { EmailAttendeesModal } from '@/components/host/EmailAttendeesModal'
 import { AttendanceToggleCompact } from '@/components/host/AttendanceToggle'
 
@@ -305,6 +305,14 @@ export default function AttendeesPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <Link
+              href={`/host/events/${eventId}/checkin`}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+              title="Scan QR codes to check in attendees"
+            >
+              <QrCode className="w-4 h-4" />
+              Scan Check-ins
+            </Link>
             {attendees.length > 0 && (
               <button
                 onClick={() => setShowEmailModal(true)}

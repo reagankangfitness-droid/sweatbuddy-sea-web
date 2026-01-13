@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { sendEventSubmittedEmail } from '@/lib/event-confirmation-email'
+import {
+  isHostTrusted,
+  moderateEventContent,
+  containsBlockedContent,
+} from '@/lib/content-moderation'
 
 // Generate URL-friendly slug from event name
 function generateSlug(name: string): string {
@@ -155,6 +160,59 @@ export async function POST(request: Request) {
     // Generate URL-friendly slug for shareable links
     const slug = await generateUniqueSlug(data.eventName)
 
+    // === HYBRID MODERATION SYSTEM ===
+    // 1. Check if host is trusted (has previous approved events)
+    // 2. If new host, check keyword blocklist
+    // 3. If passes blocklist, run AI moderation
+    // 4. Only flagged content goes to manual review
+
+    let status: 'APPROVED' | 'PENDING' | 'REJECTED' = 'PENDING'
+    let moderationNotes: string | null = null
+
+    const eventContent = {
+      eventName: data.eventName,
+      description: data.description,
+      organizerName: data.organizerName,
+      organizerInstagram: cleanInstagram,
+      location: data.location,
+      communityLink: data.communityLink,
+    }
+
+    // Step 1: Check if host is trusted
+    const { trusted, approvedCount } = await isHostTrusted(
+      prisma,
+      data.contactEmail,
+      dbUserId
+    )
+
+    if (trusted) {
+      // Trusted host - auto-approve
+      status = 'APPROVED'
+      moderationNotes = `Auto-approved: Trusted host with ${approvedCount} previous approved event(s)`
+    } else {
+      // Step 2: Check keyword blocklist (fast pre-filter)
+      const blockCheck = containsBlockedContent(eventContent)
+
+      if (blockCheck.blocked) {
+        // Blocked content - reject immediately
+        status = 'REJECTED'
+        moderationNotes = `Auto-rejected: ${blockCheck.reason}`
+      } else {
+        // Step 3: Run AI moderation for new hosts
+        const aiResult = await moderateEventContent(eventContent)
+
+        if (aiResult.approved) {
+          // AI approved - auto-approve new host
+          status = 'APPROVED'
+          moderationNotes = 'Auto-approved: Passed AI moderation'
+        } else {
+          // AI flagged - send to manual review
+          status = 'PENDING'
+          moderationNotes = `Pending review: ${aiResult.reason || 'AI flagged for review'}. Flags: ${aiResult.flags.join(', ') || 'none'}`
+        }
+      }
+    }
+
     // Save to database
     const submission = await prisma.eventSubmission.create({
       data: {
@@ -175,7 +233,8 @@ export async function POST(request: Request) {
         organizerName: data.organizerName,
         organizerInstagram: cleanInstagram,
         contactEmail: data.contactEmail,
-        status: 'APPROVED', // Auto-approve events (no review workflow needed)
+        status,
+        moderationNotes,
         // Pricing fields
         isFree: data.isFree ?? true,
         price: data.price || null,

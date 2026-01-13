@@ -3,13 +3,30 @@
 import { useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'
 import { ArrowLeft, Calendar, MapPin, Clock, Instagram, Mail, User, FileText, Loader2, CheckCircle, Users, Sparkles, DollarSign, ImageIcon, X } from 'lucide-react'
 import { UploadButton } from '@/lib/uploadthing'
 
-// Google Maps disabled temporarily to fix P0 crash
-// TODO: Re-enable with proper error handling
+// Dynamic import for Google Places to avoid SSR issues
+const LocationAutocomplete = dynamic(
+  () => import('./LocationAutocomplete').then((mod) => mod.LocationAutocomplete),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="relative">
+        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+        <input
+          type="text"
+          placeholder="Loading location search..."
+          disabled
+          className="w-full pl-10 pr-4 py-3 bg-neutral-100 border border-neutral-200 rounded-xl text-neutral-400"
+        />
+      </div>
+    ),
+  }
+)
 
 const eventTypes = [
   'Run Club',
@@ -29,10 +46,6 @@ export default function HostForm() {
   const router = useRouter()
   const { isLoaded: authLoaded, isSignedIn } = useAuth()
   const { user } = useUser()
-
-  // Google Maps disabled - use simple text input for location
-  const mapsLoaded = false
-  const mapsError = true
 
   const [mounted, setMounted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -121,6 +134,16 @@ export default function HostForm() {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
+
+  const handleLocationChange = useCallback((location: string, lat?: number, lng?: number, placeId?: string) => {
+    setFormData(prev => ({
+      ...prev,
+      location,
+      latitude: lat || 0,
+      longitude: lng || 0,
+      placeId: placeId || '',
+    }))
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -552,18 +575,13 @@ export default function HostForm() {
                 <label className="block text-ui text-neutral-700 mb-1.5">
                   Location *
                 </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    required
-                    placeholder="Marina Bay Sands, Singapore"
-                    className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.location ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
-                  />
-                </div>
+                <LocationAutocomplete
+                  value={formData.location}
+                  onChange={handleLocationChange}
+                  placeholder="Search for a venue..."
+                  hasError={fieldErrors.location}
+                  required
+                />
               </div>
 
               <div>

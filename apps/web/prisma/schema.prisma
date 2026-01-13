@@ -1621,6 +1621,7 @@ model EventSubmission {
   reviewedAt        DateTime?
   reviewedBy        String?               // Admin user ID who reviewed
   rejectionReason   String?               @db.Text
+  moderationNotes   String?               @db.Text  // AI moderation notes/logs
 
   // Capacity
   isFull            Boolean               @default(false)  // Mark event as full
@@ -1702,6 +1703,11 @@ model EventAttendance {
   waiverVersion     String?    @db.VarChar(10)  // e.g., "1.0"
   waiverAcceptedAt  DateTime?
   waiverAcceptedIp  String?    @db.VarChar(45)  // IPv4 or IPv6
+
+  // QR Code check-in
+  checkInCode       String?    @unique @db.VarChar(20)  // Unique code for QR
+  checkedInAt       DateTime?                            // When checked in via QR
+  checkedInMethod   String?    @db.VarChar(20)          // 'qr' | 'manual'
 
   @@unique([email, eventId])
   @@index([eventId])

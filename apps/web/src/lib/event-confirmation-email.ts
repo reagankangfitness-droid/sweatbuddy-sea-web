@@ -1806,6 +1806,7 @@ interface EventConfirmationParams {
   eventLocation: string
   organizerInstagram?: string
   communityLink?: string | null
+  checkInCode?: string // QR code check-in
 }
 
 /**
@@ -1824,6 +1825,7 @@ export async function sendEventConfirmationEmail(
     eventLocation,
     organizerInstagram,
     communityLink,
+    checkInCode,
   } = params
 
   const displayName = userName || 'there'
@@ -1838,6 +1840,9 @@ export async function sendEventConfirmationEmail(
     eventLocation,
   })
 
+  // Generate check-in URL if code provided
+  const checkInUrl = checkInCode ? `${BASE_URL}/checkin/${checkInCode}` : undefined
+
   const html = buildConfirmationEmailHtml({
     userName: displayName,
     userEmail: to,
@@ -1850,6 +1855,8 @@ export async function sendEventConfirmationEmail(
     mapsLink,
     organizerInstagram,
     communityLink,
+    checkInUrl,
+    checkInCode,
   })
 
   const result = await sendEmail({
@@ -1947,6 +1954,8 @@ function buildConfirmationEmailHtml(params: {
   mapsLink: string
   organizerInstagram?: string
   communityLink?: string | null
+  checkInUrl?: string
+  checkInCode?: string
 }): string {
   const {
     userName,
@@ -1960,6 +1969,8 @@ function buildConfirmationEmailHtml(params: {
     mapsLink,
     organizerInstagram,
     communityLink,
+    checkInUrl,
+    checkInCode,
   } = params
 
   const myEventsLink = `${BASE_URL}/my-events?email=${encodeURIComponent(userEmail)}`
@@ -2036,6 +2047,32 @@ function buildConfirmationEmailHtml(params: {
                   </td>
                 </tr>
               </table>
+
+              ${checkInUrl ? `
+              <!-- Check-in QR Code -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #f0fdf4; border-radius: 12px; border: 1px solid #bbf7d0;">
+                <tr>
+                  <td style="padding: 24px; text-align: center;">
+                    <p style="margin: 0 0 16px; color: #166534; font-size: 14px; font-weight: 600;">
+                      📱 Your Check-in Pass
+                    </p>
+                    <img
+                      src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(checkInUrl)}"
+                      alt="Check-in QR Code"
+                      width="150"
+                      height="150"
+                      style="display: block; margin: 0 auto 12px; border-radius: 8px;"
+                    />
+                    <p style="margin: 0 0 8px; color: #15803d; font-size: 13px;">
+                      Show this at check-in
+                    </p>
+                    <p style="margin: 0; color: #6b7280; font-size: 11px; font-family: monospace;">
+                      Code: ${checkInCode}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              ` : ''}
 
               <!-- Action Buttons -->
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">

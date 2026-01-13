@@ -4,6 +4,7 @@ import { sendEventConfirmationEmail, sendHostNewAttendeeNotification } from '@/l
 import { scheduleEventReminder } from '@/lib/event-reminders'
 import { schedulePostEventFollowUp } from '@/lib/post-event-followup'
 import { isAdminRequest } from '@/lib/admin-auth'
+import { generateCheckInCode } from '@/lib/generate-checkin-qr'
 
 interface AttendanceRecord {
   id: string
@@ -78,6 +79,9 @@ export async function POST(request: Request) {
       )
     }
 
+    // Generate unique check-in code for QR
+    const checkInCode = generateCheckInCode()
+
     // Create attendance record
     const attendance = await prisma.eventAttendance.create({
       data: {
@@ -95,6 +99,8 @@ export async function POST(request: Request) {
         waiverVersion: waiverVersion || null,
         waiverAcceptedAt: waiverAccepted ? new Date() : null,
         waiverAcceptedIp: waiverAccepted ? userIp : null,
+        // QR code check-in
+        checkInCode,
       },
     })
 
@@ -132,6 +138,7 @@ export async function POST(request: Request) {
       eventLocation: eventLocation || 'See event details',
       organizerInstagram,
       communityLink: communityLink || null,
+      checkInCode, // QR code check-in
     }).catch((emailError) => {
       console.error('Confirmation email error:', emailError)
     })

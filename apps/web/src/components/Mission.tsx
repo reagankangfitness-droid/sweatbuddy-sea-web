@@ -81,7 +81,7 @@ export function Mission() {
             className="text-lg mb-8"
             style={{ color: 'rgba(255, 255, 255, 0.7)' }}
           >
-            Hundreds of <span className="text-white font-medium">community workouts</span> happen every week — scattered across Instagram stories and Facebook groups.
+            Hundreds of <span className="text-white font-medium">community workouts</span> happen every week — led by passionate trainers and fitness enthusiasts, scattered across Instagram stories and Facebook groups.
           </motion.p>
 
           {/* Divider - subtle coral */}
@@ -93,11 +93,11 @@ export function Mission() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="inline-flex items-center gap-4 px-8 py-5 bg-neutral-900 rounded-2xl shadow-lg mb-10"
+            className="inline-flex flex-col sm:flex-row items-center gap-4 px-8 py-5 bg-neutral-900 rounded-2xl shadow-lg mb-10"
           >
             <Zap className="w-6 h-6 text-white" />
-            <span className="text-white font-sans font-semibold text-lg md:text-xl" style={{ letterSpacing: '-0.01em' }}>
-              SweatBuddies finds them all. One place.
+            <span className="text-white font-sans font-semibold text-lg md:text-xl text-center sm:text-left" style={{ letterSpacing: '-0.01em' }}>
+              SweatBuddies brings them together. Hosts list. You show up.
             </span>
           </motion.div>
 

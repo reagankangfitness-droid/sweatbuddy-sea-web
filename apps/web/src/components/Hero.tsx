@@ -129,26 +129,36 @@ export const Hero = memo(function Hero() {
 
           {/* Dual CTA Buttons */}
           <div
-            className="flex flex-wrap gap-4"
+            className="flex flex-col gap-6"
             style={{
               opacity: isLoaded ? 1 : 0,
               transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
               transition: 'opacity 0.5s ease-out 0.3s, transform 0.5s ease-out 0.3s',
             }}
           >
-            <button
-              onClick={(e) => handleHashClick(e, '#events')}
-              className="px-10 py-5 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 transition-colors shadow-lg"
-            >
-              Explore events
-            </button>
-            <Link
-              href="/host"
-              className="px-10 py-5 bg-transparent text-white border-2 border-white/30 rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/50 transition-colors flex items-center gap-2"
-            >
-              Host your event
-              <ArrowRight className="w-5 h-5" />
-            </Link>
+            <div className="flex flex-wrap gap-4">
+              <button
+                onClick={(e) => handleHashClick(e, '#events')}
+                className="px-10 py-5 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 transition-colors shadow-lg"
+              >
+                Explore events
+              </button>
+              <Link
+                href="/host"
+                className="px-10 py-5 bg-transparent text-white border-2 border-white/30 rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/50 transition-colors flex items-center gap-2"
+              >
+                Host your event
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
+
+            {/* Host hook text */}
+            <p className="text-white/50 text-sm">
+              Already leading workouts?{' '}
+              <Link href="/host" className="text-white/70 underline underline-offset-2 hover:text-white transition-colors">
+                List them free
+              </Link>
+            </p>
           </div>
         </div>
       </div>

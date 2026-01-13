@@ -116,6 +116,13 @@ export function MobileHero() {
             Host your event
             <ArrowRight className="w-5 h-5" />
           </Link>
+          {/* Host hook text */}
+          <p className="text-white/50 text-sm text-center mt-2">
+            Already leading workouts?{' '}
+            <Link href="/host" className="text-white/70 underline underline-offset-2">
+              List them free
+            </Link>
+          </p>
         </div>
       </div>
 

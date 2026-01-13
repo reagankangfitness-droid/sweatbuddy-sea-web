@@ -1,15 +1,12 @@
 'use client'
 
-import { useState, useEffect, lazy, Suspense, memo } from 'react'
+import { useState, useEffect, memo } from 'react'
 import Image from 'next/image'
-import { Heart, MapPin, Calendar, ArrowRight } from 'lucide-react'
-import { Confetti, useConfetti } from './ui/Confetti'
+import Link from 'next/link'
+import { Heart } from 'lucide-react'
 import { LiveCounter } from './ui/AnimatedCounter'
 import { AvatarStack } from './ui/AvatarStack'
 import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
-
-// Lazy load the bottom sheet - only loaded when user taps a card
-const EventDetailSheet = lazy(() => import('./EventDetailSheet').then(mod => ({ default: mod.EventDetailSheet })))
 
 interface AttendeePreview {
   id: string
@@ -99,18 +96,15 @@ const categoryEmojis: Record<string, string> = {
 
 // Memoized component to prevent unnecessary re-renders
 export const EventCard = memo(function EventCard({ event, index = 0 }: EventCardProps) {
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
   const [isGoing, setIsGoing] = useState(false)
-  const [goingCount, setGoingCount] = useState(event.goingCount || 0)
+  const [goingCount] = useState(event.goingCount || 0)
   const [heartAnimate, setHeartAnimate] = useState(false)
-  const confetti = useConfetti()
 
   const emoji = categoryEmojis[event.category] || '✨'
 
   // Load saved/going state from localStorage - deferred to avoid blocking render
   useEffect(() => {
-    // Use requestIdleCallback for non-critical localStorage reads
     const loadState = () => {
       const saved = safeGetJSON<string[]>('sweatbuddies_saved', [])
       setIsSaved(saved.includes(event.id))
@@ -127,6 +121,7 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
   }, [event.id])
 
   const handleSaveClick = (e: React.MouseEvent) => {
+    e.preventDefault()
     e.stopPropagation()
     const saved = safeGetJSON<string[]>('sweatbuddies_saved', [])
 
@@ -135,7 +130,6 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
       safeSetJSON('sweatbuddies_saved', newSaved)
     } else {
       safeSetJSON('sweatbuddies_saved', [...saved, event.id])
-      // Trigger heartbeat animation when saving
       setHeartAnimate(true)
       setTimeout(() => setHeartAnimate(false), 600)
     }
@@ -144,33 +138,13 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
     window.dispatchEvent(new Event('savedEventsUpdated'))
   }
 
-  const handleGoingClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-
-    if (isGoing) {
-      // Toggle off
-      const going = safeGetJSON<string[]>('sweatbuddies_going', [])
-      const newGoing = going.filter((id: string) => id !== event.id)
-      safeSetJSON('sweatbuddies_going', newGoing)
-      setIsGoing(false)
-      setGoingCount(Math.max(0, goingCount - 1))
-    } else {
-      // Open sheet to collect info
-      setIsSheetOpen(true)
-    }
-  }
-
-  const handleGoingSuccess = () => {
-    setIsGoing(true)
-    setGoingCount(goingCount + 1)
-    // Trigger confetti celebration
-    confetti.trigger()
-  }
+  // Generate event URL using slug or ID
+  const eventUrl = `/event/${event.slug || event.id}`
 
   return (
     <>
-      <div
-        onClick={() => setIsSheetOpen(true)}
+      <Link
+        href={eventUrl}
         className="group h-full flex flex-col bg-white rounded-xl cursor-pointer card-hover-lift card-hover-glow active:scale-[0.98]"
         style={{
           // CSS animation for staggered fade-in
@@ -262,68 +236,38 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
             {event.location}
           </p>
 
-          {/* Attendees Preview & CTA */}
-          <div className="mt-auto space-y-3">
-            {/* Avatar stack with count - always visible */}
+          {/* Attendees & Price */}
+          <div className="mt-auto flex items-center justify-between">
+            {/* Going count */}
             <div className="flex items-center gap-2">
               {event.attendeesPreview && event.attendeesPreview.length > 0 && (
                 <AvatarStack
                   attendees={event.attendeesPreview}
-                  maxDisplay={4}
+                  maxDisplay={3}
                   size="sm"
-                  showCount={goingCount > 4}
+                  showCount={goingCount > 3}
                 />
               )}
               <span className="text-xs text-neutral-500">
                 {goingCount === 0 ? (
                   'Be the first'
-                ) : goingCount === 1 ? (
-                  <>
-                    <LiveCounter value={1} className="font-medium text-neutral-700" /> person going
-                  </>
                 ) : (
                   <>
-                    <LiveCounter value={goingCount} className="font-medium text-neutral-700" /> people going
+                    <LiveCounter value={goingCount} className="font-medium text-neutral-700" /> going
                   </>
                 )}
               </span>
             </div>
 
-            {/* CTA Button */}
-            {isGoing ? (
-              <button
-                onClick={handleGoingClick}
-                className="w-full py-2.5 font-semibold text-sm flex items-center justify-center gap-2 bg-success-light text-success rounded-lg transition-all"
-              >
-                <span>✓ You&apos;re Going</span>
-              </button>
-            ) : (
-              <button
-                onClick={handleGoingClick}
-                className="w-full py-2.5 font-semibold text-sm flex items-center justify-center gap-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-700 transition-all btn-press ripple overflow-hidden relative"
-              >
-                <span>I'm In</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+            {/* Status indicator */}
+            {isGoing && (
+              <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                ✓ Going
+              </span>
             )}
           </div>
         </div>
-      </div>
-
-      {/* Bottom Sheet - Only rendered when opened (lazy loaded) */}
-      {isSheetOpen && (
-        <Suspense fallback={null}>
-          <EventDetailSheet
-            event={event}
-            isOpen={isSheetOpen}
-            onClose={() => setIsSheetOpen(false)}
-            onGoingSuccess={handleGoingSuccess}
-          />
-        </Suspense>
-      )}
-
-      {/* Confetti celebration on successful join */}
-      <Confetti isActive={confetti.isActive} onComplete={confetti.reset} />
+      </Link>
     </>
   )
 })

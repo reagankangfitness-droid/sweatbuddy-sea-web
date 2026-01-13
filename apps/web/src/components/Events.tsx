@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect, lazy, Suspense, useCallback } from 'react'
+import { useState, useEffect, lazy, Suspense, useCallback, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { EventCard } from './EventCard'
+import { CategoryBar, categoryMapping } from './CategoryBar'
 
 // Lazy load the detail sheet for shared events
 const EventDetailSheet = lazy(() => import('./EventDetailSheet').then(mod => ({ default: mod.EventDetailSheet })))
@@ -73,6 +74,19 @@ function getCurrentWeekRange() {
 
 export function Events({ initialEvents = [] }: EventsProps) {
   const [events] = useState<Event[]>(initialEvents)
+  const [selectedCategory, setSelectedCategory] = useState('all')
+
+  // Filter events based on selected category
+  const filteredEvents = useMemo(() => {
+    if (selectedCategory === 'all') return events
+    const categoryValues = categoryMapping[selectedCategory] || []
+    if (categoryValues.length === 0) return events
+    return events.filter(event =>
+      categoryValues.some(cat =>
+        event.category.toLowerCase().includes(cat.toLowerCase())
+      )
+    )
+  }, [events, selectedCategory])
 
   // Shared event handling
   const [sharedEvent, setSharedEvent] = useState<Event | null>(null)
@@ -91,8 +105,8 @@ export function Events({ initialEvents = [] }: EventsProps) {
       </Suspense>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
-        {/* Header - Simple */}
-        <div className="text-center mb-12">
+        {/* Header */}
+        <div className="text-center mb-8">
           <h2 className="font-bold text-3xl md:text-4xl text-neutral-900 mb-2">
             This week in Singapore
           </h2>
@@ -101,12 +115,34 @@ export function Events({ initialEvents = [] }: EventsProps) {
           </p>
         </div>
 
-        {/* Events Grid - No filters, just events */}
-        {events.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {events.map((event, index) => (
+        {/* Category Filter Bar */}
+        <div className="mb-8">
+          <CategoryBar
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+          />
+        </div>
+
+        {/* Events Grid */}
+        {filteredEvents.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            {filteredEvents.map((event, index) => (
               <EventCard key={event.id} event={event} index={index} />
             ))}
+          </div>
+        ) : selectedCategory !== 'all' ? (
+          <div className="text-center py-16 bg-white rounded-2xl max-w-md mx-auto">
+            <span className="text-5xl mb-4 block">🔍</span>
+            <h3 className="font-semibold text-neutral-900 mb-2 text-lg">No {selectedCategory} events this week</h3>
+            <p className="text-neutral-500 max-w-sm mx-auto px-4 mb-4">
+              Check back soon or explore other categories.
+            </p>
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className="text-neutral-900 font-medium hover:underline"
+            >
+              View all events
+            </button>
           </div>
         ) : (
           <div className="text-center py-16 bg-white rounded-2xl max-w-md mx-auto">

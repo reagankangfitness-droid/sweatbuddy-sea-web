@@ -53,12 +53,18 @@ export default function HostApplicationPage() {
   const { isLoaded: authLoaded, isSignedIn } = useAuth()
   const { user } = useUser()
 
-  // Load Google Maps API
-  const { isLoaded: mapsLoaded } = useJsApiLoader({
+  // Load Google Maps API - handle errors gracefully
+  const { isLoaded: mapsLoaded, loadError: mapsError } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
     libraries: LIBRARIES,
   })
 
+  // Log maps error but don't crash - fallback to manual input
+  if (mapsError) {
+    console.warn('Google Maps failed to load:', mapsError)
+  }
+
+  const [mounted, setMounted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState('')
@@ -67,6 +73,11 @@ export default function HostApplicationPage() {
   const [isUploading, setIsUploading] = useState(false)
   const [isUploadingQr, setIsUploadingQr] = useState(false)
   const [formInitialized, setFormInitialized] = useState(false)
+
+  // Ensure component is mounted before rendering complex content
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Google Maps state
   const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null)
@@ -122,8 +133,8 @@ export default function HostApplicationPage() {
     }
   }, [user, formInitialized])
 
-  // Show loading while checking auth
-  if (!authLoaded || !isSignedIn) {
+  // Show loading while mounting or checking auth
+  if (!mounted || !authLoaded || !isSignedIn) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
@@ -616,7 +627,7 @@ export default function HostApplicationPage() {
                 <label className="block text-ui text-neutral-700 mb-1.5">
                   Location *
                 </label>
-                {mapsLoaded ? (
+                {mapsLoaded && !mapsError ? (
                   <div className="space-y-3">
                     <Autocomplete onLoad={onAutocompleteLoad} onPlaceChanged={onPlaceChanged} options={AUTOCOMPLETE_OPTIONS}>
                       <div className="relative">

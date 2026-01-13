@@ -1,58 +1,15 @@
 'use client'
 
-import { useState, useCallback, useEffect, Component, ReactNode } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'
 import { ArrowLeft, Calendar, MapPin, Clock, Instagram, Mail, User, FileText, Loader2, CheckCircle, Users, Sparkles, DollarSign, ImageIcon, X } from 'lucide-react'
 import { UploadButton } from '@/lib/uploadthing'
-import { GoogleMap, Marker, Autocomplete, useJsApiLoader } from '@react-google-maps/api'
 
-// Error boundary to catch Google Maps initialization errors
-class MapErrorBoundary extends Component<{ children: ReactNode, fallback: ReactNode }, { hasError: boolean }> {
-  constructor(props: { children: ReactNode, fallback: ReactNode }) {
-    super(props)
-    this.state = { hasError: false }
-  }
-  static getDerivedStateFromError() {
-    return { hasError: true }
-  }
-  componentDidCatch(error: Error) {
-    console.warn('Google Maps error caught:', error)
-  }
-  render() {
-    if (this.state.hasError) {
-      return this.props.fallback
-    }
-    return this.props.children
-  }
-}
-
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
-const LIBRARIES: ('places')[] = ['places']
-const DEFAULT_CENTER = { lat: 1.3521, lng: 103.8198 } // Singapore
-
-const AUTOCOMPLETE_OPTIONS = {
-  componentRestrictions: { country: ['sg', 'th', 'id', 'my', 'ph', 'vn'] },
-  types: ['establishment', 'geocode'],
-  fields: ['formatted_address', 'geometry', 'name', 'place_id'],
-}
-
-const MAP_CONTAINER_STYLE = { width: '100%', height: '180px', borderRadius: '12px' }
-
-const MAP_OPTIONS = {
-  streetViewControl: false,
-  mapTypeControl: false,
-  fullscreenControl: false,
-  styles: [
-    { elementType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
-    { elementType: 'labels.text.fill', stylers: [{ color: '#333333' }] },
-    { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#c9e4f6' }] },
-    { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
-    { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#c8e6c9' }] },
-  ],
-}
+// Google Maps disabled temporarily to fix P0 crash
+// TODO: Re-enable with proper error handling
 
 const eventTypes = [
   'Run Club',
@@ -73,16 +30,9 @@ export default function HostForm() {
   const { isLoaded: authLoaded, isSignedIn } = useAuth()
   const { user } = useUser()
 
-  // Load Google Maps API - handle errors gracefully
-  const { isLoaded: mapsLoaded, loadError: mapsError } = useJsApiLoader({
-    googleMapsApiKey: GOOGLE_MAPS_API_KEY,
-    libraries: LIBRARIES,
-  })
-
-  // Log maps error but don't crash - fallback to manual input
-  if (mapsError) {
-    console.warn('Google Maps failed to load:', mapsError)
-  }
+  // Google Maps disabled - use simple text input for location
+  const mapsLoaded = false
+  const mapsError = true
 
   const [mounted, setMounted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -98,12 +48,6 @@ export default function HostForm() {
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  // Google Maps state
-  // Use generic type to avoid SSR issues with google.maps types
-  const [autocomplete, setAutocomplete] = useState<any>(null)
-  const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER)
-  const [markerPosition, setMarkerPosition] = useState<{ lat: number; lng: number } | null>(null)
 
   const [isRecurring, setIsRecurring] = useState(true)
   const [formData, setFormData] = useState({
@@ -163,46 +107,6 @@ export default function HostForm() {
     )
   }
 
-  // Google Maps callbacks
-  const onAutocompleteLoad = useCallback((autocompleteInstance: google.maps.places.Autocomplete) => {
-    setAutocomplete(autocompleteInstance)
-  }, [])
-
-  const onPlaceChanged = useCallback(() => {
-    if (autocomplete !== null) {
-      const place = autocomplete.getPlace()
-      if (place.geometry?.location) {
-        const lat = place.geometry.location.lat()
-        const lng = place.geometry.location.lng()
-        const newPosition = { lat, lng }
-        setMapCenter(newPosition)
-        setMarkerPosition(newPosition)
-
-        const displayAddress = place.name && place.formatted_address
-          ? `${place.name}, ${place.formatted_address}`
-          : place.formatted_address || place.name || ''
-
-        setFormData(prev => ({
-          ...prev,
-          location: displayAddress,
-          latitude: lat,
-          longitude: lng,
-          placeId: place.place_id || '',
-        }))
-      }
-    }
-  }, [autocomplete])
-
-  const onMapClick = useCallback((e: google.maps.MapMouseEvent) => {
-    if (e.latLng) {
-      const lat = e.latLng.lat()
-      const lng = e.latLng.lng()
-      const newPosition = { lat, lng }
-      setMarkerPosition(newPosition)
-      setMapCenter(newPosition)
-      setFormData(prev => ({ ...prev, latitude: lat, longitude: lng }))
-    }
-  }, [])
 
   // Convert 24-hour time to 12-hour format (e.g., "14:30" -> "2:30 PM")
   const formatTime12Hour = (time24: string): string => {
@@ -648,66 +552,18 @@ export default function HostForm() {
                 <label className="block text-ui text-neutral-700 mb-1.5">
                   Location *
                 </label>
-                {mapsLoaded && !mapsError ? (
-                  <MapErrorBoundary fallback={
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                      <input
-                        type="text"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleChange}
-                        required
-                        placeholder="Marina Bay Sands, Singapore"
-                        className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.location ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
-                      />
-                    </div>
-                  }>
-                    <div className="space-y-3">
-                      <Autocomplete onLoad={onAutocompleteLoad} onPlaceChanged={onPlaceChanged} options={AUTOCOMPLETE_OPTIONS}>
-                        <div className="relative">
-                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                          <input
-                            type="text"
-                            name="location"
-                            value={formData.location}
-                            onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                            required
-                            placeholder="Search for a location..."
-                            className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.location ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
-                          />
-                        </div>
-                      </Autocomplete>
-
-                      <GoogleMap
-                        mapContainerStyle={MAP_CONTAINER_STYLE}
-                        center={mapCenter}
-                        zoom={markerPosition ? 15 : 11}
-                        onClick={onMapClick}
-                        options={MAP_OPTIONS}
-                      >
-                        {markerPosition && <Marker position={markerPosition} />}
-                      </GoogleMap>
-
-                      <p className="text-xs text-neutral-500">
-                        Search for a venue or click on the map to set location
-                      </p>
-                    </div>
-                  </MapErrorBoundary>
-                ) : (
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                    <input
-                      type="text"
-                      name="location"
-                      value={formData.location}
-                      onChange={handleChange}
-                      required
-                      placeholder="Marina Bay Sands, Singapore"
-                      className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.location ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
-                    />
-                  </div>
-                )}
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    required
+                    placeholder="Marina Bay Sands, Singapore"
+                    className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.location ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
+                  />
+                </div>
               </div>
 
               <div>

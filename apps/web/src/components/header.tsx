@@ -81,10 +81,16 @@ export function Header() {
     if (href.startsWith('#')) {
       const elementId = href.slice(1)
 
-      if (pathname === '/') {
+      // Always try to scroll first if element exists on current page
+      const element = document.getElementById(elementId)
+      if (element) {
         scrollToElement(elementId)
-      } else {
+      } else if (pathname !== '/') {
+        // Only navigate if element not found and not on homepage
         router.push('/' + href)
+      } else {
+        // On homepage but element not found yet - retry with delay
+        scrollToElement(elementId)
       }
     }
   }, [pathname, router])

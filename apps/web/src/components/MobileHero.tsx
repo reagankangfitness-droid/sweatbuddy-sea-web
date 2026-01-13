@@ -16,7 +16,9 @@ export function MobileHero() {
     const scrollToElement = (attempts = 0) => {
       const element = document.getElementById(href)
       if (element) {
-        const top = element.getBoundingClientRect().top + window.scrollY - 20
+        // Account for mobile header height (~60px) + safe area
+        const headerOffset = 80
+        const top = element.getBoundingClientRect().top + window.scrollY - headerOffset
         window.scrollTo({ top, behavior: 'smooth' })
       } else if (attempts < 10) {
         setTimeout(() => scrollToElement(attempts + 1), 100)

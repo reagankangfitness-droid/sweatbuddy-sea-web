@@ -116,10 +116,10 @@ Only output the JSON, nothing else.`
     return result
   } catch (error) {
     console.error('AI moderation error:', error)
-    // Fail open - approve if AI check fails (can still manually review)
+    // Fail closed - flag for manual review if AI check fails
     return {
-      approved: true,
-      reason: 'AI moderation unavailable',
+      approved: false,
+      reason: 'AI moderation unavailable - requires manual review',
       flags: ['moderation_error'],
     }
   }

@@ -1,15 +1,34 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'
-import { ArrowLeft, Calendar, MapPin, Clock, Instagram, Mail, User, FileText, Loader2, CheckCircle, Users, Sparkles, DollarSign, ImageIcon, X } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  ArrowLeft,
+  Calendar,
+  MapPin,
+  Clock,
+  Instagram,
+  Mail,
+  User,
+  FileText,
+  Loader2,
+  CheckCircle,
+  DollarSign,
+  ImageIcon,
+  X,
+  ChevronDown,
+  Check,
+  Plus,
+  Globe,
+  Ticket,
+  Link2,
+  Pencil
+} from 'lucide-react'
 import { UploadButton } from '@/lib/uploadthing'
-
-// Google Maps disabled temporarily to fix P0 crash
-// TODO: Re-enable with proper error handling
 
 const eventTypes = [
   'Run Club',
@@ -30,10 +49,6 @@ export default function HostForm() {
   const { isLoaded: authLoaded, isSignedIn } = useAuth()
   const { user } = useUser()
 
-  // Google Maps disabled - use simple text input for location
-  const mapsLoaded = false
-  const mapsError = true
-
   const [mounted, setMounted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -43,13 +58,13 @@ export default function HostForm() {
   const [isUploading, setIsUploading] = useState(false)
   const [isUploadingQr, setIsUploadingQr] = useState(false)
   const [formInitialized, setFormInitialized] = useState(false)
+  const [advancedSettingsOpen, setAdvancedSettingsOpen] = useState(false)
 
-  // Ensure component is mounted before rendering complex content
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  const [isRecurring, setIsRecurring] = useState(true)
+  const [isRecurring, setIsRecurring] = useState(false)
   const [formData, setFormData] = useState({
     organizerName: '',
     instagramHandle: '',
@@ -59,16 +74,15 @@ export default function HostForm() {
     eventDay: '',
     eventDate: '',
     eventTime: '',
+    endTime: '',
     location: '',
     latitude: 0,
     longitude: 0,
     placeId: '',
     description: '',
     communityLink: '',
-    // Pricing fields
     isFree: true,
     price: '',
-    // PayNow fields
     paynowQrCode: '',
     paynowNumber: '',
   })
@@ -85,7 +99,6 @@ export default function HostForm() {
     if (user && !formInitialized) {
       const userName = user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim()
       const userEmail = user.primaryEmailAddress?.emailAddress || ''
-      // Try to get instagram from user metadata or unsafeMetadata
       const userInstagram = (user.unsafeMetadata?.instagram as string) || ''
 
       setFormData(prev => ({
@@ -101,20 +114,26 @@ export default function HostForm() {
   // Show loading while mounting or checking auth
   if (!mounted || !authLoaded || !isSignedIn) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
       </div>
     )
   }
 
-
-  // Convert 24-hour time to 12-hour format (e.g., "14:30" -> "2:30 PM")
+  // Format time for display
   const formatTime12Hour = (time24: string): string => {
     if (!time24) return ''
     const [hours, minutes] = time24.split(':').map(Number)
     const period = hours >= 12 ? 'PM' : 'AM'
     const hours12 = hours % 12 || 12
     return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`
+  }
+
+  // Format date for display
+  const formatDateDisplay = (dateStr: string): string => {
+    if (!dateStr) return ''
+    const date = new Date(dateStr)
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -128,31 +147,29 @@ export default function HostForm() {
     setError('')
     setFieldErrors({})
 
-    // Validate required fields before submission
+    // Validate required fields
     const errors: Record<string, boolean> = {}
     const missingFields: string[] = []
 
-    if (!formData.organizerName) { errors.organizerName = true; missingFields.push('Your Name') }
-    if (!formData.instagramHandle) { errors.instagramHandle = true; missingFields.push('Instagram Handle') }
-    if (!formData.email) { errors.email = true; missingFields.push('Email') }
     if (!formData.eventName) { errors.eventName = true; missingFields.push('Event Name') }
-    if (!formData.eventType) { errors.eventType = true; missingFields.push('Event Type') }
-    if (isRecurring && !formData.eventDay) { errors.eventDay = true; missingFields.push('Day') }
-    if (!isRecurring && !formData.eventDate) { errors.eventDate = true; missingFields.push('Date') }
+    if (!formData.eventDate) { errors.eventDate = true; missingFields.push('Date') }
     if (!formData.eventTime) { errors.eventTime = true; missingFields.push('Time') }
     if (!formData.location) { errors.location = true; missingFields.push('Location') }
+
+    // Check advanced settings fields
+    if (!formData.organizerName) { errors.organizerName = true; missingFields.push('Your Name (in Advanced Settings)') }
+    if (!formData.instagramHandle) { errors.instagramHandle = true; missingFields.push('Instagram (in Advanced Settings)') }
+    if (!formData.email) { errors.email = true; missingFields.push('Email (in Advanced Settings)') }
+    if (!formData.eventType) { errors.eventType = true; missingFields.push('Event Type (in Advanced Settings)') }
 
     if (missingFields.length > 0) {
       setFieldErrors(errors)
       setError(`Please fill in: ${missingFields.join(', ')}`)
       setIsLoading(false)
 
-      // Scroll to first error field
-      const firstErrorField = Object.keys(errors)[0]
-      const element = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        element.focus()
+      // Open advanced settings if any required fields there are missing
+      if (errors.organizerName || errors.instagramHandle || errors.email || errors.eventType) {
+        setAdvancedSettingsOpen(true)
       }
       return
     }
@@ -163,35 +180,33 @@ export default function HostForm() {
       if (price <= 0) {
         setFieldErrors({ price: true })
         setError('Please enter a valid price for your paid event')
+        setAdvancedSettingsOpen(true)
         setIsLoading(false)
-        const priceEl = document.querySelector('[name="price"]') as HTMLElement
-        if (priceEl) { priceEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); priceEl.focus() }
         return
       }
       if (!formData.paynowQrCode) {
         setError('Please upload a PayNow QR code so attendees can pay')
+        setAdvancedSettingsOpen(true)
         setIsLoading(false)
         return
       }
     }
 
     try {
-      // Format day display based on recurring vs one-time
+      // Format day display
       let dayDisplay = ''
-      if (isRecurring) {
+      if (isRecurring && formData.eventDay) {
         dayDisplay = formData.eventDay
       } else {
-        // Format date for display (e.g., "Jan 15, 2025")
         const date = new Date(formData.eventDate)
         dayDisplay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
       }
 
-      // Map form data to EventSubmission format for unified submission system
       const eventSubmissionData = {
         eventName: formData.eventName,
         category: formData.eventType,
         day: dayDisplay,
-        eventDate: isRecurring ? undefined : formData.eventDate,
+        eventDate: formData.eventDate,
         time: formatTime12Hour(formData.eventTime),
         recurring: isRecurring,
         location: formData.location,
@@ -204,35 +219,22 @@ export default function HostForm() {
         organizerName: formData.organizerName,
         organizerInstagram: formData.instagramHandle.replace('@', ''),
         contactEmail: formData.email,
-        // Pricing fields
         isFree: formData.isFree,
         price: formData.isFree ? null : Math.round(parseFloat(formData.price || '0') * 100),
-        // PayNow fields
         paynowEnabled: !formData.isFree && !!formData.paynowQrCode,
         paynowQrCode: formData.paynowQrCode || null,
         paynowNumber: formData.paynowNumber || null,
-        // Link to user account
         clerkUserId: user?.id || null,
       }
 
-      let response: Response
-      try {
-        response = await fetch('/api/submit-event', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(eventSubmissionData),
-        })
-      } catch {
-        throw new Error('Network error. Please check your connection and try again.')
-      }
+      const response = await fetch('/api/submit-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(eventSubmissionData),
+      })
 
-      let data
-      try {
-        const text = await response.text()
-        data = text ? JSON.parse(text) : {}
-      } catch {
-        throw new Error(`Server returned invalid response (status ${response.status})`)
-      }
+      const text = await response.text()
+      const data = text ? JSON.parse(text) : {}
 
       if (!response.ok) {
         throw new Error(data.error || `Server error: ${response.status}`)
@@ -251,35 +253,34 @@ export default function HostForm() {
   // Success state
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-neutral-50">
-        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+      <div className="min-h-screen bg-neutral-950">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-800">
           <div className="pt-[env(safe-area-inset-top,0px)]">
-            <div className="flex items-center gap-4 px-4 py-3 max-w-2xl mx-auto">
+            <div className="flex items-center justify-between px-4 py-3 max-w-6xl mx-auto">
               <Link
                 href="/"
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-800 hover:bg-neutral-700 transition-colors"
               >
-                <ArrowLeft className="w-5 h-5 text-neutral-700" />
+                <ArrowLeft className="w-5 h-5 text-neutral-300" />
               </Link>
-              <h1 className="text-xl font-sans font-semibold text-neutral-900">List Your Event</h1>
             </div>
           </div>
         </header>
 
-        <main className="pt-24 pb-32 md:pb-12 px-4">
+        <main className="pt-24 pb-32 px-4">
           <div className="max-w-md mx-auto text-center">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-10 h-10 text-green-600" />
+            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-10 h-10 text-green-400" />
             </div>
-            <h2 className="font-sans text-display-section text-neutral-900 mb-4">
-              You&apos;re all set.
+            <h2 className="text-3xl font-bold text-white mb-4">
+              You&apos;re all set!
             </h2>
-            <p className="text-body-default text-neutral-600 mb-8">
+            <p className="text-neutral-400 mb-8">
               Your event is live. Share the link and start building your crew.
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-neutral-900 text-white px-6 py-3 rounded-full font-semibold hover:bg-neutral-900-600 transition-colors"
+              className="inline-flex items-center gap-2 bg-white text-neutral-900 px-6 py-3 rounded-full font-semibold hover:bg-neutral-100 transition-colors"
             >
               Back to Home
             </Link>
@@ -290,569 +291,583 @@ export default function HostForm() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-950">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-800">
         <div className="pt-[env(safe-area-inset-top,0px)]">
-          <div className="flex items-center gap-4 px-4 py-3 max-w-2xl mx-auto">
+          <div className="flex items-center justify-between px-4 py-3 max-w-6xl mx-auto">
             <Link
               href="/"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-800 hover:bg-neutral-700 transition-colors"
             >
-              <ArrowLeft className="w-5 h-5 text-neutral-700" />
+              <ArrowLeft className="w-5 h-5 text-neutral-300" />
             </Link>
-            <h1 className="text-xl font-sans font-semibold text-neutral-900">List Your Event</h1>
+
+            {/* Public Badge */}
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-neutral-800 rounded-full">
+              <Globe className="w-4 h-4 text-neutral-400" />
+              <span className="text-sm text-neutral-300">Public</span>
+            </div>
+
+            <div className="w-10" /> {/* Spacer */}
           </div>
         </div>
       </header>
 
-      <main className="pt-24 pb-32 md:pb-12 px-4">
-        <div className="max-w-2xl mx-auto">
-          {/* Hero Section */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 bg-neutral-900/10 text-neutral-900 px-4 py-2 rounded-full text-label font-medium mb-4">
-              <Sparkles className="w-4 h-4" />
-              Takes 5 minutes
-            </div>
-            <h2 className="font-sans text-display-lg md:text-display-xl text-neutral-900 mb-3">
-              Share what moves you.
-            </h2>
-            <p className="text-body-lg text-neutral-600 max-w-md mx-auto">
-              You bring the energy. We bring the people.
-            </p>
-          </div>
-
-          {/* Benefits */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="bg-white rounded-2xl p-4 text-center border border-neutral-100 shadow-card">
-              <Users className="w-6 h-6 text-neutral-900 mx-auto mb-2" />
-              <span className="text-ui text-neutral-700">Find your crew</span>
-            </div>
-            <div className="bg-white rounded-2xl p-4 text-center border border-neutral-100 shadow-card">
-              <Calendar className="w-6 h-6 text-neutral-900 mx-auto mb-2" />
-              <span className="text-ui text-neutral-700">Track RSVPs</span>
-            </div>
-            <div className="bg-white rounded-2xl p-4 text-center border border-neutral-100 shadow-card">
-              <Sparkles className="w-6 h-6 text-neutral-900 mx-auto mb-2" />
-              <span className="text-ui text-neutral-700">Always free</span>
-            </div>
-          </div>
-
-          {/* Form */}
-          <form
-            onSubmit={handleSubmit}
-            className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 space-y-5"
-          >
+      <form onSubmit={handleSubmit}>
+        <main className="pt-20 pb-28 px-4 lg:px-8">
+          <div className="max-w-6xl mx-auto">
+            {/* Error Message */}
             {error && (
-              <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm">
+              <div className="mb-6 bg-red-500/20 border border-red-500/30 text-red-300 px-4 py-3 rounded-xl text-sm">
                 {error}
               </div>
             )}
 
-            {/* Organizer Section */}
-            <div className="space-y-4">
-              <h3 className="text-label text-neutral-500 uppercase tracking-wide">About You</h3>
-
-              <div>
-                <label className="block text-ui text-neutral-700 mb-1.5">
-                  Your Name *
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                  <input
-                    type="text"
-                    name="organizerName"
-                    value={formData.organizerName}
-                    onChange={handleChange}
-                    required
-                    placeholder="John Doe"
-                    className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.organizerName ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-ui text-neutral-700 mb-1.5">
-                  Instagram Handle *
-                </label>
-                <div className="relative">
-                  <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                  <input
-                    type="text"
-                    name="instagramHandle"
-                    value={formData.instagramHandle}
-                    onChange={handleChange}
-                    required
-                    placeholder="@yourhandle"
-                    className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.instagramHandle ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-ui text-neutral-700 mb-1.5">
-                  Email *
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    placeholder="you@example.com"
-                    className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.email ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-neutral-200 my-6" />
-
-            {/* Event Section */}
-            <div className="space-y-4">
-              <h3 className="text-label text-neutral-500 uppercase tracking-wide">Your Event</h3>
-
-              <div>
-                <label className="block text-ui text-neutral-700 mb-1.5">
-                  Event Name *
-                </label>
-                <input
-                  type="text"
-                  name="eventName"
-                  value={formData.eventName}
-                  onChange={handleChange}
-                  required
-                  placeholder="Saturday Morning Run Club"
-                  className={`w-full px-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.eventName ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
-                />
-              </div>
-
-              <div>
-                <label className="block text-ui text-neutral-700 mb-1.5">
-                  Event Type *
-                </label>
-                <select
-                  name="eventType"
-                  value={formData.eventType}
-                  onChange={handleChange}
-                  required
-                  className={`w-full px-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 appearance-none ${fieldErrors.eventType ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
-                >
-                  <option value="">Select a type...</option>
-                  {eventTypes.map(type => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Event Frequency Toggle */}
-              <div>
-                <label className="block text-ui text-neutral-700 mb-1.5">
-                  Event Schedule *
-                </label>
-                <div className="flex gap-2 mb-3">
-                  <button
-                    type="button"
-                    onClick={() => setIsRecurring(true)}
-                    className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-medium transition-colors ${
-                      isRecurring
-                        ? 'bg-neutral-900 text-white'
-                        : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-                    }`}
-                  >
-                    Recurring
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsRecurring(false)}
-                    className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-medium transition-colors ${
-                      !isRecurring
-                        ? 'bg-neutral-900 text-white'
-                        : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-                    }`}
-                  >
-                    Specific Date
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+              {/* Left Column - Form */}
+              <div className="flex-1 space-y-6">
+                {/* Event Name - Large Placeholder Style */}
                 <div>
-                  {isRecurring ? (
-                    <>
-                      <label className="block text-ui text-neutral-700 mb-1.5">
-                        Day *
-                      </label>
-                      <div className="relative">
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                        <select
-                          name="eventDay"
-                          value={formData.eventDay}
-                          onChange={handleChange}
-                          required={isRecurring}
-                          className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 appearance-none ${fieldErrors.eventDay ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
-                        >
-                          <option value="">Select day...</option>
-                          <option value="Every Monday">Every Monday</option>
-                          <option value="Every Tuesday">Every Tuesday</option>
-                          <option value="Every Wednesday">Every Wednesday</option>
-                          <option value="Every Thursday">Every Thursday</option>
-                          <option value="Every Friday">Every Friday</option>
-                          <option value="Every Saturday">Every Saturday</option>
-                          <option value="Every Sunday">Every Sunday</option>
-                          <option value="Daily">Daily</option>
-                          <option value="Weekdays">Weekdays</option>
-                          <option value="Weekends">Weekends</option>
-                        </select>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <label className="block text-ui text-neutral-700 mb-1.5">
-                        Date *
-                      </label>
-                      <div className="relative">
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
-                        <input
-                          type="date"
-                          name="eventDate"
-                          value={formData.eventDate}
-                          onChange={handleChange}
-                          required={!isRecurring}
-                          min={new Date().toISOString().split('T')[0]}
-                          className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 ${fieldErrors.eventDate ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
-                        />
-                      </div>
-                    </>
+                  <input
+                    type="text"
+                    name="eventName"
+                    value={formData.eventName}
+                    onChange={handleChange}
+                    placeholder="Enter event name"
+                    className={`w-full text-3xl md:text-4xl font-bold bg-transparent border-none text-white placeholder:text-neutral-600 focus:outline-none focus:ring-0 ${fieldErrors.eventName ? 'placeholder:text-red-400' : ''}`}
+                  />
+                  {fieldErrors.eventName && (
+                    <p className="text-red-400 text-sm mt-1">Enter an event name</p>
                   )}
                 </div>
 
-                <div>
-                  <label className="block text-ui text-neutral-700 mb-1.5">
-                    Time *
-                  </label>
+                {/* Date/Time Pills */}
+                <div className="flex flex-wrap items-center gap-3">
+                  {/* Start Date */}
                   <div className="relative">
-                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400 pointer-events-none z-10" />
-                    <input
-                      type="time"
-                      name="eventTime"
-                      value={formData.eventTime}
-                      onChange={handleChange}
-                      required
-                      className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 appearance-none min-h-[50px] ${fieldErrors.eventTime ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
-                    />
+                    <div className={`flex items-center gap-2 px-4 py-2.5 bg-neutral-900 border rounded-full cursor-pointer hover:bg-neutral-800 transition-colors ${fieldErrors.eventDate ? 'border-red-500' : 'border-neutral-700'}`}>
+                      <Calendar className="w-4 h-4 text-neutral-400" />
+                      <input
+                        type="date"
+                        name="eventDate"
+                        value={formData.eventDate}
+                        onChange={handleChange}
+                        min={new Date().toISOString().split('T')[0]}
+                        className="bg-transparent text-neutral-300 text-sm focus:outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:invert"
+                      />
+                    </div>
                   </div>
-                  <p className="text-xs text-neutral-500 mt-1">Select event start time</p>
-                </div>
-              </div>
 
-              <div>
-                <label className="block text-ui text-neutral-700 mb-1.5">
-                  Location *
+                  {/* Start Time */}
+                  <div className="relative">
+                    <div className={`flex items-center gap-2 px-4 py-2.5 bg-neutral-900 border rounded-full cursor-pointer hover:bg-neutral-800 transition-colors ${fieldErrors.eventTime ? 'border-red-500' : 'border-neutral-700'}`}>
+                      <input
+                        type="time"
+                        name="eventTime"
+                        value={formData.eventTime}
+                        onChange={handleChange}
+                        className="bg-transparent text-neutral-300 text-sm focus:outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:invert"
+                      />
+                    </div>
+                  </div>
+
+                  {/* End Time */}
+                  <div className="relative">
+                    <div className="flex items-center gap-2 px-4 py-2.5 bg-neutral-900 border border-neutral-700 rounded-full cursor-pointer hover:bg-neutral-800 transition-colors">
+                      <input
+                        type="time"
+                        name="endTime"
+                        value={formData.endTime}
+                        onChange={handleChange}
+                        placeholder="End"
+                        className="bg-transparent text-neutral-300 text-sm focus:outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:invert"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Timezone Badge */}
+                  <div className="px-3 py-2.5 bg-neutral-800 rounded-full">
+                    <span className="text-sm text-neutral-400">SGT</span>
+                  </div>
+                </div>
+
+                {/* Repeat Checkbox */}
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <button
+                    type="button"
+                    onClick={() => setIsRecurring(!isRecurring)}
+                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                      isRecurring
+                        ? 'bg-white border-white'
+                        : 'border-neutral-600 bg-transparent group-hover:border-neutral-500'
+                    }`}
+                  >
+                    {isRecurring && <Check className="w-3 h-3 text-neutral-900" />}
+                  </button>
+                  <span className="text-neutral-400 text-sm">Set this event to repeat</span>
                 </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+
+                {/* Recurring Day Selection (shown when repeat is checked) */}
+                <AnimatePresence>
+                  {isRecurring && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <select
+                        name="eventDay"
+                        value={formData.eventDay}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-neutral-300 focus:outline-none focus:border-neutral-500 appearance-none"
+                      >
+                        <option value="">Select repeat frequency...</option>
+                        <option value="Every Monday">Every Monday</option>
+                        <option value="Every Tuesday">Every Tuesday</option>
+                        <option value="Every Wednesday">Every Wednesday</option>
+                        <option value="Every Thursday">Every Thursday</option>
+                        <option value="Every Friday">Every Friday</option>
+                        <option value="Every Saturday">Every Saturday</option>
+                        <option value="Every Sunday">Every Sunday</option>
+                        <option value="Daily">Daily</option>
+                        <option value="Weekdays">Weekdays</option>
+                        <option value="Weekends">Weekends</option>
+                      </select>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Location Input */}
+                <div className={`flex items-center gap-3 px-4 py-3 bg-neutral-900 border rounded-xl focus-within:border-neutral-500 transition-colors ${fieldErrors.location ? 'border-red-500' : 'border-neutral-700'}`}>
+                  <MapPin className="w-5 h-5 text-neutral-500 shrink-0" />
                   <input
                     type="text"
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    required
-                    placeholder="Marina Bay Sands, Singapore"
-                    className={`w-full pl-10 pr-4 py-3 bg-neutral-50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 ${fieldErrors.location ? 'border-red-500 bg-red-50' : 'border-neutral-200'}`}
+                    placeholder="Add location"
+                    className="flex-1 bg-transparent text-white placeholder:text-neutral-500 focus:outline-none"
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-ui text-neutral-700 mb-1.5">
-                  Description <span className="text-neutral-400">(optional)</span>
-                </label>
-                <div className="relative">
-                  <FileText className="absolute left-3 top-3 w-5 h-5 text-neutral-400" />
+                {/* Description Input */}
+                <div className="flex items-start gap-3 px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl focus-within:border-neutral-500 transition-colors">
+                  <FileText className="w-5 h-5 text-neutral-500 shrink-0 mt-0.5" />
                   <textarea
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
+                    placeholder="Add event description"
                     rows={3}
-                    placeholder="Tell us about your event..."
-                    className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400 resize-none"
+                    className="flex-1 bg-transparent text-white placeholder:text-neutral-500 focus:outline-none resize-none"
                   />
+                </div>
+
+                {/* Tickets Section */}
+                <div className="flex items-center justify-between px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl">
+                  <div className="flex items-center gap-3">
+                    <Ticket className="w-5 h-5 text-neutral-500" />
+                    <span className="text-neutral-300">Tickets</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      formData.isFree
+                        ? 'bg-green-500/20 text-green-400'
+                        : 'bg-neutral-800 text-white'
+                    }`}>
+                      {formData.isFree ? 'FREE' : `$${formData.price || '0'}`}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setAdvancedSettingsOpen(true)}
+                      className="p-1.5 hover:bg-neutral-800 rounded-full transition-colors"
+                    >
+                      <Pencil className="w-4 h-4 text-neutral-400" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Advanced Settings */}
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => setAdvancedSettingsOpen(!advancedSettingsOpen)}
+                    className="w-full flex items-center justify-between px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-neutral-300 hover:bg-neutral-800 transition-colors"
+                  >
+                    <span className="font-medium">Advanced Settings</span>
+                    <motion.div
+                      animate={{ rotate: advancedSettingsOpen ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ChevronDown className="w-5 h-5 text-neutral-400" />
+                    </motion.div>
+                  </button>
+
+                  <AnimatePresence>
+                    {advancedSettingsOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: [0.2, 0, 0, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="p-4 space-y-4 bg-neutral-900 border border-neutral-700 rounded-xl">
+                          {/* Organizer Section */}
+                          <div className="space-y-3">
+                            <h4 className="text-xs font-medium text-neutral-500 uppercase tracking-wider">About You</h4>
+
+                            <div className="relative">
+                              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                              <input
+                                type="text"
+                                name="organizerName"
+                                value={formData.organizerName}
+                                onChange={handleChange}
+                                placeholder="Your name *"
+                                className={`w-full pl-10 pr-4 py-2.5 bg-neutral-800 border rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-500 text-sm ${fieldErrors.organizerName ? 'border-red-500' : 'border-neutral-700'}`}
+                              />
+                            </div>
+
+                            <div className="relative">
+                              <Instagram className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                              <input
+                                type="text"
+                                name="instagramHandle"
+                                value={formData.instagramHandle}
+                                onChange={handleChange}
+                                placeholder="Instagram handle *"
+                                className={`w-full pl-10 pr-4 py-2.5 bg-neutral-800 border rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-500 text-sm ${fieldErrors.instagramHandle ? 'border-red-500' : 'border-neutral-700'}`}
+                              />
+                            </div>
+
+                            <div className="relative">
+                              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                              <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder="Email *"
+                                className={`w-full pl-10 pr-4 py-2.5 bg-neutral-800 border rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-500 text-sm ${fieldErrors.email ? 'border-red-500' : 'border-neutral-700'}`}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Event Type */}
+                          <div className="space-y-3">
+                            <h4 className="text-xs font-medium text-neutral-500 uppercase tracking-wider">Event Type</h4>
+                            <select
+                              name="eventType"
+                              value={formData.eventType}
+                              onChange={handleChange}
+                              className={`w-full px-4 py-2.5 bg-neutral-800 border rounded-lg text-white focus:outline-none focus:border-neutral-500 text-sm appearance-none ${fieldErrors.eventType ? 'border-red-500' : 'border-neutral-700'}`}
+                            >
+                              <option value="">Select event type *</option>
+                              {eventTypes.map(type => (
+                                <option key={type} value={type}>{type}</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Pricing */}
+                          <div className="space-y-3">
+                            <h4 className="text-xs font-medium text-neutral-500 uppercase tracking-wider">Pricing</h4>
+
+                            <div className="flex gap-3">
+                              <button
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, isFree: true }))}
+                                className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors ${
+                                  formData.isFree
+                                    ? 'bg-white text-neutral-900'
+                                    : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
+                                }`}
+                              >
+                                Free
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, isFree: false }))}
+                                className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors ${
+                                  !formData.isFree
+                                    ? 'bg-white text-neutral-900'
+                                    : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
+                                }`}
+                              >
+                                Paid
+                              </button>
+                            </div>
+
+                            {!formData.isFree && (
+                              <div className="space-y-3 pt-2">
+                                <div className="relative">
+                                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                                  <input
+                                    type="number"
+                                    name="price"
+                                    min="1"
+                                    step="0.01"
+                                    value={formData.price}
+                                    onChange={handleChange}
+                                    placeholder="Price (SGD)"
+                                    className="w-full pl-10 pr-4 py-2.5 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-500 text-sm"
+                                  />
+                                </div>
+
+                                {/* PayNow QR Upload */}
+                                <div>
+                                  <p className="text-xs text-neutral-500 mb-2">PayNow QR Code</p>
+                                  {formData.paynowQrCode ? (
+                                    <div className="relative w-32 h-32 bg-white rounded-lg overflow-hidden">
+                                      <Image
+                                        src={formData.paynowQrCode}
+                                        alt="PayNow QR"
+                                        fill
+                                        className="object-contain"
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => setFormData(prev => ({ ...prev, paynowQrCode: '' }))}
+                                        className="absolute top-1 right-1 p-1 bg-neutral-900/80 rounded-full"
+                                      >
+                                        <X className="w-3 h-3 text-white" />
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <div className="w-32">
+                                      {isUploadingQr ? (
+                                        <div className="h-32 flex items-center justify-center bg-neutral-800 rounded-lg">
+                                          <Loader2 className="w-5 h-5 animate-spin text-neutral-400" />
+                                        </div>
+                                      ) : (
+                                        <UploadButton
+                                          endpoint="eventImage"
+                                          onUploadBegin={() => setIsUploadingQr(true)}
+                                          onClientUploadComplete={(res) => {
+                                            setIsUploadingQr(false)
+                                            if (res?.[0]?.url) {
+                                              setFormData(prev => ({ ...prev, paynowQrCode: res[0].url }))
+                                            }
+                                          }}
+                                          onUploadError={() => {
+                                            setIsUploadingQr(false)
+                                            setError('Failed to upload QR code')
+                                          }}
+                                          appearance={{
+                                            button: "bg-neutral-800 hover:bg-neutral-700 text-white text-xs px-3 py-2 rounded-lg",
+                                            allowedContent: "hidden",
+                                          }}
+                                        />
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+
+                                <input
+                                  type="text"
+                                  name="paynowNumber"
+                                  value={formData.paynowNumber}
+                                  onChange={handleChange}
+                                  placeholder="PayNow number (optional)"
+                                  className="w-full px-4 py-2.5 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-500 text-sm"
+                                />
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Community Link */}
+                          <div className="space-y-3">
+                            <h4 className="text-xs font-medium text-neutral-500 uppercase tracking-wider">Community</h4>
+                            <div className="relative">
+                              <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                              <input
+                                type="url"
+                                name="communityLink"
+                                value={formData.communityLink}
+                                onChange={handleChange}
+                                placeholder="WhatsApp or Telegram group link"
+                                className="w-full pl-10 pr-4 py-2.5 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-500 text-sm"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
 
-              {/* Community Link */}
-              <div>
-                <label className="block text-ui text-neutral-700 mb-1.5">
-                  Community Group Link <span className="text-neutral-400">(optional)</span>
-                </label>
-                <input
-                  type="url"
-                  name="communityLink"
-                  value={formData.communityLink}
-                  onChange={handleChange}
-                  placeholder="https://chat.whatsapp.com/... or https://t.me/..."
-                  className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
-                />
-                <p className="text-xs text-neutral-500 mt-1">
-                  WhatsApp or Telegram group for attendees to join
-                </p>
-              </div>
-
-              {/* Event Image Upload */}
-              <div>
-                <label className="block text-ui text-neutral-700 mb-1.5">
-                  Event Image <span className="text-neutral-400">(optional)</span>
-                </label>
-                {imageUrl ? (
-                  <div className="relative rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200">
-                    <Image src={imageUrl} alt="Event preview" width={400} height={200} className="w-full h-48 object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => setImageUrl(null)}
-                      className="absolute top-2 right-2 p-2 rounded-full bg-neutral-900/60 hover:bg-neutral-900/80 transition-colors"
-                    >
-                      <X className="w-4 h-4 text-white" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="rounded-xl bg-neutral-50 border border-neutral-200 border-dashed p-6">
-                    {isUploading ? (
-                      <div className="flex flex-col items-center gap-2 text-neutral-500">
-                        <Loader2 className="w-6 h-6 animate-spin text-neutral-900" />
-                        <span className="text-sm">Uploading...</span>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center gap-3">
-                        <ImageIcon className="w-8 h-8 text-neutral-400" />
-                        <p className="text-sm text-neutral-500">Upload a photo for your event</p>
-                        <UploadButton
-                          endpoint="eventImage"
-                          onUploadBegin={() => setIsUploading(true)}
-                          onClientUploadComplete={(res) => {
-                            setIsUploading(false)
-                            if (res?.[0]?.url) setImageUrl(res[0].url)
-                          }}
-                          onUploadError={(error: Error) => {
-                            setIsUploading(false)
-                            const msg = error.message.toLowerCase()
-                            if (msg.includes('size') || msg.includes('large')) {
-                              setError('Image too large. Please use a smaller photo (max 8MB).')
-                            } else {
-                              setError('Upload failed. Please try again or use a different image.')
-                            }
-                          }}
-                          appearance={{
-                            button: "bg-neutral-900 hover:bg-neutral-800 text-white font-medium px-4 py-2 rounded-full text-sm transition-colors",
-                            allowedContent: "hidden",
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="border-t border-neutral-200 my-6" />
-
-            {/* Pricing Section */}
-            <div className="space-y-4">
-              <h3 className="text-label text-neutral-500 uppercase tracking-wide flex items-center gap-2">
-                <DollarSign className="w-4 h-4" />
-                Pricing
-              </h3>
-
-              {/* Free or Paid Toggle */}
-              <div className="flex gap-4">
-                <label className={`flex items-center gap-3 p-4 border rounded-xl cursor-pointer flex-1 transition-colors ${formData.isFree ? 'border-neutral-900 bg-neutral-50' : 'border-neutral-200 hover:border-neutral-400'}`}>
-                  <input
-                    type="radio"
-                    name="pricingType"
-                    checked={formData.isFree}
-                    onChange={() => setFormData(prev => ({ ...prev, isFree: true }))}
-                    className="w-5 h-5 text-neutral-900"
-                  />
-                  <div>
-                    <span className="font-medium text-neutral-900">Community event</span>
-                    <p className="text-sm text-neutral-500">Anyone can join</p>
-                  </div>
-                </label>
-
-                <label className={`flex items-center gap-3 p-4 border rounded-xl cursor-pointer flex-1 transition-colors ${!formData.isFree ? 'border-neutral-900 bg-neutral-50' : 'border-neutral-200 hover:border-neutral-400'}`}>
-                  <input
-                    type="radio"
-                    name="pricingType"
-                    checked={!formData.isFree}
-                    onChange={() => setFormData(prev => ({ ...prev, isFree: false }))}
-                    className="w-5 h-5 text-neutral-900"
-                  />
-                  <div>
-                    <span className="font-medium text-neutral-900">Paid event</span>
-                    <p className="text-sm text-neutral-500">Collect payments</p>
-                  </div>
-                </label>
-              </div>
-
-              {/* Paid Event Options */}
-              {!formData.isFree && (
-                <div className="space-y-4 p-4 bg-neutral-50 rounded-xl border border-neutral-200">
-                  {/* Price Input */}
-                  <div>
-                    <label className="block text-ui text-neutral-700 mb-1.5">
-                      Price (SGD) *
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 font-medium">$</span>
-                      <input
-                        type="number"
-                        name="price"
-                        min="1"
-                        step="0.01"
-                        value={formData.price}
-                        onChange={handleChange}
-                        placeholder="15.00"
-                        required={!formData.isFree}
-                        className="w-full pl-10 pr-4 py-3 bg-white border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
-                      />
-                    </div>
-                  </div>
-
-                  {/* PayNow QR Code Upload */}
-                  <div>
-                    <label className="block text-ui text-neutral-700 mb-1.5">
-                      PayNow QR Code *
-                    </label>
-                    <p className="text-xs text-neutral-500 mb-2">
-                      Upload your PayNow QR code so attendees can pay you directly
-                    </p>
-                    {formData.paynowQrCode ? (
-                      <div className="relative rounded-xl overflow-hidden bg-white border border-neutral-200 w-48">
+              {/* Right Column - Image Preview (Desktop) */}
+              <div className="hidden lg:block w-[400px] shrink-0">
+                <div className="sticky top-24">
+                  {/* Main Image Preview */}
+                  <div className="relative aspect-[1080/1350] bg-neutral-900 rounded-2xl overflow-hidden border border-neutral-800">
+                    {imageUrl ? (
+                      <>
                         <Image
-                          src={formData.paynowQrCode}
-                          alt="PayNow QR"
-                          width={192}
-                          height={192}
-                          className="w-48 h-48 object-contain bg-white"
+                          src={imageUrl}
+                          alt="Event preview"
+                          fill
+                          className="object-cover"
                         />
-                        <button
-                          type="button"
-                          onClick={() => setFormData(prev => ({ ...prev, paynowQrCode: '' }))}
-                          className="absolute top-2 right-2 p-2 rounded-full bg-neutral-900/60 hover:bg-neutral-900/80 transition-colors"
-                        >
-                          <X className="w-4 h-4 text-white" />
-                        </button>
-                      </div>
+                        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                          <span className="text-xs text-white/80 bg-black/50 px-2 py-1 rounded">
+                            Recommended size: 1080 x 1350px
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setImageUrl(null)}
+                            className="flex items-center gap-2 px-3 py-1.5 bg-neutral-900/80 hover:bg-neutral-900 text-white text-sm rounded-full transition-colors"
+                          >
+                            <ImageIcon className="w-4 h-4" />
+                            Change image
+                          </button>
+                        </div>
+                      </>
                     ) : (
-                      <div className="rounded-xl bg-white border border-neutral-200 border-dashed p-5 w-48">
-                        {isUploadingQr ? (
-                          <div className="flex flex-col items-center gap-2 text-neutral-500">
-                            <Loader2 className="w-6 h-6 animate-spin text-neutral-900" />
-                            <span className="text-sm">Uploading...</span>
-                          </div>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                        {isUploading ? (
+                          <>
+                            <Loader2 className="w-10 h-10 animate-spin text-neutral-500" />
+                            <p className="text-neutral-500 text-sm">Uploading...</p>
+                          </>
                         ) : (
-                          <div className="flex flex-col items-center gap-2">
-                            <ImageIcon className="w-8 h-8 text-neutral-400" />
+                          <>
+                            <div className="w-16 h-16 rounded-full bg-neutral-800 flex items-center justify-center">
+                              <ImageIcon className="w-8 h-8 text-neutral-500" />
+                            </div>
+                            <div className="text-center">
+                              <p className="text-neutral-400 text-sm mb-1">Add cover image</p>
+                              <p className="text-neutral-600 text-xs">Recommended: 1080 x 1350px</p>
+                            </div>
                             <UploadButton
                               endpoint="eventImage"
-                              onUploadBegin={() => setIsUploadingQr(true)}
+                              onUploadBegin={() => setIsUploading(true)}
                               onClientUploadComplete={(res) => {
-                                setIsUploadingQr(false)
-                                if (res?.[0]?.url) {
-                                  setFormData(prev => ({ ...prev, paynowQrCode: res[0].url }))
-                                }
+                                setIsUploading(false)
+                                if (res?.[0]?.url) setImageUrl(res[0].url)
                               }}
                               onUploadError={(error: Error) => {
-                                setIsUploadingQr(false)
-                                const msg = error.message.toLowerCase()
-                                if (msg.includes('size') || msg.includes('large')) {
-                                  setError('QR code image too large. Please use a smaller image (max 8MB).')
-                                } else {
-                                  setError('Upload failed. Please try again or use a different image.')
-                                }
+                                setIsUploading(false)
+                                setError(`Upload failed: ${error.message}`)
                               }}
                               appearance={{
-                                button: "bg-neutral-900 hover:bg-neutral-800 text-white font-medium px-3 py-1.5 rounded-full text-xs transition-colors",
+                                button: "bg-white hover:bg-neutral-100 text-neutral-900 font-medium px-5 py-2.5 rounded-full text-sm transition-colors",
                                 allowedContent: "hidden",
                               }}
                             />
-                          </div>
+                          </>
                         )}
                       </div>
                     )}
                   </div>
 
-                  {/* PayNow Number */}
-                  <div>
-                    <label className="block text-ui text-neutral-700 mb-1.5">
-                      PayNow Phone or UEN <span className="text-neutral-400">(optional)</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="paynowNumber"
-                      value={formData.paynowNumber}
-                      onChange={handleChange}
-                      placeholder="e.g., 91234567 or 202312345K"
-                      className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900/50 focus:border-neutral-900 text-neutral-900 placeholder:text-neutral-400"
-                    />
-                    <p className="text-xs text-neutral-500 mt-1">
-                      For attendees who prefer to transfer manually
-                    </p>
-                  </div>
-
-                  {/* Info Box */}
-                  <div className="p-4 bg-green-50 rounded-xl border border-green-100">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-medium text-green-800">PayNow Payments</span>
-                      <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-medium">No fees</span>
+                  {/* Additional Images Section */}
+                  <div className="mt-6">
+                    <div className="flex items-start gap-4">
+                      <div className="w-16 h-16 border-2 border-dashed border-neutral-700 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 rounded bg-neutral-800 flex items-center justify-center">
+                          <ImageIcon className="w-4 h-4 text-neutral-500" />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-neutral-300 text-sm font-medium">Show what makes your event special with photos</p>
+                        <button
+                          type="button"
+                          className="mt-2 flex items-center gap-2 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-sm rounded-full transition-colors"
+                        >
+                          <Plus className="w-4 h-4" />
+                          Add Images
+                        </button>
+                      </div>
                     </div>
-                    <p className="text-sm text-green-700">
-                      Attendees scan your QR code and pay directly to your account. No platform fees!
-                    </p>
                   </div>
                 </div>
-              )}
+              </div>
+
+              {/* Mobile Image Upload */}
+              <div className="lg:hidden">
+                <div className="relative aspect-video bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800">
+                  {imageUrl ? (
+                    <>
+                      <Image
+                        src={imageUrl}
+                        alt="Event preview"
+                        fill
+                        className="object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setImageUrl(null)}
+                        className="absolute top-2 right-2 p-2 bg-neutral-900/80 rounded-full"
+                      >
+                        <X className="w-4 h-4 text-white" />
+                      </button>
+                    </>
+                  ) : (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                      {isUploading ? (
+                        <Loader2 className="w-8 h-8 animate-spin text-neutral-500" />
+                      ) : (
+                        <>
+                          <ImageIcon className="w-8 h-8 text-neutral-600" />
+                          <UploadButton
+                            endpoint="eventImage"
+                            onUploadBegin={() => setIsUploading(true)}
+                            onClientUploadComplete={(res) => {
+                              setIsUploading(false)
+                              if (res?.[0]?.url) setImageUrl(res[0].url)
+                            }}
+                            onUploadError={(error: Error) => {
+                              setIsUploading(false)
+                              setError(`Upload failed: ${error.message}`)
+                            }}
+                            appearance={{
+                              button: "bg-white text-neutral-900 font-medium px-4 py-2 rounded-full text-sm",
+                              allowedContent: "hidden",
+                            }}
+                          />
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
+          </div>
+        </main>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading || isUploading || isUploadingQr}
-              className="w-full bg-neutral-900 text-white py-4 rounded-full font-semibold text-lg hover:bg-neutral-900-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Submitting...
-                </>
-              ) : isUploading || isUploadingQr ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Uploading image...
-                </>
-              ) : (
-                'List my event'
-              )}
-            </button>
-
-            <p className="text-body-xs text-neutral-500 text-center">
-              Free to list. No platform fees. Your event goes live instantly.
-            </p>
-          </form>
-
-          {/* Link to Dashboard */}
-          <div className="mt-8 text-center">
-            <p className="text-body-small text-neutral-600">
-              Already hosting?{' '}
-              <Link href="/host/dashboard" className="text-neutral-900 font-medium hover:underline">
-                Manage your events
-              </Link>
-            </p>
+        {/* Sticky Bottom Publish Bar */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 safe-area-inset-bottom">
+          <div className="bg-neutral-950/95 backdrop-blur-lg border-t border-neutral-800 p-4">
+            <div className="max-w-6xl mx-auto">
+              <button
+                type="submit"
+                disabled={isLoading || isUploading || isUploadingQr}
+                className="w-full bg-white text-neutral-900 py-4 rounded-full font-semibold text-lg hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Publishing...
+                  </>
+                ) : isUploading || isUploadingQr ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  'Publish'
+                )}
+              </button>
+            </div>
           </div>
         </div>
-      </main>
+      </form>
     </div>
   )
 }

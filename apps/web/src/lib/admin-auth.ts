@@ -19,21 +19,32 @@ export function isAdminUser(userId: string | null | undefined): boolean {
 }
 
 // Admin secret for API routes (server-side only)
-// Supports both env var and hardcoded fallback for simple password auth
-const SIMPLE_ADMIN_PASSWORD = 'sweatbuddies2024'
-
+// SECURITY: Requires ADMIN_SECRET env var - no hardcoded fallback
 export function getAdminSecret(): string {
-  return process.env.ADMIN_SECRET || SIMPLE_ADMIN_PASSWORD
+  const secret = process.env.ADMIN_SECRET
+  if (!secret) {
+    console.error('[SECURITY] ADMIN_SECRET env var not set. Admin API access disabled.')
+    return '' // Return empty string - will never match
+  }
+  return secret
 }
 
 // Timing-safe string comparison to prevent timing attacks
 function timingSafeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) {
-    // Still do a comparison to maintain constant time
-    crypto.timingSafeEqual(Buffer.from(a), Buffer.from(a))
-    return false
-  }
-  return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b))
+  // Pad shorter string to match length (constant time regardless of input)
+  const maxLen = Math.max(a.length, b.length)
+  const paddedA = a.padEnd(maxLen, '\0')
+  const paddedB = b.padEnd(maxLen, '\0')
+
+  // Always compare same-length buffers
+  const bufA = Buffer.from(paddedA)
+  const bufB = Buffer.from(paddedB)
+
+  // timingSafeEqual requires same-length buffers
+  const isEqual = crypto.timingSafeEqual(bufA, bufB)
+
+  // Also check original lengths match (after constant-time comparison)
+  return isEqual && a.length === b.length
 }
 
 // Check admin secret header in API routes
@@ -41,18 +52,13 @@ export function isValidAdminSecret(request: Request): boolean {
   const authHeader = request.headers.get('x-admin-secret')
   if (!authHeader) return false
 
-  // Check against env secret
-  const envSecret = process.env.ADMIN_SECRET
-  if (envSecret && timingSafeEqual(authHeader, envSecret)) {
-    return true
+  // SECURITY: Only check against env secret using timing-safe comparison
+  const adminSecret = getAdminSecret()
+  if (!adminSecret) {
+    return false // No secret configured
   }
 
-  // Also accept the simple password
-  if (authHeader === SIMPLE_ADMIN_PASSWORD) {
-    return true
-  }
-
-  return false
+  return timingSafeEqual(authHeader, adminSecret)
 }
 
 // Check if the request is authenticated as admin (supports both Clerk and legacy secret)

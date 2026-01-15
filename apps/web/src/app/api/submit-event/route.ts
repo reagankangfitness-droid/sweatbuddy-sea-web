@@ -21,6 +21,9 @@ function generateSlug(name: string): string {
 }
 
 // Generate unique slug by checking existing ones
+// Note: This function provides a best-effort unique slug, but the actual
+// uniqueness is enforced by the database constraint. The caller should
+// handle unique constraint violations and retry if needed.
 async function generateUniqueSlug(eventName: string): Promise<string> {
   const baseSlug = generateSlug(eventName)
   let slug = baseSlug
@@ -33,6 +36,48 @@ async function generateUniqueSlug(eventName: string): Promise<string> {
   }
 
   return slug
+}
+
+// Create event with retry on slug collision
+async function createEventWithUniqueSlug(
+  data: Parameters<typeof prisma.eventSubmission.create>[0]['data'],
+  eventName: string,
+  maxRetries = 3
+): Promise<ReturnType<typeof prisma.eventSubmission.create>> {
+  let lastError: Error | null = null
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      // Generate a new slug (with random suffix on retry)
+      let slug = await generateUniqueSlug(eventName)
+      if (attempt > 0) {
+        // Add random suffix on retry to avoid collision
+        slug = `${slug}-${Date.now().toString(36).slice(-4)}`
+      }
+
+      return await prisma.eventSubmission.create({
+        data: {
+          ...data,
+          slug,
+        },
+      })
+    } catch (error) {
+      lastError = error as Error
+      // Check if this is a unique constraint violation on slug
+      const isSlugConflict =
+        error instanceof Error &&
+        error.message.includes('Unique constraint') &&
+        error.message.includes('slug')
+
+      if (!isSlugConflict) {
+        throw error // Re-throw non-slug errors
+      }
+      // Otherwise, retry with a new slug
+      console.log(`Slug collision on attempt ${attempt + 1}, retrying...`)
+    }
+  }
+
+  throw lastError || new Error('Failed to create event after max retries')
 }
 
 interface EventSubmission {
@@ -157,9 +202,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // Generate URL-friendly slug for shareable links
-    const slug = await generateUniqueSlug(data.eventName)
-
     // === HYBRID MODERATION SYSTEM ===
     // 1. Check if host is trusted (has previous approved events)
     // 2. If new host, check keyword blocklist
@@ -213,11 +255,10 @@ export async function POST(request: Request) {
       }
     }
 
-    // Save to database
-    const submission = await prisma.eventSubmission.create({
-      data: {
+    // Save to database with unique slug (handles race conditions)
+    const submission = await createEventWithUniqueSlug(
+      {
         eventName: data.eventName,
-        slug,
         category: data.category,
         day: data.day,
         eventDate: data.eventDate ? new Date(data.eventDate) : null,
@@ -246,7 +287,8 @@ export async function POST(request: Request) {
         // Link to user account
         submittedByUserId: dbUserId,
       },
-    })
+      data.eventName
+    )
 
     // Send confirmation email to host (fire and forget)
     sendEventSubmittedEmail({

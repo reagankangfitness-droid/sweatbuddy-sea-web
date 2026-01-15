@@ -1,21 +1,18 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { cookies } from 'next/headers'
+import { getOrganizerSession } from '@/lib/organizer-session'
 
 // Get all conversations for the organizer
 export async function GET() {
   try {
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get('organizer_session')
+    const session = await getOrganizerSession()
 
-    if (!sessionCookie) {
+    if (!session) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
       )
     }
-
-    const session = JSON.parse(sessionCookie.value)
 
     // Find organizer in DB
     const organizer = await prisma.organizer.findUnique({

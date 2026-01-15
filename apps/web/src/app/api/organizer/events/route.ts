@@ -1,22 +1,20 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { cookies } from 'next/headers'
+import { getOrganizerSession } from '@/lib/organizer-session'
 import eventsData from '@/data/events.json'
 
 // Get organizer's events
 export async function GET() {
   try {
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get('organizer_session')
+    const session = await getOrganizerSession()
 
-    if (!sessionCookie) {
+    if (!session) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
       )
     }
 
-    const session = JSON.parse(sessionCookie.value)
     const instagramHandle = session.instagramHandle
 
     // Find events where organizer matches (from static data and submissions)

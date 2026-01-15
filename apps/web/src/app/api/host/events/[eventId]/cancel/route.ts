@@ -73,19 +73,32 @@ export async function POST(
       },
     })
 
-    // Update event status to CANCELLED
-    await prisma.eventSubmission.update({
-      where: { id: eventId },
-      data: {
-        status: 'CANCELLED',
-        cancelledAt: new Date(),
-        cancelledBy: session.instagramHandle,
-        cancellationReason: reason || null,
-      },
+    // Use transaction to ensure atomicity of cancellation operations
+    await prisma.$transaction(async (tx) => {
+      // Update event status to CANCELLED
+      await tx.eventSubmission.update({
+        where: { id: eventId },
+        data: {
+          status: 'CANCELLED',
+          cancelledAt: new Date(),
+          cancelledBy: session.instagramHandle,
+          cancellationReason: reason || null,
+        },
+      })
+
+      // Delete all pending reminders for this event within transaction
+      await tx.eventReminder.deleteMany({
+        where: {
+          eventId,
+          status: 'PENDING',
+        },
+      })
     })
 
-    // Cancel all pending reminders for this event
-    await cancelRemindersForEvent(eventId)
+    // Cancel any additional reminders (this is idempotent, safe outside transaction)
+    await cancelRemindersForEvent(eventId).catch(err => {
+      console.error('Error cancelling additional reminders:', err)
+    })
 
     // Send cancellation emails to all attendees
     let emailsSent = 0

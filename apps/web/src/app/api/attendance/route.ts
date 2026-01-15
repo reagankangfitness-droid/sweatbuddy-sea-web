@@ -245,10 +245,19 @@ export async function GET(request: Request) {
       })
     }
 
-    // Return all attendance records
-    const allAttendees = await prisma.eventAttendance.findMany({
-      orderBy: { timestamp: 'desc' },
-    })
+    // Return attendance records with pagination
+    const page = parseInt(searchParams.get('page') || '1', 10)
+    const limit = Math.min(parseInt(searchParams.get('limit') || '100', 10), 500) // Max 500 per page
+    const skip = (page - 1) * limit
+
+    const [allAttendees, totalCount] = await Promise.all([
+      prisma.eventAttendance.findMany({
+        orderBy: { timestamp: 'desc' },
+        take: limit,
+        skip: skip,
+      }),
+      prisma.eventAttendance.count(),
+    ])
 
     return NextResponse.json({
       attendees: allAttendees.map((a) => ({
@@ -262,6 +271,12 @@ export async function GET(request: Request) {
         timestamp: a.timestamp.toISOString(),
         confirmed: a.confirmed,
       })),
+      pagination: {
+        page,
+        limit,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+      },
     })
   } catch (error) {
     console.error('Get attendees error:', error)

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { cookies } from 'next/headers'
+import { getOrganizerSession } from '@/lib/organizer-session'
 import eventsData from '@/data/events.json'
 
 // Helper to get organizer handle for an event
@@ -32,18 +32,16 @@ export async function GET(
     const { searchParams } = new URL(request.url)
     const attendeeEmail = searchParams.get('email')
 
-    // Check if organizer is making this request
-    const cookieStore = await cookies()
-    const organizerSession = cookieStore.get('organizer_session')
+    // Check if organizer is making this request (with signature verification)
+    const organizerSession = await getOrganizerSession()
 
     let isOrganizer = false
     let organizerId: string | null = null
     let queryEmail = attendeeEmail
 
     if (organizerSession) {
-      const session = JSON.parse(organizerSession.value)
       const organizer = await prisma.organizer.findUnique({
-        where: { id: session.id },
+        where: { id: organizerSession.id },
       })
 
       if (organizer) {
@@ -234,15 +232,13 @@ export async function POST(
       )
     }
 
-    // Check if organizer is making this request
-    const cookieStore = await cookies()
-    const organizerSession = cookieStore.get('organizer_session')
+    // Check if organizer is making this request (with signature verification)
+    const session = await getOrganizerSession()
 
     let isOrganizer = false
     let organizer: { id: string; instagramHandle: string; name: string | null } | null = null
 
-    if (organizerSession) {
-      const session = JSON.parse(organizerSession.value)
+    if (session) {
       const org = await prisma.organizer.findUnique({
         where: { id: session.id },
       })

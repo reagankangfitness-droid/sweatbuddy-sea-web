@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { cookies } from 'next/headers'
+import { getOrganizerSession } from '@/lib/organizer-session'
 
 // Get single event details for editing
 export async function GET(
@@ -9,15 +9,11 @@ export async function GET(
 ) {
   try {
     const { eventId } = await params
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get('organizer_session')
+    const session = await getOrganizerSession()
 
-    if (!sessionCookie) {
+    if (!session) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
-
-    const session = JSON.parse(sessionCookie.value)
-    const instagramHandle = session.instagramHandle
 
     // Find the submission
     const submission = await prisma.eventSubmission.findUnique({
@@ -29,7 +25,7 @@ export async function GET(
     }
 
     // Verify ownership
-    if (submission.organizerInstagram.toLowerCase() !== instagramHandle.toLowerCase()) {
+    if (submission.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
@@ -69,15 +65,11 @@ export async function PUT(
 ) {
   try {
     const { eventId } = await params
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get('organizer_session')
+    const session = await getOrganizerSession()
 
-    if (!sessionCookie) {
+    if (!session) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
-
-    const session = JSON.parse(sessionCookie.value)
-    const instagramHandle = session.instagramHandle
 
     // Find the submission
     const submission = await prisma.eventSubmission.findUnique({
@@ -89,7 +81,7 @@ export async function PUT(
     }
 
     // Verify ownership
-    if (submission.organizerInstagram.toLowerCase() !== instagramHandle.toLowerCase()) {
+    if (submission.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
@@ -150,15 +142,11 @@ export async function DELETE(
 ) {
   try {
     const { eventId } = await params
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get('organizer_session')
+    const session = await getOrganizerSession()
 
-    if (!sessionCookie) {
+    if (!session) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
-
-    const session = JSON.parse(sessionCookie.value)
-    const instagramHandle = session.instagramHandle
 
     // Find the submission
     const submission = await prisma.eventSubmission.findUnique({
@@ -170,7 +158,7 @@ export async function DELETE(
     }
 
     // Verify ownership
-    if (submission.organizerInstagram.toLowerCase() !== instagramHandle.toLowerCase()) {
+    if (submission.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 

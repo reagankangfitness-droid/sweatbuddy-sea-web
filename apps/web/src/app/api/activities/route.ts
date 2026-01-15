@@ -201,8 +201,8 @@ export async function GET(request: Request) {
           select: {
             id: true,
             name: true,
-            email: true,
             imageUrl: true,
+            // Note: email intentionally excluded from public API for privacy
           },
         },
         userActivities: {

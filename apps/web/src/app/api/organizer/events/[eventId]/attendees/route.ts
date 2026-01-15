@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { cookies } from 'next/headers'
+import { getOrganizerSession } from '@/lib/organizer-session'
 
 export async function GET(
   request: Request,
@@ -10,10 +10,9 @@ export async function GET(
     const { eventId } = await params
 
     // Check organizer session
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get('organizer_session')
+    const session = await getOrganizerSession()
 
-    if (!sessionCookie) {
+    if (!session) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
@@ -27,7 +26,6 @@ export async function GET(
     })
 
     // Get conversation status for each attendee
-    const session = JSON.parse(sessionCookie.value)
     const organizer = await prisma.organizer.findUnique({
       where: { id: session.id },
     })

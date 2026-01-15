@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { cookies } from 'next/headers'
 import { auth, currentUser } from '@clerk/nextjs/server'
+import { setOrganizerSession, getOrganizerSession, clearOrganizerSession } from '@/lib/organizer-session'
 
 export async function GET(request: Request) {
   try {
@@ -53,19 +54,12 @@ export async function GET(request: Request) {
       data: { usedAt: new Date() },
     })
 
-    // Set organizer session cookie
-    const cookieStore = await cookies()
-    cookieStore.set('organizer_session', JSON.stringify({
+    // Set secure organizer session cookie
+    await setOrganizerSession({
       id: organizer.id,
       email: organizer.email,
       instagramHandle: organizer.instagramHandle,
       name: organizer.name,
-    }), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60, // 7 days
-      path: '/',
     })
 
     return NextResponse.json({
@@ -167,18 +161,15 @@ export async function POST() {
       )
     }
 
-    // Fall back to legacy cookie-based session
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get('organizer_session')
+    // Fall back to legacy cookie-based session (with signature verification)
+    const session = await getOrganizerSession()
 
-    if (!sessionCookie) {
+    if (!session) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
       )
     }
-
-    const session = JSON.parse(sessionCookie.value)
 
     // Verify organizer still exists
     const organizer = await prisma.organizer.findUnique({
@@ -187,7 +178,7 @@ export async function POST() {
 
     if (!organizer) {
       // Clear invalid session
-      cookieStore.delete('organizer_session')
+      await clearOrganizerSession()
       return NextResponse.json(
         { error: 'Session invalid' },
         { status: 401 }
@@ -217,9 +208,7 @@ export async function POST() {
 // Logout
 export async function DELETE() {
   try {
-    const cookieStore = await cookies()
-    cookieStore.delete('organizer_session')
-
+    await clearOrganizerSession()
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Logout error:', error)

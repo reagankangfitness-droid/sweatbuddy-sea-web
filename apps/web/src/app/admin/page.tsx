@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { format, subDays, startOfDay, eachDayOfInterval } from 'date-fns'
 import {
   Calendar,
@@ -61,6 +62,7 @@ interface Stats {
 const COLORS = ['#E07A5F', '#2A9D8F', '#F4A261', '#264653', '#A84A36']
 
 export default function AdminDashboardPage() {
+  const { getToken, isLoaded } = useAuth()
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [attendees, setAttendees] = useState<Attendee[]>([])
@@ -75,16 +77,15 @@ export default function AdminDashboardPage() {
     optInRate: 0,
   })
 
-  useEffect(() => {
-    fetchData()
-  }, [])
+  const fetchData = useCallback(async () => {
+    if (!isLoaded) return
 
-  const fetchData = async () => {
     setLoading(true)
     try {
-      const headers = {
-        'x-admin-secret': 'sweatbuddies2024',
-        'Content-Type': 'application/json'
+      const token = await getToken()
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       }
       const [attendeesRes, subscribersRes] = await Promise.all([
         fetch('/api/attendance', { headers }),
@@ -127,7 +128,11 @@ export default function AdminDashboardPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [getToken, isLoaded])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const handleRefresh = async () => {
     setRefreshing(true)

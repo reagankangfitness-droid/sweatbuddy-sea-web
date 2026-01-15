@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "installCommand": "cd ../.. && pnpm install --filter sweatbuddies-web...",
+  "installCommand": "npm install",
   "buildCommand": "prisma generate && next build",
   "outputDirectory": ".next",
   "crons": [

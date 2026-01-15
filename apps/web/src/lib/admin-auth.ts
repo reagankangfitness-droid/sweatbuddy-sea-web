@@ -64,17 +64,14 @@ export function isValidAdminSecret(request: Request): boolean {
 // Check if the request is authenticated as admin (supports both Clerk and legacy secret)
 // This is for API routes only (server-side)
 export async function isAdminRequest(request: Request): Promise<boolean> {
-  // First check for Clerk Bearer token
-  const authHeader = request.headers.get('Authorization')
-  if (authHeader?.startsWith('Bearer ')) {
-    try {
-      const { userId } = await auth()
-      if (userId && isAdminUser(userId)) {
-        return true
-      }
-    } catch {
-      // Clerk auth failed, try legacy method
+  // First, always try Clerk session auth (works via cookies sent with browser requests)
+  try {
+    const { userId } = await auth()
+    if (userId && isAdminUser(userId)) {
+      return true
     }
+  } catch {
+    // Clerk auth failed, try legacy method
   }
 
   // Fall back to legacy admin secret check

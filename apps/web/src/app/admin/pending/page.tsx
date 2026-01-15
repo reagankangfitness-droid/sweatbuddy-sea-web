@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import {
@@ -30,25 +31,26 @@ interface PendingEvent {
   imageUrl?: string
 }
 
-const getAuthHeaders = () => ({
-  'x-admin-secret': 'sweatbuddies2024',
-  'Content-Type': 'application/json'
-})
-
 export default function PendingEventsPage() {
+  const { getToken, isLoaded } = useAuth()
   const [events, setEvents] = useState<PendingEvent[]>([])
   const [loading, setLoading] = useState(true)
   const [processingId, setProcessingId] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchPendingEvents()
-  }, [])
+  const getAuthHeaders = useCallback(async (): Promise<HeadersInit> => {
+    const token = await getToken()
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    }
+  }, [getToken])
 
-  const fetchPendingEvents = async () => {
+  const fetchPendingEvents = useCallback(async () => {
+    if (!isLoaded) return
     setLoading(true)
     try {
       const res = await fetch('/api/admin/event-submissions?status=PENDING', {
-        headers: getAuthHeaders(),
+        headers: await getAuthHeaders(),
       })
       if (res.ok) {
         const data = await res.json()
@@ -60,14 +62,18 @@ export default function PendingEventsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [isLoaded, getAuthHeaders])
+
+  useEffect(() => {
+    fetchPendingEvents()
+  }, [fetchPendingEvents])
 
   const handleApprove = async (eventId: string) => {
     setProcessingId(eventId)
     try {
       const res = await fetch(`/api/admin/event-submissions/${eventId}`, {
         method: 'PATCH',
-        headers: getAuthHeaders(),
+        headers: await getAuthHeaders(),
         body: JSON.stringify({ status: 'APPROVED' })
       })
 
@@ -89,7 +95,7 @@ export default function PendingEventsPage() {
     try {
       const res = await fetch(`/api/admin/event-submissions/${eventId}`, {
         method: 'PATCH',
-        headers: getAuthHeaders(),
+        headers: await getAuthHeaders(),
         body: JSON.stringify({ status: 'REJECTED' })
       })
 

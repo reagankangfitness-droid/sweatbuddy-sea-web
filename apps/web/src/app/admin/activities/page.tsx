@@ -32,11 +32,6 @@ interface Activity {
   }
 }
 
-const getAuthHeaders = () => ({
-  'x-admin-secret': 'sweatbuddies2024',
-  'Content-Type': 'application/json'
-})
-
 export default function AdminActivitiesPage() {
   const [activities, setActivities] = useState<Activity[]>([])
   const [loading, setLoading] = useState(true)

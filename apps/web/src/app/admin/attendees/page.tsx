@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import {
@@ -34,12 +35,8 @@ interface NewsletterSubscriber {
   source: string
 }
 
-const getAuthHeaders = () => ({
-  'x-admin-secret': 'sweatbuddies2024',
-  'Content-Type': 'application/json'
-})
-
 export default function AdminAttendeesPage() {
+  const { getToken, isLoaded } = useAuth()
   const [activeTab, setActiveTab] = useState<'attendees' | 'newsletter'>('attendees')
   const [attendees, setAttendees] = useState<Attendee[]>([])
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([])
@@ -48,19 +45,17 @@ export default function AdminAttendeesPage() {
   const [selectedEvent, setSelectedEvent] = useState<string>('all')
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchData()
-  }, [])
+  const getAuthHeaders = useCallback(async (): Promise<HeadersInit> => {
+    const token = await getToken()
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    }
+  }, [getToken])
 
-  const fetchData = async () => {
-    setLoading(true)
-    await Promise.all([fetchAttendees(), fetchSubscribers()])
-    setLoading(false)
-  }
-
-  const fetchAttendees = async () => {
+  const fetchAttendees = useCallback(async () => {
     try {
-      const response = await fetch('/api/attendance', { headers: getAuthHeaders() })
+      const response = await fetch('/api/attendance', { headers: await getAuthHeaders() })
       if (response.ok) {
         const data = await response.json()
         setAttendees(data.attendees || [])
@@ -68,11 +63,11 @@ export default function AdminAttendeesPage() {
     } catch {
       toast.error('Failed to fetch attendees')
     }
-  }
+  }, [getAuthHeaders])
 
-  const fetchSubscribers = async () => {
+  const fetchSubscribers = useCallback(async () => {
     try {
-      const response = await fetch('/api/newsletter/subscribers', { headers: getAuthHeaders() })
+      const response = await fetch('/api/newsletter/subscribers', { headers: await getAuthHeaders() })
       if (response.ok) {
         const data = await response.json()
         setSubscribers(data.subscribers || [])
@@ -80,7 +75,18 @@ export default function AdminAttendeesPage() {
     } catch {
       // Newsletter endpoint might not exist yet, ignore
     }
-  }
+  }, [getAuthHeaders])
+
+  const fetchData = useCallback(async () => {
+    if (!isLoaded) return
+    setLoading(true)
+    await Promise.all([fetchAttendees(), fetchSubscribers()])
+    setLoading(false)
+  }, [isLoaded, fetchAttendees, fetchSubscribers])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   // Get unique events for filter
   const uniqueEvents = Array.from(new Set(attendees.map(a => a.eventName)))

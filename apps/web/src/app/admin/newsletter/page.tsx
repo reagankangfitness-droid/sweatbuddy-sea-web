@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import {
@@ -21,25 +22,26 @@ interface NewsletterSubscriber {
   source: string
 }
 
-const getAuthHeaders = () => ({
-  'x-admin-secret': 'sweatbuddies2024',
-  'Content-Type': 'application/json'
-})
-
 export default function NewsletterPage() {
+  const { getToken, isLoaded } = useAuth()
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedSource, setSelectedSource] = useState<string>('all')
 
-  useEffect(() => {
-    fetchSubscribers()
-  }, [])
+  const getAuthHeaders = useCallback(async (): Promise<HeadersInit> => {
+    const token = await getToken()
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    }
+  }, [getToken])
 
-  const fetchSubscribers = async () => {
+  const fetchSubscribers = useCallback(async () => {
+    if (!isLoaded) return
     try {
       const response = await fetch('/api/newsletter/subscribers', {
-        headers: getAuthHeaders(),
+        headers: await getAuthHeaders(),
       })
       if (response.ok) {
         const data = await response.json()
@@ -50,7 +52,11 @@ export default function NewsletterPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [isLoaded, getAuthHeaders])
+
+  useEffect(() => {
+    fetchSubscribers()
+  }, [fetchSubscribers])
 
   // Get unique sources
   const sources = Array.from(new Set(subscribers.map(s => s.source || 'unknown')))

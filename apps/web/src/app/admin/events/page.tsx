@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import Image from 'next/image'
 import { format } from 'date-fns'
@@ -61,6 +62,7 @@ const categories = [
 ]
 
 export default function AdminEventsPage() {
+  const { getToken, isLoaded } = useAuth()
   const [activeTab, setActiveTab] = useState<'live' | 'pending'>('live')
   const [events, setEvents] = useState<Event[]>([])
   const [submissions, setSubmissions] = useState<Submission[]>([])
@@ -69,26 +71,17 @@ export default function AdminEventsPage() {
   const [processingId, setProcessingId] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
 
-  useEffect(() => {
-    fetchData()
-  }, [])
-
-  const getAuthHeaders = () => {
+  const getAuthHeaders = useCallback(async (): Promise<HeadersInit> => {
+    const token = await getToken()
     return {
-      'x-admin-secret': 'sweatbuddies2024',
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
     }
-  }
+  }, [getToken])
 
-  const fetchData = async () => {
-    setLoading(true)
-    await Promise.all([fetchEvents(), fetchSubmissions()])
-    setLoading(false)
-  }
-
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
-      const headers = getAuthHeaders()
+      const headers = await getAuthHeaders()
       const response = await fetch('/api/admin/events', { headers })
       if (response.ok) {
         const data = await response.json()
@@ -97,11 +90,11 @@ export default function AdminEventsPage() {
     } catch {
       toast.error('Failed to fetch events')
     }
-  }
+  }, [getAuthHeaders])
 
-  const fetchSubmissions = async () => {
+  const fetchSubmissions = useCallback(async () => {
     try {
-      const headers = getAuthHeaders()
+      const headers = await getAuthHeaders()
       const response = await fetch('/api/admin/event-submissions?status=PENDING', { headers })
       if (response.ok) {
         const data = await response.json()
@@ -110,13 +103,24 @@ export default function AdminEventsPage() {
     } catch {
       toast.error('Failed to fetch submissions')
     }
-  }
+  }, [getAuthHeaders])
+
+  const fetchData = useCallback(async () => {
+    if (!isLoaded) return
+    setLoading(true)
+    await Promise.all([fetchEvents(), fetchSubmissions()])
+    setLoading(false)
+  }, [isLoaded, fetchEvents, fetchSubmissions])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const handleDelete = async (event: Event) => {
     if (!confirm(`Are you sure you want to delete "${event.name}"?`)) return
 
     try {
-      const headers = getAuthHeaders()
+      const headers = await getAuthHeaders()
       const response = await fetch(`/api/admin/events/${event.id}`, {
         method: 'DELETE',
         headers,
@@ -138,7 +142,7 @@ export default function AdminEventsPage() {
     if (!editingEvent) return
 
     try {
-      const headers = getAuthHeaders()
+      const headers = await getAuthHeaders()
       const response = await fetch(`/api/admin/events/${editingEvent.id}`, {
         method: 'PUT',
         headers,
@@ -161,7 +165,7 @@ export default function AdminEventsPage() {
   const handleSubmissionAction = async (submissionId: string, action: 'approve' | 'reject') => {
     try {
       setProcessingId(submissionId)
-      const headers = getAuthHeaders()
+      const headers = await getAuthHeaders()
 
       const response = await fetch(`/api/admin/event-submissions/${submissionId}`, {
         method: 'PATCH',

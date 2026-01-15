@@ -1,8 +1,8 @@
 'use client'
 
-import dynamic from 'next/dynamic'
+import { Suspense, Component, ReactNode } from 'react'
 import { Loader2 } from 'lucide-react'
-import { Component, ReactNode } from 'react'
+import HostForm from '@/components/host/HostForm'
 
 // Error boundary for host page
 class HostErrorBoundary extends Component<
@@ -60,36 +60,20 @@ class HostErrorBoundary extends Component<
   }
 }
 
-// Dynamically import the form to prevent SSR/hydration issues with Google Maps
-const HostForm = dynamic(
-  () => import('@/components/host/HostForm').catch((err) => {
-    console.error('Failed to load HostForm:', err)
-    // Return a simple error component if dynamic import fails
-    return {
-      default: () => (
-        <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-red-600">Failed to load form component</p>
-            <p className="text-sm text-neutral-500 mt-2">{err?.message}</p>
-          </div>
-        </div>
-      ),
-    }
-  }),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
-      </div>
-    ),
-  }
-)
+function LoadingSpinner() {
+  return (
+    <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+      <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+    </div>
+  )
+}
 
 export default function HostApplicationPage() {
   return (
     <HostErrorBoundary>
-      <HostForm />
+      <Suspense fallback={<LoadingSpinner />}>
+        <HostForm />
+      </Suspense>
     </HostErrorBoundary>
   )
 }

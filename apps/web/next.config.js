@@ -1,19 +1,5 @@
-const path = require('path')
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Force single React instance to prevent hook errors
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        react: path.resolve('./node_modules/react'),
-        'react-dom': path.resolve('./node_modules/react-dom'),
-      }
-    }
-    return config
-  },
-
   // Ignore ESLint warnings during build (fix later)
   eslint: {
     ignoreDuringBuilds: true,

@@ -20,6 +20,7 @@
     "deploy:prod": "vercel link --yes --scope reagankangfitness-droids-projects --project web && vercel --prod"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
     "@clerk/nextjs": "^6.35.1",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "^5.22.0",

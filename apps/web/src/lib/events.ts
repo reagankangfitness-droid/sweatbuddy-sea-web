@@ -103,11 +103,10 @@ export function generateSlug(name: string): string {
 }
 
 // Helper to check if an event should be shown
-// - Recurring events: ALWAYS show (they repeat weekly, eventDate is just an anchor)
-// - One-time events: Only show if within 7-day window from today
+// - Recurring events: ALWAYS show (they repeat weekly)
+// - One-time events: Show all future events (filtering happens on frontend via tabs)
 function isUpcomingEvent(eventDate: Date | null, recurring: boolean): boolean {
   // RECURRING EVENTS: Always show - they happen every week on their designated day
-  // The eventDate field is just when the event was created/anchored, not an expiration
   if (recurring) return true
 
   // Events without a date - show them (legacy data)
@@ -118,11 +117,9 @@ function isUpcomingEvent(eventDate: Date | null, recurring: boolean): boolean {
   const eventDay = new Date(eventDate)
   eventDay.setHours(0, 0, 0, 0)
 
-  // ONE-TIME EVENTS: Only show if within 7-day window (today to 7 days from now)
-  const sevenDaysFromNow = new Date(today)
-  sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7)
-
-  return eventDay >= today && eventDay <= sevenDaysFromNow
+  // ONE-TIME EVENTS: Show all future events (today and onwards)
+  // Frontend will filter by date tabs (Today, Tomorrow, This weekend, Next week, etc.)
+  return eventDay >= today
 }
 
 // Cached database fetch for events - revalidates every 60s
@@ -210,7 +207,7 @@ const getCachedEvents = unstable_cache(
       paynowNumber: submission.paynowNumber,
     }))
   },
-  ['events-list-home-v2'], // New cache key to invalidate old cache
+  ['events-list-home-v3'], // Updated cache key - now returns all future events
   { revalidate: 60, tags: ['events'] }
 )
 

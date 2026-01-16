@@ -41,10 +41,10 @@ export default function ProfilePage() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex items-center justify-center">
         <div className="animate-pulse">
-          <div className="w-20 h-20 bg-neutral-100 rounded-full mb-4" />
-          <div className="h-4 bg-neutral-100 rounded-lg w-32 mx-auto" />
+          <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-800 rounded-full mb-4" />
+          <div className="h-4 bg-neutral-100 dark:bg-neutral-800 rounded-lg w-32 mx-auto" />
         </div>
       </div>
     )
@@ -53,18 +53,18 @@ export default function ProfilePage() {
   // Not signed in - show sign in prompt
   if (!isSignedIn) {
     return (
-      <div className="min-h-screen bg-neutral-50">
+      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
         {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="flex items-center gap-4 px-4 py-3">
               <Link
                 href="/"
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
               >
-                <ArrowLeft className="w-5 h-5 text-neutral-700" />
+                <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
               </Link>
-              <h1 className="text-display-card">Profile</h1>
+              <h1 className="text-lg font-semibold text-neutral-900 dark:text-white">Profile</h1>
             </div>
           </div>
         </header>
@@ -72,29 +72,29 @@ export default function ProfilePage() {
         {/* Content */}
         <main className="pt-24 pb-24 px-4">
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-2xl border border-neutral-100 shadow-card mb-6">
-              <User className="w-12 h-12 text-neutral-300" />
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-100 dark:border-neutral-700 shadow-card mb-6">
+              <User className="w-12 h-12 text-neutral-300 dark:text-neutral-600" />
             </div>
-            <h2 className="text-display-section mb-2">Join SweatBuddies</h2>
-            <p className="text-body-default mb-8 max-w-xs mx-auto">
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Join SweatBuddies</h2>
+            <p className="text-neutral-600 dark:text-neutral-400 mb-8 max-w-xs mx-auto">
               Sign in to save events, track your fitness journey, and connect with your workout crew.
             </p>
 
             <SignInButton mode="modal">
-              <button className="w-full max-w-xs bg-neutral-900 py-4 text-base font-semibold rounded-full shadow-md hover:bg-neutral-700 transition-colors" style={{ color: '#FFFFFF' }}>
+              <button className="w-full max-w-xs bg-neutral-900 dark:bg-white py-4 text-base font-semibold rounded-full shadow-md hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors text-white dark:text-neutral-900">
                 Sign In / Sign Up
               </button>
             </SignInButton>
 
-            {/* Stats Preview - Neutral numbers */}
+            {/* Stats Preview */}
             <div className="mt-12 grid grid-cols-2 gap-4 max-w-xs mx-auto">
-              <div className="bg-white p-4 rounded-2xl border border-neutral-100 shadow-card text-center">
-                <span className="text-stat-sm block">{savedCount}</span>
-                <span className="text-label-sm text-neutral-500">SAVED</span>
+              <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card text-center">
+                <span className="text-2xl font-semibold text-neutral-900 dark:text-white block">{savedCount}</span>
+                <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">SAVED</span>
               </div>
-              <div className="bg-white p-4 rounded-2xl border border-neutral-100 shadow-card text-center">
-                <span className="text-stat-sm block">{goingCount}</span>
-                <span className="text-label-sm text-neutral-500">GOING</span>
+              <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card text-center">
+                <span className="text-2xl font-semibold text-neutral-900 dark:text-white block">{goingCount}</span>
+                <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">GOING</span>
               </div>
             </div>
           </div>
@@ -107,18 +107,18 @@ export default function ProfilePage() {
 
   // Signed in - show profile
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center gap-4 px-4 py-3">
             <Link
               href="/"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
             >
-              <ArrowLeft className="w-5 h-5 text-neutral-700" />
+              <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
             </Link>
-            <h1 className="text-display-card">Profile</h1>
+            <h1 className="text-lg font-semibold text-neutral-900 dark:text-white">Profile</h1>
           </div>
         </div>
       </header>
@@ -126,9 +126,9 @@ export default function ProfilePage() {
       {/* Content */}
       <main className="pt-24 pb-24 px-4">
         {/* Profile Card */}
-        <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 mb-6">
+        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card p-6 mb-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-neutral-100 bg-neutral-50">
+            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-neutral-100 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800">
               {user?.imageUrl ? (
                 <Image
                   src={user.imageUrl}
@@ -139,76 +139,76 @@ export default function ProfilePage() {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <User className="w-8 h-8 text-neutral-300" />
+                  <User className="w-8 h-8 text-neutral-300 dark:text-neutral-600" />
                 </div>
               )}
             </div>
             <div>
-              <h2 className="text-display-card">
+              <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
                 {user?.fullName || user?.firstName || 'SweatBuddy'}
               </h2>
-              <p className="text-meta-sm">{user?.primaryEmailAddress?.emailAddress}</p>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">{user?.primaryEmailAddress?.emailAddress}</p>
             </div>
           </div>
         </div>
 
-        {/* Stats - Neutral icons */}
+        {/* Stats */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           <Link
             href="/saved"
-            className="bg-white p-4 rounded-2xl border border-neutral-100 shadow-card text-center block"
+            className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card text-center block"
           >
-            <Heart className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
-            <span className="text-stat-sm block">{savedCount}</span>
-            <span className="text-label-sm text-neutral-500">SAVED</span>
+            <Heart className="w-6 h-6 text-neutral-400 dark:text-neutral-500 mx-auto mb-2" />
+            <span className="text-2xl font-semibold text-neutral-900 dark:text-white block">{savedCount}</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">SAVED</span>
           </Link>
-          <div className="bg-white p-4 rounded-2xl border border-neutral-100 shadow-card text-center">
-            <Calendar className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
-            <span className="text-stat-sm block">{goingCount}</span>
-            <span className="text-label-sm text-neutral-500">GOING</span>
+          <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card text-center">
+            <Calendar className="w-6 h-6 text-neutral-400 dark:text-neutral-500 mx-auto mb-2" />
+            <span className="text-2xl font-semibold text-neutral-900 dark:text-white block">{goingCount}</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">GOING</span>
           </div>
         </div>
 
-        {/* Menu Items - Neutral icons */}
-        <div className="bg-white rounded-2xl border border-neutral-100 shadow-card overflow-hidden">
+        {/* Menu Items */}
+        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card overflow-hidden">
           <Link
             href="/host/dashboard"
-            className="flex items-center justify-between px-4 py-4 border-b border-neutral-100"
+            className="flex items-center justify-between px-4 py-4 border-b border-neutral-100 dark:border-neutral-800"
           >
-            <span className="flex items-center gap-3 text-neutral-800 text-ui">
-              <Calendar className="w-5 h-5 text-neutral-400" />
+            <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
+              <Calendar className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
               Host Dashboard
             </span>
-            <ChevronRight className="w-5 h-5 text-neutral-300" />
+            <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
           </Link>
 
           <Link
             href="/saved"
-            className="flex items-center justify-between px-4 py-4 border-b border-neutral-100"
+            className="flex items-center justify-between px-4 py-4 border-b border-neutral-100 dark:border-neutral-800"
           >
-            <span className="flex items-center gap-3 text-neutral-800 text-ui">
-              <Heart className="w-5 h-5 text-neutral-400" />
+            <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
+              <Heart className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
               Saved Events
             </span>
-            <ChevronRight className="w-5 h-5 text-neutral-300" />
+            <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
           </Link>
 
           <Link
             href="/settings/profile"
-            className="flex items-center justify-between px-4 py-4 border-b border-neutral-100"
+            className="flex items-center justify-between px-4 py-4 border-b border-neutral-100 dark:border-neutral-800"
           >
-            <span className="flex items-center gap-3 text-neutral-800 text-ui">
-              <Settings className="w-5 h-5 text-neutral-400" />
+            <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
+              <Settings className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
               Settings
             </span>
-            <ChevronRight className="w-5 h-5 text-neutral-300" />
+            <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
           </Link>
 
           <button
             onClick={() => signOut(() => router.push('/'))}
-            className="w-full flex items-center justify-between px-4 py-4 text-neutral-900"
+            className="w-full flex items-center justify-between px-4 py-4 text-neutral-900 dark:text-neutral-200"
           >
-            <span className="flex items-center gap-3 text-ui">
+            <span className="flex items-center gap-3 text-sm font-medium">
               <LogOut className="w-5 h-5" />
               Sign Out
             </span>

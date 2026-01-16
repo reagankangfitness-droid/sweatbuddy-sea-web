@@ -45,12 +45,12 @@ export function MobileEventsSection({ events }: Props) {
       />
 
       {/* Divider */}
-      <div className="h-px bg-neutral-200 mx-4 my-6" />
+      <div className="h-px bg-neutral-200 dark:bg-neutral-700 mx-4 my-6" />
 
       {/* Section Header */}
       <div className="px-4 mb-4">
-        <h2 className="font-sans text-xl font-bold text-neutral-900">This Week</h2>
-        <p className="text-sm text-neutral-500">{getWeekDateRange()}</p>
+        <h2 className="font-sans text-xl font-bold text-neutral-900 dark:text-white">This Week</h2>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">{getWeekDateRange()}</p>
       </div>
 
       {/* Event List - No filters */}
@@ -74,8 +74,8 @@ export function MobileEventsSection({ events }: Props) {
 
       {/* More events prompt */}
       <div className="px-4 mt-6">
-        <div className="bg-white p-4 text-center rounded-2xl border border-neutral-100 shadow-card">
-          <p className="text-sm text-neutral-600">
+        <div className="bg-white dark:bg-neutral-900 p-4 text-center rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
             More events added every Wednesday
           </p>
         </div>

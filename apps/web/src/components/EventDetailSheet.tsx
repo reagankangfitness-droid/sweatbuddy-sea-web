@@ -229,19 +229,19 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
             onDrag={(_, info) => setDragY(info.offset.y)}
             onDragEnd={handleDragEnd}
             style={{ y: dragY > 0 ? dragY : 0 }}
-            className="fixed bottom-0 left-0 right-0 z-[9999] bg-white rounded-t-3xl max-h-[90vh] flex flex-col touch-none"
+            className="fixed bottom-0 left-0 right-0 z-[9999] bg-white dark:bg-neutral-900 rounded-t-3xl max-h-[90vh] flex flex-col touch-none"
           >
             {/* Drag Handle */}
             <div className="flex justify-center py-3 flex-shrink-0 cursor-grab active:cursor-grabbing">
-              <div className="w-10 h-1 bg-neutral-300 rounded-full" />
+              <div className="w-10 h-1 bg-neutral-300 dark:bg-neutral-600 rounded-full" />
             </div>
 
             {/* Close button */}
             <button
               onClick={onClose}
-              className="absolute top-3 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors z-10"
+              className="absolute top-3 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors z-10"
             >
-              <X className="w-4 h-4 text-neutral-600" />
+              <X className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
             </button>
 
             {/* Scrollable Content */}
@@ -278,18 +278,18 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
               <div className="px-5 py-4">
                 {/* No image - show category badge */}
                 {!event.imageUrl && (
-                  <span className="inline-flex px-3 py-1 bg-neutral-100 rounded-md text-[11px] font-medium text-neutral-700 mb-3">
+                  <span className="inline-flex px-3 py-1 bg-neutral-100 dark:bg-neutral-800 rounded-md text-[11px] font-medium text-neutral-700 dark:text-neutral-300 mb-3">
                     {emoji} {event.category}
                   </span>
                 )}
 
                 {/* Title */}
-                <h2 className="text-xl sm:text-2xl font-semibold text-neutral-900 mb-1">
+                <h2 className="text-xl sm:text-2xl font-semibold text-neutral-900 dark:text-white mb-1">
                   {event.name}
                 </h2>
 
                 {/* Time & Location Summary */}
-                <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-500 mb-4">
+                <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400 mb-4">
                   <span className="flex items-center gap-1">
                     <span>📅</span> {formatEventDate(event.eventDate, event.day, event.recurring)}
                   </span>
@@ -297,20 +297,20 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                     <span>🕐</span> {event.time}
                   </span>
                   {event.recurring && (
-                    <span className="flex items-center gap-1 text-neutral-900 font-medium">
+                    <span className="flex items-center gap-1 text-neutral-900 dark:text-white font-medium">
                       <span>🔄</span> Weekly
                     </span>
                   )}
                 </div>
 
                 {/* Host Block - Prominent placement */}
-                <div className="flex items-center gap-4 p-4 bg-neutral-50 rounded-2xl mb-6">
-                  <div className="w-12 h-12 bg-neutral-200 rounded-full flex items-center justify-center text-xl">
+                <div className="flex items-center gap-4 p-4 bg-neutral-50 dark:bg-neutral-800 rounded-2xl mb-6">
+                  <div className="w-12 h-12 bg-neutral-200 dark:bg-neutral-700 rounded-full flex items-center justify-center text-xl">
                     👤
                   </div>
                   <div>
-                    <p className="text-sm text-neutral-500">Hosted by</p>
-                    <p className="font-semibold text-neutral-900">@{event.organizer}</p>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">Hosted by</p>
+                    <p className="font-semibold text-neutral-900 dark:text-white">@{event.organizer}</p>
                   </div>
                 </div>
 
@@ -321,27 +321,27 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
 
                   {/* What to Expect */}
                   <div>
-                    <h3 className="text-sm font-semibold text-neutral-900 mb-2 flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-neutral-900 dark:text-white mb-2 flex items-center gap-2">
                       <span className="text-base">✨</span> What to Expect
                     </h3>
-                    <p className="text-sm text-neutral-500 leading-relaxed">
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
                       {event.description || 'Join us for an amazing fitness session! All levels welcome.'}
                     </p>
                   </div>
 
                   {/* Where to Meet */}
                   <div>
-                    <h3 className="text-sm font-semibold text-neutral-900 mb-2 flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-neutral-900 dark:text-white mb-2 flex items-center gap-2">
                       <span className="text-base">📍</span> Where to Meet
                     </h3>
-                    <p className="text-sm text-neutral-500">{event.location}</p>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">{event.location}</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Secondary Actions Row */}
-            <div className="flex items-center justify-center gap-6 py-4 border-t border-neutral-100 bg-neutral-50/50">
+            <div className="flex items-center justify-center gap-6 py-4 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-800/50">
               {/* Chat button - only visible when user can access community */}
               {canAccessCommunity && (
                 <button
@@ -359,9 +359,9 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                 href={`https://instagram.com/${event.organizer}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col items-center gap-1.5 text-neutral-500 hover:text-neutral-900 transition-colors"
+                className="flex flex-col items-center gap-1.5 text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
               >
-                <span className="w-11 h-11 bg-white rounded-full flex items-center justify-center border border-neutral-200">
+                <span className="w-11 h-11 bg-white dark:bg-neutral-700 rounded-full flex items-center justify-center border border-neutral-200 dark:border-neutral-600">
                   <Instagram className="w-5 h-5" />
                 </span>
                 <span className="text-xs font-medium">Instagram</span>
@@ -381,10 +381,10 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                 href={`https://maps.google.com/?q=${encodeURIComponent(event.location)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col items-center gap-1.5 text-neutral-500 hover:text-neutral-900 transition-colors"
+                className="flex flex-col items-center gap-1.5 text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
                 title="Get directions to this location"
               >
-                <span className="w-11 h-11 bg-white rounded-full flex items-center justify-center border border-neutral-200">
+                <span className="w-11 h-11 bg-white dark:bg-neutral-700 rounded-full flex items-center justify-center border border-neutral-200 dark:border-neutral-600">
                   <MapPin className="w-5 h-5" />
                 </span>
                 <span className="text-xs font-medium">Open in Maps</span>
@@ -435,7 +435,7 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
             </div>
 
             {/* Sticky Footer CTA */}
-            <div className="flex-shrink-0 p-4 border-t border-neutral-100 bg-white">
+            <div className="flex-shrink-0 p-4 border-t border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900">
               <GoingButton
                 eventId={event.id}
                 eventName={event.name}

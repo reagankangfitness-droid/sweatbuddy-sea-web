@@ -174,12 +174,9 @@ export const Hero = memo(function Hero() {
         </div>
       </div>
 
-      {/* Bottom transition to white */}
+      {/* Bottom transition to content background */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
-        style={{
-          background: 'linear-gradient(to top, #FFFFFF, transparent)'
-        }}
+        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none bg-gradient-to-t from-white dark:from-neutral-950 to-transparent"
       />
     </section>
   )

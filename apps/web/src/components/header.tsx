@@ -8,6 +8,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { Menu, X, ArrowRight, LayoutDashboard, User, LogOut, ChevronDown } from 'lucide-react'
 import { useUser, useClerk } from '@clerk/nextjs'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 // Helper to scroll to element with retry for dynamic content
 const scrollToElement = (elementId: string, maxAttempts = 10) => {
@@ -109,7 +110,7 @@ export function Header() {
         transition={{ duration: 0.4, ease: [0.2, 0, 0, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-250 ${
           scrolled
-            ? 'py-3 bg-white/95 backdrop-blur-lg border-b border-neutral-200'
+            ? 'py-3 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800'
             : 'bg-transparent py-5'
         }`}
       >
@@ -118,7 +119,7 @@ export function Header() {
           <Link
             href="/"
             className={`flex items-center gap-2.5 font-semibold transition-colors ${
-              scrolled ? 'text-neutral-800 hover:text-primary' : 'text-white hover:text-primary-200'
+              scrolled ? 'text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300' : 'text-white hover:text-primary-200'
             }`}
             style={{ fontSize: '18px', letterSpacing: '-0.02em' }}
           >
@@ -145,7 +146,7 @@ export function Header() {
                     transition={{ delay: 0.1 * index }}
                     className={`text-sm font-medium transition-colors ${
                       scrolled
-                        ? 'text-neutral-600 hover:text-neutral-800'
+                        ? 'text-neutral-600 dark:text-neutral-300 hover:text-neutral-800 dark:hover:text-white'
                         : 'text-white/80 hover:text-white'
                     }`}
                   >
@@ -159,7 +160,7 @@ export function Header() {
                   href={link.href}
                   className={`text-sm font-medium transition-colors ${
                     scrolled
-                      ? 'text-neutral-600 hover:text-neutral-800'
+                      ? 'text-neutral-600 dark:text-neutral-300 hover:text-neutral-800 dark:hover:text-white'
                       : 'text-white/80 hover:text-white'
                   }`}
                 >
@@ -171,6 +172,11 @@ export function Header() {
 
           {/* Right side actions */}
           <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            <div className="hidden sm:block">
+              <ThemeToggle variant="header" isScrolled={scrolled} />
+            </div>
+
             {/* Login / User Menu */}
             {isLoaded && (
               isSignedIn ? (
@@ -179,7 +185,7 @@ export function Header() {
                     onClick={() => setUserMenuOpen(!userMenuOpen)}
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       scrolled
-                        ? 'text-neutral-700 hover:bg-neutral-100'
+                        ? 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                         : 'text-white/90 hover:bg-white/10'
                     }`}
                   >
@@ -209,12 +215,12 @@ export function Header() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-neutral-200 py-2 overflow-hidden"
+                        className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-900 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 py-2 overflow-hidden"
                       >
                         <Link
                           href="/profile"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
                         >
                           <User className="w-4 h-4 text-neutral-400" />
                           Profile
@@ -222,18 +228,18 @@ export function Header() {
                         <Link
                           href="/dashboard"
                           onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
                         >
                           <LayoutDashboard className="w-4 h-4 text-neutral-400" />
                           Dashboard
                         </Link>
-                        <div className="border-t border-neutral-100 my-1" />
+                        <div className="border-t border-neutral-100 dark:border-neutral-800 my-1" />
                         <button
                           onClick={() => {
                             setUserMenuOpen(false)
                             signOut(() => router.push('/'))
                           }}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors w-full"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors w-full"
                         >
                           <LogOut className="w-4 h-4 text-neutral-400" />
                           Sign Out
@@ -247,7 +253,7 @@ export function Header() {
                   href="/sign-in"
                   className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     scrolled
-                      ? 'text-neutral-700 hover:bg-neutral-100'
+                      ? 'text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                       : 'text-white/90 hover:bg-white/10'
                   }`}
                 >
@@ -271,7 +277,7 @@ export function Header() {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`md:hidden p-2 rounded-lg transition-colors ${
                 scrolled
-                  ? 'text-neutral-800 border border-neutral-200 bg-white hover:bg-neutral-50'
+                  ? 'text-neutral-800 dark:text-white border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700'
                   : 'text-white border border-white/30 hover:bg-white/10'
               }`}
               aria-label="Toggle menu"
@@ -311,7 +317,7 @@ export function Header() {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
-              className="md:hidden absolute top-full left-0 right-0 bg-white/95 backdrop-blur-lg border-b border-neutral-200 overflow-hidden"
+              className="md:hidden absolute top-full left-0 right-0 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800 overflow-hidden"
             >
               <nav className="flex flex-col p-6 gap-1">
                 {navLinks.map((link, index) => {
@@ -327,7 +333,7 @@ export function Header() {
                           setMobileMenuOpen(false)
                           handleHashClick(e, link.href)
                         }}
-                        className="text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100 last:border-0 text-left"
+                        className="text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800 last:border-0 text-left"
                       >
                         {link.label}
                       </motion.button>
@@ -338,7 +344,7 @@ export function Header() {
                       key={link.href}
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100 last:border-0"
+                      className="text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800 last:border-0"
                     >
                       {link.label}
                     </Link>
@@ -352,7 +358,7 @@ export function Header() {
                       <Link
                         href="/profile"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-2 text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100"
+                        className="flex items-center gap-2 text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800"
                       >
                         <User className="w-5 h-5" />
                         Profile
@@ -360,7 +366,7 @@ export function Header() {
                       <Link
                         href="/dashboard"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-2 text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100"
+                        className="flex items-center gap-2 text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800"
                       >
                         <LayoutDashboard className="w-5 h-5" />
                         Dashboard
@@ -370,7 +376,7 @@ export function Header() {
                           setMobileMenuOpen(false)
                           signOut(() => router.push('/'))
                         }}
-                        className="flex items-center gap-2 text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100 w-full text-left"
+                        className="flex items-center gap-2 text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800 w-full text-left"
                       >
                         <LogOut className="w-5 h-5" />
                         Sign Out
@@ -380,7 +386,7 @@ export function Header() {
                     <Link
                       href="/sign-in"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="text-neutral-800 hover:text-primary text-lg font-medium transition-colors py-3 border-b border-neutral-100 block"
+                      className="text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800 block"
                     >
                       Log In
                     </Link>

@@ -145,14 +145,14 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
     <>
       <Link
         href={eventUrl}
-        className="group h-full flex flex-col bg-white rounded-xl cursor-pointer card-hover-lift card-hover-glow active:scale-[0.98]"
+        className="group h-full flex flex-col bg-white dark:bg-neutral-900 rounded-xl cursor-pointer card-hover-lift card-hover-glow active:scale-[0.98]"
         style={{
           // CSS animation for staggered fade-in
           animation: `fadeInUp 0.4s ease-out ${index * 0.05}s both`,
         }}
       >
         {/* Image Section - Clean square aspect ratio, contain to show full image */}
-        <div className="relative aspect-square rounded-xl overflow-hidden bg-neutral-100 image-zoom-container">
+        <div className="relative aspect-square rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800 image-zoom-container">
           {event.imageUrl ? (
             <Image
               src={event.imageUrl}
@@ -205,7 +205,7 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
           {event.recurring && (
             <div className="absolute bottom-3 left-3">
               <span
-                className="bg-white/95 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-neutral-700 rounded-md"
+                className="bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-neutral-700 dark:text-neutral-300 rounded-md"
                 title="This happens every week—same time, same place"
               >
                 Weekly
@@ -217,22 +217,22 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
         {/* Content Section - Clean minimalist typography */}
         <div className="flex-1 flex flex-col pt-3 pb-2">
           {/* Host - Lead with the people */}
-          <p className="text-sm text-neutral-500 mb-1">
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">
             Hosted by @{event.organizer}
           </p>
 
           {/* Event Name */}
-          <h3 className="text-[15px] font-semibold text-neutral-900 leading-tight line-clamp-1 mb-1.5">
+          <h3 className="text-[15px] font-semibold text-neutral-900 dark:text-white leading-tight line-clamp-1 mb-1.5">
             {event.name}
           </h3>
 
           {/* Date & Time */}
-          <p className="text-sm text-neutral-500 mb-0.5">
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-0.5">
             {formatEventDate(event.eventDate, event.day, event.recurring)} · {event.time}
           </p>
 
           {/* Location */}
-          <p className="text-sm text-neutral-500 line-clamp-1 mb-4">
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 line-clamp-1 mb-4">
             {event.location}
           </p>
 
@@ -248,12 +248,12 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
                   showCount={goingCount > 3}
                 />
               )}
-              <span className="text-xs text-neutral-500">
+              <span className="text-xs text-neutral-500 dark:text-neutral-400">
                 {goingCount === 0 ? (
                   'Be the first'
                 ) : (
                   <>
-                    <LiveCounter value={goingCount} className="font-medium text-neutral-700" /> going
+                    <LiveCounter value={goingCount} className="font-medium text-neutral-700 dark:text-neutral-300" /> going
                   </>
                 )}
               </span>

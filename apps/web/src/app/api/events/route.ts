@@ -190,9 +190,11 @@ export async function GET() {
       { events },
       {
         headers: {
-          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
-          'CDN-Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
-          'Vercel-CDN-Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+          // Reduced cache times to ensure fresh data after approval
+          // ISR + revalidateTag handles the real caching
+          'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=30',
+          'CDN-Cache-Control': 'public, s-maxage=10, stale-while-revalidate=30',
+          'Vercel-CDN-Cache-Control': 'public, s-maxage=10, stale-while-revalidate=30',
         },
       }
     )

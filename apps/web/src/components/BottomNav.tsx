@@ -82,7 +82,7 @@ export function BottomNav() {
         className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
       >
         {/* Background with blur */}
-        <div className="absolute inset-0 bg-white/95 backdrop-blur-lg border-t border-neutral-200" />
+        <div className="absolute inset-0 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-lg border-t border-neutral-200 dark:border-neutral-800" />
 
         {/* Safe area padding for iOS */}
         <div className="relative flex items-center justify-around px-2 pt-2 pb-[env(safe-area-inset-bottom,8px)]">
@@ -101,9 +101,9 @@ export function BottomNav() {
                 >
                   <motion.div
                     whileTap={{ scale: 0.9 }}
-                    className="w-14 h-14 bg-neutral-900 rounded-full flex items-center justify-center shadow-lg shadow-neutral-900/30 hover:bg-neutral-800 transition-colors"
+                    className="w-14 h-14 bg-neutral-900 dark:bg-white rounded-full flex items-center justify-center shadow-lg shadow-neutral-900/30 dark:shadow-white/20 hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors"
                   >
-                    <Icon className="w-6 h-6 text-white" />
+                    <Icon className="w-6 h-6 text-white dark:text-neutral-900" />
                   </motion.div>
                 </Link>
               )
@@ -114,10 +114,10 @@ export function BottomNav() {
               flex flex-col items-center justify-center
               w-16 h-14
               transition-all duration-200 relative
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 rounded-lg
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 dark:focus-visible:ring-white focus-visible:ring-offset-2 rounded-lg
               ${isActive
-                ? 'text-neutral-900'
-                : 'text-neutral-400 hover:text-neutral-600 active:scale-95'
+                ? 'text-neutral-900 dark:text-white'
+                : 'text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 active:scale-95'
               }
             `
 
@@ -138,7 +138,7 @@ export function BottomNav() {
                   {isActive && (
                     <motion.div
                       layoutId="activeIndicator"
-                      className="absolute bottom-1 w-4 h-1 bg-neutral-900 rounded-full"
+                      className="absolute bottom-1 w-4 h-1 bg-neutral-900 dark:bg-white rounded-full"
                       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                     />
                   )}
@@ -161,7 +161,7 @@ export function BottomNav() {
                 {isActive && (
                   <motion.div
                     layoutId="activeIndicator"
-                    className="absolute bottom-1 w-4 h-1 bg-neutral-900 rounded-full"
+                    className="absolute bottom-1 w-4 h-1 bg-neutral-900 dark:bg-white rounded-full"
                     transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 )}

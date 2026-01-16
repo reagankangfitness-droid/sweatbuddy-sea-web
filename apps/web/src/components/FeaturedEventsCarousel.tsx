@@ -55,8 +55,8 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
       {/* Section Header - Premium typography */}
       <div className="flex items-center justify-between px-4 mb-4">
         <div>
-          <span className="text-label-sm text-neutral-500 block mb-1">FEATURED</span>
-          <h2 className="text-display-card">Trending This Week</h2>
+          <span className="text-label-sm text-neutral-500 dark:text-neutral-400 block mb-1">FEATURED</span>
+          <h2 className="text-display-card text-neutral-900 dark:text-white">Trending This Week</h2>
         </div>
         <button
           onClick={() => {
@@ -65,7 +65,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
               eventsSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
             }
           }}
-          className="text-ui text-neutral-600 hover:text-neutral-800"
+          className="text-ui text-neutral-600 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200"
         >
           See all →
         </button>
@@ -84,7 +84,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
             onClick={() => onSelect(event)}
             className="flex-shrink-0 w-[85vw] snap-start cursor-pointer"
           >
-            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-neutral-100 shadow-lg">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-neutral-100 dark:bg-neutral-800 shadow-lg">
               {/* Image or Placeholder */}
               {event.imageUrl ? (
                 <Image
@@ -146,7 +146,7 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
           <div
             key={index}
             className={`
-              h-1.5 rounded-full transition-all duration-300 bg-neutral-900
+              h-1.5 rounded-full transition-all duration-300 bg-neutral-900 dark:bg-white
               ${activeIndex === index
                 ? 'w-6'
                 : 'w-1.5 opacity-30'

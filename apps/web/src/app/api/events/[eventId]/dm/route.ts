@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getOrganizerSession } from '@/lib/organizer-session'
+import { sendEmail } from '@/lib/email'
 import eventsData from '@/data/events.json'
 
 // Helper to get organizer handle for an event
@@ -357,6 +358,42 @@ export async function POST(
       where: { id: conversation.id },
       data: { lastMessageAt: message.createdAt },
     })
+
+    // Send email notification to host when attendee sends a message
+    if (senderType === 'attendee') {
+      // Get the event details for the notification
+      const eventSubmission = await prisma.eventSubmission.findFirst({
+        where: { id: eventId },
+        select: { eventName: true, contactEmail: true, organizerName: true },
+      })
+
+      if (eventSubmission?.contactEmail) {
+        // Send notification email (don't await - fire and forget)
+        sendEmail({
+          to: eventSubmission.contactEmail,
+          subject: `New message from ${finalSenderName} about "${eventSubmission.eventName}"`,
+          html: `
+            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <h2 style="color: #171717; margin-bottom: 16px;">New Message Received</h2>
+              <p style="color: #525252; margin-bottom: 24px;">
+                You have a new message from <strong>${finalSenderName}</strong> about your event <strong>"${eventSubmission.eventName}"</strong>
+              </p>
+              <div style="background: #f5f5f5; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+                <p style="color: #171717; margin: 0; white-space: pre-wrap;">${content.trim()}</p>
+              </div>
+              <a href="https://sweatbuddies.co/organizer/dashboard"
+                 style="display: inline-block; background: #171717; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                View & Reply
+              </a>
+              <p style="color: #a3a3a3; font-size: 14px; margin-top: 24px;">
+                You're receiving this because someone messaged you about your SweatBuddies event.
+              </p>
+            </div>
+          `,
+          replyTo: finalSenderEmail,
+        }).catch(err => console.error('Failed to send notification email:', err))
+      }
+    }
 
     return NextResponse.json({
       success: true,

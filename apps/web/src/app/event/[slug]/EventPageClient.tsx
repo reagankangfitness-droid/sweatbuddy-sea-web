@@ -3,12 +3,13 @@
 import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, MapPin, Calendar, Clock, Users, Share2, Heart, ExternalLink, Instagram } from 'lucide-react'
+import { ArrowLeft, MapPin, Calendar, Clock, Users, Share2, Heart, ExternalLink, Instagram, MessageCircle } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { AttendanceModal } from '@/components/AttendanceModal'
 import { PaymentModal } from '@/components/event/PaymentModal'
 import { ShareButton } from '@/components/ShareButton'
 import { Confetti, useConfetti } from '@/components/ui/Confetti'
+import { DirectChatWindow } from '@/components/DirectChatWindow'
 import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 
 interface AttendeePreview {
@@ -73,6 +74,19 @@ export function EventPageClient({ event }: { event: Event }) {
   const [goingCount, setGoingCount] = useState(event.goingCount)
   const [showAttendanceModal, setShowAttendanceModal] = useState(false)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [showChat, setShowChat] = useState(false)
+  const [userInfo, setUserInfo] = useState<{ email: string; name: string } | null>(() => {
+    if (typeof window === 'undefined') return null
+    const saved = localStorage.getItem('sweatbuddies_user')
+    if (saved) {
+      try {
+        return JSON.parse(saved)
+      } catch {
+        return null
+      }
+    }
+    return null
+  })
 
   const confetti = useConfetti()
   const emoji = categoryEmojis[event.category] || '✨'
@@ -120,9 +134,9 @@ export function EventPageClient({ event }: { event: Event }) {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-neutral-950">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-neutral-100">
+      <header className="sticky top-0 z-50 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm border-b border-neutral-100 dark:border-neutral-800">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/#events" className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900">
             <ArrowLeft className="w-5 h-5" />
@@ -181,20 +195,27 @@ export function EventPageClient({ event }: { event: Event }) {
               <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
                 {event.name}
               </h1>
-              <div className="flex items-center gap-4 text-neutral-600">
+              <div className="flex items-center justify-between">
                 <Link
                   href={`https://instagram.com/${event.organizer}`}
                   target="_blank"
-                  className="flex items-center gap-2 hover:text-neutral-900"
+                  className="flex items-center gap-3 hover:opacity-80 transition-opacity"
                 >
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
                     {event.organizerName.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="font-medium text-neutral-900">Hosted by {event.organizerName}</p>
-                    <p className="text-sm text-neutral-500">@{event.organizer}</p>
+                    <p className="font-medium text-neutral-900 dark:text-white">Hosted by {event.organizerName}</p>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">@{event.organizer}</p>
                   </div>
                 </Link>
+                <button
+                  onClick={() => setShowChat(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-xl font-medium transition-colors"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  <span className="hidden sm:inline">Message</span>
+                </button>
               </div>
             </div>
 
@@ -425,6 +446,17 @@ export function EventPageClient({ event }: { event: Event }) {
       )}
 
       <Confetti isActive={confetti.isActive} onComplete={confetti.reset} />
+
+      {/* Message Host Chat */}
+      <DirectChatWindow
+        eventId={event.id}
+        eventName={event.name}
+        organizerHandle={event.organizer}
+        isOpen={showChat}
+        onClose={() => setShowChat(false)}
+        userEmail={userInfo?.email}
+        userName={userInfo?.name}
+      />
     </div>
   )
 }

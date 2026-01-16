@@ -98,7 +98,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
   }, [])
 
   return (
-    <section id="events" className="relative py-20 md:py-32 overflow-hidden bg-neutral-50">
+    <section id="events" className="relative py-20 md:py-32 overflow-hidden bg-neutral-50 dark:bg-neutral-950">
       {/* Shared Event Handler - wrapped in Suspense for useSearchParams */}
       <Suspense fallback={null}>
         <SharedEventHandler events={events} onEventFound={handleSharedEventFound} />
@@ -107,10 +107,10 @@ export function Events({ initialEvents = [] }: EventsProps) {
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10">
         {/* Header */}
         <div className="text-center mb-8">
-          <h2 className="font-bold text-3xl md:text-4xl text-neutral-900 mb-2">
+          <h2 className="font-bold text-3xl md:text-4xl text-neutral-900 dark:text-white mb-2">
             This week in Singapore
           </h2>
-          <p className="text-neutral-500">
+          <p className="text-neutral-500 dark:text-neutral-400">
             {getCurrentWeekRange()}
           </p>
         </div>
@@ -131,24 +131,24 @@ export function Events({ initialEvents = [] }: EventsProps) {
             ))}
           </div>
         ) : selectedCategory !== 'all' ? (
-          <div className="text-center py-16 bg-white rounded-2xl max-w-md mx-auto">
+          <div className="text-center py-16 bg-white dark:bg-neutral-900 rounded-2xl max-w-md mx-auto">
             <span className="text-5xl mb-4 block">🔍</span>
-            <h3 className="font-semibold text-neutral-900 mb-2 text-lg">No {selectedCategory} events this week</h3>
-            <p className="text-neutral-500 max-w-sm mx-auto px-4 mb-4">
+            <h3 className="font-semibold text-neutral-900 dark:text-white mb-2 text-lg">No {selectedCategory} events this week</h3>
+            <p className="text-neutral-500 dark:text-neutral-400 max-w-sm mx-auto px-4 mb-4">
               Check back soon or explore other categories.
             </p>
             <button
               onClick={() => setSelectedCategory('all')}
-              className="text-neutral-900 font-medium hover:underline"
+              className="text-neutral-900 dark:text-white font-medium hover:underline"
             >
               View all events
             </button>
           </div>
         ) : (
-          <div className="text-center py-16 bg-white rounded-2xl max-w-md mx-auto">
+          <div className="text-center py-16 bg-white dark:bg-neutral-900 rounded-2xl max-w-md mx-auto">
             <span className="text-5xl mb-4 block">🏃</span>
-            <h3 className="font-semibold text-neutral-900 mb-2 text-lg">Nothing here yet</h3>
-            <p className="text-neutral-500 max-w-sm mx-auto px-4">
+            <h3 className="font-semibold text-neutral-900 dark:text-white mb-2 text-lg">Nothing here yet</h3>
+            <p className="text-neutral-500 dark:text-neutral-400 max-w-sm mx-auto px-4">
               Be the first to host something this week.
             </p>
           </div>
@@ -156,7 +156,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
 
         {/* Simple CTA */}
         <div className="text-center mt-12">
-          <p className="text-neutral-500 text-sm">
+          <p className="text-neutral-500 dark:text-neutral-400 text-sm">
             New events added weekly
           </p>
         </div>

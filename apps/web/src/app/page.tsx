@@ -38,7 +38,7 @@ export default async function Home() {
   return (
     <>
       {/* Mobile Layout - Native App Feel */}
-      <div className="md:hidden min-h-screen bg-neutral-50">
+      <div className="md:hidden min-h-screen bg-neutral-50 dark:bg-neutral-950">
         <MobileHeader />
         <MobileHero />
         <Mission />

@@ -75,7 +75,7 @@ export default function AdminEventSubmissionsPage() {
       }
 
       const data = await response.json()
-      setSubmissions(data)
+      setSubmissions(data.submissions || [])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {

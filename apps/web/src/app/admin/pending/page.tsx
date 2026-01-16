@@ -55,6 +55,10 @@ export default function PendingEventsPage() {
       if (res.ok) {
         const data = await res.json()
         setEvents(data.submissions || [])
+      } else if (res.status === 401) {
+        toast.error('Unauthorized - please sign in with an admin account')
+      } else {
+        toast.error(`Failed to load pending events: ${res.status}`)
       }
     } catch (error) {
       console.error('Failed to fetch pending events:', error)

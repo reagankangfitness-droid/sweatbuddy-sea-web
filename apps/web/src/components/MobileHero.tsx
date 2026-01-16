@@ -137,12 +137,9 @@ export function MobileHero() {
         </div>
       </div>
 
-      {/* Bottom transition to gray-50 (matches HowItWorks bg) */}
+      {/* Bottom transition to content background */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none z-20"
-        style={{
-          background: 'linear-gradient(to top, #F9FAFB, transparent)'
-        }}
+        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none z-20 bg-gradient-to-t from-neutral-50 dark:from-neutral-950 to-transparent"
       />
     </div>
   )

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { isAdminRequest } from '@/lib/admin-auth'
 import { sendEventApprovedEmail, sendEventRejectedEmail } from '@/lib/event-confirmation-email'
@@ -35,9 +35,24 @@ export async function PATCH(
       },
     })
 
-    // Revalidate homepage cache so approved events appear immediately
+    // Revalidate caches so approved events appear immediately
     if (action === 'approve') {
-      revalidatePath('/')
+      // Revalidate all cache tags
+      revalidateTag('events')
+      revalidateTag('attendance')
+
+      // Revalidate all relevant paths
+      revalidatePath('/', 'layout')
+      revalidatePath('/', 'page')
+      revalidatePath('/api/events')
+      revalidatePath('/events')
+      revalidatePath('/discover')
+
+      // Revalidate the specific event page if it has a slug
+      if (submission.slug) {
+        revalidatePath(`/event/${submission.slug}`)
+        revalidatePath(`/e/${submission.id}`)
+      }
     }
 
     // Send notification email to host (fire and forget)

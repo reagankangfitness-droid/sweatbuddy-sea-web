@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import dynamicImport from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -29,6 +30,20 @@ import {
   Pencil
 } from 'lucide-react'
 import { UploadButton } from '@/lib/uploadthing'
+
+// Dynamically import LocationAutocomplete to prevent SSR issues with Google Maps
+const LocationAutocomplete = dynamicImport(
+  () => import('./LocationAutocomplete').then(mod => ({ default: mod.LocationAutocomplete })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center gap-3 px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl">
+        <MapPin className="w-5 h-5 text-neutral-500 shrink-0" />
+        <span className="text-neutral-500">Loading location search...</span>
+      </div>
+    ),
+  }
+)
 
 const eventTypes = [
   '🏃 Run Club',
@@ -463,18 +478,21 @@ export default function HostForm() {
                   )}
                 </AnimatePresence>
 
-                {/* Location Input */}
-                <div className={`flex items-center gap-3 px-4 py-3 bg-neutral-900 border rounded-xl focus-within:border-neutral-500 transition-colors ${fieldErrors.location ? 'border-red-500' : 'border-neutral-700'}`}>
-                  <MapPin className="w-5 h-5 text-neutral-500 shrink-0" />
-                  <input
-                    type="text"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    placeholder="Add location"
-                    className="flex-1 bg-transparent text-white placeholder:text-neutral-500 focus:outline-none"
-                  />
-                </div>
+                {/* Location Input with Google Maps Autocomplete */}
+                <LocationAutocomplete
+                  value={formData.location}
+                  hasError={fieldErrors.location}
+                  onManualChange={(value) => setFormData(prev => ({ ...prev, location: value }))}
+                  onChange={(data) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      location: data.location,
+                      latitude: data.latitude,
+                      longitude: data.longitude,
+                      placeId: data.placeId,
+                    }))
+                  }}
+                />
 
                 {/* Description Input */}
                 <div className="flex items-start gap-3 px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl focus-within:border-neutral-500 transition-colors">

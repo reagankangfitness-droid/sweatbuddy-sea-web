@@ -85,10 +85,15 @@ export default function AdminEventsPage() {
       const response = await fetch('/api/admin/events', { headers })
       if (response.ok) {
         const data = await response.json()
-        setEvents(data.events)
+        setEvents(data.events || [])
+      } else if (response.status === 401) {
+        toast.error('Unauthorized - please sign in with an admin account')
+      } else {
+        toast.error(`Failed to fetch events: ${response.status}`)
       }
-    } catch {
+    } catch (err) {
       toast.error('Failed to fetch events')
+      console.error('Fetch events error:', err)
     }
   }, [getAuthHeaders])
 
@@ -98,10 +103,15 @@ export default function AdminEventsPage() {
       const response = await fetch('/api/admin/event-submissions?status=PENDING', { headers })
       if (response.ok) {
         const data = await response.json()
-        setSubmissions(data.submissions || data || [])
+        setSubmissions(data.submissions || [])
+      } else if (response.status === 401) {
+        toast.error('Unauthorized - please sign in with an admin account')
+      } else {
+        toast.error(`Failed to fetch submissions: ${response.status}`)
       }
-    } catch {
+    } catch (err) {
       toast.error('Failed to fetch submissions')
+      console.error('Fetch submissions error:', err)
     }
   }, [getAuthHeaders])
 

@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback, KeyboardEvent } from 'react'
-import { ChevronDown, Check, User } from 'lucide-react'
+import { ChevronDown, Check, User, Sun, Moon, Monitor } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Logo } from '@/components/logo'
 import Link from 'next/link'
 import { useUser } from '@clerk/nextjs'
+import { useTheme } from '@/contexts/ThemeContext'
 
 const cities = [
   { id: 'singapore', name: 'Singapore', flag: '🇸🇬' },
@@ -23,6 +24,18 @@ export function MobileHeader() {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const listboxRef = useRef<HTMLDivElement>(null)
   const { isSignedIn, isLoaded } = useUser()
+  const { theme, toggleTheme } = useTheme()
+
+  const getThemeIcon = () => {
+    switch (theme) {
+      case 'light':
+        return <Sun className="w-4 h-4" />
+      case 'dark':
+        return <Moon className="w-4 h-4" />
+      case 'system':
+        return <Monitor className="w-4 h-4" />
+    }
+  }
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50)
@@ -110,7 +123,7 @@ export function MobileHeader() {
         fixed top-0 left-0 right-0 z-50 md:hidden
         transition-all duration-250
         ${isScrolled
-          ? 'bg-white/95 backdrop-blur-lg border-b border-neutral-200'
+          ? 'bg-white/95 dark:bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800'
           : 'bg-transparent'
         }
       `}
@@ -121,7 +134,7 @@ export function MobileHeader() {
           {/* Logo - clean, minimal */}
           <div className="flex items-center gap-2">
             <Logo size={24} variant={isScrolled ? 'default' : 'white'} />
-            <span className={`font-semibold text-lg tracking-tight transition-colors ${isScrolled ? 'text-neutral-900' : 'text-white'}`}>
+            <span className={`font-semibold text-lg tracking-tight transition-colors ${isScrolled ? 'text-neutral-900 dark:text-white' : 'text-white'}`}>
               sweatbuddies
             </span>
           </div>
@@ -142,18 +155,18 @@ export function MobileHeader() {
                 transition-all duration-200
                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2
                 ${isScrolled
-                  ? 'bg-white border border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50'
+                  ? 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700'
                   : 'bg-white/10 backdrop-blur-sm border border-white/30 hover:bg-white/20'
                 }
               `}
             >
               <span>{selectedCity.flag}</span>
-              <span className={isScrolled ? 'text-neutral-900' : 'text-white'}>{selectedCity.name}</span>
+              <span className={isScrolled ? 'text-neutral-900 dark:text-white' : 'text-white'}>{selectedCity.name}</span>
               <motion.div
                 animate={{ rotate: isDropdownOpen ? 180 : 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <ChevronDown className={`w-4 h-4 ${isScrolled ? 'text-neutral-400' : 'text-white/70'}`} />
+                <ChevronDown className={`w-4 h-4 ${isScrolled ? 'text-neutral-400 dark:text-neutral-500' : 'text-white/70'}`} />
               </motion.div>
             </button>
 
@@ -170,7 +183,7 @@ export function MobileHeader() {
                   exit={{ opacity: 0, y: -8, scale: 0.95 }}
                   transition={{ duration: 0.15 }}
                   onKeyDown={handleKeyDown}
-                  className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl border border-neutral-200 shadow-xl overflow-hidden z-50"
+                  className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-xl overflow-hidden z-50"
                 >
                   {cities.map((city, index) => (
                     <button
@@ -182,11 +195,11 @@ export function MobileHeader() {
                       onMouseEnter={() => setHighlightedIndex(index)}
                       className={`
                         w-full flex items-center justify-between px-4 py-3 text-left
-                        transition-colors border-b border-neutral-100 last:border-b-0
-                        ${highlightedIndex === index ? 'bg-neutral-100' : ''}
+                        transition-colors border-b border-neutral-100 dark:border-neutral-800 last:border-b-0
+                        ${highlightedIndex === index ? 'bg-neutral-100 dark:bg-neutral-800' : ''}
                         ${selectedCity.id === city.id
-                          ? 'text-neutral-900 font-semibold'
-                          : 'text-neutral-600'
+                          ? 'text-neutral-900 dark:text-white font-semibold'
+                          : 'text-neutral-600 dark:text-neutral-300'
                         }
                       `}
                     >
@@ -200,7 +213,7 @@ export function MobileHeader() {
                           animate={{ scale: 1 }}
                           transition={{ type: 'spring', stiffness: 500 }}
                         >
-                          <Check className="w-4 h-4 text-neutral-900" />
+                          <Check className="w-4 h-4 text-neutral-900 dark:text-white" />
                         </motion.div>
                       )}
                     </button>
@@ -209,6 +222,34 @@ export function MobileHeader() {
               )}
             </AnimatePresence>
           </div>
+
+          {/* Theme Toggle */}
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className={`
+              flex items-center justify-center w-10 h-10 rounded-full
+              transition-all duration-200
+              ${isScrolled
+                ? 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600'
+                : 'bg-white/10 backdrop-blur-sm border border-white/30 hover:bg-white/20'
+              }
+            `}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={theme}
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className={isScrolled ? 'text-neutral-700 dark:text-white' : 'text-white'}
+              >
+                {getThemeIcon()}
+              </motion.div>
+            </AnimatePresence>
+          </motion.button>
 
           {/* Login/Profile Button */}
           {isLoaded && (
@@ -219,12 +260,12 @@ export function MobileHeader() {
                 flex items-center justify-center w-10 h-10 rounded-full
                 transition-all duration-200
                 ${isScrolled
-                  ? 'bg-white border border-neutral-200 hover:border-neutral-400'
+                  ? 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600'
                   : 'bg-white/10 backdrop-blur-sm border border-white/30 hover:bg-white/20'
                 }
               `}
             >
-              <User className={`w-5 h-5 ${isScrolled ? 'text-neutral-700' : 'text-white'}`} />
+              <User className={`w-5 h-5 ${isScrolled ? 'text-neutral-700 dark:text-white' : 'text-white'}`} />
             </Link>
           )}
           </div>

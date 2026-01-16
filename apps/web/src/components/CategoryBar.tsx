@@ -36,8 +36,8 @@ export function CategoryBar({ selectedCategory, onCategoryChange }: CategoryBarP
                 whileTap={{ scale: 0.95 }}
                 className={`flex flex-col items-center gap-1.5 px-4 py-3 rounded-xl transition-all min-w-[72px] ${
                   isSelected
-                    ? 'bg-neutral-900 text-white shadow-lg'
-                    : 'bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200'
+                    ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-lg'
+                    : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700'
                 }`}
               >
                 <span className="text-2xl">{category.icon}</span>
@@ -49,8 +49,8 @@ export function CategoryBar({ selectedCategory, onCategoryChange }: CategoryBarP
       </div>
 
       {/* Fade edges on mobile */}
-      <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-neutral-50 to-transparent pointer-events-none md:hidden" />
-      <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-neutral-50 to-transparent pointer-events-none md:hidden" />
+      <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-neutral-50 dark:from-neutral-950 to-transparent pointer-events-none md:hidden" />
+      <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-neutral-50 dark:from-neutral-950 to-transparent pointer-events-none md:hidden" />
     </div>
   )
 }

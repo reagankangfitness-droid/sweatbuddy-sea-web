@@ -185,7 +185,7 @@ export function DirectChatWindow({
           exit={{ y: '100%', opacity: 0 }}
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg h-[80vh] sm:h-[70vh] flex flex-col overflow-hidden"
+          className="bg-white dark:bg-neutral-900 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg h-[80vh] sm:h-[70vh] flex flex-col overflow-hidden"
         >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-[#1800ad] to-[#3477f8] text-white">
@@ -207,7 +207,7 @@ export function DirectChatWindow({
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-neutral-50">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-neutral-50 dark:bg-neutral-950">
             {isLoading ? (
               <div className="flex items-center justify-center h-full">
                 <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
@@ -225,22 +225,22 @@ export function DirectChatWindow({
                 </p>
               </div>
             ) : !organizerRegistered ? (
-              <div className="flex flex-col items-center justify-center h-full text-neutral-500 px-4">
-                <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
-                  <MessageCircle className="w-8 h-8 text-neutral-300" />
+              <div className="flex flex-col items-center justify-center h-full text-neutral-500 dark:text-neutral-400 px-4">
+                <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-4">
+                  <MessageCircle className="w-8 h-8 text-neutral-300 dark:text-neutral-600" />
                 </div>
                 <p className="text-center text-sm mb-2">
                   The organizer hasn&apos;t set up their messaging yet.
                 </p>
-                <p className="text-xs text-neutral-400 text-center">
+                <p className="text-xs text-neutral-400 dark:text-neutral-500 text-center">
                   You can contact them via Instagram @{organizerHandle}
                 </p>
               </div>
             ) : messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-neutral-500">
-                <MessageCircle className="w-12 h-12 mb-3 text-neutral-300" />
+              <div className="flex flex-col items-center justify-center h-full text-neutral-500 dark:text-neutral-400">
+                <MessageCircle className="w-12 h-12 mb-3 text-neutral-300 dark:text-neutral-600" />
                 <p className="text-sm">No messages yet</p>
-                <p className="text-xs text-neutral-400">
+                <p className="text-xs text-neutral-400 dark:text-neutral-500">
                   Send a message to @{organizerHandle}
                 </p>
               </div>
@@ -257,7 +257,7 @@ export function DirectChatWindow({
                     <div key={msg.id}>
                       {showDate && (
                         <div className="flex justify-center my-3">
-                          <span className="text-xs text-neutral-400 bg-white px-3 py-1 rounded-full shadow-sm">
+                          <span className="text-xs text-neutral-400 dark:text-neutral-500 bg-white dark:bg-neutral-800 px-3 py-1 rounded-full shadow-sm">
                             {formatDate(msg.createdAt)}
                           </span>
                         </div>
@@ -286,7 +286,7 @@ export function DirectChatWindow({
                             className={`px-3 py-2 rounded-2xl ${
                               isOwnMessage
                                 ? 'bg-[#1800ad] text-white rounded-br-md'
-                                : 'bg-white text-neutral-800 shadow-sm rounded-bl-md'
+                                : 'bg-white dark:bg-neutral-800 text-neutral-800 dark:text-white shadow-sm rounded-bl-md'
                             }`}
                           >
                             <p className="text-sm whitespace-pre-wrap break-words">
@@ -312,7 +312,7 @@ export function DirectChatWindow({
 
           {/* Input - hide when user is not an attendee */}
           {organizerRegistered && !(error && error.includes('attendee')) && (
-            <form onSubmit={handleSend} className="p-4 border-t bg-white">
+            <form onSubmit={handleSend} className="p-4 border-t dark:border-neutral-800 bg-white dark:bg-neutral-900">
               {error && <p className="text-red-500 text-xs mb-2">{error}</p>}
               <div className="flex gap-2">
                 <input
@@ -321,7 +321,7 @@ export function DirectChatWindow({
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Type a message..."
                   maxLength={500}
-                  className="flex-1 px-4 py-2.5 border border-neutral-200 rounded-full focus:ring-2 focus:ring-[#1800ad] focus:border-transparent outline-none text-sm"
+                  className="flex-1 px-4 py-2.5 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white rounded-full focus:ring-2 focus:ring-[#1800ad] focus:border-transparent outline-none text-sm placeholder:text-neutral-400"
                 />
                 <button
                   type="submit"

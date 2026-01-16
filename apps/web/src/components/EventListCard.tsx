@@ -47,10 +47,10 @@ export function EventListCard({ event, onSelect }: Props) {
   return (
     <div
       onClick={() => onSelect(event)}
-      className="group flex gap-4 p-4 bg-white rounded-2xl border border-neutral-100 shadow-card card-hover-lift active:scale-[0.98] cursor-pointer"
+      className="group flex gap-4 p-4 bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card card-hover-lift active:scale-[0.98] cursor-pointer"
     >
       {/* Image */}
-      <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-neutral-100 relative rounded-xl image-zoom-container">
+      <div className="flex-shrink-0 w-20 h-20 overflow-hidden bg-neutral-100 dark:bg-neutral-800 relative rounded-xl image-zoom-container">
         {event.imageUrl ? (
           <Image
             src={event.imageUrl}
@@ -76,7 +76,7 @@ export function EventListCard({ event, onSelect }: Props) {
       <div className="flex-1 min-w-0">
         {/* Category + Price */}
         <div className="flex items-center gap-2">
-          <span className="text-label-sm font-medium text-neutral-900 uppercase tracking-wide">
+          <span className="text-label-sm font-medium text-neutral-900 dark:text-white uppercase tracking-wide">
             {event.category}
           </span>
           {event.price && event.price > 0 ? (
@@ -91,12 +91,12 @@ export function EventListCard({ event, onSelect }: Props) {
         </div>
 
         {/* Title */}
-        <h3 className="font-sans font-semibold text-display-card text-neutral-900 line-clamp-1 mt-0.5">
+        <h3 className="font-sans font-semibold text-display-card text-neutral-900 dark:text-white line-clamp-1 mt-0.5">
           {event.name}
         </h3>
 
         {/* Time */}
-        <p className="text-body-small text-neutral-600 mt-1 font-medium">
+        <p className="text-body-small text-neutral-600 dark:text-neutral-400 mt-1 font-medium">
           {event.day} • {event.time}
         </p>
 
@@ -131,7 +131,7 @@ export function EventListCard({ event, onSelect }: Props) {
 
       {/* Arrow */}
       <div className="flex-shrink-0 flex items-center">
-        <span className="text-neutral-300 text-xl font-bold">›</span>
+        <span className="text-neutral-300 dark:text-neutral-600 text-xl font-bold">›</span>
       </div>
     </div>
   )

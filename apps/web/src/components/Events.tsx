@@ -93,14 +93,57 @@ function parseLocalDate(dateStr: string): Date {
   return new Date(year, month - 1, day, 0, 0, 0, 0)
 }
 
+// Map day names to day numbers (0 = Sunday, 1 = Monday, etc.)
+const dayNameToNumber: Record<string, number> = {
+  'sunday': 0, 'sun': 0,
+  'monday': 1, 'mon': 1,
+  'tuesday': 2, 'tue': 2, 'tues': 2,
+  'wednesday': 3, 'wed': 3,
+  'thursday': 4, 'thu': 4, 'thur': 4, 'thurs': 4,
+  'friday': 5, 'fri': 5,
+  'saturday': 6, 'sat': 6,
+}
+
+// Get day number from event's day field (e.g., "Saturday" -> 6, "Every Wednesday" -> 3)
+function getEventDayNumber(dayField: string): number | null {
+  const normalized = dayField.toLowerCase().trim()
+
+  // Check for direct match or "Every X" pattern
+  for (const [name, num] of Object.entries(dayNameToNumber)) {
+    if (normalized === name || normalized.includes(name)) {
+      return num
+    }
+  }
+  return null
+}
+
 function filterEventsByDate(events: Event[], filter: DateFilter): Event[] {
   if (filter === 'all') return events
 
   const { today, tomorrow, saturday, sunday, nextMonday, nextSunday } = getDateFilters()
+  const todayDayNum = today.getDay()
+  const tomorrowDayNum = tomorrow.getDay()
 
   return events.filter(event => {
-    // Recurring events show in all filters
-    if (event.recurring) return true
+    // Handle recurring events - filter by their scheduled day of week
+    if (event.recurring) {
+      const eventDayNum = getEventDayNumber(event.day)
+
+      if (eventDayNum === null) return false // Can't determine day, hide it
+
+      switch (filter) {
+        case 'today':
+          return eventDayNum === todayDayNum
+        case 'tomorrow':
+          return eventDayNum === tomorrowDayNum
+        case 'weekend':
+          return eventDayNum === 0 || eventDayNum === 6 // Sunday or Saturday
+        case 'next-week':
+          return true // Recurring events happen every week
+        default:
+          return true
+      }
+    }
 
     // Events without a date don't match specific date filters
     if (!event.eventDate) return false

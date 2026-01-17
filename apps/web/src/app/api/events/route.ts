@@ -46,12 +46,20 @@ function isUpcomingEvent(eventDate: Date | null, recurring: boolean): boolean {
   // Events without a date - show them (legacy data)
   if (!eventDate) return true
 
-  const today = new Date()
+  // Use Singapore timezone (UTC+8) for date comparison
+  // This ensures events are shown correctly regardless of server timezone
+  const now = new Date()
+  const sgOffset = 8 * 60 // Singapore is UTC+8
+  const localOffset = now.getTimezoneOffset()
+  const sgTime = new Date(now.getTime() + (sgOffset + localOffset) * 60 * 1000)
+
+  const today = new Date(sgTime)
   today.setHours(0, 0, 0, 0)
+
   const eventDay = new Date(eventDate)
   eventDay.setHours(0, 0, 0, 0)
 
-  // ONE-TIME EVENTS: Show all future events (today and onwards)
+  // ONE-TIME EVENTS: Show all future events (today and onwards in Singapore time)
   // Frontend will filter by date tabs (Today, Tomorrow, This weekend, Next week, etc.)
   return eventDay >= today
 }
@@ -59,8 +67,13 @@ function isUpcomingEvent(eventDate: Date | null, recurring: boolean): boolean {
 // Cached database query - revalidates every 60s
 const getCachedEvents = unstable_cache(
   async () => {
-    // Get today's date at midnight for filtering
-    const today = new Date()
+    // Get today's date at midnight in Singapore timezone (UTC+8)
+    const now = new Date()
+    const sgOffset = 8 * 60 // Singapore is UTC+8
+    const localOffset = now.getTimezoneOffset()
+    const sgTime = new Date(now.getTime() + (sgOffset + localOffset) * 60 * 1000)
+
+    const today = new Date(sgTime)
     today.setHours(0, 0, 0, 0)
 
     // Get approved events that are upcoming or recurring
@@ -175,7 +188,7 @@ const getCachedEvents = unstable_cache(
       paynowNumber: submission.paynowNumber,
     }))
   },
-  ['events-list-v3'], // Updated cache key - now returns all future events
+  ['events-list-v4'], // Updated cache key - uses Singapore timezone for date filtering
   { revalidate: 60, tags: ['events'] }
 )
 

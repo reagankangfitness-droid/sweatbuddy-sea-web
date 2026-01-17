@@ -78,8 +78,7 @@ export function Mission() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-lg mb-8"
-            style={{ color: 'rgba(255, 255, 255, 0.7)' }}
+            className="text-lg mb-8 text-neutral-300"
           >
             Hundreds of <span className="text-white font-medium">community workouts</span> happen every week — led by passionate trainers and fitness enthusiasts, scattered across Instagram stories and Facebook groups.
           </motion.p>

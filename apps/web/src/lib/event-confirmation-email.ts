@@ -2161,3 +2161,177 @@ function buildConfirmationEmailHtml(params: {
 </html>
   `.trim()
 }
+
+// ============= REFUND NOTIFICATION EMAIL =============
+
+interface RefundNotificationParams {
+  to: string
+  userName: string | null
+  eventName: string
+  refundAmount: number
+  currency: string
+  refundType: 'full' | 'partial'
+  reason?: string
+}
+
+/**
+ * Send notification email when a refund is processed
+ */
+export async function sendRefundNotificationEmail(
+  params: RefundNotificationParams
+): Promise<{ success: boolean; error?: string }> {
+  const { to, userName, eventName, refundAmount, currency, refundType, reason } = params
+
+  const displayName = userName || 'there'
+  const formattedAmount = `${currency.toUpperCase()} ${(refundAmount / 100).toFixed(2)}`
+  const supportUrl = `${BASE_URL}/support`
+  const myBookingsUrl = `${BASE_URL}/my-bookings`
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Refund Processed</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">💸</div>
+              <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
+                Refund Processed
+              </h1>
+              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
+                ${refundType === 'full' ? 'Full refund' : 'Partial refund'} completed
+              </p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 32px; background-color: white;">
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Hey ${displayName}! 👋
+              </p>
+
+              <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
+                Good news! Your refund for <strong>"${eventName}"</strong> has been processed.
+              </p>
+
+              <!-- Refund Card -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #d1fae5; border-radius: 12px; border: 1px solid #6ee7b7;">
+                <tr>
+                  <td style="padding: 24px; text-align: center;">
+                    <p style="margin: 0 0 8px; color: #065f46; font-size: 14px; font-weight: 500;">
+                      Refund Amount
+                    </p>
+                    <p style="margin: 0; color: #047857; font-size: 32px; font-weight: 700;">
+                      ${formattedAmount}
+                    </p>
+                    <p style="margin: 12px 0 0; color: #065f46; font-size: 14px;">
+                      ✅ ${refundType === 'full' ? 'Full refund' : 'Partial refund'}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              ${reason ? `
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #f0f9ff; border-radius: 8px;">
+                <tr>
+                  <td style="padding: 16px;">
+                    <p style="margin: 0 0 4px; color: #0369a1; font-size: 13px; font-weight: 600;">
+                      Reason
+                    </p>
+                    <p style="margin: 0; color: #0c4a6e; font-size: 14px;">
+                      ${reason}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              ` : ''}
+
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #fef3c7; border-radius: 8px;">
+                <tr>
+                  <td style="padding: 16px;">
+                    <p style="margin: 0; color: #92400e; font-size: 14px; line-height: 1.6;">
+                      <strong>⏳ Processing time:</strong> The refund will appear in your account within 5-10 business days, depending on your bank or card issuer.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Action Buttons -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${myBookingsUrl}" style="display: inline-block; padding: 14px 28px; background-color: #10b981; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px; margin-right: 12px;">
+                      View My Bookings
+                    </a>
+                    <a href="${BASE_URL}" style="display: inline-block; padding: 14px 28px; background-color: #f4f4f5; color: #374151; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                      Browse Events
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
+                Have questions? <a href="${supportUrl}" style="color: #10b981; text-decoration: none;">Contact Support</a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
+              <p style="margin: 0 0 8px; color: #64748b; font-size: 13px;">
+                SweatBuddies
+              </p>
+              <a href="${BASE_URL}" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 600;">
+                sweatbuddies.co
+              </a>
+              <p style="margin: 16px 0 0; color: #94a3b8; font-size: 12px;">
+                You received this email because you had a booking on SweatBuddies.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim()
+
+  const result = await sendEmail({
+    to,
+    subject: `Refund Processed: ${formattedAmount} for ${eventName}`,
+    html,
+    text: `
+Hey ${displayName},
+
+Good news! Your refund for "${eventName}" has been processed.
+
+Refund Amount: ${formattedAmount}
+Type: ${refundType === 'full' ? 'Full refund' : 'Partial refund'}
+${reason ? `Reason: ${reason}` : ''}
+
+The refund will appear in your account within 5-10 business days, depending on your bank or card issuer.
+
+View your bookings: ${myBookingsUrl}
+Need help? ${supportUrl}
+
+- SweatBuddies Team
+    `.trim(),
+    tags: [
+      { name: 'type', value: 'refund_notification' },
+    ],
+  })
+
+  return result
+}

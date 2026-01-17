@@ -14,6 +14,8 @@ import {
   Plus,
   DollarSign,
   Loader2,
+  Ticket,
+  HelpCircle,
 } from 'lucide-react'
 import { UpcomingEventRow } from '@/components/host/UpcomingEventRow'
 import { PastEventRow } from '@/components/host/PastEventRow'
@@ -158,12 +160,17 @@ export default function DashboardPage() {
         </header>
         <main className="pt-24 px-4 text-center">
           <p className="text-red-500 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-lg"
-          >
-            Try Again
-          </button>
+          <div className="flex flex-col gap-3 items-center">
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-lg"
+            >
+              Try Again
+            </button>
+            <Link href="/support" className="text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 text-sm">
+              Need help? Contact Support
+            </Link>
+          </div>
         </main>
       </div>
     )
@@ -254,6 +261,34 @@ export default function DashboardPage() {
                 <p className="text-sm text-neutral-500 dark:text-neutral-400">Saved</p>
               </Link>
             )}
+          </div>
+
+          {/* Quick Actions */}
+          <div className="grid grid-cols-2 gap-4">
+            <Link
+              href="/my-bookings"
+              className="flex items-center gap-3 bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
+            >
+              <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                <Ticket className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <p className="font-medium text-neutral-900 dark:text-white text-sm">My Bookings</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">Tickets & refunds</p>
+              </div>
+            </Link>
+            <Link
+              href="/support"
+              className="flex items-center gap-3 bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
+            >
+              <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
+                <HelpCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <p className="font-medium text-neutral-900 dark:text-white text-sm">Get Help</p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">FAQ & support</p>
+              </div>
+            </Link>
           </div>
 
           {/* Start Hosting CTA - for non-hosts */}

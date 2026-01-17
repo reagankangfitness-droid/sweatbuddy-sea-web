@@ -1,8 +1,8 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 
-const prisma = new PrismaClient()
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,135 +16,119 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get user from database
-    const user = await prisma.user.findUnique({
-      where: { id: clerkUserId },
-    })
+    // Get current user's email from Clerk
+    const user = await currentUser()
+    const email = user?.primaryEmailAddress?.emailAddress
 
-    if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      )
+    if (!email) {
+      return NextResponse.json({
+        bookings: [],
+        pagination: {
+          page: 1,
+          limit: 20,
+          totalCount: 0,
+          totalPages: 0,
+          hasMore: false,
+        },
+      })
     }
 
     // Get query parameters
     const searchParams = request.nextUrl.searchParams
-    const statusFilter = searchParams.get('status') || 'all' // 'upcoming' | 'past' | 'all'
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '20')
     const skip = (page - 1) * limit
 
-    // Build where clause
-    const now = new Date()
-    const whereClause: any = {
-      userId: user.id,
-      status: 'JOINED', // Only get activities user has joined
-      deletedAt: null,
-      activity: {
-        deletedAt: null,
-      },
-    }
-
-    // Add time-based filtering
-    if (statusFilter === 'upcoming') {
-      whereClause.activity = {
-        ...whereClause.activity,
-        OR: [
-          { startTime: { gte: now } },
-          { startTime: null }, // Include activities without start time
-        ],
-      }
-    } else if (statusFilter === 'past') {
-      whereClause.activity = {
-        ...whereClause.activity,
-        startTime: { lt: now },
-      }
-    }
-
-    // Fetch bookings with related activity and host data
-    const [bookings, totalCount] = await Promise.all([
-      prisma.userActivity.findMany({
-        where: whereClause,
-        include: {
-          activity: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                  imageUrl: true,
-                },
-              },
-              userActivities: {
-                where: {
-                  status: 'JOINED',
-                  deletedAt: null,
-                },
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      name: true,
-                      imageUrl: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
+    // Fetch attendances for this user's email
+    const [attendances, totalCount] = await Promise.all([
+      prisma.eventAttendance.findMany({
+        where: {
+          email: email.toLowerCase(),
+          confirmed: true,
         },
         orderBy: {
-          activity: {
-            startTime: statusFilter === 'past' ? 'desc' : 'asc',
-          },
+          timestamp: 'desc',
         },
         skip,
         take: limit,
       }),
-      prisma.userActivity.count({
-        where: whereClause,
+      prisma.eventAttendance.count({
+        where: {
+          email: email.toLowerCase(),
+          confirmed: true,
+        },
       }),
     ])
 
-    // Transform the data to match the expected format
-    const formattedBookings = bookings.map((booking) => ({
-      id: booking.id,
-      userId: booking.userId,
-      activityId: booking.activityId,
-      status: booking.status,
-      createdAt: booking.createdAt,
-      updatedAt: booking.updatedAt,
-      activity: {
-        id: booking.activity.id,
-        title: booking.activity.title,
-        description: booking.activity.description,
-        type: booking.activity.type,
-        city: booking.activity.city,
-        latitude: booking.activity.latitude,
-        longitude: booking.activity.longitude,
-        startTime: booking.activity.startTime,
-        endTime: booking.activity.endTime,
-        maxPeople: booking.activity.maxPeople,
-        imageUrl: booking.activity.imageUrl,
-        price: booking.activity.price,
-        currency: booking.activity.currency,
-        status: booking.activity.status,
-        host: {
-          id: booking.activity.user.id,
-          name: booking.activity.user.name,
-          email: booking.activity.user.email,
-          imageUrl: booking.activity.user.imageUrl,
-        },
-        participants: booking.activity.userActivities.map((ua) => ({
-          id: ua.user.id,
-          name: ua.user.name,
-          imageUrl: ua.user.imageUrl,
-        })),
-        participantCount: booking.activity.userActivities.length,
+    // Get unique event IDs
+    const eventIds = [...new Set(attendances.map(a => a.eventId))]
+
+    // Fetch event details for all events
+    const events = await prisma.eventSubmission.findMany({
+      where: {
+        id: { in: eventIds },
       },
-    }))
+      select: {
+        id: true,
+        eventName: true,
+        category: true,
+        day: true,
+        eventDate: true,
+        time: true,
+        location: true,
+        description: true,
+        organizerInstagram: true,
+        imageUrl: true,
+        price: true,
+        isFree: true,
+      },
+    })
+
+    // Create a map for quick lookup
+    const eventMap = new Map(events.map(e => [e.id, e]))
+
+    // Transform the data to match the expected frontend format
+    const formattedBookings = attendances
+      .map((attendance) => {
+        const event = eventMap.get(attendance.eventId)
+
+        if (!event) {
+          return null
+        }
+
+        // Parse event date and time to create startTime
+        let startTime: string | null = null
+        if (event.eventDate) {
+          startTime = event.eventDate.toISOString()
+        }
+
+        return {
+          id: attendance.id,
+          status: attendance.paymentStatus === 'refunded' ? 'CANCELLED' : 'JOINED',
+          paymentStatus: attendance.paymentStatus?.toUpperCase() || 'FREE',
+          amountPaid: attendance.paymentAmount ? attendance.paymentAmount / 100 : 0,
+          currency: 'SGD',
+          createdAt: attendance.timestamp?.toISOString() || new Date().toISOString(),
+          activity: {
+            id: event.id,
+            title: event.eventName,
+            type: event.category || 'Fitness',
+            city: event.location || 'Singapore',
+            startTime: startTime,
+            endTime: null,
+            imageUrl: event.imageUrl,
+            price: event.isFree ? 0 : (event.price || 0),
+            currency: 'SGD',
+            user: {
+              id: event.organizerInstagram || 'host',
+              name: event.organizerInstagram ? `@${event.organizerInstagram}` : 'Host',
+              email: '',
+              imageUrl: null,
+            },
+          },
+        }
+      })
+      .filter(Boolean) // Remove null entries
 
     return NextResponse.json({
       bookings: formattedBookings,
@@ -153,7 +137,7 @@ export async function GET(request: NextRequest) {
         limit,
         totalCount,
         totalPages: Math.ceil(totalCount / limit),
-        hasMore: skip + bookings.length < totalCount,
+        hasMore: skip + attendances.length < totalCount,
       },
     })
   } catch (error) {

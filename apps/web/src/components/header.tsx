@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Logo } from '@/components/logo'
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { Menu, X, ArrowRight, LayoutDashboard, User, LogOut, ChevronDown } from 'lucide-react'
+import { Menu, X, ArrowRight, LayoutDashboard, User, LogOut, ChevronDown, Calendar, HelpCircle } from 'lucide-react'
 import { useUser, useClerk } from '@clerk/nextjs'
 import { ThemeToggle } from '@/components/ThemeToggle'
 
@@ -226,6 +226,14 @@ export function Header() {
                           Profile
                         </Link>
                         <Link
+                          href="/my-bookings"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+                        >
+                          <Calendar className="w-4 h-4 text-neutral-400" />
+                          My Bookings
+                        </Link>
+                        <Link
                           href="/dashboard"
                           onClick={() => setUserMenuOpen(false)}
                           className="flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
@@ -234,6 +242,14 @@ export function Header() {
                           Dashboard
                         </Link>
                         <div className="border-t border-neutral-100 dark:border-neutral-800 my-1" />
+                        <Link
+                          href="/support"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+                        >
+                          <HelpCircle className="w-4 h-4 text-neutral-400" />
+                          Help & Support
+                        </Link>
                         <button
                           onClick={() => {
                             setUserMenuOpen(false)
@@ -364,12 +380,28 @@ export function Header() {
                         Profile
                       </Link>
                       <Link
+                        href="/my-bookings"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-2 text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800"
+                      >
+                        <Calendar className="w-5 h-5" />
+                        My Bookings
+                      </Link>
+                      <Link
                         href="/dashboard"
                         onClick={() => setMobileMenuOpen(false)}
                         className="flex items-center gap-2 text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800"
                       >
                         <LayoutDashboard className="w-5 h-5" />
                         Dashboard
+                      </Link>
+                      <Link
+                        href="/support"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-2 text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800"
+                      >
+                        <HelpCircle className="w-5 h-5" />
+                        Help & Support
                       </Link>
                       <button
                         onClick={() => {

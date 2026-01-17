@@ -178,7 +178,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
           <h2 className="font-bold text-3xl md:text-4xl text-neutral-900 dark:text-white mb-2">
             Upcoming Events
           </h2>
-          <p className="text-neutral-500 dark:text-neutral-400">
+          <p className="text-neutral-500 dark:text-neutral-300">
             Find your next workout in Singapore
           </p>
         </div>
@@ -221,7 +221,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
             <h3 className="font-semibold text-neutral-900 dark:text-white mb-2 text-lg">
               No events {activeDateFilter !== 'all' ? getFilterLabel(activeDateFilter).toLowerCase() : ''} {selectedCategory !== 'all' ? `in ${selectedCategory}` : ''}
             </h3>
-            <p className="text-neutral-500 dark:text-neutral-400 max-w-sm mx-auto px-4 mb-4">
+            <p className="text-neutral-500 dark:text-neutral-300 max-w-sm mx-auto px-4 mb-4">
               Check back soon or try different filters.
             </p>
             {(selectedCategory !== 'all' || activeDateFilter !== 'all') && (
@@ -240,7 +240,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
 
         {/* Simple CTA */}
         <div className="text-center mt-12">
-          <p className="text-neutral-500 dark:text-neutral-400 text-sm">
+          <p className="text-neutral-500 dark:text-neutral-300 text-sm">
             New events added weekly
           </p>
         </div>

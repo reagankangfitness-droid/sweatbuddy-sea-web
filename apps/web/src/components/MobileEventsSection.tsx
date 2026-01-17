@@ -143,7 +143,7 @@ export function MobileEventsSection({ events }: Props) {
         ))}
 
         {filteredEvents.length === 0 && (
-          <div className="text-center py-12 text-neutral-400 dark:text-neutral-500">
+          <div className="text-center py-12 text-neutral-500 dark:text-neutral-400">
             <p className="text-4xl mb-2">🏃</p>
             <p className="font-medium">No events {activeFilter === 'all' ? 'yet' : getFilterLabel(activeFilter).toLowerCase()}</p>
             <p className="text-sm mt-2">Check back soon!</p>
@@ -154,7 +154,7 @@ export function MobileEventsSection({ events }: Props) {
       {/* More events prompt */}
       <div className="px-4 mt-6">
         <div className="bg-white dark:bg-neutral-900 p-4 text-center rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card">
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+          <p className="text-sm text-neutral-600 dark:text-neutral-300">
             More events added every Wednesday
           </p>
         </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { DollarSign, Users, Clock, CheckCircle, AlertCircle, CreditCard, ChevronRight } from 'lucide-react'
+import { DollarSign, Users, Clock, CheckCircle, AlertCircle, CreditCard, ChevronRight, XCircle, Ban, AlertTriangle, Star } from 'lucide-react'
 import { DashboardHeader } from '@/components/host/DashboardHeader'
 import { StatCard } from '@/components/host/StatCard'
 import { UpcomingEventRow } from '@/components/host/UpcomingEventRow'
@@ -38,6 +38,21 @@ interface RecentActivity {
   amount?: number | null
 }
 
+interface TopRegular {
+  email: string
+  name: string | null
+  attendanceCount: number
+}
+
+interface AtRiskMember {
+  email: string
+  name: string | null
+  totalAttendance: number
+  lastAttendedDate: string
+  daysSinceLastAttended: number
+  missedEventCount: number
+}
+
 interface DashboardData {
   stats: {
     activeEvents: number
@@ -46,14 +61,19 @@ interface DashboardData {
     totalEarnings?: number
     paidAttendees?: number
     pendingPayments?: number
+    atRiskCount?: number
   }
   upcoming: DashboardEvent[]
   past: DashboardEvent[]
   pending: DashboardEvent[]
+  rejected: DashboardEvent[]
+  cancelled: DashboardEvent[]
   recentActivity: RecentActivity[]
+  topRegulars: TopRegular[]
+  atRiskMembers: AtRiskMember[]
 }
 
-type TabType = 'live' | 'pending' | 'past'
+type TabType = 'live' | 'pending' | 'past' | 'rejected' | 'cancelled'
 
 export default function HostDashboard() {
   const router = useRouter()
@@ -128,6 +148,8 @@ export default function HostDashboard() {
     { id: 'live', label: 'Live', count: data.upcoming.length, icon: <CheckCircle className="w-4 h-4" /> },
     { id: 'pending', label: 'Pending', count: data.pending.length, icon: <Clock className="w-4 h-4" /> },
     { id: 'past', label: 'Past', count: data.past.length, icon: <AlertCircle className="w-4 h-4" /> },
+    { id: 'rejected', label: 'Rejected', count: data.rejected?.length || 0, icon: <XCircle className="w-4 h-4" /> },
+    { id: 'cancelled', label: 'Cancelled', count: data.cancelled?.length || 0, icon: <Ban className="w-4 h-4" /> },
   ]
 
   const getEventsForTab = () => {
@@ -135,6 +157,8 @@ export default function HostDashboard() {
       case 'live': return data.upcoming
       case 'pending': return data.pending
       case 'past': return data.past
+      case 'rejected': return data.rejected || []
+      case 'cancelled': return data.cancelled || []
       default: return data.upcoming
     }
   }
@@ -257,6 +281,18 @@ export default function HostDashboard() {
                       <p className="text-sm">No past events yet</p>
                     </div>
                   )}
+                  {activeTab === 'rejected' && (
+                    <div className="text-neutral-500 dark:text-neutral-400">
+                      <XCircle className="w-8 h-8 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" />
+                      <p className="text-sm">No rejected events</p>
+                    </div>
+                  )}
+                  {activeTab === 'cancelled' && (
+                    <div className="text-neutral-500 dark:text-neutral-400">
+                      <Ban className="w-8 h-8 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" />
+                      <p className="text-sm">No cancelled events</p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 getEventsForTab().map((event) => (
@@ -264,6 +300,10 @@ export default function HostDashboard() {
                     <PastEventRow key={event.id} event={event} />
                   ) : activeTab === 'pending' ? (
                     <PendingEventRow key={event.id} event={event} />
+                  ) : activeTab === 'rejected' ? (
+                    <RejectedEventRow key={event.id} event={event} />
+                  ) : activeTab === 'cancelled' ? (
+                    <CancelledEventRow key={event.id} event={event} />
                   ) : (
                     <UpcomingEventRow key={event.id} event={event} onCancelled={() => window.location.reload()} />
                   )
@@ -272,7 +312,7 @@ export default function HostDashboard() {
             </div>
           </div>
 
-          {/* Sidebar - Recent Activity */}
+          {/* Sidebar - Recent Activity, Top Regulars, At-Risk */}
           <div className="lg:col-span-1 space-y-6 order-2">
             {/* Recent Activity */}
             <section>
@@ -327,6 +367,73 @@ export default function HostDashboard() {
               )}
             </section>
 
+            {/* Top Regulars */}
+            {data.topRegulars && data.topRegulars.length > 0 && (
+              <section>
+                <h2 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
+                  <Star className="w-4 h-4 text-amber-500" />
+                  Top Regulars
+                </h2>
+                <div className="border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden bg-white dark:bg-neutral-900">
+                  <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                    {data.topRegulars.slice(0, 5).map((regular, index) => (
+                      <div key={regular.email} className="p-2.5 sm:p-3">
+                        <div className="flex items-center gap-2.5 sm:gap-3">
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                            <span className="text-xs font-bold text-amber-700 dark:text-amber-400">#{index + 1}</span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs sm:text-sm font-medium text-neutral-900 dark:text-white truncate">
+                              {regular.name || regular.email.split('@')[0]}
+                            </p>
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                              {regular.attendanceCount} events attended
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* At-Risk Members */}
+            {data.atRiskMembers && data.atRiskMembers.length > 0 && (
+              <section>
+                <h2 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-orange-500" />
+                  At-Risk Members
+                </h2>
+                <div className="border border-orange-200 dark:border-orange-900/50 rounded-xl overflow-hidden bg-orange-50 dark:bg-orange-900/20">
+                  <div className="divide-y divide-orange-100 dark:divide-orange-900/30">
+                    {data.atRiskMembers.slice(0, 3).map((member) => (
+                      <div key={member.email} className="p-2.5 sm:p-3">
+                        <div className="flex items-start gap-2.5 sm:gap-3">
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-orange-200 dark:bg-orange-800/50 flex items-center justify-center flex-shrink-0">
+                            <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-600 dark:text-orange-400" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs sm:text-sm font-medium text-neutral-900 dark:text-white truncate">
+                              {member.name || member.email.split('@')[0]}
+                            </p>
+                            <p className="text-xs text-orange-700 dark:text-orange-400">
+                              {member.daysSinceLastAttended} days since last event · Missed {member.missedEventCount} events
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="px-3 py-2 bg-orange-100 dark:bg-orange-900/30 border-t border-orange-200 dark:border-orange-900/50">
+                    <p className="text-xs text-orange-800 dark:text-orange-300">
+                      These regulars haven&apos;t attended recently. Consider reaching out!
+                    </p>
+                  </div>
+                </div>
+              </section>
+            )}
+
           </div>
         </div>
       </main>
@@ -354,6 +461,62 @@ function PendingEventRow({ event }: { event: DashboardEvent }) {
           </p>
           <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1 hidden sm:block">
             Submitted for review. We&apos;ll notify you once approved.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Rejected event row
+function RejectedEventRow({ event }: { event: DashboardEvent }) {
+  return (
+    <div className="p-3 sm:p-4">
+      <div className="flex items-start gap-3 sm:gap-4">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
+          <XCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 dark:text-red-400" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start gap-2 flex-wrap">
+            <h3 className="font-semibold text-neutral-900 dark:text-white text-sm sm:text-base truncate">{event.name}</h3>
+            <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 flex-shrink-0">
+              Rejected
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-0.5 sm:mt-1">
+            {event.day} · {event.time}
+          </p>
+          {event.rejectionReason && (
+            <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+              Reason: {event.rejectionReason}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Cancelled event row
+function CancelledEventRow({ event }: { event: DashboardEvent }) {
+  return (
+    <div className="p-3 sm:p-4">
+      <div className="flex items-start gap-3 sm:gap-4">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center flex-shrink-0">
+          <Ban className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-500 dark:text-neutral-400" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start gap-2 flex-wrap">
+            <h3 className="font-semibold text-neutral-500 dark:text-neutral-400 text-sm sm:text-base truncate line-through">{event.name}</h3>
+            <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 flex-shrink-0">
+              Cancelled
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-neutral-400 dark:text-neutral-500 mt-0.5 sm:mt-1">
+            {event.day} · {event.time}
+          </p>
+          <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
+            {event.goingCount} attendee{event.goingCount !== 1 ? 's were' : ' was'} registered
           </p>
         </div>
       </div>

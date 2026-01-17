@@ -26,11 +26,17 @@ export function Footer() {
               <a href="#events" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors text-sm">
                 Browse Events
               </a>
+              <a href="/my-bookings" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors text-sm">
+                My Bookings
+              </a>
               <a href="/host" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors text-sm">
                 List Your Event
               </a>
               <a href="/host/dashboard" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors text-sm">
                 Host Dashboard
+              </a>
+              <a href="/support" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors text-sm">
+                Help & Support
               </a>
               <a href="/privacy" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors text-sm">
                 Privacy Policy

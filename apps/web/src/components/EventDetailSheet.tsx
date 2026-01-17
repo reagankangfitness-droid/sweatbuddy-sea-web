@@ -4,12 +4,14 @@ import { useEffect, useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
-import { X, Instagram, MapPin, MessageCircle, Clock } from 'lucide-react'
+import { X, Instagram, MapPin, MessageCircle, Clock, Star } from 'lucide-react'
 import { GoingButton } from './GoingButton'
 import { ShareButton } from './ShareButton'
 import { EventAttendees } from './EventAttendees'
 import { DirectChatWindow } from './DirectChatWindow'
 import { OrganizerProfile } from './OrganizerProfile'
+import { EventReviews } from './EventReviews'
+import { AddToCalendar } from './AddToCalendar'
 import { detectPlatform } from '@/lib/community'
 import { safeGetJSON } from '@/lib/safe-storage'
 
@@ -336,6 +338,14 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                     </h3>
                     <p className="text-sm text-neutral-500 dark:text-neutral-400">{event.location}</p>
                   </div>
+
+                  {/* Reviews Section */}
+                  <div>
+                    <h3 className="text-sm font-semibold text-neutral-900 dark:text-white mb-3 flex items-center gap-2">
+                      <Star className="w-4 h-4 text-amber-400" /> Reviews
+                    </h3>
+                    <EventReviews eventId={event.id} />
+                  </div>
                 </div>
               </div>
             </div>
@@ -389,6 +399,9 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                 </span>
                 <span className="text-xs font-medium">Open in Maps</span>
               </a>
+
+              {/* Add to Calendar */}
+              <AddToCalendar event={event} variant="icon" />
 
               {/* Community Link - visible after RSVP (free) or payment confirmed (paid) */}
               {event.communityLink && (

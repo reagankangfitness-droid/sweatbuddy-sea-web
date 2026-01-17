@@ -4,7 +4,7 @@ import Stripe from 'stripe'
 import { prisma } from '@/lib/prisma'
 import { stripe, fromStripeAmount } from '@/lib/stripe'
 import { onBookingConfirmed, onBookingPaid, onBookingCancelled } from '@/lib/stats/realtime'
-import { sendPaidEventConfirmationEmail, sendHostBookingNotificationEmail } from '@/lib/event-confirmation-email'
+import { sendPaidEventConfirmationEmail, sendHostBookingNotificationEmail, sendRefundNotificationEmail } from '@/lib/event-confirmation-email'
 import { scheduleEventReminder } from '@/lib/event-reminders'
 
 // Disable body parsing - Stripe requires raw body for signature verification
@@ -605,7 +605,15 @@ async function handleRefund(charge: Stripe.Charge) {
     // Otherwise, check for Activity booking refund
     const booking = await prisma.userActivity.findFirst({
       where: { stripePaymentIntentId: paymentIntentId },
-      include: { activity: true },
+      include: {
+        activity: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+      },
     })
 
     if (!booking) {
@@ -656,6 +664,28 @@ async function handleRefund(charge: Stripe.Charge) {
     }
 
     console.log(`💸 Refund processed: ${paymentIntentId} - Amount: ${refundAmount} ${currency}`)
+
+    // Send refund notification email to user
+    if (booking.user?.email) {
+      try {
+        const emailResult = await sendRefundNotificationEmail({
+          to: booking.user.email,
+          userName: booking.user.name,
+          eventName: booking.activity?.title || 'Activity',
+          refundAmount: amountRefunded,
+          currency: currency.toUpperCase(),
+          refundType: isFullRefund ? 'full' : 'partial',
+        })
+
+        if (emailResult.success) {
+          console.log(`✅ Refund notification email sent to ${booking.user.email}`)
+        } else {
+          console.error(`Failed to send refund email:`, emailResult.error)
+        }
+      } catch (emailError) {
+        console.error('Error sending refund notification email:', emailError)
+      }
+    }
 
     // Update real-time stats for cancellation (async, don't block)
     try {
@@ -727,7 +757,42 @@ async function handleEventSubmissionRefund(
 
     console.log(`[EventSubmission] 💸 Refund processed: ${paymentIntentId} - Amount: ${amountRefunded / 100} ${currency}`)
 
-    // TODO: Send refund notification email to attendee
+    // Send refund notification email to attendee
+    try {
+      // Fetch attendance and event details
+      const [attendance, eventSubmission] = await Promise.all([
+        prisma.eventAttendance.findUnique({
+          where: { id: transaction.attendanceId },
+          select: { email: true, name: true },
+        }),
+        prisma.eventSubmission.findUnique({
+          where: { id: transaction.eventSubmissionId },
+          select: { eventName: true },
+        }),
+      ])
+
+      if (attendance?.email) {
+        const originalAmount = transaction.totalCharged || 0
+        const refundType = amountRefunded >= originalAmount ? 'full' : 'partial'
+
+        const emailResult = await sendRefundNotificationEmail({
+          to: attendance.email,
+          userName: attendance.name,
+          eventName: eventSubmission?.eventName || 'Event',
+          refundAmount: amountRefunded,
+          currency: currency.toUpperCase(),
+          refundType,
+        })
+
+        if (emailResult.success) {
+          console.log(`[EventSubmission] ✅ Refund notification email sent to ${attendance.email}`)
+        } else {
+          console.error(`[EventSubmission] Failed to send refund email:`, emailResult.error)
+        }
+      }
+    } catch (emailError) {
+      console.error('[EventSubmission] Error sending refund notification email:', emailError)
+    }
   } catch (error) {
     console.error('[EventSubmission] Error handling refund:', error)
   }

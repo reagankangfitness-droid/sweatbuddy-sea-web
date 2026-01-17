@@ -162,21 +162,35 @@ export default function ProfilePage() {
             <span className="text-2xl font-semibold text-neutral-900 dark:text-white block">{savedCount}</span>
             <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">SAVED</span>
           </Link>
-          <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card text-center">
+          <Link
+            href="/my-bookings"
+            className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card text-center block"
+          >
             <Calendar className="w-6 h-6 text-neutral-400 dark:text-neutral-500 mx-auto mb-2" />
             <span className="text-2xl font-semibold text-neutral-900 dark:text-white block">{goingCount}</span>
             <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">GOING</span>
-          </div>
+          </Link>
         </div>
 
         {/* Menu Items */}
         <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card overflow-hidden">
           <Link
-            href="/host/dashboard"
+            href="/my-bookings"
             className="flex items-center justify-between px-4 py-4 border-b border-neutral-100 dark:border-neutral-800"
           >
             <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
               <Calendar className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
+              My Bookings
+            </span>
+            <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+          </Link>
+
+          <Link
+            href="/host/dashboard"
+            className="flex items-center justify-between px-4 py-4 border-b border-neutral-100 dark:border-neutral-800"
+          >
+            <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
+              <User className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
               Host Dashboard
             </span>
             <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />

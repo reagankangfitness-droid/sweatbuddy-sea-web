@@ -1733,6 +1733,44 @@ model EventReminder {
   @@map("event_reminders")
 }
 
+// Event reviews (attendees can rate events after attending)
+model EventReview {
+  id              String    @id @default(cuid())
+  eventId         String    // References EventSubmission.id
+  attendanceId    String    @unique // One review per attendance
+  reviewerEmail   String    @db.VarChar(255)
+  reviewerName    String?   @db.VarChar(200)
+  hostInstagram   String    @db.VarChar(500) // For host rating aggregation
+
+  // Rating & content
+  rating          Int       // 1-5 stars
+  title           String?   @db.VarChar(200)
+  content         String?   @db.Text
+  photos          String[]  // Array of photo URLs
+
+  // Interaction metrics
+  helpfulCount    Int       @default(0)
+
+  // Host response
+  hostResponse    String?   @db.Text
+  hostRespondedAt DateTime?
+
+  // Status
+  isPublished     Boolean   @default(true)
+  isFlagged       Boolean   @default(false)
+  flagReason      String?   @db.VarChar(200)
+
+  // Timestamps
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([eventId])
+  @@index([hostInstagram])
+  @@index([rating])
+  @@index([createdAt])
+  @@map("event_reviews")
+}
+
 // Post-event follow-up (2h after event ends)
 model PostEventFollowUp {
   id           String   @id @default(cuid())

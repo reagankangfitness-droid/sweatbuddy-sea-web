@@ -87,6 +87,12 @@ function getDateFilters() {
   return { today, tomorrow, saturday, sunday, nextMonday, nextSunday }
 }
 
+// Parse date string (YYYY-MM-DD) to local date at midnight
+function parseLocalDate(dateStr: string): Date {
+  const [year, month, day] = dateStr.split('-').map(Number)
+  return new Date(year, month - 1, day, 0, 0, 0, 0)
+}
+
 function filterEventsByDate(events: Event[], filter: DateFilter): Event[] {
   if (filter === 'all') return events
 
@@ -99,8 +105,8 @@ function filterEventsByDate(events: Event[], filter: DateFilter): Event[] {
     // Events without a date don't match specific date filters
     if (!event.eventDate) return false
 
-    const eventDate = new Date(event.eventDate)
-    eventDate.setHours(0, 0, 0, 0)
+    // Parse the date string as local date to avoid timezone issues
+    const eventDate = parseLocalDate(event.eventDate)
 
     switch (filter) {
       case 'today':

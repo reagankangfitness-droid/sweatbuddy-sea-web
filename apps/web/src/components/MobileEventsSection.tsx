@@ -14,9 +14,10 @@ interface Props {
 
 type DateFilter = 'all' | 'today' | 'tomorrow' | 'weekend' | 'next-week'
 
-// Date filtering helpers
+// Date filtering helpers - uses browser's local timezone automatically
+// new Date() creates a date in the user's local timezone
 function getDateFilters() {
-  const now = new Date()
+  const now = new Date() // User's local timezone
   const today = new Date(now)
   today.setHours(0, 0, 0, 0)
 

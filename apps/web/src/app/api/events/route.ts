@@ -38,7 +38,8 @@ interface Event {
 
 // Helper to check if an event should be shown
 // - Recurring events: ALWAYS show (they repeat weekly)
-// - One-time events: Show all future events (filtering happens on frontend via tabs)
+// - One-time events: Show events from yesterday onwards (timezone-safe)
+// - Frontend handles precise timezone filtering (Today, Tomorrow, etc.)
 function isUpcomingEvent(eventDate: Date | null, recurring: boolean): boolean {
   // RECURRING EVENTS: Always show - they happen every week on their designated day
   if (recurring) return true
@@ -46,43 +47,38 @@ function isUpcomingEvent(eventDate: Date | null, recurring: boolean): boolean {
   // Events without a date - show them (legacy data)
   if (!eventDate) return true
 
-  // Use Singapore timezone (UTC+8) for date comparison
-  // This ensures events are shown correctly regardless of server timezone
+  // Use UTC and subtract 1 day to be timezone-safe for all regions
+  // This ensures events aren't filtered out due to timezone differences
+  // Frontend will do precise filtering based on user's local timezone
   const now = new Date()
-  const sgOffset = 8 * 60 // Singapore is UTC+8
-  const localOffset = now.getTimezoneOffset()
-  const sgTime = new Date(now.getTime() + (sgOffset + localOffset) * 60 * 1000)
-
-  const today = new Date(sgTime)
-  today.setHours(0, 0, 0, 0)
+  const yesterday = new Date(now)
+  yesterday.setUTCDate(yesterday.getUTCDate() - 1)
+  yesterday.setUTCHours(0, 0, 0, 0)
 
   const eventDay = new Date(eventDate)
-  eventDay.setHours(0, 0, 0, 0)
+  eventDay.setUTCHours(0, 0, 0, 0)
 
-  // ONE-TIME EVENTS: Show all future events (today and onwards in Singapore time)
-  // Frontend will filter by date tabs (Today, Tomorrow, This weekend, Next week, etc.)
-  return eventDay >= today
+  // Show events from yesterday onwards (covers all timezones)
+  return eventDay >= yesterday
 }
 
 // Cached database query - revalidates every 60s
 const getCachedEvents = unstable_cache(
   async () => {
-    // Get today's date at midnight in Singapore timezone (UTC+8)
+    // Get yesterday's date at midnight UTC (timezone-safe for all regions)
+    // This ensures we don't accidentally filter out events due to timezone differences
     const now = new Date()
-    const sgOffset = 8 * 60 // Singapore is UTC+8
-    const localOffset = now.getTimezoneOffset()
-    const sgTime = new Date(now.getTime() + (sgOffset + localOffset) * 60 * 1000)
-
-    const today = new Date(sgTime)
-    today.setHours(0, 0, 0, 0)
+    const yesterday = new Date(now)
+    yesterday.setUTCDate(yesterday.getUTCDate() - 1)
+    yesterday.setUTCHours(0, 0, 0, 0)
 
     // Get approved events that are upcoming or recurring
     const approvedSubmissions = await prisma.eventSubmission.findMany({
       where: {
         status: 'APPROVED',
         OR: [
-          // Events with future dates
-          { eventDate: { gte: today } },
+          // Events from yesterday onwards (timezone-safe)
+          { eventDate: { gte: yesterday } },
           // Recurring events (always show)
           { recurring: true },
           // Events without dates (legacy, show them)
@@ -188,7 +184,7 @@ const getCachedEvents = unstable_cache(
       paynowNumber: submission.paynowNumber,
     }))
   },
-  ['events-list-v4'], // Updated cache key - uses Singapore timezone for date filtering
+  ['events-list-v5'], // Updated cache key - timezone-agnostic, frontend handles timezone filtering
   { revalidate: 60, tags: ['events'] }
 )
 

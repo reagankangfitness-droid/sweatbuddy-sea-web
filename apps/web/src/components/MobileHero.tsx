@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ArrowDown, ArrowRight } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -123,17 +123,6 @@ export function MobileHero() {
               List them free
             </Link>
           </p>
-        </div>
-      </div>
-
-      {/* Scroll indicator */}
-      <div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce z-10"
-        style={{ animationDuration: '2s' }}
-      >
-        <span className="text-white/30 text-xs uppercase tracking-widest font-medium">Scroll</span>
-        <div className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center">
-          <ArrowDown className="w-4 h-4 text-white/30" />
         </div>
       </div>
 

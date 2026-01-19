@@ -309,24 +309,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
         </p>
       </div>
 
-      {/* Community Link */}
-      <div>
-        <label htmlFor="communityLink" className="block text-sm font-medium text-neutral-700 mb-2">
-          Community group link
-        </label>
-        <input
-          type="url"
-          id="communityLink"
-          name="communityLink"
-          value={formData.communityLink}
-          onChange={handleChange}
-          placeholder="e.g., https://chat.whatsapp.com/..."
-          className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
-        />
-        <p className="text-xs text-neutral-400 mt-1">
-          WhatsApp or Telegram group for attendees to join
-        </p>
-      </div>
+      {/* Community Link - hidden for now */}
 
       {/* Pricing Section */}
       <div className="pt-4 border-t border-neutral-200 space-y-4">

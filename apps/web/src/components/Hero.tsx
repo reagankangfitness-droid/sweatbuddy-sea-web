@@ -123,8 +123,8 @@ export const Hero = memo(function Hero() {
               transition: 'opacity 0.5s ease-out 0.2s, transform 0.5s ease-out 0.2s',
             }}
           >
-            Morning runs. Sunset yoga. Weekend hikes.<br />
-            Find what moves you.
+            Hundreds of free group workouts. Zero DM hunting.<br />
+            One tap to join.
           </p>
 
           {/* Dual CTA Buttons */}

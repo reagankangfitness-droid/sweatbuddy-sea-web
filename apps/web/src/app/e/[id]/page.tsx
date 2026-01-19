@@ -310,16 +310,7 @@ export default async function EventDetailPage({ params }: Props) {
                 <h2 className="text-lg font-semibold text-neutral-900 mb-3 flex items-center gap-2">
                   <span>📍</span> Location
                 </h2>
-                <p className="text-neutral-600 mb-3">{event.location}</p>
-                <a
-                  href={`https://maps.google.com/?q=${encodeURIComponent(event.location)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700"
-                >
-                  Open in Google Maps
-                  <span>→</span>
-                </a>
+                <p className="text-neutral-600">{event.location}</p>
               </div>
 
               {/* Organizer */}
@@ -356,7 +347,7 @@ export default async function EventDetailPage({ params }: Props) {
                 <div className="text-center pb-4 border-b border-neutral-100">
                   {goingCount === 0 ? (
                     <>
-                      <p className="text-lg font-medium text-neutral-500">Be the first to join!</p>
+                      <p className="text-lg font-medium text-neutral-500">Spots available</p>
                     </>
                   ) : (
                     <>
@@ -403,14 +394,6 @@ export default async function EventDetailPage({ params }: Props) {
                   }}
                   initialGoingCount={goingCount}
                 />
-
-                {/* Back to events */}
-                <Link
-                  href="/#events"
-                  className="block w-full text-center py-3 text-neutral-600 hover:text-neutral-900 transition-colors text-sm font-medium"
-                >
-                  ← Browse all events
-                </Link>
               </div>
             </div>
           </div>

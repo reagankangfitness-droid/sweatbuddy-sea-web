@@ -52,15 +52,24 @@ export async function GET() {
     }
 
     const instagramHandle = session.instagramHandle
+    const userId = session.userId
+
+    // Build where clause: prioritize userId for account-based queries
+    // This ensures hosts see ALL their events regardless of Instagram handle changes
+    const whereClause = userId
+      ? {
+          OR: [
+            { submittedByUserId: userId }, // Events submitted while logged in
+            { organizerInstagram: { equals: instagramHandle, mode: 'insensitive' as const } }, // Legacy events by Instagram
+          ],
+        }
+      : {
+          organizerInstagram: { equals: instagramHandle, mode: 'insensitive' as const },
+        }
 
     // Get ALL events for this organizer (approved, pending, rejected)
     const allSubmissions = await prisma.eventSubmission.findMany({
-      where: {
-        organizerInstagram: {
-          equals: instagramHandle,
-          mode: 'insensitive',
-        },
-      },
+      where: whereClause,
       orderBy: { eventDate: 'asc' },
       select: {
         id: true,

@@ -91,7 +91,7 @@ export function MobileHero() {
             transition: 'opacity 0.5s ease-out 0.2s, transform 0.5s ease-out 0.2s',
           }}
         >
-          Morning runs. Sunset yoga. Weekend hikes. Find what moves you.
+          Hundreds of free group workouts. Zero DM hunting. One tap to join.
         </p>
 
         {/* Dual CTA Buttons */}

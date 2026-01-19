@@ -13,7 +13,8 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Loader2,
-  RefreshCw
+  RefreshCw,
+  MessageCircle
 } from 'lucide-react'
 import {
   AreaChart,
@@ -48,6 +49,18 @@ interface NewsletterSubscriber {
   source: string
 }
 
+interface Conversation {
+  id: string
+  eventId: string
+  attendeeEmail: string
+  attendeeName: string | null
+  organizerHandle: string
+  organizerName: string | null
+  lastMessage: string | null
+  lastMessageAt: string
+  lastMessageSender: 'attendee' | 'organizer' | null
+}
+
 interface Stats {
   totalEvents: number
   pendingEvents: number
@@ -56,6 +69,9 @@ interface Stats {
   attendeesThisWeek: number
   subscribersThisWeek: number
   optInRate: number
+  totalMessages: number
+  messagesThisWeek: number
+  activeConversations: number
 }
 
 // Warm dusk color palette for charts
@@ -67,6 +83,7 @@ export default function AdminDashboardPage() {
   const [refreshing, setRefreshing] = useState(false)
   const [attendees, setAttendees] = useState<Attendee[]>([])
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([])
+  const [conversations, setConversations] = useState<Conversation[]>([])
   const [stats, setStats] = useState<Stats>({
     totalEvents: 0,
     pendingEvents: 0,
@@ -75,6 +92,9 @@ export default function AdminDashboardPage() {
     attendeesThisWeek: 0,
     subscribersThisWeek: 0,
     optInRate: 0,
+    totalMessages: 0,
+    messagesThisWeek: 0,
+    activeConversations: 0,
   })
 
   const fetchData = useCallback(async () => {
@@ -87,19 +107,24 @@ export default function AdminDashboardPage() {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       }
-      const [attendeesRes, subscribersRes] = await Promise.all([
+      const [attendeesRes, subscribersRes, messagesRes] = await Promise.all([
         fetch('/api/attendance', { headers }),
         fetch('/api/newsletter/subscribers', { headers }),
+        fetch('/api/admin/messages', { headers }),
       ])
 
       const attendeesData = attendeesRes.ok ? await attendeesRes.json() : { attendees: [] }
       const subscribersData = subscribersRes.ok ? await subscribersRes.json() : { subscribers: [] }
+      const messagesData = messagesRes.ok ? await messagesRes.json() : { stats: {}, conversations: [] }
 
       const attendeesList = attendeesData.attendees || []
       const subscribersList = subscribersData.subscribers || []
+      const conversationsList = messagesData.conversations || []
+      const messageStats = messagesData.stats || {}
 
       setAttendees(attendeesList)
       setSubscribers(subscribersList)
+      setConversations(conversationsList)
 
       // Calculate stats
       const weekAgo = startOfDay(subDays(new Date(), 7))
@@ -122,6 +147,9 @@ export default function AdminDashboardPage() {
         attendeesThisWeek,
         subscribersThisWeek,
         optInRate,
+        totalMessages: messageStats.totalMessages || 0,
+        messagesThisWeek: messageStats.messagesThisWeek || 0,
+        activeConversations: messageStats.activeConversations || 0,
       })
     } catch (error) {
       console.error('Failed to fetch data:', error)
@@ -227,7 +255,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <StatCard
           title="Total Attendees"
           value={stats.totalAttendees}
@@ -245,6 +273,15 @@ export default function AdminDashboardPage() {
           icon={Mail}
           iconBg="bg-emerald-100"
           iconColor="text-emerald-600"
+        />
+        <StatCard
+          title="Host Inquiries"
+          value={stats.totalMessages}
+          change={stats.messagesThisWeek}
+          changeLabel="this week"
+          icon={MessageCircle}
+          iconBg="bg-indigo-100"
+          iconColor="text-indigo-600"
         />
         <StatCard
           title="Events with RSVPs"
@@ -457,6 +494,63 @@ export default function AdminDashboardPage() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Recent Host Inquiries */}
+      <div className="mt-6 bg-white rounded-2xl border border-neutral-200 p-4 sm:p-6 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-lg text-neutral-900">Recent Host Inquiries</h3>
+          <span className="text-xs text-neutral-500">{stats.activeConversations} active conversations</span>
+        </div>
+        {conversations.length > 0 ? (
+          <div className="space-y-3">
+            {conversations.slice(0, 5).map((conv) => (
+              <div
+                key={conv.id}
+                className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
+                    <MessageCircle className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-neutral-900 text-sm font-medium truncate">
+                      {conv.attendeeName || conv.attendeeEmail}
+                    </p>
+                    <p className="text-neutral-500 text-xs truncate">
+                      → @{conv.organizerHandle}
+                      {conv.lastMessage && (
+                        <span className="ml-2 text-neutral-400">
+                          &quot;{conv.lastMessage.length > 30 ? conv.lastMessage.slice(0, 30) + '...' : conv.lastMessage}&quot;
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    conv.lastMessageSender === 'attendee'
+                      ? 'bg-amber-100 text-amber-700'
+                      : 'bg-emerald-100 text-emerald-700'
+                  }`}>
+                    {conv.lastMessageSender === 'attendee' ? 'Awaiting reply' : 'Replied'}
+                  </span>
+                  <span className="text-neutral-400 text-xs">
+                    {format(new Date(conv.lastMessageAt), 'MMM d')}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="h-32 flex items-center justify-center text-neutral-500">
+            <div className="text-center">
+              <MessageCircle className="w-8 h-8 mx-auto mb-2 text-neutral-300" />
+              <p>No host inquiries yet</p>
+              <p className="text-xs text-neutral-400 mt-1">Attendees can message hosts through event pages</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

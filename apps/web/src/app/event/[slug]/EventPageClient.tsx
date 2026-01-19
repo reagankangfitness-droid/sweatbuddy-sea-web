@@ -266,20 +266,7 @@ export function EventPageClient({ event }: { event: Event }) {
               </div>
             )}
 
-            {/* Community Link */}
-            {event.communityLink && (
-              <div>
-                <a
-                  href={event.communityLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-100 text-neutral-700 rounded-lg hover:bg-neutral-200 transition-colors"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  <span>Join community group</span>
-                </a>
-              </div>
-            )}
+            {/* Community Link - hidden for now */}
 
             {/* Attendees */}
             {goingCount > 0 && (
@@ -366,7 +353,7 @@ export function EventPageClient({ event }: { event: Event }) {
                 {/* Going count */}
                 <p className="text-center text-neutral-500 mt-4 text-sm">
                   {goingCount === 0
-                    ? 'Be the first to join!'
+                    ? 'Spots available'
                     : `${goingCount} ${goingCount === 1 ? 'person' : 'people'} going`}
                 </p>
 

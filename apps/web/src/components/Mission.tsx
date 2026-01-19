@@ -33,7 +33,11 @@ const scrollToElement = (elementId: string, maxAttempts = 10) => {
   tryScroll()
 }
 
-export function Mission() {
+interface MissionProps {
+  id?: string
+}
+
+export function Mission({ id = 'mission' }: MissionProps) {
   const pathname = usePathname()
   const router = useRouter()
 
@@ -50,7 +54,7 @@ export function Mission() {
     }
   }, [pathname, router])
   return (
-    <section id="mission" className="relative py-24 md:py-36 overflow-hidden bg-neutral-950">
+    <section id={id} className="relative py-24 md:py-36 overflow-hidden bg-neutral-950">
       {/* Decorative elements - subtle */}
       <div className="absolute top-20 right-10 w-20 h-20 rounded-full bg-white/5" />
       <div className="absolute bottom-32 left-16 w-16 h-16 rounded-full bg-neutral-900/10" />
@@ -80,7 +84,7 @@ export function Mission() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-lg mb-8 text-neutral-300"
           >
-            Hundreds of <span className="text-white font-medium">community workouts</span> happen every week — led by passionate trainers and fitness enthusiasts, scattered across Instagram stories and Facebook groups.
+            Every week, trainers and run clubs host <span className="text-white font-medium">free workouts</span> across Singapore — but finding them means scrolling through Stories and hunting DMs.
           </motion.p>
 
           {/* Divider - subtle coral */}
@@ -96,7 +100,7 @@ export function Mission() {
           >
             <Zap className="w-6 h-6 text-white" />
             <span className="text-white font-sans font-semibold text-lg md:text-xl text-center sm:text-left" style={{ letterSpacing: '-0.01em' }}>
-              SweatBuddies brings them together. Hosts list. You show up.
+              We gather them in one place. Browse. Tap. Show up.
             </span>
           </motion.div>
 

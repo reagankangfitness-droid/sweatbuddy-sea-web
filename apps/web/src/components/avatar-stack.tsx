@@ -62,7 +62,7 @@ export function AvatarStack({
     return (
       <div className="flex items-center gap-1.5">
         <span className="text-sm">👋</span>
-        <span className="text-xs text-muted-foreground italic">Be the first to join!</span>
+        <span className="text-xs text-muted-foreground">Join this session</span>
       </div>
     )
   }

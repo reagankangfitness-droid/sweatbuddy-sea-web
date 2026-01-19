@@ -3,10 +3,22 @@
 import { useRef, useState } from 'react'
 import Image from 'next/image'
 import type { Event } from '@/lib/events'
+import { AvatarStack } from './ui/AvatarStack'
+
+interface AttendeePreview {
+  id: string
+  name: string
+  imageUrl?: string | null
+}
+
+interface ExtendedEvent extends Event {
+  goingCount?: number
+  attendeesPreview?: AttendeePreview[]
+}
 
 interface Props {
-  events: Event[]
-  onSelect: (event: Event) => void
+  events: ExtendedEvent[]
+  onSelect: (event: ExtendedEvent) => void
 }
 
 const categoryEmojis: Record<string, string> = {
@@ -126,9 +138,28 @@ export function FeaturedEventsCarousel({ events, onSelect }: Props) {
                 <h3 className="text-white font-sans text-2xl font-semibold mb-2 line-clamp-2" style={{ letterSpacing: '-0.01em' }}>
                   {event.name}
                 </h3>
-                <p className="text-white/70 text-sm mb-4">
+                <p className="text-white/70 text-sm mb-3">
                   {event.day} • {event.time}
                 </p>
+
+                {/* Attendees Preview */}
+                <div className="flex items-center gap-2 mb-4">
+                  {event.attendeesPreview && event.attendeesPreview.length > 0 && (
+                    <AvatarStack
+                      attendees={event.attendeesPreview}
+                      maxDisplay={4}
+                      size="sm"
+                      showCount={false}
+                    />
+                  )}
+                  <span className="text-white/80 text-sm">
+                    {(event.goingCount || 0) === 0
+                      ? 'Spots available'
+                      : (event.goingCount || 0) === 1
+                      ? '1 person going'
+                      : `${event.goingCount} people going`}
+                  </span>
+                </div>
 
                 {/* CTA - Primary black */}
                 <button className="w-full bg-neutral-900 py-3 text-base font-semibold rounded-full active:scale-95 transition-transform shadow-md" style={{ color: '#FFFFFF' }}>

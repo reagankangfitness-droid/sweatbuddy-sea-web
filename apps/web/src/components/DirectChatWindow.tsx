@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Send, MessageCircle, Loader2, Instagram } from 'lucide-react'
+import { X, Send, MessageCircle, Loader2, Mail, CheckCircle, Instagram } from 'lucide-react'
 
 interface Message {
   id: string
@@ -39,6 +39,9 @@ export function DirectChatWindow({
   const [userEmail, setUserEmail] = useState(propEmail || '')
   const [userName, setUserName] = useState(propName || '')
   const [organizerRegistered, setOrganizerRegistered] = useState(true)
+  const [inquiryMessage, setInquiryMessage] = useState('')
+  const [inquirySent, setInquirySent] = useState(false)
+  const [isSendingInquiry, setIsSendingInquiry] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Update from props when they change
@@ -168,6 +171,38 @@ export function DirectChatWindow({
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
 
+  const handleSendInquiry = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!inquiryMessage.trim() || !userEmail || isSendingInquiry) return
+
+    setIsSendingInquiry(true)
+    setError('')
+
+    try {
+      const response = await fetch(`/api/events/${eventId}/inquiry`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: inquiryMessage.trim(),
+          senderName: userName || 'Anonymous',
+          senderEmail: userEmail,
+        }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to send')
+      }
+
+      setInquirySent(true)
+      setInquiryMessage('')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send message')
+    } finally {
+      setIsSendingInquiry(false)
+    }
+  }
+
   if (!isOpen) return null
 
   return (
@@ -225,16 +260,64 @@ export function DirectChatWindow({
                 </p>
               </div>
             ) : !organizerRegistered ? (
-              <div className="flex flex-col items-center justify-center h-full text-neutral-500 dark:text-neutral-400 px-4">
-                <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-4">
-                  <MessageCircle className="w-8 h-8 text-neutral-300 dark:text-neutral-600" />
-                </div>
-                <p className="text-center text-sm mb-2">
-                  The organizer hasn&apos;t set up their messaging yet.
-                </p>
-                <p className="text-xs text-neutral-400 dark:text-neutral-500 text-center">
-                  You can contact them via Instagram @{organizerHandle}
-                </p>
+              <div className="flex flex-col h-full">
+                {inquirySent ? (
+                  <div className="flex flex-col items-center justify-center h-full text-neutral-500 dark:text-neutral-400 px-4">
+                    <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+                      <CheckCircle className="w-8 h-8 text-green-500" />
+                    </div>
+                    <p className="text-center text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">
+                      Message sent!
+                    </p>
+                    <p className="text-xs text-neutral-400 dark:text-neutral-500 text-center">
+                      The host will receive your inquiry and can reply via email or on SweatBuddies.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col h-full px-4 py-6">
+                    <div className="text-center mb-6">
+                      <div className="w-14 h-14 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Mail className="w-7 h-7 text-neutral-400 dark:text-neutral-500" />
+                      </div>
+                      <h4 className="font-medium text-neutral-800 dark:text-neutral-200 mb-1">
+                        Send a message to @{organizerHandle}
+                      </h4>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                        Your inquiry will be sent directly to the host
+                      </p>
+                    </div>
+                    <form onSubmit={handleSendInquiry} className="flex flex-col flex-1">
+                      <textarea
+                        value={inquiryMessage}
+                        onChange={(e) => setInquiryMessage(e.target.value)}
+                        placeholder="Hi! I have a question about this event..."
+                        maxLength={500}
+                        rows={5}
+                        className="flex-1 min-h-[120px] px-4 py-3 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#1800ad] focus:border-transparent outline-none text-sm placeholder:text-neutral-400 resize-none"
+                      />
+                      <div className="flex items-center justify-between mt-3">
+                        <span className="text-xs text-neutral-400">
+                          {inquiryMessage.length}/500
+                        </span>
+                        <button
+                          type="submit"
+                          disabled={!inquiryMessage.trim() || isSendingInquiry}
+                          className="px-5 py-2.5 bg-[#1800ad] text-white rounded-full hover:bg-[#1800ad]/90 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium flex items-center gap-2"
+                        >
+                          {isSendingInquiry ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Send className="w-4 h-4" />
+                          )}
+                          Send
+                        </button>
+                      </div>
+                      {error && (
+                        <p className="text-red-500 text-xs mt-2 text-center">{error}</p>
+                      )}
+                    </form>
+                  </div>
+                )}
               </div>
             ) : messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-neutral-500 dark:text-neutral-400">

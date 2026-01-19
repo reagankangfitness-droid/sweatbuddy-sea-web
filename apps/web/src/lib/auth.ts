@@ -8,6 +8,7 @@ export interface HostSession {
   instagramHandle: string
   name: string | null
   source: 'clerk' | 'legacy' // Track which auth system
+  userId: string | null // Internal User.id for account-based queries
 }
 
 /**
@@ -47,6 +48,7 @@ export async function getHostSession(): Promise<HostSession | null> {
           instagramHandle: user.instagram,
           name: user.name,
           source: 'clerk',
+          userId: user.id, // Same as id since this is from User table
         }
       }
 
@@ -68,8 +70,11 @@ export async function getHostSession(): Promise<HostSession | null> {
       })
 
       if (organizer) {
-        // Optionally migrate the user data here
-        // await migrateOrganizerToUser(userId, organizer)
+        // Try to find a corresponding User record to get userId
+        const userByEmail = await prisma.user.findUnique({
+          where: { email: email.toLowerCase() },
+          select: { id: true },
+        })
 
         return {
           id: organizer.id,
@@ -77,6 +82,7 @@ export async function getHostSession(): Promise<HostSession | null> {
           instagramHandle: organizer.instagramHandle,
           name: organizer.name,
           source: 'clerk',
+          userId: userByEmail?.id || null, // Link to User if exists
         }
       }
 
@@ -109,12 +115,19 @@ export async function getHostSession(): Promise<HostSession | null> {
       return null
     }
 
+    // Try to find a corresponding User record to get userId
+    const userByEmail = await prisma.user.findUnique({
+      where: { email: organizer.email.toLowerCase() },
+      select: { id: true },
+    })
+
     return {
       id: organizer.id,
       email: organizer.email,
       instagramHandle: organizer.instagramHandle,
       name: organizer.name,
       source: 'legacy',
+      userId: userByEmail?.id || null, // Link to User if exists
     }
   } catch (error) {
     console.error('Error getting host session:', error)

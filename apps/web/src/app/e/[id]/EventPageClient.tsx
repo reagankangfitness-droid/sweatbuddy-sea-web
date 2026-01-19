@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { MapPin, Share2, Check, Instagram, MessageCircle, ExternalLink } from 'lucide-react'
+import { MapPin, Share2, Check, MessageCircle, ExternalLink } from 'lucide-react'
 import { GoingButton } from '@/components/GoingButton'
 import { PaymentModal } from '@/components/event/PaymentModal'
 import { PaymentStatus } from '@/components/event/PaymentStatus'
@@ -172,17 +172,6 @@ export function EventPageClient({ event, initialGoingCount }: EventPageClientPro
           <span>Directions</span>
         </a>
       </div>
-
-      {/* Instagram link */}
-      <a
-        href={`https://instagram.com/${event.organizer}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center justify-center gap-2 py-2.5 border border-neutral-200 hover:bg-neutral-50 rounded-lg text-sm font-medium text-neutral-700 transition-colors"
-      >
-        <Instagram className="w-4 h-4" />
-        <span>View @{event.organizer}</span>
-      </a>
     </div>
   )
 }

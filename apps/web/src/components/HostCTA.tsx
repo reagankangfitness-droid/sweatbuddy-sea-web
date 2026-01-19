@@ -57,8 +57,8 @@ export function HostCTA() {
         </div>
 
         {/* Social proof */}
-        <p className="mt-8 text-sm text-neutral-500">
-          Join trainers, run clubs, and fitness communities already using SweatBuddies
+        <p className="mt-8 text-sm text-neutral-400">
+          Trusted by <span className="text-neutral-300">The Slowcial Club</span>, <span className="text-neutral-300">Running Department</span>, <span className="text-neutral-300">Adidas Runners</span>, and 20+ hosts
         </p>
       </motion.div>
     </section>

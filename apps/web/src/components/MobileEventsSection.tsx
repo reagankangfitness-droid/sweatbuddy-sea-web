@@ -148,7 +148,7 @@ export function MobileEventsSection({ events }: Props) {
   const filters: DateFilter[] = ['all', 'today', 'tomorrow', 'weekend', 'next-week']
 
   return (
-    <div id="events" className="md:hidden pt-4 pb-4">
+    <div id="mobile-events" className="md:hidden pt-4 pb-4">
       {/* Featured Carousel */}
       <FeaturedEventsCarousel
         events={featuredEvents.length > 0 ? featuredEvents : events.slice(0, 5)}

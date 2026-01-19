@@ -3,6 +3,15 @@
 @tailwind utilities;
 
 @layer base {
+  /* Smooth scrolling for hash links */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Offset for fixed header when scrolling to sections */
+  [id] {
+    scroll-margin-top: 100px;
+  }
   :root {
     /* ═══════════════════════════════════════════════════════
        SWEATBUDDIES PREMIUM MINIMALISM DESIGN SYSTEM

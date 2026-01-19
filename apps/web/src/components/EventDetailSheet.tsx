@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
-import { X, Instagram, MapPin, MessageCircle, Clock, Star } from 'lucide-react'
+import { X, Instagram, MapPin, MessageCircle, Clock, Star, User, Share2, Calendar, ExternalLink } from 'lucide-react'
 import { GoingButton } from './GoingButton'
 import { ShareButton } from './ShareButton'
 import { EventAttendees } from './EventAttendees'
@@ -305,16 +305,25 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                   )}
                 </div>
 
-                {/* Host Block - Prominent placement */}
-                <div className="flex items-center gap-4 p-4 bg-neutral-50 dark:bg-neutral-800 rounded-2xl mb-6">
-                  <div className="w-12 h-12 bg-neutral-200 dark:bg-neutral-700 rounded-full flex items-center justify-center text-xl">
-                    👤
+                {/* Host Block - Prominent placement with Instagram link */}
+                <a
+                  href={`https://instagram.com/${event.organizer}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-3 bg-neutral-50 dark:bg-neutral-800 rounded-xl mb-6 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors group"
+                >
+                  <div className="w-11 h-11 bg-neutral-200 dark:bg-neutral-700 rounded-full flex items-center justify-center">
+                    <User className="w-5 h-5 text-neutral-500 dark:text-neutral-400" />
                   </div>
-                  <div>
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">Hosted by</p>
-                    <p className="font-semibold text-neutral-900 dark:text-white">@{event.organizer}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">Hosted by</p>
+                    <p className="font-semibold text-neutral-900 dark:text-white truncate">@{event.organizer}</p>
                   </div>
-                </div>
+                  <div className="flex items-center gap-1 text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300">
+                    <Instagram className="w-4 h-4" />
+                    <ExternalLink className="w-3 h-3" />
+                  </div>
+                </a>
 
                 {/* Sections */}
                 <div className="space-y-6">
@@ -350,100 +359,46 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
               </div>
             </div>
 
-            {/* Secondary Actions Row */}
-            <div className="flex items-center justify-center gap-6 py-4 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-800/50">
-              {/* Chat button - only visible when user can access community */}
-              {canAccessCommunity && (
-                <button
-                  onClick={() => setShowChat(true)}
-                  className="flex flex-col items-center gap-1.5 text-neutral-500 hover:text-neutral-900 transition-colors"
-                >
-                  <span className="w-11 h-11 bg-neutral-900 rounded-full flex items-center justify-center">
-                    <MessageCircle className="w-5 h-5 text-white" />
-                  </span>
-                  <span className="text-xs font-medium text-neutral-900">Chat</span>
-                </button>
-              )}
-
-              <a
-                href={`https://instagram.com/${event.organizer}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col items-center gap-1.5 text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
-              >
-                <span className="w-11 h-11 bg-white dark:bg-neutral-700 rounded-full flex items-center justify-center border border-neutral-200 dark:border-neutral-600">
-                  <Instagram className="w-5 h-5" />
-                </span>
-                <span className="text-xs font-medium">Instagram</span>
-              </a>
-
-              <div className="flex flex-col items-center gap-1.5 text-neutral-500">
+            {/* Quick Actions Row - Clean 4-icon layout */}
+            <div className="flex items-center justify-center gap-8 py-4 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-800/50">
+              {/* Share */}
+              <div className="flex flex-col items-center gap-1.5">
                 <ShareButton
                   eventId={event.id}
                   eventSlug={event.slug}
                   eventName={event.name}
                   iconOnly
                 />
-                <span className="text-[10px] font-medium text-center leading-tight">Know someone<br/>who&apos;d love this?</span>
+                <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Share</span>
               </div>
 
+              {/* Directions */}
               <a
                 href={`https://maps.google.com/?q=${encodeURIComponent(event.location)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col items-center gap-1.5 text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
-                title="Get directions to this location"
+                className="flex flex-col items-center gap-1.5 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
               >
                 <span className="w-11 h-11 bg-white dark:bg-neutral-700 rounded-full flex items-center justify-center border border-neutral-200 dark:border-neutral-600">
                   <MapPin className="w-5 h-5" />
                 </span>
-                <span className="text-xs font-medium">Open in Maps</span>
+                <span className="text-xs font-medium">Directions</span>
               </a>
 
-              {/* Add to Calendar */}
+              {/* Calendar */}
               <AddToCalendar event={event} variant="icon" />
 
-              {/* Community Link - visible after RSVP (free) or payment confirmed (paid) */}
-              {event.communityLink && (
-                canAccessCommunity ? (
-                  <a
-                    href={event.communityLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex flex-col items-center gap-1.5 text-neutral-500 hover:text-neutral-900 transition-colors"
-                  >
-                    <span className={`w-11 h-11 rounded-full flex items-center justify-center ${
-                      detectPlatform(event.communityLink) === 'whatsapp'
-                        ? 'bg-[#25D366]'
-                        : detectPlatform(event.communityLink) === 'telegram'
-                        ? 'bg-[#0088cc]'
-                        : 'bg-blue-600'
-                    }`}>
-                      <MessageCircle className="w-5 h-5 text-white" />
-                    </span>
-                    <span className="text-xs font-medium">
-                      {detectPlatform(event.communityLink) === 'whatsapp'
-                        ? 'WhatsApp'
-                        : detectPlatform(event.communityLink) === 'telegram'
-                        ? 'Telegram'
-                        : 'Community'}
-                    </span>
-                  </a>
-                ) : isPendingPayment ? (
-                  <div className="flex flex-col items-center gap-1.5 text-amber-500">
-                    <span className="w-11 h-11 bg-amber-50 rounded-full flex items-center justify-center border border-amber-200">
-                      <Clock className="w-5 h-5" />
-                    </span>
-                    <span className="text-[10px] font-medium text-center leading-tight">Payment<br/>pending</span>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-1.5 text-neutral-400">
-                    <span className="w-11 h-11 bg-neutral-100 rounded-full flex items-center justify-center border border-neutral-200">
-                      <MessageCircle className="w-5 h-5" />
-                    </span>
-                    <span className="text-[10px] font-medium text-center leading-tight">{isPaidEvent ? 'Pay to' : 'RSVP to'}<br/>join group</span>
-                  </div>
-                )
+              {/* Chat with host */}
+              {canAccessCommunity && (
+                <button
+                  onClick={() => setShowChat(true)}
+                  className="flex flex-col items-center gap-1.5 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
+                >
+                  <span className="w-11 h-11 bg-neutral-900 dark:bg-white rounded-full flex items-center justify-center">
+                    <MessageCircle className="w-5 h-5 text-white dark:text-neutral-900" />
+                  </span>
+                  <span className="text-xs font-medium">Chat</span>
+                </button>
               )}
             </div>
 

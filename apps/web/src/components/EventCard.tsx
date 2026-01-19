@@ -250,7 +250,7 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
               )}
               <span className="text-xs text-neutral-500 dark:text-neutral-400">
                 {goingCount === 0 ? (
-                  'Be the first'
+                  'Open spots'
                 ) : (
                   <>
                     <LiveCounter value={goingCount} className="font-medium text-neutral-700 dark:text-neutral-300" /> going

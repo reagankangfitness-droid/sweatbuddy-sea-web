@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useCallback } from 'react'
-import { Home, Search, Heart, PlusCircle, User } from 'lucide-react'
+import { Home, Search, CalendarDays, PlusCircle, User } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
@@ -10,7 +10,7 @@ const navItems = [
   { id: 'home', label: 'Home', icon: Home, href: '/', isHash: false },
   { id: 'explore', label: 'Explore', icon: Search, href: '#events', isHash: true },
   { id: 'list', label: 'List', icon: PlusCircle, href: '/host', isHash: false, isAction: true },
-  { id: 'saved', label: 'Saved', icon: Heart, href: '/saved', isHash: false },
+  { id: 'saved', label: 'Schedule', icon: CalendarDays, href: '/saved', isHash: false },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile', isHash: false },
 ]
 

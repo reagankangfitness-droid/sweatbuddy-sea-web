@@ -12,14 +12,24 @@ export async function GET() {
     }
 
     const instagramHandle = session.instagramHandle
+    const userId = session.userId
+
+    // Build base where clause: prioritize userId for account-based queries
+    const baseWhereClause = userId
+      ? {
+          OR: [
+            { submittedByUserId: userId },
+            { organizerInstagram: { equals: instagramHandle, mode: 'insensitive' as const } },
+          ],
+        }
+      : {
+          organizerInstagram: { equals: instagramHandle, mode: 'insensitive' as const },
+        }
 
     // Get all approved paid events for this host
     const events = await prisma.eventSubmission.findMany({
       where: {
-        organizerInstagram: {
-          equals: instagramHandle,
-          mode: 'insensitive',
-        },
+        ...baseWhereClause,
         status: 'APPROVED',
         isFree: false,
         price: { gt: 0 },

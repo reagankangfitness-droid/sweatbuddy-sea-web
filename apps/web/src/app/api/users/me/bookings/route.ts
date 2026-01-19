@@ -4,6 +4,63 @@ import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
+// Calculate next occurrence for recurring events
+function getNextOccurrence(dayName: string, eventTime: string): Date {
+  const dayMap: Record<string, number> = {
+    'Sundays': 0, 'Mondays': 1, 'Tuesdays': 2, 'Wednesdays': 3,
+    'Thursdays': 4, 'Fridays': 5, 'Saturdays': 6
+  }
+
+  const targetDay = dayMap[dayName]
+  if (targetDay === undefined) {
+    // Not a standard day, return a week from now
+    const date = new Date()
+    date.setDate(date.getDate() + 7)
+    return date
+  }
+
+  const now = new Date()
+  const currentDay = now.getDay()
+
+  // Calculate days until next occurrence
+  let daysUntil = targetDay - currentDay
+  if (daysUntil < 0) {
+    daysUntil += 7
+  } else if (daysUntil === 0) {
+    // If it's today, check if the event time has passed
+    const [time, period] = eventTime.split(/(?=[AP]M)/i)
+    const [hours, minutes] = time.split(':').map(Number)
+    let eventHour = hours
+    if (period?.toUpperCase() === 'PM' && hours !== 12) eventHour += 12
+    if (period?.toUpperCase() === 'AM' && hours === 12) eventHour = 0
+
+    const eventDateTime = new Date(now)
+    eventDateTime.setHours(eventHour, minutes || 0, 0, 0)
+
+    if (now > eventDateTime) {
+      // Event already happened today, show next week
+      daysUntil = 7
+    }
+  }
+
+  const nextDate = new Date(now)
+  nextDate.setDate(now.getDate() + daysUntil)
+
+  // Parse and set time
+  try {
+    const [time, period] = eventTime.split(/(?=[AP]M)/i)
+    const [hours, minutes] = time.split(':').map(Number)
+    let eventHour = hours
+    if (period?.toUpperCase() === 'PM' && hours !== 12) eventHour += 12
+    if (period?.toUpperCase() === 'AM' && hours === 12) eventHour = 0
+    nextDate.setHours(eventHour, minutes || 0, 0, 0)
+  } catch {
+    nextDate.setHours(9, 0, 0, 0) // Default to 9am
+  }
+
+  return nextDate
+}
+
 export async function GET() {
   try {
     // Authenticate user
@@ -58,6 +115,15 @@ export async function GET() {
         const event = eventMap.get(attendance.eventId)
         if (!event) return null
 
+        // For recurring events, calculate next occurrence
+        let startTime: string | null = null
+        if (event.recurring && event.day && event.time) {
+          const nextOccurrence = getNextOccurrence(event.day, event.time)
+          startTime = nextOccurrence.toISOString()
+        } else if (event.eventDate) {
+          startTime = event.eventDate.toISOString()
+        }
+
         return {
           id: attendance.id,
           status: attendance.paymentStatus === 'refunded' ? 'CANCELLED' : 'JOINED',
@@ -67,19 +133,21 @@ export async function GET() {
           createdAt: attendance.timestamp?.toISOString() || new Date().toISOString(),
           activity: {
             id: event.id,
+            slug: event.slug,
             title: event.eventName,
             type: event.category || 'Fitness',
             city: event.location || 'Singapore',
-            startTime: event.eventDate?.toISOString() || null,
+            startTime,
             endTime: null,
             imageUrl: event.imageUrl,
             price: event.isFree ? 0 : (event.price || 0),
             currency: 'SGD',
-            user: {
-              id: event.organizerInstagram || 'host',
-              name: event.organizerInstagram ? `@${event.organizerInstagram}` : 'Host',
-              email: '',
-              imageUrl: null,
+            latitude: event.latitude,
+            longitude: event.longitude,
+            recurring: event.recurring || false,
+            host: {
+              name: event.organizerName || 'Host',
+              instagram: event.organizerInstagram || null,
             },
           },
         }

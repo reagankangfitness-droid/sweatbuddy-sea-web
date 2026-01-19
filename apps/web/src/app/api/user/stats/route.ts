@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 
-// Get user stats (going count, saved count)
+export const dynamic = 'force-dynamic'
+
+// Get user stats (this month, total attended)
 export async function GET() {
   try {
     const { userId } = await auth()
@@ -16,24 +18,84 @@ export async function GET() {
 
     if (!email) {
       return NextResponse.json({
-        goingCount: 0,
-        savedCount: 0,
+        totalAttended: 0,
+        thisMonth: 0,
+        upcoming: 0,
       })
     }
 
-    // Get going count from EventAttendance
-    const goingCount = await prisma.eventAttendance.count({
+    // Get all attendance records for this user
+    const attendances = await prisma.eventAttendance.findMany({
       where: {
-        email: email.toLowerCase(),
-        confirmed: true,
+        email: {
+          equals: email,
+          mode: 'insensitive',
+        },
+      },
+      select: {
+        eventId: true,
       },
     })
 
-    // Saved events are stored in localStorage (client-side only)
-    // Return 0 for now - this could be moved to DB later
+    const eventIds = attendances.map(a => a.eventId)
+
+    if (eventIds.length === 0) {
+      return NextResponse.json({
+        totalAttended: 0,
+        thisMonth: 0,
+        upcoming: 0,
+      })
+    }
+
+    // Get event details to calculate stats
+    const events = await prisma.eventSubmission.findMany({
+      where: {
+        id: { in: eventIds },
+      },
+      select: {
+        id: true,
+        eventDate: true,
+        recurring: true,
+        day: true,
+      },
+    })
+
+    const now = new Date()
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+
+    let totalAttended = 0
+    let thisMonth = 0
+    let upcoming = 0
+
+    events.forEach(event => {
+      if (event.eventDate) {
+        const eventDate = new Date(event.eventDate)
+
+        if (eventDate < now) {
+          // Past event
+          totalAttended++
+          if (eventDate >= startOfMonth) {
+            thisMonth++
+          }
+        } else {
+          // Future event
+          upcoming++
+          if (eventDate >= startOfMonth && eventDate <= new Date(now.getFullYear(), now.getMonth() + 1, 0)) {
+            thisMonth++
+          }
+        }
+      } else if (event.recurring) {
+        // Recurring events count as attended and upcoming
+        totalAttended++
+        upcoming++
+        thisMonth++
+      }
+    })
+
     return NextResponse.json({
-      goingCount,
-      savedCount: 0, // Placeholder - saved events are in localStorage
+      totalAttended,
+      thisMonth,
+      upcoming,
     })
   } catch (error) {
     console.error('Error fetching user stats:', error)

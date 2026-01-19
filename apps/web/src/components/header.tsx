@@ -134,27 +134,20 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link, index) => {
-              const isHash = link.href.startsWith('#')
-              if (isHash) {
-                return (
-                  <motion.button
-                    key={link.href}
-                    onClick={(e) => handleHashClick(e, link.href)}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 * index }}
-                    className={`text-sm font-medium transition-colors ${
-                      scrolled
-                        ? 'text-neutral-600 dark:text-neutral-300 hover:text-neutral-800 dark:hover:text-white'
-                        : 'text-white/80 hover:text-white'
-                    }`}
-                  >
-                    {link.label}
-                  </motion.button>
-                )
-              }
-              return (
+            {navLinks.map((link) =>
+              link.href.startsWith('#') ? (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={`text-sm font-medium transition-colors cursor-pointer ${
+                    scrolled
+                      ? 'text-neutral-600 dark:text-neutral-300 hover:text-neutral-800 dark:hover:text-white'
+                      : 'text-white/80 hover:text-white'
+                  }`}
+                >
+                  {link.label}
+                </a>
+              ) : (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -167,7 +160,7 @@ export function Header() {
                   {link.label}
                 </Link>
               )
-            })}
+            )}
           </nav>
 
           {/* Right side actions */}
@@ -336,26 +329,17 @@ export function Header() {
               className="md:hidden absolute top-full left-0 right-0 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800 overflow-hidden"
             >
               <nav className="flex flex-col p-6 gap-1">
-                {navLinks.map((link, index) => {
-                  const isHash = link.href.startsWith('#')
-                  if (isHash) {
-                    return (
-                      <motion.button
-                        key={link.href}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.05 * index }}
-                        onClick={(e) => {
-                          setMobileMenuOpen(false)
-                          handleHashClick(e, link.href)
-                        }}
-                        className="text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800 last:border-0 text-left"
-                      >
-                        {link.label}
-                      </motion.button>
-                    )
-                  }
-                  return (
+                {navLinks.map((link) =>
+                  link.href.startsWith('#') ? (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800 last:border-0"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
                     <Link
                       key={link.href}
                       href={link.href}
@@ -365,7 +349,7 @@ export function Header() {
                       {link.label}
                     </Link>
                   )
-                })}
+                )}
 
                 {/* Login / User links in mobile menu */}
                 {isLoaded && (

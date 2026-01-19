@@ -2,7 +2,7 @@
 
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@clerk/nextjs'
+import { useAuth, useUser } from '@clerk/nextjs'
 import { Check, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
@@ -54,8 +54,10 @@ export function GoingButton({
 }: GoingButtonProps) {
   const router = useRouter()
   const { isSignedIn, isLoaded } = useAuth()
+  const { user } = useUser()
 
   const [isGoing, setIsGoing] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [count, setCount] = useState(initialCount)
   const [isAnimating, setIsAnimating] = useState(false)
   const [showPaymentModal, setShowPaymentModal] = useState(false)
@@ -73,7 +75,7 @@ export function GoingButton({
     setIsGoing(going.includes(eventId))
   }, [eventId])
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
 
@@ -118,30 +120,82 @@ export function GoingButton({
       return
     }
 
-    // FREE EVENT: One-tap RSVP (user is authenticated at this point)
-    const going = safeGetJSON<string[]>('sweatbuddies_going', [])
-    if (!going.includes(eventId)) {
-      safeSetJSON('sweatbuddies_going', [...going, eventId])
+    // FREE EVENT: RSVP with database save (user is authenticated at this point)
+    if (isSubmitting) return
+    setIsSubmitting(true)
+
+    try {
+      // Get user info from Clerk
+      const userEmail = user?.primaryEmailAddress?.emailAddress
+      const userName = user?.firstName || user?.fullName || null
+
+      if (!userEmail) {
+        toast.error('Unable to get your email. Please try again.')
+        setIsSubmitting(false)
+        return
+      }
+
+      // Save user info to localStorage for other components
+      localStorage.setItem('sweatbuddies_user', JSON.stringify({
+        email: userEmail,
+        name: userName,
+      }))
+
+      // Call attendance API to save to database
+      const response = await fetch('/api/attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventId,
+          eventName,
+          email: userEmail,
+          name: userName,
+          subscribe: true,
+          timestamp: new Date().toISOString(),
+          eventDay,
+          eventTime,
+          eventLocation,
+        }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        // If already registered, still mark as going locally
+        if (data.error?.includes('already registered')) {
+          // User already in database, just update local state
+        } else {
+          throw new Error(data.error || 'Failed to register')
+        }
+      }
+
+      // Update localStorage
+      const going = safeGetJSON<string[]>('sweatbuddies_going', [])
+      if (!going.includes(eventId)) {
+        safeSetJSON('sweatbuddies_going', [...going, eventId])
+      }
+
+      const saved = safeGetJSON<string[]>('sweatbuddies_saved', [])
+      if (!saved.includes(eventId)) {
+        safeSetJSON('sweatbuddies_saved', [...saved, eventId])
+        window.dispatchEvent(new CustomEvent('savedEventsUpdated'))
+      }
+
+      setIsGoing(true)
+      setCount(count + 1)
+      setIsAnimating(true)
+      setTimeout(() => setIsAnimating(false), 300)
+
+      toast.success("You're in! See you there.", {
+        duration: 3000,
+      })
+
+      onSuccess?.()
+    } catch (error) {
+      console.error('RSVP error:', error)
+      toast.error('Failed to register. Please try again.')
+    } finally {
+      setIsSubmitting(false)
     }
-
-    // Also add to saved events for easy access later
-    const saved = safeGetJSON<string[]>('sweatbuddies_saved', [])
-    if (!saved.includes(eventId)) {
-      safeSetJSON('sweatbuddies_saved', [...saved, eventId])
-      // Dispatch event for other components to update
-      window.dispatchEvent(new CustomEvent('savedEventsUpdated'))
-    }
-
-    setIsGoing(true)
-    setCount(count + 1)
-    setIsAnimating(true)
-    setTimeout(() => setIsAnimating(false), 300)
-
-    toast.success("You're in! See you there.", {
-      duration: 3000,
-    })
-
-    onSuccess?.()
   }
 
   const handlePaymentSuccess = () => {

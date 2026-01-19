@@ -720,21 +720,7 @@ export default function HostForm() {
                             )}
                           </div>
 
-                          {/* Community Link */}
-                          <div className="space-y-3">
-                            <h4 className="text-xs font-medium text-neutral-500 uppercase tracking-wider">Community</h4>
-                            <div className="relative">
-                              <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
-                              <input
-                                type="url"
-                                name="communityLink"
-                                value={formData.communityLink}
-                                onChange={handleChange}
-                                placeholder="WhatsApp or Telegram group link"
-                                className="w-full pl-10 pr-4 py-2.5 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-500 text-sm"
-                              />
-                            </div>
-                          </div>
+                          {/* Community Link - hidden for now */}
                         </div>
                       </motion.div>
                     )}

@@ -20,6 +20,9 @@ const MobileEventsSection = dynamicImport(() => import('@/components/MobileEvent
 })
 
 // Dynamically import below-the-fold components for better initial load
+const HowItWorks = dynamicImport(() => import('@/components/HowItWorks').then(mod => ({ default: mod.HowItWorks })), {
+  loading: () => <div className="py-20" />,
+})
 const HostCTA = dynamicImport(() => import('@/components/HostCTA').then(mod => ({ default: mod.HostCTA })), {
   loading: () => <div className="py-16" />,
 })
@@ -41,7 +44,8 @@ export default async function Home() {
       <div className="md:hidden min-h-screen bg-neutral-50 dark:bg-neutral-950">
         <MobileHeader />
         <MobileHero />
-        <Mission />
+        <Mission id="mobile-mission" />
+        <HowItWorks />
         <MobileEventsSection events={events} />
         <HostCTA />
         <Footer />
@@ -52,7 +56,8 @@ export default async function Home() {
         <Header />
         <main>
           <Hero />
-          <Mission />
+          <Mission id="mission" />
+          <HowItWorks />
           <Events initialEvents={events} />
           <HostCTA />
         </main>

@@ -197,13 +197,13 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
 
   // Different button styles based on context
   const buttonStyles = iconOnly
-    ? 'w-11 h-11 bg-white hover:bg-neutral-50 text-neutral-500 shadow-sm border border-neutral-100'
+    ? 'w-11 h-11 bg-white dark:bg-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-600 border border-neutral-200 dark:border-neutral-600'
     : compact
       ? 'w-6 h-6 sm:w-7 sm:h-7 bg-black/30 backdrop-blur-sm hover:bg-black/50'
       : 'w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg'
 
   const iconStyles = iconOnly
-    ? 'w-5 h-5 text-neutral-500'
+    ? 'w-5 h-5 text-neutral-600 dark:text-neutral-400'
     : compact
       ? 'w-3 h-3 sm:w-3.5 sm:h-3.5 text-white'
       : 'w-5 h-5 text-neutral-700'

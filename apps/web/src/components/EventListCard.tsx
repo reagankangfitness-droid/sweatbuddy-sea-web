@@ -115,7 +115,7 @@ export function EventListCard({ event, onSelect }: Props) {
               )}
               <span className="text-xs text-neutral-500">
                 {count === 0
-                  ? 'Be the first'
+                  ? 'Open spots'
                   : count === 1
                   ? '1 person going'
                   : `${count} people going`}
@@ -123,7 +123,7 @@ export function EventListCard({ event, onSelect }: Props) {
             </div>
           ) : (
             <div className="flex items-center gap-2 mt-2">
-              <span className="text-xs text-neutral-500">Be the first</span>
+              <span className="text-xs text-neutral-500">Open spots</span>
             </div>
           )
         })()}

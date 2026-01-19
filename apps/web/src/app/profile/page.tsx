@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useUser, SignInButton, useClerk } from '@clerk/nextjs'
-import { ArrowLeft, User, Calendar, Heart, Settings, LogOut, ChevronRight } from 'lucide-react'
+import { ArrowLeft, User, Settings, LogOut, ChevronRight, Flame, Trophy, LayoutDashboard, HelpCircle } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -11,30 +11,22 @@ export default function ProfilePage() {
   const { isLoaded, isSignedIn, user } = useUser()
   const { signOut } = useClerk()
   const router = useRouter()
-  const [savedCount, setSavedCount] = useState(0)
-  const [goingCount, setGoingCount] = useState(0)
+  const [stats, setStats] = useState({ thisMonth: 0, totalAttended: 0 })
   const [isLoadingStats, setIsLoadingStats] = useState(true)
 
   useEffect(() => {
-    // Load saved count from localStorage (client-side only)
-    const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
-    setSavedCount(saved.length)
-
-    // Fetch going count from API for logged-in users
     if (isSignedIn) {
       fetch('/api/user/stats')
         .then((res) => res.json())
         .then((data) => {
-          if (data.goingCount !== undefined) {
-            setGoingCount(data.goingCount)
-          }
+          setStats({
+            thisMonth: data.thisMonth || 0,
+            totalAttended: data.totalAttended || 0,
+          })
         })
         .catch(console.error)
         .finally(() => setIsLoadingStats(false))
     } else {
-      // Fallback to localStorage for non-logged-in users
-      const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
-      setGoingCount(going.length)
       setIsLoadingStats(false)
     }
   }, [isSignedIn])
@@ -43,8 +35,8 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex items-center justify-center">
         <div className="animate-pulse">
-          <div className="w-20 h-20 bg-neutral-100 dark:bg-neutral-800 rounded-full mb-4" />
-          <div className="h-4 bg-neutral-100 dark:bg-neutral-800 rounded-lg w-32 mx-auto" />
+          <div className="w-20 h-20 bg-neutral-200 dark:bg-neutral-800 rounded-full mb-4" />
+          <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded-lg w-32 mx-auto" />
         </div>
       </div>
     )
@@ -72,12 +64,12 @@ export default function ProfilePage() {
         {/* Content */}
         <main className="pt-24 pb-24 px-4">
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-100 dark:border-neutral-700 shadow-card mb-6">
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-white dark:bg-neutral-800 rounded-full border border-neutral-100 dark:border-neutral-700 shadow-sm mb-6">
               <User className="w-12 h-12 text-neutral-300 dark:text-neutral-600" />
             </div>
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Join SweatBuddies</h2>
             <p className="text-neutral-600 dark:text-neutral-400 mb-8 max-w-xs mx-auto">
-              Sign in to save events, track your fitness journey, and connect with your workout crew.
+              Sign in to track your fitness journey and connect with your workout crew.
             </p>
 
             <SignInButton mode="modal">
@@ -85,18 +77,6 @@ export default function ProfilePage() {
                 Sign In / Sign Up
               </button>
             </SignInButton>
-
-            {/* Stats Preview */}
-            <div className="mt-12 grid grid-cols-2 gap-4 max-w-xs mx-auto">
-              <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card text-center">
-                <span className="text-2xl font-semibold text-neutral-900 dark:text-white block">{savedCount}</span>
-                <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">SAVED</span>
-              </div>
-              <div className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card text-center">
-                <span className="text-2xl font-semibold text-neutral-900 dark:text-white block">{goingCount}</span>
-                <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">GOING</span>
-              </div>
-            </div>
           </div>
         </main>
 
@@ -124,92 +104,83 @@ export default function ProfilePage() {
       </header>
 
       {/* Content */}
-      <main className="pt-24 pb-24 px-4">
-        {/* Profile Card */}
-        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card p-6 mb-6">
+      <main className="pt-20 pb-24 px-4">
+        {/* Profile Card - Tappable to edit */}
+        <Link
+          href="/settings/profile"
+          className="block bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 p-4 mb-4 hover:border-neutral-200 dark:hover:border-neutral-700 transition-colors group"
+        >
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-neutral-100 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800">
+            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-neutral-100 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0">
               {user?.imageUrl ? (
                 <Image
                   src={user.imageUrl}
                   alt={user.fullName || 'Profile'}
-                  width={64}
-                  height={64}
-                  className="object-cover"
+                  width={56}
+                  height={56}
+                  className="object-cover w-full h-full"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <User className="w-8 h-8 text-neutral-300 dark:text-neutral-600" />
+                  <User className="w-7 h-7 text-neutral-400 dark:text-neutral-500" />
                 </div>
               )}
             </div>
-            <div>
-              <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
+            <div className="flex-1 min-w-0">
+              <h2 className="text-base font-semibold text-neutral-900 dark:text-white truncate">
                 {user?.fullName || user?.firstName || 'SweatBuddy'}
               </h2>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">{user?.primaryEmailAddress?.emailAddress}</p>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400 truncate">
+                {user?.primaryEmailAddress?.emailAddress}
+              </p>
             </div>
+            <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600 group-hover:text-neutral-400 dark:group-hover:text-neutral-500 transition-colors flex-shrink-0" />
+          </div>
+        </Link>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-neutral-100 dark:border-neutral-800">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
+                <Flame className="w-4 h-4 text-orange-500" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-neutral-900 dark:text-white">
+              {isLoadingStats ? '-' : stats.thisMonth}
+            </p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">This month</p>
+          </div>
+
+          <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-neutral-100 dark:border-neutral-800">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900/30 rounded-lg flex items-center justify-center">
+                <Trophy className="w-4 h-4 text-amber-500" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-neutral-900 dark:text-white">
+              {isLoadingStats ? '-' : stats.totalAttended}
+            </p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">Total attended</p>
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <Link
-            href="/saved"
-            className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card text-center block"
-          >
-            <Heart className="w-6 h-6 text-neutral-400 dark:text-neutral-500 mx-auto mb-2" />
-            <span className="text-2xl font-semibold text-neutral-900 dark:text-white block">{savedCount}</span>
-            <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">SAVED</span>
-          </Link>
-          <Link
-            href="/my-bookings"
-            className="bg-white dark:bg-neutral-900 p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card text-center block"
-          >
-            <Calendar className="w-6 h-6 text-neutral-400 dark:text-neutral-500 mx-auto mb-2" />
-            <span className="text-2xl font-semibold text-neutral-900 dark:text-white block">{goingCount}</span>
-            <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">GOING</span>
-          </Link>
-        </div>
-
         {/* Menu Items */}
-        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card overflow-hidden">
-          <Link
-            href="/my-bookings"
-            className="flex items-center justify-between px-4 py-4 border-b border-neutral-100 dark:border-neutral-800"
-          >
-            <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
-              <Calendar className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
-              My Bookings
-            </span>
-            <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
-          </Link>
-
+        <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 overflow-hidden">
           <Link
             href="/host/dashboard"
-            className="flex items-center justify-between px-4 py-4 border-b border-neutral-100 dark:border-neutral-800"
+            className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
           >
             <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
-              <User className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
+              <LayoutDashboard className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
               Host Dashboard
             </span>
             <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
           </Link>
 
           <Link
-            href="/saved"
-            className="flex items-center justify-between px-4 py-4 border-b border-neutral-100 dark:border-neutral-800"
-          >
-            <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
-              <Heart className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
-              Saved Events
-            </span>
-            <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
-          </Link>
-
-          <Link
             href="/settings/profile"
-            className="flex items-center justify-between px-4 py-4 border-b border-neutral-100 dark:border-neutral-800"
+            className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
           >
             <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
               <Settings className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
@@ -218,9 +189,20 @@ export default function ProfilePage() {
             <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
           </Link>
 
+          <Link
+            href="/support"
+            className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+          >
+            <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
+              <HelpCircle className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
+              Support
+            </span>
+            <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+          </Link>
+
           <button
             onClick={() => signOut(() => router.push('/'))}
-            className="w-full flex items-center justify-between px-4 py-4 text-neutral-900 dark:text-neutral-200"
+            className="w-full flex items-center justify-between px-4 py-3.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
           >
             <span className="flex items-center gap-3 text-sm font-medium">
               <LogOut className="w-5 h-5" />

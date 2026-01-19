@@ -4,55 +4,8 @@ import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
-interface AttendingEvent {
-  id: string
-  eventId: string
-  eventName: string
-  timestamp: Date
-  // Event details (if available)
-  category?: string
-  day?: string
-  time?: string
-  location?: string
-  imageUrl?: string | null
-  eventDate?: string | null
-}
-
-interface HostingEvent {
-  id: string
-  name: string
-  day: string
-  date: string | null
-  time: string
-  location: string
-  imageUrl: string | null
-  category: string
-  recurring: boolean
-  goingCount: number
-  organizer: string
-}
-
-interface DashboardResponse {
-  attending: {
-    events: AttendingEvent[]
-    count: number
-  }
-  hosting: {
-    events: HostingEvent[]
-    pastEvents: HostingEvent[]
-    stats: {
-      activeEvents: number
-      totalSignups: number
-      totalEarnings: number
-      paidAttendees: number
-    }
-  }
-  isHost: boolean
-}
-
 export async function GET() {
   try {
-    // Check Clerk authentication
     const { userId } = await auth()
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -66,184 +19,172 @@ export async function GET() {
     }
 
     const normalizedEmail = email.toLowerCase()
+    const now = new Date()
 
-    // Fetch attending events and hosting events in parallel
-    const [attendanceRecords, hostedSubmissions] = await Promise.all([
-      // Events user is ATTENDING
-      prisma.eventAttendance.findMany({
-        where: {
-          email: normalizedEmail,
-          confirmed: true,
-        },
-        orderBy: { timestamp: 'desc' },
-        take: 20,
-        select: {
-          id: true,
-          eventId: true,
-          eventName: true,
-          timestamp: true,
-        },
-      }),
-      // Events user is HOSTING (matched by contactEmail)
-      prisma.eventSubmission.findMany({
-        where: {
-          contactEmail: {
-            equals: normalizedEmail,
-            mode: 'insensitive',
-          },
-          status: 'APPROVED',
-        },
-        orderBy: { eventDate: 'asc' },
-        select: {
-          id: true,
-          eventName: true,
-          category: true,
-          day: true,
-          eventDate: true,
-          time: true,
-          location: true,
-          imageUrl: true,
-          recurring: true,
-          organizerInstagram: true,
-        },
-      }),
-    ])
-
-    // Enrich attending events with event details
-    const attendingEventIds = attendanceRecords.map((a) => a.eventId)
-    const eventDetails = await prisma.eventSubmission.findMany({
+    // Get user's upcoming events (events they're attending)
+    const attendanceRecords = await prisma.eventAttendance.findMany({
       where: {
-        id: { in: attendingEventIds },
-        status: 'APPROVED',
+        email: { equals: normalizedEmail, mode: 'insensitive' },
+        confirmed: true,
       },
+      orderBy: { timestamp: 'desc' },
+      take: 20,
       select: {
         id: true,
+        eventId: true,
+        eventName: true,
+        timestamp: true,
+      },
+    })
+
+    const attendingEventIds = attendanceRecords.map((a) => a.eventId)
+
+    // Get full event details for attending events
+    const eventDetails = attendingEventIds.length > 0
+      ? await prisma.eventSubmission.findMany({
+          where: {
+            id: { in: attendingEventIds },
+            status: 'APPROVED',
+          },
+          select: {
+            id: true,
+            eventName: true,
+            category: true,
+            day: true,
+            time: true,
+            location: true,
+            imageUrl: true,
+            eventDate: true,
+            recurring: true,
+            organizerInstagram: true,
+            organizerName: true,
+            slug: true,
+          },
+        })
+      : []
+
+    const eventDetailsMap = new Map(eventDetails.map((e) => [e.id, e]))
+
+    // Build upcoming events list (future events only)
+    const upcomingEvents = attendanceRecords
+      .map((a) => {
+        const details = eventDetailsMap.get(a.eventId)
+        if (!details) return null
+
+        const eventDate = details.eventDate
+        const isUpcoming = !eventDate || new Date(eventDate) >= now || details.recurring
+
+        if (!isUpcoming) return null
+
+        return {
+          id: a.eventId,
+          name: details.eventName,
+          category: details.category,
+          day: details.day,
+          time: details.time,
+          location: details.location,
+          imageUrl: details.imageUrl,
+          date: eventDate?.toISOString().split('T')[0] || null,
+          recurring: details.recurring,
+          organizer: details.organizerName || details.organizerInstagram,
+          slug: details.slug,
+        }
+      })
+      .filter(Boolean)
+      .sort((a, b) => {
+        // Sort by date, recurring events last
+        if (!a!.date && !b!.date) return 0
+        if (!a!.date) return 1
+        if (!b!.date) return -1
+        return new Date(a!.date).getTime() - new Date(b!.date).getTime()
+      })
+      .slice(0, 5)
+
+    // Get the next event (first upcoming) for spotlight
+    const nextEvent = upcomingEvents[0] || null
+
+    // Check if user is a host
+    const hostEventCount = await prisma.eventSubmission.count({
+      where: {
+        contactEmail: { equals: normalizedEmail, mode: 'insensitive' },
+        status: 'APPROVED',
+      },
+    })
+    const isHost = hostEventCount > 0
+
+    // Get discover events (events happening this week that user is NOT attending)
+    const weekFromNow = new Date(now)
+    weekFromNow.setDate(weekFromNow.getDate() + 7)
+
+    const discoverEvents = await prisma.eventSubmission.findMany({
+      where: {
+        status: 'APPROVED',
+        id: { notIn: attendingEventIds.length > 0 ? attendingEventIds : ['none'] },
+        OR: [
+          {
+            eventDate: {
+              gte: now,
+              lte: weekFromNow,
+            },
+          },
+          {
+            recurring: true,
+          },
+        ],
+      },
+      orderBy: { eventDate: 'asc' },
+      take: 6,
+      select: {
+        id: true,
+        eventName: true,
         category: true,
         day: true,
         time: true,
         location: true,
         imageUrl: true,
         eventDate: true,
+        recurring: true,
+        organizerInstagram: true,
+        organizerName: true,
+        slug: true,
       },
     })
 
-    const eventDetailsMap = new Map(eventDetails.map((e) => [e.id, e]))
-
-    const attendingEvents: AttendingEvent[] = attendanceRecords.map((a) => {
-      const details = eventDetailsMap.get(a.eventId)
-      return {
-        id: a.id,
-        eventId: a.eventId,
-        eventName: a.eventName,
-        timestamp: a.timestamp,
-        category: details?.category,
-        day: details?.day,
-        time: details?.time,
-        location: details?.location,
-        imageUrl: details?.imageUrl,
-        eventDate: details?.eventDate?.toISOString().split('T')[0] || null,
-      }
-    })
-
-    // Process hosting events
-    const hostedEventIds = hostedSubmissions.map((s) => s.id)
-
-    // Get attendance counts for hosted events
-    const attendanceCounts = hostedEventIds.length > 0
+    // Get attendance counts for discover events
+    const discoverEventIds = discoverEvents.map((e) => e.id)
+    const discoverCounts = discoverEventIds.length > 0
       ? await prisma.eventAttendance.groupBy({
           by: ['eventId'],
-          where: { eventId: { in: hostedEventIds } },
+          where: { eventId: { in: discoverEventIds } },
           _count: { id: true },
         })
       : []
 
-    const countMap = new Map(
-      attendanceCounts.map((a) => [a.eventId, a._count.id])
-    )
+    const discoverCountMap = new Map(discoverCounts.map((c) => [c.eventId, c._count.id]))
 
-    // Split into upcoming and past events
-    const now = new Date()
-    now.setHours(0, 0, 0, 0)
-
-    const allHostedEvents: HostingEvent[] = hostedSubmissions.map((s) => ({
-      id: s.id,
-      name: s.eventName,
-      day: s.day,
-      date: s.eventDate?.toISOString().split('T')[0] || null,
-      time: s.time,
-      location: s.location,
-      imageUrl: s.imageUrl,
-      category: s.category,
-      recurring: s.recurring,
-      goingCount: countMap.get(s.id) || 0,
-      organizer: s.organizerInstagram,
+    const formattedDiscover = discoverEvents.map((e) => ({
+      id: e.id,
+      name: e.eventName,
+      category: e.category,
+      day: e.day,
+      time: e.time,
+      location: e.location,
+      imageUrl: e.imageUrl,
+      date: e.eventDate?.toISOString().split('T')[0] || null,
+      recurring: e.recurring,
+      organizer: e.organizerName || e.organizerInstagram,
+      slug: e.slug,
+      goingCount: discoverCountMap.get(e.id) || 0,
     }))
 
-    const upcomingHosted = allHostedEvents.filter((event) => {
-      if (!event.date) return true // Recurring events are always upcoming
-      return new Date(event.date) >= now
+    return NextResponse.json({
+      nextEvent,
+      upcomingEvents,
+      upcomingCount: upcomingEvents.length,
+      discover: formattedDiscover,
+      isHost,
+      userName: user?.firstName || user?.fullName || 'there',
     })
-
-    const pastHosted = allHostedEvents
-      .filter((event) => {
-        if (!event.date) return false
-        return new Date(event.date) < now
-      })
-      .sort((a, b) => {
-        const dateA = a.date ? new Date(a.date).getTime() : 0
-        const dateB = b.date ? new Date(b.date).getTime() : 0
-        return dateB - dateA
-      })
-      .slice(0, 5)
-
-    // Calculate hosting stats
-    const totalSignups = allHostedEvents.reduce((sum, e) => sum + e.goingCount, 0)
-
-    // Get Stripe earnings if they have hosted events
-    let totalEarnings = 0
-    let paidAttendees = 0
-
-    if (hostedEventIds.length > 0) {
-      const [transactions, paidCount] = await Promise.all([
-        prisma.eventTransaction.findMany({
-          where: {
-            eventSubmissionId: { in: hostedEventIds },
-            status: 'SUCCEEDED',
-          },
-          select: { netPayoutToHost: true },
-        }),
-        prisma.eventAttendance.count({
-          where: {
-            eventId: { in: hostedEventIds },
-            paymentStatus: 'paid',
-            paymentMethod: 'stripe',
-          },
-        }),
-      ])
-
-      totalEarnings = transactions.reduce((sum, t) => sum + (t.netPayoutToHost || 0), 0)
-      paidAttendees = paidCount
-    }
-
-    const response: DashboardResponse = {
-      attending: {
-        events: attendingEvents,
-        count: attendingEvents.length,
-      },
-      hosting: {
-        events: upcomingHosted,
-        pastEvents: pastHosted,
-        stats: {
-          activeEvents: upcomingHosted.length,
-          totalSignups,
-          totalEarnings,
-          paidAttendees,
-        },
-      },
-      isHost: hostedSubmissions.length > 0,
-    }
-
-    return NextResponse.json(response)
   } catch (error) {
     console.error('Dashboard API error:', error)
     return NextResponse.json(

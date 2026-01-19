@@ -2,94 +2,70 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useUser, SignInButton } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
   ArrowLeft,
   Calendar,
-  Heart,
-  Users,
+  MapPin,
+  Clock,
   ChevronRight,
-  Plus,
-  DollarSign,
   Loader2,
-  Ticket,
-  HelpCircle,
+  Users,
+  Sparkles,
+  LayoutDashboard,
+  Search,
 } from 'lucide-react'
-import { UpcomingEventRow } from '@/components/host/UpcomingEventRow'
-import { PastEventRow } from '@/components/host/PastEventRow'
 
-interface AttendingEvent {
-  id: string
-  eventId: string
-  eventName: string
-  timestamp: string
-  category?: string
-  day?: string
-  time?: string
-  location?: string
-  imageUrl?: string | null
-  eventDate?: string | null
-}
-
-interface HostingEvent {
+interface EventData {
   id: string
   name: string
+  category: string
   day: string
-  date: string | null
   time: string
   location: string
   imageUrl: string | null
-  category: string
+  date: string | null
   recurring: boolean
-  goingCount: number
   organizer: string
+  slug: string | null
+  goingCount?: number
 }
 
 interface DashboardData {
-  attending: {
-    events: AttendingEvent[]
-    count: number
-  }
-  hosting: {
-    events: HostingEvent[]
-    pastEvents: HostingEvent[]
-    stats: {
-      activeEvents: number
-      totalSignups: number
-      totalEarnings: number
-      paidAttendees: number
-    }
-  }
+  nextEvent: EventData | null
+  upcomingEvents: EventData[]
+  upcomingCount: number
+  discover: EventData[]
   isHost: boolean
+  userName: string
+}
+
+function getTimeUntil(dateStr: string): string {
+  const eventDate = new Date(dateStr)
+  const now = new Date()
+  const diffMs = eventDate.getTime() - now.getTime()
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+
+  if (diffDays === 0) return 'Today'
+  if (diffDays === 1) return 'Tomorrow'
+  if (diffDays < 7) return `In ${diffDays} days`
+  return eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+function formatEventDate(dateStr: string | null, day: string): string {
+  if (!dateStr) return day
+  const date = new Date(dateStr)
+  return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
 }
 
 export default function DashboardPage() {
-  const { isLoaded, isSignedIn, user } = useUser()
+  const { isLoaded, isSignedIn } = useUser()
   const router = useRouter()
   const [data, setData] = useState<DashboardData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [savedCount, setSavedCount] = useState(0)
-
-  // Read saved count from localStorage
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
-    setSavedCount(saved.length)
-
-    // Listen for changes
-    const handleUpdate = () => {
-      const ids = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
-      setSavedCount(ids.length)
-    }
-    window.addEventListener('savedEventsUpdated', handleUpdate)
-    window.addEventListener('storage', handleUpdate)
-    return () => {
-      window.removeEventListener('savedEventsUpdated', handleUpdate)
-      window.removeEventListener('storage', handleUpdate)
-    }
-  }, [])
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -126,15 +102,15 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
-        <header className="fixed top-0 left-0 right-0 z-40 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
-          <div className="max-w-2xl mx-auto px-4 h-16 flex items-center gap-4">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+          <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-4">
             <Link
               href="/"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
             >
-              <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+              <ArrowLeft className="w-4 h-4 text-neutral-700 dark:text-neutral-300" />
             </Link>
-            <h1 className="text-xl font-semibold text-neutral-900 dark:text-white">Dashboard</h1>
+            <h1 className="text-lg font-semibold text-neutral-900 dark:text-white">Activity</h1>
           </div>
         </header>
         <main className="pt-24 flex items-center justify-center">
@@ -147,320 +123,294 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
-        <header className="fixed top-0 left-0 right-0 z-40 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
-          <div className="max-w-2xl mx-auto px-4 h-16 flex items-center gap-4">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+          <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-4">
             <Link
               href="/"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
             >
-              <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+              <ArrowLeft className="w-4 h-4 text-neutral-700 dark:text-neutral-300" />
             </Link>
-            <h1 className="text-xl font-semibold text-neutral-900 dark:text-white">Dashboard</h1>
+            <h1 className="text-lg font-semibold text-neutral-900 dark:text-white">Activity</h1>
           </div>
         </header>
         <main className="pt-24 px-4 text-center">
           <p className="text-red-500 mb-4">{error}</p>
-          <div className="flex flex-col gap-3 items-center">
-            <button
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-lg"
-            >
-              Try Again
-            </button>
-            <Link href="/support" className="text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 text-sm">
-              Need help? Contact Support
-            </Link>
-          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-lg"
+          >
+            Try Again
+          </button>
         </main>
       </div>
     )
   }
 
-  const email = user?.primaryEmailAddress?.emailAddress
+  const hasUpcomingEvents = data && data.upcomingCount > 0
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
-        <div className="max-w-2xl mx-auto px-4 h-14 sm:h-16 flex items-center gap-4">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+        <div className="max-w-2xl mx-auto px-4 h-14 flex items-center gap-4">
           <Link
             href="/"
-            className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
           >
-            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-700 dark:text-neutral-300" />
+            <ArrowLeft className="w-4 h-4 text-neutral-700 dark:text-neutral-300" />
           </Link>
-          <h1 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-white">Dashboard</h1>
+          <h1 className="text-lg font-semibold text-neutral-900 dark:text-white">Activity</h1>
         </div>
       </header>
 
       {/* Content */}
-      <main className="pt-20 sm:pt-24 pb-20 sm:pb-24 px-4">
+      <main className="pt-16 pb-24 px-4">
         <div className="max-w-2xl mx-auto space-y-6">
-          {/* Profile Card */}
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-neutral-100 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800">
-                {user?.imageUrl ? (
-                  <Image
-                    src={user.imageUrl}
-                    alt={user.fullName || 'Profile'}
-                    width={64}
-                    height={64}
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-xl font-semibold">
-                    {user?.firstName?.[0] || email?.[0]?.toUpperCase() || '?'}
-                  </div>
-                )}
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
-                  {user?.fullName || user?.firstName || 'SweatBuddy'}
-                </h2>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">{email}</p>
-              </div>
-            </div>
+          {/* Greeting */}
+          <div className="pt-4">
+            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
+              Hey {data?.userName}! 👋
+            </h2>
+            <p className="text-neutral-500 dark:text-neutral-400 mt-1">
+              {hasUpcomingEvents
+                ? `You have ${data.upcomingCount} upcoming event${data.upcomingCount > 1 ? 's' : ''}`
+                : "Let's find your next workout"}
+            </p>
           </div>
 
-          {/* Create New Event Button - only for hosts */}
+          {/* Host Banner */}
           {data?.isHost && (
             <Link
-              href="/host"
-              className="flex items-center justify-center gap-2 w-full py-4 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold rounded-2xl hover:bg-neutral-700 dark:hover:bg-neutral-100 transition-colors"
+              href="/host/dashboard"
+              className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl text-white"
             >
-              <Plus className="w-5 h-5" />
-              Create New Event
-            </Link>
-          )}
-
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-5 text-center">
-              <Calendar className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-neutral-900 dark:text-white">
-                {data?.attending.count || 0}
-              </p>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">Events Joined</p>
-            </div>
-            {data?.isHost ? (
-              <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-5 text-center">
-                <Users className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
-                <p className="text-2xl font-bold text-neutral-900 dark:text-white">
-                  {data.hosting.stats.activeEvents}
-                </p>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">Events Hosting</p>
-              </div>
-            ) : (
-              <Link
-                href="/saved"
-                className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-5 text-center hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
-              >
-                <Heart className="w-6 h-6 text-neutral-400 mx-auto mb-2" />
-                <p className="text-2xl font-bold text-neutral-900 dark:text-white">{savedCount}</p>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">Saved</p>
-              </Link>
-            )}
-          </div>
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-2 gap-4">
-            <Link
-              href="/my-bookings"
-              className="flex items-center gap-3 bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
-            >
-              <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
-                <Ticket className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div>
-                <p className="font-medium text-neutral-900 dark:text-white text-sm">My Bookings</p>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">Tickets & refunds</p>
-              </div>
-            </Link>
-            <Link
-              href="/support"
-              className="flex items-center gap-3 bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
-            >
-              <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
-                <HelpCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <p className="font-medium text-neutral-900 dark:text-white text-sm">Get Help</p>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">FAQ & support</p>
-              </div>
-            </Link>
-          </div>
-
-          {/* Start Hosting CTA - for non-hosts */}
-          {!data?.isHost && (
-            <div className="bg-gradient-to-r from-purple-50 to-amber-50 dark:from-purple-900/20 dark:to-amber-900/20 rounded-2xl border border-purple-100 dark:border-purple-800 p-4 sm:p-5">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center flex-shrink-0">
-                  <span className="text-xl sm:text-2xl">✨</span>
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-neutral-900 dark:text-white mb-1 text-sm sm:text-base">
-                    Become a Host
-                  </h3>
-                  <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 mb-3">
-                    Lead your own fitness events and build your community
-                  </p>
-                  <Link
-                    href="/host"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-lg text-xs sm:text-sm font-medium hover:bg-neutral-700 dark:hover:bg-neutral-100 transition-colors"
-                  >
-                    Learn More
-                    <ChevronRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Host Stats (only if host with earnings) */}
-          {data?.isHost && data.hosting.stats.totalEarnings > 0 && (
-            <div className="bg-green-50 dark:bg-green-900/20 rounded-2xl border border-green-200 dark:border-green-800 p-5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-green-600 dark:text-green-400" />
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  <LayoutDashboard className="w-5 h-5" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-green-700 dark:text-green-400">
-                    ${(data.hosting.stats.totalEarnings / 100).toFixed(2)} SGD
-                  </p>
-                  <p className="text-sm text-green-600 dark:text-green-500">
-                    Earned from {data.hosting.stats.paidAttendees} paid attendees
-                  </p>
+                  <p className="font-semibold">Host Dashboard</p>
+                  <p className="text-sm text-purple-100">Manage your events</p>
                 </div>
               </div>
+              <ChevronRight className="w-5 h-5 text-purple-200" />
+            </Link>
+          )}
+
+          {/* Next Event Spotlight */}
+          {data?.nextEvent && (
+            <div>
+              <h3 className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider px-1 mb-3">
+                Next Up
+              </h3>
+              <Link
+                href={data.nextEvent.slug ? `/event/${data.nextEvent.slug}` : `/e/${data.nextEvent.id}`}
+                className="block bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 overflow-hidden hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
+              >
+                {/* Event Image */}
+                <div className="relative h-40 bg-neutral-100 dark:bg-neutral-800">
+                  {data.nextEvent.imageUrl ? (
+                    <Image
+                      src={data.nextEvent.imageUrl}
+                      alt={data.nextEvent.name}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Calendar className="w-12 h-12 text-neutral-300 dark:text-neutral-600" />
+                    </div>
+                  )}
+                  {/* Time Badge */}
+                  {data.nextEvent.date && (
+                    <div className="absolute top-3 left-3 px-3 py-1.5 bg-white dark:bg-neutral-900 rounded-full shadow-lg">
+                      <span className="text-sm font-semibold text-neutral-900 dark:text-white">
+                        {getTimeUntil(data.nextEvent.date)}
+                      </span>
+                    </div>
+                  )}
+                  {/* Category Badge */}
+                  <div className="absolute top-3 right-3 px-2.5 py-1 bg-neutral-900/70 backdrop-blur-sm rounded-full">
+                    <span className="text-xs font-medium text-white">{data.nextEvent.category}</span>
+                  </div>
+                </div>
+
+                {/* Event Details */}
+                <div className="p-4">
+                  <h4 className="font-semibold text-lg text-neutral-900 dark:text-white mb-2">
+                    {data.nextEvent.name}
+                  </h4>
+                  <div className="flex flex-wrap gap-3 text-sm text-neutral-500 dark:text-neutral-400">
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="w-4 h-4" />
+                      {formatEventDate(data.nextEvent.date, data.nextEvent.day)} · {data.nextEvent.time}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <MapPin className="w-4 h-4" />
+                      {data.nextEvent.location.split(',')[0]}
+                    </span>
+                  </div>
+                </div>
+              </Link>
             </div>
           )}
 
-          {/* Events I'm Attending */}
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-blue-200 dark:border-blue-800 overflow-hidden">
-            <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-blue-100 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/20">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                <h3 className="font-semibold text-neutral-900 dark:text-white text-sm sm:text-base">Events I'm Attending</h3>
-              </div>
-            </div>
-
-            {!data?.attending.events.length ? (
-              <div className="p-6 sm:p-8 text-center">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-4 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
-                  <span className="text-2xl sm:text-3xl">🏃</span>
-                </div>
-                <h4 className="font-medium text-neutral-900 dark:text-white mb-1 text-sm sm:text-base">No upcoming events</h4>
-                <p className="text-neutral-500 dark:text-neutral-400 text-xs sm:text-sm mb-4">Find your next workout buddy!</p>
+          {/* Upcoming Events */}
+          {hasUpcomingEvents && data.upcomingEvents.length > 1 && (
+            <div>
+              <div className="flex items-center justify-between px-1 mb-3">
+                <h3 className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">
+                  Upcoming Events
+                </h3>
                 <Link
-                  href="/"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-lg text-xs sm:text-sm font-medium hover:bg-neutral-700 dark:hover:bg-neutral-100 transition-colors"
+                  href="/my-events"
+                  className="text-xs font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
                 >
-                  Explore Events
-                  <ChevronRight className="w-4 h-4" />
+                  See all
                 </Link>
               </div>
-            ) : (
-              <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                {data.attending.events.map((event) => (
+              <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+                {data.upcomingEvents.slice(1).map((event, idx) => (
                   <Link
                     key={event.id}
-                    href={`/e/${event.eventId}`}
-                    className="flex items-center justify-between px-5 py-4 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+                    href={event.slug ? `/event/${event.slug}` : `/e/${event.id}`}
+                    className={`flex items-center gap-4 p-4 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors ${
+                      idx > 0 ? 'border-t border-neutral-100 dark:border-neutral-800' : ''
+                    }`}
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800 flex-shrink-0">
                       {event.imageUrl ? (
-                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-800 flex-shrink-0">
-                          <Image
-                            src={event.imageUrl}
-                            alt={event.eventName}
-                            width={48}
-                            height={48}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
+                        <Image
+                          src={event.imageUrl}
+                          alt={event.name}
+                          width={48}
+                          height={48}
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
-                        <div className="w-12 h-12 rounded-lg bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center flex-shrink-0">
+                        <div className="w-full h-full flex items-center justify-center">
                           <Calendar className="w-5 h-5 text-neutral-400" />
                         </div>
                       )}
-                      <div>
-                        <p className="font-medium text-neutral-900 dark:text-white line-clamp-1">
-                          {event.eventName}
-                        </p>
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                          {event.eventDate
-                            ? new Date(event.eventDate).toLocaleDateString('en-US', {
-                                weekday: 'short',
-                                month: 'short',
-                                day: 'numeric',
-                              })
-                            : event.day}{' '}
-                          · {event.time}
-                        </p>
-                      </div>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-neutral-400 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-neutral-900 dark:text-white truncate">
+                        {event.name}
+                      </p>
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        {formatEventDate(event.date, event.day)} · {event.time}
+                      </p>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600 flex-shrink-0" />
                   </Link>
                 ))}
               </div>
-            )}
-          </div>
-
-          {/* Events I'm Hosting (only if host) */}
-          {data?.isHost && (
-            <>
-              <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-purple-200 dark:border-purple-800 overflow-hidden">
-                <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-purple-100 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-900/20 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                    <h3 className="font-semibold text-neutral-900 dark:text-white text-sm sm:text-base">Events I'm Hosting</h3>
-                  </div>
-                  <span className="text-xs sm:text-sm text-purple-600 dark:text-purple-400 font-medium">
-                    {data.hosting.stats.totalSignups} signups
-                  </span>
-                </div>
-
-                {!data.hosting.events.length ? (
-                  <div className="p-6 sm:p-8 text-center">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-4 bg-purple-50 dark:bg-purple-900/20 rounded-full flex items-center justify-center">
-                      <span className="text-2xl sm:text-3xl">🎯</span>
-                    </div>
-                    <h4 className="font-medium text-neutral-900 dark:text-white mb-1 text-sm sm:text-base">No upcoming events</h4>
-                    <p className="text-neutral-500 dark:text-neutral-400 text-xs sm:text-sm mb-4">Create your first event!</p>
-                    <Link
-                      href="/host"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-lg text-xs sm:text-sm font-medium hover:bg-neutral-700 dark:hover:bg-neutral-100 transition-colors"
-                    >
-                      Create Event
-                      <Plus className="w-4 h-4" />
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                    {data.hosting.events.map((event) => (
-                      <UpcomingEventRow key={event.id} event={event} />
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Past Hosted Events */}
-              {data.hosting.pastEvents.length > 0 && (
-                <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
-                  <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-800">
-                    <h3 className="font-semibold text-neutral-900 dark:text-white">Past Events</h3>
-                  </div>
-                  <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                    {data.hosting.pastEvents.map((event) => (
-                      <PastEventRow key={event.id} event={event} />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
+            </div>
           )}
 
+          {/* No Upcoming Events State */}
+          {!hasUpcomingEvents && (
+            <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-8 text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
+                <Calendar className="w-8 h-8 text-blue-500" />
+              </div>
+              <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">
+                No upcoming events
+              </h4>
+              <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-4">
+                Find your next workout and join the crew!
+              </p>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full text-sm font-medium hover:bg-neutral-700 dark:hover:bg-neutral-100 transition-colors"
+              >
+                <Search className="w-4 h-4" />
+                Find Events
+              </Link>
+            </div>
+          )}
+
+          {/* Discover Section */}
+          {data?.discover && data.discover.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between px-1 mb-3">
+                <h3 className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Discover This Week
+                </h3>
+                <Link
+                  href="/"
+                  className="text-xs font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
+                >
+                  Browse all
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {data.discover.slice(0, 4).map((event) => (
+                  <Link
+                    key={event.id}
+                    href={event.slug ? `/event/${event.slug}` : `/e/${event.id}`}
+                    className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
+                  >
+                    <div className="relative h-24 bg-neutral-100 dark:bg-neutral-800">
+                      {event.imageUrl ? (
+                        <Image
+                          src={event.imageUrl}
+                          alt={event.name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Calendar className="w-6 h-6 text-neutral-300 dark:text-neutral-600" />
+                        </div>
+                      )}
+                      <div className="absolute bottom-2 left-2 px-2 py-0.5 bg-neutral-900/70 backdrop-blur-sm rounded-full">
+                        <span className="text-[10px] font-medium text-white">{event.category}</span>
+                      </div>
+                    </div>
+                    <div className="p-3">
+                      <p className="font-medium text-sm text-neutral-900 dark:text-white line-clamp-1 mb-1">
+                        {event.name}
+                      </p>
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                        {event.date ? formatEventDate(event.date, event.day) : event.day}
+                      </p>
+                      {event.goingCount !== undefined && event.goingCount > 0 && (
+                        <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1 flex items-center gap-1">
+                          <Users className="w-3 h-3" />
+                          {event.goingCount} going
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Quick Actions */}
+          <div className="grid grid-cols-2 gap-3">
+            <Link
+              href="/"
+              className="flex items-center gap-3 p-4 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
+            >
+              <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
+                <Search className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <span className="font-medium text-sm text-neutral-900 dark:text-white">Find Events</span>
+            </Link>
+            <Link
+              href="/my-events"
+              className="flex items-center gap-3 p-4 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
+            >
+              <div className="w-10 h-10 bg-purple-50 dark:bg-purple-900/20 rounded-full flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <span className="font-medium text-sm text-neutral-900 dark:text-white">My Events</span>
+            </Link>
+          </div>
         </div>
       </main>
     </div>

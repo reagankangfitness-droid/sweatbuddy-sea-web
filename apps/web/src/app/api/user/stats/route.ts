@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
-// Get user stats (this month, total attended)
+// Get user stats and profile info for profile page
 export async function GET() {
   try {
     const { userId } = await auth()
@@ -13,16 +13,29 @@ export async function GET() {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
-    const user = await currentUser()
-    const email = user?.primaryEmailAddress?.emailAddress
+    const clerkUser = await currentUser()
+    const email = clerkUser?.primaryEmailAddress?.emailAddress
 
     if (!email) {
       return NextResponse.json({
         totalAttended: 0,
         thisMonth: 0,
         upcoming: 0,
+        profile: null,
       })
     }
+
+    // Get user profile from database
+    const dbUser = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      select: {
+        id: true,
+        slug: true,
+        isHost: true,
+        name: true,
+        username: true,
+      },
+    })
 
     // Get all attendance records for this user
     const attendances = await prisma.eventAttendance.findMany({
@@ -44,6 +57,11 @@ export async function GET() {
         totalAttended: 0,
         thisMonth: 0,
         upcoming: 0,
+        profile: dbUser ? {
+          slug: dbUser.slug,
+          isHost: dbUser.isHost,
+          username: dbUser.username,
+        } : null,
       })
     }
 
@@ -96,6 +114,11 @@ export async function GET() {
       totalAttended,
       thisMonth,
       upcoming,
+      profile: dbUser ? {
+        slug: dbUser.slug,
+        isHost: dbUser.isHost,
+        username: dbUser.username,
+      } : null,
     })
   } catch (error) {
     console.error('Error fetching user stats:', error)

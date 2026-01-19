@@ -16,6 +16,7 @@ import {
   Sparkles,
   LayoutDashboard,
   Search,
+  Ticket,
 } from 'lucide-react'
 
 interface EventData {
@@ -402,13 +403,13 @@ export default function DashboardPage() {
               <span className="font-medium text-sm text-neutral-900 dark:text-white">Find Events</span>
             </Link>
             <Link
-              href="/my-events"
+              href="/my-bookings"
               className="flex items-center gap-3 p-4 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
             >
-              <div className="w-10 h-10 bg-purple-50 dark:bg-purple-900/20 rounded-full flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              <div className="w-10 h-10 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center">
+                <Ticket className="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
-              <span className="font-medium text-sm text-neutral-900 dark:text-white">My Events</span>
+              <span className="font-medium text-sm text-neutral-900 dark:text-white">My Bookings</span>
             </Link>
           </div>
         </div>

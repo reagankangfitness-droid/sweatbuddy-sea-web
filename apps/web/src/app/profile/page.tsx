@@ -248,12 +248,12 @@ export default function ProfilePage() {
           </h3>
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 overflow-hidden">
             <Link
-              href="/my-events"
+              href="/dashboard"
               className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
             >
               <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
                 <CalendarDays className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
-                My Events
+                My Activity
               </span>
               <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
             </Link>

@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "framework": "nextjs",
+  "installCommand": "cd apps/web && npm install",
+  "buildCommand": "cd apps/web && prisma generate && next build",
+  "outputDirectory": "apps/web/.next",
+  "crons": [
+    {
+      "path": "/api/cron/daily-jobs",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/process-event-reminders",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}

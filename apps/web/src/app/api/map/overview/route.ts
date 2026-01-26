@@ -6,6 +6,18 @@ export const dynamic = 'force-dynamic'
 
 const HOT_THRESHOLD = 6 // Neighborhoods with >= 6 events are "hot"
 
+// Unified event type for merging Activity and EventSubmission
+interface UnifiedEvent {
+  id: string
+  title: string
+  neighborhoodId: string | null
+  latitude: number | null
+  longitude: number | null
+  startTime: Date | null
+  attendeeCount: number
+  source: 'activity' | 'event_submission'
+}
+
 // Check if a point is within a neighborhood's bounds
 function isPointInNeighborhood(
   lat: number,
@@ -105,28 +117,94 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    // Group activities by neighborhood (using coordinates if neighborhoodId not set)
+    // Also get EventSubmission events (approved events from admin)
+    const eventSubmissions = await prisma.eventSubmission.findMany({
+      where: {
+        status: 'APPROVED',
+        OR: [
+          // Events with future dates
+          { eventDate: { gte: now, lte: endDate } },
+          // Recurring events (always show)
+          { recurring: true },
+        ]
+      },
+      select: {
+        id: true,
+        eventName: true,
+        latitude: true,
+        longitude: true,
+        eventDate: true,
+        time: true,
+        recurring: true,
+      },
+      orderBy: { eventDate: 'asc' },
+    })
+
+    // Get attendance counts for EventSubmissions
+    const eventIds = eventSubmissions.map(e => e.id)
+    const attendanceCounts = eventIds.length > 0
+      ? await prisma.eventAttendance.groupBy({
+          by: ['eventId'],
+          _count: { id: true },
+        })
+      : []
+    const attendanceMap = new Map(attendanceCounts.map(a => [a.eventId, a._count.id]))
+
+    // Merge both sources into unified format
+    const unifiedEvents: UnifiedEvent[] = [
+      // Activities
+      ...activities.map(a => ({
+        id: a.id,
+        title: a.title,
+        neighborhoodId: a.neighborhoodId,
+        latitude: a.latitude,
+        longitude: a.longitude,
+        startTime: a.startTime,
+        attendeeCount: a._count.userActivities,
+        source: 'activity' as const,
+      })),
+      // EventSubmissions (no neighborhoodId - use coordinates for matching)
+      ...eventSubmissions.map(e => ({
+        id: e.id,
+        title: e.eventName,
+        neighborhoodId: null, // EventSubmission doesn't have neighborhoodId, will match by coordinates
+        latitude: e.latitude,
+        longitude: e.longitude,
+        startTime: e.eventDate,
+        attendeeCount: attendanceMap.get(e.id) || 0,
+        source: 'event_submission' as const,
+      })),
+    ]
+
+    // Sort by startTime
+    unifiedEvents.sort((a, b) => {
+      if (!a.startTime) return 1
+      if (!b.startTime) return -1
+      return a.startTime.getTime() - b.startTime.getTime()
+    })
+
+    // Group unified events by neighborhood (using coordinates if neighborhoodId not set)
     const neighborhoodStats: Record<
       string,
       {
-        events: typeof activities
+        events: UnifiedEvent[]
         attendeeCount: number
       }
     > = {}
 
-    activities.forEach((activity) => {
+    unifiedEvents.forEach((event) => {
       // Try to get neighborhood from neighborhoodId, or match by coordinates
-      let nId = activity.neighborhoodId
-      if (!nId && activity.latitude && activity.longitude) {
-        nId = findNeighborhoodForCoordinates(activity.latitude, activity.longitude)
+      let nId = event.neighborhoodId
+      if (!nId && event.latitude && event.longitude) {
+        nId = findNeighborhoodForCoordinates(event.latitude, event.longitude)
       }
       nId = nId || 'unknown'
 
       if (!neighborhoodStats[nId]) {
         neighborhoodStats[nId] = { events: [], attendeeCount: 0 }
       }
-      neighborhoodStats[nId].events.push(activity)
-      neighborhoodStats[nId].attendeeCount += activity._count.userActivities
+      neighborhoodStats[nId].events.push(event)
+      neighborhoodStats[nId].attendeeCount += event.attendeeCount
     })
 
     // Build neighborhood overview with event counts
@@ -160,7 +238,7 @@ export async function GET(request: NextRequest) {
     const hotSpot = sortedByEvents[0]?.eventCount > 0 ? sortedByEvents[0] : null
 
     // Calculate totals
-    const totalEvents = activities.length
+    const totalEvents = unifiedEvents.length
     const totalAttendees = Object.values(neighborhoodStats).reduce(
       (sum, stats) => sum + stats.attendeeCount,
       0

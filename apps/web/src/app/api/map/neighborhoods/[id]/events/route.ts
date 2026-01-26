@@ -15,6 +15,29 @@ const AVATAR_COLORS = [
   'bg-indigo-200',
 ]
 
+// Unified event response type
+interface UnifiedEventResponse {
+  id: string
+  slug: string
+  title: string
+  host: {
+    id: string
+    name: string
+    handle: string
+    avatar?: string
+  }
+  datetime: string
+  category: string
+  image?: string
+  price: number | null
+  isRecurring: boolean
+  location: { name: string }
+  attendeeCount: number
+  capacity?: number
+  attendeeAvatars: { initial: string; color: string }[]
+  source: 'activity' | 'event_submission'
+}
+
 // Check if a point is within a neighborhood's bounds
 function isPointInNeighborhood(
   lat: number,
@@ -24,17 +47,39 @@ function isPointInNeighborhood(
   return lat <= bounds.north && lat >= bounds.south && lng <= bounds.east && lng >= bounds.west
 }
 
+// Parse time string like "7:00PM" or "6:30 PM" to hours and minutes
+function parseTimeString(time: string): { hours: number; minutes: number } {
+  const match = time.match(/(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i)
+  if (!match) return { hours: 9, minutes: 0 } // Default to 9 AM
+
+  let hours = parseInt(match[1])
+  const minutes = match[2] ? parseInt(match[2]) : 0
+  const period = match[3]?.toUpperCase()
+
+  if (period === 'PM' && hours !== 12) hours += 12
+  if (period === 'AM' && hours === 12) hours = 0
+
+  return { hours, minutes }
+}
+
+// Combine eventDate and time string into a Date
+function combineDateTime(eventDate: Date, timeString: string): Date {
+  const { hours, minutes } = parseTimeString(timeString)
+  const combined = new Date(eventDate)
+  combined.setHours(hours, minutes, 0, 0)
+  return combined
+}
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const neighborhoodId = params.id
+    const { id: neighborhoodId } = await params
     const searchParams = request.nextUrl.searchParams
     const timeRange = searchParams.get('timeRange') || 'week'
     const category = searchParams.get('category')
     const limit = parseInt(searchParams.get('limit') || '20')
-    const cursor = searchParams.get('cursor')
 
     // Find neighborhood
     const neighborhood = neighborhoodsData.neighborhoods.find(
@@ -58,7 +103,6 @@ export async function GET(
         endDate.setHours(23, 59, 59, 999)
         break
       case 'weekend':
-        // Find next Sunday
         const dayOfWeek = now.getDay()
         const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek
         endDate = new Date(now)
@@ -76,8 +120,8 @@ export async function GET(
         break
     }
 
-    // Build query filters - match by neighborhoodId OR by coordinates within bounds
-    const whereClause: any = {
+    // Build query filters for Activities
+    const activityWhereClause: any = {
       status: 'PUBLISHED',
       startTime: {
         gte: now,
@@ -96,16 +140,12 @@ export async function GET(
     }
 
     if (category) {
-      whereClause.categorySlug = category
-    }
-
-    if (cursor) {
-      whereClause.id = { gt: cursor }
+      activityWhereClause.categorySlug = category
     }
 
     // Fetch activities
     const activities = await prisma.activity.findMany({
-      where: whereClause,
+      where: activityWhereClause,
       select: {
         id: true,
         title: true,
@@ -124,9 +164,7 @@ export async function GET(
           },
         },
         userActivities: {
-          where: {
-            status: 'JOINED',
-          },
+          where: { status: 'JOINED' },
           select: {
             user: {
               select: {
@@ -140,32 +178,84 @@ export async function GET(
         _count: {
           select: {
             userActivities: {
-              where: {
-                status: 'JOINED',
-              },
+              where: { status: 'JOINED' },
             },
           },
         },
       },
-      orderBy: {
-        startTime: 'asc',
-      },
-      take: limit + 1, // Get one extra to check if there's more
+      orderBy: { startTime: 'asc' },
     })
 
-    // Check if there's more
-    const hasMore = activities.length > limit
-    const eventsToReturn = hasMore ? activities.slice(0, limit) : activities
+    // Fetch EventSubmissions for this neighborhood (match by coordinates only)
+    const eventSubmissions = await prisma.eventSubmission.findMany({
+      where: {
+        status: 'APPROVED',
+        // Match by coordinates within bounds
+        latitude: { gte: neighborhood.bounds.south, lte: neighborhood.bounds.north },
+        longitude: { gte: neighborhood.bounds.west, lte: neighborhood.bounds.east },
+        // Date filtering
+        OR: [
+          { eventDate: { gte: now, lte: endDate } },
+          { recurring: true },
+        ]
+      },
+      select: {
+        id: true,
+        slug: true,
+        eventName: true,
+        eventDate: true,
+        time: true,
+        category: true,
+        imageUrl: true,
+        price: true,
+        isFree: true,
+        maxTickets: true,
+        location: true,
+        organizerInstagram: true,
+        organizerName: true,
+        recurring: true,
+      },
+      orderBy: { eventDate: 'asc' },
+    })
 
-    // Transform to response format
-    const events = eventsToReturn.map((activity) => {
+    // Get attendance counts for EventSubmissions
+    const eventIds = eventSubmissions.map(e => e.id)
+    const attendanceCounts = eventIds.length > 0
+      ? await prisma.eventAttendance.groupBy({
+          by: ['eventId'],
+          _count: { id: true },
+        })
+      : []
+    const attendanceMap = new Map(attendanceCounts.map(a => [a.eventId, a._count.id]))
+
+    // Get attendee previews for EventSubmissions
+    const attendeePreviews = eventIds.length > 0
+      ? await prisma.eventAttendance.findMany({
+          where: { eventId: { in: eventIds } },
+          select: {
+            eventId: true,
+            name: true,
+          },
+          take: 50,
+        })
+      : []
+
+    // Group attendees by event
+    const eventAttendeesMap = new Map<string, string[]>()
+    attendeePreviews.forEach(a => {
+      const list = eventAttendeesMap.get(a.eventId) || []
+      if (list.length < 3) list.push(a.name || 'Guest')
+      eventAttendeesMap.set(a.eventId, list)
+    })
+
+    // Transform activities to unified format
+    const activityEvents: UnifiedEventResponse[] = activities.map((activity) => {
       const attendees = activity.userActivities || []
       const attendeeAvatars = attendees.slice(0, 3).map((ua, i) => ({
         initial: ua.user.name?.charAt(0).toUpperCase() || '?',
         color: AVATAR_COLORS[i % AVATAR_COLORS.length],
       }))
 
-      // Handle optional user relation
       const host = activity.user
         ? {
             id: activity.user.id,
@@ -182,22 +272,74 @@ export async function GET(
 
       return {
         id: activity.id,
-        slug: activity.id, // Using ID as slug for now
+        slug: activity.id,
         title: activity.title,
         host,
         datetime: activity.startTime?.toISOString() || new Date().toISOString(),
         category: activity.categorySlug || 'Fitness',
         image: activity.imageUrl || undefined,
         price: activity.price && activity.price > 0 ? activity.price : null,
-        isRecurring: false, // Would need to add this field to Activity model
-        location: {
-          name: activity.address || neighborhood.popularVenues[0] || neighborhood.name,
-        },
+        isRecurring: false,
+        location: { name: activity.address || neighborhood.popularVenues[0] || neighborhood.name },
         attendeeCount: activity._count.userActivities,
         capacity: activity.maxPeople || undefined,
         attendeeAvatars,
+        source: 'activity' as const,
       }
     })
+
+    // Transform EventSubmissions to unified format
+    const submissionEvents: UnifiedEventResponse[] = eventSubmissions
+      .filter(e => {
+        // Filter recurring events that are within the time range
+        if (e.recurring && e.eventDate) {
+          return e.eventDate >= now && e.eventDate <= endDate
+        }
+        return e.eventDate && e.eventDate >= now && e.eventDate <= endDate
+      })
+      .map((event) => {
+        const attendeeNames = eventAttendeesMap.get(event.id) || []
+        const attendeeAvatars = attendeeNames.slice(0, 3).map((name, i) => ({
+          initial: name.charAt(0).toUpperCase() || '?',
+          color: AVATAR_COLORS[i % AVATAR_COLORS.length],
+        }))
+
+        // Combine date and time
+        const datetime = event.eventDate && event.time
+          ? combineDateTime(event.eventDate, event.time)
+          : event.eventDate || new Date()
+
+        return {
+          id: event.id,
+          slug: event.slug || event.id,
+          title: event.eventName,
+          host: {
+            id: event.organizerInstagram || 'unknown',
+            name: event.organizerName || event.organizerInstagram || 'Unknown Host',
+            handle: event.organizerInstagram ? `@${event.organizerInstagram}` : '@host',
+            avatar: undefined,
+          },
+          datetime: datetime.toISOString(),
+          category: event.category || 'Fitness',
+          image: event.imageUrl || undefined,
+          price: event.isFree ? null : (event.price ? event.price / 100 : null), // Convert cents to dollars
+          isRecurring: event.recurring,
+          location: { name: event.location || neighborhood.name },
+          attendeeCount: attendanceMap.get(event.id) || 0,
+          capacity: event.maxTickets || undefined,
+          attendeeAvatars,
+          source: 'event_submission' as const,
+        }
+      })
+
+    // Merge and sort by datetime
+    const allEvents = [...activityEvents, ...submissionEvents].sort((a, b) => {
+      return new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
+    })
+
+    // Apply limit
+    const eventsToReturn = allEvents.slice(0, limit)
+    const hasMore = allEvents.length > limit
 
     return NextResponse.json({
       success: true,
@@ -208,7 +350,7 @@ export async function GET(
           vibe: neighborhood.vibe,
           description: neighborhood.description,
         },
-        events,
+        events: eventsToReturn,
         pagination: {
           hasMore,
           cursor: hasMore ? eventsToReturn[eventsToReturn.length - 1].id : null,

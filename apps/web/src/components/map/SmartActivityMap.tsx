@@ -9,9 +9,9 @@ const GoogleActivityMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="relative w-full rounded-3xl overflow-hidden bg-gradient-to-br from-slate-100 via-sky-50 to-teal-50 animate-pulse" style={{ height: '520px' }}>
+      <div className="relative w-full rounded-3xl overflow-hidden bg-neutral-900 animate-pulse" style={{ height: '520px' }}>
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-12 h-12 border-3 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
+          <div className="w-12 h-12 border-3 border-neutral-700 border-t-blue-500 rounded-full animate-spin" />
         </div>
       </div>
     ),

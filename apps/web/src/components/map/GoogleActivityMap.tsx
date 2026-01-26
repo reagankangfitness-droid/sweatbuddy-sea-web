@@ -14,47 +14,39 @@ const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 // Singapore center
 const SINGAPORE_CENTER = { lat: 1.3521, lng: 103.8198 }
 
-// Custom map styles - clean, minimal look
+// Custom map styles - dark mode
 const MAP_STYLES: google.maps.MapTypeStyle[] = [
   {
-    featureType: 'all',
-    elementType: 'labels.text.fill',
-    stylers: [{ color: '#6b7280' }],
-  },
-  {
-    featureType: 'water',
     elementType: 'geometry',
-    stylers: [{ color: '#dbeafe' }],
+    stylers: [{ color: '#1a1a2e' }],
   },
   {
-    featureType: 'water',
     elementType: 'labels.text.fill',
-    stylers: [{ color: '#93c5fd' }],
+    stylers: [{ color: '#8b8b8b' }],
+  },
+  {
+    elementType: 'labels.text.stroke',
+    stylers: [{ color: '#1a1a2e' }],
+  },
+  {
+    featureType: 'administrative',
+    elementType: 'geometry.stroke',
+    stylers: [{ color: '#2d2d44' }],
+  },
+  {
+    featureType: 'administrative.land_parcel',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#64748b' }],
   },
   {
     featureType: 'landscape',
     elementType: 'geometry',
-    stylers: [{ color: '#f8fafc' }],
+    stylers: [{ color: '#16213e' }],
   },
   {
-    featureType: 'landscape.natural',
+    featureType: 'poi',
     elementType: 'geometry',
-    stylers: [{ color: '#ecfdf5' }],
-  },
-  {
-    featureType: 'road',
-    elementType: 'geometry',
-    stylers: [{ color: '#ffffff' }],
-  },
-  {
-    featureType: 'road',
-    elementType: 'geometry.stroke',
-    stylers: [{ color: '#e5e7eb' }],
-  },
-  {
-    featureType: 'road.highway',
-    elementType: 'geometry',
-    stylers: [{ color: '#fef3c7' }],
+    stylers: [{ color: '#1e3a5f' }],
   },
   {
     featureType: 'poi',
@@ -64,16 +56,61 @@ const MAP_STYLES: google.maps.MapTypeStyle[] = [
   {
     featureType: 'poi.park',
     elementType: 'geometry',
-    stylers: [{ color: '#dcfce7' }],
+    stylers: [{ color: '#1a3a2a' }],
+  },
+  {
+    featureType: 'poi.park',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#4ade80' }],
+  },
+  {
+    featureType: 'road',
+    elementType: 'geometry',
+    stylers: [{ color: '#2d2d44' }],
+  },
+  {
+    featureType: 'road',
+    elementType: 'geometry.stroke',
+    stylers: [{ color: '#1a1a2e' }],
+  },
+  {
+    featureType: 'road.highway',
+    elementType: 'geometry',
+    stylers: [{ color: '#3d3d5c' }],
+  },
+  {
+    featureType: 'road.highway',
+    elementType: 'geometry.stroke',
+    stylers: [{ color: '#1a1a2e' }],
+  },
+  {
+    featureType: 'road.arterial',
+    elementType: 'geometry',
+    stylers: [{ color: '#2d2d44' }],
+  },
+  {
+    featureType: 'road.local',
+    elementType: 'geometry',
+    stylers: [{ color: '#252538' }],
   },
   {
     featureType: 'transit',
     stylers: [{ visibility: 'off' }],
   },
   {
-    featureType: 'administrative',
-    elementType: 'geometry.stroke',
-    stylers: [{ color: '#d1d5db' }],
+    featureType: 'transit.line',
+    elementType: 'geometry',
+    stylers: [{ color: '#2d2d44' }],
+  },
+  {
+    featureType: 'water',
+    elementType: 'geometry',
+    stylers: [{ color: '#0f172a' }],
+  },
+  {
+    featureType: 'water',
+    elementType: 'labels.text.fill',
+    stylers: [{ color: '#3b82f6' }],
   },
 ]
 
@@ -196,12 +233,12 @@ export function GoogleActivityMap({ timeRange = 'week', onNeighborhoodSelect }: 
   // No API key - show fallback
   if (!GOOGLE_MAPS_API_KEY) {
     return (
-      <div className="relative w-full rounded-3xl overflow-hidden bg-gradient-to-br from-slate-100 via-sky-50 to-teal-50" style={{ height: '520px' }}>
+      <div className="relative w-full rounded-3xl overflow-hidden bg-neutral-900" style={{ height: '520px' }}>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center p-6">
-            <MapPin className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 font-medium mb-2">Google Maps not configured</p>
-            <p className="text-sm text-gray-400">Add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to enable</p>
+            <MapPin className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
+            <p className="text-neutral-400 font-medium mb-2">Google Maps not configured</p>
+            <p className="text-sm text-neutral-500">Add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to enable</p>
           </div>
         </div>
       </div>
@@ -210,9 +247,9 @@ export function GoogleActivityMap({ timeRange = 'week', onNeighborhoodSelect }: 
 
   if (loadError) {
     return (
-      <div className="relative w-full rounded-3xl overflow-hidden bg-red-50" style={{ height: '520px' }}>
+      <div className="relative w-full rounded-3xl overflow-hidden bg-neutral-900" style={{ height: '520px' }}>
         <div className="absolute inset-0 flex items-center justify-center">
-          <p className="text-red-500">Failed to load Google Maps</p>
+          <p className="text-red-400">Failed to load Google Maps</p>
         </div>
       </div>
     )
@@ -220,10 +257,10 @@ export function GoogleActivityMap({ timeRange = 'week', onNeighborhoodSelect }: 
 
   if (!isLoaded) {
     return (
-      <div className="relative w-full rounded-3xl overflow-hidden bg-gradient-to-br from-slate-100 via-sky-50 to-teal-50" style={{ height: '520px' }}>
+      <div className="relative w-full rounded-3xl overflow-hidden bg-neutral-900" style={{ height: '520px' }}>
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.div
-            className="w-12 h-12 border-3 border-gray-200 border-t-blue-500 rounded-full"
+            className="w-12 h-12 border-3 border-neutral-700 border-t-blue-500 rounded-full"
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
           />
@@ -300,10 +337,10 @@ export function GoogleActivityMap({ timeRange = 'week', onNeighborhoodSelect }: 
             }
             radius={1500}
             options={{
-              fillColor: '#3b82f6',
-              fillOpacity: 0.08,
-              strokeColor: '#3b82f6',
-              strokeOpacity: 0.3,
+              fillColor: '#60a5fa',
+              fillOpacity: 0.15,
+              strokeColor: '#60a5fa',
+              strokeOpacity: 0.5,
               strokeWeight: 2,
             }}
           />
@@ -321,25 +358,25 @@ export function GoogleActivityMap({ timeRange = 'week', onNeighborhoodSelect }: 
             }}
             onCloseClick={() => setHoveredNeighborhood(null)}
           >
-            <div className="p-2 min-w-[150px]">
+            <div className="p-3 min-w-[160px] bg-neutral-900 text-white rounded-xl">
               {(() => {
                 const n = neighborhoodsWithStats.find(n => n.id === hoveredNeighborhood)
                 if (!n) return null
                 return (
                   <>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-bold text-sm">{n.name}</span>
+                      <span className="font-bold text-sm text-white">{n.name}</span>
                       {n.isHot && <span className="text-sm">🔥</span>}
                     </div>
-                    <p className="text-xs text-gray-500 mb-2">{n.description}</p>
-                    <div className="flex items-center gap-3 text-xs">
+                    <p className="text-xs text-neutral-400 mb-2">{n.description}</p>
+                    <div className="flex items-center gap-3 text-xs text-neutral-300">
                       <span className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-blue-500" />
-                        <strong>{n.eventCount}</strong> events
+                        <Calendar className="w-3 h-3 text-blue-400" />
+                        <strong className="text-white">{n.eventCount}</strong> events
                       </span>
                       <span className="flex items-center gap-1">
-                        <Users className="w-3 h-3 text-green-500" />
-                        <strong>{n.attendeeCount}</strong> going
+                        <Users className="w-3 h-3 text-emerald-400" />
+                        <strong className="text-white">{n.attendeeCount}</strong> going
                       </span>
                     </div>
                   </>
@@ -352,36 +389,36 @@ export function GoogleActivityMap({ timeRange = 'week', onNeighborhoodSelect }: 
 
       {/* Singapore label */}
       <motion.div
-        className="absolute top-4 left-4 flex items-center gap-2 bg-white/95 backdrop-blur-md rounded-full px-3 py-1.5 shadow-md border border-gray-100 z-10"
+        className="absolute top-4 left-4 flex items-center gap-2 bg-neutral-900/90 backdrop-blur-md rounded-full px-3 py-1.5 shadow-lg border border-neutral-700/50 z-10"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
       >
         <span className="text-base">🇸🇬</span>
-        <span className="text-sm font-semibold text-gray-700">Singapore</span>
+        <span className="text-sm font-semibold text-white">Singapore</span>
       </motion.div>
 
       {/* Legend */}
       <motion.div
-        className="absolute top-4 right-4 hidden sm:flex flex-col gap-1.5 bg-white/95 backdrop-blur-md rounded-xl px-3 py-2 shadow-md border border-gray-100 z-10"
+        className="absolute top-4 right-4 hidden sm:flex flex-col gap-1.5 bg-neutral-900/90 backdrop-blur-md rounded-xl px-3 py-2 shadow-lg border border-neutral-700/50 z-10"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
       >
-        <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide">Events</span>
+        <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wide">Events</span>
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-full bg-orange-500" />
-          <span className="text-[10px] text-gray-600">6+ Hot</span>
+          <span className="text-[10px] text-neutral-300">6+ Hot</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-full bg-emerald-500" />
-          <span className="text-[10px] text-gray-600">5+</span>
+          <span className="text-[10px] text-neutral-300">5+</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-full bg-indigo-500" />
-          <span className="text-[10px] text-gray-600">3-4</span>
+          <span className="text-[10px] text-neutral-300">3-4</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-full bg-violet-500" />
-          <span className="text-[10px] text-gray-600">1-2</span>
+          <span className="text-[10px] text-neutral-300">1-2</span>
         </div>
       </motion.div>
 
@@ -394,28 +431,28 @@ export function GoogleActivityMap({ timeRange = 'week', onNeighborhoodSelect }: 
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
           >
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-gray-100 p-4">
+            <div className="bg-neutral-900/90 backdrop-blur-md rounded-2xl shadow-xl border border-neutral-700/50 p-4">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 sm:gap-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-9 h-9 bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl flex items-center justify-center">
-                      <Calendar className="w-4 h-4 text-blue-600" />
+                    <div className="w-9 h-9 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                      <Calendar className="w-4 h-4 text-blue-400" />
                     </div>
                     <div>
-                      <p className="text-xl font-bold text-gray-900">{summary.totalEvents}</p>
-                      <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wide">Events</p>
+                      <p className="text-xl font-bold text-white">{summary.totalEvents}</p>
+                      <p className="text-[10px] text-neutral-400 font-medium uppercase tracking-wide">Events</p>
                     </div>
                   </div>
 
-                  <div className="w-px h-10 bg-gray-200" />
+                  <div className="w-px h-10 bg-neutral-700" />
 
                   <div className="flex items-center gap-2">
-                    <div className="w-9 h-9 bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-xl flex items-center justify-center">
-                      <Users className="w-4 h-4 text-emerald-600" />
+                    <div className="w-9 h-9 bg-emerald-500/20 rounded-xl flex items-center justify-center">
+                      <Users className="w-4 h-4 text-emerald-400" />
                     </div>
                     <div>
-                      <p className="text-xl font-bold text-gray-900">{summary.totalAttendees}</p>
-                      <p className="text-[10px] text-gray-500 font-medium uppercase tracking-wide">Going</p>
+                      <p className="text-xl font-bold text-white">{summary.totalAttendees}</p>
+                      <p className="text-[10px] text-neutral-400 font-medium uppercase tracking-wide">Going</p>
                     </div>
                   </div>
                 </div>
@@ -423,12 +460,12 @@ export function GoogleActivityMap({ timeRange = 'week', onNeighborhoodSelect }: 
                 {summary.hotSpot && (
                   <button
                     onClick={() => handleMarkerClick(summary.hotSpot!.id)}
-                    className="flex items-center gap-2 px-3 py-2.5 bg-gradient-to-r from-orange-50 to-red-50 hover:from-orange-100 hover:to-red-100 rounded-xl transition-all border border-orange-100/50 group"
+                    className="flex items-center gap-2 px-3 py-2.5 bg-gradient-to-r from-orange-500/20 to-red-500/20 hover:from-orange-500/30 hover:to-red-500/30 rounded-xl transition-all border border-orange-500/30 group"
                   >
-                    <Flame className="w-5 h-5 text-orange-500" fill="currentColor" />
+                    <Flame className="w-5 h-5 text-orange-400" fill="currentColor" />
                     <div className="text-left">
-                      <p className="text-[10px] text-orange-600 font-semibold uppercase tracking-wide">Hot spot</p>
-                      <p className="text-sm font-bold text-gray-900">{summary.hotSpot.name}</p>
+                      <p className="text-[10px] text-orange-400 font-semibold uppercase tracking-wide">Hot spot</p>
+                      <p className="text-sm font-bold text-white">{summary.hotSpot.name}</p>
                     </div>
                     <ChevronRight className="w-4 h-4 text-orange-400 group-hover:translate-x-0.5 transition-transform" />
                   </button>
@@ -443,18 +480,18 @@ export function GoogleActivityMap({ timeRange = 'week', onNeighborhoodSelect }: 
       <AnimatePresence>
         {isLoading && (
           <motion.div
-            className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-sm z-20"
+            className="absolute inset-0 flex items-center justify-center bg-neutral-900/70 backdrop-blur-sm z-20"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <div className="text-center">
               <motion.div
-                className="w-12 h-12 border-3 border-gray-200 border-t-blue-500 rounded-full mx-auto mb-3"
+                className="w-12 h-12 border-3 border-neutral-700 border-t-blue-500 rounded-full mx-auto mb-3"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
               />
-              <p className="text-sm text-gray-500 font-medium">Loading events...</p>
+              <p className="text-sm text-neutral-300 font-medium">Loading events...</p>
             </div>
           </motion.div>
         )}
@@ -470,25 +507,41 @@ export function GoogleActivityMap({ timeRange = 'week', onNeighborhoodSelect }: 
       {/* Custom styles for marker labels */}
       <style jsx global>{`
         .marker-label {
-          background: white;
-          padding: 2px 6px;
-          border-radius: 4px;
+          background: rgba(23, 23, 23, 0.9) !important;
+          color: #e5e5e5 !important;
+          padding: 2px 8px;
+          border-radius: 6px;
           margin-top: 28px;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.4);
           white-space: nowrap;
+          border: 1px solid rgba(64, 64, 64, 0.5);
         }
         .marker-label.selected {
-          background: black;
-          color: white !important;
+          background: white !important;
+          color: black !important;
+          border-color: white;
         }
         .gm-style-iw {
           padding: 0 !important;
+          background: #171717 !important;
+          border-radius: 12px !important;
         }
         .gm-style-iw-d {
           overflow: hidden !important;
         }
+        .gm-style-iw-c {
+          background: #171717 !important;
+          border-radius: 12px !important;
+          padding: 0 !important;
+        }
+        .gm-style-iw-t::after {
+          background: #171717 !important;
+        }
         .gm-style-iw button[title="Close"] {
           display: none !important;
+        }
+        .gm-style .gm-style-iw-tc::after {
+          background: #171717 !important;
         }
       `}</style>
     </div>

@@ -1,0 +1,292 @@
+{
+  "neighborhoods": [
+    {
+      "id": "east_coast",
+      "name": "East Coast",
+      "shortName": "East Coast",
+      "coordinates": { "lat": 1.3010, "lng": 103.9120 },
+      "bounds": {
+        "north": 1.3150,
+        "south": 1.2900,
+        "east": 103.9500,
+        "west": 103.8800
+      },
+      "mapPosition": { "top": "52%", "left": "78%" },
+      "popularVenues": [
+        "East Coast Park",
+        "Parkland Green",
+        "Marine Cove",
+        "Bedok Jetty"
+      ],
+      "vibe": "chill",
+      "description": "Outdoor runners paradise"
+    },
+    {
+      "id": "marina_bay",
+      "name": "Marina Bay",
+      "shortName": "Marina Bay",
+      "coordinates": { "lat": 1.2834, "lng": 103.8607 },
+      "bounds": {
+        "north": 1.2950,
+        "south": 1.2700,
+        "east": 103.8800,
+        "west": 103.8400
+      },
+      "mapPosition": { "top": "58%", "left": "62%" },
+      "popularVenues": [
+        "Gardens by the Bay",
+        "Marina Barrage",
+        "The Lawn @ MBS",
+        "Bayfront Event Space"
+      ],
+      "vibe": "intense",
+      "description": "Iconic skyline workouts"
+    },
+    {
+      "id": "cbd",
+      "name": "CBD / Tanjong Pagar",
+      "shortName": "CBD",
+      "coordinates": { "lat": 1.2764, "lng": 103.8460 },
+      "bounds": {
+        "north": 1.2850,
+        "south": 1.2650,
+        "east": 103.8550,
+        "west": 103.8350
+      },
+      "mapPosition": { "top": "62%", "left": "52%" },
+      "popularVenues": [
+        "Duxton Plain Park",
+        "Tanjong Pagar Plaza",
+        "100AM",
+        "Amoy Street"
+      ],
+      "vibe": "moderate",
+      "description": "After-work fitness"
+    },
+    {
+      "id": "kallang",
+      "name": "Kallang / Sports Hub",
+      "shortName": "Kallang",
+      "coordinates": { "lat": 1.3044, "lng": 103.8714 },
+      "bounds": {
+        "north": 1.3150,
+        "south": 1.2900,
+        "east": 103.8900,
+        "west": 103.8550
+      },
+      "mapPosition": { "top": "48%", "left": "68%" },
+      "popularVenues": [
+        "Singapore Sports Hub",
+        "Kallang Riverside Park",
+        "Stadium MRT",
+        "Kallang Wave Mall"
+      ],
+      "vibe": "intense",
+      "description": "Stadium training"
+    },
+    {
+      "id": "botanic",
+      "name": "Botanic Gardens",
+      "shortName": "Botanic",
+      "coordinates": { "lat": 1.3138, "lng": 103.8159 },
+      "bounds": {
+        "north": 1.3250,
+        "south": 1.3050,
+        "east": 103.8300,
+        "west": 103.8050
+      },
+      "mapPosition": { "top": "38%", "left": "42%" },
+      "popularVenues": [
+        "Singapore Botanic Gardens",
+        "Eco Lake",
+        "Symphony Stage",
+        "Palm Valley"
+      ],
+      "vibe": "chill",
+      "description": "Nature yoga & runs"
+    },
+    {
+      "id": "orchard",
+      "name": "Orchard / Somerset",
+      "shortName": "Orchard",
+      "coordinates": { "lat": 1.3048, "lng": 103.8318 },
+      "bounds": {
+        "north": 1.3150,
+        "south": 1.2950,
+        "east": 103.8450,
+        "west": 103.8200
+      },
+      "mapPosition": { "top": "42%", "left": "48%" },
+      "popularVenues": [
+        "Istana Park",
+        "Fort Canning",
+        "SCAPE",
+        "Dhoby Ghaut Green"
+      ],
+      "vibe": "moderate",
+      "description": "Central convenience"
+    },
+    {
+      "id": "sentosa",
+      "name": "Sentosa",
+      "shortName": "Sentosa",
+      "coordinates": { "lat": 1.2494, "lng": 103.8303 },
+      "bounds": {
+        "north": 1.2600,
+        "south": 1.2400,
+        "east": 103.8600,
+        "west": 103.8100
+      },
+      "mapPosition": { "top": "75%", "left": "48%" },
+      "popularVenues": [
+        "Siloso Beach",
+        "Palawan Beach",
+        "Tanjong Beach",
+        "Sentosa Boardwalk"
+      ],
+      "vibe": "chill",
+      "description": "Beach bootcamps"
+    },
+    {
+      "id": "labrador",
+      "name": "Labrador Park",
+      "shortName": "Labrador",
+      "coordinates": { "lat": 1.2650, "lng": 103.8020 },
+      "bounds": {
+        "north": 1.2750,
+        "south": 1.2550,
+        "east": 103.8150,
+        "west": 103.7900
+      },
+      "mapPosition": { "top": "68%", "left": "38%" },
+      "popularVenues": [
+        "Labrador Nature Reserve",
+        "Labrador Park MRT",
+        "Keppel Bay"
+      ],
+      "vibe": "chill",
+      "description": "Trail running"
+    },
+    {
+      "id": "bishan",
+      "name": "Bishan / Ang Mo Kio",
+      "shortName": "Bishan",
+      "coordinates": { "lat": 1.3526, "lng": 103.8352 },
+      "bounds": {
+        "north": 1.3650,
+        "south": 1.3400,
+        "east": 103.8500,
+        "west": 103.8200
+      },
+      "mapPosition": { "top": "28%", "left": "52%" },
+      "popularVenues": [
+        "Bishan-Ang Mo Kio Park",
+        "Bishan Stadium",
+        "Lower Peirce Reservoir"
+      ],
+      "vibe": "moderate",
+      "description": "Heartland fitness"
+    },
+    {
+      "id": "bukit_timah",
+      "name": "Bukit Timah",
+      "shortName": "Bt Timah",
+      "coordinates": { "lat": 1.3400, "lng": 103.7800 },
+      "bounds": {
+        "north": 1.3600,
+        "south": 1.3200,
+        "east": 103.8000,
+        "west": 103.7600
+      },
+      "mapPosition": { "top": "32%", "left": "32%" },
+      "popularVenues": [
+        "Bukit Timah Nature Reserve",
+        "Rail Corridor",
+        "Dairy Farm",
+        "MacRitchie"
+      ],
+      "vibe": "intense",
+      "description": "Trail & nature"
+    },
+    {
+      "id": "jurong",
+      "name": "Jurong",
+      "shortName": "Jurong",
+      "coordinates": { "lat": 1.3329, "lng": 103.7436 },
+      "bounds": {
+        "north": 1.3500,
+        "south": 1.3150,
+        "east": 103.7700,
+        "west": 103.7200
+      },
+      "mapPosition": { "top": "42%", "left": "18%" },
+      "popularVenues": [
+        "Jurong Lake Gardens",
+        "Chinese Garden",
+        "Japanese Garden"
+      ],
+      "vibe": "moderate",
+      "description": "West side community"
+    },
+    {
+      "id": "punggol",
+      "name": "Punggol / Sengkang",
+      "shortName": "Punggol",
+      "coordinates": { "lat": 1.4041, "lng": 103.9025 },
+      "bounds": {
+        "north": 1.4200,
+        "south": 1.3900,
+        "east": 103.9200,
+        "west": 103.8850
+      },
+      "mapPosition": { "top": "18%", "left": "72%" },
+      "popularVenues": [
+        "Punggol Waterway Park",
+        "Coney Island",
+        "Punggol Beach"
+      ],
+      "vibe": "chill",
+      "description": "Waterfront runs"
+    },
+    {
+      "id": "woodlands",
+      "name": "Woodlands",
+      "shortName": "Woodlands",
+      "coordinates": { "lat": 1.4382, "lng": 103.7890 },
+      "bounds": {
+        "north": 1.4550,
+        "south": 1.4200,
+        "east": 103.8100,
+        "west": 103.7700
+      },
+      "mapPosition": { "top": "12%", "left": "42%" },
+      "popularVenues": [
+        "Woodlands Waterfront",
+        "Admiralty Park",
+        "Woodlands Stadium"
+      ],
+      "vibe": "moderate",
+      "description": "North community"
+    },
+    {
+      "id": "tampines",
+      "name": "Tampines / Pasir Ris",
+      "shortName": "Tampines",
+      "coordinates": { "lat": 1.3496, "lng": 103.9568 },
+      "bounds": {
+        "north": 1.3700,
+        "south": 1.3300,
+        "east": 103.9800,
+        "west": 103.9300
+      },
+      "mapPosition": { "top": "32%", "left": "88%" },
+      "popularVenues": [
+        "Tampines Eco Green",
+        "Pasir Ris Park",
+        "Tampines Hub"
+      ],
+      "vibe": "moderate",
+      "description": "East community"
+    }
+  ]
+}

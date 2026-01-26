@@ -221,6 +221,7 @@ model Activity {
   postalCode    String?        // Postal/ZIP code
   country       String?        // Country name
   placeId       String?        // Google Places ID for reference
+  neighborhoodId String?       // Singapore neighborhood ID for map features
   startTime   DateTime?
   endTime     DateTime?
   maxPeople   Int?
@@ -265,6 +266,7 @@ model Activity {
   @@index([title])
   @@index([status])
   @@index([placeId])
+  @@index([neighborhoodId])
   @@map("activities")
 }
 

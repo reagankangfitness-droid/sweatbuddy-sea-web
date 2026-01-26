@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none">
+  <!-- Singapore Island Main Shape -->
+  <path
+    d="M120 280
+       C140 260, 180 240, 220 235
+       C260 230, 300 225, 340 220
+       C380 215, 420 210, 460 205
+       C500 200, 540 195, 580 200
+       C620 205, 660 215, 700 230
+       C720 240, 735 255, 740 275
+       C745 295, 740 315, 720 335
+       C700 355, 670 370, 640 380
+       C610 390, 570 395, 530 398
+       C490 401, 450 402, 410 400
+       C370 398, 330 394, 290 388
+       C250 382, 210 374, 170 360
+       C130 346, 100 325, 95 300
+       C90 275, 100 260, 120 280Z"
+    fill="#e0f2fe"
+    stroke="#7dd3fc"
+    stroke-width="2"
+  />
+
+  <!-- Jurong Island -->
+  <path
+    d="M95 340
+       C105 335, 120 330, 135 335
+       C150 340, 160 350, 155 360
+       C150 370, 135 375, 120 372
+       C105 369, 90 360, 95 340Z"
+    fill="#e0f2fe"
+    stroke="#7dd3fc"
+    stroke-width="1.5"
+  />
+
+  <!-- Sentosa -->
+  <path
+    d="M320 410
+       C340 405, 370 403, 400 405
+       C430 407, 450 415, 445 425
+       C440 435, 415 440, 385 438
+       C355 436, 325 430, 320 420
+       C315 410, 320 410, 320 410Z"
+    fill="#e0f2fe"
+    stroke="#7dd3fc"
+    stroke-width="1.5"
+  />
+
+  <!-- Pulau Ubin -->
+  <path
+    d="M700 195
+       C715 190, 735 188, 750 193
+       C765 198, 775 210, 770 222
+       C765 234, 750 240, 730 238
+       C710 236, 695 225, 695 212
+       C695 199, 700 195, 700 195Z"
+    fill="#e0f2fe"
+    stroke="#7dd3fc"
+    stroke-width="1.5"
+  />
+
+  <!-- Water/Ocean indication - decorative waves -->
+  <g opacity="0.3" stroke="#7dd3fc" stroke-width="1" fill="none">
+    <path d="M50 450 Q100 440, 150 450 Q200 460, 250 450 Q300 440, 350 450"/>
+    <path d="M400 460 Q450 450, 500 460 Q550 470, 600 460 Q650 450, 700 460"/>
+    <path d="M100 480 Q150 470, 200 480 Q250 490, 300 480"/>
+    <path d="M500 485 Q550 475, 600 485 Q650 495, 700 485"/>
+  </g>
+
+  <!-- Marina Bay area highlight -->
+  <circle cx="520" cy="290" r="8" fill="#38bdf8" opacity="0.4"/>
+
+  <!-- Changi area -->
+  <circle cx="720" cy="260" r="6" fill="#38bdf8" opacity="0.3"/>
+
+  <!-- Jurong area -->
+  <circle cx="180" cy="300" r="6" fill="#38bdf8" opacity="0.3"/>
+
+  <!-- Central/Orchard area -->
+  <circle cx="420" cy="260" r="6" fill="#38bdf8" opacity="0.3"/>
+</svg>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Clock, ChevronDown } from 'lucide-react'
-import { ActivityMap, ViewToggle, EventCardCompact } from '@/components/map'
+import { SmartActivityMap, ViewToggle, EventCardCompact } from '@/components/map'
 import type { MapOverviewResponse, NeighborhoodEvent } from '@/types/neighborhood'
 
 type TimeRange = 'today' | 'weekend' | 'week' | 'month'
@@ -130,7 +130,7 @@ export function MapSection() {
 
       {/* Content */}
       {viewMode === 'map' ? (
-        <ActivityMap timeRange={timeRange} />
+        <SmartActivityMap timeRange={timeRange} />
       ) : (
         <div className="space-y-3">
           {isLoadingEvents ? (

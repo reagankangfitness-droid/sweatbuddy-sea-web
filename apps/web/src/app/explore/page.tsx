@@ -2,11 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { ArrowLeft, Clock, ChevronDown } from 'lucide-react'
-import { NeighborhoodPin } from '@/components/map/NeighborhoodPin'
-import { NeighborhoodDrawer } from '@/components/map/NeighborhoodDrawer'
-import { MapSummaryBar } from '@/components/map/MapSummaryBar'
+import { SmartActivityMap } from '@/components/map/SmartActivityMap'
 import { ViewToggle } from '@/components/map/ViewToggle'
 import { EventCardCompact } from '@/components/map/EventCardCompact'
 import type { NeighborhoodOverview, MapOverviewResponse, NeighborhoodEvent } from '@/types/neighborhood'
@@ -28,8 +25,7 @@ export default function ExplorePage() {
     totalAttendees: number
     hotSpot: { id: string; name: string } | null
   }>({ totalEvents: 0, totalAttendees: 0, hotSpot: null })
-  const [selectedNeighborhood, setSelectedNeighborhood] = useState<string | null>(null)
-  const [timeRange, setTimeRange] = useState<TimeRange>('week')
+  const [timeRange, setTimeRange] = useState<TimeRange>('month')
   const [viewMode, setViewMode] = useState<ViewMode>('map')
   const [isLoading, setIsLoading] = useState(true)
   const [showTimeRangePicker, setShowTimeRangePicker] = useState(false)
@@ -87,144 +83,98 @@ export default function ExplorePage() {
     }
   }, [viewMode, neighborhoods, timeRange])
 
-  const handleNeighborhoodSelect = (id: string) => {
-    setSelectedNeighborhood(id === selectedNeighborhood ? null : id)
-  }
-
-  const handleCloseDrawer = () => {
-    setSelectedNeighborhood(null)
-  }
-
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-sm border-b border-neutral-100">
-        <div className="max-w-lg mx-auto px-4 py-3">
+      <header className="sticky top-0 z-30 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm border-b border-neutral-100 dark:border-neutral-800">
+        <div className="max-w-2xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <Link
               href="/"
-              className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+              className="flex items-center gap-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span className="font-medium">Back</span>
             </Link>
 
-            <h1 className="font-bold text-lg">Explore</h1>
+            <h1 className="font-bold text-lg text-neutral-900 dark:text-white">Explore Events</h1>
 
             {/* Time range selector */}
-            <button
-              onClick={() => setShowTimeRangePicker(!showTimeRangePicker)}
-              className="flex items-center gap-1 px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 rounded-full text-sm font-medium transition-colors"
-            >
-              <Clock className="w-3.5 h-3.5" />
-              <span>{TIME_RANGE_LABELS[timeRange]}</span>
-              <ChevronDown className="w-3.5 h-3.5" />
-            </button>
-          </div>
+            <div className="relative">
+              <button
+                onClick={() => setShowTimeRangePicker(!showTimeRangePicker)}
+                className="flex items-center gap-1 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-full text-sm font-medium transition-colors"
+              >
+                <Clock className="w-3.5 h-3.5 text-neutral-500" />
+                <span className="text-neutral-700 dark:text-neutral-300">{TIME_RANGE_LABELS[timeRange]}</span>
+                <ChevronDown className="w-3.5 h-3.5 text-neutral-400" />
+              </button>
 
-          {/* Time range dropdown */}
-          {showTimeRangePicker && (
-            <div className="absolute right-4 top-14 bg-white rounded-xl shadow-lg border border-neutral-200 py-1 min-w-[140px] z-50">
-              {(Object.keys(TIME_RANGE_LABELS) as TimeRange[]).map((range) => (
-                <button
-                  key={range}
-                  onClick={() => {
-                    setTimeRange(range)
-                    setShowTimeRangePicker(false)
-                  }}
-                  className={`w-full px-4 py-2 text-left text-sm hover:bg-neutral-50 transition-colors ${
-                    timeRange === range ? 'font-semibold text-neutral-900' : 'text-neutral-600'
-                  }`}
-                >
-                  {TIME_RANGE_LABELS[range]}
-                </button>
-              ))}
+              {/* Time range dropdown */}
+              {showTimeRangePicker && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setShowTimeRangePicker(false)}
+                  />
+                  <div className="absolute right-0 top-full mt-1 bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 py-1 min-w-[140px] z-50">
+                    {(Object.keys(TIME_RANGE_LABELS) as TimeRange[]).map((range) => (
+                      <button
+                        key={range}
+                        onClick={() => {
+                          setTimeRange(range)
+                          setShowTimeRangePicker(false)
+                        }}
+                        className={`w-full px-4 py-2 text-left text-sm hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors ${
+                          timeRange === range
+                            ? 'font-semibold text-neutral-900 dark:text-white'
+                            : 'text-neutral-600 dark:text-neutral-400'
+                        }`}
+                      >
+                        {TIME_RANGE_LABELS[range]}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </header>
 
-      {/* View toggle - floating */}
-      <div className="fixed top-20 left-1/2 -translate-x-1/2 z-20">
-        <ViewToggle view={viewMode} onViewChange={setViewMode} />
-      </div>
-
       {/* Main content */}
-      <main className="pt-14">
+      <main className="max-w-2xl mx-auto">
+        {/* View toggle bar */}
+        <div className="px-4 py-3 flex justify-center">
+          <ViewToggle view={viewMode} onViewChange={setViewMode} />
+        </div>
+
         {viewMode === 'map' ? (
           /* Map View */
-          <div className="relative h-[calc(100vh-56px)] bg-gradient-to-b from-blue-50 to-blue-100">
-            {/* Singapore map background */}
-            <div className="absolute inset-0 opacity-40">
-              <Image
-                src="/images/singapore-map.svg"
-                alt="Singapore Map"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
-
-            {/* Loading state */}
-            {isLoading ? (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-12 h-12 border-4 border-neutral-200 border-t-neutral-900 rounded-full animate-spin mx-auto mb-4" />
-                  <p className="text-neutral-500">Loading neighborhoods...</p>
-                </div>
-              </div>
-            ) : (
-              <>
-                {/* Neighborhood pins */}
-                <div className="absolute inset-0">
-                  {neighborhoods.map((neighborhood) => (
-                    <NeighborhoodPin
-                      key={neighborhood.id}
-                      neighborhood={neighborhood}
-                      isSelected={selectedNeighborhood === neighborhood.id}
-                      onSelect={handleNeighborhoodSelect}
-                    />
-                  ))}
-                </div>
-
-                {/* Summary bar */}
-                <MapSummaryBar
-                  totalEvents={summary.totalEvents}
-                  totalAttendees={summary.totalAttendees}
-                  hotSpot={summary.hotSpot}
-                  onHotSpotClick={handleNeighborhoodSelect}
-                />
-              </>
-            )}
-
-            {/* Neighborhood drawer */}
-            <NeighborhoodDrawer
-              neighborhoodId={selectedNeighborhood}
-              timeRange={timeRange}
-              onClose={handleCloseDrawer}
-            />
+          <div className="px-4 pb-6">
+            <SmartActivityMap timeRange={timeRange} />
           </div>
         ) : (
           /* List View */
-          <div className="max-w-lg mx-auto px-4 pt-16 pb-8">
+          <div className="px-4 pb-8">
             {/* Stats summary */}
-            <div className="bg-white rounded-2xl shadow-sm border border-neutral-100 p-4 mb-6">
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-sm border border-neutral-100 dark:border-neutral-700 p-4 mb-6">
               <div className="flex items-center justify-around">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-neutral-900">{summary.totalEvents}</p>
-                  <p className="text-xs text-neutral-500">Events</p>
+                  <p className="text-2xl font-bold text-neutral-900 dark:text-white">{summary.totalEvents}</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Events</p>
                 </div>
-                <div className="w-px h-10 bg-neutral-200" />
+                <div className="w-px h-10 bg-neutral-200 dark:bg-neutral-700" />
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-neutral-900">{summary.totalAttendees}</p>
-                  <p className="text-xs text-neutral-500">Attendees</p>
+                  <p className="text-2xl font-bold text-neutral-900 dark:text-white">{summary.totalAttendees}</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Attendees</p>
                 </div>
-                <div className="w-px h-10 bg-neutral-200" />
+                <div className="w-px h-10 bg-neutral-200 dark:bg-neutral-700" />
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-neutral-900">
+                  <p className="text-2xl font-bold text-neutral-900 dark:text-white">
                     {neighborhoods.filter((n) => n.eventCount > 0).length}
                   </p>
-                  <p className="text-xs text-neutral-500">Areas</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Areas</p>
                 </div>
               </div>
             </div>
@@ -239,29 +189,24 @@ export default function ExplorePage() {
             ) : isLoading ? (
               <div className="space-y-3">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="animate-pulse flex gap-3 p-3 bg-white rounded-2xl">
-                    <div className="w-20 h-20 bg-neutral-200 rounded-xl" />
+                  <div key={i} className="animate-pulse flex gap-3 p-3 bg-white dark:bg-neutral-800 rounded-2xl">
+                    <div className="w-20 h-20 bg-neutral-200 dark:bg-neutral-700 rounded-xl" />
                     <div className="flex-1 space-y-2">
-                      <div className="h-4 w-3/4 bg-neutral-200 rounded" />
-                      <div className="h-3 w-1/2 bg-neutral-100 rounded" />
-                      <div className="h-3 w-1/3 bg-neutral-100 rounded" />
+                      <div className="h-4 w-3/4 bg-neutral-200 dark:bg-neutral-700 rounded" />
+                      <div className="h-3 w-1/2 bg-neutral-100 dark:bg-neutral-600 rounded" />
+                      <div className="h-3 w-1/3 bg-neutral-100 dark:bg-neutral-600 rounded" />
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <p className="text-neutral-500">No events found for {TIME_RANGE_LABELS[timeRange].toLowerCase()}</p>
+              <div className="text-center py-12 bg-white dark:bg-neutral-800 rounded-2xl">
+                <p className="text-neutral-500 dark:text-neutral-400">No events found for {TIME_RANGE_LABELS[timeRange].toLowerCase()}</p>
               </div>
             )}
           </div>
         )}
       </main>
-
-      {/* Click outside to close time range picker */}
-      {showTimeRangePicker && (
-        <div className="fixed inset-0 z-40" onClick={() => setShowTimeRangePicker(false)} />
-      )}
     </div>
   )
 }

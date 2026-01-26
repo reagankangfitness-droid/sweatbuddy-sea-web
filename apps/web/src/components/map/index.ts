@@ -1,4 +1,6 @@
 export { ActivityMap } from './ActivityMap'
+export { GoogleActivityMap } from './GoogleActivityMap'
+export { SmartActivityMap } from './SmartActivityMap'
 export { ViewToggle } from './ViewToggle'
 export { MapSummaryBar } from './MapSummaryBar'
 export { NeighborhoodPin } from './NeighborhoodPin'

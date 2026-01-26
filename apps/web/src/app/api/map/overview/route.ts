@@ -6,6 +6,42 @@ export const dynamic = 'force-dynamic'
 
 const HOT_THRESHOLD = 6 // Neighborhoods with >= 6 events are "hot"
 
+// Check if a point is within a neighborhood's bounds
+function isPointInNeighborhood(
+  lat: number,
+  lng: number,
+  bounds: { north: number; south: number; east: number; west: number }
+): boolean {
+  return lat <= bounds.north && lat >= bounds.south && lng <= bounds.east && lng >= bounds.west
+}
+
+// Find the best matching neighborhood for coordinates
+function findNeighborhoodForCoordinates(lat: number, lng: number): string | null {
+  for (const neighborhood of neighborhoodsData.neighborhoods) {
+    if (isPointInNeighborhood(lat, lng, neighborhood.bounds)) {
+      return neighborhood.id
+    }
+  }
+
+  // If no exact match, find nearest neighborhood
+  let nearestId: string | null = null
+  let minDistance = Infinity
+
+  for (const neighborhood of neighborhoodsData.neighborhoods) {
+    const distance = Math.sqrt(
+      Math.pow(lat - neighborhood.coordinates.lat, 2) +
+        Math.pow(lng - neighborhood.coordinates.lng, 2)
+    )
+    if (distance < minDistance) {
+      minDistance = distance
+      nearestId = neighborhood.id
+    }
+  }
+
+  // Only assign if within reasonable distance
+  return minDistance < 0.1 ? nearestId : null
+}
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
@@ -38,7 +74,7 @@ export async function GET(request: NextRequest) {
         break
     }
 
-    // Get all activities with their neighborhood IDs and attendee counts
+    // Get all activities with coordinates for dynamic matching
     const activities = await prisma.activity.findMany({
       where: {
         status: 'PUBLISHED',
@@ -51,6 +87,8 @@ export async function GET(request: NextRequest) {
         id: true,
         title: true,
         neighborhoodId: true,
+        latitude: true,
+        longitude: true,
         startTime: true,
         _count: {
           select: {
@@ -67,7 +105,7 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    // Group activities by neighborhood
+    // Group activities by neighborhood (using coordinates if neighborhoodId not set)
     const neighborhoodStats: Record<
       string,
       {
@@ -77,7 +115,13 @@ export async function GET(request: NextRequest) {
     > = {}
 
     activities.forEach((activity) => {
-      const nId = activity.neighborhoodId || 'unknown'
+      // Try to get neighborhood from neighborhoodId, or match by coordinates
+      let nId = activity.neighborhoodId
+      if (!nId && activity.latitude && activity.longitude) {
+        nId = findNeighborhoodForCoordinates(activity.latitude, activity.longitude)
+      }
+      nId = nId || 'unknown'
+
       if (!neighborhoodStats[nId]) {
         neighborhoodStats[nId] = { events: [], attendeeCount: 0 }
       }

@@ -15,6 +15,15 @@ const AVATAR_COLORS = [
   'bg-indigo-200',
 ]
 
+// Check if a point is within a neighborhood's bounds
+function isPointInNeighborhood(
+  lat: number,
+  lng: number,
+  bounds: { north: number; south: number; east: number; west: number }
+): boolean {
+  return lat <= bounds.north && lat >= bounds.south && lng <= bounds.east && lng >= bounds.west
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -67,14 +76,23 @@ export async function GET(
         break
     }
 
-    // Build query filters
+    // Build query filters - match by neighborhoodId OR by coordinates within bounds
     const whereClause: any = {
       status: 'PUBLISHED',
-      neighborhoodId: neighborhoodId,
       startTime: {
         gte: now,
         lte: endDate,
       },
+      OR: [
+        { neighborhoodId: neighborhoodId },
+        {
+          AND: [
+            { neighborhoodId: null },
+            { latitude: { gte: neighborhood.bounds.south, lte: neighborhood.bounds.north } },
+            { longitude: { gte: neighborhood.bounds.west, lte: neighborhood.bounds.east } },
+          ],
+        },
+      ],
     }
 
     if (category) {

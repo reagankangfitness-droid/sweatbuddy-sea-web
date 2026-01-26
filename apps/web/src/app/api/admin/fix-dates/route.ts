@@ -20,27 +20,22 @@ export async function POST() {
 
     for (const activity of activities) {
       if (activity.startTime) {
-        // Calculate how far in the past the activity is
         const oldDate = new Date(activity.startTime)
 
-        // Create a new date that's the same day/time but in the future
-        // Add 2 months to push all activities into the future
-        const newStartTime = new Date(oldDate)
-        newStartTime.setMonth(newStartTime.getMonth() + 2)
+        // Set each activity to a date within the next 7 days
+        // Spread them out based on their index
+        const index = activities.indexOf(activity)
+        const daysToAdd = (index % 7) + 1 // 1-7 days from now
+        const hoursToAdd = (index % 12) + 7 // 7am-6pm
 
-        // Make sure it's still in the future
-        while (newStartTime <= now) {
-          newStartTime.setMonth(newStartTime.getMonth() + 1)
-        }
+        const newStartTime = new Date(now)
+        newStartTime.setDate(now.getDate() + daysToAdd)
+        newStartTime.setHours(hoursToAdd, 0, 0, 0)
 
         let newEndTime = null
         if (activity.endTime) {
-          const oldEndDate = new Date(activity.endTime)
-          newEndTime = new Date(oldEndDate)
-          newEndTime.setMonth(newEndTime.getMonth() + 2)
-          while (newEndTime <= now) {
-            newEndTime.setMonth(newEndTime.getMonth() + 1)
-          }
+          const duration = activity.endTime.getTime() - oldDate.getTime()
+          newEndTime = new Date(newStartTime.getTime() + duration)
         }
 
         await prisma.activity.update({

@@ -46,12 +46,8 @@ function findNeighborhoodForCoordinates(lat: number, lng: number): string | null
 
 export async function POST() {
   try {
-    // Get all activities with coordinates but no neighborhoodId
-    const activities = await prisma.activity.findMany({
-      where: {
-        latitude: { not: null },
-        longitude: { not: null },
-      },
+    // Get all activities with coordinates
+    const allActivities = await prisma.activity.findMany({
       select: {
         id: true,
         title: true,
@@ -60,6 +56,11 @@ export async function POST() {
         neighborhoodId: true,
       },
     })
+
+    // Filter to only activities with coordinates
+    const activities = allActivities.filter(
+      (a) => a.latitude !== null && a.longitude !== null
+    )
 
     const updates: { id: string; neighborhoodId: string; title: string }[] = []
 
@@ -107,11 +108,7 @@ export async function POST() {
 // GET to preview what would be updated
 export async function GET() {
   try {
-    const activities = await prisma.activity.findMany({
-      where: {
-        latitude: { not: null },
-        longitude: { not: null },
-      },
+    const allActivities = await prisma.activity.findMany({
       select: {
         id: true,
         title: true,
@@ -121,6 +118,11 @@ export async function GET() {
         address: true,
       },
     })
+
+    // Filter to only activities with coordinates
+    const activities = allActivities.filter(
+      (a) => a.latitude !== null && a.longitude !== null
+    )
 
     const preview = activities.map((activity) => {
       const suggestedNeighborhood =

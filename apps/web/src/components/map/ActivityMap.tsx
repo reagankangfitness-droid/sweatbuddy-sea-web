@@ -59,14 +59,28 @@ export function ActivityMap({ timeRange = 'week', onNeighborhoodSelect }: Activi
 
   return (
     <div
-      className="relative w-full rounded-3xl border border-gray-200 overflow-hidden"
+      className="relative w-full rounded-3xl border border-gray-200 overflow-hidden shadow-sm"
       style={{ height: '550px' }}
     >
-      {/* Gradient background per spec */}
-      <div className="absolute inset-0 bg-gradient-to-br from-sky-50 via-teal-50/50 to-emerald-50" />
+      {/* Gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-50 via-teal-50/30 to-emerald-50/50" />
+
+      {/* Subtle grid pattern */}
+      <div
+        className="absolute inset-0 opacity-40"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.02) 1px, transparent 1px)',
+          backgroundSize: '20px 20px',
+        }}
+      />
+
+      {/* Water areas - Singapore straits */}
+      <div className="absolute top-0 right-0 w-1/3 h-2/5 bg-gradient-to-bl from-blue-100/50 to-transparent" />
+      <div className="absolute bottom-0 left-0 w-2/5 h-1/3 bg-gradient-to-tr from-blue-100/40 to-transparent" />
+      <div className="absolute bottom-1/4 right-0 w-1/4 h-1/4 bg-blue-100/30 rounded-l-full" />
 
       {/* Singapore map background */}
-      <div className="absolute inset-0 opacity-40">
+      <div className="absolute inset-0 opacity-30">
         <Image
           src="/images/singapore-map.svg"
           alt="Singapore Map"
@@ -76,9 +90,11 @@ export function ActivityMap({ timeRange = 'week', onNeighborhoodSelect }: Activi
         />
       </div>
 
-      {/* Water decoration blobs */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200/30 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-40 h-40 bg-teal-200/30 rounded-full blur-3xl" />
+      {/* Singapore label */}
+      <div className="absolute top-4 left-4 flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-sm z-10">
+        <span>🇸🇬</span>
+        <span className="text-sm font-medium text-gray-700">Singapore</span>
+      </div>
 
       {/* Loading state */}
       {isLoading ? (

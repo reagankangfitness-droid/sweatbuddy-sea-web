@@ -11,7 +11,7 @@
         "east": 103.9500,
         "west": 103.8800
       },
-      "mapPosition": { "top": "52%", "left": "78%" },
+      "mapPosition": { "top": "54%", "left": "80%" },
       "popularVenues": [
         "East Coast Park",
         "Parkland Green",
@@ -32,7 +32,7 @@
         "east": 103.8800,
         "west": 103.8400
       },
-      "mapPosition": { "top": "58%", "left": "62%" },
+      "mapPosition": { "top": "60%", "left": "60%" },
       "popularVenues": [
         "Gardens by the Bay",
         "Marina Barrage",
@@ -53,7 +53,7 @@
         "east": 103.8550,
         "west": 103.8350
       },
-      "mapPosition": { "top": "62%", "left": "52%" },
+      "mapPosition": { "top": "64%", "left": "52%" },
       "popularVenues": [
         "Duxton Plain Park",
         "Tanjong Pagar Plaza",
@@ -74,7 +74,7 @@
         "east": 103.8900,
         "west": 103.8550
       },
-      "mapPosition": { "top": "48%", "left": "68%" },
+      "mapPosition": { "top": "50%", "left": "68%" },
       "popularVenues": [
         "Singapore Sports Hub",
         "Kallang Riverside Park",
@@ -95,7 +95,7 @@
         "east": 103.8300,
         "west": 103.8050
       },
-      "mapPosition": { "top": "38%", "left": "42%" },
+      "mapPosition": { "top": "40%", "left": "44%" },
       "popularVenues": [
         "Singapore Botanic Gardens",
         "Eco Lake",
@@ -116,7 +116,7 @@
         "east": 103.8450,
         "west": 103.8200
       },
-      "mapPosition": { "top": "42%", "left": "48%" },
+      "mapPosition": { "top": "46%", "left": "50%" },
       "popularVenues": [
         "Istana Park",
         "Fort Canning",
@@ -137,7 +137,7 @@
         "east": 103.8600,
         "west": 103.8100
       },
-      "mapPosition": { "top": "75%", "left": "48%" },
+      "mapPosition": { "top": "76%", "left": "48%" },
       "popularVenues": [
         "Siloso Beach",
         "Palawan Beach",
@@ -158,7 +158,7 @@
         "east": 103.8150,
         "west": 103.7900
       },
-      "mapPosition": { "top": "68%", "left": "38%" },
+      "mapPosition": { "top": "70%", "left": "40%" },
       "popularVenues": [
         "Labrador Nature Reserve",
         "Labrador Park MRT",
@@ -178,7 +178,7 @@
         "east": 103.8500,
         "west": 103.8200
       },
-      "mapPosition": { "top": "28%", "left": "52%" },
+      "mapPosition": { "top": "30%", "left": "54%" },
       "popularVenues": [
         "Bishan-Ang Mo Kio Park",
         "Bishan Stadium",
@@ -198,7 +198,7 @@
         "east": 103.8000,
         "west": 103.7600
       },
-      "mapPosition": { "top": "32%", "left": "32%" },
+      "mapPosition": { "top": "34%", "left": "38%" },
       "popularVenues": [
         "Bukit Timah Nature Reserve",
         "Rail Corridor",
@@ -219,7 +219,7 @@
         "east": 103.7700,
         "west": 103.7200
       },
-      "mapPosition": { "top": "42%", "left": "18%" },
+      "mapPosition": { "top": "46%", "left": "22%" },
       "popularVenues": [
         "Jurong Lake Gardens",
         "Chinese Garden",
@@ -239,7 +239,7 @@
         "east": 103.9200,
         "west": 103.8850
       },
-      "mapPosition": { "top": "18%", "left": "72%" },
+      "mapPosition": { "top": "22%", "left": "74%" },
       "popularVenues": [
         "Punggol Waterway Park",
         "Coney Island",
@@ -259,7 +259,7 @@
         "east": 103.8100,
         "west": 103.7700
       },
-      "mapPosition": { "top": "12%", "left": "42%" },
+      "mapPosition": { "top": "14%", "left": "48%" },
       "popularVenues": [
         "Woodlands Waterfront",
         "Admiralty Park",
@@ -279,7 +279,7 @@
         "east": 103.9800,
         "west": 103.9300
       },
-      "mapPosition": { "top": "32%", "left": "88%" },
+      "mapPosition": { "top": "36%", "left": "86%" },
       "popularVenues": [
         "Tampines Eco Green",
         "Pasir Ris Park",

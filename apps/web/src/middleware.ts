@@ -38,6 +38,8 @@ const isPublicRoute = createRouteMatcher([
   '/my-events',
   '/my-events/(.*)',
   '/admin(.*)',
+  '/explore',
+  '/api/map(.*)',
 ])
 
 export default clerkMiddleware(async (auth, request) => {

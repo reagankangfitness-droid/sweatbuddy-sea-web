@@ -17,7 +17,7 @@ const faqs = [
   },
   {
     question: 'How much does it cost?',
-    answer: 'Many events are free. Some have a small fee. Every listing shows the price — no surprises.',
+    answer: 'Prices vary by event. Every listing shows the price upfront — no surprises.',
     emoji: '💰',
   },
 ]

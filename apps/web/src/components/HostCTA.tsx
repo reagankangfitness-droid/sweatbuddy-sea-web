@@ -44,7 +44,7 @@ export function HostCTA() {
         <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-8 text-sm text-neutral-400">
           <div className="flex items-center gap-1.5">
             <Check className="w-4 h-4 text-green-400" />
-            <span>Free to list</span>
+            <span>Quick setup</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Check className="w-4 h-4 text-green-400" />

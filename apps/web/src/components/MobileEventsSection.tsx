@@ -3,7 +3,32 @@
 import { useState, useMemo, lazy, Suspense } from 'react'
 import { FeaturedEventsCarousel } from './FeaturedEventsCarousel'
 import { EventListCard } from './EventListCard'
+import { categoryMapping } from './CategoryBar'
 import type { Event } from '@/lib/events'
+// Simplified Singapore region filters
+const areas = [
+  { id: 'all', label: 'All Areas' },
+  { id: 'central', label: 'Central', keywords: ['orchard', 'somerset', 'dhoby', 'city hall', 'raffles', 'marina', 'cbd', 'tanjong pagar', 'chinatown', 'bugis', 'fort canning', 'botanic', 'novena', 'newton', 'river valley', 'robertson', 'clarke quay', 'boat quay'] },
+  { id: 'east', label: 'East', keywords: ['east coast', 'bedok', 'tampines', 'pasir ris', 'changi', 'katong', 'marine parade', 'siglap', 'eunos', 'paya lebar', 'geylang', 'kallang', 'sports hub', 'stadium'] },
+  { id: 'west', label: 'West', keywords: ['jurong', 'clementi', 'buona vista', 'dover', 'west coast', 'queenstown', 'commonwealth', 'holland', 'bukit timah', 'beauty world', 'king albert', 'sixth avenue'] },
+  { id: 'north', label: 'North', keywords: ['woodlands', 'sembawang', 'yishun', 'admiralty', 'ang mo kio', 'bishan', 'toa payoh', 'serangoon', 'hougang', 'kovan', 'punggol', 'sengkang'] },
+  { id: 'sentosa', label: 'Sentosa', keywords: ['sentosa', 'siloso', 'palawan', 'tanjong beach', 'harbourfront', 'vivocity'] },
+]
+
+// Check if event location matches an area's keywords
+function eventMatchesArea(event: Event, areaId: string): boolean {
+  if (areaId === 'all') return true
+
+  const area = areas.find(a => a.id === areaId)
+  if (!area || !('keywords' in area) || !area.keywords) return false
+
+  const locationLower = event.location.toLowerCase()
+
+  // Check if any keyword appears in the event location
+  return area.keywords.some((keyword: string) =>
+    locationLower.includes(keyword.toLowerCase())
+  )
+}
 
 // Lazy load EventDetailSheet - only loaded when user taps an event
 const EventDetailSheet = lazy(() => import('./EventDetailSheet').then(mod => ({ default: mod.EventDetailSheet })))
@@ -131,19 +156,50 @@ function getFilterLabel(filter: DateFilter): string {
   }
 }
 
+const categories = [
+  { id: 'all', label: 'All', icon: '✨' },
+  { id: 'running', label: 'Running', icon: '🏃' },
+  { id: 'yoga', label: 'Yoga', icon: '🧘' },
+  { id: 'hiit', label: 'HIIT', icon: '🔥' },
+  { id: 'bootcamp', label: 'Bootcamp', icon: '💪' },
+  { id: 'dance', label: 'Dance', icon: '💃' },
+  { id: 'outdoor', label: 'Outdoor', icon: '🌳' },
+]
+
 export function MobileEventsSection({ events }: Props) {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [activeFilter, setActiveFilter] = useState<DateFilter>('all')
+  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedArea, setSelectedArea] = useState('all')
 
   // Featured events are first 5 with images
   const featuredEvents = useMemo(() => {
     return events.filter(e => e.imageUrl).slice(0, 5)
   }, [events])
 
-  // Filter events based on active tab
+  // Filter events based on date, category, and area
   const filteredEvents = useMemo(() => {
-    return filterEventsByDate(events, activeFilter)
-  }, [events, activeFilter])
+    let filtered = filterEventsByDate(events, activeFilter)
+
+    // Apply category filter
+    if (selectedCategory !== 'all') {
+      const categoryValues = categoryMapping[selectedCategory] || []
+      if (categoryValues.length > 0) {
+        filtered = filtered.filter(event =>
+          categoryValues.some(cat =>
+            event.category.toLowerCase().includes(cat.toLowerCase())
+          )
+        )
+      }
+    }
+
+    // Apply area filter
+    if (selectedArea !== 'all') {
+      filtered = filtered.filter(event => eventMatchesArea(event, selectedArea))
+    }
+
+    return filtered
+  }, [events, activeFilter, selectedCategory, selectedArea])
 
   const filters: DateFilter[] = ['all', 'today', 'tomorrow', 'weekend', 'next-week']
 
@@ -163,8 +219,8 @@ export function MobileEventsSection({ events }: Props) {
         <h2 className="font-sans text-xl font-bold text-neutral-900 dark:text-white">Upcoming Events</h2>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="px-4 mb-4 overflow-x-auto scrollbar-hide">
+      {/* Date Filter Tabs */}
+      <div className="px-4 mb-3 overflow-x-auto scrollbar-hide">
         <div className="flex gap-2">
           {filters.map((filter) => (
             <button
@@ -182,6 +238,45 @@ export function MobileEventsSection({ events }: Props) {
         </div>
       </div>
 
+      {/* Category Filter Tabs */}
+      <div className="px-4 mb-3 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-2">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setSelectedCategory(category.id)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                selectedCategory === category.id
+                  ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900'
+                  : 'bg-white text-neutral-600 hover:bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700'
+              }`}
+            >
+              <span>{category.icon}</span>
+              <span>{category.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Area Filter Tabs */}
+      <div className="px-4 mb-4 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-2">
+          {areas.map((area) => (
+            <button
+              key={area.id}
+              onClick={() => setSelectedArea(area.id)}
+              className={`px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                selectedArea === area.id
+                  ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900'
+                  : 'bg-white text-neutral-600 hover:bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700'
+              }`}
+            >
+              {area.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Event List */}
       <div className="px-4 mt-4 space-y-3">
         {filteredEvents.map((event) => (
@@ -194,9 +289,23 @@ export function MobileEventsSection({ events }: Props) {
 
         {filteredEvents.length === 0 && (
           <div className="text-center py-12 text-neutral-500 dark:text-neutral-400">
-            <p className="text-4xl mb-2">🏃</p>
-            <p className="font-medium">No events {activeFilter === 'all' ? 'yet' : getFilterLabel(activeFilter).toLowerCase()}</p>
-            <p className="text-sm mt-2">Check back soon!</p>
+            <p className="text-4xl mb-2">🔍</p>
+            <p className="font-medium">
+              No events{activeFilter !== 'all' ? ` ${getFilterLabel(activeFilter).toLowerCase()}` : ''}{selectedCategory !== 'all' ? ` in ${selectedCategory}` : ''}{selectedArea !== 'all' ? ` near ${areas.find(a => a.id === selectedArea)?.label || selectedArea}` : ''}
+            </p>
+            <p className="text-sm mt-2">Try different filters or check back soon!</p>
+            {(selectedCategory !== 'all' || activeFilter !== 'all' || selectedArea !== 'all') && (
+              <button
+                onClick={() => {
+                  setSelectedCategory('all')
+                  setActiveFilter('all')
+                  setSelectedArea('all')
+                }}
+                className="mt-3 text-neutral-900 dark:text-white font-medium underline"
+              >
+                View all events
+              </button>
+            )}
           </div>
         )}
       </div>

@@ -155,7 +155,7 @@ const config: Config = {
 
         'muted': {
           DEFAULT: '#FAFAFA',
-          foreground: '#737373',
+          foreground: '#757575',
         },
 
         // Borders
@@ -212,8 +212,9 @@ const config: Config = {
         'caption': ['13px', { lineHeight: '1.4', fontWeight: '500' }],
         'tiny': ['12px', { lineHeight: '1.4', fontWeight: '500' }],
 
-        // Labels
+        // Labels (minimum 11px for accessibility)
         'label': ['11px', { lineHeight: '1', letterSpacing: '0.05em', fontWeight: '600' }],
+        'label-sm': ['11px', { lineHeight: '1', letterSpacing: '0.05em', fontWeight: '600' }],
 
         // Legacy font sizes
         'display-1': ['56px', { lineHeight: '1', letterSpacing: '-0.025em', fontWeight: '700' }],

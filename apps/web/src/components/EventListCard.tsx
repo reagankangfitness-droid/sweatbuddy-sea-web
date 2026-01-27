@@ -131,7 +131,7 @@ export function EventListCard({ event, onSelect }: Props) {
 
       {/* Arrow */}
       <div className="flex-shrink-0 flex items-center">
-        <span className="text-neutral-300 dark:text-neutral-600 text-xl font-bold">›</span>
+        <span className="text-neutral-500 dark:text-neutral-400 text-xl font-bold">›</span>
       </div>
     </div>
   )

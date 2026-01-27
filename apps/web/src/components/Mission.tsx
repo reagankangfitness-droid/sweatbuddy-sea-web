@@ -84,7 +84,7 @@ export function Mission({ id = 'mission' }: MissionProps) {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-lg mb-8 text-neutral-300"
           >
-            Every week, trainers and run clubs host <span className="text-white font-medium">free workouts</span> across Singapore — but finding them means scrolling through Stories and hunting DMs.
+            Every week, trainers and run clubs host <span className="text-white font-medium">group workouts</span> across Singapore — but finding them means scrolling through Stories and hunting DMs.
           </motion.p>
 
           {/* Divider - subtle coral */}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@clerk/nextjs'
-import { format, subDays, startOfDay, eachDayOfInterval } from 'date-fns'
+import { format } from 'date-fns'
 import {
   Calendar,
   Users,
@@ -84,6 +84,9 @@ export default function AdminDashboardPage() {
   const [attendees, setAttendees] = useState<Attendee[]>([])
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([])
   const [conversations, setConversations] = useState<Conversation[]>([])
+  const [chartData, setChartData] = useState<{ date: string; attendees: number; subscribers: number }[]>([])
+  const [topEvents, setTopEvents] = useState<{ name: string; value: number }[]>([])
+  const [sourceData, setSourceData] = useState<{ name: string; value: number }[]>([])
   const [stats, setStats] = useState<Stats>({
     totalEvents: 0,
     pendingEvents: 0,
@@ -107,49 +110,40 @@ export default function AdminDashboardPage() {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       }
-      const [attendeesRes, subscribersRes, messagesRes] = await Promise.all([
-        fetch('/api/attendance', { headers }),
-        fetch('/api/newsletter/subscribers', { headers }),
+
+      // Fetch stats from dedicated endpoint (returns accurate totals from DB)
+      const [statsRes, messagesRes] = await Promise.all([
+        fetch('/api/admin/stats', { headers }),
         fetch('/api/admin/messages', { headers }),
       ])
 
-      const attendeesData = attendeesRes.ok ? await attendeesRes.json() : { attendees: [] }
-      const subscribersData = subscribersRes.ok ? await subscribersRes.json() : { subscribers: [] }
+      const statsData = statsRes.ok ? await statsRes.json() : { stats: {}, recentAttendees: [], recentSubscribers: [] }
       const messagesData = messagesRes.ok ? await messagesRes.json() : { stats: {}, conversations: [] }
 
-      const attendeesList = attendeesData.attendees || []
-      const subscribersList = subscribersData.subscribers || []
+      const dbStats = statsData.stats || {}
+      const attendeesList = statsData.recentAttendees || []
+      const subscribersList = statsData.recentSubscribers || []
       const conversationsList = messagesData.conversations || []
-      const messageStats = messagesData.stats || {}
 
       setAttendees(attendeesList)
       setSubscribers(subscribersList)
       setConversations(conversationsList)
+      setChartData(statsData.chartData || [])
+      setTopEvents(statsData.topEvents || [])
+      setSourceData(statsData.sourceData || [])
 
-      // Calculate stats
-      const weekAgo = startOfDay(subDays(new Date(), 7))
-      const attendeesThisWeek = attendeesList.filter(
-        (a: Attendee) => new Date(a.timestamp) >= weekAgo
-      ).length
-      const subscribersThisWeek = subscribersList.filter(
-        (s: NewsletterSubscriber) => new Date(s.subscribedAt) >= weekAgo
-      ).length
-      const uniqueEvents = new Set(attendeesList.map((a: Attendee) => a.eventId)).size
-      const optInRate = attendeesList.length > 0
-        ? Math.round((attendeesList.filter((a: Attendee) => a.subscribe).length / attendeesList.length) * 100)
-        : 0
-
+      // Use stats directly from database
       setStats({
-        totalEvents: uniqueEvents,
-        pendingEvents: 0,
-        totalAttendees: attendeesList.length,
-        totalSubscribers: subscribersList.length,
-        attendeesThisWeek,
-        subscribersThisWeek,
-        optInRate,
-        totalMessages: messageStats.totalMessages || 0,
-        messagesThisWeek: messageStats.messagesThisWeek || 0,
-        activeConversations: messageStats.activeConversations || 0,
+        totalEvents: dbStats.eventsWithRsvps || 0,
+        pendingEvents: dbStats.pendingEvents || 0,
+        totalAttendees: dbStats.totalAttendees || 0,
+        totalSubscribers: dbStats.totalSubscribers || 0,
+        attendeesThisWeek: dbStats.attendeesThisWeek || 0,
+        subscribersThisWeek: dbStats.subscribersThisWeek || 0,
+        optInRate: dbStats.optInRate || 0,
+        totalMessages: dbStats.totalMessages || 0,
+        messagesThisWeek: dbStats.messagesThisWeek || 0,
+        activeConversations: dbStats.activeConversations || 0,
       })
     } catch (error) {
       console.error('Failed to fetch data:', error)
@@ -168,61 +162,7 @@ export default function AdminDashboardPage() {
     setRefreshing(false)
   }
 
-  // Generate chart data for last 7 days
-  const generateChartData = () => {
-    const days = eachDayOfInterval({
-      start: subDays(new Date(), 6),
-      end: new Date(),
-    })
-
-    return days.map((day) => {
-      const dayStart = startOfDay(day)
-      const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000)
-
-      const dayAttendees = attendees.filter((a) => {
-        const date = new Date(a.timestamp)
-        return date >= dayStart && date < dayEnd
-      }).length
-
-      const daySubscribers = subscribers.filter((s) => {
-        const date = new Date(s.subscribedAt)
-        return date >= dayStart && date < dayEnd
-      }).length
-
-      return {
-        date: format(day, 'EEE'),
-        attendees: dayAttendees,
-        subscribers: daySubscribers,
-      }
-    })
-  }
-
-  // Generate event distribution data
-  const generateEventData = () => {
-    const eventCounts: Record<string, number> = {}
-    attendees.forEach((a) => {
-      eventCounts[a.eventName] = (eventCounts[a.eventName] || 0) + 1
-    })
-
-    return Object.entries(eventCounts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5)
-      .map(([name, value]) => ({ name: name.length > 15 ? name.slice(0, 15) + '...' : name, value }))
-  }
-
-  // Generate source distribution data
-  const generateSourceData = () => {
-    const sourceCounts: Record<string, number> = {}
-    subscribers.forEach((s) => {
-      const source = s.source || 'unknown'
-      sourceCounts[source] = (sourceCounts[source] || 0) + 1
-    })
-
-    return Object.entries(sourceCounts).map(([name, value]) => ({
-      name: name.replace('_', ' '),
-      value,
-    }))
-  }
+  // Chart data now comes from the API
 
   if (loading) {
     return (
@@ -232,9 +172,8 @@ export default function AdminDashboardPage() {
     )
   }
 
-  const chartData = generateChartData()
-  const eventData = generateEventData()
-  const sourceData = generateSourceData()
+  // Use chart data from state (fetched from API)
+  const eventData = topEvents
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-neutral-50 min-h-screen">

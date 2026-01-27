@@ -15,7 +15,8 @@ import {
   Clock,
   ChevronLeft,
   Loader2,
-  Lock
+  Lock,
+  UserPlus
 } from 'lucide-react'
 import { Logo } from '@/components/logo'
 
@@ -23,13 +24,11 @@ const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Events', href: '/admin/events', icon: Calendar },
   { name: 'Pending Events', href: '/admin/pending', icon: Clock },
+  { name: 'Hosts', href: '/admin/hosts', icon: UserPlus },
   { name: 'Attendees', href: '/admin/attendees', icon: Users },
   { name: 'Newsletter', href: '/admin/newsletter', icon: Mail },
   { name: 'Settings', href: '/admin/settings', icon: Settings },
 ]
-
-// Simple password check - the password is "sweatbuddies2024"
-const ADMIN_PASSWORD = 'sweatbuddies2024'
 
 export default function AdminLayout({
   children,
@@ -43,26 +42,54 @@ export default function AdminLayout({
   const [error, setError] = useState('')
   const pathname = usePathname()
 
-  // Check if already authenticated
+  // Check if already authenticated via API
   useEffect(() => {
-    const authed = localStorage.getItem('admin_authed') === 'true'
-    setIsAuthed(authed)
-    setIsLoading(false)
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/admin/auth')
+        if (res.ok) {
+          const data = await res.json()
+          setIsAuthed(data.authenticated)
+        } else {
+          setIsAuthed(false)
+        }
+      } catch {
+        setIsAuthed(false)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    checkAuth()
   }, [])
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (password === ADMIN_PASSWORD) {
-      localStorage.setItem('admin_authed', 'true')
-      setIsAuthed(true)
-      setError('')
-    } else {
-      setError('Incorrect password')
+    setError('')
+
+    try {
+      const res = await fetch('/api/admin/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+
+      if (res.ok) {
+        setIsAuthed(true)
+        setPassword('')
+      } else {
+        setError('Incorrect password')
+      }
+    } catch {
+      setError('Login failed. Please try again.')
     }
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('admin_authed')
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/auth', { method: 'DELETE' })
+    } catch {
+      // Ignore errors
+    }
     setIsAuthed(false)
   }
 

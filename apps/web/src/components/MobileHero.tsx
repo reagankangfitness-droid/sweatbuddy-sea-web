@@ -91,7 +91,7 @@ export function MobileHero() {
             transition: 'opacity 0.5s ease-out 0.2s, transform 0.5s ease-out 0.2s',
           }}
         >
-          Hundreds of free group workouts. Zero DM hunting. One tap to join.
+          Hundreds of group workouts across Singapore. Zero DM hunting. One tap to join.
         </p>
 
         {/* Dual CTA Buttons */}
@@ -120,7 +120,7 @@ export function MobileHero() {
           <p className="text-white/50 text-sm text-center mt-2">
             Already leading workouts?{' '}
             <Link href="/host" className="text-white/70 underline underline-offset-2">
-              List them free
+              List yours here
             </Link>
           </p>
         </div>

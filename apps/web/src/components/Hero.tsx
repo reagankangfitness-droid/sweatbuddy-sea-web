@@ -123,8 +123,8 @@ export const Hero = memo(function Hero() {
               transition: 'opacity 0.5s ease-out 0.2s, transform 0.5s ease-out 0.2s',
             }}
           >
-            Hundreds of free group workouts. Zero DM hunting.<br />
-            One tap to join.
+            Hundreds of group workouts across Singapore.<br />
+            Zero DM hunting. One tap to join.
           </p>
 
           {/* Dual CTA Buttons */}
@@ -156,7 +156,7 @@ export const Hero = memo(function Hero() {
             <p className="text-white/50 text-sm">
               Already leading workouts?{' '}
               <Link href="/host" className="text-white/70 underline underline-offset-2 hover:text-white transition-colors">
-                List them free
+                List yours here
               </Link>
             </p>
           </div>

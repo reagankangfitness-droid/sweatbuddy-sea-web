@@ -35,6 +35,13 @@ interface NewsletterSubscriber {
   source: string
 }
 
+interface Stats {
+  totalAttendees: number
+  totalSubscribers: number
+  eventsWithRsvps: number
+  optInRate: number
+}
+
 export default function AdminAttendeesPage() {
   const { getToken, isLoaded } = useAuth()
   const [activeTab, setActiveTab] = useState<'attendees' | 'newsletter'>('attendees')
@@ -44,6 +51,9 @@ export default function AdminAttendeesPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedEvent, setSelectedEvent] = useState<string>('all')
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [stats, setStats] = useState<Stats>({ totalAttendees: 0, totalSubscribers: 0, eventsWithRsvps: 0, optInRate: 0 })
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
 
   const getAuthHeaders = useCallback(async (): Promise<HeadersInit> => {
     const token = await getToken()
@@ -53,15 +63,36 @@ export default function AdminAttendeesPage() {
     }
   }, [getToken])
 
-  const fetchAttendees = useCallback(async () => {
+  const fetchAttendees = useCallback(async (page = 1) => {
     try {
-      const response = await fetch('/api/attendance', { headers: await getAuthHeaders() })
+      const response = await fetch(`/api/attendance?page=${page}&limit=100`, { headers: await getAuthHeaders() })
       if (response.ok) {
         const data = await response.json()
         setAttendees(data.attendees || [])
+        if (data.pagination) {
+          setTotalPages(data.pagination.totalPages || 1)
+          setCurrentPage(data.pagination.page || 1)
+        }
       }
     } catch {
       toast.error('Failed to fetch attendees')
+    }
+  }, [getAuthHeaders])
+
+  const fetchStats = useCallback(async () => {
+    try {
+      const response = await fetch('/api/admin/stats', { headers: await getAuthHeaders() })
+      if (response.ok) {
+        const data = await response.json()
+        setStats({
+          totalAttendees: data.stats?.totalAttendees || 0,
+          totalSubscribers: data.stats?.totalSubscribers || 0,
+          eventsWithRsvps: data.stats?.eventsWithRsvps || 0,
+          optInRate: data.stats?.optInRate || 0,
+        })
+      }
+    } catch {
+      // Stats fetch failed, use local counts
     }
   }, [getAuthHeaders])
 
@@ -80,9 +111,9 @@ export default function AdminAttendeesPage() {
   const fetchData = useCallback(async () => {
     if (!isLoaded) return
     setLoading(true)
-    await Promise.all([fetchAttendees(), fetchSubscribers()])
+    await Promise.all([fetchAttendees(1), fetchSubscribers(), fetchStats()])
     setLoading(false)
-  }, [isLoaded, fetchAttendees, fetchSubscribers])
+  }, [isLoaded, fetchAttendees, fetchSubscribers, fetchStats])
 
   useEffect(() => {
     fetchData()
@@ -186,7 +217,7 @@ export default function AdminAttendeesPage() {
               <Users className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-neutral-900">{attendees.length}</p>
+              <p className="text-2xl font-bold text-neutral-900">{stats.totalAttendees}</p>
               <p className="text-xs text-neutral-500">Total Attendees</p>
             </div>
           </div>
@@ -197,7 +228,7 @@ export default function AdminAttendeesPage() {
               <Mail className="w-5 h-5 text-emerald-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-neutral-900">{subscribers.length}</p>
+              <p className="text-2xl font-bold text-neutral-900">{stats.totalSubscribers}</p>
               <p className="text-xs text-neutral-500">Newsletter Subs</p>
             </div>
           </div>
@@ -208,7 +239,7 @@ export default function AdminAttendeesPage() {
               <Calendar className="w-5 h-5 text-purple-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-neutral-900">{uniqueEvents.length}</p>
+              <p className="text-2xl font-bold text-neutral-900">{stats.eventsWithRsvps}</p>
               <p className="text-xs text-neutral-500">Events w/ RSVPs</p>
             </div>
           </div>
@@ -219,9 +250,7 @@ export default function AdminAttendeesPage() {
               <CheckCircle className="w-5 h-5 text-amber-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-neutral-900">
-                {Math.round((attendees.filter(a => a.subscribe).length / attendees.length) * 100) || 0}%
-              </p>
+              <p className="text-2xl font-bold text-neutral-900">{stats.optInRate}%</p>
               <p className="text-xs text-neutral-500">Newsletter Opt-in</p>
             </div>
           </div>
@@ -238,7 +267,7 @@ export default function AdminAttendeesPage() {
               : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
           }`}
         >
-          Attendees ({attendees.length})
+          Attendees ({stats.totalAttendees})
         </button>
         <button
           onClick={() => setActiveTab('newsletter')}
@@ -248,7 +277,7 @@ export default function AdminAttendeesPage() {
               : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
           }`}
         >
-          Newsletter ({subscribers.length})
+          Newsletter ({stats.totalSubscribers})
         </button>
       </div>
 
@@ -401,6 +430,31 @@ export default function AdminAttendeesPage() {
                   </div>
                 ))}
               </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between p-4 border-t border-neutral-200">
+                  <p className="text-sm text-neutral-500">
+                    Page {currentPage} of {totalPages}
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => fetchAttendees(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1.5 text-sm bg-neutral-100 text-neutral-700 rounded-lg hover:bg-neutral-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Previous
+                    </button>
+                    <button
+                      onClick={() => fetchAttendees(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1.5 text-sm bg-neutral-100 text-neutral-700 rounded-lg hover:bg-neutral-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>

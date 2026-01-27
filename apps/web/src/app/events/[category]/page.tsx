@@ -263,7 +263,7 @@ export default async function CategoryPage({ params }: Props) {
             Host a {config.title} Event?
           </h2>
           <p className="text-neutral-600 mb-6">
-            List your event for free and reach fitness enthusiasts in your area.
+            List your event and reach fitness enthusiasts in your area.
           </p>
           <Link
             href="/#submit-desktop"

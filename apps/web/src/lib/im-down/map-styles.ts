@@ -1,0 +1,30 @@
+export const LIGHT_MAP_STYLES: google.maps.MapTypeStyle[] = [
+  { featureType: 'all', elementType: 'labels.text.fill', stylers: [{ color: '#6b7280' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#dbeafe' }] },
+  { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#93c5fd' }] },
+  { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#f8fafc' }] },
+  { featureType: 'landscape.natural', elementType: 'geometry', stylers: [{ color: '#ecfdf5' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
+  { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#e5e7eb' }] },
+  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#fef3c7' }] },
+  { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+  { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#dcfce7' }] },
+  { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+  { featureType: 'administrative', elementType: 'geometry.stroke', stylers: [{ color: '#d1d5db' }] },
+]
+
+export const DARK_MAP_STYLES: google.maps.MapTypeStyle[] = [
+  { elementType: 'geometry', stylers: [{ color: '#1a1a2e' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#8b8b8b' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a2e' }] },
+  { featureType: 'administrative', elementType: 'geometry.stroke', stylers: [{ color: '#2d2d44' }] },
+  { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#16213e' }] },
+  { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+  { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#1a3a2a' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#2d2d44' }] },
+  { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#1a1a2e' }] },
+  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#3d3d5c' }] },
+  { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f172a' }] },
+  { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#3b82f6' }] },
+]

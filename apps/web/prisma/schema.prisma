@@ -199,6 +199,11 @@ model User {
   // Event submissions (host applications)
   eventSubmissions    EventSubmission[]   @relation("UserEventSubmissions")
 
+  // I'm Down mode
+  activeStatus        UserStatus?
+  matchesInitiated    BuddyMatch[]        @relation("MatchesInitiated")
+  matchesReceived     BuddyMatch[]        @relation("MatchesReceived")
+
   @@index([slug])
   @@index([username])
   @@index([isHost])
@@ -2238,5 +2243,75 @@ model HostSubscription {
   @@index([tier, status])
   @@index([stripeSubscriptionId])
   @@map("host_subscriptions")
+}
+
+// =====================================================
+// I'M DOWN — SPONTANEOUS BUDDY MATCHING
+// =====================================================
+
+enum ImDownActivity {
+  RUN
+  YOGA
+  GYM
+  CYCLE
+  SWIM
+  ANYTHING
+}
+
+model UserStatus {
+  id           String         @id @default(cuid())
+  userId       String         @unique
+  activityType ImDownActivity
+  statusText   String?        @db.VarChar(200)
+  latitude     Float
+  longitude    Float
+  setAt        DateTime       @default(now())
+  expiresAt    DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@index([activityType])
+  @@map("user_statuses")
+}
+
+model BuddyMatch {
+  id           String         @id @default(cuid())
+  initiatorId  String
+  recipientId  String
+  activityType ImDownActivity
+  matchedAt    DateTime       @default(now())
+
+  initiator User       @relation("MatchesInitiated", fields: [initiatorId], references: [id], onDelete: Cascade)
+  recipient User       @relation("MatchesReceived", fields: [recipientId], references: [id], onDelete: Cascade)
+  chat      BuddyChat?
+
+  @@unique([initiatorId, recipientId])
+  @@index([initiatorId])
+  @@index([recipientId])
+  @@map("buddy_matches")
+}
+
+model BuddyChat {
+  id      String @id @default(cuid())
+  matchId String @unique
+
+  match    BuddyMatch    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  messages BuddyMessage[]
+
+  @@map("buddy_chats")
+}
+
+model BuddyMessage {
+  id        String   @id @default(cuid())
+  chatId    String
+  senderId  String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  chat BuddyChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@index([chatId, createdAt])
+  @@map("buddy_messages")
 }
 

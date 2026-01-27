@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Clock, ChevronDown } from 'lucide-react'
 import { SmartActivityMap } from '@/components/map/SmartActivityMap'
+import { ActivityMapView } from '@/components/map/ActivityMapView'
 import { ViewToggle } from '@/components/map/ViewToggle'
 import { EventCardCompact } from '@/components/map/EventCardCompact'
 import type { NeighborhoodOverview, MapOverviewResponse, NeighborhoodEvent } from '@/types/neighborhood'
@@ -150,9 +151,12 @@ export default function ExplorePage() {
         </div>
 
         {viewMode === 'map' ? (
-          /* Map View */
-          <div className="px-4 pb-6">
-            <SmartActivityMap timeRange={timeRange} />
+          /* Map View - Individual event markers */
+          <div className="pb-0 -mx-0">
+            <ActivityMapView
+              timeRange={timeRange}
+              onToggleView={() => setViewMode('list')}
+            />
           </div>
         ) : (
           /* List View */

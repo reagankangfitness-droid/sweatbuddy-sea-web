@@ -38,23 +38,25 @@ export function EmailSignupForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
-      <input
-        type="email"
-        required
-        placeholder="your@email.com"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 text-base"
-      />
-      <button
-        type="submit"
-        disabled={loading}
-        className="px-6 py-3 rounded-xl bg-white text-neutral-900 font-semibold text-base hover:bg-white/90 transition-colors disabled:opacity-50"
-      >
-        {loading ? 'Joining...' : 'Enter'}
-      </button>
-      {error && <p className="text-red-300 text-sm mt-1 sm:col-span-2">{error}</p>}
-    </form>
+    <div className="w-full max-w-md">
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+        <input
+          type="email"
+          required
+          placeholder="your@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/40 text-base"
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-6 py-3 rounded-xl bg-white text-neutral-900 font-semibold text-base hover:bg-white/90 transition-colors disabled:opacity-50"
+        >
+          {loading ? 'Joining...' : 'Enter'}
+        </button>
+      </form>
+      {error && <p className="text-red-300 text-sm mt-2">{error}</p>}
+    </div>
   )
 }

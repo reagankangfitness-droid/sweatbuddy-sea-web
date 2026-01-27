@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Star, Filter, ChevronDown, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ReviewCard } from '@/components/review-card'
@@ -77,7 +77,7 @@ export function ReviewsSection({
   const [filterRating, setFilterRating] = useState<number | null>(null)
   const [showSortDropdown, setShowSortDropdown] = useState(false)
 
-  const fetchReviews = async (reset = false) => {
+  const fetchReviews = useCallback(async (reset = false) => {
     const currentPage = reset ? 1 : page
     if (reset) setLoading(true)
     else setLoadingMore(true)
@@ -110,19 +110,19 @@ export function ReviewsSection({
       setLoading(false)
       setLoadingMore(false)
     }
-  }
+  }, [activityId, sortBy, filterRating, page])
 
   // Fetch on mount if no initial data
   useEffect(() => {
     if (!initialReviews.length) {
       fetchReviews(true)
     }
-  }, [])
+  }, [fetchReviews, initialReviews.length])
 
   // Refetch when sort or filter changes
   useEffect(() => {
     fetchReviews(true)
-  }, [sortBy, filterRating])
+  }, [fetchReviews])
 
   const handleLoadMore = () => {
     setPage((p) => p + 1)

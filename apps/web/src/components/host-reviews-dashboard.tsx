@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   Star,
   MessageCircle,
@@ -91,7 +91,7 @@ export function HostReviewsDashboard({ className }: HostReviewsDashboardProps) {
   const [showFilterDropdown, setShowFilterDropdown] = useState(false)
   const [showSortDropdown, setShowSortDropdown] = useState(false)
 
-  const fetchReviews = async (reset = false) => {
+  const fetchReviews = useCallback(async (reset = false) => {
     const currentPage = reset ? 1 : page
     if (reset) setLoading(true)
     else setLoadingMore(true)
@@ -125,11 +125,11 @@ export function HostReviewsDashboard({ className }: HostReviewsDashboardProps) {
       setLoading(false)
       setLoadingMore(false)
     }
-  }
+  }, [page, sortBy, filter, filterRating])
 
   useEffect(() => {
     fetchReviews(true)
-  }, [filter, sortBy, filterRating])
+  }, [fetchReviews])
 
   const handleLoadMore = () => {
     setPage((p) => p + 1)

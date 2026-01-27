@@ -2,6 +2,7 @@
 
 import { Header } from '@/components/header'
 import { notFound, useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { useEffect, useState, lazy, Suspense } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
@@ -391,11 +392,13 @@ Organized via sweatbuddies
           </div>
 
           {activity.imageUrl && (
-            <div className="mb-6 rounded-lg overflow-hidden border">
-              <img
+            <div className="mb-6 rounded-lg overflow-hidden border relative h-96">
+              <Image
                 src={activity.imageUrl}
                 alt={activity.title}
-                className="w-full h-auto max-h-96 object-cover"
+                className="w-full h-full object-cover"
+                fill
+                unoptimized
               />
             </div>
           )}
@@ -516,10 +519,13 @@ Organized via sweatbuddies
                 <h2 className="text-xl font-semibold mb-3">Organizer</h2>
                 <div className="flex items-center gap-3">
                   {activity.user.imageUrl ? (
-                    <img
+                    <Image
                       src={activity.user.imageUrl}
                       alt={activity.user.name || 'User'}
                       className="w-10 h-10 rounded-full"
+                      width={40}
+                      height={40}
+                      unoptimized
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">

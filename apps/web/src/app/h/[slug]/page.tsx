@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -118,19 +118,17 @@ export default function HostProfilePage() {
   const [hasMoreActivities, setHasMoreActivities] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
 
-  useEffect(() => {
-    if (slug) {
-      fetchProfile()
+  const fetchReviews = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/profiles/${slug}/reviews?limit=5`)
+      const data = await res.json()
+      setReviews(data.reviews || [])
+    } catch (error) {
+      console.error('Failed to fetch reviews:', error)
     }
   }, [slug])
 
-  useEffect(() => {
-    if (profile?.id) {
-      fetchActivities(1)
-    }
-  }, [profile?.id, activeTab])
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     setLoading(true)
     try {
       const res = await fetch(`/api/profiles/${slug}`)
@@ -152,9 +150,9 @@ export default function HostProfilePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [slug, router, fetchReviews])
 
-  const fetchActivities = async (page = 1, append = false) => {
+  const fetchActivities = useCallback(async (page = 1, append = false) => {
     if (page > 1) setLoadingMore(true)
 
     try {
@@ -176,17 +174,19 @@ export default function HostProfilePage() {
     } finally {
       setLoadingMore(false)
     }
-  }
+  }, [slug, activeTab])
 
-  const fetchReviews = async () => {
-    try {
-      const res = await fetch(`/api/profiles/${slug}/reviews?limit=5`)
-      const data = await res.json()
-      setReviews(data.reviews || [])
-    } catch (error) {
-      console.error('Failed to fetch reviews:', error)
+  useEffect(() => {
+    if (slug) {
+      fetchProfile()
     }
-  }
+  }, [slug, fetchProfile])
+
+  useEffect(() => {
+    if (profile?.id) {
+      fetchActivities(1)
+    }
+  }, [profile?.id, activeTab, fetchActivities])
 
   const handleFollow = async () => {
     try {

@@ -12,6 +12,12 @@ import type { Activity } from '@prisma/client'
 type MainTab = 'joined' | 'hosting' | 'stats'
 type TimeTab = 'upcoming' | 'past'
 
+const TABS: { id: MainTab; label: string; icon: typeof Calendar }[] = [
+  { id: 'joined', label: 'My Activities', icon: Calendar },
+  { id: 'hosting', label: 'Hosting', icon: Users },
+  { id: 'stats', label: 'Statistics', icon: BarChart3 },
+]
+
 interface DashboardTabsProps {
   initialHostedActivities: Activity[]
   initialJoinedBookings: any[]
@@ -48,11 +54,7 @@ export function DashboardTabs({
   const hostedToShow = timeTab === 'upcoming' ? upcomingHosted : pastHosted
   const joinedToShow = timeTab === 'upcoming' ? upcomingJoined : pastJoined
 
-  const tabs = [
-    { id: 'joined' as MainTab, label: 'My Activities', icon: Calendar },
-    { id: 'hosting' as MainTab, label: 'Hosting', icon: Users },
-    { id: 'stats' as MainTab, label: 'Statistics', icon: BarChart3 },
-  ]
+  const tabs = TABS
 
   // Keyboard navigation for tabs
   const handleTabKeyDown = useCallback((e: KeyboardEvent, currentIndex: number) => {
@@ -87,7 +89,7 @@ export function DashboardTabs({
     const newTab = tabButtons[newIndex] as HTMLButtonElement
     newTab?.focus()
     setMainTab(tabs[newIndex].id)
-  }, [tabs.length])
+  }, [tabs])
 
   return (
     <div>

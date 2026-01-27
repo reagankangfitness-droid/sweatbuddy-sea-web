@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import {
   Calendar,
   Users,
@@ -323,10 +324,13 @@ export function HostStatsDashboard() {
                 >
                   <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-neutral-100 flex-shrink-0">
                     {attendee.imageUrl ? (
-                      <img
+                      <Image
                         src={attendee.imageUrl}
                         alt={attendee.name || 'Attendee'}
                         className="w-full h-full object-cover"
+                        width={40}
+                        height={40}
+                        unoptimized
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-400 to-amber-500 text-white font-semibold text-xs sm:text-sm">

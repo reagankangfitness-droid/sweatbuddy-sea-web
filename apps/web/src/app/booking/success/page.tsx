@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { Header } from '@/components/header'
 import { Button } from '@/components/ui/button'
 import { CheckCircle, Calendar, MapPin, Users, ExternalLink, ChevronDown, Download, Ticket } from 'lucide-react'
@@ -258,11 +259,13 @@ function BookingSuccessContent() {
           {booking?.activity && (
             <div className="bg-background rounded-xl overflow-hidden mb-6">
               {booking.activity.imageUrl && (
-                <div className="h-32 overflow-hidden">
-                  <img
+                <div className="h-32 overflow-hidden relative">
+                  <Image
                     src={booking.activity.imageUrl}
                     alt={booking.activity.title}
                     className="w-full h-full object-cover"
+                    fill
+                    unoptimized
                   />
                 </div>
               )}
@@ -313,10 +316,13 @@ function BookingSuccessContent() {
                 {booking.activity.user && (
                   <div className="mt-3 pt-3 border-t border-border flex items-center gap-3">
                     {booking.activity.user.imageUrl ? (
-                      <img
+                      <Image
                         src={booking.activity.user.imageUrl}
                         alt={booking.activity.user.name || 'Host'}
                         className="w-8 h-8 rounded-full object-cover"
+                        width={32}
+                        height={32}
+                        unoptimized
                       />
                     ) : (
                       <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">

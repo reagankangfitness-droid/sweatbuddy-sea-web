@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
 
@@ -19,13 +19,7 @@ export function PaymentStatus() {
   const [details, setDetails] = useState<SessionDetails | null>(null)
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    if (sessionId && paymentStatus === 'success') {
-      fetchSessionDetails()
-    }
-  }, [sessionId, paymentStatus])
-
-  async function fetchSessionDetails() {
+  const fetchSessionDetails = useCallback(async () => {
     setLoading(true)
     try {
       const res = await fetch(`/api/stripe/checkout/${sessionId}`)
@@ -38,7 +32,13 @@ export function PaymentStatus() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [sessionId])
+
+  useEffect(() => {
+    if (sessionId && paymentStatus === 'success') {
+      fetchSessionDetails()
+    }
+  }, [sessionId, paymentStatus, fetchSessionDetails])
 
   // Payment Success
   if (paymentStatus === 'success') {

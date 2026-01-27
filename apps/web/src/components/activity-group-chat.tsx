@@ -1,7 +1,7 @@
 'use client'
 
 import { useUser } from '@clerk/nextjs'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import Image from 'next/image'
 import { Send, Users } from 'lucide-react'
 import { toast } from 'sonner'
 import { MentionInput } from '@/components/mention-input'
@@ -59,7 +60,7 @@ export function ActivityGroupChat({
   }, [messages])
 
   // Fetch messages
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       const response = await fetch(`/api/activities/${activityId}/group/messages`)
       if (response.ok) {
@@ -74,14 +75,14 @@ export function ActivityGroupChat({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [activityId])
 
   // Initial fetch
   useEffect(() => {
     if (open) {
       fetchMessages()
     }
-  }, [open, activityId])
+  }, [open, activityId, fetchMessages])
 
   // Poll for new messages every 3 seconds when dialog is open
   useEffect(() => {
@@ -92,7 +93,7 @@ export function ActivityGroupChat({
     }, 3000)
 
     return () => clearInterval(interval)
-  }, [open, activityId])
+  }, [open, activityId, fetchMessages])
 
   const handleSend = async () => {
     if (!newMessage.trim() || isSending) return
@@ -236,10 +237,13 @@ export function ActivityGroupChat({
                       )}
                     >
                       {message.user.imageUrl ? (
-                        <img
+                        <Image
                           src={message.user.imageUrl}
                           alt={message.user.name || 'User'}
+                          width={32}
+                          height={32}
                           className="w-8 h-8 rounded-full flex-shrink-0"
+                          unoptimized
                         />
                       ) : (
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">

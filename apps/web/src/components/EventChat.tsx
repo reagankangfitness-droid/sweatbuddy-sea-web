@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Send, MessageCircle, Loader2 } from 'lucide-react'
 
@@ -54,7 +54,7 @@ export function EventChat({ eventId, eventName, isOpen, onClose, userEmail: prop
   }, [propEmail, userEmail, userName])
 
   // Fetch messages
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       const response = await fetch(`/api/events/${eventId}/chat`)
       if (response.ok) {
@@ -66,7 +66,7 @@ export function EventChat({ eventId, eventName, isOpen, onClose, userEmail: prop
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [eventId])
 
   // Initial fetch and polling
   useEffect(() => {
@@ -77,7 +77,7 @@ export function EventChat({ eventId, eventName, isOpen, onClose, userEmail: prop
       const interval = setInterval(fetchMessages, 5000)
       return () => clearInterval(interval)
     }
-  }, [isOpen, eventId])
+  }, [isOpen, eventId, fetchMessages])
 
   // Scroll to bottom when messages change
   useEffect(() => {

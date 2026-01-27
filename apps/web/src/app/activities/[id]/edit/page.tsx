@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { GoogleMap, useLoadScript, Marker, Autocomplete } from '@react-google-maps/api'
@@ -432,10 +433,12 @@ export default function EditActivityPage({ params }: { params: { id: string } })
                       <div className="space-y-4">
                         {field.value && (
                           <div className="relative w-full h-48 rounded-lg overflow-hidden border">
-                            <img
+                            <Image
                               src={field.value}
                               alt="Activity preview"
                               className="w-full h-full object-cover"
+                              fill
+                              unoptimized
                             />
                             <Button
                               type="button"

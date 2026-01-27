@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Calendar, MapPin, Users, Clock, Camera } from 'lucide-react'
 import { PostActivityPromptCompact } from '@/components/post-activity-prompt'
@@ -96,10 +97,12 @@ export function JoinedActivitiesSection({
             {/* Image Section */}
             <div className="relative h-48 overflow-hidden bg-muted">
               {activity.imageUrl ? (
-                <img
+                <Image
                   src={activity.imageUrl}
                   alt={activity.title}
                   className="w-full h-full object-cover"
+                  fill
+                  unoptimized
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-muted-foreground">
@@ -180,10 +183,13 @@ export function JoinedActivitiesSection({
               {/* Host Info */}
               <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border-subtle">
                 {activity.user.imageUrl ? (
-                  <img
+                  <Image
                     src={activity.user.imageUrl}
                     alt={activity.user.name || 'Host'}
                     className="w-6 h-6 rounded-full object-cover"
+                    width={24}
+                    height={24}
+                    unoptimized
                   />
                 ) : (
                   <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center">

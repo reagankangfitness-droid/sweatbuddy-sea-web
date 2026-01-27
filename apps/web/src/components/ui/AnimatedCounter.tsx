@@ -65,6 +65,7 @@ export function AnimatedCounter({
     }
 
     requestAnimationFrame(animate)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, isVisible, duration])
 
   const formattedValue = formatNumber

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -54,13 +54,7 @@ export default function UserProfilePage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (slug) {
-      fetchProfile()
-    }
-  }, [slug])
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -81,7 +75,13 @@ export default function UserProfilePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [slug])
+
+  useEffect(() => {
+    if (slug) {
+      fetchProfile()
+    }
+  }, [slug, fetchProfile])
 
   const handleShare = async () => {
     const url = `${window.location.origin}/user/${slug}`

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Send, MessageCircle, Loader2, Mail, CheckCircle, Instagram } from 'lucide-react'
 
@@ -67,7 +67,7 @@ export function DirectChatWindow({
   }, [propEmail, userEmail, userName])
 
   // Fetch messages
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     if (!userEmail) {
       setError('RSVP to this event first to chat with the host')
       setIsLoading(false)
@@ -97,7 +97,7 @@ export function DirectChatWindow({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [eventId, userEmail])
 
   // Initial fetch and polling
   useEffect(() => {
@@ -108,7 +108,7 @@ export function DirectChatWindow({
       const interval = setInterval(fetchMessages, 5000)
       return () => clearInterval(interval)
     }
-  }, [isOpen, eventId, userEmail])
+  }, [isOpen, eventId, userEmail, fetchMessages])
 
   // Scroll to bottom when messages change
   useEffect(() => {

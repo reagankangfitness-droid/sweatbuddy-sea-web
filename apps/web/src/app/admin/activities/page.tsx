@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
 import { Check, X, Clock, MapPin, Calendar, User, DollarSign, ExternalLink } from 'lucide-react'
 import { toast } from 'sonner'
@@ -39,11 +39,7 @@ export default function AdminActivitiesPage() {
   const [processingId, setProcessingId] = useState<string | null>(null)
   const [filter, setFilter] = useState<'PENDING_APPROVAL' | 'PUBLISHED' | 'all'>('PENDING_APPROVAL')
 
-  useEffect(() => {
-    fetchActivities()
-  }, [filter])
-
-  const fetchActivities = async () => {
+  const fetchActivities = useCallback(async () => {
     try {
       setLoading(true)
       const statusParam = filter === 'all' ? '' : `?status=${filter}`
@@ -66,7 +62,11 @@ export default function AdminActivitiesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filter])
+
+  useEffect(() => {
+    fetchActivities()
+  }, [fetchActivities])
 
   const handleAction = async (activityId: string, action: 'approve' | 'reject') => {
     try {

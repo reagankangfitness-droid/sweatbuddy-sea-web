@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
 import { Check, X, Clock, MapPin, Calendar, Mail, Instagram, User, ExternalLink, Copy, ImageIcon } from 'lucide-react'
 import { toast } from 'sonner'
@@ -44,23 +44,7 @@ export default function AdminEventSubmissionsPage() {
     }
   }, [])
 
-  useEffect(() => {
-    if (isAuthed) {
-      fetchSubmissions()
-    }
-  }, [isAuthed, filter])
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (password === ADMIN_SECRET) {
-      localStorage.setItem('admin-auth', password)
-      setIsAuthed(true)
-    } else {
-      toast.error('Incorrect password')
-    }
-  }
-
-  const fetchSubmissions = async () => {
+  const fetchSubmissions = useCallback(async () => {
     try {
       setLoading(true)
       const statusParam = filter === 'all' ? 'all' : filter
@@ -80,6 +64,22 @@ export default function AdminEventSubmissionsPage() {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setLoading(false)
+    }
+  }, [filter])
+
+  useEffect(() => {
+    if (isAuthed) {
+      fetchSubmissions()
+    }
+  }, [isAuthed, filter, fetchSubmissions])
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (password === ADMIN_SECRET) {
+      localStorage.setItem('admin-auth', password)
+      setIsAuthed(true)
+    } else {
+      toast.error('Incorrect password')
     }
   }
 

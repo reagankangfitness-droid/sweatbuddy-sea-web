@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@clerk/nextjs'
+import Image from 'next/image'
 import { toast } from 'sonner'
 import { format } from 'date-fns'
 import {
@@ -174,10 +175,12 @@ export default function PendingEventsPage() {
                 {/* Event Image */}
                 {event.imageUrl && (
                   <div className="lg:w-48 h-32 lg:h-auto relative flex-shrink-0">
-                    <img
+                    <Image
                       src={event.imageUrl}
                       alt={event.eventName}
                       className="w-full h-full object-cover"
+                      fill
+                      unoptimized
                     />
                     <div className="absolute top-2 left-2">
                       <span className="px-2 py-1 bg-yellow-500 text-yellow-900 text-xs font-medium rounded-full">

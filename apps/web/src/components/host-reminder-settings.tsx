@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Bell, Mail, MapPin, Calendar, MessageSquare, Loader2, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
@@ -58,11 +58,7 @@ export function HostReminderSettings({
     customInstructions: null,
   })
 
-  useEffect(() => {
-    fetchSettings()
-  }, [activityId])
-
-  const fetchSettings = async () => {
+  const fetchSettings = useCallback(async () => {
     try {
       const res = await fetch(`/api/host/reminders/${activityId}`)
       if (res.ok) {
@@ -74,7 +70,11 @@ export function HostReminderSettings({
     } finally {
       setLoading(false)
     }
-  }
+  }, [activityId])
+
+  useEffect(() => {
+    fetchSettings()
+  }, [fetchSettings])
 
   const updateSetting = async (key: keyof HostReminderSettingsData, value: unknown) => {
     const newSettings = { ...settings, [key]: value }

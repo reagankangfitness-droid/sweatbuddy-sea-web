@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import {
@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
+import Image from 'next/image'
 import { Send, MessageCircle, LogIn } from 'lucide-react'
 
 interface Message {
@@ -66,17 +67,7 @@ export function ActivityMessaging({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  useEffect(() => {
-    if (open) {
-      fetchMessages()
-    }
-  }, [open, activityId])
-
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages])
-
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     setIsLoading(true)
     try {
       const response = await fetch(`/api/activities/${activityId}/messages`)
@@ -93,7 +84,17 @@ export function ActivityMessaging({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [activityId])
+
+  useEffect(() => {
+    if (open) {
+      fetchMessages()
+    }
+  }, [open, activityId, fetchMessages])
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -215,10 +216,13 @@ export function ActivityMessaging({
                 >
                   <div className="flex-shrink-0">
                     {message.user.imageUrl ? (
-                      <img
+                      <Image
                         src={message.user.imageUrl}
                         alt={message.user.name || 'User'}
+                        width={32}
+                        height={32}
                         className="w-8 h-8 rounded-full"
+                        unoptimized
                       />
                     ) : (
                       <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm">

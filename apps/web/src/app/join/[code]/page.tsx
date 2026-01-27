@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import Image from 'next/image'
 import { useUser } from '@clerk/nextjs'
 import { Header } from '@/components/header'
 import { Button } from '@/components/ui/button'
@@ -149,10 +150,13 @@ export default function JoinInvitePage() {
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-3 mb-4">
               {inviteData.referrer.image_url ? (
-                <img
+                <Image
                   src={inviteData.referrer.image_url}
                   alt={inviteData.referrer.name || 'Friend'}
                   className="w-12 h-12 rounded-full border-2 border-primary"
+                  width={48}
+                  height={48}
+                  unoptimized
                 />
               ) : (
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -176,11 +180,13 @@ export default function JoinInvitePage() {
 
           {/* Activity Image */}
           {inviteData.activity.image_url && (
-            <div className="mb-6 rounded-lg overflow-hidden border">
-              <img
+            <div className="mb-6 rounded-lg overflow-hidden border relative h-64">
+              <Image
                 src={inviteData.activity.image_url}
                 alt={inviteData.activity.title}
-                className="w-full h-64 object-cover"
+                className="w-full h-full object-cover"
+                fill
+                unoptimized
               />
             </div>
           )}

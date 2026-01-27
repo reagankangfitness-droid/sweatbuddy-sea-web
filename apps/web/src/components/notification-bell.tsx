@@ -132,7 +132,7 @@ export function NotificationBell() {
     if (isOpen) {
       fetchNotifications(true)
     }
-  }, [isOpen])
+  }, [isOpen, fetchNotifications])
 
   // Poll for unread count
   useEffect(() => {

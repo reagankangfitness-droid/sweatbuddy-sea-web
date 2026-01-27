@@ -3,9 +3,20 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Clock, ChevronDown } from 'lucide-react'
-import { SmartActivityMap } from '@/components/map/SmartActivityMap'
-import { ActivityMapView } from '@/components/map/ActivityMapView'
+import dynamic from 'next/dynamic'
 import { ViewToggle } from '@/components/map/ViewToggle'
+
+const ActivityMapView = dynamic(
+  () => import('@/components/map/ActivityMapView').then((m) => m.ActivityMapView),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full min-h-[70vh] flex items-center justify-center bg-gray-100 dark:bg-neutral-900">
+        <div className="w-12 h-12 border-3 border-gray-200 dark:border-neutral-700 border-t-pink-500 rounded-full animate-spin" />
+      </div>
+    ),
+  }
+)
 import { EventCardCompact } from '@/components/map/EventCardCompact'
 import type { NeighborhoodOverview, MapOverviewResponse, NeighborhoodEvent } from '@/types/neighborhood'
 

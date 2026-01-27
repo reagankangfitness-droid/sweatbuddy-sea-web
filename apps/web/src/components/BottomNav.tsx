@@ -6,13 +6,15 @@ import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 
 const navItems = [
-  { id: 'map', label: 'Map', icon: Map, href: '/' },
-  { id: 'buddies', label: 'Buddies', icon: Users, href: '/buddies' },
+  { id: 'map', label: 'Map', icon: Map, href: '/app' },
+  { id: 'crews', label: 'Crews', icon: Users, href: '/crews' },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile' },
 ]
 
 export function BottomNav() {
   const pathname = usePathname()
+
+  if (pathname === '/') return null
 
   return (
     <>
@@ -28,10 +30,7 @@ export function BottomNav() {
 
         <div className="relative flex items-center justify-around px-2 pt-2 pb-[env(safe-area-inset-bottom,8px)]">
           {navItems.map((item) => {
-            const isActive =
-              item.href === '/'
-                ? pathname === '/'
-                : pathname.startsWith(item.href)
+            const isActive = pathname.startsWith(item.href)
             const Icon = item.icon
 
             return (

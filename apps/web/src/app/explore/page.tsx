@@ -11,7 +11,7 @@ const ActivityMapView = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-full min-h-[70vh] flex items-center justify-center bg-gray-100 dark:bg-neutral-900">
+      <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-neutral-900">
         <div className="w-12 h-12 border-3 border-gray-200 dark:border-neutral-700 border-t-pink-500 rounded-full animate-spin" />
       </div>
     ),
@@ -163,7 +163,7 @@ export default function ExplorePage() {
 
         {viewMode === 'map' ? (
           /* Map View - Individual event markers */
-          <div className="pb-0 -mx-0">
+          <div style={{ height: 'calc(100vh - 110px)' }}>
             <ActivityMapView
               timeRange={timeRange}
               onToggleView={() => setViewMode('list')}

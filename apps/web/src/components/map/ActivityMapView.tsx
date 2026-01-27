@@ -177,7 +177,7 @@ export function ActivityMapView({ timeRange = 'month', onToggleView }: ActivityM
 
   if (!GOOGLE_MAPS_API_KEY) {
     return (
-      <div className="relative w-full h-full min-h-[70vh] flex items-center justify-center bg-gray-100 dark:bg-neutral-900">
+      <div className="relative w-full h-full h-full flex items-center justify-center bg-gray-100 dark:bg-neutral-900">
         <div className="text-center p-6">
           <MapPin className="w-16 h-16 text-gray-300 dark:text-neutral-600 mx-auto mb-4" />
           <p className="text-gray-500 dark:text-neutral-400 font-medium">Google Maps not configured</p>
@@ -188,7 +188,7 @@ export function ActivityMapView({ timeRange = 'month', onToggleView }: ActivityM
 
   if (loadError) {
     return (
-      <div className="relative w-full h-full min-h-[70vh] flex items-center justify-center bg-red-50 dark:bg-neutral-900">
+      <div className="relative w-full h-full h-full flex items-center justify-center bg-red-50 dark:bg-neutral-900">
         <p className="text-red-500 dark:text-red-400">Failed to load Google Maps</p>
       </div>
     )
@@ -196,7 +196,7 @@ export function ActivityMapView({ timeRange = 'month', onToggleView }: ActivityM
 
   if (!isLoaded) {
     return (
-      <div className="relative w-full h-full min-h-[70vh] flex items-center justify-center bg-gray-100 dark:bg-neutral-900">
+      <div className="relative w-full h-full h-full flex items-center justify-center bg-gray-100 dark:bg-neutral-900">
         <motion.div
           className="w-12 h-12 border-3 border-gray-200 dark:border-neutral-700 border-t-pink-500 rounded-full"
           animate={{ rotate: 360 }}
@@ -207,9 +207,9 @@ export function ActivityMapView({ timeRange = 'month', onToggleView }: ActivityM
   }
 
   return (
-    <div className="relative w-full h-full min-h-[70vh]">
+    <div className="relative w-full h-full h-full">
       <GoogleMap
-        mapContainerStyle={{ width: '100%', height: '100%', minHeight: '70vh' }}
+        mapContainerStyle={{ width: '100%', height: '100%' }}
         center={SINGAPORE_CENTER}
         zoom={12}
         onLoad={onMapLoad}

@@ -117,6 +117,40 @@ export function WaveMap() {
     return waves.filter((w) => filters.has(w.activityType))
   }, [waves, filters])
 
+  // Map hosted activity categorySlug/type to wave filter types
+  const HOSTED_TO_WAVE: Record<string, WaveActivityType> = {
+    running: 'RUN', run: 'RUN',
+    yoga: 'YOGA',
+    gym: 'GYM', 'weight-training': 'GYM', strength: 'GYM',
+    cycling: 'CYCLE', 'road-cycling': 'CYCLE', cycle: 'CYCLE',
+    swim: 'SWIM', swimming: 'SWIM',
+    hike: 'HIKE', hiking: 'HIKE',
+    tennis: 'TENNIS',
+    pickleball: 'PICKLEBALL',
+    basketball: 'BASKETBALL',
+    badminton: 'BADMINTON',
+    football: 'FOOTBALL', soccer: 'FOOTBALL',
+    climb: 'CLIMB', climbing: 'CLIMB',
+    boxing: 'BOXING',
+    hyrox: 'HYROX', hiit: 'HYROX',
+    dance: 'DANCE',
+    pilates: 'PILATES',
+    walk: 'WALK', walking: 'WALK',
+  }
+
+  // Filtered hosted activities
+  const filteredHosted = useMemo(() => {
+    if (filters.has('ALL')) return hostedActivities
+    return hostedActivities.filter((a) => {
+      const slug = (a.categorySlug || '').toLowerCase()
+      const type = (a.type || '').toLowerCase()
+      const mapped = HOSTED_TO_WAVE[slug] || HOSTED_TO_WAVE[type]
+      if (mapped) return filters.has(mapped)
+      // If filter is ANYTHING, show unmatched activities too
+      return filters.has('ANYTHING' as WaveActivityType)
+    })
+  }, [hostedActivities, filters])
+
   // Join handler
   const handleJoin = async (waveId: string) => {
     const res = await fetch(`/api/wave/${waveId}/join`, { method: 'POST' })
@@ -227,7 +261,7 @@ export function WaveMap() {
           />
         ))}
 
-        {hostedActivities.map((a) => (
+        {filteredHosted.map((a) => (
           <ActivityBubblePin
             key={`hosted-${a.id}`}
             activity={a}
@@ -240,7 +274,7 @@ export function WaveMap() {
       <WaveFilterBar selected={filters} onToggle={handleFilterToggle} />
 
       {/* Empty state */}
-      {hasFetched && filteredWaves.length === 0 && hostedActivities.length === 0 && (
+      {hasFetched && filteredWaves.length === 0 && filteredHosted.length === 0 && (
         <div className="absolute inset-0 z-[5] flex items-center justify-center pointer-events-none">
           <div className="bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md rounded-2xl px-6 py-5 text-center shadow-lg max-w-xs">
             <p className="text-3xl mb-2">🌊</p>

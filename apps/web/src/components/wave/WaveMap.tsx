@@ -246,8 +246,18 @@ export function WaveMap() {
     )
   }
 
+  // Prevent body scroll so map gets all touch events
+  useEffect(() => {
+    const prev = document.body.style.cssText
+    document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.width = '100%'
+    document.body.style.height = '100%'
+    return () => { document.body.style.cssText = prev }
+  }, [])
+
   return (
-    <div className="relative h-[100dvh] w-full">
+    <div className="fixed inset-0 w-full h-full" style={{ touchAction: 'pan-x pan-y' }}>
       <GoogleMap
         mapContainerStyle={{ width: '100%', height: '100%' }}
         center={DEFAULT_CENTER}
@@ -258,6 +268,7 @@ export function WaveMap() {
           zoomControl: true,
           styles: mapStyles,
           clickableIcons: false,
+          gestureHandling: 'greedy',
         }}
       >
         {/* User blue dot */}
@@ -295,7 +306,7 @@ export function WaveMap() {
 
       {/* Empty state */}
       {hasFetched && filteredWaves.length === 0 && filteredHosted.length === 0 && (
-        <div className="absolute inset-0 z-[5] flex items-center justify-center pointer-events-none">
+        <div className="fixed inset-0 z-[5] flex items-center justify-center pointer-events-none">
           <div className="bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md rounded-2xl px-6 py-5 text-center shadow-lg max-w-xs">
             <p className="text-3xl mb-2">🌊</p>
             <p className="font-semibold text-neutral-700 dark:text-neutral-200">No activities forming nearby</p>
@@ -314,7 +325,7 @@ export function WaveMap() {
 
       {/* Bottom drawer with activity cards */}
       {!selectedWave && !selectedActivity && !crewChat && (
-        <div className="absolute bottom-0 left-0 right-0 z-10 bg-white dark:bg-neutral-900 rounded-t-3xl shadow-2xl px-4 pt-4 pb-20">
+        <div className="fixed bottom-0 left-0 right-0 z-10 bg-white dark:bg-neutral-900 rounded-t-3xl shadow-2xl px-4 pt-4 pb-20 max-h-[50dvh] overflow-y-auto overscroll-contain" style={{ touchAction: 'pan-y' }}>
           <div className="flex items-center justify-between mb-3">
             <div>
               <h3 className="font-bold text-neutral-900 dark:text-white">{filteredWaves.length} activities forming</h3>
@@ -373,7 +384,7 @@ export function WaveMap() {
       {(selectedWave || selectedActivity || crewChat) && (
         <button
           onClick={() => setCreateOpen(true)}
-          className="absolute bottom-24 right-4 z-10 w-14 h-14 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-xl flex items-center justify-center active:scale-95 transition-transform"
+          className="fixed bottom-24 right-4 z-10 w-14 h-14 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-xl flex items-center justify-center active:scale-95 transition-transform"
         >
           <Plus className="w-6 h-6" />
         </button>

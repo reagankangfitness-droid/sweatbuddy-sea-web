@@ -22,6 +22,8 @@ import type { WaveActivityType } from '@prisma/client'
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 const DEFAULT_CENTER = { lat: 1.3521, lng: 103.8198 }
 const LIBRARIES: ('places')[] = ['places']
+const BLUE_DOT_OFFSET = { x: -12, y: -12 }
+const blueDotOffset = () => BLUE_DOT_OFFSET
 
 const HOSTED_TO_WAVE: Record<string, WaveActivityType> = {
   running: 'RUN', run: 'RUN',
@@ -274,11 +276,12 @@ export function WaveMap() {
         {myPosition && (
           <OverlayView
             position={myPosition}
-            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+            mapPaneName={OverlayView.OVERLAY_LAYER}
+            getPixelPositionOffset={blueDotOffset}
           >
-            <div className="relative -ml-3 -mt-3">
+            <div className="relative" style={{ willChange: 'transform' }}>
               <div className="w-6 h-6 rounded-full bg-blue-500 border-[3px] border-white shadow-lg" />
-              <div className="absolute inset-0 w-6 h-6 rounded-full bg-blue-500 animate-ping opacity-30" />
+              <div className="absolute -inset-1.5 rounded-full bg-blue-500/20" />
             </div>
           </OverlayView>
         )}

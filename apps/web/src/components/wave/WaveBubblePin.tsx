@@ -1,5 +1,6 @@
 'use client'
 
+import { memo } from 'react'
 import { OverlayView } from '@react-google-maps/api'
 import { WAVE_ACTIVITIES } from '@/lib/wave/constants'
 import type { WaveActivityType } from '@prisma/client'
@@ -30,37 +31,37 @@ interface WaveBubblePinProps {
   onClick: () => void
 }
 
-export function WaveBubblePin({ wave, onClick }: WaveBubblePinProps) {
+const PIN_OFFSET = { x: -40, y: -20 }
+const getOffset = () => PIN_OFFSET
+
+export const WaveBubblePin = memo(function WaveBubblePin({ wave, onClick }: WaveBubblePinProps) {
   if (wave.latitude == null || wave.longitude == null) return null
 
   const activity = WAVE_ACTIVITIES[wave.activityType]
-  const isRecent = Date.now() - new Date(wave.startedAt).getTime() < 5 * 60 * 1000
   const remaining = wave.waveThreshold - wave.participantCount
   const isAlmostUnlocked = !wave.isUnlocked && remaining === 1
 
   return (
     <OverlayView
       position={{ lat: wave.latitude, lng: wave.longitude }}
-      mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+      mapPaneName={OverlayView.OVERLAY_LAYER}
+      getPixelPositionOffset={getOffset}
     >
       <button
         onClick={onClick}
-        className="relative flex flex-col items-center -ml-10 -mt-5"
+        className="relative flex flex-col items-center pointer-events-auto"
+        style={{ willChange: 'transform' }}
       >
         <div className="relative">
-          {/* Pulse for nearly unlocked */}
+          {/* Pulse ring for nearly unlocked — static glow, no animation */}
           {isAlmostUnlocked && (
-            <div className="absolute inset-0 rounded-2xl bg-orange-500 animate-pulse opacity-20" />
+            <div className="absolute -inset-1 rounded-2xl bg-orange-400/25" />
           )}
 
           {/* Main pill bubble */}
           <div
             className={`px-3 py-2 rounded-2xl shadow-lg flex items-center gap-2 bg-white dark:bg-neutral-800 ${
-              wave.isUnlocked
-                ? 'ring-2 ring-emerald-400'
-                : isRecent
-                  ? 'animate-pulse'
-                  : ''
+              wave.isUnlocked ? 'ring-2 ring-emerald-400' : ''
             }`}
           >
             <span className="text-xl">{activity.emoji}</span>
@@ -96,4 +97,4 @@ export function WaveBubblePin({ wave, onClick }: WaveBubblePinProps) {
       </button>
     </OverlayView>
   )
-}
+})

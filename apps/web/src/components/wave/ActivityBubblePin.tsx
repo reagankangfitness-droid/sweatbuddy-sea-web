@@ -1,5 +1,6 @@
 'use client'
 
+import { memo } from 'react'
 import { OverlayView } from '@react-google-maps/api'
 import Image from 'next/image'
 
@@ -44,18 +45,23 @@ function getEmoji(activity: HostedActivityData): string {
   return CATEGORY_EMOJI[activity.type.toLowerCase()] || '📍'
 }
 
-export function ActivityBubblePin({ activity, onClick }: ActivityBubblePinProps) {
+const PIN_OFFSET = { x: -24, y: -24 }
+const getOffset = () => PIN_OFFSET
+
+export const ActivityBubblePin = memo(function ActivityBubblePin({ activity, onClick }: ActivityBubblePinProps) {
   const emoji = getEmoji(activity)
   const hasHost = !!activity.hostImageUrl
 
   return (
     <OverlayView
       position={{ lat: activity.latitude, lng: activity.longitude }}
-      mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+      mapPaneName={OverlayView.OVERLAY_LAYER}
+      getPixelPositionOffset={getOffset}
     >
       <button
         onClick={onClick}
-        className="relative flex flex-col items-center -ml-6 -mt-6"
+        className="relative flex flex-col items-center pointer-events-auto"
+        style={{ willChange: 'transform' }}
       >
         {/* Main circle */}
         <div className="w-12 h-12 rounded-full shadow-lg flex items-center justify-center bg-white dark:bg-neutral-800 border-[2.5px] border-blue-500 ring-2 ring-blue-500/20">
@@ -92,4 +98,4 @@ export function ActivityBubblePin({ activity, onClick }: ActivityBubblePinProps)
       </button>
     </OverlayView>
   )
-}
+})

@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { useUser } from '@clerk/nextjs'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
@@ -50,8 +51,11 @@ interface Profile {
 
 export default function ProfileSettingsPage() {
   const router = useRouter()
+  const { user: clerkUser } = useUser()
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [formData, setFormData] = useState({
     name: '',
@@ -162,25 +166,25 @@ export default function ProfileSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4 pb-24">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 py-8 px-4 pb-24">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white">
             Edit Profile
           </h1>
           {profile?.slug && (
             <Link
-              href={profile.isHost ? `/host/${profile.slug}` : `/user/${profile.slug}`}
+              href={`/user/${profile.slug}`}
               target="_blank"
-              className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
+              className="text-sm font-medium text-neutral-900 dark:text-white hover:underline flex items-center gap-1"
             >
               View Profile <ExternalLink className="h-3.5 w-3.5" />
             </Link>
@@ -189,9 +193,9 @@ export default function ProfileSettingsPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Avatar Section */}
-          <div className="bg-card rounded-2xl border p-6">
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl border p-6">
             <div className="flex items-center gap-5">
-              <div className="w-24 h-24 rounded-full overflow-hidden bg-muted flex-shrink-0">
+              <div className="w-24 h-24 rounded-full overflow-hidden bg-neutral-100 dark:bg-neutral-800 flex-shrink-0">
                 {profile?.imageUrl ? (
                   <Image
                     src={profile.imageUrl}
@@ -201,26 +205,49 @@ export default function ProfileSettingsPage() {
                     className="object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-primary flex items-center justify-center text-3xl font-bold text-primary-foreground">
+                  <div className="w-full h-full bg-neutral-900 dark:bg-neutral-200flex items-center justify-center text-3xl font-bold text-white dark:text-neutral-900">
                     {formData.firstName?.[0] || formData.name?.[0] || '?'}
                   </div>
                 )}
               </div>
               <div>
-                <Button type="button" variant="outline" size="sm" disabled>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0]
+                    if (!file || !clerkUser) return
+                    setUploadingPhoto(true)
+                    try {
+                      await clerkUser.setProfileImage({ file })
+                      toast.success('Photo updated!')
+                      fetchProfile()
+                    } catch {
+                      toast.error('Failed to upload photo')
+                    }
+                    setUploadingPhoto(false)
+                    e.target.value = ''
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={uploadingPhoto}
+                  onClick={() => fileInputRef.current?.click()}
+                >
                   <Camera className="h-4 w-4" />
-                  Change Photo
+                  {uploadingPhoto ? 'Uploading...' : 'Change Photo'}
                 </Button>
-                <p className="text-xs text-muted-foreground mt-2">
-                  Photo is managed through your account settings
-                </p>
               </div>
             </div>
           </div>
 
           {/* Basic Info */}
-          <div className="bg-card rounded-2xl border p-6 space-y-5">
-            <h2 className="text-lg font-semibold text-foreground">
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl border p-6 space-y-5">
+            <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
               Basic Information
             </h2>
 
@@ -249,7 +276,7 @@ export default function ProfileSettingsPage() {
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
               <div className="flex">
-                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 bg-muted text-muted-foreground text-sm">
+                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 text-sm">
                   @
                 </span>
                 <Input
@@ -265,7 +292,7 @@ export default function ProfileSettingsPage() {
                   placeholder="username"
                 />
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">
                 sweatbuddies.co/{profile?.isHost ? 'host' : 'user'}/
                 {formData.username || 'username'}
               </p>
@@ -280,7 +307,7 @@ export default function ProfileSettingsPage() {
                 placeholder="e.g., Les Mills Instructor | Fitness Coach"
                 maxLength={200}
               />
-              <p className="text-xs text-muted-foreground text-right">
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 text-right">
                 {formData.headline.length}/200
               </p>
             </div>
@@ -299,7 +326,7 @@ export default function ProfileSettingsPage() {
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                 <Input
                   id="location"
                   className="pl-10"
@@ -313,8 +340,8 @@ export default function ProfileSettingsPage() {
 
           {/* Host Information */}
           {profile?.isHost && (
-            <div className="bg-card rounded-2xl border p-6 space-y-5">
-              <h2 className="text-lg font-semibold text-foreground">
+            <div className="bg-white dark:bg-neutral-900 rounded-2xl border p-6 space-y-5">
+              <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
                 Host Information
               </h2>
 
@@ -331,7 +358,7 @@ export default function ProfileSettingsPage() {
                   multiple={true}
                   placeholder="Select your activity specialties"
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
                   What types of activities do you host?
                 </p>
               </div>
@@ -358,7 +385,7 @@ export default function ProfileSettingsPage() {
                   <button
                     type="button"
                     onClick={addCertification}
-                    className="text-sm font-medium text-muted-foreground bg-muted hover:bg-muted/80 border border-dashed px-3 py-1.5 rounded-lg transition-colors"
+                    className="text-sm font-medium text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-100 dark:bg-neutral-800/80 border border-dashed px-3 py-1.5 rounded-lg transition-colors"
                   >
                     + Add Certification
                   </button>
@@ -368,15 +395,15 @@ export default function ProfileSettingsPage() {
           )}
 
           {/* Social Links */}
-          <div className="bg-card rounded-2xl border p-6 space-y-5">
-            <h2 className="text-lg font-semibold text-foreground">
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl border p-6 space-y-5">
+            <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
               Social Links
             </h2>
 
             <div className="space-y-2">
               <Label htmlFor="website">Website</Label>
               <div className="relative">
-                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                 <Input
                   id="website"
                   type="url"
@@ -391,7 +418,7 @@ export default function ProfileSettingsPage() {
             <div className="space-y-2">
               <Label htmlFor="instagram">Instagram</Label>
               <div className="flex">
-                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 bg-muted text-muted-foreground">
+                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
                   <Instagram className="h-4 w-4" />
                 </span>
                 <Input
@@ -409,7 +436,7 @@ export default function ProfileSettingsPage() {
             <div className="space-y-2">
               <Label htmlFor="twitter">X (Twitter)</Label>
               <div className="flex">
-                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 bg-muted text-muted-foreground">
+                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
                   <svg
                     className="h-4 w-4"
                     viewBox="0 0 24 24"
@@ -434,7 +461,7 @@ export default function ProfileSettingsPage() {
               <Label htmlFor="linkedin">LinkedIn</Label>
               <div className="relative">
                 <svg
-                  className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500 dark:text-neutral-400"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >
@@ -453,19 +480,19 @@ export default function ProfileSettingsPage() {
           </div>
 
           {/* Privacy Settings */}
-          <div className="bg-card rounded-2xl border p-6 space-y-4">
-            <h2 className="text-lg font-semibold text-foreground">Privacy</h2>
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl border p-6 space-y-4">
+            <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">Privacy</h2>
 
             <label className="flex items-center justify-between py-3 border-b cursor-pointer">
               <div>
-                <div className="font-medium text-foreground">Public Profile</div>
-                <div className="text-sm text-muted-foreground">
+                <div className="font-medium text-neutral-900 dark:text-white">Public Profile</div>
+                <div className="text-sm text-neutral-500 dark:text-neutral-400">
                   Allow anyone to view your profile
                 </div>
               </div>
               <input
                 type="checkbox"
-                className="w-11 h-6 bg-muted rounded-full appearance-none cursor-pointer relative transition-colors checked:bg-primary after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-transform after:shadow checked:after:translate-x-5"
+                className="w-11 h-6 bg-neutral-100 dark:bg-neutral-800 rounded-full appearance-none cursor-pointer relative transition-colors checked:bg-neutral-900 dark:bg-neutral-200after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-transform after:shadow checked:after:translate-x-5"
                 checked={formData.isPublic}
                 onChange={(e) => handleChange('isPublic', e.target.checked)}
               />
@@ -473,16 +500,16 @@ export default function ProfileSettingsPage() {
 
             <label className="flex items-center justify-between py-3 border-b cursor-pointer">
               <div>
-                <div className="font-medium text-foreground">
+                <div className="font-medium text-neutral-900 dark:text-white">
                   Show Activities Attended
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-neutral-500 dark:text-neutral-400">
                   Display activities you have joined on your profile
                 </div>
               </div>
               <input
                 type="checkbox"
-                className="w-11 h-6 bg-muted rounded-full appearance-none cursor-pointer relative transition-colors checked:bg-primary after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-transform after:shadow checked:after:translate-x-5"
+                className="w-11 h-6 bg-neutral-100 dark:bg-neutral-800 rounded-full appearance-none cursor-pointer relative transition-colors checked:bg-neutral-900 dark:bg-neutral-200after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-transform after:shadow checked:after:translate-x-5"
                 checked={formData.showActivitiesAttended}
                 onChange={(e) =>
                   handleChange('showActivitiesAttended', e.target.checked)
@@ -493,16 +520,16 @@ export default function ProfileSettingsPage() {
             {profile?.isHost && (
               <label className="flex items-center justify-between py-3 cursor-pointer">
                 <div>
-                  <div className="font-medium text-foreground">
+                  <div className="font-medium text-neutral-900 dark:text-white">
                     Show Statistics
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-neutral-500 dark:text-neutral-400">
                     Display host stats like total events and attendees
                   </div>
                 </div>
                 <input
                   type="checkbox"
-                  className="w-11 h-6 bg-muted rounded-full appearance-none cursor-pointer relative transition-colors checked:bg-primary after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-transform after:shadow checked:after:translate-x-5"
+                  className="w-11 h-6 bg-neutral-100 dark:bg-neutral-800 rounded-full appearance-none cursor-pointer relative transition-colors checked:bg-neutral-900 dark:bg-neutral-200after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:transition-transform after:shadow checked:after:translate-x-5"
                   checked={formData.showStats}
                   onChange={(e) => handleChange('showStats', e.target.checked)}
                 />

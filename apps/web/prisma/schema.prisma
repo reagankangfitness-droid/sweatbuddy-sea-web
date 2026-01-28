@@ -2268,6 +2268,8 @@ enum WaveActivityType {
   DANCE
   PILATES
   WALK
+  ICE_BATH
+  SAUNA
   ANYTHING
 }
 

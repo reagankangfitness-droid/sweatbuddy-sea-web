@@ -18,6 +18,8 @@ export const WAVE_ACTIVITIES: Record<WaveActivityType, { label: string; emoji: s
   DANCE: { label: 'Dance', emoji: '💃' },
   PILATES: { label: 'Pilates', emoji: '🤸' },
   WALK: { label: 'Walk', emoji: '🚶' },
+  ICE_BATH: { label: 'Ice Bath', emoji: '🧊' },
+  SAUNA: { label: 'Sauna', emoji: '🧖' },
   ANYTHING: { label: 'Anything', emoji: '🙌' },
 }
 
@@ -41,6 +43,8 @@ export const WAVE_QUICK_PROMPTS: Record<WaveActivityType, string[]> = {
   DANCE: ['Social dancing', 'Learning together', 'Any style', 'Just for fun'],
   PILATES: ['Mat pilates', 'Reformer session', 'Core focus', 'Beginner friendly'],
   WALK: ['Coffee walk', 'Nature walk', 'Walking meeting', 'Evening stroll'],
+  ICE_BATH: ['First timer', 'Post-workout recovery', 'Building cold tolerance', 'Regular practice'],
+  SAUNA: ['Post-workout session', 'Relaxation time', 'Heat therapy', 'Recovery day'],
   ANYTHING: ['Open to suggestions', 'Surprise me', 'Whatever works', 'Flexible on activity'],
 }
 

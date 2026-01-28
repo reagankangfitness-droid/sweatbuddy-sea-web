@@ -105,7 +105,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
               </button>
             </div>
 
-            <div className="px-4 pb-24 overflow-y-auto overscroll-contain">
+            <div className="px-4 pb-4 overflow-y-auto overscroll-contain flex-1 min-h-0">
               {/* Step 1: Activity grid */}
               {step === 'activity' && (
                 <div className="grid grid-cols-3 gap-2.5 py-4">
@@ -207,16 +207,22 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
                     )}
                   </div>
 
-                  <button
-                    onClick={handleCreate}
-                    disabled={!area.trim() || creating}
-                    className="w-full py-3 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm disabled:opacity-50 mt-2"
-                  >
-                    {creating ? 'Creating...' : 'Start Wave 🌊'}
-                  </button>
                 </div>
               )}
             </div>
+
+            {/* Sticky submit button */}
+            {step === 'details' && (
+              <div className="shrink-0 px-4 py-3 border-t border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900">
+                <button
+                  onClick={handleCreate}
+                  disabled={!area.trim() || creating}
+                  className="w-full py-3 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm disabled:opacity-50"
+                >
+                  {creating ? 'Creating...' : 'Start Wave 🌊'}
+                </button>
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}

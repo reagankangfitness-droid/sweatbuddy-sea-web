@@ -1,5 +1,3 @@
-import Link from 'next/link'
-
 const steps = [
   { emoji: '🙋', title: 'Post a wave', description: 'Say what you want to do and when' },
   { emoji: '👋', title: 'Others join', description: 'Nearby people hop on your wave' },
@@ -30,20 +28,12 @@ export default function LandingPage() {
           <p className="text-lg sm:text-xl text-white/70 max-w-md">
             Find people near you who want to work out right now. Post a wave, meet up, and sweat together.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
-            <Link
-              href="/sign-up"
-              className="flex-1 px-6 py-3 rounded-xl bg-white text-neutral-900 font-semibold text-base text-center hover:bg-white/90 transition-colors"
-            >
-              Get Started
-            </Link>
-            <Link
-              href="/sign-in"
-              className="flex-1 px-6 py-3 rounded-xl bg-white/10 border border-white/20 text-white font-semibold text-base text-center hover:bg-white/20 transition-colors"
-            >
-              Sign In
-            </Link>
-          </div>
+          <a
+            href="/sign-up"
+            className="px-8 py-3 rounded-xl bg-white text-neutral-900 font-semibold text-base text-center hover:bg-white/90 transition-colors"
+          >
+            Sign Up
+          </a>
         </div>
       </section>
 

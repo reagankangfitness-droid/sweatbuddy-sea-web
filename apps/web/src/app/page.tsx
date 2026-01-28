@@ -14,12 +14,11 @@ export default function LandingPage() {
   return (
     <main className="min-h-screen bg-neutral-950 text-white">
       {/* Hero */}
-      <section className="relative min-h-[85vh] flex items-center justify-center">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: 'url(/images/hero-1.webp)' }}
-        />
-        <div className="absolute inset-0 bg-black/60" />
+      <section
+        className="relative min-h-[85vh] flex items-center justify-center bg-cover bg-center"
+        style={{ backgroundImage: 'url(/images/hero-1.webp)' }}
+      >
+        <div className="absolute inset-0 bg-black/60 pointer-events-none" />
 
         <div className="relative z-10 flex flex-col items-center text-center px-6 py-20 max-w-2xl mx-auto gap-6">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-tight">
@@ -30,7 +29,7 @@ export default function LandingPage() {
           </p>
           <a
             href="/sign-up"
-            className="px-8 py-3 rounded-xl bg-white text-neutral-900 font-semibold text-base text-center hover:bg-white/90 transition-colors"
+            className="relative z-20 inline-block px-8 py-4 rounded-xl bg-white text-neutral-900 font-semibold text-lg text-center hover:bg-white/90 active:scale-[0.98] transition-all cursor-pointer"
           >
             Sign Up
           </a>

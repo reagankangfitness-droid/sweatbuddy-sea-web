@@ -109,7 +109,8 @@ export async function GET(request: NextRequest) {
     where.activityType = type
   }
 
-  // --- Fetch hosted activities (published, with coordinates, upcoming or no date) ---
+  // --- Fetch hosted activities (published, with coordinates, upcoming or recently ended) ---
+  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
   const hostedActivities = await prisma.activity.findMany({
     where: {
       status: 'PUBLISHED',
@@ -118,7 +119,7 @@ export async function GET(request: NextRequest) {
       longitude: { not: 0 },
       OR: [
         { startTime: null },
-        { startTime: { gte: now } },
+        { startTime: { gte: oneDayAgo } },
       ],
     },
     include: {

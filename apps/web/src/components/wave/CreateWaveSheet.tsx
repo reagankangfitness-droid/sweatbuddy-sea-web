@@ -75,23 +75,23 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-end"
+          className="fixed inset-0 z-50 flex flex-col justify-end"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           <div className="absolute inset-0 bg-black/40" onClick={handleClose} />
           <motion.div
-            className="relative w-full bg-white dark:bg-neutral-900 rounded-t-3xl max-h-[85vh] overflow-y-auto"
+            className="relative w-full bg-white dark:bg-neutral-900 rounded-t-3xl max-h-[80dvh] flex flex-col"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
           >
             {/* Header */}
-            <div className="sticky top-0 flex items-center justify-between px-4 py-3 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm border-b border-neutral-100 dark:border-neutral-800">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100 dark:border-neutral-800 shrink-0">
               {step === 'details' ? (
-                <button onClick={() => setStep('activity')} className="p-1 text-neutral-500">
+                <button onClick={() => setStep('activity')} className="p-2 -m-1 text-neutral-500">
                   <ArrowLeft className="w-5 h-5" />
                 </button>
               ) : (
@@ -100,12 +100,12 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
               <h2 className="font-bold text-neutral-900 dark:text-white">
                 {step === 'activity' ? 'Start a Wave' : WAVE_ACTIVITIES[selectedType!].emoji + ' ' + WAVE_ACTIVITIES[selectedType!].label}
               </h2>
-              <button onClick={handleClose} className="p-1 text-neutral-500">
+              <button onClick={handleClose} className="p-2 -m-1 text-neutral-500">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="px-4 pb-[env(safe-area-inset-bottom,16px)]">
+            <div className="px-4 pb-24 overflow-y-auto overscroll-contain">
               {/* Step 1: Activity grid */}
               {step === 'activity' && (
                 <div className="grid grid-cols-3 gap-2.5 py-4">

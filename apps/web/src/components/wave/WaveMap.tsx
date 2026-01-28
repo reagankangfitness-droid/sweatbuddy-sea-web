@@ -32,6 +32,7 @@ export function WaveMap() {
   const initialCenterSet = useRef(false)
   const [waves, setWaves] = useState<WaveData[]>([])
   const [hostedActivities, setHostedActivities] = useState<HostedActivityData[]>([])
+  const [hasFetched, setHasFetched] = useState(false)
   const [selectedWave, setSelectedWave] = useState<WaveData | null>(null)
   const [selectedActivity, setSelectedActivity] = useState<HostedActivityData | null>(null)
   const [selectedWaveParticipant, setSelectedWaveParticipant] = useState(false)
@@ -83,6 +84,7 @@ export function WaveMap() {
       const data = await res.json()
       if (data.waves) setWaves(data.waves)
       if (data.hostedActivities) setHostedActivities(data.hostedActivities)
+      setHasFetched(true)
     } catch { /* silent */ }
   }, [myPosition, filters])
 
@@ -235,7 +237,7 @@ export function WaveMap() {
       <WaveFilterBar selected={filters} onToggle={handleFilterToggle} />
 
       {/* Empty state */}
-      {filteredWaves.length === 0 && hostedActivities.length === 0 && (
+      {hasFetched && filteredWaves.length === 0 && hostedActivities.length === 0 && (
         <div className="absolute inset-0 z-[5] flex items-center justify-center pointer-events-none">
           <div className="bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md rounded-2xl px-6 py-5 text-center shadow-lg max-w-xs">
             <p className="text-3xl mb-2">🌊</p>

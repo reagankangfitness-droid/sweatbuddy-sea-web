@@ -325,70 +325,14 @@ export function WaveMap() {
         </div>
       )}
 
-      {/* Bottom drawer with activity cards */}
-      {!selectedWave && !selectedActivity && !crewChat && (
-        <div className="fixed bottom-0 left-0 right-0 z-10 bg-white dark:bg-neutral-900 rounded-t-3xl shadow-2xl px-4 pt-4 pb-20 max-h-[50dvh] overflow-y-auto overscroll-contain" style={{ touchAction: 'pan-y' }}>
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <h3 className="font-bold text-neutral-900 dark:text-white">{filteredWaves.length} activities forming</h3>
-              <p className="text-sm text-neutral-500">Wave to join a crew</p>
-            </div>
-          </div>
-
-          {/* Horizontal scroll of activity cards */}
-          {filteredWaves.length > 0 && (
-            <div className="flex gap-3 overflow-x-auto pb-3 -mx-1 px-1 mb-3 scrollbar-hide">
-              {filteredWaves.map((w) => {
-                const info = WAVE_ACTIVITIES[w.activityType]
-                return (
-                  <button
-                    key={w.id}
-                    onClick={() => handleSelectWave(w)}
-                    className={`flex-shrink-0 w-64 rounded-xl p-3 transition-colors text-left ${
-                      w.isUnlocked ? 'bg-emerald-50 dark:bg-emerald-500/10' : 'bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center text-lg">
-                        {info.emoji}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-neutral-900 dark:text-white text-sm">{info.label}</p>
-                        <p className="text-xs text-neutral-500 truncate">📍 {w.locationName || w.area}</p>
-                      </div>
-                      <span className="text-xs text-neutral-500">
-                        {w.isUnlocked ? '✅' : `${w.participantCount}/${w.waveThreshold} 🙋`}
-                      </span>
-                    </div>
-                    {w.thought && (
-                      <p className="text-xs text-neutral-600 dark:text-neutral-300 line-clamp-2">&ldquo;{w.thought}&rdquo;</p>
-                    )}
-                    {w.scheduledFor && (
-                      <p className="text-xs text-neutral-400 mt-1">📅 {new Date(w.scheduledFor).toLocaleString(undefined, { weekday: 'short', hour: 'numeric', minute: '2-digit' })}</p>
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-          )}
-
-          {/* Start new activity CTA */}
-          <button
-            onClick={() => setCreateOpen(true)}
-            className="w-full py-3.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm"
-          >
-            Start an activity 🙋
-          </button>
-        </div>
-      )}
-
-      {/* Create wave FAB (visible when drawer hidden) */}
-      {(selectedWave || selectedActivity || crewChat) && (
+      {/* Start activity FAB */}
+      {!crewChat && (
         <button
           onClick={() => setCreateOpen(true)}
-          className="fixed bottom-24 right-4 z-10 w-14 h-14 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-xl flex items-center justify-center active:scale-95 transition-transform"
+          className="fixed bottom-24 left-1/2 -translate-x-1/2 z-10 px-5 py-3 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-xl font-semibold text-sm active:scale-95 transition-transform"
         >
-          <Plus className="w-6 h-6" />
+          <Plus className="w-4 h-4 inline-block -mt-0.5 mr-1" />
+          Start activity
         </button>
       )}
 

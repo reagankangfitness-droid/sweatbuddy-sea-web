@@ -23,6 +23,26 @@ const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 const DEFAULT_CENTER = { lat: 1.3521, lng: 103.8198 }
 const LIBRARIES: ('places')[] = ['places']
 
+const HOSTED_TO_WAVE: Record<string, WaveActivityType> = {
+  running: 'RUN', run: 'RUN',
+  yoga: 'YOGA',
+  gym: 'GYM', 'weight-training': 'GYM', strength: 'GYM',
+  cycling: 'CYCLE', 'road-cycling': 'CYCLE', cycle: 'CYCLE',
+  swim: 'SWIM', swimming: 'SWIM',
+  hike: 'HIKE', hiking: 'HIKE',
+  tennis: 'TENNIS',
+  pickleball: 'PICKLEBALL',
+  basketball: 'BASKETBALL',
+  badminton: 'BADMINTON',
+  football: 'FOOTBALL', soccer: 'FOOTBALL',
+  climb: 'CLIMB', climbing: 'CLIMB',
+  boxing: 'BOXING',
+  hyrox: 'HYROX', hiit: 'HYROX',
+  dance: 'DANCE',
+  pilates: 'PILATES',
+  walk: 'WALK', walking: 'WALK',
+}
+
 export function WaveMap() {
   const { resolvedTheme } = useTheme()
   const { user: clerkUser } = useUser()
@@ -123,27 +143,6 @@ export function WaveMap() {
     return waves.filter((w) => filters.has(w.activityType))
   }, [waves, filters])
 
-  // Map hosted activity categorySlug/type to wave filter types
-  const HOSTED_TO_WAVE: Record<string, WaveActivityType> = {
-    running: 'RUN', run: 'RUN',
-    yoga: 'YOGA',
-    gym: 'GYM', 'weight-training': 'GYM', strength: 'GYM',
-    cycling: 'CYCLE', 'road-cycling': 'CYCLE', cycle: 'CYCLE',
-    swim: 'SWIM', swimming: 'SWIM',
-    hike: 'HIKE', hiking: 'HIKE',
-    tennis: 'TENNIS',
-    pickleball: 'PICKLEBALL',
-    basketball: 'BASKETBALL',
-    badminton: 'BADMINTON',
-    football: 'FOOTBALL', soccer: 'FOOTBALL',
-    climb: 'CLIMB', climbing: 'CLIMB',
-    boxing: 'BOXING',
-    hyrox: 'HYROX', hiit: 'HYROX',
-    dance: 'DANCE',
-    pilates: 'PILATES',
-    walk: 'WALK', walking: 'WALK',
-  }
-
   // Filtered hosted activities
   const filteredHosted = useMemo(() => {
     if (filters.has('ALL')) return hostedActivities
@@ -226,6 +225,16 @@ export function WaveMap() {
 
   const onMapLoad = useCallback((m: google.maps.Map) => setMap(m), [])
 
+  // Prevent body scroll so map gets all touch events
+  useEffect(() => {
+    const prev = document.body.style.cssText
+    document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.width = '100%'
+    document.body.style.height = '100%'
+    return () => { document.body.style.cssText = prev }
+  }, [])
+
   if (!GOOGLE_MAPS_API_KEY) {
     return (
       <div className="h-[100dvh] flex items-center justify-center bg-neutral-50 dark:bg-neutral-950">
@@ -245,16 +254,6 @@ export function WaveMap() {
       </div>
     )
   }
-
-  // Prevent body scroll so map gets all touch events
-  useEffect(() => {
-    const prev = document.body.style.cssText
-    document.body.style.overflow = 'hidden'
-    document.body.style.position = 'fixed'
-    document.body.style.width = '100%'
-    document.body.style.height = '100%'
-    return () => { document.body.style.cssText = prev }
-  }, [])
 
   return (
     <div className="fixed inset-0 w-full h-full" style={{ touchAction: 'pan-x pan-y' }}>

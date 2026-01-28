@@ -16,7 +16,7 @@ const TIME_FILTERS: { key: TimeFilter; label: string; emoji: string }[] = [
 
 export function TimeFilterBar({ selected, onSelect }: TimeFilterBarProps) {
   return (
-    <div className="absolute top-14 left-0 right-0 z-10 px-3">
+    <div className="absolute top-[52px] left-0 right-0 z-10 px-3">
       <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
         {TIME_FILTERS.map((filter) => (
           <button

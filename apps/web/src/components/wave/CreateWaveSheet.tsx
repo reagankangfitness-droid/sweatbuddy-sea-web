@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ArrowLeft } from 'lucide-react'
+import { toast } from 'sonner'
 import { WAVE_ACTIVITIES, WAVE_ACTIVITY_TYPES } from '@/lib/wave/constants'
 import type { WaveActivityType } from '@prisma/client'
 
@@ -57,16 +58,31 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
     if (!selectedType || !area.trim()) return
     setCreating(true)
     try {
+      // For "now" and "later today", generate a fresh timestamp at submit time
+      // so it's never in the past by the time the request reaches the API
+      let finalScheduledFor: string | undefined
+      if (timePreset === 'now') {
+        finalScheduledFor = undefined // API defaults to now
+      } else if (timePreset === 'later') {
+        const later = new Date()
+        later.setHours(later.getHours() + 3)
+        finalScheduledFor = later.toISOString()
+      } else if (timePreset === 'pick' && scheduledFor) {
+        finalScheduledFor = scheduledFor
+      }
+
       await onCreateWave({
         activityType: selectedType,
         area: area.trim(),
         locationName: locationName.trim() || undefined,
         latitude: userPosition?.lat,
         longitude: userPosition?.lng,
-        scheduledFor: scheduledFor || undefined,
+        scheduledFor: finalScheduledFor,
       })
+      toast.success(`Wave started! ${WAVE_ACTIVITIES[selectedType].emoji} ${WAVE_ACTIVITIES[selectedType].label} in ${area.trim()}`)
       handleClose()
-    } catch {
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to create wave. Please try again.')
       setCreating(false)
     }
   }

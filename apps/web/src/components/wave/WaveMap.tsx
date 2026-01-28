@@ -140,7 +140,10 @@ export function WaveMap() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     })
-    if (!res.ok) throw new Error('Create failed')
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      throw new Error(err.error || 'Create failed')
+    }
     fetchWaves()
   }
 

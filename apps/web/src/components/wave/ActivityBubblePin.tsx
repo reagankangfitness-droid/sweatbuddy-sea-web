@@ -55,7 +55,7 @@ export const ActivityBubblePin = memo(function ActivityBubblePin({ activity, onC
   return (
     <OverlayView
       position={{ lat: activity.latitude, lng: activity.longitude }}
-      mapPaneName={OverlayView.OVERLAY_LAYER}
+      mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
       getPixelPositionOffset={getOffset}
     >
       <button

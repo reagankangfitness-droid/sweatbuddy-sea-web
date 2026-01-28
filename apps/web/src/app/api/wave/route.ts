@@ -13,21 +13,35 @@ export async function POST(request: NextRequest) {
 
     let dbUser = await prisma.user.findFirst({ where: { id: userId } })
     if (!dbUser) {
-      // Auto-create user from Clerk if not in DB (webhook may not have fired)
+      // Auto-create/link user from Clerk if not in DB by ID
       const clerkUser = await currentUser()
       if (!clerkUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
-      // Use upsert to handle race conditions / duplicate emails
-      dbUser = await prisma.user.upsert({
-        where: { id: clerkUser.id },
-        create: {
-          id: clerkUser.id,
-          email: clerkUser.emailAddresses[0]?.emailAddress || '',
-          name: [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(' ') || null,
-          imageUrl: clerkUser.imageUrl || null,
-        },
-        update: {},
-      })
+      const email = clerkUser.emailAddresses[0]?.emailAddress || ''
+      const name = [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(' ') || null
+
+      // Check if user exists by email (created via webhook with old ID format)
+      const existingByEmail = email ? await prisma.user.findUnique({ where: { email } }) : null
+
+      if (existingByEmail) {
+        // Update the existing record's ID to match the Clerk ID
+        // This handles the cuid → clerk ID migration
+        await prisma.$executeRawUnsafe(
+          `UPDATE users SET id = $1 WHERE id = $2`,
+          clerkUser.id,
+          existingByEmail.id
+        )
+        dbUser = { ...existingByEmail, id: clerkUser.id }
+      } else {
+        dbUser = await prisma.user.create({
+          data: {
+            id: clerkUser.id,
+            email,
+            name,
+            imageUrl: clerkUser.imageUrl || null,
+          },
+        })
+      }
     }
 
     let body

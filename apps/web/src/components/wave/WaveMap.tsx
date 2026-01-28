@@ -8,9 +8,8 @@ import { useUser } from '@clerk/nextjs'
 import { useTheme } from '@/contexts/ThemeContext'
 import { WAVE_ACTIVITIES, WAVE_POLL_INTERVAL } from '@/lib/wave/constants'
 import { LIGHT_MAP_STYLES, DARK_MAP_STYLES } from '@/lib/wave/map-styles'
-import { WaveFilterBar } from './WaveFilterBar'
-import { TimeFilterBar } from './TimeFilterBar'
-import type { TimeFilter } from './TimeFilterBar'
+import { UnifiedFilterBar } from './UnifiedFilterBar'
+import type { TimeFilter } from './UnifiedFilterBar'
 import { WaveBubblePin } from './WaveBubblePin'
 import type { WaveData } from './WaveBubblePin'
 import { ActivityBubblePin } from './ActivityBubblePin'
@@ -329,9 +328,13 @@ export function WaveMap() {
         ))}
       </GoogleMap>
 
-      {/* Filter bars */}
-      <WaveFilterBar selected={filters} onToggle={handleFilterToggle} />
-      <TimeFilterBar selected={timeFilter} onSelect={setTimeFilter} />
+      {/* Unified filter bar */}
+      <UnifiedFilterBar
+        activityFilter={filters}
+        timeFilter={timeFilter}
+        onActivityToggle={handleFilterToggle}
+        onTimeSelect={setTimeFilter}
+      />
 
       {/* Empty state */}
       {hasFetched && filteredWaves.length === 0 && filteredHosted.length === 0 && (

@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { WAVE_EXPIRY_MS, DEFAULT_RADIUS_KM, WAVE_ACTIVITY_TYPES } from '@/lib/wave/constants'
@@ -10,8 +10,20 @@ export async function POST(request: NextRequest) {
   const { userId } = await auth()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const dbUser = await prisma.user.findFirst({ where: { id: userId } })
-  if (!dbUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+  let dbUser = await prisma.user.findFirst({ where: { id: userId } })
+  if (!dbUser) {
+    // Auto-create user from Clerk if not in DB (webhook may not have fired)
+    const clerkUser = await currentUser()
+    if (!clerkUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    dbUser = await prisma.user.create({
+      data: {
+        id: clerkUser.id,
+        email: clerkUser.emailAddresses[0]?.emailAddress || '',
+        name: [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(' ') || null,
+        imageUrl: clerkUser.imageUrl || null,
+      },
+    })
+  }
 
   let body
   try { body = await request.json() } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }) }

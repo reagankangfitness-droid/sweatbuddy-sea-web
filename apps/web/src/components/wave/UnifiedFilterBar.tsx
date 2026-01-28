@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { WAVE_ACTIVITIES, WAVE_ACTIVITY_TYPES } from '@/lib/wave/constants'
 import type { WaveActivityType } from '@prisma/client'
@@ -30,28 +30,56 @@ export function UnifiedFilterBar({
 }: UnifiedFilterBarProps) {
   const [showTimeDropdown, setShowTimeDropdown] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
 
   // Close dropdown when clicking outside
+  const handleClickOutside = useCallback((event: MouseEvent | TouchEvent) => {
+    const target = event.target as Node
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(target) &&
+      buttonRef.current &&
+      !buttonRef.current.contains(target)
+    ) {
+      setShowTimeDropdown(false)
+    }
+  }, [])
+
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowTimeDropdown(false)
+    if (showTimeDropdown) {
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('touchstart', handleClickOutside)
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+        document.removeEventListener('touchstart', handleClickOutside)
       }
     }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+  }, [showTimeDropdown, handleClickOutside])
 
   const selectedTimeOption = TIME_OPTIONS.find(t => t.key === timeFilter) || TIME_OPTIONS[0]
 
+  const handleToggleDropdown = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setShowTimeDropdown(prev => !prev)
+  }
+
+  const handleSelectOption = (key: TimeFilter) => {
+    onTimeSelect(key)
+    setShowTimeDropdown(false)
+  }
+
   return (
-    <div className="absolute top-4 left-0 right-0 z-20 px-3 pointer-events-none">
-      <div className="flex gap-1.5 overflow-x-auto no-scrollbar items-center pointer-events-auto">
+    <div className="absolute top-4 left-0 right-0 z-20 px-3">
+      <div className="flex gap-1.5 overflow-x-auto no-scrollbar items-center">
         {/* When dropdown */}
-        <div className="relative shrink-0" ref={dropdownRef}>
+        <div className="relative shrink-0">
           <button
-            onClick={() => setShowTimeDropdown(!showTimeDropdown)}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+            ref={buttonRef}
+            type="button"
+            onMouseDown={handleToggleDropdown}
+            onTouchEnd={handleToggleDropdown}
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all select-none ${
               timeFilter !== 'ALL'
                 ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white border-pink-500 shadow-lg shadow-pink-500/25'
                 : 'bg-white/95 dark:bg-neutral-800/95 text-neutral-700 dark:text-neutral-200 border-neutral-300 dark:border-neutral-600'
@@ -63,13 +91,18 @@ export function UnifiedFilterBar({
 
           {/* Dropdown menu */}
           {showTimeDropdown && (
-            <div className="absolute top-full left-0 mt-1 w-40 bg-white dark:bg-neutral-800 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden z-50 pointer-events-auto">
+            <div
+              ref={dropdownRef}
+              className="absolute top-full left-0 mt-1 w-40 bg-white dark:bg-neutral-800 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden z-50"
+            >
               {TIME_OPTIONS.map((option) => (
                 <button
                   key={option.key}
-                  onClick={() => {
-                    onTimeSelect(option.key)
-                    setShowTimeDropdown(false)
+                  type="button"
+                  onMouseDown={(e) => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                    handleSelectOption(option.key)
                   }}
                   className={`w-full px-3 py-2.5 text-left text-sm transition-colors ${
                     timeFilter === option.key
@@ -89,6 +122,7 @@ export function UnifiedFilterBar({
 
         {/* Activity filters */}
         <button
+          type="button"
           onClick={() => onActivityToggle('ALL')}
           className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
             activityFilter.has('ALL')
@@ -101,6 +135,7 @@ export function UnifiedFilterBar({
         {WAVE_ACTIVITY_TYPES.map((type) => (
           <button
             key={type}
+            type="button"
             onClick={() => onActivityToggle(type)}
             className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
               activityFilter.has(type)

@@ -252,6 +252,20 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
                     {area && (
                       <p className="text-[10px] text-neutral-400 mt-0.5 truncate">{area}</p>
                     )}
+                    {!locationName && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {['East Coast Park', 'Botanic Gardens', 'Marina Bay', 'MacRitchie', 'Kallang', 'Sentosa'].map((loc) => (
+                          <button
+                            key={loc}
+                            type="button"
+                            onClick={() => { setLocationName(loc); setArea(loc) }}
+                            className="text-xs px-3 py-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                          >
+                            {loc}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Date and Time dropdowns */}

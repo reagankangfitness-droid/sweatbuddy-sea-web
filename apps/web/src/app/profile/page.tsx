@@ -9,9 +9,7 @@ import {
   Settings,
   LogOut,
   ChevronRight,
-  Flame,
-  Trophy,
-  Calendar,
+  Users,
   LayoutDashboard,
   HelpCircle,
   Ticket,
@@ -46,6 +44,8 @@ interface Stats {
   thisMonth: number
   totalAttended: number
   upcoming: number
+  wavesThisMonth: number
+  crewsJoined: number
   profile: ProfileData | null
 }
 
@@ -57,6 +57,8 @@ export default function ProfilePage() {
     thisMonth: 0,
     totalAttended: 0,
     upcoming: 0,
+    wavesThisMonth: 0,
+    crewsJoined: 0,
     profile: null,
   })
   const [isLoadingStats, setIsLoadingStats] = useState(true)
@@ -72,6 +74,8 @@ export default function ProfilePage() {
             thisMonth: data.thisMonth || 0,
             totalAttended: data.totalAttended || 0,
             upcoming: data.upcoming || 0,
+            wavesThisMonth: data.wavesThisMonth || 0,
+            crewsJoined: data.crewsJoined || 0,
             profile: data.profile || null,
           })
         })
@@ -254,33 +258,27 @@ export default function ProfilePage() {
         {/* Stats - 3 cards */}
         <div className="grid grid-cols-3 gap-3 mb-4">
           <div className="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-neutral-100 dark:border-neutral-800">
-            <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mb-2">
-              <Flame className="w-4 h-4 text-orange-500" />
-            </div>
+            <p className="text-lg mb-0.5">🙋</p>
             <p className="text-xl font-bold text-neutral-900 dark:text-white">
-              {isLoadingStats ? '-' : stats.thisMonth}
+              {isLoadingStats ? '-' : stats.wavesThisMonth}
             </p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">This month</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">Waves</p>
           </div>
 
           <div className="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-neutral-100 dark:border-neutral-800">
-            <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900/30 rounded-lg flex items-center justify-center mb-2">
-              <Trophy className="w-4 h-4 text-amber-500" />
-            </div>
+            <p className="text-lg mb-0.5"><Users className="w-4 h-4 text-neutral-500 inline" /></p>
+            <p className="text-xl font-bold text-neutral-900 dark:text-white">
+              {isLoadingStats ? '-' : stats.crewsJoined}
+            </p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">Crews</p>
+          </div>
+
+          <div className="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-neutral-100 dark:border-neutral-800">
+            <p className="text-lg mb-0.5">📅</p>
             <p className="text-xl font-bold text-neutral-900 dark:text-white">
               {isLoadingStats ? '-' : stats.totalAttended}
             </p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">Total</p>
-          </div>
-
-          <div className="bg-white dark:bg-neutral-900 p-3 rounded-xl border border-neutral-100 dark:border-neutral-800">
-            <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-2">
-              <Calendar className="w-4 h-4 text-blue-500" />
-            </div>
-            <p className="text-xl font-bold text-neutral-900 dark:text-white">
-              {isLoadingStats ? '-' : stats.upcoming}
-            </p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">Upcoming</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">Events</p>
           </div>
         </div>
 

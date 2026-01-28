@@ -21,6 +21,8 @@ export async function GET() {
         totalAttended: 0,
         thisMonth: 0,
         upcoming: 0,
+        wavesThisMonth: 0,
+        crewsJoined: 0,
         profile: null,
       })
     }
@@ -36,6 +38,18 @@ export async function GET() {
         username: true,
       },
     })
+
+    // Wave stats
+    const now = new Date()
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+
+    const wavesThisMonth = dbUser ? await prisma.waveParticipant.count({
+      where: { userId: dbUser.id, wavedAt: { gte: startOfMonth } },
+    }) : 0
+
+    const crewsJoined = dbUser ? await prisma.crewChatMember.count({
+      where: { userId: dbUser.id },
+    }) : 0
 
     // Get all attendance records for this user
     const attendances = await prisma.eventAttendance.findMany({
@@ -57,6 +71,8 @@ export async function GET() {
         totalAttended: 0,
         thisMonth: 0,
         upcoming: 0,
+        wavesThisMonth,
+        crewsJoined,
         profile: dbUser ? {
           slug: dbUser.slug,
           isHost: dbUser.isHost,
@@ -77,9 +93,6 @@ export async function GET() {
         day: true,
       },
     })
-
-    const now = new Date()
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
 
     let totalAttended = 0
     let thisMonth = 0
@@ -114,6 +127,8 @@ export async function GET() {
       totalAttended,
       thisMonth,
       upcoming,
+      wavesThisMonth,
+      crewsJoined,
       profile: dbUser ? {
         slug: dbUser.slug,
         isHost: dbUser.isHost,

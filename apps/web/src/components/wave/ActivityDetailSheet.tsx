@@ -93,13 +93,17 @@ export function ActivityDetailSheet({ activity, onClose }: ActivityDetailSheetPr
               <Image
                 src={activity.hostImageUrl}
                 alt={activity.hostName}
-                width={20}
-                height={20}
-                className="w-5 h-5 rounded-full"
+                width={24}
+                height={24}
+                className="w-6 h-6 rounded-full object-cover"
                 unoptimized
               />
             ) : (
-              <div className="w-5 h-5 rounded-full bg-neutral-200 dark:bg-neutral-700" />
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                <span className="text-[10px] font-bold text-white">
+                  {activity.hostName?.charAt(0).toUpperCase() || '?'}
+                </span>
+              </div>
             )}
             <span className="text-xs text-neutral-500">Hosted by {activity.hostName}</span>
           </div>

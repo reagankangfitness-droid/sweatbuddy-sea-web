@@ -4,6 +4,26 @@ import { prisma } from '@/lib/prisma'
 import { isAdminRequest } from '@/lib/admin-auth'
 import { sendEventApprovedEmail, sendEventRejectedEmail } from '@/lib/event-confirmation-email'
 
+// Geocode a location string to get coordinates
+async function geocodeLocation(location: string): Promise<{ lat: number; lng: number } | null> {
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+  if (!apiKey || !location) return null
+
+  try {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${apiKey}`
+    const response = await fetch(url)
+    const data = await response.json()
+
+    if (data.status === 'OK' && data.results?.[0]?.geometry?.location) {
+      return data.results[0].geometry.location
+    }
+    return null
+  } catch (error) {
+    console.error('Geocoding error:', error)
+    return null
+  }
+}
+
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -26,12 +46,28 @@ export async function PATCH(
       )
     }
 
+    // Get current submission to check if it needs geocoding
+    const currentSubmission = await prisma.eventSubmission.findUnique({
+      where: { id },
+      select: { location: true, latitude: true, longitude: true },
+    })
+
+    // Geocode if approving and coordinates are missing
+    let geocodeData: { latitude?: number; longitude?: number } = {}
+    if (action === 'approve' && currentSubmission && (!currentSubmission.latitude || !currentSubmission.longitude)) {
+      const coords = await geocodeLocation(currentSubmission.location)
+      if (coords) {
+        geocodeData = { latitude: coords.lat, longitude: coords.lng }
+      }
+    }
+
     const submission = await prisma.eventSubmission.update({
       where: { id },
       data: {
         status: action === 'approve' ? 'APPROVED' : 'REJECTED',
         reviewedAt: new Date(),
         rejectionReason: action === 'reject' ? rejectionReason : null,
+        ...geocodeData,
       },
     })
 

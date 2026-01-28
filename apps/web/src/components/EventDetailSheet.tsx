@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
-import { X, Instagram, MapPin, MessageCircle, Clock, Star, User, Share2, Calendar, ExternalLink } from 'lucide-react'
+import { X, Instagram, MapPin, MessageCircle, Clock, Star, Share2, Calendar, ExternalLink } from 'lucide-react'
 import { GoingButton } from './GoingButton'
 import { ShareButton } from './ShareButton'
 import { EventAttendees } from './EventAttendees'
@@ -312,8 +312,10 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-3 bg-neutral-50 dark:bg-neutral-800 rounded-xl mb-6 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors group"
                 >
-                  <div className="w-11 h-11 bg-neutral-200 dark:bg-neutral-700 rounded-full flex items-center justify-center">
-                    <User className="w-5 h-5 text-neutral-500 dark:text-neutral-400" />
+                  <div className="w-11 h-11 bg-gradient-to-br from-pink-500 to-rose-500 rounded-full flex items-center justify-center">
+                    <span className="text-lg font-bold text-white">
+                      {event.organizer?.charAt(0).toUpperCase() || '?'}
+                    </span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-neutral-500 dark:text-neutral-400">Hosted by</p>

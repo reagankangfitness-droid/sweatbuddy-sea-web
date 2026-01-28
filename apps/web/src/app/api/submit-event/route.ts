@@ -8,6 +8,26 @@ import {
   containsBlockedContent,
 } from '@/lib/content-moderation'
 
+// Geocode a location string to get coordinates
+async function geocodeLocation(location: string): Promise<{ lat: number; lng: number } | null> {
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+  if (!apiKey || !location) return null
+
+  try {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${apiKey}`
+    const response = await fetch(url)
+    const data = await response.json()
+
+    if (data.status === 'OK' && data.results?.[0]?.geometry?.location) {
+      return data.results[0].geometry.location
+    }
+    return null
+  } catch (error) {
+    console.error('Geocoding error:', error)
+    return null
+  }
+}
+
 // Generate URL-friendly slug from event name
 function generateSlug(name: string): string {
   return name
@@ -255,6 +275,18 @@ export async function POST(request: Request) {
       }
     }
 
+    // Geocode location if coordinates are missing
+    let latitude = data.latitude || null
+    let longitude = data.longitude || null
+
+    if (!latitude || !longitude) {
+      const coords = await geocodeLocation(data.location)
+      if (coords) {
+        latitude = coords.lat
+        longitude = coords.lng
+      }
+    }
+
     // Save to database with unique slug (handles race conditions)
     const submission = await createEventWithUniqueSlug(
       {
@@ -265,8 +297,8 @@ export async function POST(request: Request) {
         time: data.time,
         recurring: data.recurring ?? true,
         location: data.location,
-        latitude: data.latitude || null,
-        longitude: data.longitude || null,
+        latitude,
+        longitude,
         placeId: data.placeId || null,
         description: data.description || null,
         imageUrl: data.imageUrl || null,

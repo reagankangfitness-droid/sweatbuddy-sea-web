@@ -26,6 +26,7 @@ export interface MapEvent {
   name: string
   category: string
   imageUrl?: string | null
+  organizerImageUrl?: string | null
   latitude: number
   longitude: number
   day: string
@@ -54,8 +55,11 @@ interface ClusterMarkerProps {
 
 export function EventMapMarker({ event, onClick }: EventMapMarkerProps) {
   const [imgError, setImgError] = useState(false)
+  const [orgImgError, setOrgImgError] = useState(false)
   const emoji = categoryEmojis[event.category] || '✨'
-  const hasImage = event.imageUrl && !imgError
+  const hasOrgImage = event.organizerImageUrl && !orgImgError
+  const hasEventImage = event.imageUrl && !imgError
+  const initial = event.organizer?.charAt(0).toUpperCase() || '?'
 
   return (
     <OverlayView
@@ -70,9 +74,18 @@ export function EventMapMarker({ event, onClick }: EventMapMarkerProps) {
       >
         {/* Outer ring */}
         <div className="w-[44px] h-[44px] rounded-full bg-gradient-to-br from-pink-500 to-rose-500 p-[3px] shadow-lg transition-transform group-hover:scale-110 group-active:scale-95">
-          {/* Inner circle */}
+          {/* Inner circle - priority: organizer image > event image > initial */}
           <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-neutral-900 flex items-center justify-center">
-            {hasImage ? (
+            {hasOrgImage ? (
+              <Image
+                src={event.organizerImageUrl!}
+                alt={event.organizer}
+                width={38}
+                height={38}
+                className="w-full h-full object-cover rounded-full"
+                onError={() => setOrgImgError(true)}
+              />
+            ) : hasEventImage ? (
               <Image
                 src={event.imageUrl!}
                 alt={event.name}
@@ -81,6 +94,8 @@ export function EventMapMarker({ event, onClick }: EventMapMarkerProps) {
                 className="w-full h-full object-cover rounded-full"
                 onError={() => setImgError(true)}
               />
+            ) : event.organizer ? (
+              <span className="text-lg font-bold text-neutral-700 dark:text-neutral-200">{initial}</span>
             ) : (
               <span className="text-lg leading-none">{emoji}</span>
             )}

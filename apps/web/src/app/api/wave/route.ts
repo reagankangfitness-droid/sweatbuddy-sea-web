@@ -7,93 +7,103 @@ import { WaveActivityType } from '@prisma/client'
 const VALID_TYPES = new Set<string>(WAVE_ACTIVITY_TYPES)
 
 export async function POST(request: NextRequest) {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  let dbUser = await prisma.user.findFirst({ where: { id: userId } })
-  if (!dbUser) {
-    // Auto-create user from Clerk if not in DB (webhook may not have fired)
-    const clerkUser = await currentUser()
-    if (!clerkUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    dbUser = await prisma.user.create({
-      data: {
-        id: clerkUser.id,
-        email: clerkUser.emailAddresses[0]?.emailAddress || '',
-        name: [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(' ') || null,
-        imageUrl: clerkUser.imageUrl || null,
-      },
+    let dbUser = await prisma.user.findFirst({ where: { id: userId } })
+    if (!dbUser) {
+      // Auto-create user from Clerk if not in DB (webhook may not have fired)
+      const clerkUser = await currentUser()
+      if (!clerkUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+
+      // Use upsert to handle race conditions / duplicate emails
+      dbUser = await prisma.user.upsert({
+        where: { id: clerkUser.id },
+        create: {
+          id: clerkUser.id,
+          email: clerkUser.emailAddresses[0]?.emailAddress || '',
+          name: [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(' ') || null,
+          imageUrl: clerkUser.imageUrl || null,
+        },
+        update: {},
+      })
+    }
+
+    let body
+    try { body = await request.json() } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }) }
+    const { activityType, area, locationName, latitude, longitude, scheduledFor } = body as {
+      activityType: string
+      area: string
+      locationName?: string
+      latitude?: number
+      longitude?: number
+      scheduledFor?: string
+    }
+
+    if (!activityType || !area) {
+      return NextResponse.json({ error: 'activityType and area are required' }, { status: 400 })
+    }
+
+    if (!VALID_TYPES.has(activityType)) {
+      return NextResponse.json({ error: 'Invalid activityType' }, { status: 400 })
+    }
+
+    if (area.length > 200) {
+      return NextResponse.json({ error: 'Area too long' }, { status: 400 })
+    }
+
+    if (latitude != null && (latitude < -90 || latitude > 90)) {
+      return NextResponse.json({ error: 'Invalid latitude' }, { status: 400 })
+    }
+    if (longitude != null && (longitude < -180 || longitude > 180)) {
+      return NextResponse.json({ error: 'Invalid longitude' }, { status: 400 })
+    }
+
+    if (locationName && locationName.length > 300) {
+      return NextResponse.json({ error: 'Location name too long' }, { status: 400 })
+    }
+
+    if (scheduledFor) {
+      const d = new Date(scheduledFor)
+      if (isNaN(d.getTime())) return NextResponse.json({ error: 'Invalid scheduledFor date' }, { status: 400 })
+      if (d.getTime() < Date.now()) return NextResponse.json({ error: 'scheduledFor must be in the future' }, { status: 400 })
+    }
+
+    const now = new Date()
+    const expiresAt = new Date(now.getTime() + WAVE_EXPIRY_MS)
+
+    const wave = await prisma.$transaction(async (tx) => {
+      const w = await tx.waveActivity.create({
+        data: {
+          creatorId: dbUser.id,
+          activityType: activityType as WaveActivityType,
+          area,
+          locationName: locationName || null,
+          latitude: latitude ?? null,
+          longitude: longitude ?? null,
+          scheduledFor: scheduledFor ? new Date(scheduledFor) : null,
+          expiresAt,
+        },
+      })
+
+      // Creator is the first participant
+      await tx.waveParticipant.create({
+        data: {
+          waveActivityId: w.id,
+          userId: dbUser.id,
+        },
+      })
+
+      return w
     })
+
+    return NextResponse.json({ wave, participantCount: 1 }, { status: 201 })
+  } catch (error) {
+    console.error('Wave POST error:', error)
+    const message = error instanceof Error ? error.message : 'Internal server error'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
-
-  let body
-  try { body = await request.json() } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }) }
-  const { activityType, area, locationName, latitude, longitude, scheduledFor } = body as {
-    activityType: string
-    area: string
-    locationName?: string
-    latitude?: number
-    longitude?: number
-    scheduledFor?: string
-  }
-
-  if (!activityType || !area) {
-    return NextResponse.json({ error: 'activityType and area are required' }, { status: 400 })
-  }
-
-  if (!VALID_TYPES.has(activityType)) {
-    return NextResponse.json({ error: 'Invalid activityType' }, { status: 400 })
-  }
-
-  if (area.length > 200) {
-    return NextResponse.json({ error: 'Area too long' }, { status: 400 })
-  }
-
-  if (latitude != null && (latitude < -90 || latitude > 90)) {
-    return NextResponse.json({ error: 'Invalid latitude' }, { status: 400 })
-  }
-  if (longitude != null && (longitude < -180 || longitude > 180)) {
-    return NextResponse.json({ error: 'Invalid longitude' }, { status: 400 })
-  }
-
-  if (locationName && locationName.length > 300) {
-    return NextResponse.json({ error: 'Location name too long' }, { status: 400 })
-  }
-
-  if (scheduledFor) {
-    const d = new Date(scheduledFor)
-    if (isNaN(d.getTime())) return NextResponse.json({ error: 'Invalid scheduledFor date' }, { status: 400 })
-    if (d.getTime() < Date.now()) return NextResponse.json({ error: 'scheduledFor must be in the future' }, { status: 400 })
-  }
-
-  const now = new Date()
-  const expiresAt = new Date(now.getTime() + WAVE_EXPIRY_MS)
-
-  const wave = await prisma.$transaction(async (tx) => {
-    const w = await tx.waveActivity.create({
-      data: {
-        creatorId: dbUser.id,
-        activityType: activityType as WaveActivityType,
-        area,
-        locationName: locationName || null,
-        latitude: latitude ?? null,
-        longitude: longitude ?? null,
-        scheduledFor: scheduledFor ? new Date(scheduledFor) : null,
-        expiresAt,
-      },
-    })
-
-    // Creator is the first participant
-    await tx.waveParticipant.create({
-      data: {
-        waveActivityId: w.id,
-        userId: dbUser.id,
-      },
-    })
-
-    return w
-  })
-
-  return NextResponse.json({ wave, participantCount: 1 }, { status: 201 })
 }
 
 export async function GET(request: NextRequest) {

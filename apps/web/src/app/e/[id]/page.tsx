@@ -1,10 +1,9 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import Image from 'next/image'
 import { getEventById, getEventGoingCount } from '@/lib/events'
-import { Logo } from '@/components/logo'
-import { EventPageClient } from './EventPageClient'
+import { Header } from '@/components/header'
+import { UnifiedEventClient } from './UnifiedEventClient'
 import { EventAttendees } from '@/components/EventAttendees'
 
 // Use ISR - revalidate every 30 seconds for fresh data with caching
@@ -16,7 +15,7 @@ interface Props {
 
 const BASE_URL = 'https://www.sweatbuddies.co'
 
-// Category emojis for OG images
+// Category emojis
 const categoryEmojis: Record<string, string> = {
   'Run Club': '🏃',
   'Running': '🏃',
@@ -31,12 +30,23 @@ const categoryEmojis: Record<string, string> = {
   'Hiking': '🥾',
   'Meditation': '🧘',
   'Breathwork': '🌬️',
+  'Pickleball': '🏓',
+  'Tennis': '🎾',
+  'Basketball': '🏀',
+  'Football': '⚽',
+  'Swim': '🏊',
+  'Cycle': '🚴',
+  'Climb': '🧗',
+  'Boxing': '🥊',
+  'Pilates': '🤸',
+  'Walk': '🚶',
+  'Ice Bath': '🧊',
+  'Sauna': '🧖',
 }
 
-// Format date for display (e.g., "Sat, Dec 14")
+// Format date for display
 function formatEventDate(dateStr: string | null | undefined, dayName: string): string {
   if (!dateStr) {
-    // For recurring events, show the next occurrence day
     const dayMap: Record<string, number> = {
       'Sundays': 0, 'Mondays': 1, 'Tuesdays': 2, 'Wednesdays': 3,
       'Thursdays': 4, 'Fridays': 5, 'Saturdays': 6
@@ -59,7 +69,6 @@ function formatEventDate(dateStr: string | null | undefined, dayName: string): s
   try {
     const date = new Date(dateStr)
     if (isNaN(date.getTime())) return dayName
-
     return date.toLocaleDateString('en-US', {
       weekday: 'short',
       month: 'short',
@@ -70,16 +79,12 @@ function formatEventDate(dateStr: string | null | undefined, dayName: string): s
   }
 }
 
-// Format date for OG description (e.g., "Fri 20 Dec, 10AM")
+// Format date for OG description
 function formatOGDate(dateStr: string | null | undefined, dayName: string, time: string): string {
-  if (!dateStr) {
-    return `${dayName}, ${time}`
-  }
-
+  if (!dateStr) return `${dayName}, ${time}`
   try {
     const date = new Date(dateStr)
     if (isNaN(date.getTime())) return `${dayName}, ${time}`
-
     const formatted = date.toLocaleDateString('en-US', {
       weekday: 'short',
       day: 'numeric',
@@ -91,49 +96,32 @@ function formatOGDate(dateStr: string | null | undefined, dayName: string, time:
   }
 }
 
-// Truncate text to a specific length with ellipsis
 function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text
   return text.slice(0, maxLength - 3).trim() + '...'
 }
 
-// Generate dynamic metadata for social sharing
+// Generate metadata for social sharing
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   const event = await getEventById(id)
 
-  // Fallback metadata if event not found
   if (!event) {
     return {
       title: 'Event Not Found | SweatBuddies',
       description: 'This event could not be found on SweatBuddies.',
-      openGraph: {
-        title: 'Event Not Found | SweatBuddies',
-        description: 'This event could not be found on SweatBuddies.',
-        url: `${BASE_URL}/e/${id}`,
-        siteName: 'SweatBuddies',
-        type: 'website',
-      },
     }
   }
 
-  // Format: "Event Name — Host Name"
   const hostName = event.organizer ? `@${event.organizer}` : 'SweatBuddies'
   const ogTitle = `${event.name} — ${hostName}`
   const pageTitle = `${event.name} | SweatBuddies`
-
-  // Format date/time for description
   const formattedDateTime = formatOGDate(event.eventDate, event.day, event.time)
-
-  // Build description: truncated event description + date/time @ location
-  const locationShort = event.location.length > 50
-    ? event.location.split(',')[0]
-    : event.location
+  const locationShort = event.location.length > 50 ? event.location.split(',')[0] : event.location
   const suffix = ` ${formattedDateTime} @ ${locationShort}`
 
   let ogDescription: string
   if (event.description) {
-    // Truncate description to leave room for date/time/location
     const maxDescLength = 150 - suffix.length
     const truncatedDesc = truncateText(event.description, Math.max(50, maxDescLength))
     ogDescription = `${truncatedDesc}${suffix}`
@@ -142,24 +130,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ogDescription = `${emoji} ${event.category} event.${suffix}`
   }
 
-  // Use event image directly if available, otherwise generate dynamic OG image
-  let ogImageUrl: string
-  if (event.imageUrl) {
-    // Use the actual event image for better social previews
-    ogImageUrl = event.imageUrl
-  } else {
-    // Generate dynamic OG image
-    const dynamicOgUrl = new URL('/api/og', BASE_URL)
-    dynamicOgUrl.searchParams.set('title', event.name)
-    dynamicOgUrl.searchParams.set('category', event.category)
-    dynamicOgUrl.searchParams.set('day', event.day)
-    dynamicOgUrl.searchParams.set('time', event.time)
-    dynamicOgUrl.searchParams.set('location', event.location)
-    dynamicOgUrl.searchParams.set('organizer', event.organizer || '')
-    ogImageUrl = dynamicOgUrl.toString()
-  }
-
-  // Use slug for canonical URL if available, otherwise use ID
+  const ogImageUrl = event.imageUrl || `${BASE_URL}/api/og?title=${encodeURIComponent(event.name)}&category=${encodeURIComponent(event.category)}`
   const canonicalPath = event.slug || id
 
   return {
@@ -171,15 +142,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `${BASE_URL}/e/${canonicalPath}`,
       siteName: 'SweatBuddies',
       type: 'website',
-      locale: 'en_SG',
-      images: [
-        {
-          url: ogImageUrl,
-          width: 1200,
-          height: 630,
-          alt: `${event.name} - ${event.category} event on SweatBuddies`,
-        },
-      ],
+      images: [{ url: ogImageUrl, width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -187,18 +150,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: ogDescription,
       images: [ogImageUrl],
     },
-    other: {
-      'og:image:width': '1200',
-      'og:image:height': '630',
-    },
   }
 }
 
-// Dedicated Event Detail Page
+// Unified Event Detail Page
 export default async function EventDetailPage({ params }: Props) {
   const { id } = await params
 
-  // Fetch event and going count in parallel with caching
   const [event, goingCount] = await Promise.all([
     getEventById(id),
     getEventGoingCount(id)
@@ -211,29 +169,33 @@ export default async function EventDetailPage({ params }: Props) {
   const emoji = categoryEmojis[event.category] || '✨'
   const formattedDate = formatEventDate(event.eventDate, event.day)
 
-  return (
-    <div className="min-h-screen bg-neutral-50">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-b border-neutral-200">
-        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <Logo size={24} />
-            <span className="font-semibold text-lg text-neutral-900">SweatBuddies</span>
-          </Link>
-          <Link
-            href="/#events"
-            className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
-          >
-            Browse Events
-          </Link>
-        </div>
-      </header>
+  // Check if happening today
+  const isToday = (() => {
+    if (!event.eventDate) return false
+    const eventDate = new Date(event.eventDate)
+    const today = new Date()
+    return eventDate.toDateString() === today.toDateString()
+  })()
 
-      <main className="pt-24 pb-16 px-4">
-        <div className="max-w-4xl mx-auto">
+  // Check if this weekend
+  const isThisWeekend = (() => {
+    if (!event.eventDate) return false
+    const eventDate = new Date(event.eventDate)
+    const dayOfWeek = eventDate.getDay()
+    const today = new Date()
+    const daysUntil = Math.ceil((eventDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+    return (dayOfWeek === 0 || dayOfWeek === 6) && daysUntil <= 7
+  })()
+
+  return (
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+      <Header />
+
+      <main className="pt-20 pb-32 md:pb-8">
+        <div className="max-w-4xl mx-auto px-4">
           {/* Event Image */}
-          {event.imageUrl ? (
-            <div className="relative aspect-[2/1] md:aspect-[3/1] rounded-2xl overflow-hidden mb-8">
+          <div className="relative aspect-[2/1] md:aspect-[2.5/1] rounded-2xl overflow-hidden mb-6">
+            {event.imageUrl ? (
               <Image
                 src={event.imageUrl}
                 alt={event.name}
@@ -241,97 +203,114 @@ export default async function EventDetailPage({ params }: Props) {
                 className="object-cover"
                 priority
               />
-              {/* Category badge on image */}
-              <span className="absolute top-4 left-4 px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-lg text-sm font-medium text-neutral-700">
-                {emoji} {event.category}
-              </span>
-              {/* Recurring badge */}
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-pink-500/20 to-rose-500/20 dark:from-pink-500/10 dark:to-rose-500/10 flex items-center justify-center">
+                <span className="text-7xl md:text-8xl">{emoji}</span>
+              </div>
+            )}
+
+            {/* Badges on image */}
+            <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+              {isToday && (
+                <span className="px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-bold">
+                  TODAY
+                </span>
+              )}
+              {isThisWeekend && !isToday && (
+                <span className="px-3 py-1.5 bg-orange-500 text-white rounded-lg text-xs font-bold">
+                  THIS WEEKEND
+                </span>
+              )}
               {event.recurring && (
-                <span className="absolute top-4 right-4 px-3 py-1.5 bg-neutral-900 text-white rounded-lg text-sm font-medium">
+                <span className="px-3 py-1.5 bg-blue-500 text-white rounded-lg text-xs font-medium">
                   Weekly
                 </span>
               )}
-              {/* FULL badge */}
-              {event.isFull && (
-                <span className="absolute bottom-4 left-4 px-3 py-1.5 bg-red-500 text-white rounded-lg text-sm font-bold">
-                  FULL
-                </span>
-              )}
+              <span className="px-3 py-1.5 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm rounded-lg text-xs font-medium text-neutral-700 dark:text-neutral-200">
+                {emoji} {event.category}
+              </span>
             </div>
-          ) : (
-            <div className="aspect-[2/1] md:aspect-[3/1] rounded-2xl bg-gradient-to-br from-neutral-100 to-neutral-200 mb-8 flex items-center justify-center">
-              <span className="text-8xl">{emoji}</span>
-            </div>
-          )}
 
-          <div className="grid md:grid-cols-3 gap-8">
+            {event.isFull && (
+              <span className="absolute bottom-4 left-4 px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-bold">
+                FULL
+              </span>
+            )}
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
             {/* Main Content */}
-            <div className="md:col-span-2 space-y-8">
-              {/* Title and basic info */}
+            <div className="md:col-span-2 space-y-6">
+              {/* Title */}
               <div>
-                {!event.imageUrl && (
-                  <span className="inline-flex px-3 py-1 bg-neutral-100 rounded-lg text-sm font-medium text-neutral-700 mb-3">
-                    {emoji} {event.category}
-                  </span>
-                )}
-                <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
+                <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white mb-3">
                   {event.name}
                 </h1>
-                <div className="flex flex-wrap items-center gap-4 text-neutral-600">
-                  <span className="flex items-center gap-2">
-                    <span className="text-lg">📅</span>
+                <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-600 dark:text-neutral-400">
+                  <span className="flex items-center gap-1.5">
+                    <span>📅</span>
                     <span>{formattedDate}</span>
                   </span>
-                  <span className="flex items-center gap-2">
-                    <span className="text-lg">🕐</span>
+                  <span className="flex items-center gap-1.5">
+                    <span>🕐</span>
                     <span>{event.time}</span>
                   </span>
                   {event.recurring && (
-                    <span className="flex items-center gap-2 text-neutral-900 font-medium">
-                      <span className="text-lg">🔄</span>
+                    <span className="flex items-center gap-1.5 font-medium text-neutral-900 dark:text-white">
+                      <span>🔄</span>
                       <span>Every {event.day}</span>
                     </span>
                   )}
                 </div>
               </div>
 
-              {/* Description */}
-              <div>
-                <h2 className="text-lg font-semibold text-neutral-900 mb-3 flex items-center gap-2">
-                  <span>📝</span> About
+              {/* About */}
+              <div className="bg-white dark:bg-neutral-900 rounded-xl p-5 border border-neutral-200 dark:border-neutral-800">
+                <h2 className="text-base font-semibold text-neutral-900 dark:text-white mb-2">
+                  About
                 </h2>
-                <p className="text-neutral-600 leading-relaxed whitespace-pre-wrap">
+                <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed whitespace-pre-wrap">
                   {event.description || 'Join us for an amazing fitness session! All levels welcome.'}
                 </p>
               </div>
 
               {/* Location */}
-              <div>
-                <h2 className="text-lg font-semibold text-neutral-900 mb-3 flex items-center gap-2">
-                  <span>📍</span> Location
+              <div className="bg-white dark:bg-neutral-900 rounded-xl p-5 border border-neutral-200 dark:border-neutral-800">
+                <h2 className="text-base font-semibold text-neutral-900 dark:text-white mb-2">
+                  Location
                 </h2>
-                <p className="text-neutral-600">{event.location}</p>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+                  {event.location}
+                </p>
+                {/* Get Directions Button */}
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  Get Directions
+                </a>
               </div>
 
-              {/* Organizer */}
-              <div>
-                <h2 className="text-lg font-semibold text-neutral-900 mb-3 flex items-center gap-2">
-                  <span>👤</span> Organizer
+              {/* Organizer - No external links */}
+              <div className="bg-white dark:bg-neutral-900 rounded-xl p-5 border border-neutral-200 dark:border-neutral-800">
+                <h2 className="text-base font-semibold text-neutral-900 dark:text-white mb-3">
+                  Hosted by
                 </h2>
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full bg-neutral-900 flex items-center justify-center text-white font-semibold text-xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white font-bold text-lg">
                     {event.organizer?.charAt(0).toUpperCase() || '?'}
                   </div>
                   <div>
-                    <p className="font-semibold text-neutral-900">@{event.organizer}</p>
-                    <a
-                      href={`https://instagram.com/${event.organizer}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-blue-600 hover:text-blue-700"
-                    >
-                      View on Instagram →
-                    </a>
+                    <p className="font-semibold text-neutral-900 dark:text-white">
+                      {event.organizer || 'Anonymous Host'}
+                    </p>
+                    <p className="text-xs text-neutral-500">Event Organizer</p>
                   </div>
                 </div>
               </div>
@@ -340,18 +319,16 @@ export default async function EventDetailPage({ params }: Props) {
               <EventAttendees eventId={event.id} />
             </div>
 
-            {/* Sidebar - Actions */}
+            {/* Sidebar - Sticky CTA */}
             <div className="md:col-span-1">
-              <div className="sticky top-24 bg-white rounded-2xl border border-neutral-200 p-6 space-y-4">
+              <div className="sticky top-24 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-5 space-y-4">
                 {/* Going count */}
-                <div className="text-center pb-4 border-b border-neutral-100">
+                <div className="text-center pb-4 border-b border-neutral-100 dark:border-neutral-800">
                   {goingCount === 0 ? (
-                    <>
-                      <p className="text-lg font-medium text-neutral-500">Spots available</p>
-                    </>
+                    <p className="text-base font-medium text-neutral-500">Be the first to join!</p>
                   ) : (
                     <>
-                      <p className="text-3xl font-bold text-neutral-900">{goingCount}</p>
+                      <p className="text-3xl font-bold text-neutral-900 dark:text-white">{goingCount}</p>
                       <p className="text-sm text-neutral-500">
                         {goingCount === 1 ? 'person going' : 'people going'}
                       </p>
@@ -359,21 +336,18 @@ export default async function EventDetailPage({ params }: Props) {
                   )}
                 </div>
 
-                {/* Price display for paid events */}
-                {!event.isFree && event.price && event.paynowEnabled && (
-                  <div className="text-center pb-4 border-b border-neutral-100">
-                    <p className="text-sm text-neutral-500 mb-1">Price</p>
-                    <p className="text-2xl font-bold text-neutral-900">
-                      ${(event.price / 100).toFixed(2)} <span className="text-sm font-normal text-neutral-500">SGD</span>
-                    </p>
-                    <p className="text-xs text-green-600 mt-1">
-                      PayNow - No fees
+                {/* Price display */}
+                {!event.isFree && event.price && (
+                  <div className="text-center pb-4 border-b border-neutral-100 dark:border-neutral-800">
+                    <p className="text-2xl font-bold text-neutral-900 dark:text-white">
+                      ${(event.price / 100).toFixed(2)}
+                      <span className="text-sm font-normal text-neutral-500 ml-1">SGD</span>
                     </p>
                   </div>
                 )}
 
-                {/* Client-side interactive buttons */}
-                <EventPageClient
+                {/* Client-side actions - simplified */}
+                <UnifiedEventClient
                   event={{
                     id: event.id,
                     slug: event.slug,
@@ -383,9 +357,7 @@ export default async function EventDetailPage({ params }: Props) {
                     location: event.location,
                     organizer: event.organizer,
                     isFull: event.isFull,
-                    communityLink: event.communityLink,
                     eventDate: event.eventDate,
-                    // Pricing fields
                     isFree: event.isFree,
                     price: event.price,
                     paynowEnabled: event.paynowEnabled,
@@ -400,36 +372,29 @@ export default async function EventDetailPage({ params }: Props) {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-neutral-200 py-8">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <p className="text-sm text-neutral-500 mb-4">
-            Discover community fitness events near you
-          </p>
-          <div className="flex items-center justify-center gap-6 text-sm">
-            <Link href="/" className="text-neutral-600 hover:text-neutral-900">
-              Home
-            </Link>
-            <Link href="/#events" className="text-neutral-600 hover:text-neutral-900">
-              Events
-            </Link>
-            <Link href="/organizer" className="text-neutral-600 hover:text-neutral-900">
-              Host Login
-            </Link>
-            <a
-              href="https://instagram.com/_sweatbuddies"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neutral-600 hover:text-neutral-900"
-            >
-              Instagram
-            </a>
-          </div>
-          <p className="text-xs text-neutral-400 mt-6">
-            © {new Date().getFullYear()} SweatBuddies. Made with 💪 for the community.
-          </p>
-        </div>
-      </footer>
+      {/* Mobile Fixed Bottom Bar */}
+      <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800 p-4 safe-area-inset-bottom z-50">
+        <UnifiedEventClient
+          event={{
+            id: event.id,
+            slug: event.slug,
+            name: event.name,
+            day: event.day,
+            time: event.time,
+            location: event.location,
+            organizer: event.organizer,
+            isFull: event.isFull,
+            eventDate: event.eventDate,
+            isFree: event.isFree,
+            price: event.price,
+            paynowEnabled: event.paynowEnabled,
+            paynowQrCode: event.paynowQrCode,
+            paynowNumber: event.paynowNumber,
+          }}
+          initialGoingCount={goingCount}
+          variant="mobile"
+        />
+      </div>
     </div>
   )
 }

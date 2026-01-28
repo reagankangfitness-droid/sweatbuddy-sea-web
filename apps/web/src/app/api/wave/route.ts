@@ -151,8 +151,14 @@ export async function GET(request: NextRequest) {
     where.activityType = type
   }
 
-  // --- Fetch hosted activities (published, with coordinates, upcoming or recently ended) ---
-  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+  // --- Engagement-optimized filtering ---
+  // Show events from TODAY through next 14 days (urgency + discovery balance)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const twoWeeksFromNow = new Date(today)
+  twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14)
+
+  // --- Fetch hosted activities (published, with coordinates, upcoming) ---
   const hostedActivities = await prisma.activity.findMany({
     where: {
       status: 'PUBLISHED',
@@ -160,27 +166,29 @@ export async function GET(request: NextRequest) {
       latitude: { not: 0 },
       longitude: { not: 0 },
       OR: [
-        { startTime: null },
-        { startTime: { gte: oneDayAgo } },
+        { startTime: null }, // No date set - show it
+        { startTime: { gte: today, lte: twoWeeksFromNow } }, // Within 2 weeks
       ],
     },
     include: {
       user: { select: { id: true, name: true, imageUrl: true } },
       _count: { select: { userActivities: true } },
     },
-    orderBy: { createdAt: 'desc' },
-    take: 50,
+    orderBy: { startTime: 'asc' }, // Soonest first
+    take: 100,
   })
 
-  // --- Fetch approved EventSubmissions (events from host submissions) ---
+  // --- Fetch upcoming EventSubmissions (engagement-optimized) ---
+  // Show: recurring events (always) + one-time events within next 14 days
   const eventSubmissions = await prisma.eventSubmission.findMany({
     where: {
       status: 'APPROVED',
       latitude: { not: null },
       longitude: { not: null },
       OR: [
-        { eventDate: { gte: oneDayAgo } },
-        { recurring: true },
+        { recurring: true }, // Recurring = always show (happens weekly)
+        { eventDate: { gte: today, lte: twoWeeksFromNow } }, // One-time within 2 weeks
+        { eventDate: null }, // No date = show it
       ],
     },
     select: {
@@ -192,6 +200,7 @@ export async function GET(request: NextRequest) {
       latitude: true,
       longitude: true,
       eventDate: true,
+      day: true,
       time: true,
       imageUrl: true,
       isFree: true,
@@ -199,39 +208,101 @@ export async function GET(request: NextRequest) {
       organizerName: true,
       organizerInstagram: true,
       recurring: true,
+      maxTickets: true,
+      ticketsSold: true,
+      isFull: true,
     },
-    orderBy: { createdAt: 'desc' },
-    take: 50,
+    orderBy: { eventDate: 'asc' }, // Soonest first
+    take: 100,
   })
 
-  // Convert EventSubmissions to the same format as hosted activities
-  const eventSubmissionData = eventSubmissions.map((e) => ({
-    id: `event_${e.id}`,
-    title: e.eventName,
-    description: e.description,
-    categorySlug: e.category.toLowerCase().replace(/[^a-z]/g, '-'),
-    type: e.category,
-    city: '',
-    latitude: e.latitude!,
-    longitude: e.longitude!,
-    address: e.location,
-    startTime: e.eventDate,
-    endTime: null,
-    maxPeople: null,
-    imageUrl: e.imageUrl,
-    price: e.isFree ? 0 : (e.price || 0) / 100,
-    currency: 'SGD',
-    participantCount: 0,
-    hostName: e.organizerName,
-    hostImageUrl: null,
-    hostId: `organizer_${e.organizerInstagram}`,
-    isEventSubmission: true,
-    recurring: e.recurring,
-    eventTime: e.time,
-  }))
+  // Get attendance counts for social proof
+  const eventIds = eventSubmissions.map((e) => e.id)
+  const attendanceCounts = eventIds.length > 0
+    ? await prisma.eventAttendance.groupBy({
+        by: ['eventId'],
+        where: { eventId: { in: eventIds } },
+        _count: { id: true },
+      })
+    : []
+  const attendanceMap = new Map(attendanceCounts.map((a) => [a.eventId, a._count.id]))
 
-  const hostedData = [
-    ...hostedActivities.map((a) => ({
+  // Helper to check if date is today
+  const isToday = (date: Date | null) => {
+    if (!date) return false
+    const d = new Date(date)
+    return d.toDateString() === today.toDateString()
+  }
+
+  // Helper to check if date is this weekend (Sat or Sun)
+  const isThisWeekend = (date: Date | null) => {
+    if (!date) return false
+    const d = new Date(date)
+    const dayOfWeek = d.getDay()
+    const daysUntil = Math.ceil((d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+    return (dayOfWeek === 0 || dayOfWeek === 6) && daysUntil <= 7
+  }
+
+  // Helper to get next occurrence for recurring events
+  const getNextOccurrence = (day: string) => {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    const targetDay = days.findIndex(d => d.toLowerCase().startsWith(day.toLowerCase().slice(0, 3)))
+    if (targetDay === -1) return null
+    const todayDay = today.getDay()
+    let daysUntil = targetDay - todayDay
+    if (daysUntil < 0) daysUntil += 7
+    if (daysUntil === 0) return today // It's today!
+    const nextDate = new Date(today)
+    nextDate.setDate(today.getDate() + daysUntil)
+    return nextDate
+  }
+
+  // Convert EventSubmissions with engagement signals
+  const eventSubmissionData = eventSubmissions.map((e) => {
+    const goingCount = attendanceMap.get(e.id) || 0
+    const totalGoing = goingCount + (e.ticketsSold || 0) // Include both attendance RSVPs and ticket sales
+    const spotsLeft = e.maxTickets ? Math.max(0, e.maxTickets - totalGoing) : null
+
+    // For recurring events, calculate next occurrence
+    const effectiveDate = e.recurring && !e.eventDate
+      ? getNextOccurrence(e.day)
+      : e.eventDate
+
+    return {
+      id: `event_${e.id}`,
+      title: e.eventName,
+      description: e.description,
+      categorySlug: e.category.toLowerCase().replace(/[^a-z]/g, '-'),
+      type: e.category,
+      city: '',
+      latitude: e.latitude!,
+      longitude: e.longitude!,
+      address: e.location,
+      startTime: e.eventDate,
+      endTime: null,
+      maxPeople: e.maxTickets,
+      imageUrl: e.imageUrl,
+      price: e.isFree ? 0 : (e.price || 0) / 100,
+      currency: 'SGD',
+      participantCount: goingCount,
+      hostName: e.organizerName,
+      hostImageUrl: null,
+      hostId: `organizer_${e.organizerInstagram}`,
+      isEventSubmission: true,
+      recurring: e.recurring,
+      eventTime: e.time,
+      // Engagement signals
+      isHappeningToday: isToday(effectiveDate),
+      isThisWeekend: isThisWeekend(effectiveDate),
+      spotsLeft,
+      isFull: e.isFull || (spotsLeft !== null && spotsLeft <= 0),
+    }
+  })
+
+  // Map Activities with engagement signals
+  const activityData = hostedActivities.map((a) => {
+    const spotsLeft = a.maxPeople ? Math.max(0, a.maxPeople - a._count.userActivities) : null
+    return {
       id: a.id,
       title: a.title,
       description: a.description,
@@ -251,9 +322,32 @@ export async function GET(request: NextRequest) {
       hostName: a.user.name,
       hostImageUrl: a.user.imageUrl,
       hostId: a.user.id,
-    })),
-    ...eventSubmissionData,
-  ]
+      // Engagement signals
+      isHappeningToday: isToday(a.startTime),
+      isThisWeekend: isThisWeekend(a.startTime),
+      spotsLeft,
+      isFull: spotsLeft !== null && spotsLeft <= 0,
+    }
+  })
+
+  // Combine and sort: Today first, then weekend, then by date, then by popularity
+  const hostedData = [...activityData, ...eventSubmissionData].sort((a, b) => {
+    // Today's events get top priority
+    if (a.isHappeningToday && !b.isHappeningToday) return -1
+    if (!a.isHappeningToday && b.isHappeningToday) return 1
+
+    // Weekend events get second priority
+    if (a.isThisWeekend && !b.isThisWeekend) return -1
+    if (!a.isThisWeekend && b.isThisWeekend) return 1
+
+    // Then by start date (soonest first)
+    const aDate = a.startTime ? new Date(a.startTime).getTime() : Infinity
+    const bDate = b.startTime ? new Date(b.startTime).getTime() : Infinity
+    if (aDate !== bDate) return aDate - bDate
+
+    // Finally by popularity (most attendees first)
+    return (b.participantCount || 0) - (a.participantCount || 0)
+  })
 
   // If lat/lng provided, use Haversine raw query
   if (!isNaN(lat) && !isNaN(lng)) {

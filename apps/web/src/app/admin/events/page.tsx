@@ -5,7 +5,7 @@ import { useAuth } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import Image from 'next/image'
 import { format } from 'date-fns'
-import { Pencil, Trash2, X, Save, Calendar, Clock, MapPin, Instagram, ImageIcon, Check, Mail, User, Loader2, Upload, DollarSign, CreditCard, Link2, Users } from 'lucide-react'
+import { Pencil, Trash2, X, Save, Calendar, Clock, MapPin, Instagram, ImageIcon, Check, Mail, User, Loader2, Upload, DollarSign, CreditCard, Link2, Users, Navigation } from 'lucide-react'
 import { UploadButton } from '@/lib/uploadthing'
 
 interface Event {
@@ -70,6 +70,8 @@ export default function AdminEventsPage() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null)
   const [processingId, setProcessingId] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [isGeocoding, setIsGeocoding] = useState(false)
+  const [missingCoordsCount, setMissingCoordsCount] = useState(0)
 
   const getAuthHeaders = useCallback(async (): Promise<HeadersInit> => {
     const token = await getToken()
@@ -115,12 +117,25 @@ export default function AdminEventsPage() {
     }
   }, [getAuthHeaders])
 
+  const fetchGeocodeStatus = useCallback(async () => {
+    try {
+      const headers = await getAuthHeaders()
+      const response = await fetch('/api/admin/geocode-events', { headers })
+      if (response.ok) {
+        const data = await response.json()
+        setMissingCoordsCount(data.missingCoords || 0)
+      }
+    } catch (err) {
+      console.error('Failed to fetch geocode status:', err)
+    }
+  }, [getAuthHeaders])
+
   const fetchData = useCallback(async () => {
     if (!isLoaded) return
     setLoading(true)
-    await Promise.all([fetchEvents(), fetchSubmissions()])
+    await Promise.all([fetchEvents(), fetchSubmissions(), fetchGeocodeStatus()])
     setLoading(false)
-  }, [isLoaded, fetchEvents, fetchSubmissions])
+  }, [isLoaded, fetchEvents, fetchSubmissions, fetchGeocodeStatus])
 
   useEffect(() => {
     fetchData()
@@ -199,6 +214,29 @@ export default function AdminEventsPage() {
     }
   }
 
+  const handleGeocode = async () => {
+    try {
+      setIsGeocoding(true)
+      const headers = await getAuthHeaders()
+      const response = await fetch('/api/admin/geocode-events', {
+        method: 'POST',
+        headers,
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        toast.success(data.message || 'Geocoding complete')
+        fetchGeocodeStatus()
+      } else {
+        toast.error('Failed to geocode events')
+      }
+    } catch {
+      toast.error('Failed to geocode events')
+    } finally {
+      setIsGeocoding(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh] bg-neutral-50">
@@ -210,9 +248,25 @@ export default function AdminEventsPage() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-neutral-50 min-h-screen">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Event Management</h1>
-        <p className="text-neutral-500 mt-1 text-sm sm:text-base">Manage live events and review submissions</p>
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Event Management</h1>
+          <p className="text-neutral-500 mt-1 text-sm sm:text-base">Manage live events and review submissions</p>
+        </div>
+        {missingCoordsCount > 0 && (
+          <button
+            onClick={handleGeocode}
+            disabled={isGeocoding}
+            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 text-sm"
+          >
+            {isGeocoding ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Navigation className="w-4 h-4" />
+            )}
+            Geocode {missingCoordsCount} Events
+          </button>
+        )}
       </div>
 
       {/* Tabs */}

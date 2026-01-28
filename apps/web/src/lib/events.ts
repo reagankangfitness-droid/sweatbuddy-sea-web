@@ -73,8 +73,12 @@ export interface Event {
   eventDate?: string | null  // ISO date string (e.g., "2024-01-15")
   time: string
   location: string
+  latitude?: number | null
+  longitude?: number | null
   description: string | null
   organizer: string
+  organizerName?: string | null
+  organizerImageUrl?: string | null
   imageUrl: string | null
   communityLink?: string | null
   recurring: boolean
@@ -88,6 +92,8 @@ export interface Event {
   paynowNumber?: string | null
   paynowName?: string | null
   stripeEnabled?: boolean
+  // Source type
+  isActivity?: boolean
 }
 
 // Generate URL-friendly slug from event name
@@ -221,8 +227,10 @@ export async function getEvents(): Promise<Event[]> {
 }
 
 // Cached event fetch - revalidates every 30 seconds
+// Supports both EventSubmission and Activity records
 const getCachedEventById = unstable_cache(
   async (idOrSlug: string): Promise<Event | null> => {
+    // First, try EventSubmission table
     const submission = await prisma.eventSubmission.findFirst({
       where: {
         OR: [
@@ -240,13 +248,15 @@ const getCachedEventById = unstable_cache(
         eventDate: true,
         time: true,
         location: true,
+        latitude: true,
+        longitude: true,
         description: true,
         organizerInstagram: true,
+        organizerName: true,
         imageUrl: true,
         communityLink: true,
         recurring: true,
         isFull: true,
-        // Pricing fields
         isFree: true,
         price: true,
         paynowEnabled: true,
@@ -267,13 +277,15 @@ const getCachedEventById = unstable_cache(
         eventDate: submission.eventDate?.toISOString().split('T')[0] || null,
         time: submission.time,
         location: submission.location,
+        latitude: submission.latitude,
+        longitude: submission.longitude,
         description: submission.description,
-        organizer: submission.organizerInstagram,
+        organizer: submission.organizerInstagram || submission.organizerName,
+        organizerName: submission.organizerName,
         imageUrl: submission.imageUrl,
         communityLink: submission.communityLink,
         recurring: submission.recurring,
         isFull: submission.isFull,
-        // Pricing fields
         isFree: submission.isFree,
         price: submission.price,
         paynowEnabled: submission.paynowEnabled,
@@ -281,12 +293,71 @@ const getCachedEventById = unstable_cache(
         paynowNumber: submission.paynowNumber,
         paynowName: submission.paynowName,
         stripeEnabled: submission.stripeEnabled,
+        isActivity: false,
+      }
+    }
+
+    // If not found in EventSubmission, try Activity table
+    const activity = await prisma.activity.findFirst({
+      where: {
+        id: idOrSlug,
+        status: 'PUBLISHED',
+        deletedAt: null,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            imageUrl: true,
+          }
+        },
+        _count: {
+          select: {
+            userActivities: { where: { status: 'JOINED' } }
+          }
+        }
+      }
+    })
+
+    if (activity) {
+      const startDate = activity.startTime ? new Date(activity.startTime) : null
+      const dayNames = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays']
+
+      return {
+        id: activity.id,
+        slug: null,
+        name: activity.title,
+        category: activity.type || activity.categorySlug || 'Fitness',
+        day: startDate ? dayNames[startDate.getDay()] : '',
+        eventDate: startDate?.toISOString().split('T')[0] || null,
+        time: startDate?.toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit' }) || '',
+        location: activity.address || activity.city || '',
+        latitude: activity.latitude,
+        longitude: activity.longitude,
+        description: activity.description,
+        organizer: activity.user.name || 'Host',
+        organizerName: activity.user.name,
+        organizerImageUrl: activity.user.imageUrl,
+        imageUrl: activity.imageUrl,
+        communityLink: null,
+        recurring: false,
+        isFull: activity.maxPeople ? activity._count.userActivities >= activity.maxPeople : false,
+        isFree: activity.price === 0,
+        price: activity.price ? Math.round(activity.price * 100) : null, // Convert to cents
+        paynowEnabled: false,
+        paynowQrCode: null,
+        paynowNumber: null,
+        paynowName: null,
+        stripeEnabled: activity.price > 0,
+        isActivity: true,
+        goingCount: activity._count.userActivities,
       }
     }
 
     return null
   },
-  ['event-by-id'],
+  ['event-by-id-v2'],
   { revalidate: 30, tags: ['events'] }
 )
 

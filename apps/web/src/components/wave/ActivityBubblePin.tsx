@@ -24,6 +24,15 @@ export interface HostedActivityData {
   hostName: string | null
   hostImageUrl: string | null
   hostId: string
+  // Engagement signals
+  isHappeningToday?: boolean
+  isThisWeekend?: boolean
+  spotsLeft?: number | null
+  isFull?: boolean
+  // Event submission specific
+  isEventSubmission?: boolean
+  recurring?: boolean
+  eventTime?: string
 }
 
 interface ActivityBubblePinProps {

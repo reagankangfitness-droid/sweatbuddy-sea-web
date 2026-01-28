@@ -9,6 +9,8 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { WAVE_ACTIVITIES, WAVE_POLL_INTERVAL } from '@/lib/wave/constants'
 import { LIGHT_MAP_STYLES, DARK_MAP_STYLES } from '@/lib/wave/map-styles'
 import { WaveFilterBar } from './WaveFilterBar'
+import { TimeFilterBar } from './TimeFilterBar'
+import type { TimeFilter } from './TimeFilterBar'
 import { WaveBubblePin } from './WaveBubblePin'
 import type { WaveData } from './WaveBubblePin'
 import { ActivityBubblePin } from './ActivityBubblePin'
@@ -60,6 +62,7 @@ export function WaveMap() {
   const [selectedActivity, setSelectedActivity] = useState<HostedActivityData | null>(null)
   const [selectedWaveParticipant, setSelectedWaveParticipant] = useState(false)
   const [filters, setFilters] = useState<Set<WaveActivityType | 'ALL'>>(new Set(['ALL']))
+  const [timeFilter, setTimeFilter] = useState<TimeFilter>('ALL')
   const [createOpen, setCreateOpen] = useState(false)
   const [crewChat, setCrewChat] = useState<{
     chatId: string; emoji: string; area: string;
@@ -145,18 +148,41 @@ export function WaveMap() {
     return waves.filter((w) => filters.has(w.activityType))
   }, [waves, filters])
 
-  // Filtered hosted activities
+  // Filtered hosted activities (by activity type + time)
   const filteredHosted = useMemo(() => {
-    if (filters.has('ALL')) return hostedActivities
-    return hostedActivities.filter((a) => {
-      const slug = (a.categorySlug || '').toLowerCase()
-      const type = (a.type || '').toLowerCase()
-      const mapped = HOSTED_TO_WAVE[slug] || HOSTED_TO_WAVE[type]
-      if (mapped) return filters.has(mapped)
-      // If filter is ANYTHING, show unmatched activities too
-      return filters.has('ANYTHING' as WaveActivityType)
-    })
-  }, [hostedActivities, filters])
+    let result = hostedActivities
+
+    // Apply activity type filter
+    if (!filters.has('ALL')) {
+      result = result.filter((a) => {
+        const slug = (a.categorySlug || '').toLowerCase()
+        const type = (a.type || '').toLowerCase()
+        const mapped = HOSTED_TO_WAVE[slug] || HOSTED_TO_WAVE[type]
+        if (mapped) return filters.has(mapped)
+        // If filter is ANYTHING, show unmatched activities too
+        return filters.has('ANYTHING' as WaveActivityType)
+      })
+    }
+
+    // Apply time filter
+    if (timeFilter === 'TODAY') {
+      result = result.filter((a) => a.isHappeningToday)
+    } else if (timeFilter === 'WEEKEND') {
+      result = result.filter((a) => a.isThisWeekend)
+    } else if (timeFilter === 'WEEK') {
+      // Show events within the next 7 days
+      result = result.filter((a) => {
+        if (!a.startTime) return a.recurring // Show recurring events
+        const eventDate = new Date(a.startTime)
+        const today = new Date()
+        const weekFromNow = new Date()
+        weekFromNow.setDate(today.getDate() + 7)
+        return eventDate >= today && eventDate <= weekFromNow
+      })
+    }
+
+    return result
+  }, [hostedActivities, filters, timeFilter])
 
   // Delete wave handler
   const handleDeleteWave = async (waveId: string) => {
@@ -303,8 +329,9 @@ export function WaveMap() {
         ))}
       </GoogleMap>
 
-      {/* Filter bar */}
+      {/* Filter bars */}
       <WaveFilterBar selected={filters} onToggle={handleFilterToggle} />
+      <TimeFilterBar selected={timeFilter} onSelect={setTimeFilter} />
 
       {/* Empty state */}
       {hasFetched && filteredWaves.length === 0 && filteredHosted.length === 0 && (

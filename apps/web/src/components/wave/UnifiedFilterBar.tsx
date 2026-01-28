@@ -45,8 +45,8 @@ export function UnifiedFilterBar({
   const selectedTimeOption = TIME_OPTIONS.find(t => t.key === timeFilter) || TIME_OPTIONS[0]
 
   return (
-    <div className="absolute top-4 left-0 right-0 z-10 px-3">
-      <div className="flex gap-1.5 overflow-x-auto no-scrollbar items-center">
+    <div className="absolute top-4 left-0 right-0 z-20 px-3 pointer-events-none">
+      <div className="flex gap-1.5 overflow-x-auto no-scrollbar items-center pointer-events-auto">
         {/* When dropdown */}
         <div className="relative shrink-0" ref={dropdownRef}>
           <button
@@ -63,7 +63,7 @@ export function UnifiedFilterBar({
 
           {/* Dropdown menu */}
           {showTimeDropdown && (
-            <div className="absolute top-full left-0 mt-1 w-40 bg-white dark:bg-neutral-800 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden z-20">
+            <div className="absolute top-full left-0 mt-1 w-40 bg-white dark:bg-neutral-800 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden z-50 pointer-events-auto">
               {TIME_OPTIONS.map((option) => (
                 <button
                   key={option.key}

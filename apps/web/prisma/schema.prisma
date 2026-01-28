@@ -199,10 +199,11 @@ model User {
   // Event submissions (host applications)
   eventSubmissions    EventSubmission[]   @relation("UserEventSubmissions")
 
-  // I'm Down mode
-  activeStatus        UserStatus?
-  matchesInitiated    BuddyMatch[]        @relation("MatchesInitiated")
-  matchesReceived     BuddyMatch[]        @relation("MatchesReceived")
+  // Wave mode
+  waveActivitiesCreated WaveActivity[]      @relation("WaveActivitiesCreated")
+  waveParticipations    WaveParticipant[]   @relation("WaveParticipations")
+  crewChatMemberships   CrewChatMember[]    @relation("CrewChatMemberships")
+  crewMessagesSent      CrewMessage[]       @relation("CrewMessagesSent")
 
   @@index([slug])
   @@index([username])
@@ -2246,72 +2247,114 @@ model HostSubscription {
 }
 
 // =====================================================
-// I'M DOWN — SPONTANEOUS BUDDY MATCHING
+// WAVE MODE — ACTIVITY-CENTERED CREW MATCHING
 // =====================================================
 
-enum ImDownActivity {
+enum WaveActivityType {
   RUN
   YOGA
   GYM
   CYCLE
   SWIM
+  HIKE
+  TENNIS
+  PICKLEBALL
+  BASKETBALL
+  BADMINTON
+  FOOTBALL
+  CLIMB
+  BOXING
+  HYROX
+  DANCE
+  PILATES
+  WALK
   ANYTHING
 }
 
-model UserStatus {
-  id           String         @id @default(cuid())
-  userId       String         @unique
-  activityType ImDownActivity
-  statusText   String?        @db.VarChar(200)
-  latitude     Float
-  longitude    Float
-  setAt        DateTime       @default(now())
-  expiresAt    DateTime
+model WaveActivity {
+  id             String           @id @default(cuid())
+  creatorId      String
+  activityType   WaveActivityType
+  area           String           @db.VarChar(200)
+  locationName   String?          @db.VarChar(300)
+  latitude       Float?
+  longitude      Float?
+  scheduledFor   DateTime?
+  waveThreshold  Int              @default(3)
+  isUnlocked     Boolean          @default(false)
+  startedAt      DateTime         @default(now())
+  expiresAt      DateTime
+  chatId         String?          @unique
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  creator      User              @relation("WaveActivitiesCreated", fields: [creatorId], references: [id], onDelete: Cascade)
+  participants WaveParticipant[]
+  chat         CrewChat?         @relation(fields: [chatId], references: [id], onDelete: SetNull)
 
-  @@index([expiresAt])
+  @@index([creatorId])
   @@index([activityType])
-  @@map("user_statuses")
+  @@index([expiresAt])
+  @@index([expiresAt, activityType])
+  @@index([isUnlocked])
+  @@map("wave_activities")
 }
 
-model BuddyMatch {
-  id           String         @id @default(cuid())
-  initiatorId  String
-  recipientId  String
-  activityType ImDownActivity
-  matchedAt    DateTime       @default(now())
+model WaveParticipant {
+  id             String   @id @default(cuid())
+  waveActivityId String
+  userId         String
+  wavedAt        DateTime @default(now())
 
-  initiator User       @relation("MatchesInitiated", fields: [initiatorId], references: [id], onDelete: Cascade)
-  recipient User       @relation("MatchesReceived", fields: [recipientId], references: [id], onDelete: Cascade)
-  chat      BuddyChat?
+  waveActivity WaveActivity @relation(fields: [waveActivityId], references: [id], onDelete: Cascade)
+  user         User         @relation("WaveParticipations", fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([initiatorId, recipientId])
-  @@index([initiatorId])
-  @@index([recipientId])
-  @@map("buddy_matches")
+  @@unique([waveActivityId, userId])
+  @@index([waveActivityId])
+  @@index([userId])
+  @@map("wave_participants")
 }
 
-model BuddyChat {
-  id      String @id @default(cuid())
-  matchId String @unique
+model CrewChat {
+  id            String           @id @default(cuid())
+  activityType  WaveActivityType
+  area          String           @db.VarChar(200)
+  createdAt     DateTime         @default(now())
+  lastMessageAt DateTime?
 
-  match    BuddyMatch    @relation(fields: [matchId], references: [id], onDelete: Cascade)
-  messages BuddyMessage[]
+  waveActivity WaveActivity?
+  members      CrewChatMember[]
+  messages     CrewMessage[]
 
-  @@map("buddy_chats")
+  @@index([activityType])
+  @@map("crew_chats")
 }
 
-model BuddyMessage {
+model CrewChatMember {
+  id       String   @id @default(cuid())
+  chatId   String
+  userId   String
+  joinedAt DateTime @default(now())
+
+  chat CrewChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user User     @relation("CrewChatMemberships", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([chatId, userId])
+  @@index([chatId])
+  @@index([userId])
+  @@map("crew_chat_members")
+}
+
+model CrewMessage {
   id        String   @id @default(cuid())
   chatId    String
   senderId  String
   content   String   @db.Text
   createdAt DateTime @default(now())
 
-  chat BuddyChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  chat   CrewChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  sender User     @relation("CrewMessagesSent", fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([chatId, createdAt])
-  @@map("buddy_messages")
+  @@index([senderId])
+  @@map("crew_messages")
 }
 

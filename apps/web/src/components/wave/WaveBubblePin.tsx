@@ -2,6 +2,7 @@
 
 import { OverlayView } from '@react-google-maps/api'
 import { WAVE_ACTIVITIES } from '@/lib/wave/constants'
+import Image from 'next/image'
 import type { WaveActivityType } from '@prisma/client'
 
 export interface WaveData {
@@ -36,6 +37,13 @@ export function WaveBubblePin({ wave, onClick }: WaveBubblePinProps) {
   const isRecent = Date.now() - new Date(wave.startedAt).getTime() < 5 * 60 * 1000
   const remaining = wave.waveThreshold - wave.participantCount
   const isAlmostUnlocked = !wave.isUnlocked && remaining === 1
+  const hasCreator = !!wave.creatorImageUrl
+
+  const borderColor = wave.isUnlocked
+    ? 'border-emerald-500 ring-emerald-500/20'
+    : isAlmostUnlocked
+      ? 'border-orange-500 ring-orange-500/20'
+      : 'border-neutral-300 dark:border-neutral-600 ring-neutral-300/20 dark:ring-neutral-600/20'
 
   return (
     <OverlayView
@@ -44,30 +52,46 @@ export function WaveBubblePin({ wave, onClick }: WaveBubblePinProps) {
     >
       <button
         onClick={onClick}
-        className="relative flex flex-col items-center -ml-10 -mt-8"
+        className="relative flex flex-col items-center -ml-6 -mt-6"
       >
-        <div
-          className={`
-            flex flex-col items-center justify-center
-            px-3 py-1.5 rounded-2xl
-            bg-white dark:bg-neutral-800 shadow-lg
-            border-2 transition-all
-            ${wave.isUnlocked ? 'border-emerald-500' : 'border-neutral-200 dark:border-neutral-600'}
-            ${isRecent ? 'animate-pulse' : ''}
-          `}
-        >
-          <div className="flex items-center gap-1">
-            <span className="text-base leading-none">{activity.emoji}</span>
-            <span className="text-[10px] font-semibold text-neutral-700 dark:text-neutral-200 max-w-[80px] truncate">
-              {wave.area}
-            </span>
-          </div>
-          <span className="text-[9px] font-bold text-neutral-500 dark:text-neutral-400 leading-tight">
-            {wave.participantCount}/{wave.waveThreshold} 🙋
-          </span>
+        {/* Main circle */}
+        <div className={`w-12 h-12 rounded-full shadow-lg flex items-center justify-center bg-white dark:bg-neutral-800 border-[2.5px] ring-2 ${borderColor} ${isRecent ? 'animate-pulse' : ''}`}>
+          {hasCreator ? (
+            <Image
+              src={wave.creatorImageUrl!}
+              alt={wave.creatorName || 'Creator'}
+              width={44}
+              height={44}
+              className="w-full h-full rounded-full object-cover"
+              unoptimized
+            />
+          ) : (
+            <span className="text-xl leading-none">{activity.emoji}</span>
+          )}
         </div>
+
+        {/* Emoji badge (top-right) */}
+        {hasCreator && (
+          <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-white dark:bg-neutral-800 shadow-md flex items-center justify-center text-sm border border-neutral-200 dark:border-neutral-700">
+            {activity.emoji}
+          </span>
+        )}
+
+        {/* Wave count badge (bottom-right) */}
+        <span className={`absolute -bottom-0.5 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-white text-[10px] font-bold flex items-center justify-center shadow-sm ${
+          wave.isUnlocked ? 'bg-emerald-500' : isAlmostUnlocked ? 'bg-orange-500' : 'bg-neutral-500 dark:bg-neutral-600'
+        }`}>
+          {wave.participantCount}/{wave.waveThreshold}
+        </span>
+
+        {/* Pointer triangle */}
+        <div className={`w-0 h-0 border-l-[5px] border-r-[5px] border-t-[6px] border-l-transparent border-r-transparent -mt-[1px] ${
+          wave.isUnlocked ? 'border-t-emerald-500' : isAlmostUnlocked ? 'border-t-orange-500' : 'border-t-neutral-300 dark:border-t-neutral-600'
+        }`} />
+
+        {/* "1 more!" label for almost-unlocked */}
         {isAlmostUnlocked && (
-          <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap">
+          <span className="absolute -top-5 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap shadow-sm">
             1 more!
           </span>
         )}

@@ -1,6 +1,7 @@
 'use client'
 
 import { OverlayView } from '@react-google-maps/api'
+import Image from 'next/image'
 
 export interface HostedActivityData {
   id: string
@@ -45,6 +46,7 @@ function getEmoji(activity: HostedActivityData): string {
 
 export function ActivityBubblePin({ activity, onClick }: ActivityBubblePinProps) {
   const emoji = getEmoji(activity)
+  const hasHost = !!activity.hostImageUrl
 
   return (
     <OverlayView
@@ -53,24 +55,40 @@ export function ActivityBubblePin({ activity, onClick }: ActivityBubblePinProps)
     >
       <button
         onClick={onClick}
-        className="relative flex flex-col items-center -ml-10 -mt-8"
+        className="relative flex flex-col items-center -ml-6 -mt-6"
       >
-        <div className="flex flex-col items-center justify-center px-3 py-1.5 rounded-2xl bg-blue-50 dark:bg-blue-950 shadow-lg border-2 border-blue-400 dark:border-blue-600">
-          <div className="flex items-center gap-1">
-            <span className="text-base leading-none">{emoji}</span>
-            <span className="text-[10px] font-semibold text-blue-700 dark:text-blue-200 max-w-[80px] truncate">
-              {activity.title}
-            </span>
-          </div>
-          {activity.startTime && (
-            <span className="text-[9px] font-bold text-blue-500 dark:text-blue-400 leading-tight">
-              {new Date(activity.startTime).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-            </span>
+        {/* Main circle */}
+        <div className="w-12 h-12 rounded-full shadow-lg flex items-center justify-center bg-white dark:bg-neutral-800 border-[2.5px] border-blue-500 ring-2 ring-blue-500/20">
+          {hasHost ? (
+            <Image
+              src={activity.hostImageUrl!}
+              alt={activity.hostName || 'Host'}
+              width={44}
+              height={44}
+              className="w-full h-full rounded-full object-cover"
+              unoptimized
+            />
+          ) : (
+            <span className="text-xl leading-none">{emoji}</span>
           )}
         </div>
-        <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap">
-          Event
-        </span>
+
+        {/* Emoji badge (top-right, shows when host image is used) */}
+        {hasHost && (
+          <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-white dark:bg-neutral-800 shadow-md flex items-center justify-center text-sm border border-neutral-200 dark:border-neutral-700">
+            {emoji}
+          </span>
+        )}
+
+        {/* Participant count badge (bottom-right) */}
+        {activity.participantCount > 0 && (
+          <span className="absolute -bottom-0.5 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm">
+            {activity.participantCount}
+          </span>
+        )}
+
+        {/* Pointer triangle */}
+        <div className="w-0 h-0 border-l-[5px] border-r-[5px] border-t-[6px] border-l-transparent border-r-transparent border-t-blue-500 -mt-[1px]" />
       </button>
     </OverlayView>
   )

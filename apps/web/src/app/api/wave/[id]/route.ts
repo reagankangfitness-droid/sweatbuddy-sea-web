@@ -58,3 +58,38 @@ export async function GET(
     },
   })
 }
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { userId } = await auth()
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { id } = await params
+
+  const wave = await prisma.waveActivity.findUnique({ where: { id } })
+  if (!wave) return NextResponse.json({ error: 'Wave not found' }, { status: 404 })
+
+  if (wave.creatorId !== userId) {
+    return NextResponse.json({ error: 'Only the creator can delete this wave' }, { status: 403 })
+  }
+
+  await prisma.$transaction(async (tx) => {
+    if (wave.chatId) {
+      await tx.crewMessage.deleteMany({ where: { chatId: wave.chatId } })
+      await tx.crewChatMember.deleteMany({ where: { chatId: wave.chatId } })
+    }
+
+    await tx.waveParticipant.deleteMany({ where: { waveActivityId: id } })
+
+    if (wave.chatId) {
+      await tx.waveActivity.update({ where: { id }, data: { chatId: null } })
+      await tx.crewChat.delete({ where: { id: wave.chatId } })
+    }
+
+    await tx.waveActivity.delete({ where: { id } })
+  })
+
+  return new NextResponse(null, { status: 204 })
+}

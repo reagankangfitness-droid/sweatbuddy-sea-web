@@ -13,6 +13,8 @@ interface WaveDetailSheetProps {
   onJoin: (waveId: string) => Promise<{ isUnlocked: boolean; chatId: string | null }>
   onOpenChat: (chatId: string) => void
   isParticipant: boolean
+  currentUserId?: string | null
+  onDeleteWave?: (waveId: string) => Promise<void>
 }
 
 function timeAgo(iso: string): string {
@@ -24,8 +26,9 @@ function timeAgo(iso: string): string {
   return `Started ${hrs}h ago`
 }
 
-export function WaveDetailSheet({ wave, onClose, onJoin, onOpenChat, isParticipant }: WaveDetailSheetProps) {
+export function WaveDetailSheet({ wave, onClose, onJoin, onOpenChat, isParticipant, currentUserId, onDeleteWave }: WaveDetailSheetProps) {
   const [joining, setJoining] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   if (!wave) return null
 
@@ -149,6 +152,26 @@ export function WaveDetailSheet({ wave, onClose, onJoin, onOpenChat, isParticipa
               className="w-full py-3 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm disabled:opacity-50"
             >
               {joining ? 'Joining...' : 'Wave to join 🙋'}
+            </button>
+          )}
+
+          {currentUserId && wave.creatorId === currentUserId && onDeleteWave && (
+            <button
+              onClick={async () => {
+                if (!confirm('Are you sure you want to delete this wave? This cannot be undone.')) return
+                setDeleting(true)
+                try {
+                  await onDeleteWave(wave.id)
+                  onClose()
+                } catch {
+                  // silent
+                }
+                setDeleting(false)
+              }}
+              disabled={deleting}
+              className="w-full mt-2 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-semibold text-sm disabled:opacity-50"
+            >
+              {deleting ? 'Deleting...' : 'Delete Wave'}
             </button>
           )}
         </div>

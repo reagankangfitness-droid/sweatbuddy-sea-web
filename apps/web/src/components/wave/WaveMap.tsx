@@ -151,6 +151,14 @@ export function WaveMap() {
     })
   }, [hostedActivities, filters])
 
+  // Delete wave handler
+  const handleDeleteWave = async (waveId: string) => {
+    const res = await fetch(`/api/wave/${waveId}`, { method: 'DELETE' })
+    if (!res.ok) throw new Error('Delete failed')
+    setSelectedWave(null)
+    fetchWaves()
+  }
+
   // Join handler
   const handleJoin = async (waveId: string) => {
     const res = await fetch(`/api/wave/${waveId}/join`, { method: 'POST' })
@@ -309,6 +317,8 @@ export function WaveMap() {
             onJoin={handleJoin}
             onOpenChat={handleOpenChat}
             isParticipant={selectedWaveParticipant}
+            currentUserId={clerkUser?.id}
+            onDeleteWave={handleDeleteWave}
           />
         )}
       </AnimatePresence>

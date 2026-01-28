@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useUser, SignInButton, useClerk } from '@clerk/nextjs'
 import {
@@ -19,9 +19,22 @@ import {
   CalendarDays,
   ExternalLink,
   BadgeCheck,
+  Trash2,
+  Waves,
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { WAVE_ACTIVITIES } from '@/lib/wave/constants'
+import type { WaveActivityType } from '@prisma/client'
+
+interface MyWave {
+  id: string
+  activityType: WaveActivityType
+  area: string
+  participantCount: number
+  startedAt: string
+  expiresAt: string
+}
 
 interface ProfileData {
   slug: string | null
@@ -47,6 +60,8 @@ export default function ProfilePage() {
     profile: null,
   })
   const [isLoadingStats, setIsLoadingStats] = useState(true)
+  const [myWaves, setMyWaves] = useState<MyWave[]>([])
+  const [isLoadingWaves, setIsLoadingWaves] = useState(true)
 
   useEffect(() => {
     if (isSignedIn) {
@@ -66,6 +81,34 @@ export default function ProfilePage() {
       setIsLoadingStats(false)
     }
   }, [isSignedIn])
+
+  const fetchMyWaves = useCallback(() => {
+    if (!isSignedIn) {
+      setIsLoadingWaves(false)
+      return
+    }
+    fetch('/api/wave/mine')
+      .then((res) => res.json())
+      .then((data) => setMyWaves(data.waves || []))
+      .catch(console.error)
+      .finally(() => setIsLoadingWaves(false))
+  }, [isSignedIn])
+
+  useEffect(() => {
+    fetchMyWaves()
+  }, [fetchMyWaves])
+
+  const handleDeleteWave = async (waveId: string) => {
+    if (!confirm('Are you sure you want to delete this wave?')) return
+    try {
+      const res = await fetch(`/api/wave/${waveId}`, { method: 'DELETE' })
+      if (res.ok) {
+        setMyWaves((prev) => prev.filter((w) => w.id !== waveId))
+      }
+    } catch {
+      // silent
+    }
+  }
 
   if (!isLoaded) {
     return (
@@ -240,6 +283,46 @@ export default function ProfilePage() {
             <p className="text-xs text-neutral-500 dark:text-neutral-400">Upcoming</p>
           </div>
         </div>
+
+        {/* My Waves Section */}
+        {!isLoadingWaves && myWaves.length > 0 && (
+          <div className="mb-4">
+            <h3 className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider px-1 mb-2">
+              My Waves
+            </h3>
+            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 overflow-hidden">
+              {myWaves.map((wave, i) => {
+                const activity = WAVE_ACTIVITIES[wave.activityType]
+                return (
+                  <div
+                    key={wave.id}
+                    className={`flex items-center justify-between px-4 py-3.5 ${
+                      i < myWaves.length - 1 ? 'border-b border-neutral-100 dark:border-neutral-800' : ''
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="text-xl flex-shrink-0">{activity?.emoji || '🌊'}</span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200 truncate">
+                          {activity?.label || wave.activityType} in {wave.area}
+                        </p>
+                        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                          {wave.participantCount} waved
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteWave(wave.id)}
+                      className="p-2 text-neutral-400 hover:text-red-500 dark:hover:text-red-400 transition-colors flex-shrink-0"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* My Activity Section */}
         <div className="mb-4">

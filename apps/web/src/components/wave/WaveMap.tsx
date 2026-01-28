@@ -166,6 +166,14 @@ export function WaveMap() {
     // Apply time filter
     if (timeFilter === 'TODAY') {
       result = result.filter((a) => a.isHappeningToday)
+    } else if (timeFilter === 'TOMORROW') {
+      result = result.filter((a) => {
+        if (!a.startTime) return false
+        const eventDate = new Date(a.startTime)
+        const tomorrow = new Date()
+        tomorrow.setDate(tomorrow.getDate() + 1)
+        return eventDate.toDateString() === tomorrow.toDateString()
+      })
     } else if (timeFilter === 'WEEKEND') {
       result = result.filter((a) => a.isThisWeekend)
     } else if (timeFilter === 'WEEK') {

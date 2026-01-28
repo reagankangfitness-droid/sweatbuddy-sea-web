@@ -172,27 +172,88 @@ export async function GET(request: NextRequest) {
     take: 50,
   })
 
-  const hostedData = hostedActivities.map((a) => ({
-    id: a.id,
-    title: a.title,
-    description: a.description,
-    categorySlug: a.categorySlug,
-    type: a.type,
-    city: a.city,
-    latitude: a.latitude,
-    longitude: a.longitude,
-    address: a.address,
-    startTime: a.startTime,
-    endTime: a.endTime,
-    maxPeople: a.maxPeople,
-    imageUrl: a.imageUrl,
-    price: a.price,
-    currency: a.currency,
-    participantCount: a._count.userActivities,
-    hostName: a.user.name,
-    hostImageUrl: a.user.imageUrl,
-    hostId: a.user.id,
+  // --- Fetch approved EventSubmissions (events from host submissions) ---
+  const eventSubmissions = await prisma.eventSubmission.findMany({
+    where: {
+      status: 'APPROVED',
+      latitude: { not: null },
+      longitude: { not: null },
+      OR: [
+        { eventDate: { gte: oneDayAgo } },
+        { recurring: true },
+      ],
+    },
+    select: {
+      id: true,
+      eventName: true,
+      description: true,
+      category: true,
+      location: true,
+      latitude: true,
+      longitude: true,
+      eventDate: true,
+      time: true,
+      imageUrl: true,
+      isFree: true,
+      price: true,
+      organizerName: true,
+      organizerInstagram: true,
+      recurring: true,
+    },
+    orderBy: { createdAt: 'desc' },
+    take: 50,
+  })
+
+  // Convert EventSubmissions to the same format as hosted activities
+  const eventSubmissionData = eventSubmissions.map((e) => ({
+    id: `event_${e.id}`,
+    title: e.eventName,
+    description: e.description,
+    categorySlug: e.category.toLowerCase().replace(/[^a-z]/g, '-'),
+    type: e.category,
+    city: '',
+    latitude: e.latitude!,
+    longitude: e.longitude!,
+    address: e.location,
+    startTime: e.eventDate,
+    endTime: null,
+    maxPeople: null,
+    imageUrl: e.imageUrl,
+    price: e.isFree ? 0 : (e.price || 0) / 100,
+    currency: 'SGD',
+    participantCount: 0,
+    hostName: e.organizerName,
+    hostImageUrl: null,
+    hostId: `organizer_${e.organizerInstagram}`,
+    isEventSubmission: true,
+    recurring: e.recurring,
+    eventTime: e.time,
   }))
+
+  const hostedData = [
+    ...hostedActivities.map((a) => ({
+      id: a.id,
+      title: a.title,
+      description: a.description,
+      categorySlug: a.categorySlug,
+      type: a.type,
+      city: a.city,
+      latitude: a.latitude,
+      longitude: a.longitude,
+      address: a.address,
+      startTime: a.startTime,
+      endTime: a.endTime,
+      maxPeople: a.maxPeople,
+      imageUrl: a.imageUrl,
+      price: a.price,
+      currency: a.currency,
+      participantCount: a._count.userActivities,
+      hostName: a.user.name,
+      hostImageUrl: a.user.imageUrl,
+      hostId: a.user.id,
+    })),
+    ...eventSubmissionData,
+  ]
 
   // If lat/lng provided, use Haversine raw query
   if (!isNaN(lat) && !isNaN(lng)) {

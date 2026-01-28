@@ -171,7 +171,7 @@ function BookingSuccessContent() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center p-6">
+      <main className="min-h-screen bg-background flex items-center justify-center p-6 pt-24">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-muted-foreground">Confirming your booking...</p>
@@ -182,7 +182,7 @@ function BookingSuccessContent() {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center p-6">
+      <main className="min-h-screen bg-background flex items-center justify-center p-6 pt-24">
         <div className="bg-white rounded-2xl shadow-card p-8 max-w-md w-full text-center">
           <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl">!</span>
@@ -242,7 +242,7 @@ function BookingSuccessContent() {
         }
       `}</style>
 
-      <main className="min-h-screen bg-background flex items-center justify-center p-6">
+      <main className="min-h-screen bg-background flex items-center justify-center p-6 pt-24">
         <div className="bg-white rounded-2xl shadow-card p-8 max-w-lg w-full">
           {/* Success Icon */}
           <div className="text-center mb-6">
@@ -445,7 +445,7 @@ function BookingSuccessContent() {
 
 function LoadingFallback() {
   return (
-    <main className="min-h-screen bg-background flex items-center justify-center p-6">
+    <main className="min-h-screen bg-background flex items-center justify-center p-6 pt-24">
       <div className="text-center">
         <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
         <p className="text-muted-foreground">Loading...</p>

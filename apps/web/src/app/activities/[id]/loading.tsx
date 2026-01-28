@@ -4,7 +4,7 @@ export default function ActivityLoading() {
   return (
     <>
       <Header />
-      <main className="container mx-auto px-4 py-4 sm:p-8 pb-32 sm:pb-8">
+      <main className="container mx-auto px-4 pt-24 pb-32 sm:pt-28 sm:pb-8">
         <div className="max-w-4xl mx-auto">
           {/* Title skeleton */}
           <div className="mb-4 sm:mb-6">

@@ -311,7 +311,7 @@ export default function NewActivityPage() {
     return (
       <>
         <Header />
-        <main className="container mx-auto p-8">
+        <main className="container mx-auto px-4 pt-24 pb-8 sm:px-8 sm:pt-28">
           <div className="max-w-2xl mx-auto flex items-center justify-center py-20">
             <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
           </div>
@@ -324,7 +324,7 @@ export default function NewActivityPage() {
     return (
       <>
         <Header />
-        <main className="container mx-auto p-8">
+        <main className="container mx-auto px-4 pt-24 pb-8 sm:px-8 sm:pt-28">
           <div className="max-w-2xl mx-auto">
             <div className="rounded-lg border border-destructive bg-destructive/10 p-4">
               <h2 className="text-lg font-semibold text-destructive mb-2">
@@ -344,7 +344,7 @@ export default function NewActivityPage() {
   return (
     <>
       <Header />
-      <main className="container mx-auto p-8">
+      <main className="container mx-auto px-4 pt-24 pb-8 sm:px-8 sm:pt-28">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-6">Create New Activity</h1>
 

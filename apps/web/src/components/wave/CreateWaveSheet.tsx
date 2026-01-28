@@ -82,7 +82,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
         >
           <div className="absolute inset-0 bg-black/40" onClick={handleClose} />
           <motion.div
-            className="relative w-full bg-white dark:bg-neutral-900 rounded-t-3xl max-h-[80dvh] flex flex-col"
+            className="relative w-full bg-white dark:bg-neutral-900 rounded-t-3xl max-h-[70dvh] mb-16 flex flex-col"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}

@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
-import { WAVE_ACTIVITIES, WAVE_ACTIVITY_TYPES } from '@/lib/wave/constants'
+import { WAVE_ACTIVITIES, WAVE_ACTIVITY_TYPES, WAVE_QUICK_PROMPTS } from '@/lib/wave/constants'
 import type { WaveActivityType } from '@prisma/client'
 
 interface CreateWaveSheetProps {
@@ -13,6 +13,7 @@ interface CreateWaveSheetProps {
   onCreateWave: (data: {
     activityType: WaveActivityType
     area: string
+    thought?: string
     locationName?: string
     latitude?: number
     longitude?: number
@@ -26,22 +27,61 @@ type Step = 'activity' | 'details'
 export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }: CreateWaveSheetProps) {
   const [step, setStep] = useState<Step>('activity')
   const [selectedType, setSelectedType] = useState<WaveActivityType | null>(null)
+  const [thought, setThought] = useState('')
   const [area, setArea] = useState('')
   const [locationName, setLocationName] = useState('')
+  const [placeLat, setPlaceLat] = useState<number | undefined>()
+  const [placeLng, setPlaceLng] = useState<number | undefined>()
   const [scheduledFor, setScheduledFor] = useState('')
   const [scheduledForInput, setScheduledForInput] = useState('')
   const [timePreset, setTimePreset] = useState<'now' | 'later' | 'pick' | null>(null)
   const [creating, setCreating] = useState(false)
+  const locationInputRef = useRef<HTMLInputElement>(null)
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null)
+
+  // Google Maps Places Autocomplete
+  const initAutocomplete = useCallback(() => {
+    if (!locationInputRef.current || autocompleteRef.current) return
+    if (!window.google?.maps?.places) return
+    const ac = new window.google.maps.places.Autocomplete(locationInputRef.current, {
+      types: ['establishment', 'geocode'],
+      fields: ['formatted_address', 'geometry', 'name'],
+    })
+    ac.addListener('place_changed', () => {
+      const place = ac.getPlace()
+      if (place.name) setLocationName(place.name)
+      if (place.formatted_address) setArea(place.formatted_address)
+      if (place.geometry?.location) {
+        setPlaceLat(place.geometry.location.lat())
+        setPlaceLng(place.geometry.location.lng())
+      }
+    })
+    autocompleteRef.current = ac
+  }, [])
+
+  useEffect(() => {
+    if (step === 'details') {
+      // Small delay to ensure input is mounted
+      const timer = setTimeout(initAutocomplete, 100)
+      return () => clearTimeout(timer)
+    } else {
+      autocompleteRef.current = null
+    }
+  }, [step, initAutocomplete])
 
   const reset = () => {
     setStep('activity')
     setSelectedType(null)
+    setThought('')
     setArea('')
     setLocationName('')
+    setPlaceLat(undefined)
+    setPlaceLng(undefined)
     setScheduledFor('')
     setScheduledForInput('')
     setTimePreset(null)
     setCreating(false)
+    autocompleteRef.current = null
   }
 
   const handleClose = () => {
@@ -55,7 +95,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
   }
 
   const handleCreate = async () => {
-    if (!selectedType || !area.trim()) return
+    if (!selectedType || !area.trim() || !thought.trim()) return
     setCreating(true)
     try {
       // For "now" and "later today", generate a fresh timestamp at submit time
@@ -74,9 +114,10 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
       await onCreateWave({
         activityType: selectedType,
         area: area.trim(),
+        thought: thought.trim(),
         locationName: locationName.trim() || undefined,
-        latitude: userPosition?.lat,
-        longitude: userPosition?.lng,
+        latitude: placeLat ?? userPosition?.lat,
+        longitude: placeLng ?? userPosition?.lng,
         scheduledFor: finalScheduledFor,
       })
       toast.success(`Wave started! ${WAVE_ACTIVITIES[selectedType].emoji} ${WAVE_ACTIVITIES[selectedType].label} in ${area.trim()}`)
@@ -143,35 +184,57 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
               {/* Step 2: Details */}
               {step === 'details' && (
                 <div className="space-y-4 py-4">
+                  {/* Thought bubble */}
                   <div>
                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                      Area *
+                      What&apos;s the plan? *
                     </label>
-                    <input
-                      value={area}
-                      onChange={(e) => setArea(e.target.value)}
-                      placeholder="e.g. Marina Bay, Tanjong Pagar"
-                      maxLength={200}
-                      className="w-full px-4 py-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 outline-none focus:border-neutral-400 dark:focus:border-neutral-500"
+                    <textarea
+                      value={thought}
+                      onChange={(e) => setThought(e.target.value.slice(0, 140))}
+                      placeholder="Tell people what you have in mind..."
+                      rows={2}
+                      className="w-full px-4 py-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 outline-none focus:border-neutral-400 dark:focus:border-neutral-500 resize-none"
                     />
+                    <p className="text-right text-[10px] text-neutral-400 mt-0.5">{thought.length}/140</p>
+                    {/* Quick prompts */}
+                    {selectedType && !thought && (
+                      <div className="flex flex-wrap gap-1.5 mt-1.5">
+                        {WAVE_QUICK_PROMPTS[selectedType].map((prompt) => (
+                          <button
+                            key={prompt}
+                            type="button"
+                            onClick={() => setThought(prompt)}
+                            className="px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-xs text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                          >
+                            {prompt}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
+                  {/* Location with Google Places autocomplete */}
                   <div>
                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                      Location name (optional)
+                      Location *
                     </label>
                     <input
+                      ref={locationInputRef}
                       value={locationName}
                       onChange={(e) => setLocationName(e.target.value)}
-                      placeholder="e.g. Gardens by the Bay"
+                      placeholder="Search for a place..."
                       maxLength={300}
                       className="w-full px-4 py-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 outline-none focus:border-neutral-400 dark:focus:border-neutral-500"
                     />
+                    {area && (
+                      <p className="text-[10px] text-neutral-400 mt-0.5 truncate">{area}</p>
+                    )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
-                      When? (optional)
+                      When? *
                     </label>
                     <div className="flex gap-2 mb-2">
                       {[
@@ -232,7 +295,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
               <div className="shrink-0 px-4 py-3 border-t border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900">
                 <button
                   onClick={handleCreate}
-                  disabled={!area.trim() || creating}
+                  disabled={!thought.trim() || !locationName.trim() || !timePreset || creating}
                   className="w-full py-3 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm disabled:opacity-50"
                 >
                   {creating ? 'Creating...' : 'Start Wave 🌊'}

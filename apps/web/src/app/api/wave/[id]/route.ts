@@ -43,6 +43,7 @@ export async function GET(
       startedAt: wave.startedAt,
       expiresAt: wave.expiresAt,
       chatId: wave.chatId,
+      thought: wave.thought,
       participantCount: wave.participants.length,
       creator: wave.creator,
       // Only show participant details if unlocked

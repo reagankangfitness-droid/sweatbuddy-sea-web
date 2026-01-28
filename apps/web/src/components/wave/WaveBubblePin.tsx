@@ -2,7 +2,6 @@
 
 import { OverlayView } from '@react-google-maps/api'
 import { WAVE_ACTIVITIES } from '@/lib/wave/constants'
-import Image from 'next/image'
 import type { WaveActivityType } from '@prisma/client'
 
 export interface WaveData {
@@ -19,6 +18,7 @@ export interface WaveData {
   startedAt: string
   expiresAt: string
   chatId: string | null
+  thought: string | null
   participantCount: number
   distanceKm: number | null
   creatorName: string | null
@@ -37,7 +37,6 @@ export function WaveBubblePin({ wave, onClick }: WaveBubblePinProps) {
   const isRecent = Date.now() - new Date(wave.startedAt).getTime() < 5 * 60 * 1000
   const remaining = wave.waveThreshold - wave.participantCount
   const isAlmostUnlocked = !wave.isUnlocked && remaining === 1
-  const hasCreator = !!wave.creatorImageUrl
 
   const borderColor = wave.isUnlocked
     ? 'border-emerald-500 ring-emerald-500/20'
@@ -56,26 +55,8 @@ export function WaveBubblePin({ wave, onClick }: WaveBubblePinProps) {
       >
         {/* Main circle */}
         <div className={`w-12 h-12 rounded-full shadow-lg flex items-center justify-center bg-white dark:bg-neutral-800 border-[2.5px] ring-2 ${borderColor} ${isRecent ? 'animate-pulse' : ''}`}>
-          {hasCreator ? (
-            <Image
-              src={wave.creatorImageUrl!}
-              alt={wave.creatorName || 'Creator'}
-              width={44}
-              height={44}
-              className="w-full h-full rounded-full object-cover"
-              unoptimized
-            />
-          ) : (
-            <span className="text-xl leading-none">{activity.emoji}</span>
-          )}
+          <span className="text-xl leading-none">{activity.emoji}</span>
         </div>
-
-        {/* Emoji badge (top-right) */}
-        {hasCreator && (
-          <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-white dark:bg-neutral-800 shadow-md flex items-center justify-center text-sm border border-neutral-200 dark:border-neutral-700">
-            {activity.emoji}
-          </span>
-        )}
 
         {/* Wave count badge (bottom-right) */}
         <span className={`absolute -bottom-0.5 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-white text-[10px] font-bold flex items-center justify-center shadow-sm ${

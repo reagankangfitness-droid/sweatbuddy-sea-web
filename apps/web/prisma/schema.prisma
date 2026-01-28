@@ -2279,6 +2279,7 @@ model WaveActivity {
   locationName   String?          @db.VarChar(300)
   latitude       Float?
   longitude      Float?
+  thought        String?          @db.VarChar(140)
   scheduledFor   DateTime?
   waveThreshold  Int              @default(3)
   isUnlocked     Boolean          @default(false)

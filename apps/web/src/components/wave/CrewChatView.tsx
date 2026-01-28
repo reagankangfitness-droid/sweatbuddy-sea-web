@@ -20,15 +20,25 @@ interface CrewChatViewProps {
   area: string
   currentUserId: string
   onClose: () => void
+  starterThought?: string | null
+  starterName?: string | null
+  starterImageUrl?: string | null
+  locationName?: string | null
+  scheduledFor?: string | null
 }
 
-const STARTERS = [
-  "Hey crew! When works for everyone?",
-  "Anyone know a good spot nearby?",
-  "I'm free now if anyone wants to go!",
-]
-
-export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClose }: CrewChatViewProps) {
+export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClose, starterThought, starterName, starterImageUrl, locationName, scheduledFor }: CrewChatViewProps) {
+  const STARTERS = starterName
+    ? [
+        `Hey ${starterName}, what's the plan?`,
+        "I'm in! When are we meeting?",
+        "Sounds great, count me in!",
+      ]
+    : [
+        "Hey crew! When works for everyone?",
+        "Anyone know a good spot nearby?",
+        "I'm free now if anyone wants to go!",
+      ]
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
@@ -123,6 +133,31 @@ export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClo
         <div className="px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-center text-sm font-medium text-emerald-700 dark:text-emerald-400">
           Crew formed! 🎉
         </div>
+
+        {/* Pinned thought card */}
+        {starterThought && (
+          <div className="mx-4 mt-2 mb-1 flex items-start gap-2 p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl">
+            <div className="w-8 h-8 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-700 shrink-0">
+              {starterImageUrl ? (
+                <Image src={starterImageUrl} alt={starterName || ''} width={32} height={32} className="w-full h-full object-cover" unoptimized />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-xs font-bold text-neutral-400">
+                  {(starterName || '?')[0]}
+                </div>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-200">{starterName || 'Anonymous'}</p>
+              <p className="text-sm text-neutral-600 dark:text-neutral-300 mt-0.5">{starterThought}</p>
+              <div className="flex items-center gap-2 mt-1 text-[10px] text-neutral-400">
+                {locationName && <span>📍 {locationName}</span>}
+                {scheduledFor && (
+                  <span>🕐 {new Date(scheduledFor).toLocaleString(undefined, { weekday: 'short', hour: 'numeric', minute: '2-digit' })}</span>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Messages */}
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-3">

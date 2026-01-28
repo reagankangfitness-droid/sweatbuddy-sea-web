@@ -46,13 +46,14 @@ export async function POST(request: NextRequest) {
 
     let body
     try { body = await request.json() } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }) }
-    const { activityType, area, locationName, latitude, longitude, scheduledFor } = body as {
+    const { activityType, area, locationName, latitude, longitude, scheduledFor, thought } = body as {
       activityType: string
       area: string
       locationName?: string
       latitude?: number
       longitude?: number
       scheduledFor?: string
+      thought?: string
     }
 
     if (!activityType || !area) {
@@ -78,6 +79,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Location name too long' }, { status: 400 })
     }
 
+    if (thought && thought.length > 140) {
+      return NextResponse.json({ error: 'Thought must be 140 characters or less' }, { status: 400 })
+    }
+
     if (scheduledFor) {
       const d = new Date(scheduledFor)
       if (isNaN(d.getTime())) return NextResponse.json({ error: 'Invalid scheduledFor date' }, { status: 400 })
@@ -93,6 +98,7 @@ export async function POST(request: NextRequest) {
           creatorId: dbUser.id,
           activityType: activityType as WaveActivityType,
           area,
+          thought: thought?.trim() || null,
           locationName: locationName || null,
           latitude: latitude ?? null,
           longitude: longitude ?? null,
@@ -218,6 +224,7 @@ export async function GET(request: NextRequest) {
         startedAt: Date
         expiresAt: Date
         chatId: string | null
+        thought: string | null
         participantCount: bigint
         distanceKm: number | null
         creatorName: string | null
@@ -227,7 +234,7 @@ export async function GET(request: NextRequest) {
       SELECT
         wa.id, wa."creatorId", wa."activityType", wa.area, wa."locationName",
         wa.latitude, wa.longitude, wa."scheduledFor", wa."waveThreshold",
-        wa."isUnlocked", wa."startedAt", wa."expiresAt", wa."chatId",
+        wa."isUnlocked", wa."startedAt", wa."expiresAt", wa."chatId", wa.thought,
         (SELECT COUNT(*) FROM wave_participants wp WHERE wp."waveActivityId" = wa.id) AS "participantCount",
         CASE WHEN wa.latitude IS NOT NULL AND wa.longitude IS NOT NULL THEN
           (6371 * acos(LEAST(1, GREATEST(-1,
@@ -289,6 +296,7 @@ export async function GET(request: NextRequest) {
       startedAt: w.startedAt,
       expiresAt: w.expiresAt,
       chatId: w.chatId,
+      thought: w.thought,
       participantCount: w._count.participants,
       distanceKm: null,
       creatorName: w.creator.name,

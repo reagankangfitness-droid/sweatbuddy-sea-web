@@ -21,6 +21,7 @@ import type { WaveActivityType } from '@prisma/client'
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 const DEFAULT_CENTER = { lat: 1.3521, lng: 103.8198 }
+const LIBRARIES: ('places')[] = ['places']
 
 export function WaveMap() {
   const { resolvedTheme } = useTheme()
@@ -38,10 +39,15 @@ export function WaveMap() {
   const [selectedWaveParticipant, setSelectedWaveParticipant] = useState(false)
   const [filters, setFilters] = useState<Set<WaveActivityType | 'ALL'>>(new Set(['ALL']))
   const [createOpen, setCreateOpen] = useState(false)
-  const [crewChat, setCrewChat] = useState<{ chatId: string; emoji: string; area: string } | null>(null)
+  const [crewChat, setCrewChat] = useState<{
+    chatId: string; emoji: string; area: string;
+    starterThought?: string | null; starterName?: string | null;
+    starterImageUrl?: string | null; locationName?: string | null;
+    scheduledFor?: string | null;
+  } | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  const { isLoaded } = useLoadScript({ googleMapsApiKey: GOOGLE_MAPS_API_KEY })
+  const { isLoaded } = useLoadScript({ googleMapsApiKey: GOOGLE_MAPS_API_KEY, libraries: LIBRARIES })
 
   const mapStyles = useMemo(() => (isDark ? DARK_MAP_STYLES : LIGHT_MAP_STYLES), [isDark])
 
@@ -172,6 +178,7 @@ export function WaveMap() {
   const handleCreateWave = async (data: {
     activityType: WaveActivityType
     area: string
+    thought?: string
     locationName?: string
     latitude?: number
     longitude?: number
@@ -196,6 +203,11 @@ export function WaveMap() {
       chatId,
       emoji: wave ? WAVE_ACTIVITIES[wave.activityType].emoji : '🏋️',
       area: wave?.area || '',
+      starterThought: wave?.thought,
+      starterName: wave?.creatorName,
+      starterImageUrl: wave?.creatorImageUrl,
+      locationName: wave?.locationName,
+      scheduledFor: wave?.scheduledFor,
     })
   }
 
@@ -350,6 +362,11 @@ export function WaveMap() {
             area={crewChat.area}
             currentUserId={clerkUser.id}
             onClose={() => setCrewChat(null)}
+            starterThought={crewChat.starterThought}
+            starterName={crewChat.starterName}
+            starterImageUrl={crewChat.starterImageUrl}
+            locationName={crewChat.locationName}
+            scheduledFor={crewChat.scheduledFor}
           />
         )}
       </AnimatePresence>

@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Clock, MapPin } from 'lucide-react'
 import { WAVE_ACTIVITIES } from '@/lib/wave/constants'
@@ -26,9 +27,26 @@ function timeAgo(iso: string): string {
   return `Started ${hrs}h ago`
 }
 
+function formatCountdown(expiresAt: string): string {
+  const diff = new Date(expiresAt).getTime() - Date.now()
+  if (diff <= 0) return 'Expired'
+  const hrs = Math.floor(diff / 3600000)
+  const mins = Math.floor((diff % 3600000) / 60000)
+  if (hrs > 0) return `Expires in ${hrs}h ${mins}m`
+  return `Expires in ${mins}m`
+}
+
 export function WaveDetailSheet({ wave, onClose, onJoin, onOpenChat, isParticipant, currentUserId, onDeleteWave }: WaveDetailSheetProps) {
   const [joining, setJoining] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [countdown, setCountdown] = useState('')
+
+  useEffect(() => {
+    if (!wave) return
+    setCountdown(formatCountdown(wave.expiresAt))
+    const timer = setInterval(() => setCountdown(formatCountdown(wave.expiresAt)), 30000)
+    return () => clearInterval(timer)
+  }, [wave])
 
   if (!wave) return null
 
@@ -70,6 +88,7 @@ export function WaveDetailSheet({ wave, onClose, onJoin, onOpenChat, isParticipa
                 <span className="flex items-center gap-0.5">
                   <Clock className="w-3 h-3" />{timeAgo(wave.startedAt)}
                 </span>
+                <span className="text-orange-500 font-medium">{countdown}</span>
                 {wave.locationName && (
                   <span className="flex items-center gap-0.5">
                     <MapPin className="w-3 h-3" />{wave.locationName}
@@ -93,6 +112,27 @@ export function WaveDetailSheet({ wave, onClose, onJoin, onOpenChat, isParticipa
 
         {wave.distanceKm != null && (
           <p className="px-4 text-xs text-neutral-400">{formatDistance(wave.distanceKm)} away</p>
+        )}
+
+        {/* Thought bubble */}
+        {wave.thought && (
+          <div className="mx-4 mt-2 flex items-start gap-2">
+            <div className="w-7 h-7 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-700 shrink-0">
+              {wave.creatorImageUrl ? (
+                <Image src={wave.creatorImageUrl} alt={wave.creatorName || ''} width={28} height={28} className="w-full h-full object-cover" unoptimized />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-xs font-bold text-neutral-400">
+                  {(wave.creatorName || '?')[0]}
+                </div>
+              )}
+            </div>
+            <div>
+              <p className="text-[10px] text-neutral-400 mb-0.5">{wave.creatorName || 'Anonymous'}</p>
+              <div className="relative bg-neutral-100 dark:bg-neutral-800 rounded-2xl rounded-tl-md px-3 py-2 text-sm text-neutral-700 dark:text-neutral-200">
+                {wave.thought}
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Wave count */}

@@ -24,6 +24,7 @@ export async function GET() {
       id: w.id,
       activityType: w.activityType,
       area: w.area,
+      thought: w.thought,
       participantCount: w._count.participants,
       startedAt: w.startedAt,
       expiresAt: w.expiresAt,

@@ -14,6 +14,12 @@ interface ChatMessage {
   senderImageUrl: string | null
 }
 
+interface CrewParticipant {
+  userId: string
+  name: string
+  imageUrl: string | null
+}
+
 interface CrewChatViewProps {
   chatId: string
   activityEmoji: string
@@ -32,14 +38,17 @@ export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClo
     ? [
         `Hey ${starterName}, what's the plan?`,
         "I'm in! When are we meeting?",
-        "Sounds great, count me in!",
+        "What should we bring?",
+        "See you all there!",
       ]
     : [
         "Hey crew! When works for everyone?",
         "Anyone know a good spot nearby?",
+        "What should we bring?",
         "I'm free now if anyone wants to go!",
       ]
   const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [participants, setParticipants] = useState<CrewParticipant[]>([])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -68,6 +77,19 @@ export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClo
     const interval = setInterval(fetchMessages, 5000)
     return () => clearInterval(interval)
   }, [fetchMessages])
+
+  // Fetch participants for avatar stack
+  useEffect(() => {
+    const fetchParticipants = async () => {
+      try {
+        const res = await fetch(`/api/crew/${chatId}/members`)
+        if (!res.ok) return
+        const data = await res.json()
+        if (data.members) setParticipants(data.members)
+      } catch { /* silent */ }
+    }
+    fetchParticipants()
+  }, [chatId])
 
   // Track scroll position
   useEffect(() => {
@@ -133,6 +155,28 @@ export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClo
         <div className="px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-center text-sm font-medium text-emerald-700 dark:text-emerald-400">
           Crew formed! 🎉
         </div>
+
+        {/* Participant avatar stack */}
+        {participants.length > 0 && (
+          <div className="flex items-center justify-center py-2">
+            <div className="flex items-center">
+              {participants.slice(0, 4).map((p, i) => (
+                <div
+                  key={p.userId}
+                  className="w-10 h-10 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-700 ring-2 ring-white dark:ring-neutral-950 flex items-center justify-center"
+                  style={{ marginLeft: i > 0 ? '-8px' : '0', zIndex: participants.length - i }}
+                >
+                  {p.imageUrl ? (
+                    <Image src={p.imageUrl} alt={p.name} width={40} height={40} className="w-full h-full object-cover" unoptimized />
+                  ) : (
+                    <span className="text-sm font-semibold text-neutral-500">{(p.name || '?')[0]}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-neutral-500 ml-2">{participants.length} people</p>
+          </div>
+        )}
 
         {/* Pinned thought card */}
         {starterThought && (

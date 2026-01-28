@@ -135,25 +135,38 @@ export function WaveDetailSheet({ wave, onClose, onJoin, onOpenChat, isParticipa
           </div>
         )}
 
-        {/* Wave count */}
-        <p className="px-4 pt-2 text-sm text-neutral-600 dark:text-neutral-300 font-medium">
-          Waves: {wave.participantCount} of {wave.waveThreshold} needed
-        </p>
+        {/* Wave progress */}
+        <div className="px-4 pt-3">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Waves</span>
+            <span className="text-sm text-neutral-500">{wave.participantCount} of {wave.waveThreshold} to unlock crew</span>
+          </div>
 
-        {/* Progress circles */}
-        <div className="flex items-center justify-center gap-3 py-3">
-          {Array.from({ length: wave.waveThreshold }).map((_, i) => (
+          {/* Progress bar */}
+          <div className="h-3 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
             <div
-              key={i}
-              className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors ${
-                i < progress
-                  ? 'bg-emerald-500 border-emerald-500 text-white'
-                  : 'border-neutral-200 dark:border-neutral-700 text-neutral-300 dark:text-neutral-600'
-              }`}
+              className="h-full rounded-full transition-all duration-500"
+              style={{ width: `${(progress / wave.waveThreshold) * 100}%` }}
             >
-              {i < progress ? '🙋' : '?'}
+              <div className={`w-full h-full rounded-full ${wave.isUnlocked ? 'bg-emerald-500' : 'bg-neutral-900 dark:bg-white'}`} />
             </div>
-          ))}
+          </div>
+
+          {/* Wave indicator circles */}
+          <div className="flex justify-between mt-2">
+            {Array.from({ length: wave.waveThreshold }).map((_, i) => (
+              <div
+                key={i}
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
+                  i < progress
+                    ? 'bg-neutral-800 dark:bg-neutral-200 text-white dark:text-neutral-900'
+                    : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'
+                }`}
+              >
+                🙋
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Status message */}

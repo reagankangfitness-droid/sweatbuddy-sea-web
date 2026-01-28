@@ -24,6 +24,37 @@ interface CreateWaveSheetProps {
 
 type Step = 'activity' | 'details'
 
+const TIME_OPTIONS = [
+  '6:00am', '6:30am', '7:00am', '7:30am', '8:00am', '8:30am', '9:00am', '9:30am',
+  '10:00am', '10:30am', '11:00am', '11:30am', '12:00pm', '12:30pm',
+  '1:00pm', '1:30pm', '2:00pm', '2:30pm', '3:00pm', '3:30pm',
+  '4:00pm', '4:30pm', '5:00pm', '5:30pm', '6:00pm', '6:30pm',
+  '7:00pm', '7:30pm', '8:00pm', '8:30pm', '9:00pm',
+]
+
+function parseTimeToDate(dateStr: string, timeStr: string): Date {
+  const now = new Date()
+  const base = new Date(now)
+
+  if (dateStr === 'tomorrow') {
+    base.setDate(base.getDate() + 1)
+  }
+
+  // Parse time like "6:30pm"
+  const match = timeStr.match(/^(\d{1,2}):(\d{2})(am|pm)$/i)
+  if (!match) return base
+
+  let hours = parseInt(match[1])
+  const minutes = parseInt(match[2])
+  const ampm = match[3].toLowerCase()
+
+  if (ampm === 'pm' && hours !== 12) hours += 12
+  if (ampm === 'am' && hours === 12) hours = 0
+
+  base.setHours(hours, minutes, 0, 0)
+  return base
+}
+
 export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }: CreateWaveSheetProps) {
   const [step, setStep] = useState<Step>('activity')
   const [selectedType, setSelectedType] = useState<WaveActivityType | null>(null)
@@ -32,9 +63,8 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
   const [locationName, setLocationName] = useState('')
   const [placeLat, setPlaceLat] = useState<number | undefined>()
   const [placeLng, setPlaceLng] = useState<number | undefined>()
-  const [scheduledFor, setScheduledFor] = useState('')
-  const [scheduledForInput, setScheduledForInput] = useState('')
-  const [timePreset, setTimePreset] = useState<'now' | 'later' | 'pick' | null>(null)
+  const [dateOption, setDateOption] = useState('today')
+  const [timeOption, setTimeOption] = useState('')
   const [creating, setCreating] = useState(false)
   const locationInputRef = useRef<HTMLInputElement>(null)
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null)
@@ -61,7 +91,6 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
 
   useEffect(() => {
     if (step === 'details') {
-      // Small delay to ensure input is mounted
       const timer = setTimeout(initAutocomplete, 100)
       return () => clearTimeout(timer)
     } else {
@@ -77,9 +106,8 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
     setLocationName('')
     setPlaceLat(undefined)
     setPlaceLng(undefined)
-    setScheduledFor('')
-    setScheduledForInput('')
-    setTimePreset(null)
+    setDateOption('today')
+    setTimeOption('')
     setCreating(false)
     autocompleteRef.current = null
   }
@@ -94,39 +122,33 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
     setStep('details')
   }
 
+  const isValid = !!(thought.trim() && locationName.trim() && timeOption)
+
   const handleCreate = async () => {
-    if (!selectedType || !area.trim() || !thought.trim()) return
+    if (!selectedType || !isValid) return
     setCreating(true)
     try {
-      // For "now" and "later today", generate a fresh timestamp at submit time
-      // so it's never in the past by the time the request reaches the API
-      let finalScheduledFor: string | undefined
-      if (timePreset === 'now') {
-        finalScheduledFor = undefined // API defaults to now
-      } else if (timePreset === 'later') {
-        const later = new Date()
-        later.setHours(later.getHours() + 3)
-        finalScheduledFor = later.toISOString()
-      } else if (timePreset === 'pick' && scheduledFor) {
-        finalScheduledFor = scheduledFor
-      }
+      const scheduledDate = parseTimeToDate(dateOption, timeOption)
+      const finalArea = area.trim() || locationName.trim()
 
       await onCreateWave({
         activityType: selectedType,
-        area: area.trim(),
+        area: finalArea,
         thought: thought.trim(),
         locationName: locationName.trim() || undefined,
         latitude: placeLat ?? userPosition?.lat,
         longitude: placeLng ?? userPosition?.lng,
-        scheduledFor: finalScheduledFor,
+        scheduledFor: scheduledDate.getTime() > Date.now() ? scheduledDate.toISOString() : undefined,
       })
-      toast.success(`Wave started! ${WAVE_ACTIVITIES[selectedType].emoji} ${WAVE_ACTIVITIES[selectedType].label} in ${area.trim()}`)
+      toast.success(`Wave started! ${WAVE_ACTIVITIES[selectedType].emoji} ${WAVE_ACTIVITIES[selectedType].label} in ${finalArea}`)
       handleClose()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to create wave. Please try again.')
       setCreating(false)
     }
   }
+
+  const dateLabel = dateOption === 'today' ? 'Today' : dateOption === 'tomorrow' ? 'Tomorrow' : dateOption
 
   return (
     <AnimatePresence>
@@ -139,7 +161,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
         >
           <div className="absolute inset-0 bg-black/40" onClick={handleClose} />
           <motion.div
-            className="relative w-full bg-white dark:bg-neutral-900 rounded-t-3xl max-h-[70dvh] mb-16 flex flex-col"
+            className="relative w-full bg-white dark:bg-neutral-900 rounded-t-3xl max-h-[85dvh] mb-16 flex flex-col"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
@@ -182,30 +204,30 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
               )}
 
               {/* Step 2: Details */}
-              {step === 'details' && (
-                <div className="space-y-4 py-4">
+              {step === 'details' && selectedType && (
+                <div className="space-y-5 py-4">
                   {/* Thought bubble */}
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                      What&apos;s the plan? *
+                    <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2 flex items-center gap-2">
+                      <span>💭</span> What&apos;s on your mind?
                     </label>
                     <textarea
                       value={thought}
                       onChange={(e) => setThought(e.target.value.slice(0, 140))}
-                      placeholder="Tell people what you have in mind..."
-                      rows={2}
-                      className="w-full px-4 py-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 outline-none focus:border-neutral-400 dark:focus:border-neutral-500 resize-none"
+                      placeholder="E.g., Looking for a chill running buddy, no pressure on pace..."
+                      rows={3}
+                      className="w-full px-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 outline-none focus:border-neutral-400 dark:focus:border-neutral-500 resize-none"
                     />
                     <p className="text-right text-[10px] text-neutral-400 mt-0.5">{thought.length}/140</p>
                     {/* Quick prompts */}
-                    {selectedType && !thought && (
-                      <div className="flex flex-wrap gap-1.5 mt-1.5">
+                    {!thought && (
+                      <div className="flex flex-wrap gap-2 mt-1.5">
                         {WAVE_QUICK_PROMPTS[selectedType].map((prompt) => (
                           <button
                             key={prompt}
                             type="button"
                             onClick={() => setThought(prompt)}
-                            className="px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-xs text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                            className="text-xs px-3 py-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
                           >
                             {prompt}
                           </button>
@@ -216,76 +238,85 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
 
                   {/* Location with Google Places autocomplete */}
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-                      Location *
+                    <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2 flex items-center gap-2">
+                      <span>📍</span> Where?
                     </label>
                     <input
                       ref={locationInputRef}
                       value={locationName}
                       onChange={(e) => setLocationName(e.target.value)}
-                      placeholder="Search for a place..."
+                      placeholder="Search location..."
                       maxLength={300}
-                      className="w-full px-4 py-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 outline-none focus:border-neutral-400 dark:focus:border-neutral-500"
+                      className="w-full px-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 outline-none focus:border-neutral-400 dark:focus:border-neutral-500"
                     />
                     {area && (
                       <p className="text-[10px] text-neutral-400 mt-0.5 truncate">{area}</p>
                     )}
                   </div>
 
+                  {/* Date and Time dropdowns */}
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
-                      When? *
+                    <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2 flex items-center gap-2">
+                      <span>📅</span> When?
                     </label>
-                    <div className="flex gap-2 mb-2">
-                      {[
-                        { label: 'Now', value: 'now' },
-                        { label: 'Later today', value: 'later' },
-                        { label: 'Pick time', value: 'pick' },
-                      ].map((opt) => {
-                        const isSelected =
-                          (opt.value === 'now' && timePreset === 'now') ||
-                          (opt.value === 'later' && timePreset === 'later') ||
-                          (opt.value === 'pick' && timePreset === 'pick')
-                        return (
-                          <button
-                            key={opt.value}
-                            type="button"
-                            onClick={() => {
-                              setTimePreset(opt.value as 'now' | 'later' | 'pick')
-                              if (opt.value === 'now') {
-                                setScheduledFor(new Date().toISOString())
-                              } else if (opt.value === 'later') {
-                                const later = new Date()
-                                later.setHours(later.getHours() + 3)
-                                setScheduledFor(later.toISOString())
-                              } else {
-                                setScheduledFor('')
-                              }
-                            }}
-                            className={`flex-1 py-2 rounded-xl text-xs font-medium border transition-colors ${
-                              isSelected
-                                ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 border-neutral-900 dark:border-white'
-                                : 'bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700'
-                            }`}
-                          >
-                            {opt.label}
-                          </button>
-                        )
-                      })}
+                    <div className="flex gap-2">
+                      <select
+                        value={dateOption}
+                        onChange={(e) => setDateOption(e.target.value)}
+                        className="flex-1 px-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white outline-none focus:border-neutral-400 dark:focus:border-neutral-500 appearance-none"
+                      >
+                        <option value="today">Today</option>
+                        <option value="tomorrow">Tomorrow</option>
+                      </select>
+                      <select
+                        value={timeOption}
+                        onChange={(e) => setTimeOption(e.target.value)}
+                        className="flex-1 px-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white outline-none focus:border-neutral-400 dark:focus:border-neutral-500 appearance-none"
+                      >
+                        <option value="">Select time</option>
+                        {TIME_OPTIONS.map((t) => (
+                          <option key={t} value={t}>{t}</option>
+                        ))}
+                      </select>
                     </div>
-                    {timePreset === 'pick' && (
-                      <input
-                        type="datetime-local"
-                        value={scheduledForInput}
-                        onChange={(e) => {
-                          setScheduledForInput(e.target.value)
-                          setScheduledFor(e.target.value ? new Date(e.target.value).toISOString() : '')
-                        }}
-                        className="w-full px-4 py-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white outline-none focus:border-neutral-400 dark:focus:border-neutral-500"
-                      />
-                    )}
                   </div>
 
+                  {/* Preview card */}
+                  {(thought || locationName || timeOption) && (
+                    <div className="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4">
+                      <p className="text-[10px] text-neutral-500 mb-2">Preview</p>
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center text-lg shrink-0">
+                          {WAVE_ACTIVITIES[selectedType].emoji}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-neutral-900 dark:text-white text-sm">{WAVE_ACTIVITIES[selectedType].label}</p>
+                          {thought && (
+                            <p className="text-sm text-neutral-600 dark:text-neutral-300 mt-0.5">&ldquo;{thought}&rdquo;</p>
+                          )}
+                          <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-neutral-500">
+                            {locationName && <span>📍 {locationName}</span>}
+                            {timeOption && (
+                              <span>📅 {dateLabel} at {timeOption}</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Validation hints */}
+                  {!isValid && (
+                    <p className="text-xs text-orange-500 text-center">
+                      {!thought.trim()
+                        ? 'Add a thought to help others connect with you'
+                        : !locationName.trim()
+                          ? 'Add a location so others can find you'
+                          : !timeOption
+                            ? 'Pick a time'
+                            : ''}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -295,10 +326,14 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
               <div className="shrink-0 px-4 py-3 border-t border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900">
                 <button
                   onClick={handleCreate}
-                  disabled={!thought.trim() || !locationName.trim() || !timePreset || creating}
-                  className="w-full py-3 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm disabled:opacity-50"
+                  disabled={!isValid || creating}
+                  className={`w-full py-3.5 rounded-xl font-semibold text-sm transition-colors ${
+                    isValid && !creating
+                      ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900'
+                      : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-600 cursor-not-allowed'
+                  }`}
                 >
-                  {creating ? 'Creating...' : 'Start Wave 🌊'}
+                  {creating ? 'Creating...' : 'Start activity 🙋'}
                 </button>
               </div>
             )}

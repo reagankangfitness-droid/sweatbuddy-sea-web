@@ -38,12 +38,6 @@ export function WaveBubblePin({ wave, onClick }: WaveBubblePinProps) {
   const remaining = wave.waveThreshold - wave.participantCount
   const isAlmostUnlocked = !wave.isUnlocked && remaining === 1
 
-  const borderColor = wave.isUnlocked
-    ? 'border-emerald-500 ring-emerald-500/20'
-    : isAlmostUnlocked
-      ? 'border-orange-500 ring-orange-500/20'
-      : 'border-neutral-300 dark:border-neutral-600 ring-neutral-300/20 dark:ring-neutral-600/20'
-
   return (
     <OverlayView
       position={{ lat: wave.latitude, lng: wave.longitude }}
@@ -51,31 +45,54 @@ export function WaveBubblePin({ wave, onClick }: WaveBubblePinProps) {
     >
       <button
         onClick={onClick}
-        className="relative flex flex-col items-center -ml-6 -mt-6"
+        className="relative flex flex-col items-center -ml-10 -mt-5"
       >
-        {/* Main circle */}
-        <div className={`w-12 h-12 rounded-full shadow-lg flex items-center justify-center bg-white dark:bg-neutral-800 border-[2.5px] ring-2 ${borderColor} ${isRecent ? 'animate-pulse' : ''}`}>
-          <span className="text-xl leading-none">{activity.emoji}</span>
+        <div className="relative">
+          {/* Pulse for nearly unlocked */}
+          {isAlmostUnlocked && (
+            <div className="absolute inset-0 rounded-2xl bg-orange-500 animate-pulse opacity-20" />
+          )}
+
+          {/* Main pill bubble */}
+          <div
+            className={`px-3 py-2 rounded-2xl shadow-lg flex items-center gap-2 bg-white dark:bg-neutral-800 ${
+              wave.isUnlocked
+                ? 'ring-2 ring-emerald-400'
+                : isRecent
+                  ? 'animate-pulse'
+                  : ''
+            }`}
+          >
+            <span className="text-xl">{activity.emoji}</span>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-medium text-neutral-500 dark:text-neutral-400 max-w-[80px] truncate">
+                {wave.locationName || wave.area}
+              </span>
+              <div className="flex items-center gap-1">
+                <span className={`text-xs font-bold ${
+                  wave.isUnlocked
+                    ? 'text-emerald-500'
+                    : isAlmostUnlocked
+                      ? 'text-orange-500'
+                      : 'text-neutral-600 dark:text-neutral-300'
+                }`}>
+                  {wave.participantCount}/{wave.waveThreshold}
+                </span>
+                <span className="text-xs">🙋</span>
+              </div>
+            </div>
+            {wave.isUnlocked && (
+              <span className="text-emerald-500 text-sm">✓</span>
+            )}
+          </div>
+
+          {/* "1 more!" badge */}
+          {isAlmostUnlocked && (
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap shadow-sm">
+              1 more!
+            </div>
+          )}
         </div>
-
-        {/* Wave count badge (bottom-right) */}
-        <span className={`absolute -bottom-0.5 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-white text-[10px] font-bold flex items-center justify-center shadow-sm ${
-          wave.isUnlocked ? 'bg-emerald-500' : isAlmostUnlocked ? 'bg-orange-500' : 'bg-neutral-500 dark:bg-neutral-600'
-        }`}>
-          {wave.participantCount}/{wave.waveThreshold}
-        </span>
-
-        {/* Pointer triangle */}
-        <div className={`w-0 h-0 border-l-[5px] border-r-[5px] border-t-[6px] border-l-transparent border-r-transparent -mt-[1px] ${
-          wave.isUnlocked ? 'border-t-emerald-500' : isAlmostUnlocked ? 'border-t-orange-500' : 'border-t-neutral-300 dark:border-t-neutral-600'
-        }`} />
-
-        {/* "1 more!" label for almost-unlocked */}
-        {isAlmostUnlocked && (
-          <span className="absolute -top-5 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap shadow-sm">
-            1 more!
-          </span>
-        )}
       </button>
     </OverlayView>
   )

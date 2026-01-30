@@ -14,6 +14,11 @@ interface Crew {
   memberCount: number
   createdAt: string
   lastMessage: { content: string; senderName: string; createdAt: string } | null
+  starterThought?: string | null
+  starterName?: string | null
+  starterImageUrl?: string | null
+  locationName?: string | null
+  scheduledFor?: string | null
 }
 
 function timeAgo(iso: string): string {
@@ -103,6 +108,11 @@ export function CrewChatList() {
           area={openChat.area}
           currentUserId={clerkUser.id}
           onClose={() => setOpenChat(null)}
+          starterThought={openChat.starterThought}
+          starterName={openChat.starterName}
+          starterImageUrl={openChat.starterImageUrl}
+          locationName={openChat.locationName}
+          scheduledFor={openChat.scheduledFor}
         />
       )}
     </div>

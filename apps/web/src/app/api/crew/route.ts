@@ -20,7 +20,15 @@ export async function GET() {
             },
           },
           waveActivity: {
-            select: { id: true, activityType: true, area: true },
+            select: {
+              id: true,
+              activityType: true,
+              area: true,
+              thought: true,
+              locationName: true,
+              scheduledFor: true,
+              creator: { select: { name: true, firstName: true, imageUrl: true } },
+            },
           },
         },
       },
@@ -44,6 +52,11 @@ export async function GET() {
           }
         : null,
       waveActivityId: m.chat.waveActivity?.id || null,
+      starterThought: m.chat.waveActivity?.thought || null,
+      starterName: m.chat.waveActivity?.creator?.firstName || m.chat.waveActivity?.creator?.name || null,
+      starterImageUrl: m.chat.waveActivity?.creator?.imageUrl || null,
+      locationName: m.chat.waveActivity?.locationName || null,
+      scheduledFor: m.chat.waveActivity?.scheduledFor?.toISOString() || null,
     }
   })
 

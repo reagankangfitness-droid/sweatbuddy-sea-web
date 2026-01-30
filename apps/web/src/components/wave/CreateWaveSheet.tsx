@@ -245,7 +245,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
                       ref={locationInputRef}
                       value={locationName}
                       onChange={(e) => setLocationName(e.target.value)}
-                      placeholder="Search location..."
+                      placeholder="Where's the meetup?"
                       maxLength={300}
                       className="w-full px-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 outline-none focus:border-neutral-400 dark:focus:border-neutral-500"
                     />
@@ -254,7 +254,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
                     )}
                     {!locationName && (
                       <div className="flex flex-wrap gap-2 mt-2">
-                        {['East Coast Park', 'Botanic Gardens', 'Marina Bay', 'MacRitchie', 'Kallang', 'Sentosa'].map((loc) => (
+                        {['Local park', 'Downtown gym', 'Beach', 'Trail nearby', 'Community center', 'My neighborhood'].map((loc) => (
                           <button
                             key={loc}
                             type="button"
@@ -287,7 +287,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
                         onChange={(e) => setTimeOption(e.target.value)}
                         className="flex-1 px-4 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white outline-none focus:border-neutral-400 dark:focus:border-neutral-500 appearance-none"
                       >
-                        <option value="">Select time</option>
+                        <option value="">What time?</option>
                         {TIME_OPTIONS.map((t) => (
                           <option key={t} value={t}>{t}</option>
                         ))}
@@ -347,7 +347,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
                       : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-600 cursor-not-allowed'
                   }`}
                 >
-                  {creating ? 'Creating...' : 'Start activity 🙋'}
+                  {creating ? 'Creating...' : 'Start Wave 🙋'}
                 </button>
               </div>
             )}

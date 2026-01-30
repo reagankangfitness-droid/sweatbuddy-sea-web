@@ -31,7 +31,7 @@ export default function LandingPage() {
             href="/sign-up"
             className="relative z-20 inline-block px-8 py-4 rounded-xl bg-white text-neutral-900 font-semibold text-lg text-center hover:bg-white/90 active:scale-[0.98] transition-all cursor-pointer"
           >
-            Sign Up
+            Find Your Crew
           </a>
         </div>
       </section>

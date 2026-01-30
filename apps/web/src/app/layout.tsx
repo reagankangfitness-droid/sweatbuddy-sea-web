@@ -3,7 +3,7 @@ import type { PropsWithChildren } from 'react'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
-import { BottomNav } from '@/components/BottomNav'
+import { AppNav } from '@/components/AppNav'
 import './globals.css'
 
 // Plus Jakarta Sans - closest free alternative to Airbnb Cereal
@@ -97,7 +97,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <Providers>
           {children}
           <Toaster />
-          <BottomNav />
+          <AppNav />
         </Providers>
       </body>
     </html>

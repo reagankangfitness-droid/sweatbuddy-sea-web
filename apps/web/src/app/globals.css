@@ -2099,3 +2099,32 @@
 .animate-slide-out-down {
   animation: slideOutDown 0.2s ease-in forwards;
 }
+
+/* ═══════════════════════════════════════════════════════
+   GOOGLE MAPS - Hide attribution bar
+   ═══════════════════════════════════════════════════════ */
+/* Hide Google logo */
+.gm-style a[href^="https://maps.google.com/maps"] {
+  display: none !important;
+}
+
+/* Hide keyboard shortcuts, terms, report links */
+.gm-style-cc {
+  display: none !important;
+}
+
+/* Hide "Map data" attribution text */
+.gm-style .gmnoprint,
+.gm-style .gm-style-cc {
+  display: none !important;
+}
+
+/* Keep zoom controls visible but hide others */
+.gm-style .gm-bundled-control {
+  display: block !important;
+}
+
+/* Hide the entire bottom bar */
+.gm-style > div:last-child {
+  display: none !important;
+}

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { WAVE_EXPIRY_MS, DEFAULT_RADIUS_KM, WAVE_ACTIVITY_TYPES } from '@/lib/wave/constants'
 import { WaveActivityType } from '@prisma/client'
+import { getBlockedUserIds } from '@/lib/blocks'
 
 const VALID_TYPES = new Set<string>(WAVE_ACTIVITY_TYPES)
 
@@ -141,6 +142,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
   }
 
+  // Get blocked user IDs to filter them out
+  const blockedUserIds = await getBlockedUserIds(userId)
+
   const now = new Date()
 
   // Build where clause
@@ -149,6 +153,10 @@ export async function GET(request: NextRequest) {
   }
   if (type) {
     where.activityType = type
+  }
+  // Filter out waves from blocked users
+  if (blockedUserIds.size > 0) {
+    where.creatorId = { notIn: Array.from(blockedUserIds) }
   }
 
   // --- Engagement-optimized filtering ---
@@ -357,11 +365,16 @@ export async function GET(request: NextRequest) {
     const clampedRadius = Math.min(Math.max(radiusKm, 0.1), 50)
 
     // Build parameterized query — type filter uses separate param if present
-    const params: (number | string)[] = [lat, lng, clampedRadius]
+    const params: (number | string | string[])[] = [lat, lng, clampedRadius]
     let typeClause = ''
+    let blockedClause = ''
     if (type) {
       params.push(type)
       typeClause = `AND wa."activityType" = $${params.length}::text::"WaveActivityType"`
+    }
+    if (blockedUserIds.size > 0) {
+      params.push(Array.from(blockedUserIds))
+      blockedClause = `AND wa."creatorId" != ALL($${params.length}::text[])`
     }
 
     const waves = await prisma.$queryRawUnsafe<
@@ -404,6 +417,7 @@ export async function GET(request: NextRequest) {
       JOIN users u ON u.id = wa."creatorId"
       WHERE wa."expiresAt" > NOW()
         ${typeClause}
+        ${blockedClause}
         AND (
           wa.latitude IS NULL OR wa.longitude IS NULL OR
           (6371 * acos(LEAST(1, GREATEST(-1,

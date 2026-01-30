@@ -1,6 +1,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getBlockedUserIds } from '@/lib/blocks'
 
 export async function GET(
   _request: NextRequest,
@@ -17,8 +18,15 @@ export async function GET(
   })
   if (!member) return NextResponse.json({ error: 'Not a member' }, { status: 403 })
 
+  // Get blocked user IDs to filter their messages
+  const blockedUserIds = await getBlockedUserIds(userId)
+
   const messages = await prisma.crewMessage.findMany({
-    where: { chatId },
+    where: {
+      chatId,
+      // Filter out messages from blocked users
+      ...(blockedUserIds.size > 0 && { senderId: { notIn: Array.from(blockedUserIds) } }),
+    },
     orderBy: { createdAt: 'desc' },
     take: 100,
     include: {

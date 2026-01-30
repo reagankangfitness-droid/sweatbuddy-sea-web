@@ -16,7 +16,8 @@ import {
   ChevronLeft,
   Loader2,
   Lock,
-  UserPlus
+  UserPlus,
+  Flag
 } from 'lucide-react'
 import { Logo } from '@/components/logo'
 
@@ -26,6 +27,7 @@ const navigation = [
   { name: 'Pending Events', href: '/admin/pending', icon: Clock },
   { name: 'Hosts', href: '/admin/hosts', icon: UserPlus },
   { name: 'Attendees', href: '/admin/attendees', icon: Users },
+  { name: 'Reports', href: '/admin/reports', icon: Flag },
   { name: 'Newsletter', href: '/admin/newsletter', icon: Mail },
   { name: 'Settings', href: '/admin/settings', icon: Settings },
 ]

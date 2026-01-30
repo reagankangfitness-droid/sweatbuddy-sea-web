@@ -22,18 +22,18 @@ enum ActivityType {
 // =====================================================
 
 model CategoryGroup {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  name        String
-  description String?
-  emoji       String?
-  color       String?  // hex color
-  displayOrder Int     @default(0)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  description  String?
+  emoji        String?
+  color        String? // hex color
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  categories  ActivityCategory[]
+  categories ActivityCategory[]
 
   @@index([slug])
   @@index([isActive, displayOrder])
@@ -41,21 +41,21 @@ model CategoryGroup {
 }
 
 model ActivityCategory {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  name        String
-  description String?
-  emoji       String?
-  icon        String?  // lucide icon name
-  color       String?  // hex color
-  groupSlug   String?
-  displayOrder Int     @default(0)
-  isActive    Boolean  @default(true)
-  isFeatured  Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  description  String?
+  emoji        String?
+  icon         String? // lucide icon name
+  color        String? // hex color
+  groupSlug    String?
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  isFeatured   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  group       CategoryGroup? @relation(fields: [groupSlug], references: [slug])
+  group CategoryGroup? @relation(fields: [groupSlug], references: [slug])
   // Note: Activities use categorySlug as a plain string, not a foreign key
   // This allows us to manage categories as code constants while still
   // having the option to store category metadata in the database if needed
@@ -111,99 +111,110 @@ model User {
   deletedAt DateTime?
 
   // Profile fields
-  username    String?   @unique
-  slug        String?   @unique
-  firstName   String?
-  bio         String?
-  headline    String?   @db.VarChar(200)
-  location    String?   @db.VarChar(200)
+  username  String? @unique
+  slug      String? @unique
+  firstName String?
+  bio       String?
+  headline  String? @db.VarChar(200)
+  location  String? @db.VarChar(200)
 
   // Social links
-  website     String?   @db.VarChar(500)
-  instagram   String?   @db.VarChar(100)
-  twitter     String?   @db.VarChar(100)
-  linkedin    String?   @db.VarChar(200)
-  tiktok      String?   @db.VarChar(100)
+  website   String? @db.VarChar(500)
+  instagram String? @db.VarChar(100)
+  twitter   String? @db.VarChar(100)
+  linkedin  String? @db.VarChar(200)
+  tiktok    String? @db.VarChar(100)
 
   // Profile settings
-  isHost                  Boolean   @default(false)
-  isVerified              Boolean   @default(false)
-  isPublic                Boolean   @default(true)
-  showActivitiesAttended  Boolean   @default(true)
-  showStats               Boolean   @default(true)
+  isHost                 Boolean @default(false)
+  isVerified             Boolean @default(false)
+  isPublic               Boolean @default(true)
+  showActivitiesAttended Boolean @default(true)
+  showStats              Boolean @default(true)
+
+  // Trust & Safety
+  accountStatus  UserAccountStatus @default(ACTIVE)
+  suspendedUntil DateTime?
 
   // Host-specific fields
-  hostSince       DateTime?
-  specialties     String[]  @default([])
-  certifications  String[]  @default([])
-  coverImage      String?   @db.VarChar(500)
+  hostSince      DateTime?
+  specialties    String[]  @default([])
+  certifications String[]  @default([])
+  coverImage     String?   @db.VarChar(500)
 
   // Profile timestamps
   profileUpdatedAt DateTime?
 
   // Beta access fields
-  betaAccessGranted     Boolean   @default(false)
-  betaInviteCodeUsed    String?   @db.VarChar(20)
-  betaInvitesRemaining  Int       @default(3)
-  betaJoinedAt          DateTime?
+  betaAccessGranted    Boolean   @default(false)
+  betaInviteCodeUsed   String?   @db.VarChar(20)
+  betaInvitesRemaining Int       @default(3)
+  betaJoinedAt         DateTime?
 
-  activities              Activity[]            @relation("CreatedActivities")
-  hostedActivities        Activity[]            @relation("HostedActivities")
+  activities              Activity[]              @relation("CreatedActivities")
+  hostedActivities        Activity[]              @relation("HostedActivities")
   groups                  UserGroup[]
   messages                Message[]
   userActivities          UserActivity[]
-  sentConversations       Conversation[]        @relation("SentConversations")
-  receivedConversations   Conversation[]        @relation("ReceivedConversations")
+  sentConversations       Conversation[]          @relation("SentConversations")
+  receivedConversations   Conversation[]          @relation("ReceivedConversations")
   conversationMessages    ConversationMessage[]
-  referralInvitesSent     ReferralInvite[]      @relation("ReferralInvitesSent")
-  referralConversions     ReferralConversion[]  @relation("ReferralConversions")
+  referralInvitesSent     ReferralInvite[]        @relation("ReferralInvitesSent")
+  referralConversions     ReferralConversion[]    @relation("ReferralConversions")
   referralStats           UserReferralStats?
-  workoutBuddiesAsUser    WorkoutBuddy[]        @relation("WorkoutBuddiesAsUser")
-  workoutBuddiesAsBuddy   WorkoutBuddy[]        @relation("WorkoutBuddiesAsBuddy")
-  notifications           Notification[]        @relation("UserNotifications")
-  mentionsSent            Mention[]             @relation("MentionsSent")
-  mentionsReceived        Mention[]             @relation("MentionsReceived")
+  workoutBuddiesAsUser    WorkoutBuddy[]          @relation("WorkoutBuddiesAsUser")
+  workoutBuddiesAsBuddy   WorkoutBuddy[]          @relation("WorkoutBuddiesAsBuddy")
+  notifications           Notification[]          @relation("UserNotifications")
+  mentionsSent            Mention[]               @relation("MentionsSent")
+  mentionsReceived        Mention[]               @relation("MentionsReceived")
   notificationPreferences NotificationPreference?
 
   // Host statistics relations
-  hostStats             HostStats?           @relation("HostStats")
-  hostActivityStats     ActivityStats[]      @relation("HostActivityStats")
-  hostStatsDaily        HostStatsDaily[]     @relation("HostStatsDaily")
-  hostStatsMonthly      HostStatsMonthly[]   @relation("HostStatsMonthly")
-  hostAttendeeHistory   AttendeeHistory[]    @relation("HostAttendeeHistory")
-  attendeeHistory       AttendeeHistory[]    @relation("AttendeeHistory")
-  activityViews         ActivityView[]       @relation("UserActivityViews")
+  hostStats           HostStats?         @relation("HostStats")
+  hostActivityStats   ActivityStats[]    @relation("HostActivityStats")
+  hostStatsDaily      HostStatsDaily[]   @relation("HostStatsDaily")
+  hostStatsMonthly    HostStatsMonthly[] @relation("HostStatsMonthly")
+  hostAttendeeHistory AttendeeHistory[]  @relation("HostAttendeeHistory")
+  attendeeHistory     AttendeeHistory[]  @relation("AttendeeHistory")
+  activityViews       ActivityView[]     @relation("UserActivityViews")
 
   // Profile relations
-  followers       UserFollower[]  @relation("UserFollowers")
-  following       UserFollower[]  @relation("UserFollowing")
-  profileViews    ProfileView[]   @relation("ProfileViews")
-  profileViewedBy ProfileView[]   @relation("ProfileViewers")
+  followers       UserFollower[] @relation("UserFollowers")
+  following       UserFollower[] @relation("UserFollowing")
+  profileViews    ProfileView[]  @relation("ProfileViews")
+  profileViewedBy ProfileView[]  @relation("ProfileViewers")
 
   // Beta system relations
-  betaCodesCreated  BetaInviteCode[]  @relation("BetaCodesCreated")
-  betaAccessLogs    BetaAccessLog[]   @relation("BetaAccessLogs")
+  betaCodesCreated BetaInviteCode[] @relation("BetaCodesCreated")
+  betaAccessLogs   BetaAccessLog[]  @relation("BetaAccessLogs")
 
   // Waitlist relations
-  waitlistEntries   ActivityWaitlist[] @relation("UserWaitlistEntries")
+  waitlistEntries ActivityWaitlist[] @relation("UserWaitlistEntries")
 
   // Review relations
-  reviewsWritten      Review[]            @relation("ReviewsWritten")
-  reviewsReceived     Review[]            @relation("ReviewsReceived")
-  hostRatingSummary   HostRatingSummary?  @relation("HostRatingSummary")
+  reviewsWritten    Review[]           @relation("ReviewsWritten")
+  reviewsReceived   Review[]           @relation("ReviewsReceived")
+  hostRatingSummary HostRatingSummary? @relation("HostRatingSummary")
 
   // Completion card relations
-  completionCards     CompletionCard[]    @relation("UserCompletionCards")
-  userStreaks         UserStreak[]        @relation("UserStreaks")
+  completionCards CompletionCard[] @relation("UserCompletionCards")
+  userStreaks     UserStreak[]     @relation("UserStreaks")
 
   // Event submissions (host applications)
-  eventSubmissions    EventSubmission[]   @relation("UserEventSubmissions")
+  eventSubmissions EventSubmission[] @relation("UserEventSubmissions")
 
   // Wave mode
-  waveActivitiesCreated WaveActivity[]      @relation("WaveActivitiesCreated")
-  waveParticipations    WaveParticipant[]   @relation("WaveParticipations")
-  crewChatMemberships   CrewChatMember[]    @relation("CrewChatMemberships")
-  crewMessagesSent      CrewMessage[]       @relation("CrewMessagesSent")
+  waveActivitiesCreated WaveActivity[]    @relation("WaveActivitiesCreated")
+  waveParticipations    WaveParticipant[] @relation("WaveParticipations")
+  crewChatMemberships   CrewChatMember[]  @relation("CrewChatMemberships")
+  crewMessagesSent      CrewMessage[]     @relation("CrewMessagesSent")
+
+  // Trust & Safety relations
+  reportsMade       UserReport[]    @relation("ReportsMade")
+  reportsReceived   UserReport[]    @relation("ReportsReceived")
+  blocksMade        UserBlock[]     @relation("BlocksMade")
+  blocksReceived    UserBlock[]     @relation("BlocksReceived")
+  moderationActions ModerationLog[] @relation("ModerationActions")
 
   @@index([slug])
   @@index([username])
@@ -213,55 +224,55 @@ model User {
 }
 
 model Activity {
-  id          String         @id @default(cuid())
-  title       String
-  description String?
-  type        ActivityType   // Legacy field - kept for backwards compatibility
-  categorySlug String?       // New category system
-  city        String
-  latitude    Float
-  longitude   Float
+  id             String         @id @default(cuid())
+  title          String
+  description    String?
+  type           ActivityType // Legacy field - kept for backwards compatibility
+  categorySlug   String? // New category system
+  city           String
+  latitude       Float
+  longitude      Float
   // Additional location fields for Google Places data
-  address       String?        // Full formatted address (e.g., "Red Dot Design Museum, 11 Marina Blvd, Singapore 018940")
-  streetAddress String?        // Street portion (e.g., "11 Marina Blvd")
-  postalCode    String?        // Postal/ZIP code
-  country       String?        // Country name
-  placeId       String?        // Google Places ID for reference
-  neighborhoodId String?       // Singapore neighborhood ID for map features
-  startTime   DateTime?
-  endTime     DateTime?
-  maxPeople   Int?
-  imageUrl    String?
-  price       Float          @default(0)
-  currency    String         @default("USD")
-  status      ActivityStatus @default(PUBLISHED)
-  userId      String
-  hostId      String?
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  deletedAt   DateTime?
+  address        String? // Full formatted address (e.g., "Red Dot Design Museum, 11 Marina Blvd, Singapore 018940")
+  streetAddress  String? // Street portion (e.g., "11 Marina Blvd")
+  postalCode     String? // Postal/ZIP code
+  country        String? // Country name
+  placeId        String? // Google Places ID for reference
+  neighborhoodId String? // Singapore neighborhood ID for map features
+  startTime      DateTime?
+  endTime        DateTime?
+  maxPeople      Int?
+  imageUrl       String?
+  price          Float          @default(0)
+  currency       String         @default("USD")
+  status         ActivityStatus @default(PUBLISHED)
+  userId         String
+  hostId         String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  deletedAt      DateTime?
 
-  user           User             @relation("CreatedActivities", fields: [userId], references: [id])
-  host           User?            @relation("HostedActivities", fields: [hostId], references: [id])
+  user            User             @relation("CreatedActivities", fields: [userId], references: [id])
+  host            User?            @relation("HostedActivities", fields: [hostId], references: [id])
   // Note: categorySlug is NOT a foreign key - categories are managed in code as constants
   // This allows flexibility to add/remove categories without database migrations
-  userActivities UserActivity[]
-  groups         Group[]
-  conversations  Conversation[]
+  userActivities  UserActivity[]
+  groups          Group[]
+  conversations   Conversation[]
   referralInvites ReferralInvite[]
-  workoutBuddies WorkoutBuddy[]
+  workoutBuddies  WorkoutBuddy[]
 
   // Statistics relations
-  activityStats  ActivityStats?   @relation("ActivityStats")
-  activityViews  ActivityView[]   @relation("ActivityViews")
+  activityStats ActivityStats? @relation("ActivityStats")
+  activityViews ActivityView[] @relation("ActivityViews")
 
   // Waitlist relations
-  waitlistEntries    ActivityWaitlist[]       @relation("ActivityWaitlist")
-  urgencySettings    ActivityUrgencySettings? @relation("ActivityUrgencySettings")
+  waitlistEntries ActivityWaitlist[]       @relation("ActivityWaitlist")
+  urgencySettings ActivityUrgencySettings? @relation("ActivityUrgencySettings")
 
   // Review relations
-  reviews              Review[]                 @relation("ActivityReviews")
-  ratingSummary        ActivityRatingSummary?   @relation("ActivityRatingSummary")
+  reviews       Review[]               @relation("ActivityReviews")
+  ratingSummary ActivityRatingSummary? @relation("ActivityRatingSummary")
 
   @@index([userId])
   @@index([hostId])
@@ -351,24 +362,24 @@ model UserActivity {
   deletedAt  DateTime?
 
   // Payment tracking fields
-  paymentStatus             PaymentStatus? @default(PENDING)
-  stripeCheckoutSessionId   String?
-  stripePaymentIntentId     String?
-  amountPaid                Float?
-  currency                  String?        @default("SGD")
-  paidAt                    DateTime?
-  refundedAt                DateTime?
-  refundAmount              Float?
+  paymentStatus           PaymentStatus? @default(PENDING)
+  stripeCheckoutSessionId String?
+  stripePaymentIntentId   String?
+  amountPaid              Float?
+  currency                String?        @default("SGD")
+  paidAt                  DateTime?
+  refundedAt              DateTime?
+  refundAmount            Float?
 
-  user     User      @relation(fields: [userId], references: [id])
-  activity Activity  @relation(fields: [activityId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+  activity Activity @relation(fields: [activityId], references: [id])
   payment  Payment?
 
   // Waitlist conversion tracking
   waitlistEntry ActivityWaitlist? @relation("WaitlistBooking")
 
   // Review relation (one review per booking)
-  review   Review?   @relation("BookingReview")
+  review Review? @relation("BookingReview")
 
   // Completion card relation
   completionCard CompletionCard? @relation("BookingCompletionCard")
@@ -383,8 +394,8 @@ model UserActivity {
 
 // Detailed payment tracking for audit trail
 model Payment {
-  id             String        @id @default(cuid())
-  userActivityId String        @unique
+  id             String  @id @default(cuid())
+  userActivityId String  @unique
   userId         String
   activityId     String
   hostId         String?
@@ -395,32 +406,32 @@ model Payment {
   stripeCustomerId        String?
 
   // Payment details
-  amount         Float
-  currency       String        @default("SGD")
-  status         PaymentStatus @default(PENDING)
+  amount   Float
+  currency String        @default("SGD")
+  status   PaymentStatus @default(PENDING)
 
   // Fees tracking (for future use)
-  stripeFee      Float?
-  platformFee    Float?
-  hostPayout     Float?
+  stripeFee   Float?
+  platformFee Float?
+  hostPayout  Float?
 
   // Discount tracking
-  originalAmount  Float?
-  discountAmount  Float?
-  discountCode    String?
+  originalAmount   Float?
+  discountAmount   Float?
+  discountCode     String?
   referralInviteId String?
 
   // Metadata
-  description    String?
-  metadata       Json?
+  description String?
+  metadata    Json?
 
   // Timestamps
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  paidAt         DateTime?
-  refundedAt     DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  paidAt     DateTime?
+  refundedAt DateTime?
 
-  userActivity   UserActivity  @relation(fields: [userActivityId], references: [id])
+  userActivity UserActivity @relation(fields: [userActivityId], references: [id])
 
   @@index([userId])
   @@index([activityId])
@@ -483,12 +494,12 @@ enum DiscountType {
 }
 
 model ReferralInvite {
-  id         String                @id @default(cuid())
+  id         String               @id @default(cuid())
   referrerId String
   activityId String
-  inviteCode String                @unique
+  inviteCode String               @unique
   inviteLink String
-  status     ReferralInviteStatus  @default(PENDING)
+  status     ReferralInviteStatus @default(PENDING)
 
   friendEmail String?
   friendName  String?
@@ -499,11 +510,11 @@ model ReferralInvite {
   convertedAt DateTime?
   deletedAt   DateTime?
 
-  referrerRewardClaimed  Boolean @default(false)
-  friendDiscountApplied  Boolean @default(false)
+  referrerRewardClaimed Boolean @default(false)
+  friendDiscountApplied Boolean @default(false)
 
-  referrer    User                  @relation("ReferralInvitesSent", fields: [referrerId], references: [id])
-  activity    Activity              @relation(fields: [activityId], references: [id])
+  referrer    User                 @relation("ReferralInvitesSent", fields: [referrerId], references: [id])
+  activity    Activity             @relation(fields: [activityId], references: [id])
   conversions ReferralConversion[]
 
   @@index([referrerId])
@@ -514,7 +525,7 @@ model ReferralInvite {
 }
 
 model ReferralConversion {
-  id             String       @id @default(cuid())
+  id             String  @id @default(cuid())
   inviteId       String
   friendUserId   String
   userActivityId String?
@@ -523,11 +534,11 @@ model ReferralConversion {
   discountValue  Float
   discountAmount Float
 
-  convertedAt DateTime @default(now())
+  convertedAt DateTime  @default(now())
   deletedAt   DateTime?
 
-  invite       ReferralInvite @relation(fields: [inviteId], references: [id])
-  friendUser   User           @relation("ReferralConversions", fields: [friendUserId], references: [id])
+  invite     ReferralInvite @relation(fields: [inviteId], references: [id])
+  friendUser User           @relation("ReferralConversions", fields: [friendUserId], references: [id])
 
   @@index([inviteId])
   @@index([friendUserId])
@@ -544,7 +555,7 @@ model UserReferralStats {
   totalCreditsEarned   Float @default(0)
   currentCreditBalance Float @default(0)
 
-  badges Json  @default("[]")
+  badges Json @default("[]")
 
   currentStreak Int @default(0)
   longestStreak Int @default(0)
@@ -624,15 +635,15 @@ model Mention {
 }
 
 model NotificationPreference {
-  id               String   @id @default(cuid())
-  userId           String   @unique
-  mentionEnabled   Boolean  @default(true)
-  messageEnabled   Boolean  @default(true)
-  activityEnabled  Boolean  @default(true)
-  emailEnabled     Boolean  @default(false)
-  pushEnabled      Boolean  @default(false)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  mentionEnabled  Boolean  @default(true)
+  messageEnabled  Boolean  @default(true)
+  activityEnabled Boolean  @default(true)
+  emailEnabled    Boolean  @default(false)
+  pushEnabled     Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id])
 
@@ -645,8 +656,8 @@ model NotificationPreference {
 
 // Denormalized host stats table (fast reads)
 model HostStats {
-  id        String   @id @default(cuid())
-  hostId    String   @unique
+  id     String @id @default(cuid())
+  hostId String @unique
 
   // Event counts
   totalEvents          Int @default(0)
@@ -657,31 +668,31 @@ model HostStats {
   cancelledEvents      Int @default(0)
 
   // Attendee counts
-  totalBookings              Int @default(0)
-  totalBookingsThisMonth     Int @default(0)
-  totalUniqueAttendees       Int @default(0)
+  totalBookings                 Int @default(0)
+  totalBookingsThisMonth        Int @default(0)
+  totalUniqueAttendees          Int @default(0)
   totalUniqueAttendeesThisMonth Int @default(0)
 
   // Capacity & attendance
-  totalSpotsOffered       Int     @default(0)
-  totalSpotsFilled        Int     @default(0)
-  averageAttendanceRate   Decimal @default(0) @db.Decimal(5, 2)
+  totalSpotsOffered        Int     @default(0)
+  totalSpotsFilled         Int     @default(0)
+  averageAttendanceRate    Decimal @default(0) @db.Decimal(5, 2)
   averageAttendeesPerEvent Decimal @default(0) @db.Decimal(5, 2)
 
   // Repeat attendees
-  repeatAttendees     Int     @default(0)
-  repeatAttendeeRate  Decimal @default(0) @db.Decimal(5, 2)
+  repeatAttendees    Int     @default(0)
+  repeatAttendeeRate Decimal @default(0) @db.Decimal(5, 2)
 
   // Revenue (for paid events)
-  totalRevenue            Decimal @default(0) @db.Decimal(12, 2)
-  totalRevenueThisMonth   Decimal @default(0) @db.Decimal(12, 2)
-  totalRevenueThisYear    Decimal @default(0) @db.Decimal(12, 2)
-  averageRevenuePerEvent  Decimal @default(0) @db.Decimal(10, 2)
+  totalRevenue           Decimal @default(0) @db.Decimal(12, 2)
+  totalRevenueThisMonth  Decimal @default(0) @db.Decimal(12, 2)
+  totalRevenueThisYear   Decimal @default(0) @db.Decimal(12, 2)
+  averageRevenuePerEvent Decimal @default(0) @db.Decimal(10, 2)
 
   // Ratings
-  averageRating    Decimal @default(0) @db.Decimal(3, 2)
-  totalReviews     Int     @default(0)
-  fiveStarReviews  Int     @default(0)
+  averageRating   Decimal @default(0) @db.Decimal(3, 2)
+  totalReviews    Int     @default(0)
+  fiveStarReviews Int     @default(0)
 
   // Engagement
   totalProfileViews     Int     @default(0)
@@ -918,7 +929,7 @@ model ProfileView {
   profileId String
   viewerId  String?
   viewedAt  DateTime @default(now())
-  source    String?  // 'activity', 'search', 'direct'
+  source    String? // 'activity', 'search', 'direct'
 
   profile User  @relation("ProfileViews", fields: [profileId], references: [id], onDelete: Cascade)
   viewer  User? @relation("ProfileViewers", fields: [viewerId], references: [id], onDelete: SetNull)
@@ -930,14 +941,14 @@ model ProfileView {
 
 // User reviews table (for host reviews)
 model UserReview {
-  id          String   @id @default(cuid())
-  reviewerId  String
-  revieweeId  String
-  activityId  String?
-  rating      Int      // 1-5
-  comment     String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  reviewerId String
+  revieweeId String
+  activityId String?
+  rating     Int // 1-5
+  comment    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@unique([reviewerId, revieweeId, activityId])
   @@index([revieweeId])
@@ -964,33 +975,33 @@ enum WaitlistStatus {
 
 // Beta invite codes table
 model BetaInviteCode {
-  id            String       @id @default(cuid())
-  code          String       @unique
-  codeType      BetaCodeType @default(SINGLE)
+  id       String       @id @default(cuid())
+  code     String       @unique
+  codeType BetaCodeType @default(SINGLE)
 
   // Usage limits
-  maxUses       Int          @default(1)
-  currentUses   Int          @default(0)
+  maxUses     Int @default(1)
+  currentUses Int @default(0)
 
   // Who created it
   createdByUserId String?
-  createdByAdmin  Boolean    @default(false)
+  createdByAdmin  Boolean @default(false)
 
   // Metadata
-  label         String?      @db.VarChar(100)
-  notes         String?
+  label String? @db.VarChar(100)
+  notes String?
 
   // Status
-  isActive      Boolean      @default(true)
-  expiresAt     DateTime?
+  isActive  Boolean   @default(true)
+  expiresAt DateTime?
 
   // Timestamps
-  createdAt     DateTime     @default(now())
-  firstUsedAt   DateTime?
-  lastUsedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  firstUsedAt DateTime?
+  lastUsedAt  DateTime?
 
   // Relations
-  createdByUser User?          @relation("BetaCodesCreated", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdByUser User?           @relation("BetaCodesCreated", fields: [createdByUserId], references: [id], onDelete: SetNull)
   accessLogs    BetaAccessLog[]
 
   @@index([code])
@@ -1001,27 +1012,27 @@ model BetaInviteCode {
 
 // Beta access log (who used which code)
 model BetaAccessLog {
-  id            String   @id @default(cuid())
-  inviteCodeId  String?
-  codeUsed      String
+  id           String  @id @default(cuid())
+  inviteCodeId String?
+  codeUsed     String
 
   // Who used it
-  userId        String?
-  email         String?  @db.VarChar(255)
+  userId String?
+  email  String? @db.VarChar(255)
 
   // Access info
-  ipAddress     String?  @db.VarChar(45)
-  userAgent     String?
+  ipAddress String? @db.VarChar(45)
+  userAgent String?
 
   // Outcome
-  accessGranted       Boolean @default(true)
-  convertedToSignup   Boolean @default(false)
+  accessGranted     Boolean @default(true)
+  convertedToSignup Boolean @default(false)
 
-  createdAt     DateTime @default(now())
+  createdAt DateTime @default(now())
 
   // Relations
-  inviteCode    BetaInviteCode? @relation(fields: [inviteCodeId], references: [id], onDelete: SetNull)
-  user          User?           @relation("BetaAccessLogs", fields: [userId], references: [id], onDelete: SetNull)
+  inviteCode BetaInviteCode? @relation(fields: [inviteCodeId], references: [id], onDelete: SetNull)
+  user       User?           @relation("BetaAccessLogs", fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([inviteCodeId])
   @@index([userId])
@@ -1031,23 +1042,23 @@ model BetaAccessLog {
 
 // Beta waitlist
 model BetaWaitlist {
-  id              String         @id @default(cuid())
-  email           String         @unique @db.VarChar(255)
-  name            String?        @db.VarChar(200)
+  id    String  @id @default(cuid())
+  email String  @unique @db.VarChar(255)
+  name  String? @db.VarChar(200)
 
   // Interest info
-  interestedAs    String         @default("member") @db.VarChar(20)
-  referralSource  String?        @db.VarChar(100)
+  interestedAs   String  @default("member") @db.VarChar(20)
+  referralSource String? @db.VarChar(100)
 
   // Status
-  status          WaitlistStatus @default(WAITING)
-  inviteCodeSent  String?        @db.VarChar(20)
-  invitedAt       DateTime?
+  status         WaitlistStatus @default(WAITING)
+  inviteCodeSent String?        @db.VarChar(20)
+  invitedAt      DateTime?
 
   // Priority (for sorting waitlist)
-  priorityScore   Int            @default(0)
+  priorityScore Int @default(0)
 
-  createdAt       DateTime       @default(now())
+  createdAt DateTime @default(now())
 
   @@index([email])
   @@index([status, priorityScore])
@@ -1056,19 +1067,19 @@ model BetaWaitlist {
 
 // Beta settings (singleton table)
 model BetaSettings {
-  id                    Int      @id @default(1)
-  isBetaActive          Boolean  @default(true)
-  maxBetaUsers          Int      @default(500)
-  currentBetaUsers      Int      @default(0)
+  id               Int     @id @default(1)
+  isBetaActive     Boolean @default(true)
+  maxBetaUsers     Int     @default(500)
+  currentBetaUsers Int     @default(0)
 
   // Invite settings
-  invitesPerUser        Int      @default(3)
+  invitesPerUser Int @default(3)
 
   // Display settings
-  showSpotsRemaining    Boolean  @default(true)
-  showWaitlistPosition  Boolean  @default(true)
+  showSpotsRemaining   Boolean @default(true)
+  showWaitlistPosition Boolean @default(true)
 
-  updatedAt             DateTime @updatedAt
+  updatedAt DateTime @updatedAt
 
   @@map("beta_settings")
 }
@@ -1095,37 +1106,37 @@ enum WaitlistNotificationType {
 
 // Activity waitlist entries
 model ActivityWaitlist {
-  id          String                 @id @default(cuid())
+  id String @id @default(cuid())
 
   // Activity reference
-  activityId  String
+  activityId String
 
   // Who's waiting (user or email for non-logged-in)
-  userId      String?
-  email       String?                @db.VarChar(255)
-  name        String?                @db.VarChar(200)
+  userId String?
+  email  String? @db.VarChar(255)
+  name   String? @db.VarChar(200)
 
   // Position and status
-  position    Int
-  status      ActivityWaitlistStatus @default(WAITING)
+  position Int
+  status   ActivityWaitlistStatus @default(WAITING)
 
   // Notification tracking
   notifiedAt            DateTime?
-  notificationExpiresAt DateTime?    // 24-hour window to book
-  reminderSent          Boolean      @default(false)
+  notificationExpiresAt DateTime? // 24-hour window to book
+  reminderSent          Boolean   @default(false)
 
   // Outcome
-  convertedToBooking    Boolean      @default(false)
-  userActivityId        String?      @unique // Reference to booking if converted
+  convertedToBooking Boolean @default(false)
+  userActivityId     String? @unique // Reference to booking if converted
 
   // Timestamps
-  createdAt   DateTime               @default(now())
-  updatedAt   DateTime               @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  activity    Activity               @relation("ActivityWaitlist", fields: [activityId], references: [id], onDelete: Cascade)
-  user        User?                  @relation("UserWaitlistEntries", fields: [userId], references: [id], onDelete: Cascade)
-  userActivity UserActivity?         @relation("WaitlistBooking", fields: [userActivityId], references: [id], onDelete: SetNull)
+  activity      Activity               @relation("ActivityWaitlist", fields: [activityId], references: [id], onDelete: Cascade)
+  user          User?                  @relation("UserWaitlistEntries", fields: [userId], references: [id], onDelete: Cascade)
+  userActivity  UserActivity?          @relation("WaitlistBooking", fields: [userActivityId], references: [id], onDelete: SetNull)
   notifications WaitlistNotification[]
 
   // Ensure one entry per user per activity
@@ -1140,27 +1151,27 @@ model ActivityWaitlist {
 
 // Waitlist notification log
 model WaitlistNotification {
-  id                String                   @id @default(cuid())
+  id String @id @default(cuid())
 
-  waitlistEntryId   String
-  activityId        String
-  userId            String?
-  email             String?                  @db.VarChar(255)
+  waitlistEntryId String
+  activityId      String
+  userId          String?
+  email           String? @db.VarChar(255)
 
   // Notification details
-  notificationType  WaitlistNotificationType
-  channel           String                   @default("email") @db.VarChar(20) // 'email', 'push', 'sms'
+  notificationType WaitlistNotificationType
+  channel          String                   @default("email") @db.VarChar(20) // 'email', 'push', 'sms'
 
   // Status
-  sentAt            DateTime                 @default(now())
-  openedAt          DateTime?
-  clickedAt         DateTime?
+  sentAt    DateTime  @default(now())
+  openedAt  DateTime?
+  clickedAt DateTime?
 
   // Metadata
-  metadata          Json?
+  metadata Json?
 
   // Relations
-  waitlistEntry     ActivityWaitlist         @relation(fields: [waitlistEntryId], references: [id], onDelete: Cascade)
+  waitlistEntry ActivityWaitlist @relation(fields: [waitlistEntryId], references: [id], onDelete: Cascade)
 
   @@index([waitlistEntryId])
   @@index([activityId])
@@ -1170,24 +1181,24 @@ model WaitlistNotification {
 
 // Activity urgency settings (extend Activity model)
 model ActivityUrgencySettings {
-  id                String   @id @default(cuid())
-  activityId        String   @unique
+  id         String @id @default(cuid())
+  activityId String @unique
 
   // Urgency display settings
   showSpotsRemaining Boolean @default(true)
-  urgencyThreshold   Int     @default(5)  // Show urgency when <= X spots
+  urgencyThreshold   Int     @default(5) // Show urgency when <= X spots
 
   // Waitlist settings
-  waitlistEnabled    Boolean @default(true)
-  waitlistLimit      Int     @default(50) // Max waitlist size
-  notificationWindowHours Int @default(24) // Hours to book after notification
+  waitlistEnabled         Boolean @default(true)
+  waitlistLimit           Int     @default(50) // Max waitlist size
+  notificationWindowHours Int     @default(24) // Hours to book after notification
 
   // Timestamps
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  activity    Activity @relation("ActivityUrgencySettings", fields: [activityId], references: [id], onDelete: Cascade)
+  activity Activity @relation("ActivityUrgencySettings", fields: [activityId], references: [id], onDelete: Cascade)
 
   @@index([activityId])
   @@map("activity_urgency_settings")
@@ -1198,9 +1209,9 @@ model ActivityUrgencySettings {
 // =====================================================
 
 enum ReminderType {
-  ONE_WEEK       // 7 days before (optional)
-  ONE_DAY        // 24 hours before
-  TWO_HOURS      // 2 hours before
+  ONE_WEEK // 7 days before (optional)
+  ONE_DAY // 24 hours before
+  TWO_HOURS // 2 hours before
 }
 
 enum ReminderStatus {
@@ -1220,36 +1231,36 @@ enum ReminderChannel {
 
 // Scheduled reminders for bookings
 model ScheduledReminder {
-  id              String         @id @default(cuid())
+  id String @id @default(cuid())
 
   // What this reminder is for
-  userActivityId  String
-  activityId      String
-  userId          String
+  userActivityId String
+  activityId     String
+  userId         String
 
   // Reminder configuration
-  reminderType    ReminderType
-  channel         ReminderChannel @default(EMAIL)
-  scheduledFor    DateTime        // When to send
+  reminderType ReminderType
+  channel      ReminderChannel @default(EMAIL)
+  scheduledFor DateTime // When to send
 
   // Status tracking
-  status          ReminderStatus  @default(PENDING)
-  sentAt          DateTime?
-  openedAt        DateTime?
-  clickedAt       DateTime?
-  errorMessage    String?
+  status       ReminderStatus @default(PENDING)
+  sentAt       DateTime?
+  openedAt     DateTime?
+  clickedAt    DateTime?
+  errorMessage String?
 
   // Retry tracking
-  retryCount      Int            @default(0)
-  lastRetryAt     DateTime?
+  retryCount  Int       @default(0)
+  lastRetryAt DateTime?
 
   // Message customization (optional host overrides)
-  customSubject   String?        @db.VarChar(200)
-  customMessage   String?        @db.Text
+  customSubject String? @db.VarChar(200)
+  customMessage String? @db.Text
 
   // Timestamps
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([userActivityId, reminderType, channel])
   @@index([status, scheduledFor])
@@ -1260,31 +1271,31 @@ model ScheduledReminder {
 
 // Reminder delivery log (for analytics)
 model ReminderDeliveryLog {
-  id              String         @id @default(cuid())
+  id String @id @default(cuid())
 
-  reminderId      String?
-  userActivityId  String
-  activityId      String
-  userId          String
+  reminderId     String?
+  userActivityId String
+  activityId     String
+  userId         String
 
   // Delivery details
-  reminderType    ReminderType
-  channel         ReminderChannel
+  reminderType ReminderType
+  channel      ReminderChannel
 
   // Status
-  deliveredAt     DateTime       @default(now())
-  openedAt        DateTime?
-  clickedAt       DateTime?
+  deliveredAt DateTime  @default(now())
+  openedAt    DateTime?
+  clickedAt   DateTime?
 
   // Email-specific tracking
-  emailMessageId  String?        @db.VarChar(255)
-  emailProvider   String?        @db.VarChar(50) // 'resend', 'sendgrid', etc.
+  emailMessageId String? @db.VarChar(255)
+  emailProvider  String? @db.VarChar(50) // 'resend', 'sendgrid', etc.
 
   // Push-specific tracking
-  pushEndpoint    String?
+  pushEndpoint String?
 
   // Metadata
-  metadata        Json?
+  metadata Json?
 
   @@index([reminderId])
   @@index([userActivityId])
@@ -1296,32 +1307,32 @@ model ReminderDeliveryLog {
 
 // Host reminder settings (customization per activity)
 model HostReminderSettings {
-  id                  String   @id @default(cuid())
-  activityId          String   @unique
-  hostId              String
+  id         String @id @default(cuid())
+  activityId String @unique
+  hostId     String
 
   // Enable/disable reminders
-  enableOneWeekReminder   Boolean @default(false)
-  enableOneDayReminder    Boolean @default(true)
-  enableTwoHourReminder   Boolean @default(true)
+  enableOneWeekReminder Boolean @default(false)
+  enableOneDayReminder  Boolean @default(true)
+  enableTwoHourReminder Boolean @default(true)
 
   // Custom messages (optional)
-  oneDaySubject       String?  @db.VarChar(200)
-  oneDayMessage       String?  @db.Text
-  twoHourSubject      String?  @db.VarChar(200)
-  twoHourMessage      String?  @db.Text
-  oneWeekSubject      String?  @db.VarChar(200)
-  oneWeekMessage      String?  @db.Text
+  oneDaySubject  String? @db.VarChar(200)
+  oneDayMessage  String? @db.Text
+  twoHourSubject String? @db.VarChar(200)
+  twoHourMessage String? @db.Text
+  oneWeekSubject String? @db.VarChar(200)
+  oneWeekMessage String? @db.Text
 
   // Additional info to include
-  includeMapLink      Boolean  @default(true)
-  includeCalendarLink Boolean  @default(true)
-  includeHostContact  Boolean  @default(false)
-  customInstructions  String?  @db.Text // "Bring a towel", "Park in lot B", etc.
+  includeMapLink      Boolean @default(true)
+  includeCalendarLink Boolean @default(true)
+  includeHostContact  Boolean @default(false)
+  customInstructions  String? @db.Text // "Bring a towel", "Park in lot B", etc.
 
   // Timestamps
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([activityId])
   @@index([hostId])
@@ -1330,26 +1341,26 @@ model HostReminderSettings {
 
 // User push notification subscriptions
 model PushSubscription {
-  id              String   @id @default(cuid())
-  userId          String
+  id     String @id @default(cuid())
+  userId String
 
   // Web Push subscription details
-  endpoint        String   @db.Text
-  p256dh          String   @db.VarChar(255)
-  auth            String   @db.VarChar(255)
+  endpoint String @db.Text
+  p256dh   String @db.VarChar(255)
+  auth     String @db.VarChar(255)
 
   // Device info
-  userAgent       String?  @db.VarChar(500)
-  deviceType      String?  @db.VarChar(50) // 'desktop', 'mobile', 'tablet'
+  userAgent  String? @db.VarChar(500)
+  deviceType String? @db.VarChar(50) // 'desktop', 'mobile', 'tablet'
 
   // Status
-  isActive        Boolean  @default(true)
-  lastUsedAt      DateTime @default(now())
-  failureCount    Int      @default(0)
+  isActive     Boolean  @default(true)
+  lastUsedAt   DateTime @default(now())
+  failureCount Int      @default(0)
 
   // Timestamps
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([userId, endpoint])
   @@index([userId, isActive])
@@ -1358,27 +1369,27 @@ model PushSubscription {
 
 // Extended notification preferences for reminders
 model ReminderPreferences {
-  id                    String   @id @default(cuid())
-  userId                String   @unique
+  id     String @id @default(cuid())
+  userId String @unique
 
   // Reminder type preferences
-  enableOneWeekReminder Boolean  @default(false)
-  enableOneDayReminder  Boolean  @default(true)
-  enableTwoHourReminder Boolean  @default(true)
+  enableOneWeekReminder Boolean @default(false)
+  enableOneDayReminder  Boolean @default(true)
+  enableTwoHourReminder Boolean @default(true)
 
   // Channel preferences
-  emailReminders        Boolean  @default(true)
-  pushReminders         Boolean  @default(true)
-  smsReminders          Boolean  @default(false)
+  emailReminders Boolean @default(true)
+  pushReminders  Boolean @default(true)
+  smsReminders   Boolean @default(false)
 
   // Quiet hours (don't send during these times)
-  quietHoursStart       Int?     // Hour of day (0-23)
-  quietHoursEnd         Int?     // Hour of day (0-23)
-  timezone              String   @default("Asia/Singapore") @db.VarChar(50)
+  quietHoursStart Int? // Hour of day (0-23)
+  quietHoursEnd   Int? // Hour of day (0-23)
+  timezone        String @default("Asia/Singapore") @db.VarChar(50)
 
   // Timestamps
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("reminder_preferences")
 }
@@ -1388,64 +1399,64 @@ model ReminderPreferences {
 // =====================================================
 
 enum ReviewStatus {
-  PENDING      // Just submitted, awaiting moderation (if enabled)
-  PUBLISHED    // Visible to everyone
-  HIDDEN       // Hidden by admin/moderation
-  DELETED      // Soft deleted
+  PENDING // Just submitted, awaiting moderation (if enabled)
+  PUBLISHED // Visible to everyone
+  HIDDEN // Hidden by admin/moderation
+  DELETED // Soft deleted
 }
 
 enum ReviewPromptStatus {
-  PENDING      // Scheduled but not sent yet
-  SENT         // Email sent
-  COMPLETED    // Review submitted
-  EXPIRED      // Past reminder period
-  SKIPPED      // User opted out
+  PENDING // Scheduled but not sent yet
+  SENT // Email sent
+  COMPLETED // Review submitted
+  EXPIRED // Past reminder period
+  SKIPPED // User opted out
 }
 
 // Activity reviews from attendees
 model Review {
-  id              String        @id @default(cuid())
+  id String @id @default(cuid())
 
   // What's being reviewed
-  activityId      String
-  userActivityId  String        @unique // Ensures one review per booking
+  activityId     String
+  userActivityId String @unique // Ensures one review per booking
 
   // Who's reviewing
-  reviewerId      String
+  reviewerId String
 
   // Who's being reviewed (the host)
-  hostId          String
+  hostId String
 
   // Review content
-  rating          Int           // 1-5 stars
-  title           String?       @db.VarChar(200)
-  content         String?       @db.Text
+  rating  Int // 1-5 stars
+  title   String? @db.VarChar(200)
+  content String? @db.Text
 
   // Photo attachments (up to 5 URLs)
-  photos          String[]      @default([])
+  photos String[] @default([])
 
   // Status
-  status          ReviewStatus  @default(PUBLISHED)
-  isVerified      Boolean       @default(true) // Verified attendee
+  status     ReviewStatus @default(PUBLISHED)
+  isVerified Boolean      @default(true) // Verified attendee
 
   // Engagement
-  helpfulCount    Int           @default(0)
+  helpfulCount Int @default(0)
 
   // Edit tracking
-  editedAt        DateTime?
-  editCount       Int           @default(0)
+  editedAt  DateTime?
+  editCount Int       @default(0)
 
   // Timestamps
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  activity        Activity      @relation("ActivityReviews", fields: [activityId], references: [id], onDelete: Cascade)
-  userActivity    UserActivity  @relation("BookingReview", fields: [userActivityId], references: [id], onDelete: Cascade)
-  reviewer        User          @relation("ReviewsWritten", fields: [reviewerId], references: [id], onDelete: Cascade)
-  host            User          @relation("ReviewsReceived", fields: [hostId], references: [id], onDelete: Cascade)
-  hostResponse    ReviewResponse?
-  helpfulVotes    ReviewHelpfulVote[]
+  activity     Activity            @relation("ActivityReviews", fields: [activityId], references: [id], onDelete: Cascade)
+  userActivity UserActivity        @relation("BookingReview", fields: [userActivityId], references: [id], onDelete: Cascade)
+  reviewer     User                @relation("ReviewsWritten", fields: [reviewerId], references: [id], onDelete: Cascade)
+  host         User                @relation("ReviewsReceived", fields: [hostId], references: [id], onDelete: Cascade)
+  hostResponse ReviewResponse?
+  helpfulVotes ReviewHelpfulVote[]
 
   @@index([activityId, status, createdAt])
   @@index([hostId, status, createdAt])
@@ -1457,16 +1468,16 @@ model Review {
 
 // Host responses to reviews
 model ReviewResponse {
-  id          String   @id @default(cuid())
-  reviewId    String   @unique
-  hostId      String
-  content     String   @db.Text
+  id       String @id @default(cuid())
+  reviewId String @unique
+  hostId   String
+  content  String @db.Text
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  editedAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  editedAt  DateTime?
 
-  review      Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
   @@index([hostId])
   @@map("review_responses")
@@ -1479,7 +1490,7 @@ model ReviewHelpfulVote {
   userId    String
   createdAt DateTime @default(now())
 
-  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
   @@unique([reviewId, userId])
   @@index([reviewId])
@@ -1489,28 +1500,28 @@ model ReviewHelpfulVote {
 
 // Scheduled review prompts
 model ReviewPrompt {
-  id              String             @id @default(cuid())
-  userActivityId  String
-  activityId      String
-  userId          String
+  id             String @id @default(cuid())
+  userActivityId String
+  activityId     String
+  userId         String
 
   // Scheduling
-  scheduledFor    DateTime           // When to send first prompt
-  reminderAt      DateTime?          // When to send reminder
+  scheduledFor DateTime // When to send first prompt
+  reminderAt   DateTime? // When to send reminder
 
   // Status tracking
-  status          ReviewPromptStatus @default(PENDING)
-  sentAt          DateTime?
-  reminderSentAt  DateTime?
-  completedAt     DateTime?
+  status         ReviewPromptStatus @default(PENDING)
+  sentAt         DateTime?
+  reminderSentAt DateTime?
+  completedAt    DateTime?
 
   // Email tracking
-  emailMessageId  String?            @db.VarChar(255)
-  openedAt        DateTime?
-  clickedAt       DateTime?
+  emailMessageId String?   @db.VarChar(255)
+  openedAt       DateTime?
+  clickedAt      DateTime?
 
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([userActivityId])
   @@index([status, scheduledFor])
@@ -1522,25 +1533,25 @@ model ReviewPrompt {
 
 // Denormalized activity rating summary (for fast queries)
 model ActivityRatingSummary {
-  id              String   @id @default(cuid())
-  activityId      String   @unique
+  id         String @id @default(cuid())
+  activityId String @unique
 
   // Aggregate stats
-  averageRating   Decimal  @default(0) @db.Decimal(3, 2)
-  totalReviews    Int      @default(0)
+  averageRating Decimal @default(0) @db.Decimal(3, 2)
+  totalReviews  Int     @default(0)
 
   // Rating distribution
-  fiveStarCount   Int      @default(0)
-  fourStarCount   Int      @default(0)
-  threeStarCount  Int      @default(0)
-  twoStarCount    Int      @default(0)
-  oneStarCount    Int      @default(0)
+  fiveStarCount  Int @default(0)
+  fourStarCount  Int @default(0)
+  threeStarCount Int @default(0)
+  twoStarCount   Int @default(0)
+  oneStarCount   Int @default(0)
 
   // Last updated
-  lastReviewAt    DateTime?
-  updatedAt       DateTime @updatedAt
+  lastReviewAt DateTime?
+  updatedAt    DateTime  @updatedAt
 
-  activity        Activity @relation("ActivityRatingSummary", fields: [activityId], references: [id], onDelete: Cascade)
+  activity Activity @relation("ActivityRatingSummary", fields: [activityId], references: [id], onDelete: Cascade)
 
   @@index([averageRating])
   @@map("activity_rating_summaries")
@@ -1548,29 +1559,29 @@ model ActivityRatingSummary {
 
 // Denormalized host rating summary
 model HostRatingSummary {
-  id              String   @id @default(cuid())
-  hostId          String   @unique
+  id     String @id @default(cuid())
+  hostId String @unique
 
   // Aggregate stats
-  averageRating   Decimal  @default(0) @db.Decimal(3, 2)
-  totalReviews    Int      @default(0)
+  averageRating Decimal @default(0) @db.Decimal(3, 2)
+  totalReviews  Int     @default(0)
 
   // Rating distribution
-  fiveStarCount   Int      @default(0)
-  fourStarCount   Int      @default(0)
-  threeStarCount  Int      @default(0)
-  twoStarCount    Int      @default(0)
-  oneStarCount    Int      @default(0)
+  fiveStarCount  Int @default(0)
+  fourStarCount  Int @default(0)
+  threeStarCount Int @default(0)
+  twoStarCount   Int @default(0)
+  oneStarCount   Int @default(0)
 
   // Response stats
-  totalResponses  Int      @default(0)
-  responseRate    Decimal  @default(0) @db.Decimal(5, 2)
+  totalResponses Int     @default(0)
+  responseRate   Decimal @default(0) @db.Decimal(5, 2)
 
   // Last updated
-  lastReviewAt    DateTime?
-  updatedAt       DateTime @updatedAt
+  lastReviewAt DateTime?
+  updatedAt    DateTime  @updatedAt
 
-  host            User     @relation("HostRatingSummary", fields: [hostId], references: [id], onDelete: Cascade)
+  host User @relation("HostRatingSummary", fields: [hostId], references: [id], onDelete: Cascade)
 
   @@index([averageRating])
   @@map("host_rating_summaries")
@@ -1589,84 +1600,84 @@ enum EventSubmissionStatus {
 
 // Fee handling options for paid events
 enum FeeHandling {
-  PASS    // Attendee pays fees on top of ticket price
-  ABSORB  // Host absorbs fees (deducted from payout)
+  PASS // Attendee pays fees on top of ticket price
+  ABSORB // Host absorbs fees (deducted from payout)
 }
 
 // Refund policy options
 enum RefundPolicy {
-  FULL_ANYTIME   // Full refund anytime before event
-  FULL_24H       // Full refund up to 24 hours before
-  NONE           // No refunds
+  FULL_ANYTIME // Full refund anytime before event
+  FULL_24H // Full refund up to 24 hours before
+  NONE // No refunds
 }
 
 model EventSubmission {
-  id                String                @id @default(cuid())
-  slug              String?               @unique @db.VarChar(250) // URL-friendly slug (e.g., "coffee-run-dec-27")
+  id   String  @id @default(cuid())
+  slug String? @unique @db.VarChar(250) // URL-friendly slug (e.g., "coffee-run-dec-27")
 
   // Event details
-  eventName         String                @db.VarChar(200)
-  category          String                @db.VarChar(50)
-  day               String                @db.VarChar(50)  // Legacy field - keeping for backward compatibility
-  eventDate         DateTime?             // Next occurrence date (e.g., "2024-01-15")
-  time              String                @db.VarChar(50)
-  recurring         Boolean               @default(true)   // If true, event repeats weekly on this day
-  location          String                @db.VarChar(300)
-  latitude          Float?
-  longitude         Float?
-  placeId           String?               @db.VarChar(100)
-  description       String?               @db.Text
-  imageUrl          String?               @db.VarChar(500) // Event image uploaded via UploadThing
-  communityLink     String?               @db.VarChar(500) // WhatsApp/Telegram/Discord group link
+  eventName     String    @db.VarChar(200)
+  category      String    @db.VarChar(50)
+  day           String    @db.VarChar(50) // Legacy field - keeping for backward compatibility
+  eventDate     DateTime? // Next occurrence date (e.g., "2024-01-15")
+  time          String    @db.VarChar(50)
+  recurring     Boolean   @default(true) // If true, event repeats weekly on this day
+  location      String    @db.VarChar(300)
+  latitude      Float?
+  longitude     Float?
+  placeId       String?   @db.VarChar(100)
+  description   String?   @db.Text
+  imageUrl      String?   @db.VarChar(500) // Event image uploaded via UploadThing
+  communityLink String?   @db.VarChar(500) // WhatsApp/Telegram/Discord group link
 
   // Organizer details
-  organizerName     String                @db.VarChar(200)
-  organizerInstagram String               @db.VarChar(500)
-  contactEmail      String                @db.VarChar(255)
+  organizerName      String @db.VarChar(200)
+  organizerInstagram String @db.VarChar(500)
+  contactEmail       String @db.VarChar(255)
 
   // Status
-  status            EventSubmissionStatus @default(PENDING)
-  reviewedAt        DateTime?
-  reviewedBy        String?               // Admin user ID who reviewed
-  rejectionReason   String?               @db.Text
-  moderationNotes   String?               @db.Text  // AI moderation notes/logs
+  status          EventSubmissionStatus @default(PENDING)
+  reviewedAt      DateTime?
+  reviewedBy      String? // Admin user ID who reviewed
+  rejectionReason String?               @db.Text
+  moderationNotes String?               @db.Text // AI moderation notes/logs
 
   // Capacity
-  isFull            Boolean               @default(false)  // Mark event as full
+  isFull Boolean @default(false) // Mark event as full
 
   // Pricing
-  isFree            Boolean               @default(true)
-  price             Int?                  // Amount in cents (e.g., 1500 = $15.00)
-  currency          String?               @default("SGD") @db.VarChar(3)
+  isFree   Boolean @default(true)
+  price    Int? // Amount in cents (e.g., 1500 = $15.00)
+  currency String? @default("SGD") @db.VarChar(3)
 
   // PayNow details (for manual verification)
-  paynowEnabled     Boolean               @default(false)
-  paynowQrCode      String?               @db.VarChar(500) // URL to uploaded QR image
-  paynowNumber      String?               @db.VarChar(50)  // UEN or phone number
-  paynowName        String?               @db.VarChar(200) // Name that appears on PayNow
+  paynowEnabled Boolean @default(false)
+  paynowQrCode  String? @db.VarChar(500) // URL to uploaded QR image
+  paynowNumber  String? @db.VarChar(50) // UEN or phone number
+  paynowName    String? @db.VarChar(200) // Name that appears on PayNow
 
   // Stripe (for automatic payment)
-  stripeEnabled     Boolean               @default(false)
+  stripeEnabled Boolean @default(false)
 
   // Paid event capacity & settings
-  maxTickets        Int?                  // Max capacity (null = unlimited)
-  ticketsSold       Int                   @default(0) // Current sold count
-  feeHandling       FeeHandling?          // Who pays fees: PASS or ABSORB
-  salesEndDate      DateTime?             // When ticket sales close
-  refundPolicy      RefundPolicy?         // Refund policy
+  maxTickets   Int? // Max capacity (null = unlimited)
+  ticketsSold  Int           @default(0) // Current sold count
+  feeHandling  FeeHandling? // Who pays fees: PASS or ABSORB
+  salesEndDate DateTime? // When ticket sales close
+  refundPolicy RefundPolicy? // Refund policy
 
   // Cancellation (by host)
-  cancelledAt       DateTime?
-  cancelledBy       String?               @db.VarChar(255) // Host Instagram who cancelled
-  cancellationReason String?              @db.Text
+  cancelledAt        DateTime?
+  cancelledBy        String?   @db.VarChar(255) // Host Instagram who cancelled
+  cancellationReason String?   @db.Text
 
   // User account link (for authenticated hosts)
-  submittedByUserId String?               // Clerk user ID who submitted
-  submittedByUser   User?                 @relation("UserEventSubmissions", fields: [submittedByUserId], references: [id])
+  submittedByUserId String? // Clerk user ID who submitted
+  submittedByUser   User?   @relation("UserEventSubmissions", fields: [submittedByUserId], references: [id])
 
   // Timestamps
-  createdAt         DateTime              @default(now())
-  updatedAt         DateTime              @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status, createdAt])
   @@index([contactEmail])
@@ -1682,7 +1693,7 @@ model EventSubmission {
 // Track attendance from "I'm Going" button on public events
 model EventAttendance {
   id             String   @id @default(cuid())
-  eventId        String   // References the event (from events.ts data file)
+  eventId        String // References the event (from events.ts data file)
   eventName      String   @db.VarChar(200)
   email          String   @db.VarChar(255)
   name           String?  @db.VarChar(200)
@@ -1692,30 +1703,30 @@ model EventAttendance {
   mealPreference String?  @db.VarChar(50) // Optional meal choice: 'vegetarian', 'chicken', 'beef'
 
   // Payment fields
-  paymentStatus    String?  @default("free") @db.VarChar(20) // 'free', 'pending', 'paid', 'failed', 'refunded'
-  paymentMethod    String?  @db.VarChar(20) // 'stripe', 'paynow'
-  paymentAmount    Int?     // Amount in cents
-  paymentReference String?  @db.VarChar(100) // Transaction ref for PayNow
-  stripePaymentId  String?  @db.VarChar(100) // Stripe payment intent ID
+  paymentStatus    String?   @default("free") @db.VarChar(20) // 'free', 'pending', 'paid', 'failed', 'refunded'
+  paymentMethod    String?   @db.VarChar(20) // 'stripe', 'paynow'
+  paymentAmount    Int? // Amount in cents
+  paymentReference String?   @db.VarChar(100) // Transaction ref for PayNow
+  stripePaymentId  String?   @db.VarChar(100) // Stripe payment intent ID
   paidAt           DateTime?
-  verifiedBy       String?  @db.VarChar(255) // Host email who verified
+  verifiedBy       String?   @db.VarChar(255) // Host email who verified
   verifiedAt       DateTime?
 
   // Attendance tracking (did they actually show up?)
-  actuallyAttended  Boolean?   // null=unmarked, true=showed up, false=no-show
-  markedAttendedAt  DateTime?
-  markedAttendedBy  String?    @db.VarChar(255) // Host email who marked
+  actuallyAttended Boolean? // null=unmarked, true=showed up, false=no-show
+  markedAttendedAt DateTime?
+  markedAttendedBy String?   @db.VarChar(255) // Host email who marked
 
   // One-time waiver acceptance (per user, covers all future events)
-  waiverAccepted    Boolean    @default(false)
-  waiverVersion     String?    @db.VarChar(10)  // e.g., "1.0"
-  waiverAcceptedAt  DateTime?
-  waiverAcceptedIp  String?    @db.VarChar(45)  // IPv4 or IPv6
+  waiverAccepted   Boolean   @default(false)
+  waiverVersion    String?   @db.VarChar(10) // e.g., "1.0"
+  waiverAcceptedAt DateTime?
+  waiverAcceptedIp String?   @db.VarChar(45) // IPv4 or IPv6
 
   // QR Code check-in
-  checkInCode       String?    @unique @db.VarChar(20)  // Unique code for QR
-  checkedInAt       DateTime?                            // When checked in via QR
-  checkedInMethod   String?    @db.VarChar(20)          // 'qr' | 'manual'
+  checkInCode     String?   @unique @db.VarChar(20) // Unique code for QR
+  checkedInAt     DateTime? // When checked in via QR
+  checkedInMethod String?   @db.VarChar(20) // 'qr' | 'manual'
 
   @@unique([email, eventId])
   @@index([eventId])
@@ -1727,14 +1738,14 @@ model EventAttendance {
 
 // Event reminders (24h before event)
 model EventReminder {
-  id           String   @id @default(cuid())
-  attendanceId String   @unique // References EventAttendance.id
-  eventId      String   // References EventSubmission.id
+  id           String    @id @default(cuid())
+  attendanceId String    @unique // References EventAttendance.id
+  eventId      String // References EventSubmission.id
   scheduledFor DateTime // When to send (24h before event)
-  status       String   @default("PENDING") @db.VarChar(20) // PENDING, SENT, SKIPPED, FAILED
+  status       String    @default("PENDING") @db.VarChar(20) // PENDING, SENT, SKIPPED, FAILED
   sentAt       DateTime?
-  errorMessage String?  @db.Text
-  createdAt    DateTime @default(now())
+  errorMessage String?   @db.Text
+  createdAt    DateTime  @default(now())
 
   @@index([status, scheduledFor])
   @@index([eventId])
@@ -1743,34 +1754,34 @@ model EventReminder {
 
 // Event reviews (attendees can rate events after attending)
 model EventReview {
-  id              String    @id @default(cuid())
-  eventId         String    // References EventSubmission.id
-  attendanceId    String    @unique // One review per attendance
-  reviewerEmail   String    @db.VarChar(255)
-  reviewerName    String?   @db.VarChar(200)
-  hostInstagram   String    @db.VarChar(500) // For host rating aggregation
+  id            String  @id @default(cuid())
+  eventId       String // References EventSubmission.id
+  attendanceId  String  @unique // One review per attendance
+  reviewerEmail String  @db.VarChar(255)
+  reviewerName  String? @db.VarChar(200)
+  hostInstagram String  @db.VarChar(500) // For host rating aggregation
 
   // Rating & content
-  rating          Int       // 1-5 stars
-  title           String?   @db.VarChar(200)
-  content         String?   @db.Text
-  photos          String[]  // Array of photo URLs
+  rating  Int // 1-5 stars
+  title   String?  @db.VarChar(200)
+  content String?  @db.Text
+  photos  String[] // Array of photo URLs
 
   // Interaction metrics
-  helpfulCount    Int       @default(0)
+  helpfulCount Int @default(0)
 
   // Host response
   hostResponse    String?   @db.Text
   hostRespondedAt DateTime?
 
   // Status
-  isPublished     Boolean   @default(true)
-  isFlagged       Boolean   @default(false)
-  flagReason      String?   @db.VarChar(200)
+  isPublished Boolean @default(true)
+  isFlagged   Boolean @default(false)
+  flagReason  String? @db.VarChar(200)
 
   // Timestamps
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([eventId])
   @@index([hostInstagram])
@@ -1781,14 +1792,14 @@ model EventReview {
 
 // Post-event follow-up (2h after event ends)
 model PostEventFollowUp {
-  id           String   @id @default(cuid())
-  attendanceId String   @unique // References EventAttendance.id
-  eventId      String   // References EventSubmission.id
+  id           String    @id @default(cuid())
+  attendanceId String    @unique // References EventAttendance.id
+  eventId      String // References EventSubmission.id
   scheduledFor DateTime // When to send (2h after event)
-  status       String   @default("PENDING") @db.VarChar(20) // PENDING, SENT, SKIPPED, FAILED
+  status       String    @default("PENDING") @db.VarChar(20) // PENDING, SENT, SKIPPED, FAILED
   sentAt       DateTime?
-  errorMessage String?  @db.Text
-  createdAt    DateTime @default(now())
+  errorMessage String?   @db.Text
+  createdAt    DateTime  @default(now())
 
   @@index([status, scheduledFor])
   @@index([eventId])
@@ -1797,12 +1808,12 @@ model PostEventFollowUp {
 
 // Host notes about attendees (email-based, no user account required)
 model HostAttendeeNotes {
-  id              String   @id @default(cuid())
-  hostInstagram   String   @db.VarChar(500)  // Host identifier (Instagram handle)
-  attendeeEmail   String   @db.VarChar(255)  // Attendee email
-  notes           String?  @db.Text          // Host's notes about this person
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id            String   @id @default(cuid())
+  hostInstagram String   @db.VarChar(500) // Host identifier (Instagram handle)
+  attendeeEmail String   @db.VarChar(255) // Attendee email
+  notes         String?  @db.Text // Host's notes about this person
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@unique([hostInstagram, attendeeEmail])
   @@index([hostInstagram])
@@ -1811,12 +1822,12 @@ model HostAttendeeNotes {
 
 // Newsletter subscribers from various sources
 model NewsletterSubscriber {
-  id           String   @id @default(cuid())
-  email        String   @unique @db.VarChar(255)
-  name         String?  @db.VarChar(200)
-  subscribedAt DateTime @default(now())
-  source       String   @default("event_attendance") @db.VarChar(50) // 'event_attendance', 'waitlist', 'footer', etc.
-  isActive     Boolean  @default(true)
+  id             String    @id @default(cuid())
+  email          String    @unique @db.VarChar(255)
+  name           String?   @db.VarChar(200)
+  subscribedAt   DateTime  @default(now())
+  source         String    @default("event_attendance") @db.VarChar(50) // 'event_attendance', 'waitlist', 'footer', etc.
+  isActive       Boolean   @default(true)
   unsubscribedAt DateTime?
 
   @@index([email])
@@ -1827,12 +1838,12 @@ model NewsletterSubscriber {
 
 // Magic link tokens for accessing my-events page
 model MagicLinkToken {
-  id        String   @id @default(cuid())
-  email     String   @db.VarChar(255)
-  token     String   @unique @db.VarChar(64)
+  id        String    @id @default(cuid())
+  email     String    @db.VarChar(255)
+  token     String    @unique @db.VarChar(64)
   expiresAt DateTime
   usedAt    DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 
   @@index([email])
   @@index([token])
@@ -1842,12 +1853,12 @@ model MagicLinkToken {
 
 // Chat messages for public events (EventDetailSheet)
 model EventChatMessage {
-  id        String   @id @default(cuid())
-  eventId   String   @db.VarChar(100) // References event from events.json or submission-{id}
-  content   String   @db.Text
-  senderName String  @db.VarChar(200)
-  senderEmail String @db.VarChar(255)
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  eventId     String   @db.VarChar(100) // References event from events.json or submission-{id}
+  content     String   @db.Text
+  senderName  String   @db.VarChar(200)
+  senderEmail String   @db.VarChar(255)
+  createdAt   DateTime @default(now())
 
   @@index([eventId])
   @@index([createdAt])
@@ -1866,31 +1877,31 @@ enum HostApplicationStatus {
 
 // Host applications from waitlist/intake form
 model HostApplication {
-  id                String                @id @default(cuid())
+  id String @id @default(cuid())
 
   // Organizer details
-  organizerName     String                @db.VarChar(200)
-  instagramHandle   String                @db.VarChar(100)
-  email             String                @db.VarChar(255)
+  organizerName   String @db.VarChar(200)
+  instagramHandle String @db.VarChar(100)
+  email           String @db.VarChar(255)
 
   // Event details
-  eventName         String                @db.VarChar(200)
-  eventType         String                @db.VarChar(50) // Run Club, Yoga, HIIT, Cold Plunge, Bootcamp, Other
-  eventDay          String                @db.VarChar(100) // e.g., "Saturdays" or "Every Tuesday"
-  eventTime         String                @db.VarChar(50)
-  location          String                @db.VarChar(300)
-  description       String?               @db.Text
+  eventName   String  @db.VarChar(200)
+  eventType   String  @db.VarChar(50) // Run Club, Yoga, HIIT, Cold Plunge, Bootcamp, Other
+  eventDay    String  @db.VarChar(100) // e.g., "Saturdays" or "Every Tuesday"
+  eventTime   String  @db.VarChar(50)
+  location    String  @db.VarChar(300)
+  description String? @db.Text
 
   // Status
-  status            HostApplicationStatus @default(PENDING)
-  reviewedAt        DateTime?
-  reviewedBy        String?
-  rejectionReason   String?               @db.Text
-  notes             String?               @db.Text // Internal admin notes
+  status          HostApplicationStatus @default(PENDING)
+  reviewedAt      DateTime?
+  reviewedBy      String?
+  rejectionReason String?               @db.Text
+  notes           String?               @db.Text // Internal admin notes
 
   // Timestamps
-  createdAt         DateTime              @default(now())
-  updatedAt         DateTime              @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status, createdAt])
   @@index([email])
@@ -1904,15 +1915,15 @@ model HostApplication {
 
 // Verified organizers (linked by Instagram handle)
 model Organizer {
-  id                String   @id @default(cuid())
-  email             String   @unique @db.VarChar(255)
-  instagramHandle   String   @unique @db.VarChar(100)
-  name              String?  @db.VarChar(200)
-  isVerified        Boolean  @default(true)  // Auto-verified in MVP
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id              String   @id @default(cuid())
+  email           String   @unique @db.VarChar(255)
+  instagramHandle String   @unique @db.VarChar(100)
+  name            String?  @db.VarChar(200)
+  isVerified      Boolean  @default(true) // Auto-verified in MVP
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  conversations     EventDirectConversation[]
+  conversations EventDirectConversation[]
 
   @@index([instagramHandle])
   @@index([email])
@@ -1934,17 +1945,17 @@ model OrganizerMagicLink {
 
 // 1:1 conversation between organizer and attendee
 model EventDirectConversation {
-  id            String   @id @default(cuid())
-  eventId       String   @db.VarChar(100)
+  id            String    @id @default(cuid())
+  eventId       String    @db.VarChar(100)
   organizerId   String
-  attendeeEmail String   @db.VarChar(255)
-  attendeeName  String?  @db.VarChar(200)
+  attendeeEmail String    @db.VarChar(255)
+  attendeeName  String?   @db.VarChar(200)
   lastMessageAt DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  organizer     Organizer              @relation(fields: [organizerId], references: [id], onDelete: Cascade)
-  messages      EventDirectMessage[]
+  organizer Organizer            @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  messages  EventDirectMessage[]
 
   @@unique([eventId, organizerId, attendeeEmail])
   @@index([eventId])
@@ -1957,13 +1968,13 @@ model EventDirectConversation {
 model EventDirectMessage {
   id             String   @id @default(cuid())
   conversationId String
-  senderType     String   @db.VarChar(20)  // 'organizer' or 'attendee'
+  senderType     String   @db.VarChar(20) // 'organizer' or 'attendee'
   senderEmail    String   @db.VarChar(255)
   senderName     String   @db.VarChar(200)
   content        String   @db.Text
   createdAt      DateTime @default(now())
 
-  conversation   EventDirectConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversation EventDirectConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
   @@index([conversationId])
   @@index([createdAt])
@@ -1991,58 +2002,58 @@ enum CompletionCardTemplate {
 
 // Shareable completion cards for social media
 model CompletionCard {
-  id              String                @id @default(cuid())
+  id String @id @default(cuid())
 
   // References
-  userId          String
-  userActivityId  String                @unique
-  activityId      String
-  hostId          String
+  userId         String
+  userActivityId String @unique
+  activityId     String
+  hostId         String
 
   // User's uploaded photo
-  photoUrl        String                @db.VarChar(500)
-  photoWidth      Int?
-  photoHeight     Int?
+  photoUrl    String @db.VarChar(500)
+  photoWidth  Int?
+  photoHeight Int?
 
   // Card customization
-  template        CompletionCardTemplate @default(CLASSIC)
-  caption         String?               @db.Text
-  showHost        Boolean               @default(true)
-  showDate        Boolean               @default(true)
-  showDuration    Boolean               @default(true)
-  showStreak      Boolean               @default(false)
+  template     CompletionCardTemplate @default(CLASSIC)
+  caption      String?                @db.Text
+  showHost     Boolean                @default(true)
+  showDate     Boolean                @default(true)
+  showDuration Boolean                @default(true)
+  showStreak   Boolean                @default(false)
 
   // Generated card image
-  cardUrl         String?               @db.VarChar(500)
+  cardUrl         String?   @db.VarChar(500)
   cardGeneratedAt DateTime?
 
   // Activity snapshot (in case activity is deleted)
-  activityTitle   String                @db.VarChar(200)
-  activityImage   String?               @db.VarChar(500)
-  hostName        String                @db.VarChar(100)
-  hostAvatar      String?               @db.VarChar(500)
+  activityTitle   String   @db.VarChar(200)
+  activityImage   String?  @db.VarChar(500)
+  hostName        String   @db.VarChar(100)
+  hostAvatar      String?  @db.VarChar(500)
   completedAt     DateTime
   durationMinutes Int?
 
   // Sharing stats
-  downloadedCount Int                   @default(0)
-  sharedCount     Int                   @default(0)
-  sharePlatforms  String[]              @default([])
+  downloadedCount Int      @default(0)
+  sharedCount     Int      @default(0)
+  sharePlatforms  String[] @default([])
 
   // QR code and link
-  qrCodeUrl       String?               @db.VarChar(500)
-  activityLink    String?               @db.VarChar(500)
+  qrCodeUrl    String? @db.VarChar(500)
+  activityLink String? @db.VarChar(500)
 
   // Status
-  status          CompletionCardStatus  @default(DRAFT)
+  status CompletionCardStatus @default(DRAFT)
 
   // Timestamps
-  createdAt       DateTime              @default(now())
-  updatedAt       DateTime              @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  user            User                  @relation("UserCompletionCards", fields: [userId], references: [id], onDelete: Cascade)
-  userActivity    UserActivity          @relation("BookingCompletionCard", fields: [userActivityId], references: [id], onDelete: Cascade)
+  user         User         @relation("UserCompletionCards", fields: [userId], references: [id], onDelete: Cascade)
+  userActivity UserActivity @relation("BookingCompletionCard", fields: [userActivityId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
   @@index([userActivityId])
@@ -2053,24 +2064,24 @@ model CompletionCard {
 
 // User streak tracking (for showing on completion cards)
 model UserStreak {
-  id              String   @id @default(cuid())
-  userId          String
-  hostId          String?  // NULL = platform-wide streak, set = per-host streak
+  id     String  @id @default(cuid())
+  userId String
+  hostId String? // NULL = platform-wide streak, set = per-host streak
 
   // Streak type
-  streakType      String   @default("weekly") @db.VarChar(30) // 'weekly', 'daily', 'monthly'
+  streakType String @default("weekly") @db.VarChar(30) // 'weekly', 'daily', 'monthly'
 
   // Streak counts
-  currentStreak   Int      @default(0)
-  longestStreak   Int      @default(0)
-  lastActivityAt  DateTime?
+  currentStreak  Int       @default(0)
+  longestStreak  Int       @default(0)
+  lastActivityAt DateTime?
 
   // Timestamps
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  user            User     @relation("UserStreaks", fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation("UserStreaks", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, hostId, streakType])
   @@index([userId, hostId])
@@ -2091,22 +2102,22 @@ enum EventWaitlistStatus {
 
 // Waitlist for when events are full
 model EventWaitlist {
-  id           String              @id @default(cuid())
-  eventId      String              // References EventSubmission.id
-  email        String              @db.VarChar(255)
-  name         String?             @db.VarChar(200)
+  id      String  @id @default(cuid())
+  eventId String // References EventSubmission.id
+  email   String  @db.VarChar(255)
+  name    String? @db.VarChar(200)
 
   // Position and status
-  position     Int
-  status       EventWaitlistStatus @default(WAITING)
+  position Int
+  status   EventWaitlistStatus @default(WAITING)
 
   // Notification tracking
-  notifiedAt           DateTime?
-  notificationExpires  DateTime?   // 24-hour window to book
+  notifiedAt          DateTime?
+  notificationExpires DateTime? // 24-hour window to book
 
   // Timestamps
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([eventId, email])
   @@index([eventId, status, position])
@@ -2119,16 +2130,16 @@ model EventWaitlist {
 // =====================================================
 
 enum TransactionStatus {
-  PENDING       // Payment initiated
-  SUCCEEDED     // Payment completed
-  FAILED        // Payment failed
-  REFUNDED      // Full refund processed
+  PENDING // Payment initiated
+  SUCCEEDED // Payment completed
+  FAILED // Payment failed
+  REFUNDED // Full refund processed
   PARTIAL_REFUND // Partial refund processed
 }
 
 enum SubscriptionTier {
-  FREE          // Default tier (5% platform fee)
-  PREMIUM       // Premium tier (2% platform fee)
+  FREE // Default tier (5% platform fee)
+  PREMIUM // Premium tier (2% platform fee)
 }
 
 enum SubscriptionStatus {
@@ -2140,26 +2151,26 @@ enum SubscriptionStatus {
 
 // Stripe Connect accounts for hosts
 model HostStripeAccount {
-  id                      String   @id @default(cuid())
-  eventSubmissionId       String   @unique // Links to the event/host
+  id                String @id @default(cuid())
+  eventSubmissionId String @unique // Links to the event/host
 
   // Stripe Connect account info
-  stripeConnectAccountId  String   @unique @db.VarChar(100) // e.g., "acct_1234..."
+  stripeConnectAccountId   String  @unique @db.VarChar(100) // e.g., "acct_1234..."
   stripeOnboardingComplete Boolean @default(false)
-  payoutsEnabled          Boolean  @default(false)
-  chargesEnabled          Boolean  @default(false)
+  payoutsEnabled           Boolean @default(false)
+  chargesEnabled           Boolean @default(false)
 
   // Account details (cached from Stripe)
-  email                   String?  @db.VarChar(255)
-  businessName            String?  @db.VarChar(200)
-  country                 String?  @db.VarChar(2) // ISO country code
+  email        String? @db.VarChar(255)
+  businessName String? @db.VarChar(200)
+  country      String? @db.VarChar(2) // ISO country code
 
   // Timestamps
-  createdAt               DateTime @default(now())
-  updatedAt               DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  transactions            EventTransaction[]
+  transactions EventTransaction[]
 
   @@index([stripeConnectAccountId])
   @@index([eventSubmissionId])
@@ -2168,42 +2179,42 @@ model HostStripeAccount {
 
 // Transaction records for every ticket purchase
 model EventTransaction {
-  id                    String            @id @default(cuid())
-  eventSubmissionId     String            // Which event this is for
-  attendanceId          String            // Links to EventAttendance record
+  id                String @id @default(cuid())
+  eventSubmissionId String // Which event this is for
+  attendanceId      String // Links to EventAttendance record
 
   // Stripe payment info
-  stripePaymentIntentId String?           @unique @db.VarChar(100)
-  stripeChargeId        String?           @db.VarChar(100)
+  stripePaymentIntentId String? @unique @db.VarChar(100)
+  stripeChargeId        String? @db.VarChar(100)
 
   // Financial breakdown (all in cents)
-  ticketPrice           Int               // Base ticket price
-  platformFee           Int               // SweatBuddies fee (5% or 2%)
-  stripeFee             Int               // Stripe processing fee
-  netPayoutToHost       Int               // What host receives
-  currency              String            @default("SGD") @db.VarChar(3)
+  ticketPrice     Int // Base ticket price
+  platformFee     Int // SweatBuddies fee (5% or 2%)
+  stripeFee       Int // Stripe processing fee
+  netPayoutToHost Int // What host receives
+  currency        String @default("SGD") @db.VarChar(3)
 
   // Fee handling
-  feeHandling           FeeHandling       // PASS or ABSORB
-  totalCharged          Int               // Total charged to attendee
+  feeHandling  FeeHandling // PASS or ABSORB
+  totalCharged Int // Total charged to attendee
 
   // Status tracking
-  status                TransactionStatus @default(PENDING)
+  status TransactionStatus @default(PENDING)
 
   // Refund tracking
-  refundAmount          Int?              // Amount refunded (if any)
-  refundedAt            DateTime?
-  refundReason          String?           @db.VarChar(500)
+  refundAmount Int? // Amount refunded (if any)
+  refundedAt   DateTime?
+  refundReason String?   @db.VarChar(500)
 
   // Host account reference
-  hostStripeAccountId   String?
+  hostStripeAccountId String?
 
   // Timestamps
-  createdAt             DateTime          @default(now())
-  paidOutAt             DateTime?         // When host received payout
+  createdAt DateTime  @default(now())
+  paidOutAt DateTime? // When host received payout
 
   // Relations
-  hostStripeAccount     HostStripeAccount? @relation(fields: [hostStripeAccountId], references: [id], onDelete: SetNull)
+  hostStripeAccount HostStripeAccount? @relation(fields: [hostStripeAccountId], references: [id], onDelete: SetNull)
 
   @@index([eventSubmissionId])
   @@index([attendanceId])
@@ -2215,30 +2226,30 @@ model EventTransaction {
 
 // Host subscription for Premium tier
 model HostSubscription {
-  id                    String             @id @default(cuid())
-  organizerEmail        String             @unique @db.VarChar(255) // Host's email
+  id             String @id @default(cuid())
+  organizerEmail String @unique @db.VarChar(255) // Host's email
 
   // Subscription details
-  tier                  SubscriptionTier   @default(FREE)
-  status                SubscriptionStatus @default(ACTIVE)
+  tier   SubscriptionTier   @default(FREE)
+  status SubscriptionStatus @default(ACTIVE)
 
   // Stripe subscription info (for Premium tier)
-  stripeSubscriptionId  String?            @unique @db.VarChar(100)
-  stripeCustomerId      String?            @db.VarChar(100)
+  stripeSubscriptionId String? @unique @db.VarChar(100)
+  stripeCustomerId     String? @db.VarChar(100)
 
   // Billing period
-  startedAt             DateTime           @default(now())
-  currentPeriodStart    DateTime?
-  currentPeriodEnd      DateTime?
-  endsAt                DateTime?          // When subscription ends (if cancelled)
+  startedAt          DateTime  @default(now())
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  endsAt             DateTime? // When subscription ends (if cancelled)
 
   // Cancellation info
-  cancelledAt           DateTime?
-  cancellationReason    String?            @db.VarChar(500)
+  cancelledAt        DateTime?
+  cancellationReason String?   @db.VarChar(500)
 
   // Timestamps
-  createdAt             DateTime           @default(now())
-  updatedAt             DateTime           @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([organizerEmail])
   @@index([tier, status])
@@ -2274,20 +2285,20 @@ enum WaveActivityType {
 }
 
 model WaveActivity {
-  id             String           @id @default(cuid())
-  creatorId      String
-  activityType   WaveActivityType
-  area           String           @db.VarChar(200)
-  locationName   String?          @db.VarChar(300)
-  latitude       Float?
-  longitude      Float?
-  thought        String?          @db.VarChar(140)
-  scheduledFor   DateTime?
-  waveThreshold  Int              @default(3)
-  isUnlocked     Boolean          @default(false)
-  startedAt      DateTime         @default(now())
-  expiresAt      DateTime
-  chatId         String?          @unique
+  id            String           @id @default(cuid())
+  creatorId     String
+  activityType  WaveActivityType
+  area          String           @db.VarChar(200)
+  locationName  String?          @db.VarChar(300)
+  latitude      Float?
+  longitude     Float?
+  thought       String?          @db.VarChar(140)
+  scheduledFor  DateTime?
+  waveThreshold Int              @default(3)
+  isUnlocked    Boolean          @default(false)
+  startedAt     DateTime         @default(now())
+  expiresAt     DateTime
+  chatId        String?          @unique
 
   creator      User              @relation("WaveActivitiesCreated", fields: [creatorId], references: [id], onDelete: Cascade)
   participants WaveParticipant[]
@@ -2361,3 +2372,104 @@ model CrewMessage {
   @@map("crew_messages")
 }
 
+// =====================================================
+// TRUST & SAFETY SYSTEM
+// =====================================================
+
+enum ReportReason {
+  HARASSMENT
+  SPAM
+  INAPPROPRIATE_CONTENT
+  FAKE_PROFILE
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  ACTIONED
+  DISMISSED
+}
+
+enum ModerationAction {
+  WARNING
+  SUSPENSION
+  BAN
+  DISMISS
+}
+
+enum UserAccountStatus {
+  ACTIVE
+  WARNED
+  SUSPENDED
+  BANNED
+}
+
+// User reports for trust & safety
+model UserReport {
+  id             String       @id @default(cuid())
+  reporterId     String
+  reportedUserId String
+  reason         ReportReason
+  details        String?      @db.Text
+  status         ReportStatus @default(PENDING)
+
+  // Resolution
+  resolvedAt      DateTime?
+  resolvedBy      String? // Admin user ID
+  resolutionNotes String?           @db.Text
+  actionTaken     ModerationAction?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reporter     User @relation("ReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedUser User @relation("ReportsReceived", fields: [reportedUserId], references: [id], onDelete: Cascade)
+
+  @@index([reporterId])
+  @@index([reportedUserId])
+  @@index([status, createdAt])
+  @@map("user_reports")
+}
+
+// User blocks for hiding content bidirectionally
+model UserBlock {
+  id            String   @id @default(cuid())
+  blockerId     String
+  blockedUserId String
+  createdAt     DateTime @default(now())
+
+  blocker     User @relation("BlocksMade", fields: [blockerId], references: [id], onDelete: Cascade)
+  blockedUser User @relation("BlocksReceived", fields: [blockedUserId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedUserId])
+  @@index([blockerId])
+  @@index([blockedUserId])
+  @@map("user_blocks")
+}
+
+// Moderation action log for audit trail
+model ModerationLog {
+  id           String           @id @default(cuid())
+  targetUserId String
+  adminUserId  String
+  action       ModerationAction
+  reason       String?          @db.Text
+  reportId     String? // Optional link to triggering report
+
+  // For suspensions
+  suspensionDays Int?
+  suspendedUntil DateTime?
+
+  // Previous state (for potential reversal)
+  previousStatus UserAccountStatus?
+
+  createdAt DateTime @default(now())
+
+  targetUser User @relation("ModerationActions", fields: [targetUserId], references: [id], onDelete: Cascade)
+
+  @@index([targetUserId])
+  @@index([adminUserId])
+  @@index([createdAt])
+  @@map("moderation_logs")
+}

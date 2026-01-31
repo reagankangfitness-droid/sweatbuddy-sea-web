@@ -216,6 +216,11 @@ model User {
   blocksReceived    UserBlock[]     @relation("BlocksReceived")
   moderationActions ModerationLog[] @relation("ModerationActions")
 
+  // Community relations
+  communitiesOwned        Community[]          @relation("CommunitiesOwned")
+  communityMemberships    CommunityMember[]    @relation("CommunityMemberships")
+  communityMessagesSent   CommunityMessage[]   @relation("CommunityMessagesSent")
+
   @@index([slug])
   @@index([username])
   @@index([isHost])
@@ -252,8 +257,12 @@ model Activity {
   updatedAt      DateTime       @updatedAt
   deletedAt      DateTime?
 
+  // Community link (optional - activity can belong to a community)
+  communityId String?
+
   user            User             @relation("CreatedActivities", fields: [userId], references: [id])
   host            User?            @relation("HostedActivities", fields: [hostId], references: [id])
+  community       Community?       @relation("CommunityActivities", fields: [communityId], references: [id])
   // Note: categorySlug is NOT a foreign key - categories are managed in code as constants
   // This allows flexibility to add/remove categories without database migrations
   userActivities  UserActivity[]
@@ -284,6 +293,7 @@ model Activity {
   @@index([status])
   @@index([placeId])
   @@index([neighborhoodId])
+  @@index([communityId])
   @@map("activities")
 }
 
@@ -2504,4 +2514,171 @@ model ModerationLog {
   @@index([adminUserId])
   @@index([createdAt])
   @@map("moderation_logs")
+}
+
+// =====================================================
+// COMMUNITY SYSTEM
+// =====================================================
+
+enum CommunityPrivacy {
+  PUBLIC // Anyone can join
+  PRIVATE // Must request to join
+  INVITE_ONLY // Only via invite link
+}
+
+enum CommunityMemberRole {
+  OWNER // Creator, full control
+  ADMIN // Can manage members & events
+  MEMBER // Regular member
+}
+
+model City {
+  id          String  @id @default(cuid())
+  name        String  @unique // "Singapore", "Bangkok"
+  slug        String  @unique // "singapore", "bangkok"
+  country     String // "Singapore", "Thailand"
+  countryCode String  @db.VarChar(2) // "SG", "TH"
+  timezone    String // "Asia/Singapore", "Asia/Bangkok"
+  latitude    Float
+  longitude   Float
+  coverImage  String?
+
+  // Stats (denormalized for performance)
+  communityCount Int @default(0)
+  eventCount     Int @default(0)
+  activeUsers    Int @default(0)
+
+  // Launch status
+  isLaunched Boolean   @default(false)
+  launchedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  communities Community[] @relation("CityCommunities")
+
+  @@index([slug])
+  @@index([isLaunched])
+  @@map("cities")
+}
+
+model Community {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String? @db.Text
+  coverImage  String?
+  logoImage   String?
+
+  // Location & Category
+  cityId   String?
+  category String // Primary activity type slug
+
+  // Settings
+  privacy    CommunityPrivacy @default(PUBLIC)
+  isVerified Boolean          @default(false)
+  isActive   Boolean          @default(true)
+
+  // Social links
+  instagramHandle String? @db.VarChar(100)
+  websiteUrl      String? @db.VarChar(500)
+  communityLink   String? @db.VarChar(500) // WhatsApp/Discord/Telegram
+
+  // Stats (denormalized for performance)
+  memberCount Int @default(0)
+  eventCount  Int @default(0)
+
+  // Ownership
+  createdById String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  city       City?             @relation("CityCommunities", fields: [cityId], references: [id])
+  createdBy  User              @relation("CommunitiesOwned", fields: [createdById], references: [id])
+  members    CommunityMember[]
+  activities Activity[]        @relation("CommunityActivities")
+  chat       CommunityChat?
+  invites    CommunityInvite[]
+
+  @@index([cityId])
+  @@index([category])
+  @@index([slug])
+  @@index([createdById])
+  @@index([isActive])
+  @@map("communities")
+}
+
+model CommunityMember {
+  id          String              @id @default(cuid())
+  communityId String
+  userId      String
+  role        CommunityMemberRole @default(MEMBER)
+
+  // Preferences
+  notificationsOn Boolean @default(true)
+
+  joinedAt DateTime @default(now())
+
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  user      User      @relation("CommunityMemberships", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([communityId, userId])
+  @@index([communityId])
+  @@index([userId])
+  @@map("community_members")
+}
+
+model CommunityInvite {
+  id          String @id @default(cuid())
+  communityId String
+  code        String @unique
+
+  // Optional: specific invitee
+  invitedEmail String?
+  invitedById  String?
+
+  // Limits
+  maxUses   Int?
+  usedCount Int       @default(0)
+  expiresAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  community Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@index([code])
+  @@index([communityId])
+  @@map("community_invites")
+}
+
+model CommunityChat {
+  id          String @id @default(cuid())
+  communityId String @unique
+
+  createdAt     DateTime  @default(now())
+  lastMessageAt DateTime?
+
+  community Community          @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  messages  CommunityMessage[]
+
+  @@map("community_chats")
+}
+
+model CommunityMessage {
+  id       String @id @default(cuid())
+  chatId   String
+  senderId String
+  content  String @db.Text
+
+  createdAt DateTime @default(now())
+
+  chat   CommunityChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  sender User          @relation("CommunityMessagesSent", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([chatId, createdAt])
+  @@index([senderId])
+  @@map("community_messages")
 }

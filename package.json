@@ -9,6 +9,7 @@
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {
+    "tsx": "^4.21.0",
     "turbo": "^2.0.0"
   },
   "packageManager": "pnpm@8.15.0",

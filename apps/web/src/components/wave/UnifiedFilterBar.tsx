@@ -25,7 +25,7 @@ export function UnifiedFilterBar({
   onTimeSelect
 }: UnifiedFilterBarProps) {
   return (
-    <div className="absolute top-4 left-0 right-0 z-20 px-3 space-y-2">
+    <div className="absolute top-4 left-0 md:left-20 right-0 z-20 px-3 space-y-2">
       {/* Time filter chips - top row */}
       <div className="flex gap-1.5">
         {TIME_CHIPS.map((chip) => (

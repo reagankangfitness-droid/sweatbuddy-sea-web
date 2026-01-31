@@ -2262,25 +2262,57 @@ model HostSubscription {
 // =====================================================
 
 enum WaveActivityType {
+  // Cardio & Endurance
   RUN
-  YOGA
-  GYM
+  WALK
   CYCLE
   SWIM
   HIKE
+  ROWING
+  SURFING
+  SPINNING
+
+  // Strength & Conditioning
+  GYM
+  CROSSFIT
+  HYROX
+  STRETCHING
+  PILATES
+
+  // Racquet Sports
   TENNIS
   PICKLEBALL
-  BASKETBALL
   BADMINTON
+  SQUASH
+
+  // Team Sports
+  BASKETBALL
   FOOTBALL
-  CLIMB
+  VOLLEYBALL
+  FRISBEE
+
+  // Combat & Martial Arts
   BOXING
-  HYROX
+  MARTIAL_ARTS
+
+  // Other Sports
+  CLIMB
+  GOLF
+  SKATEBOARD
   DANCE
-  PILATES
-  WALK
+
+  // Wellness & Recovery
+  YOGA
+  MEDITATION
+  BREATHWORK
   ICE_BATH
   SAUNA
+
+  // Self-Improvement
+  BOOK_CLUB
+  NUTRITION
+
+  // Flexible
   ANYTHING
 }
 

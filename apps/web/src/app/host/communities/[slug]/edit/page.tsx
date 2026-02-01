@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { DashboardHeader } from '@/components/host/DashboardHeader'
 
 const CATEGORIES = [
   { value: 'running', label: 'Running', emoji: '🏃' },
@@ -131,37 +132,45 @@ export default function EditCommunityPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-neutral-400 animate-spin" />
+      <div className="min-h-screen bg-white dark:bg-neutral-950">
+        <DashboardHeader />
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center animate-pulse">
+            <span className="text-4xl mb-4 block">🏠</span>
+            <p className="text-neutral-400 dark:text-neutral-500">Loading community...</p>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-white dark:bg-neutral-950">
+      <DashboardHeader />
+
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <Link
             href={`/host/communities/${slug}`}
-            className="inline-flex items-center gap-2 text-neutral-500 hover:text-neutral-700 mb-4"
+            className="inline-flex items-center gap-2 text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 mb-4 text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Community
           </Link>
-          <h1 className="text-2xl font-bold text-neutral-900">Edit Community</h1>
-          <p className="text-neutral-500 mt-1">Update your community details</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white">Edit Community</h1>
+          <p className="text-sm sm:text-base text-neutral-500 dark:text-neutral-400 mt-1">Update your community details</p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Info */}
-          <div className="bg-white rounded-2xl border border-neutral-200 p-6">
-            <h2 className="font-semibold text-neutral-900 mb-4">Basic Info</h2>
+          <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 sm:p-6">
+            <h2 className="font-semibold text-neutral-900 dark:text-white mb-4">Basic Info</h2>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
                   Community Name *
                 </label>
                 <input
@@ -169,13 +178,13 @@ export default function EditCommunityPage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="e.g., Singapore Morning Runners"
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-neutral-200 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white focus:border-transparent"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
                   Description
                 </label>
                 <textarea
@@ -183,19 +192,19 @@ export default function EditCommunityPage() {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Tell people what your community is about..."
                   rows={4}
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent resize-none"
+                  className="w-full px-4 py-3 border border-neutral-200 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white focus:border-transparent resize-none"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
                     City *
                   </label>
                   <select
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent bg-white"
+                    className="w-full px-4 py-3 border border-neutral-200 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white focus:border-transparent"
                   >
                     {CITIES.map((city) => (
                       <option key={city.value} value={city.value}>
@@ -206,13 +215,13 @@ export default function EditCommunityPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
                     Category *
                   </label>
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent bg-white"
+                    className="w-full px-4 py-3 border border-neutral-200 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white focus:border-transparent"
                   >
                     {CATEGORIES.map((cat) => (
                       <option key={cat.value} value={cat.value}>
@@ -226,8 +235,8 @@ export default function EditCommunityPage() {
           </div>
 
           {/* Privacy */}
-          <div className="bg-white rounded-2xl border border-neutral-200 p-6">
-            <h2 className="font-semibold text-neutral-900 mb-4">Privacy</h2>
+          <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 sm:p-6">
+            <h2 className="font-semibold text-neutral-900 dark:text-white mb-4">Privacy</h2>
 
             <div className="space-y-3">
               {PRIVACY_OPTIONS.map((option) => (
@@ -235,8 +244,8 @@ export default function EditCommunityPage() {
                   key={option.value}
                   className={`flex items-center gap-4 p-4 border rounded-xl cursor-pointer transition-colors ${
                     formData.privacy === option.value
-                      ? 'border-neutral-900 bg-neutral-50'
-                      : 'border-neutral-200 hover:border-neutral-300'
+                      ? 'border-neutral-900 dark:border-white bg-neutral-50 dark:bg-neutral-800'
+                      : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'
                   }`}
                 >
                   <input
@@ -245,11 +254,11 @@ export default function EditCommunityPage() {
                     value={option.value}
                     checked={formData.privacy === option.value}
                     onChange={(e) => setFormData({ ...formData, privacy: e.target.value })}
-                    className="w-4 h-4 text-neutral-900 focus:ring-neutral-900"
+                    className="w-4 h-4 text-neutral-900 dark:text-white focus:ring-neutral-900 dark:focus:ring-white"
                   />
                   <div>
-                    <div className="font-medium text-neutral-900">{option.label}</div>
-                    <div className="text-sm text-neutral-500">{option.description}</div>
+                    <div className="font-medium text-neutral-900 dark:text-white">{option.label}</div>
+                    <div className="text-sm text-neutral-500 dark:text-neutral-400">{option.description}</div>
                   </div>
                 </label>
               ))}
@@ -257,28 +266,28 @@ export default function EditCommunityPage() {
           </div>
 
           {/* Social Links */}
-          <div className="bg-white rounded-2xl border border-neutral-200 p-6">
-            <h2 className="font-semibold text-neutral-900 mb-4">Social Links (Optional)</h2>
+          <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 sm:p-6">
+            <h2 className="font-semibold text-neutral-900 dark:text-white mb-4">Social Links (Optional)</h2>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
                   Instagram Handle
                 </label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">@</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500">@</span>
                   <input
                     type="text"
                     value={formData.instagramHandle}
                     onChange={(e) => setFormData({ ...formData, instagramHandle: e.target.value })}
                     placeholder="yourhandle"
-                    className="w-full pl-8 pr-4 py-3 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+                    className="w-full pl-8 pr-4 py-3 border border-neutral-200 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white focus:border-transparent"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
                   Website URL
                 </label>
                 <input
@@ -286,12 +295,12 @@ export default function EditCommunityPage() {
                   value={formData.websiteUrl}
                   onChange={(e) => setFormData({ ...formData, websiteUrl: e.target.value })}
                   placeholder="https://your-website.com"
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-neutral-200 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
                   Community Chat Link
                 </label>
                 <input
@@ -299,7 +308,7 @@ export default function EditCommunityPage() {
                   value={formData.communityLink}
                   onChange={(e) => setFormData({ ...formData, communityLink: e.target.value })}
                   placeholder="WhatsApp, Telegram, or Discord link"
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-neutral-200 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white focus:border-transparent"
                 />
               </div>
             </div>
@@ -309,14 +318,14 @@ export default function EditCommunityPage() {
           <div className="flex items-center justify-end gap-4">
             <Link
               href={`/host/communities/${slug}`}
-              className="px-6 py-3 text-neutral-600 font-medium hover:text-neutral-900 transition-colors"
+              className="px-6 py-3 text-neutral-600 dark:text-neutral-400 font-medium hover:text-neutral-900 dark:hover:text-white transition-colors"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-8 py-3 bg-neutral-900 text-white rounded-xl font-semibold hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-8 py-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full font-semibold hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isSubmitting ? (
                 <>
@@ -329,7 +338,7 @@ export default function EditCommunityPage() {
             </button>
           </div>
         </form>
-      </div>
+      </main>
     </div>
   )
 }

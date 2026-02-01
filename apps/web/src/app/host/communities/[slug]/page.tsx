@@ -6,11 +6,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   ArrowLeft,
-  Loader2,
   Users,
   Calendar,
   Settings,
-  Link as LinkIcon,
   Instagram,
   Globe,
   MessageCircle,
@@ -18,12 +16,11 @@ import {
   Check,
   Trash2,
   ExternalLink,
-  UserPlus,
   Crown,
   Shield,
-  MoreVertical,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { DashboardHeader } from '@/components/host/DashboardHeader'
 
 interface Community {
   id: string
@@ -162,93 +159,108 @@ export default function ManageCommunityPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-neutral-400 animate-spin" />
+      <div className="min-h-screen bg-white dark:bg-neutral-950">
+        <DashboardHeader />
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center animate-pulse">
+            <span className="text-4xl mb-4 block">🏠</span>
+            <p className="text-neutral-400 dark:text-neutral-500">Loading community...</p>
+          </div>
+        </div>
       </div>
     )
   }
 
   if (!community) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-xl font-semibold text-neutral-900">Community not found</h1>
-          <Link href="/host/communities" className="text-blue-600 hover:underline mt-2 inline-block">
-            Back to communities
-          </Link>
+      <div className="min-h-screen bg-white dark:bg-neutral-950">
+        <DashboardHeader />
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <h1 className="text-xl font-semibold text-neutral-900 dark:text-white">Community not found</h1>
+            <Link href="/host/communities" className="text-blue-600 hover:underline mt-2 inline-block">
+              Back to communities
+            </Link>
+          </div>
         </div>
       </div>
     )
   }
 
+  const tabs: { id: Tab; label: string }[] = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'members', label: 'Members' },
+    { id: 'settings', label: 'Settings' },
+  ]
+
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-6">
-          <Link
-            href="/host/communities"
-            className="inline-flex items-center gap-2 text-neutral-500 hover:text-neutral-700 mb-4"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Communities
-          </Link>
-        </div>
+    <div className="min-h-screen bg-white dark:bg-neutral-950">
+      <DashboardHeader />
+
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
+        {/* Back Link */}
+        <Link
+          href="/host/communities"
+          className="inline-flex items-center gap-2 text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 mb-6 text-sm"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Communities
+        </Link>
 
         {/* Community Header Card */}
-        <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden mb-6">
+        <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden mb-6">
           {/* Cover */}
-          <div className="h-32 bg-gradient-to-r from-neutral-800 to-neutral-900 relative">
+          <div className="h-24 sm:h-32 bg-gradient-to-r from-neutral-800 to-neutral-900 relative">
             {community.coverImage && (
               <Image src={community.coverImage} alt="" fill className="object-cover opacity-60" />
             )}
           </div>
 
           {/* Info */}
-          <div className="p-6">
-            <div className="flex items-start justify-between gap-4">
+          <div className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-neutral-900">{community.name}</h1>
-                <p className="text-neutral-500 mt-1">
+                <h1 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white">{community.name}</h1>
+                <p className="text-neutral-500 dark:text-neutral-400 mt-1">
                   {community.city} · {community.category}
                 </p>
               </div>
               <Link
                 href={`/communities/${community.slug}`}
                 target="_blank"
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-600 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 rounded-full hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
               >
                 View Public Page
                 <ExternalLink className="w-4 h-4" />
               </Link>
             </div>
 
-            <div className="flex items-center gap-6 mt-4">
-              <span className="flex items-center gap-1.5 text-neutral-600">
-                <Users className="w-5 h-5" />
+            <div className="flex items-center gap-4 sm:gap-6 mt-4">
+              <span className="flex items-center gap-1.5 text-sm text-neutral-600 dark:text-neutral-400">
+                <Users className="w-4 h-4" />
                 {community.memberCount} members
               </span>
-              <span className="flex items-center gap-1.5 text-neutral-600">
-                <Calendar className="w-5 h-5" />
+              <span className="flex items-center gap-1.5 text-sm text-neutral-600 dark:text-neutral-400">
+                <Calendar className="w-4 h-4" />
                 {community.eventCount} events
               </span>
-              <span className="px-2 py-1 text-xs font-medium bg-neutral-100 text-neutral-600 rounded-full capitalize">
+              <span className="px-2 py-1 text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded-full capitalize">
                 {community.privacy.toLowerCase()}
               </span>
             </div>
 
             {/* Quick Actions */}
-            <div className="flex items-center gap-3 mt-6 pt-6 border-t border-neutral-100">
+            <div className="flex flex-wrap items-center gap-3 mt-6 pt-6 border-t border-neutral-100 dark:border-neutral-800">
               <button
                 onClick={copyInviteLink}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-600 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 rounded-full hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
               >
                 {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                 {copied ? 'Copied!' : 'Copy Invite Link'}
               </button>
               <Link
                 href={`/host/events/new?communityId=${community.id}`}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-neutral-900 text-white rounded-lg hover:bg-neutral-800 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors"
               >
                 <Calendar className="w-4 h-4" />
                 Create Event
@@ -258,18 +270,18 @@ export default function ManageCommunityPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-1 mb-6 bg-white rounded-xl p-1 border border-neutral-200">
-          {(['overview', 'members', 'settings'] as Tab[]).map((tab) => (
+        <div className="flex items-center gap-1 mb-6 bg-neutral-100 dark:bg-neutral-800 rounded-xl p-1">
+          {tabs.map((tab) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
               className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors capitalize ${
-                activeTab === tab
-                  ? 'bg-neutral-900 text-white'
-                  : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
+                activeTab === tab.id
+                  ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900'
+                  : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
               }`}
             >
-              {tab}
+              {tab.label}
             </button>
           ))}
         </div>
@@ -278,23 +290,23 @@ export default function ManageCommunityPage() {
         {activeTab === 'overview' && (
           <div className="space-y-6">
             {/* Description */}
-            <div className="bg-white rounded-2xl border border-neutral-200 p-6">
-              <h2 className="font-semibold text-neutral-900 mb-3">About</h2>
-              <p className="text-neutral-600">
+            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 sm:p-6">
+              <h2 className="font-semibold text-neutral-900 dark:text-white mb-3">About</h2>
+              <p className="text-neutral-600 dark:text-neutral-400">
                 {community.description || 'No description yet.'}
               </p>
             </div>
 
             {/* Links */}
-            <div className="bg-white rounded-2xl border border-neutral-200 p-6">
-              <h2 className="font-semibold text-neutral-900 mb-4">Links</h2>
+            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 sm:p-6">
+              <h2 className="font-semibold text-neutral-900 dark:text-white mb-4">Links</h2>
               <div className="space-y-3">
                 {community.instagramHandle && (
                   <a
                     href={`https://instagram.com/${community.instagramHandle}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-neutral-600 hover:text-neutral-900"
+                    className="flex items-center gap-3 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
                   >
                     <Instagram className="w-5 h-5" />
                     @{community.instagramHandle}
@@ -305,7 +317,7 @@ export default function ManageCommunityPage() {
                     href={community.websiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-neutral-600 hover:text-neutral-900"
+                    className="flex items-center gap-3 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
                   >
                     <Globe className="w-5 h-5" />
                     {community.websiteUrl}
@@ -316,14 +328,14 @@ export default function ManageCommunityPage() {
                     href={community.communityLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-neutral-600 hover:text-neutral-900"
+                    className="flex items-center gap-3 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
                   >
                     <MessageCircle className="w-5 h-5" />
                     Community Chat
                   </a>
                 )}
                 {!community.instagramHandle && !community.websiteUrl && !community.communityLink && (
-                  <p className="text-neutral-400">No links added yet.</p>
+                  <p className="text-neutral-400 dark:text-neutral-500">No links added yet.</p>
                 )}
               </div>
             </div>
@@ -331,19 +343,19 @@ export default function ManageCommunityPage() {
         )}
 
         {activeTab === 'members' && (
-          <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden">
-            <div className="p-4 border-b border-neutral-100 flex items-center justify-between">
-              <h2 className="font-semibold text-neutral-900">Members ({members.length})</h2>
+          <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+            <div className="p-4 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+              <h2 className="font-semibold text-neutral-900 dark:text-white">Members ({members.length})</h2>
             </div>
 
             {members.length === 0 ? (
-              <div className="p-8 text-center text-neutral-500">No members yet</div>
+              <div className="p-8 text-center text-neutral-500 dark:text-neutral-400">No members yet</div>
             ) : (
-              <div className="divide-y divide-neutral-100">
+              <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
                 {members.map((member) => (
                   <div key={member.id} className="flex items-center justify-between p-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-neutral-100 overflow-hidden">
+                      <div className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
                         {member.user.imageUrl ? (
                           <Image
                             src={member.user.imageUrl}
@@ -354,13 +366,13 @@ export default function ManageCommunityPage() {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <Users className="w-5 h-5 text-neutral-400" />
+                            <Users className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
                           </div>
                         )}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-neutral-900">
+                          <span className="font-medium text-neutral-900 dark:text-white">
                             {member.user.name || member.user.username || 'Unknown'}
                           </span>
                           {member.role === 'OWNER' && (
@@ -370,7 +382,7 @@ export default function ManageCommunityPage() {
                             <Shield className="w-4 h-4 text-blue-500" />
                           )}
                         </div>
-                        <span className="text-sm text-neutral-500 capitalize">
+                        <span className="text-sm text-neutral-500 dark:text-neutral-400 capitalize">
                           {member.role.toLowerCase()}
                         </span>
                       </div>
@@ -381,7 +393,7 @@ export default function ManageCommunityPage() {
                         <select
                           value={member.role}
                           onChange={(e) => updateMemberRole(member.id, e.target.value)}
-                          className="text-sm border border-neutral-200 rounded-lg px-2 py-1 bg-white"
+                          className="text-sm border border-neutral-200 dark:border-neutral-700 rounded-lg px-2 py-1 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white"
                         >
                           <option value="MEMBER">Member</option>
                           <option value="ADMIN">Admin</option>
@@ -404,12 +416,12 @@ export default function ManageCommunityPage() {
         {activeTab === 'settings' && (
           <div className="space-y-6">
             {/* Edit Link */}
-            <div className="bg-white rounded-2xl border border-neutral-200 p-6">
-              <h2 className="font-semibold text-neutral-900 mb-4">Edit Community</h2>
-              <p className="text-neutral-600 mb-4">Update your community details, description, and settings.</p>
+            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 sm:p-6">
+              <h2 className="font-semibold text-neutral-900 dark:text-white mb-4">Edit Community</h2>
+              <p className="text-neutral-600 dark:text-neutral-400 mb-4">Update your community details, description, and settings.</p>
               <Link
                 href={`/host/communities/${slug}/edit`}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-neutral-200 dark:border-neutral-700 rounded-full hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors text-neutral-600 dark:text-neutral-300"
               >
                 <Settings className="w-4 h-4" />
                 Edit Community
@@ -417,9 +429,9 @@ export default function ManageCommunityPage() {
             </div>
 
             {/* Danger Zone */}
-            <div className="bg-white rounded-2xl border border-red-200 p-6">
-              <h2 className="font-semibold text-red-600 mb-2">Danger Zone</h2>
-              <p className="text-neutral-600 mb-4">
+            <div className="bg-white dark:bg-neutral-900 rounded-xl border border-red-200 dark:border-red-900/50 p-4 sm:p-6">
+              <h2 className="font-semibold text-red-600 dark:text-red-400 mb-2">Danger Zone</h2>
+              <p className="text-neutral-600 dark:text-neutral-400 mb-4">
                 Deleting your community will remove all members and cannot be undone.
               </p>
 
@@ -428,13 +440,13 @@ export default function ManageCommunityPage() {
                   <button
                     onClick={handleDelete}
                     disabled={isDeleting}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-red-600 text-white rounded-full font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
                   >
                     {isDeleting ? 'Deleting...' : 'Yes, Delete'}
                   </button>
                   <button
                     onClick={() => setShowDeleteConfirm(false)}
-                    className="px-4 py-2 text-neutral-600 hover:text-neutral-900"
+                    className="px-4 py-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white"
                   >
                     Cancel
                   </button>
@@ -442,7 +454,7 @@ export default function ManageCommunityPage() {
               ) : (
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/50 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                   Delete Community
@@ -451,7 +463,7 @@ export default function ManageCommunityPage() {
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   )
 }

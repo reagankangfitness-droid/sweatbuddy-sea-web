@@ -1,13 +1,13 @@
 'use client'
 
-import { Map, Users, User } from 'lucide-react'
+import { Map, CalendarDays, User } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 
 const navItems = [
   { id: 'map', label: 'Map', icon: Map, href: '/app' },
-  { id: 'crews', label: 'Crews', icon: Users, href: '/crews' },
+  { id: 'events', label: 'Events', icon: CalendarDays, href: '/events' },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile' },
 ]
 

@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   Ticket,
   BadgeCheck,
+  MessageCircle,
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -153,6 +154,17 @@ export default function ProfilePage() {
 
         {/* Menu Items */}
         <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden">
+          <Link
+            href="/crews"
+            className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+          >
+            <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
+              <MessageCircle className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
+              My Crews
+            </span>
+            <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+          </Link>
+
           <Link
             href="/my-bookings"
             className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"

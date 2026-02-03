@@ -89,8 +89,7 @@ export async function GET(
       membership,
       upcomingEvents,
     })
-  } catch (error) {
-    console.error('Get community error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -152,8 +151,7 @@ export async function PATCH(
     })
 
     return NextResponse.json({ community: updated })
-  } catch (error) {
-    console.error('Update community error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -199,8 +197,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ message: 'Community deleted successfully' })
-  } catch (error) {
-    console.error('Delete community error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

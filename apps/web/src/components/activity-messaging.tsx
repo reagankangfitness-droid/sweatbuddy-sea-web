@@ -79,7 +79,6 @@ export function ActivityMessaging({
       setMessages(data.messages || [])
       setConversation(data.conversation)
     } catch (error) {
-      console.error('Error fetching messages:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to load messages')
     } finally {
       setIsLoading(false)
@@ -123,7 +122,6 @@ export function ActivityMessaging({
         fetchMessages()
       }
     } catch (error) {
-      console.error('Error sending message:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to send message')
     } finally {
       setIsSending(false)

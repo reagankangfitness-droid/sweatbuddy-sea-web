@@ -62,7 +62,6 @@ export function InviteModal({
       setInviteCode(data.invite_code)
       toast.success('Invite link generated!')
     } catch (error) {
-      console.error('Error generating invite:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to generate invite')
     } finally {
       setIsGenerating(false)

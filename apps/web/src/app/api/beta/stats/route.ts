@@ -11,8 +11,7 @@ export async function GET() {
       percentFilled: Math.round((stats.currentUsers / stats.maxUsers) * 100),
       showSpotsRemaining: stats.showSpotsRemaining,
     })
-  } catch (error) {
-    console.error('Beta stats error:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to get stats' },
       { status: 500 }

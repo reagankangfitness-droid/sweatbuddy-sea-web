@@ -58,8 +58,8 @@ export function UserActionsMenu({
       }
 
       onBlockStatusChange?.()
-    } catch (error) {
-      console.error('Error unblocking user:', error)
+    } catch {
+      // Error handled silently
     }
     setMenuOpen(false)
   }

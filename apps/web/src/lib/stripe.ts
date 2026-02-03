@@ -156,10 +156,6 @@ export function calculateFees(
     const totalFees = platformFee + stripeFee
     const hostPayout = Math.max(0, priceInCents - totalFees) // Ensure hostPayout is never negative
 
-    // Warn if ticket price is too low to cover fees
-    if (priceInCents - totalFees < 0) {
-      console.warn(`[Stripe] Warning: Ticket price ${priceInCents} cents is too low to cover fees ${totalFees} cents. Host payout set to 0.`)
-    }
 
     return {
       priceInCents,

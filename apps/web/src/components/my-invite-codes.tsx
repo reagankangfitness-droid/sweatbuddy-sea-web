@@ -32,8 +32,7 @@ export function MyInviteCodes() {
       const data = await res.json()
       setCodes(data.codes || [])
       setInvitesRemaining(data.invitesRemaining || 0)
-    } catch (error) {
-      console.error('Failed to fetch codes:', error)
+    } catch {
       toast.error('Failed to load invite codes')
     } finally {
       setLoading(false)

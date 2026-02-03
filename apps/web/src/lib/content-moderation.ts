@@ -64,7 +64,6 @@ export async function moderateEventContent(
 ): Promise<ModerationResult> {
   // If no API key configured, approve by default (fail open)
   if (!process.env.ANTHROPIC_API_KEY) {
-    console.warn('ANTHROPIC_API_KEY not configured, skipping AI moderation')
     return { approved: true, flags: [] }
   }
 
@@ -114,8 +113,7 @@ Only output the JSON, nothing else.`
 
     const result = JSON.parse(textContent.text) as ModerationResult
     return result
-  } catch (error) {
-    console.error('AI moderation error:', error)
+  } catch {
     // Fail closed - flag for manual review if AI check fails
     return {
       approved: false,

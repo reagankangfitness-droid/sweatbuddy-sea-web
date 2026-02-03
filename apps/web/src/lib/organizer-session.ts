@@ -74,7 +74,6 @@ export async function getOrganizerSession(): Promise<OrganizerSession | null> {
         const legacySession = JSON.parse(sessionCookie.value)
         if (legacySession.instagramHandle && legacySession.id) {
           // Valid legacy session structure - return it but log warning
-          console.warn('[SECURITY] Legacy unsigned organizer session detected. Will be upgraded on next login.')
           return legacySession as OrganizerSession
         }
       } catch {
@@ -89,14 +88,12 @@ export async function getOrganizerSession(): Promise<OrganizerSession | null> {
     }
 
     if (!verifySignature(signedSession.data, signedSession.sig)) {
-      console.warn('[SECURITY] Invalid session signature detected - possible tampering')
       return null
     }
 
     // Parse and return session data
     return JSON.parse(signedSession.data) as OrganizerSession
-  } catch (error) {
-    console.error('Session parsing error:', error)
+  } catch {
     return null
   }
 }

@@ -22,8 +22,7 @@ async function geocodeLocation(location: string): Promise<{ lat: number; lng: nu
       return data.results[0].geometry.location
     }
     return null
-  } catch (error) {
-    console.error('Geocoding error:', error)
+  } catch {
     return null
   }
 }
@@ -93,7 +92,6 @@ async function createEventWithUniqueSlug(
         throw error // Re-throw non-slug errors
       }
       // Otherwise, retry with a new slug
-      console.log(`Slug collision on attempt ${attempt + 1}, retrying...`)
     }
   }
 
@@ -328,8 +326,8 @@ export async function POST(request: Request) {
       hostName: submission.organizerName,
       eventName: submission.eventName,
       eventId: submission.id,
-    }).catch((err) => {
-      console.error('Failed to send submission confirmation email:', err)
+    }).catch(() => {
+      // Email errors handled silently
     })
 
     return NextResponse.json({
@@ -338,7 +336,6 @@ export async function POST(request: Request) {
       id: submission.id,
     })
   } catch (error) {
-    console.error('Error submitting event:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
       { error: `Failed to submit event: ${errorMessage}` },

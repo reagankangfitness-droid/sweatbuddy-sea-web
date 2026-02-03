@@ -50,13 +50,11 @@ export async function sendEmail(options: SendEmailOptions): Promise<SendEmailRes
     })
 
     if (error) {
-      console.error('Resend error:', error)
       return { success: false, error: error.message }
     }
 
     return { success: true, messageId: data?.id }
   } catch (error) {
-    console.error('Email send error:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',

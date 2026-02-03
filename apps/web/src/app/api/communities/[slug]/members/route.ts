@@ -53,8 +53,7 @@ export async function GET(
       total,
       hasMore: offset + members.length < total,
     })
-  } catch (error) {
-    console.error('List members error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -145,8 +144,7 @@ export async function PATCH(
     })
 
     return NextResponse.json({ member: updated })
-  } catch (error) {
-    console.error('Update member error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -227,8 +225,7 @@ export async function DELETE(
     await updateCommunityMemberCount(community.id)
 
     return NextResponse.json({ message: 'Member removed successfully' })
-  } catch (error) {
-    console.error('Remove member error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

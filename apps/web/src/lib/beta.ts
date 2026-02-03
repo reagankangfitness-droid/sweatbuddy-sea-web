@@ -158,8 +158,7 @@ export async function consumeInviteCode(
       code: validation.code,
       spotsRemaining: (validation.spotsRemaining ?? 1) - 1,
     }
-  } catch (error) {
-    console.error('Error using invite code:', error)
+  } catch {
     return { success: false, error: 'Failed to process invite code' }
   }
 }
@@ -252,8 +251,7 @@ export async function addToWaitlist(
       entry,
       position,
     }
-  } catch (error) {
-    console.error('Error adding to waitlist:', error)
+  } catch {
     return { success: false, error: 'Failed to join waitlist' }
   }
 }

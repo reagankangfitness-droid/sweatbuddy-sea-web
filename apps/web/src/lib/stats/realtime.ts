@@ -148,9 +148,8 @@ export async function onBookingConfirmed(
       })
     })
 
-    console.log(`📊 Real-time stats updated for booking ${booking.id}`)
-  } catch (error) {
-    console.error('Error updating real-time stats for booking:', error)
+    // Stats updated successfully
+  } catch {
     // Don't throw - stats updates should not block the main flow
   }
 }
@@ -195,9 +194,9 @@ export async function onBookingPaid(
       },
     })
 
-    console.log(`📊 Revenue stats updated: +${amount} for host ${hostId}`)
-  } catch (error) {
-    console.error('Error updating revenue stats:', error)
+    // Revenue stats updated successfully
+  } catch {
+    // Error handled silently
   }
 }
 
@@ -303,9 +302,9 @@ export async function onBookingCancelled(
       }
     })
 
-    console.log(`📊 Stats updated for cancellation ${booking.id}`)
-  } catch (error) {
-    console.error('Error updating stats for cancellation:', error)
+    // Stats updated for cancellation
+  } catch {
+    // Error handled silently
   }
 }
 
@@ -378,8 +377,8 @@ export async function trackActivityView(
         })
       }
     }
-  } catch (error) {
-    console.error('Error tracking activity view:', error)
+  } catch {
+    // Error handled silently
   }
 }
 
@@ -421,9 +420,9 @@ export async function onActivityCreated(activity: Activity): Promise<void> {
       },
     })
 
-    console.log(`📊 Stats initialized for activity ${activity.id}`)
-  } catch (error) {
-    console.error('Error initializing activity stats:', error)
+    // Stats initialized for activity
+  } catch {
+    // Error handled silently
   }
 }
 
@@ -446,9 +445,9 @@ export async function onActivityCancelled(activity: Activity): Promise<void> {
       },
     })
 
-    console.log(`📊 Stats updated for cancelled activity ${activity.id}`)
-  } catch (error) {
-    console.error('Error updating stats for cancelled activity:', error)
+    // Stats updated for cancelled activity
+  } catch {
+    // Error handled silently
   }
 }
 
@@ -469,9 +468,9 @@ export async function onActivityCompleted(activity: Activity): Promise<void> {
       },
     })
 
-    console.log(`📊 Stats updated for completed activity ${activity.id}`)
-  } catch (error) {
-    console.error('Error updating stats for completed activity:', error)
+    // Stats updated for completed activity
+  } catch {
+    // Error handled silently
   }
 }
 
@@ -503,8 +502,8 @@ export async function recalculateActivityFillRate(activityId: string): Promise<v
         viewToBookingRate: new Decimal(viewToBookingRate),
       },
     })
-  } catch (error) {
-    console.error('Error recalculating fill rate:', error)
+  } catch {
+    // Error handled silently
   }
 }
 
@@ -568,7 +567,7 @@ export async function recalculateHostRates(hostId: string): Promise<void> {
         bookingConversionRate: new Decimal(conversionRate),
       },
     })
-  } catch (error) {
-    console.error('Error recalculating host rates:', error)
+  } catch {
+    // Error handled silently
   }
 }

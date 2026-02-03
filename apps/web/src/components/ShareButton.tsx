@@ -66,8 +66,8 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
         setCopied(false)
         setShowMenu(false)
       }, 1500)
-    } catch (err) {
-      console.error('Failed to copy:', err)
+    } catch {
+      // Error handled silently
     }
   }
 

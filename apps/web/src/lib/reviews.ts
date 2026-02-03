@@ -851,8 +851,7 @@ export async function processDueReviewPrompts(): Promise<{
       } else {
         failed++
       }
-    } catch (error) {
-      console.error(`Error processing review prompt ${prompt.id}:`, error)
+    } catch {
       failed++
     }
   }
@@ -917,8 +916,8 @@ export async function processReviewReminders(): Promise<{
         })
         sent++
       }
-    } catch (error) {
-      console.error(`Error sending review reminder ${prompt.id}:`, error)
+    } catch {
+      // Error handled silently
     }
   }
 

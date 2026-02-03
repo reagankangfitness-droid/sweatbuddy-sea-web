@@ -75,7 +75,6 @@ export function ReportUserModal({
       setReason('')
       setDetails('')
     } catch (error) {
-      console.error('Error submitting report:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to submit report')
     } finally {
       setIsSubmitting(false)

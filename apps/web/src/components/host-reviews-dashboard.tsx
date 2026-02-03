@@ -119,8 +119,8 @@ export function HostReviewsDashboard({ className }: HostReviewsDashboardProps) {
         }
         setHasMore(data.reviews.length === 10)
       }
-    } catch (error) {
-      console.error('Error fetching host reviews:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setLoading(false)
       setLoadingMore(false)

@@ -33,8 +33,7 @@ export async function GET(
     })
 
     return NextResponse.json({ invites })
-  } catch (error) {
-    console.error('List invites error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -90,8 +89,7 @@ export async function POST(
       invite,
       inviteUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://sweatbuddies.co'}/join/c/${code}`,
     }, { status: 201 })
-  } catch (error) {
-    console.error('Create invite error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -132,8 +130,7 @@ export async function DELETE(
     })
 
     return NextResponse.json({ message: 'Invite deleted' })
-  } catch (error) {
-    console.error('Delete invite error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

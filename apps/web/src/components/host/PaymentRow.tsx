@@ -39,8 +39,8 @@ export function PaymentRow({ payment }: PaymentRowProps) {
       if (res.ok) {
         router.refresh()
       }
-    } catch (error) {
-      console.error('Verification failed:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setIsProcessing(false)
       setActionType(null)

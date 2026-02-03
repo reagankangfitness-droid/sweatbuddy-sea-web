@@ -44,8 +44,7 @@ export async function POST(request: Request) {
       message: "You're on the list!",
       position: result.position,
     })
-  } catch (error) {
-    console.error('Waitlist error:', error)
+  } catch {
     return NextResponse.json(
       { success: false, error: 'Failed to join waitlist' },
       { status: 500 }

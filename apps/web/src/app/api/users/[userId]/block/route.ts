@@ -52,8 +52,7 @@ export async function POST(
     })
 
     return NextResponse.json({ block, message: 'User blocked successfully' }, { status: 201 })
-  } catch (error) {
-    console.error('Block user error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -95,8 +94,7 @@ export async function DELETE(
     })
 
     return NextResponse.json({ message: 'User unblocked successfully' })
-  } catch (error) {
-    console.error('Unblock user error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -124,8 +122,7 @@ export async function GET(
     })
 
     return NextResponse.json({ isBlocked: !!block })
-  } catch (error) {
-    console.error('Check block status error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

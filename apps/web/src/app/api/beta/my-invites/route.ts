@@ -38,8 +38,7 @@ export async function GET() {
       })),
       invitesRemaining: user.betaInvitesRemaining,
     })
-  } catch (error) {
-    console.error('Get invites error:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to get invite codes' },
       { status: 500 }
@@ -95,8 +94,7 @@ export async function POST() {
       code: codes[0].code,
       invitesRemaining: user.betaInvitesRemaining - 1,
     })
-  } catch (error) {
-    console.error('Create invite error:', error)
+  } catch {
     return NextResponse.json(
       { success: false, error: 'Failed to create invite code' },
       { status: 500 }

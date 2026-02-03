@@ -60,8 +60,7 @@ export function QRScanner({ onScan, onError, disabled }: QRScannerProps) {
       )
 
       setIsScanning(true)
-    } catch (err) {
-      console.error('Scanner error:', err)
+    } catch {
       setHasCamera(false)
       onError?.('Camera not available. Try manual entry.')
     }
@@ -72,8 +71,8 @@ export function QRScanner({ onScan, onError, disabled }: QRScannerProps) {
       try {
         await scannerRef.current.stop()
         scannerRef.current.clear()
-      } catch (err) {
-        console.error('Stop scanner error:', err)
+      } catch {
+        // Error handled silently
       }
       scannerRef.current = null
       setIsScanning(false)

@@ -197,8 +197,8 @@ export async function createCompletionCard(
         margin: 1,
         color: { dark: '#0025CC', light: '#FFFFFF' },
       })
-    } catch (qrError) {
-      console.error('QR code generation failed:', qrError)
+    } catch {
+      // QR code generation failed silently
     }
 
     // Get user's streak
@@ -237,8 +237,7 @@ export async function createCompletionCard(
       success: true,
       card: { ...formatCard(card), streak: streak.currentStreak },
     }
-  } catch (error) {
-    console.error('Create completion card error:', error)
+  } catch {
     return { success: false, error: 'Failed to create card' }
   }
 }
@@ -286,8 +285,7 @@ export async function updateCompletionCard(
     })
 
     return { success: true, card: formatCard(updated) }
-  } catch (error) {
-    console.error('Update completion card error:', error)
+  } catch {
     return { success: false, error: 'Failed to update card' }
   }
 }
@@ -332,8 +330,7 @@ export async function recordShare(
     }
 
     return { success: true }
-  } catch (error) {
-    console.error('Record share error:', error)
+  } catch {
     return { success: false }
   }
 }
@@ -407,8 +404,7 @@ export async function markCardAsGenerated(
     })
 
     return { success: true }
-  } catch (error) {
-    console.error('Mark card generated error:', error)
+  } catch {
     return { success: false, error: 'Failed to update card' }
   }
 }

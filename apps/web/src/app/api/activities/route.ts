@@ -139,8 +139,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result, { status: 201 })
   } catch (error) {
-    console.error('Error creating activity:', error)
-
     if (error instanceof Error && 'issues' in error) {
       // Zod validation error
       return NextResponse.json({ error: 'Validation failed', details: error }, { status: 400 })
@@ -234,8 +232,7 @@ export async function GET(request: Request) {
     })
 
     return NextResponse.json(activities)
-  } catch (error) {
-    console.error('Error fetching activities:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

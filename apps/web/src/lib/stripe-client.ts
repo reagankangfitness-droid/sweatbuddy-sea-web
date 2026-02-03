@@ -8,7 +8,6 @@ export const getStripe = (): Promise<Stripe | null> => {
     const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 
     if (!publishableKey) {
-      console.warn('Warning: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set')
       return Promise.resolve(null)
     }
 

@@ -78,8 +78,7 @@ export async function GET(
       messages: messages.reverse(), // Return in chronological order
       hasMore,
     })
-  } catch (error) {
-    console.error('Get chat messages error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -152,8 +151,7 @@ export async function POST(
     })
 
     return NextResponse.json({ message }, { status: 201 })
-  } catch (error) {
-    console.error('Send message error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

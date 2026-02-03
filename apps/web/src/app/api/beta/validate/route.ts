@@ -38,8 +38,7 @@ export async function POST(request: Request) {
       success: true,
       message: 'Welcome to SweatBuddies!',
     })
-  } catch (error) {
-    console.error('Beta validation error:', error)
+  } catch {
     return NextResponse.json(
       { success: false, error: 'Failed to validate passcode' },
       { status: 500 }

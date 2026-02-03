@@ -256,8 +256,8 @@ export function GoogleActivityMap({ timeRange = 'week', onNeighborhoodSelect }: 
           setNeighborhoods(data.data.neighborhoods)
           setSummary(data.data.summary)
         }
-      } catch (error) {
-        console.error('Failed to fetch map overview:', error)
+      } catch {
+        // Error handled silently
       } finally {
         setIsLoading(false)
       }

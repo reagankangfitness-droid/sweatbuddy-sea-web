@@ -68,8 +68,7 @@ export async function POST(
       member,
       message: 'Successfully joined community',
     }, { status: 201 })
-  } catch (error) {
-    console.error('Join community error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

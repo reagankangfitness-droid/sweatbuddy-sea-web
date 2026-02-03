@@ -132,8 +132,8 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
           setPaymentStatus(status.paymentStatus)
         }
       }
-    } catch (err) {
-      console.error('Failed to check attendance status:', err)
+    } catch {
+      // Error handled silently
     }
   }, [event.id])
 

@@ -185,8 +185,7 @@ export async function GET() {
       isHost,
       userName: user?.firstName || user?.fullName || 'there',
     })
-  } catch (error) {
-    console.error('Dashboard API error:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch dashboard data' },
       { status: 500 }

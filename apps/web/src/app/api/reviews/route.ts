@@ -51,7 +51,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(review, { status: 201 })
   } catch (error) {
-    console.error('Error submitting review:', error)
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to submit review' },
       { status: 500 }

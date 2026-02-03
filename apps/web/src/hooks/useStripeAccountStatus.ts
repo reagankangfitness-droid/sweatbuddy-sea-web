@@ -45,7 +45,6 @@ export function useStripeAccountStatus() {
       const data = await response.json()
       setAccountStatus(data)
     } catch (err) {
-      console.error('Error fetching account status:', err)
       const message = err instanceof Error ? err.message : 'Failed to fetch account status'
       setError(message)
       // If account not found, clear it

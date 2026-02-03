@@ -121,9 +121,8 @@ export async function POST(request: Request) {
             },
           })
         }
-      } catch (newsletterError) {
+      } catch {
         // Don't fail the whole request if newsletter signup fails
-        console.error('Newsletter signup error:', newsletterError)
       }
     }
 
@@ -139,8 +138,8 @@ export async function POST(request: Request) {
       organizerInstagram,
       communityLink: communityLink || null,
       checkInCode, // QR code check-in
-    }).catch((emailError) => {
-      console.error('Confirmation email error:', emailError)
+    }).catch(() => {
+      // Email errors handled silently
     })
 
     // Schedule 24-hour reminder email, post-event follow-up, and notify host (fire and forget)
@@ -161,8 +160,8 @@ export async function POST(request: Request) {
           attendanceId: attendance.id,
           eventId,
           eventDate: event.eventDate,
-        }).catch((err) => {
-          console.error('Failed to schedule reminder:', err)
+        }).catch(() => {
+          // Reminder scheduling errors handled silently
         })
 
         // Schedule post-event follow-up (2 hours after event ends)
@@ -171,8 +170,8 @@ export async function POST(request: Request) {
           eventId,
           eventDate: event.eventDate,
           eventTime: event.time || eventTime || '08:00',
-        }).catch((err) => {
-          console.error('Failed to schedule post-event follow-up:', err)
+        }).catch(() => {
+          // Follow-up scheduling errors handled silently
         })
       }
 
@@ -192,20 +191,19 @@ export async function POST(request: Request) {
           attendeeName: name?.trim() || null,
           attendeeEmail: email.toLowerCase().trim(),
           currentAttendeeCount: attendeeCount,
-        }).catch((err) => {
-          console.error('Failed to send host notification:', err)
+        }).catch(() => {
+          // Host notification errors handled silently
         })
       }
-    }).catch((err) => {
-      console.error('Failed to fetch event for reminder:', err)
+    }).catch(() => {
+      // Event fetch errors handled silently
     })
 
     return NextResponse.json({
       success: true,
       attendanceId: attendance.id,
     })
-  } catch (error) {
-    console.error('Attendance error:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to register attendance' },
       { status: 500 }
@@ -278,8 +276,7 @@ export async function GET(request: Request) {
         totalPages: Math.ceil(totalCount / limit),
       },
     })
-  } catch (error) {
-    console.error('Get attendees error:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to get attendees' },
       { status: 500 }
@@ -328,8 +325,7 @@ export async function DELETE(request: Request) {
       success: true,
       message: 'Attendee removed successfully',
     })
-  } catch (error) {
-    console.error('Delete attendee error:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to remove attendee' },
       { status: 500 }

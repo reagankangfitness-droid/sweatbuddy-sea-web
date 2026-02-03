@@ -98,8 +98,7 @@ export async function GET(
         createdAt: h.createdAt.toISOString(),
       })),
     })
-  } catch (error) {
-    console.error('Error fetching report:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch report' }, { status: 500 })
   }
 }
@@ -243,8 +242,7 @@ export async function PATCH(
       },
       message: `Report ${action === 'DISMISS' ? 'dismissed' : 'actioned'} successfully`,
     })
-  } catch (error) {
-    console.error('Error updating report:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to update report' }, { status: 500 })
   }
 }

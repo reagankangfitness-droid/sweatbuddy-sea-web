@@ -135,8 +135,7 @@ export async function GET() {
         username: dbUser.username,
       } : null,
     })
-  } catch (error) {
-    console.error('Error fetching user stats:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch stats' },
       { status: 500 }

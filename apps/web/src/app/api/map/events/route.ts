@@ -222,8 +222,7 @@ export async function GET(request: NextRequest) {
         timeRange,
       },
     })
-  } catch (error) {
-    console.error('Error fetching map events:', error)
+  } catch {
     return NextResponse.json(
       { success: false, error: 'Failed to fetch map events' },
       { status: 500 }

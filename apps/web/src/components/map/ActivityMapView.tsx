@@ -128,8 +128,8 @@ export function ActivityMapView({ timeRange = 'month', onToggleView }: ActivityM
         if (data.success) {
           setEvents(data.data.events)
         }
-      } catch (error) {
-        console.error('Failed to fetch map events:', error)
+      } catch {
+        // Error handled silently
       } finally {
         setIsLoading(false)
       }

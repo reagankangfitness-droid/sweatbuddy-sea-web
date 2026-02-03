@@ -47,7 +47,6 @@ export function BlockUserDialog({
       onOpenChange(false)
       onBlockSuccess?.()
     } catch (error) {
-      console.error('Error blocking user:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to block user')
     } finally {
       setIsBlocking(false)

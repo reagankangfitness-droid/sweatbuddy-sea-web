@@ -75,8 +75,8 @@ export function NotificationPreferences({ className }: NotificationPreferencesPr
         const data = await res.json()
         setPreferences(data)
       }
-    } catch (error) {
-      console.error('Error fetching preferences:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setLoading(false)
     }
@@ -99,8 +99,7 @@ export function NotificationPreferences({ className }: NotificationPreferencesPr
       }
 
       toast.success('Preferences updated')
-    } catch (error) {
-      console.error('Error updating preference:', error)
+    } catch {
       toast.error('Failed to update preferences')
       // Revert on error
       setPreferences(preferences)

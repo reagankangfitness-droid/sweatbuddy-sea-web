@@ -91,8 +91,7 @@ export function DirectChatWindow({
       setOrganizerRegistered(data.organizerRegistered)
       setMessages(data.messages || [])
       setError('') // Clear any previous errors
-    } catch (err) {
-      console.error('Failed to fetch messages:', err)
+    } catch {
       setError('Couldn\'t load messages. Try again?')
     } finally {
       setIsLoading(false)

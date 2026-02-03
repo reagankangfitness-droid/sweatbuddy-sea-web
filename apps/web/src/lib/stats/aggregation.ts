@@ -13,7 +13,6 @@ import { Decimal } from '@prisma/client/runtime/library'
  */
 export async function aggregateHostStats(hostId?: string): Promise<{ processed: number; duration: number }> {
   const startTime = Date.now()
-  console.log(`📊 Starting host stats aggregation${hostId ? ` for host ${hostId}` : ' (all hosts)'}`)
 
   try {
     // Get hosts to process (those who have activities)
@@ -33,25 +32,17 @@ export async function aggregateHostStats(hostId?: string): Promise<{ processed: 
           select: { id: true },
         })
 
-    console.log(`Processing ${hosts.length} hosts`)
-
     let processed = 0
 
     for (const host of hosts) {
       await aggregateSingleHostStats(host.id)
       processed++
-
-      if (processed % 100 === 0) {
-        console.log(`Processed ${processed}/${hosts.length} hosts`)
-      }
     }
 
     const duration = Date.now() - startTime
-    console.log(`✅ Host stats aggregation complete: ${processed} hosts in ${duration}ms`)
 
     return { processed, duration }
   } catch (error) {
-    console.error('❌ Host stats aggregation failed:', error)
     throw error
   }
 }
@@ -329,9 +320,6 @@ export async function updateAttendeeHistory(hostId: string): Promise<void> {
 export async function aggregateActivityStats(
   activityId?: string
 ): Promise<number> {
-  console.log(
-    `📊 Aggregating activity stats${activityId ? ` for ${activityId}` : ' (all)'}`
-  )
 
   const activities = await prisma.activity.findMany({
     where: activityId
@@ -436,7 +424,6 @@ export async function aggregateActivityStats(
     })
   }
 
-  console.log(`✅ Aggregated stats for ${activities.length} activities`)
   return activities.length
 }
 
@@ -449,10 +436,6 @@ export async function createDailySnapshot(date?: Date): Promise<number> {
 
   const nextDay = new Date(snapshotDate)
   nextDay.setDate(nextDay.getDate() + 1)
-
-  console.log(
-    `📊 Creating daily snapshot for ${snapshotDate.toISOString().split('T')[0]}`
-  )
 
   // Get all hosts with activity on this day
   const hostsWithActivity = await prisma.activity.groupBy({
@@ -586,7 +569,6 @@ export async function createDailySnapshot(date?: Date): Promise<number> {
     })
   }
 
-  console.log(`✅ Daily snapshot created for ${hostsWithActivity.length} hosts`)
   return hostsWithActivity.length
 }
 
@@ -603,10 +585,6 @@ export async function createMonthlySnapshot(
 
   const startOfMonth = new Date(targetYear, targetMonth - 1, 1)
   const endOfMonth = new Date(targetYear, targetMonth, 0, 23, 59, 59)
-
-  console.log(
-    `📊 Creating monthly snapshot for ${targetYear}-${String(targetMonth).padStart(2, '0')}`
-  )
 
   // Get all hosts with activity this month
   const hostsWithActivity = await prisma.activity.groupBy({
@@ -717,8 +695,5 @@ export async function createMonthlySnapshot(
     })
   }
 
-  console.log(
-    `✅ Monthly snapshot created for ${hostsWithActivity.length} hosts`
-  )
   return hostsWithActivity.length
 }

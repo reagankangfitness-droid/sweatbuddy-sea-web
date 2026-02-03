@@ -153,7 +153,6 @@ export async function POST(req: Request) {
         },
       })
 
-      console.log(`User ${id} synced successfully`)
 
       // Send welcome email only for new users
       if (eventType === 'user.created' && email) {
@@ -166,9 +165,7 @@ export async function POST(req: Request) {
             tags: [{ name: 'type', value: 'welcome' }],
           })
 
-          if (result.success) {
-            console.log(`Welcome email sent to ${email}`)
-          } else {
+          if (!result.success) {
             console.error(`Failed to send welcome email to ${email}:`, result.error)
           }
         } catch (emailError) {

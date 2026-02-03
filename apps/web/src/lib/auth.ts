@@ -129,8 +129,7 @@ export async function getHostSession(): Promise<HostSession | null> {
       source: 'legacy',
       userId: userByEmail?.id || null, // Link to User if exists
     }
-  } catch (error) {
-    console.error('Error getting host session:', error)
+  } catch {
     return null
   }
 }

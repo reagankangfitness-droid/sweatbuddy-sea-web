@@ -58,8 +58,7 @@ const getCachedSocialProofStats = unstable_cache(
 export async function getSocialProofStats(): Promise<SocialProofStats> {
   try {
     return await getCachedSocialProofStats()
-  } catch (error) {
-    console.error('Error fetching social proof stats:', error)
+  } catch {
     return { peopleMovedThisWeek: 0, eventsLive: 0, activeHosts: 0 }
   }
 }
@@ -220,8 +219,7 @@ const getCachedEvents = unstable_cache(
 export async function getEvents(): Promise<Event[]> {
   try {
     return await getCachedEvents()
-  } catch (error) {
-    console.error('Error fetching events:', error)
+  } catch {
     return []
   }
 }
@@ -365,8 +363,7 @@ const getCachedEventById = unstable_cache(
 export async function getEventById(idOrSlug: string): Promise<Event | null> {
   try {
     return await getCachedEventById(idOrSlug)
-  } catch (error) {
-    console.error('Error fetching event by ID or slug:', error)
+  } catch {
     return null
   }
 }
@@ -386,8 +383,7 @@ const getCachedGoingCount = unstable_cache(
 export async function getEventGoingCount(eventId: string): Promise<number> {
   try {
     return await getCachedGoingCount(eventId)
-  } catch (error) {
-    console.error('Error fetching going count:', error)
+  } catch {
     return 0
   }
 }

@@ -69,16 +69,8 @@ export async function schedulePostEventFollowUp(params: {
       },
     })
 
-    console.log('Scheduled post-event follow-up:', {
-      followUpId: followUp.id,
-      attendanceId,
-      eventId,
-      scheduledFor: scheduledFor.toISOString(),
-    })
-
     return { success: true, followUpId: followUp.id }
-  } catch (error) {
-    console.error('Failed to schedule post-event follow-up:', error)
+  } catch {
     return { success: false, error: 'Failed to schedule follow-up' }
   }
 }
@@ -97,7 +89,6 @@ export async function cancelFollowUpsForEvent(eventId: string): Promise<{ count:
     },
   })
 
-  console.log(`Cancelled ${result.count} follow-ups for event ${eventId}`)
   return { count: result.count }
 }
 
@@ -121,8 +112,6 @@ export async function processPostEventFollowUps(): Promise<{
     },
     take: 50, // Process in batches
   })
-
-  console.log(`Processing ${dueFollowUps.length} due post-event follow-ups`)
 
   for (const followUp of dueFollowUps) {
     stats.processed++
@@ -214,14 +203,12 @@ export async function processPostEventFollowUps(): Promise<{
           data: { status: 'SENT', sentAt: new Date() },
         })
         stats.sent++
-        console.log(`Sent post-event follow-up to ${attendance.email} for event ${event.eventName}`)
       } else {
         await prisma.postEventFollowUp.update({
           where: { id: followUp.id },
           data: { status: 'FAILED', errorMessage: emailResult.error },
         })
         stats.failed++
-        console.error(`Failed to send follow-up to ${attendance.email}:`, emailResult.error)
       }
     } catch (error) {
       // Mark as failed
@@ -233,11 +220,9 @@ export async function processPostEventFollowUps(): Promise<{
         },
       })
       stats.failed++
-      console.error(`Error processing follow-up ${followUp.id}:`, error)
     }
   }
 
-  console.log('Post-event follow-up processing complete:', stats)
   return stats
 }
 

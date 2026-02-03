@@ -47,8 +47,8 @@ export function usePushNotifications() {
         const registration = await navigator.serviceWorker.ready
         const subscription = await registration.pushManager.getSubscription()
         isSubscribed = !!subscription
-      } catch (error) {
-        console.error('Error checking subscription:', error)
+      } catch {
+        // Error handled silently
       }
 
       setState((prev) => ({
@@ -71,10 +71,8 @@ export function usePushNotifications() {
 
     try {
       const registration = await navigator.serviceWorker.register('/sw.js')
-      console.log('Service worker registered:', registration)
       return registration
     } catch (error) {
-      console.error('Service worker registration failed:', error)
       throw error
     }
   }, [])
@@ -110,8 +108,7 @@ export function usePushNotifications() {
       const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
 
       if (!vapidPublicKey) {
-        console.warn('VAPID public key not configured')
-        // For now, just mark as subscribed without actual push
+        // VAPID key not configured - mark as subscribed without actual push
         setState((prev) => ({
           ...prev,
           isSubscribed: true,
@@ -148,7 +145,6 @@ export function usePushNotifications() {
 
       return true
     } catch (error) {
-      console.error('Error subscribing to push:', error)
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -186,7 +182,6 @@ export function usePushNotifications() {
 
       return true
     } catch (error) {
-      console.error('Error unsubscribing from push:', error)
       setState((prev) => ({
         ...prev,
         isLoading: false,

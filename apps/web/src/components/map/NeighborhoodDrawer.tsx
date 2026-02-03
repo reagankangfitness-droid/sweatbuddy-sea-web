@@ -56,8 +56,8 @@ export function NeighborhoodDrawer({
           setHasMore(data.data.pagination.hasMore)
           setCursor(data.data.pagination.cursor)
         }
-      } catch (error) {
-        console.error('Failed to fetch neighborhood events:', error)
+      } catch {
+        // Error handled silently
       } finally {
         setIsLoading(false)
       }
@@ -83,8 +83,8 @@ export function NeighborhoodDrawer({
         setHasMore(data.data.pagination.hasMore)
         setCursor(data.data.pagination.cursor)
       }
-    } catch (error) {
-      console.error('Failed to load more events:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setIsLoading(false)
     }

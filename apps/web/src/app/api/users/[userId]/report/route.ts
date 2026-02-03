@@ -87,8 +87,7 @@ export async function POST(
       { report: { id: report.id }, message: 'Report submitted successfully' },
       { status: 201 }
     )
-  } catch (error) {
-    console.error('Report user error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

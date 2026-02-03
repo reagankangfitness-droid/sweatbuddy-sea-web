@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
         break
 
       default:
-        console.log(`Unhandled event type: ${event.type}`)
+        // Unhandled event type - no action needed
     }
 
     return NextResponse.json({ received: true })
@@ -124,7 +124,6 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     return
   }
 
-  console.log(`Processing checkout completion for session ${sessionId}`)
 
   try {
     // Use transaction to ensure all updates succeed together
@@ -225,7 +224,6 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       }
     })
 
-    console.log(`✅ Booking confirmed for session ${sessionId}`)
 
     // Update real-time stats (async, don't block)
     try {
@@ -263,7 +261,6 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
 async function handleCheckoutExpired(session: Stripe.Checkout.Session) {
   const sessionId = session.id
 
-  console.log(`Checkout expired for session ${sessionId}`)
 
   try {
     await prisma.userActivity.updateMany({
@@ -277,7 +274,6 @@ async function handleCheckoutExpired(session: Stripe.Checkout.Session) {
       },
     })
 
-    console.log(`⏰ Checkout marked as expired for session ${sessionId}`)
   } catch (error) {
     console.error('Error handling checkout expiry:', error)
   }
@@ -285,7 +281,6 @@ async function handleCheckoutExpired(session: Stripe.Checkout.Session) {
 
 // Handle successful payment (backup handler)
 async function handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
-  console.log(`💰 Payment succeeded: ${paymentIntent.id}`)
   // This is a backup - checkout.session.completed should handle most cases
 }
 
@@ -294,7 +289,6 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
   const paymentIntentId = paymentIntent.id
   const errorMessage = paymentIntent.last_payment_error?.message
 
-  console.log(`❌ Payment failed: ${paymentIntentId}`, errorMessage)
 
   try {
     await prisma.userActivity.updateMany({
@@ -317,11 +311,6 @@ async function handleAccountUpdated(account: Stripe.Account) {
   const payoutsEnabled = account.payouts_enabled
   const detailsSubmitted = account.details_submitted
 
-  console.log(`🔄 Account updated: ${accountId}`, {
-    chargesEnabled,
-    payoutsEnabled,
-    detailsSubmitted,
-  })
 
   try {
     // Update our database with the latest account status
@@ -336,7 +325,6 @@ async function handleAccountUpdated(account: Stripe.Account) {
       },
     })
 
-    console.log(`✅ Account ${accountId} updated in database`)
   } catch (error) {
     console.error('Error updating account in database:', error)
   }
@@ -344,7 +332,6 @@ async function handleAccountUpdated(account: Stripe.Account) {
 
 // Handle Stripe Connect account deauthorization
 async function handleAccountDeauthorized(application: Stripe.Application) {
-  console.log(`⚠️ Application deauthorized:`, application.id)
   // The connected account has disconnected from your platform
   // You might want to notify the host or update their account status
 }
@@ -378,12 +365,10 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
       where: { stripePaymentIntentId: paymentIntentId },
     })
     if (existingTransaction) {
-      console.log(`[EventSubmission] Payment already processed for intent ${paymentIntentId}, skipping`)
       return
     }
   }
 
-  console.log(`[EventSubmission] Processing payment for event ${eventId}, session ${sessionId}`)
 
   try {
     const emailData = await prisma.$transaction(async (tx) => {
@@ -479,7 +464,6 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
         },
       })
 
-      console.log(`[EventSubmission] ✅ Payment processed for ${attendeeEmail} - Event: ${event.eventName}`)
 
       // Send confirmation emails (async, don't block transaction)
       const emailData = {
@@ -524,9 +508,7 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
         stripePaymentId: emailData.stripePaymentId,
       })
 
-      if (attendeeEmailResult.success) {
-        console.log(`[EventSubmission] ✅ Confirmation email sent to ${metadata.attendeeEmail}`)
-      } else {
+      if (!attendeeEmailResult.success) {
         console.error(`[EventSubmission] Failed to send confirmation email:`, attendeeEmailResult.error)
       }
     } catch (emailError) {
@@ -549,9 +531,7 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
           hostPayout: emailData.netPayoutToHost,
         })
 
-        if (hostEmailResult.success) {
-          console.log(`[EventSubmission] ✅ Host notification sent to ${emailData.hostEmail}`)
-        } else {
+        if (!hostEmailResult.success) {
           console.error(`[EventSubmission] Failed to send host notification:`, hostEmailResult.error)
         }
       } catch (emailError) {
@@ -567,7 +547,6 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
           eventId,
           eventDate: emailData.eventDate,
         })
-        console.log(`[EventSubmission] ✅ Event reminder scheduled for ${emailData.attendeeEmail}`)
       } catch (reminderError) {
         console.error('[EventSubmission] Failed to schedule reminder:', reminderError)
       }
@@ -585,11 +564,9 @@ async function handleRefund(charge: Stripe.Charge) {
   const currency = charge.currency.toUpperCase()
 
   if (!paymentIntentId) {
-    console.log('Refund without payment intent ID')
     return
   }
 
-  console.log(`💸 Processing refund for payment intent: ${paymentIntentId}`)
 
   try {
     // First, check if this is an EventSubmission refund
@@ -663,7 +640,6 @@ async function handleRefund(charge: Stripe.Charge) {
       }
     }
 
-    console.log(`💸 Refund processed: ${paymentIntentId} - Amount: ${refundAmount} ${currency}`)
 
     // Send refund notification email to user
     if (booking.user?.email) {
@@ -677,9 +653,7 @@ async function handleRefund(charge: Stripe.Charge) {
           refundType: isFullRefund ? 'full' : 'partial',
         })
 
-        if (emailResult.success) {
-          console.log(`✅ Refund notification email sent to ${booking.user.email}`)
-        } else {
+        if (!emailResult.success) {
           console.error(`Failed to send refund email:`, emailResult.error)
         }
       } catch (emailError) {
@@ -710,7 +684,6 @@ async function handleEventSubmissionRefund(
   amountRefunded: number,
   currency: string
 ) {
-  console.log(`[EventSubmission] Processing refund for payment intent: ${paymentIntentId}`)
 
   try {
     // Find the transaction
@@ -755,7 +728,6 @@ async function handleEventSubmissionRefund(
       })
     }
 
-    console.log(`[EventSubmission] 💸 Refund processed: ${paymentIntentId} - Amount: ${amountRefunded / 100} ${currency}`)
 
     // Send refund notification email to attendee
     try {
@@ -784,9 +756,7 @@ async function handleEventSubmissionRefund(
           refundType,
         })
 
-        if (emailResult.success) {
-          console.log(`[EventSubmission] ✅ Refund notification email sent to ${attendance.email}`)
-        } else {
+        if (!emailResult.success) {
           console.error(`[EventSubmission] Failed to send refund email:`, emailResult.error)
         }
       }

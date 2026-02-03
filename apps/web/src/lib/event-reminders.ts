@@ -47,16 +47,9 @@ export async function scheduleEventReminder(params: {
       },
     })
 
-    console.log('Scheduled event reminder:', {
-      reminderId: reminder.id,
-      attendanceId,
-      eventId,
-      scheduledFor: scheduledFor.toISOString(),
-    })
 
     return { success: true, reminderId: reminder.id }
-  } catch (error) {
-    console.error('Failed to schedule reminder:', error)
+  } catch {
     return { success: false, error: 'Failed to schedule reminder' }
   }
 }
@@ -75,7 +68,6 @@ export async function cancelRemindersForEvent(eventId: string): Promise<{ count:
     },
   })
 
-  console.log(`Cancelled ${result.count} reminders for event ${eventId}`)
   return { count: result.count }
 }
 
@@ -101,7 +93,6 @@ export async function processEventReminders(): Promise<{
     take: 50, // Process in batches
   })
 
-  console.log(`Processing ${dueReminders.length} due reminders`)
 
   for (const reminder of dueReminders) {
     stats.processed++
@@ -178,14 +169,12 @@ export async function processEventReminders(): Promise<{
           data: { status: 'SENT', sentAt: new Date() },
         })
         stats.sent++
-        console.log(`Sent reminder to ${attendance.email} for event ${event.eventName}`)
       } else {
         await prisma.eventReminder.update({
           where: { id: reminder.id },
           data: { status: 'FAILED', errorMessage: emailResult.error },
         })
         stats.failed++
-        console.error(`Failed to send reminder to ${attendance.email}:`, emailResult.error)
       }
     } catch (error) {
       // Mark as failed
@@ -197,11 +186,9 @@ export async function processEventReminders(): Promise<{
         },
       })
       stats.failed++
-      console.error(`Error processing reminder ${reminder.id}:`, error)
     }
   }
 
-  console.log('Reminder processing complete:', stats)
   return stats
 }
 

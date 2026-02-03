@@ -109,8 +109,7 @@ export async function GET(
       upcomingEvents,
       categoryCounts,
     })
-  } catch (error) {
-    console.error('Get city error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

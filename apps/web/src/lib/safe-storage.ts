@@ -14,8 +14,7 @@ export function safeGetJSON<T>(key: string, defaultValue: T): T {
     const item = localStorage.getItem(key)
     if (item === null) return defaultValue
     return JSON.parse(item) as T
-  } catch (error) {
-    console.warn(`[safeGetJSON] Failed to parse "${key}":`, error)
+  } catch {
     return defaultValue
   }
 }
@@ -31,7 +30,6 @@ export function safeSetJSON<T>(key: string, value: T): boolean {
     localStorage.setItem(key, JSON.stringify(value))
     return true
   } catch (error) {
-    console.warn(`[safeSetJSON] Failed to save "${key}":`, error)
     // If quota exceeded, try to clear old data
     if (error instanceof DOMException && error.name === 'QuotaExceededError') {
       try {
@@ -56,8 +54,7 @@ export function safeRemove(key: string): boolean {
   try {
     localStorage.removeItem(key)
     return true
-  } catch (error) {
-    console.warn(`[safeRemove] Failed to remove "${key}":`, error)
+  } catch {
     return false
   }
 }

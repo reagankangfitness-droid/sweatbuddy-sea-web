@@ -88,26 +88,12 @@ export async function POST(request: Request) {
       }),
     ])
 
-    if (!adminResult.success) {
-      console.error('Failed to send admin notification:', adminResult.error)
-    }
-
-    if (!welcomeResult.success) {
-      console.error('Failed to send welcome email:', welcomeResult.error)
-    }
-
-    console.log('Newsletter subscription:', {
-      email,
-      adminEmailSent: adminResult.success,
-      welcomeEmailSent: welcomeResult.success,
-    })
 
     return NextResponse.json({
       success: true,
       message: 'Subscribed successfully',
     })
-  } catch (error) {
-    console.error('Error subscribing to newsletter:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to subscribe' }, { status: 500 })
   }
 }

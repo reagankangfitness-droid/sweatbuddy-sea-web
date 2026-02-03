@@ -185,8 +185,8 @@ export async function scheduleRemindersForBooking(
       if (!scheduledTypes.includes(reminder.type)) {
         scheduledTypes.push(reminder.type)
       }
-    } catch (error) {
-      console.error(`Error scheduling ${reminder.type} reminder:`, error)
+    } catch {
+      // Error handled silently
     }
   }
 
@@ -327,8 +327,7 @@ export async function processDueReminders(): Promise<{
           },
         })
       }
-    } catch (error) {
-      console.error(`Error processing reminder ${reminder.id}:`, error)
+    } catch {
       failed++
     }
   }
@@ -516,8 +515,7 @@ async function sendPushReminder(
         },
       })
       success = true
-    } catch (error) {
-      console.error(`Push notification failed for subscription ${subscription.id}:`, error)
+    } catch {
       // Increment failure count
       await prisma.pushSubscription.update({
         where: { id: subscription.id },

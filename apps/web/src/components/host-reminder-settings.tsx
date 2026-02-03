@@ -65,8 +65,8 @@ export function HostReminderSettings({
         const data = await res.json()
         setSettings(data)
       }
-    } catch (error) {
-      console.error('Error fetching settings:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setLoading(false)
     }
@@ -94,8 +94,7 @@ export function HostReminderSettings({
       }
 
       toast.success('Settings updated')
-    } catch (error) {
-      console.error('Error updating setting:', error)
+    } catch {
       toast.error('Failed to update settings')
       // Revert on error
       setSettings(settings)

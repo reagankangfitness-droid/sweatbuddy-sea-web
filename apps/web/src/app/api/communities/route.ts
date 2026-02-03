@@ -134,8 +134,7 @@ export async function GET(request: NextRequest) {
       total,
       hasMore: offset + communities.length < total,
     })
-  } catch (error) {
-    console.error('List communities error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -234,8 +233,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ community }, { status: 201 })
-  } catch (error) {
-    console.error('Create community error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

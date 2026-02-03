@@ -12,7 +12,6 @@ export function isAdminUser(userId: string | null | undefined): boolean {
   const adminIds = getAdminUserIds()
   // SECURITY: Require explicit admin IDs - no fallback access
   if (adminIds.length === 0) {
-    console.warn('[SECURITY] No admin user IDs configured. Set NEXT_PUBLIC_ADMIN_USER_IDS.')
     return false
   }
   return adminIds.includes(userId)
@@ -23,7 +22,6 @@ export function isAdminUser(userId: string | null | undefined): boolean {
 export function getAdminSecret(): string {
   const secret = process.env.ADMIN_SECRET
   if (!secret) {
-    console.error('[SECURITY] ADMIN_SECRET env var not set. Admin API access disabled.')
     return '' // Return empty string - will never match
   }
   return secret

@@ -231,6 +231,14 @@ export default function HostForm() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+    // Clear field error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({ ...prev, [name]: false }))
+    }
+    // Clear general error message when user makes changes
+    if (error) {
+      setError('')
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -535,7 +543,11 @@ export default function HostForm() {
                 <LocationAutocomplete
                   value={formData.location}
                   hasError={fieldErrors.location}
-                  onManualChange={(value) => setFormData(prev => ({ ...prev, location: value }))}
+                  onManualChange={(value) => {
+                    setFormData(prev => ({ ...prev, location: value }))
+                    if (fieldErrors.location) setFieldErrors(prev => ({ ...prev, location: false }))
+                    if (error) setError('')
+                  }}
                   onChange={(data) => {
                     setFormData(prev => ({
                       ...prev,
@@ -544,6 +556,8 @@ export default function HostForm() {
                       longitude: data.longitude,
                       placeId: data.placeId,
                     }))
+                    if (fieldErrors.location) setFieldErrors(prev => ({ ...prev, location: false }))
+                    if (error) setError('')
                   }}
                 />
 

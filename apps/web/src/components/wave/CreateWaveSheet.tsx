@@ -154,22 +154,31 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex flex-col justify-end"
-          style={{ touchAction: 'none', paddingBottom: 'calc(64px + env(safe-area-inset-bottom, 0px))' }}
+          className="fixed inset-0 z-[60]"
+          style={{ touchAction: 'none' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
+          {/* Backdrop */}
           <div className="absolute inset-0 bg-black/40" onClick={handleClose} />
-          <motion.div
-            className="relative w-full bg-white dark:bg-neutral-900 rounded-t-3xl flex flex-col"
-            style={{ maxHeight: 'calc(100dvh - 64px - env(safe-area-inset-bottom, 0px) - 80px)' }}
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            onTouchMove={(e) => e.stopPropagation()}
+
+          {/* Sheet container - positioned above bottom nav */}
+          <div
+            className="absolute left-0 right-0 flex flex-col justify-end"
+            style={{
+              top: 0,
+              bottom: 'calc(80px + env(safe-area-inset-bottom, 0px))'
+            }}
           >
+            <motion.div
+              className="relative w-full bg-white dark:bg-neutral-900 rounded-t-3xl flex flex-col max-h-full"
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              onTouchMove={(e) => e.stopPropagation()}
+            >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100 dark:border-neutral-800 shrink-0">
               {step === 'details' ? (
@@ -343,7 +352,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
 
             {/* Sticky submit button */}
             {step === 'details' && (
-              <div className="shrink-0 px-4 py-3 border-t border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900">
+              <div className="shrink-0 px-4 py-3 border-t border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 rounded-b-none">
                 <button
                   onClick={handleCreate}
                   disabled={!isValid || creating}
@@ -357,7 +366,8 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
                 </button>
               </div>
             )}
-          </motion.div>
+            </motion.div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

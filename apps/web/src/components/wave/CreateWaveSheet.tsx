@@ -155,6 +155,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
       {isOpen && (
         <motion.div
           className="fixed inset-0 z-50 flex flex-col justify-end pb-16"
+          style={{ touchAction: 'none' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -166,6 +167,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            onTouchMove={(e) => e.stopPropagation()}
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100 dark:border-neutral-800 shrink-0">
@@ -186,7 +188,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
 
             <div
               className="px-4 pb-4 overflow-y-auto overscroll-contain flex-1 min-h-0"
-              style={{ WebkitOverflowScrolling: 'touch' }}
+              style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
             >
               {/* Step 1: Activity grid */}
               {step === 'activity' && (

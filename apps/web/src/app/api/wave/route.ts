@@ -274,6 +274,28 @@ export async function GET(request: NextRequest) {
     return nextDate
   }
 
+  // Helper to combine date and time string into a proper Date
+  const combineDateTime = (date: Date | null, timeStr: string | null): Date | null => {
+    if (!date) return null
+    if (!timeStr) return date
+
+    // Parse time string like "3:00 PM" or "15:00"
+    const timeParts = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i)
+    if (!timeParts) return date
+
+    let hours = parseInt(timeParts[1], 10)
+    const minutes = parseInt(timeParts[2], 10)
+    const period = timeParts[3]?.toUpperCase()
+
+    // Convert to 24-hour if AM/PM specified
+    if (period === 'PM' && hours !== 12) hours += 12
+    if (period === 'AM' && hours === 12) hours = 0
+
+    const combined = new Date(date)
+    combined.setHours(hours, minutes, 0, 0)
+    return combined
+  }
+
   // Convert EventSubmissions with engagement signals
   const eventSubmissionData = eventSubmissions.map((e) => {
     const goingCount = attendanceMap.get(e.id) || 0
@@ -285,6 +307,9 @@ export async function GET(request: NextRequest) {
       ? getNextOccurrence(e.day)
       : e.eventDate
 
+    // Combine date with time string to get proper startTime
+    const startTime = combineDateTime(effectiveDate, e.time)
+
     return {
       id: `event_${e.id}`,
       title: e.eventName,
@@ -295,7 +320,7 @@ export async function GET(request: NextRequest) {
       latitude: e.latitude!,
       longitude: e.longitude!,
       address: e.location,
-      startTime: e.eventDate,
+      startTime: startTime,
       endTime: null,
       maxPeople: e.maxTickets,
       imageUrl: e.imageUrl,

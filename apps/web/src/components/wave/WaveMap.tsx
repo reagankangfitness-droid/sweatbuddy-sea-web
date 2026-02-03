@@ -8,7 +8,7 @@ import { useUser } from '@clerk/nextjs'
 import { useTheme } from '@/contexts/ThemeContext'
 import { WAVE_ACTIVITIES, WAVE_POLL_INTERVAL } from '@/lib/wave/constants'
 import { LIGHT_MAP_STYLES, DARK_MAP_STYLES } from '@/lib/wave/map-styles'
-import { UnifiedFilterBar } from './UnifiedFilterBar'
+import { UnifiedFilterBar, ActivitySelectionSheet } from './UnifiedFilterBar'
 import type { TimeFilter } from './UnifiedFilterBar'
 import { WaveBubblePin } from './WaveBubblePin'
 import type { WaveData } from './WaveBubblePin'
@@ -62,6 +62,7 @@ export function WaveMap() {
   const [selectedWaveParticipant, setSelectedWaveParticipant] = useState(false)
   const [filters, setFilters] = useState<Set<WaveActivityType | 'ALL'>>(new Set(['ALL']))
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('ALL')
+  const [activitySheetOpen, setActivitySheetOpen] = useState(false)
   const [createOpen, setCreateOpen] = useState(false)
   const [crewChat, setCrewChat] = useState<{
     chatId: string; emoji: string; area: string;
@@ -342,6 +343,7 @@ export function WaveMap() {
         timeFilter={timeFilter}
         onActivityToggle={handleFilterToggle}
         onTimeSelect={setTimeFilter}
+        onOpenActivitySheet={() => setActivitySheetOpen(true)}
       />
 
       {/* Empty state */}
@@ -405,6 +407,17 @@ export function WaveMap() {
         onClose={() => setCreateOpen(false)}
         onCreateWave={handleCreateWave}
         userPosition={myPosition}
+      />
+
+      {/* Activity selection sheet */}
+      <ActivitySelectionSheet
+        isOpen={activitySheetOpen}
+        onClose={() => setActivitySheetOpen(false)}
+        activityFilter={filters}
+        onSelect={(activity) => {
+          handleFilterToggle(activity)
+          setActivitySheetOpen(false)
+        }}
       />
 
       {/* Crew chat overlay */}

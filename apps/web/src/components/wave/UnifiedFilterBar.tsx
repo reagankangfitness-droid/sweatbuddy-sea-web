@@ -1,11 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { ChevronDown, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { WAVE_ACTIVITIES } from '@/lib/wave/constants'
 import type { WaveActivityType } from '@prisma/client'
-import { createPortal } from 'react-dom'
 
 export type TimeFilter = 'ALL' | 'TODAY' | 'TOMORROW' | 'WEEKEND' | 'WEEK'
 
@@ -14,6 +13,7 @@ interface UnifiedFilterBarProps {
   timeFilter: TimeFilter
   onActivityToggle: (key: WaveActivityType | 'ALL') => void
   onTimeSelect: (filter: TimeFilter) => void
+  onOpenActivitySheet: () => void
 }
 
 const TIME_CHIPS: { key: TimeFilter; label: string }[] = [
@@ -62,8 +62,8 @@ const ACTIVITY_CATEGORIES: { name: string; activities: WaveActivityType[] }[] = 
   },
 ]
 
-// Activity Selection Sheet Component
-function ActivitySheet({
+// Activity Selection Sheet Component - exported for use in WaveMap
+export function ActivitySelectionSheet({
   isOpen,
   onClose,
   activityFilter,
@@ -74,13 +74,22 @@ function ActivitySheet({
   activityFilter: Set<WaveActivityType | 'ALL'>
   onSelect: (activity: WaveActivityType | 'ALL') => void
 }) {
-  if (typeof window === 'undefined') return null
+  // Prevent body scroll when sheet is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = ''
+      }
+    }
+  }, [isOpen])
 
-  return createPortal(
+  return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[200]"
+          className="fixed inset-0 z-[9999]"
+          style={{ touchAction: 'none' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -94,10 +103,12 @@ function ActivitySheet({
           {/* Sheet */}
           <motion.div
             className="absolute bottom-0 left-0 right-0 bg-white dark:bg-neutral-900 rounded-t-3xl max-h-[70vh] flex flex-col"
+            style={{ touchAction: 'pan-y' }}
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-2">
@@ -108,6 +119,7 @@ function ActivitySheet({
             <div className="flex items-center justify-between px-4 pb-3 border-b border-neutral-100 dark:border-neutral-800">
               <h2 className="text-lg font-bold text-neutral-900 dark:text-white">Select Activity</h2>
               <button
+                type="button"
                 onClick={onClose}
                 className="p-2 -m-2 text-neutral-500"
               >
@@ -118,7 +130,7 @@ function ActivitySheet({
             {/* Content */}
             <div
               className="flex-1 overflow-y-auto overscroll-contain px-4 py-3"
-              style={{ WebkitOverflowScrolling: 'touch' }}
+              style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}
             >
               {/* All Activities option */}
               <button
@@ -170,8 +182,7 @@ function ActivitySheet({
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>,
-    document.body
+    </AnimatePresence>
   )
 }
 
@@ -179,10 +190,9 @@ export function UnifiedFilterBar({
   activityFilter,
   timeFilter,
   onActivityToggle,
-  onTimeSelect
+  onTimeSelect,
+  onOpenActivitySheet
 }: UnifiedFilterBarProps) {
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
-
   // Get selected activity label
   const getSelectedLabel = () => {
     if (activityFilter.has('ALL')) return 'All Activities'
@@ -193,74 +203,58 @@ export function UnifiedFilterBar({
     return 'All Activities'
   }
 
-  // Handle activity selection
-  const handleSelect = (activity: WaveActivityType | 'ALL') => {
-    onActivityToggle(activity)
-    setIsSheetOpen(false)
-  }
-
   return (
-    <>
-      <div
-        className="absolute top-4 left-0 md:left-14 right-0 z-40 px-3 overflow-x-auto"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
-      >
-        <div className="flex items-center gap-2 w-max pr-3">
-          {/* Activity Button */}
-          <div className="relative">
+    <div
+      className="absolute top-4 left-0 md:left-14 right-0 z-40 px-3 overflow-x-auto"
+      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+    >
+      <div className="flex items-center gap-2 w-max pr-3">
+        {/* Activity Button */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={onOpenActivitySheet}
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border transition-all active:scale-95 ${
+              !activityFilter.has('ALL')
+                ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 border-neutral-900 dark:border-white'
+                : 'bg-white/95 dark:bg-neutral-800/95 text-neutral-700 dark:text-neutral-200 border-neutral-200 dark:border-neutral-700'
+            }`}
+          >
+            <span className="max-w-[120px] truncate">{getSelectedLabel()}</span>
+            <ChevronDown className="w-4 h-4" />
+          </button>
+
+          {/* Clear filter button */}
+          {!activityFilter.has('ALL') && (
             <button
               type="button"
-              onClick={() => setIsSheetOpen(true)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border transition-all active:scale-95 ${
-                !activityFilter.has('ALL')
-                  ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 border-neutral-900 dark:border-white'
-                  : 'bg-white/95 dark:bg-neutral-800/95 text-neutral-700 dark:text-neutral-200 border-neutral-200 dark:border-neutral-700'
-              }`}
+              onClick={(e) => {
+                e.stopPropagation()
+                onActivityToggle('ALL')
+              }}
+              className="absolute -right-1 -top-1 w-5 h-5 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 flex items-center justify-center shadow-md"
             >
-              <span className="max-w-[120px] truncate">{getSelectedLabel()}</span>
-              <ChevronDown className="w-4 h-4" />
+              <X className="w-3 h-3" />
             </button>
-
-            {/* Clear filter button */}
-            {!activityFilter.has('ALL') && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onActivityToggle('ALL')
-                }}
-                className="absolute -right-1 -top-1 w-5 h-5 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 flex items-center justify-center shadow-md"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            )}
-          </div>
-
-          {/* Time filter chips */}
-          {TIME_CHIPS.map((chip) => (
-            <button
-              key={chip.key}
-              type="button"
-              onClick={() => onTimeSelect(timeFilter === chip.key ? 'ALL' : chip.key)}
-              className={`shrink-0 px-3 py-2 rounded-xl text-sm font-medium border transition-all active:scale-95 ${
-                timeFilter === chip.key
-                  ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white border-pink-500 shadow-lg shadow-pink-500/25'
-                  : 'bg-white/95 dark:bg-neutral-800/95 text-neutral-600 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700'
-              }`}
-            >
-              {chip.label}
-            </button>
-          ))}
+          )}
         </div>
-      </div>
 
-      {/* Activity Selection Sheet - rendered via portal */}
-      <ActivitySheet
-        isOpen={isSheetOpen}
-        onClose={() => setIsSheetOpen(false)}
-        activityFilter={activityFilter}
-        onSelect={handleSelect}
-      />
-    </>
+        {/* Time filter chips */}
+        {TIME_CHIPS.map((chip) => (
+          <button
+            key={chip.key}
+            type="button"
+            onClick={() => onTimeSelect(timeFilter === chip.key ? 'ALL' : chip.key)}
+            className={`shrink-0 px-3 py-2 rounded-xl text-sm font-medium border transition-all active:scale-95 ${
+              timeFilter === chip.key
+                ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white border-pink-500 shadow-lg shadow-pink-500/25'
+                : 'bg-white/95 dark:bg-neutral-800/95 text-neutral-600 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700'
+            }`}
+          >
+            {chip.label}
+          </button>
+        ))}
+      </div>
+    </div>
   )
 }

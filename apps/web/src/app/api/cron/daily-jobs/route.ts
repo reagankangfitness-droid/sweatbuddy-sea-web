@@ -58,7 +58,9 @@ export async function POST(request: NextRequest) {
         try {
           await scheduleReviewPrompt(ua.id, ua.activityId, ua.userId, ua.endTime)
           scheduled++
-        } catch {}
+        } catch {
+          // Individual scheduling failures shouldn't stop the batch
+        }
       }
       results.schedulePrompts = { scheduled }
     } catch (e) {

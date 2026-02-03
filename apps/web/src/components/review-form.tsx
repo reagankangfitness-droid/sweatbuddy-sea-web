@@ -205,7 +205,7 @@ export function ReviewForm({
               key={index}
               className="relative w-20 h-20 rounded-lg overflow-hidden group"
             >
-              <Image src={photo} alt="" fill className="object-cover" />
+              <Image src={photo} alt={`Upload preview ${index + 1}`} fill className="object-cover" />
               <button
                 type="button"
                 onClick={() => removePhoto(index)}

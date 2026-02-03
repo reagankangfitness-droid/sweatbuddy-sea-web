@@ -230,7 +230,7 @@ export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClo
                   {!isMe && (
                     <div className="w-7 h-7 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-700 shrink-0 mt-1">
                       {msg.senderImageUrl ? (
-                        <Image src={msg.senderImageUrl} alt="" className="w-full h-full object-cover" width={28} height={28} unoptimized />
+                        <Image src={msg.senderImageUrl} alt={`${msg.senderName || 'User'} avatar`} className="w-full h-full object-cover" width={28} height={28} unoptimized />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-xs font-bold text-neutral-400">
                           {(msg.senderName || '?')[0]}

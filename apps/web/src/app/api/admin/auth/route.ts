@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 
-const ADMIN_PASSWORD = 'sweatbuddies2024'
+// SECURITY: Admin password MUST be set via environment variable
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
 const COOKIE_NAME = 'admin_session'
-const SECRET_KEY = process.env.ADMIN_SECRET || 'fallback-admin-secret-key'
+// SECURITY: Admin secret MUST be set via environment variable - no fallback
+const SECRET_KEY = process.env.ADMIN_SECRET
 
 // Create a signed token
 function createToken(): string {
+  if (!SECRET_KEY) {
+    throw new Error('ADMIN_SECRET not configured')
+  }
   const timestamp = Date.now()
   const data = `admin:${timestamp}`
   const hmac = crypto.createHmac('sha256', SECRET_KEY)
@@ -17,6 +22,9 @@ function createToken(): string {
 
 // Verify a signed token
 function verifyToken(token: string): boolean {
+  // SECURITY: Require SECRET_KEY to be configured
+  if (!SECRET_KEY) return false
+
   try {
     const decoded = Buffer.from(token, 'base64').toString('utf-8')
     const parts = decoded.split(':')
@@ -47,6 +55,12 @@ function verifyToken(token: string): boolean {
 // POST: Login with password
 export async function POST(request: NextRequest) {
   try {
+    // SECURITY: Fail if admin password not configured
+    if (!ADMIN_PASSWORD || !SECRET_KEY) {
+      console.error('Admin auth not configured: ADMIN_PASSWORD or ADMIN_SECRET missing')
+      return NextResponse.json({ error: 'Admin auth not configured' }, { status: 500 })
+    }
+
     const body = await request.json()
     const { password } = body
 

@@ -5,6 +5,7 @@ import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { Heart } from 'lucide-react'
 import { toast } from 'sonner'
+import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 
 interface SaveEventButtonProps {
   eventId: string
@@ -20,7 +21,7 @@ export function SaveEventButton({ eventId, eventSlug, className = '', iconOnly =
   const [isAnimating, setIsAnimating] = useState(false)
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
+    const saved = safeGetJSON<string[]>('sweatbuddies_saved', [])
     setIsSaved(saved.includes(eventId))
   }, [eventId])
 
@@ -40,7 +41,7 @@ export function SaveEventButton({ eventId, eventSlug, className = '', iconOnly =
       return
     }
 
-    const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
+    const saved = safeGetJSON<string[]>('sweatbuddies_saved', [])
 
     let newSaved
     if (saved.includes(eventId)) {
@@ -55,7 +56,7 @@ export function SaveEventButton({ eventId, eventSlug, className = '', iconOnly =
       })
     }
 
-    localStorage.setItem('sweatbuddies_saved', JSON.stringify(newSaved))
+    safeSetJSON('sweatbuddies_saved', newSaved)
     setIsSaved(!isSaved)
 
     // Trigger update for saved events section

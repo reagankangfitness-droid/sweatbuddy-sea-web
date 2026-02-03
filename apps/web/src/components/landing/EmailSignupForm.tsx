@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { safeSetJSON } from '@/lib/safe-storage'
 
 export function EmailSignupForm() {
   const [email, setEmail] = useState('')
@@ -28,7 +29,7 @@ export function EmailSignupForm() {
         return
       }
 
-      localStorage.setItem('signup_email', email)
+      safeSetJSON('signup_email', email)
       router.push('/app')
     } catch {
       setError('Something went wrong. Please try again.')

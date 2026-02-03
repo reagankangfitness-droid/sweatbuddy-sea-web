@@ -4,7 +4,7 @@ import { useState, useCallback, useRef, KeyboardEvent } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { DashboardActivities } from '@/components/dashboard-activities'
-import { JoinedActivitiesSection } from '@/components/joined-activities-section'
+import { JoinedActivitiesSection, type JoinedBooking } from '@/components/joined-activities-section'
 import { HostStatsDashboard } from '@/components/host-stats-dashboard'
 import { Calendar, Users, BarChart3, Plus } from 'lucide-react'
 import type { Activity } from '@prisma/client'
@@ -20,7 +20,7 @@ const TABS: { id: MainTab; label: string; icon: typeof Calendar }[] = [
 
 interface DashboardTabsProps {
   initialHostedActivities: Activity[]
-  initialJoinedBookings: any[]
+  initialJoinedBookings: JoinedBooking[]
   userId: string
 }
 

@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { Heart, X } from 'lucide-react'
 import Image from 'next/image'
-import { MapPin, Clock, Calendar, Instagram } from 'lucide-react'
+import { MapPin, Clock, Calendar } from 'lucide-react'
+import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 
 interface Event {
   id: string
@@ -27,7 +28,7 @@ export function SavedEvents({ allEvents }: SavedEventsProps) {
 
   useEffect(() => {
     const loadSaved = () => {
-      const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
+      const saved = safeGetJSON<string[]>('sweatbuddies_saved', [])
       setSavedIds(saved)
     }
 
@@ -42,7 +43,7 @@ export function SavedEvents({ allEvents }: SavedEventsProps) {
 
   const removeSaved = (eventId: string) => {
     const newSaved = savedIds.filter((id) => id !== eventId)
-    localStorage.setItem('sweatbuddies_saved', JSON.stringify(newSaved))
+    safeSetJSON('sweatbuddies_saved', newSaved)
     setSavedIds(newSaved)
     window.dispatchEvent(new Event('savedEventsUpdated'))
   }

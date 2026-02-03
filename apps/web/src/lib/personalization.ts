@@ -1,3 +1,5 @@
+import { safeGetJSON, safeSetJSON, safeRemove } from './safe-storage'
+
 interface Preferences {
   city: string
   categories: string[]
@@ -22,18 +24,14 @@ interface Event {
  * Get user preferences from localStorage
  */
 export function getPreferences(): Preferences | null {
-  if (typeof window === 'undefined') return null
-
-  const saved = localStorage.getItem('sweatbuddies_preferences')
-  return saved ? JSON.parse(saved) : null
+  return safeGetJSON<Preferences | null>('sweatbuddies_preferences', null)
 }
 
 /**
  * Check if user has completed onboarding
  */
 export function hasCompletedOnboarding(): boolean {
-  if (typeof window === 'undefined') return false
-  return localStorage.getItem('sweatbuddies_preferences') !== null
+  return safeGetJSON<Preferences | null>('sweatbuddies_preferences', null) !== null
 }
 
 /**
@@ -41,7 +39,7 @@ export function hasCompletedOnboarding(): boolean {
  */
 export function resetPreferences(): void {
   if (typeof window === 'undefined') return
-  localStorage.removeItem('sweatbuddies_preferences')
+  safeRemove('sweatbuddies_preferences')
   window.dispatchEvent(new Event('preferencesUpdated'))
 }
 
@@ -171,16 +169,14 @@ export function getPersonalizedGreeting(): string {
  * Get saved event IDs
  */
 export function getSavedEventIds(): string[] {
-  if (typeof window === 'undefined') return []
-  return JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
+  return safeGetJSON<string[]>('sweatbuddies_saved', [])
 }
 
 /**
  * Get going event IDs
  */
 export function getGoingEventIds(): string[] {
-  if (typeof window === 'undefined') return []
-  return JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
+  return safeGetJSON<string[]>('sweatbuddies_going', [])
 }
 
 /**

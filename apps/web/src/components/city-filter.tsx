@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { ChevronDown, X, Check } from 'lucide-react'
+import { safeSetJSON, safeRemove } from '@/lib/safe-storage'
 
 interface Activity {
   city: string
@@ -331,23 +332,19 @@ export function ActivityFilter({
   const handleCitySelect = (cityValue: string) => {
     onCityChange(cityValue)
     // Persist to localStorage
-    if (typeof window !== 'undefined') {
-      if (cityValue === 'all') {
-        localStorage.removeItem('selectedCity')
-      } else {
-        localStorage.setItem('selectedCity', cityValue)
-      }
+    if (cityValue === 'all') {
+      safeRemove('selectedCity')
+    } else {
+      safeSetJSON('selectedCity', cityValue)
     }
   }
 
   const handleTypeSelect = (typeValue: string) => {
     onTypeChange(typeValue)
-    if (typeof window !== 'undefined') {
-      if (typeValue === 'all') {
-        localStorage.removeItem('selectedType')
-      } else {
-        localStorage.setItem('selectedType', typeValue)
-      }
+    if (typeValue === 'all') {
+      safeRemove('selectedType')
+    } else {
+      safeSetJSON('selectedType', typeValue)
     }
   }
 

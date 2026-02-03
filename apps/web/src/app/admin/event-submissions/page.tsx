@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
-import { Check, X, Clock, MapPin, Calendar, Mail, Instagram, User, ExternalLink, Copy, ImageIcon } from 'lucide-react'
+import { Check, X, Clock, MapPin, Calendar, Mail, Instagram, User, Copy } from 'lucide-react'
 import { toast } from 'sonner'
 import Image from 'next/image'
+import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 
 interface EventSubmission {
   id: string
@@ -38,7 +39,7 @@ export default function AdminEventSubmissionsPage() {
 
   useEffect(() => {
     // Check if already authenticated
-    const storedAuth = localStorage.getItem('admin-auth')
+    const storedAuth = safeGetJSON<string | null>('admin-auth', null)
     if (storedAuth === ADMIN_SECRET) {
       setIsAuthed(true)
     }
@@ -76,7 +77,7 @@ export default function AdminEventSubmissionsPage() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
     if (password === ADMIN_SECRET) {
-      localStorage.setItem('admin-auth', password)
+      safeSetJSON('admin-auth', password)
       setIsAuthed(true)
     } else {
       toast.error('Incorrect password')

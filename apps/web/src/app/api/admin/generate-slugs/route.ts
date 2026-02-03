@@ -3,11 +3,15 @@ import { prisma } from '@/lib/prisma'
 import { generateSlug } from '@/lib/events'
 import { revalidatePath } from 'next/cache'
 
-const ADMIN_SECRET = process.env.ADMIN_SECRET || 'sweatbuddies-admin-2024'
-
+// SECURITY: Admin secret must be set via environment variable - no fallback
 function isAdmin(request: Request): boolean {
+  const adminSecret = process.env.ADMIN_SECRET
+  if (!adminSecret) {
+    console.error('ADMIN_SECRET environment variable not configured')
+    return false
+  }
   const authHeader = request.headers.get('x-admin-secret')
-  return authHeader === ADMIN_SECRET
+  return authHeader === adminSecret
 }
 
 // POST: Generate slugs for all events without slugs

@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic'
 import { ArrowLeft, Map, Layers, Sparkles } from 'lucide-react'
 import { SwipeableEventBrowser } from '@/components/SwipeableEventBrowser'
 import { AnimatedCounter } from '@/components/ui/AnimatedCounter'
+import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 import type { Event } from '@/lib/events'
 
 // Lazy load map component
@@ -53,18 +54,18 @@ export default function DiscoverPage() {
   const handleJoin = (event: Event) => {
     setJoinedCount((prev) => prev + 1)
     // Save to localStorage
-    const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
+    const going = safeGetJSON<string[]>('sweatbuddies_going', [])
     if (!going.includes(event.id)) {
-      localStorage.setItem('sweatbuddies_going', JSON.stringify([...going, event.id]))
+      safeSetJSON('sweatbuddies_going', [...going, event.id])
     }
   }
 
   const handleSave = (event: Event) => {
     setSavedCount((prev) => prev + 1)
     // Save to localStorage
-    const saved = JSON.parse(localStorage.getItem('sweatbuddies_saved') || '[]')
+    const saved = safeGetJSON<string[]>('sweatbuddies_saved', [])
     if (!saved.includes(event.id)) {
-      localStorage.setItem('sweatbuddies_saved', JSON.stringify([...saved, event.id]))
+      safeSetJSON('sweatbuddies_saved', [...saved, event.id])
     }
   }
 

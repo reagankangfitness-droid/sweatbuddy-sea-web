@@ -77,15 +77,7 @@ export function EventPageClient({ event }: { event: Event }) {
   const [showChat, setShowChat] = useState(false)
   const [userInfo, setUserInfo] = useState<{ email: string; name: string } | null>(() => {
     if (typeof window === 'undefined') return null
-    const saved = localStorage.getItem('sweatbuddies_user')
-    if (saved) {
-      try {
-        return JSON.parse(saved)
-      } catch {
-        return null
-      }
-    }
-    return null
+    return safeGetJSON<{ email: string; name: string } | null>('sweatbuddies_user', null)
   })
 
   const confetti = useConfetti()

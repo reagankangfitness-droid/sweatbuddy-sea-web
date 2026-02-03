@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 
 // Get chat messages for an event
@@ -51,13 +52,40 @@ export async function POST(
 ) {
   try {
     const { eventId } = await params
+
+    // SECURITY: Require Clerk authentication
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      )
+    }
+
+    // Get user details from Clerk
+    const user = await currentUser()
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 401 }
+      )
+    }
+
+    const userEmail = user.primaryEmailAddress?.emailAddress
+    if (!userEmail) {
+      return NextResponse.json(
+        { error: 'Email required' },
+        { status: 400 }
+      )
+    }
+
     const body = await request.json()
-    const { content, senderName, senderEmail } = body
+    const { content } = body
 
     // Validate required fields
-    if (!content || !senderEmail) {
+    if (!content) {
       return NextResponse.json(
-        { error: 'Content and email are required' },
+        { error: 'Content is required' },
         { status: 400 }
       )
     }
@@ -74,7 +102,7 @@ export async function POST(
     const attendance = await prisma.eventAttendance.findFirst({
       where: {
         eventId,
-        email: senderEmail.toLowerCase().trim(),
+        email: userEmail.toLowerCase().trim(),
       },
     })
 
@@ -85,13 +113,14 @@ export async function POST(
       )
     }
 
-    // Create message
+    // Create message using authenticated user's details
+    const senderName = user.firstName || user.fullName || attendance.name || 'Anonymous'
     const message = await prisma.eventChatMessage.create({
       data: {
         eventId,
         content: content.trim(),
-        senderName: senderName?.trim() || attendance.name || 'Anonymous',
-        senderEmail: senderEmail.toLowerCase().trim(),
+        senderName,
+        senderEmail: userEmail.toLowerCase().trim(),
       },
     })
 

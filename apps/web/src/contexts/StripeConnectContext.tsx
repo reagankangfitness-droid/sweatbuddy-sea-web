@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, useCallback, PropsWithChildren } from 'react'
+import { safeGetJSON, safeSetJSON, safeRemove } from '@/lib/safe-storage'
 
 interface StripeConnectContextType {
   accountId: string | null
@@ -25,22 +26,18 @@ export function StripeConnectProvider({ children }: PropsWithChildren) {
 
   // Initialize from localStorage on mount
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('stripeConnectAccountId')
-      if (stored) {
-        setAccountIdState(stored)
-      }
+    const stored = safeGetJSON<string | null>('stripeConnectAccountId', null)
+    if (stored) {
+      setAccountIdState(stored)
     }
   }, [])
 
   // Persist to localStorage when accountId changes
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (accountId) {
-        localStorage.setItem('stripeConnectAccountId', accountId)
-      } else {
-        localStorage.removeItem('stripeConnectAccountId')
-      }
+    if (accountId) {
+      safeSetJSON('stripeConnectAccountId', accountId)
+    } else {
+      safeRemove('stripeConnectAccountId')
     }
   }, [accountId])
 
@@ -58,9 +55,7 @@ export function StripeConnectProvider({ children }: PropsWithChildren) {
   const clearAccount = useCallback(() => {
     setAccountIdState(null)
     setIsOnboarded(false)
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('stripeConnectAccountId')
-    }
+    safeRemove('stripeConnectAccountId')
   }, [])
 
   const value: StripeConnectContextType = {

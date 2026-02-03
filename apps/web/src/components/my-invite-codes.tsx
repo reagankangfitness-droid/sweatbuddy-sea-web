@@ -89,8 +89,8 @@ export function MyInviteCodes() {
           text: shareText,
           url: inviteUrl,
         })
-      } catch (error: any) {
-        if (error.name !== 'AbortError') {
+      } catch (error) {
+        if (!(error instanceof Error && error.name === 'AbortError')) {
           copyCode(code)
         }
       }

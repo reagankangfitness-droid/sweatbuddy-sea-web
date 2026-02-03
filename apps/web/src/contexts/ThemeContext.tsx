@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
+import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 
 type Theme = 'light' | 'dark' | 'system'
 
@@ -39,7 +40,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // Initialize theme from localStorage or system preference
   useEffect(() => {
     setMounted(true)
-    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null
+    const stored = safeGetJSON<Theme | null>(STORAGE_KEY, null)
     const initialTheme = stored || 'system'
     setThemeState(initialTheme)
 
@@ -65,7 +66,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme)
-    localStorage.setItem(STORAGE_KEY, newTheme)
+    safeSetJSON(STORAGE_KEY, newTheme)
 
     const resolved = newTheme === 'system' ? getSystemTheme() : newTheme
     applyTheme(resolved)

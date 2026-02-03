@@ -85,8 +85,9 @@ function verifyAdminCookie(request: Request): boolean {
     const tokenTime = parseInt(timestamp, 10)
     if (Date.now() - tokenTime > 24 * 60 * 60 * 1000) return false
 
-    // Verify signature
-    const SECRET_KEY = process.env.ADMIN_SECRET || 'fallback-admin-secret-key'
+    // Verify signature - SECURITY: Require ADMIN_SECRET env var
+    const SECRET_KEY = process.env.ADMIN_SECRET
+    if (!SECRET_KEY) return false
     const data = `${prefix}:${timestamp}`
     const hmac = crypto.createHmac('sha256', SECRET_KEY)
     hmac.update(data)

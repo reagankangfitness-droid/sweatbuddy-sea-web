@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Calendar, MapPin, Users, Clock, Camera } from 'lucide-react'
+import { MapPin, Users, Clock } from 'lucide-react'
 import { PostActivityPromptCompact } from '@/components/post-activity-prompt'
 
 const ACTIVITY_TYPE_EMOJI: Record<string, string> = {
@@ -19,8 +19,29 @@ const ACTIVITY_TYPE_EMOJI: Record<string, string> = {
   'OTHER': '✨',
 }
 
+export interface BookingActivity {
+  id: string
+  title: string
+  imageUrl: string | null
+  city: string
+  type: string
+  startTime: string | null
+  endTime: string | null
+  maxPeople: number | null
+  user: {
+    name: string | null
+    imageUrl: string | null
+  }
+  userActivities?: { id: string }[]
+}
+
+export interface JoinedBooking {
+  id: string
+  activity: BookingActivity
+}
+
 interface JoinedActivitiesSectionProps {
-  bookings: any[]
+  bookings: JoinedBooking[]
   timeFilter: 'upcoming' | 'past'
   userId: string
 }
@@ -221,7 +242,7 @@ export function JoinedActivitiesSection({
                     {cancellingId === booking.id ? 'Canceling...' : 'Cancel'}
                   </Button>
                 )}
-                {isPast && (
+                {isPast && activity.startTime && (
                   <>
                     <PostActivityPromptCompact
                       userActivityId={booking.id}
@@ -231,7 +252,7 @@ export function JoinedActivitiesSection({
                       hostAvatar={activity.user.imageUrl}
                       completedAt={new Date(activity.startTime)}
                       durationMinutes={
-                        activity.endTime && activity.startTime
+                        activity.endTime
                           ? Math.round((new Date(activity.endTime).getTime() - new Date(activity.startTime).getTime()) / 60000)
                           : null
                       }

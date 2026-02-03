@@ -2,7 +2,11 @@ import { cookies } from 'next/headers'
 import crypto from 'crypto'
 
 const COOKIE_NAME = 'organizer_session'
-const SESSION_SECRET = process.env.SESSION_SECRET || process.env.ADMIN_SECRET || 'fallback-dev-secret'
+
+// SECURITY: Get session secret from env - fail gracefully if not configured
+function getSessionSecret(): string | null {
+  return process.env.SESSION_SECRET || process.env.ADMIN_SECRET || null
+}
 
 export interface OrganizerSession {
   id: string
@@ -12,9 +16,11 @@ export interface OrganizerSession {
 }
 
 // Create HMAC signature for session data
-function signSession(data: string): string {
+function signSession(data: string): string | null {
+  const secret = getSessionSecret()
+  if (!secret) return null
   return crypto
-    .createHmac('sha256', SESSION_SECRET)
+    .createHmac('sha256', secret)
     .update(data)
     .digest('hex')
 }
@@ -22,6 +28,8 @@ function signSession(data: string): string {
 // Verify HMAC signature
 function verifySignature(data: string, signature: string): boolean {
   const expectedSignature = signSession(data)
+  // SECURITY: Fail if we can't compute signature
+  if (!expectedSignature) return false
   // Use timing-safe comparison
   if (signature.length !== expectedSignature.length) {
     return false
@@ -37,6 +45,12 @@ export async function setOrganizerSession(session: OrganizerSession): Promise<vo
   const cookieStore = await cookies()
   const sessionData = JSON.stringify(session)
   const signature = signSession(sessionData)
+
+  // SECURITY: Don't set session if we can't sign it
+  if (!signature) {
+    console.error('SESSION_SECRET or ADMIN_SECRET not configured - cannot create organizer session')
+    return
+  }
 
   // Store data and signature together
   const signedSession = JSON.stringify({

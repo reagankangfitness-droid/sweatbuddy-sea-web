@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, AlertTriangle, Loader2, Check } from 'lucide-react'
+import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 
 interface CancelRsvpModalProps {
   isOpen: boolean
@@ -44,11 +45,9 @@ export function CancelRsvpModal({
       }
 
       // Remove from localStorage going list
-      if (typeof window !== 'undefined') {
-        const going = JSON.parse(localStorage.getItem('sweatbuddies_going') || '[]')
-        const updated = going.filter((id: string) => id !== eventId)
-        localStorage.setItem('sweatbuddies_going', JSON.stringify(updated))
-      }
+      const going = safeGetJSON<string[]>('sweatbuddies_going', [])
+      const updated = going.filter((id: string) => id !== eventId)
+      safeSetJSON('sweatbuddies_going', updated)
 
       // Show success state briefly before closing
       setIsCancelled(true)

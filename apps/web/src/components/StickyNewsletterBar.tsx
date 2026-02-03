@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { X, Loader2, Check } from 'lucide-react'
+import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 
 export function StickyNewsletterBar() {
   const [email, setEmail] = useState('')
@@ -15,7 +16,7 @@ export function StickyNewsletterBar() {
     // Check if already subscribed or dismissed this session
     if (typeof window !== 'undefined') {
       const dismissed = sessionStorage.getItem('newsletter_bar_dismissed')
-      const subscribed = localStorage.getItem('newsletter_subscribed')
+      const subscribed = safeGetJSON<boolean | null>('newsletter_subscribed', null)
       if (dismissed || subscribed) {
         setIsDismissed(true)
         return
@@ -48,7 +49,7 @@ export function StickyNewsletterBar() {
       if (!response.ok) throw new Error('Failed to subscribe')
 
       setIsSubmitted(true)
-      localStorage.setItem('newsletter_subscribed', 'true')
+      safeSetJSON('newsletter_subscribed', true)
 
       // Auto-hide after success
       setTimeout(() => {

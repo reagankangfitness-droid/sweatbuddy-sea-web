@@ -136,10 +136,10 @@ export function GoingButton({
       }
 
       // Save user info to localStorage for other components
-      localStorage.setItem('sweatbuddies_user', JSON.stringify({
+      safeSetJSON('sweatbuddies_user', {
         email: userEmail,
         name: userName,
-      }))
+      })
 
       // Call attendance API to save to database
       const response = await fetch('/api/attendance', {

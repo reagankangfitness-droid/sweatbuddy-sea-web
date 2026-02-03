@@ -146,18 +146,13 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
       setIsGoing(userIsGoing)
 
       // Get user credentials from localStorage
-      const savedUser = localStorage.getItem('sweatbuddies_user')
+      const savedUser = safeGetJSON<{ email: string; name: string } | null>('sweatbuddies_user', null)
       if (savedUser) {
-        try {
-          const { email, name } = JSON.parse(savedUser)
-          setUserCredentials({ email: email || '', name: name || '' })
+        setUserCredentials({ email: savedUser.email || '', name: savedUser.name || '' })
 
-          // For paid events, verify actual payment status from backend
-          if (userIsGoing && email) {
-            checkAttendanceStatus(email)
-          }
-        } catch {
-          setUserCredentials(null)
+        // For paid events, verify actual payment status from backend
+        if (userIsGoing && savedUser.email) {
+          checkAttendanceStatus(savedUser.email)
         }
       }
     }
@@ -169,14 +164,9 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
     setIsGoing(true)
 
     // Get credentials immediately after joining
-    const savedUser = localStorage.getItem('sweatbuddies_user')
+    const savedUser = safeGetJSON<{ email: string; name: string } | null>('sweatbuddies_user', null)
     if (savedUser) {
-      try {
-        const { email, name } = JSON.parse(savedUser)
-        setUserCredentials({ email: email || '', name: name || '' })
-      } catch {
-        // Ignore
-      }
+      setUserCredentials({ email: savedUser.email || '', name: savedUser.name || '' })
     }
 
     onGoingSuccess?.()

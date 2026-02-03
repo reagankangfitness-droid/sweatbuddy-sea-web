@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
+import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 
 interface Preferences {
   city: string
@@ -35,7 +36,7 @@ export function OnboardingQuiz() {
 
   useEffect(() => {
     // Check if user has completed onboarding
-    const saved = localStorage.getItem('sweatbuddies_preferences')
+    const saved = safeGetJSON<Preferences | null>('sweatbuddies_preferences', null)
     if (!saved) {
       // Show quiz after 2 seconds for first-time visitors
       const timer = setTimeout(() => setIsOpen(true), 2000)
@@ -51,7 +52,7 @@ export function OnboardingQuiz() {
       completedAt: new Date().toISOString(),
     }
 
-    localStorage.setItem('sweatbuddies_preferences', JSON.stringify(finalPrefs))
+    safeSetJSON('sweatbuddies_preferences', finalPrefs)
     setIsOpen(false)
 
     // Trigger page refresh or state update to apply preferences

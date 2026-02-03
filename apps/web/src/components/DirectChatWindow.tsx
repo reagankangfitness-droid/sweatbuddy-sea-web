@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Send, MessageCircle, Loader2, Mail, CheckCircle, Instagram } from 'lucide-react'
+import { safeGetJSON } from '@/lib/safe-storage'
 
 interface Message {
   id: string
@@ -52,16 +53,11 @@ export function DirectChatWindow({
 
   // Fallback to localStorage if props not provided
   useEffect(() => {
-    if (typeof window !== 'undefined' && !propEmail) {
-      const saved = localStorage.getItem('sweatbuddies_user')
+    if (!propEmail) {
+      const saved = safeGetJSON<{ email: string; name: string } | null>('sweatbuddies_user', null)
       if (saved) {
-        try {
-          const { email, name } = JSON.parse(saved)
-          if (!userEmail && email) setUserEmail(email)
-          if (!userName && name) setUserName(name)
-        } catch {
-          // Ignore
-        }
+        if (!userEmail && saved.email) setUserEmail(saved.email)
+        if (!userName && saved.name) setUserName(saved.name)
       }
     }
   }, [propEmail, userEmail, userName])

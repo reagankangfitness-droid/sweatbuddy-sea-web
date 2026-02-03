@@ -63,9 +63,9 @@ export function ShareButton({
         })
         toast.success('Shared successfully!')
         return
-      } catch (error: any) {
+      } catch (error) {
         // User cancelled or native share failed - fall back to modal
-        if (error?.name === 'AbortError') return
+        if (error instanceof Error && error.name === 'AbortError') return
       }
     }
 

@@ -261,7 +261,7 @@ export function ReviewCard({
               key={index}
               className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0"
             >
-              <Image src={photo} alt="" fill className="object-cover" />
+              <Image src={photo} alt={`Review photo ${index + 1}`} fill className="object-cover" />
             </div>
           ))}
         </div>

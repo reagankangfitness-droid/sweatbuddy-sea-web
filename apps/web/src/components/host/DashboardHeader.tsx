@@ -46,7 +46,6 @@ export function DashboardHeader() {
   }
 
   const navLinks = [
-    { href: '/host/communities', label: 'Communities' },
     { href: '/host/community', label: 'Community' },
     { href: '/host/analytics', label: 'Analytics' },
     { href: '/host/earnings', label: 'Earnings' },

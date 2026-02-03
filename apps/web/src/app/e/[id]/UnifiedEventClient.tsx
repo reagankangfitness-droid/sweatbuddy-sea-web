@@ -53,66 +53,75 @@ export function UnifiedEventClient({ event, initialGoingCount, variant = 'defaul
     }
   }
 
-  // Mobile variant - single row with share + CTA
+  // Mobile variant - centered CTA with share button
   if (variant === 'mobile') {
     return (
-      <div className="flex items-center gap-3">
-        {/* Share button */}
-        <button
-          onClick={handleShare}
-          className="flex items-center justify-center w-12 h-12 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-        >
-          {copied ? <Check className="w-5 h-5 text-green-500" /> : <Share2 className="w-5 h-5" />}
-        </button>
+      <>
+        {/* Main CTA - full width, centered */}
+        <div className="flex items-center gap-3">
+          {/* Share button */}
+          <button
+            onClick={handleShare}
+            className="flex items-center justify-center w-12 h-12 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors flex-shrink-0"
+          >
+            {copied ? <Check className="w-5 h-5 text-green-500" /> : <Share2 className="w-5 h-5" />}
+          </button>
 
-        {/* Main CTA */}
-        <div className="flex-1">
-          {event.isFull ? (
-            <WaitlistButton eventId={event.id} eventName={event.name} fullWidth />
-          ) : isPaidEvent ? (
-            <>
-              <button
-                onClick={() => setShowPaymentModal(true)}
-                className="w-full py-3.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 transition-all shadow-lg shadow-pink-500/25"
-              >
-                Join Now · ${priceFormatted}
-              </button>
-              {showPaymentModal && (
-                <PaymentModal
-                  event={{
-                    id: event.id,
-                    name: event.name,
-                    price: event.price || 0,
-                    day: event.day,
-                    time: event.time,
-                    location: event.location,
-                    paynowEnabled: event.paynowEnabled,
-                    paynowQrCode: event.paynowQrCode,
-                    paynowNumber: event.paynowNumber,
-                  }}
-                  onClose={() => {
-                    setShowPaymentModal(false)
-                    window.location.reload()
-                  }}
-                  onSuccess={() => {}}
-                />
-              )}
-            </>
-          ) : (
-            <GoingButton
-              eventId={event.id}
-              eventName={event.name}
-              eventDay={event.day}
-              eventTime={event.time}
-              eventLocation={event.location}
-              eventOrganizer={event.organizer}
-              eventDate={event.eventDate}
-              initialCount={initialGoingCount}
-              fullWidth
-            />
-          )}
+          {/* CTA Button */}
+          <div className="flex-1 text-center">
+            {event.isFull ? (
+              <WaitlistButton eventId={event.id} eventName={event.name} fullWidth />
+            ) : isPaidEvent ? (
+              <>
+                <button
+                  onClick={() => setShowPaymentModal(true)}
+                  className="w-full py-3.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:from-pink-600 hover:to-rose-600 transition-all shadow-lg shadow-pink-500/25"
+                >
+                  Join Now · ${priceFormatted}
+                </button>
+                <p className="text-xs text-neutral-400 mt-2">${priceFormatted} SGD</p>
+              </>
+            ) : (
+              <GoingButton
+                eventId={event.id}
+                eventName={event.name}
+                eventDay={event.day}
+                eventTime={event.time}
+                eventLocation={event.location}
+                eventOrganizer={event.organizer}
+                eventDate={event.eventDate}
+                initialCount={initialGoingCount}
+                fullWidth
+              />
+            )}
+          </div>
+
+          {/* Invisible spacer to balance the share button */}
+          <div className="w-12 flex-shrink-0" />
         </div>
-      </div>
+
+        {/* Payment Modal */}
+        {showPaymentModal && isPaidEvent && (
+          <PaymentModal
+            event={{
+              id: event.id,
+              name: event.name,
+              price: event.price || 0,
+              day: event.day,
+              time: event.time,
+              location: event.location,
+              paynowEnabled: event.paynowEnabled,
+              paynowQrCode: event.paynowQrCode,
+              paynowNumber: event.paynowNumber,
+            }}
+            onClose={() => {
+              setShowPaymentModal(false)
+              window.location.reload()
+            }}
+            onSuccess={() => {}}
+          />
+        )}
+      </>
     )
   }
 

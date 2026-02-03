@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import dynamicImport from 'next/dynamic'
@@ -110,6 +110,20 @@ export default function HostForm() {
   })
   const [formInitialized, setFormInitialized] = useState(false)
   const [advancedSettingsOpen, setAdvancedSettingsOpen] = useState(false)
+
+  // Get user's timezone
+  const userTimezone = useMemo(() => {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+      // Get timezone abbreviation (e.g., "SGT", "PST", "EST")
+      const abbr = new Date().toLocaleTimeString('en-US', { timeZoneName: 'short' }).split(' ').pop() || ''
+      // Get UTC offset (e.g., "GMT+8")
+      const offset = new Date().toLocaleTimeString('en-US', { timeZoneName: 'shortOffset' }).split(' ').pop() || ''
+      return { name: tz, abbr, offset }
+    } catch {
+      return { name: 'Asia/Singapore', abbr: 'SGT', offset: 'GMT+8' }
+    }
+  }, [])
 
   useEffect(() => {
     setMounted(true)
@@ -485,9 +499,9 @@ export default function HostForm() {
                     </div>
                   </div>
 
-                  {/* Timezone Badge */}
-                  <div className="px-3 py-2.5 bg-neutral-800 rounded-full">
-                    <span className="text-sm text-neutral-400">SGT</span>
+                  {/* Timezone Badge - shows user's local timezone */}
+                  <div className="px-3 py-2.5 bg-neutral-800 rounded-full" title={userTimezone.name}>
+                    <span className="text-sm text-neutral-400">{userTimezone.abbr || userTimezone.offset}</span>
                   </div>
                 </div>
 

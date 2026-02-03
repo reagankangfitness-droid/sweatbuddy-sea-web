@@ -9,7 +9,7 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { WAVE_ACTIVITIES, WAVE_POLL_INTERVAL } from '@/lib/wave/constants'
 import { LIGHT_MAP_STYLES, DARK_MAP_STYLES } from '@/lib/wave/map-styles'
 import { UnifiedFilterBar, ActivitySelectionSheet } from './UnifiedFilterBar'
-import type { TimeFilter, ContentFilter } from './UnifiedFilterBar'
+import type { TimeFilter } from './UnifiedFilterBar'
 import { WaveBubblePin } from './WaveBubblePin'
 import type { WaveData } from './WaveBubblePin'
 import { ActivityBubblePin } from './ActivityBubblePin'
@@ -62,7 +62,6 @@ export function WaveMap() {
   const [selectedWaveParticipant, setSelectedWaveParticipant] = useState(false)
   const [filters, setFilters] = useState<Set<WaveActivityType | 'ALL'>>(new Set(['ALL']))
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('ALL')
-  const [contentFilter, setContentFilter] = useState<ContentFilter>('ALL')
   const [activitySheetOpen, setActivitySheetOpen] = useState(false)
   const [createOpen, setCreateOpen] = useState(false)
   const [crewChat, setCrewChat] = useState<{
@@ -338,8 +337,8 @@ export function WaveMap() {
           </OverlayView>
         )}
 
-        {/* Show waves when filter is ALL or WAVES */}
-        {(contentFilter === 'ALL' || contentFilter === 'WAVES') && filteredWaves.map((w) => (
+        {/* Waves */}
+        {filteredWaves.map((w) => (
           <WaveBubblePin
             key={w.id}
             wave={w}
@@ -347,8 +346,8 @@ export function WaveMap() {
           />
         ))}
 
-        {/* Show events when filter is ALL or EVENTS */}
-        {(contentFilter === 'ALL' || contentFilter === 'EVENTS') && filteredHosted.map((a) => (
+        {/* Events */}
+        {filteredHosted.map((a) => (
           <ActivityBubblePin
             key={`hosted-${a.id}`}
             activity={a}
@@ -357,83 +356,33 @@ export function WaveMap() {
         ))}
       </GoogleMap>
 
-      {/* Unified filter bar with content filter */}
+      {/* Filter bar */}
       <UnifiedFilterBar
         activityFilter={filters}
         timeFilter={timeFilter}
-        contentFilter={contentFilter}
         onActivityToggle={handleFilterToggle}
         onTimeSelect={setTimeFilter}
-        onContentFilterChange={setContentFilter}
         onOpenActivitySheet={() => setActivitySheetOpen(true)}
       />
 
-      {/* Empty state */}
-      {hasFetched && (() => {
-        const showWaves = contentFilter === 'WAVES' || contentFilter === 'ALL'
-        const showEvents = contentFilter === 'EVENTS' || contentFilter === 'ALL'
-        const noWaves = !showWaves || filteredWaves.length === 0
-        const noEvents = !showEvents || filteredHosted.length === 0
-
-        if (showWaves && showEvents && noWaves && noEvents) {
-          return (
-            <div className="fixed inset-0 z-[5] flex items-center justify-center pointer-events-none">
-              <div className="bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md rounded-2xl px-6 py-5 text-center shadow-lg max-w-xs">
-                <p className="text-3xl mb-2">🌊</p>
-                <p className="font-semibold text-neutral-700 dark:text-neutral-200">No activity nearby</p>
-                <p className="text-sm text-neutral-400 mt-1">
-                  Be the first! Start a wave and others can join you.
-                </p>
-                <button
-                  onClick={() => setCreateOpen(true)}
-                  className="mt-3 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm pointer-events-auto"
-                >
-                  Start a wave 🙋
-                </button>
-              </div>
-            </div>
-          )
-        }
-        if (showWaves && !showEvents && noWaves) {
-          return (
-            <div className="fixed inset-0 z-[5] flex items-center justify-center pointer-events-none">
-              <div className="bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md rounded-2xl px-6 py-5 text-center shadow-lg max-w-xs">
-                <p className="text-3xl mb-2">🌊</p>
-                <p className="font-semibold text-neutral-700 dark:text-neutral-200">No waves nearby</p>
-                <p className="text-sm text-neutral-400 mt-1">
-                  Be the first! Start a wave and others can join you.
-                </p>
-                <button
-                  onClick={() => setCreateOpen(true)}
-                  className="mt-3 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm pointer-events-auto"
-                >
-                  Start a wave 🙋
-                </button>
-              </div>
-            </div>
-          )
-        }
-        if (!showWaves && showEvents && noEvents) {
-          return (
-            <div className="fixed inset-0 z-[5] flex items-center justify-center pointer-events-none">
-              <div className="bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md rounded-2xl px-6 py-5 text-center shadow-lg max-w-xs">
-                <p className="text-3xl mb-2">📍</p>
-                <p className="font-semibold text-neutral-700 dark:text-neutral-200">No events nearby</p>
-                <p className="text-sm text-neutral-400 mt-1">
-                  Check back soon or host your own event!
-                </p>
-                <a
-                  href="/host/dashboard"
-                  className="mt-3 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm pointer-events-auto inline-block"
-                >
-                  Host an event 🎉
-                </a>
-              </div>
-            </div>
-          )
-        }
-        return null
-      })()}
+      {/* Empty state - show when no waves AND no events */}
+      {hasFetched && filteredWaves.length === 0 && filteredHosted.length === 0 && (
+        <div className="fixed inset-0 z-[5] flex items-center justify-center pointer-events-none">
+          <div className="bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md rounded-2xl px-6 py-5 text-center shadow-lg max-w-xs">
+            <p className="text-3xl mb-2">🌊</p>
+            <p className="font-semibold text-neutral-700 dark:text-neutral-200">No activity nearby</p>
+            <p className="text-sm text-neutral-400 mt-1">
+              Be the first! Start a wave and others can join you.
+            </p>
+            <button
+              onClick={() => setCreateOpen(true)}
+              className="mt-3 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm pointer-events-auto"
+            >
+              Start a wave 🙋
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Start wave FAB */}
       {!crewChat && (

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Waves, CalendarDays, User, ChevronRight } from 'lucide-react'
+import { Compass, CalendarDays, User, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -10,7 +10,7 @@ import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 
 const navItems = [
-  { id: 'waves', label: 'Waves', icon: Waves, href: '/app' },
+  { id: 'discover', label: 'Discover', icon: Compass, href: '/app' },
   { id: 'events', label: 'Events', icon: CalendarDays, href: '/events' },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile' },
 ]

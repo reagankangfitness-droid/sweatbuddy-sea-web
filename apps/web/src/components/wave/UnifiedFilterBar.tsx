@@ -1,21 +1,18 @@
 'use client'
 
 import { useEffect } from 'react'
-import { ChevronDown, X, Waves, CalendarDays } from 'lucide-react'
+import { ChevronDown, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { WAVE_ACTIVITIES } from '@/lib/wave/constants'
 import type { WaveActivityType } from '@prisma/client'
 
 export type TimeFilter = 'ALL' | 'TODAY' | 'TOMORROW' | 'WEEKEND' | 'WEEK'
-export type ContentFilter = 'ALL' | 'WAVES' | 'EVENTS'
 
 interface UnifiedFilterBarProps {
   activityFilter: Set<WaveActivityType | 'ALL'>
   timeFilter: TimeFilter
-  contentFilter: ContentFilter
   onActivityToggle: (key: WaveActivityType | 'ALL') => void
   onTimeSelect: (filter: TimeFilter) => void
-  onContentFilterChange: (filter: ContentFilter) => void
   onOpenActivitySheet: () => void
 }
 
@@ -192,10 +189,8 @@ export function ActivitySelectionSheet({
 export function UnifiedFilterBar({
   activityFilter,
   timeFilter,
-  contentFilter,
   onActivityToggle,
   onTimeSelect,
-  onContentFilterChange,
   onOpenActivitySheet
 }: UnifiedFilterBarProps) {
   // Get selected activity label
@@ -214,36 +209,6 @@ export function UnifiedFilterBar({
       style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
     >
       <div className="flex items-center gap-2 w-max pr-3">
-        {/* Content filter chips - Waves / Events */}
-        <button
-          type="button"
-          onClick={() => onContentFilterChange(contentFilter === 'WAVES' ? 'ALL' : 'WAVES')}
-          className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-all active:scale-95 ${
-            contentFilter === 'WAVES'
-              ? 'bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/25'
-              : 'bg-white/95 dark:bg-neutral-800/95 text-neutral-600 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700'
-          }`}
-        >
-          <Waves className="w-4 h-4" />
-          <span>Waves</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => onContentFilterChange(contentFilter === 'EVENTS' ? 'ALL' : 'EVENTS')}
-          className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-all active:scale-95 ${
-            contentFilter === 'EVENTS'
-              ? 'bg-green-500 text-white border-green-500 shadow-lg shadow-green-500/25'
-              : 'bg-white/95 dark:bg-neutral-800/95 text-neutral-600 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700'
-          }`}
-        >
-          <CalendarDays className="w-4 h-4" />
-          <span>Events</span>
-        </button>
-
-        {/* Divider */}
-        <div className="w-px h-6 bg-neutral-300 dark:bg-neutral-600 mx-1" />
-
         {/* Activity Button */}
         <div className="relative">
           <button

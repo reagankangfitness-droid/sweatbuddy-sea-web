@@ -275,7 +275,7 @@ export function EventPageClient({ event }: { event: Event }) {
                 <div>
                   <h2 className="text-xl font-semibold text-neutral-900 mb-4 flex items-center gap-2">
                     <Users className="w-5 h-5" />
-                    Who's going ({goingCount})
+                    Who&apos;s going ({goingCount})
                   </h2>
                   <div className="flex flex-wrap gap-3">
                     {event.attendeesPreview.map((attendee) => (
@@ -337,7 +337,7 @@ export function EventPageClient({ event }: { event: Event }) {
                     whileTap={{ scale: 0.98 }}
                     className="w-full py-4 bg-green-100 text-green-700 rounded-xl font-semibold text-lg flex items-center justify-center gap-2"
                   >
-                    <span>✓</span> You're Going
+                    <span>✓</span> You&apos;re Going
                   </motion.button>
                 ) : (
                   <motion.button
@@ -403,7 +403,7 @@ export function EventPageClient({ event }: { event: Event }) {
               onClick={handleRSVP}
               className="flex-1 py-3 bg-green-100 text-green-700 rounded-xl font-semibold"
             >
-              ✓ You're Going
+              ✓ You&apos;re Going
             </button>
           ) : (
             <button

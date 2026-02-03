@@ -77,7 +77,7 @@ export function PaymentStatus() {
           <div>
             <p className="font-semibold text-amber-800">Payment cancelled</p>
             <p className="text-sm text-amber-700 mt-1">
-              No worries! You can try again when you're ready.
+              No worries! You can try again when you&apos;re ready.
             </p>
           </div>
         </div>

@@ -22,7 +22,7 @@ export function HostCTA() {
 
         {/* Subheadline */}
         <p className="mt-5 text-lg md:text-xl text-neutral-300">
-          One place for signups, payments, and knowing who's actually showing up.
+          One place for signups, payments, and knowing who&apos;s actually showing up.
         </p>
 
         {/* CTA Button */}

@@ -76,7 +76,7 @@ export function SwipeableEventBrowser({
     return (
       <div className="flex flex-col items-center justify-center h-[70vh] px-6 text-center">
         <div className="text-6xl mb-4">🎉</div>
-        <h2 className="text-2xl font-bold mb-2">You've seen all events!</h2>
+        <h2 className="text-2xl font-bold mb-2">You&apos;ve seen all events!</h2>
         <p className="text-neutral-500 mb-6">
           Check back later for more or browse the full list
         </p>

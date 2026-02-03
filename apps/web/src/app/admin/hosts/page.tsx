@@ -587,8 +587,8 @@ export default function AdminHostsPage() {
             <div className="mt-6 p-4 bg-neutral-100 rounded-xl">
               <h4 className="text-sm font-medium text-neutral-700 mb-2">How it works:</h4>
               <ol className="text-xs text-neutral-600 space-y-1 list-decimal list-inside">
-                <li>Enter the host's email address</li>
-                <li>Click "Generate Magic Link"</li>
+                <li>Enter the host&apos;s email address</li>
+                <li>Click &quot;Generate Magic Link&quot;</li>
                 <li>Send the link to the host via email/message</li>
                 <li>Host clicks the link → signed in automatically</li>
                 <li>Host can access their dashboard at /host/dashboard</li>

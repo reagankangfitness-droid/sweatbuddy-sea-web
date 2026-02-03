@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import {
@@ -277,12 +278,15 @@ export default function AdminReportsPage() {
                     {/* Users */}
                     <div className="flex items-center gap-6 mb-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden">
+                        <div className="w-8 h-8 rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden relative">
                           {report.reporter.imageUrl ? (
-                            <img
+                            <Image
                               src={report.reporter.imageUrl}
-                              alt=""
+                              alt={report.reporter.name || 'Reporter'}
+                              width={32}
+                              height={32}
                               className="w-full h-full object-cover"
+                              unoptimized
                             />
                           ) : (
                             <span className="text-xs text-neutral-500">
@@ -299,12 +303,15 @@ export default function AdminReportsPage() {
                       </div>
                       <div className="text-neutral-400">reported</div>
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden">
+                        <div className="w-8 h-8 rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden relative">
                           {report.reportedUser.imageUrl ? (
-                            <img
+                            <Image
                               src={report.reportedUser.imageUrl}
-                              alt=""
+                              alt={report.reportedUser.name || 'Reported user'}
+                              width={32}
+                              height={32}
                               className="w-full h-full object-cover"
+                              unoptimized
                             />
                           ) : (
                             <span className="text-xs text-neutral-500">

@@ -26,6 +26,17 @@ interface HostedEvent {
   isHappeningToday: boolean
   isThisWeekend: boolean
   recurring: boolean
+  isEventSubmission?: boolean
+}
+
+// Helper to get the correct event detail URL
+function getEventUrl(event: HostedEvent): string {
+  // EventSubmissions have IDs like "event_xxx" and link to /e/xxx
+  if (event.isEventSubmission || event.id.startsWith('event_')) {
+    return `/e/${event.id.replace('event_', '')}`
+  }
+  // Activities link to /activities/xxx
+  return `/activities/${event.id}`
 }
 
 type FilterTab = 'all' | 'today' | 'week'
@@ -188,7 +199,7 @@ export default function EventsPage() {
                 transition={{ delay: index * 0.05 }}
               >
                 <Link
-                  href={`/activities/${event.id}`}
+                  href={getEventUrl(event)}
                   className="block bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
                 >
                   <div className="flex p-4 gap-4">

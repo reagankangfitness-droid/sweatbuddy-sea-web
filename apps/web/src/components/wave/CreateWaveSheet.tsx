@@ -154,14 +154,14 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex flex-col justify-end"
+          className="fixed inset-0 z-50 flex flex-col justify-end pb-16"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           <div className="absolute inset-0 bg-black/40" onClick={handleClose} />
           <motion.div
-            className="relative w-full bg-white dark:bg-neutral-900 rounded-t-3xl max-h-[85dvh] mb-16 flex flex-col"
+            className="relative w-full bg-white dark:bg-neutral-900 rounded-t-3xl flex flex-col max-h-[75dvh]"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
@@ -184,7 +184,10 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
               </button>
             </div>
 
-            <div className="px-4 pb-4 overflow-y-auto overscroll-contain flex-1 min-h-0">
+            <div
+              className="px-4 pb-4 overflow-y-auto overscroll-contain flex-1 min-h-0"
+              style={{ WebkitOverflowScrolling: 'touch' }}
+            >
               {/* Step 1: Activity grid */}
               {step === 'activity' && (
                 <div className="grid grid-cols-3 gap-2.5 py-4">

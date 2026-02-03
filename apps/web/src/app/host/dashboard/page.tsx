@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { DollarSign, Users, Clock, CheckCircle, AlertCircle, CreditCard, ChevronRight, XCircle, Ban, AlertTriangle, Star } from 'lucide-react'
+import { DollarSign, Users, Clock, CheckCircle, AlertCircle, CreditCard, ChevronRight, XCircle, Ban, AlertTriangle, Star, BarChart3, Wallet } from 'lucide-react'
 import { DashboardHeader } from '@/components/host/DashboardHeader'
 import { StatCard } from '@/components/host/StatCard'
 import { UpcomingEventRow } from '@/components/host/UpcomingEventRow'
@@ -221,7 +221,7 @@ export default function HostDashboard() {
         )}
 
         {/* Stats - 2 cols on very small screens, 3 cols on sm+ */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
           <StatCard value={data.stats.activeEvents || 0} label="Events Live" />
           <StatCard value={data.stats.totalSignups || 0} label="People Joined" />
           <StatCard
@@ -229,6 +229,31 @@ export default function HostDashboard() {
             label="Earnings"
             className="col-span-2 sm:col-span-1"
           />
+        </div>
+
+        {/* Quick Links */}
+        <div className="flex gap-2 mb-6 sm:mb-10 overflow-x-auto pb-1">
+          <Link
+            href="/host/community"
+            className="flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-full text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-colors whitespace-nowrap"
+          >
+            <Users className="w-4 h-4" />
+            Community
+          </Link>
+          <Link
+            href="/host/analytics"
+            className="flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-full text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-colors whitespace-nowrap"
+          >
+            <BarChart3 className="w-4 h-4" />
+            Analytics
+          </Link>
+          <Link
+            href="/host/earnings"
+            className="flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-full text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-colors whitespace-nowrap"
+          >
+            <Wallet className="w-4 h-4" />
+            Earnings
+          </Link>
         </div>
 
         {/* Main Content - stack on mobile, grid on desktop */}

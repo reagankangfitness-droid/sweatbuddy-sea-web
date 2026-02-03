@@ -17,6 +17,7 @@ interface Profile {
   email: string
   imageUrl: string | null
   bio: string | null
+  instagram: string | null
   isHost: boolean
 }
 
@@ -33,6 +34,7 @@ export default function ProfileSettingsPage() {
     firstName: '',
     username: '',
     bio: '',
+    instagram: '',
   })
 
   const fetchProfile = useCallback(async () => {
@@ -49,6 +51,7 @@ export default function ProfileSettingsPage() {
         firstName: data.profile.firstName || '',
         username: data.profile.username || '',
         bio: data.profile.bio || '',
+        instagram: data.profile.instagram || '',
       })
     } catch (error) {
       console.error('Failed to fetch profile:', error)
@@ -200,6 +203,26 @@ export default function ProfileSettingsPage() {
                   className="flex-1 text-sm text-neutral-900 dark:text-white bg-transparent outline-none placeholder-neutral-400"
                 />
               </div>
+            </div>
+
+            {/* Instagram */}
+            <div className="px-4 py-3">
+              <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400">Instagram Handle</label>
+              <div className="flex items-center gap-1 mt-1">
+                <span className="text-sm text-neutral-400">@</span>
+                <input
+                  value={formData.instagram}
+                  onChange={(e) =>
+                    setFormData((p) => ({
+                      ...p,
+                      instagram: e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ''),
+                    }))
+                  }
+                  placeholder="instagram_handle"
+                  className="flex-1 text-sm text-neutral-900 dark:text-white bg-transparent outline-none placeholder-neutral-400"
+                />
+              </div>
+              <p className="text-[10px] text-neutral-400 mt-1">Required to manage events you host</p>
             </div>
 
             {/* Bio */}

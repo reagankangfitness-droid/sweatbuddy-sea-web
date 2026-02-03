@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import dynamicImport from 'next/dynamic'
@@ -163,7 +163,7 @@ export default function HostForm() {
   }, [user, formInitialized])
 
   // Drag and drop handlers
-  const dragCounter = { current: 0 }
+  const dragCounter = useRef(0)
 
   const handleDragEnter = (e: React.DragEvent) => {
     e.preventDefault()

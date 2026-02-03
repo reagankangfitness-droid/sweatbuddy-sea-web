@@ -21,7 +21,7 @@ export default function NotFound() {
             Go back home
           </Link>
           <Link
-            href="/events"
+            href="/app"
             className="block w-full px-6 py-3 bg-neutral-100 text-neutral-700 rounded-full font-medium hover:bg-neutral-200 transition-colors text-center"
           >
             Browse events

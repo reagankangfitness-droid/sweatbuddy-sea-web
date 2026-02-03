@@ -151,7 +151,25 @@ export function WaveMap() {
 
   // Filtered hosted activities (by activity type + time)
   const filteredHosted = useMemo(() => {
-    let result = hostedActivities
+    const now = new Date()
+    // 3 hour buffer - events are still shown up to 3 hours after start time
+    const bufferTime = new Date(now.getTime() - 3 * 60 * 60 * 1000)
+
+    // First, filter out past events (events that have ended or started more than 3 hours ago)
+    let result = hostedActivities.filter((a) => {
+      // Recurring events with no specific date are always shown
+      if (a.recurring && !a.startTime) return true
+      // If has end time, check it hasn't passed
+      if (a.endTime) {
+        return new Date(a.endTime) >= now
+      }
+      // If has start time but no end time, use 3 hour buffer
+      if (a.startTime) {
+        return new Date(a.startTime) >= bufferTime
+      }
+      // No time info - show it (shouldn't happen with proper data)
+      return true
+    })
 
     // Apply activity type filter
     if (!filters.has('ALL')) {
@@ -183,10 +201,9 @@ export function WaveMap() {
       result = result.filter((a) => {
         if (!a.startTime) return a.recurring // Show recurring events
         const eventDate = new Date(a.startTime)
-        const today = new Date()
         const weekFromNow = new Date()
-        weekFromNow.setDate(today.getDate() + 7)
-        return eventDate >= today && eventDate <= weekFromNow
+        weekFromNow.setDate(now.getDate() + 7)
+        return eventDate >= bufferTime && eventDate <= weekFromNow
       })
     }
 

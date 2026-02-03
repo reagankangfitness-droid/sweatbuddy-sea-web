@@ -158,13 +158,12 @@ export async function GET(request: NextRequest) {
   }
 
   // --- Engagement-optimized filtering ---
-  // Show events from TODAY through next 14 days (urgency + discovery balance)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const twoWeeksFromNow = new Date(today)
+  // Show events from NOW through next 14 days
+  const twoWeeksFromNow = new Date(now)
   twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14)
 
   // --- Fetch hosted activities (published, with coordinates, upcoming) ---
+  // Only show activities that haven't ended yet (endTime > now, or startTime > now if no endTime)
   const hostedActivities = await prisma.activity.findMany({
     where: {
       status: 'PUBLISHED',
@@ -172,8 +171,15 @@ export async function GET(request: NextRequest) {
       latitude: { not: 0 },
       longitude: { not: 0 },
       OR: [
-        { startTime: null }, // No date set - show it
-        { startTime: { gte: today, lte: twoWeeksFromNow } }, // Within 2 weeks
+        // Has end time - must be in the future
+        { endTime: { gte: now } },
+        // No end time but has start time - start time within 2 weeks and add 3 hour buffer
+        {
+          endTime: null,
+          startTime: { gte: new Date(now.getTime() - 3 * 60 * 60 * 1000), lte: twoWeeksFromNow },
+        },
+        // Recurring with no specific time - always show
+        { startTime: null, endTime: null },
       ],
     },
     include: {
@@ -185,7 +191,9 @@ export async function GET(request: NextRequest) {
   })
 
   // --- Fetch upcoming EventSubmissions (engagement-optimized) ---
-  // Show: recurring events (always) + one-time events within next 14 days
+  // Show: recurring events (always) + one-time events from now through next 14 days
+  // For one-time events, add 3 hour buffer after eventDate to account for event duration
+  const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000)
   const eventSubmissions = await prisma.eventSubmission.findMany({
     where: {
       status: 'APPROVED',
@@ -193,8 +201,7 @@ export async function GET(request: NextRequest) {
       longitude: { not: null },
       OR: [
         { recurring: true }, // Recurring = always show (happens weekly)
-        { eventDate: { gte: today, lte: twoWeeksFromNow } }, // One-time within 2 weeks
-        { eventDate: null }, // No date = show it
+        { eventDate: { gte: threeHoursAgo, lte: twoWeeksFromNow } }, // One-time within range (with buffer)
       ],
     },
     select: {
@@ -233,11 +240,15 @@ export async function GET(request: NextRequest) {
     : []
   const attendanceMap = new Map(attendanceCounts.map((a) => [a.eventId, a._count.id]))
 
+  // Today at midnight for date comparisons
+  const today = new Date(now)
+  today.setHours(0, 0, 0, 0)
+
   // Helper to check if date is today
   const isToday = (date: Date | null) => {
     if (!date) return false
     const d = new Date(date)
-    return d.toDateString() === today.toDateString()
+    return d.toDateString() === now.toDateString()
   }
 
   // Helper to check if date is this weekend (Sat or Sun)

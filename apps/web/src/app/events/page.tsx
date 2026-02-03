@@ -77,8 +77,20 @@ export default function EventsPage() {
 
   // Filter events based on selected tab
   const filteredEvents = events.filter((event) => {
+    const now = new Date()
+    // 3 hour buffer - events still shown up to 3 hours after start
+    const bufferTime = new Date(now.getTime() - 3 * 60 * 60 * 1000)
+
+    // First, exclude past events
+    if (event.startTime) {
+      const eventDate = new Date(event.startTime)
+      if (eventDate < bufferTime) return false
+    }
+
+    // Then apply tab filter
     if (filter === 'today') return event.isHappeningToday
     if (filter === 'week') {
+      if (!event.startTime) return event.recurring // Show recurring
       const eventDate = new Date(event.startTime)
       const weekFromNow = new Date()
       weekFromNow.setDate(weekFromNow.getDate() + 7)

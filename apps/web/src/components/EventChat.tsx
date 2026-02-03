@@ -61,8 +61,8 @@ export function EventChat({ eventId, eventName, isOpen, onClose, userEmail: prop
         const data = await response.json()
         setMessages(data.messages)
       }
-    } catch (err) {
-      console.error('Failed to fetch messages:', err)
+    } catch {
+      // Error handled silently
     } finally {
       setIsLoading(false)
     }

@@ -54,8 +54,8 @@ function SignInContent() {
               return
             }
           }
-        } catch (e) {
-          console.error('Error parsing auth intent:', e)
+        } catch {
+          // Error handled silently
         }
         sessionStorage.removeItem('auth_intent')
       }

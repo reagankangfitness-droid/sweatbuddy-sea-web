@@ -51,7 +51,6 @@ export function JoinedActivitiesSection({
       // Reload the page to show updated data
       window.location.reload()
     } catch (error) {
-      console.error('Error cancelling booking:', error)
       alert(error instanceof Error ? error.message : 'Failed to cancel booking')
     } finally {
       setCancellingId(null)

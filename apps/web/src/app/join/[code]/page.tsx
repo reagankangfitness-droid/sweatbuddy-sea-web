@@ -75,8 +75,7 @@ export default function JoinInvitePage() {
         if (data.status === 'EXPIRED') {
           setError('This invite has expired')
         }
-      } catch (err) {
-        console.error('Error loading invite:', err)
+      } catch {
         setError('Failed to load invite details')
       } finally {
         setIsLoading(false)

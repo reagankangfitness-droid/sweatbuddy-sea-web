@@ -41,8 +41,7 @@ export function StripeConnectSetup({ eventId, contactEmail, onStatusChange }: St
             onboardingComplete: false,
           })
         }
-      } catch (err) {
-        console.error('Error fetching Stripe status:', err)
+      } catch {
         setStatus({
           exists: false,
           chargesEnabled: false,
@@ -120,7 +119,6 @@ export function StripeConnectSetup({ eventId, contactEmail, onStatusChange }: St
       // Step 3: Redirect to Stripe onboarding
       window.location.href = url
     } catch (err) {
-      console.error('Stripe connect error:', err)
       setError(err instanceof Error ? err.message : 'Failed to connect Stripe')
       setIsConnecting(false)
     }
@@ -153,7 +151,6 @@ export function StripeConnectSetup({ eventId, contactEmail, onStatusChange }: St
       const { url } = await res.json()
       window.open(url, '_blank')
     } catch (err) {
-      console.error('Dashboard error:', err)
       setError(err instanceof Error ? err.message : 'Failed to open dashboard')
     }
   }

@@ -159,8 +159,7 @@ export default function EditActivityPage({ params }: { params: { id: string } })
         }
 
         setIsLoading(false)
-      } catch (error) {
-        console.error('Error fetching activity:', error)
+      } catch {
         toast.error('Failed to load activity')
         router.push('/host/dashboard')
       }
@@ -186,8 +185,7 @@ export default function EditActivityPage({ params }: { params: { id: string } })
       } else {
         throw new Error('No file uploaded')
       }
-    } catch (error) {
-      console.error('Upload error:', error)
+    } catch {
       toast.error('Failed to upload image')
     } finally {
       setIsUploading(false)
@@ -285,7 +283,6 @@ export default function EditActivityPage({ params }: { params: { id: string } })
       toast.success('Activity updated successfully!')
       router.push(`/activities/${activity.id}`)
     } catch (error) {
-      console.error('Error updating activity:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to update activity')
       setIsSubmitting(false)
     }
@@ -307,7 +304,6 @@ export default function EditActivityPage({ params }: { params: { id: string } })
       toast.success('Activity deleted successfully!')
       router.push('/host/dashboard')
     } catch (error) {
-      console.error('Error deleting activity:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to delete activity')
       setIsDeleting(false)
       setShowDeleteDialog(false)

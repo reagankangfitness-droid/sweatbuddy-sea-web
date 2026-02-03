@@ -105,7 +105,7 @@ export async function GET(
       }))
     } catch (e) {
       // Mentions table may not exist yet, continue without them
-      console.log('Mentions table not available:', e)
+      // Mentions table not available yet
     }
 
     // Fetch group members for mention autocomplete

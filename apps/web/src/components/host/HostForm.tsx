@@ -280,7 +280,6 @@ export default function HostForm() {
 
       setIsSubmitted(true)
     } catch (err) {
-      console.error('[Host] Submit error:', err)
       const errorMessage = err instanceof Error ? err.message : String(err)
       setError(errorMessage || 'An unexpected error occurred. Please try again.')
     } finally {

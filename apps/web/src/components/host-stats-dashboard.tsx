@@ -124,7 +124,6 @@ export function HostStatsDashboard() {
       const result = await res.json()
       setData(result)
     } catch (err) {
-      console.error('Failed to fetch stats:', err)
       setError(err instanceof Error ? err.message : 'Failed to fetch stats')
     } finally {
       setLoading(false)

@@ -53,8 +53,7 @@ export default function ProfileSettingsPage() {
         bio: data.profile.bio || '',
         instagram: data.profile.instagram || '',
       })
-    } catch (error) {
-      console.error('Failed to fetch profile:', error)
+    } catch {
       toast.error('Failed to load profile')
     } finally {
       setLoading(false)

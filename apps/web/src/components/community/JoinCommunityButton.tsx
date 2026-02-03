@@ -41,12 +41,9 @@ export function JoinCommunityButton({
 
       if (response.ok) {
         router.refresh()
-      } else {
-        const data = await response.json()
-        console.error('Join failed:', data.error)
       }
-    } catch (error) {
-      console.error('Join error:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setLoading(false)
     }
@@ -63,12 +60,9 @@ export function JoinCommunityButton({
 
       if (response.ok) {
         router.refresh()
-      } else {
-        const data = await response.json()
-        console.error('Leave failed:', data.error)
       }
-    } catch (error) {
-      console.error('Leave error:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setLoading(false)
     }

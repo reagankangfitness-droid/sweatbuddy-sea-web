@@ -51,8 +51,8 @@ export function NotificationBell() {
       }
       setUnreadCount(data.unreadCount)
       setHasMore(data.hasMore)
-    } catch (error) {
-      console.error('Error fetching notifications:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setIsLoading(false)
     }
@@ -84,8 +84,8 @@ export function NotificationBell() {
         )
         setUnreadCount((prev) => Math.max(0, prev - 1))
       }
-    } catch (error) {
-      console.error('Error marking notification as read:', error)
+    } catch {
+      // Error handled silently
     }
   }
 
@@ -102,8 +102,8 @@ export function NotificationBell() {
         setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })))
         setUnreadCount(0)
       }
-    } catch (error) {
-      console.error('Error marking all as read:', error)
+    } catch {
+      // Error handled silently
     }
   }
 

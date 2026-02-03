@@ -118,7 +118,7 @@ export async function POST(
         })
       } catch (createError) {
         // If creation fails (e.g., email already used), try to find by email
-        console.log('Organizer creation failed, trying to find by email:', createError)
+        // Organizer creation failed, trying to find by email
         organizer = await prisma.organizer.findUnique({
           where: { email: eventDetails.contactEmail.toLowerCase().trim() },
         })

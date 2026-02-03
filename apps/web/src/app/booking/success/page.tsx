@@ -102,7 +102,6 @@ function BookingSuccessContent() {
           throw new Error('Booking not found')
         }
       } catch (err) {
-        console.error('Error fetching booking:', err)
         setError(err instanceof Error ? err.message : 'Failed to load booking details')
       } finally {
         setLoading(false)

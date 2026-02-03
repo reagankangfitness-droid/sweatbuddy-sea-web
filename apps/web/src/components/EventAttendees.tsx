@@ -29,8 +29,8 @@ export function EventAttendees({ eventId, refreshTrigger = 0 }: EventAttendeesPr
         setAttendees(data.attendees || [])
         setCount(data.count || 0)
       }
-    } catch (error) {
-      console.error('Error fetching attendees:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setIsLoading(false)
     }
@@ -122,8 +122,8 @@ export function EventAttendeesCompact({ eventId, refreshTrigger = 0 }: EventAtte
         setAttendees(data.attendees || [])
         setCount(data.count || 0)
       }
-    } catch (error) {
-      console.error('Error fetching attendees:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setIsLoading(false)
     }

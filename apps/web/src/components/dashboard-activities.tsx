@@ -67,7 +67,6 @@ export function DashboardActivities({ initialActivities }: DashboardActivitiesPr
       toast.success('Activity deleted successfully!')
       router.refresh()
     } catch (error) {
-      console.error('Error deleting activity:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to delete activity')
     } finally {
       setIsDeleting(false)

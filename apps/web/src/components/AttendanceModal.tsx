@@ -46,9 +46,6 @@ interface StoredUserData {
 }
 
 export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPreference = false }: AttendanceModalProps) {
-  // Debug log
-  console.log('[AttendanceModal] eventId:', event.id, 'showMealPreference:', showMealPreference)
-
   const { user, isSignedIn } = useUser()
   const [step, setStep] = useState<'form' | 'success'>('form')
   const [isSubmitting, setIsSubmitting] = useState(false)

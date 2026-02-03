@@ -61,8 +61,7 @@ export default function PendingEventsPage() {
       } else {
         toast.error(`Failed to load pending events: ${res.status}`)
       }
-    } catch (error) {
-      console.error('Failed to fetch pending events:', error)
+    } catch {
       toast.error('Failed to load pending events')
     } finally {
       setLoading(false)

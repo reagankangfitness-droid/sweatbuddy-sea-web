@@ -55,8 +55,8 @@ export default function ExplorePage() {
           setNeighborhoods(data.data.neighborhoods)
           setSummary(data.data.summary)
         }
-      } catch (error) {
-        console.error('Failed to fetch map overview:', error)
+      } catch {
+        // Error handled silently
       } finally {
         setIsLoading(false)
       }
@@ -85,8 +85,8 @@ export default function ExplorePage() {
         // Sort by datetime
         events.sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
         setAllEvents(events)
-      } catch (error) {
-        console.error('Failed to fetch all events:', error)
+      } catch {
+        // Error handled silently
       }
     }
 

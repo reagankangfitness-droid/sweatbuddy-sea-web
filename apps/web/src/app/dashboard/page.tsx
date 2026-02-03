@@ -85,7 +85,6 @@ export default function DashboardPage() {
           setIsLoading(false)
         })
         .catch((err) => {
-          console.error('Dashboard error:', err)
           setError(err.message)
           setIsLoading(false)
         })

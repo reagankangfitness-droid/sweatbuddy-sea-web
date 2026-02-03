@@ -50,7 +50,6 @@ export function StripeConnectOnboarding({
       setAccountId(data.accountId)
       refreshStatus()
     } catch (error) {
-      console.error('Error creating account:', error)
       setCreateError(error instanceof Error ? error.message : 'Failed to create account')
     } finally {
       setIsCreating(false)
@@ -76,8 +75,8 @@ export function StripeConnectOnboarding({
 
       const data = await response.json()
       window.location.href = data.url
-    } catch (error) {
-      console.error('Error creating account link:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setIsStartingOnboarding(false)
     }

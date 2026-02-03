@@ -20,7 +20,7 @@ async function geocodeLocation(location: string): Promise<{ lat: number; lng: nu
     if (data.status === 'OK' && data.results?.[0]?.geometry?.location) {
       return data.results[0].geometry.location
     }
-    console.log(`Geocoding failed for "${location}":`, data.status)
+    // Geocoding failed - no match found
     return null
   } catch (error) {
     console.error('Geocoding error:', error)
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       },
     })
 
-    console.log(`Found ${eventsMissingCoords.length} events missing coordinates`)
+    // Found events missing coordinates
 
     const results: Array<{ id: string; eventName: string; location: string; success: boolean; coords?: { lat: number; lng: number } }> = []
 
@@ -67,10 +67,10 @@ export async function POST(request: Request) {
           },
         })
         results.push({ ...event, success: true, coords })
-        console.log(`Geocoded "${event.eventName}" -> ${coords.lat}, ${coords.lng}`)
+        // Successfully geocoded event
       } else {
         results.push({ ...event, success: false })
-        console.log(`Failed to geocode "${event.eventName}" at "${event.location}"`)
+        // Failed to geocode event
       }
     }
 

@@ -190,8 +190,7 @@ export function GoingButton({
       })
 
       onSuccess?.()
-    } catch (error) {
-      console.error('RSVP error:', error)
+    } catch {
       toast.error('Failed to register. Please try again.')
     } finally {
       setIsSubmitting(false)

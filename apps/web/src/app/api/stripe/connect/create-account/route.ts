@@ -63,7 +63,7 @@ export async function POST(request: Request) {
       },
     })
 
-    console.log(`[Stripe Connect] Created account ${account.id} for event ${eventSubmissionId}`)
+    // Successfully created Stripe Connect account
 
     return NextResponse.json({
       accountId: account.id,

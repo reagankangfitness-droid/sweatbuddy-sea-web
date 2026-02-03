@@ -23,14 +23,12 @@ export async function GET(request: Request) {
     }
   }
 
-  console.log('Starting post-event follow-up processing...')
   const startTime = Date.now()
 
   try {
     const stats = await processPostEventFollowUps()
 
     const duration = Date.now() - startTime
-    console.log(`Post-event follow-up processing complete in ${duration}ms:`, stats)
 
     return NextResponse.json({
       success: true,

@@ -60,8 +60,8 @@ export default function EventsPage() {
       if (data.hostedActivities) {
         setEvents(data.hostedActivities)
       }
-    } catch (error) {
-      console.error('Failed to fetch events:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setLoading(false)
     }

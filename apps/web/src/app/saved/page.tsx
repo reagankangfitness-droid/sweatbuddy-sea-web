@@ -407,8 +407,7 @@ export default function SchedulePage() {
         }
         const data = await response.json()
         setBookedEvents(data.bookings || [])
-      } catch (err) {
-        console.error('Error fetching bookings:', err)
+      } catch {
         setError('Failed to fetch bookings')
       } finally {
         setIsLoading(false)

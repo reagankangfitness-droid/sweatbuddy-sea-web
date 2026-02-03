@@ -104,8 +104,8 @@ export function ReviewsSection({
         }
         setHasMore(data.reviews.length === 10)
       }
-    } catch (error) {
-      console.error('Error fetching reviews:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setLoading(false)
       setLoadingMore(false)

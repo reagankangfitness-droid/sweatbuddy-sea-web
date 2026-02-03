@@ -33,7 +33,9 @@ export default function ProfilePage() {
       fetch('/api/user/stats')
         .then((res) => res.json())
         .then((data) => setProfile(data.profile || null))
-        .catch(console.error)
+        .catch(() => {
+          // Error handled silently
+        })
     }
   }, [isSignedIn])
 

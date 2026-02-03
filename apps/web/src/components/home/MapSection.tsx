@@ -34,8 +34,8 @@ export function MapSection() {
             data.data.neighborhoods.map((n) => ({ id: n.id, eventCount: n.eventCount }))
           )
         }
-      } catch (error) {
-        console.error('Failed to fetch neighborhoods:', error)
+      } catch {
+        // Error handled silently
       }
     }
     fetchNeighborhoods()
@@ -64,8 +64,8 @@ export function MapSection() {
             new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
         )
         setAllEvents(events)
-      } catch (error) {
-        console.error('Failed to fetch all events:', error)
+      } catch {
+        // Error handled silently
       } finally {
         setIsLoadingEvents(false)
       }

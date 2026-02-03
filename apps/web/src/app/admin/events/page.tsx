@@ -93,9 +93,8 @@ export default function AdminEventsPage() {
       } else {
         toast.error(`Failed to fetch events: ${response.status}`)
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to fetch events')
-      console.error('Fetch events error:', err)
     }
   }, [getAuthHeaders])
 
@@ -111,9 +110,8 @@ export default function AdminEventsPage() {
       } else {
         toast.error(`Failed to fetch submissions: ${response.status}`)
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to fetch submissions')
-      console.error('Fetch submissions error:', err)
     }
   }, [getAuthHeaders])
 
@@ -125,8 +123,8 @@ export default function AdminEventsPage() {
         const data = await response.json()
         setMissingCoordsCount(data.missingCoords || 0)
       }
-    } catch (err) {
-      console.error('Failed to fetch geocode status:', err)
+    } catch {
+      // Error handled silently
     }
   }, [getAuthHeaders])
 

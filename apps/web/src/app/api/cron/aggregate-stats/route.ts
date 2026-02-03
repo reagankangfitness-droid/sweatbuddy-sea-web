@@ -61,7 +61,6 @@ export async function GET(request: NextRequest) {
 
       case 'full':
         // Run full aggregation
-        console.log('🔄 Starting full stats aggregation...')
         const hostResult = await aggregateHostStats()
         const activityResult = await aggregateActivityStats()
         const dailyResult = await createDailySnapshot()

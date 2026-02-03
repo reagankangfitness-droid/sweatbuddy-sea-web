@@ -124,8 +124,7 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
         }
         const data = await response.json()
         setActivity(data)
-      } catch (error) {
-        console.error('Error fetching activity:', error)
+      } catch {
         setActivity(null)
       } finally {
         setIsLoading(false)
@@ -156,8 +155,8 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
           const data = await response.json()
           setSpotsInfo(data)
         }
-      } catch (error) {
-        console.error('Error fetching spots info:', error)
+      } catch {
+        // Error handled silently
       }
     }
 
@@ -174,8 +173,8 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
         const data = await response.json()
         setSpotsInfo(data)
       }
-    } catch (error) {
-      console.error('Error refreshing spots info:', error)
+    } catch {
+      // Error handled silently
     }
   }
 
@@ -231,7 +230,6 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
         throw new Error('No checkout URL received')
       }
     } catch (error) {
-      console.error('Error processing booking:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to process booking')
       setIsJoining(false)
     }
@@ -259,7 +257,6 @@ export default function ActivityPage({ params }: { params: { id: string } }) {
       const data = await activityResponse.json()
       setActivity(data)
     } catch (error) {
-      console.error('Error leaving activity:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to leave activity')
     } finally {
       setIsJoining(false)

@@ -27,8 +27,8 @@ export function PaymentStatus() {
         const data = await res.json()
         setDetails(data)
       }
-    } catch (error) {
-      console.error('Failed to fetch session:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setLoading(false)
     }

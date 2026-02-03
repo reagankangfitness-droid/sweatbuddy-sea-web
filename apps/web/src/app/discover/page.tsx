@@ -40,8 +40,8 @@ export default function DiscoverPage() {
           const shuffled = [...data.events].sort(() => Math.random() - 0.5)
           setEvents(shuffled)
         }
-      } catch (error) {
-        console.error('Failed to fetch events:', error)
+      } catch {
+        // Error handled silently
       } finally {
         setIsLoading(false)
       }

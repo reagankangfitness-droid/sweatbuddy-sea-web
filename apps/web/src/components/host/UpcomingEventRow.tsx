@@ -62,7 +62,6 @@ export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) 
       alert(`Event duplicated! "${data.event.name}" will be reviewed before going live.`)
       router.refresh()
     } catch (error) {
-      console.error('Duplicate error:', error)
       alert(error instanceof Error ? error.message : 'Failed to duplicate event')
     } finally {
       setIsDuplicating(false)
@@ -90,7 +89,6 @@ export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) 
       setShowCancelConfirm(false)
       onCancelled?.()
     } catch (error) {
-      console.error('Cancel error:', error)
       alert(error instanceof Error ? error.message : 'Failed to cancel event')
     } finally {
       setIsCancelling(false)

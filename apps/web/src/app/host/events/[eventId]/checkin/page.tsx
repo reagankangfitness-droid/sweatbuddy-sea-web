@@ -85,8 +85,8 @@ export default function CheckInPage() {
             }))
           setRecentCheckIns(recent)
         }
-      } catch (err) {
-        console.error('Failed to fetch event data:', err)
+      } catch {
+        // Error handled silently
       } finally {
         setLoading(false)
       }
@@ -139,8 +139,7 @@ export default function CheckInPage() {
       }
 
       setShowResult(true)
-    } catch (err) {
-      console.error('Check-in error:', err)
+    } catch {
       setLastResult({
         success: false,
         error: 'Failed to check in. Please try again.',

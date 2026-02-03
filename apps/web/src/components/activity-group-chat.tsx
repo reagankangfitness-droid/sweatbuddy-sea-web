@@ -70,8 +70,8 @@ export function ActivityGroupChat({
       } else if (response.status === 403) {
         toast.error('You must join this activity to view the group chat')
       }
-    } catch (error) {
-      console.error('Error fetching group messages:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setIsLoading(false)
     }
@@ -116,7 +116,6 @@ export function ActivityGroupChat({
       setNewMessage('')
       scrollToBottom()
     } catch (error) {
-      console.error('Error sending message:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to send message')
     } finally {
       setIsSending(false)

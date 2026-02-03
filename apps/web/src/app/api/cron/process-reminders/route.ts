@@ -25,10 +25,6 @@ export async function POST(request: NextRequest) {
     // Process due reminders
     const result = await processDueReminders()
 
-    console.log(
-      `[Cron] Processed ${result.processed} reminders: ${result.sent} sent, ${result.failed} failed`
-    )
-
     return NextResponse.json({
       success: true,
       ...result,

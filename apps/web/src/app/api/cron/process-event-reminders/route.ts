@@ -23,14 +23,12 @@ export async function GET(request: Request) {
     }
   }
 
-  console.log('Starting event reminder processing...')
   const startTime = Date.now()
 
   try {
     const stats = await processEventReminders()
 
     const duration = Date.now() - startTime
-    console.log(`Event reminder processing complete in ${duration}ms:`, stats)
 
     return NextResponse.json({
       success: true,

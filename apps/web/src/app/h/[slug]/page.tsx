@@ -123,8 +123,8 @@ export default function HostProfilePage() {
       const res = await fetch(`/api/profiles/${slug}/reviews?limit=5`)
       const data = await res.json()
       setReviews(data.reviews || [])
-    } catch (error) {
-      console.error('Failed to fetch reviews:', error)
+    } catch {
+      // Error handled silently
     }
   }, [slug])
 
@@ -145,8 +145,8 @@ export default function HostProfilePage() {
       if (data.profile.isHost) {
         fetchReviews()
       }
-    } catch (error) {
-      console.error('Failed to fetch profile:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setLoading(false)
     }
@@ -169,8 +169,8 @@ export default function HostProfilePage() {
 
       setActivitiesPage(page)
       setHasMoreActivities(data.pagination.hasMore)
-    } catch (error) {
-      console.error('Failed to fetch activities:', error)
+    } catch {
+      // Error handled silently
     } finally {
       setLoadingMore(false)
     }
@@ -207,8 +207,8 @@ export default function HostProfilePage() {
           }
         })
       }
-    } catch (error) {
-      console.error('Failed to follow:', error)
+    } catch {
+      // Error handled silently
     }
   }
 
@@ -224,8 +224,8 @@ export default function HostProfilePage() {
             `Check out ${profile?.name}'s activities on SweatBuddies!`,
           url
         })
-      } catch (error) {
-        console.log('Share cancelled')
+      } catch {
+        // Share cancelled
       }
     } else {
       navigator.clipboard.writeText(url)

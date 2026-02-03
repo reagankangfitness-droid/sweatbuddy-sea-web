@@ -183,7 +183,6 @@ export function CompletionCardCreator({
       toast.success('Card created! Now customize it.')
       setStep('customize')
     } catch (error) {
-      console.error('Upload/create error:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to create card')
     } finally {
       setIsUploading(false)
@@ -215,8 +214,7 @@ export function CompletionCardCreator({
 
       const data = await response.json()
       setCard(data.card)
-    } catch (error) {
-      console.error('Update error:', error)
+    } catch {
       toast.error('Failed to save changes')
     }
   }
@@ -422,8 +420,7 @@ export function CompletionCardCreator({
 
       toast.success('Card generated!')
       setStep('preview')
-    } catch (error) {
-      console.error('Generate error:', error)
+    } catch {
       toast.error('Failed to generate card')
     } finally {
       setIsGenerating(false)
@@ -450,8 +447,7 @@ export function CompletionCardCreator({
       })
 
       toast.success('Card downloaded!')
-    } catch (error) {
-      console.error('Download error:', error)
+    } catch {
       toast.error('Failed to download')
     }
   }
@@ -482,8 +478,7 @@ export function CompletionCardCreator({
         const text = encodeURIComponent(shareText)
         window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(shareUrl)}`, '_blank')
       }
-    } catch (error) {
-      console.error('Share error:', error)
+    } catch {
       toast.error('Failed to share')
     }
   }
@@ -517,9 +512,8 @@ export function CompletionCardCreator({
         // Fallback to download
         handleDownload()
       }
-    } catch (error: any) {
-      if (error?.name !== 'AbortError') {
-        console.error('Native share error:', error)
+    } catch (error: unknown) {
+      if ((error as { name?: string })?.name !== 'AbortError') {
         handleDownload()
       }
     }

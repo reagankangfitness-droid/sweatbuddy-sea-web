@@ -69,8 +69,7 @@ export default function UserProfilePage() {
       }
       const profileData = await res.json()
       setData(profileData)
-    } catch (err) {
-      console.error('Failed to fetch profile:', err)
+    } catch {
       setError('Failed to load profile')
     } finally {
       setLoading(false)

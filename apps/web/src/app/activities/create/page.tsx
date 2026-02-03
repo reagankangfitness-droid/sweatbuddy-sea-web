@@ -89,28 +89,21 @@ export default function NewActivityPage() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    console.log('Starting upload for file:', file.name)
     setIsUploading(true)
     toast.info('Uploading image...')
 
     try {
       const result = await startUpload([file])
-      console.log('Upload result:', JSON.stringify(result, null, 2))
 
       if (result && result[0]) {
         // Construct the URL from the uploaded file key
         const imageUrl = `https://utfs.io/f/${result[0].key}`
-        console.log('Setting image URL:', imageUrl)
-        console.log('Result object:', result[0])
         fieldOnChange(imageUrl)
-        console.log('Field onChange called with:', imageUrl)
         toast.success('Image uploaded successfully!')
       } else {
-        console.error('No result from upload:', result)
         throw new Error('No file uploaded')
       }
-    } catch (error) {
-      console.error('Upload error:', error)
+    } catch {
       toast.error('Failed to upload image')
     } finally {
       setIsUploading(false)
@@ -300,7 +293,6 @@ export default function NewActivityPage() {
       toast.success('Event submitted for review! You will be notified once it is approved (typically within 24 hours).')
       router.push('/host/dashboard')
     } catch (error) {
-      console.error('Error submitting event:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to submit event')
       setIsSubmitting(false)
     }

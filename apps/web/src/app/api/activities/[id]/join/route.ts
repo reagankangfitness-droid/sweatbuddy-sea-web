@@ -136,7 +136,7 @@ export async function POST(
     // Schedule reminders for this booking (async, don't block)
     try {
       const reminderResult = await scheduleRemindersForBooking(result.id)
-      console.log(`Scheduled ${reminderResult.scheduled} reminders for booking ${result.id}`)
+      // Reminders scheduled successfully
     } catch (reminderError) {
       // Don't fail if reminder scheduling fails
       console.error('Error scheduling reminders (non-blocking):', reminderError)
@@ -229,7 +229,7 @@ export async function DELETE(
     // Process waitlist - notify next person that a spot opened up
     try {
       const waitlistResult = await processWaitlistForSpot(activityId, 1)
-      console.log(`Waitlist processed: ${waitlistResult.notified} person(s) notified`)
+      // Waitlist processed successfully
     } catch (waitlistError) {
       console.error('Error processing waitlist (non-blocking):', waitlistError)
     }
@@ -237,7 +237,7 @@ export async function DELETE(
     // Cancel scheduled reminders for this booking (async, don't block)
     try {
       const cancelledCount = await cancelRemindersForBooking(existingRsvp.id)
-      console.log(`Cancelled ${cancelledCount} reminders for booking ${existingRsvp.id}`)
+      // Reminders cancelled successfully
     } catch (reminderError) {
       console.error('Error cancelling reminders (non-blocking):', reminderError)
     }

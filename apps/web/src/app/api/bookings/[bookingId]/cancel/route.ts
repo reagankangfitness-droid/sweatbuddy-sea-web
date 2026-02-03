@@ -170,7 +170,7 @@ export async function POST(
     // Process waitlist - notify next person that a spot opened up
     try {
       const waitlistResult = await processWaitlistForSpot(booking.activityId, 1)
-      console.log(`Waitlist processed: ${waitlistResult.notified} person(s) notified`)
+      // Waitlist processed successfully
     } catch (waitlistError) {
       // Don't fail the cancellation if waitlist processing fails
       console.error('Error processing waitlist (non-blocking):', waitlistError)
@@ -179,7 +179,7 @@ export async function POST(
     // Cancel scheduled reminders for this booking
     try {
       const cancelledCount = await cancelRemindersForBooking(bookingId)
-      console.log(`Cancelled ${cancelledCount} reminders for booking ${bookingId}`)
+      // Reminders cancelled successfully
     } catch (reminderError) {
       // Don't fail the cancellation if reminder cancellation fails
       console.error('Error cancelling reminders (non-blocking):', reminderError)

@@ -95,19 +95,19 @@ export default function GoogleMapSection({
               onCloseClick={onInfoWindowClose}
             >
               <div className="p-2 max-w-xs">
-                <h3 className="font-semibold mb-1" style={{ fontSize: '15px' }}>
+                <h3 className="font-semibold mb-1 text-sm">
                   {selectedActivity.title}
                 </h3>
-                <p className="text-neutral-600 mb-2" style={{ fontSize: '12px' }}>
+                <p className="text-neutral-600 mb-2 text-xs">
                   {selectedActivity.type} • {selectedActivity.city}
                 </p>
                 {selectedActivity.price !== undefined && selectedActivity.price > 0 && (
-                  <p className="font-semibold mb-2" style={{ fontSize: '13px', color: '#0025CC' }}>
+                  <p className="font-semibold mb-2 text-xs text-primary">
                     {selectedActivity.currency || 'USD'} {selectedActivity.price.toFixed(2)}
                   </p>
                 )}
                 {selectedActivity.description && (
-                  <p className="text-neutral-700 mb-3 line-clamp-2" style={{ fontSize: '12px' }}>
+                  <p className="text-neutral-700 mb-3 line-clamp-2 text-xs">
                     {selectedActivity.description}
                   </p>
                 )}

@@ -121,7 +121,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
   if (activities.length === 0) {
     return (
       <div className="rounded-lg border p-12 text-center">
-        <p className="text-muted-foreground mb-6" style={{ fontSize: '16px' }}>
+        <p className="text-muted-foreground mb-6 text-base">
           <span role="img" aria-label="search" className="mr-2">🔍</span>
           No sessions yet. Build what moves you
           <span role="img" aria-label="sparkles" className="ml-2">✨</span>
@@ -144,19 +144,17 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
               viewMode === 'list'
                 ? 'bg-primary text-primary-foreground'
                 : 'text-muted-foreground hover:text-foreground'
-            }`}
-            style={{ fontSize: '13px' }}
+            } text-xs`}
           >
             📋 List View
           </button>
           <button
             onClick={() => setViewMode('map')}
-            className={`px-4 py-2 rounded-md font-semibold transition-colors ${
+            className={`px-4 py-2 rounded-md font-semibold transition-colors text-xs ${
               viewMode === 'map'
                 ? 'bg-primary text-primary-foreground'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
-            style={{ fontSize: '13px' }}
           >
             🗺️ Map View
           </button>
@@ -182,7 +180,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      <span style={{ fontSize: '13px' }}>No image</span>
+                      <span className="text-xs">No image</span>
                     </div>
                   )}
 
@@ -191,12 +189,12 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                     <div className="absolute top-3 left-3">
                       <div className="bg-white rounded-lg shadow-md overflow-hidden">
                         <div className="bg-primary px-2 py-0.5 text-center">
-                          <span className="text-primary-foreground font-bold uppercase" style={{ fontSize: '10px', letterSpacing: '0.05em' }}>
+                          <span className="text-primary-foreground font-bold uppercase text-[10px] tracking-wide">
                             {new Date(activity.startTime).toLocaleDateString('en-US', { month: 'short' })}
                           </span>
                         </div>
                         <div className="px-2 py-1 text-center">
-                          <span className="text-foreground font-bold" style={{ fontSize: '18px', lineHeight: '1' }}>
+                          <span className="text-foreground font-bold text-lg leading-none">
                             {new Date(activity.startTime).getDate()}
                           </span>
                         </div>
@@ -206,7 +204,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
 
                   {/* Activity Type Badge - Top Right */}
                   <div className="absolute top-3 right-3">
-                    <span className="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-sm text-foreground font-semibold shadow-sm inline-flex items-center gap-1" style={{ fontSize: '11px' }}>
+                    <span className="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-sm text-foreground font-semibold shadow-sm inline-flex items-center gap-1 text-[11px]">
                       {ACTIVITY_TYPE_EMOJI[activity.type] && (
                         <span role="img" aria-label={activity.type}>
                           {ACTIVITY_TYPE_EMOJI[activity.type]}
@@ -257,7 +255,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                   <div className="flex items-center justify-between gap-2 mb-1.5 sm:mb-2">
                     <div className="flex items-center gap-1 min-w-0">
                       <MapPin className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                      <span className="font-medium text-muted-foreground truncate" style={{ fontSize: '13px' }}>
+                      <span className="font-medium text-muted-foreground truncate text-xs">
                         {activity.city}
                       </span>
                     </div>
@@ -270,7 +268,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-semibold text-foreground mb-3 line-clamp-2 leading-snug" style={{ fontSize: '16px', lineHeight: '1.4' }}>
+                  <h3 className="font-semibold text-foreground mb-3 line-clamp-2 leading-snug text-base">
                     {activity.title}
                   </h3>
 
@@ -289,12 +287,12 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                       </div>
                     ) : (
                       <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                        <span className="text-muted-foreground" style={{ fontSize: '10px' }}>
+                        <span className="text-muted-foreground text-[10px]">
                           {activity.user.name?.charAt(0).toUpperCase() || '?'}
                         </span>
                       </div>
                     )}
-                    <span className="text-muted-foreground truncate" style={{ fontSize: '13px' }}>
+                    <span className="text-muted-foreground truncate text-xs">
                       Hosted by <span className="font-medium text-foreground">{activity.user.name || 'Unknown'}</span>
                     </span>
                   </div>
@@ -329,12 +327,12 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                     {/* Price */}
                     {activity.price !== undefined && activity.price > 0 ? (
                       <div className="flex items-baseline gap-1">
-                        <span className="font-bold text-primary-dark" style={{ fontSize: '18px' }}>
+                        <span className="font-bold text-primary-dark text-lg">
                           {activity.currency || 'SGD'} {activity.price.toFixed(2)}
                         </span>
                       </div>
                     ) : (
-                      <span className="text-foreground font-semibold" style={{ fontSize: '14px' }}>Free</span>
+                      <span className="text-foreground font-semibold text-sm">Free</span>
                     )}
 
                     {/* Spots remaining */}

@@ -118,11 +118,7 @@ export function Cities() {
             <span>Expanding Across SEA</span>
           </motion.div>
           <h2
-            className="font-sans font-extrabold tracking-wide"
-            style={{
-              fontSize: 'clamp(32px, 6vw, 56px)',
-              color: '#0A1628',
-            }}
+            className="font-sans font-bold tracking-wide text-3xl sm:text-4xl md:text-5xl text-gray-900"
           >
             Where We&apos;re <span className="text-gradient">Live</span>
           </h2>

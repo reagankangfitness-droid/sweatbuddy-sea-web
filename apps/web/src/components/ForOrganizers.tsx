@@ -146,8 +146,7 @@ export function ForOrganizers() {
             </motion.div>
 
             <h2
-              className="font-sans font-extrabold text-white mb-6 tracking-wide"
-              style={{ fontSize: 'clamp(32px, 6vw, 56px)' }}
+              className="font-sans font-bold text-white mb-6 tracking-wide text-3xl sm:text-4xl md:text-5xl"
             >
               You Bring the Energy. <br />
               <span

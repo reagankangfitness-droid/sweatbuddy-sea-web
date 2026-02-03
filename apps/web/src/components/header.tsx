@@ -118,10 +118,9 @@ export function Header() {
           {/* Logo */}
           <Link
             href="/"
-            className={`flex items-center gap-2.5 font-semibold transition-colors ${
+            className={`flex items-center gap-2.5 font-semibold transition-colors text-lg tracking-tight ${
               scrolled ? 'text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300' : 'text-white hover:text-primary-200'
             }`}
-            style={{ fontSize: '18px', letterSpacing: '-0.02em' }}
           >
             <motion.span
               whileHover={{ rotate: -5 }}

@@ -169,12 +169,11 @@ function FilterDropdown({ label, options, selectedValue, onSelect, placeholder }
           `}
           aria-expanded={isOpen}
           aria-haspopup="listbox"
-          style={{ fontSize: '14px' }}
         >
-          <span className="flex items-center gap-2">
+          <span className="flex items-center gap-2 text-sm">
             {selectedOption ? (
               <>
-                <span role="img" aria-label={selectedOption.label} style={{ fontSize: '16px' }}>
+                <span role="img" aria-label={selectedOption.label} className="text-base">
                   {selectedOption.emoji}
                 </span>
                 <span>{selectedOption.label}</span>
@@ -217,9 +216,8 @@ function FilterDropdown({ label, options, selectedValue, onSelect, placeholder }
                     `}
                     role="option"
                     aria-selected={selectedValue === option.value}
-                    style={{ fontSize: '14px' }}
                   >
-                    <span className="text-lg flex-shrink-0" role="img" aria-label={option.label}>
+                    <span className="text-lg flex-shrink-0 text-sm" role="img" aria-label={option.label}>
                       {option.emoji}
                     </span>
                     <span className={`flex-1 ${selectedValue === option.value ? 'font-semibold text-primary-dark' : 'font-medium text-foreground'}`}>
@@ -257,7 +255,7 @@ function FilterDropdown({ label, options, selectedValue, onSelect, placeholder }
 
             {/* Mobile Header */}
             <div className="flex items-center justify-between px-5 pb-4 border-b border-border">
-              <h3 className="font-sans font-semibold text-foreground" style={{ fontSize: '18px' }}>
+              <h3 className="font-sans font-semibold text-foreground text-lg">
                 {label}
               </h3>
               <button
@@ -286,7 +284,6 @@ function FilterDropdown({ label, options, selectedValue, onSelect, placeholder }
                     `}
                     role="option"
                     aria-selected={selectedValue === option.value}
-                    style={{ fontSize: '15px' }}
                   >
                     <span className="text-2xl flex-shrink-0" role="img" aria-label={option.label}>
                       {option.emoji}
@@ -377,8 +374,7 @@ export function ActivityFilter({
               handleCitySelect('all')
               handleTypeSelect('all')
             }}
-            className="px-4 py-2.5 rounded-lg font-medium text-primary-dark hover:bg-primary/10 transition-colors duration-200 md:ml-auto"
-            style={{ fontSize: '13px' }}
+            className="px-4 py-2.5 rounded-lg font-medium text-primary-dark hover:bg-primary/10 transition-colors duration-200 md:ml-auto text-xs"
           >
             Clear filters
           </button>

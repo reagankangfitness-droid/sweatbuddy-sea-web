@@ -82,15 +82,24 @@ export function UnifiedFilterBar({
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    if (!isOpen) return
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false)
       }
     }
 
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
+    // Delay adding listener to prevent immediate close
+    const timer = setTimeout(() => {
+      document.addEventListener('click', handleClickOutside, true)
+      document.addEventListener('touchend', handleClickOutside, true)
+    }, 10)
+
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener('click', handleClickOutside, true)
+      document.removeEventListener('touchend', handleClickOutside, true)
     }
   }, [isOpen])
 
@@ -110,7 +119,14 @@ export function UnifiedFilterBar({
         <div ref={dropdownRef} className="relative">
           <button
             type="button"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={(e) => {
+              e.stopPropagation()
+              e.preventDefault()
+              setIsOpen(!isOpen)
+            }}
+            onTouchEnd={(e) => {
+              e.stopPropagation()
+            }}
             style={{ touchAction: 'manipulation' }}
             className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border transition-all active:scale-95 ${
               !activityFilter.has('ALL')
@@ -145,6 +161,8 @@ export function UnifiedFilterBar({
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
                 className="absolute top-full left-0 mt-2 w-72 max-h-[60vh] overflow-y-auto rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-xl z-[100]"
+                style={{ touchAction: 'pan-y' }}
+                onClick={(e) => e.stopPropagation()}
               >
                 {/* All Activities option */}
                 <div className="p-2 border-b border-neutral-100 dark:border-neutral-800">

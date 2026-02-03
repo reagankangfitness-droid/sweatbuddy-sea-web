@@ -103,7 +103,7 @@ export function UnifiedFilterBar({
   return (
     <div
       className="absolute top-4 left-0 md:left-14 right-0 z-40 px-3 overflow-x-auto"
-      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch', touchAction: 'manipulation' }}
     >
       <div className="flex items-center gap-2 w-max pr-3">
         {/* Activity Dropdown */}
@@ -111,6 +111,7 @@ export function UnifiedFilterBar({
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
+            style={{ touchAction: 'manipulation' }}
             className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border transition-all active:scale-95 ${
               !activityFilter.has('ALL')
                 ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 border-neutral-900 dark:border-white'

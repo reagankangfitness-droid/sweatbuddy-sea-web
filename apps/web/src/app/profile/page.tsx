@@ -164,18 +164,16 @@ export default function ProfilePage() {
             <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
           </Link>
 
-          {isHost && (
-            <Link
-              href="/host/dashboard"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
-            >
-              <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
-                <LayoutDashboard className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
-                Host Dashboard
-              </span>
-              <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
-            </Link>
-          )}
+          <Link
+            href="/host/dashboard"
+            className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+          >
+            <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
+              <LayoutDashboard className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
+              Host Dashboard
+            </span>
+            <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+          </Link>
 
           <Link
             href="/settings/profile"

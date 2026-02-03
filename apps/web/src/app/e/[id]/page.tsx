@@ -319,8 +319,8 @@ export default async function EventDetailPage({ params }: Props) {
               <EventAttendees eventId={event.id} />
             </div>
 
-            {/* Sidebar - Sticky CTA */}
-            <div className="md:col-span-1">
+            {/* Sidebar - Sticky CTA (desktop only, mobile uses fixed bottom bar) */}
+            <div className="hidden md:block md:col-span-1">
               <div className="sticky top-24 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-5 space-y-4">
                 {/* Going count */}
                 <div className="text-center pb-4 border-b border-neutral-100 dark:border-neutral-800">

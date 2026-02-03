@@ -101,8 +101,8 @@ export function UnifiedFilterBar({
   }
 
   return (
-    <div className="absolute top-4 left-0 md:left-14 right-0 z-20 px-3">
-      <div className="flex items-center gap-2">
+    <div className="absolute top-4 left-0 md:left-14 right-0 z-20 px-3 overflow-x-auto scrollbar-hide">
+      <div className="flex items-center gap-2 w-max">
         {/* Activity Dropdown */}
         <div ref={dropdownRef} className="relative">
           <button

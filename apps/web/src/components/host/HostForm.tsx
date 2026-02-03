@@ -163,22 +163,36 @@ export default function HostForm() {
   }, [user, formInitialized])
 
   // Drag and drop handlers
+  const dragCounter = { current: 0 }
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    dragCounter.current++
+    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      setIsDragging(true)
+    }
+  }
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    setIsDragging(true)
   }
 
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    setIsDragging(false)
+    dragCounter.current--
+    if (dragCounter.current === 0) {
+      setIsDragging(false)
+    }
   }
 
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setIsDragging(false)
+    dragCounter.current = 0
 
     const files = Array.from(e.dataTransfer.files)
     const imageFile = files.find(f => f.type.startsWith('image/'))
@@ -777,6 +791,7 @@ export default function HostForm() {
                         ? 'border-white border-dashed bg-neutral-800'
                         : 'border-neutral-800'
                     }`}
+                    onDragEnter={handleDragEnter}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
@@ -880,6 +895,7 @@ export default function HostForm() {
                       ? 'border-white border-dashed bg-neutral-800'
                       : 'border-neutral-800'
                   }`}
+                  onDragEnter={handleDragEnter}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}

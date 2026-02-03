@@ -154,15 +154,16 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex flex-col justify-end pb-16"
-          style={{ touchAction: 'none' }}
+          className="fixed inset-0 z-50 flex flex-col justify-end"
+          style={{ touchAction: 'none', paddingBottom: 'calc(64px + env(safe-area-inset-bottom, 0px))' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           <div className="absolute inset-0 bg-black/40" onClick={handleClose} />
           <motion.div
-            className="relative w-full bg-white dark:bg-neutral-900 rounded-t-3xl flex flex-col max-h-[75dvh]"
+            className="relative w-full bg-white dark:bg-neutral-900 rounded-t-3xl flex flex-col"
+            style={{ maxHeight: 'calc(100dvh - 64px - env(safe-area-inset-bottom, 0px) - 80px)' }}
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}

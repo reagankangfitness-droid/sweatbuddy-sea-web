@@ -35,14 +35,18 @@ export default function DiscoverPage() {
     async function fetchEvents() {
       try {
         const res = await fetch('/api/events')
+        if (!res.ok) {
+          console.error('Failed to fetch events:', res.status)
+          return
+        }
         const data = await res.json()
         if (data.events) {
           // Shuffle events for discovery
           const shuffled = [...data.events].sort(() => Math.random() - 0.5)
           setEvents(shuffled)
         }
-      } catch {
-        // Error handled silently
+      } catch (error) {
+        console.error('Error fetching events:', error)
       } finally {
         setIsLoading(false)
       }

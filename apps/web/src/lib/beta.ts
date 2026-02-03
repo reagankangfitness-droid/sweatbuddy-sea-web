@@ -46,10 +46,21 @@ export function generateInviteCode(): string {
 /**
  * Validate an invite code without using it
  */
+interface InviteCodeInfo {
+  id: string
+  code: string
+  codeType: string
+  maxUses: number
+  currentUses: number
+  isActive: boolean
+  expiresAt: Date | null
+  firstUsedAt: Date | null
+}
+
 export async function validateInviteCode(code: string): Promise<{
   valid: boolean
   error?: string
-  code?: any
+  code?: InviteCodeInfo
   spotsRemaining?: number
 }> {
   if (!code) {
@@ -107,7 +118,7 @@ export async function consumeInviteCode(
 ): Promise<{
   success: boolean
   error?: string
-  code?: any
+  code?: InviteCodeInfo
   spotsRemaining?: number
 }> {
   const validation = await validateInviteCode(code)
@@ -212,7 +223,7 @@ export async function addToWaitlist(
 ): Promise<{
   success: boolean
   error?: string
-  entry?: any
+  entry?: { id: string; email: string; name: string | null }
   position?: number
 }> {
   const normalizedEmail = email.toLowerCase().trim()

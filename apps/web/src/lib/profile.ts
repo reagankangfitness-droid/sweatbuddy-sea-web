@@ -323,7 +323,8 @@ export async function getHostedActivities(
   const offset = (page - 1) * limit
   const now = new Date()
 
-  const whereClause: any = {
+  // Using Record to avoid complex Prisma type mapping
+  const whereClause: Record<string, unknown> = {
     OR: [{ userId }, { hostId: userId }],
     status: { in: ['PUBLISHED', 'COMPLETED'] }
   }
@@ -506,7 +507,7 @@ export async function updateUserProfile(
     slug = await generateUserSlug(data.name || data.firstName || null, userId)
   }
 
-  const updateData: any = {
+  const updateData: typeof data & { profileUpdatedAt: Date; slug?: string } = {
     ...data,
     profileUpdatedAt: new Date()
   }

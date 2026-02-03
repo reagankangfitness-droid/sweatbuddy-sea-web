@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import type { PrismaClient } from '@prisma/client'
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -23,7 +24,7 @@ interface EventContent {
  * Check if host is trusted (has previous approved events)
  */
 export async function isHostTrusted(
-  prisma: any,
+  prisma: PrismaClient,
   contactEmail: string,
   submittedByUserId: string | null
 ): Promise<{ trusted: boolean; approvedCount: number }> {

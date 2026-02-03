@@ -56,12 +56,16 @@ export default function EventsPage() {
     try {
       // Use the wave API which returns hosted activities
       const res = await fetch('/api/wave?lat=1.3521&lng=103.8198')
+      if (!res.ok) {
+        console.error('Failed to fetch events:', res.status)
+        return
+      }
       const data = await res.json()
       if (data.hostedActivities) {
         setEvents(data.hostedActivities)
       }
-    } catch {
-      // Error handled silently
+    } catch (error) {
+      console.error('Error fetching events:', error)
     } finally {
       setLoading(false)
     }

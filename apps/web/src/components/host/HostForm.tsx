@@ -29,7 +29,7 @@ import {
   Link2,
   Pencil
 } from 'lucide-react'
-import { UploadButton } from '@/lib/uploadthing'
+import { UploadButton, useUploadThing } from '@/lib/uploadthing'
 
 // Dynamically import LocationAutocomplete to prevent SSR issues with Google Maps
 const LocationAutocomplete = dynamicImport(
@@ -95,6 +95,19 @@ export default function HostForm() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [isUploadingQr, setIsUploadingQr] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+
+  // Hook for programmatic uploads (drag & drop)
+  const { startUpload } = useUploadThing('eventImage', {
+    onClientUploadComplete: (res) => {
+      setIsUploading(false)
+      if (res?.[0]?.url) setImageUrl(res[0].url)
+    },
+    onUploadError: (err) => {
+      setIsUploading(false)
+      setError(`Upload failed: ${err.message}`)
+    },
+  })
   const [formInitialized, setFormInitialized] = useState(false)
   const [advancedSettingsOpen, setAdvancedSettingsOpen] = useState(false)
 
@@ -148,6 +161,33 @@ export default function HostForm() {
       setFormInitialized(true)
     }
   }, [user, formInitialized])
+
+  // Drag and drop handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+  }
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+
+    const files = Array.from(e.dataTransfer.files)
+    const imageFile = files.find(f => f.type.startsWith('image/'))
+
+    if (imageFile) {
+      setIsUploading(true)
+      await startUpload([imageFile])
+    }
+  }
 
   // Show loading while mounting or checking auth
   if (!mounted || !authLoaded || !isSignedIn) {
@@ -730,8 +770,17 @@ export default function HostForm() {
               {/* Right Column - Image Preview (Desktop) */}
               <div className="hidden lg:block w-[400px] shrink-0">
                 <div className="sticky top-24">
-                  {/* Main Image Preview */}
-                  <div className="relative aspect-[1080/1350] bg-neutral-900 rounded-2xl overflow-hidden border border-neutral-800">
+                  {/* Main Image Preview with Drag & Drop */}
+                  <div
+                    className={`relative aspect-[1080/1350] bg-neutral-900 rounded-2xl overflow-hidden border-2 transition-colors ${
+                      isDragging
+                        ? 'border-white border-dashed bg-neutral-800'
+                        : 'border-neutral-800'
+                    }`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
                     {imageUrl ? (
                       <>
                         <Image
@@ -761,6 +810,13 @@ export default function HostForm() {
                             <Loader2 className="w-10 h-10 animate-spin text-neutral-500" />
                             <p className="text-neutral-500 text-sm">Uploading...</p>
                           </>
+                        ) : isDragging ? (
+                          <>
+                            <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center">
+                              <ImageIcon className="w-8 h-8 text-white" />
+                            </div>
+                            <p className="text-white text-sm font-medium">Drop image here</p>
+                          </>
                         ) : (
                           <>
                             <div className="w-16 h-16 rounded-full bg-neutral-800 flex items-center justify-center">
@@ -786,6 +842,7 @@ export default function HostForm() {
                                 allowedContent: "hidden",
                               }}
                             />
+                            <p className="text-neutral-600 text-xs">or drag and drop</p>
                           </>
                         )}
                       </div>
@@ -817,7 +874,16 @@ export default function HostForm() {
 
               {/* Mobile Image Upload */}
               <div className="lg:hidden">
-                <div className="relative aspect-video bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800">
+                <div
+                  className={`relative aspect-video bg-neutral-900 rounded-xl overflow-hidden border-2 transition-colors ${
+                    isDragging
+                      ? 'border-white border-dashed bg-neutral-800'
+                      : 'border-neutral-800'
+                  }`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                >
                   {imageUrl ? (
                     <>
                       <Image
@@ -838,6 +904,11 @@ export default function HostForm() {
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
                       {isUploading ? (
                         <Loader2 className="w-8 h-8 animate-spin text-neutral-500" />
+                      ) : isDragging ? (
+                        <>
+                          <ImageIcon className="w-8 h-8 text-white" />
+                          <p className="text-white text-sm font-medium">Drop image here</p>
+                        </>
                       ) : (
                         <>
                           <ImageIcon className="w-8 h-8 text-neutral-600" />
@@ -857,6 +928,7 @@ export default function HostForm() {
                               allowedContent: "hidden",
                             }}
                           />
+                          <p className="text-neutral-600 text-xs">or drag and drop</p>
                         </>
                       )}
                     </div>

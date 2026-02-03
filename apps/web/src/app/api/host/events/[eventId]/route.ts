@@ -17,30 +17,38 @@ export async function GET(
 
     const { eventId } = await params
 
-    // Find the event submission
-    const event = await prisma.eventSubmission.findUnique({
-      where: { id: eventId },
-      select: {
-        id: true,
-        eventName: true,
-        category: true,
-        day: true,
-        eventDate: true,
-        time: true,
-        location: true,
-        description: true,
-        imageUrl: true,
-        communityLink: true,
-        recurring: true,
-        organizerInstagram: true,
-        contactEmail: true,
-        status: true,
-        // Pricing fields
-        isFree: true,
-        price: true,
-        stripeEnabled: true,
-      },
-    })
+    // Find the event submission and get attendee count
+    const [event, attendeeCount] = await Promise.all([
+      prisma.eventSubmission.findUnique({
+        where: { id: eventId },
+        select: {
+          id: true,
+          eventName: true,
+          category: true,
+          day: true,
+          eventDate: true,
+          time: true,
+          location: true,
+          description: true,
+          imageUrl: true,
+          communityLink: true,
+          recurring: true,
+          organizerInstagram: true,
+          contactEmail: true,
+          status: true,
+          // Pricing fields
+          isFree: true,
+          price: true,
+          stripeEnabled: true,
+          // Capacity fields
+          maxTickets: true,
+          isFull: true,
+        },
+      }),
+      prisma.eventAttendance.count({
+        where: { eventId }
+      })
+    ])
 
     if (!event) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
@@ -69,6 +77,10 @@ export async function GET(
       isFree: event.isFree,
       price: event.price,
       stripeEnabled: event.stripeEnabled,
+      // Capacity fields
+      maxSpots: event.maxTickets,
+      isFull: event.isFull,
+      currentAttendees: attendeeCount,
     })
   } catch (error) {
     console.error('Get event error:', error)
@@ -128,11 +140,19 @@ export async function PUT(
     if (updates.isFree !== undefined) updateData.isFree = updates.isFree
     if (updates.price !== undefined) updateData.price = updates.price
     if (updates.stripeEnabled !== undefined) updateData.stripeEnabled = updates.stripeEnabled
+    // Capacity fields
+    if (updates.maxSpots !== undefined) updateData.maxTickets = updates.maxSpots ? parseInt(updates.maxSpots) : null
+    if (updates.isFull !== undefined) updateData.isFull = updates.isFull
 
-    const updatedEvent = await prisma.eventSubmission.update({
-      where: { id: eventId },
-      data: updateData,
-    })
+    const [updatedEvent, currentAttendees] = await Promise.all([
+      prisma.eventSubmission.update({
+        where: { id: eventId },
+        data: updateData,
+      }),
+      prisma.eventAttendance.count({
+        where: { eventId }
+      })
+    ])
 
     return NextResponse.json({
       id: updatedEvent.id,
@@ -151,6 +171,10 @@ export async function PUT(
       isFree: updatedEvent.isFree,
       price: updatedEvent.price,
       stripeEnabled: updatedEvent.stripeEnabled,
+      // Capacity fields
+      maxSpots: updatedEvent.maxTickets,
+      isFull: updatedEvent.isFull,
+      currentAttendees,
     })
   } catch (error) {
     console.error('Update event error:', error)

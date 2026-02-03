@@ -18,6 +18,10 @@ interface Event {
   description: string | null
   imageUrl: string | null
   recurring: boolean
+  // Capacity fields
+  maxSpots?: number | null
+  isFull?: boolean
+  currentAttendees?: number
 }
 
 export default function EditEventPage() {

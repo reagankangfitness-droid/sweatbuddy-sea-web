@@ -64,6 +64,41 @@ export async function POST(request: Request) {
       )
     }
 
+    // Get event details to check capacity
+    const [event, attendeeCount] = await Promise.all([
+      prisma.eventSubmission.findUnique({
+        where: { id: eventId },
+        select: {
+          isFull: true,
+          maxTickets: true,
+        }
+      }),
+      prisma.eventAttendance.count({
+        where: { eventId }
+      })
+    ])
+
+    // Check if event is manually closed
+    if (event?.isFull) {
+      return NextResponse.json(
+        { error: 'Registration is closed for this event' },
+        { status: 400 }
+      )
+    }
+
+    // Check if capacity reached
+    if (event?.maxTickets && attendeeCount >= event.maxTickets) {
+      // Auto-mark as full
+      await prisma.eventSubmission.update({
+        where: { id: eventId },
+        data: { isFull: true }
+      })
+      return NextResponse.json(
+        { error: 'This event is full' },
+        { status: 400 }
+      )
+    }
+
     // Check for duplicate (same email + event)
     const existing = await prisma.eventAttendance.findFirst({
       where: {
@@ -103,6 +138,17 @@ export async function POST(request: Request) {
         checkInCode,
       },
     })
+
+    // Check if this registration filled the event
+    if (event?.maxTickets) {
+      const newCount = attendeeCount + 1
+      if (newCount >= event.maxTickets) {
+        await prisma.eventSubmission.update({
+          where: { id: eventId },
+          data: { isFull: true }
+        })
+      }
+    }
 
     // If subscribed, add to newsletter list
     if (subscribe) {

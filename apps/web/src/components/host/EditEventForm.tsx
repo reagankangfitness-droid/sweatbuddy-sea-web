@@ -22,6 +22,10 @@ interface Event {
   // Pricing fields
   isFree?: boolean
   price?: number | null
+  // Capacity fields
+  maxSpots?: number | null
+  isFull?: boolean
+  currentAttendees?: number
 }
 
 interface EditEventFormProps {
@@ -73,6 +77,9 @@ export function EditEventForm({ event }: EditEventFormProps) {
     // Pricing fields
     isFree: event.isFree ?? true,
     price: event.price ? (event.price / 100).toFixed(2) : '',
+    // Capacity fields
+    maxSpots: event.maxSpots?.toString() || '',
+    isFull: event.isFull || false,
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -94,6 +101,8 @@ export function EditEventForm({ event }: EditEventFormProps) {
         imageUrl,
         // Convert price to cents
         price: formData.isFree ? null : Math.round(parseFloat(formData.price || '0') * 100),
+        // Capacity - convert to number or null
+        maxSpots: formData.maxSpots ? parseInt(formData.maxSpots) : null,
       }
 
       const res = await fetch(`/api/host/events/${event.id}`, {
@@ -373,6 +382,67 @@ export function EditEventForm({ event }: EditEventFormProps) {
               </p>
             </div>
           </div>
+        )}
+      </div>
+
+      {/* Capacity Section */}
+      <div className="pt-4 border-t border-neutral-200 space-y-4">
+        <h3 className="text-lg font-semibold text-neutral-900">Capacity</h3>
+
+        {/* Current attendees info */}
+        {event.currentAttendees !== undefined && (
+          <div className="p-3 bg-neutral-50 rounded-lg">
+            <p className="text-sm text-neutral-600">
+              <span className="font-semibold text-neutral-900">{event.currentAttendees}</span> people registered
+              {formData.maxSpots && (
+                <span> / {formData.maxSpots} spots</span>
+              )}
+            </p>
+          </div>
+        )}
+
+        {/* Max Spots */}
+        <div>
+          <label htmlFor="maxSpots" className="block text-sm font-medium text-neutral-700 mb-2">
+            Maximum spots (optional)
+          </label>
+          <input
+            type="number"
+            id="maxSpots"
+            name="maxSpots"
+            min="1"
+            value={formData.maxSpots}
+            onChange={handleChange}
+            placeholder="Leave empty for unlimited"
+            className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
+          />
+          <p className="text-xs text-neutral-400 mt-1">Registration closes automatically when full</p>
+        </div>
+
+        {/* Close Registration Toggle */}
+        <div className="flex items-center justify-between p-4 bg-neutral-50 rounded-xl">
+          <div>
+            <p className="font-medium text-neutral-900">Close registration</p>
+            <p className="text-sm text-neutral-500">Manually stop accepting new signups</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setFormData(prev => ({ ...prev, isFull: !prev.isFull }))}
+            className={`relative w-12 h-7 rounded-full transition-colors ${
+              formData.isFull ? 'bg-red-500' : 'bg-neutral-300'
+            }`}
+          >
+            <span
+              className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                formData.isFull ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </div>
+        {formData.isFull && (
+          <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
+            Registration is closed. New signups will be blocked.
+          </p>
         )}
       </div>
 

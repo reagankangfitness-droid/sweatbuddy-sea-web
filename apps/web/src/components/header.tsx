@@ -96,11 +96,15 @@ export function Header() {
     }
   }, [pathname, router])
 
-  const navLinks = [
+  // Desktop nav links (for landing page navigation)
+  const desktopNavLinks = [
     { href: '#events', label: 'Find Events' },
     { href: '#mission', label: 'About' },
     { href: '/host', label: 'List Your Event' },
   ]
+
+  // Check if we're on the landing page
+  const isLandingPage = pathname === '/'
 
   return (
     <>
@@ -133,7 +137,7 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) =>
+            {desktopNavLinks.map((link) =>
               link.href.startsWith('#') ? (
                 <a
                   key={link.href}
@@ -320,40 +324,30 @@ export function Header() {
               className="md:hidden absolute top-full left-0 right-0 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800 overflow-hidden"
             >
               <nav className="flex flex-col p-6 gap-1">
-                {navLinks.map((link) =>
-                  link.href.startsWith('#') ? (
+                {/* Landing page navigation links - only show on homepage */}
+                {isLandingPage && (
+                  <>
                     <a
-                      key={link.href}
-                      href={link.href}
+                      href="#events"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800 last:border-0"
+                      className="text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800"
                     >
-                      {link.label}
+                      Find Events
                     </a>
-                  ) : (
-                    <Link
-                      key={link.href}
-                      href={link.href}
+                    <a
+                      href="#mission"
                       onClick={() => setMobileMenuOpen(false)}
-                      className="text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800 last:border-0"
+                      className="text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800"
                     >
-                      {link.label}
-                    </Link>
-                  )
+                      About
+                    </a>
+                  </>
                 )}
 
-                {/* Login / User links in mobile menu */}
+                {/* User links in mobile menu */}
                 {isLoaded && (
                   isSignedIn ? (
                     <>
-                      <Link
-                        href="/profile"
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center gap-2 text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800"
-                      >
-                        <User className="w-5 h-5" />
-                        Profile
-                      </Link>
                       <Link
                         href="/dashboard"
                         onClick={() => setMobileMenuOpen(false)}

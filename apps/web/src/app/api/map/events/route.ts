@@ -188,7 +188,7 @@ export async function GET(request: NextRequest) {
         latitude: a.latitude,
         longitude: a.longitude,
         day: '',
-        time: a.startTime?.toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit' }) || '',
+        time: a.startTime?.toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Singapore' }) || '',
         location: a.address || '',
         eventDate: a.startTime?.toISOString() ?? null,
         recurring: false,

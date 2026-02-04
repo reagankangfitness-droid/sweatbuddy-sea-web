@@ -321,15 +321,21 @@ const getCachedEventById = unstable_cache(
     if (activity) {
       const startDate = activity.startTime ? new Date(activity.startTime) : null
       const dayNames = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays']
+      const sgTZ = { timeZone: 'Asia/Singapore' } as const
+
+      // Get day of week in Singapore timezone
+      const sgDayIndex = startDate
+        ? new Date(startDate.toLocaleString('en-US', sgTZ)).getDay()
+        : -1
 
       return {
         id: activity.id,
         slug: null,
         name: activity.title,
         category: activity.type || activity.categorySlug || 'Fitness',
-        day: startDate ? dayNames[startDate.getDay()] : '',
-        eventDate: startDate?.toISOString().split('T')[0] || null,
-        time: startDate?.toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit' }) || '',
+        day: sgDayIndex >= 0 ? dayNames[sgDayIndex] : '',
+        eventDate: startDate ? startDate.toLocaleDateString('en-CA', sgTZ) : null,
+        time: startDate?.toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit', ...sgTZ }) || '',
         location: activity.address || activity.city || '',
         latitude: activity.latitude,
         longitude: activity.longitude,

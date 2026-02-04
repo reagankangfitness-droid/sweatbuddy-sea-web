@@ -271,7 +271,7 @@ async function queryEventSubmissions(
   const submissions = await prisma.eventSubmission.findMany({
     where: {
       status: 'APPROVED',
-      createdAt: {
+      updatedAt: {
         gte: since,
         ...(cursor ? { lt: cursor } : {}),
       },
@@ -281,7 +281,7 @@ async function queryEventSubmissions(
         ...(followedUserIds ? { in: followedUserIds } : {}),
       },
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { updatedAt: 'desc' },
     take: PAGE_SIZE,
     include: {
       submittedByUser: {
@@ -295,7 +295,7 @@ async function queryEventSubmissions(
     .map((s) => ({
       id: `es_${s.id}`,
       type: 'new_event' as const,
-      timestamp: s.createdAt.toISOString(),
+      timestamp: s.updatedAt.toISOString(),
       actor: {
         id: s.submittedByUser!.id,
         name: s.submittedByUser!.name || s.organizerName,

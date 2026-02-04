@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Compass, CalendarDays, User, ChevronRight } from 'lucide-react'
+import { Users, CalendarDays, User, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -10,7 +10,7 @@ import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 
 const navItems = [
-  { id: 'discover', label: 'Discover', icon: Compass, href: '/app' },
+  { id: 'community', label: 'Community', icon: Users, href: '/community' },
   { id: 'events', label: 'Events', icon: CalendarDays, href: '/events' },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile' },
 ]
@@ -21,7 +21,7 @@ export function AppNav() {
   const [isHovered, setIsHovered] = useState(false)
 
   // Only show on app pages
-  const isAppPage = pathname.startsWith('/app') || pathname.startsWith('/events') || pathname.startsWith('/profile')
+  const isAppPage = pathname.startsWith('/community') || pathname.startsWith('/events') || pathname.startsWith('/profile')
   if (!isAppPage) return null
 
   return (

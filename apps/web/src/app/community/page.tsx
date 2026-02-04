@@ -17,7 +17,7 @@ export default function CommunityPage() {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
         <div className="pt-[env(safe-area-inset-top,0px)]">
-          <div className="px-4 py-4">
+          <div className="max-w-2xl mx-auto px-4 py-4">
             <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-4">
               Community
             </h1>
@@ -59,7 +59,7 @@ export default function CommunityPage() {
       </header>
 
       {/* Content */}
-      <main className="px-4 py-4 pb-28">
+      <main className="max-w-2xl mx-auto px-4 py-4 pb-28">
         <CommunityFeed tab={activeTab} currentUserId={currentUserId} />
       </main>
     </div>

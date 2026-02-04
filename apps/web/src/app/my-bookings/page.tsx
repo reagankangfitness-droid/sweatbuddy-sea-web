@@ -16,7 +16,7 @@ import {
   AlertTriangle,
   CheckCircle,
   Download,
-  MessageCircle,
+  ExternalLink,
 } from 'lucide-react'
 
 interface Booking {
@@ -28,6 +28,7 @@ interface Booking {
   createdAt: string
   activity: {
     id: string
+    slug: string | null
     title: string
     type: string
     city: string
@@ -556,11 +557,11 @@ function BookingCard({
       {!isPast && !isCancelled && (
         <div className="border-t border-neutral-100 dark:border-neutral-800 px-4 py-3 flex gap-2">
           <Link
-            href={`/activities/${activity.id}`}
+            href={`/e/${activity.slug || activity.id}`}
             className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
           >
-            <MessageCircle className="w-4 h-4" />
-            Group Chat
+            <ExternalLink className="w-4 h-4" />
+            View Event
           </Link>
           <Link
             href={`/booking/ticket?id=${booking.id}`}

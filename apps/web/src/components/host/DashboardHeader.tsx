@@ -11,7 +11,7 @@ export function DashboardHeader() {
         {/* Back to app + Logo */}
         <div className="flex items-center gap-3">
           <Link
-            href="/community"
+            href="/app"
             className="w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />

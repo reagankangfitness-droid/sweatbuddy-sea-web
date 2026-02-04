@@ -30,7 +30,7 @@ export function EmailSignupForm() {
       }
 
       safeSetJSON('signup_email', email)
-      router.push('/community')
+      router.push('/app')
     } catch {
       setError('Something went wrong. Please try again.')
     } finally {

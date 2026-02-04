@@ -99,7 +99,7 @@ export default function ProfilePage() {
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center gap-4 px-4 py-3">
             <Link
-              href="/community"
+              href="/app"
               className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
             >
               <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />

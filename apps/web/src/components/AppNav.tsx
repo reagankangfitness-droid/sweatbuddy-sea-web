@@ -21,7 +21,7 @@ export function AppNav() {
   const [isHovered, setIsHovered] = useState(false)
 
   // Only show on app pages
-  const isAppPage = pathname.startsWith('/community') || pathname.startsWith('/events') || pathname.startsWith('/profile')
+  const isAppPage = pathname.startsWith('/app') || pathname.startsWith('/community') || pathname.startsWith('/events') || pathname.startsWith('/profile')
   if (!isAppPage) return null
 
   return (

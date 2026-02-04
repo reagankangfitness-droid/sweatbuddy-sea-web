@@ -1,12 +1,12 @@
 'use client'
 
-import { Compass, CalendarDays, User } from 'lucide-react'
+import { Users, CalendarDays, User } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 
 const navItems = [
-  { id: 'discover', label: 'Discover', icon: Compass, href: '/app' },
+  { id: 'community', label: 'Community', icon: Users, href: '/community' },
   { id: 'events', label: 'Events', icon: CalendarDays, href: '/events' },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile' },
 ]

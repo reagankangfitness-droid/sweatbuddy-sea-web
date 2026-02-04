@@ -22,7 +22,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {
-      router.replace('/app')
+      router.replace('/community')
     }
   }, [isLoaded, isSignedIn, router])
 

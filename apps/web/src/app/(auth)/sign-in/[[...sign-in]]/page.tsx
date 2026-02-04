@@ -61,7 +61,7 @@ function SignInContent() {
       }
 
       // Default redirect to homepage
-      router.push(redirectUrl || '/app')
+      router.push(redirectUrl || '/community')
     }
   }, [isLoaded, isSignedIn, router, redirectUrl])
 
@@ -147,7 +147,7 @@ function SignInContent() {
                 alertText: 'text-sm',
               }
             }}
-            redirectUrl={redirectUrl || '/app'}
+            redirectUrl={redirectUrl || '/community'}
           />
         </div>
 

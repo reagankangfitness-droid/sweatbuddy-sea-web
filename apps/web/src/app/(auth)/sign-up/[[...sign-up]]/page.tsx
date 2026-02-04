@@ -58,7 +58,7 @@ function SignUpContent() {
         sessionStorage.removeItem('auth_intent')
       }
 
-      router.push(redirectUrl || '/app')
+      router.push(redirectUrl || '/community')
     }
   }, [isLoaded, isSignedIn, router, redirectUrl])
 
@@ -143,7 +143,7 @@ function SignUpContent() {
                 alertText: 'text-sm',
               }
             }}
-            redirectUrl={redirectUrl || '/app'}
+            redirectUrl={redirectUrl || '/community'}
           />
         </div>
 

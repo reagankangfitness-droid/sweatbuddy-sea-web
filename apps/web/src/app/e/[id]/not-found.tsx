@@ -15,7 +15,7 @@ export default function EventNotFound() {
         </p>
         <div className="space-y-3">
           <Link
-            href="/app"
+            href="/community"
             className="block w-full px-6 py-3 bg-neutral-900 text-white rounded-full font-semibold hover:bg-neutral-700 transition-colors text-center"
           >
             Browse upcoming events

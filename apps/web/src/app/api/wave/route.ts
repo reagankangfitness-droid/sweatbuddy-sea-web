@@ -275,6 +275,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Helper to combine date and time string into a proper Date
+  // Events are in Singapore timezone (UTC+8), so we construct the date accordingly
   const combineDateTime = (date: Date | null, timeStr: string | null): Date | null => {
     if (!date) return null
     if (!timeStr) return date
@@ -291,9 +292,12 @@ export async function GET(request: NextRequest) {
     if (period === 'PM' && hours !== 12) hours += 12
     if (period === 'AM' && hours === 12) hours = 0
 
-    const combined = new Date(date)
-    combined.setHours(hours, minutes, 0, 0)
-    return combined
+    // Get the calendar date from the input (in UTC)
+    const dateStr = date.toISOString().slice(0, 10) // "2026-02-04"
+    const h = String(hours).padStart(2, '0')
+    const m = String(minutes).padStart(2, '0')
+    // Create date with Singapore timezone offset (UTC+8)
+    return new Date(`${dateStr}T${h}:${m}:00+08:00`)
   }
 
   // Convert EventSubmissions with engagement signals

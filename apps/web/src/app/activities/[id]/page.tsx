@@ -382,7 +382,7 @@ Organized via sweatbuddies
               </a>
               {activity.startTime && (
                 <span>
-                  🕒 {new Date(activity.startTime).toLocaleDateString()}
+                  🕒 {new Date(activity.startTime).toLocaleDateString('en-US', { timeZone: 'Asia/Singapore' })}
                 </span>
               )}
             </div>
@@ -485,7 +485,7 @@ Organized via sweatbuddies
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground">Start:</dt>
                       <dd className="font-medium">
-                        {new Date(activity.startTime).toLocaleString()}
+                        {new Date(activity.startTime).toLocaleString('en-US', { timeZone: 'Asia/Singapore' })}
                       </dd>
                     </div>
                   )}
@@ -493,7 +493,7 @@ Organized via sweatbuddies
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground">End:</dt>
                       <dd className="font-medium">
-                        {new Date(activity.endTime).toLocaleString()}
+                        {new Date(activity.endTime).toLocaleString('en-US', { timeZone: 'Asia/Singapore' })}
                       </dd>
                     </div>
                   )}

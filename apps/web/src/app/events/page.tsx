@@ -47,15 +47,22 @@ function formatEventTime(iso: string): string {
   const tomorrow = new Date(now)
   tomorrow.setDate(tomorrow.getDate() + 1)
 
-  const timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+  // All events are in Singapore timezone
+  const sgOptions = { timeZone: 'Asia/Singapore' } as const
+  const timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', ...sgOptions })
 
-  if (date.toDateString() === now.toDateString()) {
+  // Compare dates in Singapore timezone
+  const dateSG = date.toLocaleDateString('en-US', sgOptions)
+  const nowSG = now.toLocaleDateString('en-US', sgOptions)
+  const tomorrowSG = tomorrow.toLocaleDateString('en-US', sgOptions)
+
+  if (dateSG === nowSG) {
     return `Today, ${timeStr}`
   }
-  if (date.toDateString() === tomorrow.toDateString()) {
+  if (dateSG === tomorrowSG) {
     return `Tomorrow, ${timeStr}`
   }
-  return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + `, ${timeStr}`
+  return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', ...sgOptions }) + `, ${timeStr}`
 }
 
 export default function EventsPage() {

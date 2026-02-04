@@ -15,23 +15,27 @@ export function EventCardCompact({ event }: EventCardCompactProps) {
   const formatTime = (datetime: string) => {
     const date = new Date(datetime)
     const now = new Date()
-    const isToday = date.toDateString() === now.toDateString()
+    const sg = { timeZone: 'Asia/Singapore' } as const
+    const dateSG = date.toLocaleDateString('en-US', sg)
+    const nowSG = now.toLocaleDateString('en-US', sg)
     const tomorrow = new Date(now)
     tomorrow.setDate(tomorrow.getDate() + 1)
-    const isTomorrow = date.toDateString() === tomorrow.toDateString()
+    const tomorrowSG = tomorrow.toLocaleDateString('en-US', sg)
 
     const timeStr = date.toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
+      ...sg,
     })
 
-    if (isToday) return `Today ${timeStr}`
-    if (isTomorrow) return `Tomorrow ${timeStr}`
+    if (dateSG === nowSG) return `Today ${timeStr}`
+    if (dateSG === tomorrowSG) return `Tomorrow ${timeStr}`
     return date.toLocaleDateString('en-US', {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
+      ...sg,
     }) + ` ${timeStr}`
   }
 

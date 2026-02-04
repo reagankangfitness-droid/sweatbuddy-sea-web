@@ -24,20 +24,22 @@ function getUrgencyBadge(activity: HostedActivityData): { label: string; color: 
     const now = new Date()
     const tomorrow = new Date(now)
     tomorrow.setDate(tomorrow.getDate() + 1)
-    if (date.toDateString() === tomorrow.toDateString()) {
+    const sg = { timeZone: 'Asia/Singapore' } as const
+    if (date.toLocaleDateString('en-US', sg) === tomorrow.toLocaleDateString('en-US', sg)) {
       return { label: 'TOMORROW', color: 'bg-amber-500' }
     }
   }
   return null
 }
 
-// Format date nicely
+// Format date nicely (Singapore timezone)
 function formatDateTime(dateStr: string | null, eventTime?: string): string {
   if (!dateStr) return eventTime || 'Time TBA'
   const date = new Date(dateStr)
-  const dayName = date.toLocaleDateString('en-US', { weekday: 'short' })
-  const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-  const time = eventTime || date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+  const sg = { timeZone: 'Asia/Singapore' } as const
+  const dayName = date.toLocaleDateString('en-US', { weekday: 'short', ...sg })
+  const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', ...sg })
+  const time = eventTime || date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', ...sg })
   return `${dayName}, ${monthDay} · ${time}`
 }
 

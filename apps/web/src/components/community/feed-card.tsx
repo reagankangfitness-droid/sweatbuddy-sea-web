@@ -269,6 +269,7 @@ export function FeedCard({
         {showFollowButton && (
           <button
             onClick={() => onFollow(item.actor.slug!, item.actor.id)}
+            aria-label={`Follow ${item.actor.name}`}
             className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
           >
             <UserPlus className="w-3.5 h-3.5" />

@@ -37,10 +37,6 @@ export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth()
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
     const { searchParams } = request.nextUrl
     const tab = searchParams.get('tab') || 'all'
     const cursor = searchParams.get('cursor')
@@ -49,12 +45,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid tab' }, { status: 400 })
     }
 
-    // Get blocked user IDs
-    const blockedIds = await getBlockedUserIds(userId)
+    // Following tab requires auth
+    if (tab === 'following' && !userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Get blocked user IDs (empty set if not authenticated)
+    const blockedIds = userId
+      ? await getBlockedUserIds(userId)
+      : new Set<string>()
 
     // Get followed user IDs if on following tab
     let followedUserIds: string[] = []
-    if (tab === 'following') {
+    if (tab === 'following' && userId) {
       const follows = await prisma.userFollower.findMany({
         where: { followerId: userId },
         select: { followingId: true },
@@ -211,7 +214,7 @@ async function queryUserActivities(
         ...(cursor ? { lt: cursor } : {}),
       },
       userId: {
-        notIn: blockedArray.length > 0 ? blockedArray : undefined,
+        ...(blockedArray.length > 0 ? { notIn: blockedArray } : {}),
         ...(followedUserIds ? { in: followedUserIds } : {}),
       },
     },
@@ -274,7 +277,7 @@ async function queryEventSubmissions(
       },
       submittedByUserId: {
         not: null,
-        notIn: blockedArray.length > 0 ? blockedArray : undefined,
+        ...(blockedArray.length > 0 ? { notIn: blockedArray } : {}),
         ...(followedUserIds ? { in: followedUserIds } : {}),
       },
     },
@@ -326,11 +329,11 @@ async function queryUserFollows(
         ...(cursor ? { lt: cursor } : {}),
       },
       followerId: {
-        notIn: blockedArray.length > 0 ? blockedArray : undefined,
+        ...(blockedArray.length > 0 ? { notIn: blockedArray } : {}),
         ...(followedUserIds ? { in: followedUserIds } : {}),
       },
       followingId: {
-        notIn: blockedArray.length > 0 ? blockedArray : undefined,
+        ...(blockedArray.length > 0 ? { notIn: blockedArray } : {}),
       },
     },
     orderBy: { createdAt: 'desc' },

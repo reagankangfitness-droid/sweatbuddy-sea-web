@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { DollarSign, Users, Clock, CheckCircle, AlertCircle, CreditCard, ChevronRight, XCircle, Ban, AlertTriangle, Star, BarChart3, Wallet } from 'lucide-react'
+import { DollarSign, Users, Clock, CheckCircle, AlertCircle, CreditCard, ChevronRight, XCircle, Ban, AlertTriangle, Star, BarChart3, Wallet, Sparkles, TrendingUp } from 'lucide-react'
 import { DashboardHeader } from '@/components/host/DashboardHeader'
 import { StatCard } from '@/components/host/StatCard'
 import { UpcomingEventRow } from '@/components/host/UpcomingEventRow'
@@ -329,6 +329,20 @@ export default function HostDashboard() {
           >
             <BarChart3 className="w-4 h-4" />
             Analytics
+          </Link>
+          <Link
+            href="/host/content"
+            className="flex items-center gap-2 px-4 py-2 bg-violet-100 dark:bg-violet-900/30 hover:bg-violet-200 dark:hover:bg-violet-900/50 rounded-full text-sm font-medium text-violet-700 dark:text-violet-300 transition-colors whitespace-nowrap"
+          >
+            <Sparkles className="w-4 h-4" />
+            Content
+          </Link>
+          <Link
+            href="/host/growth"
+            className="flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-900/50 rounded-full text-sm font-medium text-green-700 dark:text-green-300 transition-colors whitespace-nowrap"
+          >
+            <TrendingUp className="w-4 h-4" />
+            Growth
           </Link>
           <Link
             href="/host/earnings"

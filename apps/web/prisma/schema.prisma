@@ -1933,7 +1933,10 @@ model Organizer {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  conversations EventDirectConversation[]
+  conversations      EventDirectConversation[]
+  agentConversations AgentConversation[]
+  weeklyPulses       WeeklyPulse[]
+  generatedContent   GeneratedContent[]
 
   @@index([instagramHandle])
   @@index([email])
@@ -2681,4 +2684,120 @@ model CommunityMessage {
   @@index([chatId, createdAt])
   @@index([senderId])
   @@map("community_messages")
+}
+
+// =====================================================
+// AI AGENT SYSTEM
+// =====================================================
+
+// Conversations with the AI agent
+model AgentConversation {
+  id          String   @id @default(cuid())
+  organizerId String
+  title       String?  @db.VarChar(200) // Auto-generated from first message
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  organizer Organizer      @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  messages  AgentMessage[]
+
+  @@index([organizerId, updatedAt])
+  @@map("agent_conversations")
+}
+
+// Individual messages in agent conversations
+model AgentMessage {
+  id             String   @id @default(cuid())
+  conversationId String
+  role           String   @db.VarChar(20) // 'user' | 'assistant'
+  content        String   @db.Text
+  createdAt      DateTime @default(now())
+
+  conversation AgentConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+  @@map("agent_messages")
+}
+
+// Weekly AI-generated summaries for hosts
+model WeeklyPulse {
+  id          String   @id @default(cuid())
+  organizerId String
+  weekStart   DateTime @db.Date // Monday of the week
+  weekEnd     DateTime @db.Date // Sunday of the week
+
+  // AI-generated content
+  summary     String @db.Text // 2-3 sentence overview
+  highlights  Json // Array of highlight strings
+  insights    Json // Array of insight objects
+  suggestions Json // Array of action suggestions
+
+  // Snapshot of metrics at generation time
+  metrics Json // { thisWeekRsvps, lastWeekRsvps, totalAttendees, etc. }
+
+  // Metadata
+  modelUsed String?  @db.VarChar(50) // e.g., "claude-sonnet-4-20250514"
+  createdAt DateTime @default(now())
+
+  organizer Organizer @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+
+  @@unique([organizerId, weekStart])
+  @@index([organizerId, createdAt])
+  @@map("weekly_pulses")
+}
+
+// AI-generated content for hosts (captions, messages, etc.)
+model GeneratedContent {
+  id          String  @id @default(cuid())
+  organizerId String
+  eventId     String? @db.VarChar(100) // Optional reference to EventSubmission
+
+  // Content type and configuration
+  type     String @db.VarChar(50) // 'instagram_caption' | 'whatsapp_message' | 'event_description' | 'email'
+  tone     String @default("casual") @db.VarChar(20) // 'casual' | 'professional' | 'excited' | 'motivational'
+  length   String @default("medium") @db.VarChar(20) // 'short' | 'medium' | 'long'
+
+  // The prompt used and content generated
+  prompt   String @db.Text
+  content  String @db.Text
+  metadata Json?  // Additional context like hashtags, subject lines, etc.
+
+  // Usage tracking
+  copiedAt   DateTime?
+  usedAt     DateTime?
+  usedWhere  String?   @db.VarChar(100) // Where it was used (e.g., "instagram", "whatsapp")
+
+  createdAt DateTime @default(now())
+
+  organizer Organizer @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+
+  @@index([organizerId, createdAt])
+  @@index([eventId])
+  @@index([type])
+  @@map("generated_content")
+}
+
+// Track retention actions taken by hosts
+model RetentionAction {
+  id          String   @id @default(cuid())
+  organizerId String
+  memberEmail String   @db.VarChar(255)
+  memberName  String?  @db.VarChar(200)
+
+  // Action details
+  action     String @db.VarChar(50) // 'message_sent' | 'dismissed' | 'email_sent'
+  suggestion String @db.Text // The AI suggestion that was shown
+  message    String? @db.Text // The actual message sent (if applicable)
+
+  // Outcome tracking
+  memberReturned Boolean   @default(false) // Did they attend within 14 days?
+  returnedAt     DateTime?
+  returnEventId  String?   @db.VarChar(100)
+
+  createdAt DateTime @default(now())
+
+  @@index([organizerId, createdAt])
+  @@index([memberEmail])
+  @@index([memberReturned])
+  @@map("retention_actions")
 }

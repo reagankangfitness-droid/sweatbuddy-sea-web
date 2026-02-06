@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { DollarSign, Users, Clock, CheckCircle, AlertCircle, CreditCard, ChevronRight, XCircle, Ban, AlertTriangle, Star, BarChart3, Wallet } from 'lucide-react'
@@ -9,6 +9,8 @@ import { StatCard } from '@/components/host/StatCard'
 import { UpcomingEventRow } from '@/components/host/UpcomingEventRow'
 import { PastEventRow } from '@/components/host/PastEventRow'
 import { EmptyState } from '@/components/host/EmptyState'
+import { WeeklyPulseCard, WeeklyPulseCardSkeleton, type WeeklyPulseData } from '@/components/host/WeeklyPulseCard'
+import { AgentChatWidget } from '@/components/host/AgentChatWidget'
 
 interface DashboardEvent {
   id: string
@@ -81,6 +83,9 @@ export default function HostDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [activeTab, setActiveTab] = useState<TabType>('live')
+  const [pulse, setPulse] = useState<WeeklyPulseData | null>(null)
+  const [isPulseLoading, setIsPulseLoading] = useState(true)
+  const [isRefreshingPulse, setIsRefreshingPulse] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,6 +117,46 @@ export default function HostDashboard() {
 
     fetchData()
   }, [router])
+
+  // Fetch weekly pulse
+  useEffect(() => {
+    const fetchPulse = async () => {
+      try {
+        const res = await fetch('/api/host/pulse')
+        if (res.ok) {
+          const data = await res.json()
+          setPulse(data.pulse)
+        }
+      } catch (err) {
+        console.error('Failed to fetch pulse:', err)
+      } finally {
+        setIsPulseLoading(false)
+      }
+    }
+
+    if (!isLoading && data) {
+      fetchPulse()
+    }
+  }, [isLoading, data])
+
+  // Refresh pulse handler
+  const handleRefreshPulse = useCallback(async () => {
+    setIsRefreshingPulse(true)
+    try {
+      const res = await fetch('/api/host/pulse', { method: 'POST' })
+      if (res.ok) {
+        const data = await res.json()
+        setPulse(data.pulse)
+      } else if (res.status === 429) {
+        const data = await res.json()
+        alert(data.error || 'Please wait before refreshing again.')
+      }
+    } catch (err) {
+      console.error('Failed to refresh pulse:', err)
+    } finally {
+      setIsRefreshingPulse(false)
+    }
+  }, [])
 
   if (isLoading) {
     return (
@@ -195,6 +240,17 @@ export default function HostDashboard() {
             ? 'Your events are bringing people together.'
             : 'Ready to bring people together? Create your first event.'}
         </p>
+
+        {/* Weekly Pulse */}
+        {isPulseLoading ? (
+          <WeeklyPulseCardSkeleton />
+        ) : pulse ? (
+          <WeeklyPulseCard
+            pulse={pulse}
+            onRefresh={handleRefreshPulse}
+            isRefreshing={isRefreshingPulse}
+          />
+        ) : null}
 
         {/* Pending Payments Alert Banner */}
         {data.stats.pendingPayments && data.stats.pendingPayments > 0 && (
@@ -462,6 +518,9 @@ export default function HostDashboard() {
           </div>
         </div>
       </main>
+
+      {/* AI Chat Widget */}
+      <AgentChatWidget />
     </div>
   )
 }

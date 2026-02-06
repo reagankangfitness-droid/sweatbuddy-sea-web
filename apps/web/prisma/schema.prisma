@@ -1923,6 +1923,17 @@ model HostApplication {
 // ORGANIZER & DIRECT MESSAGING SYSTEM
 // =====================================================
 
+// Community types for category-specific AI intelligence
+enum CommunityType {
+  RUN
+  YOGA
+  HIIT
+  MEDITATION
+  BOOTCAMP
+  STRENGTH
+  OTHER
+}
+
 // Verified organizers (linked by Instagram handle)
 model Organizer {
   id              String   @id @default(cuid())
@@ -1932,6 +1943,15 @@ model Organizer {
   isVerified      Boolean  @default(true) // Auto-verified in MVP
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  // Onboarding fields for AI personalization
+  hasCompletedOnboarding Boolean        @default(false)
+  communityType          CommunityType?
+  communityName          String?        @db.VarChar(200) // e.g., "Dawn Runners SG"
+  communityLocation      String?        @db.VarChar(300) // e.g., "East Coast Park, Singapore"
+  communitySchedule      String?        @db.VarChar(500) // e.g., "Saturdays 6:30am, Tuesdays 7pm"
+  communitySize          String?        @db.VarChar(50)  // e.g., "10-30", "30-100", "100+"
+  onboardingCompletedAt  DateTime?
 
   conversations      EventDirectConversation[]
   agentConversations AgentConversation[]

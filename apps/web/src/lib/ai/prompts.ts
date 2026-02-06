@@ -1,4 +1,24 @@
 // System prompts for different AI agent tasks
+import type { CommunityType } from './client'
+import { COMMUNITY_TYPE_CONTEXT } from './client'
+
+/**
+ * Get category-specific context for AI prompts
+ */
+export function getCategoryContext(communityType: CommunityType): string {
+  if (!communityType || !COMMUNITY_TYPE_CONTEXT[communityType]) {
+    return ''
+  }
+
+  const ctx = COMMUNITY_TYPE_CONTEXT[communityType]
+  return `
+COMMUNITY TYPE: ${ctx.name}
+Typical activities: ${ctx.activities.join(', ')}
+Common challenges: ${ctx.commonChallenges.join(', ')}
+Growth strategies: ${ctx.growthTips.join(', ')}
+Content ideas: ${ctx.contentIdeas.join(', ')}
+`
+}
 
 export const WEEKLY_PULSE_SYSTEM_PROMPT = `You are a friendly AI assistant for SweatBuddies, a fitness community platform in Singapore.
 
@@ -13,7 +33,8 @@ Guidelines:
 - No corporate jargon - keep it real
 - Keep it concise but meaningful
 - If numbers are low or zero, be encouraging about building momentum
-- Focus on what's working and what to try next`
+- Focus on what's working and what to try next
+- IMPORTANT: If community type is provided, tailor your insights and suggestions to that specific activity type`
 
 export const CHAT_SYSTEM_PROMPT = `You are a helpful AI assistant for SweatBuddies hosts in Singapore.
 
@@ -33,7 +54,8 @@ Guidelines:
 - Use Singapore context (locations, culture, timing, local lingo)
 - If you don't know something specific, say so
 - Don't make up data - only reference what's provided in context
-- When suggesting actions, make them easy to do right now`
+- When suggesting actions, make them easy to do right now
+- IMPORTANT: If community type is provided, tailor your advice to that specific activity (e.g., running tips for run clubs, yoga-specific guidance for yoga communities)`
 
 export const CONTENT_SYSTEM_PROMPT = `You are a creative assistant helping SweatBuddies hosts write engaging content for their fitness communities in Singapore.
 

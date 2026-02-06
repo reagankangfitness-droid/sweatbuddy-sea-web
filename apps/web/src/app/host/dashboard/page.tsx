@@ -12,6 +12,7 @@ import { EmptyState } from '@/components/host/EmptyState'
 import { WeeklyPulseCard, WeeklyPulseCardSkeleton, type WeeklyPulseData } from '@/components/host/WeeklyPulseCard'
 import { AgentChatWidget } from '@/components/host/AgentChatWidget'
 import { DashboardSkeleton } from '@/components/host/DashboardSkeleton'
+import { HostOnboarding } from '@/components/host/HostOnboarding'
 
 interface DashboardEvent {
   id: string
@@ -87,6 +88,9 @@ export default function HostDashboard() {
   const [pulse, setPulse] = useState<WeeklyPulseData | null>(null)
   const [isPulseLoading, setIsPulseLoading] = useState(true)
   const [isRefreshingPulse, setIsRefreshingPulse] = useState(false)
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  const [userName, setUserName] = useState<string | null>(null)
+  const [isCheckingOnboarding, setIsCheckingOnboarding] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -97,6 +101,22 @@ export default function HostDashboard() {
           router.push('/sign-in?intent=host')
           return
         }
+
+        const sessionData = await sessionRes.json()
+        setUserName(sessionData.user?.name || null)
+
+        // Check onboarding status
+        const onboardingRes = await fetch('/api/host/onboarding')
+        if (onboardingRes.ok) {
+          const onboardingData = await onboardingRes.json()
+          if (!onboardingData.hasCompletedOnboarding) {
+            setShowOnboarding(true)
+            setIsCheckingOnboarding(false)
+            setIsLoading(false)
+            return
+          }
+        }
+        setIsCheckingOnboarding(false)
 
         const dashboardRes = await fetch('/api/host/dashboard')
         if (!dashboardRes.ok) {
@@ -118,6 +138,14 @@ export default function HostDashboard() {
 
     fetchData()
   }, [router])
+
+  // Handle onboarding completion
+  const handleOnboardingComplete = useCallback(() => {
+    setShowOnboarding(false)
+    setIsLoading(true)
+    // Reload dashboard data after onboarding
+    window.location.reload()
+  }, [])
 
   // Fetch weekly pulse
   useEffect(() => {
@@ -159,7 +187,12 @@ export default function HostDashboard() {
     }
   }, [])
 
-  if (isLoading) {
+  // Show onboarding if not completed
+  if (showOnboarding) {
+    return <HostOnboarding onComplete={handleOnboardingComplete} userName={userName} />
+  }
+
+  if (isLoading || isCheckingOnboarding) {
     return <DashboardSkeleton />
   }
 

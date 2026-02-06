@@ -1,14 +1,25 @@
 import { prisma } from '@/lib/prisma'
-import type { AgentContext } from './client'
+import type { AgentContext, CommunityType } from './client'
 
 /**
  * Build comprehensive context about an organizer for AI agent use.
  * This gathers all relevant data about their events, attendees, and activity.
  */
 export async function buildAgentContext(organizerId: string): Promise<AgentContext> {
-  // Fetch organizer with their events
+  // Fetch organizer with their events and community profile
   const organizer = await prisma.organizer.findUnique({
     where: { id: organizerId },
+    select: {
+      id: true,
+      email: true,
+      instagramHandle: true,
+      name: true,
+      communityType: true,
+      communityName: true,
+      communityLocation: true,
+      communitySchedule: true,
+      communitySize: true,
+    },
   })
 
   if (!organizer) {
@@ -152,6 +163,14 @@ export async function buildAgentContext(organizerId: string): Promise<AgentConte
     organizerName: organizer.name || organizer.instagramHandle,
     organizerEmail: organizer.email,
     instagramHandle: organizer.instagramHandle,
+    // Community profile from onboarding
+    communityProfile: {
+      communityType: organizer.communityType as CommunityType,
+      communityName: organizer.communityName,
+      communityLocation: organizer.communityLocation,
+      communitySchedule: organizer.communitySchedule,
+      communitySize: organizer.communitySize,
+    },
     totalEvents: events.length,
     totalAttendees: uniqueEmails.size,
     recentActivity,
@@ -169,17 +188,43 @@ export async function buildAgentContext(organizerId: string): Promise<AgentConte
 
 /**
  * Get a simplified context summary for chat messages.
- * Includes key stats without full lists.
+ * Includes key stats without full lists, plus community profile for personalization.
  */
 export function formatContextForChat(context: AgentContext): string {
   const lines = [
     `Host: ${context.organizerName} (@${context.instagramHandle})`,
-    `Total events: ${context.totalEvents}`,
-    `Total unique attendees: ${context.totalAttendees}`,
-    `This week's RSVPs: ${context.stats.thisWeekRsvps}`,
-    `Last week's RSVPs: ${context.stats.lastWeekRsvps}`,
-    `Avg attendees per event: ${context.stats.avgAttendeesPerEvent}`,
   ]
+
+  // Add community profile if available
+  const profile = context.communityProfile
+  if (profile.communityType) {
+    const typeLabel = profile.communityType.charAt(0) + profile.communityType.slice(1).toLowerCase()
+    lines.push(`Community Type: ${typeLabel}`)
+  }
+  if (profile.communityName) {
+    lines.push(`Community Name: ${profile.communityName}`)
+  }
+  if (profile.communityLocation) {
+    lines.push(`Location: ${profile.communityLocation}`)
+  }
+  if (profile.communitySchedule) {
+    lines.push(`Schedule: ${profile.communitySchedule}`)
+  }
+  if (profile.communitySize) {
+    const sizeLabels: Record<string, string> = {
+      small: 'Under 30 members',
+      medium: '30-100 members',
+      large: '100+ members',
+    }
+    lines.push(`Size: ${sizeLabels[profile.communitySize] || profile.communitySize}`)
+  }
+
+  lines.push('')
+  lines.push(`Total events: ${context.totalEvents}`)
+  lines.push(`Total unique attendees: ${context.totalAttendees}`)
+  lines.push(`This week's RSVPs: ${context.stats.thisWeekRsvps}`)
+  lines.push(`Last week's RSVPs: ${context.stats.lastWeekRsvps}`)
+  lines.push(`Avg attendees per event: ${context.stats.avgAttendeesPerEvent}`)
 
   if (context.topRegulars.length > 0) {
     lines.push(`Top regulars: ${context.topRegulars.map(r => `${r.name} (${r.attendanceCount})`).join(', ')}`)
@@ -204,6 +249,32 @@ export function formatContextForPulse(context: AgentContext): string {
 
   sections.push(`Host: ${context.organizerName}`)
   sections.push(`Community: @${context.instagramHandle}`)
+
+  // Add community profile for category-specific insights
+  const profile = context.communityProfile
+  if (profile.communityType) {
+    const typeLabel = profile.communityType.charAt(0) + profile.communityType.slice(1).toLowerCase()
+    sections.push(`Community Type: ${typeLabel}`)
+  }
+  if (profile.communityName) {
+    sections.push(`Community Name: ${profile.communityName}`)
+  }
+  if (profile.communityLocation) {
+    sections.push(`Location: ${profile.communityLocation}`)
+  }
+  if (profile.communitySchedule) {
+    sections.push(`Typical Schedule: ${profile.communitySchedule}`)
+  }
+  if (profile.communitySize) {
+    const sizeLabels: Record<string, string> = {
+      small: 'Small (under 30 members)',
+      medium: 'Growing (30-100 members)',
+      large: 'Established (100+ members)',
+    }
+    sections.push(`Community Size: ${sizeLabels[profile.communitySize] || profile.communitySize}`)
+  }
+  sections.push('')
+
   sections.push(`Total Events: ${context.totalEvents}`)
   sections.push(`Total Unique Attendees: ${context.totalAttendees}`)
   sections.push('')

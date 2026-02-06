@@ -18,7 +18,6 @@ import {
   Area,
 } from 'recharts'
 import {
-  Loader2,
   TrendingUp,
   TrendingDown,
   Users,
@@ -32,6 +31,7 @@ import {
   Info,
   Sparkles,
 } from 'lucide-react'
+import { AnalyticsSkeleton } from '@/components/host/AnalyticsSkeleton'
 
 interface Summary {
   totalEvents: number
@@ -151,17 +151,7 @@ export default function AnalyticsPage() {
   }, [router])
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-white dark:bg-neutral-950">
-        <DashboardHeader />
-        <div className="flex items-center justify-center h-[60vh]">
-          <div className="text-center">
-            <Loader2 className="w-8 h-8 animate-spin text-neutral-400 mx-auto mb-3" />
-            <p className="text-neutral-500">Loading analytics...</p>
-          </div>
-        </div>
-      </div>
-    )
+    return <AnalyticsSkeleton />
   }
 
   if (error) {

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { DashboardHeader } from '@/components/host/DashboardHeader'
+import { CommunitySkeleton } from '@/components/host/CommunitySkeleton'
 import { Loader2, Users, Search, ChevronDown, ChevronUp, MessageSquare, Check, X } from 'lucide-react'
 
 interface Attendee {
@@ -143,14 +144,7 @@ export default function CommunityPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-white">
-        <DashboardHeader />
-        <div className="flex items-center justify-center h-[60vh]">
-          <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
-        </div>
-      </div>
-    )
+    return <CommunitySkeleton />
   }
 
   if (error) {

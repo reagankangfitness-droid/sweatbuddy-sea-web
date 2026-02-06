@@ -11,6 +11,7 @@ import { PastEventRow } from '@/components/host/PastEventRow'
 import { EmptyState } from '@/components/host/EmptyState'
 import { WeeklyPulseCard, WeeklyPulseCardSkeleton, type WeeklyPulseData } from '@/components/host/WeeklyPulseCard'
 import { AgentChatWidget } from '@/components/host/AgentChatWidget'
+import { DashboardSkeleton } from '@/components/host/DashboardSkeleton'
 
 interface DashboardEvent {
   id: string
@@ -159,14 +160,7 @@ export default function HostDashboard() {
   }, [])
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center animate-pulse">
-          <span className="text-4xl mb-4 block">📊</span>
-          <p className="text-neutral-400">Loading your dashboard...</p>
-        </div>
-      </div>
-    )
+    return <DashboardSkeleton />
   }
 
   if (error) {

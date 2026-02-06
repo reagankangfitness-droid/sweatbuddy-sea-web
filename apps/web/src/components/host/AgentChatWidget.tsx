@@ -292,20 +292,68 @@ export function AgentChatWidget() {
   // Get quick questions based on community type
   const quickQuestions = QUICK_QUESTIONS[communityType || 'DEFAULT'] || QUICK_QUESTIONS.DEFAULT
 
+  // Check if tooltip should be shown (first time users)
+  const [showTooltip, setShowTooltip] = useState(false)
+
+  useEffect(() => {
+    // Show tooltip for first-time users
+    const hasSeenTooltip = localStorage.getItem('ai-chat-tooltip-seen')
+    if (!hasSeenTooltip && !isOpen) {
+      const timer = setTimeout(() => setShowTooltip(true), 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [isOpen])
+
+  const handleOpenChat = () => {
+    setIsOpen(!isOpen)
+    if (showTooltip) {
+      setShowTooltip(false)
+      localStorage.setItem('ai-chat-tooltip-seen', 'true')
+    }
+  }
+
   return (
     <>
-      {/* Floating button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 bg-violet-600 hover:bg-violet-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-105"
-        aria-label={isOpen ? 'Close chat' : 'Open AI assistant'}
-      >
-        {isOpen ? (
-          <X className="w-5 h-5 sm:w-6 sm:h-6" />
-        ) : (
-          <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6" />
+      {/* Floating button with pulse animation */}
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
+        {/* Tooltip */}
+        {showTooltip && !isOpen && (
+          <div className="absolute bottom-full right-0 mb-3 animate-fade-in">
+            <div className="bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 px-4 py-2 rounded-xl text-sm font-medium shadow-lg whitespace-nowrap">
+              Need help? Ask your AI assistant!
+              <div className="absolute -bottom-1 right-6 w-2 h-2 bg-neutral-900 dark:bg-white rotate-45" />
+            </div>
+          </div>
         )}
-      </button>
+
+        {/* Pulse rings */}
+        {!isOpen && (
+          <>
+            <span className="absolute inset-0 rounded-full bg-violet-500 animate-ping opacity-25" />
+            <span className="absolute inset-0 rounded-full bg-violet-500 animate-pulse opacity-20" />
+          </>
+        )}
+
+        {/* Button */}
+        <button
+          onClick={handleOpenChat}
+          className="relative w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-105"
+          aria-label={isOpen ? 'Close chat' : 'Open AI assistant'}
+        >
+          {isOpen ? (
+            <X className="w-5 h-5 sm:w-6 sm:h-6" />
+          ) : (
+            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+          )}
+
+          {/* AI Badge */}
+          {!isOpen && (
+            <span className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-amber-400 text-amber-900 text-[10px] font-bold rounded-full shadow">
+              AI
+            </span>
+          )}
+        </button>
+      </div>
 
       {/* Chat widget */}
       {isOpen && (

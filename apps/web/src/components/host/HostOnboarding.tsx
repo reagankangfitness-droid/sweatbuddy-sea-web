@@ -9,7 +9,10 @@ import {
   Calendar,
   Users,
   Check,
-  Loader2
+  Loader2,
+  MessageSquare,
+  TrendingUp,
+  Zap,
 } from 'lucide-react'
 
 // Community type options with icons and descriptions
@@ -78,12 +81,40 @@ const COMMUNITY_SIZES = [
   { id: 'large', label: 'Established', description: '100+ members' },
 ]
 
+// AI Features for the discovery screen
+const AI_FEATURES = [
+  {
+    icon: MessageSquare,
+    title: 'AI Chat',
+    description: 'Ask anything about your community and get instant answers',
+    gradient: 'from-indigo-500 to-purple-600',
+  },
+  {
+    icon: Sparkles,
+    title: 'Content Generator',
+    description: 'Create Instagram captions, WhatsApp messages, and emails',
+    gradient: 'from-violet-500 to-pink-500',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Growth Insights',
+    description: 'AI-powered recommendations to grow your community',
+    gradient: 'from-emerald-500 to-teal-500',
+  },
+  {
+    icon: Zap,
+    title: 'Weekly Pulse',
+    description: 'Automated AI summaries of your community health',
+    gradient: 'from-amber-500 to-orange-500',
+  },
+]
+
 interface HostOnboardingProps {
   onComplete: () => void
   userName?: string | null
 }
 
-type Step = 'welcome' | 'type' | 'details' | 'loading'
+type Step = 'welcome' | 'type' | 'details' | 'loading' | 'features'
 
 export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
   const [step, setStep] = useState<Step>('welcome')
@@ -139,7 +170,9 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
 
       // Show loading animation for at least 2 seconds for effect
       await new Promise(resolve => setTimeout(resolve, 2000))
-      onComplete()
+      // Go to features discovery instead of completing
+      setStep('features')
+      setIsSubmitting(false)
     } catch (error) {
       console.error('Onboarding error:', error)
       setStep('details')
@@ -151,7 +184,9 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
     setIsSubmitting(true)
     try {
       await fetch('/api/host/onboarding', { method: 'PATCH' })
-      onComplete()
+      // Go to features discovery instead of completing
+      setStep('features')
+      setIsSubmitting(false)
     } catch (error) {
       console.error('Skip error:', error)
       setIsSubmitting(false)
@@ -421,6 +456,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
             key="loading"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="max-w-md w-full text-center"
           >
             <motion.div
@@ -464,6 +500,82 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
                 />
               ))}
             </div>
+          </motion.div>
+        )}
+
+        {/* Feature Discovery Screen */}
+        {step === 'features' && (
+          <motion.div
+            key="features"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4 }}
+            className="max-w-lg w-full"
+          >
+            <div className="text-center mb-8">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
+                className="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
+              >
+                <Sparkles className="w-8 h-8 text-white" />
+              </motion.div>
+              <motion.h2
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white mb-2"
+              >
+                You&apos;re all set! 🎉
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="text-neutral-500 dark:text-neutral-400"
+              >
+                Here&apos;s what your AI assistant can do for you
+              </motion.p>
+            </div>
+
+            <div className="space-y-3 mb-8">
+              {AI_FEATURES.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 + index * 0.1 }}
+                  className={`p-4 rounded-xl bg-gradient-to-r ${feature.gradient} flex items-start gap-4`}
+                >
+                  <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <feature.icon className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-white mb-0.5">{feature.title}</h3>
+                    <p className="text-sm text-white/80">{feature.description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+            >
+              <button
+                onClick={onComplete}
+                className="w-full py-3 px-6 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-xl font-semibold hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors flex items-center justify-center gap-2"
+              >
+                Go to Dashboard
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <p className="text-center text-xs text-neutral-400 dark:text-neutral-500 mt-3">
+                Look for the chat button in the bottom-right corner anytime
+              </p>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

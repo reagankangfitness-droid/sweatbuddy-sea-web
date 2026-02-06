@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { DollarSign, Users, Clock, CheckCircle, AlertCircle, CreditCard, ChevronRight, XCircle, Ban, AlertTriangle, Star, BarChart3, Wallet, Sparkles, TrendingUp } from 'lucide-react'
+import { DollarSign, Users, Clock, CheckCircle, AlertCircle, CreditCard, ChevronRight, XCircle, Ban, AlertTriangle, Star, BarChart3, Wallet, Sparkles, TrendingUp, MessageSquare, ArrowRight } from 'lucide-react'
 import { DashboardHeader } from '@/components/host/DashboardHeader'
 import { StatCard } from '@/components/host/StatCard'
 import { UpcomingEventRow } from '@/components/host/UpcomingEventRow'
@@ -304,7 +304,7 @@ export default function HostDashboard() {
         )}
 
         {/* Stats - 2 cols on very small screens, 3 cols on sm+ */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
           <StatCard value={data.stats.activeEvents || 0} label="Events Live" />
           <StatCard value={data.stats.totalSignups || 0} label="People Joined" />
           <StatCard
@@ -312,6 +312,78 @@ export default function HostDashboard() {
             label="Earnings"
             className="col-span-2 sm:col-span-1"
           />
+        </div>
+
+        {/* AI Tools Showcase */}
+        <div className="mb-6 sm:mb-10">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-6 h-6 bg-gradient-to-br from-violet-500 to-indigo-500 rounded-lg flex items-center justify-center">
+              <Sparkles className="w-3.5 h-3.5 text-white" />
+            </div>
+            <h2 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white">
+              Your AI Assistant
+            </h2>
+            <span className="px-2 py-0.5 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 text-xs font-medium rounded-full">
+              NEW
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {/* AI Chat Card */}
+            <button
+              onClick={() => {
+                // Find and click the chat widget button
+                const chatButton = document.querySelector('[aria-label="Open AI assistant"]') as HTMLButtonElement
+                if (chatButton) chatButton.click()
+              }}
+              className="group p-4 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl text-left hover:from-indigo-600 hover:to-purple-700 transition-all hover:scale-[1.02] hover:shadow-lg"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                  <MessageSquare className="w-5 h-5 text-white" />
+                </div>
+                <ArrowRight className="w-4 h-4 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              </div>
+              <h3 className="font-semibold text-white mb-1">AI Chat</h3>
+              <p className="text-xs text-white/80">
+                Ask anything about your community, get instant answers
+              </p>
+            </button>
+
+            {/* Content Generator Card */}
+            <Link
+              href="/host/content"
+              className="group p-4 bg-gradient-to-br from-violet-500 to-pink-500 rounded-xl text-left hover:from-violet-600 hover:to-pink-600 transition-all hover:scale-[1.02] hover:shadow-lg"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <ArrowRight className="w-4 h-4 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              </div>
+              <h3 className="font-semibold text-white mb-1">Content Generator</h3>
+              <p className="text-xs text-white/80">
+                Create Instagram captions, WhatsApp messages & more
+              </p>
+            </Link>
+
+            {/* Growth Insights Card */}
+            <Link
+              href="/host/growth"
+              className="group p-4 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl text-left hover:from-emerald-600 hover:to-teal-600 transition-all hover:scale-[1.02] hover:shadow-lg"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-white" />
+                </div>
+                <ArrowRight className="w-4 h-4 text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              </div>
+              <h3 className="font-semibold text-white mb-1">Growth Insights</h3>
+              <p className="text-xs text-white/80">
+                AI-powered recommendations to grow your community
+              </p>
+            </Link>
+          </div>
         </div>
 
         {/* Quick Links */}
@@ -329,20 +401,6 @@ export default function HostDashboard() {
           >
             <BarChart3 className="w-4 h-4" />
             Analytics
-          </Link>
-          <Link
-            href="/host/content"
-            className="flex items-center gap-2 px-4 py-2 bg-violet-100 dark:bg-violet-900/30 hover:bg-violet-200 dark:hover:bg-violet-900/50 rounded-full text-sm font-medium text-violet-700 dark:text-violet-300 transition-colors whitespace-nowrap"
-          >
-            <Sparkles className="w-4 h-4" />
-            Content
-          </Link>
-          <Link
-            href="/host/growth"
-            className="flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-900/50 rounded-full text-sm font-medium text-green-700 dark:text-green-300 transition-colors whitespace-nowrap"
-          >
-            <TrendingUp className="w-4 h-4" />
-            Growth
           </Link>
           <Link
             href="/host/earnings"

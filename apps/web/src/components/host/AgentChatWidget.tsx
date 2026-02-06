@@ -1,13 +1,132 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { MessageSquare, Send, X, Trash2, Loader2 } from 'lucide-react'
+import { MessageSquare, Send, X, Trash2, Loader2, Sparkles } from 'lucide-react'
 
 interface ChatMessage {
   id: string
   role: 'user' | 'assistant'
   content: string
   createdAt: string
+  isTyping?: boolean
+}
+
+interface QuickQuestion {
+  label: string
+  question: string
+  icon?: string
+}
+
+// Category-specific quick questions
+const QUICK_QUESTIONS: Record<string, QuickQuestion[]> = {
+  RUN: [
+    { label: 'Grow my run club', question: 'How can I grow my running community in Singapore?', icon: '📈' },
+    { label: 'Engage regulars', question: 'How do I keep my regular runners engaged and coming back?', icon: '⭐' },
+    { label: 'Route ideas', question: 'Can you suggest some interesting running routes in Singapore?', icon: '🗺️' },
+    { label: 'Rainy day plan', question: 'What should I do when it rains and we can\'t run outdoors?', icon: '🌧️' },
+  ],
+  YOGA: [
+    { label: 'Grow my community', question: 'How can I attract more people to my yoga sessions?', icon: '📈' },
+    { label: 'Beginner tips', question: 'How do I make beginners feel welcome in my yoga classes?', icon: '🌱' },
+    { label: 'Session themes', question: 'What are some creative themes for yoga sessions?', icon: '✨' },
+    { label: 'Outdoor yoga', question: 'What are the best spots for outdoor yoga in Singapore?', icon: '🌳' },
+  ],
+  HIIT: [
+    { label: 'Grow attendance', question: 'How can I get more people to join my HIIT sessions?', icon: '📈' },
+    { label: 'Scale workouts', question: 'How do I scale workouts for different fitness levels?', icon: '💪' },
+    { label: 'Keep it fresh', question: 'How do I keep my HIIT workouts interesting week after week?', icon: '🔥' },
+    { label: 'Equipment ideas', question: 'What minimal equipment should I bring for outdoor HIIT?', icon: '🎒' },
+  ],
+  MEDITATION: [
+    { label: 'Attract members', question: 'How can I attract more people to try meditation?', icon: '📈' },
+    { label: 'Quiet locations', question: 'Where are the best quiet spots for meditation in Singapore?', icon: '🧘' },
+    { label: 'Session ideas', question: 'What types of meditation sessions work well for beginners?', icon: '🌱' },
+    { label: 'Build consistency', question: 'How do I help my community build a consistent practice?', icon: '📅' },
+  ],
+  BOOTCAMP: [
+    { label: 'Grow bootcamp', question: 'How can I grow my bootcamp attendance?', icon: '📈' },
+    { label: 'Team activities', question: 'What are some fun team-based bootcamp activities?', icon: '👥' },
+    { label: 'Weather backup', question: 'What\'s a good backup plan when weather is bad?', icon: '🌧️' },
+    { label: 'Member retention', question: 'How do I keep bootcamp members motivated long-term?', icon: '💪' },
+  ],
+  STRENGTH: [
+    { label: 'Grow community', question: 'How can I attract more people to strength training?', icon: '📈' },
+    { label: 'Programming tips', question: 'How should I structure progressive strength programs?', icon: '📊' },
+    { label: 'Form coaching', question: 'How do I effectively teach proper lifting form in groups?', icon: '🎯' },
+    { label: 'Track progress', question: 'What\'s the best way to track member progress?', icon: '📈' },
+  ],
+  OTHER: [
+    { label: 'Grow community', question: 'How can I grow my fitness community?', icon: '📈' },
+    { label: 'Engage members', question: 'How do I keep my community members engaged?', icon: '⭐' },
+    { label: 'Content ideas', question: 'What content should I post on social media?', icon: '📱' },
+    { label: 'Re-engage members', question: 'How do I bring back members who stopped coming?', icon: '🔄' },
+  ],
+  DEFAULT: [
+    { label: 'Grow community', question: 'How can I grow my fitness community?', icon: '📈' },
+    { label: 'This week\'s tips', question: 'Based on my data, what should I focus on this week?', icon: '🎯' },
+    { label: 'Content ideas', question: 'Can you help me write an Instagram post for my next event?', icon: '📱' },
+    { label: 'Re-engage members', question: 'How do I bring back members who haven\'t attended recently?', icon: '🔄' },
+  ],
+}
+
+// Typing animation hook
+function useTypingAnimation(text: string, isTyping: boolean, speed: number = 20) {
+  const [displayedText, setDisplayedText] = useState('')
+  const [isComplete, setIsComplete] = useState(false)
+
+  useEffect(() => {
+    if (!isTyping) {
+      setDisplayedText(text)
+      setIsComplete(true)
+      return
+    }
+
+    setDisplayedText('')
+    setIsComplete(false)
+    let index = 0
+
+    const interval = setInterval(() => {
+      if (index < text.length) {
+        setDisplayedText(text.slice(0, index + 1))
+        index++
+      } else {
+        setIsComplete(true)
+        clearInterval(interval)
+      }
+    }, speed)
+
+    return () => clearInterval(interval)
+  }, [text, isTyping, speed])
+
+  return { displayedText, isComplete }
+}
+
+// Message component with typing animation
+function AnimatedMessage({ message }: { message: ChatMessage }) {
+  const { displayedText, isComplete } = useTypingAnimation(
+    message.content,
+    message.isTyping || false,
+    15
+  )
+
+  return (
+    <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+      <div
+        className={`max-w-[85%] px-3 py-2 rounded-xl text-sm ${
+          message.role === 'user'
+            ? 'bg-violet-600 text-white rounded-br-sm'
+            : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white rounded-bl-sm'
+        }`}
+      >
+        <p className="whitespace-pre-wrap">
+          {displayedText}
+          {message.isTyping && !isComplete && (
+            <span className="inline-block w-1 h-4 ml-0.5 bg-violet-600 dark:bg-violet-400 animate-pulse" />
+          )}
+        </p>
+      </div>
+    </div>
+  )
 }
 
 export function AgentChatWidget() {
@@ -18,6 +137,8 @@ export function AgentChatWidget() {
   const [isLoading, setIsLoading] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [communityType, setCommunityType] = useState<string | null>(null)
+  const [showQuickQuestions, setShowQuickQuestions] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -29,10 +150,11 @@ export function AgentChatWidget() {
     scrollToBottom()
   }, [messages, scrollToBottom])
 
-  // Load conversation when widget opens
+  // Load conversation and community type when widget opens
   useEffect(() => {
     if (isOpen && messages.length === 0 && !isLoading) {
       loadConversation()
+      loadCommunityType()
     }
   }, [isOpen])
 
@@ -43,6 +165,18 @@ export function AgentChatWidget() {
     }
   }, [isOpen])
 
+  const loadCommunityType = async () => {
+    try {
+      const res = await fetch('/api/host/onboarding')
+      if (res.ok) {
+        const data = await res.json()
+        setCommunityType(data.organizer?.communityType || null)
+      }
+    } catch {
+      // Silently fail - will use default questions
+    }
+  }
+
   const loadConversation = async () => {
     setIsLoading(true)
     setError(null)
@@ -52,6 +186,10 @@ export function AgentChatWidget() {
         const data = await res.json()
         setConversationId(data.conversationId)
         setMessages(data.messages)
+        // Hide quick questions if there are already messages
+        if (data.messages.length > 0) {
+          setShowQuickQuestions(false)
+        }
       } else {
         throw new Error('Failed to load chat')
       }
@@ -62,13 +200,14 @@ export function AgentChatWidget() {
     }
   }
 
-  const sendMessage = async () => {
-    if (!input.trim() || isSending) return
+  const sendMessage = async (messageText?: string) => {
+    const userMessage = (messageText || input).trim()
+    if (!userMessage || isSending) return
 
-    const userMessage = input.trim()
     setInput('')
     setIsSending(true)
     setError(null)
+    setShowQuickQuestions(false)
 
     // Optimistically add user message
     const tempUserMsg: ChatMessage = {
@@ -92,16 +231,23 @@ export function AgentChatWidget() {
       if (res.ok) {
         const data = await res.json()
         setConversationId(data.conversationId)
-        // Replace temp message with actual and add assistant response
+        // Replace temp message with actual and add assistant response with typing animation
         setMessages((prev) => [
           ...prev.filter((m) => m.id !== tempUserMsg.id),
           data.userMessage,
-          data.assistantMessage,
+          { ...data.assistantMessage, isTyping: true },
         ])
+        // Remove typing flag after animation completes
+        setTimeout(() => {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === data.assistantMessage.id ? { ...m, isTyping: false } : m
+            )
+          )
+        }, data.assistantMessage.content.length * 15 + 500)
       } else if (res.status === 429) {
         const data = await res.json()
         setError(data.error || 'Rate limit reached. Please wait.')
-        // Remove optimistic message
         setMessages((prev) => prev.filter((m) => m.id !== tempUserMsg.id))
       } else {
         throw new Error('Failed to send message')
@@ -125,6 +271,7 @@ export function AgentChatWidget() {
         const data = await res.json()
         setConversationId(data.conversationId)
         setMessages([])
+        setShowQuickQuestions(true)
       }
     } catch {
       setError('Failed to clear conversation.')
@@ -137,6 +284,13 @@ export function AgentChatWidget() {
       sendMessage()
     }
   }
+
+  const handleQuickQuestion = (question: string) => {
+    sendMessage(question)
+  }
+
+  // Get quick questions based on community type
+  const quickQuestions = QUICK_QUESTIONS[communityType || 'DEFAULT'] || QUICK_QUESTIONS.DEFAULT
 
   return (
     <>
@@ -161,7 +315,7 @@ export function AgentChatWidget() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                  <MessageSquare className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-sm sm:text-base">AI Assistant</h3>
@@ -185,28 +339,44 @@ export function AgentChatWidget() {
                 <Loader2 className="w-6 h-6 text-violet-600 animate-spin" />
               </div>
             ) : messages.length === 0 ? (
-              <div className="text-center text-neutral-500 dark:text-neutral-400 py-8">
-                <MessageSquare className="w-10 h-10 mx-auto mb-3 text-neutral-300 dark:text-neutral-600" />
-                <p className="text-sm font-medium mb-1">Hi there!</p>
-                <p className="text-xs">Ask me about your events, community insights, or content ideas.</p>
+              <div className="text-center py-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-indigo-500 rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <p className="text-sm font-medium text-neutral-900 dark:text-white mb-1">
+                  Hey! How can I help?
+                </p>
+                <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-4">
+                  Ask me about your events, community insights, or content ideas.
+                </p>
+
+                {/* Quick questions */}
+                {showQuickQuestions && (
+                  <div className="space-y-2">
+                    <p className="text-xs text-neutral-400 dark:text-neutral-500 uppercase tracking-wide">
+                      Quick questions
+                    </p>
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {quickQuestions.map((q, i) => (
+                        <button
+                          key={i}
+                          onClick={() => handleQuickQuestion(q.question)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 hover:bg-violet-100 dark:hover:bg-violet-900/30 text-neutral-700 dark:text-neutral-300 hover:text-violet-700 dark:hover:text-violet-300 rounded-full text-xs font-medium transition-colors"
+                        >
+                          <span>{q.icon}</span>
+                          <span>{q.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
-              messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[85%] px-3 py-2 rounded-xl text-sm ${
-                      msg.role === 'user'
-                        ? 'bg-violet-600 text-white rounded-br-sm'
-                        : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white rounded-bl-sm'
-                    }`}
-                  >
-                    <p className="whitespace-pre-wrap">{msg.content}</p>
-                  </div>
-                </div>
-              ))
+              <>
+                {messages.map((msg) => (
+                  <AnimatedMessage key={msg.id} message={msg} />
+                ))}
+              </>
             )}
             {isSending && (
               <div className="flex justify-start">
@@ -221,6 +391,24 @@ export function AgentChatWidget() {
             )}
             <div ref={messagesEndRef} />
           </div>
+
+          {/* Quick questions when messages exist */}
+          {messages.length > 0 && !isSending && (
+            <div className="px-3 pb-2 overflow-x-auto">
+              <div className="flex gap-2">
+                {quickQuestions.slice(0, 2).map((q, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleQuickQuestion(q.question)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-neutral-100 dark:bg-neutral-800 hover:bg-violet-100 dark:hover:bg-violet-900/30 text-neutral-600 dark:text-neutral-400 hover:text-violet-700 dark:hover:text-violet-300 rounded-full text-xs font-medium transition-colors whitespace-nowrap flex-shrink-0"
+                  >
+                    <span>{q.icon}</span>
+                    <span>{q.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Error */}
           {error && (
@@ -244,7 +432,7 @@ export function AgentChatWidget() {
                 disabled={isSending}
               />
               <button
-                onClick={sendMessage}
+                onClick={() => sendMessage()}
                 disabled={!input.trim() || isSending}
                 className="p-2 bg-violet-600 hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition-colors"
               >

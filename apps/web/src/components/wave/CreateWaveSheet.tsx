@@ -140,10 +140,10 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
         longitude: placeLng ?? userPosition?.lng,
         scheduledFor: scheduledDate.getTime() > Date.now() ? scheduledDate.toISOString() : undefined,
       })
-      toast.success(`Wave started! ${WAVE_ACTIVITIES[selectedType].emoji} ${WAVE_ACTIVITIES[selectedType].label} in ${finalArea}`)
+      toast.success(`Activity started! ${WAVE_ACTIVITIES[selectedType].emoji} ${WAVE_ACTIVITIES[selectedType].label} in ${finalArea}`)
       handleClose()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to create wave. Please try again.')
+      toast.error(err instanceof Error ? err.message : 'Failed to start activity. Please try again.')
       setCreating(false)
     }
   }
@@ -189,7 +189,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
                 <div className="w-7" />
               )}
               <h2 className="font-bold text-neutral-900 dark:text-white">
-                {step === 'activity' ? 'Start a Wave' : WAVE_ACTIVITIES[selectedType!].emoji + ' ' + WAVE_ACTIVITIES[selectedType!].label}
+                {step === 'activity' ? 'Start Activity' : WAVE_ACTIVITIES[selectedType!].emoji + ' ' + WAVE_ACTIVITIES[selectedType!].label}
               </h2>
               <button onClick={handleClose} className="p-2 -m-1 text-neutral-500">
                 <X className="w-5 h-5" />
@@ -362,7 +362,7 @@ export function CreateWaveSheet({ isOpen, onClose, onCreateWave, userPosition }:
                       : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-600 cursor-not-allowed'
                   }`}
                 >
-                  {creating ? 'Creating...' : 'Start Wave 🙋'}
+                  {creating ? 'Starting...' : 'Start Activity 🙋'}
                 </button>
               </div>
             )}

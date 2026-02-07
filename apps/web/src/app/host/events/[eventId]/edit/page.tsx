@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
 import { Logo } from '@/components/logo'
+import { BackButton } from '@/components/host/BackButton'
 import { EditEventForm } from '@/components/host/EditEventForm'
 
 interface Event {
@@ -125,13 +126,11 @@ export default function EditEventPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-6 py-12">
-        {/* Back link */}
-        <Link
-          href="/host/dashboard"
-          className="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-900 transition-colors mb-8"
-        >
-          ← Back to Dashboard
-        </Link>
+        {/* Back button */}
+        <div className="flex items-center gap-2 mb-8">
+          <BackButton fallbackHref="/host/dashboard" />
+          <span className="text-sm text-neutral-500">Back</span>
+        </div>
 
         <h1 className="text-2xl font-bold text-neutral-900 mb-2">
           Edit Event

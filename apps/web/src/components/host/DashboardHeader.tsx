@@ -1,21 +1,16 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
 import { Logo } from '@/components/logo'
+import { BackButton } from '@/components/host/BackButton'
 
 export function DashboardHeader() {
   return (
     <header className="border-b border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-950 sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-        {/* Back to app + Logo */}
+        {/* Back button + Logo */}
         <div className="flex items-center gap-3">
-          <Link
-            href="/app"
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
-          </Link>
+          <BackButton fallbackHref="/host/dashboard" />
           <Link href="/" className="flex items-center gap-2">
             <Logo size={24} />
             <span className="text-lg font-bold text-neutral-900 dark:text-white hidden sm:inline">sweatbuddies</span>

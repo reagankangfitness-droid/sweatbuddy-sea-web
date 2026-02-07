@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Users, Check, Clock } from 'lucide-react'
-import Link from 'next/link'
+import { Users, Check, Clock } from 'lucide-react'
 import dynamic from 'next/dynamic'
+import { BackButton } from '@/components/host/BackButton'
 import { CheckInSuccess } from '@/components/host/CheckInSuccess'
 
 // Dynamic import QRScanner to avoid SSR issues with html5-qrcode
@@ -168,13 +168,10 @@ export default function CheckInPage() {
       {/* Header */}
       <div className="bg-white border-b border-neutral-200">
         <div className="max-w-lg mx-auto px-4 py-4">
-          <Link
-            href={`/host/events/${eventId}/attendees`}
-            className="inline-flex items-center gap-2 text-neutral-600 hover:text-neutral-900 mb-4"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Attendees</span>
-          </Link>
+          <div className="flex items-center gap-2 mb-4">
+            <BackButton fallbackHref={`/host/events/${eventId}/attendees`} />
+            <span className="text-sm text-neutral-600">Back</span>
+          </div>
 
           <h1 className="text-xl font-bold text-neutral-900">
             {event?.title || 'Event'} Check-in

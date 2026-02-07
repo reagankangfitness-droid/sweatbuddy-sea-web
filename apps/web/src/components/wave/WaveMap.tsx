@@ -378,20 +378,20 @@ export function WaveMap() {
               onClick={() => setCreateOpen(true)}
               className="mt-3 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm pointer-events-auto"
             >
-              Start a wave 🙋
+              Start activity 🙋
             </button>
           </div>
         </div>
       )}
 
-      {/* Start wave FAB */}
+      {/* Start activity FAB */}
       {!crewChat && (
         <button
           onClick={() => setCreateOpen(true)}
           className="fixed bottom-28 left-1/2 -translate-x-1/2 z-10 px-5 py-3 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-xl font-semibold text-sm active:scale-95 transition-transform"
         >
           <Plus className="w-4 h-4 inline-block -mt-0.5 mr-1" />
-          Start wave
+          Start activity
         </button>
       )}
 

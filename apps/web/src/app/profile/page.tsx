@@ -13,6 +13,13 @@ import {
   Ticket,
   BadgeCheck,
   MessageCircle,
+  Sparkles,
+  PenTool,
+  TrendingUp,
+  MessageSquare,
+  Heart,
+  HelpCircle,
+  Radio,
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -22,22 +29,66 @@ interface ProfileData {
   isHost: boolean
 }
 
+// Cache key for localStorage
+const PROFILE_CACHE_KEY = 'sb_profile_cache'
+
 export default function ProfilePage() {
   const { isLoaded, isSignedIn, user } = useUser()
   const { signOut } = useClerk()
   const router = useRouter()
+
+  // Initialize from cache for instant render
   const [profile, setProfile] = useState<ProfileData | null>(null)
 
+  // Load cache on mount (after hydration)
   useEffect(() => {
-    if (isSignedIn) {
-      fetch('/api/user/stats')
-        .then((res) => res.json())
-        .then((data) => setProfile(data.profile || null))
-        .catch(() => {
-          // Error handled silently
-        })
+    if (typeof window !== 'undefined' && user?.id) {
+      try {
+        const cached = localStorage.getItem(PROFILE_CACHE_KEY)
+        if (cached) {
+          const parsed = JSON.parse(cached)
+          // Validate cache belongs to current user
+          if (parsed._userId === user.id) {
+            setProfile({ slug: parsed.slug, isHost: parsed.isHost })
+          }
+        }
+      } catch {}
     }
-  }, [isSignedIn])
+  }, [user?.id])
+
+  useEffect(() => {
+    if (isSignedIn && user?.id) {
+      // Fetch in background, don't block render (lightweight endpoint)
+      fetch('/api/user/profile')
+        .then((res) => {
+          if (!res.ok) throw new Error('Failed to fetch')
+          return res.json()
+        })
+        .then((data) => {
+          const profileData = data.profile || null
+          setProfile(profileData)
+          // Cache with user ID for validation
+          if (profileData) {
+            try {
+              localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify({
+                ...profileData,
+                _userId: user.id,
+              }))
+            } catch {}
+          }
+        })
+        .catch(() => {
+          // On error, clear potentially stale cache
+          setProfile(null)
+        })
+    } else if (isLoaded && !isSignedIn) {
+      // Clear cache on sign out
+      try {
+        localStorage.removeItem(PROFILE_CACHE_KEY)
+      } catch {}
+      setProfile(null)
+    }
+  }, [isSignedIn, isLoaded, user?.id])
 
   if (!isLoaded) {
     return (
@@ -110,7 +161,7 @@ export default function ProfilePage() {
       </header>
 
       {/* Content */}
-      <main className="pt-20 pb-24 px-4">
+      <main className="pt-20 pb-24 px-4 max-w-lg mx-auto">
         {/* Profile Card */}
         <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 p-4 mb-4">
           <div className="flex items-center gap-4">
@@ -154,61 +205,210 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Menu Items */}
-        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden">
-          <Link
-            href="/crews"
-            className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
-          >
-            <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
-              <MessageCircle className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
-              My Crews
-            </span>
-            <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
-          </Link>
+        {/* AI Tools Showcase - For Hosts */}
+        {isHost && (
+          <div className="mb-4">
+            <div className="bg-neutral-900 dark:bg-neutral-800/50 rounded-2xl p-4 border border-neutral-800 dark:border-neutral-700 relative overflow-hidden">
+              {/* Subtle background glow */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-neutral-700/30 rounded-full blur-3xl -mr-16 -mt-16" />
 
-          <Link
-            href="/my-bookings"
-            className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
-          >
-            <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
-              <Ticket className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
-              My Bookings
-            </span>
-            <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
-          </Link>
+              <div className="relative">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 bg-neutral-800 dark:bg-neutral-700 rounded-lg flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-amber-400" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold text-sm text-white">AI Assistant</h3>
+                    <span className="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded font-semibold">NEW</span>
+                  </div>
+                </div>
 
-          <Link
-            href="/host/dashboard"
-            className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
-          >
-            <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
-              <LayoutDashboard className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
-              Host Dashboard
-            </span>
-            <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
-          </Link>
+                <p className="text-neutral-400 text-xs mb-4">
+                  Your personal AI to help grow your fitness community
+                </p>
 
-          <Link
-            href="/settings/profile"
-            className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
-          >
-            <span className="flex items-center gap-3 text-neutral-800 dark:text-neutral-200 text-sm font-medium">
-              <Settings className="w-5 h-5 text-neutral-400 dark:text-neutral-500" />
-              Settings
-            </span>
-            <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
-          </Link>
+                {/* AI Tool Cards */}
+                <div className="grid grid-cols-3 gap-2">
+                  <Link
+                    href="/host/content"
+                    className="bg-neutral-800 dark:bg-neutral-700/50 hover:bg-neutral-700 dark:hover:bg-neutral-600/50 rounded-xl p-3 text-center transition-colors border border-neutral-700 dark:border-neutral-600"
+                  >
+                    <div className="w-8 h-8 bg-neutral-700 dark:bg-neutral-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+                      <PenTool className="w-4 h-4 text-neutral-300" />
+                    </div>
+                    <p className="text-xs font-medium text-white">Content</p>
+                    <p className="text-[10px] text-neutral-500">Generator</p>
+                  </Link>
 
-          <button
-            onClick={() => signOut(() => router.push('/'))}
-            className="w-full flex items-center justify-between px-4 py-3.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
-          >
-            <span className="flex items-center gap-3 text-sm font-medium">
-              <LogOut className="w-5 h-5" />
-              Sign Out
-            </span>
-          </button>
+                  <Link
+                    href="/host/growth"
+                    className="bg-neutral-800 dark:bg-neutral-700/50 hover:bg-neutral-700 dark:hover:bg-neutral-600/50 rounded-xl p-3 text-center transition-colors border border-neutral-700 dark:border-neutral-600"
+                  >
+                    <div className="w-8 h-8 bg-neutral-700 dark:bg-neutral-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+                      <TrendingUp className="w-4 h-4 text-neutral-300" />
+                    </div>
+                    <p className="text-xs font-medium text-white">Growth</p>
+                    <p className="text-[10px] text-neutral-500">Insights</p>
+                  </Link>
+
+                  <Link
+                    href="/host/dashboard"
+                    className="bg-neutral-800 dark:bg-neutral-700/50 hover:bg-neutral-700 dark:hover:bg-neutral-600/50 rounded-xl p-3 text-center transition-colors border border-neutral-700 dark:border-neutral-600"
+                  >
+                    <div className="w-8 h-8 bg-neutral-700 dark:bg-neutral-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+                      <MessageSquare className="w-4 h-4 text-neutral-300" />
+                    </div>
+                    <p className="text-xs font-medium text-white">AI Chat</p>
+                    <p className="text-[10px] text-neutral-500">Ask anything</p>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* My Activity Section */}
+        <div className="mb-4">
+          <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-1 mb-2">
+            My Activity
+          </h3>
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden">
+            <Link
+              href="/my-activities"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg flex items-center justify-center">
+                  <Radio className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                </div>
+                <div>
+                  <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">My Activities</span>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Activities you&apos;ve started</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+            </Link>
+
+            <Link
+              href="/my-bookings"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
+                  <Ticket className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                </div>
+                <div>
+                  <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">My Bookings</span>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Upcoming & past events</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+            </Link>
+
+            <Link
+              href="/saved"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
+                  <Heart className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                </div>
+                <div>
+                  <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">Saved</span>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Events you&apos;ve saved</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+            </Link>
+
+            <Link
+              href="/crews"
+              className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
+                  <MessageCircle className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                </div>
+                <div>
+                  <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">My Crews</span>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Communities you&apos;ve joined</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Host Tools Section - Only show for non-hosts or when AI Tools not shown */}
+        {!isHost && (
+          <div className="mb-4">
+            <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-1 mb-2">
+              Host Tools
+            </h3>
+            <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden">
+              <Link
+                href="/host/dashboard"
+                className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
+                    <LayoutDashboard className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                  </div>
+                  <div>
+                    <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">Host Dashboard</span>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">Manage events & community</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* Account Section */}
+        <div className="mb-4">
+          <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-1 mb-2">
+            Account
+          </h3>
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden">
+            <Link
+              href="/settings/profile"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
+                  <Settings className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                </div>
+                <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">Settings</span>
+              </div>
+              <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+            </Link>
+
+            <Link
+              href="/support"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
+                  <HelpCircle className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                </div>
+                <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">Help & Support</span>
+              </div>
+              <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+            </Link>
+
+            <button
+              onClick={() => signOut(() => router.push('/'))}
+              className="w-full flex items-center px-4 py-3.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
+                  <LogOut className="w-4 h-4" />
+                </div>
+                <span className="text-sm font-medium">Sign Out</span>
+              </div>
+            </button>
+          </div>
         </div>
       </main>
 

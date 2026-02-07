@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronLeft, Loader2 } from 'lucide-react'
 import { Logo } from '@/components/logo'
+import { BackButton } from '@/components/host/BackButton'
 import { EarningsDashboard } from '@/components/host/EarningsDashboard'
 
 export default function EarningsPage() {
@@ -44,17 +44,13 @@ export default function EarningsPage() {
       {/* Header */}
       <header className="border-b border-neutral-100">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <Logo size={24} />
-            <span className="text-lg font-bold text-neutral-900">sweatbuddies</span>
-          </Link>
-          <Link
-            href="/host/dashboard"
-            className="text-sm text-neutral-500 hover:text-neutral-900 flex items-center gap-1"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Dashboard
-          </Link>
+          <div className="flex items-center gap-3">
+            <BackButton fallbackHref="/host/dashboard" />
+            <Link href="/" className="flex items-center gap-2">
+              <Logo size={24} />
+              <span className="text-lg font-bold text-neutral-900 hidden sm:inline">sweatbuddies</span>
+            </Link>
+          </div>
         </div>
       </header>
 

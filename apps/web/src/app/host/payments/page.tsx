@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Loader2, ChevronLeft, CreditCard } from 'lucide-react'
+import { Loader2, CreditCard } from 'lucide-react'
 import { Logo } from '@/components/logo'
+import { BackButton } from '@/components/host/BackButton'
 import { PaymentRow } from '@/components/host/PaymentRow'
 
 interface Payment {
@@ -73,10 +74,11 @@ export default function PaymentsPage() {
     return (
       <div className="min-h-screen bg-white">
         <header className="border-b border-neutral-100">
-          <div className="max-w-4xl mx-auto px-6 py-4">
+          <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-3">
+            <BackButton fallbackHref="/host/dashboard" />
             <Link href="/" className="flex items-center gap-2">
               <Logo size={24} />
-              <span className="text-lg font-bold text-neutral-900">sweatbuddies</span>
+              <span className="text-lg font-bold text-neutral-900 hidden sm:inline">sweatbuddies</span>
             </Link>
           </div>
         </header>
@@ -99,14 +101,11 @@ export default function PaymentsPage() {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="border-b border-neutral-100">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-3">
+          <BackButton fallbackHref="/host/dashboard" />
           <Link href="/" className="flex items-center gap-2">
             <Logo size={24} />
-            <span className="text-lg font-bold text-neutral-900">sweatbuddies</span>
-          </Link>
-          <Link href="/host/dashboard" className="text-sm text-neutral-500 hover:text-neutral-900 flex items-center gap-1">
-            <ChevronLeft className="w-4 h-4" />
-            Dashboard
+            <span className="text-lg font-bold text-neutral-900 hidden sm:inline">sweatbuddies</span>
           </Link>
         </div>
       </header>

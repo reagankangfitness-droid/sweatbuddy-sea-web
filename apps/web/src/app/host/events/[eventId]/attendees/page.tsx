@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Logo } from '@/components/logo'
+import { BackButton } from '@/components/host/BackButton'
 import { Loader2, Check, X, Clock, Download, User, RefreshCcw, Mail, Users, QrCode } from 'lucide-react'
 import { EmailAttendeesModal } from '@/components/host/EmailAttendeesModal'
 import { AttendanceToggleCompact } from '@/components/host/AttendanceToggle'
@@ -288,12 +289,10 @@ export default function AttendeesPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-6 py-12">
-        <Link
-          href="/host/dashboard"
-          className="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-900 transition-colors mb-8"
-        >
-          ← Back to Dashboard
-        </Link>
+        <div className="flex items-center gap-2 mb-8">
+          <BackButton fallbackHref="/host/dashboard" />
+          <span className="text-sm text-neutral-500">Back</span>
+        </div>
 
         <div className="flex items-center justify-between mb-6">
           <div>

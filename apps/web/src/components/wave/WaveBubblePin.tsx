@@ -32,7 +32,7 @@ interface WaveBubblePinProps {
   onClick: () => void
 }
 
-const PIN_OFFSET = { x: -40, y: -20 }
+const PIN_OFFSET = { x: -24, y: -24 }
 const getOffset = () => PIN_OFFSET
 
 export const WaveBubblePin = memo(function WaveBubblePin({ wave, onClick }: WaveBubblePinProps) {
@@ -41,6 +41,19 @@ export const WaveBubblePin = memo(function WaveBubblePin({ wave, onClick }: Wave
   const activity = WAVE_ACTIVITIES[wave.activityType]
   const remaining = wave.waveThreshold - wave.participantCount
   const isAlmostUnlocked = !wave.isUnlocked && remaining === 1
+
+  // Border color based on state
+  const borderColor = wave.isUnlocked
+    ? 'border-emerald-500'
+    : isAlmostUnlocked
+      ? 'border-orange-500'
+      : 'border-cyan-500'
+
+  const pulseColor = wave.isUnlocked
+    ? 'bg-emerald-500/30'
+    : isAlmostUnlocked
+      ? 'bg-orange-500/30'
+      : 'bg-cyan-500/30'
 
   return (
     <OverlayView
@@ -53,77 +66,51 @@ export const WaveBubblePin = memo(function WaveBubblePin({ wave, onClick }: Wave
         className="relative flex flex-col items-center pointer-events-auto"
         style={{ willChange: 'transform', zIndex: 1000 }}
       >
-        <div className="relative">
-          {/* Animated pulse ring for waves */}
-          <div className={`absolute -inset-2 rounded-3xl animate-pulse ${
-            wave.isUnlocked
-              ? 'bg-emerald-400/30'
-              : isAlmostUnlocked
-                ? 'bg-orange-400/30'
-                : 'bg-cyan-400/30'
-          }`} />
+        {/* Animated pulse ring - differentiates from static events */}
+        <div className={`absolute -inset-1.5 rounded-full animate-pulse ${pulseColor}`} />
 
-          {/* Main pill bubble - larger and more prominent */}
-          <div
-            className={`px-4 py-2.5 rounded-2xl shadow-2xl flex items-center gap-2.5 border-3 ${
-              wave.isUnlocked
-                ? 'bg-emerald-100 dark:bg-emerald-800/60 border-emerald-500'
-                : isAlmostUnlocked
-                  ? 'bg-orange-100 dark:bg-orange-800/60 border-orange-500'
-                  : 'bg-gradient-to-br from-cyan-100 to-blue-100 dark:from-cyan-800/60 dark:to-blue-800/60 border-cyan-500'
-            }`}
-          >
-            {/* Avatar with activity emoji badge - larger */}
-            <div className="relative">
-              {wave.creatorImageUrl ? (
-                <Image
-                  src={wave.creatorImageUrl}
-                  alt={wave.creatorName || 'Creator'}
-                  width={40}
-                  height={40}
-                  className="w-10 h-10 rounded-full object-cover ring-2 ring-white dark:ring-neutral-700"
-                />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-neutral-200 dark:bg-neutral-600 flex items-center justify-center text-xl">
-                  {activity.emoji}
-                </div>
-              )}
-              {/* Activity emoji badge - only show if user has profile pic */}
-              {wave.creatorImageUrl && (
-                <span className="absolute -bottom-1 -right-1 text-base bg-white dark:bg-neutral-800 rounded-full w-6 h-6 flex items-center justify-center shadow-md border-2 border-white dark:border-neutral-700">
-                  {activity.emoji}
-                </span>
-              )}
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold text-neutral-800 dark:text-neutral-100 max-w-[90px] truncate">
-                {wave.locationName || wave.area}
-              </span>
-              <div className="flex items-center gap-1.5">
-                <span className={`text-sm font-bold ${
-                  wave.isUnlocked
-                    ? 'text-emerald-600 dark:text-emerald-300'
-                    : isAlmostUnlocked
-                      ? 'text-orange-600 dark:text-orange-300'
-                      : 'text-cyan-600 dark:text-cyan-300'
-                }`}>
-                  {wave.participantCount}/{wave.waveThreshold}
-                </span>
-                <span className="text-sm">🙋</span>
-              </div>
-            </div>
-            {wave.isUnlocked && (
-              <span className="text-emerald-500 text-lg font-bold">✓</span>
-            )}
-          </div>
-
-          {/* "1 more!" badge - more prominent */}
-          {isAlmostUnlocked && (
-            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-full whitespace-nowrap shadow-lg animate-bounce">
-              1 more!
-            </div>
+        {/* Main circle */}
+        <div className={`w-12 h-12 rounded-full shadow-lg flex items-center justify-center bg-white dark:bg-neutral-800 border-[2.5px] ${borderColor} overflow-hidden`}>
+          {wave.creatorImageUrl ? (
+            <Image
+              src={wave.creatorImageUrl}
+              alt={wave.creatorName || 'Creator'}
+              width={44}
+              height={44}
+              className="w-full h-full object-cover"
+              unoptimized
+            />
+          ) : (
+            <span className="text-xl leading-none">{activity.emoji}</span>
           )}
         </div>
+
+        {/* Activity emoji badge (top-right) */}
+        {wave.creatorImageUrl && (
+          <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-white dark:bg-neutral-800 shadow-md flex items-center justify-center text-sm border border-neutral-200 dark:border-neutral-700">
+            {activity.emoji}
+          </span>
+        )}
+
+        {/* Wave count badge (bottom-right) - shows 🙋 + count */}
+        <span className={`absolute -bottom-0.5 -right-1 min-w-[22px] h-[18px] px-1.5 rounded-full text-white text-[10px] font-bold flex items-center justify-center shadow-sm ${
+          wave.isUnlocked
+            ? 'bg-emerald-500'
+            : isAlmostUnlocked
+              ? 'bg-orange-500'
+              : 'bg-cyan-500'
+        }`}>
+          {wave.participantCount}🙋
+        </span>
+
+        {/* Pointer triangle - cyan colored to match wave theme */}
+        <div className={`w-0 h-0 border-l-[5px] border-r-[5px] border-t-[6px] border-l-transparent border-r-transparent -mt-[1px] ${
+          wave.isUnlocked
+            ? 'border-t-emerald-500'
+            : isAlmostUnlocked
+              ? 'border-t-orange-500'
+              : 'border-t-cyan-500'
+        }`} />
       </button>
     </OverlayView>
   )

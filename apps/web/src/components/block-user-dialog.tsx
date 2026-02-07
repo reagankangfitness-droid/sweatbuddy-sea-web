@@ -66,7 +66,7 @@ export function BlockUserDialog({
               When you block someone:
             </p>
             <ul className="list-disc list-inside text-sm space-y-1 ml-2">
-              <li>They won&apos;t be able to see your waves or activities</li>
+              <li>They won&apos;t be able to see your activities</li>
               <li>You won&apos;t see their content in your feed</li>
               <li>Their messages in shared chats will be hidden from you</li>
               <li>They won&apos;t be notified that you blocked them</li>

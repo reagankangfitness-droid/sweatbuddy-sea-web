@@ -138,7 +138,7 @@ export function WaveDetailSheet({ wave, onClose, onJoin, onOpenChat, isParticipa
         {/* Wave progress */}
         <div className="px-4 pt-3">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Waves</span>
+            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">People</span>
             <span className="text-sm text-neutral-500">{wave.participantCount} of {wave.waveThreshold} to unlock crew</span>
           </div>
 
@@ -174,7 +174,7 @@ export function WaveDetailSheet({ wave, onClose, onJoin, onOpenChat, isParticipa
           {wave.isUnlocked ? (
             <span className="text-emerald-600 dark:text-emerald-400">Crew unlocked! Chat is open.</span>
           ) : remaining === 1 ? (
-            <span className="text-orange-500">🔥 Just 1 more wave to unlock!</span>
+            <span className="text-orange-500">🔥 Just 1 more person to unlock!</span>
           ) : (
             <span className="text-neutral-500 dark:text-neutral-400">
               {remaining} more to unlock crew chat
@@ -196,7 +196,7 @@ export function WaveDetailSheet({ wave, onClose, onJoin, onOpenChat, isParticipa
               disabled
               className="w-full py-3 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 font-semibold text-sm"
             >
-              You&apos;ve waved 🙋 Waiting for {remaining} more...
+              You&apos;ve joined 🙋 Waiting for {remaining} more...
             </button>
           ) : (
             <button
@@ -204,14 +204,14 @@ export function WaveDetailSheet({ wave, onClose, onJoin, onOpenChat, isParticipa
               disabled={joining}
               className="w-full py-3 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm disabled:opacity-50"
             >
-              {joining ? 'Joining...' : 'Wave to join 🙋'}
+              {joining ? 'Joining...' : 'Join activity 🙋'}
             </button>
           )}
 
           {currentUserId && wave.creatorId === currentUserId && onDeleteWave && (
             <button
               onClick={async () => {
-                if (!confirm('Are you sure you want to delete this wave? This cannot be undone.')) return
+                if (!confirm('Are you sure you want to delete this activity? This cannot be undone.')) return
                 setDeleting(true)
                 try {
                   await onDeleteWave(wave.id)
@@ -224,7 +224,7 @@ export function WaveDetailSheet({ wave, onClose, onJoin, onOpenChat, isParticipa
               disabled={deleting}
               className="w-full mt-2 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-semibold text-sm disabled:opacity-50"
             >
-              {deleting ? 'Deleting...' : 'Delete Wave'}
+              {deleting ? 'Deleting...' : 'Delete Activity'}
             </button>
           )}
         </div>

@@ -60,7 +60,7 @@ export function CrewChatList() {
             <MessageCircle className="w-8 h-8 text-neutral-400" />
           </div>
           <p className="text-neutral-500 dark:text-neutral-400 max-w-xs">
-            No crews yet. Wave at activities on the map to form crews!
+            No crews yet. Join activities on the map to form crews!
           </p>
         </div>
       ) : (

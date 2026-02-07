@@ -372,7 +372,7 @@ export function WaveMap() {
             <p className="text-3xl mb-2">🌊</p>
             <p className="font-semibold text-neutral-700 dark:text-neutral-200">No activity nearby</p>
             <p className="text-sm text-neutral-400 mt-1">
-              Be the first! Start a wave and others can join you.
+              Be the first! Start an activity and others can join you.
             </p>
             <button
               onClick={() => setCreateOpen(true)}

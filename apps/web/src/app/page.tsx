@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation'
 import { OnboardingTour } from '@/components/OnboardingTour'
 
 const steps = [
-  { emoji: '🙋', title: 'Post a wave', description: 'Say what you want to do and when' },
-  { emoji: '👋', title: 'Others join', description: 'Nearby people hop on your wave' },
+  { emoji: '🙋', title: 'Start an activity', description: 'Say what you want to do and when' },
+  { emoji: '👋', title: 'Others join', description: 'Nearby people join your activity' },
   { emoji: '💬', title: 'Meet up', description: 'Chat, coordinate, and go do it' },
 ]
 
@@ -53,7 +53,7 @@ export default function LandingPage() {
             Show up alone.<br />Leave with a crew.
           </h1>
           <p className="text-lg sm:text-xl text-white/70 max-w-md">
-            Find people near you who want to work out right now. Post a wave, meet up, and sweat together.
+            Find people near you who want to work out right now. Start an activity, meet up, and sweat together.
           </p>
           <a
             href="/sign-up"

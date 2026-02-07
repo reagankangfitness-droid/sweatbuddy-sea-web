@@ -123,6 +123,8 @@ interface EventSubmission {
   paynowNumber?: string | null
   paynowName?: string | null
   stripeEnabled?: boolean
+  // Capacity
+  maxSpots?: number | null
   // User account link
   clerkUserId?: string | null
 }
@@ -314,6 +316,8 @@ export async function POST(request: Request) {
         paynowNumber: data.paynowNumber || null,
         paynowName: data.paynowName || null,
         stripeEnabled: data.stripeEnabled ?? false,
+        // Capacity
+        maxTickets: data.maxSpots || null,
         // Link to user account
         submittedByUserId: dbUserId,
       },

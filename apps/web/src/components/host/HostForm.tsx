@@ -27,7 +27,8 @@ import {
   Globe,
   Ticket,
   Link2,
-  Pencil
+  Pencil,
+  Users
 } from 'lucide-react'
 import { UploadButton, useUploadThing } from '@/lib/uploadthing'
 
@@ -150,6 +151,7 @@ export default function HostForm() {
     price: '',
     paynowQrCode: '',
     paynowNumber: '',
+    maxSpots: '',
   })
 
   // Redirect to sign-in if not authenticated
@@ -339,6 +341,7 @@ export default function HostForm() {
         paynowQrCode: formData.paynowQrCode || null,
         paynowNumber: formData.paynowNumber || null,
         clerkUserId: user?.id || null,
+        maxSpots: formData.maxSpots ? parseInt(formData.maxSpots, 10) : null,
       }
 
       const response = await fetch('/api/submit-event', {
@@ -693,6 +696,24 @@ export default function HostForm() {
                                 <option key={type} value={type}>{type}</option>
                               ))}
                             </select>
+                          </div>
+
+                          {/* Capacity */}
+                          <div className="space-y-3">
+                            <h4 className="text-xs font-medium text-neutral-500 uppercase tracking-wider">Capacity</h4>
+                            <div className="relative">
+                              <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+                              <input
+                                type="number"
+                                name="maxSpots"
+                                min="1"
+                                value={formData.maxSpots}
+                                onChange={handleChange}
+                                placeholder="Max attendees (leave empty for unlimited)"
+                                className="w-full pl-10 pr-4 py-2.5 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-500 text-sm"
+                              />
+                            </div>
+                            <p className="text-xs text-neutral-500">Leave empty for unlimited spots</p>
                           </div>
 
                           {/* Pricing */}

@@ -60,22 +60,26 @@ export const WaveBubblePin = memo(function WaveBubblePin({ wave, onClick }: Wave
 
           {/* Main pill bubble */}
           <div
-            className={`px-3 py-2 rounded-2xl shadow-lg flex items-center gap-2 bg-white dark:bg-neutral-800 ${
-              wave.isUnlocked ? 'ring-2 ring-emerald-400' : ''
+            className={`px-3 py-2 rounded-2xl shadow-xl flex items-center gap-2 border-2 ${
+              wave.isUnlocked
+                ? 'bg-emerald-50 dark:bg-emerald-900/40 border-emerald-400'
+                : isAlmostUnlocked
+                  ? 'bg-orange-50 dark:bg-orange-900/40 border-orange-400'
+                  : 'bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-900/40 dark:to-blue-900/40 border-cyan-400/60 dark:border-cyan-500/60'
             }`}
           >
             <span className="text-xl">{activity.emoji}</span>
             <div className="flex flex-col">
-              <span className="text-[10px] font-medium text-neutral-500 dark:text-neutral-400 max-w-[80px] truncate">
+              <span className="text-[10px] font-semibold text-neutral-700 dark:text-neutral-200 max-w-[80px] truncate">
                 {wave.locationName || wave.area}
               </span>
               <div className="flex items-center gap-1">
                 <span className={`text-xs font-bold ${
                   wave.isUnlocked
-                    ? 'text-emerald-500'
+                    ? 'text-emerald-600 dark:text-emerald-400'
                     : isAlmostUnlocked
-                      ? 'text-orange-500'
-                      : 'text-neutral-600 dark:text-neutral-300'
+                      ? 'text-orange-600 dark:text-orange-400'
+                      : 'text-cyan-600 dark:text-cyan-400'
                 }`}>
                   {wave.participantCount}/{wave.waveThreshold}
                 </span>

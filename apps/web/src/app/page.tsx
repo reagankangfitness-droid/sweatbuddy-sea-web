@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
+import { OnboardingTour } from '@/components/OnboardingTour'
 
 const steps = [
   { emoji: '🙋', title: 'Post a wave', description: 'Say what you want to do and when' },
@@ -37,6 +38,9 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen bg-neutral-950 text-white">
+      {/* Onboarding Tour for first-time visitors */}
+      <OnboardingTour />
+
       {/* Hero */}
       <section
         className="relative min-h-[85vh] flex items-center justify-center bg-cover bg-center"

@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import Image from 'next/image'
 import { OverlayView } from '@react-google-maps/api'
 import { WAVE_ACTIVITIES } from '@/lib/wave/constants'
 import type { WaveActivityType } from '@prisma/client'
@@ -68,7 +69,28 @@ export const WaveBubblePin = memo(function WaveBubblePin({ wave, onClick }: Wave
                   : 'bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-900/40 dark:to-blue-900/40 border-cyan-400/60 dark:border-cyan-500/60'
             }`}
           >
-            <span className="text-xl">{activity.emoji}</span>
+            {/* Avatar with activity emoji badge */}
+            <div className="relative">
+              {wave.creatorImageUrl ? (
+                <Image
+                  src={wave.creatorImageUrl}
+                  alt={wave.creatorName || 'Creator'}
+                  width={32}
+                  height={32}
+                  className="w-8 h-8 rounded-full object-cover ring-2 ring-white dark:ring-neutral-700"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-neutral-200 dark:bg-neutral-600 flex items-center justify-center text-lg">
+                  {activity.emoji}
+                </div>
+              )}
+              {/* Activity emoji badge - only show if user has profile pic */}
+              {wave.creatorImageUrl && (
+                <span className="absolute -bottom-1 -right-1 text-sm bg-white dark:bg-neutral-800 rounded-full w-5 h-5 flex items-center justify-center shadow-sm border border-neutral-200 dark:border-neutral-600">
+                  {activity.emoji}
+                </span>
+              )}
+            </div>
             <div className="flex flex-col">
               <span className="text-[10px] font-semibold text-neutral-700 dark:text-neutral-200 max-w-[80px] truncate">
                 {wave.locationName || wave.area}

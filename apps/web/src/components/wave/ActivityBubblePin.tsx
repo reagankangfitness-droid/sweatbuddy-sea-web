@@ -59,7 +59,9 @@ const getOffset = () => PIN_OFFSET
 
 export const ActivityBubblePin = memo(function ActivityBubblePin({ activity, onClick }: ActivityBubblePinProps) {
   const emoji = getEmoji(activity)
-  const hasHost = !!activity.hostImageUrl
+  // Prioritize event image, then fall back to host image
+  const displayImage = activity.imageUrl || activity.hostImageUrl
+  const hasImage = !!displayImage
 
   return (
     <OverlayView
@@ -72,15 +74,15 @@ export const ActivityBubblePin = memo(function ActivityBubblePin({ activity, onC
         className="relative flex flex-col items-center pointer-events-auto"
         style={{ willChange: 'transform' }}
       >
-        {/* Main circle */}
-        <div className="w-12 h-12 rounded-full shadow-lg flex items-center justify-center bg-white dark:bg-neutral-800 border-[2.5px] border-blue-500 ring-2 ring-blue-500/20">
-          {hasHost ? (
+        {/* Main circle - shows event image */}
+        <div className="w-12 h-12 rounded-full shadow-lg flex items-center justify-center bg-white dark:bg-neutral-800 border-[2.5px] border-blue-500 ring-2 ring-blue-500/20 overflow-hidden">
+          {hasImage ? (
             <Image
-              src={activity.hostImageUrl!}
-              alt={activity.hostName || 'Host'}
+              src={displayImage!}
+              alt={activity.title || 'Event'}
               width={44}
               height={44}
-              className="w-full h-full rounded-full object-cover"
+              className="w-full h-full object-cover"
               unoptimized
             />
           ) : (
@@ -88,8 +90,8 @@ export const ActivityBubblePin = memo(function ActivityBubblePin({ activity, onC
           )}
         </div>
 
-        {/* Emoji badge (top-right, shows when host image is used) */}
-        {hasHost && (
+        {/* Emoji badge (top-right, shows when image is used) */}
+        {hasImage && (
           <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-white dark:bg-neutral-800 shadow-md flex items-center justify-center text-sm border border-neutral-200 dark:border-neutral-700">
             {emoji}
           </span>

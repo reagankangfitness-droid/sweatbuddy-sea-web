@@ -49,7 +49,7 @@ const hostSteps = [
 
 export function HowItWorks() {
   return (
-    <section className="relative py-20 md:py-28 overflow-hidden bg-gray-50">
+    <section id="how-it-works" className="relative py-20 md:py-28 overflow-hidden bg-gray-50">
       <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-6">
         {/* Header */}
         <motion.div

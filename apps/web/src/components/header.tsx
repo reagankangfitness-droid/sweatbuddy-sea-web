@@ -98,9 +98,9 @@ export function Header() {
 
   // Desktop nav links (for landing page navigation)
   const desktopNavLinks = [
-    { href: '#how-it-helps', label: 'Features' },
-    { href: '#pricing', label: 'Pricing' },
-    { href: '/events', label: 'Browse Events' },
+    { href: '#events', label: 'Find Events' },
+    { href: '#how-it-works', label: 'How It Works' },
+    { href: '/host', label: 'List Your Event' },
   ]
 
   // Check if we're on the landing page
@@ -328,25 +328,25 @@ export function Header() {
                 {isLandingPage && (
                   <>
                     <a
-                      href="#how-it-helps"
+                      href="#events"
                       onClick={() => setMobileMenuOpen(false)}
                       className="text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800"
                     >
-                      Features
+                      Find Events
                     </a>
                     <a
-                      href="#pricing"
+                      href="#how-it-works"
                       onClick={() => setMobileMenuOpen(false)}
                       className="text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800"
                     >
-                      Pricing
+                      How It Works
                     </a>
                     <Link
-                      href="/events"
+                      href="/host"
                       onClick={() => setMobileMenuOpen(false)}
                       className="text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800"
                     >
-                      Browse Events
+                      List Your Event
                     </Link>
                   </>
                 )}

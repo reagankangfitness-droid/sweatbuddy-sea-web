@@ -15,7 +15,7 @@ export function Footer() {
               </span>
             </div>
             <p className="text-neutral-500 dark:text-neutral-400 text-sm max-w-xs leading-relaxed">
-              Where fitness communities grow.
+              Where fitness and wellness communities grow.
             </p>
           </div>
 
@@ -72,7 +72,7 @@ export function Footer() {
             © {new Date().getFullYear()} SweatBuddies
           </p>
           <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">
-            Built for fitness hosts in Southeast Asia.
+            Built for fitness and wellness hosts in Southeast Asia.
           </p>
         </div>
       </div>

@@ -91,7 +91,7 @@ export default function LandingPage() {
 
         <div className="relative z-10 flex flex-col items-center text-center px-6 py-20 max-w-2xl mx-auto gap-6">
           <p className="text-xs sm:text-sm font-semibold tracking-[0.2em] text-white/60 uppercase">
-            For Fitness Hosts in Southeast Asia
+            For Fitness & Wellness Hosts in Southeast Asia
           </p>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-tight">
             Less admin.<br />More time with your crew.
@@ -127,7 +127,7 @@ export default function LandingPage() {
               You started this to bring people together. Not to wrestle with spreadsheets.
             </h2>
             <p className="text-base sm:text-lg text-white/60 leading-relaxed">
-              Tracking RSVPs in WhatsApp. Chasing payments on PayNow. Manually counting heads. You got into fitness community building because you love it — but the admin is starting to feel like a second job.
+              Tracking RSVPs in WhatsApp. Chasing payments on PayNow. Manually counting heads. You got into fitness and wellness community building because you love it — but the admin is starting to feel like a second job.
             </p>
           </div>
         </ScrollReveal>
@@ -207,7 +207,7 @@ export default function LandingPage() {
                 Built for What&apos;s Next
               </p>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
-                Built for the next generation of fitness hosts in Southeast Asia.
+                Built for the next generation of fitness and wellness hosts in Southeast Asia.
               </h2>
             </div>
           </ScrollReveal>

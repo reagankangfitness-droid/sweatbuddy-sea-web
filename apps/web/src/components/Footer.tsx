@@ -15,7 +15,7 @@ export function Footer() {
               </span>
             </div>
             <p className="text-neutral-500 dark:text-neutral-400 text-sm max-w-xs leading-relaxed">
-              Show up alone. Leave with a crew.
+              Where fitness communities grow.
             </p>
           </div>
 
@@ -23,17 +23,14 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-neutral-900 dark:text-white mb-5 text-sm">Quick Links</h4>
             <nav className="flex flex-col gap-3.5">
-              <a href="#events" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors text-sm">
-                Browse Events
-              </a>
-              <a href="/my-bookings" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors text-sm">
-                My Bookings
-              </a>
               <a href="/host" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors text-sm">
                 List Your Event
               </a>
               <a href="/host/dashboard" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors text-sm">
                 Host Dashboard
+              </a>
+              <a href="/events" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors text-sm">
+                Browse Events
               </a>
               <a href="/support" className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors text-sm">
                 Help & Support
@@ -75,7 +72,7 @@ export function Footer() {
             © {new Date().getFullYear()} SweatBuddies
           </p>
           <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">
-            Where fitness events live.
+            Built for fitness hosts in Southeast Asia.
           </p>
         </div>
       </div>

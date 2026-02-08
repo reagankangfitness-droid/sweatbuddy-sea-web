@@ -7,6 +7,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Check } from 'lucide-react'
 import { ScrollReveal, StaggerReveal } from '@/components/ui/ScrollReveal'
+import { IPhoneMockup } from '@/components/IPhoneMockup'
 import { Footer } from '@/components/Footer'
 
 const features = [
@@ -152,13 +153,16 @@ export default function LandingPage() {
               <ScrollReveal key={feature.title} delay={index * 100}>
                 <div className="rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden">
                   {feature.image && (
-                    <div className="relative aspect-[16/10] w-full">
-                      <Image
-                        src={feature.image}
-                        alt={feature.title}
-                        fill
-                        className="object-cover"
-                      />
+                    <div className="flex justify-center py-8">
+                      <IPhoneMockup className="scale-75 lg:scale-85">
+                        <Image
+                          src={feature.image}
+                          alt={feature.title}
+                          width={320}
+                          height={650}
+                          className="w-full h-full object-cover"
+                        />
+                      </IPhoneMockup>
                     </div>
                   )}
                   <div className="p-6 sm:p-8">

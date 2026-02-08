@@ -154,7 +154,7 @@ export default function UserProfilePage() {
                 alt={user.name || 'User'}
                 width={96}
                 height={96}
-                className="object-cover"
+                className="w-full h-full object-cover"
               />
             ) : (
               <div className="w-full h-full bg-neutral-900 flex items-center justify-center text-3xl font-bold text-white">
@@ -207,7 +207,7 @@ export default function UserProfilePage() {
                   alt={user.name || 'User'}
                   width={112}
                   height={112}
-                  className="object-cover"
+                  className="w-full h-full object-cover"
                 />
               ) : (
                 <div className="w-full h-full bg-neutral-900 flex items-center justify-center text-4xl font-bold text-white">

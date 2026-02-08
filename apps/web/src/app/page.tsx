@@ -12,28 +12,19 @@ import { Footer } from '@/components/Footer'
 
 const features = [
   {
-    title: 'List in minutes',
-    description:
-      'Create your event page with all the details — location, timing, capacity, pricing — and share a single link. No back-and-forth.',
+    title: '1. List your event',
+    description: 'Set up your event page with all the details and share a single link.',
     image: '/images/list-in-minutes.jpeg',
   },
   {
-    title: 'Signups that just work',
-    description:
-      'Attendees register and pay through one flow. You see who\'s coming in real time. No more screenshot receipts or manual headcounts.',
+    title: '2. Manage signups',
+    description: 'See who\'s coming in real time. No more spreadsheets or screenshot receipts.',
     image: '/images/attendees-dashboard.png',
   },
   {
-    title: 'Know your community',
-    description:
-      'See who your regulars are, spot trends in attendance, and get AI-powered insights to help your community grow.',
-    image: null,
-  },
-  {
-    title: 'Get paid simply',
-    description:
-      'Free events stay free. For paid events, attendees pay through the platform and you get paid out automatically. No chasing.',
-    image: null,
+    title: '3. Grow your community',
+    description: 'Track regulars, spot trends, and get AI-powered insights to keep growing.',
+    image: '/images/attendees-dashboard.png',
   },
 ]
 
@@ -135,8 +126,8 @@ export default function LandingPage() {
       </section>
 
       {/* 3. HOW IT HELPS */}
-      <section id="how-it-helps" className="px-6 py-24 sm:py-32">
-        <div className="max-w-5xl mx-auto">
+      <section id="how-it-helps" className="px-6 py-24 sm:py-32 overflow-hidden">
+        <div className="max-w-6xl mx-auto">
           <ScrollReveal>
             <div className="text-center mb-16">
               <p className="text-xs sm:text-sm font-semibold tracking-[0.2em] text-white/40 uppercase mb-6">
@@ -148,29 +139,25 @@ export default function LandingPage() {
             </div>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-12">
             {features.map((feature, index) => (
-              <ScrollReveal key={feature.title} delay={index * 100}>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden">
-                  {feature.image && (
-                    <div className="flex justify-center py-8">
-                      <IPhoneMockup className="scale-75 lg:scale-85">
-                        <Image
-                          src={feature.image}
-                          alt={feature.title}
-                          width={320}
-                          height={650}
-                          className="w-full h-full object-cover"
-                        />
-                      </IPhoneMockup>
-                    </div>
-                  )}
-                  <div className="p-6 sm:p-8">
-                    <h3 className="text-lg sm:text-xl font-semibold mb-2">{feature.title}</h3>
-                    <p className="text-sm sm:text-base text-white/60 leading-relaxed">
-                      {feature.description}
-                    </p>
+              <ScrollReveal key={feature.title} delay={index * 150}>
+                <div className="flex flex-col items-center text-center">
+                  <div className="mb-8">
+                    <IPhoneMockup>
+                      <Image
+                        src={feature.image}
+                        alt={feature.title}
+                        width={320}
+                        height={650}
+                        className="w-full h-full object-cover"
+                      />
+                    </IPhoneMockup>
                   </div>
+                  <h3 className="text-lg sm:text-xl font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-sm text-white/60 leading-relaxed max-w-xs">
+                    {feature.description}
+                  </p>
                 </div>
               </ScrollReveal>
             ))}

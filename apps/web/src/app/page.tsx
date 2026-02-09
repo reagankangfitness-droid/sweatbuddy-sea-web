@@ -61,15 +61,15 @@ export default function LandingPage() {
             Show up alone.<br />Leave with a crew.
           </h1>
           <p className="text-lg sm:text-xl text-white/70 max-w-lg">
-            Hundreds of group workouts across Singapore. Zero DM hunting. One tap to join.
+            Group workouts with people who actually show up. Zero DM hunting. One tap to join.
           </p>
           <div className="flex flex-col sm:flex-row items-stretch gap-4 mt-2">
-            <a
-              href="#events"
+            <Link
+              href="/sign-in?redirect_url=/events"
               className="flex items-center justify-center min-w-[220px] px-8 py-4 rounded-xl border border-transparent bg-white text-neutral-900 font-semibold text-lg text-center shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(255,255,255,0.2)] active:translate-y-0 active:scale-[0.98]"
             >
               Explore Experiences
-            </a>
+            </Link>
             <Link
               href="/host"
               className="flex items-center justify-center min-w-[220px] px-8 py-4 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm text-white font-semibold text-lg text-center transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:border-white/40 hover:shadow-[0_8px_30px_rgba(255,255,255,0.1)] active:translate-y-0 active:scale-[0.98]"
@@ -103,7 +103,7 @@ export default function LandingPage() {
               ].map(({ label, category }) => (
                 <Link
                   key={category}
-                  href={`/events?category=${category}`}
+                  href={`/sign-in?redirect_url=${encodeURIComponent(`/events?category=${category}`)}`}
                   className="px-4 py-2 rounded-full border border-white/15 text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white hover:border-white/30 transition-all"
                 >
                   {label}
@@ -111,13 +111,13 @@ export default function LandingPage() {
               ))}
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-4">
-              Find your next workout
+              Find your crew
             </h2>
             <p className="text-base sm:text-lg text-white/60 leading-relaxed mb-8">
-              Strangers become regulars become friends. Something new every week across Singapore.
+              Strangers become regulars become friends. New crews forming every week.
             </p>
             <Link
-              href="/events"
+              href="/sign-in?redirect_url=/events"
               className="inline-block px-8 py-4 rounded-xl bg-white text-neutral-900 font-semibold text-lg text-center hover:bg-white/90 active:scale-[0.98] transition-all"
             >
               Browse Experiences
@@ -172,13 +172,13 @@ export default function LandingPage() {
               Ready when you are.
             </h2>
             <p className="text-base sm:text-lg text-white/60 leading-relaxed mb-8">
-              No membership required. Just show up and sweat.
+              No membership required. Just show up and find your people.
             </p>
             <Link
-              href="/events"
+              href="/sign-in?redirect_url=/events"
               className="inline-block px-8 py-4 rounded-xl bg-white text-neutral-900 font-semibold text-lg text-center hover:bg-white/90 active:scale-[0.98] transition-all"
             >
-              Find Your Next Workout
+              Find Your Crew
             </Link>
           </div>
         </ScrollReveal>

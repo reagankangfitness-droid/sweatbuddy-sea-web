@@ -9,19 +9,19 @@ export function EventDetail() {
     <div className="h-full bg-white flex flex-col">
       {/* Hero Image */}
       <div className="h-36 bg-gradient-to-br from-[#2563EB] to-[#38BDF8] relative">
-        {/* Back Button */}
-        <button className="absolute top-4 left-4 w-8 h-8 bg-black/20 rounded-full flex items-center justify-center">
+        {/* Back Button (decorative mockup) */}
+        <div className="absolute top-4 left-4 w-8 h-8 bg-black/20 rounded-full flex items-center justify-center">
           <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-        </button>
+        </div>
 
-        {/* Save Button */}
-        <button className="absolute top-4 right-4 w-8 h-8 bg-black/20 rounded-full flex items-center justify-center">
+        {/* Save Button (decorative mockup) */}
+        <div className="absolute top-4 right-4 w-8 h-8 bg-black/20 rounded-full flex items-center justify-center">
           <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           </svg>
-        </button>
+        </div>
 
         {/* Event Info on Image */}
         <div className="absolute bottom-4 left-4 right-4">

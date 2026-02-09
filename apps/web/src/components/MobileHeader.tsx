@@ -5,6 +5,7 @@ import { ChevronDown, Check, User, Sun, Moon, Monitor } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Logo } from '@/components/logo'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
 import { useTheme } from '@/contexts/ThemeContext'
 
@@ -16,6 +17,7 @@ const cities = [
 ]
 
 export function MobileHeader() {
+  const router = useRouter()
   const [isScrolled, setIsScrolled] = useState(false)
   const [selectedCity, setSelectedCity] = useState(cities[0])
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -110,7 +112,14 @@ export function MobileHeader() {
     setSelectedCity(city)
     setIsDropdownOpen(false)
     buttonRef.current?.focus()
-    // TODO: Filter events by city
+    const params = new URLSearchParams(window.location.search)
+    if (city.id === 'all') {
+      params.delete('city')
+    } else {
+      params.set('city', city.id)
+    }
+    const query = params.toString()
+    router.push(`${window.location.pathname}${query ? `?${query}` : ''}`)
   }
 
   const toggleDropdown = () => {

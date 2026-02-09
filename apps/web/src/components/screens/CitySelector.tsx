@@ -79,10 +79,10 @@ export function CitySelector() {
         ))}
       </div>
 
-      {/* Continue Button */}
-      <button className="w-full mt-4 bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white py-3 rounded-xl font-semibold text-sm">
+      {/* Continue Button (decorative mockup) */}
+      <div className="w-full mt-4 bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white py-3 rounded-xl font-semibold text-sm text-center">
         Continue
-      </button>
+      </div>
     </div>
   );
 }

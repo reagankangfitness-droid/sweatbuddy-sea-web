@@ -2,10 +2,11 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, Users, Calendar, MapPin, Instagram, Globe, MessageCircle, Share2, CheckCircle } from 'lucide-react'
+import { ArrowLeft, Users, Calendar, MapPin, Instagram, Globe, MessageCircle, CheckCircle } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@clerk/nextjs/server'
 import { JoinCommunityButton } from '@/components/community/JoinCommunityButton'
+import { ShareButton } from '@/components/community/ShareButton'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -152,9 +153,7 @@ export default async function CommunityPage({ params }: Props) {
             <Link href="/" className="font-sans font-bold text-xl text-neutral-900">
               sweatbuddies
             </Link>
-            <button className="p-2 text-neutral-600 hover:text-neutral-900 transition-colors">
-              <Share2 className="w-5 h-5" />
-            </button>
+            <ShareButton />
           </div>
         </div>
       </header>

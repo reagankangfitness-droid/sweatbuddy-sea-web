@@ -124,10 +124,10 @@ export function EventBrowser() {
                   <div className="w-4 h-4 rounded-full bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#F77737]" />
                   <span className="text-[9px] text-neutral-500">@{event.organizer}</span>
                 </div>
-                <button className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white text-[9px] font-medium rounded-full">
+                <div className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white text-[9px] font-medium rounded-full">
                   <span>🙋</span>
                   <span>Going</span>
-                </button>
+                </div>
               </div>
             </div>
           </div>

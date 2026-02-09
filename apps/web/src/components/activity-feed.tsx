@@ -102,6 +102,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null)
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER)
+  const [favorites, setFavorites] = useState<Set<string>>(new Set())
 
   // Calculate center based on activities
   const calculateMapCenter = () => {
@@ -241,11 +242,23 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                   <button
                     onClick={(e) => {
                       e.preventDefault()
-                      // TODO: Implement favorite functionality
+                      setFavorites(prev => {
+                        const next = new Set(prev)
+                        if (next.has(activity.id)) {
+                          next.delete(activity.id)
+                        } else {
+                          next.add(activity.id)
+                        }
+                        return next
+                      })
                     }}
                     className="absolute bottom-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-all duration-200 shadow-sm group/heart"
                   >
-                    <Heart className="w-4 h-4 text-foreground stroke-2 group-hover/heart:fill-primary group-hover/heart:text-primary transition-colors duration-200" />
+                    <Heart className={`w-4 h-4 stroke-2 transition-colors duration-200 ${
+                      favorites.has(activity.id)
+                        ? 'fill-primary text-primary'
+                        : 'text-foreground group-hover/heart:fill-primary group-hover/heart:text-primary'
+                    }`} />
                   </button>
                 </div>
 

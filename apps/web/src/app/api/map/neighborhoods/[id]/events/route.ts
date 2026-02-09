@@ -70,6 +70,22 @@ function combineDateTime(eventDate: Date, timeString: string): Date {
   return combined
 }
 
+// Get next occurrence for recurring events based on day name
+function getNextOccurrence(day: string): Date | null {
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  const targetDay = days.findIndex(d => d.toLowerCase().startsWith(day.toLowerCase().replace('every ', '').trim().slice(0, 3)))
+  if (targetDay === -1) return null
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const todayDay = today.getDay()
+  let daysUntil = targetDay - todayDay
+  if (daysUntil < 0) daysUntil += 7
+  if (daysUntil === 0) return today
+  const nextDate = new Date(today)
+  nextDate.setDate(today.getDate() + daysUntil)
+  return nextDate
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -204,6 +220,7 @@ export async function GET(
         slug: true,
         eventName: true,
         eventDate: true,
+        day: true,
         time: true,
         category: true,
         imageUrl: true,
@@ -291,10 +308,9 @@ export async function GET(
     // Transform EventSubmissions to unified format
     const submissionEvents: UnifiedEventResponse[] = eventSubmissions
       .filter(e => {
-        // Filter recurring events that are within the time range
-        if (e.recurring && e.eventDate) {
-          return e.eventDate >= now && e.eventDate <= endDate
-        }
+        // Recurring events always show — they repeat weekly
+        if (e.recurring) return true
+        // One-time events must have a future date within range
         return e.eventDate && e.eventDate >= now && e.eventDate <= endDate
       })
       .map((event) => {
@@ -304,10 +320,15 @@ export async function GET(
           color: AVATAR_COLORS[i % AVATAR_COLORS.length],
         }))
 
+        // For recurring events, use next occurrence instead of stored eventDate
+        const nextDate = event.recurring
+          ? (getNextOccurrence(event.day || '') ?? event.eventDate)
+          : event.eventDate
+
         // Combine date and time
-        const datetime = event.eventDate && event.time
-          ? combineDateTime(event.eventDate, event.time)
-          : event.eventDate || new Date()
+        const datetime = nextDate && event.time
+          ? combineDateTime(nextDate, event.time)
+          : nextDate || new Date()
 
         return {
           id: event.id,

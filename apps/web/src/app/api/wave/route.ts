@@ -263,7 +263,8 @@ export async function GET(request: NextRequest) {
   // Helper to get next occurrence for recurring events
   const getNextOccurrence = (day: string) => {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-    const targetDay = days.findIndex(d => d.toLowerCase().startsWith(day.toLowerCase().slice(0, 3)))
+    const cleanDay = day.toLowerCase().replace('every ', '').trim()
+    const targetDay = days.findIndex(d => d.toLowerCase().startsWith(cleanDay.slice(0, 3)))
     if (targetDay === -1) return null
     const todayDay = today.getDay()
     let daysUntil = targetDay - todayDay
@@ -306,9 +307,9 @@ export async function GET(request: NextRequest) {
     const totalGoing = goingCount + (e.ticketsSold || 0) // Include both attendance RSVPs and ticket sales
     const spotsLeft = e.maxTickets ? Math.max(0, e.maxTickets - totalGoing) : null
 
-    // For recurring events, calculate next occurrence
-    const effectiveDate = e.recurring && !e.eventDate
-      ? getNextOccurrence(e.day)
+    // For recurring events, always calculate next occurrence from day name
+    const effectiveDate = e.recurring
+      ? getNextOccurrence(e.day) ?? e.eventDate
       : e.eventDate
 
     // Combine date with time string to get proper startTime

@@ -86,42 +86,35 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 2. HOW IT WORKS — Reuse existing component with iPhone mockups + host sub-section */}
+      {/* 2. HOW IT WORKS — Attendee 3-step flow with iPhone mockups */}
       <HowItWorks />
 
-      {/* 3. WHY IT MATTERS — Emotional section (attendee-focused) */}
-      <section
-        id="why-it-matters"
-        className="relative bg-cover bg-center"
-        style={{ backgroundImage: 'url(/images/organizers-bg.jpg)' }}
-      >
-        <div className="absolute inset-0 bg-black/70 pointer-events-none" />
-        <div className="relative z-10 py-32 sm:py-40 px-6">
-          <ScrollReveal>
-            <div className="max-w-2xl mx-auto text-center">
-              <p className="text-xs sm:text-sm font-semibold tracking-[0.2em] text-white/40 uppercase mb-6">
-                More Than a Workout
-              </p>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight leading-tight mb-6">
-                Because the best part was never the logistics.
-              </h2>
-              <p className="text-base sm:text-lg text-white/60 leading-relaxed">
-                It was the moment someone shows up for the first time and says &ldquo;I didn&apos;t think anyone would come.&rdquo; It was watching strangers become regulars become friends.
-              </p>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
-
-      {/* 4. SOCIAL PROOF / EVENTS TEASER */}
+      {/* 3. SOCIAL PROOF — Category pills + Browse CTA */}
       <section id="events" className="px-6 py-24 sm:py-32">
         <ScrollReveal>
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-6">
+            <div className="flex flex-wrap justify-center gap-3 mb-8">
+              {[
+                { label: 'Run Clubs', category: 'running' },
+                { label: 'Yoga', category: 'yoga' },
+                { label: 'HIIT', category: 'hiit' },
+                { label: 'Bootcamp', category: 'bootcamp' },
+                { label: 'Hikes', category: 'hikes' },
+              ].map(({ label, category }) => (
+                <Link
+                  key={category}
+                  href={`/events?category=${category}`}
+                  className="px-4 py-2 rounded-full border border-white/15 text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white hover:border-white/30 transition-all"
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-4">
               Find your next workout
             </h2>
             <p className="text-base sm:text-lg text-white/60 leading-relaxed mb-8">
-              Run clubs, yoga, HIIT, hikes — something new every week across Singapore.
+              Strangers become regulars become friends. Something new every week across Singapore.
             </p>
             <Link
               href="/events"
@@ -133,7 +126,7 @@ export default function LandingPage() {
         </ScrollReveal>
       </section>
 
-      {/* 5. FOR HOSTS — Standalone condensed host section (~20% of page) */}
+      {/* 4. FOR HOSTS — Standalone condensed host section */}
       <section id="for-hosts" className="px-6 py-24 sm:py-32 border-t border-white/5">
         <div className="max-w-4xl mx-auto">
           <ScrollReveal>
@@ -171,7 +164,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 6. CLOSING CTA — Attendee-primary soft close */}
+      {/* 5. CLOSING CTA — Single attendee call-to-action */}
       <section id="start" className="px-6 py-24 sm:py-32 border-t border-white/5">
         <ScrollReveal>
           <div className="max-w-xl mx-auto text-center">
@@ -183,20 +176,15 @@ export default function LandingPage() {
             </p>
             <Link
               href="/events"
-              className="inline-block px-8 py-4 rounded-xl bg-white text-neutral-900 font-semibold text-lg text-center hover:bg-white/90 active:scale-[0.98] transition-all mb-4"
+              className="inline-block px-8 py-4 rounded-xl bg-white text-neutral-900 font-semibold text-lg text-center hover:bg-white/90 active:scale-[0.98] transition-all"
             >
-              Find Experiences
+              Find Your Next Workout
             </Link>
-            <p className="text-sm text-white/40">
-              <Link href="/host" className="underline underline-offset-4 hover:text-white/60 transition-colors">
-                Or start hosting your own
-              </Link>
-            </p>
           </div>
         </ScrollReveal>
       </section>
 
-      {/* 7. FOOTER */}
+      {/* 6. FOOTER */}
       <Footer />
     </main>
   )

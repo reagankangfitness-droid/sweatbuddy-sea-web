@@ -1,8 +1,6 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
-import Link from 'next/link'
 import { IPhoneMockup } from './IPhoneMockup'
 import { EventBrowser } from './screens/EventBrowser'
 import { EventDetail } from './screens/EventDetail'
@@ -29,23 +27,6 @@ const steps = [
   },
 ]
 
-const hostSteps = [
-  {
-    number: '1',
-    title: 'List',
-    description: 'Create your experience in under 5 minutes.',
-  },
-  {
-    number: '2',
-    title: 'Collect',
-    description: 'Signups and payments in one place. No more spreadsheets.',
-  },
-  {
-    number: '3',
-    title: 'Grow',
-    description: 'See who keeps coming back. Build your community.',
-  },
-]
 
 export function HowItWorks() {
   return (
@@ -141,59 +122,6 @@ export function HowItWorks() {
           ))}
         </div>
 
-        {/* Host Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] }}
-          className="mt-20 md:mt-28 pt-16 border-t border-gray-200"
-        >
-          <div className="text-center mb-12">
-            <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4">
-              For Hosts
-            </span>
-            <h3 className="text-2xl md:text-3xl font-bold text-gray-900">
-              Already leading a crew?
-            </h3>
-            <p className="mt-3 text-gray-600 max-w-lg mx-auto">
-              Stop managing signups across 5 different apps.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 md:gap-8 max-w-3xl mx-auto">
-            {hostSteps.map((step, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.4, delay: index * 0.1, ease: [0.2, 0, 0, 1] }}
-                className="text-center"
-              >
-                <div className="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center text-lg font-bold mb-3 mx-auto">
-                  {step.number}
-                </div>
-                <h4 className="text-lg font-bold text-gray-900 mb-1">
-                  {step.title}
-                </h4>
-                <p className="text-gray-600 text-sm">
-                  {step.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="text-center mt-10">
-            <Link
-              href="/host"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
-            >
-              Start hosting
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </motion.div>
       </div>
     </section>
   )

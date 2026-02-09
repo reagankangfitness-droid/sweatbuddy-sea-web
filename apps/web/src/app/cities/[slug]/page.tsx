@@ -327,7 +327,7 @@ export default async function CityPage({ params }: Props) {
               <Users className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
               <p className="text-neutral-600">No communities in {city.name} yet</p>
               <Link
-                href="/host/communities/new"
+                href="/host/community"
                 className="inline-block mt-4 px-6 py-2 bg-neutral-900 text-white rounded-full text-sm font-medium hover:bg-neutral-800 transition-colors"
               >
                 Start the first one
@@ -347,7 +347,7 @@ export default async function CityPage({ params }: Props) {
             Build your tribe and host experiences for the local fitness community.
           </p>
           <Link
-            href="/host/communities/new"
+            href="/host/community"
             className="inline-flex items-center gap-2 px-8 py-4 bg-neutral-900 text-white rounded-full font-semibold hover:bg-neutral-800 transition-colors"
           >
             Create a Community

@@ -56,7 +56,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
       <header className="sticky top-0 z-50 bg-background border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center">
           <Link
-            href="/bookings"
+            href="/my-bookings"
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft size={20} />
@@ -113,7 +113,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
             </h1>
             <p className="text-muted-foreground mb-6">{eligibility.reason}</p>
             <Link
-              href="/bookings"
+              href="/my-bookings"
               className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
             >
               Back to Bookings

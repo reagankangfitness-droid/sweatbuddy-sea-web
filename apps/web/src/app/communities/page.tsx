@@ -232,7 +232,7 @@ export default async function CommunitiesPage() {
             Create a community and start hosting events for your tribe.
           </p>
           <Link
-            href="/host/communities/new"
+            href="/host/community"
             className="inline-flex items-center gap-2 px-8 py-4 bg-neutral-900 text-white rounded-full font-semibold hover:bg-neutral-800 transition-colors"
           >
             Create a Community

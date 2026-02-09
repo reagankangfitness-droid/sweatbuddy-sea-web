@@ -191,7 +191,7 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <p className="font-semibold">Host Dashboard</p>
-                  <p className="text-sm text-purple-100">Manage your events</p>
+                  <p className="text-sm text-purple-100">Manage your experiences</p>
                 </div>
               </div>
               <ChevronRight className="w-5 h-5 text-purple-200" />

@@ -585,7 +585,7 @@ export default function HostForm() {
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    placeholder="Add event description"
+                    placeholder="Add experience description"
                     rows={3}
                     className="flex-1 bg-transparent text-white placeholder:text-neutral-500 focus:outline-none resize-none"
                   />

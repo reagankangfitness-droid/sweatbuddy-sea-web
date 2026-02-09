@@ -26,7 +26,7 @@ interface EventSubmission {
 }
 
 // Simple password protection
-const ADMIN_SECRET = 'sweatbuddies-admin-2024'
+const ADMIN_SECRET = process.env.NEXT_PUBLIC_ADMIN_SECRET || ''
 
 export default function AdminEventSubmissionsPage() {
   const [submissions, setSubmissions] = useState<EventSubmission[]>([])
@@ -189,9 +189,9 @@ export default function AdminEventSubmissionsPage() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white">Event Submissions</h1>
+          <h1 className="text-3xl font-bold text-white">Experience Submissions</h1>
           <p className="text-white/60 mt-2">
-            Review and approve submitted events
+            Review and approve submitted experiences
           </p>
         </div>
 
@@ -219,7 +219,7 @@ export default function AdminEventSubmissionsPage() {
             <h2 className="text-xl font-semibold text-white mb-2">No submissions</h2>
             <p className="text-white/60">
               {filter === 'PENDING'
-                ? 'No pending event submissions to review.'
+                ? 'No pending experience submissions to review.'
                 : `No ${filter.toLowerCase()} submissions.`}
             </p>
           </div>

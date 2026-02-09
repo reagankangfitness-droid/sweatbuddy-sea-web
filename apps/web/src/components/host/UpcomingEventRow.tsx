@@ -203,7 +203,7 @@ export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) 
       {showCancelConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-2">Cancel Event?</h3>
+            <h3 className="text-lg font-semibold text-neutral-900 mb-2">Cancel Experience?</h3>
             <p className="text-sm text-neutral-600 mb-4">
               This will cancel <strong>{event.name}</strong> and notify all {event.goingCount > 0 ? `${event.goingCount} ` : ''}attendee{event.goingCount !== 1 ? 's' : ''} via email.
             </p>
@@ -224,7 +224,7 @@ export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) 
                 onClick={() => setShowCancelConfirm(false)}
                 className="flex-1 px-4 py-2 text-sm font-medium text-neutral-600 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
               >
-                Keep Event
+                Keep Experience
               </button>
               <button
                 onClick={handleCancel}
@@ -237,7 +237,7 @@ export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) 
                     Cancelling...
                   </>
                 ) : (
-                  'Cancel Event'
+                  'Cancel Experience'
                 )}
               </button>
             </div>

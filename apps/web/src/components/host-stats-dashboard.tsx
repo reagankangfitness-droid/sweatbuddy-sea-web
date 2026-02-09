@@ -187,7 +187,7 @@ export function HostStatsDashboard() {
         <StatCard
           icon={<Calendar className="w-6 h-6" />}
           value={stats.totalEvents}
-          label="Total Events"
+          label="Total Experiences"
           subtext={`${stats.upcomingEvents} upcoming • ${stats.completedEvents} completed`}
           color="#6366F1"
         />

@@ -136,7 +136,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
       {/* Event Name */}
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-neutral-700 mb-2">
-          What&apos;s your event called? *
+          What&apos;s your experience called? *
         </label>
         <input
           type="text"
@@ -258,13 +258,13 @@ export function EditEventForm({ event }: EditEventFormProps) {
       {/* Event Image */}
       <div>
         <label className="block text-sm font-medium text-neutral-700 mb-2">
-          Event Image
+          Experience Image
         </label>
         {imageUrl ? (
           <div className="relative rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200">
             <Image
               src={imageUrl}
-              alt="Event preview"
+              alt="Experience preview"
               width={600}
               height={300}
               className="w-full h-48 object-cover"

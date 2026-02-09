@@ -132,9 +132,9 @@ export default function CommunityPage() {
 
   const generateMessage = () => {
     if (!communityLink) {
-      return 'Hey! Join our community group for updates on upcoming events!'
+      return 'Hey! Join our community group for updates on upcoming experiences!'
     }
-    return `Hey! Join our community group for updates on upcoming events: ${communityLink}`
+    return `Hey! Join our community group for updates on upcoming experiences: ${communityLink}`
   }
 
   const copyMessage = () => {
@@ -167,7 +167,7 @@ export default function CommunityPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-2xl font-bold text-neutral-900">Your Community</h1>
-            <p className="text-neutral-500">Everyone who&apos;s joined your events</p>
+            <p className="text-neutral-500">Everyone who&apos;s joined your experiences</p>
           </div>
           <button
             onClick={() => setShowMessageModal(true)}
@@ -241,7 +241,7 @@ export default function CommunityPage() {
             className="px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900"
           >
             <option value="lastSeen">Last Seen</option>
-            <option value="events">Most Events</option>
+            <option value="events">Most Experiences</option>
             <option value="name">Name</option>
           </select>
         </div>
@@ -251,7 +251,7 @@ export default function CommunityPage() {
           <div className="p-12 bg-neutral-50 rounded-xl text-center">
             <Users className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
             <p className="font-medium text-neutral-900 mb-1">No attendees yet</p>
-            <p className="text-sm text-neutral-500">When people RSVP to your events, they&apos;ll show up here</p>
+            <p className="text-sm text-neutral-500">When people RSVP to your experiences, they&apos;ll show up here</p>
           </div>
         ) : (
           <div className="border border-neutral-200 rounded-xl overflow-hidden">
@@ -295,7 +295,7 @@ export default function CommunityPage() {
                   <div className="flex items-center gap-4 flex-shrink-0">
                     <div className="text-right hidden sm:block">
                       <p className="text-sm font-medium text-neutral-900">
-                        {attendee.eventsRSVPd} event{attendee.eventsRSVPd !== 1 ? 's' : ''}
+                        {attendee.eventsRSVPd} experience{attendee.eventsRSVPd !== 1 ? 's' : ''}
                         {attendee.eventsAttended > 0 && (
                           <span className="text-green-600 ml-1">
                             ({attendee.eventsAttended} attended)
@@ -423,7 +423,7 @@ export default function CommunityPage() {
               </div>
               {!communityLink && (
                 <p className="text-xs text-amber-600 mt-2">
-                  Tip: Add a community link to your events for a better message!
+                  Tip: Add a community link to your experiences for a better message!
                 </p>
               )}
             </div>

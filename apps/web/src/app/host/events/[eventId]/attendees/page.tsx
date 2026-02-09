@@ -246,7 +246,7 @@ export default function AttendeesPage() {
     const names = firstTimers.map(a => a.name || a.email.split('@')[0]).slice(0, 5).join(', ')
     const moreCount = firstTimers.length > 5 ? ` and ${firstTimers.length - 5} more` : ''
     const message = encodeURIComponent(
-      `Hey! Welcome to the crew 🙌\n\nExcited to have ${names}${moreCount} joining us for ${event?.name || 'the event'}!\n\nHere's what to know:\n📍 Check the event page for location\n⏰ Arrive a few minutes early\n\nSee you there!`
+      `Hey! Welcome to the crew 🙌\n\nExcited to have ${names}${moreCount} joining us for ${event?.name || 'the experience'}!\n\nHere's what to know:\n📍 Check the experience page for location\n⏰ Arrive a few minutes early\n\nSee you there!`
     )
     window.open(`https://wa.me/?text=${message}`, '_blank')
   }
@@ -386,7 +386,7 @@ export default function AttendeesPage() {
             </div>
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
               <p className="text-sm text-amber-700 mb-4">
-                These people are new to your events - a warm welcome goes a long way!
+                These people are new to your experiences - a warm welcome goes a long way!
               </p>
               <div className="grid gap-2">
                 {firstTimers.map((attendee) => (
@@ -587,7 +587,7 @@ export default function AttendeesPage() {
                 {firstTimers.length > 0 ? 'No returning attendees yet' : 'No RSVPs yet'}
               </p>
               <p className="text-sm text-neutral-500">
-                {firstTimers.length > 0 ? 'Everyone here is new!' : 'Share your event to get the word out!'}
+                {firstTimers.length > 0 ? 'Everyone here is new!' : 'Share your experience to get the word out!'}
               </p>
             </div>
           )

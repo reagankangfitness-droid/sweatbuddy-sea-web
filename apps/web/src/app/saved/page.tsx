@@ -467,7 +467,7 @@ export default function SchedulePage() {
             </div>
             <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">See your schedule</h2>
             <p className="text-neutral-600 dark:text-neutral-400 mb-8 max-w-xs mx-auto">
-              Sign in to view your booked events and track your fitness journey.
+              Sign in to view your booked experiences and track your fitness journey.
             </p>
             <Link
               href="/sign-in?redirect_url=/saved"
@@ -635,7 +635,7 @@ export default function SchedulePage() {
                     <History className="w-8 h-8 text-neutral-300 dark:text-neutral-600 mx-auto mb-3" />
                     <p className="text-sm text-neutral-500 dark:text-neutral-400">No past experiences yet</p>
                     <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
-                      Your attended events will appear here
+                      Your attended experiences will appear here
                     </p>
                   </div>
                 ) : (

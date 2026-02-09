@@ -258,7 +258,7 @@ export function GoingButton({
     if (isFull && !isGoing) {
       return (
         <button disabled className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold bg-neutral-200 text-neutral-500 cursor-not-allowed">
-          <span>Event Full</span>
+          <span>Experience Full</span>
           {count > 0 && <span className="text-neutral-400 ml-1">• {count} going</span>}
         </button>
       )
@@ -377,7 +377,7 @@ export function GoingButton({
   if (isFull && !isGoing) {
     return (
       <button disabled className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-neutral-200 text-neutral-500 cursor-not-allowed">
-        <span>Event Full</span>
+        <span>Experience Full</span>
       </button>
     )
   }

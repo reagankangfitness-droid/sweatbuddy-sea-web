@@ -68,8 +68,8 @@ export default function AdminSettingsPage() {
           <div className="space-y-4">
             <label className="flex items-center justify-between p-4 bg-neutral-50 rounded-lg cursor-pointer hover:bg-neutral-100 transition-colors">
               <div>
-                <p className="text-neutral-900 font-medium">New event submissions</p>
-                <p className="text-sm text-neutral-500">Get notified when new events are submitted for review</p>
+                <p className="text-neutral-900 font-medium">New experience submissions</p>
+                <p className="text-sm text-neutral-500">Get notified when new experiences are submitted for review</p>
               </div>
               <input
                 type="checkbox"

@@ -388,7 +388,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                   {/* Error Message - with special handling for already registered */}
                   {error && (
                     error.includes('already registered') ? (
-                      <p className="text-amber-600 text-sm">You&apos;ve already registered for this event</p>
+                      <p className="text-amber-600 text-sm">You&apos;ve already registered for this experience</p>
                     ) : (
                       <p className="text-red-500 text-sm">{error}</p>
                     )

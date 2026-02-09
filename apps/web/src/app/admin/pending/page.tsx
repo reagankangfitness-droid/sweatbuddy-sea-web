@@ -59,10 +59,10 @@ export default function PendingEventsPage() {
       } else if (res.status === 401) {
         toast.error('Unauthorized - please sign in with an admin account')
       } else {
-        toast.error(`Failed to load pending events: ${res.status}`)
+        toast.error(`Failed to load pending experiences: ${res.status}`)
       }
     } catch {
-      toast.error('Failed to load pending events')
+      toast.error('Failed to load pending experiences')
     } finally {
       setLoading(false)
     }
@@ -83,9 +83,9 @@ export default function PendingEventsPage() {
 
       if (res.ok) {
         setEvents(events.filter(e => e.id !== eventId))
-        toast.success('Event approved and published!')
+        toast.success('Experience approved and published!')
       } else {
-        toast.error('Failed to approve event')
+        toast.error('Failed to approve experience')
       }
     } catch (error) {
       toast.error('Failed to approve event')
@@ -105,9 +105,9 @@ export default function PendingEventsPage() {
 
       if (res.ok) {
         setEvents(events.filter(e => e.id !== eventId))
-        toast.success('Event rejected')
+        toast.success('Experience rejected')
       } else {
-        toast.error('Failed to reject event')
+        toast.error('Failed to reject experience')
       }
     } catch (error) {
       toast.error('Failed to reject event')
@@ -129,8 +129,8 @@ export default function PendingEventsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Pending Events</h1>
-          <p className="text-neutral-500 mt-1">Review and approve submitted events</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Pending Experiences</h1>
+          <p className="text-neutral-500 mt-1">Review and approve submitted experiences</p>
         </div>
         <button
           onClick={fetchPendingEvents}
@@ -161,7 +161,7 @@ export default function PendingEventsPage() {
         <div className="bg-white rounded-xl border border-neutral-200 p-12 text-center shadow-sm">
           <Inbox className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-neutral-900 mb-2">All caught up!</h3>
-          <p className="text-neutral-500">No pending events to review</p>
+          <p className="text-neutral-500">No pending experiences to review</p>
         </div>
       ) : (
         <div className="space-y-4">

@@ -121,9 +121,9 @@ export default function AdminActivitiesPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white">Event Approval Queue</h1>
+          <h1 className="text-3xl font-bold text-white">Experience Approval Queue</h1>
           <p className="text-white/60 mt-2">
-            Review and approve submitted events before they go live
+            Review and approve submitted experiences before they go live
           </p>
         </div>
 

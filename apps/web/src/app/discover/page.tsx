@@ -142,7 +142,7 @@ export default function DiscoverPage() {
             <div className="text-2xl font-bold text-neutral-900">
               <AnimatedCounter value={events.length} duration={1000} />
             </div>
-            <div className="text-xs text-neutral-500">Events</div>
+            <div className="text-xs text-neutral-500">Experiences</div>
           </div>
         </div>
       </div>
@@ -153,7 +153,7 @@ export default function DiscoverPage() {
           <div className="h-[70vh] flex items-center justify-center">
             <div className="text-center">
               <div className="w-12 h-12 border-4 border-neutral-200 border-t-neutral-900 rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-neutral-500">Loading events...</p>
+              <p className="text-neutral-500">Loading experiences...</p>
             </div>
           </div>
         ) : viewMode === 'swipe' ? (

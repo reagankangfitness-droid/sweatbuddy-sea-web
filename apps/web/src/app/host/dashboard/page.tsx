@@ -264,8 +264,8 @@ export default function HostDashboard() {
         </h1>
         <p className="text-sm sm:text-base text-neutral-500 dark:text-neutral-400 mb-6 sm:mb-8">
           {data.stats.totalSignups > 0
-            ? 'Your events are bringing people together.'
-            : 'Ready to bring people together? Create your first event.'}
+            ? 'Your experiences are bringing people together.'
+            : 'Ready to bring people together? Create your first experience.'}
         </p>
 
         {/* Weekly Pulse */}
@@ -305,7 +305,7 @@ export default function HostDashboard() {
 
         {/* Stats - 2 cols on very small screens, 3 cols on sm+ */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
-          <StatCard value={data.stats.activeEvents || 0} label="Events Live" />
+          <StatCard value={data.stats.activeEvents || 0} label="Experiences Live" />
           <StatCard value={data.stats.totalSignups || 0} label="People Joined" />
           <StatCard
             value={data.stats.totalEarnings ? `$${(data.stats.totalEarnings / 100).toFixed(0)}` : '—'}
@@ -452,25 +452,25 @@ export default function HostDashboard() {
                   {activeTab === 'pending' && (
                     <div className="text-neutral-500 dark:text-neutral-400">
                       <Clock className="w-8 h-8 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" />
-                      <p className="text-sm">No pending events</p>
+                      <p className="text-sm">No pending experiences</p>
                     </div>
                   )}
                   {activeTab === 'past' && (
                     <div className="text-neutral-500 dark:text-neutral-400">
                       <AlertCircle className="w-8 h-8 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" />
-                      <p className="text-sm">No past events yet</p>
+                      <p className="text-sm">No past experiences yet</p>
                     </div>
                   )}
                   {activeTab === 'rejected' && (
                     <div className="text-neutral-500 dark:text-neutral-400">
                       <XCircle className="w-8 h-8 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" />
-                      <p className="text-sm">No rejected events</p>
+                      <p className="text-sm">No rejected experiences</p>
                     </div>
                   )}
                   {activeTab === 'cancelled' && (
                     <div className="text-neutral-500 dark:text-neutral-400">
                       <Ban className="w-8 h-8 mx-auto mb-2 text-neutral-300 dark:text-neutral-600" />
-                      <p className="text-sm">No cancelled events</p>
+                      <p className="text-sm">No cancelled experiences</p>
                     </div>
                   )}
                 </div>
@@ -567,7 +567,7 @@ export default function HostDashboard() {
                               {regular.name || regular.email.split('@')[0]}
                             </p>
                             <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                              {regular.attendanceCount} events attended
+                              {regular.attendanceCount} experiences attended
                             </p>
                           </div>
                         </div>
@@ -598,7 +598,7 @@ export default function HostDashboard() {
                               {member.name || member.email.split('@')[0]}
                             </p>
                             <p className="text-xs text-orange-700 dark:text-orange-400">
-                              {member.daysSinceLastAttended} days since last event · Missed {member.missedEventCount} events
+                              {member.daysSinceLastAttended} days since last experience · Missed {member.missedEventCount} experiences
                             </p>
                           </div>
                         </div>

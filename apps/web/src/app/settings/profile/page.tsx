@@ -221,7 +221,7 @@ export default function ProfileSettingsPage() {
                   className="flex-1 text-sm text-neutral-900 dark:text-white bg-transparent outline-none placeholder-neutral-400"
                 />
               </div>
-              <p className="text-[10px] text-neutral-400 mt-1">Required to manage events you host</p>
+              <p className="text-[10px] text-neutral-400 mt-1">Required to manage experiences you host</p>
             </div>
 
             {/* Bio */}

@@ -191,7 +191,7 @@ function TicketContent() {
             <div className="flex items-center justify-between mb-4">
               <div className="text-2xl font-bold">SweatBuddies</div>
               <div className="text-xs px-3 py-1 bg-white/20 rounded-full uppercase tracking-wide">
-                {booking.paymentStatus === 'PAID' || booking.amountPaid ? 'Confirmed' : 'Free Event'}
+                {booking.paymentStatus === 'PAID' || booking.amountPaid ? 'Confirmed' : 'Free Experience'}
               </div>
             </div>
             <h1 className="text-xl font-semibold">{activity.title}</h1>
@@ -274,7 +274,7 @@ function TicketContent() {
           {/* Footer */}
           <div className="p-4 bg-neutral-900 text-center">
             <p className="text-white/60 text-xs">
-              Show this ticket at the event for check-in
+              Show this ticket at the experience for check-in
             </p>
             <p className="text-white/40 text-xs mt-1">
               sweatbuddies.sg

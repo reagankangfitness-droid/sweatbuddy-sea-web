@@ -257,11 +257,11 @@ export default function GrowthPage() {
           </div>
           <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-3 text-center">
             <p className="text-2xl font-bold text-purple-700 dark:text-purple-400">{metrics.avgAttendeesPerEvent}</p>
-            <p className="text-xs text-purple-600 dark:text-purple-400">Avg per Event</p>
+            <p className="text-xs text-purple-600 dark:text-purple-400">Avg per Experience</p>
           </div>
           <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3 text-center">
             <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">{metrics.totalEvents}</p>
-            <p className="text-xs text-amber-600 dark:text-amber-400">Total Events</p>
+            <p className="text-xs text-amber-600 dark:text-amber-400">Total Experiences</p>
           </div>
         </div>
 

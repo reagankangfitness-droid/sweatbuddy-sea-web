@@ -287,13 +287,13 @@ export default function NewActivityPage() {
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.error || 'Failed to submit event')
+        throw new Error(error.error || 'Failed to submit experience')
       }
 
-      toast.success('Event submitted for review! You will be notified once it is approved (typically within 24 hours).')
+      toast.success('Experience submitted for review! You will be notified once it is approved (typically within 24 hours).')
       router.push('/host/dashboard')
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to submit event')
+      toast.error(error instanceof Error ? error.message : 'Failed to submit experience')
       setIsSubmitting(false)
     }
   }

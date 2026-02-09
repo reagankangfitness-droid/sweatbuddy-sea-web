@@ -103,7 +103,7 @@ export function WaitlistButton({ eventId, eventName, fullWidth = false }: Waitli
             </div>
 
             <p className="text-sm text-neutral-600 mb-4">
-              This event is full, but you can join the waitlist. We&apos;ll notify you by email if a spot opens up!
+              This experience is full, but you can join the waitlist. We&apos;ll notify you by email if a spot opens up!
             </p>
 
             {error && (

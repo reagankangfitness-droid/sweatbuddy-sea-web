@@ -52,14 +52,14 @@ export default function EditEventPage() {
             return
           }
           if (eventRes.status === 404) {
-            setError('We couldn\'t find that event')
+            setError('We couldn\'t find that experience')
             return
           }
           if (eventRes.status === 403) {
-            setError('You don\'t have permission to edit this event')
+            setError('You don\'t have permission to edit this experience')
             return
           }
-          throw new Error('Couldn\'t load the event. Try again?')
+          throw new Error('Couldn\'t load the experience. Try again?')
         }
 
         const eventData = await eventRes.json()

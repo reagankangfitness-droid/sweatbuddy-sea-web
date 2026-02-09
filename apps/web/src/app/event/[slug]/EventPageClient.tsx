@@ -321,7 +321,7 @@ export function EventPageClient({ event }: { event: Event }) {
                     disabled
                     className="w-full py-4 bg-neutral-200 text-neutral-500 rounded-xl font-semibold text-lg cursor-not-allowed"
                   >
-                    Event Full
+                    Experience Full
                   </button>
                 ) : isGoing ? (
                   <motion.button

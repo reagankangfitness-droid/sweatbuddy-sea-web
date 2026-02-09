@@ -197,7 +197,7 @@ export default function AdminEventsPage() {
       })
 
       if (response.ok) {
-        toast.success(`Event ${action === 'approve' ? 'approved' : 'rejected'}`)
+        toast.success(`Experience ${action === 'approve' ? 'approved' : 'rejected'}`)
         setSubmissions(submissions.filter(s => s.id !== submissionId))
         if (action === 'approve') {
           fetchEvents()

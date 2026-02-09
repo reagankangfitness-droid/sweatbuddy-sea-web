@@ -22,7 +22,7 @@ export function DashboardHeader() {
           href="/host"
           className="inline-flex items-center justify-center px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-semibold rounded-full hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors"
         >
-          <span className="hidden sm:inline">+ New Event</span>
+          <span className="hidden sm:inline">+ New Experience</span>
           <span className="sm:hidden">+ New</span>
         </Link>
       </div>

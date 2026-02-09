@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -105,16 +104,15 @@ export function MobileHero() {
         >
           <button
             onClick={() => handleClick('events')}
-            className="w-full px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 transition-colors text-center shadow-lg"
+            className="w-full px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold text-lg shadow-lg transition-all duration-300 active:scale-[0.97] text-center"
           >
-            Explore experiences
+            Explore Experiences
           </button>
           <Link
             href="/host"
-            className="w-full px-8 py-4 bg-transparent text-white border-2 border-white/30 rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/50 transition-colors text-center flex items-center justify-center gap-2"
+            className="w-full px-8 py-4 bg-white/10 text-white border-2 border-white/30 rounded-full font-semibold text-lg backdrop-blur-sm transition-all duration-300 active:scale-[0.97] text-center"
           >
-            Host your experience
-            <ArrowRight className="w-5 h-5" />
+            Host Your Experience
           </Link>
           {/* Host hook text */}
           <p className="text-white/50 text-sm text-center mt-2">

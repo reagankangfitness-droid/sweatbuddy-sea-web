@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, memo, useCallback } from 'react'
-import { ArrowDown, ArrowRight } from 'lucide-react'
+import { ArrowDown } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
@@ -139,16 +139,15 @@ export const Hero = memo(function Hero() {
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={(e) => handleHashClick(e, '#events')}
-                className="px-10 py-5 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 transition-colors shadow-lg"
+                className="min-w-[220px] px-10 py-5 bg-white text-neutral-900 rounded-full font-semibold text-lg shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(255,255,255,0.2)] active:translate-y-0 active:shadow-lg text-center"
               >
-                Explore experiences
+                Explore Experiences
               </button>
               <Link
                 href="/host"
-                className="px-10 py-5 bg-transparent text-white border-2 border-white/30 rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/50 transition-colors flex items-center gap-2"
+                className="min-w-[220px] px-10 py-5 bg-white/10 text-white border-2 border-white/30 rounded-full font-semibold text-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:border-white/50 hover:shadow-[0_8px_30px_rgba(255,255,255,0.1)] active:translate-y-0 text-center"
               >
-                Host your experience
-                <ArrowRight className="w-5 h-5" />
+                Host Your Experience
               </Link>
             </div>
 

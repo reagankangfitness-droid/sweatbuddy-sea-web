@@ -923,13 +923,32 @@ export default function HostForm() {
                       </div>
                       <div>
                         <p className="text-neutral-300 text-sm font-medium">Show what makes your event special with photos</p>
-                        <button
-                          type="button"
-                          className="mt-2 flex items-center gap-2 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white text-sm rounded-full transition-colors"
-                        >
-                          <Plus className="w-4 h-4" />
-                          Add Images
-                        </button>
+                        <div className="mt-2">
+                          <UploadButton
+                            endpoint="eventImage"
+                            onUploadBegin={() => setIsUploading(true)}
+                            onClientUploadComplete={(res) => {
+                              setIsUploading(false)
+                              if (res?.[0]?.url) setImageUrl(res[0].url)
+                            }}
+                            onUploadError={(error: Error) => {
+                              setIsUploading(false)
+                              setError(`Upload failed: ${error.message}`)
+                            }}
+                            appearance={{
+                              button: "flex items-center gap-2 bg-neutral-800 hover:bg-neutral-700 text-white text-sm px-4 py-2 rounded-full transition-colors",
+                              allowedContent: "hidden",
+                            }}
+                            content={{
+                              button: () => (
+                                <span className="flex items-center gap-2">
+                                  <Plus className="w-4 h-4" />
+                                  Add Images
+                                </span>
+                              ),
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -63,16 +63,16 @@ export default function LandingPage() {
           <p className="text-lg sm:text-xl text-white/70 max-w-lg">
             Hundreds of group workouts across Singapore. Zero DM hunting. One tap to join.
           </p>
-          <div className="flex flex-col sm:flex-row items-start gap-4 mt-2">
+          <div className="flex flex-col sm:flex-row items-stretch gap-4 mt-2">
             <a
               href="#events"
-              className="inline-block min-w-[220px] px-8 py-4 rounded-xl bg-white text-neutral-900 font-semibold text-lg text-center shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(255,255,255,0.2)] active:translate-y-0 active:scale-[0.98]"
+              className="flex items-center justify-center min-w-[220px] px-8 py-4 rounded-xl border border-transparent bg-white text-neutral-900 font-semibold text-lg text-center shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(255,255,255,0.2)] active:translate-y-0 active:scale-[0.98]"
             >
               Explore Experiences
             </a>
             <Link
               href="/host"
-              className="inline-block min-w-[220px] px-8 py-4 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm text-white font-semibold text-lg text-center transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:border-white/40 hover:shadow-[0_8px_30px_rgba(255,255,255,0.1)] active:translate-y-0 active:scale-[0.98]"
+              className="flex items-center justify-center min-w-[220px] px-8 py-4 rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm text-white font-semibold text-lg text-center transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:border-white/40 hover:shadow-[0_8px_30px_rgba(255,255,255,0.1)] active:translate-y-0 active:scale-[0.98]"
             >
               Host Your Experience
             </Link>

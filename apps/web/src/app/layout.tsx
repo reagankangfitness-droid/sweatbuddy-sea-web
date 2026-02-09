@@ -21,11 +21,11 @@ const BASE_URL = 'https://www.sweatbuddies.co'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'SweatBuddies | Find Fitness Events in Singapore',
+    default: 'SweatBuddies | Find Fitness Experiences in Singapore',
     template: '%s | SweatBuddies',
   },
-  description: 'Show up alone. Leave with a crew. Find run clubs, yoga, HIIT and fitness events across Singapore. No membership required.',
-  keywords: ['fitness events', 'Singapore', 'run club', 'yoga', 'bootcamp', 'outdoor fitness', 'community events', 'workout', 'HIIT', 'group fitness'],
+  description: 'Show up alone. Leave with a crew. Find run clubs, yoga, HIIT and fitness experiences across Singapore. No membership required.',
+  keywords: ['fitness experiences', 'Singapore', 'run club', 'yoga', 'bootcamp', 'outdoor fitness', 'community experiences', 'workout', 'HIIT', 'group fitness'],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
   icons: {
@@ -38,8 +38,8 @@ export const metadata: Metadata = {
     locale: 'en_SG',
     url: BASE_URL,
     siteName: 'SweatBuddies',
-    title: 'SweatBuddies | Find Fitness Events in Singapore',
-    description: 'Show up alone. Leave with a crew. Find run clubs, yoga, HIIT and fitness events across Singapore.',
+    title: 'SweatBuddies | Find Fitness Experiences in Singapore',
+    description: 'Show up alone. Leave with a crew. Find run clubs, yoga, HIIT and fitness experiences across Singapore.',
     images: [
       {
         url: '/images/og-image.jpg',
@@ -51,8 +51,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SweatBuddies | Find Fitness Events in Singapore',
-    description: 'Show up alone. Leave with a crew. Find fitness events across Singapore.',
+    title: 'SweatBuddies | Find Fitness Experiences in Singapore',
+    description: 'Show up alone. Leave with a crew. Find fitness experiences across Singapore.',
     images: ['/images/og-image.jpg'],
   },
   robots: {

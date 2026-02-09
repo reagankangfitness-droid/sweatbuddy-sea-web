@@ -46,7 +46,7 @@ export function MobileFloatingCTA() {
         onClick={handleClick}
         className="w-full bg-neutral-900 text-white py-4 font-semibold rounded-full flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 hover:bg-neutral-900-600"
       >
-        Browse Events
+        Browse Experiences
         <ArrowRight className="w-5 h-5" />
       </button>
       {/* Safe area padding for iOS */}

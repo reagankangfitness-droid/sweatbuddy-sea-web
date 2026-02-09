@@ -281,7 +281,7 @@ export async function sendPostEventFollowUpEmail(
         <tr>
           <td style="padding: 0;">
             <h3 style="margin: 0 0 16px; color: #374151; font-size: 18px; font-weight: 600;">
-              More events you might like
+              More experiences you might like
             </h3>
           </td>
         </tr>
@@ -399,7 +399,7 @@ export async function sendPostEventFollowUpEmail(
                 <tr>
                   <td style="padding: 20px; text-align: center;">
                     <p style="margin: 0 0 12px; color: #374151; font-size: 15px;">
-                      Follow the organizer for updates on future events
+                      Follow the organizer for updates on future experiences
                     </p>
                     <a href="${instagramLink}" style="display: inline-block; padding: 10px 20px; background-color: #e1306c; color: white; text-decoration: none; font-size: 14px; font-weight: 600; border-radius: 8px;">
                       Follow @${organizerInstagram?.replace('@', '')}
@@ -416,7 +416,7 @@ export async function sendPostEventFollowUpEmail(
                 <tr>
                   <td align="center" style="padding: 8px;">
                     <a href="${BASE_URL}/events" style="display: inline-block; padding: 14px 28px; background-color: #8b5cf6; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
-                      Browse More Events
+                      Browse More Experiences
                     </a>
                   </td>
                 </tr>
@@ -432,10 +432,10 @@ export async function sendPostEventFollowUpEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <a href="${eventUrl}" style="display: inline-block; margin-bottom: 16px; color: #8b5cf6; text-decoration: none; font-size: 14px; font-weight: 500;">
-                View Event Details &rarr;
+                View Experience Details &rarr;
               </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more events at
+                Find more experiences at
               </p>
               <a href="${BASE_URL}" style="color: #8b5cf6; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co

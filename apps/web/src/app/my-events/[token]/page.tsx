@@ -179,7 +179,7 @@ export default function MyEventsViewPage() {
         {/* Hero */}
         <div className="text-center mb-8">
           <h1 className="font-sans font-bold text-2xl sm:text-3xl text-neutral-900 mb-2">
-            My Events
+            My Experiences
           </h1>
           <p className="text-neutral-600">
             Events for <strong>{data?.email}</strong>
@@ -192,16 +192,16 @@ export default function MyEventsViewPage() {
               📅
             </div>
             <h2 className="font-sans font-semibold text-lg text-neutral-900 mb-2">
-              No events yet
+              No experiences yet
             </h2>
             <p className="text-neutral-600 text-sm mb-6">
-              You haven&apos;t signed up for any events yet.
+              You haven&apos;t signed up for any experiences yet.
             </p>
             <Link
               href="/#events"
               className="inline-flex items-center justify-center h-10 px-5 rounded-full bg-[#3477f8] text-white font-semibold text-sm hover:bg-[#2563eb] transition-all"
             >
-              Browse Events
+              Browse Experiences
             </Link>
           </div>
         ) : (
@@ -211,7 +211,7 @@ export default function MyEventsViewPage() {
               <div>
                 <h2 className="font-sans font-semibold text-lg text-neutral-900 mb-4 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                  Upcoming Events ({activeEvents.length})
+                  Upcoming Experiences ({activeEvents.length})
                 </h2>
                 <div className="space-y-4">
                   {activeEvents.map((rsvp) => (
@@ -225,7 +225,7 @@ export default function MyEventsViewPage() {
             {pastEvents.length > 0 && (
               <div>
                 <h2 className="font-sans font-semibold text-lg text-neutral-500 mb-4">
-                  Past Events ({pastEvents.length})
+                  Past Experiences ({pastEvents.length})
                 </h2>
                 <div className="space-y-3 opacity-60">
                   {pastEvents.map((rsvp) => (
@@ -251,7 +251,7 @@ export default function MyEventsViewPage() {
             href="/#events"
             className="inline-flex items-center gap-2 text-[#3477f8] font-medium hover:underline"
           >
-            Browse more events
+            Browse more experiences
             <ExternalLink className="w-4 h-4" />
           </Link>
         </div>

@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 
 const navItems = [
   { id: 'community', label: 'Community', icon: Users, href: '/community' },
-  { id: 'events', label: 'Events', icon: CalendarDays, href: '/events' },
+  { id: 'events', label: 'Experiences', icon: CalendarDays, href: '/events' },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile' },
 ]
 

@@ -12,12 +12,12 @@ const faqs = [
   },
   {
     question: 'What if I\'m not fit enough?',
-    answer: "Most events are all levels. You set your own pace. No one's judging.",
+    answer: "Most experiences are all levels. You set your own pace. No one's judging.",
     emoji: '💪',
   },
   {
     question: 'How much does it cost?',
-    answer: 'Prices vary by event. Every listing shows the price upfront — no surprises.',
+    answer: 'Prices vary by experience. Every listing shows the price upfront — no surprises.',
     emoji: '💰',
   },
 ]

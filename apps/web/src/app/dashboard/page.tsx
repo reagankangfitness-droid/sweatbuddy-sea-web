@@ -174,7 +174,7 @@ export default function DashboardPage() {
             </h2>
             <p className="text-neutral-500 dark:text-neutral-400 mt-1">
               {hasUpcomingEvents
-                ? `You have ${data.upcomingCount} upcoming event${data.upcomingCount > 1 ? 's' : ''}`
+                ? `You have ${data.upcomingCount} upcoming experience${data.upcomingCount > 1 ? 's' : ''}`
                 : "Let's find your next workout"}
             </p>
           </div>
@@ -261,7 +261,7 @@ export default function DashboardPage() {
             <div>
               <div className="flex items-center justify-between px-1 mb-3">
                 <h3 className="text-xs font-semibold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">
-                  Upcoming Events
+                  Upcoming Experiences
                 </h3>
                 <Link
                   href="/my-events"
@@ -316,7 +316,7 @@ export default function DashboardPage() {
                 <Calendar className="w-8 h-8 text-blue-500" />
               </div>
               <h4 className="font-semibold text-neutral-900 dark:text-white mb-2">
-                No upcoming events
+                No upcoming experiences
               </h4>
               <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-4">
                 Find your next workout and join the crew!
@@ -326,7 +326,7 @@ export default function DashboardPage() {
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full text-sm font-medium hover:bg-neutral-700 dark:hover:bg-neutral-100 transition-colors"
               >
                 <Search className="w-4 h-4" />
-                Find Events
+                Find Experiences
               </Link>
             </div>
           )}

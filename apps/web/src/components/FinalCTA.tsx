@@ -52,7 +52,7 @@ export function FinalCTA() {
             onClick={handleClick}
             className="group relative inline-flex items-center gap-2 bg-white text-black px-8 py-4 rounded-full text-lg font-semibold shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.4)] transition-all duration-300"
           >
-            Find an Event
+            Find an Experience
             <motion.span
               className="inline-block"
               animate={{ x: [0, 4, 0] }}
@@ -73,7 +73,7 @@ export function FinalCTA() {
         >
           <div className="flex items-center gap-2">
             <span className="text-2xl">🏃</span>
-            <span>50+ events weekly</span>
+            <span>50+ experiences weekly</span>
           </div>
           <div className="w-1 h-1 bg-gray-700 rounded-full" />
           <div className="flex items-center gap-2">

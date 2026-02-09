@@ -214,7 +214,7 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
         ref={buttonRef}
         onClick={handleShare}
         className={`flex items-center justify-center rounded-full transition-all ${buttonStyles}`}
-        aria-label="Share event"
+        aria-label="Share experience"
         title="Share this with your community"
       >
         <Share2 className={iconStyles} />

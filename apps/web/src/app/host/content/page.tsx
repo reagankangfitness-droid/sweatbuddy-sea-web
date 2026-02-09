@@ -45,7 +45,7 @@ interface Event {
 const CONTENT_TYPES: { id: ContentType; label: string; icon: React.ReactNode; description: string }[] = [
   { id: 'instagram_caption', label: 'Instagram', icon: <Instagram className="w-5 h-5" />, description: 'Engaging captions with hashtags' },
   { id: 'whatsapp_message', label: 'WhatsApp', icon: <MessageCircle className="w-5 h-5" />, description: 'Quick messages to share' },
-  { id: 'event_description', label: 'Event', icon: <FileText className="w-5 h-5" />, description: 'Clear event descriptions' },
+  { id: 'event_description', label: 'Experience', icon: <FileText className="w-5 h-5" />, description: 'Clear experience descriptions' },
   { id: 'email', label: 'Email', icon: <Mail className="w-5 h-5" />, description: 'Professional email messages' },
 ]
 
@@ -340,7 +340,7 @@ export default function ContentPage() {
         {events.length > 0 && (
           <div className="mb-6">
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-              For a specific event? (optional)
+              For a specific experience? (optional)
             </label>
             <div className="relative">
               <select
@@ -348,7 +348,7 @@ export default function ContentPage() {
                 onChange={(e) => setSelectedEvent(e.target.value || null)}
                 className="w-full px-4 py-2.5 bg-neutral-100 dark:bg-neutral-800 border-0 rounded-xl text-sm text-neutral-900 dark:text-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-500"
               >
-                <option value="">No specific event</option>
+                <option value="">No specific experience</option>
                 {events.map((event) => (
                   <option key={event.id} value={event.id}>
                     {event.name} - {event.day} {event.time}

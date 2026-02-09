@@ -33,7 +33,7 @@ const hostSteps = [
   {
     number: '1',
     title: 'List',
-    description: 'Create your event in under 5 minutes.',
+    description: 'Create your experience in under 5 minutes.',
   },
   {
     number: '2',

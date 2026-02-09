@@ -221,10 +221,10 @@ export function DashboardTabs({
                 <EmptyState
                   title={timeTab === 'upcoming' ? 'No upcoming activities' : 'No past activities'}
                   description={timeTab === 'upcoming'
-                    ? "You haven't joined any upcoming activities yet. Browse events to find something fun!"
+                    ? "You haven't joined any upcoming activities yet. Browse experiences to find something fun!"
                     : "You don't have any past activities yet."
                   }
-                  actionLabel="Browse Events"
+                  actionLabel="Browse Experiences"
                   actionHref="/#events"
                 />
               ) : (

@@ -68,13 +68,13 @@ export default function LandingPage() {
               href="#events"
               className="inline-block px-8 py-4 rounded-xl bg-white text-neutral-900 font-semibold text-lg text-center hover:bg-white/90 active:scale-[0.98] transition-all"
             >
-              Explore Events
+              Explore Experiences
             </a>
             <Link
               href="/host"
               className="inline-block px-6 py-3 rounded-xl border border-white/20 text-white/80 font-medium text-base text-center hover:bg-white/10 transition-all"
             >
-              Host Your Event
+              Host Your Experience
             </Link>
           </div>
           <p className="text-sm text-white/40">
@@ -127,7 +127,7 @@ export default function LandingPage() {
               href="/events"
               className="inline-block px-8 py-4 rounded-xl bg-white text-neutral-900 font-semibold text-lg text-center hover:bg-white/90 active:scale-[0.98] transition-all"
             >
-              Browse Events
+              Browse Experiences
             </Link>
           </div>
         </ScrollReveal>
@@ -185,7 +185,7 @@ export default function LandingPage() {
               href="/events"
               className="inline-block px-8 py-4 rounded-xl bg-white text-neutral-900 font-semibold text-lg text-center hover:bg-white/90 active:scale-[0.98] transition-all mb-4"
             >
-              Find Events
+              Find Experiences
             </Link>
             <p className="text-sm text-white/40">
               <Link href="/host" className="underline underline-offset-4 hover:text-white/60 transition-colors">

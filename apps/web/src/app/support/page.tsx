@@ -14,8 +14,8 @@ const faqs: FAQItem[] = [
   // Booking
   {
     category: 'booking',
-    question: 'How do I book an event?',
-    answer: 'Browse events on the homepage or Discover page. Click on any event to see details, then tap "Going" for free events or complete checkout for paid events. You\'ll receive a confirmation email with all the details.'
+    question: 'How do I book an experience?',
+    answer: 'Browse experiences on the homepage or Discover page. Click on any experience to see details, then tap "Going" for free experiences or complete checkout for paid experiences. You\'ll receive a confirmation email with all the details.'
   },
   {
     category: 'booking',
@@ -24,13 +24,13 @@ const faqs: FAQItem[] = [
   },
   {
     category: 'booking',
-    question: 'What happens if an event is full?',
+    question: 'What happens if an experience is full?',
     answer: 'You can join the waitlist! When a spot opens up, you\'ll be notified via email and have 24 hours to claim your spot before it goes to the next person.'
   },
   {
     category: 'booking',
     question: 'How do I cancel my booking?',
-    answer: 'Go to "My Events" from your profile, find the booking you want to cancel, and click "Cancel Booking". The refund amount depends on how far in advance you cancel - check the event\'s refund policy for details.'
+    answer: 'Go to "My Experiences" from your profile, find the booking you want to cancel, and click "Cancel Booking". The refund amount depends on how far in advance you cancel - check the experience\'s refund policy for details.'
   },
   // Payment
   {
@@ -46,7 +46,7 @@ const faqs: FAQItem[] = [
   {
     category: 'payment',
     question: 'What are the service fees?',
-    answer: 'For paid events, there\'s a service fee of 3.7% + SGD $1.79 per ticket. This covers payment processing and platform costs. The fee is clearly shown before you complete your booking.'
+    answer: 'For paid experiences, there\'s a service fee of 3.7% + SGD $1.79 per ticket. This covers payment processing and platform costs. The fee is clearly shown before you complete your booking.'
   },
   {
     category: 'payment',
@@ -66,8 +66,8 @@ const faqs: FAQItem[] = [
   },
   {
     category: 'refunds',
-    question: 'What if the host cancels the event?',
-    answer: 'If a host cancels an event, all attendees are automatically notified via email. You\'ll receive a full refund for paid events, processed within 5-10 business days.'
+    question: 'What if the host cancels the experience?',
+    answer: 'If a host cancels an experience, all attendees are automatically notified via email. You\'ll receive a full refund for paid experiences, processed within 5-10 business days.'
   },
   {
     category: 'refunds',
@@ -78,7 +78,7 @@ const faqs: FAQItem[] = [
   {
     category: 'hosting',
     question: 'How do I become a host?',
-    answer: 'Sign in to SweatBuddies, go to your Profile, and click "Host Dashboard". You can submit your first event for review. Once approved, your event will be live on the platform.'
+    answer: 'Sign in to SweatBuddies, go to your Profile, and click "Host Dashboard". You can submit your first experience for review. Once approved, your experience will be live on the platform.'
   },
   {
     category: 'hosting',
@@ -340,7 +340,7 @@ export default function SupportPage() {
                   value={contactForm.message}
                   onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
                   className="w-full px-4 py-2.5 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white resize-none"
-                  placeholder="Please describe your issue or question in detail. Include any relevant booking IDs or event names."
+                  placeholder="Please describe your issue or question in detail. Include any relevant booking IDs or experience names."
                 />
               </div>
 
@@ -394,7 +394,7 @@ export default function SupportPage() {
               <Users className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               <div>
                 <p className="font-medium text-neutral-900 dark:text-white">Host Dashboard</p>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">Manage your events</p>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">Manage your experiences</p>
               </div>
             </Link>
             <Link

@@ -27,7 +27,7 @@ export async function sendEventSubmittedEmail(
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Event Submitted!</title>
+  <title>Experience Submitted!</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
   <table role="presentation" style="width: 100%; border-collapse: collapse;">
@@ -39,7 +39,7 @@ export async function sendEventSubmittedEmail(
             <td style="padding: 32px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <div style="font-size: 48px; margin-bottom: 16px;">📝</div>
               <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
-                Event Submitted!
+                Experience Submitted!
               </h1>
               <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
                 Pending review
@@ -55,7 +55,7 @@ export async function sendEventSubmittedEmail(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Thanks for submitting your event <strong>"${eventName}"</strong> to SweatBuddies!
+                Thanks for submitting your experience <strong>"${eventName}"</strong> to SweatBuddies!
               </p>
 
               <!-- Status Card -->
@@ -67,7 +67,7 @@ export async function sendEventSubmittedEmail(
                       Pending Review
                     </p>
                     <p style="margin: 8px 0 0; color: #a16207; font-size: 14px;">
-                      We'll review your event within 24-48 hours
+                      We'll review your experience within 24-48 hours
                     </p>
                   </td>
                 </tr>
@@ -78,9 +78,9 @@ export async function sendEventSubmittedEmail(
               </p>
 
               <ul style="margin: 0 0 24px; padding: 0 0 0 20px; color: #374151; font-size: 15px; line-height: 2;">
-                <li>Our team will review your event details</li>
+                <li>Our team will review your experience details</li>
                 <li>You'll receive an email once it's approved</li>
-                <li>Your event will then be live on SweatBuddies!</li>
+                <li>Your experience will then be live on SweatBuddies!</li>
               </ul>
 
               <!-- Action Button -->
@@ -104,7 +104,7 @@ export async function sendEventSubmittedEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Host your fitness events at
+                Host your fitness experiences at
               </p>
               <a href="${BASE_URL}" style="color: #f59e0b; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -121,7 +121,7 @@ export async function sendEventSubmittedEmail(
 
   return sendEmail({
     to,
-    subject: `Event Submitted: ${eventName} - Pending Review`,
+    subject: `Experience Submitted: ${eventName} - Pending Review`,
     html,
     tags: [
       { name: 'type', value: 'event_submitted' },
@@ -155,7 +155,7 @@ export async function sendEventApprovedEmail(
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Event Approved!</title>
+  <title>Experience Approved!</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
   <table role="presentation" style="width: 100%; border-collapse: collapse;">
@@ -167,10 +167,10 @@ export async function sendEventApprovedEmail(
             <td style="padding: 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
               <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
-                Event Approved!
+                Experience Approved!
               </h1>
               <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
-                Your event is now live
+                Your experience is now live
               </p>
             </td>
           </tr>
@@ -183,7 +183,7 @@ export async function sendEventApprovedEmail(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Great news! Your event <strong>"${eventName}"</strong> has been approved and is now live on SweatBuddies!
+                Great news! Your experience <strong>"${eventName}"</strong> has been approved and is now live on SweatBuddies!
               </p>
 
               <!-- Success Card -->
@@ -192,10 +192,10 @@ export async function sendEventApprovedEmail(
                   <td style="padding: 20px; text-align: center;">
                     <div style="font-size: 24px; margin-bottom: 8px;">✅</div>
                     <p style="margin: 0; color: #065f46; font-size: 16px; font-weight: 600;">
-                      Your Event is Live!
+                      Your Experience is Live!
                     </p>
                     <p style="margin: 8px 0 0; color: #047857; font-size: 14px;">
-                      People can now discover and join your event
+                      People can now discover and join your experience
                     </p>
                   </td>
                 </tr>
@@ -206,7 +206,7 @@ export async function sendEventApprovedEmail(
               </p>
 
               <ul style="margin: 0 0 24px; padding: 0 0 0 20px; color: #374151; font-size: 15px; line-height: 2;">
-                <li>Share your event link with your community</li>
+                <li>Share your experience link with your community</li>
                 <li>Track RSVPs from your dashboard</li>
                 <li>Get notified when people join</li>
               </ul>
@@ -216,7 +216,7 @@ export async function sendEventApprovedEmail(
                 <tr>
                   <td align="center" style="padding: 8px;">
                     <a href="${eventUrl}" style="display: inline-block; padding: 14px 28px; background-color: #10b981; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
-                      View Your Event
+                      View Your Experience
                     </a>
                   </td>
                 </tr>
@@ -237,7 +237,7 @@ export async function sendEventApprovedEmail(
                 <tr>
                   <td style="padding: 16px;">
                     <p style="margin: 0 0 8px; color: #374151; font-size: 14px; font-weight: 600;">
-                      📤 Share your event:
+                      📤 Share your experience:
                     </p>
                     <p style="margin: 0; color: #10b981; font-size: 14px; word-break: break-all;">
                       ${eventUrl}
@@ -256,7 +256,7 @@ export async function sendEventApprovedEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Host your fitness events at
+                Host your fitness experiences at
               </p>
               <a href="${BASE_URL}" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -273,7 +273,7 @@ export async function sendEventApprovedEmail(
 
   return sendEmail({
     to,
-    subject: `🎉 Event Approved: ${eventName} is now live!`,
+    subject: `🎉 Experience Approved: ${eventName} is now live!`,
     html,
     tags: [
       { name: 'type', value: 'event_approved' },
@@ -306,7 +306,7 @@ export async function sendEventRejectedEmail(
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Event Not Approved</title>
+  <title>Experience Not Approved</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
   <table role="presentation" style="width: 100%; border-collapse: collapse;">
@@ -318,7 +318,7 @@ export async function sendEventRejectedEmail(
             <td style="padding: 32px; background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <div style="font-size: 48px; margin-bottom: 16px;">📋</div>
               <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
-                Event Not Approved
+                Experience Not Approved
               </h1>
               <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
                 We need a few changes
@@ -334,7 +334,7 @@ export async function sendEventRejectedEmail(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Thanks for submitting your event <strong>"${eventName}"</strong>. Unfortunately, we weren't able to approve it at this time.
+                Thanks for submitting your experience <strong>"${eventName}"</strong>. Unfortunately, we weren't able to approve it at this time.
               </p>
 
               ${rejectionReason ? `
@@ -360,7 +360,7 @@ export async function sendEventRejectedEmail(
               <ul style="margin: 0 0 24px; padding: 0 0 0 20px; color: #374151; font-size: 15px; line-height: 2;">
                 <li>Review the feedback above</li>
                 <li>Make the necessary changes</li>
-                <li>Resubmit your event</li>
+                <li>Resubmit your experience</li>
               </ul>
 
               <!-- Action Button -->
@@ -384,7 +384,7 @@ export async function sendEventRejectedEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Host your fitness events at
+                Host your fitness experiences at
               </p>
               <a href="${BASE_URL}" style="color: #6b7280; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -401,7 +401,7 @@ export async function sendEventRejectedEmail(
 
   return sendEmail({
     to,
-    subject: `Event Update: ${eventName}`,
+    subject: `Experience Update: ${eventName}`,
     html,
     tags: [
       { name: 'type', value: 'event_rejected' },
@@ -494,7 +494,7 @@ export async function sendPaidEventConfirmationEmail(
                 Payment Confirmed!
               </h1>
               <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
-                You're all set for the event
+                You're all set for the experience
               </p>
             </td>
           </tr>
@@ -641,10 +641,10 @@ export async function sendPaidEventConfirmationEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <a href="${eventUrl}" style="display: inline-block; margin-bottom: 16px; color: #10b981; text-decoration: none; font-size: 14px; font-weight: 500;">
-                View Event Details &rarr;
+                View Experience Details &rarr;
               </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more events at
+                Find more experiences at
               </p>
               <a href="${BASE_URL}" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -742,7 +742,7 @@ export async function sendHostBookingNotificationEmail(
                 New Booking!
               </h1>
               <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
-                Someone just booked your event
+                Someone just booked your experience
               </p>
             </td>
           </tr>
@@ -836,13 +836,13 @@ export async function sendHostBookingNotificationEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Manage your events at
+                Manage your experiences at
               </p>
               <a href="${BASE_URL}" style="color: #7c3aed; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
               </a>
               <p style="margin: 16px 0 0; color: #94a3b8; font-size: 12px;">
-                You received this because you're hosting an event on SweatBuddies.
+                You received this because you're hosting an experience on SweatBuddies.
               </p>
             </td>
           </tr>
@@ -921,7 +921,7 @@ export async function sendHostNewAttendeeNotification(
                 New Attendee!
               </h1>
               <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
-                Someone just joined your event
+                Someone just joined your experience
               </p>
             </td>
           </tr>
@@ -986,7 +986,7 @@ export async function sendHostNewAttendeeNotification(
                 <tr>
                   <td align="center" style="padding: 8px;">
                     <a href="${eventUrl}" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 500;">
-                      View Event Page →
+                      View Experience Page →
                     </a>
                   </td>
                 </tr>
@@ -1002,13 +1002,13 @@ export async function sendHostNewAttendeeNotification(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Manage your events at
+                Manage your experiences at
               </p>
               <a href="${BASE_URL}/host/dashboard" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
               </a>
               <p style="margin: 16px 0 0; color: #94a3b8; font-size: 12px;">
-                You received this because you're hosting an event on SweatBuddies.
+                You received this because you're hosting an experience on SweatBuddies.
               </p>
             </td>
           </tr>
@@ -1081,14 +1081,14 @@ export async function sendEventCancellationEmail(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                No worries — we hope to see you at another event soon! 💪
+                No worries — we hope to see you at another experience soon! 💪
               </p>
 
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center">
                     <a href="${BASE_URL}" style="display: inline-block; padding: 16px 32px; background-color: #E07A5F; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 50px;">
-                      Browse More Events
+                      Browse More Experiences
                     </a>
                   </td>
                 </tr>
@@ -1221,7 +1221,7 @@ export async function sendWaitlistSpotAvailableEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more events at
+                Find more experiences at
               </p>
               <a href="${BASE_URL}" style="color: #f59e0b; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -1323,7 +1323,7 @@ export async function sendPaymentVerifiedEmail(
                 Payment Verified!
               </h1>
               <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
-                You're confirmed for the event
+                You're confirmed for the experience
               </p>
             </td>
           </tr>
@@ -1430,10 +1430,10 @@ export async function sendPaymentVerifiedEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <a href="${eventUrl}" style="display: inline-block; margin-bottom: 16px; color: #10b981; text-decoration: none; font-size: 14px; font-weight: 500;">
-                View Event Details &rarr;
+                View Experience Details &rarr;
               </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more events at
+                Find more experiences at
               </p>
               <a href="${BASE_URL}" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -1579,7 +1579,7 @@ export async function sendPaymentRejectedEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more events at
+                Find more experiences at
               </p>
               <a href="${BASE_URL}" style="color: #f59e0b; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -1666,7 +1666,7 @@ export async function sendEventCancelledByHostEmail(
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Event Cancelled</title>
+  <title>Experience Cancelled</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
   <table role="presentation" style="width: 100%; border-collapse: collapse;">
@@ -1678,7 +1678,7 @@ export async function sendEventCancelledByHostEmail(
             <td style="padding: 32px; background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <div style="font-size: 48px; margin-bottom: 16px;">😔</div>
               <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
-                Event Cancelled
+                Experience Cancelled
               </h1>
               <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
                 Sorry about that
@@ -1702,7 +1702,7 @@ export async function sendEventCancelledByHostEmail(
                 <tr>
                   <td style="padding: 20px;">
                     <p style="margin: 0 0 8px; color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
-                      Cancelled Event
+                      Cancelled Experience
                     </p>
                     <h3 style="margin: 0 0 12px; color: #374151; font-size: 18px; font-weight: 600; text-decoration: line-through;">
                       ${eventName}
@@ -1755,14 +1755,14 @@ export async function sendEventCancelledByHostEmail(
                 <tr>
                   <td align="center" style="padding: 8px;">
                     <a href="${BASE_URL}" style="display: inline-block; padding: 14px 28px; background-color: #3477f8; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
-                      Browse Other Events
+                      Browse Other Experiences
                     </a>
                   </td>
                 </tr>
               </table>
 
               <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
-                We hope to see you at another event soon! 💪
+                We hope to see you at another experience soon! 💪
               </p>
             </td>
           </tr>
@@ -1771,7 +1771,7 @@ export async function sendEventCancelledByHostEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more events at
+                Find more experiences at
               </p>
               <a href="${BASE_URL}" style="color: #3477f8; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -1788,7 +1788,7 @@ export async function sendEventCancelledByHostEmail(
 
   return sendEmail({
     to,
-    subject: `Event Cancelled: ${eventName}`,
+    subject: `Experience Cancelled: ${eventName}`,
     html,
     tags: [{ name: 'type', value: 'event_cancelled_by_host' }],
   })
@@ -1933,7 +1933,7 @@ function generateEventCalendarLink(params: {
   url.searchParams.set('action', 'TEMPLATE')
   url.searchParams.set('text', eventName)
   url.searchParams.set('dates', `${formatForCalendar(targetDate)}/${formatForCalendar(endDate)}`)
-  url.searchParams.set('details', `Join us at ${eventName}!\n\nFind more events at ${BASE_URL}`)
+  url.searchParams.set('details', `Join us at ${eventName}!\n\nFind more experiences at ${BASE_URL}`)
   url.searchParams.set('location', eventLocation)
 
   return url.toString()
@@ -2000,7 +2000,7 @@ function buildConfirmationEmailHtml(params: {
                 You're Going!
               </h1>
               <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
-                See you at the event
+                See you at the experience
               </p>
             </td>
           </tr>
@@ -2140,16 +2140,16 @@ function buildConfirmationEmailHtml(params: {
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <a href="${myEventsLink}" style="display: inline-block; margin-bottom: 16px; color: #3477f8; text-decoration: none; font-size: 14px; font-weight: 500;">
-                View all your upcoming events &rarr;
+                View all your upcoming experiences &rarr;
               </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more events at
+                Find more experiences at
               </p>
               <a href="${BASE_URL}" style="color: #3477f8; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
               </a>
               <p style="margin: 16px 0 0; color: #94a3b8; font-size: 12px;">
-                You received this email because you signed up for an event on SweatBuddies.
+                You received this email because you signed up for an experience on SweatBuddies.
               </p>
             </td>
           </tr>
@@ -2274,7 +2274,7 @@ export async function sendRefundNotificationEmail(
                       View My Bookings
                     </a>
                     <a href="${BASE_URL}" style="display: inline-block; padding: 14px 28px; background-color: #f4f4f5; color: #374151; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
-                      Browse Events
+                      Browse Experiences
                     </a>
                   </td>
                 </tr>

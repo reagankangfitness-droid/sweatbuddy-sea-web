@@ -141,13 +141,13 @@ export const Hero = memo(function Hero() {
                 onClick={(e) => handleHashClick(e, '#events')}
                 className="px-10 py-5 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 transition-colors shadow-lg"
               >
-                Explore events
+                Explore experiences
               </button>
               <Link
                 href="/host"
                 className="px-10 py-5 bg-transparent text-white border-2 border-white/30 rounded-full font-semibold text-lg hover:bg-white/10 hover:border-white/50 transition-colors flex items-center gap-2"
               >
-                Host your event
+                Host your experience
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>

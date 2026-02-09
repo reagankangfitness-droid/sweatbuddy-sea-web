@@ -225,7 +225,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
         {/* Header */}
         <div className="text-center mb-8">
           <h2 className="font-bold text-3xl md:text-4xl text-neutral-900 dark:text-white mb-2">
-            Upcoming Events
+            Upcoming Experiences
           </h2>
           <p className="text-neutral-500 dark:text-neutral-300">
             Find your next workout in Singapore
@@ -268,7 +268,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
           <div className="text-center py-16 bg-white dark:bg-neutral-900 rounded-2xl max-w-md mx-auto">
             <span className="text-5xl mb-4 block">🔍</span>
             <h3 className="font-semibold text-neutral-900 dark:text-white mb-2 text-lg">
-              No events {activeDateFilter !== 'all' ? getFilterLabel(activeDateFilter).toLowerCase() : ''} {selectedCategory !== 'all' ? `in ${selectedCategory}` : ''}
+              No experiences {activeDateFilter !== 'all' ? getFilterLabel(activeDateFilter).toLowerCase() : ''} {selectedCategory !== 'all' ? `in ${selectedCategory}` : ''}
             </h3>
             <p className="text-neutral-500 dark:text-neutral-300 max-w-sm mx-auto px-4 mb-4">
               Check back soon or try different filters.
@@ -281,7 +281,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
                 }}
                 className="text-neutral-900 dark:text-white font-medium hover:underline"
               >
-                View all events
+                View all experiences
               </button>
             )}
           </div>
@@ -290,7 +290,7 @@ export function Events({ initialEvents = [] }: EventsProps) {
         {/* Simple CTA */}
         <div className="text-center mt-12">
           <p className="text-neutral-500 dark:text-neutral-300 text-sm">
-            New events added weekly
+            New experiences added weekly
           </p>
         </div>
       </div>

@@ -109,7 +109,7 @@ export default function ExplorePage() {
               <span className="font-medium">Back</span>
             </Link>
 
-            <h1 className="font-bold text-lg text-neutral-900 dark:text-white">Explore Events</h1>
+            <h1 className="font-bold text-lg text-neutral-900 dark:text-white">Explore Experiences</h1>
 
             {/* Time range selector */}
             <div className="relative">
@@ -177,7 +177,7 @@ export default function ExplorePage() {
               <div className="flex items-center justify-around">
                 <div className="text-center">
                   <p className="text-2xl font-bold text-neutral-900 dark:text-white">{summary.totalEvents}</p>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Events</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Experiences</p>
                 </div>
                 <div className="w-px h-10 bg-neutral-200 dark:bg-neutral-700" />
                 <div className="text-center">
@@ -216,7 +216,7 @@ export default function ExplorePage() {
               </div>
             ) : (
               <div className="text-center py-12 bg-white dark:bg-neutral-800 rounded-2xl">
-                <p className="text-neutral-500 dark:text-neutral-400">No events found for {TIME_RANGE_LABELS[timeRange].toLowerCase()}</p>
+                <p className="text-neutral-500 dark:text-neutral-400">No experiences found for {TIME_RANGE_LABELS[timeRange].toLowerCase()}</p>
               </div>
             )}
           </div>

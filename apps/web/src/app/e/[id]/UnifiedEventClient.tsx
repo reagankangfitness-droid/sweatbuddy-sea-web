@@ -190,7 +190,7 @@ export function UnifiedEventClient({ event, initialGoingCount, variant = 'defaul
         ) : (
           <>
             <Share2 className="w-4 h-4" />
-            <span>Share Event</span>
+            <span>Share Experience</span>
           </>
         )}
       </button>

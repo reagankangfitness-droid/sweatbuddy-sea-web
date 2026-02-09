@@ -206,7 +206,7 @@ export default function AdminAttendeesPage() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Attendees & Subscribers</h1>
-        <p className="text-neutral-500 mt-1 text-sm sm:text-base">View event attendees and newsletter subscribers</p>
+        <p className="text-neutral-500 mt-1 text-sm sm:text-base">View experience attendees and newsletter subscribers</p>
       </div>
 
       {/* Stats Cards */}
@@ -289,7 +289,7 @@ export default function AdminAttendeesPage() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by email, name, or event..."
+            placeholder="Search by email, name, or experience..."
             className="w-full pl-10 pr-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
           />
         </div>

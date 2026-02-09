@@ -165,13 +165,13 @@ async function sendMagicLinkEmail(email: string) {
           <tr>
             <td style="padding: 32px; background-color: white; border-radius: 0 0 16px 16px;">
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Bookmark this link to quickly access your SweatBuddies events anytime:
+                Bookmark this link to quickly access your SweatBuddies experiences anytime:
               </p>
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center">
                     <a href="${magicLink}" style="display: inline-block; padding: 16px 32px; background-color: #3477f8; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
-                      View My Events
+                      View My Experiences
                     </a>
                   </td>
                 </tr>

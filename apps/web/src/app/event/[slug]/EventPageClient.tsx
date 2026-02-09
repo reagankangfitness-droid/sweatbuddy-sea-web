@@ -132,7 +132,7 @@ export function EventPageClient({ event }: { event: Event }) {
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/#events" className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900">
             <ArrowLeft className="w-5 h-5" />
-            <span className="hidden sm:inline">Back to events</span>
+            <span className="hidden sm:inline">Back to experiences</span>
           </Link>
           <div className="flex items-center gap-2">
             <ShareButton
@@ -251,7 +251,7 @@ export function EventPageClient({ event }: { event: Event }) {
             {/* Description */}
             {event.description && (
               <div>
-                <h2 className="text-xl font-semibold text-neutral-900 mb-4">About this event</h2>
+                <h2 className="text-xl font-semibold text-neutral-900 mb-4">About this experience</h2>
                 <p className="text-neutral-600 whitespace-pre-wrap leading-relaxed">
                   {event.description}
                 </p>

@@ -259,7 +259,7 @@ export async function sendEventReminderEmail(
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Event Tomorrow!</title>
+  <title>Experience Tomorrow!</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
   <table role="presentation" style="width: 100%; border-collapse: collapse;">
@@ -274,7 +274,7 @@ export async function sendEventReminderEmail(
                 See You Tomorrow!
               </h1>
               <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
-                Your event is coming up
+                Your experience is coming up
               </p>
             </td>
           </tr>
@@ -386,10 +386,10 @@ export async function sendEventReminderEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <a href="${eventUrl}" style="display: inline-block; margin-bottom: 16px; color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 500;">
-                View Event Details &rarr;
+                View Experience Details &rarr;
               </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more events at
+                Find more experiences at
               </p>
               <a href="${BASE_URL}" style="color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -458,7 +458,7 @@ function generateCalendarLink(params: {
   calendarUrl.searchParams.set('action', 'TEMPLATE')
   calendarUrl.searchParams.set('text', eventName)
   calendarUrl.searchParams.set('dates', `${startDate}/${endDate}`)
-  calendarUrl.searchParams.set('details', `Event via SweatBuddies\n\n${BASE_URL}`)
+  calendarUrl.searchParams.set('details', `Experience via SweatBuddies\n\n${BASE_URL}`)
   calendarUrl.searchParams.set('location', eventLocation)
 
   return calendarUrl.toString()

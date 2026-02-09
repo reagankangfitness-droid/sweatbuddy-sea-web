@@ -38,7 +38,7 @@ const benefits = [
   {
     icon: Users,
     title: 'Get Discovered',
-    description: 'Show up when people search for events in your area.',
+    description: 'Show up when people search for experiences in your area.',
     hasImage: true,
     image: '/images/connect-people.webp',
     badge: 'reach new people',
@@ -47,7 +47,7 @@ const benefits = [
   {
     icon: Star,
     title: 'List in Minutes',
-    description: "No forms, no approval delays. Your event goes live the same day.",
+    description: "No forms, no approval delays. Your experience goes live the same day.",
     hasImage: true,
     image: '/images/list-in-minutes.jpeg',
     badge: 'no hassle',
@@ -171,7 +171,7 @@ export function ForOrganizers() {
               whileTap={{ scale: 0.98 }}
               className="btn-primary inline-flex items-center gap-2"
             >
-              <span>List Your Event</span>
+              <span>List Your Experience</span>
               <ArrowRight className="w-4 h-4" />
             </motion.button>
           </motion.div>

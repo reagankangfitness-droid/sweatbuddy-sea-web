@@ -180,7 +180,7 @@ export default function AnalyticsPage() {
             Analytics
           </h1>
           <p className="text-neutral-500 dark:text-neutral-400">
-            Track your event performance and community growth
+            Track your experience performance and community growth
           </p>
         </div>
 
@@ -193,7 +193,7 @@ export default function AnalyticsPage() {
               No data yet
             </h2>
             <p className="text-neutral-500 dark:text-neutral-400 max-w-md mx-auto">
-              Once people start RSVPing to your events, you&apos;ll see detailed analytics here.
+              Once people start RSVPing to your experiences, you&apos;ll see detailed analytics here.
             </p>
           </div>
         ) : (
@@ -203,7 +203,7 @@ export default function AnalyticsPage() {
               <StatCard
                 icon={<Calendar className="w-5 h-5" />}
                 value={data.summary.totalEvents}
-                label="Total Events"
+                label="Total Experiences"
                 color="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
               />
               <StatCard
@@ -251,12 +251,12 @@ export default function AnalyticsPage() {
                   <div>
                     <h3 className="font-semibold text-neutral-900 dark:text-white mb-1">Insights</h3>
                     <p className="text-sm text-neutral-600 dark:text-neutral-300">
-                      Your events perform best on <span className="font-semibold">{data.insights.bestDay || 'weekends'}</span>
+                      Your experiences perform best on <span className="font-semibold">{data.insights.bestDay || 'weekends'}</span>
                       {data.insights.bestTime && (
                         <> at <span className="font-semibold">{data.insights.bestTime}</span></>
                       )}.
                       {data.insights.avgAttendeesPerEvent > 0 && (
-                        <> You average <span className="font-semibold">{data.insights.avgAttendeesPerEvent}</span> attendees per event.</>
+                        <> You average <span className="font-semibold">{data.insights.avgAttendeesPerEvent}</span> attendees per experience.</>
                       )}
                     </p>
                   </div>
@@ -314,7 +314,7 @@ export default function AnalyticsPage() {
                   {data.upcomingEventPredictions && data.upcomingEventPredictions.length > 0 && (
                     <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
                       <div className="px-4 py-3 border-b border-neutral-100 dark:border-neutral-800">
-                        <h3 className="font-semibold text-neutral-900 dark:text-white">Upcoming Events Forecast</h3>
+                        <h3 className="font-semibold text-neutral-900 dark:text-white">Upcoming Experiences Forecast</h3>
                         <p className="text-xs text-neutral-500 dark:text-neutral-400">Predicted attendance based on historical data</p>
                       </div>
                       <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
@@ -495,7 +495,7 @@ export default function AnalyticsPage() {
             {/* Revenue Chart (if has revenue) */}
             {data.summary.totalRevenue > 0 && (
               <div className="mb-8">
-                <ChartCard title="Revenue Trends" subtitle="Monthly earnings from paid events">
+                <ChartCard title="Revenue Trends" subtitle="Monthly earnings from paid experiences">
                   <ResponsiveContainer width="100%" height={280}>
                     <AreaChart data={data.monthlyTrends}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
@@ -527,7 +527,7 @@ export default function AnalyticsPage() {
             {data.topEvents.length > 0 && (
               <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
                 <div className="px-4 sm:px-6 py-4 border-b border-neutral-100 dark:border-neutral-800">
-                  <h3 className="font-semibold text-neutral-900 dark:text-white">Top Performing Events</h3>
+                  <h3 className="font-semibold text-neutral-900 dark:text-white">Top Performing Experiences</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400">Ranked by number of RSVPs</p>
                 </div>
                 <div className="overflow-x-auto">
@@ -535,7 +535,7 @@ export default function AnalyticsPage() {
                     <thead className="bg-neutral-50 dark:bg-neutral-800">
                       <tr>
                         <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                          Event
+                          Experience
                         </th>
                         <th className="px-4 sm:px-6 py-3 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                           RSVPs

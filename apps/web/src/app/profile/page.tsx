@@ -356,7 +356,7 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">Host Dashboard</span>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">Manage events & community</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">Manage experiences & community</p>
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />

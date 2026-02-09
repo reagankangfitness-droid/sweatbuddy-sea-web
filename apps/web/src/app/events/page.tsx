@@ -124,13 +124,13 @@ export default function EventsPage() {
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="px-4 py-4">
             <div className="flex items-center justify-between mb-4">
-              <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Events</h1>
+              <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Experiences</h1>
               <Link
                 href="/host"
                 className="flex items-center gap-1.5 px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full text-sm font-semibold"
               >
                 <Plus className="w-4 h-4" />
-                Host event
+                Host experience
               </Link>
             </div>
 
@@ -180,20 +180,20 @@ export default function EventsPage() {
             <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-4">
               <Calendar className="w-8 h-8 text-neutral-400" />
             </div>
-            <p className="text-neutral-900 dark:text-white font-semibold mb-1">No events found</p>
+            <p className="text-neutral-900 dark:text-white font-semibold mb-1">No experiences found</p>
             <p className="text-neutral-500 dark:text-neutral-400 text-sm max-w-xs mb-6">
               {filter === 'today'
-                ? "No events happening today. Check back later or host your own!"
+                ? "No experiences happening today. Check back later or host your own!"
                 : filter === 'week'
-                ? "No events this week. Be the first to host one!"
-                : "No upcoming events nearby. Start the movement!"}
+                ? "No experiences this week. Be the first to host one!"
+                : "No upcoming experiences nearby. Start the movement!"}
             </p>
             <Link
               href="/host"
               className="flex items-center gap-2 px-6 py-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full font-semibold"
             >
               <Plus className="w-4 h-4" />
-              Host an event
+              Host an experience
             </Link>
           </div>
         ) : (

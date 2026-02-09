@@ -450,11 +450,11 @@ export default function HostForm() {
                     name="eventName"
                     value={formData.eventName}
                     onChange={handleChange}
-                    placeholder="Enter event name"
+                    placeholder="Enter experience name"
                     className={`w-full text-3xl md:text-4xl font-bold bg-transparent border-none text-white placeholder:text-neutral-600 focus:outline-none focus:ring-0 ${fieldErrors.eventName ? 'placeholder:text-red-400' : ''}`}
                   />
                   {fieldErrors.eventName && (
-                    <p className="text-red-400 text-sm mt-1">Enter an event name</p>
+                    <p className="text-red-400 text-sm mt-1">Enter an experience name</p>
                   )}
                 </div>
 

@@ -62,7 +62,7 @@ export function ShareEventButtons({ event, compact = false }: ShareEventButtonsP
         <button
           onClick={handleCopyLink}
           className="p-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 transition-colors"
-          title="Copy event link"
+          title="Copy experience link"
         >
           {copied ? (
             <Check className="w-4 h-4 text-green-600" />
@@ -101,7 +101,7 @@ export function ShareEventButtons({ event, compact = false }: ShareEventButtonsP
         <button
           onClick={handleNativeShare}
           className="p-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 transition-colors"
-          title="Share event"
+          title="Share experience"
         >
           <Share2 className="w-4 h-4 text-neutral-600" />
         </button>
@@ -111,7 +111,7 @@ export function ShareEventButtons({ event, compact = false }: ShareEventButtonsP
 
   return (
     <div className="space-y-3">
-      <h4 className="text-sm font-medium text-neutral-700">Share this event</h4>
+      <h4 className="text-sm font-medium text-neutral-700">Share this experience</h4>
 
       <div className="flex flex-wrap gap-2">
         {/* Copy Link */}

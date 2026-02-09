@@ -216,7 +216,7 @@ export function MobileEventsSection({ events }: Props) {
 
       {/* Section Header */}
       <div className="px-4 mb-4">
-        <h2 className="font-sans text-xl font-bold text-neutral-900 dark:text-white">Upcoming Events</h2>
+        <h2 className="font-sans text-xl font-bold text-neutral-900 dark:text-white">Upcoming Experiences</h2>
       </div>
 
       {/* Date Filter Tabs */}
@@ -291,7 +291,7 @@ export function MobileEventsSection({ events }: Props) {
           <div className="text-center py-12 text-neutral-500 dark:text-neutral-400">
             <p className="text-4xl mb-2">🔍</p>
             <p className="font-medium">
-              No events{activeFilter !== 'all' ? ` ${getFilterLabel(activeFilter).toLowerCase()}` : ''}{selectedCategory !== 'all' ? ` in ${selectedCategory}` : ''}{selectedArea !== 'all' ? ` near ${areas.find(a => a.id === selectedArea)?.label || selectedArea}` : ''}
+              No experiences{activeFilter !== 'all' ? ` ${getFilterLabel(activeFilter).toLowerCase()}` : ''}{selectedCategory !== 'all' ? ` in ${selectedCategory}` : ''}{selectedArea !== 'all' ? ` near ${areas.find(a => a.id === selectedArea)?.label || selectedArea}` : ''}
             </p>
             <p className="text-sm mt-2">Try different filters or check back soon!</p>
             {(selectedCategory !== 'all' || activeFilter !== 'all' || selectedArea !== 'all') && (
@@ -303,7 +303,7 @@ export function MobileEventsSection({ events }: Props) {
                 }}
                 className="mt-3 text-neutral-900 dark:text-white font-medium underline"
               >
-                View all events
+                View all experiences
               </button>
             )}
           </div>
@@ -314,7 +314,7 @@ export function MobileEventsSection({ events }: Props) {
       <div className="px-4 mt-6">
         <div className="bg-white dark:bg-neutral-900 p-4 text-center rounded-2xl border border-neutral-100 dark:border-neutral-800 shadow-card">
           <p className="text-sm text-neutral-600 dark:text-neutral-300">
-            More events added every Wednesday
+            More experiences added every Wednesday
           </p>
         </div>
       </div>

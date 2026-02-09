@@ -78,7 +78,7 @@ export function MapSection() {
     <section className="px-4 py-6 bg-neutral-50 dark:bg-neutral-950">
       {/* Section header */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Explore Events</h2>
+        <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Explore Experiences</h2>
 
         <div className="flex items-center gap-2">
           {/* Time range selector */}
@@ -155,7 +155,7 @@ export function MapSection() {
           ) : (
             <div className="text-center py-12 bg-white dark:bg-neutral-800 rounded-2xl">
               <p className="text-neutral-500 dark:text-neutral-400">
-                No events found for {TIME_RANGE_LABELS[timeRange].toLowerCase()}
+                No experiences found for {TIME_RANGE_LABELS[timeRange].toLowerCase()}
               </p>
             </div>
           )}

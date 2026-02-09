@@ -112,7 +112,7 @@ export default function AdminHostsPage() {
       if (res.ok) {
         setResult({ success: true, message: data.message, data })
       } else {
-        setResult({ success: false, message: data.error || 'Failed to create event' })
+        setResult({ success: false, message: data.error || 'Failed to create experience' })
       }
     } catch (error) {
       setResult({ success: false, message: 'Network error. Please try again.' })
@@ -156,7 +156,7 @@ export default function AdminHostsPage() {
 
   const tabs = [
     { id: 'create-host' as Tab, label: 'Create Host', icon: UserPlus },
-    { id: 'create-event' as Tab, label: 'Create Event', icon: Calendar },
+    { id: 'create-event' as Tab, label: 'Create Experience', icon: Calendar },
     { id: 'magic-link' as Tab, label: 'Magic Link', icon: Link2 },
   ]
 
@@ -178,7 +178,7 @@ export default function AdminHostsPage() {
           Host Management
         </h1>
         <p className="text-sm text-neutral-500 mt-1">
-          Create host accounts, events, and generate sign-in links
+          Create host accounts, experiences, and generate sign-in links
         </p>
       </div>
 
@@ -207,7 +207,7 @@ export default function AdminHostsPage() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 mt-2 text-sm text-emerald-700 hover:text-emerald-900"
               >
-                View event <ExternalLink className="w-3 h-3" />
+                View experience <ExternalLink className="w-3 h-3" />
               </a>
             )}
           </div>
@@ -350,11 +350,11 @@ export default function AdminHostsPage() {
               </div>
             </div>
 
-            <h3 className="font-semibold text-neutral-900">Event Details</h3>
+            <h3 className="font-semibold text-neutral-900">Experience Details</h3>
 
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-1">
-                Event Name *
+                Experience Name *
               </label>
               <input
                 type="text"
@@ -514,7 +514,7 @@ export default function AdminHostsPage() {
               ) : (
                 <Calendar className="w-4 h-4" />
               )}
-              Create Event
+              Create Experience
             </button>
           </form>
         )}

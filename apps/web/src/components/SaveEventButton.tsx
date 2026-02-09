@@ -31,8 +31,8 @@ export function SaveEventButton({ eventId, eventSlug, className = '', iconOnly =
 
     // Prompt login if not signed in
     if (isLoaded && !isSignedIn) {
-      toast('Sign in to save events', {
-        description: 'Create an account to save events and access them anywhere.',
+      toast('Sign in to save experiences', {
+        description: 'Create an account to save experiences and access them anywhere.',
         action: {
           label: 'Sign in',
           onClick: () => router.push(`/sign-in?redirect_url=/e/${eventSlug || eventId}`),
@@ -46,13 +46,13 @@ export function SaveEventButton({ eventId, eventSlug, className = '', iconOnly =
     let newSaved
     if (saved.includes(eventId)) {
       newSaved = saved.filter((id: string) => id !== eventId)
-      toast.success('Removed from saved events')
+      toast.success('Removed from saved experiences')
     } else {
       newSaved = [...saved, eventId]
       setIsAnimating(true)
       setTimeout(() => setIsAnimating(false), 300)
-      toast.success('Event saved!', {
-        description: 'View your saved events anytime.',
+      toast.success('Experience saved!', {
+        description: 'View your saved experiences anytime.',
       })
     }
 
@@ -88,7 +88,7 @@ export function SaveEventButton({ eventId, eventSlug, className = '', iconOnly =
     <button
       onClick={toggleSave}
       className={`flex items-center justify-center ${buttonStyles} ${isAnimating ? 'scale-125' : 'scale-100'} ${className}`}
-      aria-label={isSaved ? 'Remove from saved' : 'Save event'}
+      aria-label={isSaved ? 'Remove from saved' : 'Save experience'}
       title={isSaved ? 'Saved to your list' : 'Save for later'}
     >
       <Heart className={iconStyles} />

@@ -23,8 +23,8 @@ import { Logo } from '@/components/logo'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Events', href: '/admin/events', icon: Calendar },
-  { name: 'Pending Events', href: '/admin/pending', icon: Clock },
+  { name: 'Experiences', href: '/admin/events', icon: Calendar },
+  { name: 'Pending Experiences', href: '/admin/pending', icon: Clock },
   { name: 'Hosts', href: '/admin/hosts', icon: UserPlus },
   { name: 'Attendees', href: '/admin/attendees', icon: Users },
   { name: 'Reports', href: '/admin/reports', icon: Flag },

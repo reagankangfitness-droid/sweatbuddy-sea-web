@@ -55,14 +55,14 @@ export function SavedEvents({ allEvents }: SavedEventsProps) {
       <div className="flex items-center gap-2 mb-4">
         <Heart className="w-5 h-5 text-pink-400 fill-pink-400" />
         <h2 className="font-sans text-xl font-bold text-white">
-          Your Saved Events
+          Your Saved Experiences
         </h2>
         <span className="ml-2 px-2 py-0.5 rounded-full bg-white/10 text-white text-xs font-medium">
           {savedEvents.length}
         </span>
       </div>
       <p className="font-sans text-sm text-white/50 mb-6">
-        Events you&apos;re interested in
+        Experiences you&apos;re interested in
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

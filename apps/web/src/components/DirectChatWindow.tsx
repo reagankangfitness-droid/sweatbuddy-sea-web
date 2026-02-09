@@ -285,7 +285,7 @@ export function DirectChatWindow({
                       <textarea
                         value={inquiryMessage}
                         onChange={(e) => setInquiryMessage(e.target.value)}
-                        placeholder="Hi! I have a question about this event..."
+                        placeholder="Hi! I have a question about this experience..."
                         maxLength={500}
                         rows={5}
                         className="flex-1 min-h-[120px] px-4 py-3 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#1800ad] focus:border-transparent outline-none text-sm placeholder:text-neutral-400 resize-none"

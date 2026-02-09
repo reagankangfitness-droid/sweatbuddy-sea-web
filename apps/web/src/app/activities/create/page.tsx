@@ -674,7 +674,7 @@ export default function NewActivityPage() {
                     Cancel
                   </Button>
                   <Button type="submit" disabled={isSubmitting || !markerPosition || !organizerInstagram}>
-                    {isSubmitting ? 'Submitting...' : 'Submit Event'}
+                    {isSubmitting ? 'Submitting...' : 'Submit Experience'}
                   </Button>
                 </div>
                 {!organizerInstagram && (
@@ -689,9 +689,9 @@ export default function NewActivityPage() {
           <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Submit Event for Review</DialogTitle>
+                <DialogTitle>Submit Experience for Review</DialogTitle>
                 <DialogDescription>
-                  Your event will be reviewed by our team before going live. This typically takes up to 24 hours.
+                  Your experience will be reviewed by our team before going live. This typically takes up to 24 hours.
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-2 py-4">
@@ -732,7 +732,7 @@ export default function NewActivityPage() {
               {/* Approval Notice */}
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 my-4">
                 <p className="text-sm text-amber-800">
-                  <strong>Note:</strong> All events are reviewed before being published to ensure quality and safety for our community. You will receive a notification once your event is approved.
+                  <strong>Note:</strong> All experiences are reviewed before being published to ensure quality and safety for our community. You will receive a notification once your experience is approved.
                 </p>
               </div>
               <DialogFooter>

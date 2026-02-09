@@ -150,14 +150,14 @@ export default function AdminEventsPage() {
       })
 
       if (response.ok) {
-        toast.success('Event deleted')
+        toast.success('Experience deleted')
         setEvents(events.filter(e => e.id !== event.id))
       } else {
         const data = await response.json()
-        toast.error(data.error || 'Failed to delete event')
+        toast.error(data.error || 'Failed to delete experience')
       }
     } catch {
-      toast.error('Failed to delete event')
+      toast.error('Failed to delete experience')
     }
   }
 
@@ -173,15 +173,15 @@ export default function AdminEventsPage() {
       })
 
       if (response.ok) {
-        toast.success('Event updated')
+        toast.success('Experience updated')
         setEvents(events.map(e => e.id === editingEvent.id ? editingEvent : e))
         setEditingEvent(null)
       } else {
         const data = await response.json()
-        toast.error(data.error || 'Failed to update event')
+        toast.error(data.error || 'Failed to update experience')
       }
     } catch {
-      toast.error('Failed to update event')
+      toast.error('Failed to update experience')
     }
   }
 
@@ -248,8 +248,8 @@ export default function AdminEventsPage() {
       {/* Header */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Event Management</h1>
-          <p className="text-neutral-500 mt-1 text-sm sm:text-base">Manage live events and review submissions</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Experience Management</h1>
+          <p className="text-neutral-500 mt-1 text-sm sm:text-base">Manage live experiences and review submissions</p>
         </div>
         {missingCoordsCount > 0 && (
           <button
@@ -262,7 +262,7 @@ export default function AdminEventsPage() {
             ) : (
               <Navigation className="w-4 h-4" />
             )}
-            Geocode {missingCoordsCount} Events
+            Geocode {missingCoordsCount} Experiences
           </button>
         )}
       </div>
@@ -303,7 +303,7 @@ export default function AdminEventsPage() {
         <div className="space-y-3 sm:space-y-4">
           {events.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl border border-neutral-200 shadow-sm">
-              <p className="text-neutral-500">No live events</p>
+              <p className="text-neutral-500">No live experiences</p>
             </div>
           ) : (
             events.map((event) => (
@@ -563,7 +563,7 @@ export default function AdminEventsPage() {
         <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50">
           <div className="bg-white sm:border sm:border-neutral-200 sm:rounded-2xl w-full sm:max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl shadow-xl">
             <div className="sticky top-0 bg-white border-b border-neutral-200 p-4 sm:p-6 flex justify-between items-center z-10">
-              <h2 className="text-lg sm:text-xl font-bold text-neutral-900">Edit Event</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-neutral-900">Edit Experience</h2>
               <button
                 onClick={() => setEditingEvent(null)}
                 className="p-2 text-neutral-500 hover:text-neutral-700 active:scale-95"
@@ -574,7 +574,7 @@ export default function AdminEventsPage() {
 
             <div className="p-4 sm:p-6 space-y-4">
               <div>
-                <label className="block text-sm text-neutral-600 mb-1">Event Name</label>
+                <label className="block text-sm text-neutral-600 mb-1">Experience Name</label>
                 <input
                   type="text"
                   value={editingEvent.name}
@@ -648,7 +648,7 @@ export default function AdminEventsPage() {
               </div>
 
               <div>
-                <label className="block text-sm text-neutral-600 mb-2">Event Image</label>
+                <label className="block text-sm text-neutral-600 mb-2">Experience Image</label>
                 {editingEvent.imageUrl ? (
                   <div className="relative rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200">
                     <Image
@@ -679,7 +679,7 @@ export default function AdminEventsPage() {
                     ) : (
                       <div className="flex flex-col items-center gap-3">
                         <ImageIcon className="w-8 h-8 text-neutral-400" />
-                        <p className="text-sm text-neutral-500">Upload an image for this event</p>
+                        <p className="text-sm text-neutral-500">Upload an image for this experience</p>
                         <UploadButton
                           endpoint="eventImage"
                           onUploadBegin={() => setIsUploading(true)}
@@ -726,7 +726,7 @@ export default function AdminEventsPage() {
                   onChange={(e) => setEditingEvent({ ...editingEvent, recurring: e.target.checked })}
                   className="w-5 h-5 rounded bg-white border-neutral-300 text-neutral-900 focus:ring-neutral-900"
                 />
-                <label htmlFor="recurring" className="text-base text-neutral-600">Recurring event</label>
+                <label htmlFor="recurring" className="text-base text-neutral-600">Recurring experience</label>
               </div>
 
               {/* Divider */}
@@ -750,7 +750,7 @@ export default function AdminEventsPage() {
                     })}
                     className="w-5 h-5 rounded bg-white border-neutral-300 text-neutral-900 focus:ring-neutral-900"
                   />
-                  <label htmlFor="isFree" className="text-base text-neutral-600">Free event</label>
+                  <label htmlFor="isFree" className="text-base text-neutral-600">Free experience</label>
                 </div>
 
                 {/* Price (only show if not free) */}

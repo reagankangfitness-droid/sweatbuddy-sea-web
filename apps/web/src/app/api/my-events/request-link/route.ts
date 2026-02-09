@@ -79,7 +79,7 @@ function buildMagicLinkEmail({ magicLink, email }: { magicLink: string; email: s
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>View Your Events</title>
+  <title>View Your Experiences</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
   <table role="presentation" style="width: 100%; border-collapse: collapse;">
@@ -91,7 +91,7 @@ function buildMagicLinkEmail({ magicLink, email }: { magicLink: string; email: s
             <td style="padding: 32px; background: linear-gradient(135deg, #3477f8 0%, #1d4ed8 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <div style="font-size: 48px; margin-bottom: 16px;">📅</div>
               <h1 style="margin: 0; color: white; font-size: 24px; font-weight: 700;">
-                View Your Events
+                View Your Experiences
               </h1>
             </td>
           </tr>
@@ -104,7 +104,7 @@ function buildMagicLinkEmail({ magicLink, email }: { magicLink: string; email: s
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Click the button below to see all the events you've signed up for on SweatBuddies.
+                Click the button below to see all the experiences you've signed up for on SweatBuddies.
               </p>
 
               <!-- CTA Button -->
@@ -112,7 +112,7 @@ function buildMagicLinkEmail({ magicLink, email }: { magicLink: string; email: s
                 <tr>
                   <td align="center">
                     <a href="${magicLink}" style="display: inline-block; padding: 16px 32px; background-color: #3477f8; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
-                      View My Events
+                      View My Experiences
                     </a>
                   </td>
                 </tr>

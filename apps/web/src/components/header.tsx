@@ -98,9 +98,9 @@ export function Header() {
 
   // Desktop nav links (for landing page navigation)
   const desktopNavLinks = [
-    { href: '#events', label: 'Find Events' },
+    { href: '#events', label: 'Find Experiences' },
     { href: '#how-it-works', label: 'How It Works' },
-    { href: '/host', label: 'List Your Event' },
+    { href: '/host', label: 'List Your Experience' },
   ]
 
   // Check if we're on the landing page
@@ -332,7 +332,7 @@ export function Header() {
                       onClick={() => setMobileMenuOpen(false)}
                       className="text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800"
                     >
-                      Find Events
+                      Find Experiences
                     </a>
                     <a
                       href="#how-it-works"
@@ -346,7 +346,7 @@ export function Header() {
                       onClick={() => setMobileMenuOpen(false)}
                       className="text-neutral-800 dark:text-white hover:text-primary dark:hover:text-neutral-300 text-lg font-medium transition-colors py-3 border-b border-neutral-100 dark:border-neutral-800"
                     >
-                      List Your Event
+                      List Your Experience
                     </Link>
                   </>
                 )}

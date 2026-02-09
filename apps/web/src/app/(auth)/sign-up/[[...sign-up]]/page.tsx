@@ -2,8 +2,9 @@
 
 import { SignUp, useAuth } from '@clerk/nextjs'
 import { useSearchParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useEffect, Suspense } from 'react'
-import { Loader2 } from 'lucide-react'
+import { Loader2, ArrowLeft } from 'lucide-react'
 import { Logo } from '@/components/logo'
 
 function SignUpContent() {
@@ -90,6 +91,15 @@ function SignUpContent() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-50 px-4 py-8 pb-24 md:pb-8">
       <div className="w-full max-w-sm mx-auto">
+        {/* Back to home */}
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-900 transition-colors mb-8"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to home
+        </Link>
+
         {/* Logo */}
         <div className="flex justify-center mb-6">
           <Logo size={40} />

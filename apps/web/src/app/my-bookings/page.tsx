@@ -328,18 +328,20 @@ export default function MyBookingsPage() {
                     <strong>{selectedBooking.activity.title}</strong>?
                   </p>
 
-                  {/* Refund Policy */}
-                  <div className="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4 mb-4">
-                    <h4 className="font-medium text-neutral-900 dark:text-white mb-2 flex items-center gap-2">
-                      <AlertTriangle className="w-4 h-4 text-amber-500" />
-                      Refund Policy
-                    </h4>
-                    <ul className="text-sm text-neutral-600 dark:text-neutral-400 space-y-1">
-                      <li>• More than 24 hours before: <span className="text-green-600 dark:text-green-400">Full refund</span></li>
-                      <li>• 2-24 hours before: <span className="text-amber-600 dark:text-amber-400">50% refund</span></li>
-                      <li>• Less than 2 hours: <span className="text-red-600 dark:text-red-400">No refund</span></li>
-                    </ul>
-                  </div>
+                  {/* Refund Policy - only show for paid bookings */}
+                  {selectedBooking.amountPaid && selectedBooking.amountPaid > 0 && (
+                    <div className="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-4 mb-4">
+                      <h4 className="font-medium text-neutral-900 dark:text-white mb-2 flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 text-amber-500" />
+                        Refund Policy
+                      </h4>
+                      <ul className="text-sm text-neutral-600 dark:text-neutral-400 space-y-1">
+                        <li>• More than 24 hours before: <span className="text-green-600 dark:text-green-400">Full refund</span></li>
+                        <li>• 2-24 hours before: <span className="text-amber-600 dark:text-amber-400">50% refund</span></li>
+                        <li>• Less than 2 hours: <span className="text-red-600 dark:text-red-400">No refund</span></li>
+                      </ul>
+                    </div>
+                  )}
 
                   {/* Refund Preview */}
                   {refundPreview && (

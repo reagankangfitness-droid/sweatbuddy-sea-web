@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { stripe, calculateRefundAmount, toStripeAmount } from '@/lib/stripe'
@@ -34,25 +34,172 @@ export async function POST(
       )
     }
 
-    // Verify the booking exists and belongs to the user
+    // Try userActivity table first (Activity bookings)
     const booking = await prisma.userActivity.findUnique({
-      where: {
-        id: bookingId,
-      },
-      include: {
-        activity: true,
-      },
+      where: { id: bookingId },
+      include: { activity: true },
     })
 
-    if (!booking) {
+    if (booking) {
+      // --- Handle Activity booking cancellation (existing flow) ---
+      if (booking.userId !== user.id) {
+        return NextResponse.json(
+          { error: 'You do not have permission to cancel this booking' },
+          { status: 403 }
+        )
+      }
+
+      if (booking.status === 'CANCELLED') {
+        return NextResponse.json(
+          { error: 'This booking is already cancelled' },
+          { status: 400 }
+        )
+      }
+
+      if (booking.activity.startTime && new Date(booking.activity.startTime) < new Date()) {
+        return NextResponse.json(
+          { error: 'Cannot cancel a booking for a past activity' },
+          { status: 400 }
+        )
+      }
+
+      // Handle refund for paid bookings
+      let refundResult = {
+        status: 'not_applicable' as 'full' | 'partial' | 'none' | 'not_applicable',
+        amount: 0,
+        percentage: 0,
+      }
+
+      if (
+        booking.paymentStatus === 'PAID' &&
+        booking.stripePaymentIntentId &&
+        booking.amountPaid &&
+        booking.amountPaid > 0
+      ) {
+        const activityStartTime = booking.activity.startTime || new Date()
+        const refundCalc = calculateRefundAmount(booking.amountPaid, activityStartTime)
+
+        refundResult = {
+          status: refundCalc.policy,
+          amount: refundCalc.amount,
+          percentage: refundCalc.percentage,
+        }
+
+        if (refundCalc.amount > 0) {
+          try {
+            const currency = booking.currency || 'SGD'
+            await stripe.refunds.create({
+              payment_intent: booking.stripePaymentIntentId,
+              amount: toStripeAmount(refundCalc.amount, currency),
+              reason: 'requested_by_customer',
+            })
+
+            await prisma.userActivity.update({
+              where: { id: bookingId },
+              data: {
+                refundAmount: refundCalc.amount,
+                refundedAt: new Date(),
+                paymentStatus: 'REFUNDED',
+              },
+            })
+          } catch (refundError) {
+            console.error('Refund error:', refundError)
+          }
+        }
+      }
+
+      const updatedBooking = await prisma.userActivity.update({
+        where: { id: bookingId },
+        data: { status: 'CANCELLED', updatedAt: new Date() },
+        include: {
+          activity: {
+            include: {
+              user: {
+                select: { id: true, name: true, email: true, imageUrl: true },
+              },
+            },
+          },
+        },
+      })
+
+      // Remove user from activity group chat
+      const activityGroup = await prisma.group.findFirst({
+        where: { activityId: booking.activityId },
+      })
+      if (activityGroup) {
+        await prisma.userGroup.updateMany({
+          where: { userId: clerkUserId, groupId: activityGroup.id },
+          data: { deletedAt: new Date() },
+        })
+      }
+
+      // Process waitlist
+      try {
+        await processWaitlistForSpot(booking.activityId, 1)
+      } catch (waitlistError) {
+        console.error('Error processing waitlist (non-blocking):', waitlistError)
+      }
+
+      // Cancel reminders
+      try {
+        await cancelRemindersForBooking(bookingId)
+      } catch (reminderError) {
+        console.error('Error cancelling reminders (non-blocking):', reminderError)
+      }
+
+      return NextResponse.json({
+        message: 'Booking cancelled successfully',
+        booking: {
+          id: updatedBooking.id,
+          userId: updatedBooking.userId,
+          activityId: updatedBooking.activityId,
+          status: updatedBooking.status,
+          createdAt: updatedBooking.createdAt,
+          updatedAt: updatedBooking.updatedAt,
+          activity: {
+            id: updatedBooking.activity.id,
+            title: updatedBooking.activity.title,
+            description: updatedBooking.activity.description,
+            type: updatedBooking.activity.type,
+            city: updatedBooking.activity.city,
+            startTime: updatedBooking.activity.startTime,
+            endTime: updatedBooking.activity.endTime,
+            price: updatedBooking.activity.price,
+            currency: updatedBooking.activity.currency,
+            host: {
+              id: updatedBooking.activity.user.id,
+              name: updatedBooking.activity.user.name,
+              email: updatedBooking.activity.user.email,
+              imageUrl: updatedBooking.activity.user.imageUrl,
+            },
+          },
+        },
+        refund: refundResult.status !== 'not_applicable' ? {
+          status: refundResult.status,
+          amount: refundResult.amount,
+          percentage: refundResult.percentage,
+          currency: booking.currency || 'SGD',
+        } : null,
+      })
+    }
+
+    // --- Handle EventAttendance booking cancellation ---
+    const attendance = await prisma.eventAttendance.findUnique({
+      where: { id: bookingId },
+    })
+
+    if (!attendance) {
       return NextResponse.json(
         { error: 'Booking not found' },
         { status: 404 }
       )
     }
 
-    // Verify the booking belongs to the authenticated user
-    if (booking.userId !== user.id) {
+    // Verify ownership by matching email
+    const clerkUser = await currentUser()
+    const userEmail = clerkUser?.primaryEmailAddress?.emailAddress
+
+    if (!userEmail || attendance.email.toLowerCase() !== userEmail.toLowerCase()) {
       return NextResponse.json(
         { error: 'You do not have permission to cancel this booking' },
         { status: 403 }
@@ -60,22 +207,14 @@ export async function POST(
     }
 
     // Check if already cancelled
-    if (booking.status === 'CANCELLED') {
+    if (attendance.paymentStatus === 'refunded') {
       return NextResponse.json(
         { error: 'This booking is already cancelled' },
         { status: 400 }
       )
     }
 
-    // Check if activity has already happened (past activities)
-    if (booking.activity.startTime && new Date(booking.activity.startTime) < new Date()) {
-      return NextResponse.json(
-        { error: 'Cannot cancel a booking for a past activity' },
-        { status: 400 }
-      )
-    }
-
-    // Handle refund for paid bookings
+    // Handle refund for paid EventAttendance bookings
     let refundResult = {
       status: 'not_applicable' as 'full' | 'partial' | 'none' | 'not_applicable',
       amount: 0,
@@ -83,14 +222,18 @@ export async function POST(
     }
 
     if (
-      booking.paymentStatus === 'PAID' &&
-      booking.stripePaymentIntentId &&
-      booking.amountPaid &&
-      booking.amountPaid > 0
+      attendance.paymentStatus === 'paid' &&
+      attendance.stripePaymentId &&
+      attendance.paymentAmount &&
+      attendance.paymentAmount > 0
     ) {
-      // Calculate refund based on cancellation policy
-      const activityStartTime = booking.activity.startTime || new Date()
-      const refundCalc = calculateRefundAmount(booking.amountPaid, activityStartTime)
+      // Get event to check start time for refund calculation
+      const event = await prisma.eventSubmission.findUnique({
+        where: { id: attendance.eventId },
+      })
+      const eventStartTime = event?.eventDate || new Date()
+      const amountInDollars = attendance.paymentAmount / 100
+      const refundCalc = calculateRefundAmount(amountInDollars, eventStartTime)
 
       refundResult = {
         status: refundCalc.policy,
@@ -98,128 +241,39 @@ export async function POST(
         percentage: refundCalc.percentage,
       }
 
-      // Process refund if applicable
       if (refundCalc.amount > 0) {
         try {
-          const currency = booking.currency || 'SGD'
           await stripe.refunds.create({
-            payment_intent: booking.stripePaymentIntentId,
-            amount: toStripeAmount(refundCalc.amount, currency),
+            payment_intent: attendance.stripePaymentId,
+            amount: toStripeAmount(refundCalc.amount, 'SGD'),
             reason: 'requested_by_customer',
-          })
-
-          // Update booking with refund info
-          await prisma.userActivity.update({
-            where: { id: bookingId },
-            data: {
-              refundAmount: refundCalc.amount,
-              refundedAt: new Date(),
-              paymentStatus: 'REFUNDED',
-            },
           })
         } catch (refundError) {
           console.error('Refund error:', refundError)
-          // Continue with cancellation even if refund fails
-          // The refund can be processed manually later
         }
       }
     }
 
-    // Update booking status to CANCELLED
-    const updatedBooking = await prisma.userActivity.update({
-      where: {
-        id: bookingId,
-      },
-      data: {
-        status: 'CANCELLED',
-        updatedAt: new Date(),
-      },
-      include: {
-        activity: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                imageUrl: true,
-              },
-            },
-          },
-        },
-      },
+    // Mark attendance as cancelled
+    await prisma.eventAttendance.update({
+      where: { id: bookingId },
+      data: { paymentStatus: 'refunded' },
     })
-
-    // Remove user from activity group chat
-    const activityGroup = await prisma.group.findFirst({
-      where: { activityId: booking.activityId },
-    })
-
-    if (activityGroup) {
-      await prisma.userGroup.updateMany({
-        where: {
-          userId: clerkUserId,
-          groupId: activityGroup.id,
-        },
-        data: {
-          deletedAt: new Date(),
-        },
-      })
-    }
-
-    // Process waitlist - notify next person that a spot opened up
-    try {
-      const waitlistResult = await processWaitlistForSpot(booking.activityId, 1)
-      // Waitlist processed successfully
-    } catch (waitlistError) {
-      // Don't fail the cancellation if waitlist processing fails
-      console.error('Error processing waitlist (non-blocking):', waitlistError)
-    }
-
-    // Cancel scheduled reminders for this booking
-    try {
-      const cancelledCount = await cancelRemindersForBooking(bookingId)
-      // Reminders cancelled successfully
-    } catch (reminderError) {
-      // Don't fail the cancellation if reminder cancellation fails
-      console.error('Error cancelling reminders (non-blocking):', reminderError)
-    }
-
-    // Format the response
-    const formattedBooking = {
-      id: updatedBooking.id,
-      userId: updatedBooking.userId,
-      activityId: updatedBooking.activityId,
-      status: updatedBooking.status,
-      createdAt: updatedBooking.createdAt,
-      updatedAt: updatedBooking.updatedAt,
-      activity: {
-        id: updatedBooking.activity.id,
-        title: updatedBooking.activity.title,
-        description: updatedBooking.activity.description,
-        type: updatedBooking.activity.type,
-        city: updatedBooking.activity.city,
-        startTime: updatedBooking.activity.startTime,
-        endTime: updatedBooking.activity.endTime,
-        price: updatedBooking.activity.price,
-        currency: updatedBooking.activity.currency,
-        host: {
-          id: updatedBooking.activity.user.id,
-          name: updatedBooking.activity.user.name,
-          email: updatedBooking.activity.user.email,
-          imageUrl: updatedBooking.activity.user.imageUrl,
-        },
-      },
-    }
 
     return NextResponse.json({
       message: 'Booking cancelled successfully',
-      booking: formattedBooking,
+      booking: {
+        id: attendance.id,
+        status: 'CANCELLED',
+        activity: {
+          title: attendance.eventName,
+        },
+      },
       refund: refundResult.status !== 'not_applicable' ? {
         status: refundResult.status,
         amount: refundResult.amount,
         percentage: refundResult.percentage,
-        currency: booking.currency || 'SGD',
+        currency: 'SGD',
       } : null,
     })
   } catch (error) {

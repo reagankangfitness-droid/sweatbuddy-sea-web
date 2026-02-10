@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminUser } from '@/lib/admin-auth'
+import { notifyFollowersOfNewActivity } from '@/lib/follower-notifications'
 
 // PATCH - Approve or reject an activity
 export async function PATCH(
@@ -71,6 +72,20 @@ export async function PATCH(
         link: action === 'approve' ? `/activities/${activity.id}` : '/activities/create',
       },
     })
+
+    // Notify followers when activity is approved
+    if (action === 'approve') {
+      notifyFollowersOfNewActivity(
+        activity.hostId || activity.userId,
+        {
+          id: activity.id,
+          title: activity.title,
+          startTime: activity.startTime,
+          city: activity.city,
+          categorySlug: activity.categorySlug,
+        }
+      ).catch((err) => console.error('Failed to notify followers:', err))
+    }
 
     return NextResponse.json({
       success: true,

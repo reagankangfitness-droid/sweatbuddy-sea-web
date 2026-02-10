@@ -17,7 +17,8 @@ import {
   Award,
   Users,
   Loader2,
-  Lock
+  Lock,
+  Hand
 } from 'lucide-react'
 import { format, formatDistanceToNow } from 'date-fns'
 import { Button } from '@/components/ui/button'
@@ -112,6 +113,8 @@ export default function HostProfilePage() {
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
   const [isFollowing, setIsFollowing] = useState(false)
+  const [isInterestedState, setIsInterestedState] = useState(false)
+  const [interestCount, setInterestCount] = useState(0)
   const [isOwnProfile, setIsOwnProfile] = useState(false)
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming')
   const [activitiesPage, setActivitiesPage] = useState(1)
@@ -139,6 +142,8 @@ export default function HostProfilePage() {
       const data = await res.json()
       setProfile(data.profile)
       setIsFollowing(data.isFollowing)
+      setIsInterestedState(data.isInterested || false)
+      setInterestCount(data.profile.interestCount || 0)
       setIsOwnProfile(data.isOwnProfile)
 
       // Fetch reviews for hosts
@@ -207,6 +212,21 @@ export default function HostProfilePage() {
           }
         })
       }
+    } catch {
+      // Error handled silently
+    }
+  }
+
+  const handleInterest = async () => {
+    try {
+      const res = await fetch(`/api/profiles/${slug}/interest`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      })
+      const data = await res.json()
+      setIsInterestedState(data.interested)
+      setInterestCount(data.count)
     } catch {
       // Error handled silently
     }
@@ -394,6 +414,21 @@ export default function HostProfilePage() {
                     <UserPlus className="h-4 w-4" />
                     Follow
                   </>
+                )}
+              </Button>
+            )}
+
+            {!isOwnProfile && profile.isHost && (
+              <Button
+                onClick={handleInterest}
+                variant={isInterestedState ? 'outline' : 'secondary'}
+                size="sm"
+                className="gap-1.5"
+              >
+                <Hand className="h-4 w-4" />
+                {isInterestedState ? 'Interested' : 'I want this!'}
+                {interestCount > 0 && (
+                  <span className="text-xs opacity-70">({interestCount})</span>
                 )}
               </Button>
             )}

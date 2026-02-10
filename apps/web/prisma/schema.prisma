@@ -184,6 +184,10 @@ model User {
   profileViews    ProfileView[]  @relation("ProfileViews")
   profileViewedBy ProfileView[]  @relation("ProfileViewers")
 
+  // Interest signal relations
+  interestSignalsSent     HostInterest[] @relation("UserInterestSignals")
+  interestSignalsReceived HostInterest[] @relation("HostInterestReceived")
+
   // Beta system relations
   betaCodesCreated BetaInviteCode[] @relation("BetaCodesCreated")
   betaAccessLogs   BetaAccessLog[]  @relation("BetaAccessLogs")
@@ -931,6 +935,24 @@ model UserFollower {
   @@index([followerId])
   @@index([followingId])
   @@map("user_followers")
+}
+
+// Host interest signals (demand signaling)
+model HostInterest {
+  id           String   @id @default(cuid())
+  userId       String
+  hostId       String
+  categorySlug String?
+  message      String?  @db.VarChar(200)
+  createdAt    DateTime @default(now())
+
+  user User @relation("UserInterestSignals", fields: [userId], references: [id], onDelete: Cascade)
+  host User @relation("HostInterestReceived", fields: [hostId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, hostId])
+  @@index([hostId])
+  @@index([userId])
+  @@map("host_interests")
 }
 
 // Profile views table (for analytics)

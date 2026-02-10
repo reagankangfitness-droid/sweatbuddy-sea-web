@@ -9,6 +9,7 @@ import {
   isFollowing,
   trackProfileView
 } from '@/lib/profile'
+import { getInterestCount, isInterested } from '@/lib/interest'
 
 export async function GET(
   request: Request,
@@ -47,18 +48,25 @@ export async function GET(
     const showActivitiesAttended = 'showActivitiesAttended' in profile ? profile.showActivitiesAttended : false
     const showStats = 'showStats' in profile ? profile.showStats : false
 
-    const [hostStats, attendedStats, followCounts] = await Promise.all([
+    const [hostStats, attendedStats, followCounts, interestCount] = await Promise.all([
       profile.isHost ? getHostStats(profile.id) : null,
       showActivitiesAttended || isOwnProfile
         ? getAttendedStats(profile.id)
         : null,
-      getFollowCounts(profile.id)
+      getFollowCounts(profile.id),
+      profile.isHost ? getInterestCount(profile.id) : 0,
     ])
 
-    // Check if current user is following this profile
+    // Check if current user is following this profile and interested
     let isFollowingProfile = false
+    let isInterestedInProfile = false
     if (userId && !isOwnProfile) {
-      isFollowingProfile = await isFollowing(userId, profile.id)
+      const [followStatus, interestStatus] = await Promise.all([
+        isFollowing(userId, profile.id),
+        profile.isHost ? isInterested(userId, profile.id) : false,
+      ])
+      isFollowingProfile = followStatus
+      isInterestedInProfile = interestStatus
     }
 
     // Track profile view (don't await to avoid slowing response)
@@ -71,10 +79,12 @@ export async function GET(
         ...profile,
         hostStats: showStats || isOwnProfile ? hostStats : null,
         attendedStats: showActivitiesAttended || isOwnProfile ? attendedStats : null,
-        followCounts
+        followCounts,
+        interestCount,
       },
       isOwnProfile,
-      isFollowing: isFollowingProfile
+      isFollowing: isFollowingProfile,
+      isInterested: isInterestedInProfile,
     })
   } catch (error) {
     console.error('Profile fetch error:', error)

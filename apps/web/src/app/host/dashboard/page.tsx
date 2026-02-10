@@ -13,6 +13,7 @@ import { WeeklyPulseCard, WeeklyPulseCardSkeleton, type WeeklyPulseData } from '
 import { AgentChatWidget } from '@/components/host/AgentChatWidget'
 import { DashboardSkeleton } from '@/components/host/DashboardSkeleton'
 import { HostOnboarding } from '@/components/host/HostOnboarding'
+import { DemandSignalsCard } from '@/components/host/DemandSignalsCard'
 
 interface DashboardEvent {
   id: string
@@ -492,8 +493,11 @@ export default function HostDashboard() {
             </div>
           </div>
 
-          {/* Sidebar - Recent Activity, Top Regulars, At-Risk */}
+          {/* Sidebar - Demand Signals, Recent Activity, Top Regulars, At-Risk */}
           <div className="lg:col-span-1 space-y-6 order-2">
+            {/* Demand Signals */}
+            <DemandSignalsCard />
+
             {/* Recent Activity */}
             <section>
               <h2 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">

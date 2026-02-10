@@ -82,8 +82,14 @@ export async function POST(
       )
     }
 
-    // Get authenticated user (host)
+    // Require authenticated user (host)
     const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
+      )
+    }
 
     // Find attendee by check-in code
     const attendance = await prisma.eventAttendance.findUnique({
@@ -110,19 +116,17 @@ export async function POST(
       }, { status: 400 })
     }
 
-    // Verify host owns this event (optional but recommended)
-    if (userId) {
-      const event = await prisma.eventSubmission.findUnique({
-        where: { id: attendance.eventId },
-        select: { submittedByUserId: true },
-      })
+    // Verify host owns this event
+    const event = await prisma.eventSubmission.findUnique({
+      where: { id: attendance.eventId },
+      select: { submittedByUserId: true },
+    })
 
-      if (event && event.submittedByUserId !== userId) {
-        return NextResponse.json(
-          { success: false, error: 'Not authorized to check in for this event' },
-          { status: 403 }
-        )
-      }
+    if (event && event.submittedByUserId !== userId) {
+      return NextResponse.json(
+        { success: false, error: 'Not authorized to check in for this event' },
+        { status: 403 }
+      )
     }
 
     // Mark as checked in

@@ -11,25 +11,41 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const { searchParams } = new URL(request.url)
+    const page = parseInt(searchParams.get('page') || '1', 10)
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 200)
+    const skip = (page - 1) * limit
+
     // Get hosts from User table (isHost = true or has instagram)
-    const users = await prisma.user.findMany({
-      where: {
-        OR: [
-          { isHost: true },
-          { instagram: { not: null } }
-        ]
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        instagram: true,
-        isHost: true,
-        createdAt: true,
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 100,
-    })
+    const [users, totalUsers] = await Promise.all([
+      prisma.user.findMany({
+        where: {
+          OR: [
+            { isHost: true },
+            { instagram: { not: null } }
+          ]
+        },
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          instagram: true,
+          isHost: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip,
+      }),
+      prisma.user.count({
+        where: {
+          OR: [
+            { isHost: true },
+            { instagram: { not: null } }
+          ]
+        },
+      }),
+    ])
 
     // Get hosts from Organizer table (legacy)
     const organizers = await prisma.organizer.findMany({
@@ -42,13 +58,15 @@ export async function GET(request: NextRequest) {
         createdAt: true,
       },
       orderBy: { createdAt: 'desc' },
-      take: 100,
+      take: limit,
+      skip,
     })
 
     return NextResponse.json({
       success: true,
       hosts: users,
       organizers,
+      pagination: { page, limit, total: totalUsers, totalPages: Math.ceil(totalUsers / limit) },
     })
   } catch (error) {
     console.error('Error fetching hosts:', error)

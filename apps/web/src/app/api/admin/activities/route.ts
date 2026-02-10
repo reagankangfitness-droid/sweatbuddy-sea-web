@@ -18,31 +18,46 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status') || 'PENDING_APPROVAL'
+    const page = parseInt(searchParams.get('page') || '1', 10)
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 200)
+    const skip = (page - 1) * limit
 
-    const activities = await prisma.activity.findMany({
-      where: {
-        status: status as 'PENDING_APPROVAL' | 'PUBLISHED' | 'DRAFT' | 'CANCELLED' | 'COMPLETED',
-        deletedAt: null,
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            imageUrl: true,
+    const [activities, total] = await Promise.all([
+      prisma.activity.findMany({
+        where: {
+          status: status as 'PENDING_APPROVAL' | 'PUBLISHED' | 'DRAFT' | 'CANCELLED' | 'COMPLETED',
+          deletedAt: null,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              imageUrl: true,
+            },
           },
         },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    })
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: limit,
+        skip,
+      }),
+      prisma.activity.count({
+        where: {
+          status: status as 'PENDING_APPROVAL' | 'PUBLISHED' | 'DRAFT' | 'CANCELLED' | 'COMPLETED',
+          deletedAt: null,
+        },
+      }),
+    ])
 
-    return NextResponse.json(activities)
+    return NextResponse.json({
+      activities,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    })
   } catch (error) {
     console.error('Error fetching pending activities:', error)
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-    return NextResponse.json({ error: 'Internal server error', details: errorMessage }, { status: 500 })
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

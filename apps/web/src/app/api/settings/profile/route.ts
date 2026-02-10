@@ -133,9 +133,8 @@ export async function PUT(request: Request) {
     }
   } catch (error) {
     console.error('Profile update error:', error)
-    const errorMessage = error instanceof Error ? error.message : 'Failed to update profile'
     return NextResponse.json(
-      { error: errorMessage, details: String(error) },
+      { error: 'Failed to update profile' },
       { status: 500 }
     )
   }

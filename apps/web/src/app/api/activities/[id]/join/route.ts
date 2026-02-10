@@ -153,14 +153,15 @@ export async function POST(
     }
 
     return NextResponse.json(result, { status: 201 })
-  } catch (error: any) {
-    if (error?.message === 'ACTIVITY_FULL') {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : ''
+    if (message === 'ACTIVITY_FULL') {
       return NextResponse.json(
         { error: 'Activity is full' },
         { status: 400 }
       )
     }
-    if (error?.message === 'ACTIVITY_NOT_FOUND') {
+    if (message === 'ACTIVITY_NOT_FOUND') {
       return NextResponse.json(
         { error: 'Activity not found' },
         { status: 404 }

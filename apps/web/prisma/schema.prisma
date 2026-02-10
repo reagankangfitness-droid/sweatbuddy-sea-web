@@ -402,6 +402,7 @@ model UserActivity {
   @@index([userId])
   @@index([activityId])
   @@index([status])
+  @@index([paymentStatus])
   @@index([stripeCheckoutSessionId])
   @@map("user_activities")
 }
@@ -2642,7 +2643,7 @@ model Community {
 
   // Relations
   city       City?             @relation("CityCommunities", fields: [cityId], references: [id])
-  createdBy  User              @relation("CommunitiesOwned", fields: [createdById], references: [id])
+  createdBy  User              @relation("CommunitiesOwned", fields: [createdById], references: [id], onDelete: Cascade)
   members    CommunityMember[]
   activities Activity[]        @relation("CommunityActivities")
   chat       CommunityChat?

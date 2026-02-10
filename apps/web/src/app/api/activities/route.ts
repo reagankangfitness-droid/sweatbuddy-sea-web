@@ -141,7 +141,7 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof Error && 'issues' in error) {
       // Zod validation error
-      return NextResponse.json({ error: 'Validation failed', details: error }, { status: 400 })
+      return NextResponse.json({ error: 'Validation failed' }, { status: 400 })
     }
 
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -227,7 +227,7 @@ export async function GET(request: Request) {
       orderBy: upcoming === 'true'
         ? { startTime: 'asc' }
         : { createdAt: 'desc' },
-      take: limit ? parseInt(limit, 10) : undefined,
+      take: limit ? Math.min(parseInt(limit, 10), 100) : 20,
       skip: offset ? parseInt(offset, 10) : undefined,
     })
 

@@ -52,7 +52,7 @@ export async function GET(
     }
 
     const { searchParams } = new URL(request.url)
-    const limit = parseInt(searchParams.get('limit') || '50')
+    const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100)
     const cursor = searchParams.get('cursor')
 
     const messages = await prisma.eventChatMessage.findMany({
@@ -178,9 +178,8 @@ export async function POST(
     })
   } catch (error) {
     console.error('Send chat message error:', error)
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
-      { error: 'Failed to send message', details: errorMessage },
+      { error: 'Failed to send message' },
       { status: 500 }
     )
   }

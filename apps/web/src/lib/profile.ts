@@ -260,29 +260,31 @@ export async function getHostReviews(
     })
   ])
 
-  // Get reviewer info and activity info for each review
-  const enrichedReviews = await Promise.all(
-    reviews.map(async (review) => {
-      const [reviewer, activity] = await Promise.all([
-        prisma.user.findUnique({
-          where: { id: review.reviewerId },
-          select: { id: true, name: true, firstName: true, imageUrl: true, slug: true }
-        }),
-        review.activityId
-          ? prisma.activity.findUnique({
-              where: { id: review.activityId },
-              select: { id: true, title: true }
-            })
-          : null
-      ])
+  // Batch-fetch all reviewers and activities in 2 queries instead of N+1
+  const reviewerIds = [...new Set(reviews.map((r) => r.reviewerId))]
+  const activityIds = [...new Set(reviews.map((r) => r.activityId).filter(Boolean) as string[])]
 
-      return {
-        ...review,
-        reviewer,
-        activity
-      }
-    })
-  )
+  const [reviewers, activities] = await Promise.all([
+    prisma.user.findMany({
+      where: { id: { in: reviewerIds } },
+      select: { id: true, name: true, firstName: true, imageUrl: true, slug: true }
+    }),
+    activityIds.length > 0
+      ? prisma.activity.findMany({
+          where: { id: { in: activityIds } },
+          select: { id: true, title: true }
+        })
+      : []
+  ])
+
+  const reviewerMap = new Map(reviewers.map((r) => [r.id, r]))
+  const activityMap = new Map(activities.map((a) => [a.id, a]))
+
+  const enrichedReviews = reviews.map((review) => ({
+    ...review,
+    reviewer: reviewerMap.get(review.reviewerId) || null,
+    activity: review.activityId ? activityMap.get(review.activityId) || null : null
+  }))
 
   // Get rating distribution
   const ratingDistribution = await prisma.userReview.groupBy({

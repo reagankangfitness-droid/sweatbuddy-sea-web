@@ -463,86 +463,107 @@ export async function createDailySnapshot(date?: Date): Promise<number> {
     },
   })
 
-  for (const host of hostsWithActivity) {
-    const hostId = host.userId
+  const hostIds = hostsWithActivity.map((h) => h.userId)
 
-    // Count events hosted today
-    const eventsHosted = await prisma.activity.count({
-      where: {
-        userId: hostId,
-        startTime: {
-          gte: snapshotDate,
-          lt: nextDay,
-        },
-        deletedAt: null,
-      },
-    })
-
-    // Count new bookings today
-    const newBookings = await prisma.userActivity.count({
-      where: {
-        activity: {
-          userId: hostId,
+  // Batch all counts in parallel instead of N+1 per host
+  const [eventsGrouped, bookingsGrouped, cancellationsGrouped, revenueGrouped, viewsGrouped] =
+    await Promise.all([
+      prisma.activity.groupBy({
+        by: ['userId'],
+        where: {
+          userId: { in: hostIds },
+          startTime: { gte: snapshotDate, lt: nextDay },
           deletedAt: null,
         },
-        status: 'JOINED',
-        createdAt: {
-          gte: snapshotDate,
-          lt: nextDay,
-        },
-        deletedAt: null,
-      },
-    })
-
-    // Count cancellations today
-    const cancellations = await prisma.userActivity.count({
-      where: {
-        activity: {
-          userId: hostId,
+        _count: { id: true },
+      }),
+      prisma.userActivity.groupBy({
+        by: ['activityId'],
+        where: {
+          activity: { userId: { in: hostIds }, deletedAt: null },
+          status: 'JOINED',
+          createdAt: { gte: snapshotDate, lt: nextDay },
           deletedAt: null,
         },
-        status: 'CANCELLED',
-        updatedAt: {
-          gte: snapshotDate,
-          lt: nextDay,
+        _count: { id: true },
+      }),
+      prisma.userActivity.groupBy({
+        by: ['activityId'],
+        where: {
+          activity: { userId: { in: hostIds }, deletedAt: null },
+          status: 'CANCELLED',
+          updatedAt: { gte: snapshotDate, lt: nextDay },
         },
-      },
-    })
-
-    // Calculate revenue today
-    const revenueData = await prisma.userActivity.aggregate({
-      where: {
-        activity: {
-          userId: hostId,
+        _count: { id: true },
+      }),
+      prisma.userActivity.groupBy({
+        by: ['activityId'],
+        where: {
+          activity: { userId: { in: hostIds }, deletedAt: null },
+          paymentStatus: 'PAID',
+          paidAt: { gte: snapshotDate, lt: nextDay },
           deletedAt: null,
         },
-        paymentStatus: 'PAID',
-        paidAt: {
-          gte: snapshotDate,
-          lt: nextDay,
+        _sum: { amountPaid: true },
+      }),
+      prisma.activityView.groupBy({
+        by: ['activityId'],
+        where: {
+          activity: { userId: { in: hostIds }, deletedAt: null },
+          viewedAt: { gte: snapshotDate, lt: nextDay },
         },
-        deletedAt: null,
-      },
-      _sum: {
-        amountPaid: true,
-      },
-    })
+        _count: { id: true },
+      }),
+    ])
 
-    // Count activity views today
-    const activityViews = await prisma.activityView.count({
-      where: {
-        activity: {
-          userId: hostId,
-          deletedAt: null,
-        },
-        viewedAt: {
-          gte: snapshotDate,
-          lt: nextDay,
-        },
-      },
-    })
+  // Build lookup maps: hostId -> count
+  const eventsMap = new Map(eventsGrouped.map((e) => [e.userId, e._count.id]))
 
-    // Upsert daily snapshot
+  // For userActivity groupBy results, we need to map activityId back to hostId
+  // Fetch activity->host mapping for the relevant activities
+  const allActivityIds = [
+    ...new Set([
+      ...bookingsGrouped.map((b) => b.activityId),
+      ...cancellationsGrouped.map((c) => c.activityId),
+      ...revenueGrouped.map((r) => r.activityId),
+      ...viewsGrouped.map((v) => v.activityId),
+    ]),
+  ]
+
+  const activityHostMap = new Map<string, string>()
+  if (allActivityIds.length > 0) {
+    const activities = await prisma.activity.findMany({
+      where: { id: { in: allActivityIds } },
+      select: { id: true, userId: true },
+    })
+    activities.forEach((a) => activityHostMap.set(a.id, a.userId))
+  }
+
+  // Aggregate per host
+  const bookingsMap = new Map<string, number>()
+  const cancellationsMap = new Map<string, number>()
+  const revenueMap = new Map<string, number>()
+  const viewsMap = new Map<string, number>()
+
+  bookingsGrouped.forEach((b) => {
+    const hid = activityHostMap.get(b.activityId)
+    if (hid) bookingsMap.set(hid, (bookingsMap.get(hid) || 0) + b._count.id)
+  })
+  cancellationsGrouped.forEach((c) => {
+    const hid = activityHostMap.get(c.activityId)
+    if (hid) cancellationsMap.set(hid, (cancellationsMap.get(hid) || 0) + c._count.id)
+  })
+  revenueGrouped.forEach((r) => {
+    const hid = activityHostMap.get(r.activityId)
+    if (hid) revenueMap.set(hid, (revenueMap.get(hid) || 0) + (r._sum.amountPaid || 0))
+  })
+  viewsGrouped.forEach((v) => {
+    const hid = activityHostMap.get(v.activityId)
+    if (hid) viewsMap.set(hid, (viewsMap.get(hid) || 0) + v._count.id)
+  })
+
+  // Upsert all snapshots
+  for (const hostId of hostIds) {
     await prisma.hostStatsDaily.upsert({
       where: {
         hostId_date: {
@@ -553,18 +574,18 @@ export async function createDailySnapshot(date?: Date): Promise<number> {
       create: {
         hostId,
         date: snapshotDate,
-        eventsHosted,
-        newBookings,
-        cancellations,
-        revenue: new Decimal(revenueData._sum.amountPaid || 0),
-        activityViews,
+        eventsHosted: eventsMap.get(hostId) || 0,
+        newBookings: bookingsMap.get(hostId) || 0,
+        cancellations: cancellationsMap.get(hostId) || 0,
+        revenue: new Decimal(revenueMap.get(hostId) || 0),
+        activityViews: viewsMap.get(hostId) || 0,
       },
       update: {
-        eventsHosted,
-        newBookings,
-        cancellations,
-        revenue: new Decimal(revenueData._sum.amountPaid || 0),
-        activityViews,
+        eventsHosted: eventsMap.get(hostId) || 0,
+        newBookings: bookingsMap.get(hostId) || 0,
+        cancellations: cancellationsMap.get(hostId) || 0,
+        revenue: new Decimal(revenueMap.get(hostId) || 0),
+        activityViews: viewsMap.get(hostId) || 0,
       },
     })
   }

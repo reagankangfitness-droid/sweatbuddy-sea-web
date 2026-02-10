@@ -34,6 +34,7 @@ export async function GET(
           communityLink: true,
           recurring: true,
           organizerInstagram: true,
+          submittedByUserId: true,
           contactEmail: true,
           status: true,
           // Pricing fields
@@ -54,8 +55,11 @@ export async function GET(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    // Verify ownership - compare Instagram handles (case-insensitive)
-    if (event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    // Verify ownership via userId or fallback to Instagram handle
+    const isOwner =
+      (session.userId && event.submittedByUserId && event.submittedByUserId === session.userId) ||
+      (event.organizerInstagram.toLowerCase() === session.instagramHandle.toLowerCase())
+    if (!isOwner) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -111,6 +115,7 @@ export async function PUT(
       select: {
         id: true,
         organizerInstagram: true,
+        submittedByUserId: true,
       },
     })
 
@@ -118,8 +123,11 @@ export async function PUT(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    // Verify ownership
-    if (event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    // Verify ownership via userId or fallback to Instagram handle
+    const isOwner =
+      (session.userId && event.submittedByUserId && event.submittedByUserId === session.userId) ||
+      (event.organizerInstagram.toLowerCase() === session.instagramHandle.toLowerCase())
+    if (!isOwner) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

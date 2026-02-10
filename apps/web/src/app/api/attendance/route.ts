@@ -49,7 +49,8 @@ export async function POST(request: Request) {
     const userIp = forwardedFor?.split(',')[0]?.trim() || realIp || null
 
     // Validate email
-    if (!email || !email.includes('@')) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!email || !emailRegex.test(email.trim())) {
       return NextResponse.json(
         { error: 'Valid email required' },
         { status: 400 }
@@ -245,20 +246,21 @@ export async function POST(request: Request) {
       success: true,
       attendanceId: attendance.id,
     })
-  } catch (error: any) {
-    if (error?.message === 'REGISTRATION_CLOSED') {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : ''
+    if (message === 'REGISTRATION_CLOSED') {
       return NextResponse.json(
         { error: 'Registration is closed for this event' },
         { status: 400 }
       )
     }
-    if (error?.message === 'EVENT_FULL') {
+    if (message === 'EVENT_FULL') {
       return NextResponse.json(
         { error: 'This event is full' },
         { status: 400 }
       )
     }
-    if (error?.message === 'ALREADY_REGISTERED') {
+    if (message === 'ALREADY_REGISTERED') {
       return NextResponse.json(
         { error: "You've already registered for this event" },
         { status: 400 }

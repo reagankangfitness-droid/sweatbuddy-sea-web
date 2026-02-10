@@ -83,10 +83,11 @@ export async function getAttendeesByEvent(eventId: string): Promise<AttendanceRe
   }))
 }
 
-// Get all attendees
+// Get all attendees (limited to most recent 1000)
 export async function getAllAttendees(): Promise<AttendanceRecord[]> {
   const attendees = await prisma.eventAttendance.findMany({
     orderBy: { timestamp: 'desc' },
+    take: 1000,
   })
 
   return attendees.map(a => ({

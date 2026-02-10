@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getOrganizerSession } from '@/lib/organizer-session'
 import { sendEmail } from '@/lib/email'
+import { escapeHtml } from '@/lib/utils'
 import eventsData from '@/data/events.json'
 
 // Helper to get organizer handle for an event
@@ -376,10 +377,10 @@ export async function POST(
             <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
               <h2 style="color: #171717; margin-bottom: 16px;">New Message Received</h2>
               <p style="color: #525252; margin-bottom: 24px;">
-                You have a new message from <strong>${finalSenderName}</strong> about your event <strong>"${eventSubmission.eventName}"</strong>
+                You have a new message from <strong>${escapeHtml(finalSenderName)}</strong> about your event <strong>"${escapeHtml(eventSubmission.eventName)}"</strong>
               </p>
               <div style="background: #f5f5f5; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
-                <p style="color: #171717; margin: 0; white-space: pre-wrap;">${content.trim()}</p>
+                <p style="color: #171717; margin: 0; white-space: pre-wrap;">${escapeHtml(content.trim())}</p>
               </div>
               <a href="https://sweatbuddies.co/organizer/dashboard"
                  style="display: inline-block; background: #171717; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600;">

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendEmail } from '@/lib/email'
+import { escapeHtml } from '@/lib/utils'
 import eventsData from '@/data/events.json'
 
 // Normalize Instagram handle (remove @ prefix, lowercase, trim)
@@ -182,20 +183,20 @@ export async function POST(
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <h2 style="color: #171717; margin-bottom: 16px;">You have a new message</h2>
             <p style="color: #525252; margin-bottom: 8px;">
-              <strong>${senderName || 'Someone'}</strong> sent you a message about your event:
+              <strong>${escapeHtml(senderName || 'Someone')}</strong> sent you a message about your event:
             </p>
             <p style="color: #171717; font-weight: 600; margin-bottom: 24px;">
-              ${eventDetails.name}
+              ${escapeHtml(eventDetails.name)}
             </p>
             <div style="background: #f5f5f5; border-radius: 12px; padding: 16px; margin-bottom: 24px; border-left: 4px solid #1800ad;">
-              <p style="color: #171717; margin: 0; white-space: pre-wrap; line-height: 1.5;">${content.trim()}</p>
+              <p style="color: #171717; margin: 0; white-space: pre-wrap; line-height: 1.5;">${escapeHtml(content.trim())}</p>
             </div>
             <a href="${replyUrl}"
                style="display: inline-block; background: #1800ad; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600;">
               View & Reply on SweatBuddies
             </a>
             <p style="color: #a3a3a3; font-size: 13px; margin-top: 32px; padding-top: 16px; border-top: 1px solid #e5e5e5;">
-              Reply directly to this email to respond to ${senderName || 'the attendee'}, or click the button above to reply on SweatBuddies.
+              Reply directly to this email to respond to ${escapeHtml(senderName || 'the attendee')}, or click the button above to reply on SweatBuddies.
             </p>
           </div>
         `,

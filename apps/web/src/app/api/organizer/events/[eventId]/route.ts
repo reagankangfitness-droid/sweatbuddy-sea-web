@@ -162,14 +162,22 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    // Delete the event
-    await prisma.eventSubmission.delete({
-      where: { id: eventId },
-    })
-
-    // Also delete related attendance records
-    await prisma.eventAttendance.deleteMany({
-      where: { eventId },
+    // Delete all children first, then parent to avoid foreign key violations
+    await prisma.$transaction(async (tx) => {
+      // Delete children that reference eventAttendance or eventSubmission
+      await tx.eventChatMessage.deleteMany({ where: { eventId } })
+      await tx.eventDirectMessage.deleteMany({
+        where: { conversation: { eventId } },
+      })
+      await tx.eventDirectConversation.deleteMany({ where: { eventId } })
+      await tx.eventReminder.deleteMany({ where: { eventId } })
+      await tx.postEventFollowUp.deleteMany({ where: { eventId } })
+      await tx.eventReview.deleteMany({ where: { eventId } })
+      await tx.eventWaitlist.deleteMany({ where: { eventId } })
+      // Delete attendance records (child of eventSubmission)
+      await tx.eventAttendance.deleteMany({ where: { eventId } })
+      // Finally delete the parent event
+      await tx.eventSubmission.delete({ where: { id: eventId } })
     })
 
     return NextResponse.json({

@@ -33,7 +33,7 @@ export default function MyActivitiesPage() {
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      router.push('/sign-in?redirect=/my-activities')
+      router.push('/sign-in?redirect_url=/my-activities')
       return
     }
 

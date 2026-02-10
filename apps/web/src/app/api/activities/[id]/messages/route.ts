@@ -48,15 +48,15 @@ export async function GET(
     // Determine who the other person in the conversation is
     const hostId = activity.hostId || activity.userId
     const senderId = userId
-    const receiverId = isHost ? senderId : hostId
+    const receiverId = hostId
 
     // Find the conversation
     const conversation = await prisma.conversation.findFirst({
       where: {
         activityId,
         OR: [
-          { senderId, receiverId },
-          { senderId: receiverId, receiverId: senderId },
+          { senderId: userId, receiverId: hostId },
+          { senderId: hostId, receiverId: userId },
         ],
       },
       include: {
@@ -161,26 +161,32 @@ export async function POST(
 
     // Determine sender and receiver
     const hostId = activity.hostId || activity.userId
-    const senderId = userId
-    const receiverId = isHost ? senderId : hostId
+    const receiverId = hostId
 
     // Find or create conversation
     let conversation = await prisma.conversation.findFirst({
       where: {
         activityId,
         OR: [
-          { senderId, receiverId },
-          { senderId: receiverId, receiverId: senderId },
+          { senderId: userId, receiverId: hostId },
+          { senderId: hostId, receiverId: userId },
         ],
       },
     })
 
     if (!conversation) {
+      // Host can't initiate a conversation (they don't know which attendee to message)
+      if (isHost) {
+        return NextResponse.json(
+          { error: 'No conversation exists. The attendee must send the first message.' },
+          { status: 400 }
+        )
+      }
       conversation = await prisma.conversation.create({
         data: {
           activityId,
-          senderId,
-          receiverId,
+          senderId: userId,
+          receiverId: hostId,
         },
       })
     }

@@ -69,6 +69,7 @@ export async function POST(
         amount: 0,
         percentage: 0,
       }
+      let refundError: string | null = null
 
       if (
         booking.paymentStatus === 'PAID' &&
@@ -93,45 +94,59 @@ export async function POST(
               amount: toStripeAmount(refundCalc.amount, currency),
               reason: 'requested_by_customer',
             })
-
-            await prisma.userActivity.update({
-              where: { id: bookingId },
-              data: {
-                refundAmount: refundCalc.amount,
-                refundedAt: new Date(),
-                paymentStatus: 'REFUNDED',
-              },
-            })
-          } catch (refundError) {
-            console.error('Refund error:', refundError)
+          } catch (err) {
+            console.error('Refund error:', err)
+            refundError = err instanceof Error ? err.message : 'Stripe refund failed'
           }
         }
       }
 
-      const updatedBooking = await prisma.userActivity.update({
-        where: { id: bookingId },
-        data: { status: 'CANCELLED', updatedAt: new Date() },
-        include: {
-          activity: {
-            include: {
-              user: {
-                select: { id: true, name: true, email: true, imageUrl: true },
+      // Wrap DB updates in a transaction
+      const updatedBooking = await prisma.$transaction(async (tx) => {
+        // Update refund info if Stripe refund succeeded
+        if (
+          refundResult.amount > 0 &&
+          !refundError &&
+          booking.stripePaymentIntentId
+        ) {
+          await tx.userActivity.update({
+            where: { id: bookingId },
+            data: {
+              refundAmount: refundResult.amount,
+              refundedAt: new Date(),
+              paymentStatus: 'REFUNDED',
+            },
+          })
+        }
+
+        // Mark booking as cancelled (CANCELLED, not REFUNDED, if refund failed)
+        const updated = await tx.userActivity.update({
+          where: { id: bookingId },
+          data: { status: 'CANCELLED', updatedAt: new Date() },
+          include: {
+            activity: {
+              include: {
+                user: {
+                  select: { id: true, name: true, email: true, imageUrl: true },
+                },
               },
             },
           },
-        },
-      })
-
-      // Remove user from activity group chat
-      const activityGroup = await prisma.group.findFirst({
-        where: { activityId: booking.activityId },
-      })
-      if (activityGroup) {
-        await prisma.userGroup.updateMany({
-          where: { userId: clerkUserId, groupId: activityGroup.id },
-          data: { deletedAt: new Date() },
         })
-      }
+
+        // Remove user from activity group chat
+        const activityGroup = await tx.group.findFirst({
+          where: { activityId: booking.activityId },
+        })
+        if (activityGroup) {
+          await tx.userGroup.updateMany({
+            where: { userId: clerkUserId, groupId: activityGroup.id },
+            data: { deletedAt: new Date() },
+          })
+        }
+
+        return updated
+      })
 
       // Process waitlist
       try {
@@ -175,10 +190,11 @@ export async function POST(
           },
         },
         refund: refundResult.status !== 'not_applicable' ? {
-          status: refundResult.status,
+          status: refundError ? 'failed' : refundResult.status,
           amount: refundResult.amount,
           percentage: refundResult.percentage,
           currency: booking.currency || 'SGD',
+          ...(refundError ? { error: refundError } : {}),
         } : null,
       })
     }
@@ -220,6 +236,7 @@ export async function POST(
       amount: 0,
       percentage: 0,
     }
+    let eventRefundError: string | null = null
 
     if (
       attendance.paymentStatus === 'paid' &&
@@ -248,16 +265,17 @@ export async function POST(
             amount: toStripeAmount(refundCalc.amount, 'SGD'),
             reason: 'requested_by_customer',
           })
-        } catch (refundError) {
-          console.error('Refund error:', refundError)
+        } catch (err) {
+          console.error('Refund error:', err)
+          eventRefundError = err instanceof Error ? err.message : 'Stripe refund failed'
         }
       }
     }
 
-    // Mark attendance as cancelled
+    // Mark attendance as cancelled (use 'cancelled' if refund failed, 'refunded' if succeeded)
     await prisma.eventAttendance.update({
       where: { id: bookingId },
-      data: { paymentStatus: 'refunded' },
+      data: { paymentStatus: eventRefundError ? 'cancelled' : 'refunded' },
     })
 
     return NextResponse.json({
@@ -270,10 +288,11 @@ export async function POST(
         },
       },
       refund: refundResult.status !== 'not_applicable' ? {
-        status: refundResult.status,
+        status: eventRefundError ? 'failed' : refundResult.status,
         amount: refundResult.amount,
         percentage: refundResult.percentage,
         currency: 'SGD',
+        ...(eventRefundError ? { error: eventRefundError } : {}),
       } : null,
     })
   } catch (error) {

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { anthropic, AGENT_MODEL } from '@/lib/ai'
+import { isAdminRequest } from '@/lib/admin-auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -7,8 +8,13 @@ export const dynamic = 'force-dynamic'
  * GET /api/test/ai
  * Simple test endpoint to verify Anthropic API is working
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const isAdmin = await isAdminRequest(request)
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const response = await anthropic.messages.create({
       model: AGENT_MODEL,
       max_tokens: 100,

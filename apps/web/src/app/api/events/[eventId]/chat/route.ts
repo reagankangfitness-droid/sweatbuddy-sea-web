@@ -9,6 +9,48 @@ export async function GET(
 ) {
   try {
     const { eventId } = await params
+
+    // SECURITY: Require Clerk authentication
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      )
+    }
+
+    // Get user details from Clerk
+    const user = await currentUser()
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 401 }
+      )
+    }
+
+    const userEmail = user.primaryEmailAddress?.emailAddress
+    if (!userEmail) {
+      return NextResponse.json(
+        { error: 'Email required' },
+        { status: 400 }
+      )
+    }
+
+    // Verify user is attending this event
+    const attendance = await prisma.eventAttendance.findFirst({
+      where: {
+        eventId,
+        email: userEmail.toLowerCase().trim(),
+      },
+    })
+
+    if (!attendance) {
+      return NextResponse.json(
+        { error: 'Only attendees can view messages' },
+        { status: 403 }
+      )
+    }
+
     const { searchParams } = new URL(request.url)
     const limit = parseInt(searchParams.get('limit') || '50')
     const cursor = searchParams.get('cursor')

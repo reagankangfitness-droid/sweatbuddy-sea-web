@@ -1,9 +1,25 @@
 import { NextResponse } from 'next/server'
+import { auth, clerkClient } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { sendEventCancellationEmail, sendWaitlistSpotAvailableEmail } from '@/lib/event-confirmation-email'
 
 export async function POST(request: Request) {
   try {
+    const { userId } = await auth()
+
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Get the authenticated user's email
+    const client = await clerkClient()
+    const user = await client.users.getUser(userId)
+    const userEmail = user.emailAddresses[0]?.emailAddress?.toLowerCase()
+
+    if (!userEmail) {
+      return NextResponse.json({ error: 'No email found for user' }, { status: 400 })
+    }
+
     const { eventId, email } = await request.json()
 
     // Validate required fields
@@ -15,6 +31,14 @@ export async function POST(request: Request) {
     }
 
     const normalizedEmail = email.toLowerCase().trim()
+
+    // Verify the email in the request matches the authenticated user's email
+    if (normalizedEmail !== userEmail) {
+      return NextResponse.json(
+        { error: 'You can only cancel your own RSVP' },
+        { status: 403 }
+      )
+    }
 
     // Find the attendance record
     const attendance = await prisma.eventAttendance.findFirst({

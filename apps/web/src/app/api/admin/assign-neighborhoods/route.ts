@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import neighborhoodsData from '@/data/neighborhoods.json'
+import { isAdminRequest } from '@/lib/admin-auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -44,8 +45,13 @@ function findNeighborhoodForCoordinates(lat: number, lng: number): string | null
   return null
 }
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    const isAdmin = await isAdminRequest(request)
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     // Get all activities with coordinates
     const allActivities = await prisma.activity.findMany({
       select: {
@@ -106,8 +112,13 @@ export async function POST() {
 }
 
 // GET to preview what would be updated
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const isAdmin = await isAdminRequest(request)
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const allActivities = await prisma.activity.findMany({
       select: {
         id: true,

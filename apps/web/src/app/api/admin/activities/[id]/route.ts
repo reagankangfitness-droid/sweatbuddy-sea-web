@@ -1,16 +1,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-
-// List of admin user IDs (Clerk user IDs)
-const ADMIN_USER_IDS = [
-  'user_35uErdZUOkuGuTgxKGNVHRXlFRF', // Reagan
-]
-
-// Check if user is an admin
-function isAdmin(userId: string): boolean {
-  return ADMIN_USER_IDS.includes(userId)
-}
+import { isAdminUser } from '@/lib/admin-auth'
 
 // PATCH - Approve or reject an activity
 export async function PATCH(
@@ -23,7 +14,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    if (!isAdmin(userId)) {
+    if (!isAdminUser(userId)) {
       return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 })
     }
 
@@ -105,7 +96,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    if (!isAdmin(userId)) {
+    if (!isAdminUser(userId)) {
       return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 })
     }
 

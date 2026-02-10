@@ -316,7 +316,7 @@ export default async function CommunityPage({ params }: Props) {
           <h2 className="text-xl font-semibold text-neutral-900">Upcoming Experiences</h2>
           {isAdmin && (
             <Link
-              href={`/host/communities/${community.slug}/events/new`}
+              href="/activities/create"
               className="text-sm font-medium text-blue-600 hover:text-blue-700"
             >
               + Create Experience
@@ -363,7 +363,7 @@ export default async function CommunityPage({ params }: Props) {
             <p className="text-neutral-600">No upcoming experiences</p>
             {isAdmin && (
               <Link
-                href={`/host/communities/${community.slug}/events/new`}
+                href="/activities/create"
                 className="inline-block mt-4 px-6 py-2 bg-neutral-900 text-white rounded-full text-sm font-medium hover:bg-neutral-800 transition-colors"
               >
                 Create an Experience

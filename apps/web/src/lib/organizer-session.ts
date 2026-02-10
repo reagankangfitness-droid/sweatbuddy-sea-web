@@ -82,17 +82,6 @@ export async function getOrganizerSession(): Promise<OrganizerSession | null> {
     try {
       signedSession = JSON.parse(sessionCookie.value)
     } catch {
-      // Legacy unsigned session - try to parse directly
-      // This provides backward compatibility during migration
-      try {
-        const legacySession = JSON.parse(sessionCookie.value)
-        if (legacySession.instagramHandle && legacySession.id) {
-          // Valid legacy session structure - return it but log warning
-          return legacySession as OrganizerSession
-        }
-      } catch {
-        // Invalid session
-      }
       return null
     }
 

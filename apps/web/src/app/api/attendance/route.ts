@@ -64,91 +64,87 @@ export async function POST(request: Request) {
       )
     }
 
-    // Get event details to check capacity
-    const [event, attendeeCount] = await Promise.all([
-      prisma.eventSubmission.findUnique({
-        where: { id: eventId },
-        select: {
-          isFull: true,
-          maxTickets: true,
-        }
-      }),
-      prisma.eventAttendance.count({
-        where: { eventId }
-      })
-    ])
-
-    // Check if event is manually closed
-    if (event?.isFull) {
-      return NextResponse.json(
-        { error: 'Registration is closed for this event' },
-        { status: 400 }
-      )
-    }
-
-    // Check if capacity reached
-    if (event?.maxTickets && attendeeCount >= event.maxTickets) {
-      // Auto-mark as full
-      await prisma.eventSubmission.update({
-        where: { id: eventId },
-        data: { isFull: true }
-      })
-      return NextResponse.json(
-        { error: 'This event is full' },
-        { status: 400 }
-      )
-    }
-
-    // Check for duplicate (same email + event)
-    const existing = await prisma.eventAttendance.findFirst({
-      where: {
-        email: email.toLowerCase().trim(),
-        eventId: eventId,
-      },
-    })
-
-    if (existing) {
-      return NextResponse.json(
-        { error: "You've already registered for this event" },
-        { status: 400 }
-      )
-    }
-
     // Generate unique check-in code for QR
     const checkInCode = generateCheckInCode()
 
-    // Create attendance record
-    const attendance = await prisma.eventAttendance.create({
-      data: {
-        id: generateId(),
-        eventId,
-        eventName,
-        email: email.toLowerCase().trim(),
-        name: name?.trim() || null,
-        subscribe: subscribe ?? true,
-        mealPreference: mealPreference || null,
-        timestamp: new Date(timestamp || new Date()),
-        confirmed: true,
-        // Waiver acceptance (one-time, covers all future events)
-        waiverAccepted: waiverAccepted ?? false,
-        waiverVersion: waiverVersion || null,
-        waiverAcceptedAt: waiverAccepted ? new Date() : null,
-        waiverAcceptedIp: waiverAccepted ? userIp : null,
-        // QR code check-in
-        checkInCode,
-      },
-    })
+    // Atomically check capacity, check duplicate, and create attendance inside transaction
+    const { attendance, event, attendeeCount } = await prisma.$transaction(async (tx) => {
+      // Get event details to check capacity
+      const [txEvent, txAttendeeCount] = await Promise.all([
+        tx.eventSubmission.findUnique({
+          where: { id: eventId },
+          select: {
+            isFull: true,
+            maxTickets: true,
+          }
+        }),
+        tx.eventAttendance.count({
+          where: { eventId }
+        })
+      ])
 
-    // Check if this registration filled the event
-    if (event?.maxTickets) {
-      const newCount = attendeeCount + 1
-      if (newCount >= event.maxTickets) {
-        await prisma.eventSubmission.update({
+      // Check if event is manually closed
+      if (txEvent?.isFull) {
+        throw new Error('REGISTRATION_CLOSED')
+      }
+
+      // Check if capacity reached
+      if (txEvent?.maxTickets && txAttendeeCount >= txEvent.maxTickets) {
+        // Auto-mark as full
+        await tx.eventSubmission.update({
           where: { id: eventId },
           data: { isFull: true }
         })
+        throw new Error('EVENT_FULL')
       }
-    }
+
+      // Check for duplicate (same email + event)
+      const existing = await tx.eventAttendance.findFirst({
+        where: {
+          email: email.toLowerCase().trim(),
+          eventId: eventId,
+        },
+      })
+
+      if (existing) {
+        throw new Error('ALREADY_REGISTERED')
+      }
+
+      // Create attendance record
+      const txAttendance = await tx.eventAttendance.create({
+        data: {
+          id: generateId(),
+          eventId,
+          eventName,
+          email: email.toLowerCase().trim(),
+          name: name?.trim() || null,
+          subscribe: subscribe ?? true,
+          mealPreference: mealPreference || null,
+          timestamp: new Date(timestamp || new Date()),
+          confirmed: true,
+          // Waiver acceptance (one-time, covers all future events)
+          waiverAccepted: waiverAccepted ?? false,
+          waiverVersion: waiverVersion || null,
+          waiverAcceptedAt: waiverAccepted ? new Date() : null,
+          waiverAcceptedIp: waiverAccepted ? userIp : null,
+          // QR code check-in
+          checkInCode,
+        },
+      })
+
+      // Check if this registration filled the event
+      if (txEvent?.maxTickets) {
+        const newCount = txAttendeeCount + 1
+        if (newCount >= txEvent.maxTickets) {
+          await tx.eventSubmission.update({
+            where: { id: eventId },
+            data: { isFull: true }
+          })
+        }
+      }
+
+      return { attendance: txAttendance, event: txEvent, attendeeCount: txAttendeeCount }
+    })
 
     // If subscribed, add to newsletter list
     if (subscribe) {
@@ -249,7 +245,25 @@ export async function POST(request: Request) {
       success: true,
       attendanceId: attendance.id,
     })
-  } catch {
+  } catch (error: any) {
+    if (error?.message === 'REGISTRATION_CLOSED') {
+      return NextResponse.json(
+        { error: 'Registration is closed for this event' },
+        { status: 400 }
+      )
+    }
+    if (error?.message === 'EVENT_FULL') {
+      return NextResponse.json(
+        { error: 'This event is full' },
+        { status: 400 }
+      )
+    }
+    if (error?.message === 'ALREADY_REGISTERED') {
+      return NextResponse.json(
+        { error: "You've already registered for this event" },
+        { status: 400 }
+      )
+    }
     return NextResponse.json(
       { error: 'Failed to register attendance' },
       { status: 500 }

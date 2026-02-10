@@ -1,9 +1,18 @@
 import { NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
+import { getOrganizerSession } from '@/lib/organizer-session'
 
 export async function POST(request: Request) {
   try {
+    const session = await getOrganizerSession()
+    if (!session) {
+      return NextResponse.json(
+        { error: { message: 'Unauthorized - organizer session required' } },
+        { status: 401 }
+      )
+    }
+
     const { email, eventSubmissionId } = await request.json()
 
     if (!email) {

@@ -38,12 +38,9 @@ export async function POST(
       },
     })
 
-    // Check if activity exists
+    // Check if activity exists (initial check before transaction)
     const activity = await prisma.activity.findUnique({
       where: { id: activityId, deletedAt: null },
-      include: {
-        userActivities: true,
-      },
     })
 
     if (!activity) {
@@ -67,21 +64,30 @@ export async function POST(
       )
     }
 
-    // Check if activity is full
-    if (activity.maxPeople) {
-      const currentParticipants = activity.userActivities.filter(
-        (ua) => ua.status === 'JOINED'
-      ).length
-      if (currentParticipants >= activity.maxPeople) {
-        return NextResponse.json(
-          { error: 'Activity is full' },
-          { status: 400 }
-        )
-      }
-    }
-
-    // Create UserActivity record and add to group chat
+    // Atomically check capacity and create participant inside transaction
     const result = await prisma.$transaction(async (tx) => {
+      // Re-fetch activity with participants inside transaction for atomicity
+      const freshActivity = await tx.activity.findUnique({
+        where: { id: activityId, deletedAt: null },
+        include: {
+          userActivities: true,
+        },
+      })
+
+      if (!freshActivity) {
+        throw new Error('ACTIVITY_NOT_FOUND')
+      }
+
+      // Check capacity inside transaction to prevent race condition
+      if (freshActivity.maxPeople) {
+        const currentParticipants = freshActivity.userActivities.filter(
+          (ua) => ua.status === 'JOINED'
+        ).length
+        if (currentParticipants >= freshActivity.maxPeople) {
+          throw new Error('ACTIVITY_FULL')
+        }
+      }
+
       const userActivity = await tx.userActivity.create({
         data: {
           userId,
@@ -111,6 +117,10 @@ export async function POST(
 
       return userActivity
     })
+
+    if (!result) {
+      return NextResponse.json({ error: 'Failed to join activity' }, { status: 500 })
+    }
 
     // Update real-time stats (async, don't block)
     try {
@@ -143,7 +153,19 @@ export async function POST(
     }
 
     return NextResponse.json(result, { status: 201 })
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.message === 'ACTIVITY_FULL') {
+      return NextResponse.json(
+        { error: 'Activity is full' },
+        { status: 400 }
+      )
+    }
+    if (error?.message === 'ACTIVITY_NOT_FOUND') {
+      return NextResponse.json(
+        { error: 'Activity not found' },
+        { status: 404 }
+      )
+    }
     console.error('Error joining activity:', error)
     return NextResponse.json(
       { error: 'Internal server error' },

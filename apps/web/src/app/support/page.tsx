@@ -99,7 +99,7 @@ const faqs: FAQItem[] = [
   {
     category: 'account',
     question: 'How do I delete my account?',
-    answer: 'Contact us at support@sweatbuddies.sg to request account deletion. Please note that any active bookings should be cancelled first, and this action cannot be undone.'
+    answer: 'Contact us at support@sweatbuddies.co to request account deletion. Please note that any active bookings should be cancelled first, and this action cannot be undone.'
   },
 ]
 
@@ -145,7 +145,7 @@ export default function SupportPage() {
       setSubmitSuccess(true)
       setContactForm({ name: '', email: '', category: 'general', message: '' })
     } catch {
-      setSubmitError('Failed to send message. Please try emailing us directly at support@sweatbuddies.sg')
+      setSubmitError('Failed to send message. Please try emailing us directly at support@sweatbuddies.co')
     } finally {
       setIsSubmitting(false)
     }
@@ -192,12 +192,12 @@ export default function SupportPage() {
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 text-center">
             <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
             <p className="text-sm font-medium text-neutral-900 dark:text-white">Email</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">support@sweatbuddies.sg</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">support@sweatbuddies.co</p>
           </div>
           <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 text-center">
             <MessageCircle className="w-6 h-6 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
             <p className="text-sm font-medium text-neutral-900 dark:text-white">Instagram</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">@sweatbuddies.sg</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">@sweatbuddies.co</p>
           </div>
         </div>
 
@@ -378,7 +378,7 @@ export default function SupportPage() {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Link
-              href="/my-events"
+              href="/my-bookings"
               className="flex items-center gap-3 p-4 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
             >
               <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -408,13 +408,13 @@ export default function SupportPage() {
               </div>
             </Link>
             <a
-              href="mailto:support@sweatbuddies.sg"
+              href="mailto:support@sweatbuddies.co"
               className="flex items-center gap-3 p-4 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
             >
               <Mail className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               <div>
                 <p className="font-medium text-neutral-900 dark:text-white">Email Us Directly</p>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">support@sweatbuddies.sg</p>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">support@sweatbuddies.co</p>
               </div>
             </a>
           </div>

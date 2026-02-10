@@ -169,7 +169,7 @@ function TicketContent() {
         {/* Action Bar - Hidden on print */}
         <div className="no-print max-w-md mx-auto mb-4 flex items-center justify-between">
           <Link
-            href="/my-events"
+            href="/my-bookings"
             className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -277,7 +277,7 @@ function TicketContent() {
               Show this ticket at the experience for check-in
             </p>
             <p className="text-white/40 text-xs mt-1">
-              sweatbuddies.sg
+              sweatbuddies.co
             </p>
           </div>
         </div>

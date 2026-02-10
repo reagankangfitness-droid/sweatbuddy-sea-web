@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { isAdminRequest } from '@/lib/admin-auth'
 
 export const dynamic = 'force-dynamic'
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    const isAdmin = await isAdminRequest(request)
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     // Get all activities
     const activities = await prisma.activity.findMany({
       select: {
@@ -75,8 +81,13 @@ export async function POST() {
 }
 
 // GET to preview what would be updated
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const isAdmin = await isAdminRequest(request)
+    if (!isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const activities = await prisma.activity.findMany({
       select: {
         id: true,

@@ -124,6 +124,7 @@ export const ACTIVITY_CATEGORIES: ActivityCategory[] = [
   { slug: 'outdoor_fitness', name: 'Outdoor Fitness', description: 'Park workouts, outdoor gyms, and green exercise', emoji: '🌳', icon: 'tree-pine', color: '#34D399', groupSlug: 'outdoor', displayOrder: 32, featured: false },
   { slug: 'beach_workout', name: 'Beach Workout', description: 'Sand training, beach runs, and coastal fitness', emoji: '🏖️', icon: 'sun', color: '#6EE7B7', groupSlug: 'outdoor', displayOrder: 33, featured: false },
   { slug: 'trail_running', name: 'Trail Running', description: 'Off-road running and trail adventures', emoji: '🏞️', icon: 'map', color: '#A7F3D0', groupSlug: 'outdoor', displayOrder: 34, featured: false },
+  { slug: 'snowboarding', name: 'Snowboarding', description: 'Snowboarding meetups and mountain sessions', emoji: '🏂', icon: 'mountain-snow', color: '#64748B', groupSlug: 'outdoor', displayOrder: 35, featured: false },
 
   // SPORTS
   { slug: 'volleyball', name: 'Volleyball', description: 'Beach volleyball and indoor volleyball', emoji: '🏐', icon: 'circle', color: '#F97316', groupSlug: 'outdoor', displayOrder: 40, featured: true },

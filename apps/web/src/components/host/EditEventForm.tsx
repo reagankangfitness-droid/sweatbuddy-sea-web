@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { X, Loader2, ImageIcon } from 'lucide-react'
 import { UploadButton } from '@/lib/uploadthing'
+import { ACTIVITY_CATEGORIES } from '@/lib/categories'
 
 interface Event {
   id: string
@@ -32,30 +33,9 @@ interface EditEventFormProps {
   event: Event
 }
 
-const CATEGORIES = [
-  'Running',
-  'Run Club',
-  'Cycling',
-  'HIIT',
-  'Swimming',
-  'Dance Fitness',
-  'Strength Training',
-  'Bootcamp',
-  'CrossFit',
-  'Yoga',
-  'Pilates',
-  'Breathwork',
-  'Meditation',
-  'Hiking',
-  'Outdoor Fitness',
-  'Volleyball',
-  'Pickleball',
-  'Tennis',
-  'Cold Plunge',
-  'Wellness Circle',
-  'Sweat Date',
-  'Other'
-]
+const CATEGORIES = ACTIVITY_CATEGORIES
+  .sort((a, b) => a.displayOrder - b.displayOrder)
+  .map(c => c.name)
 
 export function EditEventForm({ event }: EditEventFormProps) {
   const router = useRouter()

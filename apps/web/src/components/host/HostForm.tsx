@@ -31,6 +31,7 @@ import {
   Users
 } from 'lucide-react'
 import { UploadButton, useUploadThing } from '@/lib/uploadthing'
+import { ACTIVITY_CATEGORIES } from '@/lib/categories'
 
 // Dynamically import LocationAutocomplete to prevent SSR issues with Google Maps
 const LocationAutocomplete = dynamicImport(
@@ -46,42 +47,9 @@ const LocationAutocomplete = dynamicImport(
   }
 )
 
-const eventTypes = [
-  '🏃 Run Club',
-  '🧘 Yoga',
-  '🔥 HIIT',
-  '🧊 Cold Plunge',
-  '💪 Bootcamp',
-  '🚴 Cycling',
-  '🏊 Swimming',
-  '🏋️ Strength Training',
-  '💃 Dance',
-  '🥋 Martial Arts',
-  '🧗 Rock Climbing',
-  '🎾 Tennis',
-  '🏸 Badminton',
-  '⚽ Football',
-  '🏀 Basketball',
-  '🥊 Boxing',
-  '🧘‍♂️ Pilates',
-  '🚣 Kayaking',
-  '🏄 Surfing',
-  '⛳ Golf',
-  '🎿 Skiing',
-  '🛹 Skateboarding',
-  '🤸 Gymnastics',
-  '🏐 Volleyball',
-  '🥾 Hiking',
-  '🧠 Mindfulness',
-  '🌅 Outdoor Fitness',
-  '🎉 Fitness Social',
-  '💑 Sweat Date',
-  '🏢 Corporate Wellness',
-  '📚 Workshop',
-  '🏕️ Retreat',
-  '🎪 Fitness Festival',
-  '✨ Other',
-]
+const eventTypes = ACTIVITY_CATEGORIES
+  .sort((a, b) => a.displayOrder - b.displayOrder)
+  .map(c => `${c.emoji} ${c.name}`)
 
 export default function HostForm() {
   const router = useRouter()

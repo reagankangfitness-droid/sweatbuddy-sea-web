@@ -11,6 +11,7 @@ import { ShareButton } from '@/components/ShareButton'
 import { Confetti, useConfetti } from '@/components/ui/Confetti'
 import { DirectChatWindow } from '@/components/DirectChatWindow'
 import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
+import { formatEventDate } from '@/lib/event-dates'
 
 interface AttendeePreview {
   id: string
@@ -115,14 +116,9 @@ export function EventPageClient({ event }: { event: Event }) {
   }
 
   const formatDate = () => {
-    if (event.recurring) return event.day
-    if (!event.eventDate) return event.day
-    const date = new Date(event.eventDate)
-    return date.toLocaleDateString('en-US', {
+    return formatEventDate(event.eventDate, event.day, event.recurring, {
       weekday: 'long',
       month: 'long',
-      day: 'numeric',
-      timeZone: 'Asia/Singapore',
     })
   }
 

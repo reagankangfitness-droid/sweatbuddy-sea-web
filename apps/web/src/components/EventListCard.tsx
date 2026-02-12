@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import type { Event } from '@/lib/events'
 import { AvatarStack } from './ui/AvatarStack'
+import { formatEventDate } from '@/lib/event-dates'
 
 interface AttendeePreview {
   id: string
@@ -37,30 +38,6 @@ const categoryEmojis: Record<string, string> = {
   'CrossFit': '🏋️',
   'Bootcamp': '⚡',
   'Social': '🤝',
-}
-
-function formatEventDate(dateStr: string | null | undefined, dayName: string, isRecurring: boolean = false): string {
-  if (isRecurring) {
-    const dayMap: Record<string, string> = {
-      'Sundays': 'Every Sun', 'Mondays': 'Every Mon', 'Tuesdays': 'Every Tue',
-      'Wednesdays': 'Every Wed', 'Thursdays': 'Every Thu', 'Fridays': 'Every Fri',
-      'Saturdays': 'Every Sat'
-    }
-    return dayMap[dayName] || dayName
-  }
-  if (!dateStr) return dayName
-  try {
-    const date = new Date(dateStr)
-    if (isNaN(date.getTime())) return dayName
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      timeZone: 'Asia/Singapore',
-    })
-  } catch {
-    return dayName
-  }
 }
 
 function getCategoryEmoji(category: string): string {

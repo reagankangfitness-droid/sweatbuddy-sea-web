@@ -1,3 +1,5 @@
+import { parseLocalDate } from '@/lib/event-dates'
+
 interface CalendarEvent {
   title: string
   description: string
@@ -119,9 +121,7 @@ export function generateYahooCalendarUrl(event: CalendarEvent): string {
 export function parseEventTime(dateStr: string | null, timeStr: string): Date {
   let date: Date
   if (dateStr) {
-    // Parse YYYY-MM-DD as local date to avoid UTC midnight day-shift
-    const parts = dateStr.split('T')[0].split('-').map(Number)
-    date = new Date(parts[0], parts[1] - 1, parts[2])
+    date = parseLocalDate(dateStr)
   } else {
     date = new Date()
   }

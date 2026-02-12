@@ -4,6 +4,7 @@ import { useState, useEffect, lazy, Suspense, useCallback, useMemo } from 'react
 import { useSearchParams } from 'next/navigation'
 import { EventCard } from './EventCard'
 import { CategoryBar, categoryMapping } from './CategoryBar'
+import { parseLocalDate as parseLocalDateSafe } from '@/lib/event-dates'
 
 // Lazy load the detail sheet for shared events
 const EventDetailSheet = lazy(() => import('./EventDetailSheet').then(mod => ({ default: mod.EventDetailSheet })))
@@ -88,10 +89,7 @@ function getDateFilters() {
 }
 
 // Parse date string (YYYY-MM-DD) to local date at midnight
-function parseLocalDate(dateStr: string): Date {
-  const [year, month, day] = dateStr.split('-').map(Number)
-  return new Date(year, month - 1, day, 0, 0, 0, 0)
-}
+const parseLocalDate = parseLocalDateSafe
 
 // Map day names to day numbers (0 = Sunday, 1 = Monday, etc.)
 const dayNameToNumber: Record<string, number> = {

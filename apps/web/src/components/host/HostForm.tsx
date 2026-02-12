@@ -32,6 +32,7 @@ import {
 } from 'lucide-react'
 import { UploadButton, useUploadThing } from '@/lib/uploadthing'
 import { ACTIVITY_CATEGORIES, CATEGORY_GROUPS, getCategoriesByGroup } from '@/lib/categories'
+import { parseLocalDate } from '@/lib/event-dates'
 
 // Dynamically import LocationAutocomplete to prevent SSR issues with Google Maps
 const LocationAutocomplete = dynamicImport(
@@ -282,9 +283,7 @@ export default function HostForm() {
       if (isRecurring && formData.eventDay) {
         dayDisplay = formData.eventDay
       } else {
-        // Parse date parts directly to avoid UTC-vs-local timezone shift
-        const [year, month, day] = formData.eventDate.split('-').map(Number)
-        const date = new Date(year, month - 1, day)
+        const date = parseLocalDate(formData.eventDate)
         dayDisplay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
       }
 

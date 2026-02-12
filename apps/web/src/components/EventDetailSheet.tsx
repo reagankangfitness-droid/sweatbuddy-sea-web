@@ -14,6 +14,7 @@ import { EventReviews } from './EventReviews'
 import { AddToCalendar } from './AddToCalendar'
 import { detectPlatform } from '@/lib/community'
 import { safeGetJSON } from '@/lib/safe-storage'
+import { formatEventDate } from '@/lib/event-dates'
 
 interface Event {
   id: string
@@ -37,41 +38,6 @@ interface Event {
   paynowEnabled?: boolean
   paynowQrCode?: string | null
   paynowNumber?: string | null
-}
-
-// Format date for display (e.g., "Sat, Dec 14")
-// For recurring events: Always show "Every [Day]" format since they happen weekly
-// For one-time events: Show the actual event date
-function formatEventDate(dateStr: string | null | undefined, dayName: string, isRecurring: boolean = false): string {
-  // RECURRING EVENTS: Show "Every [Day]" format - the eventDate is just an anchor, not when it happens
-  if (isRecurring) {
-    const dayMap: Record<string, string> = {
-      'Sundays': 'Every Sun', 'Mondays': 'Every Mon', 'Tuesdays': 'Every Tue',
-      'Wednesdays': 'Every Wed', 'Thursdays': 'Every Thu', 'Fridays': 'Every Fri',
-      'Saturdays': 'Every Sat'
-    }
-    return dayMap[dayName] || dayName // Fallback to day name for "Monthly", "Various", etc.
-  }
-
-  // ONE-TIME EVENTS: Show the actual event date
-  if (!dateStr) {
-    return dayName // Fallback for events without dates
-  }
-
-  try {
-    const date = new Date(dateStr)
-    // Check if date is valid
-    if (isNaN(date.getTime())) return dayName
-
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      timeZone: 'Asia/Singapore',
-    })
-  } catch {
-    return dayName
-  }
 }
 
 interface EventDetailSheetProps {

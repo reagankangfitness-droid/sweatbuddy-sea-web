@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getSGToday, isTodaySG, isThisWeekendSG, getNextOccurrenceSG } from '@/lib/event-dates'
 
 export const dynamic = 'force-dynamic'
 
@@ -36,10 +37,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Engagement-optimized: Show events from today through next 14 days
-    // Use Singapore timezone for all date calculations
-    const sgNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' }))
-    const today = new Date(sgNow)
-    today.setHours(0, 0, 0, 0)
+    const today = getSGToday()
     const twoWeeksFromNow = new Date(today)
     twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14)
 
@@ -122,50 +120,14 @@ export async function GET(request: NextRequest) {
       orderBy: { startTime: 'asc' },
     })
 
-    // Helper: format Date as YYYY-MM-DD in Singapore timezone
-    const toSGDateStr = (d: Date): string => {
-      const sg = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Singapore' }))
-      const y = sg.getFullYear()
-      const m = String(sg.getMonth() + 1).padStart(2, '0')
-      const day = String(sg.getDate()).padStart(2, '0')
-      return `${y}-${m}-${day}`
-    }
-
-    // Helper functions for engagement signals (Singapore timezone)
-    const isToday = (date: Date | null) => {
-      if (!date) return false
-      return toSGDateStr(date) === toSGDateStr(sgNow)
-    }
-
-    const isThisWeekend = (date: Date | null) => {
-      if (!date) return false
-      const sg = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Singapore' }))
-      const dayOfWeek = sg.getDay()
-      const daysUntil = Math.ceil((sg.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-      return (dayOfWeek === 0 || dayOfWeek === 6) && daysUntil <= 7
-    }
-
-    // Get next occurrence for recurring events (Singapore timezone)
-    const getNextOccurrence = (day: string) => {
-      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-      const cleanDay = day.toLowerCase().replace('every ', '').trim()
-      const targetDay = days.findIndex(d => d.toLowerCase().startsWith(cleanDay.slice(0, 3)))
-      if (targetDay === -1) return null
-      const todayDay = sgNow.getDay()
-      let daysUntil = targetDay - todayDay
-      if (daysUntil < 0) daysUntil += 7
-      if (daysUntil === 0) return today
-      const nextDate = new Date(today)
-      nextDate.setDate(today.getDate() + daysUntil)
-      return nextDate
-    }
+    // Date helpers imported from @/lib/event-dates
 
     // Build unified response with engagement signals
     const events = [
       ...eventSubmissions.map((e) => {
         // For recurring events, always calculate next occurrence from day name
         const effectiveDate = e.recurring
-          ? getNextOccurrence(e.day) ?? e.eventDate
+          ? getNextOccurrenceSG(e.day) ?? e.eventDate
           : e.eventDate
         return {
           id: e.id,
@@ -188,8 +150,8 @@ export async function GET(request: NextRequest) {
           goingCount: attendanceMap.get(e.id) || 0,
           source: 'event_submission' as const,
           // Engagement signals
-          isHappeningToday: isToday(effectiveDate),
-          isThisWeekend: isThisWeekend(effectiveDate),
+          isHappeningToday: isTodaySG(effectiveDate),
+          isThisWeekend: isThisWeekendSG(effectiveDate),
         }
       }),
       ...activities.map((a) => ({
@@ -213,8 +175,8 @@ export async function GET(request: NextRequest) {
         goingCount: a._count.userActivities,
         source: 'activity' as const,
         // Engagement signals
-        isHappeningToday: isToday(a.startTime),
-        isThisWeekend: isThisWeekend(a.startTime),
+        isHappeningToday: isTodaySG(a.startTime),
+        isThisWeekend: isThisWeekendSG(a.startTime),
       })),
     ].sort((a, b) => {
       // Today's events first (dopamine hit - "I could go NOW")

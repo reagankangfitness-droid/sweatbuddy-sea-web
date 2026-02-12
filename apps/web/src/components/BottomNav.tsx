@@ -6,9 +6,9 @@ import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 
 const navItems = [
+  { id: 'events', label: 'Experiences', icon: CalendarDays, href: '/events' },
   { id: 'discover', label: 'Discover', icon: Compass, href: '/app' },
   { id: 'community', label: 'Community', icon: Users, href: '/community' },
-  { id: 'events', label: 'Experiences', icon: CalendarDays, href: '/events' },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile' },
 ]
 

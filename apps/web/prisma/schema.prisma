@@ -2844,3 +2844,4 @@ model RetentionAction {
   @@index([memberReturned])
   @@map("retention_actions")
 }
+

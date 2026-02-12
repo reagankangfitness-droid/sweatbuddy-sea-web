@@ -9,7 +9,6 @@ export {
   CHAT_SYSTEM_PROMPT,
   CONTENT_SYSTEM_PROMPT,
   RETENTION_SYSTEM_PROMPT,
-  SEGMENTATION_SYSTEM_PROMPT,
   getCategoryContext,
 } from './prompts'
 

@@ -14,7 +14,11 @@ async function geocodeLocation(location: string): Promise<{ lat: number; lng: nu
   if (!apiKey || !location) return null
 
   try {
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${apiKey}`
+    // Add Singapore context for better geocoding results
+    const searchQuery = location.toLowerCase().includes('singapore')
+      ? location
+      : `${location}, Singapore`
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(searchQuery)}&key=${apiKey}`
     const response = await fetch(url)
     const data = await response.json()
 

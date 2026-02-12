@@ -205,6 +205,25 @@ export default function ProfilePage() {
           </div>
         </div>
 
+        {/* Host Dashboard Button */}
+        {isHost && (
+          <Link
+            href="/host/dashboard"
+            className="flex items-center justify-between w-full mb-4 px-4 py-4 bg-amber-500 hover:bg-amber-600 rounded-2xl transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <LayoutDashboard className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <span className="text-white font-semibold text-sm">Host Dashboard</span>
+                <p className="text-white/70 text-xs">Manage experiences & community</p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-white/70" />
+          </Link>
+        )}
+
         {/* AI Tools Showcase - For Hosts */}
         {isHost && (
           <div className="mb-4">

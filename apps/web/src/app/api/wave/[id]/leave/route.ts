@@ -13,9 +13,9 @@ export async function POST(
 
   // Prevent creator from leaving their own wave
   const wave = await prisma.waveActivity.findUnique({ where: { id } })
-  if (!wave) return NextResponse.json({ error: 'Wave not found' }, { status: 404 })
+  if (!wave) return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
   if (wave.creatorId === userId) {
-    return NextResponse.json({ error: 'Creator cannot leave their own wave' }, { status: 403 })
+    return NextResponse.json({ error: 'Creator cannot leave their own activity' }, { status: 403 })
   }
 
   const participant = await prisma.waveParticipant.findUnique({

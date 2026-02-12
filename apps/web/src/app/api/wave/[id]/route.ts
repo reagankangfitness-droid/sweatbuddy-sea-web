@@ -24,7 +24,7 @@ export async function GET(
     },
   })
 
-  if (!wave) return NextResponse.json({ error: 'Wave not found' }, { status: 404 })
+  if (!wave) return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
 
   const isParticipant = wave.participants.some((p) => p.userId === userId)
 
@@ -70,7 +70,7 @@ export async function DELETE(
   const { id } = await params
 
   const wave = await prisma.waveActivity.findUnique({ where: { id } })
-  if (!wave) return NextResponse.json({ error: 'Wave not found' }, { status: 404 })
+  if (!wave) return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
 
   if (wave.creatorId !== userId) {
     return NextResponse.json({ error: 'Only the creator can delete this wave' }, { status: 403 })

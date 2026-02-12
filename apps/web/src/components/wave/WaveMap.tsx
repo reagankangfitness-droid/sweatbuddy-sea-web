@@ -382,7 +382,7 @@ export function WaveMap() {
                   : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
               }`}
             >
-              Waves
+              Activities
             </button>
           </div>
         </div>
@@ -443,16 +443,16 @@ export function WaveMap() {
               </>
             ) : (
               <>
-                <p className="text-3xl mb-2">🌊</p>
-                <p className="font-semibold text-neutral-700 dark:text-neutral-200">No waves nearby</p>
+                <p className="text-3xl mb-2">🏃</p>
+                <p className="font-semibold text-neutral-700 dark:text-neutral-200">No activities nearby</p>
                 <p className="text-sm text-neutral-400 mt-1">
-                  Be the first! Start a wave and others can join you.
+                  Be the first! Start an activity and others can join you.
                 </p>
                 <button
                   onClick={() => setCreateOpen(true)}
                   className="mt-3 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm pointer-events-auto"
                 >
-                  Start wave 🙋
+                  Start activity 🙋
                 </button>
               </>
             )}

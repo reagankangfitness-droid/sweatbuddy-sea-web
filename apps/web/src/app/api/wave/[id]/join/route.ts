@@ -16,9 +16,9 @@ export async function POST(
 
   const wave = await prisma.waveActivity.findUnique({ where: { id } })
 
-  if (!wave) return NextResponse.json({ error: 'Wave not found' }, { status: 404 })
+  if (!wave) return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
   if (wave.expiresAt < new Date()) {
-    return NextResponse.json({ error: 'Wave has expired' }, { status: 410 })
+    return NextResponse.json({ error: 'Activity has expired' }, { status: 410 })
   }
 
   const result = await prisma.$transaction(async (tx) => {

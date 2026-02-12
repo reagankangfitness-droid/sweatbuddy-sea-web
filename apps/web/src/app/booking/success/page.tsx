@@ -3,9 +3,8 @@
 import { Suspense, useEffect, useState, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
-import { Header } from '@/components/header'
 import { Button } from '@/components/ui/button'
-import { CheckCircle, Calendar, MapPin, Users, ExternalLink, ChevronDown, Download, Ticket } from 'lucide-react'
+import { CheckCircle, Calendar, MapPin, Users, ExternalLink, ChevronDown, Download, Ticket, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { generateGoogleCalendarUrl, generateOutlookWebUrl, downloadIcsFile } from '@/lib/calendar'
 
@@ -456,7 +455,16 @@ function LoadingFallback() {
 export default function BookingSuccessPage() {
   return (
     <>
-      <Header />
+      <header className="sticky top-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+        <div className="pt-[env(safe-area-inset-top,0px)]">
+          <div className="max-w-2xl mx-auto flex items-center gap-4 px-4 py-3">
+            <Link href="/events" className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+              <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+            </Link>
+            <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Booking Confirmed</span>
+          </div>
+        </div>
+      </header>
       <Suspense fallback={<LoadingFallback />}>
         <BookingSuccessContent />
       </Suspense>

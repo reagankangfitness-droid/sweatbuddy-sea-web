@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { GoogleMap, LoadScript, Marker, Autocomplete } from '@react-google-maps/api'
 import { toast } from 'sonner'
 import { useUser } from '@clerk/nextjs'
-import { Header } from '@/components/header'
+import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useUploadThing } from '@/lib/uploadthing'
 import {
@@ -302,7 +302,16 @@ export default function NewActivityPage() {
   if (!isLoaded) {
     return (
       <>
-        <Header />
+        <header className="sticky top-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+          <div className="pt-[env(safe-area-inset-top,0px)]">
+            <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
+              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+                <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+              </button>
+              <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Create Activity</span>
+            </div>
+          </div>
+        </header>
         <main className="container mx-auto px-4 pt-24 pb-8 sm:px-8 sm:pt-28">
           <div className="max-w-2xl mx-auto flex items-center justify-center py-20">
             <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
@@ -315,7 +324,16 @@ export default function NewActivityPage() {
   if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === 'YOUR_GOOGLE_MAPS_API_KEY') {
     return (
       <>
-        <Header />
+        <header className="sticky top-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+          <div className="pt-[env(safe-area-inset-top,0px)]">
+            <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
+              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+                <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+              </button>
+              <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Create Activity</span>
+            </div>
+          </div>
+        </header>
         <main className="container mx-auto px-4 pt-24 pb-8 sm:px-8 sm:pt-28">
           <div className="max-w-2xl mx-auto">
             <div className="rounded-lg border border-destructive bg-destructive/10 p-4">
@@ -335,8 +353,17 @@ export default function NewActivityPage() {
 
   return (
     <>
-      <Header />
-      <main className="container mx-auto px-4 pt-24 pb-8 sm:px-8 sm:pt-28">
+      <header className="sticky top-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+        <div className="pt-[env(safe-area-inset-top,0px)]">
+          <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
+            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+              <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+            </button>
+            <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Create Activity</span>
+          </div>
+        </div>
+      </header>
+      <main className="container mx-auto px-4 pt-4 pb-8 sm:px-8 sm:pt-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-6">Create New Activity</h1>
 

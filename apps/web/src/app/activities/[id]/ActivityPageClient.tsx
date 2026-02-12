@@ -1,7 +1,7 @@
 'use client'
 
-import { Header } from '@/components/header'
 import { notFound, useRouter, useSearchParams } from 'next/navigation'
+import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useState, lazy, Suspense } from 'react'
 import { useUser } from '@clerk/nextjs'
@@ -336,7 +336,16 @@ Organized via sweatbuddies
   if (isLoading) {
     return (
       <>
-        <Header />
+        <header className="sticky top-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+          <div className="pt-[env(safe-area-inset-top,0px)]">
+            <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
+              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+                <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+              </button>
+              <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Activity Details</span>
+            </div>
+          </div>
+        </header>
         <main className="container mx-auto p-8">
           <div className="max-w-4xl mx-auto text-center">
             <p className="text-muted-foreground">Loading...</p>
@@ -352,8 +361,17 @@ Organized via sweatbuddies
 
   return (
     <>
-      <Header />
-      <main className="container mx-auto px-4 pt-24 pb-32 sm:pt-28 sm:pb-8">
+      <header className="sticky top-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+        <div className="pt-[env(safe-area-inset-top,0px)]">
+          <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
+            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+              <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+            </button>
+            <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Activity Details</span>
+          </div>
+        </div>
+      </header>
+      <main className="container mx-auto px-4 pt-4 pb-32 sm:pt-8 sm:pb-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-4 sm:mb-6">
             <div className="flex items-start justify-between gap-2 sm:gap-4">

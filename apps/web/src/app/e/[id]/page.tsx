@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { getEventById, getEventGoingCount } from '@/lib/events'
-import { Header } from '@/components/header'
+import Link from 'next/link'
 import { UnifiedEventClient } from './UnifiedEventClient'
 import { EventAttendees } from '@/components/EventAttendees'
 import { formatEventDate, isTodaySG, isThisWeekendSG } from '@/lib/event-dates'
@@ -131,9 +131,25 @@ export default async function EventDetailPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
-      <Header />
+      {/* Back button header */}
+      <header className="sticky top-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+        <div className="pt-[env(safe-area-inset-top,0px)]">
+          <div className="max-w-4xl mx-auto flex items-center justify-between px-4 py-3">
+            <Link
+              href="/events"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
+            >
+              <svg className="w-5 h-5 text-neutral-700 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+            </Link>
+            <h1 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Event Details</h1>
+            <div className="w-10" />
+          </div>
+        </div>
+      </header>
 
-      <main className="pt-20 pb-32 md:pb-8">
+      <main className="pb-32 md:pb-8">
         <div className="max-w-4xl mx-auto px-4">
           {/* Event Image */}
           <div className="relative aspect-[2/1] md:aspect-[2.5/1] rounded-2xl overflow-hidden mb-6">

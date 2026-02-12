@@ -31,7 +31,7 @@ import {
   Users
 } from 'lucide-react'
 import { UploadButton, useUploadThing } from '@/lib/uploadthing'
-import { ACTIVITY_CATEGORIES } from '@/lib/categories'
+import { ACTIVITY_CATEGORIES, CATEGORY_GROUPS, getCategoriesByGroup } from '@/lib/categories'
 
 // Dynamically import LocationAutocomplete to prevent SSR issues with Google Maps
 const LocationAutocomplete = dynamicImport(
@@ -244,7 +244,7 @@ export default function HostForm() {
     if (!formData.organizerName) { errors.organizerName = true; missingFields.push('Your Name (in Advanced Settings)') }
     if (!formData.instagramHandle) { errors.instagramHandle = true; missingFields.push('Instagram (in Advanced Settings)') }
     if (!formData.email) { errors.email = true; missingFields.push('Email (in Advanced Settings)') }
-    if (!formData.eventType) { errors.eventType = true; missingFields.push('Event Type (in Advanced Settings)') }
+    if (!formData.eventType) { errors.eventType = true; missingFields.push('Activity Type') }
 
     if (missingFields.length > 0) {
       setFieldErrors(errors)
@@ -252,7 +252,7 @@ export default function HostForm() {
       setIsLoading(false)
 
       // Open advanced settings if any required fields there are missing
-      if (errors.organizerName || errors.instagramHandle || errors.email || errors.eventType) {
+      if (errors.organizerName || errors.instagramHandle || errors.email) {
         setAdvancedSettingsOpen(true)
       }
       return
@@ -559,6 +559,58 @@ export default function HostForm() {
                   />
                 </div>
 
+                {/* Activity Type Selection */}
+                <div className="space-y-4">
+                  <h3 className={`text-lg font-semibold ${fieldErrors.eventType ? 'text-red-400' : 'text-white'}`}>
+                    What type of experience is this?
+                  </h3>
+                  {fieldErrors.eventType && (
+                    <p className="text-red-400 text-sm">Please select an activity type</p>
+                  )}
+                  {CATEGORY_GROUPS
+                    .sort((a, b) => a.displayOrder - b.displayOrder)
+                    .map(group => {
+                      const activities = getCategoriesByGroup(group.slug)
+                      if (activities.length === 0) return null
+                      return (
+                        <div key={group.slug} className="space-y-2">
+                          <h4 className="text-xs font-medium text-neutral-500 uppercase tracking-wider">
+                            {group.emoji} {group.name}
+                          </h4>
+                          <div className="flex flex-wrap gap-2">
+                            {activities.map(cat => {
+                              const value = `${cat.emoji} ${cat.name}`
+                              const isSelected = formData.eventType === value
+                              return (
+                                <button
+                                  key={cat.slug}
+                                  type="button"
+                                  onClick={() => {
+                                    setFormData(prev => ({
+                                      ...prev,
+                                      eventType: isSelected ? '' : value,
+                                    }))
+                                    if (fieldErrors.eventType) {
+                                      setFieldErrors(prev => ({ ...prev, eventType: false }))
+                                    }
+                                    if (error) setError('')
+                                  }}
+                                  className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                                    isSelected
+                                      ? 'bg-white text-neutral-900 border-white font-medium'
+                                      : 'bg-neutral-900 text-neutral-300 border-neutral-700 hover:bg-neutral-800 hover:border-neutral-600'
+                                  }`}
+                                >
+                                  {cat.emoji} {cat.name}
+                                </button>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      )
+                    })}
+                </div>
+
                 {/* Tickets Section */}
                 <div className="flex items-center justify-between px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl">
                   <div className="flex items-center gap-3">
@@ -648,22 +700,6 @@ export default function HostForm() {
                                 className={`w-full pl-10 pr-4 py-2.5 bg-neutral-800 border rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-500 text-sm ${fieldErrors.email ? 'border-red-500' : 'border-neutral-700'}`}
                               />
                             </div>
-                          </div>
-
-                          {/* Event Type */}
-                          <div className="space-y-3">
-                            <h4 className="text-xs font-medium text-neutral-500 uppercase tracking-wider">Event Type</h4>
-                            <select
-                              name="eventType"
-                              value={formData.eventType}
-                              onChange={handleChange}
-                              className={`w-full px-4 py-2.5 bg-neutral-800 border rounded-lg text-white focus:outline-none focus:border-neutral-500 text-sm appearance-none ${fieldErrors.eventType ? 'border-red-500' : 'border-neutral-700'}`}
-                            >
-                              <option value="">Select event type *</option>
-                              {eventTypes.map(type => (
-                                <option key={type} value={type}>{type}</option>
-                              ))}
-                            </select>
                           </div>
 
                           {/* Capacity */}

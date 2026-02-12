@@ -63,9 +63,9 @@ export async function isHostTrusted(
 export async function moderateEventContent(
   content: EventContent
 ): Promise<ModerationResult> {
-  // If no API key configured, approve by default (fail open)
+  // If no API key configured, flag for manual review (fail closed)
   if (!process.env.ANTHROPIC_API_KEY) {
-    return { approved: true, flags: [] }
+    return { approved: false, reason: 'AI moderation unavailable - requires manual review', flags: ['no_api_key'] }
   }
 
   try {

@@ -108,7 +108,7 @@ export function toSGDateStr(d: Date): string {
  */
 export function isTodaySG(date: Date | null): boolean {
   if (!date) return false
-  return toSGDateStr(date) === toSGDateStr(new Date())
+  return toSGDateStr(date) === toSGDateStr(getSGNow())
 }
 
 /**

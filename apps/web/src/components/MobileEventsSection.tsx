@@ -4,6 +4,7 @@ import { useState, useMemo, lazy, Suspense } from 'react'
 import { FeaturedEventsCarousel } from './FeaturedEventsCarousel'
 import { EventListCard } from './EventListCard'
 import { categoryMapping } from './CategoryBar'
+import { parseLocalDate } from '@/lib/event-dates'
 import type { Event } from '@/lib/events'
 // Simplified Singapore region filters
 const areas = [
@@ -65,12 +66,6 @@ function getDateFilters() {
   nextSunday.setDate(nextMonday.getDate() + 6)
 
   return { today, tomorrow, saturday, sunday, nextMonday, nextSunday }
-}
-
-// Parse date string (YYYY-MM-DD) to local date at midnight
-function parseLocalDate(dateStr: string): Date {
-  const [year, month, day] = dateStr.split('-').map(Number)
-  return new Date(year, month - 1, day, 0, 0, 0, 0)
 }
 
 // Map day names to day numbers (0 = Sunday, 1 = Monday, etc.)

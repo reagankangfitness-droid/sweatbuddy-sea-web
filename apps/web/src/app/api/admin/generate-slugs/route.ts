@@ -2,21 +2,11 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { generateSlug } from '@/lib/events'
 import { revalidatePath } from 'next/cache'
-
-// SECURITY: Admin secret must be set via environment variable - no fallback
-function isAdmin(request: Request): boolean {
-  const adminSecret = process.env.ADMIN_SECRET
-  if (!adminSecret) {
-    console.error('ADMIN_SECRET environment variable not configured')
-    return false
-  }
-  const authHeader = request.headers.get('x-admin-secret')
-  return authHeader === adminSecret
-}
+import { isAdminRequest } from '@/lib/admin-auth'
 
 // POST: Generate slugs for all events without slugs
 export async function POST(request: Request) {
-  if (!isAdmin(request)) {
+  if (!await isAdminRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -90,7 +80,7 @@ export async function POST(request: Request) {
 
 // GET: Check how many events need slugs
 export async function GET(request: Request) {
-  if (!isAdmin(request)) {
+  if (!await isAdminRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

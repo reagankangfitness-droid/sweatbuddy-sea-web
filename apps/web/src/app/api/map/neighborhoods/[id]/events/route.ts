@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import neighborhoodsData from '@/data/neighborhoods.json'
+import { getNextOccurrenceSG, combineDateTimeSG } from '@/lib/event-dates'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,44 +48,6 @@ function isPointInNeighborhood(
   return lat <= bounds.north && lat >= bounds.south && lng <= bounds.east && lng >= bounds.west
 }
 
-// Parse time string like "7:00PM" or "6:30 PM" to hours and minutes
-function parseTimeString(time: string): { hours: number; minutes: number } {
-  const match = time.match(/(\d{1,2}):?(\d{2})?\s*(AM|PM)?/i)
-  if (!match) return { hours: 9, minutes: 0 } // Default to 9 AM
-
-  let hours = parseInt(match[1])
-  const minutes = match[2] ? parseInt(match[2]) : 0
-  const period = match[3]?.toUpperCase()
-
-  if (period === 'PM' && hours !== 12) hours += 12
-  if (period === 'AM' && hours === 12) hours = 0
-
-  return { hours, minutes }
-}
-
-// Combine eventDate and time string into a Date
-function combineDateTime(eventDate: Date, timeString: string): Date {
-  const { hours, minutes } = parseTimeString(timeString)
-  const combined = new Date(eventDate)
-  combined.setHours(hours, minutes, 0, 0)
-  return combined
-}
-
-// Get next occurrence for recurring events based on day name
-function getNextOccurrence(day: string): Date | null {
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-  const targetDay = days.findIndex(d => d.toLowerCase().startsWith(day.toLowerCase().replace('every ', '').trim().slice(0, 3)))
-  if (targetDay === -1) return null
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const todayDay = today.getDay()
-  let daysUntil = targetDay - todayDay
-  if (daysUntil < 0) daysUntil += 7
-  if (daysUntil === 0) return today
-  const nextDate = new Date(today)
-  nextDate.setDate(today.getDate() + daysUntil)
-  return nextDate
-}
 
 export async function GET(
   request: NextRequest,
@@ -296,12 +259,12 @@ export async function GET(
 
         // For recurring events, use next occurrence instead of stored eventDate
         const nextDate = event.recurring
-          ? (getNextOccurrence(event.day || '') ?? event.eventDate)
+          ? (getNextOccurrenceSG(event.day || '') ?? event.eventDate)
           : event.eventDate
 
         // Combine date and time
         const datetime = nextDate && event.time
-          ? combineDateTime(nextDate, event.time)
+          ? combineDateTimeSG(nextDate, event.time) ?? nextDate
           : nextDate || new Date()
 
         return {

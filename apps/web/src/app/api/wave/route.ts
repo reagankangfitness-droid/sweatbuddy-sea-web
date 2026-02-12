@@ -158,13 +158,8 @@ export async function GET(request: NextRequest) {
     where.creatorId = { notIn: Array.from(blockedUserIds) }
   }
 
-  // --- Engagement-optimized filtering ---
-  // Show events from NOW through next 14 days
-  const twoWeeksFromNow = new Date(now)
-  twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14)
-
   // --- Fetch hosted activities (published, with coordinates, upcoming) ---
-  // Only show activities that haven't ended yet (endTime > now, or startTime > now if no endTime)
+  // Show all future activities with no date ceiling
   const hostedActivities = await prisma.activity.findMany({
     where: {
       status: 'PUBLISHED',
@@ -174,12 +169,12 @@ export async function GET(request: NextRequest) {
       OR: [
         // Has end time - must be in the future
         { endTime: { gte: now } },
-        // No end time but has start time - start time within 2 weeks and add 3 hour buffer
+        // No end time but has start time - must be upcoming (with 3 hour buffer for in-progress events)
         {
           endTime: null,
-          startTime: { gte: new Date(now.getTime() - 3 * 60 * 60 * 1000), lte: twoWeeksFromNow },
+          startTime: { gte: new Date(now.getTime() - 3 * 60 * 60 * 1000) },
         },
-        // Recurring with no specific time - always show
+        // No specific time - always show
         { startTime: null, endTime: null },
       ],
     },

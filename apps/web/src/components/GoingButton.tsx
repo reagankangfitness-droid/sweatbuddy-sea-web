@@ -220,12 +220,13 @@ export function GoingButton({
 
   // WhatsApp share function
   const handleWhatsAppShare = () => {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
     const eventUrl = eventSlug
-      ? `https://sweatbuddies.co/e/${eventSlug}`
-      : `https://sweatbuddies.co/?event=${eventId}`
+      ? `${baseUrl}/e/${eventSlug}`
+      : `${baseUrl}/?event=${eventId}`
 
     const dateStr = eventDate
-      ? new Date(eventDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+      ? new Date(eventDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'Asia/Singapore' })
       : eventDay
 
     const message = `I'm going to ${eventName} on ${dateStr} at ${eventTime}. Join me?\n\n${eventUrl}`

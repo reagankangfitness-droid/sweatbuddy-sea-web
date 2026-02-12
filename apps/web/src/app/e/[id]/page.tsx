@@ -5,6 +5,7 @@ import { getEventById, getEventGoingCount } from '@/lib/events'
 import { Header } from '@/components/header'
 import { UnifiedEventClient } from './UnifiedEventClient'
 import { EventAttendees } from '@/components/EventAttendees'
+import { formatEventDate, isTodaySG, isThisWeekendSG } from '@/lib/event-dates'
 
 // Use ISR - revalidate every 30 seconds for fresh data with caching
 export const revalidate = 30
@@ -13,7 +14,7 @@ interface Props {
   params: Promise<{ id: string }>
 }
 
-const BASE_URL = 'https://www.sweatbuddies.co'
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
 
 // Category emojis
 const categoryEmojis: Record<string, string> = {
@@ -44,56 +45,10 @@ const categoryEmojis: Record<string, string> = {
   'Sauna': '🧖',
 }
 
-// Format date for display
-function formatEventDate(dateStr: string | null | undefined, dayName: string): string {
-  if (!dateStr) {
-    const dayMap: Record<string, number> = {
-      'Sundays': 0, 'Mondays': 1, 'Tuesdays': 2, 'Wednesdays': 3,
-      'Thursdays': 4, 'Fridays': 5, 'Saturdays': 6
-    }
-    const dayNum = dayMap[dayName]
-    if (dayNum !== undefined) {
-      const today = new Date()
-      const daysUntil = (dayNum - today.getDay() + 7) % 7 || 7
-      const nextDate = new Date(today)
-      nextDate.setDate(today.getDate() + daysUntil)
-      return nextDate.toLocaleDateString('en-US', {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric'
-      })
-    }
-    return dayName
-  }
-
-  try {
-    const date = new Date(dateStr)
-    if (isNaN(date.getTime())) return dayName
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric'
-    })
-  } catch {
-    return dayName
-  }
-}
-
 // Format date for OG description
-function formatOGDate(dateStr: string | null | undefined, dayName: string, time: string): string {
-  if (!dateStr) return `${dayName}, ${time}`
-  try {
-    const date = new Date(dateStr)
-    if (isNaN(date.getTime())) return `${dayName}, ${time}`
-    const formatted = date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-    })
-    return `${formatted}, ${time}`
-  } catch {
-    return `${dayName}, ${time}`
-  }
+function formatOGDate(dateStr: string | null | undefined, dayName: string, time: string, recurring: boolean): string {
+  const formatted = formatEventDate(dateStr, dayName, recurring)
+  return `${formatted}, ${time}`
 }
 
 function truncateText(text: string, maxLength: number): string {
@@ -116,7 +71,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const hostName = event.organizer ? `@${event.organizer}` : 'SweatBuddies'
   const ogTitle = `${event.name} — ${hostName}`
   const pageTitle = `${event.name} | SweatBuddies`
-  const formattedDateTime = formatOGDate(event.eventDate, event.day, event.time)
+  const formattedDateTime = formatOGDate(event.eventDate, event.day, event.time, event.recurring)
   const locationShort = event.location.length > 50 ? event.location.split(',')[0] : event.location
   const suffix = ` ${formattedDateTime} @ ${locationShort}`
 
@@ -167,25 +122,12 @@ export default async function EventDetailPage({ params }: Props) {
   }
 
   const emoji = categoryEmojis[event.category] || '✨'
-  const formattedDate = formatEventDate(event.eventDate, event.day)
+  const formattedDate = formatEventDate(event.eventDate, event.day, event.recurring)
 
-  // Check if happening today
-  const isToday = (() => {
-    if (!event.eventDate) return false
-    const eventDate = new Date(event.eventDate)
-    const today = new Date()
-    return eventDate.toDateString() === today.toDateString()
-  })()
-
-  // Check if this weekend
-  const isThisWeekend = (() => {
-    if (!event.eventDate) return false
-    const eventDate = new Date(event.eventDate)
-    const dayOfWeek = eventDate.getDay()
-    const today = new Date()
-    const daysUntil = Math.ceil((eventDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-    return (dayOfWeek === 0 || dayOfWeek === 6) && daysUntil <= 7
-  })()
+  // Check engagement signals using Singapore timezone
+  const eventDateObj = event.eventDate ? new Date(event.eventDate) : null
+  const isToday = isTodaySG(eventDateObj)
+  const isThisWeekend = isThisWeekendSG(eventDateObj)
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">

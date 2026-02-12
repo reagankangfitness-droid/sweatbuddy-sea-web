@@ -15,11 +15,9 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get('authorization')
     const cronSecret = authHeader?.replace('Bearer ', '')
 
-    // In development, allow without secret
-    if (process.env.NODE_ENV === 'production' && CRON_SECRET) {
-      if (cronSecret !== CRON_SECRET) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-      }
+    // Require the cron secret
+    if (!CRON_SECRET || cronSecret !== CRON_SECRET) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Process due reminders

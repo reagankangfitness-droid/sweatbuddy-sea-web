@@ -79,14 +79,37 @@ export function GoingButton({
     e.preventDefault()
     e.stopPropagation()
 
-    // If already going, allow toggle off without auth check
+    // If already going, cancel RSVP on server then toggle off
     if (isGoing) {
-      // Toggle off
-      const going = safeGetJSON<string[]>('sweatbuddies_going', [])
-      const newGoing = going.filter((id: string) => id !== eventId)
-      safeSetJSON('sweatbuddies_going', newGoing)
-      setIsGoing(false)
-      setCount(Math.max(0, count - 1))
+      if (isSubmitting) return
+      setIsSubmitting(true)
+      try {
+        const userEmail = user?.primaryEmailAddress?.emailAddress
+        if (userEmail) {
+          const res = await fetch('/api/attendance/cancel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ eventId, email: userEmail }),
+          })
+          if (!res.ok) {
+            const data = await res.json()
+            // If no RSVP found server-side, still clean up local state
+            if (res.status !== 404) {
+              throw new Error(data.error || 'Failed to cancel RSVP')
+            }
+          }
+        }
+        const going = safeGetJSON<string[]>('sweatbuddies_going', [])
+        const newGoing = going.filter((id: string) => id !== eventId)
+        safeSetJSON('sweatbuddies_going', newGoing)
+        setIsGoing(false)
+        setCount(Math.max(0, count - 1))
+        toast.success('RSVP cancelled')
+      } catch {
+        toast.error('Failed to cancel RSVP. Please try again.')
+      } finally {
+        setIsSubmitting(false)
+      }
       return
     }
 

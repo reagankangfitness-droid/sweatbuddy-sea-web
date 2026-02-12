@@ -77,13 +77,26 @@ export async function POST(request: Request) {
       console.error('Failed to send cancellation email:', error)
     })
 
-    // Check if event was full and notify next person on waitlist
+    // Check if event was full and reset isFull + notify next person on waitlist
     const event = await prisma.eventSubmission.findUnique({
       where: { id: eventId },
-      select: { id: true, eventName: true, isFull: true, slug: true },
+      select: { id: true, eventName: true, isFull: true, maxTickets: true, slug: true },
     })
 
     if (event?.isFull) {
+      // Recount attendees after deletion
+      const currentCount = await prisma.eventAttendance.count({
+        where: { eventId },
+      })
+
+      // Reset isFull if we're now below capacity
+      if (!event.maxTickets || currentCount < event.maxTickets) {
+        await prisma.eventSubmission.update({
+          where: { id: eventId },
+          data: { isFull: false },
+        })
+      }
+
       // Get next person on waitlist
       const nextInLine = await prisma.eventWaitlist.findFirst({
         where: {

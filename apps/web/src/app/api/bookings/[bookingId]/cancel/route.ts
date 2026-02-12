@@ -63,7 +63,7 @@ export async function POST(
         )
       }
 
-      // Handle refund for paid bookings
+      // Handle refund + cancellation atomically in a transaction
       let refundResult = {
         status: 'not_applicable' as 'full' | 'partial' | 'none' | 'not_applicable',
         amount: 0,
@@ -71,6 +71,7 @@ export async function POST(
       }
       let refundError: string | null = null
 
+      // Calculate refund before transaction (read-only)
       if (
         booking.paymentStatus === 'PAID' &&
         booking.stripePaymentIntentId &&
@@ -79,47 +80,46 @@ export async function POST(
       ) {
         const activityStartTime = booking.activity.startTime || new Date()
         const refundCalc = calculateRefundAmount(booking.amountPaid, activityStartTime)
-
         refundResult = {
           status: refundCalc.policy,
           amount: refundCalc.amount,
           percentage: refundCalc.percentage,
         }
+      }
 
-        if (refundCalc.amount > 0) {
+      // Wrap DB updates and Stripe refund together
+      const updatedBooking = await prisma.$transaction(async (tx) => {
+        // Issue Stripe refund inside transaction so DB state stays consistent
+        if (
+          refundResult.amount > 0 &&
+          booking.stripePaymentIntentId
+        ) {
           try {
             const currency = booking.currency || 'SGD'
             await stripe.refunds.create({
               payment_intent: booking.stripePaymentIntentId,
-              amount: toStripeAmount(refundCalc.amount, currency),
+              amount: toStripeAmount(refundResult.amount, currency),
               reason: 'requested_by_customer',
             })
           } catch (err) {
             console.error('Refund error:', err)
             refundError = err instanceof Error ? err.message : 'Stripe refund failed'
           }
-        }
-      }
 
-      // Wrap DB updates in a transaction
-      const updatedBooking = await prisma.$transaction(async (tx) => {
-        // Update refund info if Stripe refund succeeded
-        if (
-          refundResult.amount > 0 &&
-          !refundError &&
-          booking.stripePaymentIntentId
-        ) {
-          await tx.userActivity.update({
-            where: { id: bookingId },
-            data: {
-              refundAmount: refundResult.amount,
-              refundedAt: new Date(),
-              paymentStatus: 'REFUNDED',
-            },
-          })
+          // Update refund info if Stripe refund succeeded
+          if (!refundError) {
+            await tx.userActivity.update({
+              where: { id: bookingId },
+              data: {
+                refundAmount: refundResult.amount,
+                refundedAt: new Date(),
+                paymentStatus: 'REFUNDED',
+              },
+            })
+          }
         }
 
-        // Mark booking as cancelled (CANCELLED, not REFUNDED, if refund failed)
+        // Mark booking as cancelled
         const updated = await tx.userActivity.update({
           where: { id: bookingId },
           data: { status: 'CANCELLED', updatedAt: new Date() },

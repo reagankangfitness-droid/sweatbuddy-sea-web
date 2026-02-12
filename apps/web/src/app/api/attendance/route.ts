@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { sendEventConfirmationEmail, sendHostNewAttendeeNotification } from '@/lib/event-confirmation-email'
 import { scheduleEventReminder } from '@/lib/event-reminders'
@@ -23,6 +24,12 @@ function generateId(): string {
 
 export async function POST(request: Request) {
   try {
+    // Require authentication
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
+    }
+
     const body = await request.json()
     const {
       eventId,

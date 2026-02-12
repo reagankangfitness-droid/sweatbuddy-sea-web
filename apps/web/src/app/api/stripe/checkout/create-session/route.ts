@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
 import { stripe, calculateFees } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 
@@ -13,6 +14,15 @@ interface CreateCheckoutRequest {
 
 export async function POST(request: Request) {
   try {
+    // Require authentication
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json(
+        { error: { message: 'Authentication required' } },
+        { status: 401 }
+      )
+    }
+
     const body: CreateCheckoutRequest = await request.json()
     const { eventId, attendeeEmail, attendeeName, quantity = 1 } = body
 
@@ -23,51 +33,50 @@ export async function POST(request: Request) {
       )
     }
 
-    // Fetch the event
-    const event = await prisma.eventSubmission.findUnique({
-      where: { id: eventId },
-      select: {
-        id: true,
-        slug: true,
-        eventName: true,
-        price: true,
-        currency: true,
-        isFree: true,
-        stripeEnabled: true,
-        feeHandling: true,
-        maxTickets: true,
-        ticketsSold: true,
-        organizerInstagram: true,
-        contactEmail: true,
-      },
+    // Atomically check capacity and reserve tickets in a transaction
+    const event = await prisma.$transaction(async (tx) => {
+      const ev = await tx.eventSubmission.findUnique({
+        where: { id: eventId },
+        select: {
+          id: true,
+          slug: true,
+          eventName: true,
+          price: true,
+          currency: true,
+          isFree: true,
+          stripeEnabled: true,
+          feeHandling: true,
+          maxTickets: true,
+          ticketsSold: true,
+          organizerInstagram: true,
+          contactEmail: true,
+        },
+      })
+
+      if (!ev) throw new Error('EVENT_NOT_FOUND')
+      if (ev.isFree || !ev.price) throw new Error('FREE_EVENT')
+      if (!ev.stripeEnabled) throw new Error('STRIPE_NOT_ENABLED')
+
+      // Atomic capacity check
+      if (ev.maxTickets && ev.ticketsSold + quantity > ev.maxTickets) {
+        throw new Error('NOT_ENOUGH_TICKETS')
+      }
+
+      // Reserve tickets atomically
+      if (ev.maxTickets) {
+        await tx.eventSubmission.update({
+          where: { id: eventId },
+          data: { ticketsSold: { increment: quantity } },
+        })
+      }
+
+      return ev
     })
 
     if (!event) {
       return NextResponse.json(
         { error: { message: 'Event not found' } },
         { status: 404 }
-      )
-    }
-
-    if (event.isFree || !event.price) {
-      return NextResponse.json(
-        { error: { message: 'This is a free event' } },
-        { status: 400 }
-      )
-    }
-
-    if (!event.stripeEnabled) {
-      return NextResponse.json(
-        { error: { message: 'Stripe payments are not enabled for this event' } },
-        { status: 400 }
-      )
-    }
-
-    // Check capacity
-    if (event.maxTickets && event.ticketsSold + quantity > event.maxTickets) {
-      return NextResponse.json(
-        { error: { message: 'Not enough tickets available' } },
-        { status: 400 }
       )
     }
 
@@ -85,7 +94,7 @@ export async function POST(request: Request) {
 
     // Calculate fees
     const feeHandling = event.feeHandling || 'ABSORB'
-    const fees = calculateFees(event.price, false, feeHandling)
+    const fees = calculateFees(event.price!, false, feeHandling)
 
     // The amount to charge the customer
     const unitAmount = fees.totalChargedToAttendee
@@ -143,10 +152,22 @@ export async function POST(request: Request) {
       url: session.url,
     })
   } catch (error) {
+    const msg = error instanceof Error ? error.message : ''
+    if (msg === 'EVENT_NOT_FOUND') {
+      return NextResponse.json({ error: { message: 'Event not found' } }, { status: 404 })
+    }
+    if (msg === 'FREE_EVENT') {
+      return NextResponse.json({ error: { message: 'This is a free event' } }, { status: 400 })
+    }
+    if (msg === 'STRIPE_NOT_ENABLED') {
+      return NextResponse.json({ error: { message: 'Stripe payments are not enabled for this event' } }, { status: 400 })
+    }
+    if (msg === 'NOT_ENOUGH_TICKETS') {
+      return NextResponse.json({ error: { message: 'Not enough tickets available' } }, { status: 400 })
+    }
     console.error('Error creating checkout session:', error)
-    const message = error instanceof Error ? error.message : 'Failed to create checkout session'
     return NextResponse.json(
-      { error: { message } },
+      { error: { message: 'Failed to create checkout session' } },
       { status: 500 }
     )
   }

@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const cronSecret = process.env.CRON_SECRET
 
     // Only verify if CRON_SECRET is set (skip in development)
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

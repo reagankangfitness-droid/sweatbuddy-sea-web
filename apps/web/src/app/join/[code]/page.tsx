@@ -136,7 +136,7 @@ export default function JoinInvitePage() {
     )
   }
 
-  const originalPrice = inviteData.activity.price
+  const originalPrice = inviteData.activity.price / 100
   const discountedPrice = originalPrice * (1 - inviteData.discount.value / 100)
   const savings = originalPrice - discountedPrice
 

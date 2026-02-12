@@ -15,13 +15,10 @@ export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('authorization')
 
   // Allow either cron secret or Vercel's built-in cron authentication
-  const isVercelCron = authHeader === `Bearer ${process.env.CRON_SECRET}`
-  const isManualCron = cronSecret === process.env.CRON_SECRET
+  const isVercelCron = !!process.env.CRON_SECRET && authHeader === `Bearer ${process.env.CRON_SECRET}`
+  const isManualCron = !!process.env.CRON_SECRET && cronSecret === process.env.CRON_SECRET
 
-  // In development, allow without auth
-  const isDev = process.env.NODE_ENV === 'development'
-
-  if (!isDev && !isVercelCron && !isManualCron) {
+  if (!isVercelCron && !isManualCron) {
     console.error('Unauthorized cron request')
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

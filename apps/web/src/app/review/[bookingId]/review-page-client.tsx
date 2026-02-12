@@ -31,7 +31,7 @@ export function ReviewPageClient({
   const router = useRouter()
 
   const handleSuccess = () => {
-    router.push('/bookings?reviewed=true')
+    router.push('/my-bookings?reviewed=true')
   }
 
   return (

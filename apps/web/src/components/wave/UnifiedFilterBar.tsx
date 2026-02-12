@@ -14,6 +14,7 @@ interface UnifiedFilterBarProps {
   onActivityToggle: (key: WaveActivityType | 'ALL') => void
   onTimeSelect: (filter: TimeFilter) => void
   onOpenActivitySheet: () => void
+  inline?: boolean
 }
 
 const TIME_CHIPS: { key: TimeFilter; label: string }[] = [
@@ -191,7 +192,8 @@ export function UnifiedFilterBar({
   timeFilter,
   onActivityToggle,
   onTimeSelect,
-  onOpenActivitySheet
+  onOpenActivitySheet,
+  inline
 }: UnifiedFilterBarProps) {
   // Get selected activity label
   const getSelectedLabel = () => {
@@ -205,7 +207,7 @@ export function UnifiedFilterBar({
 
   return (
     <div
-      className="absolute top-4 left-0 md:left-14 right-0 z-40 px-3 overflow-x-auto"
+      className={`${inline ? '' : 'absolute top-4 left-0 md:left-14 right-0 z-40 px-3 '}overflow-x-auto`}
       style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
     >
       <div className="flex items-center gap-2 w-max pr-3">

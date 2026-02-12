@@ -60,6 +60,7 @@ export function WaveMap() {
   const [selectedWave, setSelectedWave] = useState<WaveData | null>(null)
   const [selectedActivity, setSelectedActivity] = useState<HostedActivityData | null>(null)
   const [selectedWaveParticipant, setSelectedWaveParticipant] = useState(false)
+  const [mapMode, setMapMode] = useState<'experiences' | 'waves'>('experiences')
   const [filters, setFilters] = useState<Set<WaveActivityType | 'ALL'>>(new Set(['ALL']))
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('ALL')
   const [activitySheetOpen, setActivitySheetOpen] = useState(false)
@@ -337,8 +338,8 @@ export function WaveMap() {
           </OverlayView>
         )}
 
-        {/* Waves */}
-        {filteredWaves.map((w) => (
+        {/* Waves - only in waves mode */}
+        {mapMode === 'waves' && filteredWaves.map((w) => (
           <WaveBubblePin
             key={w.id}
             wave={w}
@@ -346,8 +347,8 @@ export function WaveMap() {
           />
         ))}
 
-        {/* Events */}
-        {filteredHosted.map((a) => (
+        {/* Events - only in experiences mode */}
+        {mapMode === 'experiences' && filteredHosted.map((a) => (
           <ActivityBubblePin
             key={`hosted-${a.id}`}
             activity={a}
@@ -356,36 +357,111 @@ export function WaveMap() {
         ))}
       </GoogleMap>
 
-      {/* Filter bar */}
-      <UnifiedFilterBar
-        activityFilter={filters}
-        timeFilter={timeFilter}
-        onActivityToggle={handleFilterToggle}
-        onTimeSelect={setTimeFilter}
-        onOpenActivitySheet={() => setActivitySheetOpen(true)}
-      />
+      {/* Mode toggle + Filter bar */}
+      <div className="absolute top-4 left-0 right-0 z-40 px-3 space-y-2">
+        {/* Segmented toggle */}
+        <div className="flex justify-center">
+          <div className="inline-flex bg-white/95 dark:bg-neutral-800/95 backdrop-blur-md rounded-xl border border-neutral-200 dark:border-neutral-700 p-1 shadow-lg">
+            <button
+              type="button"
+              onClick={() => setMapMode('experiences')}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                mapMode === 'experiences'
+                  ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-sm'
+                  : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
+              }`}
+            >
+              Experiences
+            </button>
+            <button
+              type="button"
+              onClick={() => setMapMode('waves')}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                mapMode === 'waves'
+                  ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-sm'
+                  : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
+              }`}
+            >
+              Waves
+            </button>
+          </div>
+        </div>
 
-      {/* Empty state - show when no waves AND no events */}
-      {hasFetched && filteredWaves.length === 0 && filteredHosted.length === 0 && (
+        {/* Conditional filters below the toggle */}
+        {mapMode === 'waves' ? (
+          <UnifiedFilterBar
+            activityFilter={filters}
+            timeFilter={timeFilter}
+            onActivityToggle={handleFilterToggle}
+            onTimeSelect={setTimeFilter}
+            onOpenActivitySheet={() => setActivitySheetOpen(true)}
+            inline
+          />
+        ) : (
+          <div
+            className="overflow-x-auto"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+          >
+            <div className="flex items-center gap-2 w-max pr-3">
+              {[
+                { key: 'TODAY' as TimeFilter, label: '🔥 Today' },
+                { key: 'WEEKEND' as TimeFilter, label: '🎉 Weekend' },
+                { key: 'WEEK' as TimeFilter, label: '📅 Week' },
+              ].map((chip) => (
+                <button
+                  key={chip.key}
+                  type="button"
+                  onClick={() => setTimeFilter(timeFilter === chip.key ? 'ALL' : chip.key)}
+                  className={`shrink-0 px-3 py-2 rounded-xl text-sm font-medium border transition-all active:scale-95 ${
+                    timeFilter === chip.key
+                      ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white border-pink-500 shadow-lg shadow-pink-500/25'
+                      : 'bg-white/95 dark:bg-neutral-800/95 text-neutral-600 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700'
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Empty state */}
+      {hasFetched && (
+        (mapMode === 'waves' && filteredWaves.length === 0) ||
+        (mapMode === 'experiences' && filteredHosted.length === 0)
+      ) && (
         <div className="fixed inset-0 z-[5] flex items-center justify-center pointer-events-none">
           <div className="bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md rounded-2xl px-6 py-5 text-center shadow-lg max-w-xs">
-            <p className="text-3xl mb-2">🌊</p>
-            <p className="font-semibold text-neutral-700 dark:text-neutral-200">No activity nearby</p>
-            <p className="text-sm text-neutral-400 mt-1">
-              Be the first! Start an activity and others can join you.
-            </p>
-            <button
-              onClick={() => setCreateOpen(true)}
-              className="mt-3 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm pointer-events-auto"
-            >
-              Start activity 🙋
-            </button>
+            {mapMode === 'experiences' ? (
+              <>
+                <p className="text-3xl mb-2">📍</p>
+                <p className="font-semibold text-neutral-700 dark:text-neutral-200">No experiences nearby</p>
+                <p className="text-sm text-neutral-400 mt-1">
+                  Check back soon — new experiences are added regularly!
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-3xl mb-2">🌊</p>
+                <p className="font-semibold text-neutral-700 dark:text-neutral-200">No waves nearby</p>
+                <p className="text-sm text-neutral-400 mt-1">
+                  Be the first! Start a wave and others can join you.
+                </p>
+                <button
+                  onClick={() => setCreateOpen(true)}
+                  className="mt-3 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm pointer-events-auto"
+                >
+                  Start wave 🙋
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
 
-      {/* Start activity FAB */}
-      {!crewChat && (
+      {/* Start activity FAB - only in waves mode */}
+      {!crewChat && mapMode === 'waves' && (
         <button
           onClick={() => setCreateOpen(true)}
           className="fixed bottom-28 left-1/2 -translate-x-1/2 z-10 px-5 py-3 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-xl font-semibold text-sm active:scale-95 transition-transform"

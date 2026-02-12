@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import neighborhoodsData from '@/data/neighborhoods.json'
 
@@ -54,46 +54,18 @@ function findNeighborhoodForCoordinates(lat: number, lng: number): string | null
   return minDistance < 0.1 ? nearestId : null
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const searchParams = request.nextUrl.searchParams
-    const timeRange = searchParams.get('timeRange') || 'week'
-
-    // Calculate date range
     const now = new Date()
-    let endDate: Date
 
-    switch (timeRange) {
-      case 'today':
-        endDate = new Date(now)
-        endDate.setHours(23, 59, 59, 999)
-        break
-      case 'weekend':
-        const dayOfWeek = now.getDay()
-        const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek
-        endDate = new Date(now)
-        endDate.setDate(now.getDate() + daysUntilSunday)
-        endDate.setHours(23, 59, 59, 999)
-        break
-      case 'month':
-        endDate = new Date(now)
-        endDate.setMonth(now.getMonth() + 1)
-        break
-      case 'week':
-      default:
-        endDate = new Date(now)
-        endDate.setDate(now.getDate() + 7)
-        break
-    }
-
-    // Get all activities with coordinates for dynamic matching
+    // Get all upcoming activities with coordinates for dynamic matching
     const activities = await prisma.activity.findMany({
       where: {
         status: 'PUBLISHED',
-        startTime: {
-          gte: now,
-          lte: endDate,
-        },
+        OR: [
+          { startTime: null },
+          { startTime: { gte: now } },
+        ],
       },
       select: {
         id: true,
@@ -122,10 +94,9 @@ export async function GET(request: NextRequest) {
       where: {
         status: 'APPROVED',
         OR: [
-          // Events with future dates
-          { eventDate: { gte: now, lte: endDate } },
-          // Recurring events (always show)
+          { eventDate: { gte: now } },
           { recurring: true },
+          { eventDate: null },
         ]
       },
       select: {
@@ -258,7 +229,7 @@ export async function GET(request: NextRequest) {
               }
             : null,
         },
-        timeRange,
+        timeRange: 'all',
       },
     })
   } catch {

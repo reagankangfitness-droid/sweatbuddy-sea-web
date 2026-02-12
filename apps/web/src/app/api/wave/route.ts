@@ -191,16 +191,16 @@ export async function GET(request: NextRequest) {
     take: 100,
   })
 
-  // --- Fetch upcoming EventSubmissions (engagement-optimized) ---
-  // Show: recurring events (always) + one-time events from now through next 14 days
-  // For one-time events, add 3 hour buffer after eventDate to account for event duration
+  // --- Fetch upcoming EventSubmissions ---
+  // Show: recurring events (always) + all future one-time events
+  // Add 3 hour buffer after eventDate to account for event duration
   const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000)
   const eventSubmissions = await prisma.eventSubmission.findMany({
     where: {
       status: 'APPROVED',
       OR: [
-        { recurring: true }, // Recurring = always show (happens weekly)
-        { eventDate: { gte: threeHoursAgo, lte: twoWeeksFromNow } }, // One-time within range (with buffer)
+        { recurring: true },
+        { eventDate: { gte: threeHoursAgo } },
       ],
     },
     select: {

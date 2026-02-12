@@ -1,45 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSGToday, isTodaySG, isThisWeekendSG, getNextOccurrenceSG } from '@/lib/event-dates'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const searchParams = request.nextUrl.searchParams
-    const timeRange = searchParams.get('timeRange') || 'month'
-
-    const now = new Date()
-    let endDate: Date
-
-    switch (timeRange) {
-      case 'today':
-        endDate = new Date(now)
-        endDate.setHours(23, 59, 59, 999)
-        break
-      case 'weekend': {
-        const dayOfWeek = now.getDay()
-        const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek
-        endDate = new Date(now)
-        endDate.setDate(now.getDate() + daysUntilSunday)
-        endDate.setHours(23, 59, 59, 999)
-        break
-      }
-      case 'month':
-        endDate = new Date(now)
-        endDate.setMonth(now.getMonth() + 1)
-        break
-      case 'week':
-      default:
-        endDate = new Date(now)
-        endDate.setDate(now.getDate() + 7)
-        break
-    }
-
-    // Engagement-optimized: Show events from today through next 14 days
+    // Show all approved events: recurring (always) + all future one-time events
     const today = getSGToday()
-    const twoWeeksFromNow = new Date(today)
-    twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14)
 
     // Fetch upcoming EventSubmission events with coordinates
     const eventSubmissions = await prisma.eventSubmission.findMany({
@@ -48,9 +16,9 @@ export async function GET(request: NextRequest) {
         latitude: { not: null },
         longitude: { not: null },
         OR: [
-          { recurring: true }, // Recurring = always show
-          { eventDate: { gte: today, lte: twoWeeksFromNow } }, // One-time within 2 weeks
-          { eventDate: null }, // No date = show it
+          { recurring: true },
+          { eventDate: { gte: today } },
+          { eventDate: null },
         ],
       },
       select: {
@@ -89,7 +57,7 @@ export async function GET(request: NextRequest) {
       attendanceCounts.map((a) => [a.eventId, a._count.id])
     )
 
-    // Also fetch Activity events with coordinates (upcoming within 2 weeks)
+    // Also fetch Activity events with coordinates
     const activities = await prisma.activity.findMany({
       where: {
         status: 'PUBLISHED',
@@ -98,7 +66,7 @@ export async function GET(request: NextRequest) {
         longitude: { not: 0 },
         OR: [
           { startTime: null },
-          { startTime: { gte: today, lte: twoWeeksFromNow } },
+          { startTime: { gte: today } },
         ],
       },
       select: {
@@ -194,7 +162,6 @@ export async function GET(request: NextRequest) {
       data: {
         events,
         total: events.length,
-        timeRange,
       },
     })
   } catch {

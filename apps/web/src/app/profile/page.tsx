@@ -13,10 +13,6 @@ import {
   Ticket,
   BadgeCheck,
   MessageCircle,
-  Sparkles,
-  PenTool,
-  TrendingUp,
-  MessageSquare,
   Heart,
   HelpCircle,
   Radio,
@@ -204,68 +200,6 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
-
-        {/* AI Tools Showcase - For Hosts */}
-        {isHost && (
-          <div className="mb-4">
-            <div className="bg-neutral-900 dark:bg-neutral-800/50 rounded-2xl p-4 border border-neutral-800 dark:border-neutral-700 relative overflow-hidden">
-              {/* Subtle background glow */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-neutral-700/30 rounded-full blur-3xl -mr-16 -mt-16" />
-
-              <div className="relative">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-8 h-8 bg-neutral-800 dark:bg-neutral-700 rounded-lg flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-sm text-white">AI Assistant</h3>
-                    <span className="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded font-semibold">NEW</span>
-                  </div>
-                </div>
-
-                <p className="text-neutral-400 text-xs mb-4">
-                  Your personal AI to help grow your fitness community
-                </p>
-
-                {/* AI Tool Cards */}
-                <div className="grid grid-cols-3 gap-2">
-                  <Link
-                    href="/host/content"
-                    className="bg-neutral-800 dark:bg-neutral-700/50 hover:bg-neutral-700 dark:hover:bg-neutral-600/50 rounded-xl p-3 text-center transition-colors border border-neutral-700 dark:border-neutral-600"
-                  >
-                    <div className="w-8 h-8 bg-neutral-700 dark:bg-neutral-600 rounded-lg flex items-center justify-center mx-auto mb-2">
-                      <PenTool className="w-4 h-4 text-neutral-300" />
-                    </div>
-                    <p className="text-xs font-medium text-white">Content</p>
-                    <p className="text-[10px] text-neutral-500">Generator</p>
-                  </Link>
-
-                  <Link
-                    href="/host/growth"
-                    className="bg-neutral-800 dark:bg-neutral-700/50 hover:bg-neutral-700 dark:hover:bg-neutral-600/50 rounded-xl p-3 text-center transition-colors border border-neutral-700 dark:border-neutral-600"
-                  >
-                    <div className="w-8 h-8 bg-neutral-700 dark:bg-neutral-600 rounded-lg flex items-center justify-center mx-auto mb-2">
-                      <TrendingUp className="w-4 h-4 text-neutral-300" />
-                    </div>
-                    <p className="text-xs font-medium text-white">Growth</p>
-                    <p className="text-[10px] text-neutral-500">Insights</p>
-                  </Link>
-
-                  <Link
-                    href="/host/dashboard"
-                    className="bg-neutral-800 dark:bg-neutral-700/50 hover:bg-neutral-700 dark:hover:bg-neutral-600/50 rounded-xl p-3 text-center transition-colors border border-neutral-700 dark:border-neutral-600"
-                  >
-                    <div className="w-8 h-8 bg-neutral-700 dark:bg-neutral-600 rounded-lg flex items-center justify-center mx-auto mb-2">
-                      <MessageSquare className="w-4 h-4 text-neutral-300" />
-                    </div>
-                    <p className="text-xs font-medium text-white">AI Chat</p>
-                    <p className="text-[10px] text-neutral-500">Ask anything</p>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* My Activity Section */}
         <div className="mb-4">

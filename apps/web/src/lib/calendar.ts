@@ -117,7 +117,14 @@ export function generateYahooCalendarUrl(event: CalendarEvent): string {
  * Handles formats like "7:00 AM", "19:00", "7pm"
  */
 export function parseEventTime(dateStr: string | null, timeStr: string): Date {
-  const date = dateStr ? new Date(dateStr) : new Date()
+  let date: Date
+  if (dateStr) {
+    // Parse YYYY-MM-DD as local date to avoid UTC midnight day-shift
+    const parts = dateStr.split('T')[0].split('-').map(Number)
+    date = new Date(parts[0], parts[1] - 1, parts[2])
+  } else {
+    date = new Date()
+  }
   date.setHours(0, 0, 0, 0) // Reset time part
 
   // Parse time string

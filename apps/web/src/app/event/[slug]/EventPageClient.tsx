@@ -122,6 +122,7 @@ export function EventPageClient({ event }: { event: Event }) {
       weekday: 'long',
       month: 'long',
       day: 'numeric',
+      timeZone: 'Asia/Singapore',
     })
   }
 

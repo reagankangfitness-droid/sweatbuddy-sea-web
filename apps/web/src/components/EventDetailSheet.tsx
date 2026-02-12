@@ -66,7 +66,8 @@ function formatEventDate(dateStr: string | null | undefined, dayName: string, is
     return date.toLocaleDateString('en-US', {
       weekday: 'short',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
+      timeZone: 'Asia/Singapore',
     })
   } catch {
     return dayName

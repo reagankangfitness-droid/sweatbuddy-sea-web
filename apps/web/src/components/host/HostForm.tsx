@@ -282,7 +282,9 @@ export default function HostForm() {
       if (isRecurring && formData.eventDay) {
         dayDisplay = formData.eventDay
       } else {
-        const date = new Date(formData.eventDate)
+        // Parse date parts directly to avoid UTC-vs-local timezone shift
+        const [year, month, day] = formData.eventDate.split('-').map(Number)
+        const date = new Date(year, month - 1, day)
         dayDisplay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
       }
 

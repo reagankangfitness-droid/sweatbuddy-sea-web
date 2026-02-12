@@ -238,33 +238,42 @@ export async function GET(request: NextRequest) {
     : []
   const attendanceMap = new Map(attendanceCounts.map((a) => [a.eventId, a._count.id]))
 
-  // Today at midnight for date comparisons
-  const today = new Date(now)
+  // Use Singapore timezone for all date calculations (app targets Singapore users)
+  const sgNow = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Singapore' }))
+  const today = new Date(sgNow)
   today.setHours(0, 0, 0, 0)
 
-  // Helper to check if date is today
-  const isToday = (date: Date | null) => {
-    if (!date) return false
-    const d = new Date(date)
-    return d.toDateString() === now.toDateString()
+  // Format a Date as YYYY-MM-DD in Singapore timezone
+  const toSGDateStr = (d: Date): string => {
+    const sg = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Singapore' }))
+    const y = sg.getFullYear()
+    const m = String(sg.getMonth() + 1).padStart(2, '0')
+    const day = String(sg.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
   }
 
-  // Helper to check if date is this weekend (Sat or Sun)
+  // Helper to check if date is today (in Singapore time)
+  const isToday = (date: Date | null) => {
+    if (!date) return false
+    return toSGDateStr(date) === toSGDateStr(now)
+  }
+
+  // Helper to check if date is this weekend (Sat or Sun, in Singapore time)
   const isThisWeekend = (date: Date | null) => {
     if (!date) return false
-    const d = new Date(date)
-    const dayOfWeek = d.getDay()
-    const daysUntil = Math.ceil((d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+    const sg = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Singapore' }))
+    const dayOfWeek = sg.getDay()
+    const daysUntil = Math.ceil((sg.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
     return (dayOfWeek === 0 || dayOfWeek === 6) && daysUntil <= 7
   }
 
-  // Helper to get next occurrence for recurring events
+  // Helper to get next occurrence for recurring events (in Singapore time)
   const getNextOccurrence = (day: string) => {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     const cleanDay = day.toLowerCase().replace('every ', '').trim()
     const targetDay = days.findIndex(d => d.toLowerCase().startsWith(cleanDay.slice(0, 3)))
     if (targetDay === -1) return null
-    const todayDay = today.getDay()
+    const todayDay = sgNow.getDay()
     let daysUntil = targetDay - todayDay
     if (daysUntil < 0) daysUntil += 7
     if (daysUntil === 0) return today // It's today!
@@ -291,8 +300,8 @@ export async function GET(request: NextRequest) {
     if (period === 'PM' && hours !== 12) hours += 12
     if (period === 'AM' && hours === 12) hours = 0
 
-    // Get the calendar date from the input (in UTC)
-    const dateStr = date.toISOString().slice(0, 10) // "2026-02-04"
+    // Get the calendar date in Singapore timezone to avoid UTC day-shift
+    const dateStr = toSGDateStr(date)
     const h = String(hours).padStart(2, '0')
     const m = String(minutes).padStart(2, '0')
     // Create date with Singapore timezone offset (UTC+8)

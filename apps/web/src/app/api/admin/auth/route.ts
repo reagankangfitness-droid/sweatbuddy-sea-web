@@ -57,8 +57,8 @@ export async function POST(request: NextRequest) {
   try {
     // SECURITY: Fail if admin password not configured
     if (!ADMIN_PASSWORD || !SECRET_KEY) {
-      console.error('Admin auth not configured: ADMIN_PASSWORD or ADMIN_SECRET missing')
-      return NextResponse.json({ error: 'Admin auth not configured' }, { status: 500 })
+      console.error('Admin auth not configured')
+      return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
     }
 
     const body = await request.json()

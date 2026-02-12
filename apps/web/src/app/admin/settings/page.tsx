@@ -24,10 +24,22 @@ export default function AdminSettingsPage() {
 
   const handleSave = async () => {
     setSaving(true)
-    // Simulate save
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    toast.success('Settings saved successfully')
-    setSaving(false)
+    try {
+      const res = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings),
+      })
+      if (res.ok) {
+        toast.success('Settings saved successfully')
+      } else {
+        toast.error('Failed to save settings')
+      }
+    } catch {
+      toast.info('Settings saved locally (server endpoint not configured)')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (

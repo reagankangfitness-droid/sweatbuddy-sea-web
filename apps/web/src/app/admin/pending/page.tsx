@@ -78,7 +78,7 @@ export default function PendingEventsPage() {
       const res = await fetch(`/api/admin/event-submissions/${eventId}`, {
         method: 'PATCH',
         headers: await getAuthHeaders(),
-        body: JSON.stringify({ status: 'APPROVED' })
+        body: JSON.stringify({ action: 'approve' })
       })
 
       if (res.ok) {
@@ -100,7 +100,7 @@ export default function PendingEventsPage() {
       const res = await fetch(`/api/admin/event-submissions/${eventId}`, {
         method: 'PATCH',
         headers: await getAuthHeaders(),
-        body: JSON.stringify({ status: 'REJECTED' })
+        body: JSON.stringify({ action: 'reject' })
       })
 
       if (res.ok) {

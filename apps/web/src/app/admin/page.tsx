@@ -145,8 +145,8 @@ export default function AdminDashboardPage() {
         messagesThisWeek: dbStats.messagesThisWeek || 0,
         activeConversations: dbStats.activeConversations || 0,
       })
-    } catch {
-      // Error handled silently
+    } catch (err) {
+      console.error('Dashboard data fetch error:', err)
     } finally {
       setLoading(false)
     }

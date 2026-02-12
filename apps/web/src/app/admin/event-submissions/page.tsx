@@ -2,10 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
-import { Check, X, Clock, MapPin, Calendar, Mail, Instagram, User, Copy } from 'lucide-react'
+import { Check, X, Clock, MapPin, Calendar, Mail, Instagram, User, Copy, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import Image from 'next/image'
-import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 
 interface EventSubmission {
   id: string
@@ -25,35 +24,18 @@ interface EventSubmission {
   reviewedAt: string | null
 }
 
-// Simple password protection
-const ADMIN_SECRET = process.env.NEXT_PUBLIC_ADMIN_SECRET || ''
-
 export default function AdminEventSubmissionsPage() {
   const [submissions, setSubmissions] = useState<EventSubmission[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [processingId, setProcessingId] = useState<string | null>(null)
   const [filter, setFilter] = useState<'PENDING' | 'APPROVED' | 'REJECTED' | 'all'>('PENDING')
-  const [isAuthed, setIsAuthed] = useState(false)
-  const [password, setPassword] = useState('')
-
-  useEffect(() => {
-    // Check if already authenticated
-    const storedAuth = safeGetJSON<string | null>('admin-auth', null)
-    if (storedAuth === ADMIN_SECRET) {
-      setIsAuthed(true)
-    }
-  }, [])
 
   const fetchSubmissions = useCallback(async () => {
     try {
       setLoading(true)
       const statusParam = filter === 'all' ? 'all' : filter
-      const response = await fetch(`/api/admin/event-submissions?status=${statusParam}`, {
-        headers: {
-          'x-admin-secret': ADMIN_SECRET,
-        },
-      })
+      const response = await fetch(`/api/admin/event-submissions?status=${statusParam}`)
 
       if (!response.ok) {
         throw new Error('Failed to fetch submissions')
@@ -69,20 +51,8 @@ export default function AdminEventSubmissionsPage() {
   }, [filter])
 
   useEffect(() => {
-    if (isAuthed) {
-      fetchSubmissions()
-    }
-  }, [isAuthed, filter, fetchSubmissions])
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (password === ADMIN_SECRET) {
-      safeSetJSON('admin-auth', password)
-      setIsAuthed(true)
-    } else {
-      toast.error('Incorrect password')
-    }
-  }
+    fetchSubmissions()
+  }, [filter, fetchSubmissions])
 
   const handleAction = async (submissionId: string, action: 'approve' | 'reject') => {
     try {
@@ -92,7 +62,6 @@ export default function AdminEventSubmissionsPage() {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-secret': ADMIN_SECRET,
         },
         body: JSON.stringify({ action }),
       })
@@ -140,96 +109,70 @@ export default function AdminEventSubmissionsPage() {
     toast.success('JSON copied to clipboard!')
   }
 
-  if (!isAuthed) {
-    return (
-      <div className="min-h-screen bg-[#0A1628] flex items-center justify-center p-4">
-        <div className="bg-white/10 backdrop-blur-lg p-6 sm:p-8 rounded-2xl border border-white/20 max-w-sm w-full">
-          <h1 className="text-xl sm:text-2xl font-bold text-white mb-6 text-center">Admin Access</h1>
-          <form onSubmit={handleLogin}>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter admin password"
-              className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg mb-4 text-white placeholder-white/40 focus:outline-none focus:border-[#38BDF8] text-base"
-            />
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-all active:scale-[0.98]"
-            >
-              Login
-            </button>
-          </form>
-        </div>
-      </div>
-    )
-  }
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0A1628] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#38BDF8]"></div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="w-8 h-8 text-neutral-400 animate-spin" />
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#0A1628] flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-400 mb-2">Error</h1>
-          <p className="text-white/60">{error}</p>
+          <h1 className="text-2xl font-bold text-red-600 mb-2">Error</h1>
+          <p className="text-neutral-500">{error}</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#0A1628]">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white">Experience Submissions</h1>
-          <p className="text-white/60 mt-2">
-            Review and approve submitted experiences
+    <div className="p-4 sm:p-6 lg:p-8 bg-neutral-50 min-h-screen">
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Experience Submissions</h1>
+        <p className="text-neutral-500 mt-1">
+          Review and approve submitted experiences
+        </p>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="flex gap-2 mb-6 flex-wrap">
+        {(['PENDING', 'APPROVED', 'REJECTED', 'all'] as const).map((status) => (
+          <button
+            key={status}
+            onClick={() => setFilter(status)}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              filter === status
+                ? 'bg-neutral-900 text-white'
+                : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
+            }`}
+          >
+            {status === 'all' ? 'All' : status.charAt(0) + status.slice(1).toLowerCase()}
+          </button>
+        ))}
+      </div>
+
+      {/* Submissions List */}
+      {submissions.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-xl border border-neutral-200 shadow-sm">
+          <Clock className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-neutral-900 mb-2">No submissions</h2>
+          <p className="text-neutral-500">
+            {filter === 'PENDING'
+              ? 'No pending experience submissions to review.'
+              : `No ${filter.toLowerCase()} submissions.`}
           </p>
         </div>
-
-        {/* Filter Tabs */}
-        <div className="flex gap-2 mb-6 flex-wrap">
-          {(['PENDING', 'APPROVED', 'REJECTED', 'all'] as const).map((status) => (
-            <button
-              key={status}
-              onClick={() => setFilter(status)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === status
-                  ? 'bg-gradient-to-r from-[#2563EB] to-[#38BDF8] text-white'
-                  : 'bg-white/10 text-white hover:bg-white/20'
-              }`}
+      ) : (
+        <div className="space-y-4">
+          {submissions.map((submission) => (
+            <div
+              key={submission.id}
+              className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm"
             >
-              {status === 'all' ? 'All' : status.charAt(0) + status.slice(1).toLowerCase()}
-            </button>
-          ))}
-        </div>
-
-        {/* Submissions List */}
-        {submissions.length === 0 ? (
-          <div className="text-center py-12 bg-white/5 rounded-2xl border border-white/10">
-            <Clock className="w-12 h-12 text-white/40 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-white mb-2">No submissions</h2>
-            <p className="text-white/60">
-              {filter === 'PENDING'
-                ? 'No pending experience submissions to review.'
-                : `No ${filter.toLowerCase()} submissions.`}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {submissions.map((submission) => (
-              <div
-                key={submission.id}
-                className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 overflow-hidden"
-              >
                 {/* Event Image */}
                 {submission.imageUrl && (
                   <div className="relative h-48 w-full bg-white/5">
@@ -247,7 +190,7 @@ export default function AdminEventSubmissionsPage() {
                     <div className="flex-1">
                       {/* Title and Status */}
                       <div className="flex items-center gap-3 mb-3">
-                        <h3 className="text-xl font-semibold text-white">
+                        <h3 className="text-xl font-semibold text-neutral-900">
                           {submission.eventName}
                         </h3>
                         <span
@@ -268,30 +211,30 @@ export default function AdminEventSubmissionsPage() {
 
                       {/* Description */}
                       {submission.description && (
-                        <p className="text-white/60 mb-4">{submission.description}</p>
+                        <p className="text-neutral-600 mb-4">{submission.description}</p>
                       )}
 
                       {/* Details Grid */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm mb-4">
-                        <div className="flex items-center gap-2 text-white/60">
+                        <div className="flex items-center gap-2 text-neutral-600">
                           <Calendar className="w-4 h-4" />
                           <span>{submission.day} • {submission.time}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-white/60">
+                        <div className="flex items-center gap-2 text-neutral-600">
                           <MapPin className="w-4 h-4" />
                           <span>{submission.location}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-white/60">
-                          <span className={`px-2 py-0.5 rounded text-xs ${submission.recurring ? 'bg-green-500/20 text-green-400' : 'bg-white/10 text-white/60'}`}>
+                        <div className="flex items-center gap-2 text-neutral-600">
+                          <span className={`px-2 py-0.5 rounded text-xs ${submission.recurring ? 'bg-green-100 text-green-700' : 'bg-neutral-100 text-neutral-600'}`}>
                             {submission.recurring ? 'Recurring' : 'One-time'}
                           </span>
                         </div>
                       </div>
 
                       {/* Organizer Info */}
-                      <div className="pt-4 border-t border-white/10">
+                      <div className="pt-4 border-t border-neutral-200">
                         <div className="flex flex-wrap items-center gap-4 text-sm">
-                          <div className="flex items-center gap-2 text-white/60">
+                          <div className="flex items-center gap-2 text-neutral-600">
                             <User className="w-4 h-4" />
                             <span>{submission.organizerName}</span>
                           </div>
@@ -299,20 +242,20 @@ export default function AdminEventSubmissionsPage() {
                             href={`https://instagram.com/${submission.organizerInstagram}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1 text-[#38BDF8] hover:underline"
+                            className="flex items-center gap-1 text-blue-600 hover:underline"
                           >
                             <Instagram className="w-4 h-4" />
                             @{submission.organizerInstagram}
                           </a>
                           <a
                             href={`mailto:${submission.contactEmail}`}
-                            className="flex items-center gap-1 text-white/60 hover:text-[#38BDF8]"
+                            className="flex items-center gap-1 text-neutral-600 hover:text-blue-600"
                           >
                             <Mail className="w-4 h-4" />
                             {submission.contactEmail}
                           </a>
                         </div>
-                        <p className="text-xs text-white/40 mt-2">
+                        <p className="text-xs text-neutral-400 mt-2">
                           Submitted {format(new Date(submission.createdAt), 'MMM d, yyyy h:mm a')}
                         </p>
                       </div>
@@ -333,7 +276,7 @@ export default function AdminEventSubmissionsPage() {
                           <button
                             onClick={() => handleAction(submission.id, 'reject')}
                             disabled={processingId === submission.id}
-                            className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+                            className="flex items-center justify-center gap-2 px-4 py-2 bg-red-100 text-red-600 border border-red-200 rounded-lg font-medium hover:bg-red-200 transition-colors disabled:opacity-50"
                           >
                             <X className="w-4 h-4" />
                             Reject
@@ -342,7 +285,7 @@ export default function AdminEventSubmissionsPage() {
                       )}
                       <button
                         onClick={() => copyJsonSnippet(submission)}
-                        className="flex items-center justify-center gap-2 px-4 py-2 bg-white/10 text-white rounded-lg font-medium hover:bg-white/20 transition-colors"
+                        className="flex items-center justify-center gap-2 px-4 py-2 bg-neutral-100 text-neutral-700 rounded-lg font-medium hover:bg-neutral-200 transition-colors"
                       >
                         <Copy className="w-4 h-4" />
                         Copy JSON
@@ -354,7 +297,6 @@ export default function AdminEventSubmissionsPage() {
             ))}
           </div>
         )}
-      </div>
     </div>
   )
 }

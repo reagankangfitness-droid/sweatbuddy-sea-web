@@ -220,8 +220,8 @@ export default function NewsletterPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredSubscribers.map((subscriber, index) => (
-                    <tr key={index} className="border-b border-neutral-100 hover:bg-neutral-50">
+                  {filteredSubscribers.map((subscriber) => (
+                    <tr key={subscriber.email} className="border-b border-neutral-100 hover:bg-neutral-50">
                       <td className="p-4">
                         <a href={`mailto:${subscriber.email}`} className="text-blue-600 hover:underline">
                           {subscriber.email}
@@ -244,8 +244,8 @@ export default function NewsletterPage() {
 
             {/* Mobile Cards */}
             <div className="sm:hidden divide-y divide-neutral-100">
-              {filteredSubscribers.map((subscriber, index) => (
-                <div key={index} className="p-4">
+              {filteredSubscribers.map((subscriber) => (
+                <div key={subscriber.email} className="p-4">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="flex-1 min-w-0">
                       <a href={`mailto:${subscriber.email}`} className="text-blue-600 hover:underline text-sm break-all">

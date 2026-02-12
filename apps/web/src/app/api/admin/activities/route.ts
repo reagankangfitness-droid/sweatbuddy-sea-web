@@ -17,15 +17,21 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url)
-    const status = searchParams.get('status') || 'PENDING_APPROVAL'
+    const statusParam = searchParams.get('status') || 'PENDING_APPROVAL'
     const page = parseInt(searchParams.get('page') || '1', 10)
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 200)
     const skip = (page - 1) * limit
 
+    const validStatuses = ['PENDING_APPROVAL', 'PUBLISHED', 'DRAFT', 'CANCELLED', 'COMPLETED'] as const
+    type ActivityStatus = typeof validStatuses[number]
+    const status: ActivityStatus = validStatuses.includes(statusParam as ActivityStatus)
+      ? (statusParam as ActivityStatus)
+      : 'PENDING_APPROVAL'
+
     const [activities, total] = await Promise.all([
       prisma.activity.findMany({
         where: {
-          status: status as 'PENDING_APPROVAL' | 'PUBLISHED' | 'DRAFT' | 'CANCELLED' | 'COMPLETED',
+          status,
           deletedAt: null,
         },
         include: {
@@ -46,7 +52,7 @@ export async function GET(request: Request) {
       }),
       prisma.activity.count({
         where: {
-          status: status as 'PENDING_APPROVAL' | 'PUBLISHED' | 'DRAFT' | 'CANCELLED' | 'COMPLETED',
+          status,
           deletedAt: null,
         },
       }),

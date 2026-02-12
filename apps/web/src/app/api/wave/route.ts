@@ -197,8 +197,6 @@ export async function GET(request: NextRequest) {
   const eventSubmissions = await prisma.eventSubmission.findMany({
     where: {
       status: 'APPROVED',
-      latitude: { not: null },
-      longitude: { not: null },
       OR: [
         { recurring: true }, // Recurring = always show (happens weekly)
         { eventDate: { gte: threeHoursAgo, lte: twoWeeksFromNow } }, // One-time within range (with buffer)
@@ -322,8 +320,8 @@ export async function GET(request: NextRequest) {
       categorySlug: e.category.toLowerCase().replace(/[^a-z]/g, '-'),
       type: e.category,
       city: '',
-      latitude: e.latitude!,
-      longitude: e.longitude!,
+      latitude: e.latitude ?? null,
+      longitude: e.longitude ?? null,
       address: e.location,
       startTime: startTime,
       endTime: null,

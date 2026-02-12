@@ -58,6 +58,8 @@ export async function PATCH(
       const coords = await geocodeLocation(currentSubmission.location)
       if (coords) {
         geocodeData = { latitude: coords.lat, longitude: coords.lng }
+      } else {
+        console.warn(`Geocoding failed for event "${id}" with location "${currentSubmission.location}". Event will be approved without coordinates.`)
       }
     }
 

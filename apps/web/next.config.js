@@ -151,12 +151,12 @@ const nextConfig = {
         ],
       },
       {
-        // Events API - cache for 60s with stale-while-revalidate
+        // Events API - short CDN cache, revalidateTag handles real invalidation
         source: '/api/events',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, s-maxage=60, stale-while-revalidate=300',
+            value: 'public, s-maxage=10, stale-while-revalidate=30',
           },
         ],
       },

@@ -28,7 +28,7 @@ export async function GET() {
             OR: [
               { recurring: true },
               { eventDate: { gte: today } },
-              { eventDate: null },
+              { eventDate: null, recurring: true },
             ],
           },
         ],

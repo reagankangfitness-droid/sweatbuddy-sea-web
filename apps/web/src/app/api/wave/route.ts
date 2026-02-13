@@ -206,7 +206,7 @@ export async function GET(request: NextRequest) {
           OR: [
             { recurring: true },
             { eventDate: { gte: today } },
-            { eventDate: null },
+            { eventDate: null, recurring: true },
           ],
         },
       ],

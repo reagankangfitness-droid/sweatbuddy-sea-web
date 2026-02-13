@@ -83,8 +83,8 @@ const getCachedEvents = unstable_cache(
               { eventDate: { gte: yesterday } },
               // Recurring events (always show)
               { recurring: true },
-              // Events without dates (legacy, show them)
-              { eventDate: null }
+              // Recurring events without dates (legacy data)
+              { eventDate: null, recurring: true }
             ]
           },
           {

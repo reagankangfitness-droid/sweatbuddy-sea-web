@@ -30,7 +30,7 @@ const getCachedSocialProofStats = unstable_cache(
           OR: [
             { eventDate: { gte: today } },
             { recurring: true },
-            { eventDate: null }
+            { eventDate: null, recurring: true }
           ]
         },
       }),
@@ -41,7 +41,7 @@ const getCachedSocialProofStats = unstable_cache(
           OR: [
             { eventDate: { gte: today } },
             { recurring: true },
-            { eventDate: null }
+            { eventDate: null, recurring: true }
           ]
         },
         select: { organizerInstagram: true },
@@ -153,7 +153,7 @@ const getCachedEvents = unstable_cache(
               // Recurring events (always show)
               { recurring: true },
               // Events without dates (legacy, show them)
-              { eventDate: null }
+              { eventDate: null, recurring: true }
             ]
           }
         ]

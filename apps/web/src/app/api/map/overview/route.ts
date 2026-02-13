@@ -96,7 +96,7 @@ export async function GET() {
         OR: [
           { eventDate: { gte: now } },
           { recurring: true },
-          { eventDate: null },
+          { eventDate: null, recurring: true },
         ]
       },
       select: {

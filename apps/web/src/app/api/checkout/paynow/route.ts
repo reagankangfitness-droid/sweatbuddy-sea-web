@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { sendHostNewAttendeeNotification } from '@/lib/event-confirmation-email'
 
@@ -22,12 +21,6 @@ interface PayNowCheckoutRequest {
 
 export async function POST(request: Request) {
   try {
-    // Require authentication
-    const { userId } = await auth()
-    if (!userId) {
-      return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
-    }
-
     const data: PayNowCheckoutRequest = await request.json()
 
     // Accept both paymentReference and transactionRef

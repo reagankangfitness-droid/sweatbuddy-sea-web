@@ -10,15 +10,27 @@ export async function GET() {
     const today = getSGToday()
 
     // Fetch upcoming EventSubmission events with coordinates
+    const now = new Date()
+
     const eventSubmissions = await prisma.eventSubmission.findMany({
       where: {
         status: 'APPROVED',
         latitude: { not: null },
         longitude: { not: null },
-        OR: [
-          { recurring: true },
-          { eventDate: { gte: today } },
-          { eventDate: null },
+        AND: [
+          {
+            OR: [
+              { scheduledPublishAt: null },
+              { scheduledPublishAt: { lte: now } },
+            ],
+          },
+          {
+            OR: [
+              { recurring: true },
+              { eventDate: { gte: today } },
+              { eventDate: null },
+            ],
+          },
         ],
       },
       select: {

@@ -100,6 +100,9 @@ export default function HostForm() {
   }, [])
 
   const [isRecurring, setIsRecurring] = useState(false)
+  const [scheduleEnabled, setScheduleEnabled] = useState(false)
+  const [scheduleDate, setScheduleDate] = useState('')
+  const [scheduleTime, setScheduleTime] = useState('')
   const [formData, setFormData] = useState({
     organizerName: '',
     instagramHandle: '',
@@ -311,6 +314,9 @@ export default function HostForm() {
         paynowNumber: formData.paynowNumber || null,
         clerkUserId: user?.id || null,
         maxSpots: formData.maxSpots ? parseInt(formData.maxSpots, 10) : null,
+        scheduledPublishAt: scheduleEnabled && scheduleDate && scheduleTime
+          ? new Date(`${scheduleDate}T${scheduleTime}`).toISOString()
+          : null,
       }
 
       const response = await fetch('/api/submit-event', {
@@ -361,7 +367,9 @@ export default function HostForm() {
               You&apos;re all set!
             </h2>
             <p className="text-neutral-400 mb-8">
-              Your event is live. Share the link and start building your crew.
+              {scheduleEnabled && scheduleDate && scheduleTime
+                ? `Your event is scheduled to go live on ${new Date(`${scheduleDate}T${scheduleTime}`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at ${new Date(`${scheduleDate}T${scheduleTime}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}.`
+                : 'Your event is live. Share the link and start building your crew.'}
             </p>
             <Link
               href="/"
@@ -521,6 +529,68 @@ export default function HostForm() {
                         <option value="Weekdays">Weekdays</option>
                         <option value="Weekends">Weekends</option>
                       </select>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Schedule Publish Toggle */}
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <button
+                    type="button"
+                    onClick={() => setScheduleEnabled(!scheduleEnabled)}
+                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                      scheduleEnabled
+                        ? 'bg-white border-white'
+                        : 'border-neutral-600 bg-transparent group-hover:border-neutral-500'
+                    }`}
+                  >
+                    {scheduleEnabled && <Check className="w-3 h-3 text-neutral-900" />}
+                  </button>
+                  <Clock className="w-4 h-4 text-neutral-500" />
+                  <span className="text-neutral-400 text-sm">Schedule for later</span>
+                </label>
+
+                {/* Schedule Date/Time Pickers */}
+                <AnimatePresence>
+                  {scheduleEnabled && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <div className="relative">
+                            <div className="flex items-center gap-2 px-4 py-2.5 bg-neutral-900 border border-neutral-700 rounded-full cursor-pointer hover:bg-neutral-800 transition-colors">
+                              <Calendar className="w-4 h-4 text-neutral-400" />
+                              <input
+                                type="date"
+                                value={scheduleDate}
+                                onChange={(e) => setScheduleDate(e.target.value)}
+                                min={new Date().toISOString().split('T')[0]}
+                                max={formData.eventDate || undefined}
+                                className="bg-transparent text-neutral-300 text-sm focus:outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:invert"
+                              />
+                            </div>
+                          </div>
+                          <div className="relative">
+                            <div className="flex items-center gap-2 px-4 py-2.5 bg-neutral-900 border border-neutral-700 rounded-full cursor-pointer hover:bg-neutral-800 transition-colors">
+                              <input
+                                type="time"
+                                value={scheduleTime}
+                                onChange={(e) => setScheduleTime(e.target.value)}
+                                className="bg-transparent text-neutral-300 text-sm focus:outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:invert"
+                              />
+                            </div>
+                          </div>
+                          <div className="px-3 py-2.5 bg-neutral-800 rounded-full" title={userTimezone.name}>
+                            <span className="text-sm text-neutral-400">{userTimezone.abbr || userTimezone.offset}</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-neutral-500">Your event will go live at this time</p>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -1047,6 +1117,8 @@ export default function HostForm() {
                     <Loader2 className="w-5 h-5 animate-spin" />
                     Uploading...
                   </>
+                ) : scheduleEnabled ? (
+                  'Schedule'
                 ) : (
                   'Publish'
                 )}

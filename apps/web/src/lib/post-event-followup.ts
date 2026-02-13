@@ -165,12 +165,17 @@ export async function processPostEventFollowUps(): Promise<{
       }
 
       // Get upcoming events in the same category (for "next event" suggestions)
+      const upcomingNow = new Date()
       const upcomingEvents = await prisma.eventSubmission.findMany({
         where: {
           status: 'APPROVED',
           category: event.category,
           id: { not: event.id },
-          eventDate: { gt: new Date() },
+          eventDate: { gt: upcomingNow },
+          OR: [
+            { scheduledPublishAt: null },
+            { scheduledPublishAt: { lte: upcomingNow } },
+          ],
         },
         orderBy: { eventDate: 'asc' },
         take: 3,

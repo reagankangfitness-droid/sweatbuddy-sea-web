@@ -1708,11 +1708,15 @@ model EventSubmission {
   submittedByUserId String? // Clerk user ID who submitted
   submittedByUser   User?   @relation("UserEventSubmissions", fields: [submittedByUserId], references: [id])
 
+  // Scheduled publishing
+  scheduledPublishAt DateTime? // If set, event won't be visible until this time
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([status, createdAt])
+  @@index([status, scheduledPublishAt])
   @@index([contactEmail])
   @@index([slug])
   @@index([submittedByUserId])

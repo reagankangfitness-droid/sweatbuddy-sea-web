@@ -193,9 +193,19 @@ export async function GET(request: NextRequest) {
   const eventSubmissions = await prisma.eventSubmission.findMany({
     where: {
       status: 'APPROVED',
-      OR: [
-        { recurring: true },
-        { eventDate: { gte: threeHoursAgo } },
+      AND: [
+        {
+          OR: [
+            { scheduledPublishAt: null },
+            { scheduledPublishAt: { lte: now } },
+          ],
+        },
+        {
+          OR: [
+            { recurring: true },
+            { eventDate: { gte: threeHoursAgo } },
+          ],
+        },
       ],
     },
     select: {

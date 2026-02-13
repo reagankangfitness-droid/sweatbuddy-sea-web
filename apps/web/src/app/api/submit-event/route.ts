@@ -131,6 +131,8 @@ interface EventSubmission {
   maxSpots?: number | null
   // User account link
   clerkUserId?: string | null
+  // Scheduled publishing
+  scheduledPublishAt?: string | null // ISO date string
 }
 
 export async function POST(request: Request) {
@@ -324,6 +326,8 @@ export async function POST(request: Request) {
         maxTickets: data.maxSpots || null,
         // Link to user account
         submittedByUserId: dbUserId,
+        // Scheduled publishing
+        scheduledPublishAt: data.scheduledPublishAt ? new Date(data.scheduledPublishAt) : null,
       },
       data.eventName
     )

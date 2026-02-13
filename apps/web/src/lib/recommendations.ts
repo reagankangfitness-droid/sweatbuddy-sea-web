@@ -242,9 +242,19 @@ export async function getRecommendedEvents(
       where: {
         status: 'APPROVED',
         isFull: false,
-        OR: [
-          { eventDate: { gt: now } },
-          { recurring: true },
+        AND: [
+          {
+            OR: [
+              { scheduledPublishAt: null },
+              { scheduledPublishAt: { lte: now } },
+            ],
+          },
+          {
+            OR: [
+              { eventDate: { gt: now } },
+              { recurring: true },
+            ],
+          },
         ],
       },
       select: {
@@ -468,9 +478,19 @@ export async function getTrendingEvents(limit = 5): Promise<RecommendedEvent[]> 
             id: { in: trendingSubmissionIds },
             status: 'APPROVED',
             isFull: false,
-            OR: [
-              { eventDate: { gt: now } },
-              { recurring: true },
+            AND: [
+              {
+                OR: [
+                  { scheduledPublishAt: null },
+                  { scheduledPublishAt: { lte: now } },
+                ],
+              },
+              {
+                OR: [
+                  { eventDate: { gt: now } },
+                  { recurring: true },
+                ],
+              },
             ],
           },
           select: {

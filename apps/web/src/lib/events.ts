@@ -134,17 +134,28 @@ const getCachedEvents = unstable_cache(
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
+    const now = new Date()
+
     // Get approved events that are upcoming or recurring
     const approvedSubmissions = await prisma.eventSubmission.findMany({
       where: {
         status: 'APPROVED',
+        // Only show events that are either not scheduled or whose publish time has passed
         OR: [
-          // Events with future dates
-          { eventDate: { gte: today } },
-          // Recurring events (always show)
-          { recurring: true },
-          // Events without dates (legacy, show them)
-          { eventDate: null }
+          { scheduledPublishAt: null },
+          { scheduledPublishAt: { lte: now } },
+        ],
+        AND: [
+          {
+            OR: [
+              // Events with future dates
+              { eventDate: { gte: today } },
+              // Recurring events (always show)
+              { recurring: true },
+              // Events without dates (legacy, show them)
+              { eventDate: null }
+            ]
+          }
         ]
       },
       orderBy: { eventDate: 'asc' }, // Sort by event date, soonest first
@@ -228,6 +239,8 @@ export async function getEvents(): Promise<Event[]> {
 // Supports both EventSubmission and Activity records
 const getCachedEventById = unstable_cache(
   async (idOrSlug: string): Promise<Event | null> => {
+    const now = new Date()
+
     // First, try EventSubmission table
     const submission = await prisma.eventSubmission.findFirst({
       where: {
@@ -235,7 +248,15 @@ const getCachedEventById = unstable_cache(
           { id: idOrSlug },
           { slug: idOrSlug }
         ],
-        status: 'APPROVED'
+        status: 'APPROVED',
+        AND: [
+          {
+            OR: [
+              { scheduledPublishAt: null },
+              { scheduledPublishAt: { lte: now } },
+            ]
+          }
+        ]
       },
       select: {
         id: true,

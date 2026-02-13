@@ -27,6 +27,7 @@ export async function buildAgentContext(organizerId: string): Promise<AgentConte
   }
 
   // Get all events for this organizer (by Instagram handle or email)
+  const now = new Date()
   const events = await prisma.eventSubmission.findMany({
     where: {
       OR: [
@@ -34,6 +35,14 @@ export async function buildAgentContext(organizerId: string): Promise<AgentConte
         { contactEmail: organizer.email },
       ],
       status: 'APPROVED',
+      AND: [
+        {
+          OR: [
+            { scheduledPublishAt: null },
+            { scheduledPublishAt: { lte: now } },
+          ],
+        },
+      ],
     },
     orderBy: { createdAt: 'desc' },
   })
@@ -103,7 +112,6 @@ export async function buildAgentContext(organizerId: string): Promise<AgentConte
   // At-risk members (attended 2+ times but not in last 30 days)
   const thirtyDaysAgo = new Date()
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-  const now = new Date()
 
   const atRiskMembers = Object.values(attendanceCounts)
     .filter(a => {

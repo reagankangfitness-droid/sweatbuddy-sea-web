@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { getSGNow } from '@/lib/event-dates'
+// Use plain new Date() for time arithmetic - timezone doesn't affect diffs
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -65,7 +65,7 @@ function normalizeWeights(weights: Map<string, number>): Map<string, number> {
 
 /** How many days ago a date was created (capped at 30 for scoring). */
 function daysSinceCreation(createdAt: Date): number {
-  const now = getSGNow()
+  const now = new Date()
   const diff = now.getTime() - createdAt.getTime()
   return Math.min(Math.max(Math.floor(diff / (1000 * 60 * 60 * 24)), 0), 30)
 }
@@ -216,7 +216,7 @@ export async function getRecommendedEvents(
   userEmail: string,
   limit = 10,
 ): Promise<RecommendedEvent[]> {
-  const now = getSGNow()
+  const now = new Date()
 
   // Fetch upcoming events from both systems in parallel
   const [upcomingActivities, upcomingSubmissions, profile] = await Promise.all([
@@ -443,7 +443,7 @@ export async function getRecommendedEvents(
  * Get trending events based on highest attendance in the last 7 days.
  */
 export async function getTrendingEvents(limit = 5): Promise<RecommendedEvent[]> {
-  const now = getSGNow()
+  const now = new Date()
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
 
   // Get attendance counts from both systems in the last 7 days

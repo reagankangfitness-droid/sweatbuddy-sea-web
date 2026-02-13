@@ -73,34 +73,53 @@ export function parseLocalDate(dateStr: string): Date {
 }
 
 // ─── Server-side Singapore-aware helpers ──────────────────────────────
+// IMPORTANT: These use Intl.DateTimeFormat to extract SGT date parts directly
+// from Date objects. This avoids the double-conversion bug where
+// `new Date(date.toLocaleString(...))` applies the timezone offset twice
+// on UTC servers (Vercel), causing dates to shift after 4 PM SGT.
+
+/** Reusable formatter for YYYY-MM-DD in SGT */
+const sgDateFormatter = new Intl.DateTimeFormat('en-US', {
+  timeZone: EVENT_TIMEZONE,
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+})
+
+/** Reusable formatter for SGT day of week */
+const sgWeekdayFormatter = new Intl.DateTimeFormat('en-US', {
+  timeZone: EVENT_TIMEZONE,
+  weekday: 'short',
+})
 
 /**
- * Get "now" in Singapore timezone as a Date object.
- * Use this instead of `new Date()` for date comparisons on the server.
+ * Format a Date as YYYY-MM-DD in Singapore timezone.
+ * Uses Intl.DateTimeFormat to avoid double-conversion bugs.
  */
-export function getSGNow(): Date {
-  return new Date(new Date().toLocaleString('en-US', { timeZone: EVENT_TIMEZONE }))
+export function toSGDateStr(d: Date): string {
+  const parts = sgDateFormatter.formatToParts(d)
+  const y = parts.find(p => p.type === 'year')!.value
+  const m = parts.find(p => p.type === 'month')!.value
+  const day = parts.find(p => p.type === 'day')!.value
+  return `${y}-${m}-${day}`
+}
+
+/**
+ * Get the SGT day of week (0=Sun, 1=Mon, ..., 6=Sat) for a Date.
+ */
+function getSGDayOfWeek(d: Date): number {
+  const dayName = sgWeekdayFormatter.format(d)
+  const dayMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }
+  return dayMap[dayName] ?? 0
 }
 
 /**
  * Get today at midnight in Singapore timezone.
+ * Returns a Date suitable for Prisma queries (where eventDate is stored as midnight UTC).
  */
 export function getSGToday(): Date {
-  const sg = getSGNow()
-  sg.setHours(0, 0, 0, 0)
-  return sg
-}
-
-/**
- * Format a Date as YYYY-MM-DD in Singapore timezone.
- * Use this instead of `date.toISOString().slice(0, 10)` which extracts the UTC date.
- */
-export function toSGDateStr(d: Date): string {
-  const sg = new Date(d.toLocaleString('en-US', { timeZone: EVENT_TIMEZONE }))
-  const y = sg.getFullYear()
-  const m = String(sg.getMonth() + 1).padStart(2, '0')
-  const day = String(sg.getDate()).padStart(2, '0')
-  return `${y}-${m}-${day}`
+  const todayStr = toSGDateStr(new Date())
+  return new Date(todayStr + 'T00:00:00Z')
 }
 
 /**
@@ -108,7 +127,7 @@ export function toSGDateStr(d: Date): string {
  */
 export function isTodaySG(date: Date | null): boolean {
   if (!date) return false
-  return toSGDateStr(date) === toSGDateStr(getSGNow())
+  return toSGDateStr(date) === toSGDateStr(new Date())
 }
 
 /**
@@ -116,11 +135,14 @@ export function isTodaySG(date: Date | null): boolean {
  */
 export function isThisWeekendSG(date: Date | null): boolean {
   if (!date) return false
-  const sg = new Date(date.toLocaleString('en-US', { timeZone: EVENT_TIMEZONE }))
-  const today = getSGToday()
-  const dayOfWeek = sg.getDay()
-  const daysUntil = Math.ceil((sg.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-  return (dayOfWeek === 0 || dayOfWeek === 6) && daysUntil <= 7
+  const dayOfWeek = getSGDayOfWeek(date)
+  if (dayOfWeek !== 0 && dayOfWeek !== 6) return false
+  // Check within next 7 days
+  const eventStr = toSGDateStr(date)
+  const todayStr = toSGDateStr(new Date())
+  const diffMs = new Date(eventStr).getTime() - new Date(todayStr).getTime()
+  const daysUntil = Math.round(diffMs / (1000 * 60 * 60 * 24))
+  return daysUntil >= 0 && daysUntil <= 7
 }
 
 /**
@@ -133,16 +155,15 @@ export function getNextOccurrenceSG(day: string): Date | null {
   const targetDay = days.findIndex(d => d.toLowerCase().startsWith(cleanDay.slice(0, 3)))
   if (targetDay === -1) return null
 
-  const sgNow = getSGNow()
+  const todayDay = getSGDayOfWeek(new Date())
   const today = getSGToday()
-  const todayDay = sgNow.getDay()
 
   let daysUntil = targetDay - todayDay
   if (daysUntil < 0) daysUntil += 7
   if (daysUntil === 0) return today
 
   const nextDate = new Date(today)
-  nextDate.setDate(today.getDate() + daysUntil)
+  nextDate.setUTCDate(today.getUTCDate() + daysUntil)
   return nextDate
 }
 
@@ -164,7 +185,7 @@ export function combineDateTimeSG(date: Date | null, timeStr: string | null): Da
   if (period === 'PM' && hours !== 12) hours += 12
   if (period === 'AM' && hours === 12) hours = 0
 
-  // Get the calendar date in Singapore timezone to avoid UTC day-shift
+  // Get the calendar date in Singapore timezone
   const dateStr = toSGDateStr(date)
   const h = String(hours).padStart(2, '0')
   const m = String(minutes).padStart(2, '0')

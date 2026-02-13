@@ -100,6 +100,7 @@ export default function HostForm() {
   }, [])
 
   const [isRecurring, setIsRecurring] = useState(false)
+  const [activeGroup, setActiveGroup] = useState<string | null>(null)
   const [scheduleEnabled, setScheduleEnabled] = useState(false)
   const [scheduleDate, setScheduleDate] = useState('')
   const [scheduleTime, setScheduleTime] = useState('')
@@ -630,56 +631,99 @@ export default function HostForm() {
                   />
                 </div>
 
-                {/* Activity Type Selection */}
-                <div className="space-y-4">
+                {/* Activity Type Selection — Two-step picker */}
+                <div className="space-y-3">
                   <h3 className={`text-lg font-semibold ${fieldErrors.eventType ? 'text-red-400' : 'text-white'}`}>
                     What type of experience is this?
                   </h3>
                   {fieldErrors.eventType && (
                     <p className="text-red-400 text-sm">Please select an activity type</p>
                   )}
-                  {CATEGORY_GROUPS
-                    .sort((a, b) => a.displayOrder - b.displayOrder)
-                    .map(group => {
-                      const activities = getCategoriesByGroup(group.slug)
-                      if (activities.length === 0) return null
-                      return (
-                        <div key={group.slug} className="space-y-2">
-                          <h4 className="text-xs font-medium text-neutral-500 uppercase tracking-wider">
-                            {group.emoji} {group.name}
-                          </h4>
-                          <div className="flex flex-wrap gap-2">
-                            {activities.map(cat => {
-                              const value = `${cat.emoji} ${cat.name}`
-                              const isSelected = formData.eventType === value
-                              return (
-                                <button
-                                  key={cat.slug}
-                                  type="button"
-                                  onClick={() => {
-                                    setFormData(prev => ({
-                                      ...prev,
-                                      eventType: isSelected ? '' : value,
-                                    }))
-                                    if (fieldErrors.eventType) {
-                                      setFieldErrors(prev => ({ ...prev, eventType: false }))
-                                    }
-                                    if (error) setError('')
-                                  }}
-                                  className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
-                                    isSelected
-                                      ? 'bg-white text-neutral-900 border-white font-medium'
-                                      : 'bg-neutral-900 text-neutral-300 border-neutral-700 hover:bg-neutral-800 hover:border-neutral-600'
-                                  }`}
-                                >
-                                  {cat.emoji} {cat.name}
-                                </button>
-                              )
-                            })}
-                          </div>
+
+                  {/* Selected activity chip (shown when an activity is picked) */}
+                  {formData.eventType && (
+                    <div className="flex items-center gap-2">
+                      <span className="px-3 py-1.5 rounded-full text-sm bg-white text-neutral-900 border border-white font-medium">
+                        {formData.eventType}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData(prev => ({ ...prev, eventType: '' }))
+                          setActiveGroup(null)
+                        }}
+                        className="p-1 hover:bg-neutral-800 rounded-full transition-colors"
+                      >
+                        <X className="w-4 h-4 text-neutral-400" />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Step 1: Group pills */}
+                  {!formData.eventType && (
+                    <div className="flex flex-wrap gap-2">
+                      {CATEGORY_GROUPS
+                        .sort((a, b) => a.displayOrder - b.displayOrder)
+                        .map(group => {
+                          const isActive = activeGroup === group.slug
+                          // Check if the selected activity belongs to this group
+                          const hasSelection = getCategoriesByGroup(group.slug).some(
+                            cat => formData.eventType === `${cat.emoji} ${cat.name}`
+                          )
+                          return (
+                            <button
+                              key={group.slug}
+                              type="button"
+                              onClick={() => setActiveGroup(isActive ? null : group.slug)}
+                              className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                                isActive
+                                  ? 'bg-white text-neutral-900 border-white font-medium'
+                                  : hasSelection
+                                    ? 'bg-neutral-800 text-white border-neutral-600 font-medium'
+                                    : 'bg-neutral-900 text-neutral-300 border-neutral-700 hover:bg-neutral-800 hover:border-neutral-600'
+                              }`}
+                            >
+                              {group.emoji} {group.name}
+                            </button>
+                          )
+                        })}
+                    </div>
+                  )}
+
+                  {/* Step 2: Activities in selected group */}
+                  <AnimatePresence>
+                    {activeGroup && !formData.eventType && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          {getCategoriesByGroup(activeGroup).map(cat => {
+                            const value = `${cat.emoji} ${cat.name}`
+                            return (
+                              <button
+                                key={cat.slug}
+                                type="button"
+                                onClick={() => {
+                                  setFormData(prev => ({ ...prev, eventType: value }))
+                                  if (fieldErrors.eventType) {
+                                    setFieldErrors(prev => ({ ...prev, eventType: false }))
+                                  }
+                                  if (error) setError('')
+                                }}
+                                className="px-3 py-1.5 rounded-full text-sm border bg-neutral-900 text-neutral-300 border-neutral-700 hover:bg-neutral-800 hover:border-neutral-600 transition-colors"
+                              >
+                                {cat.emoji} {cat.name}
+                              </button>
+                            )
+                          })}
                         </div>
-                      )
-                    })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 {/* Tickets Section */}

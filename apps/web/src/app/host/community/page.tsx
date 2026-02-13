@@ -397,7 +397,7 @@ export default function CommunityPage() {
                     onChange={() => setMessageAudience('all')}
                     className="text-neutral-900"
                   />
-                  <span className="text-sm">All RSVPs ({stats?.totalPeople || 0} people)</span>
+                  <span className="text-sm text-neutral-900">All RSVPs ({stats?.totalPeople || 0} people)</span>
                 </label>
                 <label className="flex items-center gap-2 p-3 border border-neutral-200 rounded-lg cursor-pointer hover:bg-neutral-50">
                   <input
@@ -408,7 +408,7 @@ export default function CommunityPage() {
                     onChange={() => setMessageAudience('regulars')}
                     className="text-neutral-900"
                   />
-                  <span className="text-sm">Regulars only ({stats?.regulars || 0} people with 3+ events)</span>
+                  <span className="text-sm text-neutral-900">Regulars only ({stats?.regulars || 0} people with 3+ events)</span>
                 </label>
               </div>
             </div>

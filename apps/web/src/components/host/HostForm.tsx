@@ -33,6 +33,8 @@ import {
 import { UploadButton, useUploadThing } from '@/lib/uploadthing'
 import { ACTIVITY_CATEGORIES, CATEGORY_GROUPS, getCategoriesByGroup } from '@/lib/categories'
 import { parseLocalDate } from '@/lib/event-dates'
+import { DatePickerDropdown } from '@/components/ui/DatePickerDropdown'
+import { TimePickerDropdown } from '@/components/ui/TimePickerDropdown'
 
 // Dynamically import LocationAutocomplete to prevent SSR issues with Google Maps
 const LocationAutocomplete = dynamicImport(
@@ -439,46 +441,39 @@ export default function HostForm() {
                 {/* Date/Time Pills */}
                 <div className="flex flex-wrap items-center gap-3">
                   {/* Start Date */}
-                  <div className="relative">
-                    <div className={`flex items-center gap-2 px-4 py-2.5 bg-neutral-900 border rounded-full cursor-pointer hover:bg-neutral-800 transition-colors ${fieldErrors.eventDate ? 'border-red-500' : 'border-neutral-700'}`}>
-                      <Calendar className="w-4 h-4 text-neutral-400" />
-                      <input
-                        type="date"
-                        name="eventDate"
-                        value={formData.eventDate}
-                        onChange={handleChange}
-                        min={new Date().toISOString().split('T')[0]}
-                        className="bg-transparent text-white text-sm focus:outline-none cursor-pointer [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:invert"
-                      />
-                    </div>
-                  </div>
+                  <DatePickerDropdown
+                    value={formData.eventDate}
+                    onChange={(date) => {
+                      setFormData(prev => ({ ...prev, eventDate: date }))
+                      if (fieldErrors.eventDate) setFieldErrors(prev => ({ ...prev, eventDate: false }))
+                      if (error) setError('')
+                    }}
+                    min={new Date().toISOString().split('T')[0]}
+                    placeholder="Pick a date"
+                    hasError={fieldErrors.eventDate}
+                  />
 
                   {/* Start Time */}
-                  <div className="relative">
-                    <div className={`flex items-center gap-2 px-4 py-2.5 bg-neutral-900 border rounded-full cursor-pointer hover:bg-neutral-800 transition-colors ${fieldErrors.eventTime ? 'border-red-500' : 'border-neutral-700'}`}>
-                      <input
-                        type="time"
-                        name="eventTime"
-                        value={formData.eventTime}
-                        onChange={handleChange}
-                        className="bg-transparent text-white text-sm focus:outline-none cursor-pointer [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:invert"
-                      />
-                    </div>
-                  </div>
+                  <TimePickerDropdown
+                    value={formData.eventTime}
+                    onChange={(time) => {
+                      setFormData(prev => ({ ...prev, eventTime: time }))
+                      if (fieldErrors.eventTime) setFieldErrors(prev => ({ ...prev, eventTime: false }))
+                      if (error) setError('')
+                    }}
+                    placeholder="Start time"
+                    hasError={fieldErrors.eventTime}
+                  />
 
                   {/* End Time */}
-                  <div className="relative">
-                    <div className="flex items-center gap-2 px-4 py-2.5 bg-neutral-900 border border-neutral-700 rounded-full cursor-pointer hover:bg-neutral-800 transition-colors">
-                      <input
-                        type="time"
-                        name="endTime"
-                        value={formData.endTime}
-                        onChange={handleChange}
-                        placeholder="End"
-                        className="bg-transparent text-white text-sm focus:outline-none cursor-pointer [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:invert"
-                      />
-                    </div>
-                  </div>
+                  <TimePickerDropdown
+                    value={formData.endTime}
+                    onChange={(time) => {
+                      setFormData(prev => ({ ...prev, endTime: time }))
+                      if (error) setError('')
+                    }}
+                    placeholder="End time"
+                  />
 
                   {/* Timezone Badge - shows user's local timezone */}
                   <div className="px-3 py-2.5 bg-neutral-800 rounded-full" title={userTimezone.name}>
@@ -563,29 +558,18 @@ export default function HostForm() {
                     >
                       <div className="space-y-3">
                         <div className="flex flex-wrap items-center gap-3">
-                          <div className="relative">
-                            <div className="flex items-center gap-2 px-4 py-2.5 bg-neutral-900 border border-neutral-700 rounded-full cursor-pointer hover:bg-neutral-800 transition-colors">
-                              <Calendar className="w-4 h-4 text-neutral-400" />
-                              <input
-                                type="date"
-                                value={scheduleDate}
-                                onChange={(e) => setScheduleDate(e.target.value)}
-                                min={new Date().toISOString().split('T')[0]}
-                                max={formData.eventDate || undefined}
-                                className="bg-transparent text-white text-sm focus:outline-none cursor-pointer [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:invert"
-                              />
-                            </div>
-                          </div>
-                          <div className="relative">
-                            <div className="flex items-center gap-2 px-4 py-2.5 bg-neutral-900 border border-neutral-700 rounded-full cursor-pointer hover:bg-neutral-800 transition-colors">
-                              <input
-                                type="time"
-                                value={scheduleTime}
-                                onChange={(e) => setScheduleTime(e.target.value)}
-                                className="bg-transparent text-white text-sm focus:outline-none cursor-pointer [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:invert"
-                              />
-                            </div>
-                          </div>
+                          <DatePickerDropdown
+                            value={scheduleDate}
+                            onChange={(date) => setScheduleDate(date)}
+                            min={new Date().toISOString().split('T')[0]}
+                            max={formData.eventDate || undefined}
+                            placeholder="Pick a date"
+                          />
+                          <TimePickerDropdown
+                            value={scheduleTime}
+                            onChange={(time) => setScheduleTime(time)}
+                            placeholder="Pick a time"
+                          />
                           <div className="px-3 py-2.5 bg-neutral-800 rounded-full" title={userTimezone.name}>
                             <span className="text-sm text-neutral-400">{userTimezone.abbr || userTimezone.offset}</span>
                           </div>

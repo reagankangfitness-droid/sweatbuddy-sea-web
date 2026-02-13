@@ -158,6 +158,9 @@ export async function GET(request: NextRequest) {
     where.creatorId = { notIn: Array.from(blockedUserIds) }
   }
 
+  // Use shared Singapore timezone helpers for all date calculations
+  const today = getSGToday()
+
   // --- Fetch hosted activities (published, with coordinates, upcoming) ---
   // Show all future activities with no date ceiling
   const hostedActivities = await prisma.activity.findMany({
@@ -188,8 +191,7 @@ export async function GET(request: NextRequest) {
 
   // --- Fetch upcoming EventSubmissions ---
   // Show: recurring events (always) + all future one-time events
-  // Add 3 hour buffer after eventDate to account for event duration
-  const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000)
+  // Use SGT-aware "today" for eventDate comparison since eventDate is stored as midnight UTC
   const eventSubmissions = await prisma.eventSubmission.findMany({
     where: {
       status: 'APPROVED',
@@ -203,7 +205,8 @@ export async function GET(request: NextRequest) {
         {
           OR: [
             { recurring: true },
-            { eventDate: { gte: threeHoursAgo } },
+            { eventDate: { gte: today } },
+            { eventDate: null },
           ],
         },
       ],
@@ -243,9 +246,6 @@ export async function GET(request: NextRequest) {
       })
     : []
   const attendanceMap = new Map(attendanceCounts.map((a) => [a.eventId, a._count.id]))
-
-  // Use shared Singapore timezone helpers for all date calculations
-  const today = getSGToday()
 
   // Convert EventSubmissions with engagement signals
   const eventSubmissionData = eventSubmissions.map((e) => {

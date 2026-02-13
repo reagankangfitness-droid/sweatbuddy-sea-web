@@ -448,7 +448,7 @@ export default function HostForm() {
                         value={formData.eventDate}
                         onChange={handleChange}
                         min={new Date().toISOString().split('T')[0]}
-                        className="bg-transparent text-neutral-300 text-sm focus:outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:invert"
+                        className="bg-transparent text-white text-sm focus:outline-none cursor-pointer [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:invert"
                       />
                     </div>
                   </div>
@@ -461,7 +461,7 @@ export default function HostForm() {
                         name="eventTime"
                         value={formData.eventTime}
                         onChange={handleChange}
-                        className="bg-transparent text-neutral-300 text-sm focus:outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:invert"
+                        className="bg-transparent text-white text-sm focus:outline-none cursor-pointer [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:invert"
                       />
                     </div>
                   </div>
@@ -475,7 +475,7 @@ export default function HostForm() {
                         value={formData.endTime}
                         onChange={handleChange}
                         placeholder="End"
-                        className="bg-transparent text-neutral-300 text-sm focus:outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:invert"
+                        className="bg-transparent text-white text-sm focus:outline-none cursor-pointer [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:invert"
                       />
                     </div>
                   </div>
@@ -516,7 +516,7 @@ export default function HostForm() {
                         name="eventDay"
                         value={formData.eventDay}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-neutral-300 focus:outline-none focus:border-neutral-500 appearance-none"
+                        className="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl text-white focus:outline-none focus:border-neutral-500 appearance-none [color-scheme:dark]"
                       >
                         <option value="">Select repeat frequency...</option>
                         <option value="Every Monday">Every Monday</option>
@@ -572,7 +572,7 @@ export default function HostForm() {
                                 onChange={(e) => setScheduleDate(e.target.value)}
                                 min={new Date().toISOString().split('T')[0]}
                                 max={formData.eventDate || undefined}
-                                className="bg-transparent text-neutral-300 text-sm focus:outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:invert"
+                                className="bg-transparent text-white text-sm focus:outline-none cursor-pointer [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:invert"
                               />
                             </div>
                           </div>
@@ -582,7 +582,7 @@ export default function HostForm() {
                                 type="time"
                                 value={scheduleTime}
                                 onChange={(e) => setScheduleTime(e.target.value)}
-                                className="bg-transparent text-neutral-300 text-sm focus:outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:invert"
+                                className="bg-transparent text-white text-sm focus:outline-none cursor-pointer [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:invert"
                               />
                             </div>
                           </div>

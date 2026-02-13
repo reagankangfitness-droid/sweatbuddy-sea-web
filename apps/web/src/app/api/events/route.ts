@@ -76,13 +76,23 @@ const getCachedEvents = unstable_cache(
     const approvedSubmissions = await prisma.eventSubmission.findMany({
       where: {
         status: 'APPROVED',
-        OR: [
-          // Events from yesterday onwards (timezone-safe)
-          { eventDate: { gte: yesterday } },
-          // Recurring events (always show)
-          { recurring: true },
-          // Events without dates (legacy, show them)
-          { eventDate: null }
+        AND: [
+          {
+            OR: [
+              // Events from yesterday onwards (timezone-safe)
+              { eventDate: { gte: yesterday } },
+              // Recurring events (always show)
+              { recurring: true },
+              // Events without dates (legacy, show them)
+              { eventDate: null }
+            ]
+          },
+          {
+            OR: [
+              { scheduledPublishAt: null },
+              { scheduledPublishAt: { lte: now } },
+            ]
+          },
         ]
       },
       orderBy: { eventDate: 'asc' }, // Sort by event date, soonest first

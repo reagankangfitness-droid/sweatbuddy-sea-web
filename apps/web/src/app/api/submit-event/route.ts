@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
+import { revalidateTag } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { sendEventSubmittedEmail } from '@/lib/event-confirmation-email'
 import {
@@ -331,6 +332,11 @@ export async function POST(request: Request) {
       },
       data.eventName
     )
+
+    // Bust the events cache so new event appears immediately
+    if (status === 'APPROVED') {
+      revalidateTag('events')
+    }
 
     // Send confirmation email to host (fire and forget)
     sendEventSubmittedEmail({

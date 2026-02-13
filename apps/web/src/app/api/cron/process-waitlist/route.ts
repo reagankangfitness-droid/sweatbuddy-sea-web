@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server'
 import { processExpiredNotifications } from '@/lib/waitlist'
+import { isValidCronSecret } from '@/lib/cron-auth'
 
 export async function GET(request: Request) {
   try {
-    // Verify cron secret from Vercel or other services
     const authHeader = request.headers.get('authorization')
     const cronSecret = process.env.CRON_SECRET
+    const providedSecret = authHeader?.replace('Bearer ', '') || ''
 
-    // Only verify if CRON_SECRET is set (skip in development)
-    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    if (!cronSecret || !isValidCronSecret(providedSecret, cronSecret)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

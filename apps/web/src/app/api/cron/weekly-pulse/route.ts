@@ -7,11 +7,11 @@ import {
   formatContextForPulse,
   WEEKLY_PULSE_SYSTEM_PROMPT,
 } from '@/lib/ai'
+import { isValidCronSecret } from '@/lib/cron-auth'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 300 // 5 minutes timeout for cron job
 
-// Verify cron secret to prevent unauthorized access
 const CRON_SECRET = process.env.CRON_SECRET
 
 /**
@@ -114,9 +114,9 @@ Only output the JSON, no other text.`,
  */
 export async function POST(request: Request) {
   try {
-    // Verify cron secret
     const authHeader = request.headers.get('authorization')
-    if (!CRON_SECRET || authHeader !== `Bearer ${CRON_SECRET}`) {
+    const providedSecret = authHeader?.replace('Bearer ', '') || ''
+    if (!CRON_SECRET || !isValidCronSecret(providedSecret, CRON_SECRET)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

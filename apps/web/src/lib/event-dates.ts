@@ -119,7 +119,7 @@ function getSGDayOfWeek(d: Date): number {
  */
 export function getSGToday(): Date {
   const todayStr = toSGDateStr(new Date())
-  return new Date(todayStr + 'T00:00:00Z')
+  return new Date(todayStr + 'T00:00:00+08:00')
 }
 
 /**

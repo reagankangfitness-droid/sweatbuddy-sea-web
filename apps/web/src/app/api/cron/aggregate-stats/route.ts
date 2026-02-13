@@ -5,21 +5,21 @@ import {
   createDailySnapshot,
   createMonthlySnapshot,
 } from '@/lib/stats/aggregation'
+import { isValidCronSecret } from '@/lib/cron-auth'
 
 export const runtime = 'nodejs'
 export const maxDuration = 300 // 5 minutes max for cron jobs
 
 export async function GET(request: NextRequest) {
-  // Verify cron secret for security
-  const cronSecret = request.headers.get('x-cron-secret')
+  const cronSecret = request.headers.get('x-cron-secret') || ''
   const authHeader = request.headers.get('authorization')
+  const bearerSecret = authHeader?.replace('Bearer ', '') || ''
+  const expectedSecret = process.env.CRON_SECRET || ''
 
-  // Allow either cron secret or Vercel's built-in cron authentication
-  const isVercelCron = !!process.env.CRON_SECRET && authHeader === `Bearer ${process.env.CRON_SECRET}`
-  const isManualCron = !!process.env.CRON_SECRET && cronSecret === process.env.CRON_SECRET
+  const isVercelCron = !!expectedSecret && isValidCronSecret(bearerSecret, expectedSecret)
+  const isManualCron = !!expectedSecret && isValidCronSecret(cronSecret, expectedSecret)
 
   if (!isVercelCron && !isManualCron) {
-    console.error('Unauthorized cron request')
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

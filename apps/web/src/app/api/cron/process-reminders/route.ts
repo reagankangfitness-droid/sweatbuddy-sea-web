@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { processDueReminders } from '@/lib/reminders'
+import { isValidCronSecret } from '@/lib/cron-auth'
 
-// Verify cron secret to prevent unauthorized access
 const CRON_SECRET = process.env.CRON_SECRET
 
 /**
@@ -11,12 +11,10 @@ const CRON_SECRET = process.env.CRON_SECRET
  */
 export async function POST(request: NextRequest) {
   try {
-    // Verify authorization
     const authHeader = request.headers.get('authorization')
-    const cronSecret = authHeader?.replace('Bearer ', '')
+    const providedSecret = authHeader?.replace('Bearer ', '') || ''
 
-    // Require the cron secret
-    if (!CRON_SECRET || cronSecret !== CRON_SECRET) {
+    if (!CRON_SECRET || !isValidCronSecret(providedSecret, CRON_SECRET)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

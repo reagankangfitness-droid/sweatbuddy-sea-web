@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { revalidateTag } from 'next/cache'
@@ -34,14 +35,16 @@ async function geocodeLocation(location: string): Promise<{ lat: number; lng: nu
 
 // Generate URL-friendly slug from event name
 function generateSlug(name: string): string {
-  return name
+  const randomSuffix = crypto.randomBytes(3).toString('hex')
+  const base = name
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, '') // Remove special chars
-    .replace(/\s+/g, '-')     // Replace spaces with hyphens
-    .replace(/-+/g, '-')      // Remove consecutive hyphens
-    .replace(/^-|-$/g, '')    // Remove leading/trailing hyphens
-    .substring(0, 50)         // Limit length
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .substring(0, 50)
+  return `${base}-${randomSuffix}`
 }
 
 // Generate unique slug by checking existing ones
@@ -344,8 +347,8 @@ export async function POST(request: Request) {
       hostName: submission.organizerName,
       eventName: submission.eventName,
       eventId: submission.id,
-    }).catch(() => {
-      // Email errors handled silently
+    }).catch((err) => {
+      console.error('Failed to send event submitted email:', err)
     })
 
     return NextResponse.json({

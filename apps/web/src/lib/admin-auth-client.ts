@@ -3,7 +3,7 @@
 
 // Admin user IDs - these Clerk user IDs have admin access
 const getAdminUserIds = () => {
-  return (process.env.NEXT_PUBLIC_ADMIN_USER_IDS || '').split(',').filter(Boolean)
+  return (process.env.ADMIN_USER_IDS || '').split(',').filter(Boolean)
 }
 
 // Check if a Clerk user ID has admin access (client-side)

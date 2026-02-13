@@ -64,16 +64,20 @@ export function EventChat({ eventId, eventName, isOpen, onClose, userEmail: prop
     }
   }, [eventId])
 
+  // Keep a ref to fetchMessages to avoid interval recreation
+  const fetchMessagesRef = useRef(fetchMessages)
+  fetchMessagesRef.current = fetchMessages
+
   // Initial fetch and polling
   useEffect(() => {
     if (isOpen) {
-      fetchMessages()
+      fetchMessagesRef.current()
 
       // Poll for new messages every 5 seconds
-      const interval = setInterval(fetchMessages, 5000)
+      const interval = setInterval(() => fetchMessagesRef.current(), 5000)
       return () => clearInterval(interval)
     }
-  }, [isOpen, eventId, fetchMessages])
+  }, [isOpen])
 
   // Scroll to bottom when messages change
   useEffect(() => {

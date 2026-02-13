@@ -88,7 +88,9 @@ export async function sendBatchEmails(
 
 // Email template helpers
 export function formatDate(date: Date | string): string {
-  return new Date(date).toLocaleDateString('en-US', {
+  const parsed = new Date(date)
+  if (isNaN(parsed.getTime())) return 'Date unavailable'
+  return parsed.toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -97,7 +99,9 @@ export function formatDate(date: Date | string): string {
 }
 
 export function formatTime(date: Date | string): string {
-  return new Date(date).toLocaleTimeString('en-US', {
+  const parsed = new Date(date)
+  if (isNaN(parsed.getTime())) return 'Date unavailable'
+  return parsed.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
@@ -105,7 +109,9 @@ export function formatTime(date: Date | string): string {
 }
 
 export function formatDateTime(date: Date | string): string {
-  return `${formatDate(date)} at ${formatTime(date)}`
+  const parsed = new Date(date)
+  if (isNaN(parsed.getTime())) return 'Date unavailable'
+  return `${formatDate(parsed)} at ${formatTime(parsed)}`
 }
 
 /**

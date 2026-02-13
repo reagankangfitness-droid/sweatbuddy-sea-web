@@ -112,8 +112,8 @@ model Activity {
   updatedAt   DateTime       @updatedAt
   deletedAt   DateTime?
 
-  user           User             @relation("CreatedActivities", fields: [userId], references: [id])
-  host           User?            @relation("HostedActivities", fields: [hostId], references: [id])
+  user           User             @relation("CreatedActivities", fields: [userId], references: [id], onDelete: Cascade)
+  host           User?            @relation("HostedActivities", fields: [hostId], references: [id], onDelete: SetNull)
   userActivities UserActivity[]
   groups         Group[]
 
@@ -137,7 +137,7 @@ model Group {
   updatedAt   DateTime     @updatedAt
   deletedAt   DateTime?
 
-  activity Activity?   @relation(fields: [activityId], references: [id])
+  activity Activity?   @relation(fields: [activityId], references: [id], onDelete: SetNull)
   members  UserGroup[]
   messages Message[]
 
@@ -154,8 +154,8 @@ model Message {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  group    Group     @relation(fields: [groupId], references: [id])
-  user     User      @relation(fields: [userId], references: [id])
+  group    Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   mentions Mention[]
 
   @@index([groupId])
@@ -173,8 +173,8 @@ model UserGroup {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  user  User  @relation(fields: [userId], references: [id])
-  group Group @relation(fields: [groupId], references: [id])
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@unique([userId, groupId])
   @@index([userId])
@@ -191,8 +191,8 @@ model UserActivity {
   updatedAt  DateTime           @updatedAt
   deletedAt  DateTime?
 
-  user     User     @relation(fields: [userId], references: [id])
-  activity Activity @relation(fields: [activityId], references: [id])
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
 
   @@unique([userId, activityId])
   @@index([userId])
@@ -213,7 +213,7 @@ model Notification {
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 
-  user User @relation("UserNotifications", fields: [userId], references: [id])
+  user User @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([isRead])
@@ -229,9 +229,9 @@ model Mention {
   mentionText       String
   createdAt         DateTime @default(now())
 
-  message       Message @relation(fields: [messageId], references: [id])
-  mentionedUser User    @relation("MentionsReceived", fields: [mentionedUserId], references: [id])
-  mentionedBy   User    @relation("MentionsSent", fields: [mentionedByUserId], references: [id])
+  message       Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  mentionedUser User    @relation("MentionsReceived", fields: [mentionedUserId], references: [id], onDelete: Cascade)
+  mentionedBy   User    @relation("MentionsSent", fields: [mentionedByUserId], references: [id], onDelete: Cascade)
 
   @@index([messageId])
   @@index([mentionedUserId])
@@ -250,7 +250,7 @@ model NotificationPreference {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notification_preferences")
 }

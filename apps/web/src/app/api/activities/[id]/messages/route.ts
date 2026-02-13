@@ -182,13 +182,29 @@ export async function POST(
           { status: 400 }
         )
       }
-      conversation = await prisma.conversation.create({
-        data: {
-          activityId,
-          senderId: userId,
-          receiverId: hostId,
-        },
-      })
+      try {
+        conversation = await prisma.conversation.create({
+          data: {
+            activityId,
+            senderId: userId,
+            receiverId: hostId,
+          },
+        })
+      } catch {
+        // Handle race condition: another request may have created the conversation
+        conversation = await prisma.conversation.findFirst({
+          where: {
+            activityId,
+            OR: [
+              { senderId: userId, receiverId: hostId },
+              { senderId: hostId, receiverId: userId },
+            ],
+          },
+        })
+        if (!conversation) {
+          throw new Error('Failed to create or find conversation')
+        }
+      }
     }
 
     // Create the message

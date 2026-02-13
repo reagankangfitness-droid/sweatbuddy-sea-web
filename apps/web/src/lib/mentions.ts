@@ -15,7 +15,7 @@ export interface MentionableUser {
 
 // Regex to match @mentions - matches @username or @"Full Name"
 // Supports: @john, @JohnDoe, @"John Doe", @"Mary Jane"
-const MENTION_REGEX = /@(?:"([^"]+)"|(\w+))/g
+const MENTION_PATTERN = '@(?:"([^"]+)"|(\\w+))'
 
 /**
  * Parse mentions from a message content string
@@ -28,10 +28,9 @@ export function parseMentions(
   const mentions: ParsedMention[] = []
   let match
 
-  // Reset regex state
-  MENTION_REGEX.lastIndex = 0
+  const regex = new RegExp(MENTION_PATTERN, 'g')
 
-  while ((match = MENTION_REGEX.exec(content)) !== null) {
+  while ((match = regex.exec(content)) !== null) {
     // match[1] is for quoted names, match[2] is for simple names
     const mentionName = match[1] || match[2]
 

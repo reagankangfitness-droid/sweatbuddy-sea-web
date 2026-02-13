@@ -143,7 +143,7 @@ export async function getAttendedStats(userId: string) {
     })
   ])
 
-  const uniqueHosts = new Set(hostsCount.map(ua => ua.activity.hostId).filter(Boolean)).size
+  const uniqueHosts = new Set(hostsCount.map(ua => ua.activity?.hostId).filter(Boolean)).size
 
   return {
     activitiesAttended: activitiesCount,

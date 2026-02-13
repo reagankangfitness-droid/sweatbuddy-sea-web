@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { processDueReviewPrompts, processReviewReminders } from '@/lib/reviews'
+import { isValidCronSecret } from '@/lib/cron-auth'
 
-// Cron secret for authentication
 const CRON_SECRET = process.env.CRON_SECRET
 
 /**
@@ -16,9 +16,9 @@ const CRON_SECRET = process.env.CRON_SECRET
  */
 export async function POST(request: NextRequest) {
   try {
-    // Verify cron secret
     const authHeader = request.headers.get('authorization')
-    if (!CRON_SECRET || authHeader !== `Bearer ${CRON_SECRET}`) {
+    const providedSecret = authHeader?.replace('Bearer ', '') || ''
+    if (!CRON_SECRET || !isValidCronSecret(providedSecret, CRON_SECRET)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

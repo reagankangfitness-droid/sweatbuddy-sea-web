@@ -147,6 +147,18 @@ export function calculateFees(
   isPremiumHost: boolean = false,
   feeHandling: 'PASS' | 'ABSORB' = 'ABSORB'
 ): FeeCalculation {
+  if (priceInCents <= 0) {
+    return {
+      priceInCents: 0,
+      platformFee: 0,
+      stripeFee: 0,
+      totalFees: 0,
+      hostPayout: 0,
+      platformFeePercent: 0,
+      totalChargedToAttendee: 0,
+    }
+  }
+
   const platformFeePercent = isPremiumHost ? PLATFORM_FEE_PERCENT_PREMIUM : PLATFORM_FEE_PERCENT_FREE
 
   if (feeHandling === 'ABSORB') {

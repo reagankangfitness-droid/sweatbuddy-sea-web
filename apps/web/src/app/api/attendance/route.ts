@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
@@ -19,7 +20,7 @@ interface AttendanceRecord {
 }
 
 function generateId(): string {
-  return `att_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  return `att_${crypto.randomBytes(12).toString('hex')}`
 }
 
 export async function POST(request: Request) {
@@ -171,8 +172,8 @@ export async function POST(request: Request) {
             },
           })
         }
-      } catch {
-        // Don't fail the whole request if newsletter signup fails
+      } catch (err) {
+        console.error('Failed to add newsletter subscriber:', err)
       }
     }
 
@@ -188,8 +189,8 @@ export async function POST(request: Request) {
       organizerInstagram,
       communityLink: communityLink || null,
       checkInCode, // QR code check-in
-    }).catch(() => {
-      // Email errors handled silently
+    }).catch((err) => {
+      console.error('Failed to send confirmation email:', err)
     })
 
     // Schedule 24-hour reminder email, post-event follow-up, and notify host (fire and forget)
@@ -210,8 +211,8 @@ export async function POST(request: Request) {
           attendanceId: attendance.id,
           eventId,
           eventDate: event.eventDate,
-        }).catch(() => {
-          // Reminder scheduling errors handled silently
+        }).catch((err) => {
+          console.error('Failed to schedule event reminder:', err)
         })
 
         // Schedule post-event follow-up (2 hours after event ends)
@@ -220,8 +221,8 @@ export async function POST(request: Request) {
           eventId,
           eventDate: event.eventDate,
           eventTime: event.time || eventTime || '08:00',
-        }).catch(() => {
-          // Follow-up scheduling errors handled silently
+        }).catch((err) => {
+          console.error('Failed to schedule post-event follow-up:', err)
         })
       }
 
@@ -241,12 +242,12 @@ export async function POST(request: Request) {
           attendeeName: name?.trim() || null,
           attendeeEmail: email.toLowerCase().trim(),
           currentAttendeeCount: attendeeCount,
-        }).catch(() => {
-          // Host notification errors handled silently
+        }).catch((err) => {
+          console.error('Failed to send host new attendee notification:', err)
         })
       }
-    }).catch(() => {
-      // Event fetch errors handled silently
+    }).catch((err) => {
+      console.error('Failed to fetch event for scheduling reminders:', err)
     })
 
     return NextResponse.json({
@@ -345,7 +346,8 @@ export async function GET(request: Request) {
         totalPages: Math.ceil(totalCount / limit),
       },
     })
-  } catch {
+  } catch (err) {
+    console.error('Failed to get attendees:', err)
     return NextResponse.json(
       { error: 'Failed to get attendees' },
       { status: 500 }
@@ -394,7 +396,8 @@ export async function DELETE(request: Request) {
       success: true,
       message: 'Attendee removed successfully',
     })
-  } catch {
+  } catch (err) {
+    console.error('Failed to remove attendee:', err)
     return NextResponse.json(
       { error: 'Failed to remove attendee' },
       { status: 500 }

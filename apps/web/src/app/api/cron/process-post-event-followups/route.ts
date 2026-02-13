@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { processPostEventFollowUps } from '@/lib/post-event-followup'
+import { isValidCronSecret } from '@/lib/cron-auth'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60 // Allow up to 60 seconds for processing
@@ -11,12 +12,11 @@ export const maxDuration = 60 // Allow up to 60 seconds for processing
  * Security: Protected by CRON_SECRET environment variable
  */
 export async function GET(request: Request) {
-  // Verify cron secret for security
   const authHeader = request.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
+  const providedSecret = authHeader?.replace('Bearer ', '') || ''
 
-  // Require the cron secret
-  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret || !isValidCronSecret(providedSecret, cronSecret)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

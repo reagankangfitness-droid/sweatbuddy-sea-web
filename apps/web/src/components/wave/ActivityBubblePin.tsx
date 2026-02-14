@@ -1,7 +1,8 @@
 'use client'
 
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import { OverlayView } from '@react-google-maps/api'
+import Image from 'next/image'
 import { ACTIVITY_CATEGORIES } from '@/lib/categories'
 
 export interface HostedActivityData {
@@ -68,8 +69,11 @@ const PIN_OFFSET = { x: -24, y: -24 }
 const getOffset = () => PIN_OFFSET
 
 export const ActivityBubblePin = memo(function ActivityBubblePin({ activity, onClick }: ActivityBubblePinProps) {
+  const [imgError, setImgError] = useState(false)
   const emoji = getEmoji(activity)
   const color = getColor(activity)
+  const displayImage = activity.imageUrl || activity.hostImageUrl
+  const hasImage = !!displayImage && !imgError
 
   return (
     <OverlayView
@@ -82,13 +86,32 @@ export const ActivityBubblePin = memo(function ActivityBubblePin({ activity, onC
         className="relative flex flex-col items-center pointer-events-auto"
         style={{ willChange: 'transform' }}
       >
-        {/* Main circle — category emoji */}
+        {/* Main circle — event image or emoji fallback */}
         <div
-          className="w-12 h-12 rounded-full shadow-lg flex items-center justify-center bg-white dark:bg-neutral-800 border-[2.5px] ring-2 ring-opacity-20 overflow-hidden"
+          className="w-12 h-12 rounded-full shadow-lg flex items-center justify-center bg-white dark:bg-neutral-800 border-[2.5px] overflow-hidden"
           style={{ borderColor: color, boxShadow: `0 0 0 4px ${color}33` }}
         >
-          <span className="text-2xl leading-none">{emoji}</span>
+          {hasImage ? (
+            <Image
+              src={displayImage!}
+              alt={activity.title || 'Event'}
+              width={44}
+              height={44}
+              className="w-full h-full object-cover"
+              onError={() => setImgError(true)}
+              unoptimized
+            />
+          ) : (
+            <span className="text-2xl leading-none">{emoji}</span>
+          )}
         </div>
+
+        {/* Emoji badge (top-right) — always visible */}
+        <span
+          className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-white dark:bg-neutral-800 shadow-md flex items-center justify-center text-sm border border-neutral-200 dark:border-neutral-700"
+        >
+          {emoji}
+        </span>
 
         {/* Participant count badge (bottom-right) */}
         {activity.participantCount > 0 && (

@@ -47,21 +47,7 @@ interface EventDetailSheetProps {
   onGoingSuccess?: () => void
 }
 
-const categoryEmojis: Record<string, string> = {
-  'Run Club': '🏃',
-  'Running': '🏃',
-  'Yoga': '🧘',
-  'HIIT': '🔥',
-  'Bootcamp': '💪',
-  'Dance': '💃',
-  'Dance Fitness': '💃',
-  'Combat': '🥊',
-  'Outdoor': '🌳',
-  'Outdoor Fitness': '🌳',
-  'Hiking': '🥾',
-  'Meditation': '🧘',
-  'Breathwork': '🌬️',
-}
+import { getCategoryEmoji } from '@/lib/categories'
 
 export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: EventDetailSheetProps) {
   const [mounted, setMounted] = useState(false)
@@ -158,7 +144,7 @@ export function EventDetailSheet({ event, isOpen, onClose, onGoingSuccess }: Eve
     setDragY(0)
   }
 
-  const emoji = categoryEmojis[event.category] || '✨'
+  const emoji = getCategoryEmoji(event.category)
 
   if (!mounted) return null
 

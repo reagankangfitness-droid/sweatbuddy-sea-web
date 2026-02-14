@@ -21,28 +21,7 @@ interface Props {
   onSelect: (event: ExtendedEvent) => void
 }
 
-const categoryEmojis: Record<string, string> = {
-  'Run Club': '🏃',
-  'Running': '🏃',
-  'Yoga': '🧘',
-  'HIIT': '🔥',
-  'Wellness': '💆',
-  'Strength': '💪',
-  'Cycling': '🚴',
-  'Swimming': '🏊',
-  'Dance': '💃',
-  'Meditation': '🧘',
-  'Boxing': '🥊',
-  'Martial Arts': '🥋',
-  'Pilates': '🤸',
-  'CrossFit': '🏋️',
-  'Bootcamp': '⚡',
-  'Social': '🤝',
-}
-
-function getCategoryEmoji(category: string): string {
-  return categoryEmojis[category] || '✨'
-}
+import { getCategoryEmoji } from '@/lib/categories'
 
 export function FeaturedEventsCarousel({ events, onSelect }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null)

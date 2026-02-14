@@ -52,21 +52,7 @@ interface VerifyResponse {
   error?: string
 }
 
-const categoryEmojis: Record<string, string> = {
-  'Run Club': '🏃',
-  'Running': '🏃',
-  'Yoga': '🧘',
-  'HIIT': '🔥',
-  'Bootcamp': '💪',
-  'Dance': '💃',
-  'Dance Fitness': '💃',
-  'Combat': '🥊',
-  'Outdoor': '🌳',
-  'Outdoor Fitness': '🌳',
-  'Hiking': '🥾',
-  'Meditation': '🧘',
-  'Breathwork': '🌬️',
-}
+import { getCategoryEmoji } from '@/lib/categories'
 
 export default function MyEventsViewPage() {
   const params = useParams()
@@ -262,7 +248,7 @@ export default function MyEventsViewPage() {
 
 function EventCard({ rsvp }: { rsvp: RSVPEvent }) {
   const event = rsvp.event!
-  const emoji = categoryEmojis[event.category] || '✨'
+  const emoji = getCategoryEmoji(event.category)
 
   return (
     <Link

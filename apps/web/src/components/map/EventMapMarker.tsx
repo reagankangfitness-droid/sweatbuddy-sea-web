@@ -1,30 +1,7 @@
 'use client'
 
 import { OverlayView } from '@react-google-maps/api'
-import { ACTIVITY_CATEGORIES } from '@/lib/categories'
-
-// Build lookup maps from the authoritative category list
-// Keyed by slug, hyphenated slug, and display name for maximum coverage
-const emojiByCategory: Record<string, string> = {}
-const colorByCategory: Record<string, string> = {}
-for (const cat of ACTIVITY_CATEGORIES) {
-  emojiByCategory[cat.slug] = cat.emoji
-  emojiByCategory[cat.slug.replace(/_/g, '-')] = cat.emoji
-  emojiByCategory[cat.name] = cat.emoji
-  emojiByCategory[cat.name.toLowerCase()] = cat.emoji
-  colorByCategory[cat.slug] = cat.color
-  colorByCategory[cat.slug.replace(/_/g, '-')] = cat.color
-  colorByCategory[cat.name] = cat.color
-  colorByCategory[cat.name.toLowerCase()] = cat.color
-}
-
-function getCategoryEmoji(category: string): string {
-  return emojiByCategory[category] || emojiByCategory[category.toLowerCase()] || '✨'
-}
-
-function getCategoryColor(category: string): string {
-  return colorByCategory[category] || colorByCategory[category.toLowerCase()] || '#EC4899'
-}
+import { getCategoryEmoji, getCategoryColor } from '@/lib/categories'
 
 export interface MapEvent {
   id: string

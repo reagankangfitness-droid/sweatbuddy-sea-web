@@ -3,26 +3,7 @@ import { NextRequest } from 'next/server'
 
 export const runtime = 'edge'
 
-// Category emojis
-const categoryEmojis: Record<string, string> = {
-  'Run Club': '🏃',
-  'Running': '🏃',
-  'Yoga': '🧘',
-  'HIIT': '🔥',
-  'Bootcamp': '💪',
-  'Dance': '💃',
-  'Dance Fitness': '💃',
-  'Combat': '🥊',
-  'Outdoor': '🌳',
-  'Outdoor Fitness': '🌳',
-  'Hiking': '🥾',
-  'Meditation': '🧘',
-  'Breathwork': '🌬️',
-  'Cold Plunge': '🧊',
-  'Swimming': '🏊',
-  'Cycling': '🚴',
-  'Social': '🎉',
-}
+import { getCategoryEmoji } from '@/lib/categories'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -35,7 +16,7 @@ export async function GET(request: NextRequest) {
   const location = searchParams.get('location') || 'Singapore'
   const organizer = searchParams.get('organizer') || ''
 
-  const emoji = categoryEmojis[category] || '✨'
+  const emoji = getCategoryEmoji(category)
 
   // If no title provided, render homepage OG image
   if (!title) {

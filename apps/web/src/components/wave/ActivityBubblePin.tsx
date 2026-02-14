@@ -3,7 +3,7 @@
 import { memo, useState } from 'react'
 import { OverlayView } from '@react-google-maps/api'
 import Image from 'next/image'
-import { ACTIVITY_CATEGORIES } from '@/lib/categories'
+import { getCategoryEmoji, getCategoryColor } from '@/lib/categories'
 
 export interface HostedActivityData {
   id: string
@@ -41,32 +41,18 @@ interface ActivityBubblePinProps {
   onClick: () => void
 }
 
-// Build lookup maps from the authoritative category list
-// Index by slug (underscored), hyphenated slug, and display name for maximum coverage
-const emojiByKey: Record<string, string> = {}
-const colorByKey: Record<string, string> = {}
-for (const cat of ACTIVITY_CATEGORIES) {
-  emojiByKey[cat.slug] = cat.emoji
-  emojiByKey[cat.slug.replace(/_/g, '-')] = cat.emoji
-  emojiByKey[cat.name.toLowerCase()] = cat.emoji
-  colorByKey[cat.slug] = cat.color
-  colorByKey[cat.slug.replace(/_/g, '-')] = cat.color
-  colorByKey[cat.name.toLowerCase()] = cat.color
-}
-
 function getEmoji(activity: HostedActivityData): string {
-  const slug = activity.categorySlug?.toLowerCase()
-  if (slug && emojiByKey[slug]) return emojiByKey[slug]
-  // Fallback to type (display name) field
-  const type = activity.type.toLowerCase()
-  return emojiByKey[type] || '📍'
+  const fromSlug = getCategoryEmoji(activity.categorySlug)
+  if (fromSlug !== '✨') return fromSlug
+  const fromType = getCategoryEmoji(activity.type)
+  return fromType !== '✨' ? fromType : '📍'
 }
 
 function getColor(activity: HostedActivityData): string {
-  const slug = activity.categorySlug?.toLowerCase()
-  if (slug && colorByKey[slug]) return colorByKey[slug]
-  const type = activity.type.toLowerCase()
-  return colorByKey[type] || '#3B82F6'
+  const fromSlug = getCategoryColor(activity.categorySlug)
+  if (fromSlug !== '#9CA3AF') return fromSlug
+  const fromType = getCategoryColor(activity.type)
+  return fromType !== '#9CA3AF' ? fromType : '#3B82F6'
 }
 
 const PIN_OFFSET = { x: -24, y: -24 }

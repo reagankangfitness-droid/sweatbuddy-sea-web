@@ -45,21 +45,7 @@ interface Event {
   attendeesPreview: AttendeePreview[]
 }
 
-const categoryEmojis: Record<string, string> = {
-  'Run Club': '🏃',
-  'Running': '🏃',
-  'Yoga': '🧘',
-  'HIIT': '🔥',
-  'Bootcamp': '💪',
-  'Dance': '💃',
-  'Dance Fitness': '💃',
-  'Combat': '🥊',
-  'Outdoor': '🌳',
-  'Outdoor Fitness': '🌳',
-  'Hiking': '🥾',
-  'Meditation': '🧘',
-  'Breathwork': '🌬️',
-}
+import { getCategoryEmoji } from '@/lib/categories'
 
 export function EventPageClient({ event }: { event: Event }) {
   const [isGoing, setIsGoing] = useState(() => {
@@ -82,7 +68,7 @@ export function EventPageClient({ event }: { event: Event }) {
   })
 
   const confetti = useConfetti()
-  const emoji = categoryEmojis[event.category] || '✨'
+  const emoji = getCategoryEmoji(event.category)
   const isPaid = !event.isFree && event.price && event.price > 0
 
   const handleSave = () => {

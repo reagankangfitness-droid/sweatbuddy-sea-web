@@ -14,21 +14,7 @@ interface SwipeableEventBrowserProps {
   onSave?: (event: Event) => void
 }
 
-const categoryEmojis: Record<string, string> = {
-  'Run Club': '🏃',
-  'Running': '🏃',
-  'Yoga': '🧘',
-  'HIIT': '🔥',
-  'Bootcamp': '💪',
-  'Dance': '💃',
-  'Dance Fitness': '💃',
-  'Combat': '🥊',
-  'Outdoor': '🌳',
-  'Outdoor Fitness': '🌳',
-  'Hiking': '🥾',
-  'Meditation': '🧘',
-  'Breathwork': '🌬️',
-}
+import { getCategoryEmoji } from '@/lib/categories'
 
 export function SwipeableEventBrowser({
   events,
@@ -100,7 +86,7 @@ export function SwipeableEventBrowser({
     )
   }
 
-  const emoji = categoryEmojis[currentEvent.category] || '✨'
+  const emoji = getCategoryEmoji(currentEvent.category)
 
   return (
     <div className="relative h-[75vh] max-h-[600px] w-full max-w-sm mx-auto">
@@ -125,7 +111,7 @@ export function SwipeableEventBrowser({
                 />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center">
-                  <span className="text-8xl">{categoryEmojis[nextEvent.category] || '✨'}</span>
+                  <span className="text-8xl">{getCategoryEmoji(nextEvent.category)}</span>
                 </div>
               )}
             </div>

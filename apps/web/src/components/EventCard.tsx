@@ -45,21 +45,7 @@ interface EventCardProps {
   index?: number
 }
 
-const categoryEmojis: Record<string, string> = {
-  'Run Club': '🏃',
-  'Running': '🏃',
-  'Yoga': '🧘',
-  'HIIT': '🔥',
-  'Bootcamp': '💪',
-  'Dance': '💃',
-  'Dance Fitness': '💃',
-  'Combat': '🥊',
-  'Outdoor': '🌳',
-  'Outdoor Fitness': '🌳',
-  'Hiking': '🥾',
-  'Meditation': '🧘',
-  'Breathwork': '🌬️',
-}
+import { getCategoryEmoji } from '@/lib/categories'
 
 // Memoized component to prevent unnecessary re-renders
 export const EventCard = memo(function EventCard({ event, index = 0 }: EventCardProps) {
@@ -68,7 +54,7 @@ export const EventCard = memo(function EventCard({ event, index = 0 }: EventCard
   const [goingCount] = useState(event.goingCount || 0)
   const [heartAnimate, setHeartAnimate] = useState(false)
 
-  const emoji = categoryEmojis[event.category] || '✨'
+  const emoji = getCategoryEmoji(event.category)
 
   // Load saved/going state from localStorage - deferred to avoid blocking render
   useEffect(() => {

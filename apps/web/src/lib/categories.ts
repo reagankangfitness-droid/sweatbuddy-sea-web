@@ -289,6 +289,35 @@ export function getCategoriesGrouped(): { group: CategoryGroup; categories: Acti
   }))
 }
 
+// Pre-built lookup maps for fast emoji/color resolution from any category format
+// Keyed by slug (underscored), hyphenated slug, and display name (lowercase)
+const _emojiMap: Record<string, string> = {}
+const _colorMap: Record<string, string> = {}
+for (const cat of ACTIVITY_CATEGORIES) {
+  _emojiMap[cat.slug] = cat.emoji
+  _emojiMap[cat.slug.replace(/_/g, '-')] = cat.emoji
+  _emojiMap[cat.name.toLowerCase()] = cat.emoji
+  _colorMap[cat.slug] = cat.color
+  _colorMap[cat.slug.replace(/_/g, '-')] = cat.color
+  _colorMap[cat.name.toLowerCase()] = cat.color
+}
+
+/**
+ * Get emoji for a category — accepts slug, hyphenated slug, or display name
+ */
+export function getCategoryEmoji(category: string | null | undefined): string {
+  if (!category) return '✨'
+  return _emojiMap[category] || _emojiMap[category.toLowerCase()] || '✨'
+}
+
+/**
+ * Get color for a category — accepts slug, hyphenated slug, or display name
+ */
+export function getCategoryColor(category: string | null | undefined): string {
+  if (!category) return '#9CA3AF'
+  return _colorMap[category] || _colorMap[category.toLowerCase()] || '#9CA3AF'
+}
+
 /**
  * Search categories by name
  */

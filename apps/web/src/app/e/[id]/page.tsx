@@ -16,34 +16,7 @@ interface Props {
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
 
-// Category emojis
-const categoryEmojis: Record<string, string> = {
-  'Run Club': '🏃',
-  'Running': '🏃',
-  'Yoga': '🧘',
-  'HIIT': '🔥',
-  'Bootcamp': '💪',
-  'Dance': '💃',
-  'Dance Fitness': '💃',
-  'Combat': '🥊',
-  'Outdoor': '🌳',
-  'Outdoor Fitness': '🌳',
-  'Hiking': '🥾',
-  'Meditation': '🧘',
-  'Breathwork': '🌬️',
-  'Pickleball': '🏓',
-  'Tennis': '🎾',
-  'Basketball': '🏀',
-  'Football': '⚽',
-  'Swim': '🏊',
-  'Cycle': '🚴',
-  'Climb': '🧗',
-  'Boxing': '🥊',
-  'Pilates': '🤸',
-  'Walk': '🚶',
-  'Ice Bath': '🧊',
-  'Sauna': '🧖',
-}
+import { getCategoryEmoji } from '@/lib/categories'
 
 // Format date for OG description
 function formatOGDate(dateStr: string | null | undefined, dayName: string, time: string, recurring: boolean): string {
@@ -81,7 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const truncatedDesc = truncateText(event.description, Math.max(50, maxDescLength))
     ogDescription = `${truncatedDesc}${suffix}`
   } else {
-    const emoji = categoryEmojis[event.category] || '✨'
+    const emoji = getCategoryEmoji(event.category)
     ogDescription = `${emoji} ${event.category} event.${suffix}`
   }
 
@@ -121,7 +94,7 @@ export default async function EventDetailPage({ params }: Props) {
     notFound()
   }
 
-  const emoji = categoryEmojis[event.category] || '✨'
+  const emoji = getCategoryEmoji(event.category)
   const formattedDate = formatEventDate(event.eventDate, event.day, event.recurring)
 
   // Check engagement signals using Singapore timezone

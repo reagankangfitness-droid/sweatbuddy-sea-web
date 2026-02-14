@@ -1,23 +1,25 @@
 'use client'
 
-import { useState } from 'react'
 import { OverlayView } from '@react-google-maps/api'
-import Image from 'next/image'
+import { ACTIVITY_CATEGORIES } from '@/lib/categories'
 
-const categoryEmojis: Record<string, string> = {
-  'Run Club': '🏃',
-  'Running': '🏃',
-  'Yoga': '🧘',
-  'HIIT': '🔥',
-  'Bootcamp': '💪',
-  'Dance': '💃',
-  'Dance Fitness': '💃',
-  'Combat': '🥊',
-  'Outdoor': '🌳',
-  'Outdoor Fitness': '🌳',
-  'Hiking': '🥾',
-  'Meditation': '🧘',
-  'Breathwork': '🌬️',
+// Build lookup maps from the authoritative category list
+// Keyed by both slug and display name for maximum coverage
+const emojiByCategory: Record<string, string> = {}
+const colorByCategory: Record<string, string> = {}
+for (const cat of ACTIVITY_CATEGORIES) {
+  emojiByCategory[cat.slug] = cat.emoji
+  emojiByCategory[cat.name] = cat.emoji
+  colorByCategory[cat.slug] = cat.color
+  colorByCategory[cat.name] = cat.color
+}
+
+function getCategoryEmoji(category: string): string {
+  return emojiByCategory[category] || '✨'
+}
+
+function getCategoryColor(category: string): string {
+  return colorByCategory[category] || '#EC4899' // fallback pink
 }
 
 export interface MapEvent {
@@ -54,12 +56,8 @@ interface ClusterMarkerProps {
 }
 
 export function EventMapMarker({ event, onClick }: EventMapMarkerProps) {
-  const [imgError, setImgError] = useState(false)
-  const [orgImgError, setOrgImgError] = useState(false)
-  const emoji = categoryEmojis[event.category] || '✨'
-  const hasOrgImage = event.organizerImageUrl && !orgImgError
-  const hasEventImage = event.imageUrl && !imgError
-  const initial = event.organizer?.charAt(0).toUpperCase() || '?'
+  const emoji = getCategoryEmoji(event.category)
+  const color = getCategoryColor(event.category)
 
   return (
     <OverlayView
@@ -72,33 +70,14 @@ export function EventMapMarker({ event, onClick }: EventMapMarkerProps) {
         className="relative group focus:outline-none"
         aria-label={`View ${event.name}`}
       >
-        {/* Outer ring */}
-        <div className="w-[44px] h-[44px] rounded-full bg-gradient-to-br from-pink-500 to-rose-500 p-[3px] shadow-lg transition-transform group-hover:scale-110 group-active:scale-95">
-          {/* Inner circle - priority: organizer image > event image > initial */}
-          <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-neutral-900 flex items-center justify-center">
-            {hasOrgImage ? (
-              <Image
-                src={event.organizerImageUrl!}
-                alt={event.organizer}
-                width={38}
-                height={38}
-                className="w-full h-full object-cover rounded-full"
-                onError={() => setOrgImgError(true)}
-              />
-            ) : hasEventImage ? (
-              <Image
-                src={event.imageUrl!}
-                alt={event.name}
-                width={38}
-                height={38}
-                className="w-full h-full object-cover rounded-full"
-                onError={() => setImgError(true)}
-              />
-            ) : event.organizer ? (
-              <span className="text-lg font-bold text-neutral-700 dark:text-neutral-200">{initial}</span>
-            ) : (
-              <span className="text-lg leading-none">{emoji}</span>
-            )}
+        {/* Outer ring — colored by category */}
+        <div
+          className="w-[44px] h-[44px] rounded-full p-[3px] shadow-lg transition-transform group-hover:scale-110 group-active:scale-95"
+          style={{ background: color }}
+        >
+          {/* Inner circle — emoji */}
+          <div className="w-full h-full rounded-full bg-white dark:bg-neutral-900 flex items-center justify-center">
+            <span className="text-xl leading-none">{emoji}</span>
           </div>
         </div>
       </button>

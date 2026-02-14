@@ -42,27 +42,31 @@ interface ActivityBubblePinProps {
 }
 
 // Build lookup maps from the authoritative category list
+// Index by slug (underscored), hyphenated slug, and display name for maximum coverage
 const emojiByKey: Record<string, string> = {}
 const colorByKey: Record<string, string> = {}
 for (const cat of ACTIVITY_CATEGORIES) {
   emojiByKey[cat.slug] = cat.emoji
+  emojiByKey[cat.slug.replace(/_/g, '-')] = cat.emoji
   emojiByKey[cat.name.toLowerCase()] = cat.emoji
   colorByKey[cat.slug] = cat.color
+  colorByKey[cat.slug.replace(/_/g, '-')] = cat.color
   colorByKey[cat.name.toLowerCase()] = cat.color
 }
 
 function getEmoji(activity: HostedActivityData): string {
-  if (activity.categorySlug) {
-    return emojiByKey[activity.categorySlug.toLowerCase()] || '📍'
-  }
-  return emojiByKey[activity.type.toLowerCase()] || '📍'
+  const slug = activity.categorySlug?.toLowerCase()
+  if (slug && emojiByKey[slug]) return emojiByKey[slug]
+  // Fallback to type (display name) field
+  const type = activity.type.toLowerCase()
+  return emojiByKey[type] || '📍'
 }
 
 function getColor(activity: HostedActivityData): string {
-  if (activity.categorySlug) {
-    return colorByKey[activity.categorySlug.toLowerCase()] || '#3B82F6'
-  }
-  return colorByKey[activity.type.toLowerCase()] || '#3B82F6'
+  const slug = activity.categorySlug?.toLowerCase()
+  if (slug && colorByKey[slug]) return colorByKey[slug]
+  const type = activity.type.toLowerCase()
+  return colorByKey[type] || '#3B82F6'
 }
 
 const PIN_OFFSET = { x: -24, y: -24 }

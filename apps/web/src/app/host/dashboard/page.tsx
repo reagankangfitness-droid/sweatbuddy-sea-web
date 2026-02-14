@@ -14,6 +14,7 @@ import { AgentChatWidget } from '@/components/host/AgentChatWidget'
 import { DashboardSkeleton } from '@/components/host/DashboardSkeleton'
 import { HostOnboarding } from '@/components/host/HostOnboarding'
 import { DemandSignalsCard } from '@/components/host/DemandSignalsCard'
+import { NudgeCardsSection } from '@/components/nudge-cards-section'
 
 interface DashboardEvent {
   id: string
@@ -327,6 +328,11 @@ export default function HostDashboard() {
             <Wallet className="w-4 h-4" />
             Earnings
           </Link>
+        </div>
+
+        {/* AI Nudge Cards */}
+        <div className="mb-6 sm:mb-8">
+          <NudgeCardsSection />
         </div>
 
         {/* Main Content - stack on mobile, grid on desktop */}

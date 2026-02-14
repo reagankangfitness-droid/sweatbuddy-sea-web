@@ -150,7 +150,23 @@ export function NotificationBell() {
   }, [fetchUnreadCount])
 
   // Get notification icon based on type
-  const getNotificationIcon = (type: string) => {
+  const getNudgeIcon = (metadata?: Record<string, unknown>) => {
+    const nudgeType = metadata?.nudgeType as string | undefined
+    switch (nudgeType) {
+      case 'EVENT_RECOMMENDATION':
+        return '📅'
+      case 'INACTIVITY_REENGAGEMENT':
+        return '✨'
+      case 'LOW_FILL_RATE':
+        return '⚠️'
+      case 'REGULARS_NOT_SIGNED_UP':
+        return '👥'
+      default:
+        return '💡'
+    }
+  }
+
+  const getNotificationIcon = (type: string, metadata?: Record<string, unknown>) => {
     switch (type) {
       case 'MENTION':
         return '@'
@@ -158,6 +174,8 @@ export function NotificationBell() {
         return '💬'
       case 'ACTIVITY_UPDATE':
         return '📅'
+      case 'NUDGE':
+        return getNudgeIcon(metadata)
       default:
         return '🔔'
     }
@@ -270,12 +288,12 @@ function NotificationItem({
   getIcon,
 }: {
   notification: Notification
-  getIcon: (type: string) => string
+  getIcon: (type: string, metadata?: Record<string, unknown>) => string
 }) {
   return (
     <div className="flex items-start gap-3">
       <div className="flex-shrink-0 w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm">
-        {getIcon(notification.type)}
+        {getIcon(notification.type, notification.metadata)}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">

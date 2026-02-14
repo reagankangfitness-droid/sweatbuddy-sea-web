@@ -1,0 +1,5 @@
+export type { NudgeSignalType, NudgeContext, NudgeCopy, NudgeResult, ProcessNudgesResult } from './signals'
+export { checkNudgeEligibility } from './dedup'
+export { generateNudgeCopy } from './ai-copy'
+export { processNudges } from './engine'
+export { sendEventRecommendationNudges } from './event-recommendation'

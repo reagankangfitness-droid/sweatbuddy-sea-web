@@ -47,6 +47,7 @@ enum NotificationType {
   ACTIVITY_UPDATE
   JOIN_REQUEST
   SYSTEM
+  NUDGE
 }
 
 // Models

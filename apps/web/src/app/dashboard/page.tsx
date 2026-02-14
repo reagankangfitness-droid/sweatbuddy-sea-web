@@ -18,6 +18,7 @@ import {
   Search,
   Ticket,
 } from 'lucide-react'
+import { NudgeCardsSection } from '@/components/nudge-cards-section'
 
 interface EventData {
   id: string
@@ -197,6 +198,9 @@ export default function DashboardPage() {
               <ChevronRight className="w-5 h-5 text-purple-200" />
             </Link>
           )}
+
+          {/* AI Nudge Cards */}
+          <NudgeCardsSection />
 
           {/* Next Event Spotlight */}
           {data?.nextEvent && (

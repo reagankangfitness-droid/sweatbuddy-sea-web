@@ -3,6 +3,7 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { isAdminRequest } from '@/lib/admin-auth'
 import { sendEventApprovedEmail, sendEventRejectedEmail } from '@/lib/event-confirmation-email'
+import { sendEventRecommendationNudges } from '@/lib/nudges'
 
 // Geocode a location string to get coordinates
 async function geocodeLocation(location: string): Promise<{ lat: number; lng: number } | null> {
@@ -108,6 +109,11 @@ export async function PATCH(
           eventSlug: submission.slug,
         }).catch((err) => {
           console.error('Failed to send approval email:', err)
+        })
+
+        // Send recommendation nudges to past attendees (fire and forget)
+        sendEventRecommendationNudges(submission.id).catch((err) => {
+          console.error('Failed to send recommendation nudges:', err)
         })
       } else {
         sendEventRejectedEmail({

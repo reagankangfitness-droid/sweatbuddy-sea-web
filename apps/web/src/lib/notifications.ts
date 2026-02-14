@@ -29,6 +29,7 @@ export async function createNotification(params: CreateNotificationParams) {
     if (type === 'MENTION' && !prefs.mentionEnabled) return null
     if (type === 'MESSAGE' && !prefs.messageEnabled) return null
     if (type === 'ACTIVITY_UPDATE' && !prefs.activityEnabled) return null
+    if (type === 'NUDGE' && prefs.nudgeEnabled === false) return null
   }
 
   return prisma.notification.create({

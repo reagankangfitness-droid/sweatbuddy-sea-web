@@ -9,15 +9,13 @@ import type { TimeFilter } from './UnifiedFilterBar'
 import { ActivityBubblePin } from './ActivityBubblePin'
 import type { HostedActivityData } from './ActivityBubblePin'
 import { ActivityDetailSheet } from './ActivityDetailSheet'
-import type { WaveActivityType } from '@prisma/client'
-
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 const DEFAULT_CENTER = { lat: 1.3521, lng: 103.8198 }
 const LIBRARIES: ('places')[] = ['places']
 const BLUE_DOT_OFFSET = { x: -12, y: -12 }
 const blueDotOffset = () => BLUE_DOT_OFFSET
 
-const HOSTED_TO_WAVE: Record<string, WaveActivityType> = {
+const HOSTED_TO_WAVE: Record<string, string> = {
   running: 'RUN', run: 'RUN',
   yoga: 'YOGA',
   gym: 'GYM', 'weight-training': 'GYM', strength: 'GYM',
@@ -49,7 +47,6 @@ export function WaveMap() {
   const [hostedActivities, setHostedActivities] = useState<HostedActivityData[]>([])
   const [hasFetched, setHasFetched] = useState(false)
   const [selectedActivity, setSelectedActivity] = useState<HostedActivityData | null>(null)
-  const [filters, setFilters] = useState<Set<WaveActivityType | 'ALL'>>(new Set(['ALL']))
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('ALL')
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -126,18 +123,6 @@ export function WaveMap() {
       return true
     })
 
-    // Apply activity type filter
-    if (!filters.has('ALL')) {
-      result = result.filter((a) => {
-        const slug = (a.categorySlug || '').toLowerCase()
-        const type = (a.type || '').toLowerCase()
-        const mapped = HOSTED_TO_WAVE[slug] || HOSTED_TO_WAVE[type]
-        if (mapped) return filters.has(mapped)
-        // If filter is ANYTHING, show unmatched activities too
-        return filters.has('ANYTHING' as WaveActivityType)
-      })
-    }
-
     // Apply time filter
     if (timeFilter === 'TODAY') {
       result = result.filter((a) => a.isHappeningToday)
@@ -163,7 +148,7 @@ export function WaveMap() {
     }
 
     return result
-  }, [hostedActivities, filters, timeFilter])
+  }, [hostedActivities, timeFilter])
 
   const onMapLoad = useCallback((m: google.maps.Map) => setMap(m), [])
 

@@ -227,8 +227,8 @@ export function DashboardTabs({
                     ? "You're not hosting any upcoming activities. Create one to get started!"
                     : "You haven't hosted any activities yet."
                   }
-                  actionLabel="Host an Activity"
-                  actionHref="/activities/create"
+                  actionLabel="Submit an Experience"
+                  actionHref="/host/dashboard"
                 />
               ) : (
                 <DashboardActivities initialActivities={hostedToShow} />

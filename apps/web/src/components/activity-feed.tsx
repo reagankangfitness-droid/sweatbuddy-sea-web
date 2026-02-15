@@ -127,7 +127,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
           No sessions yet. Build what moves you
           <span role="img" aria-label="sparkles" className="ml-2">✨</span>
         </p>
-        <Link href="/activities/create">
+        <Link href="/host/dashboard">
           <Button size="lg">Host Your First Session</Button>
         </Link>
       </div>

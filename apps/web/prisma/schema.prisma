@@ -1767,6 +1767,10 @@ model EventAttendance {
   checkedInAt     DateTime? // When checked in via QR
   checkedInMethod String?   @db.VarChar(20) // 'qr' | 'manual'
 
+  // Host notes & tags for guest management
+  hostNotes String? @db.Text
+  taggedAs  String[] @default([])
+
   @@unique([email, eventId])
   @@index([eventId])
   @@index([email])
@@ -2849,5 +2853,25 @@ model RetentionAction {
   @@index([memberEmail])
   @@index([memberReturned])
   @@map("retention_actions")
+}
+
+// =====================================================
+// POST-EVENT AI SUMMARY
+// =====================================================
+
+model EventSummary {
+  id                String   @id @default(cuid())
+  eventSubmissionId String   @unique
+  summary           String   @db.Text
+  highlights        Json
+  metrics           Json
+  insights          Json
+  suggestions       Json
+  comparedToAverage Json?
+  generatedAt       DateTime @default(now())
+  regeneratedCount  Int      @default(0)
+
+  @@index([eventSubmissionId])
+  @@map("event_summaries")
 }
 

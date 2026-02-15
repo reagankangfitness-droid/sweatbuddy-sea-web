@@ -546,6 +546,15 @@ export default function HostDashboard() {
       </main>
 
       {/* AI Chat Widget - hidden for now */}
+
+      {/* Plan Next Event Floating CTA */}
+      <Link
+        href="/host/plan"
+        className="fixed bottom-6 right-6 bg-amber-500 hover:bg-amber-600 text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-2 transition-all z-50 text-sm font-medium"
+      >
+        <Sparkles className="w-4 h-4" />
+        Plan Next Event
+      </Link>
     </div>
   )
 }

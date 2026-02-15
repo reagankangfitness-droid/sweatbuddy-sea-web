@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Sparkles } from 'lucide-react'
 
 interface Event {
   id: string
@@ -35,11 +36,11 @@ export function PastEventRow({ event }: PastEventRowProps) {
     : null
 
   return (
-    <Link
-      href={`/host/events/${event.id}/attendees`}
-      className="px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between hover:bg-neutral-50 transition-colors gap-3"
-    >
-      <div className="flex items-center gap-2 min-w-0 flex-1">
+    <div className="px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between hover:bg-neutral-50 transition-colors gap-3">
+      <Link
+        href={`/host/events/${event.id}/attendees`}
+        className="flex items-center gap-2 min-w-0 flex-1"
+      >
         <span className="font-medium text-neutral-900 text-sm sm:text-base truncate">{event.name}</span>
         {event.date && (
           <>
@@ -47,8 +48,16 @@ export function PastEventRow({ event }: PastEventRowProps) {
             <span className="text-neutral-500 text-xs sm:text-sm hidden sm:inline">{formatDate(event.date)}</span>
           </>
         )}
-      </div>
+      </Link>
       <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+        <Link
+          href={`/host/events/${event.id}/summary`}
+          className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors"
+          onClick={e => e.stopPropagation()}
+        >
+          <Sparkles className="w-3 h-3" />
+          <span className="hidden sm:inline">Summary</span>
+        </Link>
         {showUpBadge && (
           <span className={`inline-flex items-center px-1.5 sm:px-2 py-0.5 text-xs font-medium rounded-full ${showUpBadge.color}`}>
             <span className="hidden sm:inline">{event.showUpRate}% showed</span>
@@ -62,6 +71,6 @@ export function PastEventRow({ event }: PastEventRowProps) {
           <span className="sm:hidden">{event.goingCount}</span>
         </span>
       </div>
-    </Link>
+    </div>
   )
 }

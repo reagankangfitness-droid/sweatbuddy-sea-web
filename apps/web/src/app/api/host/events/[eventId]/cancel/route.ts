@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getHostSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { sendEventCancelledByHostEmail } from '@/lib/event-confirmation-email'
+import { stripe } from '@/lib/stripe'
+import { sendEventCancelledByHostEmail, sendRefundNotificationEmail } from '@/lib/event-confirmation-email'
 import { cancelRemindersForEvent } from '@/lib/event-reminders'
 
 export const dynamic = 'force-dynamic'
@@ -12,7 +13,7 @@ interface CancelRequest {
 
 /**
  * POST /api/host/events/[eventId]/cancel
- * Cancel an event and notify all attendees
+ * Cancel an event, auto-refund Stripe payments, and notify all attendees
  */
 export async function POST(
   request: Request,
@@ -43,6 +44,7 @@ export async function POST(
         isFree: true,
         stripeEnabled: true,
         paynowEnabled: true,
+        currency: true,
       },
     })
 
@@ -70,6 +72,7 @@ export async function POST(
         paymentStatus: true,
         paymentMethod: true,
         paymentAmount: true,
+        stripePaymentId: true,
       },
     })
 
@@ -100,24 +103,66 @@ export async function POST(
       console.error('Error cancelling additional reminders:', err)
     })
 
-    // Send cancellation emails to all attendees
+    // Process refunds and send cancellation emails
     let emailsSent = 0
     let emailsFailed = 0
+    let refundsProcessed = 0
+    let refundsFailed = 0
+    let totalRefundedAmount = 0
 
     for (const attendee of attendees) {
       try {
-        // Determine refund status for paid attendees
         const wasPaid = attendee.paymentStatus === 'paid'
         let refundStatus: 'auto_refunded' | 'pending_manual' | null = null
 
         if (wasPaid) {
-          // Stripe payments can be auto-refunded, PayNow needs manual
-          refundStatus = attendee.paymentMethod === 'stripe' ? 'auto_refunded' : 'pending_manual'
+          if (attendee.paymentMethod === 'stripe' && attendee.stripePaymentId) {
+            // Auto-refund Stripe payments
+            try {
+              await stripe.refunds.create({
+                payment_intent: attendee.stripePaymentId,
+              })
 
-          // TODO: For Stripe payments, trigger automatic refund here
-          // For now, we'll mark as pending_manual and let host handle manually
-          if (attendee.paymentMethod === 'stripe') {
-            // Mark for manual refund - auto-refund requires more Stripe integration
+              // Update attendance record
+              await prisma.eventAttendance.update({
+                where: { id: attendee.id },
+                data: { paymentStatus: 'refunded' },
+              })
+
+              // Update transaction record
+              await prisma.eventTransaction.updateMany({
+                where: { attendanceId: attendee.id },
+                data: {
+                  status: 'REFUNDED',
+                  refundAmount: attendee.paymentAmount,
+                  refundedAt: new Date(),
+                  refundReason: `Event cancelled by host${reason ? ': ' + reason : ''}`,
+                },
+              })
+
+              refundStatus = 'auto_refunded'
+              refundsProcessed++
+              totalRefundedAmount += attendee.paymentAmount || 0
+
+              // Send refund notification email
+              sendRefundNotificationEmail({
+                to: attendee.email,
+                userName: attendee.name,
+                eventName: event.eventName,
+                refundAmount: attendee.paymentAmount || 0,
+                currency: event.currency || 'SGD',
+                refundType: 'full',
+                reason: `Event cancelled by host${reason ? ': ' + reason : ''}`,
+              }).catch(err => {
+                console.error(`Failed to send refund email to ${attendee.email}:`, err)
+              })
+            } catch (refundError) {
+              console.error(`Failed to refund Stripe payment for ${attendee.email}:`, refundError)
+              refundStatus = 'pending_manual'
+              refundsFailed++
+            }
+          } else {
+            // PayNow or other - needs manual refund
             refundStatus = 'pending_manual'
           }
         }
@@ -149,6 +194,11 @@ export async function POST(
       message: 'Event cancelled successfully',
       attendeesNotified: emailsSent,
       emailsFailed,
+      refunds: {
+        processed: refundsProcessed,
+        failed: refundsFailed,
+        totalAmount: totalRefundedAmount,
+      },
     })
   } catch (error) {
     console.error('Event cancellation error:', error)

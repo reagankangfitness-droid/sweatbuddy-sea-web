@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
 import { auth, clerkClient } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
-import { sendEventCancellationEmail, sendWaitlistSpotAvailableEmail } from '@/lib/event-confirmation-email'
+import { stripe } from '@/lib/stripe'
+import { sendEventCancellationEmail, sendWaitlistSpotAvailableEmail, sendRefundNotificationEmail } from '@/lib/event-confirmation-email'
+import { calculateRefund } from '@/lib/refund-policy'
 
 export async function POST(request: Request) {
   try {
@@ -53,6 +55,85 @@ export async function POST(request: Request) {
         { error: 'No RSVP found for this email and event' },
         { status: 404 }
       )
+    }
+
+    // Handle refund for paid attendees
+    let refundResult: { refunded: boolean; amount: number; reason: string } | null = null
+
+    if (attendance.paymentStatus === 'paid' && attendance.paymentAmount && attendance.paymentAmount > 0) {
+      // Fetch event's refund policy
+      const event = await prisma.eventSubmission.findUnique({
+        where: { id: eventId },
+        select: {
+          refundPolicy: true,
+          eventDate: true,
+          price: true,
+          eventName: true,
+          currency: true,
+        },
+      })
+
+      if (event) {
+        const refundCalc = calculateRefund(
+          { refundPolicy: event.refundPolicy, eventDate: event.eventDate, price: event.price },
+          attendance.paymentAmount,
+          new Date(),
+          false // attendee-initiated cancellation
+        )
+
+        if (refundCalc.eligible && attendance.paymentMethod === 'stripe' && attendance.stripePaymentId) {
+          try {
+            // Process Stripe refund
+            await stripe.refunds.create({
+              payment_intent: attendance.stripePaymentId,
+              amount: refundCalc.percent < 100 ? refundCalc.amount : undefined,
+            })
+
+            // Update transaction record
+            await prisma.eventTransaction.updateMany({
+              where: { attendanceId: attendance.id },
+              data: {
+                status: refundCalc.percent === 100 ? 'REFUNDED' : 'PARTIAL_REFUND',
+                refundAmount: refundCalc.amount,
+                refundedAt: new Date(),
+                refundReason: 'Attendee cancelled RSVP',
+              },
+            })
+
+            // Send refund notification
+            sendRefundNotificationEmail({
+              to: normalizedEmail,
+              userName: attendance.name,
+              eventName: event.eventName,
+              refundAmount: refundCalc.amount,
+              currency: event.currency || 'SGD',
+              refundType: refundCalc.percent === 100 ? 'full' : 'partial',
+              reason: 'You cancelled your RSVP',
+            }).catch(err => {
+              console.error('Failed to send refund email:', err)
+            })
+
+            refundResult = {
+              refunded: true,
+              amount: refundCalc.amount,
+              reason: refundCalc.reason,
+            }
+          } catch (refundError) {
+            console.error('Stripe refund failed:', refundError)
+            refundResult = {
+              refunded: false,
+              amount: 0,
+              reason: 'Refund processing failed - please contact support',
+            }
+          }
+        } else if (!refundCalc.eligible) {
+          refundResult = {
+            refunded: false,
+            amount: 0,
+            reason: refundCalc.reason,
+          }
+        }
+      }
     }
 
     // Delete the attendance record
@@ -137,6 +218,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       message: 'RSVP cancelled successfully',
+      refund: refundResult,
     })
   } catch (error) {
     console.error('Cancel attendance error:', error)

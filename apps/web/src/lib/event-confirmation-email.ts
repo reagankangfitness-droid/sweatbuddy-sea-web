@@ -427,6 +427,8 @@ interface PaidEventConfirmationParams {
   currency: string
   ticketQuantity: number
   stripePaymentId?: string | null
+  // Ticket link (optional)
+  checkInCode?: string | null
 }
 
 /**
@@ -449,10 +451,12 @@ export async function sendPaidEventConfirmationEmail(
     currency,
     ticketQuantity,
     stripePaymentId,
+    checkInCode,
   } = params
 
   const displayName = attendeeName || 'there'
   const eventUrl = `${BASE_URL}/e/${eventId}`
+  const ticketUrl = checkInCode ? `${BASE_URL}/ticket/${checkInCode}` : null
   const mapsLink = generateMapsLink({ address: eventLocation })
 
   // Format amount (convert from cents to dollars)
@@ -576,7 +580,7 @@ export async function sendPaidEventConfirmationEmail(
               </table>
 
               <!-- Action Buttons -->
-              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 12px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
                     <a href="${calendarLink}" style="display: inline-block; padding: 14px 28px; background-color: #10b981; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
@@ -584,6 +588,15 @@ export async function sendPaidEventConfirmationEmail(
                     </a>
                   </td>
                 </tr>
+                ${ticketUrl ? `
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${ticketUrl}" style="display: inline-block; padding: 14px 28px; background-color: #f59e0b; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                      🎫 View Your Ticket & QR Code
+                    </a>
+                  </td>
+                </tr>
+                ` : ''}
               </table>
 
               ${communityLink ? `
@@ -2075,7 +2088,7 @@ function buildConfirmationEmailHtml(params: {
               ` : ''}
 
               <!-- Action Buttons -->
-              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 12px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
                     <a href="${calendarLink}" style="display: inline-block; padding: 14px 28px; background-color: #3477f8; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
@@ -2083,6 +2096,15 @@ function buildConfirmationEmailHtml(params: {
                     </a>
                   </td>
                 </tr>
+                ${checkInCode ? `
+                <tr>
+                  <td align="center" style="padding: 8px;">
+                    <a href="${BASE_URL}/ticket/${checkInCode}" style="display: inline-block; padding: 14px 28px; background-color: #f59e0b; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                      🎫 View Your Ticket
+                    </a>
+                  </td>
+                </tr>
+                ` : ''}
               </table>
 
               ${communityLink ? `

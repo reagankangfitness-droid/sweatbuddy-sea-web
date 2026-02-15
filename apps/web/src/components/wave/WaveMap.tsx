@@ -3,20 +3,12 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { GoogleMap, useLoadScript, OverlayView } from '@react-google-maps/api'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus } from 'lucide-react'
-import { useUser } from '@clerk/nextjs'
 import { useTheme } from '@/contexts/ThemeContext'
-import { WAVE_ACTIVITIES, WAVE_POLL_INTERVAL } from '@/lib/wave/constants'
 import { LIGHT_MAP_STYLES, DARK_MAP_STYLES } from '@/lib/wave/map-styles'
 import type { TimeFilter } from './UnifiedFilterBar'
-import { WaveBubblePin } from './WaveBubblePin'
-import type { WaveData } from './WaveBubblePin'
 import { ActivityBubblePin } from './ActivityBubblePin'
 import type { HostedActivityData } from './ActivityBubblePin'
-import { WaveDetailSheet } from './WaveDetailSheet'
 import { ActivityDetailSheet } from './ActivityDetailSheet'
-import { CreateWaveSheet } from './CreateWaveSheet'
-import { CrewChatView } from './CrewChatView'
 import type { WaveActivityType } from '@prisma/client'
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
@@ -45,29 +37,20 @@ const HOSTED_TO_WAVE: Record<string, WaveActivityType> = {
   walk: 'WALK', walking: 'WALK',
 }
 
+const POLL_INTERVAL = 30_000
+
 export function WaveMap() {
   const { resolvedTheme } = useTheme()
-  const { user: clerkUser } = useUser()
   const isDark = resolvedTheme === 'dark'
 
   const [map, setMap] = useState<google.maps.Map | null>(null)
   const [myPosition, setMyPosition] = useState<{ lat: number; lng: number } | null>(null)
   const initialCenterSet = useRef(false)
-  const [waves, setWaves] = useState<WaveData[]>([])
   const [hostedActivities, setHostedActivities] = useState<HostedActivityData[]>([])
   const [hasFetched, setHasFetched] = useState(false)
-  const [selectedWave, setSelectedWave] = useState<WaveData | null>(null)
   const [selectedActivity, setSelectedActivity] = useState<HostedActivityData | null>(null)
-  const [selectedWaveParticipant, setSelectedWaveParticipant] = useState(false)
   const [filters, setFilters] = useState<Set<WaveActivityType | 'ALL'>>(new Set(['ALL']))
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('ALL')
-  const [createOpen, setCreateOpen] = useState(false)
-  const [crewChat, setCrewChat] = useState<{
-    chatId: string; emoji: string; area: string;
-    starterThought?: string | null; starterName?: string | null;
-    starterImageUrl?: string | null; locationName?: string | null;
-    scheduledFor?: string | null;
-  } | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const { isLoaded } = useLoadScript({ googleMapsApiKey: GOOGLE_MAPS_API_KEY, libraries: LIBRARIES })
@@ -102,32 +85,24 @@ export function WaveMap() {
     )
   }, [])
 
-  // Poll waves
-  const fetchWaves = useCallback(async () => {
+  // Fetch experiences
+  const fetchExperiences = useCallback(async () => {
     if (!myPosition) return
     try {
-      const typeParam = [...filters].find((f): f is WaveActivityType => f !== 'ALL')
-      const url = `/api/wave?lat=${myPosition.lat}&lng=${myPosition.lng}${typeParam ? `&type=${typeParam}` : ''}`
+      const url = `/api/wave?lat=${myPosition.lat}&lng=${myPosition.lng}`
       const res = await fetch(url)
       if (!res.ok) return
       const data = await res.json()
-      if (data.waves) setWaves(data.waves)
       if (data.hostedActivities) setHostedActivities(data.hostedActivities)
       setHasFetched(true)
     } catch { /* silent */ }
-  }, [myPosition, filters])
+  }, [myPosition])
 
   useEffect(() => {
-    fetchWaves()
-    pollRef.current = setInterval(fetchWaves, WAVE_POLL_INTERVAL)
+    fetchExperiences()
+    pollRef.current = setInterval(fetchExperiences, POLL_INTERVAL)
     return () => { if (pollRef.current) clearInterval(pollRef.current) }
-  }, [fetchWaves])
-
-  // Filtered waves (client-side for ALL mode)
-  const filteredWaves = useMemo(() => {
-    if (filters.has('ALL')) return waves
-    return waves.filter((w) => filters.has(w.activityType))
-  }, [waves, filters])
+  }, [fetchExperiences])
 
   // Filtered hosted activities (by activity type + time)
   const filteredHosted = useMemo(() => {
@@ -190,73 +165,6 @@ export function WaveMap() {
     return result
   }, [hostedActivities, filters, timeFilter])
 
-  // Delete wave handler
-  const handleDeleteWave = async (waveId: string) => {
-    const res = await fetch(`/api/wave/${waveId}`, { method: 'DELETE' })
-    if (!res.ok) throw new Error('Delete failed')
-    setSelectedWave(null)
-    fetchWaves()
-  }
-
-  // Join handler
-  const handleJoin = async (waveId: string) => {
-    const res = await fetch(`/api/wave/${waveId}/join`, { method: 'POST' })
-    if (!res.ok) throw new Error('Join failed')
-    const data = await res.json()
-    fetchWaves()
-    return data as { isUnlocked: boolean; chatId: string | null }
-  }
-
-  // Create wave handler
-  const handleCreateWave = async (data: {
-    activityType: WaveActivityType
-    area: string
-    thought?: string
-    locationName?: string
-    latitude?: number
-    longitude?: number
-    scheduledFor?: string
-  }) => {
-    const res = await fetch('/api/wave', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      throw new Error(err.error || 'Create failed')
-    }
-    fetchWaves()
-  }
-
-  // Open chat
-  const handleOpenChat = (chatId: string) => {
-    const wave = selectedWave || waves.find((w) => w.chatId === chatId)
-    setCrewChat({
-      chatId,
-      emoji: wave ? WAVE_ACTIVITIES[wave.activityType].emoji : '🏋️',
-      area: wave?.area || '',
-      starterThought: wave?.thought,
-      starterName: wave?.creatorName,
-      starterImageUrl: wave?.creatorImageUrl,
-      locationName: wave?.locationName,
-      scheduledFor: wave?.scheduledFor,
-    })
-  }
-
-  // Select wave and check participation
-  const handleSelectWave = async (wave: WaveData) => {
-    setSelectedActivity(null)
-    setSelectedWave(wave)
-    try {
-      const res = await fetch(`/api/wave/${wave.id}`)
-      const data = await res.json()
-      setSelectedWaveParticipant(data.wave?.isParticipant || false)
-    } catch {
-      setSelectedWaveParticipant(false)
-    }
-  }
-
   const onMapLoad = useCallback((m: google.maps.Map) => setMap(m), [])
 
   // Prevent body scroll so map gets all touch events
@@ -318,21 +226,12 @@ export function WaveMap() {
           </OverlayView>
         )}
 
-        {/* Wave bubbles */}
-        {filteredWaves.map((w) => (
-          <WaveBubblePin
-            key={w.id}
-            wave={w}
-            onClick={() => handleSelectWave(w)}
-          />
-        ))}
-
         {/* Experience pins */}
         {filteredHosted.map((a) => (
           <ActivityBubblePin
             key={`hosted-${a.id}`}
             activity={a}
-            onClick={() => { setSelectedWave(null); setSelectedActivity(a) }}
+            onClick={() => { setSelectedActivity(a) }}
           />
         ))}
       </GoogleMap>
@@ -361,50 +260,18 @@ export function WaveMap() {
         </div>
       </div>
 
-      {/* Empty state — only when both waves and experiences are empty */}
-      {hasFetched && filteredWaves.length === 0 && filteredHosted.length === 0 && (
+      {/* Empty state */}
+      {hasFetched && filteredHosted.length === 0 && (
         <div className="fixed inset-0 z-[5] flex items-center justify-center pointer-events-none">
           <div className="bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md rounded-2xl px-6 py-5 text-center shadow-lg max-w-xs">
             <p className="text-3xl mb-2">📍</p>
-            <p className="font-semibold text-neutral-700 dark:text-neutral-200">Nothing nearby yet</p>
+            <p className="font-semibold text-neutral-700 dark:text-neutral-200">No experiences nearby yet</p>
             <p className="text-sm text-neutral-400 mt-1">
-              Start an activity or check back soon for new experiences!
+              Check back soon for new experiences!
             </p>
-            <button
-              onClick={() => setCreateOpen(true)}
-              className="mt-3 px-5 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm pointer-events-auto"
-            >
-              Start activity
-            </button>
           </div>
         </div>
       )}
-
-      {/* Start activity FAB */}
-      {!crewChat && (
-        <button
-          onClick={() => setCreateOpen(true)}
-          className="fixed bottom-28 left-1/2 -translate-x-1/2 z-10 px-5 py-3 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 shadow-xl font-semibold text-sm active:scale-95 transition-transform"
-        >
-          <Plus className="w-4 h-4 inline-block -mt-0.5 mr-1" />
-          Start activity
-        </button>
-      )}
-
-      {/* Wave detail sheet */}
-      <AnimatePresence>
-        {selectedWave && (
-          <WaveDetailSheet
-            wave={selectedWave}
-            onClose={() => setSelectedWave(null)}
-            onJoin={handleJoin}
-            onOpenChat={handleOpenChat}
-            isParticipant={selectedWaveParticipant}
-            currentUserId={clerkUser?.id}
-            onDeleteWave={handleDeleteWave}
-          />
-        )}
-      </AnimatePresence>
 
       {/* Hosted activity detail sheet */}
       <AnimatePresence>
@@ -412,32 +279,6 @@ export function WaveMap() {
           <ActivityDetailSheet
             activity={selectedActivity}
             onClose={() => setSelectedActivity(null)}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Create wave sheet */}
-      <CreateWaveSheet
-        isOpen={createOpen}
-        onClose={() => setCreateOpen(false)}
-        onCreateWave={handleCreateWave}
-        userPosition={myPosition}
-      />
-
-      {/* Crew chat overlay */}
-      <AnimatePresence>
-        {crewChat && clerkUser && (
-          <CrewChatView
-            chatId={crewChat.chatId}
-            activityEmoji={crewChat.emoji}
-            area={crewChat.area}
-            currentUserId={clerkUser.id}
-            onClose={() => setCrewChat(null)}
-            starterThought={crewChat.starterThought}
-            starterName={crewChat.starterName}
-            starterImageUrl={crewChat.starterImageUrl}
-            locationName={crewChat.locationName}
-            scheduledFor={crewChat.scheduledFor}
           />
         )}
       </AnimatePresence>

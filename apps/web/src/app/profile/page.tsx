@@ -15,7 +15,6 @@ import {
   MessageCircle,
   Heart,
   HelpCircle,
-  Radio,
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -224,22 +223,6 @@ export default function ProfilePage() {
                 <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
               </Link>
             )}
-
-            <Link
-              href="/my-activities"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg flex items-center justify-center">
-                  <Radio className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-                </div>
-                <div>
-                  <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">My Activities</span>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Activities you&apos;ve started</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
-            </Link>
 
             <Link
               href="/my-bookings"

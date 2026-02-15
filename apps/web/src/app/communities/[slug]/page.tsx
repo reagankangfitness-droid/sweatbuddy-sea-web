@@ -314,14 +314,6 @@ export default async function CommunityPage({ params }: Props) {
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-neutral-900">Upcoming Experiences</h2>
-          {isAdmin && (
-            <Link
-              href="/activities/create"
-              className="text-sm font-medium text-blue-600 hover:text-blue-700"
-            >
-              + Create Experience
-            </Link>
-          )}
         </div>
 
         {upcomingEvents.length > 0 ? (
@@ -361,14 +353,6 @@ export default async function CommunityPage({ params }: Props) {
           <div className="text-center py-12 bg-neutral-50 rounded-xl">
             <Calendar className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
             <p className="text-neutral-600">No upcoming experiences</p>
-            {isAdmin && (
-              <Link
-                href="/activities/create"
-                className="inline-block mt-4 px-6 py-2 bg-neutral-900 text-white rounded-full text-sm font-medium hover:bg-neutral-800 transition-colors"
-              >
-                Create an Experience
-              </Link>
-            )}
           </div>
         )}
       </section>

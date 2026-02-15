@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { DashboardActivities } from '@/components/dashboard-activities'
 import { JoinedActivitiesSection, type JoinedBooking } from '@/components/joined-activities-section'
 import { HostStatsDashboard } from '@/components/host-stats-dashboard'
-import { Calendar, Users, BarChart3, Plus } from 'lucide-react'
+import { Calendar, Users, BarChart3 } from 'lucide-react'
 import type { Activity } from '@prisma/client'
 
 type MainTab = 'joined' | 'hosting' | 'stats'
@@ -182,21 +182,6 @@ export function DashboardTabs({
               </button>
             </div>
 
-            {/* Action Button (only show for Hosting tab) */}
-            {mainTab === 'hosting' && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Link href="/activities/create" className="w-full sm:w-auto block">
-                  <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-neutral-900 text-white font-sans font-semibold text-sm rounded-xl hover:bg-neutral-800 transition-all duration-200 active:scale-[0.98] shadow-md shadow-neutral-900/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2">
-                    <Plus className="w-4 h-4" />
-                    Host an Activity
-                  </button>
-                </Link>
-              </motion.div>
-            )}
           </motion.div>
         )}
       </AnimatePresence>

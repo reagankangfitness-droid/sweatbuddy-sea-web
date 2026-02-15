@@ -36,7 +36,11 @@ interface DashboardActivitiesProps {
   initialActivities: Activity[]
 }
 
-export function DashboardActivities({ initialActivities }: DashboardActivitiesProps) {
+export function DashboardActivities({ initialActivities: _initialActivities }: DashboardActivitiesProps) {
+  return null
+}
+
+function _DashboardActivitiesHidden({ initialActivities }: DashboardActivitiesProps) {
   const router = useRouter()
   const [activities, setActivities] = useState(initialActivities)
   const [deleteId, setDeleteId] = useState<string | null>(null)

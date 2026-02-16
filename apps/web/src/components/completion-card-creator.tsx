@@ -372,7 +372,12 @@ export function CompletionCardCreator({
         reject(new Error('Failed to load photo'))
       }
 
-      img.src = card?.photoUrl || photoPreview || ''
+      const src = card?.photoUrl || photoPreview
+      if (!src) {
+        reject(new Error('No photo available'))
+        return
+      }
+      img.src = src
     })
   }, [template, caption, showHost, showDate, showDuration, showStreak, streak, activityTitle, hostName, completedAt, durationMinutes, card, photoPreview])
 

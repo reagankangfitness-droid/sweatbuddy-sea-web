@@ -73,7 +73,7 @@ export async function buildAgentContext(organizerId: string): Promise<AgentConte
       const event = events.find(e => e.id === a.eventId)
       return {
         type: a.paymentStatus === 'paid' ? 'paid' : 'rsvp',
-        attendeeName: a.name || a.email.split('@')[0],
+        attendeeName: a.name || (a.email ? a.email.split('@')[0] : 'Unknown'),
         eventName: event?.eventName || a.eventName || 'Event',
         timestamp: a.timestamp.toISOString(),
       }
@@ -86,7 +86,7 @@ export async function buildAgentContext(organizerId: string): Promise<AgentConte
     const key = a.email
     if (!attendanceCounts[key]) {
       attendanceCounts[key] = {
-        name: a.name || a.email.split('@')[0],
+        name: a.name || (a.email ? a.email.split('@')[0] : 'Unknown'),
         email: a.email,
         count: 0,
         lastDate: null,

@@ -38,23 +38,32 @@ const LOCATION_COORDINATES: Record<string, { lat: number; lng: number }> = {
   'singapore': { lat: 1.3521, lng: 103.8198 },
 }
 
+// Simple hash to generate deterministic offset from a string
+function hashOffset(str: string, index: number): number {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0
+  }
+  return ((((hash >>> index) & 0xff) / 255) - 0.5)
+}
+
 function getEventCoordinates(location: string): { lat: number; lng: number } | null {
   const lowerLocation = location.toLowerCase()
 
   for (const [key, coords] of Object.entries(LOCATION_COORDINATES)) {
     if (lowerLocation.includes(key)) {
-      // Add small random offset to prevent marker stacking
+      // Add small deterministic offset to prevent marker stacking
       return {
-        lat: coords.lat + (Math.random() - 0.5) * 0.002,
-        lng: coords.lng + (Math.random() - 0.5) * 0.002,
+        lat: coords.lat + hashOffset(lowerLocation, 0) * 0.002,
+        lng: coords.lng + hashOffset(lowerLocation, 8) * 0.002,
       }
     }
   }
 
-  // Default to Singapore center with random offset
+  // Default to Singapore center with deterministic offset
   return {
-    lat: 1.3521 + (Math.random() - 0.5) * 0.05,
-    lng: 103.8198 + (Math.random() - 0.5) * 0.05,
+    lat: 1.3521 + hashOffset(lowerLocation, 0) * 0.05,
+    lng: 103.8198 + hashOffset(lowerLocation, 8) * 0.05,
   }
 }
 

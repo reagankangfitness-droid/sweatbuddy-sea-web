@@ -85,10 +85,17 @@ export async function GET(request: Request) {
  * POST /api/attendance/status
  * Body: { email: string, eventIds: string[] }
  *
- * Returns attendance status without requiring auth (for checking by email)
+ * Returns attendance status - requires Clerk auth to prevent email enumeration.
+ * The email in the body must match the authenticated user's email.
  */
 export async function POST(request: Request) {
   try {
+    const { userId } = await auth()
+
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body = await request.json()
     const { email, eventIds } = body
 
@@ -100,6 +107,19 @@ export async function POST(request: Request) {
     }
 
     const normalizedEmail = email.toLowerCase().trim()
+
+    // Verify the email matches the authenticated user
+    const { clerkClient } = await import('@clerk/nextjs/server')
+    const client = await clerkClient()
+    const user = await client.users.getUser(userId)
+    const userEmail = user.emailAddresses[0]?.emailAddress?.toLowerCase()
+
+    if (normalizedEmail !== userEmail) {
+      return NextResponse.json(
+        { error: 'You can only check your own attendance status' },
+        { status: 403 }
+      )
+    }
 
     // Get all attendance records for this email and these events
     const attendances = await prisma.eventAttendance.findMany({

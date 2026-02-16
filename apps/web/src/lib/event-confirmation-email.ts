@@ -2,6 +2,16 @@ import { sendEmail, generateMapsLink } from './email'
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
 
+/** Escape HTML special characters to prevent XSS in email templates */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 // ============= HOST EVENT STATUS NOTIFICATIONS =============
 
 interface EventSubmissionNotificationParams {
@@ -18,7 +28,7 @@ export async function sendEventSubmittedEmail(
   params: EventSubmissionNotificationParams
 ): Promise<{ success: boolean; error?: string }> {
   const { to, hostName, eventName, eventId } = params
-  const displayName = hostName || 'there'
+  const displayName = escapeHtml(hostName || 'there')
   const dashboardUrl = `${BASE_URL}/host/dashboard`
 
   const html = `
@@ -145,7 +155,7 @@ export async function sendEventApprovedEmail(
   params: EventApprovedParams
 ): Promise<{ success: boolean; error?: string }> {
   const { to, hostName, eventName, eventId, eventSlug } = params
-  const displayName = hostName || 'there'
+  const displayName = escapeHtml(hostName || 'there')
   const eventUrl = eventSlug ? `${BASE_URL}/e/${eventSlug}` : `${BASE_URL}/e/${eventId}`
   const dashboardUrl = `${BASE_URL}/host/dashboard`
 
@@ -297,7 +307,7 @@ export async function sendEventRejectedEmail(
   params: EventRejectedParams
 ): Promise<{ success: boolean; error?: string }> {
   const { to, hostName, eventName, eventId, rejectionReason } = params
-  const displayName = hostName || 'there'
+  const displayName = escapeHtml(hostName || 'there')
   const submitUrl = `${BASE_URL}/host`
 
   const html = `
@@ -454,7 +464,7 @@ export async function sendPaidEventConfirmationEmail(
     checkInCode,
   } = params
 
-  const displayName = attendeeName || 'there'
+  const displayName = escapeHtml(attendeeName || 'there')
   const eventUrl = `${BASE_URL}/e/${eventId}`
   const ticketUrl = checkInCode ? `${BASE_URL}/ticket/${checkInCode}` : null
   const mapsLink = generateMapsLink({ address: eventLocation })
@@ -1059,7 +1069,7 @@ export async function sendEventCancellationEmail(
   params: EventCancellationParams
 ): Promise<{ success: boolean; error?: string }> {
   const { to, userName, eventName } = params
-  const displayName = userName || 'there'
+  const displayName = escapeHtml(userName || 'there')
 
   const html = `
 <!DOCTYPE html>
@@ -1145,7 +1155,7 @@ export async function sendWaitlistSpotAvailableEmail(
   params: WaitlistSpotAvailableParams
 ): Promise<{ success: boolean; error?: string }> {
   const { to, userName, eventName, eventUrl, expiresAt } = params
-  const displayName = userName || 'there'
+  const displayName = escapeHtml(userName || 'there')
 
   // Format expiry time
   const expiryTime = expiresAt.toLocaleString('en-SG', {
@@ -1295,7 +1305,7 @@ export async function sendPaymentVerifiedEmail(
     eventId,
   } = params
 
-  const displayName = attendeeName || 'there'
+  const displayName = escapeHtml(attendeeName || 'there')
   const eventUrl = eventSlug ? `${BASE_URL}/e/${eventSlug}` : `${BASE_URL}/e/${eventId}`
   const mapsLink = generateMapsLink({ address: eventLocation })
 
@@ -1500,7 +1510,7 @@ export async function sendPaymentRejectedEmail(
     rejectionReason,
   } = params
 
-  const displayName = attendeeName || 'there'
+  const displayName = escapeHtml(attendeeName || 'there')
   const eventUrl = eventSlug ? `${BASE_URL}/e/${eventSlug}` : `${BASE_URL}/e/${eventId}`
 
   const formattedAmount = new Intl.NumberFormat('en-SG', {
@@ -1657,7 +1667,7 @@ export async function sendEventCancelledByHostEmail(
     refundStatus,
   } = params
 
-  const displayName = attendeeName || 'there'
+  const displayName = escapeHtml(attendeeName || 'there')
 
   const formattedAmount = paymentAmount
     ? new Intl.NumberFormat('en-SG', { style: 'currency', currency: 'SGD' }).format(paymentAmount / 100)
@@ -1841,7 +1851,7 @@ export async function sendEventConfirmationEmail(
     checkInCode,
   } = params
 
-  const displayName = userName || 'there'
+  const displayName = escapeHtml(userName || 'there')
   const eventUrl = `${BASE_URL}/e/${eventId}`
   const mapsLink = generateMapsLink({ address: eventLocation })
 
@@ -2204,7 +2214,7 @@ export async function sendRefundNotificationEmail(
 ): Promise<{ success: boolean; error?: string }> {
   const { to, userName, eventName, refundAmount, currency, refundType, reason } = params
 
-  const displayName = userName || 'there'
+  const displayName = escapeHtml(userName || 'there')
   const formattedAmount = `${currency.toUpperCase()} ${(refundAmount / 100).toFixed(2)}`
   const supportUrl = `${BASE_URL}/support`
   const myBookingsUrl = `${BASE_URL}/my-bookings`

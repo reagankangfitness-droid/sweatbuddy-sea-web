@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Users, Compass, CalendarDays, User, ChevronRight } from 'lucide-react'
+import { Users, CalendarDays, User, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -10,7 +10,6 @@ import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 
 const navItems = [
-  { id: 'discover', label: 'Discover', icon: Compass, href: '/app' },
   { id: 'events', label: 'Experiences', icon: CalendarDays, href: '/events' },
   { id: 'community', label: 'Community', icon: Users, href: '/community' },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile' },

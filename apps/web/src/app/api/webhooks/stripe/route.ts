@@ -6,6 +6,7 @@ import { stripe, fromStripeAmount } from '@/lib/stripe'
 import { onBookingConfirmed, onBookingPaid, onBookingCancelled } from '@/lib/stats/realtime'
 import { sendPaidEventConfirmationEmail, sendHostBookingNotificationEmail, sendRefundNotificationEmail } from '@/lib/event-confirmation-email'
 import { scheduleEventReminder } from '@/lib/event-reminders'
+import { generateCheckInCode } from '@/lib/generate-checkin-qr'
 
 // Disable body parsing - Stripe requires raw body for signature verification
 export const runtime = 'nodejs'
@@ -400,8 +401,9 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
       })
 
       let attendance
+      const checkInCode = generateCheckInCode()
       if (existingAttendance) {
-        // Update existing attendance
+        // Update existing attendance (generate checkInCode if missing)
         attendance = await tx.eventAttendance.update({
           where: { id: existingAttendance.id },
           data: {
@@ -410,6 +412,7 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
             paymentAmount: amountTotal,
             stripePaymentId: paymentIntentId,
             paidAt: new Date(),
+            ...(existingAttendance.checkInCode ? {} : { checkInCode }),
           },
         })
       } else {
@@ -425,6 +428,7 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
             paymentAmount: amountTotal,
             stripePaymentId: paymentIntentId,
             paidAt: new Date(),
+            checkInCode,
           },
         })
       }
@@ -469,6 +473,7 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
       const emailData = {
         eventId,
         attendanceId: attendance.id,
+        checkInCode: attendance.checkInCode || checkInCode,
         eventName: event.eventName,
         eventDay: event.day || 'TBD',
         eventDate: event.eventDate,
@@ -506,6 +511,7 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
         currency: emailData.currency,
         ticketQuantity: emailData.ticketQuantity,
         stripePaymentId: emailData.stripePaymentId,
+        checkInCode: emailData.checkInCode,
       })
 
       if (!attendeeEmailResult.success) {

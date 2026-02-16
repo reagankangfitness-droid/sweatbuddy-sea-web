@@ -262,13 +262,13 @@ export default function EventsPage() {
                   href={getEventUrl(heroEvent)}
                   className="block relative rounded-2xl overflow-hidden group"
                 >
-                  <div className="aspect-[16/9] relative bg-neutral-900">
+                  <div className="aspect-[16/9] relative">
                     {heroEvent.imageUrl ? (
                       <Image
                         src={heroEvent.imageUrl}
                         alt={heroEvent.title}
                         fill
-                        className="object-contain transition-transform duration-500 group-hover:scale-105"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                         unoptimized
                       />
                     ) : (
@@ -384,13 +384,13 @@ function EventCard({ event, index }: { event: HostedEvent; index: number }) {
         className="block bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden hover:border-neutral-300 dark:hover:border-neutral-700 hover:shadow-lg transition-all group"
       >
         {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+        <div className="relative aspect-[4/3] overflow-hidden">
           {event.imageUrl ? (
             <Image
               src={event.imageUrl}
               alt={event.title}
               fill
-              className="object-contain transition-transform duration-500 group-hover:scale-105"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
               unoptimized
             />
           ) : (

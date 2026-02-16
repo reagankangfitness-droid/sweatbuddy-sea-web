@@ -135,13 +135,13 @@ export function EventPageClient({ event }: { event: Event }) {
       </header>
 
       {/* Hero Image */}
-      <div className="relative w-full h-64 sm:h-80 md:h-96 bg-neutral-100 dark:bg-neutral-900">
+      <div className="relative w-full h-64 sm:h-80 md:h-96 bg-neutral-100">
         {event.imageUrl ? (
           <Image
             src={event.imageUrl}
             alt={event.name}
             fill
-            className="object-contain"
+            className="object-cover"
             priority
           />
         ) : (

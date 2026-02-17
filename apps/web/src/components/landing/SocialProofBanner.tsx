@@ -11,13 +11,10 @@ export function SocialProofBanner() {
           <div className="relative">
             <div className="text-[2.5rem] mb-4">🌱</div>
             <h3 className="font-[family-name:var(--font-outfit)] text-2xl font-bold mb-3 text-white">
-              We&apos;re early — and that&apos;s your advantage
+              &ldquo;Show up alone. Leave with a crew.&rdquo;
             </h3>
             <p className="text-gray-400 text-[0.95rem] leading-relaxed max-w-[500px] mx-auto mb-4">
-              SweatBuddies is a growing platform built by fitness people, for fitness people. The entrepreneurs who join now get to shape the product, access founder-level support, and lock in early pricing before we scale.
-            </p>
-            <p className="text-gray-500 text-sm italic">
-              Your members will say: &ldquo;Show up alone. Leave with a crew.&rdquo;
+              That&apos;s what your members say about your community. We&apos;re here to make sure you can keep delivering that — without burning out behind the scenes.
             </p>
           </div>
         </div>

@@ -19,25 +19,24 @@ export function HeroSection() {
           className="inline-flex items-center gap-2 bg-brand-blue/10 border border-brand-blue/30 rounded-full px-5 py-2 text-sm font-medium text-brand-blue-glow mb-8 opacity-0 animate-fade-in-up"
         >
           <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-          Now onboarding fitness entrepreneurs
+          Where fitness communities come to life
         </div>
 
         {/* Headline */}
         <h1
           className="font-[family-name:var(--font-outfit)] text-[clamp(2.5rem,5.5vw,4.2rem)] font-extrabold leading-[1.1] tracking-[-0.03em] mb-6 text-white opacity-0 animate-fade-in-up [animation-delay:100ms]"
         >
-          The platform that helps you{' '}
+          You built the community.{' '}
           <span className="bg-gradient-to-br from-brand-blue-glow to-[#818CF8] bg-clip-text text-transparent">
-            kickstart, build &amp; grow
-          </span>{' '}
-          your fitness community
+            Now let it run itself.
+          </span>
         </h1>
 
         {/* Subtitle */}
         <p
           className="text-lg text-gray-400 leading-relaxed max-w-[600px] mx-auto mb-10 opacity-0 animate-fade-in-up [animation-delay:200ms]"
         >
-          Whether you run a run club, bootcamp, PT sessions or wellness retreats — SweatBuddies gives you the tools to stop juggling spreadsheets and start growing a real community.
+          No more chasing payments in DMs. No more headcounts on a spreadsheet at 5am. Just you, your people, and a platform that handles the rest.
         </p>
 
         {/* CTAs */}
@@ -45,10 +44,10 @@ export function HeroSection() {
           className="flex gap-4 justify-center flex-wrap opacity-0 animate-fade-in-up [animation-delay:300ms]"
         >
           <Link
-            href="/host"
+            href="/sign-up"
             className="bg-brand-blue text-white px-9 py-3.5 rounded-full font-[family-name:var(--font-outfit)] font-semibold text-base inline-flex items-center gap-2 transition-all duration-300 hover:bg-brand-blue-dark hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(0,37,204,0.4)]"
           >
-            Claim Your Spot →
+            Launch Your Community →
           </Link>
           <Link
             href="#features"

@@ -24,8 +24,8 @@ export function DashboardMockEventManager() {
       <div className="p-6 flex flex-col gap-4">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <div className="font-[family-name:var(--font-outfit)] font-bold text-base">📅 My Events</div>
-          <div className="bg-brand-blue text-white px-4 py-1.5 rounded-lg text-xs font-semibold font-[family-name:var(--font-outfit)]">
+          <div className="font-sans font-bold text-base">📅 My Events</div>
+          <div className="bg-brand-blue text-white px-4 py-1.5 rounded-lg text-xs font-semibold font-sans">
             + New Event
           </div>
         </div>
@@ -34,7 +34,7 @@ export function DashboardMockEventManager() {
         <div className="grid grid-cols-3 gap-3">
           {stats.map((stat) => (
             <div key={stat.label} className="bg-white/[0.04] border border-white/[0.06] rounded-xl p-4 text-center">
-              <div className={`font-[family-name:var(--font-outfit)] font-extrabold text-2xl ${stat.color}`}>
+              <div className={`font-sans font-extrabold text-2xl ${stat.color}`}>
                 {stat.value}
               </div>
               <div className="text-[0.7rem] text-gray-400 mt-1">{stat.label}</div>

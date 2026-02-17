@@ -21,7 +21,7 @@ export function DashboardMockAnalytics() {
       <div className="p-6 flex flex-col gap-4">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <div className="font-[family-name:var(--font-outfit)] font-bold text-base">📊 Growth Analytics</div>
+          <div className="font-sans font-bold text-base">📊 Growth Analytics</div>
           <div className="text-[0.75rem] text-gray-400">Last 8 weeks</div>
         </div>
 
@@ -47,7 +47,7 @@ export function DashboardMockAnalytics() {
         <div className="grid grid-cols-2 gap-3">
           {kpis.map((kpi) => (
             <div key={kpi.label} className="bg-white/[0.04] rounded-xl p-3">
-              <div className={`font-[family-name:var(--font-outfit)] font-bold text-lg ${kpi.color}`}>
+              <div className={`font-sans font-bold text-lg ${kpi.color}`}>
                 {kpi.value}
               </div>
               <div className="text-[0.68rem] text-gray-400">{kpi.label}</div>

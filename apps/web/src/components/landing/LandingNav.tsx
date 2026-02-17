@@ -10,13 +10,13 @@ export function LandingNav() {
       <div className="flex items-center gap-4">
         <Link
           href="/sign-in"
-          className="text-gray-300 font-[family-name:var(--font-outfit)] font-medium text-sm transition-colors duration-200 hover:text-white"
+          className="text-neutral-400 font-sans font-medium text-body-sm transition-colors duration-200 hover:text-white"
         >
           Sign In
         </Link>
         <Link
           href="/sign-up"
-          className="bg-brand-blue text-white border-none px-6 py-2.5 rounded-full font-[family-name:var(--font-outfit)] font-semibold text-sm transition-all duration-300 hover:bg-brand-blue-dark hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(0,37,204,0.4)]"
+          className="bg-brand-blue text-white border-none px-6 py-2.5 rounded-full font-sans font-semibold text-body-sm transition-all duration-300 hover:bg-brand-blue-dark hover:-translate-y-0.5 hover:shadow-md"
         >
           Get Started
         </Link>

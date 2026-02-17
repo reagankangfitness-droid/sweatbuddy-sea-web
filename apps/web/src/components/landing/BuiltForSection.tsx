@@ -14,10 +14,10 @@ export function BuiltForSection() {
     <section className="py-24 px-5 bg-dark text-center">
       <div className="max-w-[1100px] mx-auto">
         <ScrollReveal>
-          <div className="font-[family-name:var(--font-outfit)] text-xs font-bold tracking-[0.15em] uppercase text-brand-blue-glow mb-4">
+          <div className="font-sans text-label tracking-[0.15em] uppercase text-brand-blue-glow mb-4">
             Built For You
           </div>
-          <h2 className="font-[family-name:var(--font-outfit)] text-[clamp(1.8rem,3.5vw,2.8rem)] font-extrabold tracking-[-0.02em] leading-[1.15] mb-4 text-white">
+          <h2 className="font-sans text-display font-extrabold tracking-[-0.02em] leading-[1.15] mb-4 text-white">
             No matter how you move people,<br />we&apos;ve got you covered
           </h2>
         </ScrollReveal>
@@ -27,11 +27,11 @@ export function BuiltForSection() {
             {audiences.map((item) => (
               <div
                 key={item.title}
-                className="bg-white/[0.03] border border-white/[0.06] rounded-[14px] px-5 py-7 transition-all duration-300 hover:border-brand-blue/30 hover:bg-brand-blue/[0.04] hover:-translate-y-1"
+                className="bg-white/[0.03] border border-white/[0.06] rounded-xl px-5 py-7 transition-all duration-300 hover:border-brand-blue/30 hover:bg-brand-blue/[0.04] hover:-translate-y-1"
               >
                 <div className="text-[2rem] mb-3">{item.icon}</div>
-                <h4 className="font-[family-name:var(--font-outfit)] text-base font-bold mb-1 text-white">{item.title}</h4>
-                <p className="text-[0.82rem] text-gray-400 leading-snug">{item.description}</p>
+                <h4 className="font-sans text-body font-bold mb-1 text-white">{item.title}</h4>
+                <p className="text-caption text-neutral-400 leading-snug">{item.description}</p>
               </div>
             ))}
           </div>

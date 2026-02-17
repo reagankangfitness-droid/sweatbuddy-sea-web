@@ -6,26 +6,26 @@ export function FinalCTASection() {
     <section id="cta" className="py-24 pb-32 px-5 text-center relative overflow-hidden landing-cta-glow">
       <ScrollReveal>
         <div className="relative z-[2]">
-          <div className="font-[family-name:var(--font-outfit)] text-xs font-bold tracking-[0.15em] uppercase text-brand-blue-glow mb-4">
+          <div className="font-sans text-label tracking-[0.15em] uppercase text-brand-blue-glow mb-4">
             Ready?
           </div>
-          <h2 className="font-[family-name:var(--font-outfit)] text-[clamp(2rem,4vw,3rem)] font-extrabold tracking-[-0.02em] leading-[1.15] mb-4 text-white">
+          <h2 className="font-sans text-display font-extrabold tracking-[-0.02em] leading-[1.15] mb-4 text-white">
             You didn&apos;t start this to send{' '}
             <span className="bg-gradient-to-br from-brand-blue-glow to-[#818CF8] bg-clip-text text-transparent">
               spreadsheets
             </span>
             .
           </h2>
-          <p className="text-gray-400 text-[1.05rem] leading-relaxed max-w-[520px] mx-auto mb-10">
+          <p className="text-neutral-400 text-body-lg leading-relaxed max-w-[520px] mx-auto mb-10">
             Hundreds of coaches and organizers already made the switch. Less admin. More energy for the people who show up.
           </p>
           <Link
             href="/sign-up"
-            className="inline-flex items-center gap-2.5 bg-brand-blue text-white px-12 py-[18px] rounded-full font-[family-name:var(--font-outfit)] font-bold text-lg transition-all duration-300 hover:bg-brand-blue-dark hover:-translate-y-1 shadow-[0_4px_20px_rgba(0,37,204,0.3)] hover:shadow-[0_12px_40px_rgba(0,37,204,0.5)]"
+            className="inline-flex items-center gap-2.5 bg-brand-blue text-white px-12 py-[18px] rounded-full font-sans font-bold text-heading-sm transition-all duration-300 hover:bg-brand-blue-dark hover:-translate-y-1 shadow-md hover:shadow-lg"
           >
             Get Started — It&apos;s Free →
           </Link>
-          <div className="mt-4 text-[0.82rem] text-gray-400">
+          <div className="mt-4 text-caption text-neutral-500">
             No credit card needed. Set up in under 5 minutes.
           </div>
         </div>

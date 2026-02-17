@@ -42,13 +42,13 @@ export function FeaturesSection() {
       <div className="max-w-[1100px] mx-auto">
         <ScrollReveal>
           <div className="text-center mb-16">
-            <div className="font-[family-name:var(--font-outfit)] text-xs font-bold tracking-[0.15em] uppercase text-brand-blue-glow mb-4">
+            <div className="font-sans text-label tracking-[0.15em] uppercase text-brand-blue-glow mb-4">
               Your Dashboard
             </div>
-            <h2 className="font-[family-name:var(--font-outfit)] text-[clamp(1.8rem,3.5vw,2.8rem)] font-extrabold tracking-[-0.02em] leading-[1.15] mb-4 text-white">
+            <h2 className="font-sans text-display font-extrabold tracking-[-0.02em] leading-[1.15] mb-4 text-white">
               Everything you need.<br />Nothing you don&apos;t.
             </h2>
-            <p className="text-[1.05rem] text-gray-400 leading-relaxed max-w-[580px] mx-auto">
+            <p className="text-body-lg text-neutral-400 leading-relaxed max-w-[580px] mx-auto">
               A purpose-built dashboard designed for fitness entrepreneurs — not generic SaaS.
             </p>
           </div>
@@ -63,15 +63,15 @@ export function FeaturesSection() {
             >
               {/* Text */}
               <div>
-                <h3 className="font-[family-name:var(--font-outfit)] text-2xl font-bold mb-3 leading-tight text-white">
+                <h3 className="font-sans text-heading-xl font-bold mb-3 leading-tight text-white">
                   {feature.title}
                 </h3>
-                <p className="text-gray-400 text-[0.95rem] leading-relaxed mb-5">
+                <p className="text-neutral-400 text-body leading-relaxed mb-5">
                   {feature.description}
                 </p>
                 <ul className="flex flex-col gap-2.5">
                   {feature.bullets.map((bullet) => (
-                    <li key={bullet} className="flex items-start gap-2.5 text-[0.9rem] text-gray-300">
+                    <li key={bullet} className="flex items-start gap-2.5 text-body-sm text-neutral-300">
                       <span className="text-emerald-500 font-bold mt-px">✓</span>
                       {bullet}
                     </li>

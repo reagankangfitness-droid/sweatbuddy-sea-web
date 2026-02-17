@@ -42,13 +42,13 @@ export function JourneySection() {
       <div className="max-w-[1100px] mx-auto">
         <ScrollReveal>
           <div className="text-center mb-16">
-            <div className="font-[family-name:var(--font-outfit)] text-xs font-bold tracking-[0.15em] uppercase text-brand-blue-glow mb-4">
+            <div className="font-sans text-label tracking-[0.15em] uppercase text-brand-blue-glow mb-4">
               Your Journey With Us
             </div>
-            <h2 className="font-[family-name:var(--font-outfit)] text-[clamp(1.8rem,3.5vw,2.8rem)] font-extrabold tracking-[-0.02em] leading-[1.15] mb-4 text-white">
+            <h2 className="font-sans text-display font-extrabold tracking-[-0.02em] leading-[1.15] mb-4 text-white">
               From idea to thriving community<br />in three phases
             </h2>
-            <p className="text-[1.05rem] text-gray-400 leading-relaxed max-w-[580px] mx-auto">
+            <p className="text-body-lg text-neutral-400 leading-relaxed max-w-[580px] mx-auto">
               SweatBuddies meets you where you are and grows with you.
             </p>
           </div>
@@ -62,17 +62,17 @@ export function JourneySection() {
             {steps.map((step) => (
               <div key={step.number} className="text-center relative">
                 <div
-                  className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-6 font-[family-name:var(--font-outfit)] font-extrabold text-xl relative z-[2] border-2 ${step.colors.bg} ${step.colors.border} ${step.colors.text}`}
+                  className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-6 font-sans font-extrabold text-heading relative z-[2] border-2 ${step.colors.bg} ${step.colors.border} ${step.colors.text}`}
                 >
                   {step.number}
                 </div>
-                <div className={`font-[family-name:var(--font-outfit)] text-[0.7rem] font-semibold uppercase tracking-[0.12em] mb-1.5 ${step.colors.text}`}>
+                <div className={`font-sans text-tiny font-semibold uppercase tracking-[0.12em] mb-1.5 ${step.colors.text}`}>
                   {step.label}
                 </div>
-                <h3 className="font-[family-name:var(--font-outfit)] text-xl font-bold mb-2 text-white">
+                <h3 className="font-sans text-heading font-bold mb-2 text-white">
                   {step.title}
                 </h3>
-                <p className="text-gray-400 text-[0.9rem] leading-relaxed max-w-[280px] mx-auto">
+                <p className="text-neutral-400 text-body-sm leading-relaxed max-w-[280px] mx-auto">
                   {step.description}
                 </p>
               </div>

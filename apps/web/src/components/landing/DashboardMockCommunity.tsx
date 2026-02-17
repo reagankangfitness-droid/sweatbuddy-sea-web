@@ -19,7 +19,7 @@ export function DashboardMockCommunity() {
       <div className="p-6 flex flex-col gap-4">
         {/* Header */}
         <div className="flex justify-between items-center">
-          <div className="font-[family-name:var(--font-outfit)] font-bold text-base">👥 Community Members</div>
+          <div className="font-sans font-bold text-base">👥 Community Members</div>
           <div className="text-[0.78rem] text-gray-400">247 members</div>
         </div>
 

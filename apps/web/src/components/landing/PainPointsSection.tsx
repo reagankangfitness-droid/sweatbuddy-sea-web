@@ -39,13 +39,13 @@ export function PainPointsSection() {
       <div className="max-w-[1100px] mx-auto">
         <ScrollReveal>
           <div className="text-center mb-16">
-            <div className="font-[family-name:var(--font-outfit)] text-xs font-bold tracking-[0.15em] uppercase text-brand-blue-glow mb-4">
+            <div className="font-sans text-label tracking-[0.15em] uppercase text-brand-blue-glow mb-4">
               Sound Familiar?
             </div>
-            <h2 className="font-[family-name:var(--font-outfit)] text-[clamp(1.8rem,3.5vw,2.8rem)] font-extrabold tracking-[-0.02em] leading-[1.15] mb-4 text-white">
+            <h2 className="font-sans text-display font-extrabold tracking-[-0.02em] leading-[1.15] mb-4 text-white">
               You&apos;re passionate about fitness.<br />But running the business? That&apos;s the hard part.
             </h2>
-            <p className="text-[1.05rem] text-gray-400 leading-relaxed max-w-[580px] mx-auto">
+            <p className="text-body-lg text-neutral-400 leading-relaxed max-w-[580px] mx-auto">
               Most fitness entrepreneurs are stuck duct-taping tools together while their community deserves better.
             </p>
           </div>
@@ -56,10 +56,10 @@ export function PainPointsSection() {
             <ScrollReveal key={point.title} delay={index * 80}>
               <div className="landing-pain-card bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 transition-all duration-400 hover:border-red-500/15 hover:bg-red-500/[0.03] hover:-translate-y-1">
                 <div className="text-[1.6rem] mb-4">{point.icon}</div>
-                <h3 className="font-[family-name:var(--font-outfit)] text-[1.1rem] font-bold mb-2.5 text-white">
+                <h3 className="font-sans text-heading-sm font-bold mb-2.5 text-white">
                   {point.title}
                 </h3>
-                <p className="text-gray-400 text-[0.92rem] leading-relaxed">
+                <p className="text-neutral-400 text-body-sm leading-relaxed">
                   {point.description}
                 </p>
               </div>

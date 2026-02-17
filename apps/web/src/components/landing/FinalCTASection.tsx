@@ -13,10 +13,10 @@ export function FinalCTASection() {
         className="object-cover object-center"
       />
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-dark/85 z-[1]" />
+      <div className="absolute inset-0 bg-dark/90 z-[1]" />
 
-      <ScrollReveal>
-        <div className="relative z-[2]">
+      <div className="relative z-[2]">
+        <ScrollReveal>
           <div className="font-sans text-label tracking-[0.15em] uppercase text-brand-blue-glow mb-4">
             Ready?
           </div>
@@ -39,8 +39,8 @@ export function FinalCTASection() {
           <div className="mt-4 text-caption text-neutral-400">
             No credit card needed. Set up in under 5 minutes.
           </div>
-        </div>
-      </ScrollReveal>
+        </ScrollReveal>
+      </div>
     </section>
   )
 }

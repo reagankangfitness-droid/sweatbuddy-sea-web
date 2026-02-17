@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Plus, MapPin, Users, Clock, Calendar, ChevronRight } from 'lucide-react'
+import { Plus, MapPin, Users, Clock, Calendar } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { ACTIVITY_CATEGORIES } from '@/lib/categories'
 
@@ -323,22 +323,11 @@ export default function EventsPage() {
                   </div>
                 </Link>
 
-                {/* Additional today events as compact row */}
+                {/* Additional today events as regular cards */}
                 {todayEvents.length > 1 && (
-                  <div className="flex gap-2 mt-2 overflow-x-auto scrollbar-hide">
-                    {todayEvents.slice(1, 4).map((event) => (
-                      <Link
-                        key={event.id}
-                        href={getEventUrl(event)}
-                        className="flex-shrink-0 flex items-center gap-3 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-xl px-3 py-2"
-                      >
-                        <span className="text-lg">{event.emoji}</span>
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-neutral-900 dark:text-white truncate max-w-[140px]">{event.title}</p>
-                          <p className="text-xs text-neutral-500 dark:text-neutral-400">{formatHeroTime(event.startTime)}</p>
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-neutral-300 flex-shrink-0" />
-                      </Link>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
+                    {todayEvents.slice(1).map((event, index) => (
+                      <EventCard key={event.id} event={event} index={index} />
                     ))}
                   </div>
                 )}

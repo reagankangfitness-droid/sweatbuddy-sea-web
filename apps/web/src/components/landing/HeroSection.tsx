@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 
 const activityTypes = [
@@ -10,13 +11,22 @@ const activityTypes = [
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center text-center px-5 pt-32 pb-16 overflow-hidden landing-hero-glow">
-      <div className="landing-grid-bg" />
+    <section className="relative min-h-screen flex items-center justify-center text-center px-5 pt-32 pb-16 overflow-hidden">
+      {/* Background image */}
+      <Image
+        src="/images/hero-bg.jpg"
+        alt="Outdoor fitness community class"
+        fill
+        priority
+        className="object-cover object-center"
+      />
+      {/* Dark overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/70 to-dark z-[1]" />
 
       <div className="relative z-[2] max-w-[820px]">
         {/* Badge */}
         <div
-          className="inline-flex items-center gap-2 bg-brand-blue/10 border border-brand-blue/30 rounded-full px-5 py-2 text-body-sm font-medium text-brand-blue-glow mb-8 opacity-0 animate-fade-in-up"
+          className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-sm rounded-full px-5 py-2 text-body-sm font-medium text-white mb-8 opacity-0 animate-fade-in-up"
         >
           <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
           Where fitness communities come to life
@@ -34,7 +44,7 @@ export function HeroSection() {
 
         {/* Subtitle */}
         <p
-          className="text-body-lg text-neutral-400 leading-relaxed max-w-[600px] mx-auto mb-10 opacity-0 animate-fade-in-up [animation-delay:200ms]"
+          className="text-body-lg text-neutral-300 leading-relaxed max-w-[600px] mx-auto mb-10 opacity-0 animate-fade-in-up [animation-delay:200ms]"
         >
           No more chasing payments in DMs. No more headcounts on a spreadsheet at 5am. Just you, your people, and a platform that handles the rest.
         </p>
@@ -51,7 +61,7 @@ export function HeroSection() {
           </Link>
           <Link
             href="#features"
-            className="bg-transparent text-neutral-400 border border-white/15 px-9 py-3.5 rounded-full font-sans font-medium text-body transition-all duration-300 hover:border-white/30 hover:text-white hover:bg-white/5"
+            className="bg-white/10 text-white backdrop-blur-sm border border-white/20 px-9 py-3.5 rounded-full font-sans font-medium text-body transition-all duration-300 hover:bg-white/20"
           >
             See How It Works
           </Link>
@@ -62,7 +72,7 @@ export function HeroSection() {
           className="flex justify-center gap-6 sm:gap-8 flex-wrap mt-14 opacity-0 animate-fade-in-up [animation-delay:400ms]"
         >
           {activityTypes.map((type) => (
-            <div key={type.label} className="flex items-center gap-1.5 text-neutral-400 text-body-sm">
+            <div key={type.label} className="flex items-center gap-1.5 text-neutral-300 text-body-sm">
               <span className="text-body">{type.icon}</span>
               {type.label}
             </div>

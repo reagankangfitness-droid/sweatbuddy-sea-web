@@ -1,9 +1,20 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 export function FinalCTASection() {
   return (
-    <section id="cta" className="py-24 pb-32 px-5 text-center relative overflow-hidden landing-cta-glow">
+    <section id="cta" className="py-24 pb-32 px-5 text-center relative overflow-hidden">
+      {/* Background image */}
+      <Image
+        src="/images/connect-people.webp"
+        alt="Large outdoor bootcamp community workout"
+        fill
+        className="object-cover object-center"
+      />
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-dark/85 z-[1]" />
+
       <ScrollReveal>
         <div className="relative z-[2]">
           <div className="font-sans text-label tracking-[0.15em] uppercase text-brand-blue-glow mb-4">
@@ -16,7 +27,7 @@ export function FinalCTASection() {
             </span>
             .
           </h2>
-          <p className="text-neutral-400 text-body-lg leading-relaxed max-w-[520px] mx-auto mb-10">
+          <p className="text-neutral-300 text-body-lg leading-relaxed max-w-[520px] mx-auto mb-10">
             Hundreds of coaches and organizers already made the switch. Less admin. More energy for the people who show up.
           </p>
           <Link
@@ -25,7 +36,7 @@ export function FinalCTASection() {
           >
             Get Started — It&apos;s Free →
           </Link>
-          <div className="mt-4 text-caption text-neutral-500">
+          <div className="mt-4 text-caption text-neutral-400">
             No credit card needed. Set up in under 5 minutes.
           </div>
         </div>

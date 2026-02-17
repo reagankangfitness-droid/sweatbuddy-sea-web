@@ -11,6 +11,7 @@ import { FeaturesSection } from '@/components/landing/FeaturesSection'
 import { BuiltForSection } from '@/components/landing/BuiltForSection'
 import { SocialProofBanner } from '@/components/landing/SocialProofBanner'
 import { FinalCTASection } from '@/components/landing/FinalCTASection'
+import { PhotoStrip } from '@/components/landing/PhotoStrip'
 import { LandingFooter } from '@/components/landing/LandingFooter'
 
 export default function LandingPage() {
@@ -33,9 +34,10 @@ export default function LandingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-dark text-white font-[family-name:var(--font-dm-sans)]">
+    <main className="min-h-screen bg-dark text-white font-sans">
       <LandingNav />
       <HeroSection />
+      <PhotoStrip />
       <PainPointsSection />
       <JourneySection />
       <FeaturesSection />

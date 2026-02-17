@@ -31,6 +31,15 @@ const config: Config = {
       // Black is the only "accent"
       // ═══════════════════════════════════════════════════════
       colors: {
+        // Landing page brand colors
+        'brand-blue': '#0025CC',
+        'brand-blue-dark': '#001DA3',
+        'brand-blue-light': '#D6DEFF',
+        'brand-blue-glow': '#2244EE',
+        'dark': '#0A0E1A',
+        'dark-card': '#111827',
+        'dark-surface': '#1F2937',
+
         // Primary neutrals (warm-tinted)
         'neutral': {
           50:  '#FAFAFA',

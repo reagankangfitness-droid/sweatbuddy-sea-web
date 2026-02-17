@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import type { PropsWithChildren } from 'react'
-import { Plus_Jakarta_Sans } from 'next/font/google'
+import { Plus_Jakarta_Sans, Outfit, DM_Sans } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
 import { AppNav } from '@/components/AppNav'
@@ -16,15 +16,27 @@ const plusJakarta = Plus_Jakarta_Sans({
   preload: true,
 })
 
+const outfit = Outfit({
+  subsets: ['latin'],
+  variable: '--font-outfit',
+  display: 'swap',
+})
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  variable: '--font-dm-sans',
+  display: 'swap',
+})
+
 const BASE_URL = 'https://www.sweatbuddies.co'
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'SweatBuddies | Find Fitness Experiences in Singapore',
+    default: 'SweatBuddies | The Platform Built for Fitness & Wellness Entrepreneurs',
     template: '%s | SweatBuddies',
   },
-  description: 'Show up alone. Leave with a crew. Find run clubs, yoga, HIIT and fitness experiences across Singapore. No membership required.',
+  description: 'Whether you run a run club, bootcamp, PT sessions or wellness retreats — SweatBuddies gives you the tools to kickstart, build and grow your fitness community.',
   keywords: ['fitness experiences', 'Singapore', 'run club', 'yoga', 'bootcamp', 'outdoor fitness', 'community experiences', 'workout', 'HIIT', 'group fitness'],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
@@ -38,21 +50,21 @@ export const metadata: Metadata = {
     locale: 'en_SG',
     url: BASE_URL,
     siteName: 'SweatBuddies',
-    title: 'SweatBuddies | Find Fitness Experiences in Singapore',
-    description: 'Show up alone. Leave with a crew. Find run clubs, yoga, HIIT and fitness experiences across Singapore.',
+    title: 'SweatBuddies | The Platform Built for Fitness & Wellness Entrepreneurs',
+    description: 'Whether you run a run club, bootcamp, PT sessions or wellness retreats — SweatBuddies gives you the tools to kickstart, build and grow your fitness community.',
     images: [
       {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SweatBuddies — Show up alone. Leave with a crew.',
+        alt: 'SweatBuddies — Kickstart, build & grow your fitness community.',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SweatBuddies | Find Fitness Experiences in Singapore',
-    description: 'Show up alone. Leave with a crew. Find fitness experiences across Singapore.',
+    title: 'SweatBuddies | The Platform Built for Fitness & Wellness Entrepreneurs',
+    description: 'Whether you run a run club, bootcamp, PT sessions or wellness retreats — SweatBuddies gives you the tools to kickstart, build and grow your fitness community.',
     images: ['/images/og-image.jpg'],
   },
   robots: {
@@ -82,18 +94,10 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <link rel="preconnect" href="https://utfs.io" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://utfs.io" />
 
-        {/* Preload hero image for LCP optimization */}
-        <link
-          rel="preload"
-          href="/images/hero-1.webp"
-          as="image"
-          type="image/webp"
-        />
-
         {/* Prefetch events API for faster data loading */}
         <link rel="prefetch" href="/api/events" as="fetch" crossOrigin="anonymous" />
       </head>
-      <body className={`${plusJakarta.variable} font-sans antialiased`}>
+      <body className={`${plusJakarta.variable} ${outfit.variable} ${dmSans.variable} font-sans antialiased`}>
         <Providers>
           {children}
           <Toaster />

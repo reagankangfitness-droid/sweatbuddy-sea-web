@@ -1,5 +1,5 @@
-import { WaveMap } from '@/components/wave/WaveMap'
+import { redirect } from 'next/navigation'
 
 export default function AppPage() {
-  return <WaveMap />
+  redirect('/events')
 }

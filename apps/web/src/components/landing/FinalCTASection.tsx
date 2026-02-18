@@ -21,23 +21,30 @@ export function FinalCTASection() {
             Ready?
           </div>
           <h2 className="font-sans text-display font-extrabold tracking-[-0.02em] leading-[1.15] mb-4 text-white">
-            You didn&apos;t start this to send{' '}
+            Your fitness community{' '}
             <span className="bg-gradient-to-br from-brand-blue-glow to-[#818CF8] bg-clip-text text-transparent">
-              spreadsheets
+              starts here.
             </span>
-            .
           </h2>
           <p className="text-neutral-300 text-body-lg leading-relaxed max-w-[520px] mx-auto mb-10">
-            Hundreds of coaches and organizers already made the switch. Less admin. More energy for the people who show up.
+            Join thousands discovering their next favorite workout — or launch the community you&apos;ve been dreaming about. Either way, it&apos;s free.
           </p>
-          <Link
-            href="/sign-up"
-            className="inline-flex items-center gap-2.5 bg-brand-blue text-white px-12 py-[18px] rounded-full font-sans font-bold text-heading-sm transition-all duration-300 hover:bg-brand-blue-dark hover:-translate-y-1 shadow-md hover:shadow-lg"
-          >
-            Get Started — It&apos;s Free →
-          </Link>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <Link
+              href="/sign-up"
+              className="inline-flex items-center gap-2.5 bg-brand-blue text-white px-12 py-[18px] rounded-full font-sans font-bold text-heading-sm transition-all duration-300 hover:bg-brand-blue-dark hover:-translate-y-1 shadow-md hover:shadow-lg"
+            >
+              Find Events →
+            </Link>
+            <Link
+              href="/sign-up?intent=host"
+              className="inline-flex items-center gap-2.5 bg-white/10 text-white backdrop-blur-sm border border-white/20 px-12 py-[18px] rounded-full font-sans font-bold text-heading-sm transition-all duration-300 hover:bg-white/20"
+            >
+              Start Hosting →
+            </Link>
+          </div>
           <div className="mt-4 text-caption text-neutral-400">
-            No credit card needed. Set up in under 5 minutes.
+            No credit card needed. One account for everything.
           </div>
         </ScrollReveal>
       </div>

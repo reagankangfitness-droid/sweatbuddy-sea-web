@@ -14,7 +14,7 @@ export function SocialProofBanner() {
               &ldquo;Show up alone. Leave with a crew.&rdquo;
             </h3>
             <p className="text-neutral-400 text-body leading-relaxed max-w-[500px] mx-auto mb-4">
-              That&apos;s what your members say about your community. We&apos;re here to make sure you can keep delivering that — without burning out behind the scenes.
+              That&apos;s the SweatBuddies experience. Real connections through real movement — whether you&apos;re joining your first run club or building a fitness empire.
             </p>
           </div>
         </div>

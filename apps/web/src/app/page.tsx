@@ -5,13 +5,11 @@ import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { LandingNav } from '@/components/landing/LandingNav'
 import { HeroSection } from '@/components/landing/HeroSection'
-import { PainPointsSection } from '@/components/landing/PainPointsSection'
-import { JourneySection } from '@/components/landing/JourneySection'
-import { FeaturesSection } from '@/components/landing/FeaturesSection'
+import { PhotoStrip } from '@/components/landing/PhotoStrip'
+import { DualPathSection } from '@/components/landing/DualPathSection'
 import { BuiltForSection } from '@/components/landing/BuiltForSection'
 import { SocialProofBanner } from '@/components/landing/SocialProofBanner'
 import { FinalCTASection } from '@/components/landing/FinalCTASection'
-import { PhotoStrip } from '@/components/landing/PhotoStrip'
 import { LandingFooter } from '@/components/landing/LandingFooter'
 
 export default function LandingPage() {
@@ -38,9 +36,7 @@ export default function LandingPage() {
       <LandingNav />
       <HeroSection />
       <PhotoStrip />
-      <PainPointsSection />
-      <JourneySection />
-      <FeaturesSection />
+      <DualPathSection />
       <BuiltForSection />
       <SocialProofBanner />
       <FinalCTASection />

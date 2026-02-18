@@ -33,10 +33,10 @@ const BASE_URL = 'https://www.sweatbuddies.co'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'SweatBuddies | The Platform Built for Fitness & Wellness Entrepreneurs',
+    default: 'SweatBuddies | Discover & Host Fitness Events in Your Community',
     template: '%s | SweatBuddies',
   },
-  description: 'Whether you run a run club, bootcamp, PT sessions or wellness retreats — SweatBuddies gives you the tools to kickstart, build and grow your fitness community.',
+  description: 'Find group workouts, run clubs, and wellness events near you — or create your own. SweatBuddies is where fitness communities come to life.',
   keywords: ['fitness experiences', 'Singapore', 'run club', 'yoga', 'bootcamp', 'outdoor fitness', 'community experiences', 'workout', 'HIIT', 'group fitness'],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
@@ -50,21 +50,21 @@ export const metadata: Metadata = {
     locale: 'en_SG',
     url: BASE_URL,
     siteName: 'SweatBuddies',
-    title: 'SweatBuddies | The Platform Built for Fitness & Wellness Entrepreneurs',
-    description: 'Whether you run a run club, bootcamp, PT sessions or wellness retreats — SweatBuddies gives you the tools to kickstart, build and grow your fitness community.',
+    title: 'SweatBuddies | Discover & Host Fitness Events in Your Community',
+    description: 'Find group workouts, run clubs, and wellness events near you — or create your own. SweatBuddies is where fitness communities come to life.',
     images: [
       {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SweatBuddies — Kickstart, build & grow your fitness community.',
+        alt: 'SweatBuddies — Discover & host fitness events in your community.',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SweatBuddies | The Platform Built for Fitness & Wellness Entrepreneurs',
-    description: 'Whether you run a run club, bootcamp, PT sessions or wellness retreats — SweatBuddies gives you the tools to kickstart, build and grow your fitness community.',
+    title: 'SweatBuddies | Discover & Host Fitness Events in Your Community',
+    description: 'Find group workouts, run clubs, and wellness events near you — or create your own. SweatBuddies is where fitness communities come to life.',
     images: ['/images/og-image.jpg'],
   },
   robots: {

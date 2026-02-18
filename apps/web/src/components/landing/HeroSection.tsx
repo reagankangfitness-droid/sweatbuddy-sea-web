@@ -36,9 +36,9 @@ export function HeroSection() {
         <h1
           className="font-sans text-display-xl font-extrabold leading-[1.1] tracking-[-0.03em] mb-6 text-white opacity-0 animate-fade-in-up [animation-delay:100ms]"
         >
-          You built the community.{' '}
+          Your next workout crew is{' '}
           <span className="bg-gradient-to-br from-brand-blue-glow to-[#818CF8] bg-clip-text text-transparent">
-            Now let it run itself.
+            one tap away.
           </span>
         </h1>
 
@@ -46,7 +46,7 @@ export function HeroSection() {
         <p
           className="text-body-lg text-neutral-300 leading-relaxed max-w-[600px] mx-auto mb-10 opacity-0 animate-fade-in-up [animation-delay:200ms]"
         >
-          No more chasing payments in DMs. No more headcounts on a spreadsheet at 5am. Just you, your people, and a platform that handles the rest.
+          Discover group runs, bootcamps, and wellness sessions near you — or launch your own community and watch it grow.
         </p>
 
         {/* CTAs */}
@@ -57,13 +57,13 @@ export function HeroSection() {
             href="/sign-up"
             className="bg-brand-blue text-white px-9 py-3.5 rounded-full font-sans font-semibold text-body inline-flex items-center gap-2 transition-all duration-300 hover:bg-brand-blue-dark hover:-translate-y-0.5 hover:shadow-md"
           >
-            Launch Your Community →
+            Find Events Near You
           </Link>
           <Link
-            href="#features"
+            href="/sign-up?intent=host"
             className="bg-white/10 text-white backdrop-blur-sm border border-white/20 px-9 py-3.5 rounded-full font-sans font-medium text-body transition-all duration-300 hover:bg-white/20"
           >
-            See How It Works
+            Start a Movement
           </Link>
         </div>
 

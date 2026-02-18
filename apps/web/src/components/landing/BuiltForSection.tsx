@@ -1,12 +1,12 @@
 import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 const audiences = [
-  { icon: '🏃', title: 'Run Clubs', description: 'Weekly routes, pace groups, and post-run socials — all managed.' },
-  { icon: '🔥', title: 'Bootcamps', description: 'Track capacity, manage waitlists, and keep energy high.' },
-  { icon: '🧘', title: 'Yoga & Pilates', description: 'Offer drop-ins or memberships with seamless booking.' },
-  { icon: '💪', title: 'Personal Trainers', description: 'Move from 1:1 to group experiences and scale your income.' },
-  { icon: '🏔️', title: 'Retreats & Workshops', description: 'One-off or recurring — manage registrations and payments.' },
-  { icon: '🥊', title: 'Combat & Martial Arts', description: 'Belt tracking, sparring groups, and class management.' },
+  { icon: '🏃', title: 'Run Clubs', description: 'Weekly routes, pace groups, and post-run socials — all in one place.' },
+  { icon: '🔥', title: 'Bootcamps', description: 'Find your next session or fill every spot — all in one place.' },
+  { icon: '🧘', title: 'Yoga & Pilates', description: 'Drop in to a class or build a following — all in one place.' },
+  { icon: '💪', title: 'Personal Trainers', description: 'Join group sessions or launch your own — all in one place.' },
+  { icon: '🏔️', title: 'Retreats & Workshops', description: 'Discover unique experiences or host your own — all in one place.' },
+  { icon: '🥊', title: 'Combat & Martial Arts', description: 'Sparring groups, classes, and community — all in one place.' },
 ]
 
 export function BuiltForSection() {
@@ -18,7 +18,7 @@ export function BuiltForSection() {
             Built For You
           </div>
           <h2 className="font-sans text-display font-extrabold tracking-[-0.02em] leading-[1.15] mb-4 text-white">
-            No matter how you move people,<br />we&apos;ve got you covered
+            No matter how you move,<br />we&apos;ve got you covered
           </h2>
         </ScrollReveal>
 

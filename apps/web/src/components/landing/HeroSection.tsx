@@ -21,14 +21,14 @@ export function HeroSection() {
         className="object-cover object-center"
       />
       {/* Dark overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/70 to-dark z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-neutral-950/80 via-neutral-950/70 to-neutral-950 z-[1]" />
 
       <div className="relative z-[2] max-w-[820px]">
         {/* Badge */}
         <div
           className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-sm rounded-full px-5 py-2 text-body-sm font-medium text-white mb-8 opacity-0 animate-fade-in-up"
         >
-          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+          <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
           Where fitness communities come to life
         </div>
 
@@ -37,7 +37,7 @@ export function HeroSection() {
           className="font-sans text-display-xl font-extrabold leading-[1.1] tracking-[-0.03em] mb-6 text-white opacity-0 animate-fade-in-up [animation-delay:100ms]"
         >
           Your next workout crew is{' '}
-          <span className="bg-gradient-to-br from-brand-blue-glow to-[#818CF8] bg-clip-text text-transparent">
+          <span className="text-neutral-300">
             one tap away.
           </span>
         </h1>
@@ -55,7 +55,7 @@ export function HeroSection() {
         >
           <Link
             href="/sign-up"
-            className="bg-brand-blue text-white px-9 py-3.5 rounded-full font-sans font-semibold text-body inline-flex items-center gap-2 transition-all duration-300 hover:bg-brand-blue-dark hover:-translate-y-0.5 hover:shadow-md"
+            className="bg-white text-neutral-900 px-9 py-3.5 rounded-full font-sans font-semibold text-body inline-flex items-center gap-2 transition-all duration-300 hover:bg-neutral-100 hover:-translate-y-0.5 hover:shadow-md"
           >
             Find Events Near You
           </Link>
@@ -72,7 +72,7 @@ export function HeroSection() {
           className="flex justify-center gap-6 sm:gap-8 flex-wrap mt-14 opacity-0 animate-fade-in-up [animation-delay:400ms]"
         >
           {activityTypes.map((type) => (
-            <div key={type.label} className="flex items-center gap-1.5 text-neutral-300 text-body-sm">
+            <div key={type.label} className="flex items-center gap-1.5 text-neutral-400 text-body-sm">
               <span className="text-body">{type.icon}</span>
               {type.label}
             </div>

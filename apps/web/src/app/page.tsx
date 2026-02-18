@@ -25,14 +25,14 @@ export default function LandingPage() {
   // Show nothing while checking auth to avoid flash
   if (!isLoaded || isSignedIn) {
     return (
-      <div className="min-h-screen bg-dark flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-neutral-200 border-t-neutral-900 rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <main className="min-h-screen bg-dark text-white font-sans">
+    <main className="min-h-screen bg-white text-neutral-900 font-sans">
       <LandingNav />
       <HeroSection />
       <PhotoStrip />

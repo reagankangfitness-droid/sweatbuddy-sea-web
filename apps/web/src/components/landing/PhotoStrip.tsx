@@ -10,7 +10,7 @@ const photos = [
 
 export function PhotoStrip() {
   return (
-    <section className="py-8 overflow-hidden bg-dark">
+    <section className="py-8 overflow-hidden bg-neutral-50">
       <div className="flex gap-4 animate-scroll">
         {/* Double the photos for seamless loop */}
         {[...photos, ...photos].map((photo, i) => (

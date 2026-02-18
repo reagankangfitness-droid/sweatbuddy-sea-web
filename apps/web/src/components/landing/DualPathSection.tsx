@@ -70,7 +70,7 @@ export function DualPathSection() {
               </ul>
               <Link
                 href="/sign-up?intent=host"
-                className="inline-flex items-center gap-2 bg-white text-neutral-900 border border-neutral-300 px-8 py-3 rounded-full font-sans font-semibold text-body transition-all duration-300 hover:border-neutral-900 hover:-translate-y-0.5 hover:shadow-md"
+                className="inline-flex items-center gap-2 bg-white text-neutral-900 border border-neutral-400 px-8 py-3 rounded-full font-sans font-semibold text-body transition-all duration-300 hover:border-neutral-900 hover:-translate-y-0.5 hover:shadow-md"
               >
                 Start Hosting
               </Link>

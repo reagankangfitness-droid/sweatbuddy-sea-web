@@ -14,7 +14,7 @@ export function BuiltForSection() {
     <section className="py-24 px-5 bg-neutral-50 text-center">
       <div className="max-w-[1100px] mx-auto">
         <ScrollReveal>
-          <div className="font-sans text-label tracking-[0.15em] uppercase text-neutral-500 mb-4">
+          <div className="font-sans text-label tracking-[0.15em] uppercase text-neutral-600 mb-4">
             Built For You
           </div>
           <h2 className="font-sans text-display font-extrabold tracking-[-0.02em] leading-[1.15] mb-4 text-neutral-900">
@@ -27,11 +27,11 @@ export function BuiltForSection() {
             {audiences.map((item) => (
               <div
                 key={item.title}
-                className="bg-white border border-neutral-150 rounded-xl px-5 py-7 transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1"
+                className="bg-white border border-neutral-200 rounded-xl px-5 py-7 transition-all duration-300 hover:shadow-card-hover hover:-translate-y-1"
               >
                 <div className="text-[2rem] mb-3">{item.icon}</div>
                 <h4 className="font-sans text-body font-bold mb-1 text-neutral-900">{item.title}</h4>
-                <p className="text-caption text-neutral-500 leading-snug">{item.description}</p>
+                <p className="text-caption text-neutral-600 leading-snug">{item.description}</p>
               </div>
             ))}
           </div>

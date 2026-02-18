@@ -9,7 +9,7 @@ export function SocialProofBanner() {
           <h3 className="font-sans text-heading-xl font-bold mb-3 text-neutral-900">
             &ldquo;Show up alone. Leave with a crew.&rdquo;
           </h3>
-          <p className="text-neutral-500 text-body leading-relaxed max-w-[500px] mx-auto mb-4">
+          <p className="text-neutral-600 text-body leading-relaxed max-w-[500px] mx-auto mb-4">
             That&apos;s the SweatBuddies experience. Real connections through real movement — whether you&apos;re joining your first run club or building a fitness empire.
           </p>
         </div>

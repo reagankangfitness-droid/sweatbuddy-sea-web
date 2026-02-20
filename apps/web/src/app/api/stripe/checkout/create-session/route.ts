@@ -86,6 +86,13 @@ export async function POST(request: Request) {
     })
 
     if (!hostStripeAccount || !hostStripeAccount.chargesEnabled) {
+      // Rollback ticket reservation
+      if (event.maxTickets) {
+        await prisma.eventSubmission.update({
+          where: { id: eventId },
+          data: { ticketsSold: { decrement: quantity } },
+        })
+      }
       return NextResponse.json(
         { error: { message: 'Host has not completed Stripe setup' } },
         { status: 400 }
@@ -100,52 +107,64 @@ export async function POST(request: Request) {
     const unitAmount = fees.totalChargedToAttendee
 
     // Create Stripe Checkout Session with destination charges
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      mode: 'payment',
-      customer_email: attendeeEmail,
-      line_items: [
-        {
-          price_data: {
-            currency: event.currency?.toLowerCase() || 'sgd',
-            product_data: {
-              name: event.eventName,
-              description: `Ticket for ${event.eventName}`,
-              metadata: {
-                eventId: event.id,
+    let session
+    try {
+      session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        mode: 'payment',
+        customer_email: attendeeEmail,
+        line_items: [
+          {
+            price_data: {
+              currency: event.currency?.toLowerCase() || 'sgd',
+              product_data: {
+                name: event.eventName,
+                description: `Ticket for ${event.eventName}`,
+                metadata: {
+                  eventId: event.id,
+                },
               },
+              unit_amount: unitAmount,
             },
-            unit_amount: unitAmount,
+            quantity,
           },
-          quantity,
+        ],
+        payment_intent_data: {
+          // Platform takes application fee (platform fee only, Stripe fee is separate)
+          application_fee_amount: fees.platformFee * quantity,
+          // Funds go to host's connected account
+          transfer_data: {
+            destination: hostStripeAccount.stripeConnectAccountId,
+          },
+          metadata: {
+            eventId: event.id,
+            attendeeEmail,
+            attendeeName,
+            quantity: String(quantity),
+          },
         },
-      ],
-      payment_intent_data: {
-        // Platform takes application fee (platform fee only, Stripe fee is separate)
-        application_fee_amount: fees.platformFee * quantity,
-        // Funds go to host's connected account
-        transfer_data: {
-          destination: hostStripeAccount.stripeConnectAccountId,
-        },
+        success_url: `${BASE_URL}/e/${event.slug || event.id}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${BASE_URL}/e/${event.slug || event.id}?payment=cancelled`,
         metadata: {
           eventId: event.id,
           attendeeEmail,
           attendeeName,
           quantity: String(quantity),
+          ticketPrice: String(event.price),
+          platformFee: String(fees.platformFee),
+          feeHandling,
         },
-      },
-      success_url: `${BASE_URL}/e/${event.slug || event.id}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${BASE_URL}/e/${event.slug || event.id}?payment=cancelled`,
-      metadata: {
-        eventId: event.id,
-        attendeeEmail,
-        attendeeName,
-        quantity: String(quantity),
-        ticketPrice: String(event.price),
-        platformFee: String(fees.platformFee),
-        feeHandling,
-      },
-    })
+      })
+    } catch (stripeError) {
+      // Rollback ticket reservation if Stripe session creation fails
+      if (event.maxTickets) {
+        await prisma.eventSubmission.update({
+          where: { id: eventId },
+          data: { ticketsSold: { decrement: quantity } },
+        })
+      }
+      throw stripeError
+    }
 
     return NextResponse.json({
       sessionId: session.id,

@@ -77,6 +77,14 @@ export async function POST(request: Request) {
       )
     }
 
+    // Validate amount matches event price
+    if (!data.amount || data.amount <= 0 || data.amount !== event.price) {
+      return NextResponse.json(
+        { error: 'Payment amount does not match event price' },
+        { status: 400 }
+      )
+    }
+
     // Check for existing pending/paid signup with same email
     const existing = await prisma.eventAttendance.findFirst({
       where: {
@@ -109,7 +117,7 @@ export async function POST(request: Request) {
         name: data.name || null,
         paymentStatus: 'pending',
         paymentMethod: 'paynow',
-        paymentAmount: data.amount || event.price,
+        paymentAmount: event.price,
         paymentReference: paymentReference.toUpperCase(),
       },
     })

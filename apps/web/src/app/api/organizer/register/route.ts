@@ -20,6 +20,15 @@ export async function POST(request: Request) {
       )
     }
 
+    // Validate Instagram handle format (letters, numbers, periods, underscores, 1-30 chars)
+    const cleanHandle = instagramHandle.replace(/^@/, '').trim()
+    if (!/^[a-zA-Z0-9_.]{1,30}$/.test(cleanHandle)) {
+      return NextResponse.json(
+        { error: 'Invalid Instagram handle format' },
+        { status: 400 }
+      )
+    }
+
     const normalizedEmail = email.toLowerCase().trim()
     // Remove @ if user included it
     const normalizedHandle = instagramHandle.replace(/^@/, '').toLowerCase().trim()

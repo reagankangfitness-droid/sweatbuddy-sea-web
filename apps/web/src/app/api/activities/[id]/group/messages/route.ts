@@ -175,6 +175,10 @@ export async function POST(
       return NextResponse.json({ error: 'Message content is required' }, { status: 400 })
     }
 
+    if (content.trim().length > 5000) {
+      return NextResponse.json({ error: 'Message content is too long (max 5000 characters)' }, { status: 400 })
+    }
+
     // Check if activity exists
     const activity = await prisma.activity.findUnique({
       where: { id: activityId, deletedAt: null },

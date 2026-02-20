@@ -604,6 +604,11 @@ async function handleRefund(charge: Stripe.Charge) {
       return
     }
 
+    // Idempotency check — skip if already refunded
+    if (booking.paymentStatus === 'REFUNDED') {
+      return
+    }
+
     const refundAmount = fromStripeAmount(amountRefunded, currency)
     const isFullRefund = amountRefunded >= (charge.amount || 0)
 
@@ -699,6 +704,11 @@ async function handleEventSubmissionRefund(
 
     if (!transaction) {
       console.error('[EventSubmission] Transaction not found for refund:', paymentIntentId)
+      return
+    }
+
+    // Idempotency check — skip if already refunded
+    if (transaction.status === 'REFUNDED') {
       return
     }
 

@@ -39,7 +39,8 @@ export async function POST(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    if (event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!event.organizerInstagram || !session.instagramHandle ||
+        event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -59,11 +60,15 @@ export async function POST(
       )
     }
 
+    // HTML-escape to prevent XSS via attendee names or message content
+    const escapeHtml = (str: string) =>
+      str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+
     // Prepare emails with {name} placeholder replacement
     const emails = attendees.map((attendee) => {
-      const personalizedMessage = message.replace(
+      const personalizedMessage = escapeHtml(message).replace(
         /\{name\}/gi,
-        attendee.name || 'there'
+        escapeHtml(attendee.name || 'there')
       )
 
       const html = `
@@ -73,7 +78,7 @@ export async function POST(
           </div>
           <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 24px 0;">
           <p style="color: #737373; font-size: 14px;">
-            This email was sent by @${session.instagramHandle} via SweatBuddies regarding "${event.eventName}".
+            This email was sent by @${escapeHtml(session.instagramHandle)} via SweatBuddies regarding "${escapeHtml(event.eventName)}".
           </p>
           <p style="color: #a3a3a3; font-size: 12px; margin-top: 16px;">
             <a href="https://www.sweatbuddies.co" style="color: #737373;">SweatBuddies</a> - Community Fitness Events

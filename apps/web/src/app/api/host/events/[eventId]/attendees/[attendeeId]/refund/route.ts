@@ -29,21 +29,18 @@ export async function POST(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    if (event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!event.organizerInstagram || !session.instagramHandle ||
+        event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    // Get the attendance record
-    const attendance = await prisma.eventAttendance.findUnique({
-      where: { id: attendeeId },
+    // Get the attendance record — scoped to this event to prevent cross-event access
+    const attendance = await prisma.eventAttendance.findFirst({
+      where: { id: attendeeId, eventId },
     })
 
     if (!attendance) {
       return NextResponse.json({ error: 'Attendee not found' }, { status: 404 })
-    }
-
-    if (attendance.eventId !== eventId) {
-      return NextResponse.json({ error: 'Attendee not in this event' }, { status: 400 })
     }
 
     if (attendance.paymentStatus !== 'paid') {

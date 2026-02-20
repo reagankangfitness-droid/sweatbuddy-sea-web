@@ -159,7 +159,7 @@ export function EventChat({ eventId, eventName, isOpen, onClose, userEmail: prop
       'bg-pink-500',
       'bg-indigo-500',
       'bg-orange-500',
-      'bg-neutral-900-500',
+      'bg-teal-500',
       'bg-red-500',
     ]
     let hash = 0

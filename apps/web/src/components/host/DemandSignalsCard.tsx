@@ -178,7 +178,7 @@ export function DemandSignalsCard() {
                   {signal.user.imageUrl ? (
                     <Image
                       src={signal.user.imageUrl}
-                      alt=""
+                      alt={signal.user.firstName || signal.user.name || 'User avatar'}
                       width={24}
                       height={24}
                       className="object-cover"

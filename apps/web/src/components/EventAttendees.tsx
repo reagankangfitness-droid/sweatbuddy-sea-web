@@ -20,17 +20,21 @@ export function EventAttendees({ eventId, refreshTrigger = 0 }: EventAttendeesPr
   const [attendees, setAttendees] = useState<Attendee[]>([])
   const [count, setCount] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   const fetchAttendees = useCallback(async () => {
     try {
+      setError(false)
       const response = await fetch(`/api/events/${eventId}/attendees`)
       if (response.ok) {
         const data = await response.json()
         setAttendees(data.attendees || [])
         setCount(data.count || 0)
+      } else {
+        setError(true)
       }
     } catch {
-      // Error handled silently
+      setError(true)
     } finally {
       setIsLoading(false)
     }
@@ -123,7 +127,7 @@ export function EventAttendeesCompact({ eventId, refreshTrigger = 0 }: EventAtte
         setCount(data.count || 0)
       }
     } catch {
-      // Error handled silently
+      // Non-critical UI — fail silently for compact view
     } finally {
       setIsLoading(false)
     }

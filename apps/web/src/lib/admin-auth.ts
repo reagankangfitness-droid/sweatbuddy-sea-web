@@ -27,22 +27,11 @@ export function getAdminSecret(): string {
   return secret
 }
 
-// Timing-safe string comparison to prevent timing attacks
+// Timing-safe string comparison — hash both values first to avoid length leaks
 function timingSafeEqual(a: string, b: string): boolean {
-  // Pad shorter string to match length (constant time regardless of input)
-  const maxLen = Math.max(a.length, b.length)
-  const paddedA = a.padEnd(maxLen, '\0')
-  const paddedB = b.padEnd(maxLen, '\0')
-
-  // Always compare same-length buffers
-  const bufA = Buffer.from(paddedA)
-  const bufB = Buffer.from(paddedB)
-
-  // timingSafeEqual requires same-length buffers
-  const isEqual = crypto.timingSafeEqual(bufA, bufB)
-
-  // Also check original lengths match (after constant-time comparison)
-  return isEqual && a.length === b.length
+  const hashA = crypto.createHash('sha256').update(a).digest()
+  const hashB = crypto.createHash('sha256').update(b).digest()
+  return crypto.timingSafeEqual(hashA, hashB)
 }
 
 // Check admin secret header in API routes

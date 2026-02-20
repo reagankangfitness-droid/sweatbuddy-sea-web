@@ -22,7 +22,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/event-waitlist(.*)',
   '/api/newsletter(.*)',
   '/api/signup(.*)',
-  '/api/admin(.*)',
+  '/api/admin(.*)', // Has own multi-method auth (Clerk + admin secret + cookie)
   '/api/submit-event(.*)',
   '/api/my-events(.*)',
   '/api/organizer(.*)',
@@ -38,7 +38,7 @@ const isPublicRoute = createRouteMatcher([
   '/organizer/(.*)',
   '/my-events',
   '/my-events/(.*)',
-  '/admin(.*)',
+  // /admin pages require Clerk auth at middleware level
   '/explore',
   '/api/map(.*)',
   '/crews',

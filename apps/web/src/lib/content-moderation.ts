@@ -114,8 +114,9 @@ Only output the JSON, nothing else.`
 
     const result = JSON.parse(textContent.text) as ModerationResult
     return result
-  } catch {
+  } catch (error) {
     // Fail closed - flag for manual review if AI check fails
+    console.error('[ContentModeration] AI moderation failed:', error instanceof Error ? error.message : error)
     return {
       approved: false,
       reason: 'AI moderation unavailable - requires manual review',

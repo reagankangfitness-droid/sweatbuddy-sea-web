@@ -24,10 +24,11 @@ export async function POST(request: Request) {
     })
 
     if (!organizer) {
-      return NextResponse.json(
-        { error: 'No organizer found with this email. Please register first.' },
-        { status: 404 }
-      )
+      // Return same success response to prevent email enumeration
+      return NextResponse.json({
+        success: true,
+        message: 'If this email is registered, you will receive a login link',
+      })
     }
 
     // Generate secure token
@@ -114,7 +115,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: 'Magic link sent to your email',
+      message: 'If this email is registered, you will receive a login link',
     })
   } catch (error) {
     console.error('Organizer login error:', error)

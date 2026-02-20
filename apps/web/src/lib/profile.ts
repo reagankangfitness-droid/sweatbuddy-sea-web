@@ -2,6 +2,7 @@
  * Profile utility functions for user/host profiles
  */
 
+import crypto from 'crypto'
 import { prisma } from '@/lib/prisma'
 
 /**
@@ -16,9 +17,10 @@ export async function generateUserSlug(name: string | null, userId: string): Pro
 
   let slug = baseName
   let counter = 1
+  const MAX_SLUG_ATTEMPTS = 100
 
-  // Check for uniqueness
-  while (true) {
+  // Check for uniqueness (capped to prevent infinite loop)
+  while (counter <= MAX_SLUG_ATTEMPTS) {
     const existing = await prisma.user.findFirst({
       where: {
         slug,
@@ -30,6 +32,12 @@ export async function generateUserSlug(name: string | null, userId: string): Pro
 
     slug = `${baseName}-${counter}`
     counter++
+
+    if (counter > MAX_SLUG_ATTEMPTS) {
+      // Fallback to unique suffix
+      slug = `${baseName}-${crypto.randomUUID().slice(0, 8)}`
+      break
+    }
   }
 
   return slug

@@ -136,20 +136,72 @@ export async function POST(request: Request) {
       }
     }
 
-    // Delete the attendance record
-    await prisma.eventAttendance.delete({
-      where: { id: attendance.id },
+    // Delete attendance, clean up chat messages, and update capacity in one transaction
+    const { event: cancelledEvent, nextInLine } = await prisma.$transaction(async (tx) => {
+      // Delete the attendance record
+      await tx.eventAttendance.delete({
+        where: { id: attendance.id },
+      })
+
+      // Also delete any chat messages from this user for this event
+      await tx.eventChatMessage.deleteMany({
+        where: {
+          eventId,
+          senderEmail: normalizedEmail,
+        },
+      })
+
+      // Check if event was full and reset isFull + find waitlist candidate
+      const txEvent = await tx.eventSubmission.findUnique({
+        where: { id: eventId },
+        select: { id: true, eventName: true, isFull: true, maxTickets: true, slug: true },
+      })
+
+      let txNextInLine = null
+
+      if (txEvent?.isFull) {
+        // Recount attendees after deletion
+        const currentCount = await tx.eventAttendance.count({
+          where: { eventId },
+        })
+
+        // Reset isFull if we're now below capacity
+        if (!txEvent.maxTickets || currentCount < txEvent.maxTickets) {
+          await tx.eventSubmission.update({
+            where: { id: eventId },
+            data: { isFull: false },
+          })
+        }
+
+        // Get next person on waitlist
+        txNextInLine = await tx.eventWaitlist.findFirst({
+          where: {
+            eventId,
+            status: 'WAITING',
+          },
+          orderBy: { position: 'asc' },
+        })
+
+        if (txNextInLine) {
+          // Update their status to NOTIFIED
+          const expiresAt = new Date()
+          expiresAt.setHours(expiresAt.getHours() + 24) // 24-hour window
+
+          await tx.eventWaitlist.update({
+            where: { id: txNextInLine.id },
+            data: {
+              status: 'NOTIFIED',
+              notifiedAt: new Date(),
+              notificationExpires: expiresAt,
+            },
+          })
+        }
+      }
+
+      return { event: txEvent, nextInLine: txNextInLine }
     })
 
-    // Also delete any chat messages from this user for this event
-    await prisma.eventChatMessage.deleteMany({
-      where: {
-        eventId,
-        senderEmail: normalizedEmail,
-      },
-    })
-
-    // Send cancellation email (fire and forget)
+    // Send cancellation email (fire and forget — outside transaction)
     sendEventCancellationEmail({
       to: normalizedEmail,
       userName: attendance.name,
@@ -158,61 +210,18 @@ export async function POST(request: Request) {
       console.error('Failed to send cancellation email:', error)
     })
 
-    // Check if event was full and reset isFull + notify next person on waitlist
-    const event = await prisma.eventSubmission.findUnique({
-      where: { id: eventId },
-      select: { id: true, eventName: true, isFull: true, maxTickets: true, slug: true },
-    })
-
-    if (event?.isFull) {
-      // Recount attendees after deletion
-      const currentCount = await prisma.eventAttendance.count({
-        where: { eventId },
+    // Send waitlist notification (fire and forget — outside transaction)
+    if (nextInLine && cancelledEvent) {
+      const eventUrl = `https://www.sweatbuddies.co/e/${cancelledEvent.slug || cancelledEvent.id}`
+      sendWaitlistSpotAvailableEmail({
+        to: nextInLine.email,
+        userName: nextInLine.name,
+        eventName: cancelledEvent.eventName,
+        eventUrl,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      }).catch((error) => {
+        console.error('Failed to send waitlist notification:', error)
       })
-
-      // Reset isFull if we're now below capacity
-      if (!event.maxTickets || currentCount < event.maxTickets) {
-        await prisma.eventSubmission.update({
-          where: { id: eventId },
-          data: { isFull: false },
-        })
-      }
-
-      // Get next person on waitlist
-      const nextInLine = await prisma.eventWaitlist.findFirst({
-        where: {
-          eventId,
-          status: 'WAITING',
-        },
-        orderBy: { position: 'asc' },
-      })
-
-      if (nextInLine) {
-        // Update their status to NOTIFIED
-        const expiresAt = new Date()
-        expiresAt.setHours(expiresAt.getHours() + 24) // 24-hour window
-
-        await prisma.eventWaitlist.update({
-          where: { id: nextInLine.id },
-          data: {
-            status: 'NOTIFIED',
-            notifiedAt: new Date(),
-            notificationExpires: expiresAt,
-          },
-        })
-
-        // Send notification email
-        const eventUrl = `https://www.sweatbuddies.co/e/${event.slug || event.id}`
-        sendWaitlistSpotAvailableEmail({
-          to: nextInLine.email,
-          userName: nextInLine.name,
-          eventName: event.eventName,
-          eventUrl,
-          expiresAt,
-        }).catch((error) => {
-          console.error('Failed to send waitlist notification:', error)
-        })
-      }
     }
 
     return NextResponse.json({

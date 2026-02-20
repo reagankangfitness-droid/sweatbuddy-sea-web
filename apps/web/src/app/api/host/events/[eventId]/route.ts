@@ -55,10 +55,11 @@ export async function GET(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    // Verify ownership via userId or fallback to Instagram handle
+    // Verify ownership via userId or fallback to Instagram handle (null-safe)
     const isOwner =
       (session.userId && event.submittedByUserId && event.submittedByUserId === session.userId) ||
-      (event.organizerInstagram.toLowerCase() === session.instagramHandle.toLowerCase())
+      (event.organizerInstagram && session.instagramHandle &&
+        event.organizerInstagram.toLowerCase() === session.instagramHandle.toLowerCase())
     if (!isOwner) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
@@ -123,10 +124,11 @@ export async function PUT(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    // Verify ownership via userId or fallback to Instagram handle
+    // Verify ownership via userId or fallback to Instagram handle (null-safe)
     const isOwner =
       (session.userId && event.submittedByUserId && event.submittedByUserId === session.userId) ||
-      (event.organizerInstagram.toLowerCase() === session.instagramHandle.toLowerCase())
+      (event.organizerInstagram && session.instagramHandle &&
+        event.organizerInstagram.toLowerCase() === session.instagramHandle.toLowerCase())
     if (!isOwner) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }

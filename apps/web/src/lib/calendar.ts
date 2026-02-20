@@ -39,6 +39,10 @@ export function generateIcsFile(event: CalendarEvent): string {
     return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
   }
 
+  // ICS spec requires escaping backslashes, semicolons, commas, and newlines
+  const escapeIcs = (text: string) =>
+    text.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n')
+
   return `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//sweatbuddies//Calendar//EN
@@ -47,9 +51,9 @@ UID:${Date.now()}@sweatbuddies.com
 DTSTAMP:${formatIcsDate(new Date())}
 DTSTART:${formatIcsDate(event.startTime)}
 DTEND:${formatIcsDate(event.endTime)}
-SUMMARY:${event.title}
-DESCRIPTION:${event.description.replace(/\n/g, '\\n')}
-LOCATION:${event.location}
+SUMMARY:${escapeIcs(event.title)}
+DESCRIPTION:${escapeIcs(event.description)}
+LOCATION:${escapeIcs(event.location)}
 STATUS:CONFIRMED
 END:VEVENT
 END:VCALENDAR`

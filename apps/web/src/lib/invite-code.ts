@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import { prisma } from './prisma'
 
 const INVITE_CODE_PREFIX = 'SB'
@@ -5,13 +6,14 @@ const INVITE_CODE_LENGTH = 6
 const MAX_RETRIES = 5
 
 /**
- * Generates a random alphanumeric string of specified length
+ * Generates a cryptographically secure random alphanumeric string
  */
 function generateRandomString(length: number): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  const bytes = crypto.getRandomValues(new Uint8Array(length))
   let result = ''
   for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length))
+    result += chars.charAt(bytes[i] % chars.length)
   }
   return result
 }

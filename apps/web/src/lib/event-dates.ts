@@ -67,8 +67,11 @@ export function formatEventDate(
  * Use this instead of `new Date("2026-02-17")` which parses as UTC midnight.
  */
 export function parseLocalDate(dateStr: string): Date {
+  if (!dateStr) return new Date(NaN)
   const iso = dateStr.split('T')[0]
-  const [year, month, day] = iso.split('-').map(Number)
+  const parts = iso.split('-').map(Number)
+  if (parts.length !== 3 || parts.some(isNaN)) return new Date(NaN)
+  const [year, month, day] = parts
   return new Date(year, month - 1, day, 0, 0, 0, 0)
 }
 

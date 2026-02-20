@@ -314,8 +314,8 @@ export async function GET(request: Request) {
     }
 
     // Return attendance records with pagination
-    const page = parseInt(searchParams.get('page') || '1', 10)
-    const limit = Math.min(parseInt(searchParams.get('limit') || '100', 10), 500) // Max 500 per page
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
+    const limit = Math.min(Math.max(1, parseInt(searchParams.get('limit') || '100', 10)), 500)
     const skip = (page - 1) * limit
 
     const [allAttendees, totalCount] = await Promise.all([

@@ -40,16 +40,18 @@ export default function Error({
             Go back home
           </button>
         </div>
-        {/* Show error details in both dev and production for debugging */}
-        <details className="mt-6 text-left">
-          <summary className="text-xs text-neutral-400 cursor-pointer">
-            Error details
-          </summary>
-          <pre className="mt-2 p-3 bg-neutral-100 rounded-lg text-xs text-red-600 overflow-auto max-h-40">
-            {error.message}
-            {error.digest && `\n\nDigest: ${error.digest}`}
-          </pre>
-        </details>
+        {/* Only show error details in development */}
+        {process.env.NODE_ENV === 'development' && (
+          <details className="mt-6 text-left">
+            <summary className="text-xs text-neutral-400 cursor-pointer">
+              Error details
+            </summary>
+            <pre className="mt-2 p-3 bg-neutral-100 rounded-lg text-xs text-red-600 overflow-auto max-h-40">
+              {error.message}
+              {error.digest && `\n\nDigest: ${error.digest}`}
+            </pre>
+          </details>
+        )}
       </div>
     </div>
   )

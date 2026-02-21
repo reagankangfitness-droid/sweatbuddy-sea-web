@@ -36,6 +36,14 @@ export async function GET(request: Request) {
       )
     }
 
+    // Check if already used (single-use tokens)
+    if (magicLink.usedAt) {
+      return NextResponse.json(
+        { error: 'This link has already been used. Please request a new one.' },
+        { status: 410 }
+      )
+    }
+
     // Find the organizer
     const organizer = await prisma.organizer.findUnique({
       where: { email: magicLink.email },

@@ -86,7 +86,13 @@ export function ReviewForm({
   }
 
   const removePhoto = (index: number) => {
-    setPhotos((prev) => prev.filter((_, i) => i !== index))
+    setPhotos((prev) => {
+      const removed = prev[index]
+      if (removed?.startsWith('blob:')) {
+        URL.revokeObjectURL(removed)
+      }
+      return prev.filter((_, i) => i !== index)
+    })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

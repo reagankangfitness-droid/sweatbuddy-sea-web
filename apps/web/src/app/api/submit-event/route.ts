@@ -357,9 +357,9 @@ export async function POST(request: Request) {
       id: submission.id,
     })
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    console.error('Submit event error:', error)
     return NextResponse.json(
-      { error: `Failed to submit event: ${errorMessage}` },
+      { error: 'Failed to submit event. Please try again.' },
       { status: 500 }
     )
   }

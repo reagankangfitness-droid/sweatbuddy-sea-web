@@ -183,6 +183,9 @@ export function calculateFees(
     // We need to calculate what to charge so host gets full ticket price after fees
     // Formula: chargeAmount = (priceInCents + STRIPE_FEE_FIXED_CENTS) / (1 - totalFeePercent)
     const totalFeePercent = (platformFeePercent + STRIPE_FEE_PERCENT) / 100
+    if (totalFeePercent >= 1) {
+      throw new Error('Total fee percentage cannot be 100% or more')
+    }
     const chargeAmount = Math.round((priceInCents + STRIPE_FEE_FIXED_CENTS) / (1 - totalFeePercent))
 
     const platformFee = Math.round(chargeAmount * platformFeePercent / 100)

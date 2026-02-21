@@ -16,7 +16,7 @@ export type { ReviewStatus, ReviewPromptStatus }
 const REVIEW_EDIT_WINDOW_HOURS = 48
 const REVIEW_PROMPT_DELAY_HOURS = 2 // Send prompt 2 hours after activity ends
 const REVIEW_REMINDER_DELAY_DAYS = 3 // Send reminder 3 days after first prompt
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://sweatbuddies.co'
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
 
 // Types
 export interface ReviewWithDetails extends Review {

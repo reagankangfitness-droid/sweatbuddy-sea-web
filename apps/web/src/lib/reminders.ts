@@ -29,7 +29,7 @@ const REMINDER_INTERVALS = {
   TWO_HOURS: 2 * 60 * 60 * 1000, // 2 hours in ms
 } as const
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://sweatbuddies.co'
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
 
 // Types
 interface ActivityWithHost extends Activity {

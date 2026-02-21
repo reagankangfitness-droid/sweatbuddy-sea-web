@@ -122,7 +122,7 @@ export async function POST(
       select: { submittedByUserId: true },
     })
 
-    if (event && event.submittedByUserId !== userId) {
+    if (!event || event.submittedByUserId !== userId) {
       return NextResponse.json(
         { success: false, error: 'Not authorized to check in for this event' },
         { status: 403 }

@@ -44,7 +44,7 @@ export async function generateInviteCode(): Promise<string> {
  * Generates the full invite link for a given invite code
  */
 export function generateInviteLink(inviteCode: string, baseUrl?: string): string {
-  const base = baseUrl || process.env.NEXT_PUBLIC_APP_URL || 'https://sweatbuddies.co'
+  const base = baseUrl || process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
   return `${base}/join/${inviteCode}`
 }
 

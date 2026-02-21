@@ -36,6 +36,20 @@ export async function POST(
       )
     }
 
+    // Verify the user is the host of this review's activity
+    const review = await prisma.review.findUnique({
+      where: { id: reviewId },
+      select: { hostId: true },
+    })
+
+    if (!review) {
+      return NextResponse.json({ error: 'Review not found' }, { status: 404 })
+    }
+
+    if (review.hostId !== userId) {
+      return NextResponse.json({ error: 'Only the host can respond to reviews' }, { status: 403 })
+    }
+
     // Check if there's already a response
     const existingResponse = await prisma.reviewResponse.findUnique({
       where: { reviewId },
@@ -48,16 +62,16 @@ export async function POST(
     }
 
     // Get the updated review with response
-    const review = await prisma.review.findUnique({
+    const updatedReview = await prisma.review.findUnique({
       where: { id: reviewId },
       include: { hostResponse: true },
     })
 
-    return NextResponse.json(review?.hostResponse)
+    return NextResponse.json(updatedReview?.hostResponse)
   } catch (error) {
     console.error('Error responding to review:', error)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to respond' },
+      { error: 'Failed to respond to review' },
       { status: 500 }
     )
   }

@@ -17,7 +17,7 @@ export async function GET(
 
     const { slug } = await params
     const { searchParams } = new URL(request.url)
-    const limit = parseInt(searchParams.get('limit') || '50')
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '50')))
     const before = searchParams.get('before') // cursor for pagination
 
     const community = await prisma.community.findUnique({
@@ -100,6 +100,10 @@ export async function POST(
 
     if (!content || content.trim().length === 0) {
       return NextResponse.json({ error: 'Message content is required' }, { status: 400 })
+    }
+
+    if (content.trim().length > 5000) {
+      return NextResponse.json({ error: 'Message content is too long (max 5000 characters)' }, { status: 400 })
     }
 
     const community = await prisma.community.findUnique({

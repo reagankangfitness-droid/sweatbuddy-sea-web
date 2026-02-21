@@ -98,7 +98,16 @@ export async function getHostSession(): Promise<HostSession | null> {
       return null
     }
 
-    const session = JSON.parse(sessionCookie.value)
+    let session
+    try {
+      session = JSON.parse(sessionCookie.value)
+    } catch {
+      return null
+    }
+
+    if (!session?.id) {
+      return null
+    }
 
     // Verify the organizer still exists in the database
     const organizer = await prisma.organizer.findUnique({

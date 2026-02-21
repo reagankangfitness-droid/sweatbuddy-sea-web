@@ -127,8 +127,10 @@ export function MentionInput({
     }, 0)
   }
 
-  // Close suggestions when clicking outside
+  // Close suggestions when clicking outside — only listen when dropdown is open
   useEffect(() => {
+    if (!showSuggestions) return
+
     const handleClickOutside = (e: MouseEvent) => {
       if (
         suggestionsRef.current &&
@@ -142,7 +144,7 @@ export function MentionInput({
 
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+  }, [showSuggestions])
 
   // Auto-resize textarea
   useEffect(() => {

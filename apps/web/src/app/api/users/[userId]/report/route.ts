@@ -35,7 +35,7 @@ export async function POST(
     // Validate reason
     if (!reason || !VALID_REASONS.has(reason)) {
       return NextResponse.json(
-        { error: 'Invalid reason. Must be one of: ' + Array.from(VALID_REASONS).join(', ') },
+        { error: 'Invalid report reason' },
         { status: 400 }
       )
     }

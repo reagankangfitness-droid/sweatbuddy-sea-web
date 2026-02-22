@@ -77,6 +77,8 @@ const nextConfig = {
       { source: '/organizer/dashboard', destination: '/host/dashboard', permanent: true },
       { source: '/organizer/dashboard/:eventId/edit', destination: '/host/events/:eventId/edit', permanent: true },
       { source: '/organizer/dashboard/:eventId', destination: '/host/events/:eventId/attendees', permanent: true },
+      { source: '/my-events', destination: '/', permanent: false },
+      { source: '/my-activities', destination: '/dashboard', permanent: false },
     ]
   },
 

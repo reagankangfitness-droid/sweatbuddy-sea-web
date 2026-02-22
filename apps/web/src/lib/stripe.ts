@@ -119,11 +119,11 @@ export function calculateRefundAmount(
 // PAID EVENTS - FEE CALCULATIONS
 // =====================================================
 
-// Fee percentages for paid events
+// Fee percentages for paid events (EventSubmission / Stripe Connect)
 const PLATFORM_FEE_PERCENT_FREE = 5 // Free tier hosts pay 5%
 const PLATFORM_FEE_PERCENT_PREMIUM = 2 // Premium tier hosts pay 2%
-const STRIPE_FEE_PERCENT = 2.9
-const STRIPE_FEE_FIXED_CENTS = 40 // 40 cents fixed Stripe fee
+export const STRIPE_FEE_PERCENT = 2.9
+export const STRIPE_FEE_FIXED_CENTS = 40 // 40 cents fixed Stripe fee
 
 export interface FeeCalculation {
   priceInCents: number
@@ -137,12 +137,13 @@ export interface FeeCalculation {
 }
 
 /**
- * Calculate fees for a ticket purchase
+ * Calculate fees for an EventSubmission ticket purchase (Stripe Connect flow).
+ * For Activity bookings, use calculateFees from @/lib/constants/fees instead.
  * @param priceInCents - The ticket price in cents (e.g., 1500 = $15.00)
  * @param isPremiumHost - Whether the host is on Premium tier (lower fees)
  * @param feeHandling - 'PASS' = attendee pays fees, 'ABSORB' = host absorbs fees
  */
-export function calculateFees(
+export function calculateEventSubmissionFees(
   priceInCents: number,
   isPremiumHost: boolean = false,
   feeHandling: 'PASS' | 'ABSORB' = 'ABSORB'

@@ -3,6 +3,7 @@ import { auth, clerkClient } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { stripe, STRIPE_CONFIG } from '@/lib/stripe'
 import { calculateFees } from '@/lib/constants/fees'
+import { sendActivityBookingConfirmationEmail } from '@/lib/event-confirmation-email'
 
 export async function POST(request: NextRequest) {
   try {
@@ -229,6 +230,27 @@ export async function POST(request: NextRequest) {
             role: 'MEMBER',
           },
         })
+      }
+
+      // Send booking confirmation email (async, don't block response)
+      const userRecord = await prisma.user.findUnique({
+        where: { id: clerkUserId },
+        select: { email: true, name: true },
+      })
+
+      if (userRecord?.email) {
+        sendActivityBookingConfirmationEmail({
+          to: userRecord.email,
+          attendeeName: userRecord.name || 'there',
+          activityId,
+          activityTitle: activity.title,
+          startTime: activity.startTime ? new Date(activity.startTime) : null,
+          endTime: activity.endTime ? new Date(activity.endTime) : null,
+          location: activity.address || activity.city,
+          hostName: hostInfo?.name || undefined,
+          currency,
+          amountPaidCents: 0,
+        }).catch((err) => console.error('Failed to send booking confirmation email:', err))
       }
 
       return NextResponse.json({

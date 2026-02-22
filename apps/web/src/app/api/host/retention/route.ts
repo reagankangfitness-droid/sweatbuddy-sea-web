@@ -7,8 +7,13 @@ import {
   buildAgentContext,
   RETENTION_SYSTEM_PROMPT,
 } from '@/lib/ai'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
+
+// 5 requests per 10 minutes per user
+const RATE_LIMIT_MAX = 5
+const RATE_LIMIT_WINDOW = 10 * 60 * 1000
 
 interface AtRiskMember {
   email: string
@@ -59,6 +64,14 @@ export async function GET() {
     const session = await getHostSession()
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const limit = checkRateLimit(session.id, 'retention', RATE_LIMIT_MAX, RATE_LIMIT_WINDOW)
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { error: `Too many requests. Try again in ${limit.retryAfterSeconds} seconds.` },
+        { status: 429 }
+      )
     }
 
     const organizer = await ensureOrganizer(session)

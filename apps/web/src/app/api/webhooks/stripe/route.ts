@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import Stripe from 'stripe'
 import { prisma } from '@/lib/prisma'
-import { stripe } from '@/lib/stripe'
+import { stripe, STRIPE_FEE_PERCENT, STRIPE_FEE_FIXED_CENTS } from '@/lib/stripe'
 import { onBookingConfirmed, onBookingPaid, onBookingCancelled } from '@/lib/stats/realtime'
-import { sendPaidEventConfirmationEmail, sendHostBookingNotificationEmail, sendRefundNotificationEmail } from '@/lib/event-confirmation-email'
+import { sendPaidEventConfirmationEmail, sendHostBookingNotificationEmail, sendRefundNotificationEmail, sendActivityBookingConfirmationEmail } from '@/lib/event-confirmation-email'
 import { scheduleEventReminder } from '@/lib/event-reminders'
 import { generateCheckInCode } from '@/lib/generate-checkin-qr'
 
@@ -250,8 +250,45 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
       console.error('Error updating stats (non-blocking):', statsError)
     }
 
-    // TODO: Send confirmation email to user
-    // TODO: Send notification to host
+    // Send booking confirmation email to user
+    try {
+      const activityForEmail = await prisma.activity.findUnique({
+        where: { id: activityId },
+        select: {
+          title: true,
+          startTime: true,
+          endTime: true,
+          address: true,
+          city: true,
+          host: { select: { name: true } },
+          user: { select: { name: true } },
+        },
+      })
+
+      const userForEmail = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { email: true, name: true },
+      })
+
+      if (activityForEmail && userForEmail?.email) {
+        const hostName = activityForEmail.host?.name || activityForEmail.user?.name || undefined
+
+        await sendActivityBookingConfirmationEmail({
+          to: userForEmail.email,
+          attendeeName: userForEmail.name || 'there',
+          activityId: activityId!,
+          activityTitle: activityForEmail.title,
+          startTime: activityForEmail.startTime,
+          endTime: activityForEmail.endTime,
+          location: activityForEmail.address || activityForEmail.city,
+          hostName,
+          currency,
+          amountPaidCents: amountTotal,
+        })
+      }
+    } catch (emailError) {
+      console.error('Error sending booking confirmation email (non-blocking):', emailError)
+    }
   } catch (error) {
     console.error('Error handling checkout completion:', error)
     throw error
@@ -435,8 +472,8 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
 
       // 4. Create EventTransaction record for audit trail
       if (hostStripeAccount) {
-        // Calculate Stripe fee (approximately 2.9% + $0.30)
-        const stripeFeeEstimate = Math.round(amountTotal * 0.029) + 30
+        // Calculate Stripe fee estimate using shared constants
+        const stripeFeeEstimate = Math.round(amountTotal * STRIPE_FEE_PERCENT / 100) + STRIPE_FEE_FIXED_CENTS
         const netPayoutToHost = amountTotal - platformFeeNum - stripeFeeEstimate
         const feeHandlingValue = feeHandling === 'PASS' ? 'PASS' : 'ABSORB'
 
@@ -488,7 +525,7 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
         ticketQuantity: ticketQty,
         stripePaymentId: paymentIntentId,
         hostEmail: event.contactEmail,
-        netPayoutToHost: hostStripeAccount ? amountTotal - platformFeeNum - (Math.round(amountTotal * 0.029) + 30) : 0,
+        netPayoutToHost: hostStripeAccount ? amountTotal - platformFeeNum - (Math.round(amountTotal * STRIPE_FEE_PERCENT / 100) + STRIPE_FEE_FIXED_CENTS) : 0,
       }
 
       // Store for use outside transaction

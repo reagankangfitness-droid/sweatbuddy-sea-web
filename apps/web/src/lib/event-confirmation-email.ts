@@ -1,4 +1,4 @@
-import { sendEmail, generateMapsLink } from './email'
+import { sendEmail, generateMapsLink, generateCalendarLink, formatDate, formatTime } from './email'
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
 
@@ -2399,4 +2399,154 @@ Need help? ${supportUrl}
   })
 
   return result
+}
+
+// ============= ACTIVITY BOOKING CONFIRMATION =============
+
+interface ActivityBookingEmailParams {
+  to: string
+  attendeeName: string
+  activityId: string
+  activityTitle: string
+  startTime: Date | null
+  endTime?: Date | null
+  location: string
+  hostName?: string
+  currency?: string
+  amountPaidCents?: number // 0 or undefined for free
+}
+
+/**
+ * Send booking confirmation email for Activity bookings (both free and paid).
+ * Triggered after free RSVP or after paid checkout completes.
+ */
+export async function sendActivityBookingConfirmationEmail(
+  params: ActivityBookingEmailParams
+): Promise<{ success: boolean; error?: string }> {
+  const {
+    to,
+    attendeeName,
+    activityId,
+    activityTitle,
+    startTime,
+    endTime,
+    location,
+    hostName,
+    currency = 'SGD',
+    amountPaidCents,
+  } = params
+
+  const displayName = escapeHtml(attendeeName || 'there')
+  const safeTitle = escapeHtml(activityTitle)
+  const safeLocation = escapeHtml(location)
+  const safeHost = hostName ? escapeHtml(hostName) : null
+  const activityUrl = `${BASE_URL}/activities/${activityId}`
+  const myBookingsUrl = `${BASE_URL}/my-bookings`
+  const mapsLink = generateMapsLink({ address: location })
+
+  const isPaid = amountPaidCents && amountPaidCents > 0
+  const formattedAmount = isPaid ? `${currency} ${(amountPaidCents / 100).toFixed(2)}` : null
+
+  const dateStr = startTime ? formatDate(startTime) : 'Date TBD'
+  const timeStr = startTime ? formatTime(startTime) : ''
+
+  const calendarLink = startTime
+    ? generateCalendarLink({
+        title: activityTitle,
+        description: `Booked via SweatBuddies${safeHost ? ` — Hosted by ${safeHost}` : ''}`,
+        location,
+        startTime,
+        endTime: endTime || undefined,
+      })
+    : null
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Confirmed!</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 12px;">&#127881;</div>
+              <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">You're in!</h1>
+              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">Your spot is confirmed</p>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding: 32px; background: #ffffff;">
+              <p style="font-size: 16px; color: #374151; line-height: 1.6; margin: 0 0 24px;">
+                Hey ${displayName}, you're booked for <strong>${safeTitle}</strong>!
+              </p>
+
+              <!-- Event Details -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                      <tr>
+                        <td style="padding: 6px 0; font-size: 15px; color: #374151;">
+                          &#128197; <strong>${dateStr}</strong>${timeStr ? ` at ${timeStr}` : ''}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 6px 0; font-size: 15px; color: #374151;">
+                          &#128205; ${safeLocation}
+                        </td>
+                      </tr>
+                      ${safeHost ? `<tr><td style="padding: 6px 0; font-size: 15px; color: #374151;">&#128100; Hosted by ${safeHost}</td></tr>` : ''}
+                      ${formattedAmount ? `<tr><td style="padding: 6px 0; font-size: 15px; color: #374151;">&#128176; ${formattedAmount}</td></tr>` : '<tr><td style="padding: 6px 0; font-size: 15px; color: #10b981; font-weight: 600;">&#127881; Free</td></tr>'}
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Action Buttons -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
+                <tr>
+                  <td align="center" style="padding: 0 0 12px;">
+                    <a href="${activityUrl}" style="display: inline-block; padding: 14px 28px; background: #10b981; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">View Activity</a>
+                  </td>
+                </tr>
+                ${calendarLink ? `<tr><td align="center" style="padding: 0 0 12px;"><a href="${calendarLink}" style="display: inline-block; padding: 12px 24px; background: #f0fdf4; color: #059669; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid #bbf7d0;">&#128197; Add to Google Calendar</a></td></tr>` : ''}
+                ${mapsLink ? `<tr><td align="center"><a href="${mapsLink}" style="display: inline-block; padding: 12px 24px; background: #f0fdf4; color: #059669; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid #bbf7d0;">&#128205; Open in Maps</a></td></tr>` : ''}
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px 32px; background: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
+              <p style="font-size: 13px; color: #64748b; margin: 0;">
+                <a href="${myBookingsUrl}" style="color: #059669; text-decoration: none;">View My Bookings</a>
+              </p>
+              <p style="font-size: 12px; color: #94a3b8; margin: 12px 0 0;">SweatBuddies — Your fitness community</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
+
+  return sendEmail({
+    to,
+    subject: `You're going to ${activityTitle}!`,
+    html,
+    tags: [
+      { name: 'type', value: 'activity_booking_confirmation' },
+      { name: 'activity_id', value: activityId },
+    ],
+  })
 }

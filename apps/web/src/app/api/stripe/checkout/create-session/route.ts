@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
-import { stripe, calculateFees } from '@/lib/stripe'
+import { stripe, calculateEventSubmissionFees } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
@@ -101,7 +101,7 @@ export async function POST(request: Request) {
 
     // Calculate fees
     const feeHandling = event.feeHandling || 'ABSORB'
-    const fees = calculateFees(event.price!, false, feeHandling)
+    const fees = calculateEventSubmissionFees(event.price!, false, feeHandling)
 
     // The amount to charge the customer
     const unitAmount = fees.totalChargedToAttendee

@@ -2,14 +2,27 @@ import { NextResponse } from 'next/server'
 import { getHostSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { anthropic, AGENT_MODEL } from '@/lib/ai'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
+
+// 5 requests per 10 minutes per user
+const RATE_LIMIT_MAX = 5
+const RATE_LIMIT_WINDOW = 10 * 60 * 1000
 
 export async function GET() {
   try {
     const session = await getHostSession()
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const limit = checkRateLimit(session.id, 'ai/pricing', RATE_LIMIT_MAX, RATE_LIMIT_WINDOW)
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { error: `Too many requests. Try again in ${limit.retryAfterSeconds} seconds.` },
+        { status: 429 }
+      )
     }
 
     // Get all host's events with pricing

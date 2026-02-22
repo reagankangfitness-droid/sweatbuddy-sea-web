@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { AvatarStack } from '@/components/avatar-stack'
+import { WhosGoing } from '@/components/whos-going'
 import { ShareButton } from '@/components/share-button'
 import { SpotsIndicator } from '@/components/spots-indicator'
 import { WaitlistButton } from '@/components/waitlist-button'
@@ -515,20 +516,14 @@ Organized via sweatbuddies
                       </dd>
                     </div>
                   )}
-                  <div className="pt-2 border-t">
-                    <dt className="text-muted-foreground mb-2">Participants:</dt>
-                    <dd>
-                      <AvatarStack
-                        participants={activity.userActivities
-                          .filter(ua => ua.status === 'JOINED')
-                          .map(ua => ua.user)}
-                        maxPeople={activity.maxPeople}
-                        size="md"
-                      />
-                    </dd>
-                  </div>
                 </dl>
               </div>
+
+              <WhosGoing
+                activityId={activity.id}
+                hasJoined={hasJoined}
+                currentUserId={user?.id || null}
+              />
 
               <div className="rounded-lg border p-6">
                 <h2 className="text-xl font-semibold mb-3">Organizer</h2>

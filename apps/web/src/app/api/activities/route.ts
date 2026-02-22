@@ -107,7 +107,7 @@ export async function POST(request: Request) {
           endTime: validatedData.endTime ? parseLocalDateTime(validatedData.endTime, timezoneOffset) : null,
           maxPeople: validatedData.maxPeople || null,
           imageUrl: validatedData.imageUrl || null,
-          price: validatedData.price ?? 0,
+          price: Math.round((validatedData.price ?? 0) * 100), // convert dollars to cents
           currency: validatedData.currency || 'USD',
           status: 'PENDING_APPROVAL', // All new activities require approval
           userId,

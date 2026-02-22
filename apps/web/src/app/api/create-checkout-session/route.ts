@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth, clerkClient } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
-import { stripe, toStripeAmount, STRIPE_CONFIG } from '@/lib/stripe'
+import { stripe, STRIPE_CONFIG } from '@/lib/stripe'
 import { calculateFees } from '@/lib/constants/fees'
 
 export async function POST(request: NextRequest) {
@@ -263,7 +263,8 @@ export async function POST(request: NextRequest) {
     const userEmail = clerkUser.emailAddresses[0]?.emailAddress
 
     // Calculate fees using new fee structure (3.7% + $1.79 per ticket)
-    const fees = calculateFees(finalPrice, 1)
+    // calculateFees expects dollars; activity.price is now stored in cents
+    const fees = calculateFees(finalPrice / 100, 1)
 
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -282,7 +283,7 @@ export async function POST(request: NextRequest) {
               description: `${activityDate} - ${activity.city}${hostInfo?.name ? ` - Hosted by ${hostInfo.name}` : ''}`,
               images: activity.imageUrl ? [activity.imageUrl] : [],
             },
-            unit_amount: toStripeAmount(finalPrice, currency),
+            unit_amount: finalPrice, // already in cents
           },
           quantity: 1,
         },
@@ -296,7 +297,7 @@ export async function POST(request: NextRequest) {
                     name: 'Service Fee',
                     description: 'Platform and payment processing fee',
                   },
-                  unit_amount: toStripeAmount(fees.serviceFee, currency),
+                  unit_amount: Math.round(fees.serviceFee * 100), // convert dollars to cents
                 },
                 quantity: 1,
               },
@@ -309,12 +310,12 @@ export async function POST(request: NextRequest) {
         activity_id: activityId,
         user_id: clerkUserId,
         host_id: hostId,
-        original_price: activity.price.toString(),
-        discount_amount: discountAmount.toString(),
-        final_price: finalPrice.toString(),
-        service_fee: fees.serviceFee.toString(),
-        attendee_pays: fees.attendeePays.toString(),
-        host_receives: fees.hostReceives.toString(),
+        original_price: activity.price.toString(), // cents
+        discount_amount: discountAmount.toString(), // cents
+        final_price: finalPrice.toString(), // cents
+        service_fee: Math.round(fees.serviceFee * 100).toString(), // cents
+        attendee_pays: Math.round(fees.attendeePays * 100).toString(), // cents
+        host_receives: Math.round(fees.hostReceives * 100).toString(), // cents
         currency: currency,
         invite_code: inviteCode || '',
         referral_invite_id: referralInvite?.id || '',
@@ -343,7 +344,7 @@ export async function POST(request: NextRequest) {
         status: 'INTERESTED', // Will be updated to JOINED after payment
         paymentStatus: 'PENDING',
         stripeCheckoutSessionId: checkoutSession.id,
-        amountPaid: fees.attendeePays, // Total amount attendee pays
+        amountPaid: Math.round(fees.attendeePays * 100), // Total amount attendee pays (cents)
         currency: currency,
         deletedAt: null,
       },
@@ -353,7 +354,7 @@ export async function POST(request: NextRequest) {
         status: 'INTERESTED',
         paymentStatus: 'PENDING',
         stripeCheckoutSessionId: checkoutSession.id,
-        amountPaid: fees.attendeePays, // Total amount attendee pays
+        amountPaid: Math.round(fees.attendeePays * 100), // Total amount attendee pays (cents)
         currency: currency,
       },
     })

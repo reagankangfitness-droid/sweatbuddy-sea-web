@@ -259,7 +259,7 @@ function TicketContent() {
                 <div>
                   <p className="text-sm text-green-700">Amount Paid</p>
                   <p className="text-2xl font-bold text-green-900">
-                    {booking.currency || 'SGD'} {booking.amountPaid.toFixed(2)}
+                    {booking.currency || 'SGD'} {(booking.amountPaid / 100).toFixed(2)}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center">

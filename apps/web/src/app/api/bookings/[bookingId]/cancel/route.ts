@@ -1,7 +1,7 @@
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { stripe, calculateRefundAmount, toStripeAmount } from '@/lib/stripe'
+import { stripe, calculateRefundAmount } from '@/lib/stripe'
 import { processWaitlistForSpot } from '@/lib/waitlist'
 import { cancelRemindersForBooking } from '@/lib/reminders'
 
@@ -98,7 +98,7 @@ export async function POST(
             const currency = booking.currency || 'SGD'
             await stripe.refunds.create({
               payment_intent: booking.stripePaymentIntentId,
-              amount: toStripeAmount(refundResult.amount, currency),
+              amount: refundResult.amount, // already in cents
               reason: 'requested_by_customer',
             })
           } catch (err) {
@@ -249,8 +249,7 @@ export async function POST(
         where: { id: attendance.eventId },
       })
       const eventStartTime = event?.eventDate || new Date()
-      const amountInDollars = attendance.paymentAmount / 100
-      const refundCalc = calculateRefundAmount(amountInDollars, eventStartTime)
+      const refundCalc = calculateRefundAmount(attendance.paymentAmount, eventStartTime)
 
       refundResult = {
         status: refundCalc.policy,
@@ -262,7 +261,7 @@ export async function POST(
         try {
           await stripe.refunds.create({
             payment_intent: attendance.stripePaymentId,
-            amount: toStripeAmount(refundCalc.amount, 'SGD'),
+            amount: refundCalc.amount, // already in cents
             reason: 'requested_by_customer',
           })
         } catch (err) {

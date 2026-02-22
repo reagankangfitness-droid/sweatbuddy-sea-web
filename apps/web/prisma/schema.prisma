@@ -253,7 +253,7 @@ model Activity {
   endTime        DateTime?
   maxPeople      Int?
   imageUrl       String?
-  price          Float          @default(0)
+  price          Int            @default(0)
   currency       String         @default("USD")
   status         ActivityStatus @default(PUBLISHED)
   userId         String
@@ -382,11 +382,11 @@ model UserActivity {
   paymentStatus           PaymentStatus? @default(PENDING)
   stripeCheckoutSessionId String?
   stripePaymentIntentId   String?
-  amountPaid              Float?
+  amountPaid              Int?
   currency                String?        @default("SGD")
   paidAt                  DateTime?
   refundedAt              DateTime?
-  refundAmount            Float?
+  refundAmount            Int?
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
@@ -425,18 +425,18 @@ model Payment {
   stripeCustomerId        String?
 
   // Payment details
-  amount   Float
+  amount   Int
   currency String        @default("SGD")
   status   PaymentStatus @default(PENDING)
 
   // Fees tracking (for future use)
-  stripeFee   Float?
-  platformFee Float?
-  hostPayout  Float?
+  stripeFee   Int?
+  platformFee Int?
+  hostPayout  Int?
 
   // Discount tracking
-  originalAmount   Float?
-  discountAmount   Float?
+  originalAmount   Int?
+  discountAmount   Int?
   discountCode     String?
   referralInviteId String?
 
@@ -550,8 +550,8 @@ model ReferralConversion {
   userActivityId String?
 
   discountType   DiscountType
-  discountValue  Float
-  discountAmount Float
+  discountValue  Int
+  discountAmount Int
 
   convertedAt DateTime  @default(now())
   deletedAt   DateTime?
@@ -571,8 +571,8 @@ model UserReferralStats {
   totalClicks      Int @default(0)
   totalConversions Int @default(0)
 
-  totalCreditsEarned   Float @default(0)
-  currentCreditBalance Float @default(0)
+  totalCreditsEarned   Int @default(0)
+  currentCreditBalance Int @default(0)
 
   badges Json @default("[]")
 

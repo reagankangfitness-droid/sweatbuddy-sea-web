@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import Stripe from 'stripe'
 import { prisma } from '@/lib/prisma'
-import { stripe, fromStripeAmount } from '@/lib/stripe'
+import { stripe } from '@/lib/stripe'
 import { onBookingConfirmed, onBookingPaid, onBookingCancelled } from '@/lib/stats/realtime'
 import { sendPaidEventConfirmationEmail, sendHostBookingNotificationEmail, sendRefundNotificationEmail } from '@/lib/event-confirmation-email'
 import { scheduleEventReminder } from '@/lib/event-reminders'
@@ -148,14 +148,14 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
           status: 'JOINED',
           paymentStatus: 'PAID',
           stripePaymentIntentId: paymentIntentId,
-          amountPaid: fromStripeAmount(amountTotal, currency),
+          amountPaid: amountTotal, // already in cents from Stripe
           currency: currency,
           paidAt: new Date(),
         },
       })
 
       // 3. Create payment record for audit trail
-      // Note: amount is total paid by attendee, serviceFee is platform fee, hostReceives is net to host
+      // Note: all monetary values stored in cents (Int)
       await tx.payment.create({
         data: {
           userActivityId: booking.id,
@@ -164,15 +164,15 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
           hostId: hostId || null,
           stripeCheckoutSessionId: sessionId,
           stripePaymentIntentId: paymentIntentId,
-          amount: fromStripeAmount(amountTotal, currency),
+          amount: amountTotal, // cents from Stripe
           currency: currency,
           status: 'PAID',
-          originalAmount: originalPrice ? parseFloat(originalPrice) : null,
-          discountAmount: discountAmount ? parseFloat(discountAmount) : null,
+          originalAmount: originalPrice ? parseInt(originalPrice, 10) : null,
+          discountAmount: discountAmount ? parseInt(discountAmount, 10) : null,
           discountCode: inviteCode || null,
           referralInviteId: referralInviteId || null,
-          platformFee: serviceFee ? parseFloat(serviceFee) : null,
-          hostPayout: hostReceives ? parseFloat(hostReceives) : null,
+          platformFee: serviceFee ? parseInt(serviceFee, 10) : null,
+          hostPayout: hostReceives ? parseInt(hostReceives, 10) : null,
           paidAt: new Date(),
         },
       })
@@ -195,7 +195,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
             userActivityId: booking.id,
             discountType: 'PERCENTAGE',
             discountValue: 50,
-            discountAmount: discountAmount ? parseFloat(discountAmount) : 0,
+            discountAmount: discountAmount ? parseInt(discountAmount, 10) : 0,
           },
         })
       }
@@ -242,7 +242,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
           await onBookingPaid(
             bookingData,
             activityData,
-            fromStripeAmount(amountTotal, currency)
+            amountTotal / 100 // convert cents to dollars for Decimal stats fields
           )
         }
       }
@@ -609,7 +609,7 @@ async function handleRefund(charge: Stripe.Charge) {
       return
     }
 
-    const refundAmount = fromStripeAmount(amountRefunded, currency)
+    const refundAmount = amountRefunded // already in cents
     const isFullRefund = amountRefunded >= (charge.amount || 0)
 
     // Update booking

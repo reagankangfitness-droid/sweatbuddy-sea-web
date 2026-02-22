@@ -392,7 +392,7 @@ export default function MyBookingsPage() {
                               : 'text-red-900 dark:text-red-100'
                           }`}
                         >
-                          {refundPreview.currency} {refundPreview.amount.toFixed(2)}
+                          {refundPreview.currency} {(refundPreview.amount / 100).toFixed(2)}
                         </p>
                       </div>
                     </div>
@@ -548,7 +548,7 @@ function BookingCard({
           {booking.amountPaid && booking.amountPaid > 0 && (
             <div className="mt-2 pt-2 border-t border-neutral-100 dark:border-neutral-800">
               <span className="text-sm text-green-600 dark:text-green-400 font-medium">
-                Paid: {booking.currency || 'SGD'} {booking.amountPaid.toFixed(2)}
+                Paid: {booking.currency || 'SGD'} {(booking.amountPaid / 100).toFixed(2)}
               </span>
             </div>
           )}

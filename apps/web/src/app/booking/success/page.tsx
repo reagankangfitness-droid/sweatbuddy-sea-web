@@ -304,7 +304,7 @@ function BookingSuccessContent() {
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Amount Paid</span>
                       <span className="font-semibold text-success">
-                        {booking.currency || 'SGD'} {booking.amountPaid.toFixed(2)}
+                        {booking.currency || 'SGD'} {(booking.amountPaid / 100).toFixed(2)}
                       </span>
                     </div>
                   </div>

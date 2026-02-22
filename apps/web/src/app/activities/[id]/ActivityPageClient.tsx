@@ -279,7 +279,7 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
 🔗 Maps: ${mapsLink}
 
 👤 Host: ${activity.user.name || 'Anonymous'} (${activity.user.email})
-💰 Price: ${activity.currency} ${activity.price.toFixed(2)}
+💰 Price: ${activity.currency} ${(activity.price / 100).toFixed(2)}
 👥 Participants: ${joinedCount}${activity.maxPeople ? ` of ${activity.maxPeople}` : ''}
 
 Organized via sweatbuddies - Find local workouts and wellness activities
@@ -313,7 +313,7 @@ Location: ${location}
 Maps: ${mapsLink}
 
 Host: ${activity.user.name || 'Anonymous'} (${activity.user.email})
-Price: ${activity.currency} ${activity.price.toFixed(2)}
+Price: ${activity.currency} ${(activity.price / 100).toFixed(2)}
 Participants: ${joinedCount}${activity.maxPeople ? ` of ${activity.maxPeople}` : ''}
 
 Organized via sweatbuddies
@@ -489,7 +489,7 @@ Organized via sweatbuddies
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground">Price:</dt>
                       <dd className="font-semibold text-green-600">
-                        {activity.currency} {activity.price.toFixed(2)}
+                        {activity.currency} {(activity.price / 100).toFixed(2)}
                       </dd>
                     </div>
                   )}
@@ -748,7 +748,7 @@ Organized via sweatbuddies
                         {isJoining
                           ? 'Processing...'
                           : activity.price > 0
-                            ? `Pay ${activity.currency} ${activity.price.toFixed(2)} & Join`
+                            ? `Pay ${activity.currency} ${(activity.price / 100).toFixed(2)} & Join`
                             : 'Join Activity'
                         }
                       </Button>
@@ -795,7 +795,7 @@ Organized via sweatbuddies
                     className="flex-1 h-11 text-sm sm:text-base"
                   >
                     {activity.price > 0
-                      ? `Sign in (${activity.currency} ${activity.price.toFixed(2)})`
+                      ? `Sign in (${activity.currency} ${(activity.price / 100).toFixed(2)})`
                       : 'Sign in to Join'
                     }
                   </Button>

@@ -238,7 +238,7 @@ export default function AdminActivitiesPage() {
                           <div className="flex items-center gap-2 text-neutral-600">
                             <DollarSign className="w-4 h-4" />
                             <span>
-                              {activity.price === 0 ? 'Free' : `${activity.currency} ${activity.price}`}
+                              {activity.price === 0 ? 'Free' : `${activity.currency} ${(activity.price / 100).toFixed(2)}`}
                             </span>
                           </div>
 

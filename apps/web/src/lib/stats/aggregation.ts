@@ -149,16 +149,17 @@ export async function aggregateSingleHostStats(hostId: string): Promise<void> {
     },
   })
 
+  // amountPaid is in cents; convert to dollars for Decimal stats fields
   const totalRevenue = paidBookings.reduce(
     (sum, b) => sum + (b.amountPaid || 0),
     0
-  )
+  ) / 100
   const revenueThisMonth = paidBookings
     .filter((b) => b.paidAt && b.paidAt >= startOfMonth)
-    .reduce((sum, b) => sum + (b.amountPaid || 0), 0)
+    .reduce((sum, b) => sum + (b.amountPaid || 0), 0) / 100
   const revenueThisYear = paidBookings
     .filter((b) => b.paidAt && b.paidAt >= startOfYear)
-    .reduce((sum, b) => sum + (b.amountPaid || 0), 0)
+    .reduce((sum, b) => sum + (b.amountPaid || 0), 0) / 100
   const averageRevenuePerEvent =
     totalEvents > 0 ? Math.round((totalRevenue / totalEvents) * 100) / 100 : 0
 
@@ -272,7 +273,7 @@ export async function updateAttendeeHistory(hostId: string): Promise<void> {
   for (const booking of bookings) {
     const existing = attendeeData.get(booking.userId)
     const spent =
-      booking.paymentStatus === 'PAID' ? booking.amountPaid || 0 : 0
+      booking.paymentStatus === 'PAID' ? (booking.amountPaid || 0) / 100 : 0 // cents to dollars
 
     if (existing) {
       existing.count++
@@ -406,7 +407,7 @@ export async function aggregateActivityStats(
         viewCount,
         uniqueViewers: uniqueViewers.length,
         viewToBookingRate: new Decimal(conversionRate),
-        totalRevenue: new Decimal(revenueData._sum.amountPaid || 0),
+        totalRevenue: new Decimal((revenueData._sum.amountPaid || 0) / 100),
       },
       update: {
         totalSpots,
@@ -419,7 +420,7 @@ export async function aggregateActivityStats(
         viewCount,
         uniqueViewers: uniqueViewers.length,
         viewToBookingRate: new Decimal(conversionRate),
-        totalRevenue: new Decimal(revenueData._sum.amountPaid || 0),
+        totalRevenue: new Decimal((revenueData._sum.amountPaid || 0) / 100),
       },
     })
   }
@@ -555,7 +556,7 @@ export async function createDailySnapshot(date?: Date): Promise<number> {
   })
   revenueGrouped.forEach((r) => {
     const hid = activityHostMap.get(r.activityId)
-    if (hid) revenueMap.set(hid, (revenueMap.get(hid) || 0) + (r._sum.amountPaid || 0))
+    if (hid) revenueMap.set(hid, (revenueMap.get(hid) || 0) + (r._sum.amountPaid || 0) / 100)
   })
   viewsGrouped.forEach((v) => {
     const hid = activityHostMap.get(v.activityId)
@@ -677,7 +678,7 @@ export async function createMonthlySnapshot(
       },
     })
 
-    const totalRevenue = revenueData._sum.amountPaid || 0
+    const totalRevenue = (revenueData._sum.amountPaid || 0) / 100 // cents to dollars
     const averageRevenuePerEvent =
       eventsHosted > 0 ? Math.round((totalRevenue / eventsHosted) * 100) / 100 : 0
 

@@ -138,12 +138,12 @@ export async function onBookingConfirmed(
           totalEventsAttended: 1,
           firstEventDate: new Date(),
           lastEventDate: new Date(),
-          totalSpent: new Decimal(booking.amountPaid || 0),
+          totalSpent: new Decimal((booking.amountPaid || 0) / 100), // cents to dollars for Decimal field
         },
         update: {
           totalEventsAttended: { increment: 1 },
           lastEventDate: new Date(),
-          totalSpent: { increment: booking.amountPaid || 0 },
+          totalSpent: { increment: (booking.amountPaid || 0) / 100 }, // cents to dollars
         },
       })
     })

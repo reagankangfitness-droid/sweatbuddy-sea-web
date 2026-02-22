@@ -156,7 +156,7 @@ export async function PUT(
         endTime: body.endTime ? parseLocalDateTime(body.endTime, timezoneOffset) : null,
         maxPeople: body.maxPeople || null,
         imageUrl: body.imageUrl || null,
-        price: body.price ?? 0,
+        price: Math.round((body.price ?? 0) * 100), // convert dollars to cents
         currency: body.currency || 'USD',
       },
     })

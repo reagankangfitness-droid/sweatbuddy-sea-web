@@ -659,7 +659,7 @@ export default function HostProfilePage() {
                       </span>
                       {activity.price > 0 ? (
                         <span className="text-sm font-semibold text-foreground">
-                          {activity.currency} {activity.price}
+                          {activity.currency} {(activity.price / 100).toFixed(2)}
                         </span>
                       ) : (
                         <span className="text-sm font-semibold text-emerald-600">

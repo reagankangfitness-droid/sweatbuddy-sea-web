@@ -232,6 +232,13 @@ export async function POST(request: NextRequest) {
         })
       }
 
+      // Ensure EventChat exists for this activity
+      await prisma.eventChat.upsert({
+        where: { activityId: activityId },
+        update: {},
+        create: { activityId: activityId, isActive: true },
+      })
+
       // Send booking confirmation email (async, don't block response)
       const userRecord = await prisma.user.findUnique({
         where: { id: clerkUserId },

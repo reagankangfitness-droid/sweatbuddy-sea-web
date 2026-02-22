@@ -223,6 +223,13 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
           },
         })
       }
+
+      // 6. Ensure EventChat exists for this activity
+      await tx.eventChat.upsert({
+        where: { activityId: activityId },
+        update: {},
+        create: { activityId: activityId, isActive: true },
+      })
     })
 
 

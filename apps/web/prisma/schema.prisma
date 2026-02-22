@@ -55,7 +55,7 @@ model ActivityCategory {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  group CategoryGroup? @relation(fields: [groupSlug], references: [slug])
+  group CategoryGroup? @relation(fields: [groupSlug], references: [slug], onDelete: SetNull)
   // Note: Activities use categorySlug as a plain string, not a foreign key
   // This allows us to manage categories as code constants while still
   // having the option to store category metadata in the database if needed
@@ -265,9 +265,9 @@ model Activity {
   // Community link (optional - activity can belong to a community)
   communityId String?
 
-  user            User             @relation("CreatedActivities", fields: [userId], references: [id])
-  host            User?            @relation("HostedActivities", fields: [hostId], references: [id])
-  community       Community?       @relation("CommunityActivities", fields: [communityId], references: [id])
+  user            User             @relation("CreatedActivities", fields: [userId], references: [id], onDelete: Cascade)
+  host            User?            @relation("HostedActivities", fields: [hostId], references: [id], onDelete: SetNull)
+  community       Community?       @relation("CommunityActivities", fields: [communityId], references: [id], onDelete: SetNull)
   // Note: categorySlug is NOT a foreign key - categories are managed in code as constants
   // This allows flexibility to add/remove categories without database migrations
   userActivities  UserActivity[]
@@ -299,6 +299,8 @@ model Activity {
   @@index([placeId])
   @@index([neighborhoodId])
   @@index([communityId])
+  @@index([hostId, status])
+  @@index([startTime, status])
   @@map("activities")
 }
 
@@ -312,7 +314,7 @@ model Group {
   updatedAt   DateTime     @updatedAt
   deletedAt   DateTime?
 
-  activity Activity?   @relation(fields: [activityId], references: [id])
+  activity Activity?   @relation(fields: [activityId], references: [id], onDelete: Cascade)
   members  UserGroup[]
   messages Message[]
 
@@ -329,8 +331,8 @@ model Message {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  group    Group     @relation(fields: [groupId], references: [id])
-  user     User      @relation(fields: [userId], references: [id])
+  group    Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   mentions Mention[]
 
   @@index([groupId])
@@ -348,8 +350,8 @@ model UserGroup {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  user  User  @relation(fields: [userId], references: [id])
-  group Group @relation(fields: [groupId], references: [id])
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@unique([userId, groupId])
   @@index([userId])
@@ -386,8 +388,8 @@ model UserActivity {
   refundedAt              DateTime?
   refundAmount            Float?
 
-  user     User     @relation(fields: [userId], references: [id])
-  activity Activity @relation(fields: [activityId], references: [id])
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   payment  Payment?
 
   // Waitlist conversion tracking
@@ -405,6 +407,7 @@ model UserActivity {
   @@index([status])
   @@index([paymentStatus])
   @@index([stripeCheckoutSessionId])
+  @@index([activityId, status])
   @@map("user_activities")
 }
 
@@ -447,7 +450,7 @@ model Payment {
   paidAt     DateTime?
   refundedAt DateTime?
 
-  userActivity UserActivity @relation(fields: [userActivityId], references: [id])
+  userActivity UserActivity @relation(fields: [userActivityId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([activityId])
@@ -466,9 +469,9 @@ model Conversation {
   updatedAt  DateTime  @updatedAt
   deletedAt  DateTime?
 
-  activity Activity              @relation(fields: [activityId], references: [id])
-  sender   User                  @relation("SentConversations", fields: [senderId], references: [id])
-  receiver User                  @relation("ReceivedConversations", fields: [receiverId], references: [id])
+  activity Activity              @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  sender   User                  @relation("SentConversations", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User                  @relation("ReceivedConversations", fields: [receiverId], references: [id], onDelete: Cascade)
   messages ConversationMessage[]
 
   @@unique([activityId, senderId, receiverId])
@@ -487,8 +490,8 @@ model ConversationMessage {
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
 
-  conversation Conversation @relation(fields: [conversationId], references: [id])
-  user         User         @relation(fields: [userId], references: [id])
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([conversationId])
   @@index([userId])
@@ -529,8 +532,8 @@ model ReferralInvite {
   referrerRewardClaimed Boolean @default(false)
   friendDiscountApplied Boolean @default(false)
 
-  referrer    User                 @relation("ReferralInvitesSent", fields: [referrerId], references: [id])
-  activity    Activity             @relation(fields: [activityId], references: [id])
+  referrer    User                 @relation("ReferralInvitesSent", fields: [referrerId], references: [id], onDelete: Cascade)
+  activity    Activity             @relation(fields: [activityId], references: [id], onDelete: Cascade)
   conversions ReferralConversion[]
 
   @@index([referrerId])
@@ -553,8 +556,8 @@ model ReferralConversion {
   convertedAt DateTime  @default(now())
   deletedAt   DateTime?
 
-  invite     ReferralInvite @relation(fields: [inviteId], references: [id])
-  friendUser User           @relation("ReferralConversions", fields: [friendUserId], references: [id])
+  invite     ReferralInvite @relation(fields: [inviteId], references: [id], onDelete: Cascade)
+  friendUser User           @relation("ReferralConversions", fields: [friendUserId], references: [id], onDelete: Cascade)
 
   @@index([inviteId])
   @@index([friendUserId])
@@ -579,7 +582,7 @@ model UserReferralStats {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("user_referral_stats")
@@ -602,9 +605,9 @@ model WorkoutBuddy {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  user          User     @relation("WorkoutBuddiesAsUser", fields: [userId], references: [id])
-  buddy         User     @relation("WorkoutBuddiesAsBuddy", fields: [buddyId], references: [id])
-  firstActivity Activity @relation(fields: [firstActivityId], references: [id])
+  user          User     @relation("WorkoutBuddiesAsUser", fields: [userId], references: [id], onDelete: Cascade)
+  buddy         User     @relation("WorkoutBuddiesAsBuddy", fields: [buddyId], references: [id], onDelete: Cascade)
+  firstActivity Activity @relation(fields: [firstActivityId], references: [id], onDelete: Cascade)
 
   @@unique([userId, buddyId])
   @@index([userId])
@@ -624,11 +627,12 @@ model Notification {
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 
-  user User @relation("UserNotifications", fields: [userId], references: [id])
+  user User @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([isRead])
   @@index([createdAt])
+  @@index([userId, isRead])
   @@map("notifications")
 }
 
@@ -639,10 +643,11 @@ model Mention {
   mentionedByUserId String
   mentionText       String
   createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  message       Message @relation(fields: [messageId], references: [id])
-  mentionedUser User    @relation("MentionsReceived", fields: [mentionedUserId], references: [id])
-  mentionedBy   User    @relation("MentionsSent", fields: [mentionedByUserId], references: [id])
+  message       Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  mentionedUser User    @relation("MentionsReceived", fields: [mentionedUserId], references: [id], onDelete: Cascade)
+  mentionedBy   User    @relation("MentionsSent", fields: [mentionedByUserId], references: [id], onDelete: Cascade)
 
   @@index([messageId])
   @@index([mentionedUserId])
@@ -662,7 +667,7 @@ model NotificationPreference {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notification_preferences")
 }
@@ -915,6 +920,7 @@ model StatsAggregationJob {
 
   // Timestamps
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status, createdAt])
   @@map("stats_aggregation_jobs")
@@ -1094,6 +1100,7 @@ model BetaWaitlist {
   priorityScore Int @default(0)
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([email])
   @@index([status, priorityScore])
@@ -1708,7 +1715,7 @@ model EventSubmission {
 
   // User account link (for authenticated hosts)
   submittedByUserId String? // Clerk user ID who submitted
-  submittedByUser   User?   @relation("UserEventSubmissions", fields: [submittedByUserId], references: [id])
+  submittedByUser   User?   @relation("UserEventSubmissions", fields: [submittedByUserId], references: [id], onDelete: SetNull)
 
   // Scheduled publishing
   scheduledPublishAt DateTime? // If set, event won't be visible until this time
@@ -1723,6 +1730,7 @@ model EventSubmission {
   @@index([slug])
   @@index([submittedByUserId])
   @@index([organizerInstagram])
+  @@index([eventDate])
   @@map("event_submissions")
 }
 
@@ -1777,6 +1785,7 @@ model EventAttendance {
   @@index([email])
   @@index([timestamp])
   @@index([paymentStatus])
+  @@index([email, paymentStatus])
   @@map("event_attendances")
 }
 
@@ -1786,10 +1795,11 @@ model EventReminder {
   attendanceId String    @unique // References EventAttendance.id
   eventId      String // References EventSubmission.id
   scheduledFor DateTime // When to send (24h before event)
-  status       String    @default("PENDING") @db.VarChar(20) // PENDING, SENT, SKIPPED, FAILED
+  status       ReminderStatus @default(PENDING)
   sentAt       DateTime?
-  errorMessage String?   @db.Text
-  createdAt    DateTime  @default(now())
+  errorMessage String?        @db.Text
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
   @@index([status, scheduledFor])
   @@index([eventId])
@@ -1844,6 +1854,7 @@ model PostEventFollowUp {
   sentAt       DateTime?
   errorMessage String?   @db.Text
   createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   @@index([status, scheduledFor])
   @@index([eventId])
@@ -1903,6 +1914,7 @@ model EventChatMessage {
   senderName  String   @db.VarChar(200)
   senderEmail String   @db.VarChar(255)
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([eventId])
   @@index([createdAt])
@@ -2040,6 +2052,7 @@ model EventDirectMessage {
   senderName     String   @db.VarChar(200)
   content        String   @db.Text
   createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   conversation EventDirectConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
@@ -2288,6 +2301,7 @@ model EventTransaction {
   @@index([stripePaymentIntentId])
   @@index([status])
   @@index([createdAt])
+  @@index([eventSubmissionId, status])
   @@map("event_transactions")
 }
 
@@ -2653,7 +2667,7 @@ model Community {
   updatedAt DateTime @updatedAt
 
   // Relations
-  city       City?             @relation("CityCommunities", fields: [cityId], references: [id])
+  city       City?             @relation("CityCommunities", fields: [cityId], references: [id], onDelete: SetNull)
   createdBy  User              @relation("CommunitiesOwned", fields: [createdById], references: [id], onDelete: Cascade)
   members    CommunityMember[]
   activities Activity[]        @relation("CommunityActivities")
@@ -2849,6 +2863,7 @@ model RetentionAction {
   returnEventId  String?   @db.VarChar(100)
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([organizerId, createdAt])
   @@index([memberEmail])

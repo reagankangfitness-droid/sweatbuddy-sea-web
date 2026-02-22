@@ -123,6 +123,7 @@ export async function GET(
         content: m.content,
         isPinned: m.isPinned,
         isSystem: m.isSystem,
+        isIcebreaker: m.isIcebreaker,
         createdAt: m.createdAt.toISOString(),
         user: m.user,
       })),
@@ -131,6 +132,7 @@ export async function GET(
         content: m.content,
         isPinned: true,
         isSystem: m.isSystem,
+        isIcebreaker: m.isIcebreaker,
         createdAt: m.createdAt.toISOString(),
         user: m.user,
       })),
@@ -241,6 +243,7 @@ export async function POST(
       content: message.content,
       isPinned: message.isPinned,
       isSystem: message.isSystem,
+      isIcebreaker: message.isIcebreaker,
       createdAt: message.createdAt.toISOString(),
       user: message.user,
     })

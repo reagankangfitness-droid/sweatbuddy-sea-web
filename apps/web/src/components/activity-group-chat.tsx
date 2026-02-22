@@ -19,6 +19,7 @@ interface ChatMessage {
   content: string
   isPinned: boolean
   isSystem?: boolean
+  isIcebreaker?: boolean
   createdAt: string
   user: {
     id: string
@@ -348,6 +349,22 @@ export function ActivityGroupChat({
                       </span>
                     </div>
                     {dateMessages.map((message) => {
+                      // Icebreaker messages render as a distinct card
+                      if (message.isIcebreaker) {
+                        return (
+                          <div key={message.id} className="flex justify-center mb-3">
+                            <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 max-w-[85%] sm:max-w-[75%] text-center">
+                              <span className="text-xs font-medium text-amber-700 block mb-1">
+                                ✨ Icebreaker
+                              </span>
+                              <p className="text-sm text-amber-900">
+                                {message.content}
+                              </p>
+                            </div>
+                          </div>
+                        )
+                      }
+
                       // System messages render as centered notifications
                       if (message.isSystem) {
                         return (

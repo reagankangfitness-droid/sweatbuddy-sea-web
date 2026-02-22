@@ -30,6 +30,10 @@
     {
       "path": "/api/cron/process-post-event-followups",
       "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/process-icebreakers",
+      "schedule": "0 7 * * *"
     }
   ]
 }

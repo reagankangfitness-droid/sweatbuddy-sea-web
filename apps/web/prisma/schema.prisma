@@ -1920,10 +1920,11 @@ model MagicLinkToken {
 
 // Chat messages for public events (EventDetailSheet)
 model EventChat {
-  id         String   @id @default(cuid())
-  activityId String   @unique
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now())
+  id             String   @id @default(cuid())
+  activityId     String   @unique
+  isActive       Boolean  @default(true)
+  icebreakerSent Boolean  @default(false)
+  createdAt      DateTime @default(now())
 
   activity Activity           @relation(fields: [activityId], references: [id], onDelete: Cascade)
   messages EventChatMessage[]
@@ -1933,13 +1934,14 @@ model EventChat {
 }
 
 model EventChatMessage {
-  id        String   @id @default(cuid())
-  chatId    String
-  userId    String
-  content   String   @db.Text
-  isPinned  Boolean  @default(false)
-  isSystem  Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  chatId       String
+  userId       String
+  content      String   @db.Text
+  isPinned     Boolean  @default(false)
+  isSystem     Boolean  @default(false)
+  isIcebreaker Boolean  @default(false)
+  createdAt    DateTime @default(now())
 
   chat EventChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
   user User      @relation("EventChatMessagesSent", fields: [userId], references: [id], onDelete: Cascade)

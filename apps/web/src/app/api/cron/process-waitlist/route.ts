@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { processExpiredNotifications } from '@/lib/waitlist'
 import { isValidCronSecret } from '@/lib/cron-auth'
 
+export const maxDuration = 60
+
 export async function GET(request: Request) {
   try {
     const authHeader = request.headers.get('authorization')

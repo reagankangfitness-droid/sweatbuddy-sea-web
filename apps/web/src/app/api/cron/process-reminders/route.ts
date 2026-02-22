@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { processDueReminders } from '@/lib/reminders'
 import { isValidCronSecret } from '@/lib/cron-auth'
 
+export const maxDuration = 60
+
 const CRON_SECRET = process.env.CRON_SECRET
 
 /**

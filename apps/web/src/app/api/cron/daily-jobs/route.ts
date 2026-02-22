@@ -8,6 +8,9 @@ import {
 import { processPostEventFollowUps } from '@/lib/post-event-followup'
 import { isValidCronSecret } from '@/lib/cron-auth'
 
+// This route makes multiple sub-requests and DB queries — needs longer timeout
+export const maxDuration = 60
+
 const CRON_SECRET = process.env.CRON_SECRET
 
 /**

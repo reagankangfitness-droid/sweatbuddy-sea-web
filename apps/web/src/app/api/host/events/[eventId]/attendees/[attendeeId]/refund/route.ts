@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getHostSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { stripe } from '@/lib/stripe'
+import { calculateRefund } from '@/lib/refund-policy'
 
 export async function POST(
   request: NextRequest,
@@ -22,6 +23,9 @@ export async function POST(
         id: true,
         organizerInstagram: true,
         eventName: true,
+        refundPolicy: true,
+        eventDate: true,
+        price: true,
       },
     })
 
@@ -63,10 +67,26 @@ export async function POST(
       return NextResponse.json({ error: 'Transaction not found' }, { status: 404 })
     }
 
+    // Check refund policy — host-initiated refunds always get full refund
+    const refundCalc = calculateRefund(
+      { refundPolicy: event.refundPolicy, eventDate: event.eventDate, price: event.price },
+      attendance.paymentAmount || transaction.totalCharged || 0,
+      new Date(),
+      true // host-initiated
+    )
+
+    if (!refundCalc.eligible) {
+      return NextResponse.json(
+        { error: refundCalc.reason },
+        { status: 400 }
+      )
+    }
+
     // Issue refund via Stripe
     // For Connect accounts, we need to refund from the platform
     const refund = await stripe.refunds.create({
       payment_intent: attendance.stripePaymentId,
+      amount: refundCalc.percent < 100 ? refundCalc.amount : undefined,
       reason: 'requested_by_customer',
     })
 
@@ -85,6 +105,7 @@ export async function POST(
         status: 'REFUNDED',
         refundedAt: new Date(),
         refundAmount: refund.amount,
+        refundReason: refundCalc.reason,
       },
     })
 
@@ -102,6 +123,7 @@ export async function POST(
       success: true,
       refundId: refund.id,
       amount: refund.amount,
+      policy: refundCalc.reason,
     })
   } catch (error) {
     console.error('[Refund] Error:', error)

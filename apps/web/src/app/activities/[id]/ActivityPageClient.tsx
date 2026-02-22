@@ -17,6 +17,7 @@ import { generateGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
 import { Calendar, MessageCircle, Users, ChevronDown, ChevronUp } from 'lucide-react'
 import type { UrgencyLevel } from '@/lib/waitlist'
 import { PostActivityPrompt } from '@/components/post-activity-prompt'
+import { GoingSoloPrompt } from '@/components/going-solo-prompt'
 import { getSignInUrl } from '@/lib/auth-utils'
 
 // Character limit for description before showing "Read More"
@@ -95,6 +96,7 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
   const [spotsInfo, setSpotsInfo] = useState<SpotsInfo | null>(null)
   const [userBookingId, setUserBookingId] = useState<string | null>(null)
   const [showCompletionPrompt, setShowCompletionPrompt] = useState(true)
+  const [showGoingSoloPrompt, setShowGoingSoloPrompt] = useState(false)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
 
   // Handle payment status from URL params
@@ -105,6 +107,7 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
     if (paymentStatus === 'success' || sessionId) {
       toast.success('Payment successful! You have joined the activity.')
       setHasJoined(true)
+      setShowGoingSoloPrompt(true)
       // Remove the query param
       router.replace(`/activities/${params.id}`)
     } else if (paymentStatus === 'cancelled') {
@@ -215,6 +218,7 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
       if (data.isFree) {
         toast.success('Successfully joined the activity!')
         setHasJoined(true)
+        setShowGoingSoloPrompt(true)
 
         // Refresh activity data
         const activityResponse = await fetch(`/api/activities/${params.id}`)
@@ -415,6 +419,16 @@ Organized via sweatbuddies
                 className="w-full h-full object-cover"
                 fill
                 unoptimized
+              />
+            </div>
+          )}
+
+          {/* Going solo prompt after RSVP */}
+          {hasJoined && showGoingSoloPrompt && (
+            <div className="mb-6">
+              <GoingSoloPrompt
+                activityId={activity.id}
+                onOptIn={() => setShowGoingSoloPrompt(false)}
               />
             </div>
           )}

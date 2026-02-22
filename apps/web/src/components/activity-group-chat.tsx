@@ -18,6 +18,7 @@ interface ChatMessage {
   id: string
   content: string
   isPinned: boolean
+  isSystem?: boolean
   createdAt: string
   user: {
     id: string
@@ -347,6 +348,20 @@ export function ActivityGroupChat({
                       </span>
                     </div>
                     {dateMessages.map((message) => {
+                      // System messages render as centered notifications
+                      if (message.isSystem) {
+                        return (
+                          <div key={message.id} className="flex justify-center mb-3">
+                            <div className="flex items-center gap-1.5 px-3 py-1">
+                              <Users className="w-3 h-3 text-muted-foreground shrink-0" />
+                              <span className="text-xs text-muted-foreground">
+                                {message.content}
+                              </span>
+                            </div>
+                          </div>
+                        )
+                      }
+
                       const isOwnMessage = user?.id === message.user.id
 
                       return (

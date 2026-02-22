@@ -398,6 +398,8 @@ model UserActivity {
   refundedAt              DateTime?
   refundAmount            Int?
 
+  goingSolo Boolean @default(false)
+
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   payment  Payment?
@@ -1936,6 +1938,7 @@ model EventChatMessage {
   userId    String
   content   String   @db.Text
   isPinned  Boolean  @default(false)
+  isSystem  Boolean  @default(false)
   createdAt DateTime @default(now())
 
   chat EventChat @relation(fields: [chatId], references: [id], onDelete: Cascade)

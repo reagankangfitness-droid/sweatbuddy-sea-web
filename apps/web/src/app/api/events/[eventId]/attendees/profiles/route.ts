@@ -31,6 +31,7 @@ export async function GET(
       take: 50,
       select: {
         userId: true,
+        goingSolo: true,
         user: {
           select: {
             id: true,
@@ -39,7 +40,6 @@ export async function GET(
             imageUrl: true,
             bio: true,
             fitnessInterests: true,
-            goingSolo: true,
             isPublic: true,
           },
         },
@@ -131,7 +131,7 @@ export async function GET(
         imageUrl: user.imageUrl,
         bio: user.bio ? user.bio.slice(0, 100) : null,
         fitnessInterests: user.fitnessInterests,
-        goingSolo: user.goingSolo,
+        goingSolo: ua.goingSolo,
         isFollowing: followingSet.has(user.id),
         mutualEvents: mutualEventsMap.get(user.id) || [],
       }

@@ -122,6 +122,7 @@ export async function GET(
         id: m.id,
         content: m.content,
         isPinned: m.isPinned,
+        isSystem: m.isSystem,
         createdAt: m.createdAt.toISOString(),
         user: m.user,
       })),
@@ -129,6 +130,7 @@ export async function GET(
         id: m.id,
         content: m.content,
         isPinned: true,
+        isSystem: m.isSystem,
         createdAt: m.createdAt.toISOString(),
         user: m.user,
       })),
@@ -238,6 +240,7 @@ export async function POST(
       id: message.id,
       content: message.content,
       isPinned: message.isPinned,
+      isSystem: message.isSystem,
       createdAt: message.createdAt.toISOString(),
       user: message.user,
     })

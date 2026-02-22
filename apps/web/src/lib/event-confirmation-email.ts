@@ -29,6 +29,7 @@ export async function sendEventSubmittedEmail(
 ): Promise<{ success: boolean; error?: string }> {
   const { to, hostName, eventName, eventId } = params
   const displayName = escapeHtml(hostName || 'there')
+  const safeEventName = escapeHtml(eventName)
   const dashboardUrl = `${BASE_URL}/host/dashboard`
 
   const html = `
@@ -65,7 +66,7 @@ export async function sendEventSubmittedEmail(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Thanks for submitting your experience <strong>"${eventName}"</strong> to SweatBuddies!
+                Thanks for submitting your experience <strong>"${safeEventName}"</strong> to SweatBuddies!
               </p>
 
               <!-- Status Card -->
@@ -156,6 +157,7 @@ export async function sendEventApprovedEmail(
 ): Promise<{ success: boolean; error?: string }> {
   const { to, hostName, eventName, eventId, eventSlug } = params
   const displayName = escapeHtml(hostName || 'there')
+  const safeEventName = escapeHtml(eventName)
   const eventUrl = eventSlug ? `${BASE_URL}/e/${eventSlug}` : `${BASE_URL}/e/${eventId}`
   const dashboardUrl = `${BASE_URL}/host/dashboard`
 
@@ -193,7 +195,7 @@ export async function sendEventApprovedEmail(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Great news! Your experience <strong>"${eventName}"</strong> has been approved and is now live on SweatBuddies!
+                Great news! Your experience <strong>"${safeEventName}"</strong> has been approved and is now live on SweatBuddies!
               </p>
 
               <!-- Success Card -->
@@ -308,6 +310,8 @@ export async function sendEventRejectedEmail(
 ): Promise<{ success: boolean; error?: string }> {
   const { to, hostName, eventName, eventId, rejectionReason } = params
   const displayName = escapeHtml(hostName || 'there')
+  const safeEventName = escapeHtml(eventName)
+  const safeRejectionReason = rejectionReason ? escapeHtml(rejectionReason) : null
   const submitUrl = `${BASE_URL}/host`
 
   const html = `
@@ -344,10 +348,10 @@ export async function sendEventRejectedEmail(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Thanks for submitting your experience <strong>"${eventName}"</strong>. Unfortunately, we weren't able to approve it at this time.
+                Thanks for submitting your experience <strong>"${safeEventName}"</strong>. Unfortunately, we weren't able to approve it at this time.
               </p>
 
-              ${rejectionReason ? `
+              ${safeRejectionReason ? `
               <!-- Reason Card -->
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #fef2f2; border-radius: 12px; border: 1px solid #fecaca;">
                 <tr>
@@ -356,7 +360,7 @@ export async function sendEventRejectedEmail(
                       Reason:
                     </p>
                     <p style="margin: 0; color: #dc2626; font-size: 15px; line-height: 1.6;">
-                      ${rejectionReason}
+                      ${safeRejectionReason}
                     </p>
                   </td>
                 </tr>
@@ -465,6 +469,10 @@ export async function sendPaidEventConfirmationEmail(
   } = params
 
   const displayName = escapeHtml(attendeeName || 'there')
+  const safeEventName = escapeHtml(eventName)
+  const safeEventDay = escapeHtml(eventDay)
+  const safeEventTime = escapeHtml(eventTime)
+  const safeEventLocation = escapeHtml(eventLocation)
   const eventUrl = `${BASE_URL}/e/${eventId}`
   const ticketUrl = checkInCode ? `${BASE_URL}/ticket/${checkInCode}` : null
   const mapsLink = generateMapsLink({ address: eventLocation })
@@ -562,26 +570,26 @@ export async function sendPaidEventConfirmationEmail(
                 <tr>
                   <td style="padding: 24px;">
                     <h2 style="margin: 0 0 20px; color: #0f172a; font-size: 22px; font-weight: 700;">
-                      ${eventName}
+                      ${safeEventName}
                     </h2>
 
                     <table role="presentation" style="width: 100%; border-collapse: collapse;">
                       <tr>
                         <td style="padding: 10px 0; color: #64748b; font-size: 15px; border-bottom: 1px solid #e2e8f0;">
                           <span style="display: inline-block; width: 24px;">📅</span>
-                          <strong style="color: #0f172a;">${eventDay}</strong>
+                          <strong style="color: #0f172a;">${safeEventDay}</strong>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 10px 0; color: #64748b; font-size: 15px; border-bottom: 1px solid #e2e8f0;">
                           <span style="display: inline-block; width: 24px;">🕐</span>
-                          <strong style="color: #0f172a;">${eventTime}</strong>
+                          <strong style="color: #0f172a;">${safeEventTime}</strong>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 10px 0; color: #64748b; font-size: 15px;">
                           <span style="display: inline-block; width: 24px;">📍</span>
-                          <strong style="color: #0f172a;">${eventLocation}</strong>
+                          <strong style="color: #0f172a;">${safeEventLocation}</strong>
                         </td>
                       </tr>
                     </table>
@@ -730,7 +738,10 @@ export async function sendHostBookingNotificationEmail(
     hostPayout,
   } = params
 
-  const displayHostName = hostName || 'there'
+  const displayHostName = escapeHtml(hostName || 'there')
+  const safeEventName = escapeHtml(eventName)
+  const safeAttendeeName = escapeHtml(attendeeName)
+  const safeAttendeeEmail = escapeHtml(attendeeEmail)
   const dashboardUrl = `${BASE_URL}/host/dashboard`
 
   // Format amounts
@@ -778,7 +789,7 @@ export async function sendHostBookingNotificationEmail(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Great news! You just received a new booking for <strong>${eventName}</strong>.
+                Great news! You just received a new booking for <strong>${safeEventName}</strong>.
               </p>
 
               <!-- Booking Summary -->
@@ -794,7 +805,7 @@ export async function sendHostBookingNotificationEmail(
                           <strong>Attendee:</strong>
                         </td>
                         <td style="padding: 8px 0; color: #581c87; font-size: 14px; text-align: right;">
-                          ${attendeeName}
+                          ${safeAttendeeName}
                         </td>
                       </tr>
                       <tr>
@@ -802,7 +813,7 @@ export async function sendHostBookingNotificationEmail(
                           <strong>Email:</strong>
                         </td>
                         <td style="padding: 8px 0; color: #581c87; font-size: 14px; text-align: right;">
-                          ${attendeeEmail}
+                          ${safeAttendeeEmail}
                         </td>
                       </tr>
                       <tr>
@@ -918,8 +929,11 @@ export async function sendHostNewAttendeeNotification(
     currentAttendeeCount,
   } = params
 
-  const displayHostName = hostName || 'there'
+  const displayHostName = escapeHtml(hostName || 'there')
   const displayAttendeeName = attendeeName || attendeeEmail.split('@')[0]
+  const safeDisplayAttendeeName = escapeHtml(displayAttendeeName)
+  const safeEventName = escapeHtml(eventName)
+  const safeAttendeeEmail = escapeHtml(attendeeEmail)
   const dashboardUrl = `${BASE_URL}/host/events/${eventId}/attendees`
   const eventUrl = eventSlug ? `${BASE_URL}/e/${eventSlug}` : `${BASE_URL}/e/${eventId}`
 
@@ -957,7 +971,7 @@ export async function sendHostNewAttendeeNotification(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                <strong>${displayAttendeeName}</strong> just signed up for <strong>${eventName}</strong>!
+                <strong>${safeDisplayAttendeeName}</strong> just signed up for <strong>${safeEventName}</strong>!
               </p>
 
               <!-- Attendee Info Card -->
@@ -970,7 +984,7 @@ export async function sendHostNewAttendeeNotification(
                           <strong>Name:</strong>
                         </td>
                         <td style="padding: 8px 0; color: #166534; font-size: 14px; text-align: right;">
-                          ${displayAttendeeName}
+                          ${safeDisplayAttendeeName}
                         </td>
                       </tr>
                       <tr>
@@ -978,7 +992,7 @@ export async function sendHostNewAttendeeNotification(
                           <strong>Email:</strong>
                         </td>
                         <td style="padding: 8px 0; color: #166534; font-size: 14px; text-align: right;">
-                          ${attendeeEmail}
+                          ${safeAttendeeEmail}
                         </td>
                       </tr>
                       <tr style="background-color: #10b981;">
@@ -1070,6 +1084,7 @@ export async function sendEventCancellationEmail(
 ): Promise<{ success: boolean; error?: string }> {
   const { to, userName, eventName } = params
   const displayName = escapeHtml(userName || 'there')
+  const safeEventName = escapeHtml(eventName)
 
   const html = `
 <!DOCTYPE html>
@@ -1100,7 +1115,7 @@ export async function sendEventCancellationEmail(
               </p>
 
               <p style="margin: 0 0 20px; color: #374151; font-size: 16px; line-height: 1.6;">
-                You've cancelled your RSVP for <strong>${eventName}</strong>.
+                You've cancelled your RSVP for <strong>${safeEventName}</strong>.
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
@@ -1156,6 +1171,7 @@ export async function sendWaitlistSpotAvailableEmail(
 ): Promise<{ success: boolean; error?: string }> {
   const { to, userName, eventName, eventUrl, expiresAt } = params
   const displayName = escapeHtml(userName || 'there')
+  const safeEventName = escapeHtml(eventName)
 
   // Format expiry time
   const expiryTime = expiresAt.toLocaleString('en-SG', {
@@ -1201,7 +1217,7 @@ export async function sendWaitlistSpotAvailableEmail(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Good news! A spot just opened up for <strong>${eventName}</strong> and you're first in line on the waitlist!
+                Good news! A spot just opened up for <strong>${safeEventName}</strong> and you're first in line on the waitlist!
               </p>
 
               <!-- Urgency Card -->
@@ -1306,6 +1322,10 @@ export async function sendPaymentVerifiedEmail(
   } = params
 
   const displayName = escapeHtml(attendeeName || 'there')
+  const safeEventName = escapeHtml(eventName)
+  const safeEventDay = escapeHtml(eventDay)
+  const safeEventTime = escapeHtml(eventTime)
+  const safeEventLocation = escapeHtml(eventLocation)
   const eventUrl = eventSlug ? `${BASE_URL}/e/${eventSlug}` : `${BASE_URL}/e/${eventId}`
   const mapsLink = generateMapsLink({ address: eventLocation })
 
@@ -1359,7 +1379,7 @@ export async function sendPaymentVerifiedEmail(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Great news! The host has verified your payment of <strong>${formattedAmount}</strong> for <strong>${eventName}</strong>.
+                Great news! The host has verified your payment of <strong>${formattedAmount}</strong> for <strong>${safeEventName}</strong>.
               </p>
 
               <!-- Success Card -->
@@ -1378,25 +1398,25 @@ export async function sendPaymentVerifiedEmail(
                 <tr>
                   <td style="padding: 24px;">
                     <h2 style="margin: 0 0 20px; color: #0f172a; font-size: 22px; font-weight: 700;">
-                      ${eventName}
+                      ${safeEventName}
                     </h2>
                     <table role="presentation" style="width: 100%; border-collapse: collapse;">
                       <tr>
                         <td style="padding: 10px 0; color: #64748b; font-size: 15px; border-bottom: 1px solid #e2e8f0;">
                           <span style="display: inline-block; width: 24px;">📅</span>
-                          <strong style="color: #0f172a;">${eventDay}</strong>
+                          <strong style="color: #0f172a;">${safeEventDay}</strong>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 10px 0; color: #64748b; font-size: 15px; border-bottom: 1px solid #e2e8f0;">
                           <span style="display: inline-block; width: 24px;">🕐</span>
-                          <strong style="color: #0f172a;">${eventTime}</strong>
+                          <strong style="color: #0f172a;">${safeEventTime}</strong>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 10px 0; color: #64748b; font-size: 15px;">
                           <span style="display: inline-block; width: 24px;">📍</span>
-                          <strong style="color: #0f172a;">${eventLocation}</strong>
+                          <strong style="color: #0f172a;">${safeEventLocation}</strong>
                         </td>
                       </tr>
                     </table>
@@ -1511,6 +1531,8 @@ export async function sendPaymentRejectedEmail(
   } = params
 
   const displayName = escapeHtml(attendeeName || 'there')
+  const safeEventName = escapeHtml(eventName)
+  const safeRejectionReason = rejectionReason ? escapeHtml(rejectionReason) : null
   const eventUrl = eventSlug ? `${BASE_URL}/e/${eventSlug}` : `${BASE_URL}/e/${eventId}`
 
   const formattedAmount = new Intl.NumberFormat('en-SG', {
@@ -1552,10 +1574,10 @@ export async function sendPaymentRejectedEmail(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Unfortunately, the host couldn't verify your payment of <strong>${formattedAmount}</strong> for <strong>${eventName}</strong>.
+                Unfortunately, the host couldn't verify your payment of <strong>${formattedAmount}</strong> for <strong>${safeEventName}</strong>.
               </p>
 
-              ${rejectionReason ? `
+              ${safeRejectionReason ? `
               <!-- Reason Card -->
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #fef3c7; border-radius: 12px; border: 1px solid #fcd34d;">
                 <tr>
@@ -1564,7 +1586,7 @@ export async function sendPaymentRejectedEmail(
                       Reason:
                     </p>
                     <p style="margin: 0; color: #b45309; font-size: 15px; line-height: 1.6;">
-                      ${rejectionReason}
+                      ${safeRejectionReason}
                     </p>
                   </td>
                 </tr>
@@ -1668,6 +1690,11 @@ export async function sendEventCancelledByHostEmail(
   } = params
 
   const displayName = escapeHtml(attendeeName || 'there')
+  const safeEventName = escapeHtml(eventName)
+  const safeEventDay = escapeHtml(eventDay)
+  const safeEventTime = escapeHtml(eventTime)
+  const safeEventLocation = escapeHtml(eventLocation)
+  const safeCancellationReason = cancellationReason ? escapeHtml(cancellationReason) : null
 
   const formattedAmount = paymentAmount
     ? new Intl.NumberFormat('en-SG', { style: 'currency', currency: 'SGD' }).format(paymentAmount / 100)
@@ -1717,7 +1744,7 @@ export async function sendEventCancelledByHostEmail(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Unfortunately, <strong>${eventName}</strong> has been cancelled by the host.
+                Unfortunately, <strong>${safeEventName}</strong> has been cancelled by the host.
               </p>
 
               <!-- Event Details (for reference) -->
@@ -1728,16 +1755,16 @@ export async function sendEventCancelledByHostEmail(
                       Cancelled Experience
                     </p>
                     <h3 style="margin: 0 0 12px; color: #374151; font-size: 18px; font-weight: 600; text-decoration: line-through;">
-                      ${eventName}
+                      ${safeEventName}
                     </h3>
                     <p style="margin: 0; color: #6b7280; font-size: 14px;">
-                      ${eventDay} · ${eventTime} · ${eventLocation}
+                      ${safeEventDay} · ${safeEventTime} · ${safeEventLocation}
                     </p>
                   </td>
                 </tr>
               </table>
 
-              ${cancellationReason ? `
+              ${safeCancellationReason ? `
               <!-- Reason Card -->
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
                 <tr>
@@ -1746,7 +1773,7 @@ export async function sendEventCancelledByHostEmail(
                       Reason from host:
                     </p>
                     <p style="margin: 0; color: #64748b; font-size: 15px; line-height: 1.6;">
-                      "${cancellationReason}"
+                      "${safeCancellationReason}"
                     </p>
                   </td>
                 </tr>
@@ -1996,6 +2023,10 @@ function buildConfirmationEmailHtml(params: {
     checkInCode,
   } = params
 
+  const safeEventName = escapeHtml(eventName)
+  const safeEventDay = escapeHtml(eventDay)
+  const safeEventTime = escapeHtml(eventTime)
+  const safeEventLocation = escapeHtml(eventLocation)
   const myEventsLink = `${BASE_URL}/my-events?email=${encodeURIComponent(userEmail)}`
 
   const instagramLink = organizerInstagram
@@ -2044,26 +2075,26 @@ function buildConfirmationEmailHtml(params: {
                 <tr>
                   <td style="padding: 24px;">
                     <h2 style="margin: 0 0 20px; color: #0f172a; font-size: 22px; font-weight: 700;">
-                      ${eventName}
+                      ${safeEventName}
                     </h2>
 
                     <table role="presentation" style="width: 100%; border-collapse: collapse;">
                       <tr>
                         <td style="padding: 10px 0; color: #64748b; font-size: 15px; border-bottom: 1px solid #e2e8f0;">
                           <span style="display: inline-block; width: 24px;">📅</span>
-                          <strong style="color: #0f172a;">${eventDay}</strong>
+                          <strong style="color: #0f172a;">${safeEventDay}</strong>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 10px 0; color: #64748b; font-size: 15px; border-bottom: 1px solid #e2e8f0;">
                           <span style="display: inline-block; width: 24px;">🕐</span>
-                          <strong style="color: #0f172a;">${eventTime}</strong>
+                          <strong style="color: #0f172a;">${safeEventTime}</strong>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 10px 0; color: #64748b; font-size: 15px;">
                           <span style="display: inline-block; width: 24px;">📍</span>
-                          <strong style="color: #0f172a;">${eventLocation}</strong>
+                          <strong style="color: #0f172a;">${safeEventLocation}</strong>
                         </td>
                       </tr>
                     </table>
@@ -2215,6 +2246,8 @@ export async function sendRefundNotificationEmail(
   const { to, userName, eventName, refundAmount, currency, refundType, reason } = params
 
   const displayName = escapeHtml(userName || 'there')
+  const safeEventName = escapeHtml(eventName)
+  const safeReason = reason ? escapeHtml(reason) : undefined
   const formattedAmount = `${currency.toUpperCase()} ${(refundAmount / 100).toFixed(2)}`
   const supportUrl = `${BASE_URL}/support`
   const myBookingsUrl = `${BASE_URL}/my-bookings`
@@ -2253,7 +2286,7 @@ export async function sendRefundNotificationEmail(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Good news! Your refund for <strong>"${eventName}"</strong> has been processed.
+                Good news! Your refund for <strong>"${safeEventName}"</strong> has been processed.
               </p>
 
               <!-- Refund Card -->
@@ -2273,7 +2306,7 @@ export async function sendRefundNotificationEmail(
                 </tr>
               </table>
 
-              ${reason ? `
+              ${safeReason ? `
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px; background-color: #f0f9ff; border-radius: 8px;">
                 <tr>
                   <td style="padding: 16px;">
@@ -2281,7 +2314,7 @@ export async function sendRefundNotificationEmail(
                       Reason
                     </p>
                     <p style="margin: 0; color: #0c4a6e; font-size: 14px;">
-                      ${reason}
+                      ${safeReason}
                     </p>
                   </td>
                 </tr>

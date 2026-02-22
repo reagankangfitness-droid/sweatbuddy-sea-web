@@ -137,7 +137,7 @@ export async function PATCH(
     // Validate action
     if (!action || !VALID_ACTIONS.has(action)) {
       return NextResponse.json(
-        { error: 'Invalid action. Must be one of: ' + Array.from(VALID_ACTIONS).join(', ') },
+        { error: 'Invalid action' },
         { status: 400 }
       )
     }

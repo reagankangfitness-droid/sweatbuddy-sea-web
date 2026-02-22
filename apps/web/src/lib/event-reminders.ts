@@ -3,6 +3,16 @@ import { sendEmail, generateMapsLink } from './email'
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
 
+/** Escape HTML special characters to prevent injection in email templates */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 /**
  * Schedule a reminder for an attendee 24 hours before the event
  */
@@ -228,7 +238,10 @@ export async function sendEventReminderEmail(
     communityLink,
   } = params
 
-  const displayName = attendeeName || 'there'
+  const displayName = escapeHtml(attendeeName || 'there')
+  const safeEventName = escapeHtml(eventName)
+  const safeEventTime = escapeHtml(eventTime)
+  const safeEventLocation = escapeHtml(eventLocation)
   const eventUrl = eventSlug ? `${BASE_URL}/e/${eventSlug}` : `${BASE_URL}/e/${eventId}`
   const mapsLink = generateMapsLink({ address: eventLocation })
 
@@ -287,7 +300,7 @@ export async function sendEventReminderEmail(
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Just a friendly reminder that you're signed up for <strong>${eventName}</strong> tomorrow!
+                Just a friendly reminder that you're signed up for <strong>${safeEventName}</strong> tomorrow!
               </p>
 
               <!-- Event Card -->
@@ -295,7 +308,7 @@ export async function sendEventReminderEmail(
                 <tr>
                   <td style="padding: 24px;">
                     <h2 style="margin: 0 0 20px; color: #1e40af; font-size: 22px; font-weight: 700;">
-                      ${eventName}
+                      ${safeEventName}
                     </h2>
                     <table role="presentation" style="width: 100%; border-collapse: collapse;">
                       <tr>
@@ -307,13 +320,13 @@ export async function sendEventReminderEmail(
                       <tr>
                         <td style="padding: 10px 0; color: #3730a3; font-size: 15px; border-bottom: 1px solid #93c5fd;">
                           <span style="display: inline-block; width: 24px;">🕐</span>
-                          <strong>${eventTime}</strong>
+                          <strong>${safeEventTime}</strong>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 10px 0; color: #3730a3; font-size: 15px;">
                           <span style="display: inline-block; width: 24px;">📍</span>
-                          <strong>${eventLocation}</strong>
+                          <strong>${safeEventLocation}</strong>
                         </td>
                       </tr>
                     </table>

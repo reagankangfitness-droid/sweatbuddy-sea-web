@@ -32,12 +32,14 @@ export function NotificationBell() {
   const [hasMore, setHasMore] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const notificationsRef = useRef<Notification[]>([])
+  notificationsRef.current = notifications
 
   // Fetch notifications
   const fetchNotifications = useCallback(async (reset = false) => {
     try {
       setIsLoading(true)
-      const offset = reset ? 0 : notifications.length
+      const offset = reset ? 0 : notificationsRef.current.length
       const response = await fetch(`/api/notifications?limit=10&offset=${offset}`)
 
       if (!response.ok) throw new Error('Failed to fetch')
@@ -56,7 +58,7 @@ export function NotificationBell() {
     } finally {
       setIsLoading(false)
     }
-  }, [notifications.length])
+  }, [])
 
   // Fetch unread count (lightweight)
   const fetchUnreadCount = useCallback(async () => {

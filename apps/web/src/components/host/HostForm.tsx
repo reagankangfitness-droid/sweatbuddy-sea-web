@@ -329,10 +329,15 @@ export default function HostForm() {
       })
 
       const text = await response.text()
-      const data = text ? JSON.parse(text) : {}
+      let data: Record<string, unknown> = {}
+      try {
+        data = text ? JSON.parse(text) : {}
+      } catch {
+        // Server returned non-JSON response
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || `Server error: ${response.status}`)
+        throw new Error((data.error as string) || `Server error: ${response.status}`)
       }
 
       setIsSubmitted(true)

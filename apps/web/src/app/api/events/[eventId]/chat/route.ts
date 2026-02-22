@@ -133,9 +133,9 @@ export async function POST(
     }
 
     // Validate content length
-    if (content.length > 500) {
+    if (content.length > 5000) {
       return NextResponse.json(
-        { error: 'Message too long (max 500 characters)' },
+        { error: 'Message too long (max 5000 characters)' },
         { status: 400 }
       )
     }

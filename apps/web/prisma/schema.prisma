@@ -126,6 +126,10 @@ model User {
   linkedin  String? @db.VarChar(200)
   tiktok    String? @db.VarChar(100)
 
+  // Social / discovery
+  fitnessInterests String[]  @default([])
+  goingSolo        Boolean   @default(false)
+
   // Profile settings
   isHost                 Boolean @default(false)
   isVerified             Boolean @default(false)
@@ -226,6 +230,9 @@ model User {
   communityMemberships    CommunityMember[]    @relation("CommunityMemberships")
   communityMessagesSent   CommunityMessage[]   @relation("CommunityMessagesSent")
 
+  // Event chat relations
+  eventChatMessages EventChatMessage[] @relation("EventChatMessagesSent")
+
   @@index([slug])
   @@index([username])
   @@index([isHost])
@@ -287,6 +294,9 @@ model Activity {
   // Review relations
   reviews       Review[]               @relation("ActivityReviews")
   ratingSummary ActivityRatingSummary? @relation("ActivityRatingSummary")
+
+  // Event chat
+  eventChat EventChat?
 
   @@index([userId])
   @@index([hostId])
@@ -1907,17 +1917,31 @@ model MagicLinkToken {
 }
 
 // Chat messages for public events (EventDetailSheet)
-model EventChatMessage {
-  id          String   @id @default(cuid())
-  eventId     String   @db.VarChar(100) // References event from events.json or submission-{id}
-  content     String   @db.Text
-  senderName  String   @db.VarChar(200)
-  senderEmail String   @db.VarChar(255)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model EventChat {
+  id         String   @id @default(cuid())
+  activityId String   @unique
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
 
-  @@index([eventId])
-  @@index([createdAt])
+  activity Activity           @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  messages EventChatMessage[]
+
+  @@index([activityId])
+  @@map("event_chats")
+}
+
+model EventChatMessage {
+  id        String   @id @default(cuid())
+  chatId    String
+  userId    String
+  content   String   @db.Text
+  isPinned  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  chat EventChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user User      @relation("EventChatMessagesSent", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([chatId, createdAt])
   @@map("event_chat_messages")
 }
 

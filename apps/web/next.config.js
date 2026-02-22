@@ -66,6 +66,16 @@ const nextConfig = {
     },
   },
 
+  // Redirects for removed stub pages
+  async redirects() {
+    return [
+      { source: '/discover', destination: '/events', permanent: true },
+      { source: '/explore', destination: '/events', permanent: true },
+      { source: '/app', destination: '/events', permanent: true },
+      { source: '/activities/create', destination: '/dashboard', permanent: true },
+    ]
+  },
+
   // Security and caching headers
   async headers() {
     return [

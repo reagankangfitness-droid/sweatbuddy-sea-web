@@ -2891,3 +2891,20 @@ model EventSummary {
   @@map("event_summaries")
 }
 
+// =====================================================
+// ADMIN SETTINGS (singleton, id = 1)
+// =====================================================
+
+model AdminSettings {
+  id                      Int      @id @default(1)
+  notifyOnNewEvent        Boolean  @default(true)
+  notifyOnNewAttendee     Boolean  @default(true)
+  autoApproveOrganizers   Boolean  @default(false)
+  requireEmailVerification Boolean @default(true)
+  maxAttendeesPerEvent    Int      @default(100)
+  adminEmail              String   @default("")
+  updatedAt               DateTime @updatedAt
+
+  @@map("admin_settings")
+}
+

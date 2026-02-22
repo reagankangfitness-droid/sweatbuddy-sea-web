@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Loader2, TrendingUp, Calendar, Receipt, AlertCircle, QrCode } from 'lucide-react'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 
 interface EarningsData {
   host: {
@@ -172,6 +173,51 @@ export function EarningsDashboard() {
       {summary.totalRefunded > 0 && (
         <div className="bg-neutral-100 p-4 rounded-xl text-sm text-neutral-600">
           <span className="font-medium">Refunds:</span> {formatCurrency(summary.totalRefunded)} refunded
+        </div>
+      )}
+
+      {/* Revenue by Event Chart */}
+      {eventEarnings.length > 0 && (
+        <div className="bg-white rounded-xl border border-neutral-200 p-6">
+          <h2 className="text-lg font-semibold text-neutral-900 mb-4">Revenue by Event</h2>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={eventEarnings.map((e) => ({
+                  name: e.eventName.length > 20 ? e.eventName.slice(0, 20) + '...' : e.eventName,
+                  revenue: e.totalRevenue / 100,
+                  tickets: e.ticketsSold,
+                }))}
+                margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+              >
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 12, fill: '#6b7280' }}
+                  tickLine={false}
+                  axisLine={{ stroke: '#e5e7eb' }}
+                />
+                <YAxis
+                  tick={{ fontSize: 12, fill: '#6b7280' }}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(v: number) => `$${v}`}
+                />
+                <Tooltip
+                  formatter={((value: number, name: string) => [
+                    name === 'revenue' ? `$${value.toFixed(2)}` : value,
+                    name === 'revenue' ? 'Revenue' : 'Tickets',
+                  ]) as never}
+                  contentStyle={{
+                    backgroundColor: '#fff',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    fontSize: '13px',
+                  }}
+                />
+                <Bar dataKey="revenue" fill="#22c55e" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       )}
 

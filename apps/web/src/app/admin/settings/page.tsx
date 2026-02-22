@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { toast } from 'sonner'
 import {
   Bell,
@@ -13,6 +13,7 @@ import {
 
 export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [settings, setSettings] = useState({
     notifyOnNewEvent: true,
     notifyOnNewAttendee: true,
@@ -21,6 +22,31 @@ export default function AdminSettingsPage() {
     maxAttendeesPerEvent: 100,
     adminEmail: '',
   })
+
+  const fetchSettings = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/settings')
+      if (res.ok) {
+        const data = await res.json()
+        setSettings({
+          notifyOnNewEvent: data.notifyOnNewEvent,
+          notifyOnNewAttendee: data.notifyOnNewAttendee,
+          autoApproveOrganizers: data.autoApproveOrganizers,
+          requireEmailVerification: data.requireEmailVerification,
+          maxAttendeesPerEvent: data.maxAttendeesPerEvent,
+          adminEmail: data.adminEmail,
+        })
+      }
+    } catch {
+      // Use defaults on error
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchSettings()
+  }, [fetchSettings])
 
   const handleSave = async () => {
     setSaving(true)
@@ -36,10 +62,18 @@ export default function AdminSettingsPage() {
         toast.error('Failed to save settings')
       }
     } catch {
-      toast.info('Settings saved locally (server endpoint not configured)')
+      toast.error('Failed to save settings')
     } finally {
       setSaving(false)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-neutral-400"></div>
+      </div>
+    )
   }
 
   return (

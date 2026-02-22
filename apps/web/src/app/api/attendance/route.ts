@@ -384,14 +384,6 @@ export async function DELETE(request: Request) {
       where: { id: attendeeId },
     })
 
-    // Also delete any chat messages from this user for this event
-    await prisma.eventChatMessage.deleteMany({
-      where: {
-        eventId: attendee.eventId,
-        senderEmail: attendee.email,
-      },
-    })
-
     return NextResponse.json({
       success: true,
       message: 'Attendee removed successfully',

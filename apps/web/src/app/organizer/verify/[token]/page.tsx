@@ -27,7 +27,7 @@ export default function OrganizerVerifyPage() {
 
         // Redirect to dashboard after a short delay
         setTimeout(() => {
-          router.push('/organizer/dashboard')
+          router.push('/host/dashboard')
         }, 1500)
       } catch (err) {
         setStatus('error')
@@ -82,7 +82,7 @@ export default function OrganizerVerifyPage() {
               {error}
             </p>
             <Link
-              href="/organizer"
+              href="/sign-in?intent=host"
               className="inline-block px-6 py-3 bg-[#1800ad] text-white font-semibold rounded-xl hover:bg-[#1800ad]/90 transition"
             >
               Back to Login

@@ -143,14 +143,6 @@ export async function POST(request: Request) {
         where: { id: attendance.id },
       })
 
-      // Also delete any chat messages from this user for this event
-      await tx.eventChatMessage.deleteMany({
-        where: {
-          eventId,
-          senderEmail: normalizedEmail,
-        },
-      })
-
       // Check if event was full and reset isFull + find waitlist candidate
       const txEvent = await tx.eventSubmission.findUnique({
         where: { id: eventId },

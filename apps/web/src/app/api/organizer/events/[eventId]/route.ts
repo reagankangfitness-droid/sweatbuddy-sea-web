@@ -165,7 +165,6 @@ export async function DELETE(
     // Delete all children first, then parent to avoid foreign key violations
     await prisma.$transaction(async (tx) => {
       // Delete children that reference eventAttendance or eventSubmission
-      await tx.eventChatMessage.deleteMany({ where: { eventId } })
       await tx.eventDirectMessage.deleteMany({
         where: { conversation: { eventId } },
       })

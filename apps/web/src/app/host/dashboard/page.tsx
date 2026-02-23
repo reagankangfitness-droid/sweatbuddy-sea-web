@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { DollarSign, Users, Clock, CheckCircle, AlertCircle, CreditCard, ChevronRight, XCircle, Ban, AlertTriangle, Star, BarChart3, Wallet, Sparkles, TrendingUp, MessageSquare, ArrowRight } from 'lucide-react'
+import { DollarSign, Users, Clock, CheckCircle, AlertCircle, CreditCard, ChevronRight, XCircle, Ban, AlertTriangle, Star, BarChart3, Wallet, Sparkles, TrendingUp, MessageSquare, ArrowRight, PartyPopper } from 'lucide-react'
 import { DashboardHeader } from '@/components/host/DashboardHeader'
 import { StatCard } from '@/components/host/StatCard'
 import { UpcomingEventRow } from '@/components/host/UpcomingEventRow'
@@ -15,6 +15,7 @@ import { DashboardSkeleton } from '@/components/host/DashboardSkeleton'
 import { HostOnboarding } from '@/components/host/HostOnboarding'
 import { DemandSignalsCard } from '@/components/host/DemandSignalsCard'
 import { NudgeCardsSection } from '@/components/nudge-cards-section'
+import { RecapCreator } from '@/components/host/RecapCreator'
 
 interface DashboardEvent {
   id: string
@@ -93,6 +94,8 @@ export default function HostDashboard() {
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [userName, setUserName] = useState<string | null>(null)
   const [isCheckingOnboarding, setIsCheckingOnboarding] = useState(true)
+  const [recapEligible, setRecapEligible] = useState<DashboardEvent[]>([])
+  const [showRecapFor, setShowRecapFor] = useState<DashboardEvent | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -167,6 +170,42 @@ export default function HostDashboard() {
 
     if (!isLoading && data) {
       fetchPulse()
+    }
+  }, [isLoading, data])
+
+  // Check recap eligibility for recent past events
+  useEffect(() => {
+    const checkRecapEligibility = async () => {
+      if (!data?.past) return
+
+      const now = new Date()
+      const fortyEightHoursAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000)
+      const recentPast = data.past.filter((event) => {
+        if (!event.date) return false
+        const eventDate = new Date(event.date)
+        return eventDate >= fortyEightHoursAgo && eventDate <= now
+      })
+
+      if (recentPast.length === 0) return
+
+      try {
+        const res = await fetch('/api/host/events/recap-status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventIds: recentPast.map((e) => e.id) }),
+        })
+        if (res.ok) {
+          const { recappedEventIds } = await res.json()
+          const eligible = recentPast.filter((e) => !recappedEventIds.includes(e.id))
+          setRecapEligible(eligible)
+        }
+      } catch (err) {
+        console.error('Failed to check recap status:', err)
+      }
+    }
+
+    if (!isLoading && data) {
+      checkRecapEligibility()
     }
   }, [isLoading, data])
 
@@ -293,6 +332,36 @@ export default function HostDashboard() {
             </div>
           </Link>
         )}
+
+        {/* Recap Prompts */}
+        {recapEligible.map((event) => (
+          <button
+            key={event.id}
+            onClick={() => setShowRecapFor(event)}
+            className="block w-full mb-4 text-left"
+          >
+            <div className="p-3 sm:p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-300 dark:border-emerald-800 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-colors">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-emerald-200 dark:bg-emerald-800 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <PartyPopper className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-700 dark:text-emerald-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-emerald-900 dark:text-emerald-100 text-sm sm:text-base">
+                      &ldquo;{event.name}&rdquo; just wrapped!
+                    </p>
+                    <p className="text-xs sm:text-sm text-emerald-700 dark:text-emerald-400">
+                      Create a recap for your community?
+                    </p>
+                  </div>
+                </div>
+                <span className="text-sm font-medium text-emerald-700 dark:text-emerald-400 whitespace-nowrap flex-shrink-0">
+                  Create Recap →
+                </span>
+              </div>
+            </div>
+          </button>
+        ))}
 
         {/* Stats - 2 cols on very small screens, 3 cols on sm+ */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
@@ -555,6 +624,21 @@ export default function HostDashboard() {
         <Sparkles className="w-4 h-4" />
         Plan Next Event
       </Link>
+
+      {/* Recap Creator Modal */}
+      {showRecapFor && (
+        <RecapCreator
+          eventId={showRecapFor.id}
+          eventName={showRecapFor.name}
+          category={showRecapFor.category}
+          attendeeCount={showRecapFor.goingCount}
+          onClose={() => setShowRecapFor(null)}
+          onPublished={() => {
+            setRecapEligible((prev) => prev.filter((e) => e.id !== showRecapFor.id))
+            setShowRecapFor(null)
+          }}
+        />
+      )}
     </div>
   )
 }

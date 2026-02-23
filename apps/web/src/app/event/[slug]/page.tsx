@@ -21,8 +21,8 @@ async function getEvent(slug: string) {
 
   if (!event) return null
 
-  // Query attendees separately (no Prisma relation defined)
-  const [attendees, attendeeCount] = await Promise.all([
+  // Query attendees and recap separately (no Prisma relation defined)
+  const [attendees, attendeeCount, recap] = await Promise.all([
     prisma.eventAttendance.findMany({
       where: {
         eventId: event.id,
@@ -40,6 +40,15 @@ async function getEvent(slug: string) {
         eventId: event.id,
         confirmed: true
       }
+    }),
+    prisma.eventRecap.findUnique({
+      where: { eventSubmissionId: event.id },
+      select: {
+        recapText: true,
+        photoUrl: true,
+        publishedAt: true,
+        attendeeCount: true,
+      },
     })
   ])
 
@@ -71,6 +80,12 @@ async function getEvent(slug: string) {
       id: a.id,
       name: a.name || 'Anonymous',
     })),
+    recap: recap ? {
+      recapText: recap.recapText,
+      photoUrl: recap.photoUrl,
+      publishedAt: recap.publishedAt.toISOString(),
+      attendeeCount: recap.attendeeCount,
+    } : null,
   }
 }
 

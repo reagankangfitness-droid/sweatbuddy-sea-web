@@ -18,6 +18,13 @@ interface AttendeePreview {
   name: string
 }
 
+interface EventRecap {
+  recapText: string
+  photoUrl: string | null
+  publishedAt: string
+  attendeeCount: number
+}
+
 interface Event {
   id: string
   slug: string | null
@@ -43,6 +50,7 @@ interface Event {
   paynowQrCode: string | null
   paynowNumber: string | null
   attendeesPreview: AttendeePreview[]
+  recap: EventRecap | null
 }
 
 import { getCategoryEmoji } from '@/lib/categories'
@@ -242,6 +250,46 @@ export function EventPageClient({ event }: { event: Event }) {
             )}
 
             {/* Community Link - hidden for now */}
+
+            {/* Event Recap */}
+            {event.recap && (
+              <>
+                <div className="border-t border-neutral-200" />
+                <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl p-6">
+                  <h2 className="text-xl font-semibold text-neutral-900 dark:text-white mb-4">
+                    Event Recap
+                  </h2>
+                  {event.recap.photoUrl && (
+                    <div className="mb-4 rounded-xl overflow-hidden">
+                      <Image
+                        src={event.recap.photoUrl}
+                        alt="Event recap"
+                        width={640}
+                        height={400}
+                        className="w-full h-auto object-cover"
+                      />
+                    </div>
+                  )}
+                  <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap">
+                    {event.recap.recapText}
+                  </p>
+                  <div className="mt-4 flex items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
+                    <span className="flex items-center gap-1">
+                      <Users className="w-4 h-4" />
+                      {event.recap.attendeeCount} {event.recap.attendeeCount === 1 ? 'person' : 'people'} joined
+                    </span>
+                    <span>·</span>
+                    <span>
+                      {new Date(event.recap.publishedAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </span>
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Attendees */}
             {goingCount > 0 && (

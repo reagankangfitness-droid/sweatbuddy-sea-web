@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Plus, MapPin, Users, Clock, Calendar, TrendingUp, Sparkles, ChevronRight } from 'lucide-react'
+import { Plus, MapPin, Users, Clock, Calendar, TrendingUp } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { ACTIVITY_CATEGORIES } from '@/lib/categories'
 
@@ -30,17 +30,6 @@ interface HostedEvent {
   participantCount?: number
   isEventSubmission?: boolean
   friendsGoing?: { id: string; name: string | null; firstName: string | null; imageUrl: string | null }[]
-}
-
-interface DiscoverCommunity {
-  id: string
-  name: string
-  slug: string
-  category: string
-  coverImage: string | null
-  logoImage: string | null
-  memberCount: number
-  createdBy: { imageUrl: string | null } | null
 }
 
 function getEventUrl(event: HostedEvent): string {
@@ -111,24 +100,13 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true)
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null)
   const categoryScrollRef = useRef<HTMLDivElement>(null)
-  const [newCommunities, setNewCommunities] = useState<DiscoverCommunity[]>([])
-
   const fetchEvents = useCallback(async () => {
     try {
-      const [waveRes, discoverRes] = await Promise.all([
-        fetch('/api/wave?lat=1.3521&lng=103.8198'),
-        fetch('/api/discover'),
-      ])
+      const waveRes = await fetch('/api/wave?lat=1.3521&lng=103.8198')
       if (waveRes.ok) {
         const data = await waveRes.json()
         if (data.hostedActivities) {
           setEvents(data.hostedActivities)
-        }
-      }
-      if (discoverRes.ok) {
-        const discoverData = await discoverRes.json()
-        if (discoverData.newCommunities) {
-          setNewCommunities(discoverData.newCommunities)
         }
       }
     } catch (error) {
@@ -225,7 +203,7 @@ export default function EventsPage() {
               <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Experiences</h1>
               <Link
                 href="/host"
-                className="flex items-center gap-1.5 px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full text-sm font-semibold"
+                className="hidden md:flex items-center gap-1.5 px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full text-sm font-semibold"
               >
                 <Plus className="w-4 h-4" />
                 Host
@@ -269,7 +247,7 @@ export default function EventsPage() {
       </header>
 
       {/* Content */}
-      <main className="px-4 py-4 pb-28">
+      <main className="px-4 pt-4 pb-24 md:pb-12">
         {loading ? (
           /* Loading skeleton - card grid */
           <div className="space-y-6">
@@ -308,7 +286,9 @@ export default function EventsPage() {
             </Link>
           </div>
         ) : (
-          <div className="space-y-8">
+          <div>
+            {/* ── PRIMARY: Happening This Week ── */}
+
             {/* Hero card for today's featured event */}
             {heroEvent && !categoryFilter && (
               <motion.div
@@ -380,9 +360,9 @@ export default function EventsPage() {
                   </div>
                 </Link>
 
-                {/* Additional today events as regular cards */}
+                {/* Additional today events as full-width list on mobile */}
                 {todayEvents.length > 1 && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
+                  <div className="flex flex-col gap-3 mt-3 md:grid md:grid-cols-3 md:gap-4">
                     {todayEvents.slice(1).map((event, index) => (
                       <EventCard key={event.id} event={event} index={index} />
                     ))}
@@ -399,11 +379,11 @@ export default function EventsPage() {
               if (groupKey === 'today' && heroEvent && !categoryFilter) return null
 
               return (
-                <section key={groupKey}>
-                  <h2 className="text-lg font-bold text-neutral-900 dark:text-white mb-3">
+                <section key={groupKey} className="py-8 md:py-12 first:pt-0">
+                  <h2 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">
                     {TIME_GROUP_LABELS[groupKey]}
                   </h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="flex flex-col gap-3 md:grid md:grid-cols-3 md:gap-4">
                     {groupEvents.map((event, index) => (
                       <EventCard key={event.id} event={event} index={index} />
                     ))}
@@ -415,14 +395,14 @@ export default function EventsPage() {
             {/* ── Discovery Sections (only when not filtering by category) ── */}
             {!categoryFilter && (
               <>
-                {/* Popular Right Now */}
+                {/* ── SECONDARY: Popular Right Now ── */}
                 {popularEvents.length > 0 && (
-                  <section>
-                    <div className="flex items-center gap-2 mb-3">
+                  <section className="py-8 md:py-12 border-t border-neutral-200 dark:border-neutral-800">
+                    <div className="flex items-center gap-2 mb-4">
                       <TrendingUp className="w-5 h-5 text-orange-500" />
                       <h2 className="text-lg font-bold text-neutral-900 dark:text-white">Popular Right Now</h2>
                     </div>
-                    <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-2 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:overflow-visible">
+                    <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-2 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible">
                       {popularEvents.map((event, index) => (
                         <div key={event.id} className="flex-shrink-0 w-[70vw] md:w-auto">
                           <EventCard event={event} index={index} />
@@ -432,47 +412,26 @@ export default function EventsPage() {
                   </section>
                 )}
 
-                {/* Friends Are Going */}
+                {/* ── CONTEXTUAL: Friends Are Going ── */}
                 {friendsGoingEvents.length > 0 && (
-                  <section>
+                  <section className="py-8 md:py-12">
                     <div className="flex items-center gap-2 mb-3">
-                      <Users className="w-5 h-5 text-indigo-500" />
-                      <h2 className="text-lg font-bold text-neutral-900 dark:text-white">Friends Are Going</h2>
+                      <Users className="w-4 h-4 text-indigo-500" />
+                      <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Friends Are Going</h2>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 gap-3">
                       {friendsGoingEvents.map((event, index) => (
-                        <EventCard key={event.id} event={event} index={index} />
+                        <EventCard key={event.id} event={event} index={index} compact />
                       ))}
                     </div>
                   </section>
                 )}
 
-                {/* New Communities */}
-                {newCommunities.length > 0 && (
-                  <section>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <Sparkles className="w-5 h-5 text-amber-500" />
-                        <h2 className="text-lg font-bold text-neutral-900 dark:text-white">New Communities</h2>
-                      </div>
-                      <Link href="/communities" className="flex items-center gap-0.5 text-sm font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors">
-                        See all
-                        <ChevronRight className="w-4 h-4" />
-                      </Link>
-                    </div>
-                    <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-2 md:mx-0 md:px-0 md:grid md:grid-cols-4 md:overflow-visible">
-                      {newCommunities.map((community) => (
-                        <CommunityCard key={community.id} community={community} />
-                      ))}
-                    </div>
-                  </section>
-                )}
-
-                {/* Explore by Category */}
+                {/* ── TERTIARY: Explore by Category ── */}
                 {categoryCards.length > 0 && (
-                  <section>
-                    <h2 className="text-lg font-bold text-neutral-900 dark:text-white mb-3">Explore by Category</h2>
-                    <div className="grid grid-cols-3 md:grid-cols-4 gap-2.5">
+                  <section className="py-8 md:py-12 border-t border-neutral-100 dark:border-neutral-800/50">
+                    <h2 className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide mb-3">Explore by Category</h2>
+                    <div className="flex flex-wrap gap-2">
                       {categoryCards.map((cat) => (
                         <button
                           key={cat.slug}
@@ -480,11 +439,11 @@ export default function EventsPage() {
                             setCategoryFilter(cat.slug)
                             window.scrollTo({ top: 0, behavior: 'smooth' })
                           }}
-                          className="flex flex-col items-center gap-1.5 p-3 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 hover:shadow-md transition-all"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-neutral-900 rounded-full border border-neutral-200 dark:border-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600 hover:shadow-sm transition-all text-sm"
                         >
-                          <span className="text-2xl">{cat.emoji}</span>
-                          <span className="text-xs font-medium text-neutral-900 dark:text-white text-center leading-tight">{cat.name}</span>
-                          <span className="text-[10px] text-neutral-400 dark:text-neutral-500">{cat.eventCount} events</span>
+                          <span>{cat.emoji}</span>
+                          <span className="font-medium text-neutral-700 dark:text-neutral-300">{cat.name}</span>
+                          <span className="text-neutral-400 dark:text-neutral-500 text-xs">{cat.eventCount}</span>
                         </button>
                       ))}
                     </div>
@@ -499,7 +458,7 @@ export default function EventsPage() {
   )
 }
 
-function EventCard({ event, index }: { event: HostedEvent; index: number }) {
+function EventCard({ event, index, compact }: { event: HostedEvent; index: number; compact?: boolean }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -511,7 +470,7 @@ function EventCard({ event, index }: { event: HostedEvent; index: number }) {
         className="block bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden hover:border-neutral-300 dark:hover:border-neutral-700 hover:shadow-lg transition-all group"
       >
         {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden">
+        <div className={`relative overflow-hidden ${compact ? 'aspect-[3/2]' : 'aspect-[4/3]'}`}>
           {event.imageUrl ? (
             <Image
               src={event.imageUrl}
@@ -601,54 +560,3 @@ function EventCard({ event, index }: { event: HostedEvent; index: number }) {
   )
 }
 
-function CommunityCard({ community }: { community: DiscoverCommunity }) {
-  const avatarSrc = community.logoImage || community.createdBy?.imageUrl
-  return (
-    <Link
-      href={`/communities/${community.slug}`}
-      className="flex-shrink-0 w-[60vw] md:w-auto bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden hover:border-neutral-300 dark:hover:border-neutral-700 hover:shadow-lg transition-all group"
-    >
-      {/* Cover */}
-      <div className="relative h-24 bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30">
-        {community.coverImage && (
-          <Image
-            src={community.coverImage}
-            alt={community.name}
-            fill
-            className="object-cover"
-            unoptimized
-          />
-        )}
-        <div className="absolute top-2 left-2">
-          <span className="px-2 py-0.5 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm rounded-full text-[10px] font-medium text-neutral-700 dark:text-neutral-300 capitalize">
-            {community.category}
-          </span>
-        </div>
-      </div>
-      {/* Info */}
-      <div className="p-3">
-        <div className="flex items-center gap-2">
-          {avatarSrc ? (
-            <Image
-              src={avatarSrc}
-              alt={community.name}
-              width={24}
-              height={24}
-              className="rounded-full"
-              unoptimized
-            />
-          ) : (
-            <div className="w-6 h-6 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center">
-              <Users className="w-3 h-3 text-neutral-400" />
-            </div>
-          )}
-          <h3 className="font-semibold text-sm text-neutral-900 dark:text-white truncate">{community.name}</h3>
-        </div>
-        <div className="flex items-center gap-1 mt-2 text-xs text-neutral-500 dark:text-neutral-400">
-          <Users className="w-3 h-3" />
-          <span>{community.memberCount} {community.memberCount === 1 ? 'member' : 'members'}</span>
-        </div>
-      </div>
-    </Link>
-  )
-}

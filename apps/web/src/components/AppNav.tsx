@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Users, CalendarDays, User, ChevronRight } from 'lucide-react'
+import { Users, CalendarDays, User, ChevronRight, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -126,6 +126,15 @@ export function AppNav() {
                 })}
               </div>
 
+              {/* Host CTA */}
+              <Link
+                href="/host"
+                aria-label="Host an experience"
+                className="flex items-center justify-center w-12 h-12 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors mb-3"
+              >
+                <Plus className="w-5 h-5" />
+              </Link>
+
               {/* User Avatar at bottom */}
               <div className="mt-auto">
                 {isSignedIn && user ? (
@@ -187,7 +196,7 @@ export function AppNav() {
                   aria-current={isActive ? 'page' : undefined}
                   className={`
                     flex flex-col items-center justify-center
-                    w-16 h-14
+                    w-14 h-14
                     transition-all duration-200 relative
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 dark:focus-visible:ring-white focus-visible:ring-offset-2 rounded-lg
                     ${isActive
@@ -209,6 +218,17 @@ export function AppNav() {
                 </Link>
               )
             })}
+
+            {/* Host CTA */}
+            <Link
+              href="/host"
+              aria-label="Host an experience"
+              className="flex flex-col items-center justify-center w-14 h-14"
+            >
+              <div className="w-10 h-10 rounded-full bg-neutral-900 dark:bg-white flex items-center justify-center">
+                <Plus className="w-5 h-5 text-white dark:text-neutral-900" />
+              </div>
+            </Link>
           </div>
         </nav>
       </div>

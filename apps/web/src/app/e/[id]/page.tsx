@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { UnifiedEventClient } from './UnifiedEventClient'
 import { EventAttendees } from '@/components/EventAttendees'
 import { formatEventDate, isTodaySG, isThisWeekendSG } from '@/lib/event-dates'
+import { auth } from '@clerk/nextjs/server'
+import { prisma } from '@/lib/prisma'
 
 // Use ISR - revalidate every 30 seconds for fresh data with caching
 export const revalidate = 30
@@ -92,6 +94,38 @@ export default async function EventDetailPage({ params }: Props) {
 
   if (!event) {
     notFound()
+  }
+
+  // Social proof: friends going
+  type FriendGoing = { id: string; name: string | null; firstName: string | null; imageUrl: string | null }
+  let friendsGoing: FriendGoing[] = []
+  const { userId } = await auth()
+  if (userId) {
+    const followRows = await prisma.userFollower.findMany({
+      where: { followerId: userId },
+      select: { followingId: true },
+    })
+    const followingIds = followRows.map((f) => f.followingId)
+    if (followingIds.length > 0) {
+      const followedUsers = await prisma.user.findMany({
+        where: { id: { in: followingIds } },
+        select: { id: true, name: true, firstName: true, imageUrl: true, email: true },
+      })
+      const followingEmails = followedUsers.map((u) => u.email)
+      if (followingEmails.length > 0) {
+        const friendAttendances = await prisma.eventAttendance.findMany({
+          where: {
+            email: { in: followingEmails, mode: 'insensitive' },
+            eventId: id,
+          },
+          select: { email: true },
+        })
+        const attendingEmails = new Set(friendAttendances.map((a) => a.email.toLowerCase()))
+        friendsGoing = followedUsers
+          .filter((u) => attendingEmails.has(u.email.toLowerCase()))
+          .map((u) => ({ id: u.id, name: u.name, firstName: u.firstName, imageUrl: u.imageUrl }))
+      }
+    }
   }
 
   const emoji = getCategoryEmoji(event.category)
@@ -245,6 +279,41 @@ export default async function EventDetailPage({ params }: Props) {
                   </div>
                 </div>
               </div>
+
+              {/* Friends Going */}
+              {friendsGoing.length > 0 && (
+                <div className="bg-indigo-50 dark:bg-indigo-950/30 rounded-xl p-5 border border-indigo-100 dark:border-indigo-900/50">
+                  <h2 className="text-base font-semibold text-indigo-900 dark:text-indigo-200 mb-3 flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Friends Going
+                  </h2>
+                  <div className="flex flex-wrap gap-3">
+                    {friendsGoing.map((friend) => (
+                      <div key={friend.id} className="flex items-center gap-2">
+                        {friend.imageUrl ? (
+                          <Image
+                            src={friend.imageUrl}
+                            alt={friend.name || 'Friend'}
+                            width={28}
+                            height={28}
+                            className="rounded-full"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="w-7 h-7 rounded-full bg-indigo-200 dark:bg-indigo-800 flex items-center justify-center text-xs font-medium text-indigo-700 dark:text-indigo-300">
+                            {(friend.firstName || friend.name || '?').charAt(0)}
+                          </div>
+                        )}
+                        <span className="text-sm font-medium text-indigo-800 dark:text-indigo-300">
+                          {friend.firstName || friend.name || 'Anonymous'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Attendees */}
               <EventAttendees eventId={event.id} />

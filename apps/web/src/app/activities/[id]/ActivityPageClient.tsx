@@ -81,6 +81,7 @@ interface Activity {
       imageUrl: string | null
     }
   }>
+  friendsGoing?: { id: string; name: string | null; firstName: string | null; imageUrl: string | null }[]
 }
 
 export default function ActivityPageClient({ params }: { params: { id: string } }) {
@@ -532,6 +533,38 @@ Organized via sweatbuddies
                   )}
                 </dl>
               </div>
+
+              {activity.friendsGoing && activity.friendsGoing.length > 0 && (
+                <div className="rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/50 p-5">
+                  <h2 className="text-base font-semibold text-indigo-900 dark:text-indigo-200 mb-3 flex items-center gap-2">
+                    <Users className="w-4 h-4" />
+                    Friends Going
+                  </h2>
+                  <div className="flex flex-wrap gap-3">
+                    {activity.friendsGoing.map((friend) => (
+                      <div key={friend.id} className="flex items-center gap-2">
+                        {friend.imageUrl ? (
+                          <Image
+                            src={friend.imageUrl}
+                            alt={friend.name || 'Friend'}
+                            width={28}
+                            height={28}
+                            className="rounded-full"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="w-7 h-7 rounded-full bg-indigo-200 dark:bg-indigo-800 flex items-center justify-center text-xs font-medium text-indigo-700 dark:text-indigo-300">
+                            {(friend.firstName || friend.name || '?').charAt(0)}
+                          </div>
+                        )}
+                        <span className="text-sm font-medium text-indigo-800 dark:text-indigo-300">
+                          {friend.firstName || friend.name || 'Anonymous'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <WhosGoing
                 activityId={activity.id}

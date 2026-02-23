@@ -97,7 +97,30 @@ export async function GET(
       return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
     }
 
-    return NextResponse.json(activity)
+    // Social proof: friends going
+    let friendsGoing: { id: string; name: string | null; firstName: string | null; imageUrl: string | null }[] = []
+    const { userId } = await auth()
+    if (userId) {
+      const followRows = await prisma.userFollower.findMany({
+        where: { followerId: userId },
+        select: { followingId: true },
+      })
+      const followingIds = followRows.map((f) => f.followingId)
+      if (followingIds.length > 0) {
+        const friendRsvps = activity.userActivities.filter(
+          (ua) => followingIds.includes(ua.userId) && ua.status === 'JOINED'
+        )
+        if (friendRsvps.length > 0) {
+          const friendUsers = await prisma.user.findMany({
+            where: { id: { in: friendRsvps.map((r) => r.userId) } },
+            select: { id: true, name: true, firstName: true, imageUrl: true },
+          })
+          friendsGoing = friendUsers
+        }
+      }
+    }
+
+    return NextResponse.json({ ...activity, friendsGoing })
   } catch (error) {
     console.error('Error fetching activity:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

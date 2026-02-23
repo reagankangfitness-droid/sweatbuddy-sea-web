@@ -342,6 +342,74 @@ export async function GET(request: NextRequest) {
     return (b.participantCount || 0) - (a.participantCount || 0)
   })
 
+  // --- Social proof: friends going ---
+  type FriendGoing = { id: string; name: string | null; firstName: string | null; imageUrl: string | null }
+  const friendsGoingMap = new Map<string, FriendGoing[]>()
+
+  const followRows = await prisma.userFollower.findMany({
+    where: { followerId: userId },
+    select: { followingId: true },
+  })
+  const followingIds = followRows.map((f) => f.followingId)
+
+  if (followingIds.length > 0) {
+    const followedUsers = await prisma.user.findMany({
+      where: { id: { in: followingIds } },
+      select: { id: true, name: true, firstName: true, imageUrl: true, email: true },
+    })
+    const userById = new Map(followedUsers.map((u) => [u.id, u]))
+    const userByEmail = new Map(followedUsers.map((u) => [u.email.toLowerCase(), u]))
+
+    // Activity events (plain cuid IDs)
+    const activityIds = activityData.map((a) => a.id)
+    if (activityIds.length > 0) {
+      const friendActivities = await prisma.userActivity.findMany({
+        where: {
+          userId: { in: followingIds },
+          activityId: { in: activityIds },
+          status: { in: ['JOINED', 'COMPLETED'] },
+        },
+        select: { activityId: true, userId: true },
+      })
+      for (const fa of friendActivities) {
+        const u = userById.get(fa.userId)
+        if (!u) continue
+        const arr = friendsGoingMap.get(fa.activityId) || []
+        arr.push({ id: u.id, name: u.name, firstName: u.firstName, imageUrl: u.imageUrl })
+        friendsGoingMap.set(fa.activityId, arr)
+      }
+    }
+
+    // EventSubmission events (IDs prefixed with event_)
+    const rawSubmissionIds = eventSubmissionData.map((e) => e.id.replace('event_', ''))
+    const followingEmails = followedUsers.map((u) => u.email)
+    if (rawSubmissionIds.length > 0 && followingEmails.length > 0) {
+      const friendAttendances = await prisma.eventAttendance.findMany({
+        where: {
+          email: { in: followingEmails, mode: 'insensitive' },
+          eventId: { in: rawSubmissionIds },
+        },
+        select: { eventId: true, email: true },
+      })
+      for (const fa of friendAttendances) {
+        const u = userByEmail.get(fa.email.toLowerCase())
+        if (!u) continue
+        const key = `event_${fa.eventId}`
+        const arr = friendsGoingMap.get(key) || []
+        if (!arr.some((f) => f.id === u.id)) {
+          arr.push({ id: u.id, name: u.name, firstName: u.firstName, imageUrl: u.imageUrl })
+        }
+        friendsGoingMap.set(key, arr)
+      }
+    }
+  }
+
+  // Attach friendsGoing to each event
+  const hostedDataWithFriends = hostedData.map((e) => ({
+    ...e,
+    friendsGoing: friendsGoingMap.get(e.id) || [],
+  }))
+
   // If lat/lng provided, use Haversine raw query
   if (!isNaN(lat) && !isNaN(lng)) {
     if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
@@ -420,7 +488,7 @@ export async function GET(request: NextRequest) {
         ...w,
         participantCount: Number(w.participantCount),
       })),
-      hostedActivities: hostedData,
+      hostedActivities: hostedDataWithFriends,
     })
   }
 
@@ -456,6 +524,6 @@ export async function GET(request: NextRequest) {
       creatorName: w.creator.name,
       creatorImageUrl: w.creator.imageUrl,
     })),
-    hostedActivities: hostedData,
+    hostedActivities: hostedDataWithFriends,
   })
 }

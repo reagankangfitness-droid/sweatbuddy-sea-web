@@ -28,6 +28,7 @@ interface HostedEvent {
   isThisWeekend: boolean
   recurring: boolean
   isEventSubmission?: boolean
+  friendsGoing?: { id: string; name: string | null; firstName: string | null; imageUrl: string | null }[]
 }
 
 function getEventUrl(event: HostedEvent): string {
@@ -442,6 +443,21 @@ function EventCard({ event, index }: { event: HostedEvent; index: number }) {
               by {event.hostName}
             </span>
           </div>
+
+          {event.friendsGoing && event.friendsGoing.length > 0 && (
+            <div className="flex items-center gap-1 mt-1.5">
+              <Users className="w-3 h-3 flex-shrink-0 text-indigo-500" />
+              <span className="text-[11px] text-indigo-600 dark:text-indigo-400 truncate">
+                {event.friendsGoing.length === 1 ? (
+                  <><strong>{event.friendsGoing[0].firstName || event.friendsGoing[0].name}</strong> is going</>
+                ) : event.friendsGoing.length === 2 ? (
+                  <><strong>{event.friendsGoing[0].firstName || event.friendsGoing[0].name}</strong> and <strong>{event.friendsGoing[1].firstName || event.friendsGoing[1].name}</strong> are going</>
+                ) : (
+                  <><strong>{event.friendsGoing[0].firstName || event.friendsGoing[0].name}</strong> and <strong>{event.friendsGoing.length - 1} others</strong> you follow are going</>
+                )}
+              </span>
+            </div>
+          )}
         </div>
       </Link>
     </motion.div>

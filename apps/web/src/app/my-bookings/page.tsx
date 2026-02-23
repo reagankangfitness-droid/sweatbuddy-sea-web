@@ -488,7 +488,7 @@ function BookingCard({
   }
 
   return (
-    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+    <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden">
       <div className="flex">
         {/* Image */}
         <div className="relative w-24 sm:w-32 flex-shrink-0">

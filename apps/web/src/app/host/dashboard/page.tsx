@@ -364,7 +364,7 @@ export default function HostDashboard() {
         ))}
 
         {/* Stats - 2 cols on very small screens, 3 cols on sm+ */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-8">
           <StatCard value={data.stats.activeEvents || 0} label="Experiences Live" />
           <StatCard value={data.stats.totalSignups || 0} label="People Joined" />
           <StatCard
@@ -374,8 +374,8 @@ export default function HostDashboard() {
           />
         </div>
 
-        {/* Quick Links */}
-        <div className="flex gap-2 mb-6 sm:mb-10 overflow-x-auto pb-1">
+        {/* Quick Links - hidden on mobile to keep events above fold */}
+        <div className="hidden sm:flex gap-2 mb-6 sm:mb-10 overflow-x-auto pb-1">
           <Link
             href="/host/community"
             className="flex items-center gap-2 px-4 py-2 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-full text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-colors whitespace-nowrap"
@@ -399,8 +399,8 @@ export default function HostDashboard() {
           </Link>
         </div>
 
-        {/* AI Nudge Cards */}
-        <div className="mb-6 sm:mb-8">
+        {/* AI Nudge Cards - compact on mobile */}
+        <div className="mb-4 sm:mb-8">
           <NudgeCardsSection />
         </div>
 

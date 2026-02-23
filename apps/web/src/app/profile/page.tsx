@@ -158,7 +158,7 @@ export default function ProfilePage() {
       {/* Content */}
       <main className="pt-20 pb-24 px-4 max-w-lg mx-auto">
         {/* Profile Card */}
-        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 p-4 mb-4">
+        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 p-4 mb-8">
           <div className="flex items-center gap-4">
             <div className="relative">
               <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-neutral-100 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0">
@@ -201,7 +201,7 @@ export default function ProfilePage() {
         </div>
 
         {/* My Activity Section */}
-        <div className="mb-4">
+        <div className="mb-8">
           <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-1 mb-2">
             My Activity
           </h3>
@@ -276,7 +276,7 @@ export default function ProfilePage() {
 
         {/* Host Tools Section - Only show for non-hosts or when AI Tools not shown */}
         {!isHost && (
-          <div className="mb-4">
+          <div className="mb-8">
             <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-1 mb-2">
               Host Tools
             </h3>
@@ -301,7 +301,7 @@ export default function ProfilePage() {
         )}
 
         {/* Account Section */}
-        <div className="mb-4">
+        <div className="mb-8">
           <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-1 mb-2">
             Account
           </h3>

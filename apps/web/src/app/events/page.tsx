@@ -212,13 +212,15 @@ export default function EventsPage() {
 
             {/* Category filter pills - horizontal scroll */}
             {availableCategories.length > 0 && (
+              <div className="relative -mx-4">
+                <div className="absolute right-0 top-0 bottom-1 w-8 bg-gradient-to-l from-neutral-50 dark:from-neutral-950 to-transparent pointer-events-none z-10" />
               <div
                 ref={categoryScrollRef}
-                className="flex gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-1"
+                className="flex gap-2 overflow-x-auto scrollbar-hide px-4 pb-1"
               >
                 <button
                   onClick={() => setCategoryFilter(null)}
-                  className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                  className={`flex-shrink-0 px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${
                     categoryFilter === null
                       ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900'
                       : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700'
@@ -230,7 +232,7 @@ export default function EventsPage() {
                   <button
                     key={cat.slug}
                     onClick={() => setCategoryFilter(categoryFilter === cat.slug ? null : cat.slug)}
-                    className={`flex-shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${
                       categoryFilter === cat.slug
                         ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900'
                         : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700'
@@ -240,6 +242,7 @@ export default function EventsPage() {
                     <span>{cat.name}</span>
                   </button>
                 ))}
+              </div>
               </div>
             )}
           </div>
@@ -379,7 +382,7 @@ export default function EventsPage() {
               if (groupKey === 'today' && heroEvent && !categoryFilter) return null
 
               return (
-                <section key={groupKey} className="py-8 md:py-12 first:pt-0">
+                <section key={groupKey} className="py-8 md:py-12 first:pt-0 [&:not(:first-child)]:border-t [&:not(:first-child)]:border-neutral-100 [&:not(:first-child)]:dark:border-neutral-800/50">
                   <h2 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">
                     {TIME_GROUP_LABELS[groupKey]}
                   </h2>
@@ -399,22 +402,25 @@ export default function EventsPage() {
                 {popularEvents.length > 0 && (
                   <section className="py-8 md:py-12 border-t border-neutral-200 dark:border-neutral-800">
                     <div className="flex items-center gap-2 mb-4">
-                      <TrendingUp className="w-5 h-5 text-orange-500" />
-                      <h2 className="text-lg font-bold text-neutral-900 dark:text-white">Popular Right Now</h2>
+                      <TrendingUp className="w-4 h-4 text-orange-500" />
+                      <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Popular Right Now</h2>
                     </div>
-                    <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-2 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible">
-                      {popularEvents.map((event, index) => (
-                        <div key={event.id} className="flex-shrink-0 w-[70vw] md:w-auto">
-                          <EventCard event={event} index={index} />
-                        </div>
-                      ))}
+                    <div className="relative -mx-4 md:mx-0">
+                      <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-neutral-50 dark:from-neutral-950 to-transparent pointer-events-none z-10 md:hidden" />
+                      <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-2 md:px-0 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible">
+                        {popularEvents.map((event, index) => (
+                          <div key={event.id} className="flex-shrink-0 w-[70vw] md:w-auto">
+                            <EventCard event={event} index={index} />
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </section>
                 )}
 
                 {/* ── CONTEXTUAL: Friends Are Going ── */}
                 {friendsGoingEvents.length > 0 && (
-                  <section className="py-8 md:py-12">
+                  <section className="py-8 md:py-12 border-t border-neutral-100 dark:border-neutral-800/50">
                     <div className="flex items-center gap-2 mb-3">
                       <Users className="w-4 h-4 text-indigo-500" />
                       <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Friends Are Going</h2>
@@ -504,7 +510,7 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
           {/* Spots badge */}
           {event.spotsLeft !== null && event.spotsLeft <= 5 && (
             <div className="absolute top-2 right-2 px-2 py-0.5 bg-black/60 backdrop-blur-sm rounded-full">
-              <span className={`text-[10px] font-bold ${event.spotsLeft <= 3 ? 'text-orange-300' : 'text-white'}`}>
+              <span className={`text-xs font-bold ${event.spotsLeft <= 3 ? 'text-orange-300' : 'text-white'}`}>
                 {event.spotsLeft} left
               </span>
             </div>
@@ -513,7 +519,7 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
           {/* Today badge */}
           {event.isHappeningToday && (
             <div className="absolute top-2 left-2 px-2 py-0.5 bg-green-500 rounded-full">
-              <span className="text-white text-[10px] font-bold">TODAY</span>
+              <span className="text-white text-xs font-bold">TODAY</span>
             </div>
           )}
         </div>
@@ -524,18 +530,18 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
             {event.title}
           </h3>
 
-          <div className="flex items-center gap-1 mt-1.5 text-xs text-neutral-500 dark:text-neutral-400">
-            <Clock className="w-3 h-3 flex-shrink-0" />
+          <div className="flex items-center gap-1 mt-1.5 text-sm text-neutral-500 dark:text-neutral-400">
+            <Clock className="w-3.5 h-3.5 flex-shrink-0" />
             <span className="truncate">{formatEventTime(event.startTime)}</span>
           </div>
 
-          <div className="flex items-center gap-1 mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
-            <MapPin className="w-3 h-3 flex-shrink-0" />
+          <div className="flex items-center gap-1 mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">
+            <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
             <span className="truncate">{event.locationName}</span>
           </div>
 
           <div className="flex items-center gap-1.5 mt-2">
-            <span className="text-[11px] text-neutral-400 dark:text-neutral-500 truncate">
+            <span className="text-xs text-neutral-400 dark:text-neutral-500 truncate">
               by {event.hostName}
             </span>
           </div>
@@ -543,7 +549,7 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
           {event.friendsGoing && event.friendsGoing.length > 0 && (
             <div className="flex items-center gap-1 mt-1.5">
               <Users className="w-3 h-3 flex-shrink-0 text-indigo-500" />
-              <span className="text-[11px] text-indigo-600 dark:text-indigo-400 truncate">
+              <span className="text-xs text-indigo-600 dark:text-indigo-400 truncate">
                 {event.friendsGoing.length === 1 ? (
                   <><strong>{event.friendsGoing[0].firstName || event.friendsGoing[0].name}</strong> is going</>
                 ) : event.friendsGoing.length === 2 ? (

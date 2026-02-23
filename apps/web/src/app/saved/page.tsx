@@ -145,7 +145,7 @@ function NextEventCard({ booking }: { booking: BookedEvent }) {
   const [showCalendarMenu, setShowCalendarMenu] = useState(false)
 
   return (
-    <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 dark:from-neutral-800 dark:to-neutral-900 rounded-2xl p-4 mb-6 text-white relative overflow-hidden">
+    <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 dark:from-neutral-800 dark:to-neutral-900 rounded-2xl p-4 mb-8 text-white relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
 
@@ -272,7 +272,7 @@ function StatsCard({ pastEvents, upcomingEvents }: { pastEvents: BookedEvent[]; 
   if (pastEvents.length === 0 && upcomingEvents.length === 0) return null
 
   return (
-    <div className="grid grid-cols-2 gap-3 mb-6">
+    <div className="grid grid-cols-2 gap-3 mb-8">
       <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 p-4">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
@@ -301,7 +301,7 @@ function EventCard({ booking, isPast = false }: { booking: BookedEvent; isPast?:
   const [showActions, setShowActions] = useState(false)
 
   return (
-    <div className={`bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 shadow-sm overflow-hidden ${isPast ? 'opacity-70' : ''}`}>
+    <div className={`bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden ${isPast ? 'opacity-70' : ''}`}>
       <Link
         href={`/e/${booking.activity.slug || booking.activity.id}`}
         className="flex"
@@ -579,7 +579,7 @@ export default function SchedulePage() {
                     <CalendarDays className="w-4 h-4 text-white dark:text-neutral-900" />
                   </div>
                   <div>
-                    <h2 className="font-semibold text-neutral-900 dark:text-white">Upcoming</h2>
+                    <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Upcoming</h2>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400">{upcomingEvents.length} experiences</p>
                   </div>
                 </div>
@@ -625,7 +625,7 @@ export default function SchedulePage() {
                     <History className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
                   </div>
                   <div>
-                    <h2 className="font-semibold text-neutral-900 dark:text-white">Past Experiences</h2>
+                    <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Past Experiences</h2>
                     <p className="text-xs text-neutral-500 dark:text-neutral-400">{pastEvents.length} attended</p>
                   </div>
                 </div>

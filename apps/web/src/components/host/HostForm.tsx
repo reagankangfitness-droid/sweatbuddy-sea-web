@@ -28,7 +28,9 @@ import {
   Ticket,
   Link2,
   Pencil,
-  Users
+  Users,
+  Sparkles,
+  RefreshCw
 } from 'lucide-react'
 import { UploadButton, useUploadThing } from '@/lib/uploadthing'
 import { ACTIVITY_CATEGORIES, CATEGORY_GROUPS, getCategoriesByGroup } from '@/lib/categories'
@@ -82,6 +84,8 @@ export default function HostForm() {
   })
   const [formInitialized, setFormInitialized] = useState(false)
   const [advancedSettingsOpen, setAdvancedSettingsOpen] = useState(false)
+  const [isGeneratingDesc, setIsGeneratingDesc] = useState(false)
+  const [aiDescError, setAiDescError] = useState<string | null>(null)
 
   // Get user's timezone
   const userTimezone = useMemo(() => {
@@ -229,6 +233,43 @@ export default function HostForm() {
     // Clear general error message when user makes changes
     if (error) {
       setError('')
+    }
+  }
+
+  const handleGenerateDescription = async () => {
+    if (!formData.eventName) {
+      setAiDescError('Add an event name first')
+      return
+    }
+    setIsGeneratingDesc(true)
+    setAiDescError(null)
+    try {
+      const res = await fetch('/api/ai/generate-description', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: formData.eventName,
+          category: formData.eventType,
+          location: formData.location,
+          dateTime: formData.eventDate && formData.eventTime
+            ? `${formData.eventDate} ${formatTime12Hour(formData.eventTime)}`
+            : undefined,
+          additionalContext: formData.description || undefined,
+        }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        setAiDescError(data.error || 'Failed to generate')
+        return
+      }
+      const data = await res.json()
+      if (data.description) {
+        setFormData(prev => ({ ...prev, description: data.description }))
+      }
+    } catch {
+      setAiDescError('Something went wrong. Try again.')
+    } finally {
+      setIsGeneratingDesc(false)
     }
   }
 
@@ -608,16 +649,46 @@ export default function HostForm() {
                 />
 
                 {/* Description Input */}
-                <div className="flex items-start gap-3 px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl focus-within:border-neutral-500 transition-colors">
-                  <FileText className="w-5 h-5 text-neutral-500 shrink-0 mt-0.5" />
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    placeholder="Add experience description"
-                    rows={3}
-                    className="flex-1 bg-transparent text-white placeholder:text-neutral-500 focus:outline-none resize-none"
-                  />
+                <div className="space-y-2">
+                  <div className="flex items-start gap-3 px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-xl focus-within:border-neutral-500 transition-colors">
+                    <FileText className="w-5 h-5 text-neutral-500 shrink-0 mt-0.5" />
+                    <textarea
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      placeholder="Add experience description"
+                      rows={formData.description ? 6 : 3}
+                      className="flex-1 bg-transparent text-white placeholder:text-neutral-500 focus:outline-none resize-none"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleGenerateDescription}
+                      disabled={isGeneratingDesc}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700"
+                    >
+                      {isGeneratingDesc ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          Writing your description...
+                        </>
+                      ) : formData.description ? (
+                        <>
+                          <RefreshCw className="w-3.5 h-3.5" />
+                          Regenerate
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-3.5 h-3.5" />
+                          Generate with AI
+                        </>
+                      )}
+                    </button>
+                    {aiDescError && (
+                      <span className="text-xs text-red-400">{aiDescError}</span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Activity Type Selection — Two-step picker */}

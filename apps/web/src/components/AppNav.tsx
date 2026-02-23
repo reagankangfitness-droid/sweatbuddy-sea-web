@@ -11,7 +11,7 @@ import Image from 'next/image'
 
 const navItems = [
   { id: 'events', label: 'Experiences', icon: CalendarDays, href: '/events' },
-  { id: 'community', label: 'Community', icon: Users, href: '/community' },
+  { id: 'community', label: 'Community', icon: Users, href: '/communities' },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile' },
 ]
 
@@ -21,7 +21,7 @@ export function AppNav() {
   const [isHovered, setIsHovered] = useState(false)
 
   // Only show on app pages
-  const isAppPage = pathname.startsWith('/app') || pathname.startsWith('/community') || pathname.startsWith('/events') || pathname.startsWith('/profile')
+  const isAppPage = pathname.startsWith('/app') || pathname.startsWith('/community') || pathname.startsWith('/communities') || pathname.startsWith('/events') || pathname.startsWith('/profile')
   if (!isAppPage) return null
 
   return (

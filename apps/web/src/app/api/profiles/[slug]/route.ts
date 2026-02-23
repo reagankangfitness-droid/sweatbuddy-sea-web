@@ -48,13 +48,53 @@ export async function GET(
     const showActivitiesAttended = 'showActivitiesAttended' in profile ? profile.showActivitiesAttended : false
     const showStats = 'showStats' in profile ? profile.showStats : false
 
-    const [hostStats, attendedStats, followCounts, interestCount] = await Promise.all([
+    const [hostStats, attendedStats, followCounts, interestCount, communities, upcomingEvents] = await Promise.all([
       profile.isHost ? getHostStats(profile.id) : null,
       showActivitiesAttended || isOwnProfile
         ? getAttendedStats(profile.id)
         : null,
       getFollowCounts(profile.id),
       profile.isHost ? getInterestCount(profile.id) : 0,
+      prisma.communityMember.findMany({
+        where: { userId: profile.id },
+        include: {
+          community: {
+            select: {
+              name: true,
+              slug: true,
+              logoImage: true,
+              category: true,
+              memberCount: true,
+            }
+          }
+        }
+      }),
+      (showActivitiesAttended || isOwnProfile)
+        ? prisma.userActivity.findMany({
+            where: {
+              userId: profile.id,
+              status: 'JOINED',
+              activity: {
+                startTime: { gte: new Date() },
+                status: 'PUBLISHED',
+              }
+            },
+            take: 10,
+            orderBy: { activity: { startTime: 'asc' } },
+            include: {
+              activity: {
+                select: {
+                  id: true,
+                  title: true,
+                  startTime: true,
+                  city: true,
+                  imageUrl: true,
+                  categorySlug: true,
+                }
+              }
+            }
+          })
+        : [],
     ])
 
     // Check if current user is following this profile and interested
@@ -82,6 +122,21 @@ export async function GET(
         followCounts,
         interestCount,
       },
+      communities: communities.map(cm => ({
+        name: cm.community.name,
+        slug: cm.community.slug,
+        logoImage: cm.community.logoImage,
+        category: cm.community.category,
+        memberCount: cm.community.memberCount,
+      })),
+      upcomingEvents: Array.isArray(upcomingEvents) ? upcomingEvents.map((ua) => ({
+        id: ua.activity.id,
+        title: ua.activity.title,
+        startTime: ua.activity.startTime,
+        city: ua.activity.city,
+        imageUrl: ua.activity.imageUrl,
+        categorySlug: ua.activity.categorySlug,
+      })) : [],
       isOwnProfile,
       isFollowing: isFollowingProfile,
       isInterested: isInterestedInProfile,

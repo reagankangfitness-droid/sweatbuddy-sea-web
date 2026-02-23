@@ -7,6 +7,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Camera, Loader2, ExternalLink, ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
+import { ACTIVITY_CATEGORIES, getCategoryDisplay } from '@/lib/categories'
+
+const FEATURED_CATEGORIES = ACTIVITY_CATEGORIES.filter(c => c.featured)
 
 interface Profile {
   id: string
@@ -19,6 +22,9 @@ interface Profile {
   bio: string | null
   instagram: string | null
   isHost: boolean
+  fitnessInterests: string[]
+  goingSolo: boolean
+  isPublic: boolean
 }
 
 export default function ProfileSettingsPage() {
@@ -35,6 +41,9 @@ export default function ProfileSettingsPage() {
     username: '',
     bio: '',
     instagram: '',
+    fitnessInterests: [] as string[],
+    goingSolo: false,
+    isPublic: true,
   })
 
   const fetchProfile = useCallback(async () => {
@@ -52,6 +61,9 @@ export default function ProfileSettingsPage() {
         username: data.profile.username || '',
         bio: data.profile.bio || '',
         instagram: data.profile.instagram || '',
+        fitnessInterests: data.profile.fitnessInterests || [],
+        goingSolo: data.profile.goingSolo || false,
+        isPublic: data.profile.isPublic !== false,
       })
     } catch {
       toast.error('Failed to load profile')
@@ -83,6 +95,15 @@ export default function ProfileSettingsPage() {
     } finally {
       setSaving(false)
     }
+  }
+
+  const toggleInterest = (slug: string) => {
+    setFormData(prev => ({
+      ...prev,
+      fitnessInterests: prev.fitnessInterests.includes(slug)
+        ? prev.fitnessInterests.filter(s => s !== slug)
+        : [...prev.fitnessInterests, slug],
+    }))
   }
 
   if (loading) {
@@ -236,6 +257,86 @@ export default function ProfileSettingsPage() {
                 className="w-full mt-1 text-sm text-neutral-900 dark:text-white bg-transparent outline-none placeholder-neutral-400 resize-none"
               />
               <p className="text-right text-[10px] text-neutral-400">{formData.bio.length}/300</p>
+            </div>
+          </div>
+
+          {/* Fitness Interests */}
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
+            <label className="text-xs font-medium text-neutral-500 dark:text-neutral-400">Fitness Interests</label>
+            <p className="text-[10px] text-neutral-400 mt-0.5 mb-3">Select activities you enjoy</p>
+            <div className="flex flex-wrap gap-2">
+              {FEATURED_CATEGORIES.map(cat => {
+                const isSelected = formData.fitnessInterests.includes(cat.slug)
+                const display = getCategoryDisplay(cat.slug)
+                return (
+                  <button
+                    key={cat.slug}
+                    type="button"
+                    onClick={() => toggleInterest(cat.slug)}
+                    className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                      isSelected
+                        ? 'border-current'
+                        : 'border-neutral-200 dark:border-neutral-700 text-neutral-400 dark:text-neutral-500'
+                    }`}
+                    style={isSelected ? {
+                      borderColor: display.color + '80',
+                      backgroundColor: display.color + '15',
+                      color: display.color,
+                    } : undefined}
+                  >
+                    {display.emoji} {display.name}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Toggles */}
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 divide-y divide-neutral-100 dark:divide-neutral-800">
+            {/* Going Solo */}
+            <div className="px-4 py-4 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium text-neutral-900 dark:text-white">Going Solo</p>
+                <p className="text-[10px] text-neutral-400 mt-0.5">Show others you&apos;re open to meeting new people at events</p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={formData.goingSolo}
+                onClick={() => setFormData(p => ({ ...p, goingSolo: !p.goingSolo }))}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full transition-colors ${
+                  formData.goingSolo ? 'bg-amber-500' : 'bg-neutral-200 dark:bg-neutral-700'
+                }`}
+              >
+                <span
+                  className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform mt-0.5 ${
+                    formData.goingSolo ? 'translate-x-[22px]' : 'translate-x-0.5'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Public Profile */}
+            <div className="px-4 py-4 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium text-neutral-900 dark:text-white">Public Profile</p>
+                <p className="text-[10px] text-neutral-400 mt-0.5">Let others see your activity and communities</p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={formData.isPublic}
+                onClick={() => setFormData(p => ({ ...p, isPublic: !p.isPublic }))}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full transition-colors ${
+                  formData.isPublic ? 'bg-neutral-900 dark:bg-white' : 'bg-neutral-200 dark:bg-neutral-700'
+                }`}
+              >
+                <span
+                  className={`inline-block h-5 w-5 transform rounded-full bg-white dark:bg-neutral-900 shadow-sm transition-transform mt-0.5 ${
+                    formData.isPublic ? 'translate-x-[22px]' : 'translate-x-0.5'
+                  }`}
+                />
+              </button>
             </div>
           </div>
 

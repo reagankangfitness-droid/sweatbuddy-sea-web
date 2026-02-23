@@ -66,6 +66,8 @@ export const publicProfileSelect = {
   isPublic: true,
   showActivitiesAttended: true,
   showStats: true,
+  fitnessInterests: true,
+  goingSolo: true,
   hostSince: true,
   specialties: true,
   certifications: true,
@@ -493,6 +495,8 @@ export async function updateUserProfile(
     showStats?: boolean
     specialties?: string[]
     certifications?: string[]
+    fitnessInterests?: string[]
+    goingSolo?: boolean
   }
 ) {
   // If username provided, check uniqueness

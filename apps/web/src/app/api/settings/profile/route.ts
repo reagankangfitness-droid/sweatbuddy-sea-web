@@ -33,7 +33,9 @@ export async function GET() {
       select: {
         ...publicProfileSelect,
         email: true,
-        username: true
+        username: true,
+        fitnessInterests: true,
+        goingSolo: true,
       }
     })
 
@@ -93,7 +95,9 @@ export async function PUT(request: Request) {
       showActivitiesAttended,
       showStats,
       specialties,
-      certifications
+      certifications,
+      fitnessInterests,
+      goingSolo
     } = body
 
     try {
@@ -114,7 +118,9 @@ export async function PUT(request: Request) {
         showActivitiesAttended,
         showStats,
         specialties,
-        certifications
+        certifications,
+        fitnessInterests,
+        goingSolo
       })
 
       return NextResponse.json({

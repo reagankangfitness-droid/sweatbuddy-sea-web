@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Plus, MapPin, Users, Clock, Calendar } from 'lucide-react'
+import { Plus, MapPin, Users, Clock, Calendar, TrendingUp, Sparkles, ChevronRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { ACTIVITY_CATEGORIES } from '@/lib/categories'
 
@@ -27,8 +27,20 @@ interface HostedEvent {
   isHappeningToday: boolean
   isThisWeekend: boolean
   recurring: boolean
+  participantCount?: number
   isEventSubmission?: boolean
   friendsGoing?: { id: string; name: string | null; firstName: string | null; imageUrl: string | null }[]
+}
+
+interface DiscoverCommunity {
+  id: string
+  name: string
+  slug: string
+  category: string
+  coverImage: string | null
+  logoImage: string | null
+  memberCount: number
+  createdBy: { imageUrl: string | null } | null
 }
 
 function getEventUrl(event: HostedEvent): string {
@@ -99,14 +111,25 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true)
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null)
   const categoryScrollRef = useRef<HTMLDivElement>(null)
+  const [newCommunities, setNewCommunities] = useState<DiscoverCommunity[]>([])
 
   const fetchEvents = useCallback(async () => {
     try {
-      const res = await fetch('/api/wave?lat=1.3521&lng=103.8198')
-      if (!res.ok) return
-      const data = await res.json()
-      if (data.hostedActivities) {
-        setEvents(data.hostedActivities)
+      const [waveRes, discoverRes] = await Promise.all([
+        fetch('/api/wave?lat=1.3521&lng=103.8198'),
+        fetch('/api/discover'),
+      ])
+      if (waveRes.ok) {
+        const data = await waveRes.json()
+        if (data.hostedActivities) {
+          setEvents(data.hostedActivities)
+        }
+      }
+      if (discoverRes.ok) {
+        const discoverData = await discoverRes.json()
+        if (discoverData.newCommunities) {
+          setNewCommunities(discoverData.newCommunities)
+        }
       }
     } catch (error) {
       console.error('Error fetching events:', error)
@@ -154,6 +177,39 @@ export default function EventsPage() {
     }
     return groups
   }, [filteredEvents])
+
+  // Popular Right Now: top 6 events by RSVP count within next 14 days
+  const popularEvents = useMemo(() => {
+    const fourteenDaysFromNow = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
+    return [...activeEvents]
+      .filter((e) => {
+        if (!e.startTime) return e.recurring
+        return new Date(e.startTime) <= fourteenDaysFromNow
+      })
+      .sort((a, b) => (b.participantCount || 0) - (a.participantCount || 0))
+      .slice(0, 6)
+  }, [activeEvents])
+
+  // Friends Are Going: events where followed users RSVP'd, max 4
+  const friendsGoingEvents = useMemo(() => {
+    return activeEvents
+      .filter((e) => e.friendsGoing && e.friendsGoing.length > 0)
+      .slice(0, 4)
+  }, [activeEvents])
+
+  // Explore by Category: categories with event counts from loaded data
+  const categoryCards = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const e of activeEvents) {
+      if (e.categorySlug) {
+        counts.set(e.categorySlug, (counts.get(e.categorySlug) || 0) + 1)
+      }
+    }
+    return ACTIVITY_CATEGORIES
+      .filter((c) => counts.has(c.slug))
+      .sort((a, b) => (counts.get(b.slug) || 0) - (counts.get(a.slug) || 0))
+      .map((c) => ({ ...c, eventCount: counts.get(c.slug) || 0 }))
+  }, [activeEvents])
 
   // Today's events for hero card
   const todayEvents = groupedEvents.get('today') || []
@@ -355,6 +411,87 @@ export default function EventsPage() {
                 </section>
               )
             })}
+
+            {/* ── Discovery Sections (only when not filtering by category) ── */}
+            {!categoryFilter && (
+              <>
+                {/* Popular Right Now */}
+                {popularEvents.length > 0 && (
+                  <section>
+                    <div className="flex items-center gap-2 mb-3">
+                      <TrendingUp className="w-5 h-5 text-orange-500" />
+                      <h2 className="text-lg font-bold text-neutral-900 dark:text-white">Popular Right Now</h2>
+                    </div>
+                    <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-2 md:mx-0 md:px-0 md:grid md:grid-cols-3 md:overflow-visible">
+                      {popularEvents.map((event, index) => (
+                        <div key={event.id} className="flex-shrink-0 w-[70vw] md:w-auto">
+                          <EventCard event={event} index={index} />
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Friends Are Going */}
+                {friendsGoingEvents.length > 0 && (
+                  <section>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Users className="w-5 h-5 text-indigo-500" />
+                      <h2 className="text-lg font-bold text-neutral-900 dark:text-white">Friends Are Going</h2>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {friendsGoingEvents.map((event, index) => (
+                        <EventCard key={event.id} event={event} index={index} />
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* New Communities */}
+                {newCommunities.length > 0 && (
+                  <section>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="w-5 h-5 text-amber-500" />
+                        <h2 className="text-lg font-bold text-neutral-900 dark:text-white">New Communities</h2>
+                      </div>
+                      <Link href="/communities" className="flex items-center gap-0.5 text-sm font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors">
+                        See all
+                        <ChevronRight className="w-4 h-4" />
+                      </Link>
+                    </div>
+                    <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4 pb-2 md:mx-0 md:px-0 md:grid md:grid-cols-4 md:overflow-visible">
+                      {newCommunities.map((community) => (
+                        <CommunityCard key={community.id} community={community} />
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* Explore by Category */}
+                {categoryCards.length > 0 && (
+                  <section>
+                    <h2 className="text-lg font-bold text-neutral-900 dark:text-white mb-3">Explore by Category</h2>
+                    <div className="grid grid-cols-3 md:grid-cols-4 gap-2.5">
+                      {categoryCards.map((cat) => (
+                        <button
+                          key={cat.slug}
+                          onClick={() => {
+                            setCategoryFilter(cat.slug)
+                            window.scrollTo({ top: 0, behavior: 'smooth' })
+                          }}
+                          className="flex flex-col items-center gap-1.5 p-3 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 hover:shadow-md transition-all"
+                        >
+                          <span className="text-2xl">{cat.emoji}</span>
+                          <span className="text-xs font-medium text-neutral-900 dark:text-white text-center leading-tight">{cat.name}</span>
+                          <span className="text-[10px] text-neutral-400 dark:text-neutral-500">{cat.eventCount} events</span>
+                        </button>
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </>
+            )}
           </div>
         )}
       </main>
@@ -461,5 +598,57 @@ function EventCard({ event, index }: { event: HostedEvent; index: number }) {
         </div>
       </Link>
     </motion.div>
+  )
+}
+
+function CommunityCard({ community }: { community: DiscoverCommunity }) {
+  const avatarSrc = community.logoImage || community.createdBy?.imageUrl
+  return (
+    <Link
+      href={`/communities/${community.slug}`}
+      className="flex-shrink-0 w-[60vw] md:w-auto bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden hover:border-neutral-300 dark:hover:border-neutral-700 hover:shadow-lg transition-all group"
+    >
+      {/* Cover */}
+      <div className="relative h-24 bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30">
+        {community.coverImage && (
+          <Image
+            src={community.coverImage}
+            alt={community.name}
+            fill
+            className="object-cover"
+            unoptimized
+          />
+        )}
+        <div className="absolute top-2 left-2">
+          <span className="px-2 py-0.5 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-sm rounded-full text-[10px] font-medium text-neutral-700 dark:text-neutral-300 capitalize">
+            {community.category}
+          </span>
+        </div>
+      </div>
+      {/* Info */}
+      <div className="p-3">
+        <div className="flex items-center gap-2">
+          {avatarSrc ? (
+            <Image
+              src={avatarSrc}
+              alt={community.name}
+              width={24}
+              height={24}
+              className="rounded-full"
+              unoptimized
+            />
+          ) : (
+            <div className="w-6 h-6 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center">
+              <Users className="w-3 h-3 text-neutral-400" />
+            </div>
+          )}
+          <h3 className="font-semibold text-sm text-neutral-900 dark:text-white truncate">{community.name}</h3>
+        </div>
+        <div className="flex items-center gap-1 mt-2 text-xs text-neutral-500 dark:text-neutral-400">
+          <Users className="w-3 h-3" />
+          <span>{community.memberCount} {community.memberCount === 1 ? 'member' : 'members'}</span>
+        </div>
+      </div>
+    </Link>
   )
 }

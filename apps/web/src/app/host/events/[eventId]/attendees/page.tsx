@@ -5,9 +5,10 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Logo } from '@/components/logo'
 import { BackButton } from '@/components/host/BackButton'
-import { Loader2, Check, X, Clock, Download, User, RefreshCcw, Mail, Users, QrCode } from 'lucide-react'
+import { Loader2, Check, X, Clock, Download, User, RefreshCcw, Mail, Users, QrCode, Sparkles } from 'lucide-react'
 import { EmailAttendeesModal } from '@/components/host/EmailAttendeesModal'
 import { AttendanceToggleCompact } from '@/components/host/AttendanceToggle'
+import { SocialPostGenerator } from '@/components/host/SocialPostGenerator'
 
 interface Attendee {
   id: string
@@ -52,6 +53,11 @@ interface EventDetails {
   name: string
   isFree: boolean
   price: number | null
+  category: string
+  location: string
+  date: string | null
+  time: string | null
+  description: string | null
 }
 
 export default function AttendeesPage() {
@@ -69,6 +75,7 @@ export default function AttendeesPage() {
   const [verifyingId, setVerifyingId] = useState<string | null>(null)
   const [refundingId, setRefundingId] = useState<string | null>(null)
   const [showEmailModal, setShowEmailModal] = useState(false)
+  const [showSocialGenerator, setShowSocialGenerator] = useState(false)
 
   // Fetch attendees
   useEffect(() => {
@@ -322,6 +329,14 @@ export default function AttendeesPage() {
                 Email All
               </button>
             )}
+            <button
+              onClick={() => setShowSocialGenerator(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-lg text-sm font-medium hover:from-pink-600 hover:to-orange-600 transition-colors"
+              title="Generate social media content with AI"
+            >
+              <Sparkles className="w-4 h-4" />
+              Social Post
+            </button>
             <button
               onClick={downloadCsv}
               className="flex items-center gap-2 px-4 py-2 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
@@ -602,6 +617,20 @@ export default function AttendeesPage() {
           eventName={event.name}
           attendees={attendees}
           onClose={() => setShowEmailModal(false)}
+        />
+      )}
+
+      {/* Social Post Generator Modal */}
+      {showSocialGenerator && event && (
+        <SocialPostGenerator
+          eventId={eventId}
+          eventName={event.name}
+          category={event.category}
+          location={event.location}
+          date={event.date}
+          time={event.time}
+          description={event.description}
+          onClose={() => setShowSocialGenerator(false)}
         />
       )}
     </div>

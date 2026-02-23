@@ -211,7 +211,7 @@ export default function ContentPage() {
     <div className="min-h-screen bg-white dark:bg-neutral-950">
       <DashboardHeader />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-12 pb-28">
         {/* Header */}
         <div className="flex items-start justify-between mb-8">
           <div>
@@ -467,6 +467,29 @@ export default function ContentPage() {
           </div>
         )}
       </main>
+
+      {/* Sticky Bottom Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-neutral-950 border-t border-neutral-200 dark:border-neutral-800 p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px)+4rem)] z-30">
+        <div className="max-w-4xl mx-auto">
+          <button
+            onClick={handleGenerate}
+            disabled={isGenerating}
+            className="w-full py-3 px-6 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 disabled:opacity-50 text-white rounded-full font-semibold flex items-center justify-center gap-2 transition-all"
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-5 h-5" />
+                Generate Content
+              </>
+            )}
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

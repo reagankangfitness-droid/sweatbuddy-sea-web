@@ -3,13 +3,12 @@
 import dynamic from 'next/dynamic'
 import { Loader2 } from 'lucide-react'
 
-// Dynamically import the form to prevent SSR/hydration issues with Google Maps
-const HostForm = dynamic(
-  () => import('@/components/host/HostForm'),
+const EventWizard = dynamic(
+  () => import('@/components/host/event-wizard/EventWizard').then(m => ({ default: m.EventWizard })),
   {
     ssr: false,
     loading: () => (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
       </div>
     ),
@@ -17,5 +16,5 @@ const HostForm = dynamic(
 )
 
 export default function HostApplicationPage() {
-  return <HostForm />
+  return <EventWizard mode="create" />
 }

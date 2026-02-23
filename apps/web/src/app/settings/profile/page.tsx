@@ -45,6 +45,7 @@ export default function ProfileSettingsPage() {
     goingSolo: false,
     isPublic: true,
   })
+  const [savedFormData, setSavedFormData] = useState(formData)
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -55,7 +56,7 @@ export default function ProfileSettingsPage() {
       }
       const data = await res.json()
       setProfile(data.profile)
-      setFormData({
+      const loaded = {
         name: data.profile.name || '',
         firstName: data.profile.firstName || '',
         username: data.profile.username || '',
@@ -64,7 +65,9 @@ export default function ProfileSettingsPage() {
         fitnessInterests: data.profile.fitnessInterests || [],
         goingSolo: data.profile.goingSolo || false,
         isPublic: data.profile.isPublic !== false,
-      })
+      }
+      setFormData(loaded)
+      setSavedFormData(loaded)
     } catch {
       toast.error('Failed to load profile')
     } finally {
@@ -76,8 +79,7 @@ export default function ProfileSettingsPage() {
     fetchProfile()
   }, [fetchProfile])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const saveProfile = async () => {
     setSaving(true)
     try {
       const res = await fetch('/api/settings/profile', {
@@ -89,12 +91,18 @@ export default function ProfileSettingsPage() {
       if (!res.ok) throw new Error(data.error || 'Failed to save')
       toast.success('Profile saved!')
       setProfile(data.profile)
+      setSavedFormData(formData)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to update profile'
       toast.error(message)
     } finally {
       setSaving(false)
     }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    await saveProfile()
   }
 
   const toggleInterest = (slug: string) => {
@@ -105,6 +113,16 @@ export default function ProfileSettingsPage() {
         : [...prev.fitnessInterests, slug],
     }))
   }
+
+  const isDirty = formData.name !== savedFormData.name
+    || formData.firstName !== savedFormData.firstName
+    || formData.username !== savedFormData.username
+    || formData.bio !== savedFormData.bio
+    || formData.instagram !== savedFormData.instagram
+    || formData.goingSolo !== savedFormData.goingSolo
+    || formData.isPublic !== savedFormData.isPublic
+    || formData.fitnessInterests.length !== savedFormData.fitnessInterests.length
+    || formData.fitnessInterests.some((s, i) => s !== savedFormData.fitnessInterests[i])
 
   if (loading) {
     return (
@@ -142,7 +160,7 @@ export default function ProfileSettingsPage() {
         </div>
       </header>
 
-      <main className="pt-24 pb-24 px-4">
+      <main className="pt-24 pb-40 px-4">
         <form onSubmit={handleSubmit} className="max-w-lg mx-auto space-y-6">
           {/* Photo */}
           <div className="flex flex-col items-center gap-3">
@@ -350,6 +368,22 @@ export default function ProfileSettingsPage() {
           </button>
         </form>
       </main>
+
+      {/* Sticky Save Bar — visible only when form has unsaved changes */}
+      {isDirty && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-neutral-950 border-t border-neutral-200 dark:border-neutral-800 p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px)+4rem)] z-30">
+          <div className="max-w-lg mx-auto">
+            <button
+              type="button"
+              disabled={saving}
+              onClick={saveProfile}
+              className="w-full py-3.5 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm disabled:opacity-50"
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -170,7 +170,7 @@ export default function JoinInvitePage() {
           </div>
         </div>
       </header>
-      <main className="container mx-auto px-4 pt-4 pb-8 sm:px-8 sm:pt-8">
+      <main className="container mx-auto px-4 pt-4 pb-24 sm:px-8 sm:pt-8">
         <div className="max-w-3xl mx-auto">
           {/* Referral Header */}
           <div className="text-center mb-8">
@@ -307,6 +307,19 @@ export default function JoinInvitePage() {
           </div>
         </div>
       </main>
+
+      {/* Sticky Bottom Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-neutral-950 border-t border-neutral-200 dark:border-neutral-800 p-4 z-30">
+        <div className="max-w-3xl mx-auto">
+          <Button
+            size="lg"
+            onClick={handleJoinActivity}
+            className="w-full bg-black text-white hover:bg-neutral-800 rounded-full"
+          >
+            {user ? 'Join Activity' : 'Sign In to Join'}
+          </Button>
+        </div>
+      </div>
     </>
   )
 }

@@ -39,34 +39,9 @@ function formatDate(dateString: string | null, recurring: boolean): string {
 
 export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) {
   const router = useRouter()
-  const [isDuplicating, setIsDuplicating] = useState(false)
   const [isCancelling, setIsCancelling] = useState(false)
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
   const [cancelReason, setCancelReason] = useState('')
-
-  const handleDuplicate = async () => {
-    if (isDuplicating) return
-
-    setIsDuplicating(true)
-    try {
-      const response = await fetch(`/api/host/events/${event.id}/duplicate`, {
-        method: 'POST',
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to duplicate event')
-      }
-
-      alert(`Event duplicated! "${data.event.name}" will be reviewed before going live.`)
-      router.refresh()
-    } catch (error) {
-      alert(error instanceof Error ? error.message : 'Failed to duplicate event')
-    } finally {
-      setIsDuplicating(false)
-    }
-  }
 
   const handleCancel = async () => {
     if (isCancelling) return
@@ -158,23 +133,13 @@ export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) 
             >
               Edit
             </Link>
-            <button
-              onClick={handleDuplicate}
-              disabled={isDuplicating}
-              className="text-xs sm:text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors disabled:opacity-50 flex items-center gap-1"
+            <Link
+              href={`/host/events/${event.id}/duplicate`}
+              className="text-xs sm:text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors flex items-center gap-1"
             >
-              {isDuplicating ? (
-                <>
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                  <span className="hidden sm:inline">Duplicating...</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3 h-3" />
-                  <span className="hidden sm:inline">Duplicate</span>
-                </>
-              )}
-            </button>
+              <Copy className="w-3 h-3" />
+              <span className="hidden sm:inline">Duplicate</span>
+            </Link>
             <button
               onClick={() => setShowCancelConfirm(true)}
               className="text-xs sm:text-sm font-medium text-red-500 hover:text-red-700 transition-colors flex items-center gap-1"

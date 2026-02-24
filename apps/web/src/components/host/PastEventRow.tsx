@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Sparkles } from 'lucide-react'
+import { Copy, Sparkles } from 'lucide-react'
 
 interface Event {
   id: string
@@ -50,6 +50,14 @@ export function PastEventRow({ event }: PastEventRowProps) {
         )}
       </Link>
       <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+        <Link
+          href={`/host/events/${event.id}/duplicate`}
+          className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 transition-colors"
+          onClick={e => e.stopPropagation()}
+        >
+          <Copy className="w-3 h-3" />
+          <span className="hidden sm:inline">Duplicate</span>
+        </Link>
         <Link
           href={`/host/events/${event.id}/summary`}
           className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors"

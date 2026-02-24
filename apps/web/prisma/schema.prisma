@@ -2974,3 +2974,20 @@ model AdminSettings {
   @@map("admin_settings")
 }
 
+// =====================================================
+// HOST REENGAGEMENT NUDGES
+// =====================================================
+
+model ReengagementNudge {
+  id                 String   @id @default(cuid())
+  organizerInstagram String   @db.VarChar(100)
+  recipientEmail     String   @db.VarChar(255)
+  recipientName      String?  @db.VarChar(200)
+  subject            String
+  message            String   @db.Text
+  sentAt             DateTime @default(now())
+
+  @@index([organizerInstagram, recipientEmail, sentAt])
+  @@map("reengagement_nudges")
+}
+

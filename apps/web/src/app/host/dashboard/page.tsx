@@ -16,6 +16,7 @@ import { HostOnboarding } from '@/components/host/HostOnboarding'
 import { DemandSignalsCard } from '@/components/host/DemandSignalsCard'
 import { NudgeCardsSection } from '@/components/nudge-cards-section'
 import { RecapCreator } from '@/components/host/RecapCreator'
+import { ReengagementSection } from '@/components/host/ReengagementSection'
 
 interface DashboardEvent {
   id: string
@@ -577,41 +578,8 @@ export default function HostDashboard() {
               </section>
             )}
 
-            {/* At-Risk Members */}
-            {data.atRiskMembers && data.atRiskMembers.length > 0 && (
-              <section>
-                <h2 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white mb-3 sm:mb-4 flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-orange-500" />
-                  At-Risk Members
-                </h2>
-                <div className="border border-orange-200 dark:border-orange-900/50 rounded-xl overflow-hidden bg-orange-50 dark:bg-orange-900/20">
-                  <div className="divide-y divide-orange-100 dark:divide-orange-900/30">
-                    {data.atRiskMembers.slice(0, 3).map((member) => (
-                      <div key={member.email} className="p-2.5 sm:p-3">
-                        <div className="flex items-start gap-2.5 sm:gap-3">
-                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-orange-200 dark:bg-orange-800/50 flex items-center justify-center flex-shrink-0">
-                            <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-600 dark:text-orange-400" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs sm:text-sm font-medium text-neutral-900 dark:text-white truncate">
-                              {member.name || member.email.split('@')[0]}
-                            </p>
-                            <p className="text-xs text-orange-700 dark:text-orange-400">
-                              {member.daysSinceLastAttended} days since last experience · Missed {member.missedEventCount} experiences
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="px-3 py-2 bg-orange-100 dark:bg-orange-900/30 border-t border-orange-200 dark:border-orange-900/50">
-                    <p className="text-xs text-orange-800 dark:text-orange-300">
-                      These regulars haven&apos;t attended recently. Consider reaching out!
-                    </p>
-                  </div>
-                </div>
-              </section>
-            )}
+            {/* Members to re-engage (with send nudge action) */}
+            <ReengagementSection />
 
           </div>
         </div>

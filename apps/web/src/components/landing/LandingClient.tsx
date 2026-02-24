@@ -54,20 +54,20 @@ export function LandingClient({ data }: { data: LandingData }) {
   return (
     <main className="min-h-screen bg-white text-neutral-900">
       {/* Nav */}
-      <nav className="fixed top-0 w-full z-50 px-4 sm:px-8 py-4 backdrop-blur-xl bg-white/80 border-b border-neutral-100 flex justify-between items-center">
+      <nav className="fixed top-0 w-full z-50 px-4 sm:px-8 py-4 backdrop-blur-xl bg-black/30 border-b border-white/10 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-2">
-          <LogoWithText size={28} />
+          <LogoWithText size={28} variant="white" />
         </Link>
         <div className="flex items-center gap-3 sm:gap-4">
           <Link
             href="/sign-in"
-            className="text-neutral-500 font-medium text-sm hover:text-neutral-900 transition-colors"
+            className="text-white/70 font-medium text-sm hover:text-white transition-colors"
           >
             Sign In
           </Link>
           <Link
             href="/events"
-            className="hidden sm:inline-flex text-neutral-600 font-medium text-sm hover:text-neutral-900 transition-colors"
+            className="hidden sm:inline-flex text-white/70 font-medium text-sm hover:text-white transition-colors"
           >
             Browse Events
           </Link>
@@ -75,14 +75,25 @@ export function LandingClient({ data }: { data: LandingData }) {
       </nav>
 
       {/* ============ VIEWPORT 1: HERO ============ */}
-      <section className="pt-28 sm:pt-36 pb-16 sm:pb-20 px-5">
-        <div className="max-w-2xl mx-auto text-center">
-          <h1 className="text-[2rem] sm:text-[3rem] font-extrabold leading-[1.1] tracking-[-0.03em] text-neutral-900 mb-4 sm:mb-5">
+      <section className="relative min-h-[80vh] sm:min-h-screen flex items-center justify-center px-5 overflow-hidden">
+        {/* Background image */}
+        <Image
+          src="/images/hero-bg.jpg"
+          alt="Outdoor fitness community"
+          fill
+          priority
+          className="object-cover object-center"
+        />
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/65" />
+
+        <div className="relative z-10 max-w-2xl mx-auto text-center py-28 sm:py-36">
+          <h1 className="text-[2rem] sm:text-[3rem] font-extrabold leading-[1.1] tracking-[-0.03em] text-white mb-4 sm:mb-5">
             Host fitness events.{' '}
-            <span className="text-neutral-400">Build your community. Get paid.</span>
+            <span className="text-white/60">Build your community. Get paid.</span>
           </h1>
 
-          <p className="text-base sm:text-lg text-neutral-500 leading-relaxed max-w-lg mx-auto mb-8 sm:mb-10">
+          <p className="text-base sm:text-lg text-white/70 leading-relaxed max-w-lg mx-auto mb-8 sm:mb-10">
             Create events, collect payments, and grow your fitness community — all in one place.
           </p>
 
@@ -90,13 +101,13 @@ export function LandingClient({ data }: { data: LandingData }) {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <Link
               href="/host"
-              className="inline-flex items-center justify-center bg-neutral-900 text-white px-8 py-3.5 rounded-full font-semibold text-base hover:bg-neutral-700 transition-colors"
+              className="inline-flex items-center justify-center bg-white text-neutral-900 px-8 py-3.5 rounded-full font-semibold text-base hover:bg-neutral-100 transition-colors"
             >
               Start Hosting — It&apos;s Free
             </Link>
             <Link
               href="/events"
-              className="inline-flex items-center justify-center border border-neutral-300 text-neutral-700 px-8 py-3.5 rounded-full font-semibold text-base hover:border-neutral-400 hover:bg-neutral-50 transition-colors"
+              className="inline-flex items-center justify-center border border-white/30 text-white px-8 py-3.5 rounded-full font-semibold text-base hover:border-white/50 hover:bg-white/10 transition-colors"
             >
               Browse Events
             </Link>
@@ -104,7 +115,7 @@ export function LandingClient({ data }: { data: LandingData }) {
 
           {/* Social proof line */}
           {showSocialProof && (
-            <p className="mt-6 text-sm text-neutral-400">
+            <p className="mt-6 text-sm text-white/50">
               Join {data.hostCount}+ hosts and {data.eventCount}+ events across Singapore
             </p>
           )}

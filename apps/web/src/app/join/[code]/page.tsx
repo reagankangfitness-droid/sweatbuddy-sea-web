@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { MapPin, Clock, Users, Tag, UserPlus, AlertCircle, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { StickyBottomBar } from '@/components/ui/StickyBottomBar'
 
 interface InviteData {
   invite_id: string
@@ -308,18 +309,15 @@ export default function JoinInvitePage() {
         </div>
       </main>
 
-      {/* Sticky Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-neutral-950 border-t border-neutral-200 dark:border-neutral-800 p-4 z-30">
-        <div className="max-w-3xl mx-auto">
-          <Button
-            size="lg"
-            onClick={handleJoinActivity}
-            className="w-full bg-black text-white hover:bg-neutral-800 rounded-full"
-          >
-            {user ? 'Join Activity' : 'Sign In to Join'}
-          </Button>
-        </div>
-      </div>
+      <StickyBottomBar maxWidth="3xl">
+        <Button
+          size="lg"
+          onClick={handleJoinActivity}
+          className="w-full bg-black text-white hover:bg-neutral-800 rounded-full"
+        >
+          {user ? 'Join Activity' : 'Sign In to Join'}
+        </Button>
+      </StickyBottomBar>
     </>
   )
 }

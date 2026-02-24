@@ -8,6 +8,7 @@ import Image from 'next/image'
 import { Camera, Loader2, ExternalLink, ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import { ACTIVITY_CATEGORIES, getCategoryDisplay } from '@/lib/categories'
+import { StickyBottomBar } from '@/components/ui/StickyBottomBar'
 
 const FEATURED_CATEGORIES = ACTIVITY_CATEGORIES.filter(c => c.featured)
 
@@ -369,21 +370,16 @@ export default function ProfileSettingsPage() {
         </form>
       </main>
 
-      {/* Sticky Save Bar — visible only when form has unsaved changes */}
-      {isDirty && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-neutral-950 border-t border-neutral-200 dark:border-neutral-800 p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px)+4rem)] z-30">
-          <div className="max-w-lg mx-auto">
-            <button
-              type="button"
-              disabled={saving}
-              onClick={saveProfile}
-              className="w-full py-3.5 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm disabled:opacity-50"
-            >
-              {saving ? 'Saving...' : 'Save Changes'}
-            </button>
-          </div>
-        </div>
-      )}
+      <StickyBottomBar show={isDirty} maxWidth="lg">
+        <button
+          type="button"
+          disabled={saving}
+          onClick={saveProfile}
+          className="w-full py-3.5 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm disabled:opacity-50"
+        >
+          {saving ? 'Saving...' : 'Save Changes'}
+        </button>
+      </StickyBottomBar>
     </div>
   )
 }

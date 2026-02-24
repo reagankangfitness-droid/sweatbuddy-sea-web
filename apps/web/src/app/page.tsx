@@ -1,46 +1,74 @@
-'use client'
+import { prisma } from '@/lib/prisma'
+import { LandingClient } from '@/components/landing/LandingClient'
 
-import { useEffect } from 'react'
-import { useUser } from '@clerk/nextjs'
-import { useRouter } from 'next/navigation'
-import { LandingNav } from '@/components/landing/LandingNav'
-import { HeroSection } from '@/components/landing/HeroSection'
-import { PhotoStrip } from '@/components/landing/PhotoStrip'
-import { DualPathSection } from '@/components/landing/DualPathSection'
-import { BuiltForSection } from '@/components/landing/BuiltForSection'
-import { SocialProofBanner } from '@/components/landing/SocialProofBanner'
-import { FinalCTASection } from '@/components/landing/FinalCTASection'
-import { LandingFooter } from '@/components/landing/LandingFooter'
+export const revalidate = 300 // ISR: revalidate every 5 minutes
 
-export default function LandingPage() {
-  const { isLoaded, isSignedIn } = useUser()
-  const router = useRouter()
+async function getLandingData() {
+  const now = new Date()
 
-  useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      router.replace('/events')
-    }
-  }, [isLoaded, isSignedIn, router])
+  // Count approved events & distinct hosts
+  const [eventCount, hostCount, upcomingEvents] = await Promise.all([
+    prisma.eventSubmission.count({
+      where: { status: 'APPROVED' },
+    }),
+    prisma.eventSubmission
+      .findMany({
+        where: { status: 'APPROVED' },
+        select: { organizerInstagram: true },
+        distinct: ['organizerInstagram'],
+      })
+      .then((rows) => rows.length),
+    prisma.eventSubmission.findMany({
+      where: {
+        status: 'APPROVED',
+        eventDate: { gte: now },
+        OR: [
+          { scheduledPublishAt: null },
+          { scheduledPublishAt: { lte: now } },
+        ],
+      },
+      orderBy: { eventDate: 'asc' },
+      take: 4,
+      select: {
+        id: true,
+        slug: true,
+        eventName: true,
+        category: true,
+        eventDate: true,
+        time: true,
+        location: true,
+        imageUrl: true,
+        organizerName: true,
+        organizerInstagram: true,
+        isFree: true,
+        price: true,
+        currency: true,
+      },
+    }),
+  ])
 
-  // Show nothing while checking auth to avoid flash
-  if (!isLoaded || isSignedIn) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-neutral-200 border-t-neutral-900 rounded-full animate-spin" />
-      </div>
-    )
+  return {
+    eventCount,
+    hostCount,
+    upcomingEvents: upcomingEvents.map((e) => ({
+      id: e.id,
+      slug: e.slug,
+      eventName: e.eventName,
+      category: e.category,
+      eventDate: e.eventDate?.toISOString() || null,
+      time: e.time,
+      location: e.location,
+      imageUrl: e.imageUrl,
+      organizerName: e.organizerName,
+      isFree: e.isFree,
+      price: e.price,
+      currency: e.currency,
+    })),
   }
+}
 
-  return (
-    <main className="min-h-screen bg-white text-neutral-900 font-sans">
-      <LandingNav />
-      <HeroSection />
-      <PhotoStrip />
-      <DualPathSection />
-      <BuiltForSection />
-      <SocialProofBanner />
-      <FinalCTASection />
-      <LandingFooter />
-    </main>
-  )
+export default async function LandingPage() {
+  const data = await getLandingData()
+
+  return <LandingClient data={data} />
 }

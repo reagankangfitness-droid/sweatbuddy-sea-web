@@ -363,15 +363,18 @@ export default function HostDashboard() {
           </button>
         ))}
 
-        {/* Stats - 2 cols on very small screens, 3 cols on sm+ */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-8">
-          <StatCard value={data.stats.activeEvents || 0} label="Experiences Live" />
-          <StatCard value={data.stats.totalSignups || 0} label="People Joined" />
-          <StatCard
-            value={data.stats.totalEarnings ? `$${(data.stats.totalEarnings / 100).toFixed(0)}` : '—'}
-            label="Earnings"
-            className="col-span-2 sm:col-span-1"
-          />
+        {/* Stats - horizontal scroll on mobile, 3-col grid on sm+ */}
+        <div className="relative -mx-4 sm:mx-0 mb-4 sm:mb-8">
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-neutral-950 to-transparent pointer-events-none z-10 sm:hidden" />
+          <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 pb-1 sm:px-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible">
+            <StatCard value={data.stats.activeEvents || 0} label="Experiences Live" className="flex-shrink-0 min-w-[140px] snap-start sm:min-w-0" />
+            <StatCard value={data.stats.totalSignups || 0} label="People Joined" className="flex-shrink-0 min-w-[140px] snap-start sm:min-w-0" />
+            <StatCard
+              value={data.stats.totalEarnings ? `$${(data.stats.totalEarnings / 100).toFixed(0)}` : '—'}
+              label="Earnings"
+              className="flex-shrink-0 min-w-[140px] snap-start sm:min-w-0"
+            />
+          </div>
         </div>
 
         {/* Quick Links - hidden on mobile to keep events above fold */}

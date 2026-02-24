@@ -76,6 +76,8 @@ export default function AttendeesPage() {
   const [refundingId, setRefundingId] = useState<string | null>(null)
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [showSocialGenerator, setShowSocialGenerator] = useState(false)
+  const [visibleFirstTimers, setVisibleFirstTimers] = useState(15)
+  const [visibleAttendees, setVisibleAttendees] = useState(15)
 
   // Fetch attendees
   useEffect(() => {
@@ -404,7 +406,7 @@ export default function AttendeesPage() {
                 These people are new to your experiences - a warm welcome goes a long way!
               </p>
               <div className="grid gap-2">
-                {firstTimers.map((attendee) => (
+                {firstTimers.slice(0, visibleFirstTimers).map((attendee) => (
                   <div
                     key={attendee.id}
                     className="flex items-center justify-between bg-white rounded-lg p-3 border border-amber-100"
@@ -434,6 +436,14 @@ export default function AttendeesPage() {
                   </div>
                 ))}
               </div>
+              {firstTimers.length > visibleFirstTimers && (
+                <button
+                  onClick={() => setVisibleFirstTimers(prev => prev + 15)}
+                  className="mt-3 w-full py-2.5 text-sm font-medium text-amber-700 bg-white border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors"
+                >
+                  Load more ({firstTimers.length - visibleFirstTimers} remaining)
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -516,8 +526,9 @@ export default function AttendeesPage() {
               ? confirmedAttendees.filter(a => !a.isFirstTimer)
               : confirmedAttendees
             return displayAttendees.length > 0 ? (
+            <>
             <div className="border border-neutral-200 rounded-xl overflow-hidden">
-              {displayAttendees.map((attendee) => (
+              {displayAttendees.slice(0, visibleAttendees).map((attendee) => (
                 <div
                   key={attendee.id}
                   className="flex items-center justify-between p-4 border-b border-neutral-100 last:border-0"
@@ -595,6 +606,15 @@ export default function AttendeesPage() {
                 </div>
               ))}
             </div>
+            {displayAttendees.length > visibleAttendees && (
+              <button
+                onClick={() => setVisibleAttendees(prev => prev + 15)}
+                className="mt-4 w-full py-2.5 text-sm font-medium text-neutral-600 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors"
+              >
+                Load more ({displayAttendees.length - visibleAttendees} remaining)
+              </button>
+            )}
+            </>
           ) : (
             <div className="p-8 bg-neutral-50 rounded-xl text-center">
               <span className="text-4xl mb-3 block">👋</span>

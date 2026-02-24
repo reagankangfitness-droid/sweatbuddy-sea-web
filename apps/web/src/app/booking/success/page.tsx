@@ -253,6 +253,55 @@ function BookingSuccessContent() {
             </p>
           </div>
 
+          {/* Add to Calendar */}
+          <div className="relative mb-6" ref={calendarDropdownRef}>
+            <Button
+              className="w-full gap-2 justify-between"
+              onClick={() => setCalendarDropdownOpen(!calendarDropdownOpen)}
+            >
+              <span className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                Add to Calendar
+              </span>
+              <ChevronDown className={`w-4 h-4 transition-transform ${calendarDropdownOpen ? 'rotate-180' : ''}`} />
+            </Button>
+
+            {calendarDropdownOpen && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-border overflow-hidden z-10">
+                <button
+                  onClick={handleAddToGoogleCalendar}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-background transition-colors text-left"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="#4285F4"/>
+                    <path d="M12 6V12L16 14" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  <span className="font-medium">Google Calendar</span>
+                </button>
+                <button
+                  onClick={handleAddToOutlook}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-background transition-colors text-left border-t border-border"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                    <path d="M22 6L12 13L2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6Z" fill="#0078D4"/>
+                    <path d="M22 6L12 13L2 6" stroke="#0078D4" strokeWidth="2"/>
+                  </svg>
+                  <span className="font-medium">Outlook / Office 365</span>
+                </button>
+                <button
+                  onClick={handleDownloadIcs}
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-background transition-colors text-left border-t border-border"
+                >
+                  <Download className="w-5 h-5 text-muted-foreground" />
+                  <div>
+                    <span className="font-medium">Download .ics file</span>
+                    <p className="text-xs text-muted-foreground">Apple Calendar, other apps</p>
+                  </div>
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* Activity Card */}
           {booking?.activity && (
             <div className="bg-background rounded-xl overflow-hidden mb-6">
@@ -343,54 +392,13 @@ function BookingSuccessContent() {
 
           {/* Action Buttons */}
           <div className="space-y-3">
-            {/* Calendar Dropdown */}
-            <div className="relative" ref={calendarDropdownRef}>
-              <Button
-                className="w-full gap-2 justify-between"
-                onClick={() => setCalendarDropdownOpen(!calendarDropdownOpen)}
-              >
-                <span className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  Add to Calendar
-                </span>
-                <ChevronDown className={`w-4 h-4 transition-transform ${calendarDropdownOpen ? 'rotate-180' : ''}`} />
+            {/* View My Bookings */}
+            <Link href="/my-bookings" className="block">
+              <Button variant="outline" className="w-full gap-2">
+                <Ticket className="w-4 h-4" />
+                View My Bookings
               </Button>
-
-              {calendarDropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-border overflow-hidden z-10">
-                  <button
-                    onClick={handleAddToGoogleCalendar}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-background transition-colors text-left"
-                  >
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-                      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="#4285F4"/>
-                      <path d="M12 6V12L16 14" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                    <span className="font-medium">Google Calendar</span>
-                  </button>
-                  <button
-                    onClick={handleAddToOutlook}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-background transition-colors text-left border-t border-border"
-                  >
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-                      <path d="M22 6L12 13L2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6Z" fill="#0078D4"/>
-                      <path d="M22 6L12 13L2 6" stroke="#0078D4" strokeWidth="2"/>
-                    </svg>
-                    <span className="font-medium">Outlook / Office 365</span>
-                  </button>
-                  <button
-                    onClick={handleDownloadIcs}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-background transition-colors text-left border-t border-border"
-                  >
-                    <Download className="w-5 h-5 text-muted-foreground" />
-                    <div>
-                      <span className="font-medium">Download .ics file</span>
-                      <p className="text-xs text-muted-foreground">Apple Calendar, other apps</p>
-                    </div>
-                  </button>
-                </div>
-              )}
-            </div>
+            </Link>
 
             {/* Download Ticket */}
             <Link
@@ -400,14 +408,6 @@ function BookingSuccessContent() {
               <Button variant="outline" className="w-full gap-2">
                 <Download className="w-4 h-4" />
                 Download Ticket (PDF)
-              </Button>
-            </Link>
-
-            {/* View My Bookings */}
-            <Link href="/my-bookings" className="block">
-              <Button variant="outline" className="w-full gap-2">
-                <Ticket className="w-4 h-4" />
-                View My Bookings
               </Button>
             </Link>
 

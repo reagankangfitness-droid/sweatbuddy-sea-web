@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { DashboardHeader } from '@/components/host/DashboardHeader'
 import {
@@ -125,6 +125,44 @@ export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [activeSection, setActiveSection] = useState('overview')
+
+  const overviewRef = useRef<HTMLDivElement>(null)
+  const chartsRef = useRef<HTMLDivElement>(null)
+  const topEventsRef = useRef<HTMLDivElement>(null)
+
+  const scrollTo = useCallback((id: string) => {
+    const ref = id === 'overview' ? overviewRef : id === 'charts' ? chartsRef : topEventsRef
+    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [])
+
+  useEffect(() => {
+    const refs = [
+      { id: 'overview', el: overviewRef.current },
+      { id: 'charts', el: chartsRef.current },
+      { id: 'top-events', el: topEventsRef.current },
+    ].filter(r => r.el) as { id: string; el: Element }[]
+
+    if (refs.length === 0) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter(e => e.isIntersecting)
+        if (visible.length > 0) {
+          // Pick the one closest to the top
+          const top = visible.reduce((a, b) =>
+            a.boundingClientRect.top < b.boundingClientRect.top ? a : b
+          )
+          const match = refs.find(r => r.el === top.target)
+          if (match) setActiveSection(match.id)
+        }
+      },
+      { rootMargin: '-100px 0px -60% 0px', threshold: 0 }
+    )
+
+    refs.forEach(r => observer.observe(r.el))
+    return () => observer.disconnect()
+  }, [data])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -184,6 +222,31 @@ export default function AnalyticsPage() {
           </p>
         </div>
 
+        {/* Section Nav Pills */}
+        {hasData && (
+          <div className="sticky top-[57px] z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800 mb-6">
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+              {[
+                { id: 'overview', label: 'Overview' },
+                { id: 'charts', label: 'Charts' },
+                { id: 'top-events', label: 'Top Events' },
+              ].map((pill) => (
+                <button
+                  key={pill.id}
+                  onClick={() => scrollTo(pill.id)}
+                  className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    activeSection === pill.id
+                      ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900'
+                      : 'bg-white dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700'
+                  }`}
+                >
+                  {pill.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {!hasData ? (
           <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-12 text-center">
             <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -199,7 +262,7 @@ export default function AnalyticsPage() {
         ) : (
           <>
             {/* Summary Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8">
+            <div ref={overviewRef} id="overview" className="scroll-mt-28 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-8">
               <StatCard
                 icon={<Calendar className="w-5 h-5" />}
                 value={data.summary.totalEvents}
@@ -386,7 +449,7 @@ export default function AnalyticsPage() {
             )}
 
             {/* Charts Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div ref={chartsRef} id="charts" className="scroll-mt-28 grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
               {/* Attendance Trends */}
               <ChartCard title="Attendance Trends" subtitle="RSVPs vs Actual Attendance (12 months)">
                 <ResponsiveContainer width="100%" height={280}>
@@ -525,7 +588,7 @@ export default function AnalyticsPage() {
 
             {/* Top Events Table */}
             {data.topEvents.length > 0 && (
-              <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+              <div ref={topEventsRef} id="top-events" className="scroll-mt-28 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
                 <div className="px-4 sm:px-6 py-4 border-b border-neutral-100 dark:border-neutral-800">
                   <h3 className="font-semibold text-neutral-900 dark:text-white">Top Performing Experiences</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400">Ranked by number of RSVPs</p>

@@ -156,7 +156,7 @@ export default function EventsPage() {
     return groups
   }, [filteredEvents])
 
-  // Popular Right Now: top 6 events by RSVP count within next 14 days
+  // Popular Right Now: top 4 events by RSVP count within next 14 days
   const popularEvents = useMemo(() => {
     const fourteenDaysFromNow = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)
     return [...activeEvents]
@@ -165,7 +165,7 @@ export default function EventsPage() {
         return new Date(e.startTime) <= fourteenDaysFromNow
       })
       .sort((a, b) => (b.participantCount || 0) - (a.participantCount || 0))
-      .slice(0, 6)
+      .slice(0, 4)
   }, [activeEvents])
 
   // Friends Are Going: events where followed users RSVP'd, max 4
@@ -173,20 +173,6 @@ export default function EventsPage() {
     return activeEvents
       .filter((e) => e.friendsGoing && e.friendsGoing.length > 0)
       .slice(0, 4)
-  }, [activeEvents])
-
-  // Explore by Category: categories with event counts from loaded data
-  const categoryCards = useMemo(() => {
-    const counts = new Map<string, number>()
-    for (const e of activeEvents) {
-      if (e.categorySlug) {
-        counts.set(e.categorySlug, (counts.get(e.categorySlug) || 0) + 1)
-      }
-    }
-    return ACTIVITY_CATEGORIES
-      .filter((c) => counts.has(c.slug))
-      .sort((a, b) => (counts.get(b.slug) || 0) - (counts.get(a.slug) || 0))
-      .map((c) => ({ ...c, eventCount: counts.get(c.slug) || 0 }))
   }, [activeEvents])
 
   // Today's events for hero card
@@ -382,7 +368,7 @@ export default function EventsPage() {
               if (groupKey === 'today' && heroEvent && !categoryFilter) return null
 
               return (
-                <section key={groupKey} className="py-8 md:py-12 first:pt-0 [&:not(:first-child)]:border-t [&:not(:first-child)]:border-neutral-100 [&:not(:first-child)]:dark:border-neutral-800/50">
+                <section key={groupKey} className="py-6 md:py-12 first:pt-0 [&:not(:first-child)]:border-t [&:not(:first-child)]:border-neutral-100 [&:not(:first-child)]:dark:border-neutral-800/50">
                   <h2 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">
                     {TIME_GROUP_LABELS[groupKey]}
                   </h2>
@@ -400,7 +386,7 @@ export default function EventsPage() {
               <>
                 {/* ── SECONDARY: Popular Right Now ── */}
                 {popularEvents.length > 0 && (
-                  <section className="py-8 md:py-12 border-t border-neutral-200 dark:border-neutral-800">
+                  <section className="py-6 md:py-12 border-t border-neutral-200 dark:border-neutral-800">
                     <div className="flex items-center gap-2 mb-4">
                       <TrendingUp className="w-4 h-4 text-orange-500" />
                       <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Popular Right Now</h2>
@@ -420,7 +406,7 @@ export default function EventsPage() {
 
                 {/* ── CONTEXTUAL: Friends Are Going ── */}
                 {friendsGoingEvents.length > 0 && (
-                  <section className="py-8 md:py-12 border-t border-neutral-100 dark:border-neutral-800/50">
+                  <section className="py-6 md:py-12 border-t border-neutral-100 dark:border-neutral-800/50">
                     <div className="flex items-center gap-2 mb-3">
                       <Users className="w-4 h-4 text-indigo-500" />
                       <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Friends Are Going</h2>
@@ -433,28 +419,6 @@ export default function EventsPage() {
                   </section>
                 )}
 
-                {/* ── TERTIARY: Explore by Category ── */}
-                {categoryCards.length > 0 && (
-                  <section className="py-8 md:py-12 border-t border-neutral-100 dark:border-neutral-800/50">
-                    <h2 className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wide mb-3">Explore by Category</h2>
-                    <div className="flex flex-wrap gap-2">
-                      {categoryCards.map((cat) => (
-                        <button
-                          key={cat.slug}
-                          onClick={() => {
-                            setCategoryFilter(cat.slug)
-                            window.scrollTo({ top: 0, behavior: 'smooth' })
-                          }}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-neutral-900 rounded-full border border-neutral-200 dark:border-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600 hover:shadow-sm transition-all text-sm"
-                        >
-                          <span>{cat.emoji}</span>
-                          <span className="font-medium text-neutral-700 dark:text-neutral-300">{cat.name}</span>
-                          <span className="text-neutral-400 dark:text-neutral-500 text-xs">{cat.eventCount}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </section>
-                )}
               </>
             )}
           </div>

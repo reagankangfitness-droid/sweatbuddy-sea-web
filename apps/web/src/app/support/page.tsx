@@ -123,10 +123,13 @@ export default function SupportPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [submitError, setSubmitError] = useState('')
+  const [showAllFaqs, setShowAllFaqs] = useState(false)
 
   const filteredFaqs = selectedCategory === 'all'
     ? faqs
     : faqs.filter(faq => faq.category === selectedCategory)
+
+  const displayedFaqs = showAllFaqs ? filteredFaqs : filteredFaqs.slice(0, 5)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -170,39 +173,17 @@ export default function SupportPage() {
 
       <main className="max-w-4xl mx-auto px-4 py-8">
         {/* Hero Section */}
-        <div className="text-center mb-10">
-          <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <HelpCircle className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white mb-2">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white mb-1">
             How can we help?
           </h2>
-          <p className="text-neutral-500 dark:text-neutral-400 max-w-md mx-auto">
-            Find answers to common questions or reach out to our team for assistance.
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">
+            Find answers below or reach out to our team.
           </p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-10">
-          <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 text-center">
-            <Clock className="w-6 h-6 text-green-600 dark:text-green-400 mx-auto mb-2" />
-            <p className="text-sm font-medium text-neutral-900 dark:text-white">Response Time</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">Within 24 hours</p>
-          </div>
-          <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 text-center">
-            <Mail className="w-6 h-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-            <p className="text-sm font-medium text-neutral-900 dark:text-white">Email</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">support@sweatbuddies.co</p>
-          </div>
-          <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 text-center">
-            <MessageCircle className="w-6 h-6 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
-            <p className="text-sm font-medium text-neutral-900 dark:text-white">Instagram</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">@sweatbuddies.co</p>
-          </div>
-        </div>
-
         {/* FAQ Section */}
-        <section className="mb-12">
+        <section className="mb-8">
           <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-4">
             Frequently Asked Questions
           </h3>
@@ -230,7 +211,7 @@ export default function SupportPage() {
 
           {/* FAQ List */}
           <div className="space-y-3">
-            {filteredFaqs.map((faq, index) => (
+            {displayedFaqs.map((faq, index) => (
               <div
                 key={index}
                 className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden"
@@ -258,10 +239,20 @@ export default function SupportPage() {
               </div>
             ))}
           </div>
+
+          {/* Show All / Show Less */}
+          {filteredFaqs.length > 5 && (
+            <button
+              onClick={() => { setShowAllFaqs(!showAllFaqs); setExpandedFaq(null) }}
+              className="mt-4 w-full py-2.5 text-sm font-medium text-neutral-600 dark:text-neutral-300 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            >
+              {showAllFaqs ? 'Show fewer FAQs' : `Show all ${filteredFaqs.length} FAQs`}
+            </button>
+          )}
         </section>
 
         {/* Contact Form Section */}
-        <section className="mb-12">
+        <section className="mb-8">
           <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-4">
             Still need help? Contact us
           </h3>
@@ -372,7 +363,7 @@ export default function SupportPage() {
         </section>
 
         {/* Quick Links */}
-        <section>
+        <section className="mb-8">
           <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-4">
             Quick Links
           </h3>
@@ -419,6 +410,25 @@ export default function SupportPage() {
             </a>
           </div>
         </section>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 text-center">
+            <Clock className="w-5 h-5 text-green-600 dark:text-green-400 mx-auto mb-1" />
+            <p className="text-xs font-medium text-neutral-900 dark:text-white">Response</p>
+            <p className="text-[10px] text-neutral-500 dark:text-neutral-400">Within 24 hours</p>
+          </div>
+          <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 text-center">
+            <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400 mx-auto mb-1" />
+            <p className="text-xs font-medium text-neutral-900 dark:text-white">Email</p>
+            <p className="text-[10px] text-neutral-500 dark:text-neutral-400">support@sweatbuddies.co</p>
+          </div>
+          <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 text-center">
+            <MessageCircle className="w-5 h-5 text-purple-600 dark:text-purple-400 mx-auto mb-1" />
+            <p className="text-xs font-medium text-neutral-900 dark:text-white">Instagram</p>
+            <p className="text-[10px] text-neutral-500 dark:text-neutral-400">@sweatbuddies.co</p>
+          </div>
+        </div>
       </main>
 
       {/* Footer spacing */}

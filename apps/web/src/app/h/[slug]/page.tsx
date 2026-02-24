@@ -120,6 +120,7 @@ export default function HostProfilePage() {
   const [activitiesPage, setActivitiesPage] = useState(1)
   const [hasMoreActivities, setHasMoreActivities] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
+  const [showAllReviews, setShowAllReviews] = useState(false)
 
   const fetchReviews = useCallback(async () => {
     try {
@@ -723,7 +724,7 @@ export default function HostProfilePage() {
           </div>
 
           <div className="space-y-4">
-            {reviews.map((review) => (
+            {(showAllReviews ? reviews : reviews.slice(0, 2)).map((review) => (
               <div key={review.id} className="bg-card rounded-2xl border p-4">
                 <div className="flex gap-3">
                   <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex-shrink-0">
@@ -790,6 +791,15 @@ export default function HostProfilePage() {
               </div>
             ))}
           </div>
+
+          {reviews.length > 2 && !showAllReviews && (
+            <button
+              onClick={() => setShowAllReviews(true)}
+              className="mt-4 w-full py-2.5 text-sm font-medium text-neutral-600 dark:text-neutral-300 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            >
+              Show all {reviews.length} reviews
+            </button>
+          )}
         </div>
       )}
     </div>

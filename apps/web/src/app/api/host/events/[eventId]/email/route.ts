@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getHostSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { sendBatchEmails } from '@/lib/email'
+import { createNotification } from '@/lib/notifications'
 
 export const dynamic = 'force-dynamic'
 
@@ -106,6 +107,27 @@ export async function POST(
 
     if (failed > 0) {
       console.error(`Failed to send ${failed} emails for event ${eventId}`)
+    }
+
+    // Create in-app notifications for attendees who have user accounts (fire-and-forget)
+    try {
+      const attendeeEmails = attendees.map((a) => a.email)
+      const usersWithAccounts = await prisma.user.findMany({
+        where: { email: { in: attendeeEmails } },
+        select: { id: true },
+      })
+      for (const user of usersWithAccounts) {
+        void createNotification({
+          userId: user.id,
+          type: 'HOST_ANNOUNCEMENT',
+          title: subject,
+          content: message.slice(0, 200),
+          link: `/events/${eventId}`,
+          metadata: { eventId, hostHandle: session.instagramHandle },
+        })
+      }
+    } catch (notifyError) {
+      console.error('Error creating host announcement notifications (non-blocking):', notifyError)
     }
 
     return NextResponse.json({

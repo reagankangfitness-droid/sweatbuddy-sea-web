@@ -531,8 +531,8 @@ export async function processWaitlistForSpot(
     if (entry.userId) {
       await createNotification({
         userId: entry.userId,
-        type: 'ACTIVITY_UPDATE',
-        title: '🎉 A spot opened up!',
+        type: 'WAITLIST_PROMOTED',
+        title: 'A spot opened up!',
         content: `Book now for "${activity.title}" - you have ${notificationWindowHours} hours!`,
         link: `/activities/${activityId}?from=waitlist`,
         metadata: {

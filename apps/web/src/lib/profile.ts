@@ -4,6 +4,7 @@
 
 import crypto from 'crypto'
 import { prisma } from '@/lib/prisma'
+import { createNotification } from '@/lib/notifications'
 
 /**
  * Generate a unique slug for a user
@@ -218,6 +219,22 @@ export async function toggleFollow(followerId: string, followingId: string) {
         followingId
       }
     })
+
+    // Notify the followed user
+    const follower = await prisma.user.findUnique({
+      where: { id: followerId },
+      select: { name: true, firstName: true, slug: true, imageUrl: true },
+    })
+    const followerName = follower?.firstName || follower?.name?.split(' ')[0] || 'Someone'
+    void createNotification({
+      userId: followingId,
+      type: 'NEW_FOLLOWER',
+      content: `${followerName} started following you`,
+      title: 'New follower',
+      link: follower?.slug ? `/user/${follower.slug}` : undefined,
+      metadata: { followerId },
+    })
+
     return { following: true }
   }
 }

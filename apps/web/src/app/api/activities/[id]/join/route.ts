@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { onBookingConfirmed, onBookingCancelled } from '@/lib/stats/realtime'
 import { processWaitlistForSpot, convertWaitlistToBooking } from '@/lib/waitlist'
 import { scheduleRemindersForBooking, cancelRemindersForBooking } from '@/lib/reminders'
+import { createNotification } from '@/lib/notifications'
 
 export async function POST(
   request: Request,
@@ -150,6 +151,39 @@ export async function POST(
     } catch (reminderError) {
       // Don't fail if reminder scheduling fails
       console.error('Error scheduling reminders (non-blocking):', reminderError)
+    }
+
+    // Notify friends already RSVP'd to this activity (fire-and-forget)
+    try {
+      // Get user's followers who are also RSVP'd to this activity
+      const friendsAtEvent = await prisma.userActivity.findMany({
+        where: {
+          activityId,
+          status: 'JOINED',
+          userId: { not: userId },
+          user: {
+            // Users who follow the joining user (they're "friends")
+            following: { some: { followingId: userId } },
+          },
+        },
+        select: { userId: true },
+      })
+
+      if (friendsAtEvent.length > 0) {
+        const joinerName = clerkUser.firstName || clerkUser.fullName?.split(' ')[0] || 'A friend'
+        for (const friend of friendsAtEvent) {
+          void createNotification({
+            userId: friend.userId,
+            type: 'FRIEND_RSVP',
+            title: `${joinerName} is going too!`,
+            content: `${joinerName} just RSVP'd to "${activity.title}"`,
+            link: `/activities/${activityId}`,
+            metadata: { activityId, friendUserId: userId },
+          })
+        }
+      }
+    } catch (friendNotifyError) {
+      console.error('Error notifying friends (non-blocking):', friendNotifyError)
     }
 
     return NextResponse.json(result, { status: 201 })

@@ -1,6 +1,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { createNotification } from '@/lib/notifications'
 
 export async function POST(
   request: Request,
@@ -32,7 +33,7 @@ export async function POST(
     }
 
     // Create follow (upsert to avoid duplicate errors)
-    await prisma.userFollower.upsert({
+    const result = await prisma.userFollower.upsert({
       where: {
         followerId_followingId: {
           followerId: userId,
@@ -45,6 +46,24 @@ export async function POST(
       },
       update: {},
     })
+
+    // Notify the followed user (fire-and-forget)
+    if (result.createdAt.getTime() > Date.now() - 5000) {
+      // Only notify on fresh creates (upsert might hit an existing row)
+      const follower = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { name: true, firstName: true, slug: true },
+      })
+      const followerName = follower?.firstName || follower?.name?.split(' ')[0] || 'Someone'
+      void createNotification({
+        userId: targetUserId,
+        type: 'NEW_FOLLOWER',
+        content: `${followerName} started following you`,
+        title: 'New follower',
+        link: follower?.slug ? `/user/${follower.slug}` : undefined,
+        metadata: { followerId: userId },
+      })
+    }
 
     return NextResponse.json({ following: true })
   } catch (error) {

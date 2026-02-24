@@ -7,6 +7,7 @@ import {
   generateCalendarLink,
   generateMapsLink,
 } from '@/lib/email'
+import { createNotification } from '@/lib/notifications'
 import type {
   ReminderType,
   ReminderChannel,
@@ -565,15 +566,13 @@ async function sendInAppReminder(
         : `is on ${formatDate(activity.startTime!)}`
   }`
 
-  await prisma.notification.create({
-    data: {
-      userId: user.id,
-      type: 'ACTIVITY_UPDATE',
-      title,
-      content,
-      link: `/activities/${activity.id}`,
-      metadata: { reminderType, activityId: activity.id },
-    },
+  await createNotification({
+    userId: user.id,
+    type: 'EVENT_REMINDER',
+    title,
+    content,
+    link: `/activities/${activity.id}`,
+    metadata: { reminderType, activityId: activity.id },
   })
 
   // Log delivery

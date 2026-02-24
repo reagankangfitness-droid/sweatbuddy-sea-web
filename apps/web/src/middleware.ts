@@ -28,6 +28,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/organizer(.*)',
   '/api/stripe(.*)',
   '/api/checkout(.*)',
+  '/api/wave(.*)',
   '/booking/success',
   '/join/(.*)',
   '/host',
@@ -40,8 +41,8 @@ const isPublicRoute = createRouteMatcher([
   '/my-events/(.*)',
   // /admin pages require Clerk auth at middleware level
   '/explore',
+  '/communities(.*)',
   '/api/map(.*)',
-  '/crews',
   '/api/test(.*)',
   '/api/cron(.*)',
 ])

@@ -203,7 +203,7 @@ export function LandingClient({ data }: { data: LandingData }) {
       <footer className="py-10 px-5 border-t border-neutral-100">
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <LogoWithText size={24} />
+            <Link href="/"><LogoWithText size={24} /></Link>
             <nav className="flex items-center gap-5 text-sm text-neutral-500">
               <Link href="/events" className="hover:text-neutral-900 transition-colors">Events</Link>
               <Link href="/communities" className="hover:text-neutral-900 transition-colors">Community</Link>

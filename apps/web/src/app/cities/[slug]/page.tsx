@@ -106,11 +106,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${city.name} Fitness Experiences & Communities | SweatBuddies`,
-    description: `Find fitness experiences and join communities in ${city.name}. ${city.communityCount} communities, ${city.eventCount} experiences.`,
+    title: `${city.name} Fitness Events & Communities | SweatBuddies`,
+    description: `Find fitness events and join communities in ${city.name}. ${city.communityCount} communities, ${city.eventCount} events.`,
     openGraph: {
       title: `${city.name} | SweatBuddies`,
-      description: `Find fitness experiences and communities in ${city.name}.`,
+      description: `Find fitness events and communities in ${city.name}.`,
       url: `https://www.sweatbuddies.co/cities/${slug}`,
       images: cityImages[slug] ? [cityImages[slug]] : [],
     },
@@ -210,7 +210,7 @@ export default async function CityPage({ params }: Props) {
       <section className="py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-neutral-900">Upcoming Experiences</h2>
+            <h2 className="text-2xl font-bold text-neutral-900">Upcoming Events</h2>
             <Link
               href={`/events?city=${slug}`}
               className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1"

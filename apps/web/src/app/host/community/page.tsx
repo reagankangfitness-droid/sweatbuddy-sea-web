@@ -241,7 +241,7 @@ export default function CommunityPage() {
             className="px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900"
           >
             <option value="lastSeen">Last Seen</option>
-            <option value="events">Most Experiences</option>
+            <option value="events">Most Events</option>
             <option value="name">Name</option>
           </select>
         </div>

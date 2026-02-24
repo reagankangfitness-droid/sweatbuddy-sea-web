@@ -10,7 +10,7 @@ import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 
 const navItems = [
-  { id: 'events', label: 'Experiences', icon: CalendarDays, href: '/events' },
+  { id: 'events', label: 'Events', icon: CalendarDays, href: '/events' },
   { id: 'community', label: 'Community', icon: Users, href: '/communities' },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile' },
 ]
@@ -129,7 +129,7 @@ export function AppNav() {
               {/* Host CTA */}
               <Link
                 href="/host"
-                aria-label="Host an experience"
+                aria-label="Host an event"
                 className="flex items-center justify-center w-12 h-12 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors mb-3"
               >
                 <Plus className="w-5 h-5" />
@@ -222,7 +222,7 @@ export function AppNav() {
             {/* Host CTA */}
             <Link
               href="/host"
-              aria-label="Host an experience"
+              aria-label="Host an event"
               className="flex flex-col items-center justify-center w-14 h-14"
             >
               <div className="w-10 h-10 rounded-full bg-neutral-900 dark:bg-white flex items-center justify-center">

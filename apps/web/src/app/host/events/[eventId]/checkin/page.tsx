@@ -61,7 +61,7 @@ export default function CheckInPage() {
         const res = await fetch(`/api/host/events/${eventId}/attendees`)
         if (res.ok) {
           const data = await res.json()
-          setEvent({ title: data.event?.title || 'Experience' })
+          setEvent({ title: data.event?.title || 'Event' })
 
           // Calculate check-in stats
           const attendees = [...(data.firstTimers || []), ...(data.returning || [])]
@@ -174,7 +174,7 @@ export default function CheckInPage() {
           </div>
 
           <h1 className="text-xl font-bold text-neutral-900">
-            {event?.title || 'Experience'} Check-in
+            {event?.title || 'Event'} Check-in
           </h1>
         </div>
       </div>

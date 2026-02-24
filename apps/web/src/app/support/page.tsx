@@ -30,7 +30,7 @@ const faqs: FAQItem[] = [
   {
     category: 'booking',
     question: 'How do I cancel my booking?',
-    answer: 'Go to "My Experiences" from your profile, find the booking you want to cancel, and click "Cancel Booking". The refund amount depends on how far in advance you cancel - check the experience\'s refund policy for details.'
+    answer: 'Go to "My Events" from your profile, find the booking you want to cancel, and click "Cancel Booking". The refund amount depends on how far in advance you cancel - check the event\'s refund policy for details.'
   },
   // Payment
   {

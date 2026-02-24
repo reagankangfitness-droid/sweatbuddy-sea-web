@@ -313,7 +313,7 @@ export default async function CommunityPage({ params }: Props) {
       {/* Upcoming Events */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-neutral-900">Upcoming Experiences</h2>
+          <h2 className="text-xl font-semibold text-neutral-900">Upcoming Events</h2>
         </div>
 
         {upcomingEvents.length > 0 ? (

@@ -266,7 +266,7 @@ export default function AnalyticsPage() {
               <StatCard
                 icon={<Calendar className="w-5 h-5" />}
                 value={data.summary.totalEvents}
-                label="Total Experiences"
+                label="Total Events"
                 color="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
               />
               <StatCard
@@ -377,7 +377,7 @@ export default function AnalyticsPage() {
                   {data.upcomingEventPredictions && data.upcomingEventPredictions.length > 0 && (
                     <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
                       <div className="px-4 py-3 border-b border-neutral-100 dark:border-neutral-800">
-                        <h3 className="font-semibold text-neutral-900 dark:text-white">Upcoming Experiences Forecast</h3>
+                        <h3 className="font-semibold text-neutral-900 dark:text-white">Upcoming Events Forecast</h3>
                         <p className="text-xs text-neutral-500 dark:text-neutral-400">Predicted attendance based on historical data</p>
                       </div>
                       <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
@@ -590,7 +590,7 @@ export default function AnalyticsPage() {
             {data.topEvents.length > 0 && (
               <div ref={topEventsRef} id="top-events" className="scroll-mt-28 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
                 <div className="px-4 sm:px-6 py-4 border-b border-neutral-100 dark:border-neutral-800">
-                  <h3 className="font-semibold text-neutral-900 dark:text-white">Top Performing Experiences</h3>
+                  <h3 className="font-semibold text-neutral-900 dark:text-white">Top Performing Events</h3>
                   <p className="text-sm text-neutral-500 dark:text-neutral-400">Ranked by number of RSVPs</p>
                 </div>
                 <div className="overflow-x-auto">
@@ -598,7 +598,7 @@ export default function AnalyticsPage() {
                     <thead className="bg-neutral-50 dark:bg-neutral-800">
                       <tr>
                         <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                          Experience
+                          Event
                         </th>
                         <th className="px-4 sm:px-6 py-3 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                           RSVPs

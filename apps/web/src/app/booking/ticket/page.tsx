@@ -191,7 +191,7 @@ function TicketContent() {
             <div className="flex items-center justify-between mb-4">
               <div className="text-2xl font-bold">SweatBuddies</div>
               <div className="text-xs px-3 py-1 bg-white/20 rounded-full uppercase tracking-wide">
-                {booking.paymentStatus === 'PAID' || booking.amountPaid ? 'Confirmed' : 'Free Experience'}
+                {booking.paymentStatus === 'PAID' || booking.amountPaid ? 'Confirmed' : 'Free Event'}
               </div>
             </div>
             <h1 className="text-xl font-semibold">{activity.title}</h1>

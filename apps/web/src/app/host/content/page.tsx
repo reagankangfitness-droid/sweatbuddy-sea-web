@@ -46,7 +46,7 @@ interface Event {
 const CONTENT_TYPES: { id: ContentType; label: string; icon: React.ReactNode; description: string }[] = [
   { id: 'instagram_caption', label: 'Instagram', icon: <Instagram className="w-5 h-5" />, description: 'Engaging captions with hashtags' },
   { id: 'whatsapp_message', label: 'WhatsApp', icon: <MessageCircle className="w-5 h-5" />, description: 'Quick messages to share' },
-  { id: 'event_description', label: 'Experience', icon: <FileText className="w-5 h-5" />, description: 'Clear experience descriptions' },
+  { id: 'event_description', label: 'Event', icon: <FileText className="w-5 h-5" />, description: 'Clear event descriptions' },
   { id: 'email', label: 'Email', icon: <Mail className="w-5 h-5" />, description: 'Professional email messages' },
 ]
 

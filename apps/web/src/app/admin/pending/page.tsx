@@ -83,7 +83,7 @@ export default function PendingEventsPage() {
 
       if (res.ok) {
         setEvents(events.filter(e => e.id !== eventId))
-        toast.success('Experience approved and published!')
+        toast.success('Event approved and published!')
       } else {
         toast.error('Failed to approve experience')
       }
@@ -105,7 +105,7 @@ export default function PendingEventsPage() {
 
       if (res.ok) {
         setEvents(events.filter(e => e.id !== eventId))
-        toast.success('Experience rejected')
+        toast.success('Event rejected')
       } else {
         toast.error('Failed to reject experience')
       }
@@ -129,8 +129,8 @@ export default function PendingEventsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Pending Experiences</h1>
-          <p className="text-neutral-500 mt-1">Review and approve submitted experiences</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Pending Events</h1>
+          <p className="text-neutral-500 mt-1">Review and approve submitted events</p>
         </div>
         <button
           onClick={fetchPendingEvents}

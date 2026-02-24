@@ -238,13 +238,13 @@ export function EditEventForm({ event }: EditEventFormProps) {
       {/* Event Image */}
       <div>
         <label className="block text-sm font-medium text-neutral-700 mb-2">
-          Experience Image
+          Event Image
         </label>
         {imageUrl ? (
           <div className="relative rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200">
             <Image
               src={imageUrl}
-              alt="Experience preview"
+              alt="Event preview"
               width={600}
               height={300}
               className="w-full h-48 object-cover"

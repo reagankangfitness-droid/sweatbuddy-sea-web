@@ -150,7 +150,7 @@ export default function AdminEventsPage() {
       })
 
       if (response.ok) {
-        toast.success('Experience deleted')
+        toast.success('Event deleted')
         setEvents(events.filter(e => e.id !== event.id))
       } else {
         const data = await response.json()
@@ -173,7 +173,7 @@ export default function AdminEventsPage() {
       })
 
       if (response.ok) {
-        toast.success('Experience updated')
+        toast.success('Event updated')
         setEvents(events.map(e => e.id === editingEvent.id ? editingEvent : e))
         setEditingEvent(null)
       } else {
@@ -197,7 +197,7 @@ export default function AdminEventsPage() {
       })
 
       if (response.ok) {
-        toast.success(`Experience ${action === 'approve' ? 'approved' : 'rejected'}`)
+        toast.success(`Event ${action === 'approve' ? 'approved' : 'rejected'}`)
         setSubmissions(submissions.filter(s => s.id !== submissionId))
         if (action === 'approve') {
           fetchEvents()
@@ -248,8 +248,8 @@ export default function AdminEventsPage() {
       {/* Header */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Experience Management</h1>
-          <p className="text-neutral-500 mt-1 text-sm sm:text-base">Manage live experiences and review submissions</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Event Management</h1>
+          <p className="text-neutral-500 mt-1 text-sm sm:text-base">Manage live events and review submissions</p>
         </div>
         {missingCoordsCount > 0 && (
           <button
@@ -262,7 +262,7 @@ export default function AdminEventsPage() {
             ) : (
               <Navigation className="w-4 h-4" />
             )}
-            Geocode {missingCoordsCount} Experiences
+            Geocode {missingCoordsCount} Events
           </button>
         )}
       </div>
@@ -563,7 +563,7 @@ export default function AdminEventsPage() {
         <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50">
           <div className="bg-white sm:border sm:border-neutral-200 sm:rounded-2xl w-full sm:max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl shadow-xl">
             <div className="sticky top-0 bg-white border-b border-neutral-200 p-4 sm:p-6 flex justify-between items-center z-10">
-              <h2 className="text-lg sm:text-xl font-bold text-neutral-900">Edit Experience</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-neutral-900">Edit Event</h2>
               <button
                 onClick={() => setEditingEvent(null)}
                 className="p-2 text-neutral-500 hover:text-neutral-700 active:scale-95"
@@ -574,7 +574,7 @@ export default function AdminEventsPage() {
 
             <div className="p-4 sm:p-6 space-y-4">
               <div>
-                <label className="block text-sm text-neutral-600 mb-1">Experience Name</label>
+                <label className="block text-sm text-neutral-600 mb-1">Event Name</label>
                 <input
                   type="text"
                   value={editingEvent.name}
@@ -648,7 +648,7 @@ export default function AdminEventsPage() {
               </div>
 
               <div>
-                <label className="block text-sm text-neutral-600 mb-2">Experience Image</label>
+                <label className="block text-sm text-neutral-600 mb-2">Event Image</label>
                 {editingEvent.imageUrl ? (
                   <div className="relative rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200">
                     <Image

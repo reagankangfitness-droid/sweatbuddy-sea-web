@@ -233,13 +233,13 @@ export default function MyBookingsPage() {
               No bookings yet
             </h2>
             <p className="text-neutral-500 dark:text-neutral-400 mb-6">
-              Find your next workout and book an experience!
+              Find your next workout and book an event!
             </p>
             <Link
               href="/"
               className="inline-flex items-center justify-center px-6 py-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold rounded-full hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors"
             >
-              Browse Experiences
+              Browse Events
             </Link>
           </div>
         ) : (

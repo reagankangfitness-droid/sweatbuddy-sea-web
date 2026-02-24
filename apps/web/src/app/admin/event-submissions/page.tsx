@@ -132,9 +132,9 @@ export default function AdminEventSubmissionsPage() {
     <div className="p-4 sm:p-6 lg:p-8 bg-neutral-50 min-h-screen">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Experience Submissions</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Event Submissions</h1>
         <p className="text-neutral-500 mt-1">
-          Review and approve submitted experiences
+          Review and approve submitted events
         </p>
       </div>
 

@@ -186,7 +186,7 @@ export default function EventsPage() {
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="px-4 py-4">
             <div className="flex items-center justify-between mb-3">
-              <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Experiences</h1>
+              <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Events</h1>
               <Link
                 href="/host"
                 className="hidden md:flex items-center gap-1.5 px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full text-sm font-semibold"
@@ -259,19 +259,19 @@ export default function EventsPage() {
               <Calendar className="w-8 h-8 text-neutral-400" />
             </div>
             <p className="text-neutral-900 dark:text-white font-semibold mb-1">
-              {categoryFilter ? 'No experiences in this category' : 'No experiences found'}
+              {categoryFilter ? 'No events in this category' : 'No events found'}
             </p>
             <p className="text-neutral-500 dark:text-neutral-400 text-sm max-w-xs mb-6">
               {categoryFilter
                 ? 'Try a different category or check back later.'
-                : 'No upcoming experiences nearby. Start the movement!'}
+                : 'No upcoming events nearby. Start the movement!'}
             </p>
             <Link
               href="/host"
               className="flex items-center gap-2 px-6 py-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full font-semibold"
             >
               <Plus className="w-4 h-4" />
-              Host an experience
+              Host an event
             </Link>
           </div>
         ) : (

@@ -156,7 +156,7 @@ export default function AdminHostsPage() {
 
   const tabs = [
     { id: 'create-host' as Tab, label: 'Create Host', icon: UserPlus },
-    { id: 'create-event' as Tab, label: 'Create Experience', icon: Calendar },
+    { id: 'create-event' as Tab, label: 'Create Event', icon: Calendar },
     { id: 'magic-link' as Tab, label: 'Magic Link', icon: Link2 },
   ]
 
@@ -350,11 +350,11 @@ export default function AdminHostsPage() {
               </div>
             </div>
 
-            <h3 className="font-semibold text-neutral-900">Experience Details</h3>
+            <h3 className="font-semibold text-neutral-900">Event Details</h3>
 
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-1">
-                Experience Name *
+                Event Name *
               </label>
               <input
                 type="text"
@@ -514,7 +514,7 @@ export default function AdminHostsPage() {
               ) : (
                 <Calendar className="w-4 h-4" />
               )}
-              Create Experience
+              Create Event
             </button>
           </form>
         )}

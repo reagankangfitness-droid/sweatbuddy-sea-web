@@ -2991,3 +2991,36 @@ model ReengagementNudge {
   @@map("reengagement_nudges")
 }
 
+// =====================================================
+// HOST POST-EVENT THANK-YOU EMAIL DRAFTS
+// =====================================================
+
+model PostEventDraft {
+  id            String   @id @default(cuid())
+  eventId       String   @unique // One draft per event
+  hostInstagram String   @db.VarChar(100)
+  hostUserId    String?
+
+  // Draft content
+  subject String
+  body    String @db.Text
+
+  // Event context (snapshot for display)
+  eventName     String
+  eventDate     String?
+  attendeeCount Int    @default(0)
+  category      String @default("")
+
+  // Status: DRAFT → SENT
+  status    String    @default("DRAFT") @db.VarChar(20)
+  sentAt    DateTime?
+  sentCount Int? // Number of emails sent
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([hostInstagram, status])
+  @@index([status, createdAt])
+  @@map("post_event_drafts")
+}
+

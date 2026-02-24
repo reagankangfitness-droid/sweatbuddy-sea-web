@@ -38,6 +38,10 @@
     {
       "path": "/api/cron/host-weekly-summary",
       "schedule": "0 0 * * 1"
+    },
+    {
+      "path": "/api/cron/draft-post-event-emails",
+      "schedule": "0 16 * * *"
     }
   ]
 }

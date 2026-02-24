@@ -17,6 +17,7 @@ import { DemandSignalsCard } from '@/components/host/DemandSignalsCard'
 import { NudgeCardsSection } from '@/components/nudge-cards-section'
 import { RecapCreator } from '@/components/host/RecapCreator'
 import { ReengagementSection } from '@/components/host/ReengagementSection'
+import { PostEventDraftsSection } from '@/components/host/PostEventDraftsSection'
 
 interface DashboardEvent {
   id: string
@@ -363,6 +364,9 @@ export default function HostDashboard() {
             </div>
           </button>
         ))}
+
+        {/* Post-Event Thank-You Email Drafts */}
+        <PostEventDraftsSection />
 
         {/* Stats - horizontal scroll on mobile, 3-col grid on sm+ */}
         <div className="relative -mx-4 sm:mx-0 mb-4 sm:mb-8">

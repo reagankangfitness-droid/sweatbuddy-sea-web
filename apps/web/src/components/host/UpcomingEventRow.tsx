@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Copy, Loader2, Users, XCircle } from 'lucide-react'
 import { ShareEventButtons } from './ShareEventButtons'
+import { ShareFlyerButton } from './ShareFlyerButton'
 
 interface Event {
   id: string
@@ -15,6 +16,7 @@ interface Event {
   time: string
   location: string
   imageUrl: string | null
+  category: string
   goingCount: number
   recurring: boolean
   organizer?: string | null
@@ -147,7 +149,19 @@ export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) 
               <XCircle className="w-3 h-3" />
               <span className="hidden sm:inline">Cancel</span>
             </button>
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-2">
+              <ShareFlyerButton
+                event={{
+                  id: event.id,
+                  name: event.name,
+                  day: event.day,
+                  time: event.time,
+                  location: event.location,
+                  category: event.category,
+                  organizer: event.organizer,
+                }}
+                compact
+              />
               <ShareEventButtons
                 event={{
                   id: event.id,

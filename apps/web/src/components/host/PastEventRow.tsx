@@ -1,11 +1,17 @@
 import Link from 'next/link'
 import { Copy, Sparkles } from 'lucide-react'
+import { ShareFlyerButton } from './ShareFlyerButton'
 
 interface Event {
   id: string
   name: string
+  day: string
   date: string | null
+  time: string
+  location: string
+  category: string
   goingCount: number
+  organizer?: string | null
   showUpRate?: number | null
   attendedCount?: number
 }
@@ -50,6 +56,18 @@ export function PastEventRow({ event }: PastEventRowProps) {
         )}
       </Link>
       <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+        <ShareFlyerButton
+          event={{
+            id: event.id,
+            name: event.name,
+            day: event.day,
+            time: event.time,
+            location: event.location,
+            category: event.category,
+            organizer: event.organizer,
+          }}
+          compact
+        />
         <Link
           href={`/host/events/${event.id}/duplicate`}
           className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 transition-colors"

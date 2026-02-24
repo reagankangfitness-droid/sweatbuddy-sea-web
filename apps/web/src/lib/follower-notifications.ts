@@ -80,10 +80,14 @@ export async function notifyFollowersOfNewActivity(
   // Send emails to followers with email notifications enabled
   const emailFollowers = followers.filter(({ follower }) => {
     const prefs = follower.notificationPreferences
-    // Send email if user has email enabled and activity notifications enabled
+    // Send email if user has email enabled and activity update type not disabled
     // Default to true if no preferences set (new users get emails)
     if (!prefs) return true
-    return prefs.emailEnabled && prefs.activityEnabled
+    if (!prefs.emailEnabled) return false
+    const overrides = (prefs.typeOverrides as Record<string, { email?: boolean }>) || {}
+    const typeOverride = overrides['ACTIVITY_UPDATE']
+    if (typeOverride && typeof typeOverride.email === 'boolean') return typeOverride.email
+    return true
   })
 
   if (emailFollowers.length > 0) {

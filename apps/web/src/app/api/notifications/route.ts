@@ -16,18 +16,20 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url)
     const limit = parseInt(searchParams.get('limit') || '20', 10)
-    const offset = parseInt(searchParams.get('offset') || '0', 10)
+    const cursor = searchParams.get('cursor') || undefined
     const unreadOnly = searchParams.get('unreadOnly') === 'true'
 
-    const [notifications, unreadCount] = await Promise.all([
-      getUserNotifications(userId, { limit, offset, unreadOnly }),
+    const [result, unreadCount] = await Promise.all([
+      getUserNotifications(userId, { limit, cursor, unreadOnly }),
       getUnreadNotificationCount(userId),
     ])
 
     return NextResponse.json({
-      notifications,
+      notifications: result.notifications,
       unreadCount,
-      hasMore: notifications.length === limit,
+      nextCursor: result.nextCursor,
+      // Backward compat for clients still using hasMore
+      hasMore: result.nextCursor !== null,
     })
   } catch (error) {
     console.error('Error fetching notifications:', error)

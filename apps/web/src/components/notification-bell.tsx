@@ -22,6 +22,7 @@ interface NotificationResponse {
   notifications: Notification[]
   unreadCount: number
   hasMore: boolean
+  nextCursor: string | null
 }
 
 export function NotificationBell() {
@@ -30,17 +31,19 @@ export function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [hasMore, setHasMore] = useState(false)
+  const [nextCursor, setNextCursor] = useState<string | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null)
-  const notificationsRef = useRef<Notification[]>([])
-  notificationsRef.current = notifications
 
   // Fetch notifications
   const fetchNotifications = useCallback(async (reset = false) => {
     try {
       setIsLoading(true)
-      const offset = reset ? 0 : notificationsRef.current.length
-      const response = await fetch(`/api/notifications?limit=10&offset=${offset}`)
+      const params = new URLSearchParams({ limit: '10' })
+      if (!reset && nextCursor) {
+        params.set('cursor', nextCursor)
+      }
+      const response = await fetch(`/api/notifications?${params.toString()}`)
 
       if (!response.ok) throw new Error('Failed to fetch')
 
@@ -53,12 +56,13 @@ export function NotificationBell() {
       }
       setUnreadCount(data.unreadCount)
       setHasMore(data.hasMore)
+      setNextCursor(data.nextCursor)
     } catch {
       // Error handled silently
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [nextCursor])
 
   // Fetch unread count (lightweight)
   const fetchUnreadCount = useCallback(async () => {

@@ -93,6 +93,18 @@ enum UserRole {
 }
 
 enum NotificationType {
+  // New granular types
+  FRIEND_RSVP
+  EVENT_REMINDER
+  NEW_FOLLOWER
+  BUDDY_MATCH
+  WAITLIST_PROMOTED
+  HOST_ANNOUNCEMENT
+  EVENT_RECAP
+  PASSPORT_BADGE
+  COMMUNITY_WELCOME
+  STREAK_REMINDER
+  // Legacy types preserved for existing DB rows
   MENTION
   MESSAGE
   ACTIVITY_UPDATE
@@ -634,6 +646,7 @@ model Notification {
   title     String
   content   String
   link      String?
+  imageUrl  String?
   isRead    Boolean          @default(false)
   metadata  Json?
   createdAt DateTime         @default(now())
@@ -668,16 +681,20 @@ model Mention {
 }
 
 model NotificationPreference {
-  id              String   @id @default(cuid())
-  userId          String   @unique
-  mentionEnabled  Boolean  @default(true)
-  messageEnabled  Boolean  @default(true)
-  activityEnabled Boolean  @default(true)
-  emailEnabled    Boolean  @default(false)
-  pushEnabled     Boolean  @default(false)
-  nudgeEnabled    Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id        String @id @default(cuid())
+  userId    String @unique
+
+  // Global channel toggles
+  emailEnabled Boolean @default(false)
+  pushEnabled  Boolean @default(false)
+
+  // Per-type overrides stored as JSON
+  // Shape: { [NotificationType]: { email?: boolean, push?: boolean, inApp?: boolean } }
+  // If a type is missing from this map, it inherits the global defaults
+  typeOverrides Json @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

@@ -4,6 +4,7 @@ import { Plus_Jakarta_Sans, Outfit, DM_Sans } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
 import { AppNav } from '@/components/AppNav'
+import { PushPromptBanner } from '@/components/push-prompt-banner'
 import './globals.css'
 
 // Plus Jakarta Sans - closest free alternative to Airbnb Cereal
@@ -102,6 +103,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
           {children}
           <Toaster />
           <AppNav />
+          <PushPromptBanner />
         </Providers>
       </body>
     </html>

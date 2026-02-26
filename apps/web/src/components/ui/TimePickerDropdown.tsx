@@ -11,11 +11,11 @@ interface TimePickerDropdownProps {
   hasError?: boolean
 }
 
-// Generate 48 half-hour slots: "00:00" through "23:30"
+// Generate 96 quarter-hour slots: "00:00" through "23:45"
 function generateTimeSlots(): { value: string; label: string }[] {
   const slots: { value: string; label: string }[] = []
   for (let h = 0; h < 24; h++) {
-    for (const m of [0, 30]) {
+    for (const m of [0, 15, 30, 45]) {
       const hh = h.toString().padStart(2, '0')
       const mm = m.toString().padStart(2, '0')
       const value = `${hh}:${mm}`

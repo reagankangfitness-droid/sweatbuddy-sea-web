@@ -230,7 +230,7 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:border-neutral-900"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:border-neutral-900 text-neutral-900 bg-white"
                 />
               </div>
 
@@ -244,7 +244,7 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your name"
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:border-neutral-900"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:border-neutral-900 text-neutral-900 bg-white"
                 />
               </div>
 
@@ -258,7 +258,7 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
                   value={paymentReference}
                   onChange={(e) => setPaymentReference(e.target.value.toUpperCase())}
                   placeholder="e.g., 20240115ABC123"
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:border-neutral-900 font-mono uppercase"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:border-neutral-900 text-neutral-900 bg-white font-mono uppercase"
                 />
                 <p className="text-xs text-neutral-400 mt-1">
                   Find this in your PayNow transfer confirmation

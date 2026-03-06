@@ -34,7 +34,7 @@ export function HowItWorksSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Find Events */}
           <ScrollAnimator delay={100}>
-            <div className="bg-white rounded-xl border border-neutral-200 p-7 sm:p-8 h-full flex flex-col">
+            <div className="bg-white rounded-xl border border-neutral-200 p-5 sm:p-8 h-full flex flex-col">
               <span className="inline-block w-fit px-2.5 py-1 bg-neutral-100 rounded-md text-xs font-semibold text-neutral-600 uppercase tracking-wide mb-5">
                 Find Events
               </span>
@@ -65,7 +65,7 @@ export function HowItWorksSection() {
 
           {/* Host Events */}
           <ScrollAnimator delay={200}>
-            <div className="bg-white rounded-xl border border-neutral-200 p-7 sm:p-8 h-full flex flex-col">
+            <div className="bg-white rounded-xl border border-neutral-200 p-5 sm:p-8 h-full flex flex-col">
               <span className="inline-block w-fit px-2.5 py-1 bg-neutral-100 rounded-md text-xs font-semibold text-neutral-600 uppercase tracking-wide mb-5">
                 Host Events
               </span>

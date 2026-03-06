@@ -16,7 +16,7 @@ export function HostCTASection() {
     <section id="host" className="py-20 sm:py-24 px-5">
       <div className="max-w-6xl mx-auto">
         <ScrollAnimator>
-          <div className="bg-neutral-900 rounded-2xl p-8 sm:p-12 overflow-hidden relative">
+          <div className="bg-neutral-900 rounded-2xl p-5 sm:p-12 overflow-hidden relative">
             {/* Subtle glow */}
             <div
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-10 pointer-events-none"

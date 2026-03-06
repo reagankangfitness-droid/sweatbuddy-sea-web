@@ -25,17 +25,17 @@ export function HostsSection() {
         </ScrollAnimator>
 
         {/* Host cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           {hosts.map((host, i) => (
             <ScrollAnimator key={host.name} delay={i * 80}>
-              <div className="bg-white rounded-xl border border-neutral-200 p-5 text-center hover:shadow-sm transition-all">
+              <div className="bg-white rounded-xl border border-neutral-200 p-3.5 sm:p-5 text-center hover:shadow-sm transition-all">
                 {/* Avatar */}
-                <div className={`w-14 h-14 rounded-full ${host.bg} flex items-center justify-center mx-auto mb-3`}>
-                  <span className="text-sm font-bold">{host.initials}</span>
+                <div className={`w-11 h-11 sm:w-14 sm:h-14 rounded-full ${host.bg} flex items-center justify-center mx-auto mb-2.5`}>
+                  <span className="text-xs sm:text-sm font-bold">{host.initials}</span>
                 </div>
-                <h3 className="font-semibold text-sm text-neutral-900 leading-tight">{host.name}</h3>
-                <p className="text-xs text-neutral-500 mt-1">{host.type}</p>
-                <p className="text-xs text-neutral-400 mt-0.5">{host.stat}</p>
+                <h3 className="font-semibold text-xs sm:text-sm text-neutral-900 leading-tight">{host.name}</h3>
+                <p className="text-[11px] sm:text-xs text-neutral-500 mt-1">{host.type}</p>
+                <p className="text-[11px] sm:text-xs text-neutral-400 mt-0.5 hidden sm:block">{host.stat}</p>
               </div>
             </ScrollAnimator>
           ))}

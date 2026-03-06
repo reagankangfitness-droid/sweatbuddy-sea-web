@@ -215,7 +215,7 @@ export function DirectChatWindow({
           exit={{ y: '100%', opacity: 0 }}
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-white dark:bg-neutral-900 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg h-[80vh] sm:h-[70vh] flex flex-col overflow-hidden"
+          className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg h-[80vh] sm:h-[70vh] flex flex-col overflow-hidden"
         >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-[#1800ad] to-[#3477f8] text-white">
@@ -237,7 +237,7 @@ export function DirectChatWindow({
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-neutral-50 dark:bg-neutral-950">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-neutral-50">
             {isLoading ? (
               <div className="flex items-center justify-center h-full">
                 <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
@@ -257,27 +257,27 @@ export function DirectChatWindow({
             ) : !organizerRegistered ? (
               <div className="flex flex-col h-full">
                 {inquirySent ? (
-                  <div className="flex flex-col items-center justify-center h-full text-neutral-500 dark:text-neutral-400 px-4">
-                    <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+                  <div className="flex flex-col items-center justify-center h-full text-neutral-500 px-4">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                       <CheckCircle className="w-8 h-8 text-green-500" />
                     </div>
-                    <p className="text-center text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">
+                    <p className="text-center text-sm font-medium text-neutral-700 mb-2">
                       Message sent!
                     </p>
-                    <p className="text-xs text-neutral-400 dark:text-neutral-500 text-center">
+                    <p className="text-xs text-neutral-400 text-center">
                       The host will receive your inquiry and can reply via email or on SweatBuddies.
                     </p>
                   </div>
                 ) : (
                   <div className="flex flex-col h-full px-4 py-6">
                     <div className="text-center mb-6">
-                      <div className="w-14 h-14 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Mail className="w-7 h-7 text-neutral-400 dark:text-neutral-500" />
+                      <div className="w-14 h-14 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <Mail className="w-7 h-7 text-neutral-400" />
                       </div>
-                      <h4 className="font-medium text-neutral-800 dark:text-neutral-200 mb-1">
+                      <h4 className="font-medium text-neutral-800 mb-1">
                         Send a message to @{organizerHandle}
                       </h4>
-                      <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                      <p className="text-xs text-neutral-500">
                         Your inquiry will be sent directly to the host
                       </p>
                     </div>
@@ -288,7 +288,7 @@ export function DirectChatWindow({
                         placeholder="Hi! I have a question about this experience..."
                         maxLength={500}
                         rows={5}
-                        className="flex-1 min-h-[120px] px-4 py-3 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white rounded-xl focus:ring-2 focus:ring-[#1800ad] focus:border-transparent outline-none text-sm placeholder:text-neutral-400 resize-none"
+                        className="flex-1 min-h-[120px] px-4 py-3 border border-neutral-200 bg-white text-neutral-900 rounded-xl focus:ring-2 focus:ring-[#1800ad] focus:border-transparent outline-none text-sm placeholder:text-neutral-400 resize-none"
                       />
                       <div className="flex items-center justify-between mt-3">
                         <span className="text-xs text-neutral-400">
@@ -315,10 +315,10 @@ export function DirectChatWindow({
                 )}
               </div>
             ) : messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-neutral-500 dark:text-neutral-400">
-                <MessageCircle className="w-12 h-12 mb-3 text-neutral-300 dark:text-neutral-600" />
+              <div className="flex flex-col items-center justify-center h-full text-neutral-500">
+                <MessageCircle className="w-12 h-12 mb-3 text-neutral-300" />
                 <p className="text-sm">No messages yet</p>
-                <p className="text-xs text-neutral-400 dark:text-neutral-500">
+                <p className="text-xs text-neutral-400">
                   Send a message to @{organizerHandle}
                 </p>
               </div>
@@ -335,7 +335,7 @@ export function DirectChatWindow({
                     <div key={msg.id}>
                       {showDate && (
                         <div className="flex justify-center my-3">
-                          <span className="text-xs text-neutral-400 dark:text-neutral-500 bg-white dark:bg-neutral-800 px-3 py-1 rounded-full shadow-sm">
+                          <span className="text-xs text-neutral-400 bg-white px-3 py-1 rounded-full shadow-sm">
                             {formatDate(msg.createdAt)}
                           </span>
                         </div>
@@ -364,7 +364,7 @@ export function DirectChatWindow({
                             className={`px-3 py-2 rounded-2xl ${
                               isOwnMessage
                                 ? 'bg-[#1800ad] text-white rounded-br-md'
-                                : 'bg-white dark:bg-neutral-800 text-neutral-800 dark:text-white shadow-sm rounded-bl-md'
+                                : 'bg-white text-neutral-800 shadow-sm rounded-bl-md'
                             }`}
                           >
                             <p className="text-sm whitespace-pre-wrap break-words">
@@ -390,7 +390,7 @@ export function DirectChatWindow({
 
           {/* Input - hide when user is not an attendee */}
           {organizerRegistered && !(error && error.includes('attendee')) && (
-            <form onSubmit={handleSend} className="p-4 border-t dark:border-neutral-800 bg-white dark:bg-neutral-900">
+            <form onSubmit={handleSend} className="p-4 border-t bg-white">
               {error && <p className="text-red-500 text-xs mb-2">{error}</p>}
               <div className="flex gap-2">
                 <input
@@ -399,7 +399,7 @@ export function DirectChatWindow({
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Type a message..."
                   maxLength={500}
-                  className="flex-1 px-4 py-2.5 border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white rounded-full focus:ring-2 focus:ring-[#1800ad] focus:border-transparent outline-none text-sm placeholder:text-neutral-400"
+                  className="flex-1 px-4 py-2.5 border border-neutral-200 bg-white text-neutral-900 rounded-full focus:ring-2 focus:ring-[#1800ad] focus:border-transparent outline-none text-sm placeholder:text-neutral-400"
                 />
                 <button
                   type="submit"

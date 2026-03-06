@@ -86,7 +86,7 @@ export default function AttendeesPage() {
         // Verify session
         const sessionRes = await fetch('/api/organizer/verify', { method: 'POST' })
         if (!sessionRes.ok) {
-          router.push('/organizer')
+          router.push('/sign-in?intent=host')
           return
         }
 
@@ -94,7 +94,7 @@ export default function AttendeesPage() {
         const eventRes = await fetch(`/api/host/events/${eventId}`)
         if (!eventRes.ok) {
           if (eventRes.status === 401) {
-            router.push('/organizer')
+            router.push('/sign-in?intent=host')
             return
           }
           throw new Error('Failed to load event')

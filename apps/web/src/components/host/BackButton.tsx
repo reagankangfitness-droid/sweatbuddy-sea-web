@@ -24,10 +24,10 @@ export function BackButton({ fallbackHref = '/host/dashboard', className }: Back
   return (
     <button
       onClick={handleBack}
-      className={className || "w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"}
+      className={className || "w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors"}
       aria-label="Go back"
     >
-      <ArrowLeft className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+      <ArrowLeft className="w-4 h-4 text-neutral-600" />
     </button>
   )
 }

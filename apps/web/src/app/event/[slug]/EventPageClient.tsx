@@ -117,9 +117,9 @@ export function EventPageClient({ event }: { event: Event }) {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm border-b border-neutral-100 dark:border-neutral-800">
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-neutral-100">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/#events" className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900">
             <ArrowLeft className="w-5 h-5" />
@@ -188,13 +188,13 @@ export function EventPageClient({ event }: { event: Event }) {
                     {event.organizerName.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="font-medium text-neutral-900 dark:text-white">Hosted by {event.organizerName}</p>
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">@{event.organizer}</p>
+                    <p className="font-medium text-neutral-900">Hosted by {event.organizerName}</p>
+                    <p className="text-sm text-neutral-500">@{event.organizer}</p>
                   </div>
                 </Link>
                 <button
                   onClick={() => setShowChat(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 rounded-xl font-medium transition-colors"
+                  className="flex items-center gap-2 px-4 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-xl font-medium transition-colors"
                 >
                   <MessageCircle className="w-5 h-5" />
                   <span className="hidden sm:inline">Message</span>
@@ -255,8 +255,8 @@ export function EventPageClient({ event }: { event: Event }) {
             {event.recap && (
               <>
                 <div className="border-t border-neutral-200" />
-                <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl p-6">
-                  <h2 className="text-xl font-semibold text-neutral-900 dark:text-white mb-4">
+                <div className="bg-emerald-50 rounded-2xl p-6">
+                  <h2 className="text-xl font-semibold text-neutral-900 mb-4">
                     Event Recap
                   </h2>
                   {event.recap.photoUrl && (
@@ -270,10 +270,10 @@ export function EventPageClient({ event }: { event: Event }) {
                       />
                     </div>
                   )}
-                  <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed whitespace-pre-wrap">
+                  <p className="text-neutral-700 leading-relaxed whitespace-pre-wrap">
                     {event.recap.recapText}
                   </p>
-                  <div className="mt-4 flex items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
+                  <div className="mt-4 flex items-center gap-3 text-sm text-neutral-500">
                     <span className="flex items-center gap-1">
                       <Users className="w-4 h-4" />
                       {event.recap.attendeeCount} {event.recap.attendeeCount === 1 ? 'person' : 'people'} joined
@@ -332,7 +332,7 @@ export function EventPageClient({ event }: { event: Event }) {
                   {isPaid ? (
                     <div className="flex items-baseline gap-1">
                       <span className="text-3xl font-bold text-neutral-900">
-                        ${(event.price! / 100).toFixed(0)}
+                        ${(event.price! / 100).toFixed(2)}
                       </span>
                       <span className="text-neutral-500">per person</span>
                     </div>
@@ -369,7 +369,7 @@ export function EventPageClient({ event }: { event: Event }) {
                     whileTap={{ scale: 0.98 }}
                     className="w-full py-4 bg-neutral-900 text-white rounded-xl font-semibold text-lg hover:bg-neutral-800 transition-colors"
                   >
-                    {isPaid ? `Reserve for $${(event.price! / 100).toFixed(0)}` : "I'm In"}
+                    {isPaid ? `Reserve for $${(event.price! / 100).toFixed(2)}` : "I'm In"}
                   </motion.button>
                 )}
 
@@ -407,7 +407,7 @@ export function EventPageClient({ event }: { event: Event }) {
           <div>
             {isPaid ? (
               <span className="text-xl font-bold text-neutral-900">
-                ${(event.price! / 100).toFixed(0)}
+                ${(event.price! / 100).toFixed(2)}
               </span>
             ) : (
               <span className="text-xl font-bold text-green-600">Free</span>

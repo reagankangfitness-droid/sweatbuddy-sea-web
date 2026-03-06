@@ -795,7 +795,7 @@ export default function HostProfilePage() {
           {reviews.length > 2 && !showAllReviews && (
             <button
               onClick={() => setShowAllReviews(true)}
-              className="mt-4 w-full py-2.5 text-sm font-medium text-neutral-600 dark:text-neutral-300 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+              className="mt-4 w-full py-2.5 text-sm font-medium text-neutral-600 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-100 transition-colors"
             >
               Show all {reviews.length} reviews
             </button>

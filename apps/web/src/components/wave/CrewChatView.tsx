@@ -136,23 +136,23 @@ export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClo
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 bg-white dark:bg-neutral-950 flex flex-col"
+        className="fixed inset-0 z-50 bg-white flex flex-col"
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 30, stiffness: 300 }}
       >
         {/* Header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-neutral-200 dark:border-neutral-800">
-          <button onClick={onClose} className="p-1 text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-neutral-200">
+          <button onClick={onClose} className="p-1 text-neutral-500 hover:text-neutral-700">
             <X className="w-5 h-5" />
           </button>
           <span className="text-xl">{activityEmoji}</span>
-          <span className="font-semibold text-neutral-900 dark:text-white">{area}</span>
+          <span className="font-semibold text-neutral-900">{area}</span>
         </div>
 
         {/* Banner */}
-        <div className="px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-center text-sm font-medium text-emerald-700 dark:text-emerald-400">
+        <div className="px-4 py-2 bg-emerald-50 text-center text-sm font-medium text-emerald-700">
           Crew formed! 🎉
         </div>
 
@@ -163,7 +163,7 @@ export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClo
               {participants.slice(0, 4).map((p, i) => (
                 <div
                   key={p.userId}
-                  className="w-10 h-10 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-700 ring-2 ring-white dark:ring-neutral-950 flex items-center justify-center"
+                  className="w-10 h-10 rounded-full overflow-hidden bg-neutral-200 ring-2 ring-white flex items-center justify-center"
                   style={{ marginLeft: i > 0 ? '-8px' : '0', zIndex: participants.length - i }}
                 >
                   {p.imageUrl ? (
@@ -180,8 +180,8 @@ export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClo
 
         {/* Pinned thought card */}
         {starterThought && (
-          <div className="mx-4 mt-2 mb-1 flex items-start gap-2 p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl">
-            <div className="w-8 h-8 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-700 shrink-0">
+          <div className="mx-4 mt-2 mb-1 flex items-start gap-2 p-3 bg-neutral-50 border border-neutral-200 rounded-xl">
+            <div className="w-8 h-8 rounded-full overflow-hidden bg-neutral-200 shrink-0">
               {starterImageUrl ? (
                 <Image src={starterImageUrl} alt={starterName || ''} width={32} height={32} className="w-full h-full object-cover" unoptimized />
               ) : (
@@ -191,8 +191,8 @@ export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClo
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-200">{starterName || 'Anonymous'}</p>
-              <p className="text-sm text-neutral-600 dark:text-neutral-300 mt-0.5">{starterThought}</p>
+              <p className="text-xs font-semibold text-neutral-700">{starterName || 'Anonymous'}</p>
+              <p className="text-sm text-neutral-600 mt-0.5">{starterThought}</p>
               <div className="flex items-center gap-2 mt-1 text-[10px] text-neutral-400">
                 {locationName && <span>📍 {locationName}</span>}
                 {scheduledFor && (
@@ -213,7 +213,7 @@ export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClo
                   <button
                     key={s}
                     onClick={() => sendMessage(s)}
-                    className="px-3 py-2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-sm text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                    className="px-3 py-2 rounded-full bg-neutral-100 text-sm text-neutral-700 border border-neutral-200 hover:bg-neutral-200 transition-colors"
                   >
                     {s}
                   </button>
@@ -228,7 +228,7 @@ export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClo
               <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[75%] ${!isMe ? 'flex gap-2' : ''}`}>
                   {!isMe && (
-                    <div className="w-7 h-7 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-700 shrink-0 mt-1">
+                    <div className="w-7 h-7 rounded-full overflow-hidden bg-neutral-200 shrink-0 mt-1">
                       {msg.senderImageUrl ? (
                         <Image src={msg.senderImageUrl} alt={`${msg.senderName || 'User'} avatar`} className="w-full h-full object-cover" width={28} height={28} unoptimized />
                       ) : (
@@ -245,8 +245,8 @@ export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClo
                     <div
                       className={`px-4 py-2.5 rounded-2xl text-sm ${
                         isMe
-                          ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-br-md'
-                          : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white rounded-bl-md'
+                          ? 'bg-neutral-900 text-white rounded-br-md'
+                          : 'bg-neutral-100 text-neutral-900 rounded-bl-md'
                       }`}
                     >
                       {msg.content}
@@ -260,7 +260,7 @@ export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClo
         </div>
 
         {/* Input */}
-        <div className="px-4 py-3 border-t border-neutral-200 dark:border-neutral-800 pb-[env(safe-area-inset-bottom,12px)]">
+        <div className="px-4 py-3 border-t border-neutral-200 pb-[env(safe-area-inset-bottom,12px)]">
           <form
             onSubmit={(e) => { e.preventDefault(); sendMessage(input) }}
             className="flex items-center gap-2"
@@ -270,12 +270,12 @@ export function CrewChatView({ chatId, activityEmoji, area, currentUserId, onClo
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type a message..."
               maxLength={500}
-              className="flex-1 px-4 py-2.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 outline-none border border-neutral-200 dark:border-neutral-700 focus:border-neutral-400 dark:focus:border-neutral-500"
+              className="flex-1 px-4 py-2.5 rounded-full bg-neutral-100 text-sm text-neutral-900 placeholder-neutral-400 outline-none border border-neutral-200 focus:border-neutral-400"
             />
             <button
               type="submit"
               disabled={!input.trim() || sending}
-              className="p-2.5 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 disabled:opacity-30 transition-opacity"
+              className="p-2.5 rounded-full bg-neutral-900 text-white disabled:opacity-30 transition-opacity"
             >
               <Send className="w-4 h-4" />
             </button>

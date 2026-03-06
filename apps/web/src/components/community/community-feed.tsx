@@ -37,14 +37,14 @@ function LoadingSkeleton() {
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 p-4 animate-pulse"
+          className="bg-white rounded-2xl border border-neutral-100 p-4 animate-pulse"
         >
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 bg-neutral-200 dark:bg-neutral-800 rounded-full" />
+            <div className="w-10 h-10 bg-neutral-200 rounded-full" />
             <div className="flex-1 space-y-2">
-              <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-3/4" />
-              <div className="h-3 bg-neutral-200 dark:bg-neutral-800 rounded w-1/4" />
-              <div className="h-16 bg-neutral-100 dark:bg-neutral-800/50 rounded-xl mt-2" />
+              <div className="h-4 bg-neutral-200 rounded w-3/4" />
+              <div className="h-3 bg-neutral-200 rounded w-1/4" />
+              <div className="h-16 bg-neutral-100 rounded-xl mt-2" />
             </div>
           </div>
         </div>
@@ -151,17 +151,17 @@ export function CommunityFeed({
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-4">
+        <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
           {tab === 'following' ? (
             <Users className="w-8 h-8 text-neutral-400" />
           ) : (
             <Calendar className="w-8 h-8 text-neutral-400" />
           )}
         </div>
-        <p className="text-neutral-900 dark:text-white font-semibold mb-1">
+        <p className="text-neutral-900 font-semibold mb-1">
           {tab === 'following' ? 'No activity yet' : 'No activity yet'}
         </p>
-        <p className="text-neutral-500 dark:text-neutral-400 text-sm max-w-xs">
+        <p className="text-neutral-500 text-sm max-w-xs">
           {tab === 'following'
             ? 'Follow people to see their activity here'
             : 'Be the first to join an event!'}
@@ -187,7 +187,7 @@ export function CommunityFeed({
         <div ref={observerRef} className="py-4">
           {loadingMore && (
             <div className="flex justify-center">
-              <div className="w-6 h-6 border-2 border-neutral-300 border-t-neutral-900 dark:border-neutral-600 dark:border-t-white rounded-full animate-spin" />
+              <div className="w-6 h-6 border-2 border-neutral-300 border-t-neutral-900 rounded-full animate-spin" />
             </div>
           )}
         </div>

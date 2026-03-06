@@ -32,7 +32,7 @@ export default function PaymentsPage() {
         // First verify session
         const sessionRes = await fetch('/api/organizer/verify', { method: 'POST' })
         if (!sessionRes.ok) {
-          router.push('/organizer')
+          router.push('/sign-in?intent=host')
           return
         }
 
@@ -40,7 +40,7 @@ export default function PaymentsPage() {
         const paymentsRes = await fetch('/api/host/payments/pending')
         if (!paymentsRes.ok) {
           if (paymentsRes.status === 401) {
-            router.push('/organizer')
+            router.push('/sign-in?intent=host')
             return
           }
           throw new Error('Failed to load payments')

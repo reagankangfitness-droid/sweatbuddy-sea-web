@@ -70,7 +70,7 @@ export function PastEventRow({ event }: PastEventRowProps) {
         />
         <Link
           href={`/host/events/${event.id}/duplicate`}
-          className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 transition-colors"
+          className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-neutral-100 text-neutral-600 hover:bg-neutral-200 transition-colors"
           onClick={e => e.stopPropagation()}
         >
           <Copy className="w-3 h-3" />

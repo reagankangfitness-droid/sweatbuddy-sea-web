@@ -137,20 +137,20 @@ export default async function EventDetailPage({ params }: Props) {
   const isThisWeekend = isThisWeekendSG(eventDateObj)
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+    <div className="min-h-screen bg-neutral-50">
       {/* Back button header */}
-      <header className="sticky top-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+      <header className="sticky top-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-4xl mx-auto flex items-center justify-between px-4 py-3">
             <Link
               href="/events"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
             >
-              <svg className="w-5 h-5 text-neutral-700 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
               </svg>
             </Link>
-            <h1 className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Event Details</h1>
+            <h1 className="text-sm font-medium text-neutral-500">Event Details</h1>
             <div className="w-10" />
           </div>
         </div>
@@ -169,7 +169,7 @@ export default async function EventDetailPage({ params }: Props) {
                 priority
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-pink-500/20 to-rose-500/20 dark:from-pink-500/10 dark:to-rose-500/10 flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-pink-500/20 to-rose-500/20 flex items-center justify-center">
                 <span className="text-7xl md:text-8xl">{emoji}</span>
               </div>
             )}
@@ -191,7 +191,7 @@ export default async function EventDetailPage({ params }: Props) {
                   Weekly
                 </span>
               )}
-              <span className="px-3 py-1.5 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm rounded-lg text-xs font-medium text-neutral-700 dark:text-neutral-200">
+              <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-lg text-xs font-medium text-neutral-700">
                 {emoji} {event.category}
               </span>
             </div>
@@ -208,10 +208,10 @@ export default async function EventDetailPage({ params }: Props) {
             <div className="md:col-span-2 space-y-6">
               {/* Title */}
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white mb-3">
+                <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-3">
                   {event.name}
                 </h1>
-                <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-600 dark:text-neutral-400">
+                <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-600">
                   <span className="flex items-center gap-1.5">
                     <span>📅</span>
                     <span>{formattedDate}</span>
@@ -221,7 +221,7 @@ export default async function EventDetailPage({ params }: Props) {
                     <span>{event.time}</span>
                   </span>
                   {event.recurring && (
-                    <span className="flex items-center gap-1.5 font-medium text-neutral-900 dark:text-white">
+                    <span className="flex items-center gap-1.5 font-medium text-neutral-900">
                       <span>🔄</span>
                       <span>Every {event.day}</span>
                     </span>
@@ -230,21 +230,21 @@ export default async function EventDetailPage({ params }: Props) {
               </div>
 
               {/* About */}
-              <div className="bg-white dark:bg-neutral-900 rounded-xl p-5 border border-neutral-200 dark:border-neutral-800">
-                <h2 className="text-base font-semibold text-neutral-900 dark:text-white mb-2">
+              <div className="bg-white rounded-xl p-5 border border-neutral-200">
+                <h2 className="text-base font-semibold text-neutral-900 mb-2">
                   About
                 </h2>
-                <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed whitespace-pre-wrap">
+                <p className="text-sm text-neutral-600 leading-relaxed whitespace-pre-wrap">
                   {event.description || 'Join us for an amazing fitness session! All levels welcome.'}
                 </p>
               </div>
 
               {/* Location */}
-              <div className="bg-white dark:bg-neutral-900 rounded-xl p-5 border border-neutral-200 dark:border-neutral-800">
-                <h2 className="text-base font-semibold text-neutral-900 dark:text-white mb-2">
+              <div className="bg-white rounded-xl p-5 border border-neutral-200">
+                <h2 className="text-base font-semibold text-neutral-900 mb-2">
                   Location
                 </h2>
-                <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+                <p className="text-sm text-neutral-600 mb-4">
                   {event.location}
                 </p>
                 {/* Get Directions Button */}
@@ -252,7 +252,7 @@ export default async function EventDetailPage({ params }: Props) {
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-neutral-100 hover:bg-neutral-200 rounded-lg text-sm font-medium text-neutral-700 transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -263,8 +263,8 @@ export default async function EventDetailPage({ params }: Props) {
               </div>
 
               {/* Organizer - No external links */}
-              <div className="bg-white dark:bg-neutral-900 rounded-xl p-5 border border-neutral-200 dark:border-neutral-800">
-                <h2 className="text-base font-semibold text-neutral-900 dark:text-white mb-3">
+              <div className="bg-white rounded-xl p-5 border border-neutral-200">
+                <h2 className="text-base font-semibold text-neutral-900 mb-3">
                   Hosted by
                 </h2>
                 <div className="flex items-center gap-3">
@@ -272,7 +272,7 @@ export default async function EventDetailPage({ params }: Props) {
                     {event.organizer?.charAt(0).toUpperCase() || '?'}
                   </div>
                   <div>
-                    <p className="font-semibold text-neutral-900 dark:text-white">
+                    <p className="font-semibold text-neutral-900">
                       {event.organizer || 'Anonymous Host'}
                     </p>
                     <p className="text-xs text-neutral-500">Event Organizer</p>
@@ -282,8 +282,8 @@ export default async function EventDetailPage({ params }: Props) {
 
               {/* Friends Going */}
               {friendsGoing.length > 0 && (
-                <div className="bg-indigo-50 dark:bg-indigo-950/30 rounded-xl p-5 border border-indigo-100 dark:border-indigo-900/50">
-                  <h2 className="text-base font-semibold text-indigo-900 dark:text-indigo-200 mb-3 flex items-center gap-2">
+                <div className="bg-indigo-50 rounded-xl p-5 border border-indigo-100">
+                  <h2 className="text-base font-semibold text-indigo-900 mb-3 flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
@@ -302,11 +302,11 @@ export default async function EventDetailPage({ params }: Props) {
                             unoptimized
                           />
                         ) : (
-                          <div className="w-7 h-7 rounded-full bg-indigo-200 dark:bg-indigo-800 flex items-center justify-center text-xs font-medium text-indigo-700 dark:text-indigo-300">
+                          <div className="w-7 h-7 rounded-full bg-indigo-200 flex items-center justify-center text-xs font-medium text-indigo-700">
                             {(friend.firstName || friend.name || '?').charAt(0)}
                           </div>
                         )}
-                        <span className="text-sm font-medium text-indigo-800 dark:text-indigo-300">
+                        <span className="text-sm font-medium text-indigo-800">
                           {friend.firstName || friend.name || 'Anonymous'}
                         </span>
                       </div>
@@ -321,14 +321,14 @@ export default async function EventDetailPage({ params }: Props) {
 
             {/* Sidebar - Sticky CTA (desktop only, mobile uses fixed bottom bar) */}
             <div className="hidden md:block md:col-span-1">
-              <div className="sticky top-24 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-5 space-y-4">
+              <div className="sticky top-24 bg-white rounded-xl border border-neutral-200 p-5 space-y-4">
                 {/* Going count */}
-                <div className="text-center pb-4 border-b border-neutral-100 dark:border-neutral-800">
+                <div className="text-center pb-4 border-b border-neutral-100">
                   {goingCount === 0 ? (
                     <p className="text-base font-medium text-neutral-500">Be the first to join!</p>
                   ) : (
                     <>
-                      <p className="text-3xl font-bold text-neutral-900 dark:text-white">{goingCount}</p>
+                      <p className="text-3xl font-bold text-neutral-900">{goingCount}</p>
                       <p className="text-sm text-neutral-500">
                         {goingCount === 1 ? 'person going' : 'people going'}
                       </p>
@@ -338,8 +338,8 @@ export default async function EventDetailPage({ params }: Props) {
 
                 {/* Price display */}
                 {!event.isFree && event.price && (
-                  <div className="text-center pb-4 border-b border-neutral-100 dark:border-neutral-800">
-                    <p className="text-2xl font-bold text-neutral-900 dark:text-white">
+                  <div className="text-center pb-4 border-b border-neutral-100">
+                    <p className="text-2xl font-bold text-neutral-900">
                       ${(event.price / 100).toFixed(2)}
                       <span className="text-sm font-normal text-neutral-500 ml-1">SGD</span>
                     </p>
@@ -373,7 +373,7 @@ export default async function EventDetailPage({ params }: Props) {
       </main>
 
       {/* Mobile Fixed Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white dark:bg-neutral-900 border-t border-neutral-200 dark:border-neutral-800 p-4 safe-area-inset-bottom z-50">
+      <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white border-t border-neutral-200 p-4 safe-area-inset-bottom z-50">
         <UnifiedEventClient
           event={{
             id: event.id,

@@ -59,9 +59,9 @@ function Avatar({
 
   return (
     <div
-      className={`${sizeClasses} rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center flex-shrink-0`}
+      className={`${sizeClasses} rounded-full bg-neutral-200 flex items-center justify-center flex-shrink-0`}
     >
-      <span className={`${textSize} font-medium text-neutral-500 dark:text-neutral-400`}>
+      <span className={`${textSize} font-medium text-neutral-500`}>
         {name.charAt(0).toUpperCase()}
       </span>
     </div>
@@ -74,7 +74,7 @@ function ActorLink({
   actor: FeedItem['actor']
 }) {
   const name = (
-    <span className="font-semibold text-neutral-900 dark:text-white">
+    <span className="font-semibold text-neutral-900">
       {actor.name}
     </span>
   )
@@ -103,10 +103,10 @@ function EventPreview({ item }: { item: FeedItem }) {
   return (
     <Link
       href={url}
-      className="mt-3 flex gap-3 p-3 bg-neutral-50 dark:bg-neutral-800/50 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+      className="mt-3 flex gap-3 p-3 bg-neutral-50 rounded-xl hover:bg-neutral-100 transition-colors"
     >
       {item.event.imageUrl ? (
-        <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-neutral-200 dark:bg-neutral-700 flex-shrink-0">
+        <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-neutral-200 flex-shrink-0">
           <Image
             src={item.event.imageUrl}
             alt={item.event.name}
@@ -116,24 +116,24 @@ function EventPreview({ item }: { item: FeedItem }) {
           />
         </div>
       ) : (
-        <div className="w-14 h-14 rounded-lg bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center flex-shrink-0">
+        <div className="w-14 h-14 rounded-lg bg-neutral-200 flex items-center justify-center flex-shrink-0">
           <Calendar className="w-6 h-6 text-neutral-400" />
         </div>
       )}
 
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-neutral-900 dark:text-white text-sm truncate">
+        <p className="font-medium text-neutral-900 text-sm truncate">
           {item.event.name}
         </p>
         {item.event.category && (
-          <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+          <p className="text-xs text-neutral-500 mt-0.5">
             {item.event.category}
           </p>
         )}
         {item.event.date && (
           <div className="flex items-center gap-1 mt-0.5">
             <Calendar className="w-3 h-3 text-neutral-400" />
-            <span className="text-xs text-neutral-500 dark:text-neutral-400">
+            <span className="text-xs text-neutral-500">
               {new Date(item.event.date).toLocaleDateString('en-US', {
                 weekday: 'short',
                 month: 'short',
@@ -145,7 +145,7 @@ function EventPreview({ item }: { item: FeedItem }) {
         {item.event.location && (
           <div className="flex items-center gap-1 mt-0.5">
             <MapPin className="w-3 h-3 text-neutral-400" />
-            <span className="text-xs text-neutral-500 dark:text-neutral-400 truncate">
+            <span className="text-xs text-neutral-500 truncate">
               {item.event.location}
             </span>
           </div>
@@ -176,7 +176,7 @@ export function FeedCard({
     !followedIds.has(item.actor.id)
 
   return (
-    <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 p-4">
+    <div className="bg-white rounded-2xl border border-neutral-100 p-4">
       <div className="flex items-start gap-3">
         {/* Actor avatar */}
         {item.actor.slug ? (
@@ -189,7 +189,7 @@ export function FeedCard({
 
         <div className="flex-1 min-w-0">
           {/* Activity text */}
-          <p className="text-sm text-neutral-700 dark:text-neutral-300">
+          <p className="text-sm text-neutral-700">
             <ActorLink actor={item.actor} />{' '}
             {item.type === 'event_joined' && 'joined'}
             {item.type === 'activity_joined' && 'joined'}
@@ -200,12 +200,12 @@ export function FeedCard({
                 {item.target?.slug ? (
                   <Link
                     href={`/user/${item.target.slug}`}
-                    className="font-semibold text-neutral-900 dark:text-white"
+                    className="font-semibold text-neutral-900"
                   >
                     {item.target.name}
                   </Link>
                 ) : (
-                  <span className="font-semibold text-neutral-900 dark:text-white">
+                  <span className="font-semibold text-neutral-900">
                     {item.target?.name}
                   </span>
                 )}
@@ -215,7 +215,7 @@ export function FeedCard({
               item.event && (
                 <>
                   {' '}
-                  <span className="font-semibold text-neutral-900 dark:text-white">
+                  <span className="font-semibold text-neutral-900">
                     {item.event.name}
                   </span>
                 </>
@@ -223,7 +223,7 @@ export function FeedCard({
           </p>
 
           {/* Time ago */}
-          <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
+          <p className="text-xs text-neutral-400 mt-0.5">
             {timeAgo(item.timestamp)}
           </p>
 
@@ -245,7 +245,7 @@ export function FeedCard({
                     name={item.target.name}
                     size="sm"
                   />
-                  <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                  <span className="text-sm font-medium text-neutral-700">
                     {item.target.name}
                   </span>
                 </Link>
@@ -256,7 +256,7 @@ export function FeedCard({
                     name={item.target.name}
                     size="sm"
                   />
-                  <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                  <span className="text-sm font-medium text-neutral-700">
                     {item.target.name}
                   </span>
                 </div>
@@ -270,7 +270,7 @@ export function FeedCard({
           <button
             onClick={() => onFollow(item.actor.slug!, item.actor.id)}
             aria-label={`Follow ${item.actor.name}`}
-            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition-colors"
           >
             <UserPlus className="w-3.5 h-3.5" />
             Follow

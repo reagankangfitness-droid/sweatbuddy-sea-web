@@ -145,7 +145,7 @@ function NextEventCard({ booking }: { booking: BookedEvent }) {
   const [showCalendarMenu, setShowCalendarMenu] = useState(false)
 
   return (
-    <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 dark:from-neutral-800 dark:to-neutral-900 rounded-2xl p-4 mb-8 text-white relative overflow-hidden">
+    <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-2xl p-4 mb-8 text-white relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
 
@@ -225,12 +225,12 @@ function NextEventCard({ booking }: { booking: BookedEvent }) {
                   className="fixed inset-0 z-40"
                   onClick={() => setShowCalendarMenu(false)}
                 />
-                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden z-50">
+                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-xl shadow-lg border border-neutral-200 overflow-hidden z-50">
                   <a
                     href={generateCalendarUrl(booking, 'google')}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-900 dark:text-white text-sm"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-100 text-neutral-900 text-sm"
                     onClick={() => setShowCalendarMenu(false)}
                   >
                     <span className="text-lg">📅</span>
@@ -239,7 +239,7 @@ function NextEventCard({ booking }: { booking: BookedEvent }) {
                   <a
                     href={generateCalendarUrl(booking, 'apple')}
                     download={`${booking.activity.title.replace(/\s+/g, '-')}.ics`}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-900 dark:text-white text-sm border-t border-neutral-100 dark:border-neutral-700"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-100 text-neutral-900 text-sm border-t border-neutral-100"
                     onClick={() => setShowCalendarMenu(false)}
                   >
                     <span className="text-lg">🍎</span>
@@ -273,24 +273,24 @@ function StatsCard({ pastEvents, upcomingEvents }: { pastEvents: BookedEvent[]; 
 
   return (
     <div className="grid grid-cols-2 gap-3 mb-8">
-      <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 p-4">
+      <div className="bg-white rounded-xl border border-neutral-100 p-4">
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
             <Flame className="w-4 h-4 text-orange-500" />
           </div>
         </div>
-        <p className="text-2xl font-bold text-neutral-900 dark:text-white">{eventsThisMonth}</p>
-        <p className="text-xs text-neutral-500 dark:text-neutral-400">Events this month</p>
+        <p className="text-2xl font-bold text-neutral-900">{eventsThisMonth}</p>
+        <p className="text-xs text-neutral-500">Events this month</p>
       </div>
 
-      <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 p-4">
+      <div className="bg-white rounded-xl border border-neutral-100 p-4">
         <div className="flex items-center gap-2 mb-1">
-          <div className="w-8 h-8 bg-amber-100 dark:bg-amber-900/30 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
             <Trophy className="w-4 h-4 text-amber-500" />
           </div>
         </div>
-        <p className="text-2xl font-bold text-neutral-900 dark:text-white">{pastEvents.length}</p>
-        <p className="text-xs text-neutral-500 dark:text-neutral-400">Total attended</p>
+        <p className="text-2xl font-bold text-neutral-900">{pastEvents.length}</p>
+        <p className="text-xs text-neutral-500">Total attended</p>
       </div>
     </div>
   )
@@ -301,13 +301,13 @@ function EventCard({ booking, isPast = false }: { booking: BookedEvent; isPast?:
   const [showActions, setShowActions] = useState(false)
 
   return (
-    <div className={`bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden ${isPast ? 'opacity-70' : ''}`}>
+    <div className={`bg-white rounded-2xl border border-neutral-100 overflow-hidden ${isPast ? 'opacity-70' : ''}`}>
       <Link
         href={`/e/${booking.activity.slug || booking.activity.id}`}
         className="flex"
       >
         {/* Image */}
-        <div className="w-20 h-20 flex-shrink-0 bg-neutral-100 dark:bg-neutral-800 relative">
+        <div className="w-20 h-20 flex-shrink-0 bg-neutral-100 relative">
           {booking.activity.imageUrl ? (
             <Image
               src={booking.activity.imageUrl}
@@ -325,19 +325,19 @@ function EventCard({ booking, isPast = false }: { booking: BookedEvent; isPast?:
         {/* Details */}
         <div className="flex-1 p-3 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase">
+            <span className="text-xs font-medium text-neutral-500 uppercase">
               {booking.activity.type}
             </span>
             {isPast && (
-              <span className="text-[10px] px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 rounded">
+              <span className="text-[10px] px-1.5 py-0.5 bg-neutral-100 text-neutral-500 rounded">
                 Completed
               </span>
             )}
           </div>
-          <h4 className="font-medium text-neutral-900 dark:text-white line-clamp-1 text-sm">
+          <h4 className="font-medium text-neutral-900 line-clamp-1 text-sm">
             {booking.activity.title}
           </h4>
-          <div className="flex items-center gap-3 mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+          <div className="flex items-center gap-3 mt-1 text-xs text-neutral-500">
             {booking.activity.startTime && (
               <span className="flex items-center gap-1">
                 <Clock className="w-3 h-3" />
@@ -355,26 +355,26 @@ function EventCard({ booking, isPast = false }: { booking: BookedEvent; isPast?:
         </div>
 
         <div className="flex items-center pr-3">
-          <ChevronRight className="w-4 h-4 text-neutral-300 dark:text-neutral-600" />
+          <ChevronRight className="w-4 h-4 text-neutral-300" />
         </div>
       </Link>
 
       {/* Quick Actions for upcoming events */}
       {!isPast && (
-        <div className="flex border-t border-neutral-100 dark:border-neutral-800">
+        <div className="flex border-t border-neutral-100">
           <button
             onClick={() => openDirections(booking.activity.latitude, booking.activity.longitude, booking.activity.city)}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-neutral-600 hover:bg-neutral-50 transition-colors"
           >
             <Navigation className="w-3.5 h-3.5" />
             Directions
           </button>
-          <div className="w-px bg-neutral-100 dark:bg-neutral-800" />
+          <div className="w-px bg-neutral-100" />
           <a
             href={generateCalendarUrl(booking, 'google')}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-neutral-600 hover:bg-neutral-50 transition-colors"
           >
             <CalendarPlus className="w-3.5 h-3.5" />
             Add to Cal
@@ -434,7 +434,7 @@ export default function SchedulePage() {
   // Show loading while checking auth
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
       </div>
     )
@@ -443,18 +443,18 @@ export default function SchedulePage() {
   // Not signed in - show sign in prompt
   if (!isSignedIn) {
     return (
-      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+      <div className="min-h-screen bg-neutral-50">
         {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="flex items-center gap-4 px-4 py-3">
               <Link
                 href="/"
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
               >
-                <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+                <ArrowLeft className="w-5 h-5 text-neutral-700" />
               </Link>
-              <h1 className="text-lg font-semibold text-neutral-900 dark:text-white">My Schedule</h1>
+              <h1 className="text-lg font-semibold text-neutral-900">My Schedule</h1>
             </div>
           </div>
         </header>
@@ -462,22 +462,22 @@ export default function SchedulePage() {
         {/* Sign in prompt */}
         <main className="pt-24 pb-24 px-4">
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-100 dark:border-neutral-700 shadow-sm mb-6">
-              <CalendarDays className="w-12 h-12 text-neutral-300 dark:text-neutral-600" />
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-2xl border border-neutral-100 shadow-sm mb-6">
+              <CalendarDays className="w-12 h-12 text-neutral-300" />
             </div>
-            <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">See your schedule</h2>
-            <p className="text-neutral-600 dark:text-neutral-400 mb-8 max-w-xs mx-auto">
+            <h2 className="text-xl font-bold text-neutral-900 mb-2">See your schedule</h2>
+            <p className="text-neutral-600 mb-8 max-w-xs mx-auto">
               Sign in to view your booked experiences and track your fitness journey.
             </p>
             <Link
               href="/sign-in?redirect_url=/saved"
-              className="inline-flex items-center gap-2 bg-neutral-900 dark:bg-white px-6 py-3 text-base font-semibold rounded-full shadow-md hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors text-white dark:text-neutral-900"
+              className="inline-flex items-center gap-2 bg-neutral-900 px-6 py-3 text-base font-semibold rounded-full shadow-md hover:bg-neutral-700 transition-colors text-white"
             >
               Sign in to continue
             </Link>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-4">
+            <p className="text-sm text-neutral-500 mt-4">
               Don&apos;t have an account?{' '}
-              <Link href="/sign-up?redirect_url=/saved" className="text-neutral-900 dark:text-white font-medium hover:underline">
+              <Link href="/sign-up?redirect_url=/saved" className="text-neutral-900 font-medium hover:underline">
                 Sign up
               </Link>
             </p>
@@ -488,20 +488,20 @@ export default function SchedulePage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+    <div className="min-h-screen bg-neutral-50">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center gap-4 px-4 py-3">
             <Link
               href="/"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
             >
-              <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+              <ArrowLeft className="w-5 h-5 text-neutral-700" />
             </Link>
             <div>
-              <h1 className="text-lg font-semibold text-neutral-900 dark:text-white">My Schedule</h1>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400">
+              <h1 className="text-lg font-semibold text-neutral-900">My Schedule</h1>
+              <p className="text-xs text-neutral-500">
                 {upcomingEvents.length} upcoming • {pastEvents.length} past
               </p>
             </div>
@@ -514,19 +514,19 @@ export default function SchedulePage() {
         {isLoading ? (
           <div className="space-y-4 mt-4">
             {/* Skeleton for next event */}
-            <div className="animate-pulse bg-neutral-200 dark:bg-neutral-800 rounded-2xl h-48" />
+            <div className="animate-pulse bg-neutral-200 rounded-2xl h-48" />
             {/* Skeleton for stats */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="animate-pulse bg-white dark:bg-neutral-900 rounded-xl h-24 border border-neutral-100 dark:border-neutral-800" />
-              <div className="animate-pulse bg-white dark:bg-neutral-900 rounded-xl h-24 border border-neutral-100 dark:border-neutral-800" />
+              <div className="animate-pulse bg-white rounded-xl h-24 border border-neutral-100" />
+              <div className="animate-pulse bg-white rounded-xl h-24 border border-neutral-100" />
             </div>
             {/* Skeleton for events */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[1, 2].map((col) => (
                 <div key={col} className="space-y-3">
-                  <div className="h-6 bg-neutral-200 dark:bg-neutral-800 rounded w-32" />
+                  <div className="h-6 bg-neutral-200 rounded w-32" />
                   {[1, 2].map((i) => (
-                    <div key={i} className="animate-pulse bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 h-24" />
+                    <div key={i} className="animate-pulse bg-white rounded-xl border border-neutral-100 h-24" />
                   ))}
                 </div>
               ))}
@@ -534,30 +534,30 @@ export default function SchedulePage() {
           </div>
         ) : error ? (
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-50 rounded-full mb-4">
               <X className="w-8 h-8 text-red-500" />
             </div>
-            <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">Failed to load schedule</h2>
-            <p className="text-neutral-600 dark:text-neutral-400 mb-4">{error}</p>
+            <h2 className="text-lg font-semibold text-neutral-900 mb-2">Failed to load schedule</h2>
+            <p className="text-neutral-600 mb-4">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full text-sm font-medium"
+              className="px-4 py-2 bg-neutral-900 text-white rounded-full text-sm font-medium"
             >
               Try again
             </button>
           </div>
         ) : upcomingEvents.length === 0 && pastEvents.length === 0 ? (
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-white dark:bg-neutral-800 rounded-2xl border border-neutral-100 dark:border-neutral-700 shadow-sm mb-6">
-              <CalendarDays className="w-10 h-10 text-neutral-300 dark:text-neutral-600" />
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl border border-neutral-100 shadow-sm mb-6">
+              <CalendarDays className="w-10 h-10 text-neutral-300" />
             </div>
-            <h2 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">No events yet</h2>
-            <p className="text-neutral-600 dark:text-neutral-400 mb-6">
+            <h2 className="text-lg font-semibold text-neutral-900 mb-2">No events yet</h2>
+            <p className="text-neutral-600 mb-6">
               Book an event to see it in your schedule.
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-neutral-900 dark:bg-white px-6 py-3 text-base font-semibold rounded-full shadow-md hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors text-white dark:text-neutral-900"
+              className="inline-flex items-center gap-2 bg-neutral-900 px-6 py-3 text-base font-semibold rounded-full shadow-md hover:bg-neutral-700 transition-colors text-white"
             >
               Browse Events
             </Link>
@@ -575,22 +575,22 @@ export default function SchedulePage() {
               {/* Upcoming Events Column */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 bg-neutral-900 dark:bg-white rounded-lg flex items-center justify-center">
-                    <CalendarDays className="w-4 h-4 text-white dark:text-neutral-900" />
+                  <div className="w-8 h-8 bg-neutral-900 rounded-lg flex items-center justify-center">
+                    <CalendarDays className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Upcoming</h2>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{upcomingEvents.length} experiences</p>
+                    <h2 className="text-base font-semibold text-neutral-900">Upcoming</h2>
+                    <p className="text-xs text-neutral-500">{upcomingEvents.length} experiences</p>
                   </div>
                 </div>
 
                 {upcomingEvents.length === 0 ? (
-                  <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 p-6 text-center">
-                    <CalendarDays className="w-8 h-8 text-neutral-300 dark:text-neutral-600 mx-auto mb-3" />
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-3">No upcoming experiences</p>
+                  <div className="bg-white rounded-xl border border-neutral-100 p-6 text-center">
+                    <CalendarDays className="w-8 h-8 text-neutral-300 mx-auto mb-3" />
+                    <p className="text-sm text-neutral-500 mb-3">No upcoming experiences</p>
                     <Link
                       href="/"
-                      className="text-sm font-medium text-neutral-900 dark:text-white hover:underline"
+                      className="text-sm font-medium text-neutral-900 hover:underline"
                     >
                       Browse experiences →
                     </Link>
@@ -602,13 +602,13 @@ export default function SchedulePage() {
                       <EventCard key={booking.id} booking={booking} />
                     ))}
                     {upcomingEvents.length === 1 && (
-                      <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 p-4 text-center">
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                      <div className="bg-white rounded-xl border border-neutral-100 p-4 text-center">
+                        <p className="text-sm text-neutral-500">
                           Your next experience is shown above
                         </p>
                         <Link
                           href="/"
-                          className="text-sm font-medium text-neutral-900 dark:text-white hover:underline mt-2 inline-block"
+                          className="text-sm font-medium text-neutral-900 hover:underline mt-2 inline-block"
                         >
                           Book more experiences →
                         </Link>
@@ -621,20 +621,20 @@ export default function SchedulePage() {
               {/* Past Events Column */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 bg-neutral-200 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
-                    <History className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                  <div className="w-8 h-8 bg-neutral-200 rounded-lg flex items-center justify-center">
+                    <History className="w-4 h-4 text-neutral-600" />
                   </div>
                   <div>
-                    <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Past Events</h2>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">{pastEvents.length} attended</p>
+                    <h2 className="text-base font-semibold text-neutral-900">Past Events</h2>
+                    <p className="text-xs text-neutral-500">{pastEvents.length} attended</p>
                   </div>
                 </div>
 
                 {pastEvents.length === 0 ? (
-                  <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-100 dark:border-neutral-800 p-6 text-center">
-                    <History className="w-8 h-8 text-neutral-300 dark:text-neutral-600 mx-auto mb-3" />
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">No past experiences yet</p>
-                    <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
+                  <div className="bg-white rounded-xl border border-neutral-100 p-6 text-center">
+                    <History className="w-8 h-8 text-neutral-300 mx-auto mb-3" />
+                    <p className="text-sm text-neutral-500">No past experiences yet</p>
+                    <p className="text-xs text-neutral-400 mt-1">
                       Your attended experiences will appear here
                     </p>
                   </div>
@@ -646,7 +646,7 @@ export default function SchedulePage() {
                     {pastEvents.length > 10 && (
                       <Link
                         href="/my-bookings"
-                        className="block text-center py-3 text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
+                        className="block text-center py-3 text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
                       >
                         View all {pastEvents.length} past experiences →
                       </Link>

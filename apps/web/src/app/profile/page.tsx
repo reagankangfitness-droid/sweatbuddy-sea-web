@@ -87,10 +87,10 @@ export default function ProfilePage() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
         <div className="animate-pulse">
-          <div className="w-20 h-20 bg-neutral-200 dark:bg-neutral-800 rounded-full mb-4" />
-          <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded-lg w-32 mx-auto" />
+          <div className="w-20 h-20 bg-neutral-200 rounded-full mb-4" />
+          <div className="h-4 bg-neutral-200 rounded-lg w-32 mx-auto" />
         </div>
       </div>
     )
@@ -98,33 +98,33 @@ export default function ProfilePage() {
 
   if (!isSignedIn) {
     return (
-      <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
-        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+      <div className="min-h-screen bg-neutral-50">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="flex items-center gap-4 px-4 py-3">
               <Link
                 href="/"
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
               >
-                <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+                <ArrowLeft className="w-5 h-5 text-neutral-700" />
               </Link>
-              <h1 className="text-lg font-semibold text-neutral-900 dark:text-white">Profile</h1>
+              <h1 className="text-lg font-semibold text-neutral-900">Profile</h1>
             </div>
           </div>
         </header>
 
         <main className="pt-24 pb-24 px-4">
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-white dark:bg-neutral-800 rounded-full border border-neutral-100 dark:border-neutral-700 shadow-sm mb-6">
-              <User className="w-12 h-12 text-neutral-300 dark:text-neutral-600" />
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-full border border-neutral-100 shadow-sm mb-6">
+              <User className="w-12 h-12 text-neutral-300" />
             </div>
-            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Join SweatBuddies</h2>
-            <p className="text-neutral-600 dark:text-neutral-400 mb-8 max-w-xs mx-auto">
+            <h2 className="text-2xl font-bold text-neutral-900 mb-2">Join SweatBuddies</h2>
+            <p className="text-neutral-600 mb-8 max-w-xs mx-auto">
               Sign in to track your fitness journey and connect with your workout crew.
             </p>
 
             <SignInButton mode="modal">
-              <button className="w-full max-w-xs bg-neutral-900 dark:bg-white py-4 text-base font-semibold rounded-full shadow-md hover:bg-neutral-700 dark:hover:bg-neutral-200 transition-colors text-white dark:text-neutral-900">
+              <button className="w-full max-w-xs bg-neutral-900 py-4 text-base font-semibold rounded-full shadow-md hover:bg-neutral-700 transition-colors text-white">
                 Sign In / Sign Up
               </button>
             </SignInButton>
@@ -139,18 +139,18 @@ export default function ProfilePage() {
   const isHost = profile?.isHost
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+    <div className="min-h-screen bg-neutral-50">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center gap-4 px-4 py-3">
             <Link
               href="/events"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
             >
-              <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+              <ArrowLeft className="w-5 h-5 text-neutral-700" />
             </Link>
-            <h1 className="text-lg font-semibold text-neutral-900 dark:text-white">Profile</h1>
+            <h1 className="text-lg font-semibold text-neutral-900">Profile</h1>
           </div>
         </div>
       </header>
@@ -158,10 +158,10 @@ export default function ProfilePage() {
       {/* Content */}
       <main className="pt-20 pb-24 px-4 max-w-lg mx-auto">
         {/* Profile Card */}
-        <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 p-4 mb-8">
+        <div className="bg-white rounded-2xl border border-neutral-100 p-4 mb-8">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-neutral-100 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0">
+              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-neutral-100 bg-neutral-100 flex-shrink-0">
                 {user?.imageUrl ? (
                   <Image
                     src={user.imageUrl}
@@ -172,28 +172,28 @@ export default function ProfilePage() {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <User className="w-8 h-8 text-neutral-400 dark:text-neutral-500" />
+                    <User className="w-8 h-8 text-neutral-400" />
                   </div>
                 )}
               </div>
               {isHost && (
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center border-2 border-white dark:border-neutral-900">
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center border-2 border-white">
                   <BadgeCheck className="w-3.5 h-3.5 text-white" />
                 </div>
               )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-semibold text-neutral-900 dark:text-white truncate">
+                <h2 className="text-lg font-semibold text-neutral-900 truncate">
                   {user?.fullName || user?.firstName || 'SweatBuddy'}
                 </h2>
                 {isHost && (
-                  <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-medium rounded-full">
+                  <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
                     Host
                   </span>
                 )}
               </div>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 truncate">
+              <p className="text-sm text-neutral-500 truncate">
                 {user?.primaryEmailAddress?.emailAddress}
               </p>
             </div>
@@ -202,74 +202,74 @@ export default function ProfilePage() {
 
         {/* My Activity Section */}
         <div className="mb-8">
-          <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-1 mb-2">
+          <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider px-1 mb-2">
             My Activity
           </h3>
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden">
+          <div className="bg-white rounded-2xl border border-neutral-100 overflow-hidden">
             {isHost && (
               <Link
                 href="/host/dashboard"
-                className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+                className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 bg-amber-100 dark:bg-amber-900/30 rounded-lg flex items-center justify-center">
-                    <LayoutDashboard className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  <div className="w-9 h-9 bg-amber-100 rounded-lg flex items-center justify-center">
+                    <LayoutDashboard className="w-4 h-4 text-amber-600" />
                   </div>
                   <div>
-                    <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">Host Dashboard</span>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">Manage experiences & community</p>
+                    <span className="text-neutral-800 text-sm font-medium">Host Dashboard</span>
+                    <p className="text-xs text-neutral-500">Manage experiences & community</p>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+                <ChevronRight className="w-5 h-5 text-neutral-300" />
               </Link>
             )}
 
             <Link
               href="/my-bookings"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
-                  <Ticket className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                <div className="w-9 h-9 bg-neutral-100 rounded-lg flex items-center justify-center">
+                  <Ticket className="w-4 h-4 text-neutral-600" />
                 </div>
                 <div>
-                  <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">My Bookings</span>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Upcoming & past events</p>
+                  <span className="text-neutral-800 text-sm font-medium">My Bookings</span>
+                  <p className="text-xs text-neutral-500">Upcoming & past events</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+              <ChevronRight className="w-5 h-5 text-neutral-300" />
             </Link>
 
             <Link
               href="/saved"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
-                  <Heart className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                <div className="w-9 h-9 bg-neutral-100 rounded-lg flex items-center justify-center">
+                  <Heart className="w-4 h-4 text-neutral-600" />
                 </div>
                 <div>
-                  <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">Saved</span>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Events you&apos;ve saved</p>
+                  <span className="text-neutral-800 text-sm font-medium">Saved</span>
+                  <p className="text-xs text-neutral-500">Events you&apos;ve saved</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+              <ChevronRight className="w-5 h-5 text-neutral-300" />
             </Link>
 
             <Link
               href="/crews"
-              className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
-                  <MessageCircle className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                <div className="w-9 h-9 bg-neutral-100 rounded-lg flex items-center justify-center">
+                  <MessageCircle className="w-4 h-4 text-neutral-600" />
                 </div>
                 <div>
-                  <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">My Crews</span>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">Communities you&apos;ve joined</p>
+                  <span className="text-neutral-800 text-sm font-medium">My Crews</span>
+                  <p className="text-xs text-neutral-500">Communities you&apos;ve joined</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+              <ChevronRight className="w-5 h-5 text-neutral-300" />
             </Link>
           </div>
         </div>
@@ -277,24 +277,24 @@ export default function ProfilePage() {
         {/* Host Tools Section - Only show for non-hosts or when AI Tools not shown */}
         {!isHost && (
           <div className="mb-8">
-            <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-1 mb-2">
+            <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider px-1 mb-2">
               Host Tools
             </h3>
-            <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden">
+            <div className="bg-white rounded-2xl border border-neutral-100 overflow-hidden">
               <Link
                 href="/host/dashboard"
-                className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+                className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
-                    <LayoutDashboard className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                  <div className="w-9 h-9 bg-neutral-100 rounded-lg flex items-center justify-center">
+                    <LayoutDashboard className="w-4 h-4 text-neutral-600" />
                   </div>
                   <div>
-                    <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">Host Dashboard</span>
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">Manage experiences & community</p>
+                    <span className="text-neutral-800 text-sm font-medium">Host Dashboard</span>
+                    <p className="text-xs text-neutral-500">Manage experiences & community</p>
                   </div>
                 </div>
-                <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+                <ChevronRight className="w-5 h-5 text-neutral-300" />
               </Link>
             </div>
           </div>
@@ -302,42 +302,42 @@ export default function ProfilePage() {
 
         {/* Account Section */}
         <div className="mb-8">
-          <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider px-1 mb-2">
+          <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider px-1 mb-2">
             Account
           </h3>
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden">
+          <div className="bg-white rounded-2xl border border-neutral-100 overflow-hidden">
             <Link
               href="/settings/profile"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
-                  <Settings className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                <div className="w-9 h-9 bg-neutral-100 rounded-lg flex items-center justify-center">
+                  <Settings className="w-4 h-4 text-neutral-600" />
                 </div>
-                <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">Settings</span>
+                <span className="text-neutral-800 text-sm font-medium">Settings</span>
               </div>
-              <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+              <ChevronRight className="w-5 h-5 text-neutral-300" />
             </Link>
 
             <Link
               href="/support"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
-                  <HelpCircle className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+                <div className="w-9 h-9 bg-neutral-100 rounded-lg flex items-center justify-center">
+                  <HelpCircle className="w-4 h-4 text-neutral-600" />
                 </div>
-                <span className="text-neutral-800 dark:text-neutral-200 text-sm font-medium">Help & Support</span>
+                <span className="text-neutral-800 text-sm font-medium">Help & Support</span>
               </div>
-              <ChevronRight className="w-5 h-5 text-neutral-300 dark:text-neutral-600" />
+              <ChevronRight className="w-5 h-5 text-neutral-300" />
             </Link>
 
             <button
               onClick={() => signOut(() => router.push('/'))}
-              className="w-full flex items-center px-4 py-3.5 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors"
+              className="w-full flex items-center px-4 py-3.5 text-neutral-600 hover:bg-neutral-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-100 dark:bg-neutral-800 rounded-lg flex items-center justify-center">
+                <div className="w-9 h-9 bg-neutral-100 rounded-lg flex items-center justify-center">
                   <LogOut className="w-4 h-4" />
                 </div>
                 <span className="text-sm font-medium">Sign Out</span>

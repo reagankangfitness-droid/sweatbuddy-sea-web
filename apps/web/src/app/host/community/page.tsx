@@ -66,7 +66,7 @@ export default function CommunityPage() {
         // Verify session
         const sessionRes = await fetch('/api/organizer/verify', { method: 'POST' })
         if (!sessionRes.ok) {
-          router.push('/organizer')
+          router.push('/sign-in?intent=host')
           return
         }
 

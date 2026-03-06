@@ -196,7 +196,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
   const selectedType = COMMUNITY_TYPES.find(t => t.id === communityType)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex items-center justify-center p-4">
       <AnimatePresence mode="wait">
         {/* Welcome Screen */}
         {step === 'welcome' && (
@@ -221,7 +221,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white mb-3"
+              className="text-2xl sm:text-3xl font-bold text-neutral-900 mb-3"
             >
               Hey{userName ? `, ${userName.split(' ')[0]}` : ''}! 👋
             </motion.h1>
@@ -230,7 +230,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="text-neutral-600 dark:text-neutral-400 mb-8 text-base sm:text-lg"
+              className="text-neutral-600 mb-8 text-base sm:text-lg"
             >
               I&apos;m your AI assistant. Let me learn about your community so I can give you personalized insights.
             </motion.p>
@@ -243,7 +243,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
             >
               <button
                 onClick={() => setStep('type')}
-                className="w-full py-3 px-6 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-xl font-semibold hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 px-6 bg-neutral-900 text-white rounded-xl font-semibold hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2"
               >
                 Let&apos;s get started
                 <ArrowRight className="w-4 h-4" />
@@ -251,7 +251,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
               <button
                 onClick={handleSkip}
                 disabled={isSubmitting}
-                className="text-sm text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
+                className="text-sm text-neutral-500 hover:text-neutral-700 transition-colors"
               >
                 Skip for now
               </button>
@@ -270,10 +270,10 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
             className="max-w-lg w-full"
           >
             <div className="text-center mb-8">
-              <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white mb-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-2">
                 What type of community do you run?
               </h2>
-              <p className="text-neutral-500 dark:text-neutral-400 text-sm">
+              <p className="text-neutral-500 text-sm">
                 This helps me give you relevant insights and suggestions
               </p>
             </div>
@@ -289,7 +289,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
                   className={`p-4 rounded-xl border-2 text-left transition-all ${
                     communityType === type.id
                       ? `${type.selectedColor} text-white`
-                      : `${type.color} text-neutral-900 dark:text-white`
+                      : `${type.color} text-neutral-900`
                   }`}
                 >
                   <span className="text-2xl mb-2 block">{type.emoji}</span>
@@ -306,14 +306,14 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
             <div className="flex gap-3">
               <button
                 onClick={() => setStep('welcome')}
-                className="px-6 py-3 text-neutral-600 dark:text-neutral-400 font-medium hover:text-neutral-900 dark:hover:text-white transition-colors"
+                className="px-6 py-3 text-neutral-600 font-medium hover:text-neutral-900 transition-colors"
               >
                 Back
               </button>
               <button
                 onClick={() => setStep('details')}
                 disabled={!communityType}
-                className="flex-1 py-3 px-6 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-xl font-semibold hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="flex-1 py-3 px-6 bg-neutral-900 text-white rounded-xl font-semibold hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 Continue
                 <ArrowRight className="w-4 h-4" />
@@ -333,16 +333,16 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
             className="max-w-lg w-full"
           >
             <div className="text-center mb-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-neutral-100 dark:bg-neutral-800 rounded-full text-sm mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-neutral-100 rounded-full text-sm mb-4">
                 <span>{selectedType?.emoji}</span>
-                <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                <span className="font-medium text-neutral-700">
                   {selectedType?.label}
                 </span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white mb-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-2">
                 Tell me more about your community
               </h2>
-              <p className="text-neutral-500 dark:text-neutral-400 text-sm">
+              <p className="text-neutral-500 text-sm">
                 All fields are optional - share what you&apos;re comfortable with
               </p>
             </div>
@@ -350,7 +350,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
             <div className="space-y-4 mb-6">
               {/* Community Name */}
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 mb-2">
                   <Users className="w-4 h-4" />
                   Community Name
                 </label>
@@ -359,13 +359,13 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
                   value={communityName}
                   onChange={(e) => setCommunityName(e.target.value)}
                   placeholder={`e.g., ${selectedType?.id === 'RUN' ? 'Dawn Runners SG' : selectedType?.id === 'YOGA' ? 'Sunrise Yoga Collective' : 'My Awesome Community'}`}
-                  className="w-full px-4 py-3 border border-neutral-200 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl bg-white text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900"
                 />
               </div>
 
               {/* Location */}
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 mb-2">
                   <MapPin className="w-4 h-4" />
                   Usual Location
                 </label>
@@ -374,13 +374,13 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
                   value={communityLocation}
                   onChange={(e) => setCommunityLocation(e.target.value)}
                   placeholder="e.g., East Coast Park, Singapore"
-                  className="w-full px-4 py-3 border border-neutral-200 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl bg-white text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900"
                 />
               </div>
 
               {/* Schedule */}
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-neutral-700 mb-2">
                   <Calendar className="w-4 h-4" />
                   Typical Schedule
                 </label>
@@ -389,13 +389,13 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
                   value={communitySchedule}
                   onChange={(e) => setCommunitySchedule(e.target.value)}
                   placeholder="e.g., Saturdays 6:30am, Tuesdays 7pm"
-                  className="w-full px-4 py-3 border border-neutral-200 dark:border-neutral-700 rounded-xl bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-xl bg-white text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900"
                 />
               </div>
 
               {/* Community Size */}
               <div>
-                <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2 block">
+                <label className="text-sm font-medium text-neutral-700 mb-2 block">
                   Community Size
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -405,13 +405,13 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
                       onClick={() => setCommunitySize(size.id)}
                       className={`p-3 rounded-xl border-2 text-center transition-all ${
                         communitySize === size.id
-                          ? 'border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900'
-                          : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'
+                          ? 'border-neutral-900 bg-neutral-900 text-white'
+                          : 'border-neutral-200 hover:border-neutral-300'
                       }`}
                     >
                       <span className="font-medium text-sm block">{size.label}</span>
                       <span className={`text-xs ${
-                        communitySize === size.id ? 'text-white/70 dark:text-neutral-900/70' : 'text-neutral-500'
+                        communitySize === size.id ? 'text-white/70' : 'text-neutral-500'
                       }`}>
                         {size.description}
                       </span>
@@ -425,14 +425,14 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
               <button
                 onClick={() => setStep('type')}
                 disabled={isSubmitting}
-                className="px-6 py-3 text-neutral-600 dark:text-neutral-400 font-medium hover:text-neutral-900 dark:hover:text-white transition-colors"
+                className="px-6 py-3 text-neutral-600 font-medium hover:text-neutral-900 transition-colors"
               >
                 Back
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex-1 py-3 px-6 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-xl font-semibold hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 py-3 px-6 bg-neutral-900 text-white rounded-xl font-semibold hover:bg-neutral-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>
@@ -478,7 +478,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
               key={loadingMessage}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-neutral-600 dark:text-neutral-400 text-base"
+              className="text-neutral-600 text-base"
             >
               {loadingMessage}
             </motion.div>
@@ -526,7 +526,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white mb-2"
+                className="text-xl sm:text-2xl font-bold text-neutral-900 mb-2"
               >
                 You&apos;re all set! 🎉
               </motion.h2>
@@ -534,7 +534,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="text-neutral-500 dark:text-neutral-400"
+                className="text-neutral-500"
               >
                 Here&apos;s what your AI assistant can do for you
               </motion.p>
@@ -567,12 +567,12 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
             >
               <button
                 onClick={onComplete}
-                className="w-full py-3 px-6 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-xl font-semibold hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 px-6 bg-neutral-900 text-white rounded-xl font-semibold hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2"
               >
                 Go to Dashboard
                 <ArrowRight className="w-4 h-4" />
               </button>
-              <p className="text-center text-xs text-neutral-400 dark:text-neutral-500 mt-3">
+              <p className="text-center text-xs text-neutral-400 mt-3">
                 Look for the chat button in the bottom-right corner anytime
               </p>
             </motion.div>

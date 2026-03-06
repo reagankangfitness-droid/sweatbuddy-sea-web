@@ -62,7 +62,7 @@ export function UnifiedEventClient({ event, initialGoingCount, variant = 'defaul
           {/* Share button */}
           <button
             onClick={handleShare}
-            className="flex items-center justify-center w-12 h-12 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors flex-shrink-0"
+            className="flex items-center justify-center w-12 h-12 rounded-xl bg-neutral-100 text-neutral-600 hover:bg-neutral-200 transition-colors flex-shrink-0"
           >
             {copied ? <Check className="w-5 h-5 text-green-500" /> : <Share2 className="w-5 h-5" />}
           </button>
@@ -180,12 +180,12 @@ export function UnifiedEventClient({ event, initialGoingCount, variant = 'defaul
       {/* Share button */}
       <button
         onClick={handleShare}
-        className="w-full flex items-center justify-center gap-2 py-2.5 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-xl text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-colors"
+        className="w-full flex items-center justify-center gap-2 py-2.5 bg-neutral-100 hover:bg-neutral-200 rounded-xl text-sm font-medium text-neutral-700 transition-colors"
       >
         {copied ? (
           <>
             <Check className="w-4 h-4 text-green-500" />
-            <span className="text-green-600 dark:text-green-400">Link Copied!</span>
+            <span className="text-green-600">Link Copied!</span>
           </>
         ) : (
           <>

@@ -342,13 +342,13 @@ Organized via sweatbuddies
   if (isLoading) {
     return (
       <>
-        <header className="sticky top-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+        <header className="sticky top-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
-                <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200">
+                <ArrowLeft className="w-5 h-5 text-neutral-700" />
               </button>
-              <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Activity Details</span>
+              <span className="text-sm font-medium text-neutral-500">Activity Details</span>
             </div>
           </div>
         </header>
@@ -367,13 +367,13 @@ Organized via sweatbuddies
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+      <header className="sticky top-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
-              <ArrowLeft className="w-5 h-5 text-neutral-700 dark:text-neutral-300" />
+            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200">
+              <ArrowLeft className="w-5 h-5 text-neutral-700" />
             </button>
-            <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Activity Details</span>
+            <span className="text-sm font-medium text-neutral-500">Activity Details</span>
           </div>
         </div>
       </header>
@@ -535,8 +535,8 @@ Organized via sweatbuddies
               </div>
 
               {activity.friendsGoing && activity.friendsGoing.length > 0 && (
-                <div className="rounded-xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/50 p-5">
-                  <h2 className="text-base font-semibold text-indigo-900 dark:text-indigo-200 mb-3 flex items-center gap-2">
+                <div className="rounded-xl bg-indigo-50 border border-indigo-100 p-5">
+                  <h2 className="text-base font-semibold text-indigo-900 mb-3 flex items-center gap-2">
                     <Users className="w-4 h-4" />
                     Friends Going
                   </h2>
@@ -553,11 +553,11 @@ Organized via sweatbuddies
                             unoptimized
                           />
                         ) : (
-                          <div className="w-7 h-7 rounded-full bg-indigo-200 dark:bg-indigo-800 flex items-center justify-center text-xs font-medium text-indigo-700 dark:text-indigo-300">
+                          <div className="w-7 h-7 rounded-full bg-indigo-200 flex items-center justify-center text-xs font-medium text-indigo-700">
                             {(friend.firstName || friend.name || '?').charAt(0)}
                           </div>
                         )}
-                        <span className="text-sm font-medium text-indigo-800 dark:text-indigo-300">
+                        <span className="text-sm font-medium text-indigo-800">
                           {friend.firstName || friend.name || 'Anonymous'}
                         </span>
                       </div>

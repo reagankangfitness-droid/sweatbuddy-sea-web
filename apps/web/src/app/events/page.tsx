@@ -180,16 +180,16 @@ export default function EventsPage() {
   const heroEvent = todayEvents[0]
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+    <div className="min-h-screen bg-neutral-50">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800">
+      <header className="sticky top-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="px-4 py-4">
             <div className="flex items-center justify-between mb-3">
-              <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Events</h1>
+              <h1 className="text-2xl font-bold text-neutral-900">Events</h1>
               <Link
                 href="/host"
-                className="hidden md:flex items-center gap-1.5 px-4 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full text-sm font-semibold"
+                className="hidden md:flex items-center gap-1.5 px-4 py-2 bg-neutral-900 text-white rounded-full text-sm font-semibold"
               >
                 <Plus className="w-4 h-4" />
                 Host
@@ -199,7 +199,7 @@ export default function EventsPage() {
             {/* Category filter pills - horizontal scroll */}
             {availableCategories.length > 0 && (
               <div className="relative -mx-4">
-                <div className="absolute right-0 top-0 bottom-1 w-8 bg-gradient-to-l from-neutral-50 dark:from-neutral-950 to-transparent pointer-events-none z-10" />
+                <div className="absolute right-0 top-0 bottom-1 w-8 bg-gradient-to-l from-neutral-50 to-transparent pointer-events-none z-10" />
               <div
                 ref={categoryScrollRef}
                 className="flex gap-2 overflow-x-auto scrollbar-hide px-4 pb-1"
@@ -208,8 +208,8 @@ export default function EventsPage() {
                   onClick={() => setCategoryFilter(null)}
                   className={`flex-shrink-0 px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${
                     categoryFilter === null
-                      ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900'
-                      : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700'
+                      ? 'bg-neutral-900 text-white'
+                      : 'bg-white text-neutral-600 border border-neutral-200'
                   }`}
                 >
                   All
@@ -220,8 +220,8 @@ export default function EventsPage() {
                     onClick={() => setCategoryFilter(categoryFilter === cat.slug ? null : cat.slug)}
                     className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${
                       categoryFilter === cat.slug
-                        ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900'
-                        : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700'
+                        ? 'bg-neutral-900 text-white'
+                        : 'bg-white text-neutral-600 border border-neutral-200'
                     }`}
                   >
                     <span>{cat.emoji}</span>
@@ -240,14 +240,14 @@ export default function EventsPage() {
         {loading ? (
           /* Loading skeleton - card grid */
           <div className="space-y-6">
-            <div className="h-48 bg-neutral-200 dark:bg-neutral-800 rounded-2xl animate-pulse" />
+            <div className="h-48 bg-neutral-200 rounded-2xl animate-pulse" />
             <div className="grid grid-cols-2 gap-3">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="animate-pulse">
-                  <div className="aspect-[4/3] bg-neutral-200 dark:bg-neutral-800 rounded-2xl" />
+                  <div className="aspect-[4/3] bg-neutral-200 rounded-2xl" />
                   <div className="mt-2 space-y-1.5">
-                    <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-3/4" />
-                    <div className="h-3 bg-neutral-200 dark:bg-neutral-800 rounded w-1/2" />
+                    <div className="h-4 bg-neutral-200 rounded w-3/4" />
+                    <div className="h-3 bg-neutral-200 rounded w-1/2" />
                   </div>
                 </div>
               ))}
@@ -255,20 +255,20 @@ export default function EventsPage() {
           </div>
         ) : filteredEvents.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-4">
+            <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
               <Calendar className="w-8 h-8 text-neutral-400" />
             </div>
-            <p className="text-neutral-900 dark:text-white font-semibold mb-1">
+            <p className="text-neutral-900 font-semibold mb-1">
               {categoryFilter ? 'No events in this category' : 'No events found'}
             </p>
-            <p className="text-neutral-500 dark:text-neutral-400 text-sm max-w-xs mb-6">
+            <p className="text-neutral-500 text-sm max-w-xs mb-6">
               {categoryFilter
                 ? 'Try a different category or check back later.'
                 : 'No upcoming events nearby. Start the movement!'}
             </p>
             <Link
               href="/host"
-              className="flex items-center gap-2 px-6 py-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full font-semibold"
+              className="flex items-center gap-2 px-6 py-3 bg-neutral-900 text-white rounded-full font-semibold"
             >
               <Plus className="w-4 h-4" />
               Host an event
@@ -368,8 +368,8 @@ export default function EventsPage() {
               if (groupKey === 'today' && heroEvent && !categoryFilter) return null
 
               return (
-                <section key={groupKey} className="py-6 md:py-12 first:pt-0 [&:not(:first-child)]:border-t [&:not(:first-child)]:border-neutral-100 [&:not(:first-child)]:dark:border-neutral-800/50">
-                  <h2 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">
+                <section key={groupKey} className="py-6 md:py-12 first:pt-0 [&:not(:first-child)]:border-t [&:not(:first-child)]:border-neutral-100">
+                  <h2 className="text-lg font-bold text-neutral-900 mb-4">
                     {TIME_GROUP_LABELS[groupKey]}
                   </h2>
                   <div className="flex flex-col gap-3 md:grid md:grid-cols-3 md:gap-4">
@@ -386,13 +386,13 @@ export default function EventsPage() {
               <>
                 {/* ── SECONDARY: Popular Right Now ── */}
                 {popularEvents.length > 0 && (
-                  <section className="py-6 md:py-12 border-t border-neutral-200 dark:border-neutral-800">
+                  <section className="py-6 md:py-12 border-t border-neutral-200">
                     <div className="flex items-center gap-2 mb-4">
                       <TrendingUp className="w-4 h-4 text-orange-500" />
-                      <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Popular Right Now</h2>
+                      <h2 className="text-base font-semibold text-neutral-900">Popular Right Now</h2>
                     </div>
                     <div className="relative -mx-4 md:mx-0">
-                      <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-neutral-50 dark:from-neutral-950 to-transparent pointer-events-none z-10 md:hidden" />
+                      <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-neutral-50 to-transparent pointer-events-none z-10 md:hidden" />
                       <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-2 md:px-0 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible">
                         {popularEvents.map((event, index) => (
                           <div key={event.id} className="flex-shrink-0 w-[70vw] md:w-auto">
@@ -406,10 +406,10 @@ export default function EventsPage() {
 
                 {/* ── CONTEXTUAL: Friends Are Going ── */}
                 {friendsGoingEvents.length > 0 && (
-                  <section className="py-6 md:py-12 border-t border-neutral-100 dark:border-neutral-800/50">
+                  <section className="py-6 md:py-12 border-t border-neutral-100">
                     <div className="flex items-center gap-2 mb-3">
                       <Users className="w-4 h-4 text-indigo-500" />
-                      <h2 className="text-base font-semibold text-neutral-900 dark:text-white">Friends Are Going</h2>
+                      <h2 className="text-base font-semibold text-neutral-900">Friends Are Going</h2>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       {friendsGoingEvents.map((event, index) => (
@@ -437,7 +437,7 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
     >
       <Link
         href={getEventUrl(event)}
-        className="block bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-800 overflow-hidden hover:border-neutral-300 dark:hover:border-neutral-700 hover:shadow-lg transition-all group"
+        className="block bg-white rounded-2xl border border-neutral-100 overflow-hidden hover:border-neutral-300 hover:shadow-lg transition-all group"
       >
         {/* Image */}
         <div className={`relative overflow-hidden ${compact ? 'aspect-[3/2]' : 'aspect-[4/3]'}`}>
@@ -450,7 +450,7 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
               unoptimized
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center">
               <span className="text-4xl">{event.emoji}</span>
             </div>
           )}
@@ -463,11 +463,11 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
                 alt={event.hostName}
                 width={28}
                 height={28}
-                className="rounded-full border-2 border-white dark:border-neutral-900 shadow-sm"
+                className="rounded-full border-2 border-white shadow-sm"
                 unoptimized
               />
             ) : (
-              <div className="w-7 h-7 rounded-full bg-neutral-300 dark:bg-neutral-700 border-2 border-white dark:border-neutral-900 shadow-sm" />
+              <div className="w-7 h-7 rounded-full bg-neutral-300 border-2 border-white shadow-sm" />
             )}
           </div>
 
@@ -490,22 +490,22 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
 
         {/* Info */}
         <div className="p-3 pt-4">
-          <h3 className="font-semibold text-sm text-neutral-900 dark:text-white line-clamp-2 leading-tight">
+          <h3 className="font-semibold text-sm text-neutral-900 line-clamp-2 leading-tight">
             {event.title}
           </h3>
 
-          <div className="flex items-center gap-1 mt-1.5 text-sm text-neutral-500 dark:text-neutral-400">
+          <div className="flex items-center gap-1 mt-1.5 text-sm text-neutral-500">
             <Clock className="w-3.5 h-3.5 flex-shrink-0" />
             <span className="truncate">{formatEventTime(event.startTime)}</span>
           </div>
 
-          <div className="flex items-center gap-1 mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">
+          <div className="flex items-center gap-1 mt-0.5 text-sm text-neutral-500">
             <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
             <span className="truncate">{event.locationName}</span>
           </div>
 
           <div className="flex items-center gap-1.5 mt-2">
-            <span className="text-xs text-neutral-400 dark:text-neutral-500 truncate">
+            <span className="text-xs text-neutral-400 truncate">
               by {event.hostName}
             </span>
           </div>
@@ -513,7 +513,7 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
           {event.friendsGoing && event.friendsGoing.length > 0 && (
             <div className="flex items-center gap-1 mt-1.5">
               <Users className="w-3 h-3 flex-shrink-0 text-indigo-500" />
-              <span className="text-xs text-indigo-600 dark:text-indigo-400 truncate">
+              <span className="text-xs text-indigo-600 truncate">
                 {event.friendsGoing.length === 1 ? (
                   <><strong>{event.friendsGoing[0].firstName || event.friendsGoing[0].name}</strong> is going</>
                 ) : event.friendsGoing.length === 2 ? (

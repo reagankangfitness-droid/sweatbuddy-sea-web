@@ -51,15 +51,15 @@ export function CrewChatList() {
   }, [fetchCrews])
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 px-4 pt-6 pb-24">
-      <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-4">Crews</h1>
+    <div className="min-h-screen bg-neutral-50 px-4 pt-6 pb-24">
+      <h1 className="text-2xl font-bold text-neutral-900 mb-4">Crews</h1>
 
       {crews.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-4">
+          <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
             <MessageCircle className="w-8 h-8 text-neutral-400" />
           </div>
-          <p className="text-neutral-500 dark:text-neutral-400 max-w-xs">
+          <p className="text-neutral-500 max-w-xs">
             No crews yet. Join activities on the map to form crews!
           </p>
         </div>
@@ -71,19 +71,19 @@ export function CrewChatList() {
               <button
                 key={c.chatId}
                 onClick={() => setOpenChat(c)}
-                className="flex items-center gap-3 w-full bg-white dark:bg-neutral-900 rounded-2xl p-4 border border-neutral-200 dark:border-neutral-800 text-left"
+                className="flex items-center gap-3 w-full bg-white rounded-2xl p-4 border border-neutral-200 text-left"
               >
-                <div className="w-12 h-12 rounded-2xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-xl shrink-0">
+                <div className="w-12 h-12 rounded-2xl bg-neutral-100 flex items-center justify-center text-xl shrink-0">
                   {activity.emoji}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <p className="font-semibold text-neutral-900 dark:text-white truncate">
+                    <p className="font-semibold text-neutral-900 truncate">
                       {activity.label} — {c.area}
                     </p>
                     <span className="text-xs text-neutral-400 shrink-0">{c.memberCount} members</span>
                   </div>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400 truncate">
+                  <p className="text-sm text-neutral-500 truncate">
                     {c.lastMessage
                       ? `${c.lastMessage.senderName}: ${c.lastMessage.content}`
                       : 'No messages yet'}

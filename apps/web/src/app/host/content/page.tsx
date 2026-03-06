@@ -65,20 +65,20 @@ const LENGTHS: { id: ContentLength; label: string }[] = [
 
 function ContentSkeleton() {
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950">
+    <div className="min-h-screen bg-white">
       <DashboardHeader />
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
         <div className="animate-pulse">
-          <div className="h-8 bg-neutral-200 dark:bg-neutral-800 rounded w-48 mb-2" />
-          <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-72 mb-8" />
+          <div className="h-8 bg-neutral-200 rounded w-48 mb-2" />
+          <div className="h-4 bg-neutral-200 rounded w-72 mb-8" />
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-24 bg-neutral-200 dark:bg-neutral-800 rounded-xl" />
+              <div key={i} className="h-24 bg-neutral-200 rounded-xl" />
             ))}
           </div>
 
-          <div className="h-64 bg-neutral-200 dark:bg-neutral-800 rounded-xl" />
+          <div className="h-64 bg-neutral-200 rounded-xl" />
         </div>
       </main>
     </div>
@@ -209,24 +209,24 @@ export default function ContentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950">
+    <div className="min-h-screen bg-white">
       <DashboardHeader />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-12 pb-28">
         {/* Header */}
         <div className="flex items-start justify-between mb-8">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white mb-1">
+            <h1 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-1">
               Content Generator
             </h1>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400">
+            <p className="text-sm text-neutral-500">
               Create engaging content for your community with AI
             </p>
           </div>
           {contentHistory.length > 0 && (
             <button
               onClick={() => setShowHistory(!showHistory)}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
             >
               <History className="w-4 h-4" />
               History
@@ -236,24 +236,24 @@ export default function ContentPage() {
 
         {/* History Panel */}
         {showHistory && contentHistory.length > 0 && (
-          <div className="mb-6 p-4 bg-neutral-50 dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800">
-            <h3 className="font-medium text-neutral-900 dark:text-white mb-3">Recent Content</h3>
+          <div className="mb-6 p-4 bg-neutral-50 rounded-xl border border-neutral-200">
+            <h3 className="font-medium text-neutral-900 mb-3">Recent Content</h3>
             <div className="space-y-2 max-h-60 overflow-y-auto">
               {contentHistory.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => loadFromHistory(item)}
-                  className="w-full text-left p-3 bg-white dark:bg-neutral-800 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                  className="w-full text-left p-3 bg-white rounded-lg hover:bg-neutral-100 transition-colors"
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-medium text-violet-600 dark:text-violet-400 uppercase">
+                    <span className="text-xs font-medium text-violet-600 uppercase">
                       {item.type.replace('_', ' ')}
                     </span>
                     <span className="text-xs text-neutral-400">
                       {new Date(item.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="text-sm text-neutral-600 dark:text-neutral-300 line-clamp-2">
+                  <p className="text-sm text-neutral-600 line-clamp-2">
                     {item.content}
                   </p>
                 </button>
@@ -264,7 +264,7 @@ export default function ContentPage() {
 
         {/* Content Type Selection */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+          <label className="block text-sm font-medium text-neutral-700 mb-3">
             What do you want to create?
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -274,17 +274,17 @@ export default function ContentPage() {
                 onClick={() => setSelectedType(type.id)}
                 className={`p-4 rounded-xl border-2 text-left transition-all ${
                   selectedType === type.id
-                    ? 'border-violet-500 bg-violet-50 dark:bg-violet-900/20'
-                    : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600'
+                    ? 'border-violet-500 bg-violet-50'
+                    : 'border-neutral-200 hover:border-neutral-300'
                 }`}
               >
-                <div className={`mb-2 ${selectedType === type.id ? 'text-violet-600 dark:text-violet-400' : 'text-neutral-400'}`}>
+                <div className={`mb-2 ${selectedType === type.id ? 'text-violet-600' : 'text-neutral-400'}`}>
                   {type.icon}
                 </div>
-                <p className={`font-medium text-sm ${selectedType === type.id ? 'text-violet-900 dark:text-violet-100' : 'text-neutral-900 dark:text-white'}`}>
+                <p className={`font-medium text-sm ${selectedType === type.id ? 'text-violet-900' : 'text-neutral-900'}`}>
                   {type.label}
                 </p>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+                <p className="text-xs text-neutral-500 mt-0.5">
                   {type.description}
                 </p>
               </button>
@@ -295,7 +295,7 @@ export default function ContentPage() {
         {/* Tone & Length */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
               Tone
             </label>
             <div className="flex flex-wrap gap-2">
@@ -306,7 +306,7 @@ export default function ContentPage() {
                   className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                     selectedTone === tone.id
                       ? 'bg-violet-600 text-white'
-                      : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                   }`}
                 >
                   {tone.emoji} {tone.label}
@@ -316,7 +316,7 @@ export default function ContentPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
               Length
             </label>
             <div className="flex gap-2">
@@ -327,7 +327,7 @@ export default function ContentPage() {
                   className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                     selectedLength === len.id
                       ? 'bg-violet-600 text-white'
-                      : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
                   }`}
                 >
                   {len.label}
@@ -340,14 +340,14 @@ export default function ContentPage() {
         {/* Event Selection (Optional) */}
         {events.length > 0 && (
           <div className="mb-6">
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
               For a specific experience? (optional)
             </label>
             <div className="relative">
               <select
                 value={selectedEvent || ''}
                 onChange={(e) => setSelectedEvent(e.target.value || null)}
-                className="w-full px-4 py-2.5 bg-neutral-100 dark:bg-neutral-800 border-0 rounded-xl text-sm text-neutral-900 dark:text-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-500"
+                className="w-full px-4 py-2.5 bg-neutral-100 border-0 rounded-xl text-sm text-neutral-900 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-500"
               >
                 <option value="">No specific experience</option>
                 {events.map((event) => (
@@ -363,7 +363,7 @@ export default function ContentPage() {
 
         {/* Custom Prompt */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+          <label className="block text-sm font-medium text-neutral-700 mb-2">
             Additional context (optional)
           </label>
           <textarea
@@ -371,7 +371,7 @@ export default function ContentPage() {
             onChange={(e) => setCustomPrompt(e.target.value)}
             placeholder="E.g., Mention we're celebrating our 1-year anniversary, or highlight the new location..."
             rows={2}
-            className="w-full px-4 py-3 bg-neutral-100 dark:bg-neutral-800 border-0 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-violet-500 dark:text-white placeholder:text-neutral-400"
+            className="w-full px-4 py-3 bg-neutral-100 border-0 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-neutral-400"
           />
         </div>
 
@@ -396,24 +396,24 @@ export default function ContentPage() {
 
         {/* Error */}
         {error && (
-          <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-xl">
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <div className="mt-4 p-3 bg-red-50 rounded-xl">
+            <p className="text-sm text-red-600">{error}</p>
           </div>
         )}
 
         {/* Generated Content */}
         {generatedContent && (
-          <div className="mt-8 p-6 bg-neutral-50 dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800">
+          <div className="mt-8 p-6 bg-neutral-50 rounded-xl border border-neutral-200">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-violet-600" />
-                <h3 className="font-semibold text-neutral-900 dark:text-white">Generated Content</h3>
+                <h3 className="font-semibold text-neutral-900">Generated Content</h3>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleGenerate}
                   disabled={isGenerating}
-                  className="p-2 text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
+                  className="p-2 text-neutral-500 hover:text-neutral-700 transition-colors"
                   title="Regenerate"
                 >
                   <RefreshCw className={`w-4 h-4 ${isGenerating ? 'animate-spin' : ''}`} />
@@ -422,8 +422,8 @@ export default function ContentPage() {
                   onClick={handleCopy}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     copied
-                      ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                      : 'bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 hover:bg-violet-200 dark:hover:bg-violet-900/50'
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-violet-100 text-violet-700 hover:bg-violet-200'
                   }`}
                 >
                   {copied ? (
@@ -441,8 +441,8 @@ export default function ContentPage() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-neutral-800 rounded-lg p-4">
-              <p className="text-neutral-900 dark:text-white whitespace-pre-wrap">
+            <div className="bg-white rounded-lg p-4">
+              <p className="text-neutral-900 whitespace-pre-wrap">
                 {generatedContent.content}
               </p>
             </div>
@@ -450,7 +450,7 @@ export default function ContentPage() {
             {generatedContent.metadata?.hashtags && generatedContent.metadata.hashtags.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2">
                 {generatedContent.metadata.hashtags.map((tag, i) => (
-                  <span key={i} className="text-xs text-violet-600 dark:text-violet-400">
+                  <span key={i} className="text-xs text-violet-600">
                     {tag}
                   </span>
                 ))}

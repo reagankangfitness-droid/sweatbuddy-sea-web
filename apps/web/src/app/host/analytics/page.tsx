@@ -194,7 +194,7 @@ export default function AnalyticsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white dark:bg-neutral-950">
+      <div className="min-h-screen bg-white">
         <DashboardHeader />
         <main className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
           <p className="text-red-600">{error}</p>
@@ -208,23 +208,23 @@ export default function AnalyticsPage() {
   const hasData = data.summary.totalRSVPs > 0
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950">
+    <div className="min-h-screen bg-neutral-50">
       <DashboardHeader />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900 mb-2">
             Analytics
           </h1>
-          <p className="text-neutral-500 dark:text-neutral-400">
+          <p className="text-neutral-500">
             Track your experience performance and community growth
           </p>
         </div>
 
         {/* Section Nav Pills */}
         {hasData && (
-          <div className="sticky top-[57px] z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2 bg-neutral-50/95 dark:bg-neutral-950/95 backdrop-blur-lg border-b border-neutral-200 dark:border-neutral-800 mb-6">
+          <div className="sticky top-[57px] z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200 mb-6">
             <div className="flex gap-2 overflow-x-auto scrollbar-hide">
               {[
                 { id: 'overview', label: 'Overview' },
@@ -236,8 +236,8 @@ export default function AnalyticsPage() {
                   onClick={() => scrollTo(pill.id)}
                   className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                     activeSection === pill.id
-                      ? 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900'
-                      : 'bg-white dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700'
+                      ? 'bg-neutral-900 text-white'
+                      : 'bg-white text-neutral-500 border border-neutral-200'
                   }`}
                 >
                   {pill.label}
@@ -248,14 +248,14 @@ export default function AnalyticsPage() {
         )}
 
         {!hasData ? (
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 p-12 text-center">
-            <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="bg-white rounded-2xl border border-neutral-200 p-12 text-center">
+            <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <TrendingUp className="w-8 h-8 text-neutral-400" />
             </div>
-            <h2 className="text-xl font-semibold text-neutral-900 dark:text-white mb-2">
+            <h2 className="text-xl font-semibold text-neutral-900 mb-2">
               No data yet
             </h2>
-            <p className="text-neutral-500 dark:text-neutral-400 max-w-md mx-auto">
+            <p className="text-neutral-500 max-w-md mx-auto">
               Once people start RSVPing to your experiences, you&apos;ll see detailed analytics here.
             </p>
           </div>
@@ -267,53 +267,53 @@ export default function AnalyticsPage() {
                 icon={<Calendar className="w-5 h-5" />}
                 value={data.summary.totalEvents}
                 label="Total Events"
-                color="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                color="bg-blue-100 text-blue-600"
               />
               <StatCard
                 icon={<Users className="w-5 h-5" />}
                 value={data.summary.totalRSVPs}
                 label="Total RSVPs"
-                color="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                color="bg-green-100 text-green-600"
               />
               <StatCard
                 icon={<Target className="w-5 h-5" />}
                 value={`${data.summary.avgShowUpRate}%`}
                 label="Show-up Rate"
-                color="bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
+                color="bg-purple-100 text-purple-600"
               />
               <StatCard
                 icon={<DollarSign className="w-5 h-5" />}
                 value={`$${data.summary.totalRevenue.toFixed(0)}`}
                 label="Total Revenue"
-                color="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
+                color="bg-amber-100 text-amber-600"
               />
               <StatCard
                 icon={<Users className="w-5 h-5" />}
                 value={data.summary.uniqueAttendees}
                 label="Unique People"
-                color="bg-pink-100 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400"
+                color="bg-pink-100 text-pink-600"
               />
               <StatCard
                 icon={data.insights && data.insights.growthRate >= 0 ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
                 value={`${data.insights?.growthRate || 0}%`}
                 label="Growth (3mo)"
                 color={data.insights && data.insights.growthRate >= 0
-                  ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
-                  : "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
+                  ? "bg-emerald-100 text-emerald-600"
+                  : "bg-red-100 text-red-600"
                 }
               />
             </div>
 
             {/* Insights Banner */}
             {data.insights && (data.insights.bestDay || data.insights.bestTime) && (
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-100 dark:border-blue-800 rounded-xl p-4 sm:p-6 mb-8">
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100 rounded-xl p-4 sm:p-6 mb-8">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-white dark:bg-neutral-800 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center flex-shrink-0">
                     <Zap className="w-5 h-5 text-amber-500" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-neutral-900 dark:text-white mb-1">Insights</h3>
-                    <p className="text-sm text-neutral-600 dark:text-neutral-300">
+                    <h3 className="font-semibold text-neutral-900 mb-1">Insights</h3>
+                    <p className="text-sm text-neutral-600">
                       Your experiences perform best on <span className="font-semibold">{data.insights.bestDay || 'weekends'}</span>
                       {data.insights.bestTime && (
                         <> at <span className="font-semibold">{data.insights.bestTime}</span></>
@@ -335,27 +335,27 @@ export default function AnalyticsPage() {
                     key={index}
                     className={`p-4 rounded-xl border ${
                       rec.type === 'success'
-                        ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+                        ? 'bg-green-50 border-green-200'
                         : rec.type === 'warning'
-                        ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
-                        : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+                        ? 'bg-amber-50 border-amber-200'
+                        : 'bg-blue-50 border-blue-200'
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                         rec.type === 'success'
-                          ? 'bg-green-100 dark:bg-green-800'
+                          ? 'bg-green-100'
                           : rec.type === 'warning'
-                          ? 'bg-amber-100 dark:bg-amber-800'
-                          : 'bg-blue-100 dark:bg-blue-800'
+                          ? 'bg-amber-100'
+                          : 'bg-blue-100'
                       }`}>
-                        {rec.type === 'success' && <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />}
-                        {rec.type === 'warning' && <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />}
-                        {rec.type === 'info' && <Info className="w-4 h-4 text-blue-600 dark:text-blue-400" />}
+                        {rec.type === 'success' && <CheckCircle className="w-4 h-4 text-green-600" />}
+                        {rec.type === 'warning' && <AlertTriangle className="w-4 h-4 text-amber-600" />}
+                        {rec.type === 'info' && <Info className="w-4 h-4 text-blue-600" />}
                       </div>
                       <div>
-                        <h4 className="font-semibold text-neutral-900 dark:text-white text-sm">{rec.title}</h4>
-                        <p className="text-xs text-neutral-600 dark:text-neutral-300 mt-1">{rec.description}</p>
+                        <h4 className="font-semibold text-neutral-900 text-sm">{rec.title}</h4>
+                        <p className="text-xs text-neutral-600 mt-1">{rec.description}</p>
                       </div>
                     </div>
                   </div>
@@ -368,37 +368,37 @@ export default function AnalyticsPage() {
               <div className="mb-8">
                 <div className="flex items-center gap-2 mb-4">
                   <Sparkles className="w-5 h-5 text-purple-500" />
-                  <h2 className="font-semibold text-lg text-neutral-900 dark:text-white">Predictions</h2>
-                  <span className="text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded-full">AI Powered</span>
+                  <h2 className="font-semibold text-lg text-neutral-900">Predictions</h2>
+                  <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">AI Powered</span>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Upcoming Events Predictions */}
                   {data.upcomingEventPredictions && data.upcomingEventPredictions.length > 0 && (
-                    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
-                      <div className="px-4 py-3 border-b border-neutral-100 dark:border-neutral-800">
-                        <h3 className="font-semibold text-neutral-900 dark:text-white">Upcoming Events Forecast</h3>
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400">Predicted attendance based on historical data</p>
+                    <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
+                      <div className="px-4 py-3 border-b border-neutral-100">
+                        <h3 className="font-semibold text-neutral-900">Upcoming Events Forecast</h3>
+                        <p className="text-xs text-neutral-500">Predicted attendance based on historical data</p>
                       </div>
-                      <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                      <div className="divide-y divide-neutral-100">
                         {data.upcomingEventPredictions.map((event) => (
-                          <div key={event.id} className="px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
+                          <div key={event.id} className="px-4 py-3 hover:bg-neutral-50">
                             <div className="flex items-center justify-between">
                               <div className="min-w-0 flex-1">
-                                <p className="font-medium text-neutral-900 dark:text-white truncate">{event.name}</p>
-                                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                                <p className="font-medium text-neutral-900 truncate">{event.name}</p>
+                                <p className="text-xs text-neutral-500">
                                   {event.date && new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                                   {event.time && ` • ${event.time}`}
                                 </p>
                               </div>
                               <div className="text-right ml-4">
-                                <p className="text-sm font-semibold text-neutral-900 dark:text-white">
+                                <p className="text-sm font-semibold text-neutral-900">
                                   {event.predictedAttendance} <span className="text-xs font-normal text-neutral-500">/ {event.currentRSVPs} RSVPs</span>
                                 </p>
                                 <p className={`text-xs ${
-                                  event.predictedShowUpRate >= 80 ? 'text-green-600 dark:text-green-400' :
-                                  event.predictedShowUpRate >= 60 ? 'text-amber-600 dark:text-amber-400' :
-                                  'text-red-600 dark:text-red-400'
+                                  event.predictedShowUpRate >= 80 ? 'text-green-600' :
+                                  event.predictedShowUpRate >= 60 ? 'text-amber-600' :
+                                  'text-red-600'
                                 }`}>
                                   {event.predictedShowUpRate}% predicted show-up
                                 </p>
@@ -412,16 +412,16 @@ export default function AnalyticsPage() {
 
                   {/* Revenue Forecast */}
                   {data.revenueForecast && data.revenueForecast.length > 0 && data.summary.totalRevenue > 0 && (
-                    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
-                      <div className="px-4 py-3 border-b border-neutral-100 dark:border-neutral-800">
-                        <h3 className="font-semibold text-neutral-900 dark:text-white">Revenue Forecast</h3>
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400">Projected earnings next 3 months</p>
+                    <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
+                      <div className="px-4 py-3 border-b border-neutral-100">
+                        <h3 className="font-semibold text-neutral-900">Revenue Forecast</h3>
+                        <p className="text-xs text-neutral-500">Projected earnings next 3 months</p>
                       </div>
                       <div className="p-4">
                         <div className="flex items-end justify-between gap-4">
                           {data.revenueForecast.map((forecast, idx) => (
                             <div key={forecast.month} className="flex-1 text-center">
-                              <div className="relative h-24 bg-neutral-100 dark:bg-neutral-800 rounded-lg overflow-hidden mb-2">
+                              <div className="relative h-24 bg-neutral-100 rounded-lg overflow-hidden mb-2">
                                 <div
                                   className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-amber-500 to-amber-400 rounded-lg transition-all"
                                   style={{
@@ -429,12 +429,12 @@ export default function AnalyticsPage() {
                                   }}
                                 />
                               </div>
-                              <p className="text-lg font-bold text-neutral-900 dark:text-white">${forecast.predictedRevenue.toFixed(0)}</p>
-                              <p className="text-xs text-neutral-500 dark:text-neutral-400">{forecast.month}</p>
+                              <p className="text-lg font-bold text-neutral-900">${forecast.predictedRevenue.toFixed(0)}</p>
+                              <p className="text-xs text-neutral-500">{forecast.month}</p>
                               <span className={`text-xs px-1.5 py-0.5 rounded ${
-                                forecast.confidence === 'high' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
-                                forecast.confidence === 'medium' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' :
-                                'bg-neutral-100 dark:bg-neutral-800 text-neutral-500'
+                                forecast.confidence === 'high' ? 'bg-green-100 text-green-700' :
+                                forecast.confidence === 'medium' ? 'bg-amber-100 text-amber-700' :
+                                'bg-neutral-100 text-neutral-500'
                               }`}>
                                 {forecast.confidence}
                               </span>
@@ -588,71 +588,71 @@ export default function AnalyticsPage() {
 
             {/* Top Events Table */}
             {data.topEvents.length > 0 && (
-              <div ref={topEventsRef} id="top-events" className="scroll-mt-28 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
-                <div className="px-4 sm:px-6 py-4 border-b border-neutral-100 dark:border-neutral-800">
-                  <h3 className="font-semibold text-neutral-900 dark:text-white">Top Performing Events</h3>
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400">Ranked by number of RSVPs</p>
+              <div ref={topEventsRef} id="top-events" className="scroll-mt-28 bg-white rounded-xl border border-neutral-200 overflow-hidden">
+                <div className="px-4 sm:px-6 py-4 border-b border-neutral-100">
+                  <h3 className="font-semibold text-neutral-900">Top Performing Events</h3>
+                  <p className="text-sm text-neutral-500">Ranked by number of RSVPs</p>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-neutral-50 dark:bg-neutral-800">
+                    <thead className="bg-neutral-50">
                       <tr>
-                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wider">
                           Event
                         </th>
-                        <th className="px-4 sm:px-6 py-3 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                        <th className="px-4 sm:px-6 py-3 text-right text-xs font-semibold text-neutral-500 uppercase tracking-wider">
                           RSVPs
                         </th>
-                        <th className="px-4 sm:px-6 py-3 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider hidden sm:table-cell">
+                        <th className="px-4 sm:px-6 py-3 text-right text-xs font-semibold text-neutral-500 uppercase tracking-wider hidden sm:table-cell">
                           Attended
                         </th>
-                        <th className="px-4 sm:px-6 py-3 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                        <th className="px-4 sm:px-6 py-3 text-right text-xs font-semibold text-neutral-500 uppercase tracking-wider">
                           Show-up
                         </th>
                         {data.summary.totalRevenue > 0 && (
-                          <th className="px-4 sm:px-6 py-3 text-right text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider hidden sm:table-cell">
+                          <th className="px-4 sm:px-6 py-3 text-right text-xs font-semibold text-neutral-500 uppercase tracking-wider hidden sm:table-cell">
                             Revenue
                           </th>
                         )}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                    <tbody className="divide-y divide-neutral-100">
                       {data.topEvents.map((event, index) => (
-                        <tr key={event.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
+                        <tr key={event.id} className="hover:bg-neutral-50">
                           <td className="px-4 sm:px-6 py-4">
                             <div className="flex items-center gap-3">
-                              <span className="w-6 h-6 bg-neutral-100 dark:bg-neutral-700 rounded-full flex items-center justify-center text-xs font-bold text-neutral-500 dark:text-neutral-400">
+                              <span className="w-6 h-6 bg-neutral-100 rounded-full flex items-center justify-center text-xs font-bold text-neutral-500">
                                 {index + 1}
                               </span>
                               <div className="min-w-0">
-                                <p className="font-medium text-neutral-900 dark:text-white truncate max-w-[200px] sm:max-w-none">
+                                <p className="font-medium text-neutral-900 truncate max-w-[200px] sm:max-w-none">
                                   {event.name}
                                 </p>
                                 {event.date && (
-                                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                                  <p className="text-xs text-neutral-500">
                                     {new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                   </p>
                                 )}
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 sm:px-6 py-4 text-right font-semibold text-neutral-900 dark:text-white">
+                          <td className="px-4 sm:px-6 py-4 text-right font-semibold text-neutral-900">
                             {event.rsvps}
                           </td>
-                          <td className="px-4 sm:px-6 py-4 text-right text-neutral-600 dark:text-neutral-300 hidden sm:table-cell">
+                          <td className="px-4 sm:px-6 py-4 text-right text-neutral-600 hidden sm:table-cell">
                             {event.attended}
                           </td>
                           <td className="px-4 sm:px-6 py-4 text-right">
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                              event.showUpRate >= 80 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' :
-                              event.showUpRate >= 60 ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' :
-                              'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                              event.showUpRate >= 80 ? 'bg-green-100 text-green-700' :
+                              event.showUpRate >= 60 ? 'bg-amber-100 text-amber-700' :
+                              'bg-red-100 text-red-700'
                             }`}>
                               {event.showUpRate}%
                             </span>
                           </td>
                           {data.summary.totalRevenue > 0 && (
-                            <td className="px-4 sm:px-6 py-4 text-right text-neutral-600 dark:text-neutral-300 hidden sm:table-cell">
+                            <td className="px-4 sm:px-6 py-4 text-right text-neutral-600 hidden sm:table-cell">
                               {event.revenue > 0 ? `$${event.revenue.toFixed(0)}` : '—'}
                             </td>
                           )}
@@ -682,12 +682,12 @@ function StatCard({
   color: string
 }) {
   return (
-    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4">
+    <div className="bg-white rounded-xl border border-neutral-200 p-4">
       <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${color}`}>
         {icon}
       </div>
-      <p className="text-2xl font-bold text-neutral-900 dark:text-white">{value}</p>
-      <p className="text-sm text-neutral-500 dark:text-neutral-400">{label}</p>
+      <p className="text-2xl font-bold text-neutral-900">{value}</p>
+      <p className="text-sm text-neutral-500">{label}</p>
     </div>
   )
 }
@@ -702,10 +702,10 @@ function ChartCard({
   children: React.ReactNode
 }) {
   return (
-    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 sm:p-6">
+    <div className="bg-white rounded-xl border border-neutral-200 p-4 sm:p-6">
       <div className="mb-4">
-        <h3 className="font-semibold text-neutral-900 dark:text-white">{title}</h3>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">{subtitle}</p>
+        <h3 className="font-semibold text-neutral-900">{title}</h3>
+        <p className="text-sm text-neutral-500">{subtitle}</p>
       </div>
       {children}
     </div>

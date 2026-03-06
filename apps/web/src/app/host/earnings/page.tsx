@@ -16,12 +16,12 @@ export default function EarningsPage() {
       try {
         const res = await fetch('/api/organizer/verify', { method: 'POST' })
         if (!res.ok) {
-          router.push('/organizer')
+          router.push('/sign-in?intent=host')
           return
         }
         setIsVerifying(false)
       } catch {
-        router.push('/organizer')
+        router.push('/sign-in?intent=host')
       }
     }
 

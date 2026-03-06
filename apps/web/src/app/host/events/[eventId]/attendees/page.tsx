@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { Logo } from '@/components/logo'
 import { BackButton } from '@/components/host/BackButton'
 import { Loader2, Check, X, Clock, Download, User, RefreshCcw, Mail, Users, QrCode, Sparkles } from 'lucide-react'
@@ -149,7 +150,7 @@ export default function AttendeesPage() {
         return a
       }))
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to verify payment')
+      toast.error(err instanceof Error ? err.message : 'Failed to verify payment')
     } finally {
       setVerifyingId(null)
     }
@@ -182,9 +183,9 @@ export default function AttendeesPage() {
         return a
       }))
 
-      alert('Refund processed successfully!')
+      toast.success('Refund processed successfully!')
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed to process refund')
+      toast.error(err instanceof Error ? err.message : 'Failed to process refund')
     } finally {
       setRefundingId(null)
     }

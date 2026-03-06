@@ -1,6 +1,7 @@
 'use client'
 
 import { Share2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 export function ShareButton() {
   return (
@@ -15,7 +16,7 @@ export function ShareButton() {
           }
         } else {
           await navigator.clipboard.writeText(url)
-          alert('Link copied to clipboard!')
+          toast.success('Link copied to clipboard!')
         }
       }}
       className="p-2 text-neutral-600 hover:text-neutral-900 transition-colors"

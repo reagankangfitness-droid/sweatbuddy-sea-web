@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { MapPin, Users, Clock } from 'lucide-react'
 import { PostActivityPromptCompact } from '@/components/post-activity-prompt'
@@ -72,7 +73,7 @@ export function JoinedActivitiesSection({
       // Reload the page to show updated data
       window.location.reload()
     } catch (error) {
-      alert(error instanceof Error ? error.message : 'Failed to cancel booking')
+      toast.error(error instanceof Error ? error.message : 'Failed to cancel booking')
     } finally {
       setCancellingId(null)
     }

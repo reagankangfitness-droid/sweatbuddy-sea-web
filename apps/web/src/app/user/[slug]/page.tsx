@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import Image from 'next/image'
 import {
   MapPin,
@@ -141,7 +142,7 @@ export default function UserProfilePage() {
       } catch { /* cancelled */ }
     } else {
       navigator.clipboard.writeText(url)
-      alert('Link copied to clipboard!')
+      toast.success('Link copied to clipboard!')
     }
   }
 

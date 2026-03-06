@@ -3,9 +3,9 @@ import crypto from 'crypto'
 
 const COOKIE_NAME = 'organizer_session'
 
-// SECURITY: Get session secret from env - fail gracefully if not configured
+// SECURITY: Get session secret from env - require explicit SESSION_SECRET
 function getSessionSecret(): string | null {
-  return process.env.SESSION_SECRET || process.env.ADMIN_SECRET || null
+  return process.env.SESSION_SECRET || null
 }
 
 export interface OrganizerSession {

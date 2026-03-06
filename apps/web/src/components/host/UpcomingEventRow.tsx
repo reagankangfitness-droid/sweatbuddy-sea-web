@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { Copy, Loader2, Users, XCircle } from 'lucide-react'
 import { ShareEventButtons } from './ShareEventButtons'
@@ -62,11 +63,11 @@ export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) 
         throw new Error(data.error || 'Failed to cancel event')
       }
 
-      alert(`Event cancelled. ${data.attendeesNotified} attendee(s) have been notified.`)
+      toast.success(`Event cancelled. ${data.attendeesNotified} attendee(s) have been notified.`)
       setShowCancelConfirm(false)
       onCancelled?.()
     } catch (error) {
-      alert(error instanceof Error ? error.message : 'Failed to cancel event')
+      toast.error(error instanceof Error ? error.message : 'Failed to cancel event')
     } finally {
       setIsCancelling(false)
     }

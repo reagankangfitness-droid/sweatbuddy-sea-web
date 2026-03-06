@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { DollarSign, Users, Clock, CheckCircle, AlertCircle, CreditCard, ChevronRight, XCircle, Ban, AlertTriangle, Star, BarChart3, Wallet, Sparkles, TrendingUp, MessageSquare, ArrowRight, PartyPopper } from 'lucide-react'
 import { DashboardHeader } from '@/components/host/DashboardHeader'
 import { StatCard } from '@/components/host/StatCard'
@@ -221,7 +222,7 @@ export default function HostDashboard() {
         setPulse(data.pulse)
       } else if (res.status === 429) {
         const data = await res.json()
-        alert(data.error || 'Please wait before refreshing again.')
+        toast.error(data.error || 'Please wait before refreshing again.')
       }
     } catch (err) {
       console.error('Failed to refresh pulse:', err)

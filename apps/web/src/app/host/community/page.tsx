@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { DashboardHeader } from '@/components/host/DashboardHeader'
 import { CommunitySkeleton } from '@/components/host/CommunitySkeleton'
 import { Loader2, Users, Search, ChevronDown, ChevronUp, MessageSquare, Check, X } from 'lucide-react'
@@ -124,7 +125,7 @@ export default function CommunityPage() {
 
       setExpandedEmail(null)
     } catch {
-      alert('Failed to save notes')
+      toast.error('Failed to save notes')
     } finally {
       setSavingNotes(false)
     }
@@ -139,7 +140,7 @@ export default function CommunityPage() {
 
   const copyMessage = () => {
     navigator.clipboard.writeText(generateMessage())
-    alert('Message copied to clipboard!')
+    toast.success('Message copied to clipboard!')
     setShowMessageModal(false)
   }
 

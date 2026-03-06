@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { Image, Download, Loader2, X, Smartphone, Square } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface ShareFlyerButtonProps {
   event: {
@@ -86,7 +87,7 @@ export function ShareFlyerButton({ event, compact = false }: ShareFlyerButtonPro
         setShowPicker(false)
       } catch (err) {
         console.error('Flyer generation failed:', err)
-        alert('Failed to generate flyer. Please try again.')
+        toast.error('Failed to generate flyer. Please try again.')
       } finally {
         setIsGenerating(false)
         setFormat(null)

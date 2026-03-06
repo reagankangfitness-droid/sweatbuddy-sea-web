@@ -9,7 +9,7 @@ export function LandingFooter() {
           <Link href="/">
             <LogoWithText size={24} />
           </Link>
-          <nav className="flex items-center gap-5 text-sm text-neutral-500">
+          <nav className="flex flex-wrap justify-center items-center gap-x-5 gap-y-2 text-sm text-neutral-500">
             <Link href="/events" className="hover:text-neutral-900 transition-colors">Events</Link>
             <Link href="/communities" className="hover:text-neutral-900 transition-colors">Communities</Link>
             <Link href="/host" className="hover:text-neutral-900 transition-colors">Host</Link>

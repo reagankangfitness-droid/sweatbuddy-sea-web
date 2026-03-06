@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { LandingClient } from '@/components/landing/LandingClient'
+import { LandingPage as LandingClient } from '@/components/landing/LandingPage'
 
 export const revalidate = 300 // ISR: revalidate every 5 minutes
 

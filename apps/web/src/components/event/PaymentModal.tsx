@@ -105,10 +105,10 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
     return (
       <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center">
         <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-        <div className="relative bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-6">
+        <div className="relative bg-neutral-950 w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-6">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100"
+            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-800"
           >
             <X className="w-5 h-5 text-neutral-500" />
           </button>
@@ -126,16 +126,16 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-6 max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-neutral-950 w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-6 max-h-[90vh] overflow-y-auto">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100"
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-800"
         >
           <X className="w-5 h-5 text-neutral-500" />
         </button>
 
-        <h2 className="text-xl font-bold text-neutral-900 mb-1">
+        <h2 className="text-xl font-bold text-neutral-100 mb-1">
           Pay with PayNow
         </h2>
         <p className="text-sm text-neutral-500 mb-4">
@@ -143,7 +143,7 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
         </p>
 
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm mb-4">
+          <div className="p-3 bg-red-950 border border-red-800 rounded-lg text-red-400 text-sm mb-4">
             {error}
           </div>
         )}
@@ -153,13 +153,13 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
             {/* Step 1: Scan QR */}
             <div className="mb-5">
               <div className="flex items-center gap-2 mb-3">
-                <span className="w-6 h-6 rounded-full bg-neutral-900 text-white text-sm flex items-center justify-center font-semibold">1</span>
-                <span className="font-medium text-neutral-900">Scan QR or transfer to</span>
+                <span className="w-6 h-6 rounded-full bg-white text-neutral-900 text-sm flex items-center justify-center font-semibold">1</span>
+                <span className="font-medium text-neutral-100">Scan QR or transfer to</span>
               </div>
 
-              <div className="flex flex-col items-center bg-neutral-50 rounded-xl p-4">
+              <div className="flex flex-col items-center bg-neutral-900 rounded-xl p-4">
                 {/* QR Code */}
-                <div className="bg-white p-2 rounded-lg shadow-sm mb-3">
+                <div className="bg-neutral-950 p-2 rounded-lg shadow-sm mb-3">
                   <Image
                     src={event.paynowQrCode}
                     alt="PayNow QR Code"
@@ -173,11 +173,11 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
                 {event.paynowNumber && (
                   <button
                     onClick={copyNumber}
-                    className="flex items-center gap-2 px-4 py-2 bg-white border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-neutral-950 border border-neutral-800 rounded-lg hover:bg-neutral-900 transition-colors"
                   >
-                    <span className="text-neutral-900 font-mono font-medium">{event.paynowNumber}</span>
+                    <span className="text-neutral-100 font-mono font-medium">{event.paynowNumber}</span>
                     {copied ? (
-                      <Check className="w-4 h-4 text-green-600" />
+                      <Check className="w-4 h-4 text-green-400" />
                     ) : (
                       <Copy className="w-4 h-4 text-neutral-400" />
                     )}
@@ -189,12 +189,12 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
             {/* Step 2: Amount */}
             <div className="mb-5">
               <div className="flex items-center gap-2 mb-3">
-                <span className="w-6 h-6 rounded-full bg-neutral-900 text-white text-sm flex items-center justify-center font-semibold">2</span>
-                <span className="font-medium text-neutral-900">Transfer this amount</span>
+                <span className="w-6 h-6 rounded-full bg-white text-neutral-900 text-sm flex items-center justify-center font-semibold">2</span>
+                <span className="font-medium text-neutral-100">Transfer this amount</span>
               </div>
 
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
-                <span className="text-3xl font-bold text-neutral-900">${priceFormatted}</span>
+              <div className="bg-amber-950 border border-amber-800 rounded-xl p-4 text-center">
+                <span className="text-3xl font-bold text-neutral-100">${priceFormatted}</span>
                 <span className="text-neutral-500 ml-1">SGD</span>
               </div>
             </div>
@@ -202,7 +202,7 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
             {/* CTA */}
             <button
               onClick={() => setStep('confirm')}
-              className="w-full py-4 bg-neutral-900 text-white rounded-xl font-semibold hover:bg-neutral-800 transition-colors"
+              className="w-full py-4 bg-white text-neutral-900 rounded-xl font-semibold hover:bg-neutral-200 transition-colors"
             >
               I&apos;ve Made the Transfer
             </button>
@@ -216,13 +216,13 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
             {/* Step 3: Enter details */}
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-3">
-                <span className="w-6 h-6 rounded-full bg-neutral-900 text-white text-sm flex items-center justify-center font-semibold">3</span>
-                <span className="font-medium text-neutral-900">Enter your details</span>
+                <span className="w-6 h-6 rounded-full bg-white text-neutral-900 text-sm flex items-center justify-center font-semibold">3</span>
+                <span className="font-medium text-neutral-100">Enter your details</span>
               </div>
 
               {/* Email */}
               <div className="mb-3">
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-300 mb-1">
                   Email *
                 </label>
                 <input
@@ -230,13 +230,13 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:border-neutral-900 text-neutral-900 bg-white"
+                  className="w-full px-4 py-3 border border-neutral-800 rounded-lg focus:outline-none focus:border-neutral-500 text-neutral-100 bg-neutral-950"
                 />
               </div>
 
               {/* Name */}
               <div className="mb-3">
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-300 mb-1">
                   Name (optional)
                 </label>
                 <input
@@ -244,13 +244,13 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your name"
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:border-neutral-900 text-neutral-900 bg-white"
+                  className="w-full px-4 py-3 border border-neutral-800 rounded-lg focus:outline-none focus:border-neutral-500 text-neutral-100 bg-neutral-950"
                 />
               </div>
 
               {/* Payment Reference */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-300 mb-1">
                   PayNow Reference *
                 </label>
                 <input
@@ -258,7 +258,7 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
                   value={paymentReference}
                   onChange={(e) => setPaymentReference(e.target.value.toUpperCase())}
                   placeholder="e.g., 20240115ABC123"
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:border-neutral-900 text-neutral-900 bg-white font-mono uppercase"
+                  className="w-full px-4 py-3 border border-neutral-800 rounded-lg focus:outline-none focus:border-neutral-500 text-neutral-100 bg-neutral-950 font-mono uppercase"
                 />
                 <p className="text-xs text-neutral-400 mt-1">
                   Find this in your PayNow transfer confirmation
@@ -270,7 +270,7 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
             <button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="w-full py-4 bg-neutral-900 text-white rounded-xl font-semibold hover:bg-neutral-800 transition-colors disabled:opacity-50"
+              className="w-full py-4 bg-white text-neutral-900 rounded-xl font-semibold hover:bg-neutral-200 transition-colors disabled:opacity-50"
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">
@@ -285,7 +285,7 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
             {/* Back button */}
             <button
               onClick={() => setStep('pay')}
-              className="w-full py-3 text-neutral-500 text-sm hover:text-neutral-700 mt-2"
+              className="w-full py-3 text-neutral-500 text-sm hover:text-neutral-300 mt-2"
             >
               Back to payment instructions
             </button>
@@ -297,10 +297,10 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
         ) : (
           /* Success State */
           <div className="text-center py-2">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Check className="w-8 h-8 text-green-600" />
+            <div className="w-16 h-16 bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Check className="w-8 h-8 text-green-400" />
             </div>
-            <h3 className="text-xl font-bold text-neutral-900 mb-1">
+            <h3 className="text-xl font-bold text-neutral-100 mb-1">
               Payment Submitted! 🎉
             </h3>
             <p className="text-sm text-neutral-500 mb-4">
@@ -309,9 +309,9 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
 
             {/* Event Summary Card */}
             {(event.day || event.time || event.location) && (
-              <div className="bg-neutral-50 rounded-xl p-4 mb-4 text-left">
+              <div className="bg-neutral-900 rounded-xl p-4 mb-4 text-left">
                 {(event.day || event.time) && (
-                  <div className="flex items-center gap-2 text-sm text-neutral-600">
+                  <div className="flex items-center gap-2 text-sm text-neutral-400">
                     <span>📅</span>
                     <span>{event.day} {event.time && `· ${event.time}`}</span>
                   </div>
@@ -329,7 +329,7 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
             <div className="space-y-3">
               <button
                 onClick={() => window.open(generateCalendarUrl(), '_blank')}
-                className="w-full py-3 border border-neutral-200 rounded-xl font-medium hover:bg-neutral-50 transition flex items-center justify-center gap-2"
+                className="w-full py-3 border border-neutral-800 rounded-xl font-medium hover:bg-neutral-900 transition flex items-center justify-center gap-2"
               >
                 <Calendar className="w-5 h-5" />
                 Add to Calendar
@@ -360,7 +360,7 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
 
               <button
                 onClick={onClose}
-                className="w-full py-3 bg-neutral-900 text-white rounded-xl font-medium hover:bg-neutral-800 transition"
+                className="w-full py-3 bg-white text-neutral-900 rounded-xl font-medium hover:bg-neutral-200 transition"
               >
                 Done
               </button>

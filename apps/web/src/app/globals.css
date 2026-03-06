@@ -39,26 +39,26 @@
     --neutral-950: #0A0A0A;
 
     /* Text Colors - Hierarchy through opacity/weight, not color */
-    --text-primary: #171717;
-    --text-secondary: #525252;
-    --text-tertiary: #6B6B6B;
-    --text-muted: #757575;
+    --text-primary: #F5F5F5;
+    --text-secondary: #A3A3A3;
+    --text-tertiary: #737373;
+    --text-muted: #636363;
 
     /* Backgrounds */
-    --background: #FFFFFF;
-    --background-secondary: #FAFAFA;
-    --surface: #FFFFFF;
+    --background: #0A0A0A;
+    --background-secondary: #141414;
+    --surface: #141414;
 
-    /* Primary = Black (this is the only "accent") */
-    --primary: #171717;
-    --primary-hover: #404040;
-    --primary-foreground: #FFFFFF;
+    /* Primary = White (inverted for dark mode) */
+    --primary: #FFFFFF;
+    --primary-hover: #E5E5E5;
+    --primary-foreground: #0A0A0A;
 
     /* Semantic Colors (minimal, functional only) */
     --success: #16A34A;
-    --success-light: #F0FDF4;
+    --success-light: #052E16;
     --error: #DC2626;
-    --error-light: #FEF2F2;
+    --error-light: #450A0A;
 
     /* Legacy compatibility - all mapped to neutrals */
     --gray-50: #FAFAFA;
@@ -94,10 +94,27 @@
     --cream: #FFFFFF;
     --mist: #F5F5F5;
 
+    /* shadcn/ui compatibility — dark mode values */
+    --foreground: #F5F5F5;
+    --card: #171717;
+    --card-foreground: #F5F5F5;
+    --popover: #171717;
+    --popover-foreground: #F5F5F5;
+    --secondary: #262626;
+    --secondary-foreground: #F5F5F5;
+    --muted: #262626;
+    --muted-foreground: #A3A3A3;
+    --accent: #262626;
+    --accent-foreground: #F5F5F5;
+    --destructive: #DC2626;
+    --destructive-foreground: #FFFFFF;
+    --input: #404040;
+    --ring: #FFFFFF;
+
     /* Borders - subtle, never prominent */
-    --border: #E5E5E5;
-    --border-light: #EDEDED;
-    --border-subtle: #F5F5F5;
+    --border: #262626;
+    --border-light: #1C1C1C;
+    --border-subtle: #171717;
 
     /* Shadows - soft, warm-tinted, creates depth without weight */
     --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -228,7 +245,7 @@
 
   /* Selection styling - neutral, not colored */
   ::selection {
-    background-color: rgba(23, 23, 23, 0.15);
+    background-color: rgba(255, 255, 255, 0.2);
     color: var(--text-primary);
   }
 
@@ -309,7 +326,7 @@
 
 .btn-secondary:hover {
   border-color: var(--neutral-400);
-  background-color: var(--neutral-50);
+  background-color: var(--neutral-800);
 }
 
 .btn-secondary:active {
@@ -338,7 +355,7 @@
 .btn-tertiary:hover,
 .btn-ghost:hover {
   color: var(--text-primary);
-  background-color: var(--neutral-100);
+  background-color: var(--neutral-800);
 }
 
 /* Link button */
@@ -492,7 +509,7 @@
   font-weight: 500;
   line-height: 1;
   border-radius: var(--radius-full);
-  background-color: var(--neutral-100);
+  background-color: var(--neutral-800);
   color: var(--text-secondary);
 }
 
@@ -520,7 +537,7 @@
 .badge-combat,
 .badge-outdoor,
 .badge-social {
-  background-color: var(--neutral-100);
+  background-color: var(--neutral-800);
   color: var(--text-secondary);
 }
 
@@ -629,7 +646,7 @@
 .input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(23, 23, 23, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
 }
 
 .input:hover:not(:focus) {
@@ -659,7 +676,7 @@
 .input-light:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(23, 23, 23, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
 }
 
 /* Search input */
@@ -676,7 +693,7 @@
 
 .search-pill:focus-within {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(23, 23, 23, 0.1);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1048,16 +1065,16 @@
    GLASSMORPHISM & EFFECTS
    ═══════════════════════════════════════════════════════ */
 .glass {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(10, 10, 10, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(23, 23, 23, 0.9);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1184,7 +1201,7 @@
 
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -1196,12 +1213,12 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1922,9 +1939,9 @@
 .skeleton-wave {
   background: linear-gradient(
     90deg,
-    #e5e5e5 0%,
-    #f0f0f0 50%,
-    #e5e5e5 100%
+    #1a1a1a 0%,
+    #262626 50%,
+    #1a1a1a 100%
   );
   background-size: 200% 100%;
   animation: skeletonWave 1.5s ease-in-out infinite;

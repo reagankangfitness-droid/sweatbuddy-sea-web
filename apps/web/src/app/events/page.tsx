@@ -180,16 +180,16 @@ export default function EventsPage() {
   const heroEvent = todayEvents[0]
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+      <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="px-4 py-4">
             <div className="flex items-center justify-between mb-3">
-              <h1 className="text-2xl font-bold text-neutral-900">Events</h1>
+              <h1 className="text-2xl font-bold text-neutral-100">Events</h1>
               <Link
                 href="/host"
-                className="hidden md:flex items-center gap-1.5 px-4 py-2 bg-neutral-900 text-white rounded-full text-sm font-semibold"
+                className="hidden md:flex items-center gap-1.5 px-4 py-2 bg-white text-neutral-900 rounded-full text-sm font-semibold"
               >
                 <Plus className="w-4 h-4" />
                 Host
@@ -199,7 +199,7 @@ export default function EventsPage() {
             {/* Category filter pills - horizontal scroll */}
             {availableCategories.length > 0 && (
               <div className="relative -mx-4">
-                <div className="absolute right-0 top-0 bottom-1 w-8 bg-gradient-to-l from-neutral-50 to-transparent pointer-events-none z-10" />
+                <div className="absolute right-0 top-0 bottom-1 w-8 bg-gradient-to-l from-neutral-950 to-transparent pointer-events-none z-10" />
               <div
                 ref={categoryScrollRef}
                 className="flex gap-2 overflow-x-auto scrollbar-hide px-4 pb-1"
@@ -208,8 +208,8 @@ export default function EventsPage() {
                   onClick={() => setCategoryFilter(null)}
                   className={`flex-shrink-0 px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${
                     categoryFilter === null
-                      ? 'bg-neutral-900 text-white'
-                      : 'bg-white text-neutral-600 border border-neutral-200'
+                      ? 'bg-white text-neutral-900'
+                      : 'bg-neutral-950 text-neutral-400 border border-neutral-800'
                   }`}
                 >
                   All
@@ -220,8 +220,8 @@ export default function EventsPage() {
                     onClick={() => setCategoryFilter(categoryFilter === cat.slug ? null : cat.slug)}
                     className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-medium transition-colors ${
                       categoryFilter === cat.slug
-                        ? 'bg-neutral-900 text-white'
-                        : 'bg-white text-neutral-600 border border-neutral-200'
+                        ? 'bg-white text-neutral-900'
+                        : 'bg-neutral-950 text-neutral-400 border border-neutral-800'
                     }`}
                   >
                     <span>{cat.emoji}</span>
@@ -240,14 +240,14 @@ export default function EventsPage() {
         {loading ? (
           /* Loading skeleton - card grid */
           <div className="space-y-6">
-            <div className="h-48 bg-neutral-200 rounded-2xl animate-pulse" />
+            <div className="h-48 bg-neutral-700 rounded-2xl animate-pulse" />
             <div className="grid grid-cols-2 gap-3">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="animate-pulse">
-                  <div className="aspect-[4/3] bg-neutral-200 rounded-2xl" />
+                  <div className="aspect-[4/3] bg-neutral-700 rounded-2xl" />
                   <div className="mt-2 space-y-1.5">
-                    <div className="h-4 bg-neutral-200 rounded w-3/4" />
-                    <div className="h-3 bg-neutral-200 rounded w-1/2" />
+                    <div className="h-4 bg-neutral-700 rounded w-3/4" />
+                    <div className="h-3 bg-neutral-700 rounded w-1/2" />
                   </div>
                 </div>
               ))}
@@ -255,10 +255,10 @@ export default function EventsPage() {
           </div>
         ) : filteredEvents.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mb-4">
+            <div className="w-16 h-16 bg-neutral-800 rounded-full flex items-center justify-center mb-4">
               <Calendar className="w-8 h-8 text-neutral-400" />
             </div>
-            <p className="text-neutral-900 font-semibold mb-1">
+            <p className="text-neutral-100 font-semibold mb-1">
               {categoryFilter ? 'No events in this category' : 'No events found'}
             </p>
             <p className="text-neutral-500 text-sm max-w-xs mb-6">
@@ -268,7 +268,7 @@ export default function EventsPage() {
             </p>
             <Link
               href="/host"
-              className="flex items-center gap-2 px-6 py-3 bg-neutral-900 text-white rounded-full font-semibold"
+              className="flex items-center gap-2 px-6 py-3 bg-white text-neutral-900 rounded-full font-semibold"
             >
               <Plus className="w-4 h-4" />
               Host an event
@@ -306,7 +306,7 @@ export default function EventsPage() {
 
                     {/* Live badge */}
                     <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 bg-green-500 rounded-full">
-                      <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                      <div className="w-1.5 h-1.5 bg-neutral-950 rounded-full animate-pulse" />
                       <span className="text-white text-xs font-bold uppercase tracking-wide">Today</span>
                     </div>
 
@@ -369,7 +369,7 @@ export default function EventsPage() {
 
               return (
                 <section key={groupKey} className="py-6 md:py-12 first:pt-0 [&:not(:first-child)]:border-t [&:not(:first-child)]:border-neutral-100">
-                  <h2 className="text-lg font-bold text-neutral-900 mb-4">
+                  <h2 className="text-lg font-bold text-neutral-100 mb-4">
                     {TIME_GROUP_LABELS[groupKey]}
                   </h2>
                   <div className="flex flex-col gap-3 md:grid md:grid-cols-3 md:gap-4">
@@ -386,13 +386,13 @@ export default function EventsPage() {
               <>
                 {/* ── SECONDARY: Popular Right Now ── */}
                 {popularEvents.length > 0 && (
-                  <section className="py-6 md:py-12 border-t border-neutral-200">
+                  <section className="py-6 md:py-12 border-t border-neutral-800">
                     <div className="flex items-center gap-2 mb-4">
                       <TrendingUp className="w-4 h-4 text-orange-500" />
-                      <h2 className="text-base font-semibold text-neutral-900">Popular Right Now</h2>
+                      <h2 className="text-base font-semibold text-neutral-100">Popular Right Now</h2>
                     </div>
                     <div className="relative -mx-4 md:mx-0">
-                      <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-neutral-50 to-transparent pointer-events-none z-10 md:hidden" />
+                      <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-neutral-950 to-transparent pointer-events-none z-10 md:hidden" />
                       <div className="flex gap-3 overflow-x-auto scrollbar-hide px-4 pb-2 md:px-0 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible">
                         {popularEvents.map((event, index) => (
                           <div key={event.id} className="flex-shrink-0 w-[70vw] md:w-auto">
@@ -406,10 +406,10 @@ export default function EventsPage() {
 
                 {/* ── CONTEXTUAL: Friends Are Going ── */}
                 {friendsGoingEvents.length > 0 && (
-                  <section className="py-6 md:py-12 border-t border-neutral-100">
+                  <section className="py-6 md:py-12 border-t border-neutral-800">
                     <div className="flex items-center gap-2 mb-3">
                       <Users className="w-4 h-4 text-indigo-500" />
-                      <h2 className="text-base font-semibold text-neutral-900">Friends Are Going</h2>
+                      <h2 className="text-base font-semibold text-neutral-100">Friends Are Going</h2>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       {friendsGoingEvents.map((event, index) => (
@@ -437,7 +437,7 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
     >
       <Link
         href={getEventUrl(event)}
-        className="block bg-white rounded-2xl border border-neutral-100 overflow-hidden hover:border-neutral-300 hover:shadow-lg transition-all group"
+        className="block bg-neutral-950 rounded-2xl border border-neutral-800 overflow-hidden hover:border-neutral-600 hover:shadow-lg transition-all group"
       >
         {/* Image */}
         <div className={`relative overflow-hidden ${compact ? 'aspect-[3/2]' : 'aspect-[4/3]'}`}>
@@ -450,7 +450,7 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
               unoptimized
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-700 flex items-center justify-center">
               <span className="text-4xl">{event.emoji}</span>
             </div>
           )}
@@ -463,11 +463,11 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
                 alt={event.hostName}
                 width={28}
                 height={28}
-                className="rounded-full border-2 border-white shadow-sm"
+                className="rounded-full border-2 border-neutral-700 shadow-sm"
                 unoptimized
               />
             ) : (
-              <div className="w-7 h-7 rounded-full bg-neutral-300 border-2 border-white shadow-sm" />
+              <div className="w-7 h-7 rounded-full bg-neutral-300 border-2 border-neutral-700 shadow-sm" />
             )}
           </div>
 
@@ -490,7 +490,7 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
 
         {/* Info */}
         <div className="p-3 pt-4">
-          <h3 className="font-semibold text-sm text-neutral-900 line-clamp-2 leading-tight">
+          <h3 className="font-semibold text-sm text-neutral-100 line-clamp-2 leading-tight">
             {event.title}
           </h3>
 

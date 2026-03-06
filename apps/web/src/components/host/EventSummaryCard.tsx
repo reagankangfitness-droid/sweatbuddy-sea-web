@@ -75,16 +75,16 @@ export function EventSummaryCard({ eventId }: EventSummaryCardProps) {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl border p-6 animate-pulse">
-        <div className="h-6 bg-neutral-200 rounded w-48 mb-4" />
+      <div className="bg-neutral-950 rounded-xl border p-6 animate-pulse">
+        <div className="h-6 bg-neutral-700 rounded w-48 mb-4" />
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-20 bg-neutral-100 rounded-lg" />
+            <div key={i} className="h-20 bg-neutral-800 rounded-lg" />
           ))}
         </div>
         <div className="space-y-2">
-          <div className="h-4 bg-neutral-100 rounded w-full" />
-          <div className="h-4 bg-neutral-100 rounded w-3/4" />
+          <div className="h-4 bg-neutral-800 rounded w-full" />
+          <div className="h-4 bg-neutral-800 rounded w-3/4" />
         </div>
       </div>
     )
@@ -92,9 +92,9 @@ export function EventSummaryCard({ eventId }: EventSummaryCardProps) {
 
   if (error) {
     return (
-      <div className="bg-white rounded-xl border p-6 text-center">
+      <div className="bg-neutral-950 rounded-xl border p-6 text-center">
         <Sparkles className="w-8 h-8 text-amber-400 mx-auto mb-2" />
-        <p className="text-neutral-600 mb-3">{error}</p>
+        <p className="text-neutral-400 mb-3">{error}</p>
         <button onClick={fetchSummary} className="px-4 py-2 bg-amber-500 text-white rounded-lg text-sm hover:bg-amber-600">
           Try Again
         </button>
@@ -107,13 +107,13 @@ export function EventSummaryCard({ eventId }: EventSummaryCardProps) {
   const metrics = data.metrics
 
   return (
-    <div className="bg-white rounded-xl border overflow-hidden">
+    <div className="bg-neutral-950 rounded-xl border overflow-hidden">
       {/* Header */}
       <div className="p-6 border-b bg-gradient-to-r from-amber-50 to-orange-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-amber-500" />
-            <h3 className="font-semibold text-neutral-900">AI Event Summary</h3>
+            <h3 className="font-semibold text-neutral-100">AI Event Summary</h3>
           </div>
           <button
             onClick={regenerate}
@@ -128,14 +128,14 @@ export function EventSummaryCard({ eventId }: EventSummaryCardProps) {
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-6">
-        <div className="bg-blue-50 rounded-lg p-3 text-center">
-          <Users className="w-5 h-5 text-blue-600 mx-auto mb-1" />
+        <div className="bg-blue-950 rounded-lg p-3 text-center">
+          <Users className="w-5 h-5 text-blue-400 mx-auto mb-1" />
           <div className="text-xl font-bold text-blue-700">{metrics.attendance}</div>
           <div className="text-xs text-blue-500">Attendees</div>
         </div>
-        <div className="bg-green-50 rounded-lg p-3 text-center">
-          <DollarSign className="w-5 h-5 text-green-600 mx-auto mb-1" />
-          <div className="text-xl font-bold text-green-700">${(metrics.revenue / 100).toFixed(0)}</div>
+        <div className="bg-green-950 rounded-lg p-3 text-center">
+          <DollarSign className="w-5 h-5 text-green-400 mx-auto mb-1" />
+          <div className="text-xl font-bold text-green-400">${(metrics.revenue / 100).toFixed(0)}</div>
           <div className="text-xs text-green-500">Revenue</div>
         </div>
         <div className="bg-purple-50 rounded-lg p-3 text-center">
@@ -143,16 +143,16 @@ export function EventSummaryCard({ eventId }: EventSummaryCardProps) {
           <div className="text-xl font-bold text-purple-700">{metrics.fillRate}%</div>
           <div className="text-xs text-purple-500">Fill Rate</div>
         </div>
-        <div className="bg-amber-50 rounded-lg p-3 text-center">
-          <Star className="w-5 h-5 text-amber-600 mx-auto mb-1" />
-          <div className="text-xl font-bold text-amber-700">{metrics.rating || 'N/A'}</div>
+        <div className="bg-amber-950 rounded-lg p-3 text-center">
+          <Star className="w-5 h-5 text-amber-400 mx-auto mb-1" />
+          <div className="text-xl font-bold text-amber-400">{metrics.rating || 'N/A'}</div>
           <div className="text-xs text-amber-500">Rating</div>
         </div>
       </div>
 
       {/* AI Summary */}
       <div className="px-6 pb-4">
-        <p className="text-neutral-700 text-sm leading-relaxed">{data.summary}</p>
+        <p className="text-neutral-300 text-sm leading-relaxed">{data.summary}</p>
       </div>
 
       {/* Expandable Sections */}
@@ -160,9 +160,9 @@ export function EventSummaryCard({ eventId }: EventSummaryCardProps) {
         {/* Highlights */}
         <button
           onClick={() => toggleSection('highlights')}
-          className="w-full flex items-center justify-between px-6 py-3 hover:bg-neutral-50 transition-colors"
+          className="w-full flex items-center justify-between px-6 py-3 hover:bg-neutral-900 transition-colors"
         >
-          <span className="flex items-center gap-2 text-sm font-medium text-neutral-700">
+          <span className="flex items-center gap-2 text-sm font-medium text-neutral-300">
             <TrendingUp className="w-4 h-4 text-green-500" /> Highlights
           </span>
           {expandedSection === 'highlights' ? <ChevronUp className="w-4 h-4 text-neutral-400" /> : <ChevronDown className="w-4 h-4 text-neutral-400" />}
@@ -170,7 +170,7 @@ export function EventSummaryCard({ eventId }: EventSummaryCardProps) {
         {expandedSection === 'highlights' && (
           <ul className="px-6 pb-4 space-y-2">
             {(data.highlights || []).map((h, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-neutral-600">
+              <li key={i} className="flex items-start gap-2 text-sm text-neutral-400">
                 <span className="text-green-500 mt-0.5">+</span> {h}
               </li>
             ))}
@@ -180,9 +180,9 @@ export function EventSummaryCard({ eventId }: EventSummaryCardProps) {
         {/* Insights */}
         <button
           onClick={() => toggleSection('insights')}
-          className="w-full flex items-center justify-between px-6 py-3 hover:bg-neutral-50 transition-colors border-t"
+          className="w-full flex items-center justify-between px-6 py-3 hover:bg-neutral-900 transition-colors border-t"
         >
-          <span className="flex items-center gap-2 text-sm font-medium text-neutral-700">
+          <span className="flex items-center gap-2 text-sm font-medium text-neutral-300">
             <Lightbulb className="w-4 h-4 text-amber-500" /> Insights
           </span>
           {expandedSection === 'insights' ? <ChevronUp className="w-4 h-4 text-neutral-400" /> : <ChevronDown className="w-4 h-4 text-neutral-400" />}
@@ -190,7 +190,7 @@ export function EventSummaryCard({ eventId }: EventSummaryCardProps) {
         {expandedSection === 'insights' && (
           <ul className="px-6 pb-4 space-y-2">
             {(data.insights || []).map((ins, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-neutral-600">
+              <li key={i} className="flex items-start gap-2 text-sm text-neutral-400">
                 <span className="text-amber-500 mt-0.5">*</span> {ins}
               </li>
             ))}
@@ -200,9 +200,9 @@ export function EventSummaryCard({ eventId }: EventSummaryCardProps) {
         {/* Suggestions */}
         <button
           onClick={() => toggleSection('suggestions')}
-          className="w-full flex items-center justify-between px-6 py-3 hover:bg-neutral-50 transition-colors border-t"
+          className="w-full flex items-center justify-between px-6 py-3 hover:bg-neutral-900 transition-colors border-t"
         >
-          <span className="flex items-center gap-2 text-sm font-medium text-neutral-700">
+          <span className="flex items-center gap-2 text-sm font-medium text-neutral-300">
             <ArrowRight className="w-4 h-4 text-blue-500" /> Suggestions for Next Time
           </span>
           {expandedSection === 'suggestions' ? <ChevronUp className="w-4 h-4 text-neutral-400" /> : <ChevronDown className="w-4 h-4 text-neutral-400" />}
@@ -210,7 +210,7 @@ export function EventSummaryCard({ eventId }: EventSummaryCardProps) {
         {expandedSection === 'suggestions' && (
           <ul className="px-6 pb-4 space-y-2">
             {(data.suggestions || []).map((s, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-neutral-600">
+              <li key={i} className="flex items-start gap-2 text-sm text-neutral-400">
                 <span className="text-blue-500 mt-0.5">{i + 1}.</span> {s}
               </li>
             ))}

@@ -172,7 +172,7 @@ export function ShareButton({
                   variant="outline"
                   className="flex items-center justify-center gap-2 h-12 touch-manipulation"
                 >
-                  <MessageCircle className="w-5 h-5 text-green-600" />
+                  <MessageCircle className="w-5 h-5 text-green-400" />
                   <span className="text-sm">WhatsApp</span>
                 </Button>
                 <Button

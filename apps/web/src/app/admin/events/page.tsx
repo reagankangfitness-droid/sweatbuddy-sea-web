@@ -237,18 +237,18 @@ export default function AdminEventsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh] bg-neutral-50">
+      <div className="flex items-center justify-center min-h-[60vh] bg-neutral-900">
         <Loader2 className="w-8 h-8 text-neutral-400 animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-neutral-50 min-h-screen">
+    <div className="p-4 sm:p-6 lg:p-8 bg-neutral-900 min-h-screen">
       {/* Header */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Event Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-100">Event Management</h1>
           <p className="text-neutral-500 mt-1 text-sm sm:text-base">Manage live events and review submissions</p>
         </div>
         {missingCoordsCount > 0 && (
@@ -273,8 +273,8 @@ export default function AdminEventsPage() {
           onClick={() => setActiveTab('live')}
           className={`flex-1 sm:flex-none px-4 sm:px-6 py-3 rounded-lg font-medium transition-colors text-sm sm:text-base active:scale-[0.98] ${
             activeTab === 'live'
-              ? 'bg-neutral-900 text-white'
-              : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
+              ? 'bg-white text-neutral-900'
+              : 'bg-neutral-950 text-neutral-400 border border-neutral-800 hover:bg-neutral-900'
           }`}
         >
           Live ({events.length})
@@ -283,14 +283,14 @@ export default function AdminEventsPage() {
           onClick={() => setActiveTab('pending')}
           className={`flex-1 sm:flex-none px-4 sm:px-6 py-3 rounded-lg font-medium transition-colors relative text-sm sm:text-base active:scale-[0.98] ${
             activeTab === 'pending'
-              ? 'bg-neutral-900 text-white'
-              : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
+              ? 'bg-white text-neutral-900'
+              : 'bg-neutral-950 text-neutral-400 border border-neutral-800 hover:bg-neutral-900'
           }`}
         >
           Pending
           {submissions.length > 0 && (
             <span className={`absolute -top-1 -right-1 w-5 h-5 rounded-full text-xs flex items-center justify-center font-bold ${
-              activeTab === 'pending' ? 'bg-white text-neutral-900' : 'bg-red-500 text-white'
+              activeTab === 'pending' ? 'bg-neutral-950 text-neutral-100' : 'bg-red-500 text-white'
             }`}>
               {submissions.length}
             </span>
@@ -302,18 +302,18 @@ export default function AdminEventsPage() {
       {activeTab === 'live' && (
         <div className="space-y-3 sm:space-y-4">
           {events.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-xl border border-neutral-200 shadow-sm">
+            <div className="text-center py-12 bg-neutral-950 rounded-xl border border-neutral-800 shadow-sm">
               <p className="text-neutral-500">No live experiences</p>
             </div>
           ) : (
             events.map((event) => (
               <div
                 key={event.id}
-                className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm"
+                className="bg-neutral-950 rounded-xl border border-neutral-800 overflow-hidden shadow-sm"
               >
                 {/* Mobile: Stack layout */}
                 <div className="block sm:hidden">
-                  <div className="relative w-full h-40 bg-neutral-100">
+                  <div className="relative w-full h-40 bg-neutral-800">
                     {event.imageUrl ? (
                       <Image
                         src={event.imageUrl}
@@ -329,7 +329,7 @@ export default function AdminEventsPage() {
                     <div className="absolute top-2 right-2 flex gap-2">
                       <button
                         onClick={() => setEditingEvent(event)}
-                        className="p-2.5 bg-white/90 text-neutral-700 rounded-lg active:scale-95 shadow-sm"
+                        className="p-2.5 bg-neutral-950/90 text-neutral-300 rounded-lg active:scale-95 shadow-sm"
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
@@ -344,8 +344,8 @@ export default function AdminEventsPage() {
 
                   <div className="p-4">
                     <div className="flex items-start justify-between gap-2 mb-3">
-                      <h3 className="text-base font-semibold text-neutral-900 leading-tight">{event.name}</h3>
-                      <span className="px-2 py-0.5 text-xs rounded bg-neutral-100 text-neutral-600 whitespace-nowrap">
+                      <h3 className="text-base font-semibold text-neutral-100 leading-tight">{event.name}</h3>
+                      <span className="px-2 py-0.5 text-xs rounded bg-neutral-800 text-neutral-400 whitespace-nowrap">
                         {event.category}
                       </span>
                     </div>
@@ -369,7 +369,7 @@ export default function AdminEventsPage() {
 
                 {/* Desktop: Side-by-side layout */}
                 <div className="hidden sm:flex">
-                  <div className="relative w-48 bg-neutral-100 flex-shrink-0">
+                  <div className="relative w-48 bg-neutral-800 flex-shrink-0">
                     {event.imageUrl ? (
                       <Image
                         src={event.imageUrl}
@@ -388,8 +388,8 @@ export default function AdminEventsPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          <h3 className="text-lg font-semibold text-neutral-900">{event.name}</h3>
-                          <span className="px-2 py-0.5 text-xs rounded bg-neutral-100 text-neutral-600">
+                          <h3 className="text-lg font-semibold text-neutral-100">{event.name}</h3>
+                          <span className="px-2 py-0.5 text-xs rounded bg-neutral-800 text-neutral-400">
                             {event.category}
                           </span>
                         </div>
@@ -421,14 +421,14 @@ export default function AdminEventsPage() {
                       <div className="flex gap-2 flex-shrink-0">
                         <button
                           onClick={() => setEditingEvent(event)}
-                          className="p-2 bg-neutral-100 text-neutral-700 rounded-lg hover:bg-neutral-200 transition-colors"
+                          className="p-2 bg-neutral-800 text-neutral-300 rounded-lg hover:bg-neutral-700 transition-colors"
                           title="Edit"
                         >
                           <Pencil className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(event)}
-                          className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                          className="p-2 bg-red-950 text-red-400 rounded-lg hover:bg-red-900 transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -447,7 +447,7 @@ export default function AdminEventsPage() {
       {activeTab === 'pending' && (
         <div className="space-y-3 sm:space-y-4">
           {submissions.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-xl border border-neutral-200 shadow-sm">
+            <div className="text-center py-12 bg-neutral-950 rounded-xl border border-neutral-800 shadow-sm">
               <Check className="w-12 h-12 text-emerald-500 mx-auto mb-4" />
               <p className="text-neutral-500">No pending submissions</p>
             </div>
@@ -455,10 +455,10 @@ export default function AdminEventsPage() {
             submissions.map((submission) => (
               <div
                 key={submission.id}
-                className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm"
+                className="bg-neutral-950 rounded-xl border border-neutral-800 overflow-hidden shadow-sm"
               >
                 {submission.imageUrl && (
-                  <div className="relative h-40 sm:h-48 w-full bg-neutral-100">
+                  <div className="relative h-40 sm:h-48 w-full bg-neutral-800">
                     <Image
                       src={submission.imageUrl}
                       alt={submission.eventName}
@@ -470,19 +470,19 @@ export default function AdminEventsPage() {
 
                 <div className="p-4 sm:p-6">
                   <div className="flex flex-wrap items-start gap-2 mb-3">
-                    <h3 className="text-lg sm:text-xl font-semibold text-neutral-900">{submission.eventName}</h3>
+                    <h3 className="text-lg sm:text-xl font-semibold text-neutral-100">{submission.eventName}</h3>
                     <div className="flex gap-2 flex-wrap">
-                      <span className="px-2 py-1 text-xs font-medium rounded bg-amber-100 text-amber-700">
+                      <span className="px-2 py-1 text-xs font-medium rounded bg-amber-900 text-amber-400">
                         PENDING
                       </span>
-                      <span className="px-2 py-1 text-xs font-medium rounded bg-neutral-100 text-neutral-600">
+                      <span className="px-2 py-1 text-xs font-medium rounded bg-neutral-800 text-neutral-400">
                         {submission.category}
                       </span>
                     </div>
                   </div>
 
                   {submission.description && (
-                    <p className="text-neutral-600 mb-4 text-sm sm:text-base">{submission.description}</p>
+                    <p className="text-neutral-400 mb-4 text-sm sm:text-base">{submission.description}</p>
                   )}
 
                   <div className="space-y-2 text-sm mb-4">
@@ -495,13 +495,13 @@ export default function AdminEventsPage() {
                       <span className="break-words">{submission.location}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-0.5 rounded text-xs ${submission.recurring ? 'bg-emerald-100 text-emerald-700' : 'bg-neutral-100 text-neutral-500'}`}>
+                      <span className={`px-2 py-0.5 rounded text-xs ${submission.recurring ? 'bg-emerald-100 text-emerald-700' : 'bg-neutral-800 text-neutral-500'}`}>
                         {submission.recurring ? 'Recurring' : 'One-time'}
                       </span>
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-neutral-200">
+                  <div className="pt-4 border-t border-neutral-800">
                     <div className="space-y-2 sm:space-y-0 sm:flex sm:flex-wrap sm:items-center sm:gap-4 text-sm">
                       <div className="flex items-center gap-2 text-neutral-500">
                         <User className="w-4 h-4" />
@@ -511,7 +511,7 @@ export default function AdminEventsPage() {
                         href={`https://instagram.com/${submission.organizerInstagram}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-blue-600 hover:underline"
+                        className="flex items-center gap-1 text-blue-400 hover:underline"
                       >
                         <Instagram className="w-4 h-4" />
                         @{submission.organizerInstagram}
@@ -529,7 +529,7 @@ export default function AdminEventsPage() {
                     </p>
                   </div>
 
-                  <div className="flex gap-2 mt-4 pt-4 border-t border-neutral-200">
+                  <div className="flex gap-2 mt-4 pt-4 border-t border-neutral-800">
                     <button
                       onClick={() => handleSubmissionAction(submission.id, 'approve')}
                       disabled={processingId === submission.id}
@@ -561,12 +561,12 @@ export default function AdminEventsPage() {
       {/* Edit Modal */}
       {editingEvent && (
         <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50">
-          <div className="bg-white sm:border sm:border-neutral-200 sm:rounded-2xl w-full sm:max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl shadow-xl">
-            <div className="sticky top-0 bg-white border-b border-neutral-200 p-4 sm:p-6 flex justify-between items-center z-10">
-              <h2 className="text-lg sm:text-xl font-bold text-neutral-900">Edit Event</h2>
+          <div className="bg-neutral-950 sm:border sm:border-neutral-200 sm:rounded-2xl w-full sm:max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl shadow-xl">
+            <div className="sticky top-0 bg-neutral-950 border-b border-neutral-800 p-4 sm:p-6 flex justify-between items-center z-10">
+              <h2 className="text-lg sm:text-xl font-bold text-neutral-100">Edit Event</h2>
               <button
                 onClick={() => setEditingEvent(null)}
-                className="p-2 text-neutral-500 hover:text-neutral-700 active:scale-95"
+                className="p-2 text-neutral-500 hover:text-neutral-300 active:scale-95"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -574,21 +574,21 @@ export default function AdminEventsPage() {
 
             <div className="p-4 sm:p-6 space-y-4">
               <div>
-                <label className="block text-sm text-neutral-600 mb-1">Event Name</label>
+                <label className="block text-sm text-neutral-400 mb-1">Event Name</label>
                 <input
                   type="text"
                   value={editingEvent.name}
                   onChange={(e) => setEditingEvent({ ...editingEvent, name: e.target.value })}
-                  className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
+                  className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white text-base"
                 />
               </div>
 
               <div>
-                <label className="block text-sm text-neutral-600 mb-1">Category</label>
+                <label className="block text-sm text-neutral-400 mb-1">Category</label>
                 <select
                   value={editingEvent.category}
                   onChange={(e) => setEditingEvent({ ...editingEvent, category: e.target.value })}
-                  className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
+                  className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white text-base"
                 >
                   {categories.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
@@ -598,59 +598,59 @@ export default function AdminEventsPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm text-neutral-600 mb-1">Day</label>
+                  <label className="block text-sm text-neutral-400 mb-1">Day</label>
                   <input
                     type="text"
                     value={editingEvent.day}
                     onChange={(e) => setEditingEvent({ ...editingEvent, day: e.target.value })}
-                    className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
+                    className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white text-base"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-neutral-600 mb-1">Time</label>
+                  <label className="block text-sm text-neutral-400 mb-1">Time</label>
                   <input
                     type="text"
                     value={editingEvent.time}
                     onChange={(e) => setEditingEvent({ ...editingEvent, time: e.target.value })}
-                    className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
+                    className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white text-base"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm text-neutral-600 mb-1">Location</label>
+                <label className="block text-sm text-neutral-400 mb-1">Location</label>
                 <input
                   type="text"
                   value={editingEvent.location}
                   onChange={(e) => setEditingEvent({ ...editingEvent, location: e.target.value })}
-                  className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
+                  className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white text-base"
                 />
               </div>
 
               <div>
-                <label className="block text-sm text-neutral-600 mb-1">Description</label>
+                <label className="block text-sm text-neutral-400 mb-1">Description</label>
                 <textarea
                   value={editingEvent.description || ''}
                   onChange={(e) => setEditingEvent({ ...editingEvent, description: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 resize-none text-base"
+                  className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white resize-none text-base"
                 />
               </div>
 
               <div>
-                <label className="block text-sm text-neutral-600 mb-1">Instagram Handle</label>
+                <label className="block text-sm text-neutral-400 mb-1">Instagram Handle</label>
                 <input
                   type="text"
                   value={editingEvent.organizer}
                   onChange={(e) => setEditingEvent({ ...editingEvent, organizer: e.target.value })}
-                  className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
+                  className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white text-base"
                 />
               </div>
 
               <div>
-                <label className="block text-sm text-neutral-600 mb-2">Event Image</label>
+                <label className="block text-sm text-neutral-400 mb-2">Event Image</label>
                 {editingEvent.imageUrl ? (
-                  <div className="relative rounded-lg overflow-hidden bg-neutral-100 border border-neutral-200">
+                  <div className="relative rounded-lg overflow-hidden bg-neutral-800 border border-neutral-800">
                     <Image
                       src={editingEvent.imageUrl}
                       alt="Event preview"
@@ -670,10 +670,10 @@ export default function AdminEventsPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-lg bg-neutral-50 border border-neutral-200 border-dashed p-6">
+                  <div className="rounded-lg bg-neutral-900 border border-neutral-800 border-dashed p-6">
                     {isUploading ? (
                       <div className="flex flex-col items-center gap-2 text-neutral-500">
-                        <Loader2 className="w-6 h-6 animate-spin text-neutral-900" />
+                        <Loader2 className="w-6 h-6 animate-spin text-neutral-100" />
                         <span className="text-sm">Uploading...</span>
                       </div>
                     ) : (
@@ -709,7 +709,7 @@ export default function AdminEventsPage() {
                                 setEditingEvent({ ...editingEvent, imageUrl: e.target.value })
                               }
                             }}
-                            className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg text-neutral-900 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                            className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
                           />
                         </div>
                       </div>
@@ -724,14 +724,14 @@ export default function AdminEventsPage() {
                   id="recurring"
                   checked={editingEvent.recurring}
                   onChange={(e) => setEditingEvent({ ...editingEvent, recurring: e.target.checked })}
-                  className="w-5 h-5 rounded bg-white border-neutral-300 text-neutral-900 focus:ring-neutral-900"
+                  className="w-5 h-5 rounded bg-neutral-950 border-neutral-700 text-neutral-100 focus:ring-white"
                 />
-                <label htmlFor="recurring" className="text-base text-neutral-600">Recurring experience</label>
+                <label htmlFor="recurring" className="text-base text-neutral-400">Recurring experience</label>
               </div>
 
               {/* Divider */}
-              <div className="border-t border-neutral-200 pt-4 mt-2">
-                <h3 className="text-sm font-semibold text-neutral-900 mb-3 flex items-center gap-2">
+              <div className="border-t border-neutral-800 pt-4 mt-2">
+                <h3 className="text-sm font-semibold text-neutral-100 mb-3 flex items-center gap-2">
                   <CreditCard className="w-4 h-4" />
                   Payment Settings
                 </h3>
@@ -748,15 +748,15 @@ export default function AdminEventsPage() {
                       // Reset price if marking as free
                       price: e.target.checked ? null : editingEvent.price
                     })}
-                    className="w-5 h-5 rounded bg-white border-neutral-300 text-neutral-900 focus:ring-neutral-900"
+                    className="w-5 h-5 rounded bg-neutral-950 border-neutral-700 text-neutral-100 focus:ring-white"
                   />
-                  <label htmlFor="isFree" className="text-base text-neutral-600">Free experience</label>
+                  <label htmlFor="isFree" className="text-base text-neutral-400">Free experience</label>
                 </div>
 
                 {/* Price (only show if not free) */}
                 {!editingEvent.isFree && (
                   <div className="mb-4">
-                    <label className="block text-sm text-neutral-600 mb-1">Price (in cents, e.g., 1500 = $15.00)</label>
+                    <label className="block text-sm text-neutral-400 mb-1">Price (in cents, e.g., 1500 = $15.00)</label>
                     <div className="relative">
                       <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                       <input
@@ -764,7 +764,7 @@ export default function AdminEventsPage() {
                         value={editingEvent.price || ''}
                         onChange={(e) => setEditingEvent({ ...editingEvent, price: e.target.value ? parseInt(e.target.value) : null })}
                         placeholder="1500"
-                        className="w-full pl-10 pr-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
+                        className="w-full pl-10 pr-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white text-base"
                       />
                     </div>
                     {editingEvent.price && (
@@ -782,16 +782,16 @@ export default function AdminEventsPage() {
                     id="paynowEnabled"
                     checked={editingEvent.paynowEnabled}
                     onChange={(e) => setEditingEvent({ ...editingEvent, paynowEnabled: e.target.checked })}
-                    className="w-5 h-5 rounded bg-white border-neutral-300 text-neutral-900 focus:ring-neutral-900"
+                    className="w-5 h-5 rounded bg-neutral-950 border-neutral-700 text-neutral-100 focus:ring-white"
                   />
-                  <label htmlFor="paynowEnabled" className="text-base text-neutral-600">Enable PayNow payments</label>
+                  <label htmlFor="paynowEnabled" className="text-base text-neutral-400">Enable PayNow payments</label>
                 </div>
 
                 {/* PayNow Details (only show if enabled) */}
                 {editingEvent.paynowEnabled && (
                   <div className="space-y-4 pl-4 border-l-2 border-purple-200 bg-purple-50/50 p-4 rounded-r-lg">
                     <div>
-                      <label className="block text-sm text-neutral-600 mb-1">PayNow QR Code</label>
+                      <label className="block text-sm text-neutral-400 mb-1">PayNow QR Code</label>
                       {editingEvent.paynowQrCode ? (
                         <div className="relative inline-block">
                           <Image
@@ -799,7 +799,7 @@ export default function AdminEventsPage() {
                             alt="PayNow QR"
                             width={120}
                             height={120}
-                            className="rounded-lg border border-neutral-200"
+                            className="rounded-lg border border-neutral-800"
                           />
                           <button
                             type="button"
@@ -836,20 +836,20 @@ export default function AdminEventsPage() {
                             value={editingEvent.paynowQrCode || ''}
                             onChange={(e) => setEditingEvent({ ...editingEvent, paynowQrCode: e.target.value })}
                             placeholder="https://utfs.io/f/..."
-                            className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                            className="w-full px-3 py-2 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                           />
                         </div>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-sm text-neutral-600 mb-1">PayNow Number/UEN</label>
+                      <label className="block text-sm text-neutral-400 mb-1">PayNow Number/UEN</label>
                       <input
                         type="text"
                         value={editingEvent.paynowNumber || ''}
                         onChange={(e) => setEditingEvent({ ...editingEvent, paynowNumber: e.target.value })}
                         placeholder="91234567 or 12345678X"
-                        className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
+                        className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
                       />
                     </div>
                   </div>
@@ -857,15 +857,15 @@ export default function AdminEventsPage() {
               </div>
 
               {/* Community & Capacity Section */}
-              <div className="border-t border-neutral-200 pt-4 mt-2">
-                <h3 className="text-sm font-semibold text-neutral-900 mb-3 flex items-center gap-2">
+              <div className="border-t border-neutral-800 pt-4 mt-2">
+                <h3 className="text-sm font-semibold text-neutral-100 mb-3 flex items-center gap-2">
                   <Users className="w-4 h-4" />
                   Community & Capacity
                 </h3>
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm text-neutral-600 mb-1">Community Link (WhatsApp/Telegram)</label>
+                    <label className="block text-sm text-neutral-400 mb-1">Community Link (WhatsApp/Telegram)</label>
                     <div className="relative">
                       <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                       <input
@@ -873,13 +873,13 @@ export default function AdminEventsPage() {
                         value={editingEvent.communityLink || ''}
                         onChange={(e) => setEditingEvent({ ...editingEvent, communityLink: e.target.value })}
                         placeholder="https://chat.whatsapp.com/... or https://t.me/..."
-                        className="w-full pl-10 pr-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
+                        className="w-full pl-10 pr-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white text-base"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm text-neutral-600 mb-1">Capacity (leave empty for unlimited)</label>
+                    <label className="block text-sm text-neutral-400 mb-1">Capacity (leave empty for unlimited)</label>
                     <div className="relative">
                       <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                       <input
@@ -887,25 +887,25 @@ export default function AdminEventsPage() {
                         value={editingEvent.capacity || ''}
                         onChange={(e) => setEditingEvent({ ...editingEvent, capacity: e.target.value ? parseInt(e.target.value) : null })}
                         placeholder="20"
-                        className="w-full pl-10 pr-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
+                        className="w-full pl-10 pr-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white text-base"
                       />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="sticky bottom-0 bg-white pt-4 pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:static border-t border-neutral-200 sm:border-0">
+              <div className="sticky bottom-0 bg-neutral-950 pt-4 pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:static border-t border-neutral-800 sm:border-0">
                 <div className="flex gap-3">
                   <button
                     onClick={() => setEditingEvent(null)}
-                    className="flex-1 px-4 py-3.5 bg-neutral-100 text-neutral-700 rounded-lg font-medium hover:bg-neutral-200 transition-colors active:scale-[0.98]"
+                    className="flex-1 px-4 py-3.5 bg-neutral-800 text-neutral-300 rounded-lg font-medium hover:bg-neutral-700 transition-colors active:scale-[0.98]"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSave}
                     disabled={isUploading}
-                    className="flex-1 px-4 py-3.5 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-700 transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 px-4 py-3.5 bg-white text-neutral-900 rounded-lg font-medium hover:bg-neutral-200 transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isUploading ? (
                       <>

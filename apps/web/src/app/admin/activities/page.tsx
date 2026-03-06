@@ -109,7 +109,7 @@ export default function AdminActivitiesPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-2">Access Denied</h1>
+          <h1 className="text-2xl font-bold text-red-400 mb-2">Access Denied</h1>
           <p className="text-neutral-500">{error}</p>
         </div>
       </div>
@@ -117,10 +117,10 @@ export default function AdminActivitiesPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-neutral-50 min-h-screen">
+    <div className="p-4 sm:p-6 lg:p-8 bg-neutral-900 min-h-screen">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Event Approval Queue</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-neutral-100">Event Approval Queue</h1>
         <p className="text-neutral-500 mt-1">
           Review and approve submitted events before they go live
         </p>
@@ -132,8 +132,8 @@ export default function AdminActivitiesPage() {
           onClick={() => setFilter('PENDING_APPROVAL')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             filter === 'PENDING_APPROVAL'
-              ? 'bg-neutral-900 text-white'
-              : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
+              ? 'bg-white text-neutral-900'
+              : 'bg-neutral-950 text-neutral-400 border border-neutral-800 hover:bg-neutral-900'
           }`}
         >
           Pending Approval
@@ -142,8 +142,8 @@ export default function AdminActivitiesPage() {
           onClick={() => setFilter('PUBLISHED')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             filter === 'PUBLISHED'
-              ? 'bg-neutral-900 text-white'
-              : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
+              ? 'bg-white text-neutral-900'
+              : 'bg-neutral-950 text-neutral-400 border border-neutral-800 hover:bg-neutral-900'
           }`}
         >
           Published
@@ -152,9 +152,9 @@ export default function AdminActivitiesPage() {
 
       {/* Activities List */}
       {activities.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-xl border border-neutral-200 shadow-sm">
+        <div className="text-center py-12 bg-neutral-950 rounded-xl border border-neutral-800 shadow-sm">
           <Clock className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-neutral-900 mb-2">No events to review</h2>
+          <h2 className="text-xl font-semibold text-neutral-100 mb-2">No events to review</h2>
           <p className="text-neutral-500">
             {filter === 'PENDING_APPROVAL'
               ? 'All submitted events have been reviewed.'
@@ -166,7 +166,7 @@ export default function AdminActivitiesPage() {
           {activities.map((activity) => (
             <div
               key={activity.id}
-              className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm"
+              className="bg-neutral-950 rounded-xl border border-neutral-800 overflow-hidden shadow-sm"
             >
                 <div className="flex flex-col lg:flex-row">
                   {/* Image */}
@@ -179,7 +179,7 @@ export default function AdminActivitiesPage() {
                         className="object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-neutral-100 flex items-center justify-center">
+                      <div className="w-full h-full bg-neutral-800 flex items-center justify-center">
                         <span className="text-4xl">
                           {activity.type === 'RUN' ? '🏃' :
                            activity.type === 'GYM' ? '💪' :
@@ -197,15 +197,15 @@ export default function AdminActivitiesPage() {
                       <div className="flex-1">
                         {/* Title and Status */}
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-xl font-semibold text-neutral-900">
+                          <h3 className="text-xl font-semibold text-neutral-100">
                             {activity.title}
                           </h3>
                           <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                             activity.status === 'PENDING_APPROVAL'
                               ? 'bg-yellow-100 text-yellow-800'
                               : activity.status === 'PUBLISHED'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-neutral-100 text-neutral-800'
+                              ? 'bg-green-900 text-green-800'
+                              : 'bg-neutral-800 text-neutral-200'
                           }`}>
                             {activity.status.replace('_', ' ')}
                           </span>
@@ -213,7 +213,7 @@ export default function AdminActivitiesPage() {
 
                         {/* Description */}
                         {activity.description && (
-                          <p className="text-neutral-600 mb-4 line-clamp-2">
+                          <p className="text-neutral-400 mb-4 line-clamp-2">
                             {activity.description}
                           </p>
                         )}
@@ -222,20 +222,20 @@ export default function AdminActivitiesPage() {
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
                           {/* Date/Time */}
                           {activity.startTime && (
-                            <div className="flex items-center gap-2 text-neutral-600">
+                            <div className="flex items-center gap-2 text-neutral-400">
                               <Calendar className="w-4 h-4" />
                               <span>{format(new Date(activity.startTime), 'MMM d, yyyy h:mm a')}</span>
                             </div>
                           )}
 
                           {/* Location */}
-                          <div className="flex items-center gap-2 text-neutral-600">
+                          <div className="flex items-center gap-2 text-neutral-400">
                             <MapPin className="w-4 h-4" />
                             <span>{activity.city}</span>
                           </div>
 
                           {/* Price */}
-                          <div className="flex items-center gap-2 text-neutral-600">
+                          <div className="flex items-center gap-2 text-neutral-400">
                             <DollarSign className="w-4 h-4" />
                             <span>
                               {activity.price === 0 ? 'Free' : `${activity.currency} ${(activity.price / 100).toFixed(2)}`}
@@ -244,7 +244,7 @@ export default function AdminActivitiesPage() {
 
                           {/* Capacity */}
                           {activity.maxPeople && (
-                            <div className="flex items-center gap-2 text-neutral-600">
+                            <div className="flex items-center gap-2 text-neutral-400">
                               <User className="w-4 h-4" />
                               <span>Max {activity.maxPeople} people</span>
                             </div>
@@ -252,7 +252,7 @@ export default function AdminActivitiesPage() {
                         </div>
 
                         {/* Submitter Info */}
-                        <div className="mt-4 pt-4 border-t border-neutral-200">
+                        <div className="mt-4 pt-4 border-t border-neutral-800">
                           <div className="flex items-center gap-3">
                             {activity.user.imageUrl ? (
                               <Image
@@ -263,12 +263,12 @@ export default function AdminActivitiesPage() {
                                 className="rounded-full"
                               />
                             ) : (
-                              <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
-                                <User className="w-4 h-4 text-neutral-600" />
+                              <div className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center">
+                                <User className="w-4 h-4 text-neutral-400" />
                               </div>
                             )}
                             <div>
-                              <p className="text-sm font-medium text-neutral-900">
+                              <p className="text-sm font-medium text-neutral-100">
                                 {activity.user.name || 'Anonymous'}
                               </p>
                               <p className="text-xs text-neutral-500">
@@ -293,7 +293,7 @@ export default function AdminActivitiesPage() {
                           <button
                             onClick={() => handleAction(activity.id, 'reject')}
                             disabled={processingId === activity.id}
-                            className="flex items-center justify-center gap-2 px-4 py-2 bg-red-100 text-red-600 border border-red-200 rounded-lg font-medium hover:bg-red-200 transition-colors disabled:opacity-50"
+                            className="flex items-center justify-center gap-2 px-4 py-2 bg-red-900 text-red-400 border border-red-800 rounded-lg font-medium hover:bg-red-200 transition-colors disabled:opacity-50"
                           >
                             <X className="w-4 h-4" />
                             Reject
@@ -302,7 +302,7 @@ export default function AdminActivitiesPage() {
                             href={`/activities/${activity.id}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-2 px-4 py-2 bg-neutral-100 text-neutral-700 rounded-lg font-medium hover:bg-neutral-200 transition-colors"
+                            className="flex items-center justify-center gap-2 px-4 py-2 bg-neutral-800 text-neutral-300 rounded-lg font-medium hover:bg-neutral-700 transition-colors"
                           >
                             <ExternalLink className="w-4 h-4" />
                             Preview

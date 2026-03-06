@@ -9,8 +9,8 @@ export function StatCard({ value, label, className = '' }: StatCardProps) {
   const isLongValue = typeof value === 'string' && value.length > 10
 
   return (
-    <div className={`bg-neutral-50 rounded-xl p-4 sm:p-6 text-center ${className}`}>
-      <div className={`font-bold text-neutral-900 mb-1 ${
+    <div className={`bg-neutral-900 rounded-xl p-4 sm:p-6 text-center ${className}`}>
+      <div className={`font-bold text-neutral-100 mb-1 ${
         isLongValue
           ? 'text-sm sm:text-base'
           : 'text-xl sm:text-2xl md:text-3xl'

@@ -19,22 +19,22 @@ const NUDGE_STYLES: Record<
 > = {
   EVENT_RECOMMENDATION: {
     gradient: 'from-blue-500/10 to-blue-600/5 border-blue-200',
-    iconBg: 'bg-blue-100 text-blue-600',
+    iconBg: 'bg-blue-900 text-blue-400',
     icon: <Calendar className="w-4 h-4" />,
   },
   INACTIVITY_REENGAGEMENT: {
-    gradient: 'from-amber-500/10 to-amber-600/5 border-amber-200',
-    iconBg: 'bg-amber-100 text-amber-600',
+    gradient: 'from-amber-500/10 to-amber-600/5 border-amber-800',
+    iconBg: 'bg-amber-900 text-amber-400',
     icon: <Sparkles className="w-4 h-4" />,
   },
   LOW_FILL_RATE: {
     gradient: 'from-rose-500/10 to-rose-600/5 border-rose-200',
-    iconBg: 'bg-rose-100 text-rose-600',
+    iconBg: 'bg-rose-900 text-rose-600',
     icon: <AlertTriangle className="w-4 h-4" />,
   },
   REGULARS_NOT_SIGNED_UP: {
-    gradient: 'from-violet-500/10 to-violet-600/5 border-violet-200',
-    iconBg: 'bg-violet-100 text-violet-600',
+    gradient: 'from-violet-500/10 to-violet-600/5 border-violet-800',
+    iconBg: 'bg-violet-900 text-violet-400',
     icon: <Users className="w-4 h-4" />,
   },
 }
@@ -81,10 +81,10 @@ export function NudgeCard({
           {style.icon}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-neutral-900 line-clamp-1">
+          <p className="text-sm font-semibold text-neutral-100 line-clamp-1">
             {nudge.title}
           </p>
-          <p className="text-xs text-neutral-600 mt-0.5 line-clamp-2">
+          <p className="text-xs text-neutral-400 mt-0.5 line-clamp-2">
             {nudge.content}
           </p>
         </div>

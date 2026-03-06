@@ -138,19 +138,19 @@ export default async function CommunityPage({ params }: Props) {
   const isAdmin = membership?.role === 'ADMIN' || isOwner
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-neutral-950">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-100">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link
               href="/communities"
-              className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+              className="flex items-center gap-2 text-neutral-400 hover:text-neutral-100 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span className="font-medium">Communities</span>
             </Link>
-            <Link href="/" className="font-sans font-bold text-xl text-neutral-900">
+            <Link href="/" className="font-sans font-bold text-xl text-neutral-100">
               sweatbuddies
             </Link>
             <ShareButton />
@@ -172,10 +172,10 @@ export default async function CommunityPage({ params }: Props) {
 
       {/* Community Info */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
-        <div className="bg-white rounded-2xl shadow-lg p-6">
+        <div className="bg-neutral-950 rounded-2xl shadow-lg p-6">
           <div className="flex flex-col sm:flex-row sm:items-start gap-4">
             {/* Logo */}
-            <div className="w-20 h-20 rounded-2xl bg-neutral-100 flex items-center justify-center overflow-hidden flex-shrink-0 border-4 border-white shadow-md">
+            <div className="w-20 h-20 rounded-2xl bg-neutral-800 flex items-center justify-center overflow-hidden flex-shrink-0 border-4 border-neutral-700 shadow-md">
               {community.logoImage ? (
                 <Image
                   src={community.logoImage}
@@ -200,7 +200,7 @@ export default async function CommunityPage({ params }: Props) {
             {/* Info */}
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">
+                <h1 className="text-2xl sm:text-3xl font-bold text-neutral-100">
                   {community.name}
                 </h1>
                 {community.isVerified && (
@@ -273,15 +273,15 @@ export default async function CommunityPage({ params }: Props) {
 
           {/* Description */}
           {community.description && (
-            <p className="mt-6 text-neutral-600 whitespace-pre-line">
+            <p className="mt-6 text-neutral-400 whitespace-pre-line">
               {community.description}
             </p>
           )}
 
           {/* Host */}
-          <div className="mt-6 pt-6 border-t border-neutral-100">
+          <div className="mt-6 pt-6 border-t border-neutral-800">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-neutral-100 overflow-hidden">
+              <div className="w-10 h-10 rounded-full bg-neutral-800 overflow-hidden">
                 {community.createdBy?.imageUrl ? (
                   <Image
                     src={community.createdBy.imageUrl}
@@ -298,7 +298,7 @@ export default async function CommunityPage({ params }: Props) {
               </div>
               <div>
                 <p className="text-sm text-neutral-500">Hosted by</p>
-                <p className="font-medium text-neutral-900">
+                <p className="font-medium text-neutral-100">
                   {community.createdBy?.name || community.createdBy?.username}
                   {community.createdBy?.isVerified && (
                     <CheckCircle className="w-4 h-4 text-blue-500 inline ml-1" />
@@ -313,7 +313,7 @@ export default async function CommunityPage({ params }: Props) {
       {/* Upcoming Events */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-neutral-900">Upcoming Events</h2>
+          <h2 className="text-xl font-semibold text-neutral-100">Upcoming Events</h2>
         </div>
 
         {upcomingEvents.length > 0 ? (
@@ -322,19 +322,19 @@ export default async function CommunityPage({ params }: Props) {
               <Link
                 key={event.id}
                 href={`/activities/${event.id}`}
-                className="group block bg-white border border-neutral-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+                className="group block bg-neutral-950 border border-neutral-800 rounded-xl p-4 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-14 h-14 rounded-lg bg-neutral-100 flex flex-col items-center justify-center flex-shrink-0">
+                  <div className="w-14 h-14 rounded-lg bg-neutral-800 flex flex-col items-center justify-center flex-shrink-0">
                     <span className="text-xs text-neutral-500">
                       {event.startTime ? new Date(event.startTime).toLocaleDateString('en-US', { month: 'short' }) : ''}
                     </span>
-                    <span className="text-lg font-bold text-neutral-900">
+                    <span className="text-lg font-bold text-neutral-100">
                       {event.startTime ? new Date(event.startTime).getDate() : ''}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-neutral-900 group-hover:text-blue-600 transition-colors truncate">
+                    <h3 className="font-medium text-neutral-100 group-hover:text-blue-600 transition-colors truncate">
                       {event.title}
                     </h3>
                     <p className="text-sm text-neutral-500 mt-0.5">
@@ -350,9 +350,9 @@ export default async function CommunityPage({ params }: Props) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 bg-neutral-50 rounded-xl">
+          <div className="text-center py-12 bg-neutral-900 rounded-xl">
             <Calendar className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
-            <p className="text-neutral-600">No upcoming experiences</p>
+            <p className="text-neutral-400">No upcoming experiences</p>
           </div>
         )}
       </section>
@@ -360,7 +360,7 @@ export default async function CommunityPage({ params }: Props) {
       {/* Members */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-neutral-900">Members</h2>
+          <h2 className="text-xl font-semibold text-neutral-100">Members</h2>
           <span className="text-sm text-neutral-500">
             {community._count.members} total
           </span>
@@ -371,9 +371,9 @@ export default async function CommunityPage({ params }: Props) {
             <Link
               key={member.id}
               href={`/user/${member.user.id}`}
-              className="group flex items-center gap-2 px-3 py-2 bg-neutral-50 hover:bg-neutral-100 rounded-full transition-colors"
+              className="group flex items-center gap-2 px-3 py-2 bg-neutral-900 hover:bg-neutral-800 rounded-full transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-neutral-200 overflow-hidden">
+              <div className="w-8 h-8 rounded-full bg-neutral-700 overflow-hidden">
                 {member.user.imageUrl ? (
                   <Image
                     src={member.user.imageUrl}
@@ -388,14 +388,14 @@ export default async function CommunityPage({ params }: Props) {
                   </div>
                 )}
               </div>
-              <span className="text-sm font-medium text-neutral-700 group-hover:text-neutral-900">
+              <span className="text-sm font-medium text-neutral-300 group-hover:text-neutral-100">
                 {member.user.name?.split(' ')[0] || 'Member'}
               </span>
               {member.role === 'OWNER' && (
-                <span className="text-xs px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded">Host</span>
+                <span className="text-xs px-1.5 py-0.5 bg-amber-900 text-amber-400 rounded">Host</span>
               )}
               {member.role === 'ADMIN' && (
-                <span className="text-xs px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded">Admin</span>
+                <span className="text-xs px-1.5 py-0.5 bg-blue-900 text-blue-700 rounded">Admin</span>
               )}
             </Link>
           ))}

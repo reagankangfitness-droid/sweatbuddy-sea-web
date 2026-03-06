@@ -90,7 +90,7 @@ export default function MyEventsViewPage() {
       <div className="min-h-screen bg-gradient-to-b from-[#f8fafc] to-white flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[#3477f8] mx-auto mb-4" />
-          <p className="text-neutral-600">Loading your experiences...</p>
+          <p className="text-neutral-400">Loading your experiences...</p>
         </div>
       </div>
     )
@@ -99,17 +99,17 @@ export default function MyEventsViewPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#f8fafc] to-white">
-        <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-100">
+        <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <Link
                 href="/my-events"
-                className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+                className="flex items-center gap-2 text-neutral-400 hover:text-neutral-100 transition-colors"
               >
                 <ArrowLeft className="w-5 h-5" />
                 <span className="font-medium">Back</span>
               </Link>
-              <Link href="/" className="font-sans font-bold text-xl text-neutral-900">
+              <Link href="/" className="font-sans font-bold text-xl text-neutral-100">
                 sweatbuddies
               </Link>
               <div className="w-20" />
@@ -118,13 +118,13 @@ export default function MyEventsViewPage() {
         </header>
 
         <main className="max-w-md mx-auto px-4 py-16 text-center">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-red-100 flex items-center justify-center">
-            <AlertCircle className="w-8 h-8 text-red-600" />
+          <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-red-900 flex items-center justify-center">
+            <AlertCircle className="w-8 h-8 text-red-400" />
           </div>
-          <h1 className="font-sans font-bold text-2xl text-neutral-900 mb-3">
+          <h1 className="font-sans font-bold text-2xl text-neutral-100 mb-3">
             Link Expired or Invalid
           </h1>
-          <p className="text-neutral-600 mb-8">{error}</p>
+          <p className="text-neutral-400 mb-8">{error}</p>
           <Link
             href="/my-events"
             className="inline-flex items-center justify-center h-12 px-6 rounded-xl bg-[#3477f8] text-white font-semibold hover:bg-[#2563eb] transition-all"
@@ -142,17 +142,17 @@ export default function MyEventsViewPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f8fafc] to-white">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-100">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link
               href="/"
-              className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+              className="flex items-center gap-2 text-neutral-400 hover:text-neutral-100 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span className="font-medium">Home</span>
             </Link>
-            <Link href="/" className="font-sans font-bold text-xl text-neutral-900">
+            <Link href="/" className="font-sans font-bold text-xl text-neutral-100">
               sweatbuddies
             </Link>
             <div className="w-20" />
@@ -164,23 +164,23 @@ export default function MyEventsViewPage() {
       <main className="max-w-2xl mx-auto px-4 py-8 sm:py-12">
         {/* Hero */}
         <div className="text-center mb-8">
-          <h1 className="font-sans font-bold text-2xl sm:text-3xl text-neutral-900 mb-2">
+          <h1 className="font-sans font-bold text-2xl sm:text-3xl text-neutral-100 mb-2">
             My Events
           </h1>
-          <p className="text-neutral-600">
+          <p className="text-neutral-400">
             Events for <strong>{data?.email}</strong>
           </p>
         </div>
 
         {activeEvents.length === 0 && pastEvents.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-neutral-100 p-8 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-neutral-100 flex items-center justify-center text-3xl">
+          <div className="bg-neutral-950 rounded-2xl shadow-sm border border-neutral-800 p-8 text-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-neutral-800 flex items-center justify-center text-3xl">
               📅
             </div>
-            <h2 className="font-sans font-semibold text-lg text-neutral-900 mb-2">
+            <h2 className="font-sans font-semibold text-lg text-neutral-100 mb-2">
               No events yet
             </h2>
-            <p className="text-neutral-600 text-sm mb-6">
+            <p className="text-neutral-400 text-sm mb-6">
               You haven&apos;t signed up for any events yet.
             </p>
             <Link
@@ -195,7 +195,7 @@ export default function MyEventsViewPage() {
             {/* Active Events */}
             {activeEvents.length > 0 && (
               <div>
-                <h2 className="font-sans font-semibold text-lg text-neutral-900 mb-4 flex items-center gap-2">
+                <h2 className="font-sans font-semibold text-lg text-neutral-100 mb-4 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-500"></span>
                   Upcoming Events ({activeEvents.length})
                 </h2>
@@ -217,9 +217,9 @@ export default function MyEventsViewPage() {
                   {pastEvents.map((rsvp) => (
                     <div
                       key={rsvp.id}
-                      className="bg-white rounded-xl border border-neutral-100 p-4"
+                      className="bg-neutral-950 rounded-xl border border-neutral-800 p-4"
                     >
-                      <p className="font-medium text-neutral-700">{rsvp.eventName}</p>
+                      <p className="font-medium text-neutral-300">{rsvp.eventName}</p>
                       <p className="text-sm text-neutral-500 mt-1">
                         RSVP&apos;d on {new Date(rsvp.rsvpDate).toLocaleDateString()}
                       </p>
@@ -253,7 +253,7 @@ function EventCard({ rsvp }: { rsvp: RSVPEvent }) {
   return (
     <Link
       href={`/e/${event.id}`}
-      className="block bg-white rounded-2xl shadow-sm border border-neutral-100 overflow-hidden hover:shadow-md transition-shadow"
+      className="block bg-neutral-950 rounded-2xl shadow-sm border border-neutral-800 overflow-hidden hover:shadow-md transition-shadow"
     >
       <div className="flex">
         {/* Image */}
@@ -276,7 +276,7 @@ function EventCard({ rsvp }: { rsvp: RSVPEvent }) {
         {/* Content */}
         <div className="flex-1 p-4">
           <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className="font-sans font-semibold text-neutral-900 line-clamp-2">
+            <h3 className="font-sans font-semibold text-neutral-100 line-clamp-2">
               {event.name}
             </h3>
             {event.recurring && (
@@ -286,7 +286,7 @@ function EventCard({ rsvp }: { rsvp: RSVPEvent }) {
             )}
           </div>
 
-          <div className="space-y-1.5 text-sm text-neutral-600">
+          <div className="space-y-1.5 text-sm text-neutral-400">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-neutral-400" />
               <span>{formatEventDate(event.eventDate, event.day)}</span>

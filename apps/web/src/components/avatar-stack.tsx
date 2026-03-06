@@ -81,7 +81,7 @@ export function AvatarStack({
             key={participant.id}
             className={cn(
               avatarSize,
-              'relative rounded-full border-2 border-white bg-muted flex items-center justify-center overflow-hidden',
+              'relative rounded-full border-2 border-neutral-700 bg-muted flex items-center justify-center overflow-hidden',
               'shadow-sm',
               'transition-all duration-200 hover:scale-110 hover:z-20 hover:shadow-md'
             )}
@@ -111,7 +111,7 @@ export function AvatarStack({
           <div
             className={cn(
               avatarSize,
-              'rounded-full border-2 border-white',
+              'rounded-full border-2 border-neutral-700',
               'bg-muted text-muted-foreground',
               'flex items-center justify-center font-semibold',
               'shadow-sm'

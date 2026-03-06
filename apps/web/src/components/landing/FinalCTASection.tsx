@@ -6,7 +6,7 @@ export function FinalCTASection() {
     <section className="py-20 sm:py-24 px-5">
       <div className="max-w-2xl mx-auto text-center">
         <ScrollAnimator>
-          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight mb-4">
+          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-100 tracking-tight mb-4">
             Ready to find your{' '}
             <span className="text-neutral-500 italic">crew</span>?
           </h2>
@@ -18,13 +18,13 @@ export function FinalCTASection() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
             <Link
               href="/events"
-              className="inline-flex items-center justify-center px-7 py-3.5 bg-neutral-900 text-white font-semibold text-sm rounded-md hover:bg-neutral-700 transition-colors"
+              className="inline-flex items-center justify-center px-7 py-3.5 bg-white text-neutral-900 font-semibold text-sm rounded-md hover:bg-neutral-200 transition-colors"
             >
               Browse events
             </Link>
             <Link
               href="/host"
-              className="inline-flex items-center justify-center px-7 py-3.5 border border-neutral-300 text-neutral-700 font-semibold text-sm rounded-md hover:bg-neutral-100 transition-colors"
+              className="inline-flex items-center justify-center px-7 py-3.5 border border-neutral-700 text-neutral-300 font-semibold text-sm rounded-md hover:bg-neutral-800 transition-colors"
             >
               Start hosting — free
             </Link>

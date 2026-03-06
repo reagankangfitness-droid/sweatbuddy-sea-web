@@ -149,7 +149,7 @@ export function ActivityMessaging({
             </DialogTitle>
           </DialogHeader>
           <div className="text-center py-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-neutral-100 rounded-full mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-neutral-800 rounded-full mb-4">
               <LogIn className="w-8 h-8 text-neutral-400" />
             </div>
             <h3 className="text-lg font-semibold mb-2">Sign in to message</h3>
@@ -172,7 +172,7 @@ export function ActivityMessaging({
                   onOpenChange(false)
                   router.push(`/sign-up?redirect_url=/activities/${activityId}`)
                 }}
-                className="text-neutral-900 font-medium hover:underline"
+                className="text-neutral-100 font-medium hover:underline"
               >
                 Sign up
               </button>

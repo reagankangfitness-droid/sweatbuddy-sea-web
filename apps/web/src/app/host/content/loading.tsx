@@ -2,20 +2,20 @@ import { DashboardHeader } from '@/components/host/DashboardHeader'
 
 export default function ContentLoading() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-neutral-950">
       <DashboardHeader />
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
         <div className="animate-pulse">
-          <div className="h-8 bg-neutral-200 rounded w-48 mb-2" />
-          <div className="h-4 bg-neutral-200 rounded w-72 mb-8" />
+          <div className="h-8 bg-neutral-700 rounded w-48 mb-2" />
+          <div className="h-4 bg-neutral-700 rounded w-72 mb-8" />
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-24 bg-neutral-200 rounded-xl" />
+              <div key={i} className="h-24 bg-neutral-700 rounded-xl" />
             ))}
           </div>
 
-          <div className="h-64 bg-neutral-200 rounded-xl" />
+          <div className="h-64 bg-neutral-700 rounded-xl" />
         </div>
       </main>
     </div>

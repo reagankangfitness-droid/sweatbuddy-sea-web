@@ -55,7 +55,7 @@ export function EventCard({ event }: { event: UpcomingEvent }) {
   return (
     <Link
       href={href}
-      className="group block bg-white rounded-xl border border-neutral-200 overflow-hidden hover:border-neutral-300 hover:shadow-md transition-all"
+      className="group block bg-neutral-950 rounded-xl border border-neutral-800 overflow-hidden hover:border-neutral-600 hover:shadow-md transition-all"
     >
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -69,14 +69,14 @@ export function EventCard({ event }: { event: UpcomingEvent }) {
             unoptimized
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center">
+          <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-700 flex items-center justify-center">
             <span className="text-4xl">{getCategoryEmoji(event.category)}</span>
           </div>
         )}
 
         {/* Category tag */}
         <div className="absolute top-2.5 left-2.5">
-          <span className="px-2 py-0.5 bg-white/90 backdrop-blur-sm rounded-md text-xs font-medium text-neutral-700 capitalize">
+          <span className="px-2 py-0.5 bg-neutral-950/90 backdrop-blur-sm rounded-md text-xs font-medium text-neutral-300 capitalize">
             {event.category}
           </span>
         </div>
@@ -86,8 +86,8 @@ export function EventCard({ event }: { event: UpcomingEvent }) {
           <div className="absolute top-2.5 right-2.5">
             <span className={`px-2 py-0.5 rounded-md text-xs font-semibold ${
               event.isFree
-                ? 'bg-green-50 text-green-700'
-                : 'bg-white/90 backdrop-blur-sm text-neutral-900'
+                ? 'bg-green-950 text-green-400'
+                : 'bg-neutral-950/90 backdrop-blur-sm text-neutral-100'
             }`}>
               {priceLabel}
             </span>
@@ -97,7 +97,7 @@ export function EventCard({ event }: { event: UpcomingEvent }) {
 
       {/* Info */}
       <div className="p-3.5">
-        <h3 className="font-semibold text-sm text-neutral-900 line-clamp-2 leading-snug">
+        <h3 className="font-semibold text-sm text-neutral-100 line-clamp-2 leading-snug">
           {event.eventName}
         </h3>
 

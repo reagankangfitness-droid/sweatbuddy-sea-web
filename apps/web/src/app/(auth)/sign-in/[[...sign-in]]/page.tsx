@@ -93,12 +93,12 @@ function SignInContent() {
   const content = getContextualContent()
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-50 px-4 py-8 pb-24 md:pb-8">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-900 px-4 py-8 pb-24 md:pb-8">
       <div className="w-full max-w-sm mx-auto">
         {/* Back to home */}
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-900 transition-colors mb-8"
+          className="inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-100 transition-colors mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to home
@@ -111,12 +111,12 @@ function SignInContent() {
 
         {/* Contextual Header */}
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-neutral-900">{content.title}</h1>
+          <h1 className="text-2xl font-bold text-neutral-100">{content.title}</h1>
           <p className="text-neutral-500 mt-1">{content.subtitle}</p>
         </div>
 
         {/* Clerk Sign In */}
-        <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
+        <div className="bg-neutral-950 rounded-2xl border border-neutral-800 shadow-sm overflow-hidden">
           <SignIn
             appearance={{
               layout: {
@@ -138,20 +138,20 @@ function SignInContent() {
                 formFieldRow: 'w-full',
                 formField: 'w-full gap-1',
                 socialButtons: 'w-full',
-                socialButtonsBlockButton: 'border border-neutral-200 hover:bg-neutral-50 rounded-xl w-full py-3',
-                socialButtonsBlockButtonText: 'font-medium text-neutral-700',
+                socialButtonsBlockButton: 'border border-neutral-800 hover:bg-neutral-900 rounded-xl w-full py-3',
+                socialButtonsBlockButtonText: 'font-medium text-neutral-300',
                 socialButtonsProviderIcon: 'w-5 h-5',
                 dividerRow: 'my-4',
-                dividerLine: 'bg-neutral-200',
+                dividerLine: 'bg-neutral-700',
                 dividerText: 'text-neutral-400 text-sm px-3',
-                formFieldLabel: 'text-neutral-700 font-medium text-sm',
-                formFieldInput: 'border-neutral-200 focus:border-neutral-900 focus:ring-neutral-900 rounded-xl w-full py-3',
+                formFieldLabel: 'text-neutral-300 font-medium text-sm',
+                formFieldInput: 'border-neutral-800 focus:border-neutral-500 focus:ring-white rounded-xl w-full py-3',
                 formButtonPrimary: 'bg-neutral-900 hover:bg-neutral-800 rounded-xl w-full py-3 text-base font-semibold',
                 footerAction: 'pt-4 justify-center',
-                footerActionLink: 'text-neutral-900 hover:text-neutral-700 font-medium',
+                footerActionLink: 'text-neutral-100 hover:text-neutral-300 font-medium',
                 footer: 'hidden',
                 identityPreview: 'justify-center',
-                identityPreviewEditButton: 'text-neutral-600',
+                identityPreviewEditButton: 'text-neutral-400',
                 formFieldInputShowPasswordButton: 'text-neutral-500',
                 alert: 'rounded-xl',
                 alertText: 'text-sm',
@@ -173,7 +173,7 @@ function SignInContent() {
 export default function SignInPage() {
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="flex min-h-screen items-center justify-center bg-neutral-950">
         <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
       </div>
     }>

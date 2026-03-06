@@ -126,7 +126,7 @@ export function TimePickerDropdown({
                     }}
                     className={`w-full text-left px-4 py-2 text-sm transition-colors ${
                       isSelected
-                        ? 'bg-white text-neutral-900 font-semibold'
+                        ? 'bg-neutral-950 text-neutral-100 font-semibold'
                         : 'text-neutral-300 hover:bg-neutral-800'
                     }`}
                   >

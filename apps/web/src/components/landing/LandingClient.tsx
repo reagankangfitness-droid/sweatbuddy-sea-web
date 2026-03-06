@@ -42,8 +42,8 @@ export function LandingClient({ data }: { data: LandingData }) {
   // Show nothing while checking auth to avoid flash
   if (!isLoaded || isSignedIn) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-neutral-200 border-t-neutral-900 rounded-full animate-spin" />
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-neutral-800 border-t-white rounded-full animate-spin" />
       </div>
     )
   }
@@ -52,7 +52,7 @@ export function LandingClient({ data }: { data: LandingData }) {
   const showEvents = data.upcomingEvents.length >= 3
 
   return (
-    <main className="min-h-screen bg-white text-neutral-900">
+    <main className="min-h-screen bg-neutral-950 text-neutral-100">
       {/* Nav */}
       <nav className="fixed top-0 w-full z-50 px-4 sm:px-8 py-4 backdrop-blur-xl bg-black/30 border-b border-white/10 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-2">
@@ -101,7 +101,7 @@ export function LandingClient({ data }: { data: LandingData }) {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <Link
               href="/host"
-              className="inline-flex items-center justify-center bg-white text-neutral-900 px-8 py-3.5 rounded-full font-semibold text-base hover:bg-neutral-100 transition-colors"
+              className="inline-flex items-center justify-center bg-neutral-950 text-neutral-100 px-8 py-3.5 rounded-full font-semibold text-base hover:bg-neutral-800 transition-colors"
             >
               Start Hosting — It&apos;s Free
             </Link>
@@ -123,9 +123,9 @@ export function LandingClient({ data }: { data: LandingData }) {
       </section>
 
       {/* ============ VIEWPORT 2: HOW IT WORKS ============ */}
-      <section className="py-16 sm:py-20 px-5 bg-neutral-50">
+      <section className="py-16 sm:py-20 px-5 bg-neutral-900">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 text-center mb-10 sm:mb-12">
+          <h2 className="text-xl sm:text-2xl font-bold text-neutral-100 text-center mb-10 sm:mb-12">
             How it works
           </h2>
 
@@ -134,7 +134,7 @@ export function LandingClient({ data }: { data: LandingData }) {
               <div className="text-3xl mb-3">
                 <span role="img" aria-label="Create">&#x1f4dd;</span>
               </div>
-              <h3 className="font-semibold text-neutral-900 mb-1.5">Create your event</h3>
+              <h3 className="font-semibold text-neutral-100 mb-1.5">Create your event</h3>
               <p className="text-sm text-neutral-500 leading-relaxed">
                 Set up in under 5 minutes. Add title, time, location, and price.
               </p>
@@ -144,7 +144,7 @@ export function LandingClient({ data }: { data: LandingData }) {
               <div className="text-3xl mb-3">
                 <span role="img" aria-label="Share">&#x1f4f1;</span>
               </div>
-              <h3 className="font-semibold text-neutral-900 mb-1.5">Share & grow</h3>
+              <h3 className="font-semibold text-neutral-100 mb-1.5">Share & grow</h3>
               <p className="text-sm text-neutral-500 leading-relaxed">
                 Get shareable flyers, tracked links, and AI-written descriptions.
               </p>
@@ -154,7 +154,7 @@ export function LandingClient({ data }: { data: LandingData }) {
               <div className="text-3xl mb-3">
                 <span role="img" aria-label="Get paid">&#x1f4b0;</span>
               </div>
-              <h3 className="font-semibold text-neutral-900 mb-1.5">Get paid</h3>
+              <h3 className="font-semibold text-neutral-100 mb-1.5">Get paid</h3>
               <p className="text-sm text-neutral-500 leading-relaxed">
                 Collect payments through Stripe or PayNow. We handle everything.
               </p>
@@ -164,7 +164,7 @@ export function LandingClient({ data }: { data: LandingData }) {
           <div className="text-center mt-10 sm:mt-12">
             <Link
               href="/host"
-              className="inline-flex items-center justify-center bg-neutral-900 text-white px-8 py-3.5 rounded-full font-semibold text-base hover:bg-neutral-700 transition-colors"
+              className="inline-flex items-center justify-center bg-white text-neutral-900 px-8 py-3.5 rounded-full font-semibold text-base hover:bg-neutral-200 transition-colors"
             >
               Start Hosting — It&apos;s Free
             </Link>
@@ -176,7 +176,7 @@ export function LandingClient({ data }: { data: LandingData }) {
       {showEvents && (
         <section className="py-16 sm:py-20 px-5">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 text-center mb-8 sm:mb-10">
+            <h2 className="text-xl sm:text-2xl font-bold text-neutral-100 text-center mb-8 sm:mb-10">
               Happening soon in Singapore
             </h2>
 
@@ -189,7 +189,7 @@ export function LandingClient({ data }: { data: LandingData }) {
             <div className="text-center mt-8">
               <Link
                 href="/events"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
               >
                 See all events
                 <ArrowRight className="w-4 h-4" />
@@ -200,15 +200,15 @@ export function LandingClient({ data }: { data: LandingData }) {
       )}
 
       {/* ============ FOOTER ============ */}
-      <footer className="py-10 px-5 border-t border-neutral-100">
+      <footer className="py-10 px-5 border-t border-neutral-800">
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <Link href="/"><LogoWithText size={24} /></Link>
             <nav className="flex items-center gap-5 text-sm text-neutral-500">
-              <Link href="/events" className="hover:text-neutral-900 transition-colors">Events</Link>
-              <Link href="/communities" className="hover:text-neutral-900 transition-colors">Community</Link>
-              <Link href="/host" className="hover:text-neutral-900 transition-colors">Host</Link>
-              <Link href="/support" className="hover:text-neutral-900 transition-colors">Support</Link>
+              <Link href="/events" className="hover:text-neutral-100 transition-colors">Events</Link>
+              <Link href="/communities" className="hover:text-neutral-100 transition-colors">Community</Link>
+              <Link href="/host" className="hover:text-neutral-100 transition-colors">Host</Link>
+              <Link href="/support" className="hover:text-neutral-100 transition-colors">Support</Link>
             </nav>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2 mt-6 text-xs text-neutral-400">
@@ -217,7 +217,7 @@ export function LandingClient({ data }: { data: LandingData }) {
               href="https://instagram.com/_sweatbuddies"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-neutral-600 transition-colors"
+              className="hover:text-neutral-400 transition-colors"
             >
               @_sweatbuddies
             </a>
@@ -244,7 +244,7 @@ function LandingEventCard({ event }: { event: UpcomingEvent }) {
   return (
     <Link
       href={href}
-      className="block bg-white rounded-2xl border border-neutral-100 overflow-hidden hover:border-neutral-300 hover:shadow-lg transition-all group"
+      className="block bg-neutral-950 rounded-2xl border border-neutral-800 overflow-hidden hover:border-neutral-600 hover:shadow-lg transition-all group"
     >
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -258,7 +258,7 @@ function LandingEventCard({ event }: { event: UpcomingEvent }) {
             unoptimized
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-neutral-100 to-neutral-200 flex items-center justify-center">
+          <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-700 flex items-center justify-center">
             <span className="text-3xl">
               {event.category === 'running' ? '\u{1F3C3}' :
                event.category === 'yoga' ? '\u{1F9D8}' :
@@ -271,7 +271,7 @@ function LandingEventCard({ event }: { event: UpcomingEvent }) {
 
       {/* Info */}
       <div className="p-3">
-        <h3 className="font-semibold text-sm text-neutral-900 line-clamp-2 leading-tight">
+        <h3 className="font-semibold text-sm text-neutral-100 line-clamp-2 leading-tight">
           {event.eventName}
         </h3>
 

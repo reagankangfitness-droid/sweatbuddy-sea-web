@@ -171,10 +171,10 @@ export default function AdminHostsPage() {
   ]
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-neutral-50 min-h-screen">
+    <div className="p-4 sm:p-6 lg:p-8 bg-neutral-900 min-h-screen">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="font-sans text-2xl sm:text-3xl font-bold text-neutral-900">
+        <h1 className="font-sans text-2xl sm:text-3xl font-bold text-neutral-100">
           Host Management
         </h1>
         <p className="text-sm text-neutral-500 mt-1">
@@ -187,14 +187,14 @@ export default function AdminHostsPage() {
         <div
           className={`mb-6 p-4 rounded-xl flex items-start gap-3 ${
             result.success
-              ? 'bg-emerald-50 border border-emerald-200'
-              : 'bg-red-50 border border-red-200'
+              ? 'bg-emerald-50 border border-emerald-800'
+              : 'bg-red-950 border border-red-800'
           }`}
         >
           {result.success ? (
-            <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+            <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
           ) : (
-            <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <XCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
           )}
           <div className="flex-1">
             <p className={result.success ? 'text-emerald-800' : 'text-red-800'}>
@@ -225,8 +225,8 @@ export default function AdminHostsPage() {
             }}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === tab.id
-                ? 'bg-neutral-900 text-white'
-                : 'bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-50'
+                ? 'bg-white text-neutral-900'
+                : 'bg-neutral-950 border border-neutral-800 text-neutral-400 hover:bg-neutral-900'
             }`}
           >
             <tab.icon className="w-4 h-4" />
@@ -236,12 +236,12 @@ export default function AdminHostsPage() {
       </div>
 
       {/* Tab Content */}
-      <div className="bg-white border border-neutral-200 rounded-2xl p-6">
+      <div className="bg-neutral-950 border border-neutral-800 rounded-2xl p-6">
         {/* Create Host Tab */}
         {activeTab === 'create-host' && (
           <form onSubmit={handleCreateHost} className="space-y-4 max-w-md">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
+              <label className="block text-sm font-medium text-neutral-300 mb-1">
                 <Mail className="w-4 h-4 inline mr-1" />
                 Host Email *
               </label>
@@ -251,12 +251,12 @@ export default function AdminHostsPage() {
                 onChange={(e) => setHostEmail(e.target.value)}
                 placeholder="host@example.com"
                 required
-                className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 bg-white text-neutral-900 placeholder:text-neutral-500"
+                className="w-full px-4 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
+              <label className="block text-sm font-medium text-neutral-300 mb-1">
                 <Instagram className="w-4 h-4 inline mr-1" />
                 Instagram Handle *
               </label>
@@ -266,12 +266,12 @@ export default function AdminHostsPage() {
                 onChange={(e) => setHostInstagram(e.target.value)}
                 placeholder="runalone_runningclub"
                 required
-                className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 bg-white text-neutral-900 placeholder:text-neutral-500"
+                className="w-full px-4 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
+              <label className="block text-sm font-medium text-neutral-300 mb-1">
                 <User className="w-4 h-4 inline mr-1" />
                 Display Name
               </label>
@@ -280,14 +280,14 @@ export default function AdminHostsPage() {
                 value={hostName}
                 onChange={(e) => setHostName(e.target.value)}
                 placeholder="Run Alone Running Club"
-                className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 bg-white text-neutral-900 placeholder:text-neutral-500"
+                className="w-full px-4 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-700 transition-colors disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white text-neutral-900 rounded-lg font-medium hover:bg-neutral-200 transition-colors disabled:opacity-50"
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -306,11 +306,11 @@ export default function AdminHostsPage() {
         {/* Create Event Tab */}
         {activeTab === 'create-event' && (
           <form onSubmit={handleCreateEvent} className="space-y-4 max-w-lg">
-            <div className="border-b border-neutral-200 pb-4 mb-4">
-              <h3 className="font-semibold text-neutral-900 mb-3">Host Details</h3>
+            <div className="border-b border-neutral-800 pb-4 mb-4">
+              <h3 className="font-semibold text-neutral-100 mb-3">Host Details</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-300 mb-1">
                     Host Email *
                   </label>
                   <input
@@ -319,11 +319,11 @@ export default function AdminHostsPage() {
                     onChange={(e) => setEventHostEmail(e.target.value)}
                     placeholder="host@example.com"
                     required
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm bg-white text-neutral-900 placeholder:text-neutral-500"
+                    className="w-full px-3 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-sm bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-300 mb-1">
                     Instagram Handle *
                   </label>
                   <input
@@ -332,12 +332,12 @@ export default function AdminHostsPage() {
                     onChange={(e) => setEventHostInstagram(e.target.value)}
                     placeholder="runningclub"
                     required
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm bg-white text-neutral-900 placeholder:text-neutral-500"
+                    className="w-full px-3 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-sm bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
                   />
                 </div>
               </div>
               <div className="mt-3">
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-300 mb-1">
                   Host Name
                 </label>
                 <input
@@ -345,15 +345,15 @@ export default function AdminHostsPage() {
                   value={eventHostName}
                   onChange={(e) => setEventHostName(e.target.value)}
                   placeholder="Running Club SG"
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm bg-white text-neutral-900 placeholder:text-neutral-500"
+                  className="w-full px-3 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-sm bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
                 />
               </div>
             </div>
 
-            <h3 className="font-semibold text-neutral-900">Event Details</h3>
+            <h3 className="font-semibold text-neutral-100">Event Details</h3>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
+              <label className="block text-sm font-medium text-neutral-300 mb-1">
                 Event Name *
               </label>
               <input
@@ -362,19 +362,19 @@ export default function AdminHostsPage() {
                 onChange={(e) => setEventName(e.target.value)}
                 placeholder="Saturday Morning Run"
                 required
-                className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm bg-white text-neutral-900 placeholder:text-neutral-500"
+                className="w-full px-3 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-sm bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-300 mb-1">
                   Category *
                 </label>
                 <select
                   value={eventCategory}
                   onChange={(e) => setEventCategory(e.target.value)}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm bg-white text-neutral-900 placeholder:text-neutral-500"
+                  className="w-full px-3 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-sm bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
                 >
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>{cat}</option>
@@ -382,13 +382,13 @@ export default function AdminHostsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-300 mb-1">
                   Day *
                 </label>
                 <select
                   value={eventDay}
                   onChange={(e) => setEventDay(e.target.value)}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm bg-white text-neutral-900 placeholder:text-neutral-500"
+                  className="w-full px-3 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-sm bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
                 >
                   {days.map((day) => (
                     <option key={day} value={day}>{day}</option>
@@ -399,7 +399,7 @@ export default function AdminHostsPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-300 mb-1">
                   Time *
                 </label>
                 <input
@@ -408,24 +408,24 @@ export default function AdminHostsPage() {
                   onChange={(e) => setEventTime(e.target.value)}
                   placeholder="7:00 AM"
                   required
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm bg-white text-neutral-900 placeholder:text-neutral-500"
+                  className="w-full px-3 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-sm bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-300 mb-1">
                   Specific Date (optional)
                 </label>
                 <input
                   type="date"
                   value={eventDate}
                   onChange={(e) => setEventDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm bg-white text-neutral-900 placeholder:text-neutral-500"
+                  className="w-full px-3 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-sm bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
+              <label className="block text-sm font-medium text-neutral-300 mb-1">
                 Location *
               </label>
               <input
@@ -434,12 +434,12 @@ export default function AdminHostsPage() {
                 onChange={(e) => setEventLocation(e.target.value)}
                 placeholder="East Coast Park, Car Park C"
                 required
-                className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm bg-white text-neutral-900 placeholder:text-neutral-500"
+                className="w-full px-3 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-sm bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
+              <label className="block text-sm font-medium text-neutral-300 mb-1">
                 Description
               </label>
               <textarea
@@ -447,12 +447,12 @@ export default function AdminHostsPage() {
                 onChange={(e) => setEventDescription(e.target.value)}
                 placeholder="Join us for a casual morning run..."
                 rows={3}
-                className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm bg-white text-neutral-900 placeholder:text-neutral-500"
+                className="w-full px-3 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-sm bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
+              <label className="block text-sm font-medium text-neutral-300 mb-1">
                 Image URL
               </label>
               <input
@@ -460,7 +460,7 @@ export default function AdminHostsPage() {
                 value={eventImageUrl}
                 onChange={(e) => setEventImageUrl(e.target.value)}
                 placeholder="https://example.com/image.jpg"
-                className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm bg-white text-neutral-900 placeholder:text-neutral-500"
+                className="w-full px-3 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-sm bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
               />
               <p className="text-xs text-neutral-500 mt-1">
                 Direct URL to an image (from Instagram, Google Drive, etc.)
@@ -468,7 +468,7 @@ export default function AdminHostsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
+              <label className="block text-sm font-medium text-neutral-300 mb-1">
                 Community Link
               </label>
               <input
@@ -476,7 +476,7 @@ export default function AdminHostsPage() {
                 value={eventCommunityLink}
                 onChange={(e) => setEventCommunityLink(e.target.value)}
                 placeholder="https://instagram.com/runningclub or WhatsApp group link"
-                className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 text-sm bg-white text-neutral-900 placeholder:text-neutral-500"
+                className="w-full px-3 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white text-sm bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
               />
               <p className="text-xs text-neutral-500 mt-1">
                 Link to Instagram, WhatsApp group, or community page
@@ -489,7 +489,7 @@ export default function AdminHostsPage() {
                   type="checkbox"
                   checked={eventRecurring}
                   onChange={(e) => setEventRecurring(e.target.checked)}
-                  className="rounded border-neutral-300"
+                  className="rounded border-neutral-700"
                 />
                 Recurring weekly
               </label>
@@ -498,7 +498,7 @@ export default function AdminHostsPage() {
                   type="checkbox"
                   checked={eventAutoApprove}
                   onChange={(e) => setEventAutoApprove(e.target.checked)}
-                  className="rounded border-neutral-300"
+                  className="rounded border-neutral-700"
                 />
                 Auto-approve
               </label>
@@ -507,7 +507,7 @@ export default function AdminHostsPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-700 transition-colors disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white text-neutral-900 rounded-lg font-medium hover:bg-neutral-200 transition-colors disabled:opacity-50"
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -524,7 +524,7 @@ export default function AdminHostsPage() {
           <div className="max-w-md">
             <form onSubmit={handleGenerateMagicLink} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-300 mb-1">
                   <Mail className="w-4 h-4 inline mr-1" />
                   Host Email *
                 </label>
@@ -534,14 +534,14 @@ export default function AdminHostsPage() {
                   onChange={(e) => setMagicLinkEmail(e.target.value)}
                   placeholder="host@example.com"
                   required
-                  className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 bg-white text-neutral-900 placeholder:text-neutral-500"
+                  className="w-full px-4 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-white bg-neutral-950 text-neutral-100 placeholder:text-neutral-500"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-700 transition-colors disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white text-neutral-900 rounded-lg font-medium hover:bg-neutral-200 transition-colors disabled:opacity-50"
               >
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -553,11 +553,11 @@ export default function AdminHostsPage() {
             </form>
 
             {generatedLink && (
-              <div className="mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+              <div className="mt-6 p-4 bg-emerald-50 border border-emerald-800 rounded-xl">
                 <p className="text-sm font-medium text-emerald-800 mb-2">
                   Magic sign-in link generated!
                 </p>
-                <div className="bg-white border border-emerald-200 rounded-lg p-3 break-all text-xs text-neutral-700 mb-3">
+                <div className="bg-neutral-950 border border-emerald-800 rounded-lg p-3 break-all text-xs text-neutral-300 mb-3">
                   {generatedLink}
                 </div>
                 <div className="flex gap-2">
@@ -572,21 +572,21 @@ export default function AdminHostsPage() {
                     href={generatedLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1 px-3 py-1.5 bg-white border border-emerald-200 text-emerald-700 rounded-lg text-sm hover:bg-emerald-50 transition-colors"
+                    className="flex items-center gap-1 px-3 py-1.5 bg-neutral-950 border border-emerald-800 text-emerald-700 rounded-lg text-sm hover:bg-emerald-50 transition-colors"
                   >
                     <ExternalLink className="w-3 h-3" />
                     Test Link
                   </a>
                 </div>
-                <p className="text-xs text-emerald-600 mt-3">
+                <p className="text-xs text-emerald-400 mt-3">
                   Send this link to the host. They can sign in directly without a password.
                 </p>
               </div>
             )}
 
-            <div className="mt-6 p-4 bg-neutral-100 rounded-xl">
-              <h4 className="text-sm font-medium text-neutral-700 mb-2">How it works:</h4>
-              <ol className="text-xs text-neutral-600 space-y-1 list-decimal list-inside">
+            <div className="mt-6 p-4 bg-neutral-800 rounded-xl">
+              <h4 className="text-sm font-medium text-neutral-300 mb-2">How it works:</h4>
+              <ol className="text-xs text-neutral-400 space-y-1 list-decimal list-inside">
                 <li>Enter the host&apos;s email address</li>
                 <li>Click &quot;Generate Magic Link&quot;</li>
                 <li>Send the link to the host via email/message</li>

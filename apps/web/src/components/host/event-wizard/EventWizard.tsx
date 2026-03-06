@@ -341,7 +341,7 @@ export function EventWizard({ mode, initialData, eventId, currentAttendees }: Ev
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-white text-neutral-900 px-6 py-3 rounded-full font-semibold hover:bg-neutral-100 transition-colors"
+              className="inline-flex items-center gap-2 bg-neutral-950 text-neutral-100 px-6 py-3 rounded-full font-semibold hover:bg-neutral-800 transition-colors"
             >
               Back to Home
             </Link>
@@ -407,9 +407,9 @@ export function EventWizard({ mode, initialData, eventId, currentAttendees }: Ev
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${
                         step.number < currentStep
-                          ? 'bg-white text-neutral-900'
+                          ? 'bg-neutral-950 text-neutral-100'
                           : step.number === currentStep
-                            ? 'bg-white text-neutral-900'
+                            ? 'bg-neutral-950 text-neutral-100'
                             : 'bg-neutral-800 text-neutral-500'
                       }`}
                     >
@@ -421,7 +421,7 @@ export function EventWizard({ mode, initialData, eventId, currentAttendees }: Ev
                     </div>
                     <span
                       className={`text-xs ${
-                        step.number <= currentStep ? 'text-neutral-300' : 'text-neutral-600'
+                        step.number <= currentStep ? 'text-neutral-300' : 'text-neutral-400'
                       }`}
                     >
                       {step.label}
@@ -430,7 +430,7 @@ export function EventWizard({ mode, initialData, eventId, currentAttendees }: Ev
                   {i < STEPS.length - 1 && (
                     <div
                       className={`flex-1 h-0.5 mx-2 mb-5 rounded-full transition-colors ${
-                        step.number < currentStep ? 'bg-white' : 'bg-neutral-800'
+                        step.number < currentStep ? 'bg-neutral-950' : 'bg-neutral-800'
                       }`}
                     />
                   )}
@@ -501,7 +501,7 @@ export function EventWizard({ mode, initialData, eventId, currentAttendees }: Ev
               <button
                 type="button"
                 onClick={handleNext}
-                className="flex items-center gap-2 px-6 py-3.5 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 transition-colors"
+                className="flex items-center gap-2 px-6 py-3.5 bg-neutral-950 text-neutral-100 rounded-full font-semibold text-lg hover:bg-neutral-800 transition-colors"
               >
                 Next
                 <ChevronRight className="w-4 h-4" />
@@ -511,7 +511,7 @@ export function EventWizard({ mode, initialData, eventId, currentAttendees }: Ev
                 type="button"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex items-center gap-2 px-6 py-3.5 bg-white text-neutral-900 rounded-full font-semibold text-lg hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-2 px-6 py-3.5 bg-neutral-950 text-neutral-100 rounded-full font-semibold text-lg hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isSubmitting ? (
                   <>

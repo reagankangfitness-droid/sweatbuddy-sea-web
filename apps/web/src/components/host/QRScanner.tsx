@@ -99,9 +99,9 @@ export function QRScanner({ onScan, onError, disabled }: QRScannerProps) {
 
   if (disabled) {
     return (
-      <div className="bg-neutral-100 rounded-2xl p-8 text-center">
+      <div className="bg-neutral-800 rounded-2xl p-8 text-center">
         <CameraOff className="w-12 h-12 text-neutral-400 mx-auto mb-4" />
-        <p className="text-neutral-600">Scanner paused</p>
+        <p className="text-neutral-400">Scanner paused</p>
       </div>
     )
   }
@@ -130,12 +130,12 @@ export function QRScanner({ onScan, onError, disabled }: QRScannerProps) {
 
       {/* No Camera Fallback */}
       {!hasCamera && !showManualInput && (
-        <div className="bg-neutral-100 rounded-2xl p-8 text-center">
+        <div className="bg-neutral-800 rounded-2xl p-8 text-center">
           <CameraOff className="w-12 h-12 text-neutral-400 mx-auto mb-4" />
-          <p className="text-neutral-600 mb-4">Camera not available</p>
+          <p className="text-neutral-400 mb-4">Camera not available</p>
           <button
             onClick={() => setShowManualInput(true)}
-            className="px-4 py-2 bg-neutral-900 text-white rounded-lg font-medium"
+            className="px-4 py-2 bg-white text-neutral-900 rounded-lg font-medium"
           >
             Enter code manually
           </button>
@@ -153,7 +153,7 @@ export function QRScanner({ onScan, onError, disabled }: QRScannerProps) {
               setShowManualInput(true)
             }
           }}
-          className="w-full flex items-center justify-center gap-2 py-3 text-neutral-600 hover:text-neutral-900 transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-3 text-neutral-400 hover:text-neutral-100 transition-colors"
         >
           {showManualInput ? (
             <>
@@ -173,7 +173,7 @@ export function QRScanner({ onScan, onError, disabled }: QRScannerProps) {
       {showManualInput && (
         <form onSubmit={handleManualSubmit} className="space-y-3">
           <div>
-            <label htmlFor="manual-code" className="block text-sm font-medium text-neutral-700 mb-1">
+            <label htmlFor="manual-code" className="block text-sm font-medium text-neutral-300 mb-1">
               Check-in Code
             </label>
             <input
@@ -182,14 +182,14 @@ export function QRScanner({ onScan, onError, disabled }: QRScannerProps) {
               value={manualCode}
               onChange={(e) => setManualCode(e.target.value)}
               placeholder="Enter the code from ticket"
-              className="w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+              className="w-full px-4 py-3 border border-neutral-700 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
               autoFocus
             />
           </div>
           <button
             type="submit"
             disabled={!manualCode.trim()}
-            className="w-full py-3 bg-neutral-900 text-white rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 bg-white text-neutral-900 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Check In
           </button>

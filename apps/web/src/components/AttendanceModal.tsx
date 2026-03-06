@@ -237,7 +237,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
+            className="bg-neutral-950 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
           >
             {/* Header */}
             <div className="relative bg-gradient-to-br from-[#2563EB] to-[#38BDF8] p-6 text-white flex-shrink-0">
@@ -263,10 +263,10 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                 <form onSubmit={handleSubmit} className="space-y-4">
                   {/* Email Field */}
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-1">
+                    <label className="block text-sm font-medium text-neutral-300 mb-1">
                       Your email
                       {isSignedIn && (
-                        <span className="ml-2 text-xs text-green-600 font-normal">Using your account</span>
+                        <span className="ml-2 text-xs text-green-400 font-normal">Using your account</span>
                       )}
                     </label>
                     <input
@@ -276,8 +276,8 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                       onChange={(e) => !isSignedIn && setFormData({ ...formData, email: e.target.value })}
                       readOnly={isSignedIn}
                       placeholder="you@example.com"
-                      className={`w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition ${
-                        isSignedIn ? 'bg-neutral-50 cursor-not-allowed' : ''
+                      className={`w-full px-4 py-3 border border-neutral-800 rounded-xl focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition ${
+                        isSignedIn ? 'bg-neutral-900 cursor-not-allowed' : ''
                       }`}
                     />
                     <span className="text-xs text-neutral-400 mt-1 block">
@@ -287,7 +287,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
 
                   {/* Name Field (Optional) */}
                   <div>
-                    <label className="block text-sm font-medium text-neutral-700 mb-1">
+                    <label className="block text-sm font-medium text-neutral-300 mb-1">
                       Your name <span className="text-neutral-400">(optional)</span>
                     </label>
                     <input
@@ -295,14 +295,14 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="What should we call you?"
-                      className="w-full px-4 py-3 border border-neutral-200 rounded-xl focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition"
+                      className="w-full px-4 py-3 border border-neutral-800 rounded-xl focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition"
                     />
                   </div>
 
                   {/* Meal Preference (Only for specific events) */}
                   {showMealPreference && (
                     <div>
-                      <label className="block text-sm font-medium text-neutral-700 mb-2">
+                      <label className="block text-sm font-medium text-neutral-300 mb-2">
                         Meal Preference *
                       </label>
                       <div className="grid grid-cols-3 gap-2">
@@ -317,8 +317,8 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                             onClick={() => setFormData({ ...formData, mealPreference: option.value })}
                             className={`p-3 rounded-xl border-2 transition-all text-center ${
                               formData.mealPreference === option.value
-                                ? 'border-[#2563EB] bg-blue-50 text-[#2563EB]'
-                                : 'border-neutral-200 hover:border-neutral-300'
+                                ? 'border-[#2563EB] bg-blue-950 text-[#2563EB]'
+                                : 'border-neutral-800 hover:border-neutral-600'
                             }`}
                           >
                             <span className="text-xl block mb-1">{option.emoji}</span>
@@ -340,9 +340,9 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                           type="checkbox"
                           checked={formData.waiverAccepted}
                           onChange={(e) => setFormData({ ...formData, waiverAccepted: e.target.checked })}
-                          className="mt-1 w-4 h-4 text-[#2563EB] border-neutral-300 rounded focus:ring-[#2563EB]"
+                          className="mt-1 w-4 h-4 text-[#2563EB] border-neutral-700 rounded focus:ring-[#2563EB]"
                         />
-                        <span className="text-sm text-neutral-600">
+                        <span className="text-sm text-neutral-400">
                           I have read and agree to the{' '}
                           <button
                             type="button"
@@ -363,7 +363,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                             exit={{ opacity: 0, height: 0 }}
                             className="overflow-hidden"
                           >
-                            <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-4 mt-2">
+                            <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 mt-2">
                               <WaiverText expandable={false} compact />
                             </div>
                           </motion.div>
@@ -378,9 +378,9 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                       type="checkbox"
                       checked={formData.subscribe}
                       onChange={(e) => setFormData({ ...formData, subscribe: e.target.checked })}
-                      className="mt-1 w-4 h-4 text-[#2563EB] border-neutral-300 rounded focus:ring-[#2563EB]"
+                      className="mt-1 w-4 h-4 text-[#2563EB] border-neutral-700 rounded focus:ring-[#2563EB]"
                     />
-                    <span className="text-sm text-neutral-600">
+                    <span className="text-sm text-neutral-400">
                       Send me the weekly drop — the best local events, every Wednesday.
                     </span>
                   </label>
@@ -388,7 +388,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                   {/* Error Message - with special handling for already registered */}
                   {error && (
                     error.includes('already registered') ? (
-                      <p className="text-amber-600 text-sm">You&apos;ve already registered for this experience</p>
+                      <p className="text-amber-400 text-sm">You&apos;ve already registered for this experience</p>
                     ) : (
                       <p className="text-red-500 text-sm">{error}</p>
                     )
@@ -420,16 +420,16 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
               ) : (
                 /* Success State */
                 <div className="text-center py-4">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Check className="w-8 h-8 text-green-600" />
+                  <div className="w-16 h-16 bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Check className="w-8 h-8 text-green-400" />
                   </div>
-                  <h3 className="text-xl font-bold text-neutral-900 mb-1">
+                  <h3 className="text-xl font-bold text-neutral-100 mb-1">
                     You&apos;re in. See you there.
                   </h3>
 
                   {/* Event Summary Card */}
-                  <div className="bg-neutral-50 rounded-xl p-4 my-4 text-left">
-                    <div className="flex items-center gap-2 text-sm text-neutral-600">
+                  <div className="bg-neutral-900 rounded-xl p-4 my-4 text-left">
+                    <div className="flex items-center gap-2 text-sm text-neutral-400">
                       <span>📅</span>
                       <span>{event.day} · {event.time}</span>
                     </div>
@@ -446,7 +446,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                         const calendarUrl = generateCalendarUrl()
                         window.open(calendarUrl, '_blank')
                       }}
-                      className="w-full py-3 border border-neutral-200 rounded-xl font-medium hover:bg-neutral-50 transition flex items-center justify-center gap-2"
+                      className="w-full py-3 border border-neutral-800 rounded-xl font-medium hover:bg-neutral-900 transition flex items-center justify-center gap-2"
                       title="Add this to your calendar so you don't forget"
                     >
                       <Calendar className="w-5 h-5" />
@@ -461,8 +461,8 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
 
                     {/* Community Link - Only show if host has one */}
                     {event.communityLink && (
-                      <div className="pt-3 border-t border-neutral-100">
-                        <p className="text-sm text-neutral-600 mb-3">Join the community</p>
+                      <div className="pt-3 border-t border-neutral-800">
+                        <p className="text-sm text-neutral-400 mb-3">Join the community</p>
                         <a
                           href={event.communityLink}
                           target="_blank"
@@ -487,14 +487,14 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
 
                     <button
                       onClick={handleClose}
-                      className="w-full py-3 bg-neutral-900 text-white rounded-xl font-medium hover:bg-neutral-800 transition"
+                      className="w-full py-3 bg-white text-neutral-900 rounded-xl font-medium hover:bg-neutral-200 transition"
                     >
                       Got It
                     </button>
 
                     <a
                       href={`/my-events?email=${encodeURIComponent(formData.email)}`}
-                      className="block text-sm text-neutral-500 hover:text-neutral-900 transition"
+                      className="block text-sm text-neutral-500 hover:text-neutral-100 transition"
                     >
                       View all my events &rarr;
                     </a>

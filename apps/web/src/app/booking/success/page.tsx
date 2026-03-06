@@ -181,7 +181,7 @@ function BookingSuccessContent() {
   if (error) {
     return (
       <main className="min-h-screen bg-background flex items-center justify-center p-6 pt-24">
-        <div className="bg-white rounded-2xl shadow-card p-8 max-w-md w-full text-center">
+        <div className="bg-neutral-950 rounded-2xl shadow-card p-8 max-w-md w-full text-center">
           <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl">!</span>
           </div>
@@ -241,7 +241,7 @@ function BookingSuccessContent() {
       `}</style>
 
       <main className="min-h-screen bg-background flex items-center justify-center p-6 pt-24">
-        <div className="bg-white rounded-2xl shadow-card p-8 max-w-lg w-full">
+        <div className="bg-neutral-950 rounded-2xl shadow-card p-8 max-w-lg w-full">
           {/* Success Icon */}
           <div className="text-center mb-6">
             <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -267,7 +267,7 @@ function BookingSuccessContent() {
             </Button>
 
             {calendarDropdownOpen && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-border overflow-hidden z-10">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-neutral-950 rounded-xl shadow-lg border border-border overflow-hidden z-10">
                 <button
                   onClick={handleAddToGoogleCalendar}
                   className="w-full flex items-center gap-3 px-4 py-3 hover:bg-background transition-colors text-left"
@@ -455,11 +455,11 @@ function LoadingFallback() {
 export default function BookingSuccessPage() {
   return (
     <>
-      <header className="sticky top-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+      <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-2xl mx-auto flex items-center gap-4 px-4 py-3">
-            <Link href="/events" className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200">
-              <ArrowLeft className="w-5 h-5 text-neutral-700" />
+            <Link href="/events" className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
+              <ArrowLeft className="w-5 h-5 text-neutral-300" />
             </Link>
             <span className="text-sm font-medium text-neutral-500">Booking Confirmed</span>
           </div>

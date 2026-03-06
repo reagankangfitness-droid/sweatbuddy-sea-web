@@ -19,7 +19,7 @@ export function ShareButton() {
           toast.success('Link copied to clipboard!')
         }
       }}
-      className="p-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+      className="p-2 text-neutral-400 hover:text-neutral-100 transition-colors"
     >
       <Share2 className="w-5 h-5" />
     </button>

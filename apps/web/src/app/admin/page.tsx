@@ -166,7 +166,7 @@ export default function AdminDashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh] bg-neutral-50">
+      <div className="flex items-center justify-center min-h-[60vh] bg-neutral-900">
         <Loader2 className="w-8 h-8 text-neutral-500 animate-spin" />
       </div>
     )
@@ -176,17 +176,17 @@ export default function AdminDashboardPage() {
   const eventData = topEvents
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-neutral-50 min-h-screen">
+    <div className="p-4 sm:p-6 lg:p-8 bg-neutral-900 min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-sans text-2xl sm:text-3xl font-bold text-neutral-900">Dashboard</h1>
+          <h1 className="font-sans text-2xl sm:text-3xl font-bold text-neutral-100">Dashboard</h1>
           <p className="text-sm text-neutral-500 mt-1">Overview of your SweatBuddies platform</p>
         </div>
         <button
           onClick={handleRefresh}
           disabled={refreshing}
-          className="flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-xl hover:bg-neutral-700 transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 bg-white text-neutral-900 rounded-xl hover:bg-neutral-200 transition-colors disabled:opacity-50"
         >
           <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
           <span className="hidden sm:inline text-sm font-medium">Refresh</span>
@@ -201,8 +201,8 @@ export default function AdminDashboardPage() {
           change={stats.attendeesThisWeek}
           changeLabel="this week"
           icon={Users}
-          iconBg="bg-blue-100"
-          iconColor="text-blue-600"
+          iconBg="bg-blue-900"
+          iconColor="text-blue-400"
         />
         <StatCard
           title="Newsletter Subscribers"
@@ -211,7 +211,7 @@ export default function AdminDashboardPage() {
           changeLabel="this week"
           icon={Mail}
           iconBg="bg-emerald-100"
-          iconColor="text-emerald-600"
+          iconColor="text-emerald-400"
         />
         <StatCard
           title="Host Inquiries"
@@ -226,23 +226,23 @@ export default function AdminDashboardPage() {
           title="Events with RSVPs"
           value={stats.totalEvents}
           icon={Calendar}
-          iconBg="bg-purple-100"
+          iconBg="bg-purple-900"
           iconColor="text-purple-600"
         />
         <StatCard
           title="Newsletter Opt-in Rate"
           value={`${stats.optInRate}%`}
           icon={TrendingUp}
-          iconBg="bg-amber-100"
-          iconColor="text-amber-600"
+          iconBg="bg-amber-900"
+          iconColor="text-amber-400"
         />
       </div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Activity Chart */}
-        <div className="bg-white rounded-2xl border border-neutral-200 p-4 sm:p-6 shadow-sm">
-          <h3 className="font-semibold text-lg text-neutral-900 mb-4">Activity (Last 7 Days)</h3>
+        <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 sm:p-6 shadow-sm">
+          <h3 className="font-semibold text-lg text-neutral-100 mb-4">Activity (Last 7 Days)</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
@@ -289,18 +289,18 @@ export default function AdminDashboardPage() {
           <div className="flex items-center justify-center gap-6 mt-4">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-blue-500 rounded-full" />
-              <span className="text-neutral-600 text-sm">Attendees</span>
+              <span className="text-neutral-400 text-sm">Attendees</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-emerald-500 rounded-full" />
-              <span className="text-neutral-600 text-sm">Subscribers</span>
+              <span className="text-neutral-400 text-sm">Subscribers</span>
             </div>
           </div>
         </div>
 
         {/* Event Distribution */}
-        <div className="bg-white rounded-2xl border border-neutral-200 p-4 sm:p-6 shadow-sm">
-          <h3 className="font-semibold text-lg text-neutral-900 mb-4">Top Events by RSVPs</h3>
+        <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 sm:p-6 shadow-sm">
+          <h3 className="font-semibold text-lg text-neutral-100 mb-4">Top Events by RSVPs</h3>
           {eventData.length > 0 ? (
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
@@ -342,8 +342,8 @@ export default function AdminDashboardPage() {
       {/* Bottom Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Subscriber Sources */}
-        <div className="bg-white rounded-2xl border border-neutral-200 p-4 sm:p-6 shadow-sm">
-          <h3 className="font-semibold text-lg text-neutral-900 mb-4">Subscriber Sources</h3>
+        <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 sm:p-6 shadow-sm">
+          <h3 className="font-semibold text-lg text-neutral-100 mb-4">Subscriber Sources</h3>
           {sourceData.length > 0 ? (
             <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
@@ -384,21 +384,21 @@ export default function AdminDashboardPage() {
                   className="w-2.5 h-2.5 rounded-full"
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 />
-                <span className="text-neutral-600 text-xs capitalize">{source.name}</span>
+                <span className="text-neutral-400 text-xs capitalize">{source.name}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Recent Attendees */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-neutral-200 p-4 sm:p-6 shadow-sm">
-          <h3 className="font-semibold text-lg text-neutral-900 mb-4">Recent Attendees</h3>
+        <div className="lg:col-span-2 bg-neutral-950 rounded-2xl border border-neutral-800 p-4 sm:p-6 shadow-sm">
+          <h3 className="font-semibold text-lg text-neutral-100 mb-4">Recent Attendees</h3>
           {attendees.length > 0 ? (
             <div className="space-y-3">
               {attendees.slice(0, 5).map((attendee) => (
                 <div
                   key={attendee.id}
-                  className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl"
+                  className="flex items-center justify-between p-3 bg-neutral-900 rounded-xl"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-neutral-900 rounded-full flex items-center justify-center">
@@ -407,7 +407,7 @@ export default function AdminDashboardPage() {
                       </span>
                     </div>
                     <div>
-                      <p className="text-neutral-900 text-sm font-medium">
+                      <p className="text-neutral-100 text-sm font-medium">
                         {attendee.name || attendee.email}
                       </p>
                       <p className="text-neutral-500 text-xs">{attendee.eventName}</p>
@@ -415,7 +415,7 @@ export default function AdminDashboardPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     {attendee.subscribe && (
-                      <span className="text-emerald-600 text-xs flex items-center gap-1">
+                      <span className="text-emerald-400 text-xs flex items-center gap-1">
                         <CheckCircle className="w-3 h-3" />
                         <span className="hidden sm:inline">Subscribed</span>
                       </span>
@@ -436,9 +436,9 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Recent Host Inquiries */}
-      <div className="mt-6 bg-white rounded-2xl border border-neutral-200 p-4 sm:p-6 shadow-sm">
+      <div className="mt-6 bg-neutral-950 rounded-2xl border border-neutral-800 p-4 sm:p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-lg text-neutral-900">Recent Host Inquiries</h3>
+          <h3 className="font-semibold text-lg text-neutral-100">Recent Host Inquiries</h3>
           <span className="text-xs text-neutral-500">{stats.activeConversations} active conversations</span>
         </div>
         {conversations.length > 0 ? (
@@ -446,14 +446,14 @@ export default function AdminDashboardPage() {
             {conversations.slice(0, 5).map((conv) => (
               <div
                 key={conv.id}
-                className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl"
+                className="flex items-center justify-between p-3 bg-neutral-900 rounded-xl"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
                     <MessageCircle className="w-4 h-4 text-white" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-neutral-900 text-sm font-medium truncate">
+                    <p className="text-neutral-100 text-sm font-medium truncate">
                       {conv.attendeeName || conv.attendeeEmail}
                     </p>
                     <p className="text-neutral-500 text-xs truncate">
@@ -469,7 +469,7 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <span className={`text-xs px-2 py-0.5 rounded-full ${
                     conv.lastMessageSender === 'attendee'
-                      ? 'bg-amber-100 text-amber-700'
+                      ? 'bg-amber-900 text-amber-400'
                       : 'bg-emerald-100 text-emerald-700'
                   }`}>
                     {conv.lastMessageSender === 'attendee' ? 'Awaiting reply' : 'Replied'}
@@ -513,20 +513,20 @@ function StatCard({
   iconColor: string
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-neutral-200 p-4 shadow-sm">
+    <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 shadow-sm">
       <div className="flex items-start justify-between">
         <div className={`w-10 h-10 ${iconBg} rounded-xl flex items-center justify-center`}>
           <Icon className={`w-5 h-5 ${iconColor}`} />
         </div>
         {change !== undefined && (
-          <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium">
+          <div className="flex items-center gap-1 text-emerald-400 text-xs font-medium">
             <ArrowUpRight className="w-3 h-3" />
             <span>+{change}</span>
           </div>
         )}
       </div>
       <div className="mt-3">
-        <p className="text-2xl font-bold text-neutral-900">{value}</p>
+        <p className="text-2xl font-bold text-neutral-100">{value}</p>
         <p className="text-xs text-neutral-500 mt-1">
           {title}
           {changeLabel && change !== undefined && (

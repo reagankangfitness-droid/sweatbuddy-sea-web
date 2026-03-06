@@ -77,7 +77,7 @@ export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) 
     <div className="p-3 sm:p-4">
       <div className="flex gap-3 sm:gap-4">
         {/* Thumbnail */}
-        <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-lg bg-neutral-100 overflow-hidden flex-shrink-0">
+        <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-lg bg-neutral-800 overflow-hidden flex-shrink-0">
           {event.imageUrl ? (
             <Image
               src={event.imageUrl}
@@ -99,7 +99,7 @@ export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) 
         <div className="flex-1 min-w-0">
           {/* Title and going count */}
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold text-neutral-900 text-sm sm:text-base truncate">
+            <h3 className="font-semibold text-neutral-100 text-sm sm:text-base truncate">
               {event.name}
             </h3>
             {/* Desktop: text, Mobile: icon with count */}
@@ -126,19 +126,19 @@ export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) 
           <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 sm:mt-3">
             <Link
               href={`/host/events/${event.id}/attendees`}
-              className="text-xs sm:text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
+              className="text-xs sm:text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
             >
               Attendees
             </Link>
             <Link
               href={`/host/events/${event.id}/edit`}
-              className="text-xs sm:text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
+              className="text-xs sm:text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
             >
               Edit
             </Link>
             <Link
               href={`/host/events/${event.id}/duplicate`}
-              className="text-xs sm:text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors flex items-center gap-1"
+              className="text-xs sm:text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors flex items-center gap-1"
             >
               <Copy className="w-3 h-3" />
               <span className="hidden sm:inline">Duplicate</span>
@@ -182,27 +182,27 @@ export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) 
       {/* Cancel Confirmation Modal */}
       {showCancelConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-neutral-900 mb-2">Cancel Event?</h3>
-            <p className="text-sm text-neutral-600 mb-4">
+          <div className="bg-neutral-950 rounded-xl max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-neutral-100 mb-2">Cancel Event?</h3>
+            <p className="text-sm text-neutral-400 mb-4">
               This will cancel <strong>{event.name}</strong> and notify all {event.goingCount > 0 ? `${event.goingCount} ` : ''}attendee{event.goingCount !== 1 ? 's' : ''} via email.
             </p>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-neutral-700 mb-1">
+              <label className="block text-sm font-medium text-neutral-300 mb-1">
                 Reason (optional)
               </label>
               <textarea
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
                 placeholder="e.g., Weather conditions, venue unavailable..."
-                className="w-full px-3 py-2 border border-neutral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
+                className="w-full px-3 py-2 border border-neutral-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
                 rows={2}
               />
             </div>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowCancelConfirm(false)}
-                className="flex-1 px-4 py-2 text-sm font-medium text-neutral-600 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 text-sm font-medium text-neutral-400 bg-neutral-800 hover:bg-neutral-700 rounded-lg transition-colors"
               >
                 Keep Event
               </button>

@@ -220,7 +220,7 @@ export function WhosGoing({ activityId, hasJoined, currentUserId }: WhosGoingPro
                     <DialogTitle className="text-left">{selectedAttendee.name}</DialogTitle>
                     <DialogDescription className="text-left">
                       {selectedAttendee.goingSolo && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-medium mt-1">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-900 text-amber-800 text-xs font-medium mt-1">
                           Going Solo
                         </span>
                       )}

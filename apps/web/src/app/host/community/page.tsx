@@ -31,10 +31,10 @@ interface Event {
 }
 
 function getLoyaltyBadge(count: number): { label: string; color: string; emoji: string } | null {
-  if (count >= 20) return { label: 'Superfan', color: 'bg-purple-100 text-purple-700', emoji: '💎' }
-  if (count >= 10) return { label: 'Loyal', color: 'bg-amber-100 text-amber-700', emoji: '🔥' }
-  if (count >= 5) return { label: 'Regular', color: 'bg-blue-100 text-blue-700', emoji: '⭐' }
-  if (count >= 3) return { label: 'Returning', color: 'bg-green-100 text-green-700', emoji: '🔄' }
+  if (count >= 20) return { label: 'Superfan', color: 'bg-purple-900 text-purple-700', emoji: '💎' }
+  if (count >= 10) return { label: 'Loyal', color: 'bg-amber-900 text-amber-400', emoji: '🔥' }
+  if (count >= 5) return { label: 'Regular', color: 'bg-blue-900 text-blue-700', emoji: '⭐' }
+  if (count >= 3) return { label: 'Returning', color: 'bg-green-900 text-green-400', emoji: '🔄' }
   return null
 }
 
@@ -150,29 +150,29 @@ export default function CommunityPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-neutral-950">
         <DashboardHeader />
         <main className="max-w-4xl mx-auto px-6 py-12">
-          <p className="text-red-600">{error}</p>
+          <p className="text-red-400">{error}</p>
         </main>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-neutral-950">
       <DashboardHeader />
 
       <main className="max-w-4xl mx-auto px-6 py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900">Your Community</h1>
+            <h1 className="text-2xl font-bold text-neutral-100">Your Community</h1>
             <p className="text-neutral-500">Everyone who&apos;s joined your experiences</p>
           </div>
           <button
             onClick={() => setShowMessageModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-full hover:bg-neutral-700 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-neutral-900 text-sm font-semibold rounded-full hover:bg-neutral-200 transition-colors"
           >
             <MessageSquare className="w-4 h-4" />
             Quick Message
@@ -182,15 +182,15 @@ export default function CommunityPage() {
         {/* Stats */}
         {stats && (
           <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="p-4 bg-neutral-50 rounded-xl text-center">
-              <p className="text-2xl font-bold text-neutral-900">{stats.totalPeople}</p>
+            <div className="p-4 bg-neutral-900 rounded-xl text-center">
+              <p className="text-2xl font-bold text-neutral-100">{stats.totalPeople}</p>
               <p className="text-sm text-neutral-500">Total People</p>
             </div>
-            <div className="p-4 bg-neutral-50 rounded-xl text-center">
-              <p className="text-2xl font-bold text-green-600">{stats.totalAttended}</p>
+            <div className="p-4 bg-neutral-900 rounded-xl text-center">
+              <p className="text-2xl font-bold text-green-400">{stats.totalAttended}</p>
               <p className="text-sm text-neutral-500">Showed Up</p>
             </div>
-            <div className="p-4 bg-neutral-50 rounded-xl text-center">
+            <div className="p-4 bg-neutral-900 rounded-xl text-center">
               <p className="text-2xl font-bold text-purple-600">{stats.regulars}</p>
               <p className="text-sm text-neutral-500">Regulars (3+)</p>
             </div>
@@ -207,18 +207,18 @@ export default function CommunityPage() {
               placeholder="Search by name or email..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-neutral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              className="w-full pl-10 pr-4 py-2.5 border border-neutral-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
 
           {/* Filter Toggle */}
-          <div className="flex rounded-lg border border-neutral-200 overflow-hidden">
+          <div className="flex rounded-lg border border-neutral-800 overflow-hidden">
             <button
               onClick={() => setFilter('all')}
               className={`px-4 py-2.5 text-sm font-medium transition-colors ${
                 filter === 'all'
-                  ? 'bg-neutral-900 text-white'
-                  : 'bg-white text-neutral-600 hover:bg-neutral-50'
+                  ? 'bg-white text-neutral-900'
+                  : 'bg-neutral-950 text-neutral-400 hover:bg-neutral-900'
               }`}
             >
               All RSVPs
@@ -227,8 +227,8 @@ export default function CommunityPage() {
               onClick={() => setFilter('attended')}
               className={`px-4 py-2.5 text-sm font-medium transition-colors ${
                 filter === 'attended'
-                  ? 'bg-neutral-900 text-white'
-                  : 'bg-white text-neutral-600 hover:bg-neutral-50'
+                  ? 'bg-white text-neutral-900'
+                  : 'bg-neutral-950 text-neutral-400 hover:bg-neutral-900'
               }`}
             >
               Attended Only
@@ -239,7 +239,7 @@ export default function CommunityPage() {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as 'lastSeen' | 'events' | 'name')}
-            className="px-4 py-2.5 border border-neutral-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900"
+            className="px-4 py-2.5 border border-neutral-800 rounded-lg text-sm bg-neutral-950 focus:outline-none focus:ring-2 focus:ring-white"
           >
             <option value="lastSeen">Last Seen</option>
             <option value="events">Most Events</option>
@@ -249,29 +249,29 @@ export default function CommunityPage() {
 
         {/* Attendee List */}
         {attendees.length === 0 ? (
-          <div className="p-12 bg-neutral-50 rounded-xl text-center">
+          <div className="p-12 bg-neutral-900 rounded-xl text-center">
             <Users className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
-            <p className="font-medium text-neutral-900 mb-1">No attendees yet</p>
+            <p className="font-medium text-neutral-100 mb-1">No attendees yet</p>
             <p className="text-sm text-neutral-500">When people RSVP to your experiences, they&apos;ll show up here</p>
           </div>
         ) : (
-          <div className="border border-neutral-200 rounded-xl overflow-hidden">
+          <div className="border border-neutral-800 rounded-xl overflow-hidden">
             {attendees.map((attendee) => (
-              <div key={attendee.email} className="border-b border-neutral-100 last:border-0">
+              <div key={attendee.email} className="border-b border-neutral-800 last:border-0">
                 {/* Main Row */}
                 <div
-                  className="flex items-center justify-between p-4 cursor-pointer hover:bg-neutral-50 transition-colors"
+                  className="flex items-center justify-between p-4 cursor-pointer hover:bg-neutral-900 transition-colors"
                   onClick={() => handleExpandRow(attendee.email, attendee.notes)}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 bg-neutral-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="font-medium text-neutral-600">
+                    <div className="w-10 h-10 bg-neutral-800 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="font-medium text-neutral-400">
                         {(attendee.name?.[0] || attendee.email[0]).toUpperCase()}
                       </span>
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-medium text-neutral-900 truncate">
+                        <p className="font-medium text-neutral-100 truncate">
                           {attendee.name || 'Anonymous'}
                         </p>
                         {(() => {
@@ -295,10 +295,10 @@ export default function CommunityPage() {
 
                   <div className="flex items-center gap-4 flex-shrink-0">
                     <div className="text-right hidden sm:block">
-                      <p className="text-sm font-medium text-neutral-900">
+                      <p className="text-sm font-medium text-neutral-100">
                         {attendee.eventsRSVPd} experience{attendee.eventsRSVPd !== 1 ? 's' : ''}
                         {attendee.eventsAttended > 0 && (
-                          <span className="text-green-600 ml-1">
+                          <span className="text-green-400 ml-1">
                             ({attendee.eventsAttended} attended)
                           </span>
                         )}
@@ -319,16 +319,16 @@ export default function CommunityPage() {
 
                 {/* Expanded Notes Section */}
                 {expandedEmail === attendee.email && (
-                  <div className="px-4 pb-4 bg-neutral-50">
+                  <div className="px-4 pb-4 bg-neutral-900">
                     <div className="ml-13">
-                      <label className="block text-sm font-medium text-neutral-700 mb-2">
+                      <label className="block text-sm font-medium text-neutral-300 mb-2">
                         Notes about {attendee.name || 'this person'}
                       </label>
                       <textarea
                         value={editingNotes}
                         onChange={(e) => setEditingNotes(e.target.value)}
                         placeholder="Add notes... (e.g., prefers morning sessions, vegetarian)"
-                        className="w-full p-3 border border-neutral-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                        className="w-full p-3 border border-neutral-800 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-white"
                         rows={3}
                       />
                       <div className="flex items-center justify-between mt-2">
@@ -338,14 +338,14 @@ export default function CommunityPage() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => setExpandedEmail(null)}
-                            className="px-3 py-1.5 text-sm text-neutral-600 hover:text-neutral-900"
+                            className="px-3 py-1.5 text-sm text-neutral-400 hover:text-neutral-100"
                           >
                             Cancel
                           </button>
                           <button
                             onClick={() => handleSaveNotes(attendee.email)}
                             disabled={savingNotes}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-neutral-700 disabled:opacity-50"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-white text-neutral-900 text-sm font-medium rounded-lg hover:bg-neutral-200 disabled:opacity-50"
                           >
                             {savingNotes ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
@@ -368,12 +368,12 @@ export default function CommunityPage() {
       {/* Quick Message Modal */}
       {showMessageModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+          <div className="bg-neutral-950 rounded-2xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-neutral-900">Quick Message</h2>
+              <h2 className="text-lg font-semibold text-neutral-100">Quick Message</h2>
               <button
                 onClick={() => setShowMessageModal(false)}
-                className="p-1 text-neutral-400 hover:text-neutral-600"
+                className="p-1 text-neutral-400 hover:text-neutral-400"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -385,45 +385,45 @@ export default function CommunityPage() {
 
             {/* Audience Selection */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
+              <label className="block text-sm font-medium text-neutral-300 mb-2">
                 Select Audience
               </label>
               <div className="space-y-2">
-                <label className="flex items-center gap-2 p-3 border border-neutral-200 rounded-lg cursor-pointer hover:bg-neutral-50">
+                <label className="flex items-center gap-2 p-3 border border-neutral-800 rounded-lg cursor-pointer hover:bg-neutral-900">
                   <input
                     type="radio"
                     name="audience"
                     value="all"
                     checked={messageAudience === 'all'}
                     onChange={() => setMessageAudience('all')}
-                    className="text-neutral-900"
+                    className="text-neutral-100"
                   />
-                  <span className="text-sm text-neutral-900">All RSVPs ({stats?.totalPeople || 0} people)</span>
+                  <span className="text-sm text-neutral-100">All RSVPs ({stats?.totalPeople || 0} people)</span>
                 </label>
-                <label className="flex items-center gap-2 p-3 border border-neutral-200 rounded-lg cursor-pointer hover:bg-neutral-50">
+                <label className="flex items-center gap-2 p-3 border border-neutral-800 rounded-lg cursor-pointer hover:bg-neutral-900">
                   <input
                     type="radio"
                     name="audience"
                     value="regulars"
                     checked={messageAudience === 'regulars'}
                     onChange={() => setMessageAudience('regulars')}
-                    className="text-neutral-900"
+                    className="text-neutral-100"
                   />
-                  <span className="text-sm text-neutral-900">Regulars only ({stats?.regulars || 0} people with 3+ events)</span>
+                  <span className="text-sm text-neutral-100">Regulars only ({stats?.regulars || 0} people with 3+ events)</span>
                 </label>
               </div>
             </div>
 
             {/* Message Preview */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
+              <label className="block text-sm font-medium text-neutral-300 mb-2">
                 Message Preview
               </label>
-              <div className="p-3 bg-neutral-50 rounded-lg text-sm text-neutral-700">
+              <div className="p-3 bg-neutral-900 rounded-lg text-sm text-neutral-300">
                 {generateMessage()}
               </div>
               {!communityLink && (
-                <p className="text-xs text-amber-600 mt-2">
+                <p className="text-xs text-amber-400 mt-2">
                   Tip: Add a community link to your experiences for a better message!
                 </p>
               )}
@@ -433,13 +433,13 @@ export default function CommunityPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowMessageModal(false)}
-                className="flex-1 px-4 py-2.5 border border-neutral-200 text-neutral-700 text-sm font-medium rounded-lg hover:bg-neutral-50"
+                className="flex-1 px-4 py-2.5 border border-neutral-800 text-neutral-300 text-sm font-medium rounded-lg hover:bg-neutral-900"
               >
                 Cancel
               </button>
               <button
                 onClick={copyMessage}
-                className="flex-1 px-4 py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-neutral-700"
+                className="flex-1 px-4 py-2.5 bg-white text-neutral-900 text-sm font-medium rounded-lg hover:bg-neutral-200"
               >
                 Copy Message
               </button>

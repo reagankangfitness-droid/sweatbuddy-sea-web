@@ -127,32 +127,32 @@ export default function ProfileSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => router.back()}
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800"
               >
-                <ArrowLeft className="w-5 h-5 text-neutral-700" />
+                <ArrowLeft className="w-5 h-5 text-neutral-300" />
               </button>
-              <h1 className="text-lg font-semibold text-neutral-900">Edit Profile</h1>
+              <h1 className="text-lg font-semibold text-neutral-100">Edit Profile</h1>
             </div>
             {profile?.slug && (
               <Link
                 href={`/user/${profile.slug}`}
                 target="_blank"
-                className="text-sm font-medium text-neutral-500 hover:text-neutral-900 flex items-center gap-1"
+                className="text-sm font-medium text-neutral-500 hover:text-neutral-100 flex items-center gap-1"
               >
                 View <ExternalLink className="h-3.5 w-3.5" />
               </Link>
@@ -165,7 +165,7 @@ export default function ProfileSettingsPage() {
         <form onSubmit={handleSubmit} className="max-w-lg mx-auto space-y-6">
           {/* Photo */}
           <div className="flex flex-col items-center gap-3">
-            <div className="w-24 h-24 rounded-full overflow-hidden bg-neutral-200">
+            <div className="w-24 h-24 rounded-full overflow-hidden bg-neutral-700">
               {profile?.imageUrl ? (
                 <Image
                   src={profile.imageUrl}
@@ -205,7 +205,7 @@ export default function ProfileSettingsPage() {
               type="button"
               disabled={uploadingPhoto}
               onClick={() => fileInputRef.current?.click()}
-              className="text-sm font-medium text-neutral-600 flex items-center gap-1.5"
+              className="text-sm font-medium text-neutral-400 flex items-center gap-1.5"
             >
               <Camera className="h-4 w-4" />
               {uploadingPhoto ? 'Uploading...' : 'Change Photo'}
@@ -213,7 +213,7 @@ export default function ProfileSettingsPage() {
           </div>
 
           {/* Fields */}
-          <div className="bg-white rounded-2xl border border-neutral-200 divide-y divide-neutral-100">
+          <div className="bg-neutral-950 rounded-2xl border border-neutral-800 divide-y divide-neutral-800">
             {/* Display Name */}
             <div className="px-4 py-3">
               <label className="text-xs font-medium text-neutral-500">Display Name</label>
@@ -221,7 +221,7 @@ export default function ProfileSettingsPage() {
                 value={formData.name}
                 onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
                 placeholder="Your full name"
-                className="w-full mt-1 text-sm text-neutral-900 bg-transparent outline-none placeholder-neutral-400"
+                className="w-full mt-1 text-sm text-neutral-100 bg-transparent outline-none placeholder-neutral-400"
               />
             </div>
 
@@ -239,7 +239,7 @@ export default function ProfileSettingsPage() {
                     }))
                   }
                   placeholder="username"
-                  className="flex-1 text-sm text-neutral-900 bg-transparent outline-none placeholder-neutral-400"
+                  className="flex-1 text-sm text-neutral-100 bg-transparent outline-none placeholder-neutral-400"
                 />
               </div>
             </div>
@@ -258,7 +258,7 @@ export default function ProfileSettingsPage() {
                     }))
                   }
                   placeholder="instagram_handle"
-                  className="flex-1 text-sm text-neutral-900 bg-transparent outline-none placeholder-neutral-400"
+                  className="flex-1 text-sm text-neutral-100 bg-transparent outline-none placeholder-neutral-400"
                 />
               </div>
               <p className="text-[10px] text-neutral-400 mt-1">Required to manage experiences you host</p>
@@ -273,14 +273,14 @@ export default function ProfileSettingsPage() {
                 placeholder="Tell people about yourself..."
                 rows={3}
                 maxLength={300}
-                className="w-full mt-1 text-sm text-neutral-900 bg-transparent outline-none placeholder-neutral-400 resize-none"
+                className="w-full mt-1 text-sm text-neutral-100 bg-transparent outline-none placeholder-neutral-400 resize-none"
               />
               <p className="text-right text-[10px] text-neutral-400">{formData.bio.length}/300</p>
             </div>
           </div>
 
           {/* Fitness Interests */}
-          <div className="bg-white rounded-2xl border border-neutral-200 p-4">
+          <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4">
             <label className="text-xs font-medium text-neutral-500">Fitness Interests</label>
             <p className="text-[10px] text-neutral-400 mt-0.5 mb-3">Select activities you enjoy</p>
             <div className="flex flex-wrap gap-2">
@@ -295,7 +295,7 @@ export default function ProfileSettingsPage() {
                     className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                       isSelected
                         ? 'border-current'
-                        : 'border-neutral-200 text-neutral-400'
+                        : 'border-neutral-800 text-neutral-400'
                     }`}
                     style={isSelected ? {
                       borderColor: display.color + '80',
@@ -311,11 +311,11 @@ export default function ProfileSettingsPage() {
           </div>
 
           {/* Toggles */}
-          <div className="bg-white rounded-2xl border border-neutral-200 divide-y divide-neutral-100">
+          <div className="bg-neutral-950 rounded-2xl border border-neutral-800 divide-y divide-neutral-800">
             {/* Going Solo */}
             <div className="px-4 py-4 flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm font-medium text-neutral-900">Going Solo</p>
+                <p className="text-sm font-medium text-neutral-100">Going Solo</p>
                 <p className="text-[10px] text-neutral-400 mt-0.5">Show others you&apos;re open to meeting new people at events</p>
               </div>
               <button
@@ -324,11 +324,11 @@ export default function ProfileSettingsPage() {
                 aria-checked={formData.goingSolo}
                 onClick={() => setFormData(p => ({ ...p, goingSolo: !p.goingSolo }))}
                 className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full transition-colors ${
-                  formData.goingSolo ? 'bg-amber-500' : 'bg-neutral-200'
+                  formData.goingSolo ? 'bg-amber-500' : 'bg-neutral-700'
                 }`}
               >
                 <span
-                  className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform mt-0.5 ${
+                  className={`inline-block h-5 w-5 transform rounded-full bg-neutral-950 shadow-sm transition-transform mt-0.5 ${
                     formData.goingSolo ? 'translate-x-[22px]' : 'translate-x-0.5'
                   }`}
                 />
@@ -338,7 +338,7 @@ export default function ProfileSettingsPage() {
             {/* Public Profile */}
             <div className="px-4 py-4 flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm font-medium text-neutral-900">Public Profile</p>
+                <p className="text-sm font-medium text-neutral-100">Public Profile</p>
                 <p className="text-[10px] text-neutral-400 mt-0.5">Let others see your activity and communities</p>
               </div>
               <button
@@ -347,11 +347,11 @@ export default function ProfileSettingsPage() {
                 aria-checked={formData.isPublic}
                 onClick={() => setFormData(p => ({ ...p, isPublic: !p.isPublic }))}
                 className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full transition-colors ${
-                  formData.isPublic ? 'bg-neutral-900' : 'bg-neutral-200'
+                  formData.isPublic ? 'bg-neutral-900' : 'bg-neutral-700'
                 }`}
               >
                 <span
-                  className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform mt-0.5 ${
+                  className={`inline-block h-5 w-5 transform rounded-full bg-neutral-950 shadow-sm transition-transform mt-0.5 ${
                     formData.isPublic ? 'translate-x-[22px]' : 'translate-x-0.5'
                   }`}
                 />
@@ -363,7 +363,7 @@ export default function ProfileSettingsPage() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full py-3.5 rounded-xl bg-neutral-900 text-white font-semibold text-sm disabled:opacity-50"
+            className="w-full py-3.5 rounded-xl bg-white text-neutral-900 font-semibold text-sm disabled:opacity-50"
           >
             {saving ? 'Saving...' : 'Save'}
           </button>
@@ -375,7 +375,7 @@ export default function ProfileSettingsPage() {
           type="button"
           disabled={saving}
           onClick={saveProfile}
-          className="w-full py-3.5 rounded-full bg-neutral-900 text-white font-semibold text-sm disabled:opacity-50"
+          className="w-full py-3.5 rounded-full bg-white text-neutral-900 font-semibold text-sm disabled:opacity-50"
         >
           {saving ? 'Saving...' : 'Save Changes'}
         </button>

@@ -17,16 +17,16 @@ export function HappeningSection({ events }: HappeningSectionProps) {
         <ScrollAnimator>
           <div className="flex items-end justify-between mb-8 sm:mb-10">
             <div>
-              <span className="inline-block px-2.5 py-1 bg-neutral-100 rounded-md text-xs font-medium text-neutral-500 uppercase tracking-wide mb-3">
+              <span className="inline-block px-2.5 py-1 bg-neutral-800 rounded-md text-xs font-medium text-neutral-500 uppercase tracking-wide mb-3">
                 Happening Soon
               </span>
-              <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold text-neutral-100 tracking-tight">
                 This week in Singapore
               </h2>
             </div>
             <Link
               href="/events"
-              className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
             >
               See all events
               <ArrowRight className="w-4 h-4" />
@@ -47,7 +47,7 @@ export function HappeningSection({ events }: HappeningSectionProps) {
         <div className="text-center mt-8 sm:hidden">
           <Link
             href="/events"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
           >
             See all events
             <ArrowRight className="w-4 h-4" />

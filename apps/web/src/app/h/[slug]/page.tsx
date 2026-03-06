@@ -664,7 +664,7 @@ export default function HostProfilePage() {
                           {activity.currency} {(activity.price / 100).toFixed(2)}
                         </span>
                       ) : (
-                        <span className="text-sm font-semibold text-emerald-600">
+                        <span className="text-sm font-semibold text-emerald-400">
                           Free
                         </span>
                       )}
@@ -796,7 +796,7 @@ export default function HostProfilePage() {
           {reviews.length > 2 && !showAllReviews && (
             <button
               onClick={() => setShowAllReviews(true)}
-              className="mt-4 w-full py-2.5 text-sm font-medium text-neutral-600 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-100 transition-colors"
+              className="mt-4 w-full py-2.5 text-sm font-medium text-neutral-400 bg-neutral-950 border border-neutral-800 rounded-xl hover:bg-neutral-800 transition-colors"
             >
               Show all {reviews.length} reviews
             </button>

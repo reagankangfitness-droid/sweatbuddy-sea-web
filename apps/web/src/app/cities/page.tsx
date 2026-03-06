@@ -47,19 +47,19 @@ export default async function CitiesPage() {
   const comingSoonCities = cities.filter(c => !c.isLaunched)
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-neutral-950">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-100">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link
               href="/"
-              className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+              className="flex items-center gap-2 text-neutral-400 hover:text-neutral-100 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span className="font-medium">Home</span>
             </Link>
-            <Link href="/" className="font-sans font-bold text-xl text-neutral-900">
+            <Link href="/" className="font-sans font-bold text-xl text-neutral-100">
               sweatbuddies
             </Link>
             <div className="w-20" />
@@ -70,10 +70,10 @@ export default async function CitiesPage() {
       {/* Hero */}
       <section className="py-16 sm:py-20 text-center">
         <div className="max-w-4xl mx-auto px-4">
-          <h1 className="font-sans font-bold text-4xl sm:text-5xl text-neutral-900 mb-4">
+          <h1 className="font-sans font-bold text-4xl sm:text-5xl text-neutral-100 mb-4">
             SweatBuddies Cities
           </h1>
-          <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
             Find fitness events and communities across Southeast Asia. Pick your city to explore.
           </p>
         </div>
@@ -148,10 +148,10 @@ export default async function CitiesPage() {
               {comingSoonCities.map((city) => (
                 <div
                   key={city.slug}
-                  className="bg-neutral-50 rounded-xl p-5 text-center"
+                  className="bg-neutral-900 rounded-xl p-5 text-center"
                 >
                   <span className="text-3xl mb-2 block">{cityEmojis[city.slug] || '🌏'}</span>
-                  <h3 className="font-semibold text-neutral-900">{city.name}</h3>
+                  <h3 className="font-semibold text-neutral-100">{city.name}</h3>
                   <p className="text-sm text-neutral-500 mt-1">{city.country}</p>
                 </div>
               ))}
@@ -161,17 +161,17 @@ export default async function CitiesPage() {
       )}
 
       {/* CTA */}
-      <section className="py-16 bg-neutral-50">
+      <section className="py-16 bg-neutral-900">
         <div className="max-w-2xl mx-auto px-4 text-center">
-          <h2 className="font-semibold text-2xl text-neutral-900 mb-3">
+          <h2 className="font-semibold text-2xl text-neutral-100 mb-3">
             Want SweatBuddies in your city?
           </h2>
-          <p className="text-neutral-600 mb-6">
+          <p className="text-neutral-400 mb-6">
             We&apos;re expanding across Southeast Asia. Let us know where you&apos;d like us next!
           </p>
           <a
             href="mailto:hello@sweatbuddies.co?subject=Bring%20SweatBuddies%20to%20my%20city"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-neutral-900 text-white rounded-full font-semibold hover:bg-neutral-800 transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold hover:bg-neutral-200 transition-colors"
           >
             Request Your City
             <ArrowRight className="w-5 h-5" />

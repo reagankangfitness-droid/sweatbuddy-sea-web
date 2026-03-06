@@ -107,28 +107,28 @@ export function SocialPostGenerator({
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative w-full sm:max-w-lg bg-white rounded-t-2xl sm:rounded-2xl max-h-[90vh] flex flex-col">
+      <div className="relative w-full sm:max-w-lg bg-neutral-950 rounded-t-2xl sm:rounded-2xl max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-neutral-100">
-          <h2 className="text-lg font-bold text-neutral-900">Social Media Content</h2>
+        <div className="flex items-center justify-between p-4 border-b border-neutral-800">
+          <h2 className="text-lg font-bold text-neutral-100">Social Media Content</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-neutral-100 rounded-full transition-colors"
+            className="p-2 hover:bg-neutral-800 rounded-full transition-colors"
           >
             <X className="w-5 h-5 text-neutral-500" />
           </button>
         </div>
 
         {/* Tab bar */}
-        <div className="flex gap-1 p-3 border-b border-neutral-100">
+        <div className="flex gap-1 p-3 border-b border-neutral-800">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 activeTab === tab.key
-                  ? 'bg-neutral-900 text-white'
-                  : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                  ? 'bg-white text-neutral-900'
+                  : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
               }`}
             >
               {tab.icon}
@@ -141,27 +141,27 @@ export function SocialPostGenerator({
         <div className="flex-1 overflow-y-auto p-4">
           {isGenerating ? (
             <div className="space-y-3">
-              <div className="h-4 bg-neutral-100 rounded animate-pulse w-3/4" />
-              <div className="h-4 bg-neutral-100 rounded animate-pulse w-full" />
-              <div className="h-4 bg-neutral-100 rounded animate-pulse w-5/6" />
-              <div className="h-4 bg-neutral-100 rounded animate-pulse w-2/3" />
-              <div className="h-4 bg-neutral-100 rounded animate-pulse w-4/5" />
-              <div className="h-4 bg-neutral-100 rounded animate-pulse w-1/2" />
+              <div className="h-4 bg-neutral-800 rounded animate-pulse w-3/4" />
+              <div className="h-4 bg-neutral-800 rounded animate-pulse w-full" />
+              <div className="h-4 bg-neutral-800 rounded animate-pulse w-5/6" />
+              <div className="h-4 bg-neutral-800 rounded animate-pulse w-2/3" />
+              <div className="h-4 bg-neutral-800 rounded animate-pulse w-4/5" />
+              <div className="h-4 bg-neutral-800 rounded animate-pulse w-1/2" />
             </div>
           ) : error ? (
             <div className="text-center py-8">
-              <p className="text-red-600 mb-4">{error}</p>
+              <p className="text-red-400 mb-4">{error}</p>
               <button
                 onClick={generate}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-lg text-sm font-medium hover:bg-neutral-800 transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white text-neutral-900 rounded-lg text-sm font-medium hover:bg-neutral-200 transition-colors"
               >
                 <RefreshCcw className="w-4 h-4" />
                 Try Again
               </button>
             </div>
           ) : content ? (
-            <div className="bg-neutral-50 rounded-xl p-4 border border-neutral-100">
-              <p className="text-sm text-neutral-800 whitespace-pre-wrap leading-relaxed">
+            <div className="bg-neutral-900 rounded-xl p-4 border border-neutral-800">
+              <p className="text-sm text-neutral-200 whitespace-pre-wrap leading-relaxed">
                 {content[activeTab]}
               </p>
             </div>
@@ -169,12 +169,12 @@ export function SocialPostGenerator({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-neutral-100 flex items-center justify-between gap-3">
+        <div className="p-4 border-t border-neutral-800 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <button
               onClick={generate}
               disabled={isGenerating}
-              className="inline-flex items-center gap-2 px-4 py-2 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2 border border-neutral-800 rounded-lg text-sm font-medium text-neutral-300 hover:bg-neutral-900 transition-colors disabled:opacity-50"
             >
               <RefreshCcw className={`w-4 h-4 ${isGenerating ? 'animate-spin' : ''}`} />
               Regenerate
@@ -187,7 +187,7 @@ export function SocialPostGenerator({
           {content && (
             <button
               onClick={() => handleCopy(activeTab)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-lg text-sm font-medium hover:bg-neutral-800 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white text-neutral-900 rounded-lg text-sm font-medium hover:bg-neutral-200 transition-colors"
             >
               {copiedTab === activeTab ? (
                 <>

@@ -66,11 +66,11 @@ export function StepLocation({ mode, userTimezone }: StepLocationProps) {
           onClick={() => setValue('isRecurring', !isRecurring)}
           className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
             isRecurring
-              ? 'bg-white border-white'
+              ? 'bg-neutral-950 border-neutral-700'
               : 'border-neutral-600 bg-transparent group-hover:border-neutral-500'
           }`}
         >
-          {isRecurring && <Check className="w-3 h-3 text-neutral-900" />}
+          {isRecurring && <Check className="w-3 h-3 text-neutral-100" />}
         </button>
         <span className="text-neutral-400 text-sm">Set this event to repeat</span>
       </label>
@@ -120,11 +120,11 @@ export function StepLocation({ mode, userTimezone }: StepLocationProps) {
               onClick={() => setValue('scheduleEnabled', !scheduleEnabled)}
               className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
                 scheduleEnabled
-                  ? 'bg-white border-white'
+                  ? 'bg-neutral-950 border-neutral-700'
                   : 'border-neutral-600 bg-transparent group-hover:border-neutral-500'
               }`}
             >
-              {scheduleEnabled && <Check className="w-3 h-3 text-neutral-900" />}
+              {scheduleEnabled && <Check className="w-3 h-3 text-neutral-100" />}
             </button>
             <Clock className="w-4 h-4 text-neutral-500" />
             <span className="text-neutral-400 text-sm">Schedule for later</span>

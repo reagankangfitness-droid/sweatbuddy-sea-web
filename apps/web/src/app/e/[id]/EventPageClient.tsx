@@ -146,12 +146,12 @@ export function EventPageClient({ event, initialGoingCount }: EventPageClientPro
         {/* Share */}
         <button
           onClick={handleShare}
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-neutral-100 hover:bg-neutral-200 rounded-lg text-sm font-medium text-neutral-700 transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-neutral-800 hover:bg-neutral-700 rounded-lg text-sm font-medium text-neutral-300 transition-colors"
         >
           {copied ? (
             <>
-              <Check className="w-4 h-4 text-green-600" />
-              <span className="text-green-600">Copied!</span>
+              <Check className="w-4 h-4 text-green-400" />
+              <span className="text-green-400">Copied!</span>
             </>
           ) : (
             <>
@@ -166,7 +166,7 @@ export function EventPageClient({ event, initialGoingCount }: EventPageClientPro
           href={`https://maps.google.com/?q=${encodeURIComponent(event.location)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-neutral-100 hover:bg-neutral-200 rounded-lg text-sm font-medium text-neutral-700 transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-neutral-800 hover:bg-neutral-700 rounded-lg text-sm font-medium text-neutral-300 transition-colors"
         >
           <MapPin className="w-4 h-4" />
           <span>Directions</span>

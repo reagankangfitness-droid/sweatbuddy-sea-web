@@ -42,10 +42,10 @@ interface AttendanceStats {
 
 // Get loyalty badge based on attendance count
 function getLoyaltyBadge(count: number): { label: string; color: string; emoji: string } | null {
-  if (count >= 20) return { label: 'Superfan', color: 'bg-purple-100 text-purple-700', emoji: '💎' }
-  if (count >= 10) return { label: 'Loyal', color: 'bg-amber-100 text-amber-700', emoji: '🔥' }
-  if (count >= 5) return { label: 'Regular', color: 'bg-blue-100 text-blue-700', emoji: '⭐' }
-  if (count === 1) return { label: 'First time!', color: 'bg-green-100 text-green-700', emoji: '👋' }
+  if (count >= 20) return { label: 'Superfan', color: 'bg-purple-900 text-purple-700', emoji: '💎' }
+  if (count >= 10) return { label: 'Loyal', color: 'bg-amber-900 text-amber-400', emoji: '🔥' }
+  if (count >= 5) return { label: 'Regular', color: 'bg-blue-900 text-blue-700', emoji: '⭐' }
+  if (count === 1) return { label: 'First time!', color: 'bg-green-900 text-green-400', emoji: '👋' }
   return null // 2-4 times, no badge
 }
 
@@ -263,7 +263,7 @@ export default function AttendeesPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-950">
         <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
       </div>
     )
@@ -271,29 +271,29 @@ export default function AttendeesPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white">
-        <header className="border-b border-neutral-100">
+      <div className="min-h-screen bg-neutral-950">
+        <header className="border-b border-neutral-800">
           <div className="max-w-2xl mx-auto px-6 py-4">
             <Link href="/" className="flex items-center gap-2">
               <Logo size={24} />
-              <span className="text-lg font-bold text-neutral-900">sweatbuddies</span>
+              <span className="text-lg font-bold text-neutral-100">sweatbuddies</span>
             </Link>
           </div>
         </header>
         <main className="max-w-2xl mx-auto px-6 py-12">
-          <p className="text-red-600">{error}</p>
+          <p className="text-red-400">{error}</p>
         </main>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="border-b border-neutral-100">
+    <div className="min-h-screen bg-neutral-950">
+      <header className="border-b border-neutral-800">
         <div className="max-w-2xl mx-auto px-6 py-4">
           <Link href="/" className="flex items-center gap-2">
             <Logo size={24} />
-            <span className="text-lg font-bold text-neutral-900">sweatbuddies</span>
+            <span className="text-lg font-bold text-neutral-100">sweatbuddies</span>
           </Link>
         </div>
       </header>
@@ -306,7 +306,7 @@ export default function AttendeesPage() {
 
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900">
+            <h1 className="text-2xl font-bold text-neutral-100">
               Who&apos;s Coming
             </h1>
             <p className="text-neutral-500">
@@ -342,7 +342,7 @@ export default function AttendeesPage() {
             </button>
             <button
               onClick={downloadCsv}
-              className="flex items-center gap-2 px-4 py-2 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 border border-neutral-800 rounded-lg text-sm font-medium text-neutral-300 hover:bg-neutral-900 transition-colors"
               title="Download attendee list as spreadsheet"
             >
               <Download className="w-4 h-4" />
@@ -353,18 +353,18 @@ export default function AttendeesPage() {
 
         {/* Attendance Stats */}
         {stats && attendees.length > 0 && (
-          <div className="mb-8 p-4 bg-neutral-50 rounded-xl border border-neutral-100">
+          <div className="mb-8 p-4 bg-neutral-900 rounded-xl border border-neutral-800">
             <div className="flex items-center gap-2 mb-3">
-              <Users className="w-5 h-5 text-neutral-600" />
-              <h3 className="font-semibold text-neutral-900">Attendance Tracking</h3>
+              <Users className="w-5 h-5 text-neutral-400" />
+              <h3 className="font-semibold text-neutral-100">Attendance Tracking</h3>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
               <div>
-                <p className="text-2xl font-bold text-neutral-900">{stats.totalRSVPs}</p>
+                <p className="text-2xl font-bold text-neutral-100">{stats.totalRSVPs}</p>
                 <p className="text-xs text-neutral-500">RSVPs</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-green-600">{stats.markedAttended}</p>
+                <p className="text-2xl font-bold text-green-400">{stats.markedAttended}</p>
                 <p className="text-xs text-neutral-500">Showed Up</p>
               </div>
               <div>
@@ -372,7 +372,7 @@ export default function AttendeesPage() {
                 <p className="text-xs text-neutral-500">No-Show</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-neutral-900">
+                <p className="text-2xl font-bold text-neutral-100">
                   {stats.showUpRate !== null ? `${stats.showUpRate}%` : '-'}
                 </p>
                 <p className="text-xs text-neutral-500">Show-up Rate</p>
@@ -390,7 +390,7 @@ export default function AttendeesPage() {
         {firstTimers.length > 0 && (
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-neutral-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-neutral-100 flex items-center gap-2">
                 <span className="text-lg">🆕</span>
                 First-Timers ({firstTimers.length})
               </h2>
@@ -402,15 +402,15 @@ export default function AttendeesPage() {
                 Send Welcome
               </button>
             </div>
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-              <p className="text-sm text-amber-700 mb-4">
+            <div className="bg-amber-950 border border-amber-800 rounded-xl p-4">
+              <p className="text-sm text-amber-400 mb-4">
                 These people are new to your experiences - a warm welcome goes a long way!
               </p>
               <div className="grid gap-2">
                 {firstTimers.slice(0, visibleFirstTimers).map((attendee) => (
                   <div
                     key={attendee.id}
-                    className="flex items-center justify-between bg-white rounded-lg p-3 border border-amber-100"
+                    className="flex items-center justify-between bg-neutral-950 rounded-lg p-3 border border-amber-100"
                   >
                     <div className="flex items-center gap-3">
                       <AttendanceToggleCompact
@@ -419,19 +419,19 @@ export default function AttendeesPage() {
                         initialValue={attendee.actuallyAttended}
                         onUpdate={(value) => handleAttendanceUpdate(attendee.id, value)}
                       />
-                      <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
-                        <span className="text-amber-700 font-medium text-sm">
+                      <div className="w-8 h-8 bg-amber-900 rounded-full flex items-center justify-center">
+                        <span className="text-amber-400 font-medium text-sm">
                           {(attendee.name?.[0] || attendee.email[0]).toUpperCase()}
                         </span>
                       </div>
                       <div>
-                        <p className="font-medium text-neutral-900 text-sm">
+                        <p className="font-medium text-neutral-100 text-sm">
                           {attendee.name || 'Anonymous'}
                         </p>
                         <p className="text-xs text-neutral-500">{attendee.email}</p>
                       </div>
                     </div>
-                    <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-700">
+                    <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-green-900 text-green-400">
                       👋 First time!
                     </span>
                   </div>
@@ -440,7 +440,7 @@ export default function AttendeesPage() {
               {firstTimers.length > visibleFirstTimers && (
                 <button
                   onClick={() => setVisibleFirstTimers(prev => prev + 15)}
-                  className="mt-3 w-full py-2.5 text-sm font-medium text-amber-700 bg-white border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors"
+                  className="mt-3 w-full py-2.5 text-sm font-medium text-amber-400 bg-neutral-950 border border-amber-800 rounded-lg hover:bg-amber-950 transition-colors"
                 >
                   Load more ({firstTimers.length - visibleFirstTimers} remaining)
                 </button>
@@ -452,23 +452,23 @@ export default function AttendeesPage() {
         {/* Pending Payments - Show first if any */}
         {pendingPayments.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-lg font-semibold text-neutral-900 mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-neutral-100 mb-4 flex items-center gap-2">
               <Clock className="w-5 h-5 text-amber-500" />
               Pending Verification ({pendingPayments.length})
             </h2>
-            <div className="border border-amber-200 rounded-xl overflow-hidden bg-amber-50">
+            <div className="border border-amber-800 rounded-xl overflow-hidden bg-amber-950">
               {pendingPayments.map((attendee) => (
                 <div
                   key={attendee.id}
-                  className="flex items-center justify-between p-4 border-b border-amber-200 last:border-0"
+                  className="flex items-center justify-between p-4 border-b border-amber-800 last:border-0"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-amber-600" />
+                    <div className="w-10 h-10 bg-amber-900 rounded-full flex items-center justify-center">
+                      <User className="w-5 h-5 text-amber-400" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="font-medium text-neutral-900">
+                        <p className="font-medium text-neutral-100">
                           {attendee.name || 'Anonymous'}
                         </p>
                         {(() => {
@@ -482,7 +482,7 @@ export default function AttendeesPage() {
                         })()}
                       </div>
                       <p className="text-sm text-neutral-500">{attendee.email}</p>
-                      <p className="text-xs text-amber-600 font-mono mt-0.5">
+                      <p className="text-xs text-amber-400 font-mono mt-0.5">
                         Ref: {attendee.paymentReference} • ${((attendee.paymentAmount || 0) / 100).toFixed(2)}
                       </p>
                     </div>
@@ -503,7 +503,7 @@ export default function AttendeesPage() {
                     <button
                       onClick={() => handleVerify(attendee.id, 'reject')}
                       disabled={verifyingId === attendee.id}
-                      className="flex items-center gap-1 px-3 py-1.5 border border-neutral-200 text-neutral-600 text-sm font-medium rounded-full hover:bg-neutral-50 transition-colors disabled:opacity-50"
+                      className="flex items-center gap-1 px-3 py-1.5 border border-neutral-800 text-neutral-400 text-sm font-medium rounded-full hover:bg-neutral-900 transition-colors disabled:opacity-50"
                     >
                       <X className="w-4 h-4" />
                       Reject
@@ -517,7 +517,7 @@ export default function AttendeesPage() {
 
         {/* Returning Attendees */}
         <div>
-          <h2 className="text-lg font-semibold text-neutral-900 mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-neutral-100 mb-4 flex items-center gap-2">
             <Users className="w-5 h-5 text-blue-500" />
             {returningAttendees.length > 0 ? `Returning (${returningAttendees.length})` : `All Attendees (${confirmedAttendees.length})`}
           </h2>
@@ -528,11 +528,11 @@ export default function AttendeesPage() {
               : confirmedAttendees
             return displayAttendees.length > 0 ? (
             <>
-            <div className="border border-neutral-200 rounded-xl overflow-hidden">
+            <div className="border border-neutral-800 rounded-xl overflow-hidden">
               {displayAttendees.slice(0, visibleAttendees).map((attendee) => (
                 <div
                   key={attendee.id}
-                  className="flex items-center justify-between p-4 border-b border-neutral-100 last:border-0"
+                  className="flex items-center justify-between p-4 border-b border-neutral-800 last:border-0"
                 >
                   <div className="flex items-center gap-3">
                     {/* Attendance Toggle */}
@@ -542,14 +542,14 @@ export default function AttendeesPage() {
                       initialValue={attendee.actuallyAttended}
                       onUpdate={(value) => handleAttendanceUpdate(attendee.id, value)}
                     />
-                    <div className="w-10 h-10 bg-neutral-100 rounded-full flex items-center justify-center">
-                      <span className="font-medium text-neutral-600">
+                    <div className="w-10 h-10 bg-neutral-800 rounded-full flex items-center justify-center">
+                      <span className="font-medium text-neutral-400">
                         {(attendee.name?.[0] || attendee.email[0]).toUpperCase()}
                       </span>
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <p className="font-medium text-neutral-900">
+                        <p className="font-medium text-neutral-100">
                           {attendee.name || 'Anonymous'}
                         </p>
                         {(() => {
@@ -568,14 +568,14 @@ export default function AttendeesPage() {
                   <div className="text-right flex flex-col items-end gap-1">
                     {attendee.paymentStatus === 'paid' && attendee.paymentMethod === 'stripe' ? (
                       <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-900 text-green-400 text-xs font-medium rounded-full">
                           <Check className="w-3 h-3" />
                           Paid ${((attendee.paymentAmount || 0) / 100).toFixed(2)}
                         </span>
                         <button
                           onClick={() => handleRefund(attendee.id)}
                           disabled={refundingId === attendee.id}
-                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-red-400 hover:text-red-700 hover:bg-red-950 rounded transition-colors disabled:opacity-50"
                         >
                           {refundingId === attendee.id ? (
                             <Loader2 className="w-3 h-3 animate-spin" />
@@ -586,12 +586,12 @@ export default function AttendeesPage() {
                         </button>
                       </div>
                     ) : attendee.paymentStatus === 'paid' ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-900 text-green-400 text-xs font-medium rounded-full">
                         <Check className="w-3 h-3" />
                         Paid
                       </span>
                     ) : attendee.paymentStatus === 'refunded' ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-neutral-100 text-neutral-500 text-xs font-medium rounded-full">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-neutral-800 text-neutral-500 text-xs font-medium rounded-full">
                         <RefreshCcw className="w-3 h-3" />
                         Refunded
                       </span>
@@ -610,16 +610,16 @@ export default function AttendeesPage() {
             {displayAttendees.length > visibleAttendees && (
               <button
                 onClick={() => setVisibleAttendees(prev => prev + 15)}
-                className="mt-4 w-full py-2.5 text-sm font-medium text-neutral-600 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors"
+                className="mt-4 w-full py-2.5 text-sm font-medium text-neutral-400 bg-neutral-950 border border-neutral-800 rounded-xl hover:bg-neutral-900 transition-colors"
               >
                 Load more ({displayAttendees.length - visibleAttendees} remaining)
               </button>
             )}
             </>
           ) : (
-            <div className="p-8 bg-neutral-50 rounded-xl text-center">
+            <div className="p-8 bg-neutral-900 rounded-xl text-center">
               <span className="text-4xl mb-3 block">👋</span>
-              <p className="font-medium text-neutral-900 mb-1">
+              <p className="font-medium text-neutral-100 mb-1">
                 {firstTimers.length > 0 ? 'No returning attendees yet' : 'No RSVPs yet'}
               </p>
               <p className="text-sm text-neutral-500">

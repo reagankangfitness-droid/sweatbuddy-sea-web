@@ -17,15 +17,15 @@ interface SpotsIndicatorProps {
 // Color mapping for urgency levels
 const urgencyColors = {
   none: {
-    bg: 'bg-green-50',
-    text: 'text-green-600',
-    border: 'border-green-200',
+    bg: 'bg-green-950',
+    text: 'text-green-400',
+    border: 'border-green-800',
     fill: 'bg-green-500',
   },
   medium: {
-    bg: 'bg-amber-50',
-    text: 'text-amber-600',
-    border: 'border-amber-200',
+    bg: 'bg-amber-950',
+    text: 'text-amber-400',
+    border: 'border-amber-800',
     fill: 'bg-amber-500',
   },
   high: {
@@ -35,14 +35,14 @@ const urgencyColors = {
     fill: 'bg-orange-500',
   },
   critical: {
-    bg: 'bg-red-50',
-    text: 'text-red-600',
-    border: 'border-red-200',
+    bg: 'bg-red-950',
+    text: 'text-red-400',
+    border: 'border-red-800',
     fill: 'bg-red-500',
   },
   full: {
-    bg: 'bg-red-100',
-    text: 'text-red-700',
+    bg: 'bg-red-900',
+    text: 'text-red-400',
     border: 'border-red-300',
     fill: 'bg-red-600',
   },
@@ -172,7 +172,7 @@ export function SpotsIndicator({
             )}
           </div>
           <div className="flex-1">
-            <div className={cn('text-[15px] font-semibold', urgencyLevel === 'full' || urgencyLevel === 'critical' ? colors.text : 'text-neutral-900')}>
+            <div className={cn('text-[15px] font-semibold', urgencyLevel === 'full' || urgencyLevel === 'critical' ? colors.text : 'text-neutral-100')}>
               {urgencyLevel === 'full' ? (
                 'This activity is sold out'
               ) : urgencyLevel === 'critical' ? (
@@ -196,7 +196,7 @@ export function SpotsIndicator({
 
         {showProgress && urgencyLevel !== 'full' && totalSpots > 0 && (
           <div className="mt-3.5">
-            <div className="h-1.5 bg-neutral-200 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-neutral-700 rounded-full overflow-hidden">
               <div
                 className={cn('h-full rounded-full transition-all duration-500', colors.fill)}
                 style={{ width: `${percentFilled}%` }}
@@ -206,7 +206,7 @@ export function SpotsIndicator({
         )}
 
         {urgencyLevel === 'full' && waitlistCount > 0 && (
-          <div className="flex items-center gap-2 text-sm text-neutral-600 mt-3 pt-3 border-t border-slate-200">
+          <div className="flex items-center gap-2 text-sm text-neutral-400 mt-3 pt-3 border-t border-slate-200">
             <Users size={14} />
             <span>{waitlistCount} people waiting for a spot</span>
           </div>

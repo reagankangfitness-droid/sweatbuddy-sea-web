@@ -113,7 +113,7 @@ export function JoinedActivitiesSection({
         return (
           <div
             key={booking.id}
-            className="bg-white rounded-xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300"
+            className="bg-neutral-950 rounded-xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300"
           >
             {/* Image Section */}
             <div className="relative h-48 overflow-hidden bg-muted">
@@ -134,7 +134,7 @@ export function JoinedActivitiesSection({
               {/* Date Badge - Top Left */}
               {activity.startTime && (
                 <div className="absolute top-3 left-3">
-                  <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                  <div className="bg-neutral-950 rounded-lg shadow-md overflow-hidden">
                     <div className="bg-primary px-2 py-0.5 text-center">
                       <span className="text-primary-foreground font-bold uppercase text-[10px] tracking-wide">
                         {new Date(activity.startTime).toLocaleDateString('en-US', { month: 'short' })}
@@ -151,7 +151,7 @@ export function JoinedActivitiesSection({
 
               {/* Activity Type Badge - Top Right */}
               <div className="absolute top-3 right-3">
-                <span className="px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-sm text-foreground font-semibold shadow-sm inline-flex items-center gap-1 text-[11px]">
+                <span className="px-2.5 py-1 rounded-full bg-neutral-950/95 backdrop-blur-sm text-foreground font-semibold shadow-sm inline-flex items-center gap-1 text-[11px]">
                   {ACTIVITY_TYPE_EMOJI[activity.type] && (
                     <span role="img" aria-label={activity.type}>
                       {ACTIVITY_TYPE_EMOJI[activity.type]}

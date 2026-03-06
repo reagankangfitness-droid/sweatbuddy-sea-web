@@ -77,7 +77,7 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
               </p>
             </div>
 
-            <div className="bg-white rounded-xl border border-border p-6">
+            <div className="bg-neutral-950 rounded-xl border border-border p-6">
               <ReviewPageClient
                 bookingId={bookingId}
                 activity={{
@@ -104,8 +104,8 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
             </div>
           </>
         ) : (
-          <div className="bg-white rounded-xl border border-border p-8 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-50 flex items-center justify-center">
+          <div className="bg-neutral-950 rounded-xl border border-border p-8 text-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-950 flex items-center justify-center">
               <XCircle className="w-8 h-8 text-red-500" />
             </div>
             <h1 className="text-xl font-bold text-foreground mb-2">
@@ -123,9 +123,9 @@ export default async function ReviewPage({ params }: ReviewPageProps) {
 
         {/* Review already submitted success state */}
         {eligibility.existingReview && !eligibility.canEdit && (
-          <div className="mt-6 bg-emerald-50 rounded-xl border border-emerald-200 p-6">
+          <div className="mt-6 bg-emerald-50 rounded-xl border border-emerald-800 p-6">
             <div className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-emerald-600 mt-0.5" />
+              <CheckCircle className="w-5 h-5 text-emerald-400 mt-0.5" />
               <div>
                 <h3 className="font-semibold text-emerald-900">
                   Review Submitted

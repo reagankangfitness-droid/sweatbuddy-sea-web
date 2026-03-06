@@ -13,9 +13,9 @@ const QRScanner = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="bg-neutral-100 rounded-2xl p-8 text-center animate-pulse">
-        <div className="w-12 h-12 bg-neutral-200 rounded-full mx-auto mb-4" />
-        <div className="h-4 bg-neutral-200 rounded w-32 mx-auto" />
+      <div className="bg-neutral-800 rounded-2xl p-8 text-center animate-pulse">
+        <div className="w-12 h-12 bg-neutral-700 rounded-full mx-auto mb-4" />
+        <div className="h-4 bg-neutral-700 rounded w-32 mx-auto" />
       </div>
     ),
   }
@@ -157,33 +157,33 @@ export default function CheckInPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-neutral-300 border-t-neutral-900" />
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-neutral-700 border-t-white" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <div className="bg-white border-b border-neutral-200">
+      <div className="bg-neutral-950 border-b border-neutral-800">
         <div className="max-w-lg mx-auto px-4 py-4">
           <div className="flex items-center gap-2 mb-4">
             <BackButton fallbackHref={`/host/events/${eventId}/attendees`} />
-            <span className="text-sm text-neutral-600">Back</span>
+            <span className="text-sm text-neutral-400">Back</span>
           </div>
 
-          <h1 className="text-xl font-bold text-neutral-900">
+          <h1 className="text-xl font-bold text-neutral-100">
             {event?.title || 'Event'} Check-in
           </h1>
         </div>
       </div>
 
       {/* Stats Bar */}
-      <div className="bg-white border-b border-neutral-200">
+      <div className="bg-neutral-950 border-b border-neutral-800">
         <div className="max-w-lg mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-neutral-600">
+            <div className="flex items-center gap-2 text-neutral-400">
               <Users className="w-4 h-4" />
               <span className="text-sm font-medium">
                 {stats.checkedIn} / {stats.total} checked in
@@ -197,7 +197,7 @@ export default function CheckInPage() {
             </div>
           </div>
           {/* Progress bar */}
-          <div className="mt-2 h-2 bg-neutral-100 rounded-full overflow-hidden">
+          <div className="mt-2 h-2 bg-neutral-800 rounded-full overflow-hidden">
             <div
               className="h-full bg-green-500 rounded-full transition-all duration-300"
               style={{
@@ -226,15 +226,15 @@ export default function CheckInPage() {
           <h2 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-3">
             Recent Check-ins
           </h2>
-          <div className="bg-white rounded-xl border border-neutral-200 divide-y divide-neutral-100">
+          <div className="bg-neutral-950 rounded-xl border border-neutral-800 divide-y divide-neutral-800">
             {recentCheckIns.map((checkIn, index) => (
               <div key={index} className="px-4 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <Check className="w-4 h-4 text-green-600" />
+                  <div className="w-8 h-8 bg-green-900 rounded-full flex items-center justify-center">
+                    <Check className="w-4 h-4 text-green-400" />
                   </div>
                   <div>
-                    <p className="font-medium text-neutral-900">
+                    <p className="font-medium text-neutral-100">
                       {checkIn.name || 'Guest'}
                     </p>
                     <p className="text-sm text-neutral-500">{checkIn.email}</p>

@@ -61,8 +61,9 @@ const config: Config = {
         'error': '#DC2626',
 
         // Backgrounds
-        'background': '#FFFFFF',
-        'surface': '#FAFAFA',
+        'background': '#0A0A0A',
+        'foreground': '#F5F5F5',
+        'surface': '#141414',
 
         // Legacy compatibility - map to neutrals
         'gray': {
@@ -130,11 +131,11 @@ const config: Config = {
         'electric': '#171717',
         'mint': '#16A34A',
 
-        // Primary (black is the accent)
+        // Primary (white is the accent in dark mode)
         'primary': {
-          DEFAULT: '#171717',
-          foreground: '#FFFFFF',
-          hover: '#404040',
+          DEFAULT: '#FFFFFF',
+          foreground: '#0A0A0A',
+          hover: '#E5E5E5',
           50: '#FAFAFA',
           100: '#F5F5F5',
           200: '#E5E5E5',
@@ -148,12 +149,12 @@ const config: Config = {
         },
 
         // Success state colors
-        'success-light': '#F0FDF4',
+        'success-light': '#052E16',
 
         // Secondary
         'secondary': {
-          DEFAULT: '#FAFAFA',
-          foreground: '#171717',
+          DEFAULT: '#262626',
+          foreground: '#F5F5F5',
         },
 
         // Semantic
@@ -163,29 +164,31 @@ const config: Config = {
         },
 
         'muted': {
-          DEFAULT: '#FAFAFA',
-          foreground: '#757575',
+          DEFAULT: '#262626',
+          foreground: '#A3A3A3',
         },
 
         // Borders
-        'border': '#E5E5E5',
-        'border-light': '#EDEDED',
-        'border-subtle': '#F5F5F5',
-        'input': '#E5E5E5',
-        'ring': '#171717',
+        'border': '#262626',
+        'border-light': '#1C1C1C',
+        'border-subtle': '#171717',
+        'input': '#404040',
+        'ring': '#FFFFFF',
 
         // Cards & Popovers
         'popover': {
-          DEFAULT: '#FFFFFF',
-          foreground: '#171717',
+          DEFAULT: '#171717',
+          foreground: '#F5F5F5',
         },
         'card': {
-          DEFAULT: '#FFFFFF',
-          foreground: '#171717',
+          DEFAULT: '#171717',
+          foreground: '#F5F5F5',
         },
 
         // Accent colors (all neutral now)
         'accent': {
+          DEFAULT: '#262626',
+          foreground: '#F5F5F5',
           teal: '#171717',
           purple: '#525252',
           orange: '#737373',

@@ -129,12 +129,12 @@ export default function PendingEventsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Pending Events</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-100">Pending Events</h1>
           <p className="text-neutral-500 mt-1">Review and approve submitted events</p>
         </div>
         <button
           onClick={fetchPendingEvents}
-          className="flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-xl hover:bg-neutral-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-white text-neutral-900 rounded-xl hover:bg-neutral-200 transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
           <span className="hidden sm:inline text-sm font-medium">Refresh</span>
@@ -143,13 +143,13 @@ export default function PendingEventsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm">
+        <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
               <Clock className="w-5 h-5 text-yellow-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-neutral-900">{events.length}</p>
+              <p className="text-2xl font-bold text-neutral-100">{events.length}</p>
               <p className="text-xs text-neutral-500">Pending Review</p>
             </div>
           </div>
@@ -158,9 +158,9 @@ export default function PendingEventsPage() {
 
       {/* Pending Events List */}
       {events.length === 0 ? (
-        <div className="bg-white rounded-xl border border-neutral-200 p-12 text-center shadow-sm">
+        <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-12 text-center shadow-sm">
           <Inbox className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-neutral-900 mb-2">All caught up!</h3>
+          <h3 className="text-xl font-semibold text-neutral-100 mb-2">All caught up!</h3>
           <p className="text-neutral-500">No pending experiences to review</p>
         </div>
       ) : (
@@ -168,7 +168,7 @@ export default function PendingEventsPage() {
           {events.map((event) => (
             <div
               key={event.id}
-              className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm"
+              className="bg-neutral-950 rounded-xl border border-neutral-800 overflow-hidden shadow-sm"
             >
               <div className="flex flex-col lg:flex-row">
                 {/* Event Image */}
@@ -193,28 +193,28 @@ export default function PendingEventsPage() {
                 <div className="flex-1 p-4 lg:p-6">
                   <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-neutral-900 mb-2">{event.eventName}</h3>
-                      <p className="text-neutral-600 text-sm mb-3 line-clamp-2">{event.description}</p>
+                      <h3 className="text-lg font-semibold text-neutral-100 mb-2">{event.eventName}</h3>
+                      <p className="text-neutral-400 text-sm mb-3 line-clamp-2">{event.description}</p>
 
                       <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
                         {event.eventDate && (
-                          <div className="flex items-center gap-1.5 text-neutral-600">
+                          <div className="flex items-center gap-1.5 text-neutral-400">
                             <Calendar className="w-4 h-4" />
                             <span>{format(new Date(event.eventDate), 'MMM d, yyyy')} at {event.time}</span>
                           </div>
                         )}
-                        <div className="flex items-center gap-1.5 text-neutral-600">
+                        <div className="flex items-center gap-1.5 text-neutral-400">
                           <MapPin className="w-4 h-4" />
                           <span>{event.location}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-neutral-600">
+                        <div className="flex items-center gap-1.5 text-neutral-400">
                           <User className="w-4 h-4" />
                           <span>{event.organizerName || event.organizerInstagram}</span>
                         </div>
                       </div>
 
                       <div className="mt-3 flex items-center gap-2">
-                        <span className="px-2 py-1 bg-neutral-100 text-neutral-700 text-xs rounded-full">
+                        <span className="px-2 py-1 bg-neutral-800 text-neutral-300 text-xs rounded-full">
                           {event.category}
                         </span>
                         <span className="text-neutral-400 text-xs">
@@ -240,7 +240,7 @@ export default function PendingEventsPage() {
                       <button
                         onClick={() => handleReject(event.id)}
                         disabled={processingId === event.id}
-                        className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-red-100 text-red-600 border border-red-200 rounded-lg hover:bg-red-200 transition-colors disabled:opacity-50"
+                        className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-red-900 text-red-400 border border-red-800 rounded-lg hover:bg-red-200 transition-colors disabled:opacity-50"
                       >
                         <X className="w-4 h-4" />
                         <span>Reject</span>

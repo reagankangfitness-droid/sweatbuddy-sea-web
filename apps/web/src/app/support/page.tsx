@@ -155,18 +155,18 @@ export default function SupportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+      <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
             <Link
               href="/"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800"
             >
-              <ArrowLeft className="w-5 h-5 text-neutral-700" />
+              <ArrowLeft className="w-5 h-5 text-neutral-300" />
             </Link>
-            <h1 className="text-lg font-semibold text-neutral-900">Help & Support</h1>
+            <h1 className="text-lg font-semibold text-neutral-100">Help & Support</h1>
           </div>
         </div>
       </header>
@@ -174,7 +174,7 @@ export default function SupportPage() {
       <main className="max-w-4xl mx-auto px-4 py-8">
         {/* Hero Section */}
         <div className="text-center mb-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 mb-1">
+          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-100 mb-1">
             How can we help?
           </h2>
           <p className="text-sm text-neutral-500">
@@ -184,7 +184,7 @@ export default function SupportPage() {
 
         {/* FAQ Section */}
         <section className="mb-8">
-          <h3 className="text-xl font-semibold text-neutral-900 mb-4">
+          <h3 className="text-xl font-semibold text-neutral-100 mb-4">
             Frequently Asked Questions
           </h3>
 
@@ -198,8 +198,8 @@ export default function SupportPage() {
                   onClick={() => setSelectedCategory(cat.id)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                     selectedCategory === cat.id
-                      ? 'bg-neutral-900 text-white'
-                      : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-100'
+                      ? 'bg-white text-neutral-900'
+                      : 'bg-neutral-950 text-neutral-400 border border-neutral-800 hover:bg-neutral-800'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -214,13 +214,13 @@ export default function SupportPage() {
             {displayedFaqs.map((faq, index) => (
               <div
                 key={index}
-                className="bg-white rounded-xl border border-neutral-200 overflow-hidden"
+                className="bg-neutral-950 rounded-xl border border-neutral-800 overflow-hidden"
               >
                 <button
                   onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
                   className="w-full flex items-center justify-between p-4 text-left"
                 >
-                  <span className="font-medium text-neutral-900 pr-4">
+                  <span className="font-medium text-neutral-100 pr-4">
                     {faq.question}
                   </span>
                   {expandedFaq === index ? (
@@ -231,7 +231,7 @@ export default function SupportPage() {
                 </button>
                 {expandedFaq === index && (
                   <div className="px-4 pb-4">
-                    <p className="text-neutral-600 text-sm leading-relaxed">
+                    <p className="text-neutral-400 text-sm leading-relaxed">
                       {faq.answer}
                     </p>
                   </div>
@@ -244,7 +244,7 @@ export default function SupportPage() {
           {filteredFaqs.length > 5 && (
             <button
               onClick={() => { setShowAllFaqs(!showAllFaqs); setExpandedFaq(null) }}
-              className="mt-4 w-full py-2.5 text-sm font-medium text-neutral-600 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-100 transition-colors"
+              className="mt-4 w-full py-2.5 text-sm font-medium text-neutral-400 bg-neutral-950 border border-neutral-800 rounded-xl hover:bg-neutral-800 transition-colors"
             >
               {showAllFaqs ? 'Show fewer FAQs' : `Show all ${filteredFaqs.length} FAQs`}
             </button>
@@ -253,29 +253,29 @@ export default function SupportPage() {
 
         {/* Contact Form Section */}
         <section className="mb-8">
-          <h3 className="text-xl font-semibold text-neutral-900 mb-4">
+          <h3 className="text-xl font-semibold text-neutral-100 mb-4">
             Still need help? Contact us
           </h3>
 
           {submitSuccess ? (
-            <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
-              <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-3" />
+            <div className="bg-green-950 border border-green-800 rounded-xl p-6 text-center">
+              <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-3" />
               <h4 className="font-semibold text-green-900 mb-1">Message Sent!</h4>
-              <p className="text-green-700 text-sm">
+              <p className="text-green-400 text-sm">
                 We&apos;ll get back to you within 24 hours. Check your email for our response.
               </p>
               <button
                 onClick={() => setSubmitSuccess(false)}
-                className="mt-4 text-green-700 text-sm font-medium hover:underline"
+                className="mt-4 text-green-400 text-sm font-medium hover:underline"
               >
                 Send another message
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-neutral-200 p-6">
+            <form onSubmit={handleSubmit} className="bg-neutral-950 rounded-xl border border-neutral-800 p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-300 mb-1">
                     Your Name
                   </label>
                   <input
@@ -283,12 +283,12 @@ export default function SupportPage() {
                     required
                     value={contactForm.name}
                     onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg bg-white text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                    className="w-full px-4 py-2.5 border border-neutral-800 rounded-lg bg-neutral-950 text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white"
                     placeholder="John Doe"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1">
+                  <label className="block text-sm font-medium text-neutral-300 mb-1">
                     Email Address
                   </label>
                   <input
@@ -296,20 +296,20 @@ export default function SupportPage() {
                     required
                     value={contactForm.email}
                     onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg bg-white text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                    className="w-full px-4 py-2.5 border border-neutral-800 rounded-lg bg-neutral-950 text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white"
                     placeholder="you@example.com"
                   />
                 </div>
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-300 mb-1">
                   What do you need help with?
                 </label>
                 <select
                   value={contactForm.category}
                   onChange={(e) => setContactForm({ ...contactForm, category: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg bg-white text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                  className="w-full px-4 py-2.5 border border-neutral-800 rounded-lg bg-neutral-950 text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <option value="general">General Question</option>
                   <option value="booking">Booking Issue</option>
@@ -322,7 +322,7 @@ export default function SupportPage() {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-neutral-700 mb-1">
+                <label className="block text-sm font-medium text-neutral-300 mb-1">
                   Message
                 </label>
                 <textarea
@@ -330,21 +330,21 @@ export default function SupportPage() {
                   rows={5}
                   value={contactForm.message}
                   onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-neutral-200 rounded-lg bg-white text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 resize-none"
+                  className="w-full px-4 py-2.5 border border-neutral-800 rounded-lg bg-neutral-950 text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white resize-none"
                   placeholder="Please describe your issue or question in detail. Include any relevant booking IDs or experience names."
                 />
               </div>
 
               {submitError && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-red-700 text-sm">{submitError}</p>
+                <div className="mb-4 p-3 bg-red-950 border border-red-800 rounded-lg">
+                  <p className="text-red-400 text-sm">{submitError}</p>
                 </div>
               )}
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-neutral-900 text-white font-semibold rounded-full hover:bg-neutral-700 transition-colors disabled:opacity-50"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-white text-neutral-900 font-semibold rounded-full hover:bg-neutral-200 transition-colors disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <>
@@ -364,47 +364,47 @@ export default function SupportPage() {
 
         {/* Quick Links */}
         <section className="mb-8">
-          <h3 className="text-xl font-semibold text-neutral-900 mb-4">
+          <h3 className="text-xl font-semibold text-neutral-100 mb-4">
             Quick Links
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Link
               href="/my-bookings"
-              className="flex items-center gap-3 p-4 bg-white rounded-xl border border-neutral-200 hover:border-neutral-300 transition-colors"
+              className="flex items-center gap-3 p-4 bg-neutral-950 rounded-xl border border-neutral-800 hover:border-neutral-600 transition-colors"
             >
-              <Calendar className="w-5 h-5 text-blue-600" />
+              <Calendar className="w-5 h-5 text-blue-400" />
               <div>
-                <p className="font-medium text-neutral-900">My Bookings</p>
+                <p className="font-medium text-neutral-100">My Bookings</p>
                 <p className="text-sm text-neutral-500">View and manage your bookings</p>
               </div>
             </Link>
             <Link
               href="/host/dashboard"
-              className="flex items-center gap-3 p-4 bg-white rounded-xl border border-neutral-200 hover:border-neutral-300 transition-colors"
+              className="flex items-center gap-3 p-4 bg-neutral-950 rounded-xl border border-neutral-800 hover:border-neutral-600 transition-colors"
             >
               <Users className="w-5 h-5 text-purple-600" />
               <div>
-                <p className="font-medium text-neutral-900">Host Dashboard</p>
+                <p className="font-medium text-neutral-100">Host Dashboard</p>
                 <p className="text-sm text-neutral-500">Manage your experiences</p>
               </div>
             </Link>
             <Link
               href="/profile"
-              className="flex items-center gap-3 p-4 bg-white rounded-xl border border-neutral-200 hover:border-neutral-300 transition-colors"
+              className="flex items-center gap-3 p-4 bg-neutral-950 rounded-xl border border-neutral-800 hover:border-neutral-600 transition-colors"
             >
-              <Shield className="w-5 h-5 text-green-600" />
+              <Shield className="w-5 h-5 text-green-400" />
               <div>
-                <p className="font-medium text-neutral-900">Account Settings</p>
+                <p className="font-medium text-neutral-100">Account Settings</p>
                 <p className="text-sm text-neutral-500">Update your profile</p>
               </div>
             </Link>
             <a
               href="mailto:support@sweatbuddies.co"
-              className="flex items-center gap-3 p-4 bg-white rounded-xl border border-neutral-200 hover:border-neutral-300 transition-colors"
+              className="flex items-center gap-3 p-4 bg-neutral-950 rounded-xl border border-neutral-800 hover:border-neutral-600 transition-colors"
             >
-              <Mail className="w-5 h-5 text-amber-600" />
+              <Mail className="w-5 h-5 text-amber-400" />
               <div>
-                <p className="font-medium text-neutral-900">Email Us Directly</p>
+                <p className="font-medium text-neutral-100">Email Us Directly</p>
                 <p className="text-sm text-neutral-500">support@sweatbuddies.co</p>
               </div>
             </a>
@@ -413,19 +413,19 @@ export default function SupportPage() {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white rounded-xl border border-neutral-200 p-3 text-center">
-            <Clock className="w-5 h-5 text-green-600 mx-auto mb-1" />
-            <p className="text-xs font-medium text-neutral-900">Response</p>
+          <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-3 text-center">
+            <Clock className="w-5 h-5 text-green-400 mx-auto mb-1" />
+            <p className="text-xs font-medium text-neutral-100">Response</p>
             <p className="text-[10px] text-neutral-500">Within 24 hours</p>
           </div>
-          <div className="bg-white rounded-xl border border-neutral-200 p-3 text-center">
-            <Mail className="w-5 h-5 text-blue-600 mx-auto mb-1" />
-            <p className="text-xs font-medium text-neutral-900">Email</p>
+          <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-3 text-center">
+            <Mail className="w-5 h-5 text-blue-400 mx-auto mb-1" />
+            <p className="text-xs font-medium text-neutral-100">Email</p>
             <p className="text-[10px] text-neutral-500">support@sweatbuddies.co</p>
           </div>
-          <div className="bg-white rounded-xl border border-neutral-200 p-3 text-center">
+          <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-3 text-center">
             <MessageCircle className="w-5 h-5 text-purple-600 mx-auto mb-1" />
-            <p className="text-xs font-medium text-neutral-900">Instagram</p>
+            <p className="text-xs font-medium text-neutral-100">Instagram</p>
             <p className="text-[10px] text-neutral-500">@sweatbuddies.co</p>
           </div>
         </div>

@@ -137,16 +137,16 @@ export default async function EventDetailPage({ params }: Props) {
   const isThisWeekend = isThisWeekendSG(eventDateObj)
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-900">
       {/* Back button header */}
-      <header className="sticky top-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+      <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-4xl mx-auto flex items-center justify-between px-4 py-3">
             <Link
               href="/events"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800"
             >
-              <svg className="w-5 h-5 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
               </svg>
             </Link>
@@ -191,7 +191,7 @@ export default async function EventDetailPage({ params }: Props) {
                   Weekly
                 </span>
               )}
-              <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-lg text-xs font-medium text-neutral-700">
+              <span className="px-3 py-1.5 bg-neutral-950/95 backdrop-blur-sm rounded-lg text-xs font-medium text-neutral-300">
                 {emoji} {event.category}
               </span>
             </div>
@@ -208,10 +208,10 @@ export default async function EventDetailPage({ params }: Props) {
             <div className="md:col-span-2 space-y-6">
               {/* Title */}
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-3">
+                <h1 className="text-2xl md:text-3xl font-bold text-neutral-100 mb-3">
                   {event.name}
                 </h1>
-                <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-600">
+                <div className="flex flex-wrap items-center gap-3 text-sm text-neutral-400">
                   <span className="flex items-center gap-1.5">
                     <span>📅</span>
                     <span>{formattedDate}</span>
@@ -221,7 +221,7 @@ export default async function EventDetailPage({ params }: Props) {
                     <span>{event.time}</span>
                   </span>
                   {event.recurring && (
-                    <span className="flex items-center gap-1.5 font-medium text-neutral-900">
+                    <span className="flex items-center gap-1.5 font-medium text-neutral-100">
                       <span>🔄</span>
                       <span>Every {event.day}</span>
                     </span>
@@ -230,21 +230,21 @@ export default async function EventDetailPage({ params }: Props) {
               </div>
 
               {/* About */}
-              <div className="bg-white rounded-xl p-5 border border-neutral-200">
-                <h2 className="text-base font-semibold text-neutral-900 mb-2">
+              <div className="bg-neutral-950 rounded-xl p-5 border border-neutral-800">
+                <h2 className="text-base font-semibold text-neutral-100 mb-2">
                   About
                 </h2>
-                <p className="text-sm text-neutral-600 leading-relaxed whitespace-pre-wrap">
+                <p className="text-sm text-neutral-400 leading-relaxed whitespace-pre-wrap">
                   {event.description || 'Join us for an amazing fitness session! All levels welcome.'}
                 </p>
               </div>
 
               {/* Location */}
-              <div className="bg-white rounded-xl p-5 border border-neutral-200">
-                <h2 className="text-base font-semibold text-neutral-900 mb-2">
+              <div className="bg-neutral-950 rounded-xl p-5 border border-neutral-800">
+                <h2 className="text-base font-semibold text-neutral-100 mb-2">
                   Location
                 </h2>
-                <p className="text-sm text-neutral-600 mb-4">
+                <p className="text-sm text-neutral-400 mb-4">
                   {event.location}
                 </p>
                 {/* Get Directions Button */}
@@ -252,7 +252,7 @@ export default async function EventDetailPage({ params }: Props) {
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-neutral-100 hover:bg-neutral-200 rounded-lg text-sm font-medium text-neutral-700 transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-neutral-800 hover:bg-neutral-700 rounded-lg text-sm font-medium text-neutral-300 transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -263,8 +263,8 @@ export default async function EventDetailPage({ params }: Props) {
               </div>
 
               {/* Organizer - No external links */}
-              <div className="bg-white rounded-xl p-5 border border-neutral-200">
-                <h2 className="text-base font-semibold text-neutral-900 mb-3">
+              <div className="bg-neutral-950 rounded-xl p-5 border border-neutral-800">
+                <h2 className="text-base font-semibold text-neutral-100 mb-3">
                   Hosted by
                 </h2>
                 <div className="flex items-center gap-3">
@@ -272,7 +272,7 @@ export default async function EventDetailPage({ params }: Props) {
                     {event.organizer?.charAt(0).toUpperCase() || '?'}
                   </div>
                   <div>
-                    <p className="font-semibold text-neutral-900">
+                    <p className="font-semibold text-neutral-100">
                       {event.organizer || 'Anonymous Host'}
                     </p>
                     <p className="text-xs text-neutral-500">Event Organizer</p>
@@ -321,14 +321,14 @@ export default async function EventDetailPage({ params }: Props) {
 
             {/* Sidebar - Sticky CTA (desktop only, mobile uses fixed bottom bar) */}
             <div className="hidden md:block md:col-span-1">
-              <div className="sticky top-24 bg-white rounded-xl border border-neutral-200 p-5 space-y-4">
+              <div className="sticky top-24 bg-neutral-950 rounded-xl border border-neutral-800 p-5 space-y-4">
                 {/* Going count */}
-                <div className="text-center pb-4 border-b border-neutral-100">
+                <div className="text-center pb-4 border-b border-neutral-800">
                   {goingCount === 0 ? (
                     <p className="text-base font-medium text-neutral-500">Be the first to join!</p>
                   ) : (
                     <>
-                      <p className="text-3xl font-bold text-neutral-900">{goingCount}</p>
+                      <p className="text-3xl font-bold text-neutral-100">{goingCount}</p>
                       <p className="text-sm text-neutral-500">
                         {goingCount === 1 ? 'person going' : 'people going'}
                       </p>
@@ -338,8 +338,8 @@ export default async function EventDetailPage({ params }: Props) {
 
                 {/* Price display */}
                 {!event.isFree && event.price && (
-                  <div className="text-center pb-4 border-b border-neutral-100">
-                    <p className="text-2xl font-bold text-neutral-900">
+                  <div className="text-center pb-4 border-b border-neutral-800">
+                    <p className="text-2xl font-bold text-neutral-100">
                       ${(event.price / 100).toFixed(2)}
                       <span className="text-sm font-normal text-neutral-500 ml-1">SGD</span>
                     </p>
@@ -373,7 +373,7 @@ export default async function EventDetailPage({ params }: Props) {
       </main>
 
       {/* Mobile Fixed Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white border-t border-neutral-200 p-4 safe-area-inset-bottom z-50">
+      <div className="fixed bottom-0 left-0 right-0 md:hidden bg-neutral-950 border-t border-neutral-800 p-4 safe-area-inset-bottom z-50">
         <UnifiedEventClient
           event={{
             id: event.id,

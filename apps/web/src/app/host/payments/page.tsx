@@ -64,7 +64,7 @@ export default function PaymentsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-950">
         <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
       </div>
     )
@@ -72,13 +72,13 @@ export default function PaymentsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white">
-        <header className="border-b border-neutral-100">
+      <div className="min-h-screen bg-neutral-950">
+        <header className="border-b border-neutral-800">
           <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-3">
             <BackButton fallbackHref="/host/dashboard" />
             <Link href="/" className="flex items-center gap-2">
               <Logo size={24} />
-              <span className="text-lg font-bold text-neutral-900 hidden sm:inline">sweatbuddies</span>
+              <span className="text-lg font-bold text-neutral-100 hidden sm:inline">sweatbuddies</span>
             </Link>
           </div>
         </header>
@@ -87,7 +87,7 @@ export default function PaymentsPage() {
             <p className="text-neutral-500 mb-4">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-neutral-900 text-white rounded-full text-sm font-medium hover:bg-neutral-700 transition-colors"
+              className="px-4 py-2 bg-white text-neutral-900 rounded-full text-sm font-medium hover:bg-neutral-200 transition-colors"
             >
               Try again
             </button>
@@ -98,25 +98,25 @@ export default function PaymentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-neutral-950">
       {/* Header */}
-      <header className="border-b border-neutral-100">
+      <header className="border-b border-neutral-800">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-3">
           <BackButton fallbackHref="/host/dashboard" />
           <Link href="/" className="flex items-center gap-2">
             <Logo size={24} />
-            <span className="text-lg font-bold text-neutral-900 hidden sm:inline">sweatbuddies</span>
+            <span className="text-lg font-bold text-neutral-100 hidden sm:inline">sweatbuddies</span>
           </Link>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-6 py-12">
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+          <div className="w-12 h-12 bg-purple-900 rounded-xl flex items-center justify-center">
             <CreditCard className="w-6 h-6 text-purple-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900">
+            <h1 className="text-2xl font-bold text-neutral-100">
               Payment Verification
             </h1>
             <p className="text-neutral-500">Verify PayNow payments from attendees</p>
@@ -125,25 +125,25 @@ export default function PaymentsPage() {
 
         {/* Pending Payments */}
         <section className="mb-12">
-          <h2 className="text-lg font-semibold text-neutral-900 mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-neutral-100 mb-4 flex items-center gap-2">
             Pending Verification
             {pendingPayments.length > 0 && (
-              <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-sm rounded-full font-medium">
+              <span className="px-2 py-0.5 bg-amber-900 text-amber-400 text-sm rounded-full font-medium">
                 {pendingPayments.length}
               </span>
             )}
           </h2>
 
           {pendingPayments.length === 0 ? (
-            <div className="border border-neutral-200 rounded-xl p-8 text-center">
-              <div className="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div className="border border-neutral-800 rounded-xl p-8 text-center">
+              <div className="w-12 h-12 bg-neutral-800 rounded-full flex items-center justify-center mx-auto mb-3">
                 <CreditCard className="w-6 h-6 text-neutral-400" />
               </div>
               <p className="text-neutral-500">No pending payments to verify</p>
               <p className="text-sm text-neutral-400 mt-1">Payments from PayNow will appear here</p>
             </div>
           ) : (
-            <div className="border border-neutral-200 rounded-xl divide-y divide-neutral-100">
+            <div className="border border-neutral-800 rounded-xl divide-y divide-neutral-800">
               {pendingPayments.map((payment) => (
                 <PaymentRow key={payment.id} payment={payment} />
               ))}
@@ -154,10 +154,10 @@ export default function PaymentsPage() {
         {/* Recently Verified */}
         {verifiedPayments.length > 0 && (
           <section className="mb-12">
-            <h2 className="text-lg font-semibold text-neutral-900 mb-4">
+            <h2 className="text-lg font-semibold text-neutral-100 mb-4">
               Recently Verified
             </h2>
-            <div className="border border-neutral-200 rounded-xl divide-y divide-neutral-100">
+            <div className="border border-neutral-800 rounded-xl divide-y divide-neutral-800">
               {verifiedPayments.slice(0, 10).map((payment) => (
                 <PaymentRow key={payment.id} payment={payment} />
               ))}
@@ -168,10 +168,10 @@ export default function PaymentsPage() {
         {/* Rejected */}
         {rejectedPayments.length > 0 && (
           <section>
-            <h2 className="text-lg font-semibold text-neutral-900 mb-4">
+            <h2 className="text-lg font-semibold text-neutral-100 mb-4">
               Rejected
             </h2>
-            <div className="border border-neutral-200 rounded-xl divide-y divide-neutral-100">
+            <div className="border border-neutral-800 rounded-xl divide-y divide-neutral-800">
               {rejectedPayments.slice(0, 5).map((payment) => (
                 <PaymentRow key={payment.id} payment={payment} />
               ))}

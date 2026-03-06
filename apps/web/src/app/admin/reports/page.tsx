@@ -67,16 +67,16 @@ const REASON_LABELS: Record<string, string> = {
 
 const STATUS_COLORS: Record<ReportStatus, string> = {
   PENDING: 'bg-yellow-100 text-yellow-800',
-  REVIEWED: 'bg-blue-100 text-blue-800',
-  ACTIONED: 'bg-green-100 text-green-800',
-  DISMISSED: 'bg-neutral-100 text-neutral-600',
+  REVIEWED: 'bg-blue-900 text-blue-800',
+  ACTIONED: 'bg-green-900 text-green-800',
+  DISMISSED: 'bg-neutral-800 text-neutral-400',
 }
 
 const ACTION_COLORS: Record<ModerationAction, string> = {
   WARNING: 'bg-yellow-100 text-yellow-800',
   SUSPENSION: 'bg-orange-100 text-orange-800',
-  BAN: 'bg-red-100 text-red-800',
-  DISMISS: 'bg-neutral-100 text-neutral-600',
+  BAN: 'bg-red-900 text-red-800',
+  DISMISS: 'bg-neutral-800 text-neutral-400',
 }
 
 export default function AdminReportsPage() {
@@ -179,14 +179,14 @@ export default function AdminReportsPage() {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-neutral-900">User Reports</h1>
-        <p className="text-neutral-600 mt-1">
+        <h1 className="text-2xl font-bold text-neutral-100">User Reports</h1>
+        <p className="text-neutral-400 mt-1">
           Review and moderate reported users
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-neutral-200">
+      <div className="flex gap-2 mb-6 border-b border-neutral-800">
         <button
           onClick={() => {
             setActiveTab('PENDING')
@@ -195,8 +195,8 @@ export default function AdminReportsPage() {
           className={cn(
             'px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
             activeTab === 'PENDING'
-              ? 'border-neutral-900 text-neutral-900'
-              : 'border-transparent text-neutral-500 hover:text-neutral-700'
+              ? 'border-neutral-900 text-neutral-100'
+              : 'border-transparent text-neutral-500 hover:text-neutral-300'
           )}
         >
           Pending
@@ -214,8 +214,8 @@ export default function AdminReportsPage() {
           className={cn(
             'px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors',
             activeTab === 'all'
-              ? 'border-neutral-900 text-neutral-900'
-              : 'border-transparent text-neutral-500 hover:text-neutral-700'
+              ? 'border-neutral-900 text-neutral-100'
+              : 'border-transparent text-neutral-500 hover:text-neutral-300'
           )}
         >
           All Reports
@@ -224,7 +224,7 @@ export default function AdminReportsPage() {
 
       {/* Error state */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+        <div className="bg-red-950 border border-red-800 text-red-400 px-4 py-3 rounded-lg mb-6">
           {error}
         </div>
       )}
@@ -246,7 +246,7 @@ export default function AdminReportsPage() {
             {reports.map((report) => (
               <div
                 key={report.id}
-                className="bg-white border border-neutral-200 rounded-lg p-4"
+                className="bg-neutral-950 border border-neutral-800 rounded-lg p-4"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
@@ -278,7 +278,7 @@ export default function AdminReportsPage() {
                     {/* Users */}
                     <div className="flex items-center gap-6 mb-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden relative">
+                        <div className="w-8 h-8 rounded-full bg-neutral-700 flex items-center justify-center overflow-hidden relative">
                           {report.reporter.imageUrl ? (
                             <Image
                               src={report.reporter.imageUrl}
@@ -295,7 +295,7 @@ export default function AdminReportsPage() {
                           )}
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-neutral-900">
+                          <p className="text-sm font-medium text-neutral-100">
                             {report.reporter.name}
                           </p>
                           <p className="text-xs text-neutral-500">Reporter</p>
@@ -303,7 +303,7 @@ export default function AdminReportsPage() {
                       </div>
                       <div className="text-neutral-400">reported</div>
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden relative">
+                        <div className="w-8 h-8 rounded-full bg-neutral-700 flex items-center justify-center overflow-hidden relative">
                           {report.reportedUser.imageUrl ? (
                             <Image
                               src={report.reportedUser.imageUrl}
@@ -320,7 +320,7 @@ export default function AdminReportsPage() {
                           )}
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-neutral-900">
+                          <p className="text-sm font-medium text-neutral-100">
                             {report.reportedUser.name}
                           </p>
                           <p className="text-xs text-neutral-500">
@@ -332,11 +332,11 @@ export default function AdminReportsPage() {
 
                     {/* Reason & Details */}
                     <div className="mb-3">
-                      <p className="text-sm font-medium text-neutral-900">
+                      <p className="text-sm font-medium text-neutral-100">
                         Reason: {REASON_LABELS[report.reason] || report.reason}
                       </p>
                       {report.details && (
-                        <p className="text-sm text-neutral-600 mt-1">
+                        <p className="text-sm text-neutral-400 mt-1">
                           {report.details}
                         </p>
                       )}
@@ -344,9 +344,9 @@ export default function AdminReportsPage() {
 
                     {/* Resolution notes */}
                     {report.resolutionNotes && (
-                      <div className="bg-neutral-50 rounded p-3 text-sm">
-                        <p className="font-medium text-neutral-700">Resolution notes:</p>
-                        <p className="text-neutral-600">{report.resolutionNotes}</p>
+                      <div className="bg-neutral-900 rounded p-3 text-sm">
+                        <p className="font-medium text-neutral-300">Resolution notes:</p>
+                        <p className="text-neutral-400">{report.resolutionNotes}</p>
                       </div>
                     )}
                   </div>
@@ -379,7 +379,7 @@ export default function AdminReportsPage() {
               >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
-              <span className="text-sm text-neutral-600">
+              <span className="text-sm text-neutral-400">
                 Page {page} of {totalPages}
               </span>
               <Button
@@ -415,7 +415,7 @@ export default function AdminReportsPage() {
                   'flex items-center gap-2 p-3 rounded-lg border-2 text-left transition-colors',
                   selectedAction === 'WARNING'
                     ? 'border-yellow-500 bg-yellow-50'
-                    : 'border-neutral-200 hover:border-neutral-300'
+                    : 'border-neutral-800 hover:border-neutral-600'
                 )}
               >
                 <AlertTriangle className="w-5 h-5 text-yellow-600" />
@@ -430,7 +430,7 @@ export default function AdminReportsPage() {
                   'flex items-center gap-2 p-3 rounded-lg border-2 text-left transition-colors',
                   selectedAction === 'SUSPENSION'
                     ? 'border-orange-500 bg-orange-50'
-                    : 'border-neutral-200 hover:border-neutral-300'
+                    : 'border-neutral-800 hover:border-neutral-600'
                 )}
               >
                 <Clock className="w-5 h-5 text-orange-600" />
@@ -444,11 +444,11 @@ export default function AdminReportsPage() {
                 className={cn(
                   'flex items-center gap-2 p-3 rounded-lg border-2 text-left transition-colors',
                   selectedAction === 'BAN'
-                    ? 'border-red-500 bg-red-50'
-                    : 'border-neutral-200 hover:border-neutral-300'
+                    ? 'border-red-500 bg-red-950'
+                    : 'border-neutral-800 hover:border-neutral-600'
                 )}
               >
-                <Ban className="w-5 h-5 text-red-600" />
+                <Ban className="w-5 h-5 text-red-400" />
                 <div>
                   <p className="font-medium text-sm">Ban</p>
                   <p className="text-xs text-neutral-500">Permanent ban</p>
@@ -459,11 +459,11 @@ export default function AdminReportsPage() {
                 className={cn(
                   'flex items-center gap-2 p-3 rounded-lg border-2 text-left transition-colors',
                   selectedAction === 'DISMISS'
-                    ? 'border-neutral-500 bg-neutral-50'
-                    : 'border-neutral-200 hover:border-neutral-300'
+                    ? 'border-neutral-500 bg-neutral-900'
+                    : 'border-neutral-800 hover:border-neutral-600'
                 )}
               >
-                <X className="w-5 h-5 text-neutral-600" />
+                <X className="w-5 h-5 text-neutral-400" />
                 <div>
                   <p className="font-medium text-sm">Dismiss</p>
                   <p className="text-xs text-neutral-500">No action</p>
@@ -485,7 +485,7 @@ export default function AdminReportsPage() {
                   }
                   min={1}
                   max={365}
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900"
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
                 />
               </div>
             )}

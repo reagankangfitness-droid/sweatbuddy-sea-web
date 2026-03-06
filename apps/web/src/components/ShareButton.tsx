@@ -99,13 +99,13 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
       }}
     >
       <div
-        className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-200"
+        className="bg-neutral-950 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-neutral-100">
+        <div className="flex items-center justify-between p-4 border-b border-neutral-800">
           <div>
-            <h3 className="font-semibold text-neutral-900">Spread the word</h3>
+            <h3 className="font-semibold text-neutral-100">Spread the word</h3>
             <p className="text-sm text-neutral-500">Know someone who&apos;d love this?</p>
           </div>
           <button
@@ -114,15 +114,15 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
               e.stopPropagation()
               setShowMenu(false)
             }}
-            className="p-1.5 rounded-full hover:bg-neutral-100 transition-colors"
+            className="p-1.5 rounded-full hover:bg-neutral-800 transition-colors"
           >
             <X className="w-5 h-5 text-neutral-500" />
           </button>
         </div>
 
         {/* Event Preview */}
-        <div className="px-4 py-3 bg-neutral-50">
-          <p className="text-sm font-medium text-neutral-900 line-clamp-1">{eventName}</p>
+        <div className="px-4 py-3 bg-neutral-900">
+          <p className="text-sm font-medium text-neutral-100 line-clamp-1">{eventName}</p>
           <p className="text-xs text-neutral-500 mt-0.5 truncate">{shareUrl}</p>
         </div>
 
@@ -130,22 +130,22 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
         <div className="p-2">
           <button
             onClick={copyLink}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-300 hover:bg-neutral-900 transition-colors"
           >
             {copied ? (
               <>
-                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                  <Check className="w-5 h-5 text-green-600" />
+                <div className="w-10 h-10 rounded-full bg-green-900 flex items-center justify-center">
+                  <Check className="w-5 h-5 text-green-400" />
                 </div>
                 <div className="flex flex-col items-start">
-                  <span className="text-green-600 font-medium">Link copied!</span>
+                  <span className="text-green-400 font-medium">Link copied!</span>
                   <span className="text-xs text-green-500">Paste anywhere to share</span>
                 </div>
               </>
             ) : (
               <>
-                <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center">
-                  <Copy className="w-5 h-5 text-neutral-600" />
+                <div className="w-10 h-10 rounded-full bg-neutral-800 flex items-center justify-center">
+                  <Copy className="w-5 h-5 text-neutral-400" />
                 </div>
                 <span className="font-medium">Copy Link</span>
               </>
@@ -154,7 +154,7 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
 
           <button
             onClick={shareToWhatsApp}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-300 hover:bg-neutral-900 transition-colors"
           >
             <div className="w-10 h-10 rounded-full bg-[#25D366]/10 flex items-center justify-center">
               <svg className="w-5 h-5 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor">
@@ -166,7 +166,7 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
 
           <button
             onClick={shareToTelegram}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-700 hover:bg-neutral-50 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-neutral-300 hover:bg-neutral-900 transition-colors"
           >
             <div className="w-10 h-10 rounded-full bg-[#0088cc]/10 flex items-center justify-center">
               <svg className="w-5 h-5 text-[#0088cc]" viewBox="0 0 24 24" fill="currentColor">
@@ -185,7 +185,7 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
               e.stopPropagation()
               setShowMenu(false)
             }}
-            className="w-full py-3 rounded-xl text-neutral-500 font-medium hover:bg-neutral-50 transition-colors"
+            className="w-full py-3 rounded-xl text-neutral-500 font-medium hover:bg-neutral-900 transition-colors"
           >
             Never Mind
           </button>
@@ -197,16 +197,16 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
 
   // Different button styles based on context
   const buttonStyles = iconOnly
-    ? 'w-11 h-11 bg-white hover:bg-neutral-50 border border-neutral-200'
+    ? 'w-11 h-11 bg-neutral-950 hover:bg-neutral-900 border border-neutral-800'
     : compact
       ? 'w-6 h-6 sm:w-7 sm:h-7 bg-black/30 backdrop-blur-sm hover:bg-black/50'
-      : 'w-10 h-10 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg'
+      : 'w-10 h-10 bg-neutral-950/90 backdrop-blur-sm hover:bg-neutral-950 shadow-lg'
 
   const iconStyles = iconOnly
-    ? 'w-5 h-5 text-neutral-600'
+    ? 'w-5 h-5 text-neutral-400'
     : compact
       ? 'w-3 h-3 sm:w-3.5 sm:h-3.5 text-white'
-      : 'w-5 h-5 text-neutral-700'
+      : 'w-5 h-5 text-neutral-300'
 
   return (
     <>

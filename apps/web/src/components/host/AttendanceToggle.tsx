@@ -58,10 +58,10 @@ export function AttendanceToggle({
         inline-flex items-center justify-center w-8 h-8 rounded-lg border-2 transition-all
         ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105'}
         ${value === true
-          ? 'bg-green-50 border-green-500 text-green-600'
+          ? 'bg-green-950 border-green-500 text-green-400'
           : value === false
-            ? 'bg-red-50 border-red-400 text-red-500'
-            : 'bg-neutral-50 border-neutral-200 text-neutral-400'
+            ? 'bg-red-950 border-red-400 text-red-500'
+            : 'bg-neutral-900 border-neutral-800 text-neutral-400'
         }
       `}
       title={
@@ -120,8 +120,8 @@ export function AttendanceToggleCompact({
         disabled={isLoading}
         className={`
           p-1.5 rounded transition-all
-          ${isLoading ? 'opacity-50' : 'hover:bg-green-100'}
-          ${value === true ? 'bg-green-100 text-green-600' : 'text-neutral-300 hover:text-green-500'}
+          ${isLoading ? 'opacity-50' : 'hover:bg-green-900'}
+          ${value === true ? 'bg-green-900 text-green-400' : 'text-neutral-300 hover:text-green-500'}
         `}
         title="Mark as attended"
       >
@@ -132,8 +132,8 @@ export function AttendanceToggleCompact({
         disabled={isLoading}
         className={`
           p-1.5 rounded transition-all
-          ${isLoading ? 'opacity-50' : 'hover:bg-red-100'}
-          ${value === false ? 'bg-red-100 text-red-500' : 'text-neutral-300 hover:text-red-400'}
+          ${isLoading ? 'opacity-50' : 'hover:bg-red-900'}
+          ${value === false ? 'bg-red-900 text-red-500' : 'text-neutral-300 hover:text-red-400'}
         `}
         title="Mark as no-show"
       >

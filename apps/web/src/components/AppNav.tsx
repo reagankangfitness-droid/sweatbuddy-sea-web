@@ -40,7 +40,7 @@ export function AppNav() {
           initial={false}
           animate={{ opacity: isHovered ? 0 : 1 }}
           transition={{ duration: 0.15 }}
-          className="absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center py-6 bg-white/80 backdrop-blur-sm border-r border-neutral-200/50"
+          className="absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center py-6 bg-neutral-950/80 backdrop-blur-sm border-r border-neutral-800/50"
         >
           {/* Small logo */}
           <div className="mb-6">
@@ -57,7 +57,7 @@ export function AppNav() {
                   key={item.id}
                   className={`w-8 h-8 rounded-lg flex items-center justify-center ${
                     isActive
-                      ? 'bg-neutral-900 text-white'
+                      ? 'bg-white text-neutral-900'
                       : 'text-neutral-400'
                   }`}
                 >
@@ -83,7 +83,7 @@ export function AppNav() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -80, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-              className="absolute left-0 top-0 bottom-0 w-20 flex flex-col items-center py-6 bg-white/95 backdrop-blur-lg border-r border-neutral-200 shadow-xl"
+              className="absolute left-0 top-0 bottom-0 w-20 flex flex-col items-center py-6 bg-neutral-950/95 backdrop-blur-lg border-r border-neutral-800 shadow-xl"
             >
               {/* Logo - links to home */}
               <Link href="/" className="mb-8" title="Back to home">
@@ -107,15 +107,15 @@ export function AppNav() {
                         w-14 h-14 rounded-xl
                         transition-all duration-200
                         ${isActive
-                          ? 'text-neutral-900 bg-neutral-100'
-                          : 'text-neutral-400 hover:text-neutral-600 hover:bg-neutral-50'
+                          ? 'text-neutral-100 bg-neutral-800'
+                          : 'text-neutral-400 hover:text-neutral-400 hover:bg-neutral-900'
                         }
                       `}
                     >
                       {isActive && (
                         <motion.div
                           layoutId="desktopSidebarIndicator"
-                          className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-neutral-900 rounded-r-full"
+                          className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full"
                           transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                         />
                       )}
@@ -130,7 +130,7 @@ export function AppNav() {
               <Link
                 href="/host"
                 aria-label="Host an event"
-                className="flex items-center justify-center w-12 h-12 rounded-xl bg-neutral-900 text-white hover:bg-neutral-700 transition-colors mb-3"
+                className="flex items-center justify-center w-12 h-12 rounded-xl bg-white text-neutral-900 hover:bg-neutral-200 transition-colors mb-3"
               >
                 <Plus className="w-5 h-5" />
               </Link>
@@ -140,7 +140,7 @@ export function AppNav() {
                 {isSignedIn && user ? (
                   <Link
                     href="/profile"
-                    className="block w-10 h-10 rounded-full overflow-hidden border-2 border-neutral-200 hover:border-neutral-400 transition-colors"
+                    className="block w-10 h-10 rounded-full overflow-hidden border-2 border-neutral-800 hover:border-neutral-600 transition-colors"
                   >
                     {user.imageUrl ? (
                       <Image
@@ -151,7 +151,7 @@ export function AppNav() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-neutral-200 flex items-center justify-center">
+                      <div className="w-full h-full bg-neutral-700 flex items-center justify-center">
                         <User className="w-5 h-5 text-neutral-500" />
                       </div>
                     )}
@@ -159,7 +159,7 @@ export function AppNav() {
                 ) : (
                   <Link
                     href="/sign-in"
-                    className="flex items-center justify-center w-10 h-10 rounded-full bg-neutral-900 text-white hover:opacity-90 transition-opacity"
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-white text-neutral-900 hover:opacity-90 transition-opacity"
                     title="Sign In"
                   >
                     <User className="w-5 h-5" />
@@ -181,7 +181,7 @@ export function AppNav() {
           aria-label="Main navigation"
           className="fixed bottom-0 left-0 right-0 z-50"
         >
-          <div className="absolute inset-0 bg-white/95 backdrop-blur-lg border-t border-neutral-200" />
+          <div className="absolute inset-0 bg-neutral-950/95 backdrop-blur-lg border-t border-neutral-800" />
 
           <div className="relative flex items-center justify-around px-2 pt-2 pb-[env(safe-area-inset-bottom,8px)]">
             {navItems.map((item) => {
@@ -198,10 +198,10 @@ export function AppNav() {
                     flex flex-col items-center justify-center
                     w-14 h-14
                     transition-all duration-200 relative
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 rounded-lg
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 rounded-lg
                     ${isActive
-                      ? 'text-neutral-900'
-                      : 'text-neutral-400 hover:text-neutral-600 active:scale-95'
+                      ? 'text-neutral-100'
+                      : 'text-neutral-400 hover:text-neutral-400 active:scale-95'
                     }
                   `}
                 >
@@ -211,7 +211,7 @@ export function AppNav() {
                   {isActive && (
                     <motion.div
                       layoutId="mobileActiveIndicator"
-                      className="absolute bottom-1 w-4 h-1 bg-neutral-900 rounded-full"
+                      className="absolute bottom-1 w-4 h-1 bg-white rounded-full"
                       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                     />
                   )}
@@ -225,8 +225,8 @@ export function AppNav() {
               aria-label="Host an event"
               className="flex flex-col items-center justify-center w-14 h-14"
             >
-              <div className="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center">
-                <Plus className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                <Plus className="w-5 h-5 text-neutral-900" />
               </div>
             </Link>
           </div>

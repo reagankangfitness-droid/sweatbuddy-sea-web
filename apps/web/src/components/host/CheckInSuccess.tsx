@@ -36,32 +36,32 @@ export function CheckInSuccess({
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-xl"
+            className="bg-neutral-950 rounded-3xl p-8 max-w-sm w-full text-center shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             {error ? (
               // Error state
               <>
-                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <X className="w-8 h-8 text-red-600" />
+                <div className="w-16 h-16 bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <X className="w-8 h-8 text-red-400" />
                 </div>
-                <h3 className="text-xl font-bold text-neutral-900 mb-2">
+                <h3 className="text-xl font-bold text-neutral-100 mb-2">
                   Check-in Failed
                 </h3>
-                <p className="text-neutral-600 mb-6">{error}</p>
+                <p className="text-neutral-400 mb-6">{error}</p>
               </>
             ) : alreadyCheckedIn ? (
               // Already checked in
               <>
-                <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <AlertCircle className="w-8 h-8 text-amber-600" />
+                <div className="w-16 h-16 bg-amber-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <AlertCircle className="w-8 h-8 text-amber-400" />
                 </div>
-                <h3 className="text-xl font-bold text-neutral-900 mb-2">
+                <h3 className="text-xl font-bold text-neutral-100 mb-2">
                   Already Checked In
                 </h3>
                 {attendee && (
                   <>
-                    <p className="text-lg font-medium text-neutral-800">
+                    <p className="text-lg font-medium text-neutral-200">
                       {attendee.name || 'Guest'}
                     </p>
                     <p className="text-neutral-500 text-sm mb-2">
@@ -84,16 +84,16 @@ export function CheckInSuccess({
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', damping: 15, delay: 0.1 }}
-                  className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
+                  className="w-16 h-16 bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4"
                 >
-                  <Check className="w-8 h-8 text-green-600" />
+                  <Check className="w-8 h-8 text-green-400" />
                 </motion.div>
-                <h3 className="text-xl font-bold text-neutral-900 mb-2">
+                <h3 className="text-xl font-bold text-neutral-100 mb-2">
                   Checked In!
                 </h3>
                 {attendee && (
                   <>
-                    <p className="text-lg font-medium text-neutral-800">
+                    <p className="text-lg font-medium text-neutral-200">
                       {attendee.name || 'Guest'}
                     </p>
                     <p className="text-neutral-500 text-sm mb-2">
@@ -112,7 +112,7 @@ export function CheckInSuccess({
 
             <button
               onClick={onClose}
-              className="w-full py-3 bg-neutral-900 text-white rounded-xl font-semibold hover:bg-neutral-800 transition-colors"
+              className="w-full py-3 bg-white text-neutral-900 rounded-xl font-semibold hover:bg-neutral-200 transition-colors"
             >
               {error || alreadyCheckedIn ? 'Try Again' : 'Scan Next'}
             </button>

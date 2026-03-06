@@ -101,10 +101,10 @@ export function ShareFlyerButton({ event, compact = false }: ShareFlyerButtonPro
       <>
         <button
           onClick={() => setShowPicker(true)}
-          className="p-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 transition-colors"
+          className="p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors"
           title="Share flyer"
         >
-          <Image className="w-4 h-4 text-neutral-600" />
+          <Image className="w-4 h-4 text-neutral-400" />
         </button>
 
         {showPicker && (
@@ -123,7 +123,7 @@ export function ShareFlyerButton({ event, compact = false }: ShareFlyerButtonPro
     <>
       <button
         onClick={() => setShowPicker(true)}
-        className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
+        className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
       >
         <Image className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
         <span className="hidden sm:inline">Share Flyer</span>
@@ -156,15 +156,15 @@ function FormatPicker({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative w-full max-w-xs bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200">
-          <h3 className="font-semibold text-neutral-900 text-base">
+      <div className="relative w-full max-w-xs bg-neutral-950 rounded-2xl shadow-xl overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-800">
+          <h3 className="font-semibold text-neutral-100 text-base">
             Share Flyer
           </h3>
           <button
             onClick={onClose}
             disabled={isGenerating}
-            className="p-1 text-neutral-400 hover:text-neutral-600 transition-colors disabled:opacity-50"
+            className="p-1 text-neutral-400 hover:text-neutral-400 transition-colors disabled:opacity-50"
           >
             <X className="w-5 h-5" />
           </button>
@@ -179,13 +179,13 @@ function FormatPicker({
           <button
             onClick={() => onSelect('story')}
             disabled={isGenerating}
-            className="w-full flex items-center gap-4 p-4 rounded-xl border border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50 transition-colors disabled:opacity-50"
+            className="w-full flex items-center gap-4 p-4 rounded-xl border border-neutral-800 hover:border-neutral-600 hover:bg-neutral-900 transition-colors disabled:opacity-50"
           >
-            <div className="w-10 h-14 rounded-lg bg-neutral-100 flex items-center justify-center flex-shrink-0 border border-neutral-200">
+            <div className="w-10 h-14 rounded-lg bg-neutral-800 flex items-center justify-center flex-shrink-0 border border-neutral-800">
               <Smartphone className="w-5 h-5 text-neutral-400" />
             </div>
             <div className="flex-1 text-left">
-              <p className="text-sm font-medium text-neutral-900">
+              <p className="text-sm font-medium text-neutral-100">
                 Instagram Story
               </p>
               <p className="text-xs text-neutral-500">
@@ -204,13 +204,13 @@ function FormatPicker({
           <button
             onClick={() => onSelect('post')}
             disabled={isGenerating}
-            className="w-full flex items-center gap-4 p-4 rounded-xl border border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50 transition-colors disabled:opacity-50"
+            className="w-full flex items-center gap-4 p-4 rounded-xl border border-neutral-800 hover:border-neutral-600 hover:bg-neutral-900 transition-colors disabled:opacity-50"
           >
-            <div className="w-10 h-10 rounded-lg bg-neutral-100 flex items-center justify-center flex-shrink-0 border border-neutral-200">
+            <div className="w-10 h-10 rounded-lg bg-neutral-800 flex items-center justify-center flex-shrink-0 border border-neutral-800">
               <Square className="w-5 h-5 text-neutral-400" />
             </div>
             <div className="flex-1 text-left">
-              <p className="text-sm font-medium text-neutral-900">
+              <p className="text-sm font-medium text-neutral-100">
                 Instagram Post
               </p>
               <p className="text-xs text-neutral-500">

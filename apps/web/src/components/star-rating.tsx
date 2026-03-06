@@ -227,16 +227,16 @@ export function RatingBadge({ rating, count, className }: RatingBadgeProps) {
   return (
     <div
       className={cn(
-        'inline-flex items-center gap-1 px-2 py-1 bg-amber-50 rounded-lg',
+        'inline-flex items-center gap-1 px-2 py-1 bg-amber-950 rounded-lg',
         className
       )}
     >
       <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-      <span className="text-sm font-semibold text-amber-700">
+      <span className="text-sm font-semibold text-amber-400">
         {rating.toFixed(1)}
       </span>
       {count !== undefined && count > 0 && (
-        <span className="text-xs text-amber-600">({count})</span>
+        <span className="text-xs text-amber-400">({count})</span>
       )}
     </div>
   )
@@ -295,7 +295,7 @@ export function RatingDistribution({
               {stars}
             </span>
             <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-            <div className="flex-1 h-2 bg-neutral-100 rounded-full overflow-hidden">
+            <div className="flex-1 h-2 bg-neutral-800 rounded-full overflow-hidden">
               <div
                 className={cn(
                   'h-full rounded-full transition-all',

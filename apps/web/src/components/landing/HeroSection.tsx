@@ -29,18 +29,18 @@ export function HeroSection() {
         priority
         className="object-cover"
       />
-      <div className="absolute inset-0 bg-white/90" />
+      <div className="absolute inset-0 bg-neutral-950/90" />
 
       {/* Gradient fade to white at bottom */}
       <div
         className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none z-[1]"
-        style={{ background: 'linear-gradient(to bottom, transparent, white)' }}
+        style={{ background: 'linear-gradient(to bottom, transparent, #0A0A0A)' }}
       />
 
       <div className="relative z-10 max-w-3xl mx-auto text-center">
         {/* Eyebrow */}
         <ScrollAnimator>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-neutral-200 rounded-full mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-neutral-950 border border-neutral-800 rounded-full mb-6">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
             <span className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
               Live events this week in Singapore
@@ -50,7 +50,7 @@ export function HeroSection() {
 
         {/* H1 */}
         <ScrollAnimator delay={100}>
-          <h1 className="text-3xl sm:text-5xl font-extrabold leading-[1.1] tracking-tight text-neutral-900 mb-5">
+          <h1 className="text-3xl sm:text-5xl font-extrabold leading-[1.1] tracking-tight text-neutral-100 mb-5">
             Your city&apos;s fitness community,{' '}
             <span className="text-neutral-500 italic">all in one place</span>
           </h1>
@@ -69,13 +69,13 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
             <Link
               href="/events"
-              className="inline-flex items-center justify-center px-7 py-3.5 bg-neutral-900 text-white font-semibold text-sm rounded-md hover:bg-neutral-700 transition-colors"
+              className="inline-flex items-center justify-center px-7 py-3.5 bg-white text-neutral-900 font-semibold text-sm rounded-md hover:bg-neutral-200 transition-colors"
             >
               Find events near me
             </Link>
             <Link
               href="/host"
-              className="inline-flex items-center justify-center px-7 py-3.5 border border-neutral-300 text-neutral-700 font-semibold text-sm rounded-md hover:bg-neutral-100 transition-colors"
+              className="inline-flex items-center justify-center px-7 py-3.5 border border-neutral-700 text-neutral-300 font-semibold text-sm rounded-md hover:bg-neutral-800 transition-colors"
             >
               Start hosting
             </Link>
@@ -110,7 +110,7 @@ export function HeroSection() {
               <Link
                 key={cat.param}
                 href={`/events?cat=${cat.param}`}
-                className="px-3.5 py-1.5 bg-white border border-neutral-200 rounded-full text-xs font-medium text-neutral-600 hover:border-neutral-400 hover:text-neutral-900 transition-colors"
+                className="px-3.5 py-1.5 bg-neutral-950 border border-neutral-800 rounded-full text-xs font-medium text-neutral-400 hover:border-neutral-600 hover:text-neutral-100 transition-colors"
               >
                 {cat.label}
               </Link>

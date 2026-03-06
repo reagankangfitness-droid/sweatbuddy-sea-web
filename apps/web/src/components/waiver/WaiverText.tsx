@@ -23,8 +23,8 @@ export function WaiverText({
   const [isExpanded, setIsExpanded] = useState(defaultExpanded)
 
   const waiverContent = (
-    <div className={`prose prose-sm max-w-none ${compact ? 'text-xs' : 'text-sm'} text-neutral-600`}>
-      <h4 className={`font-semibold text-neutral-900 ${compact ? 'text-sm mb-2' : 'text-base mb-3'}`}>
+    <div className={`prose prose-sm max-w-none ${compact ? 'text-xs' : 'text-sm'} text-neutral-400`}>
+      <h4 className={`font-semibold text-neutral-100 ${compact ? 'text-sm mb-2' : 'text-base mb-3'}`}>
         PARTICIPATION WAIVER AND RELEASE OF LIABILITY
       </h4>
 
@@ -61,13 +61,13 @@ export function WaiverText({
   }
 
   return (
-    <div className="border border-neutral-200 rounded-lg overflow-hidden">
+    <div className="border border-neutral-800 rounded-lg overflow-hidden">
       <button
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-neutral-50 hover:bg-neutral-100 transition-colors text-left"
+        className="w-full flex items-center justify-between px-4 py-3 bg-neutral-900 hover:bg-neutral-800 transition-colors text-left"
       >
-        <span className="font-medium text-neutral-900 text-sm">
+        <span className="font-medium text-neutral-100 text-sm">
           Participation Waiver
         </span>
         {isExpanded ? (
@@ -78,7 +78,7 @@ export function WaiverText({
       </button>
 
       {isExpanded && (
-        <div className="px-4 py-4 bg-white border-t border-neutral-200">
+        <div className="px-4 py-4 bg-neutral-950 border-t border-neutral-800">
           {waiverContent}
         </div>
       )}

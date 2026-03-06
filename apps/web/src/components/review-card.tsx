@@ -137,7 +137,7 @@ export function ReviewCard({
   }
 
   return (
-    <div className={cn('bg-white rounded-xl border border-border p-5', className)}>
+    <div className={cn('bg-neutral-950 rounded-xl border border-border p-5', className)}>
       {/* Activity info (if showing) */}
       {showActivity && review.activity && (
         <Link
@@ -186,7 +186,7 @@ export function ReviewCard({
                 {review.reviewer.name || 'Anonymous'}
               </span>
               {review.isVerified && (
-                <span className="inline-flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">
+                <span className="inline-flex items-center gap-1 text-xs text-emerald-400 bg-emerald-50 px-1.5 py-0.5 rounded-full">
                   <CheckCircle size={10} />
                   Verified
                 </span>
@@ -209,7 +209,7 @@ export function ReviewCard({
               <MoreHorizontal size={18} className="text-muted-foreground" />
             </button>
             {showOptions && (
-              <div className="absolute right-0 top-full mt-1 bg-white border rounded-lg shadow-lg py-1 z-10 min-w-[120px]">
+              <div className="absolute right-0 top-full mt-1 bg-neutral-950 border rounded-lg shadow-lg py-1 z-10 min-w-[120px]">
                 <button
                   onClick={() => {
                     onEdit?.(review.id)
@@ -225,7 +225,7 @@ export function ReviewCard({
                     onDelete?.(review.id)
                     setShowOptions(false)
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-950"
                 >
                   <Trash2 size={14} />
                   Delete

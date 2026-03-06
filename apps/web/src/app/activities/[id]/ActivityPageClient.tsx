@@ -342,11 +342,11 @@ Organized via sweatbuddies
   if (isLoading) {
     return (
       <>
-        <header className="sticky top-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+        <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200">
-                <ArrowLeft className="w-5 h-5 text-neutral-700" />
+              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
+                <ArrowLeft className="w-5 h-5 text-neutral-300" />
               </button>
               <span className="text-sm font-medium text-neutral-500">Activity Details</span>
             </div>
@@ -367,11 +367,11 @@ Organized via sweatbuddies
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+      <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200">
-              <ArrowLeft className="w-5 h-5 text-neutral-700" />
+            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
+              <ArrowLeft className="w-5 h-5 text-neutral-300" />
             </button>
             <span className="text-sm font-medium text-neutral-500">Activity Details</span>
           </div>
@@ -504,7 +504,7 @@ Organized via sweatbuddies
                   {activity.price > 0 && (
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground">Price:</dt>
-                      <dd className="font-semibold text-green-600">
+                      <dd className="font-semibold text-green-400">
                         {activity.currency} {(activity.price / 100).toFixed(2)}
                       </dd>
                     </div>
@@ -712,7 +712,7 @@ Organized via sweatbuddies
                       >
                         {isJoining ? 'Leaving...' : 'Leave'}
                       </Button>
-                      <span className="text-xs sm:text-sm text-green-600 font-medium flex items-center gap-1">
+                      <span className="text-xs sm:text-sm text-green-400 font-medium flex items-center gap-1">
                         <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                         Joined
                       </span>

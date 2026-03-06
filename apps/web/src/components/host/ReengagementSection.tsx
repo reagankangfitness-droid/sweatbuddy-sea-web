@@ -153,7 +153,7 @@ export function ReengagementSection() {
   return (
     <>
       <section>
-        <h2 className="text-base sm:text-lg font-semibold text-neutral-900 mb-3 sm:mb-4 flex items-center gap-2">
+        <h2 className="text-base sm:text-lg font-semibold text-neutral-100 mb-3 sm:mb-4 flex items-center gap-2">
           <UserMinus className="w-4 h-4 text-rose-500" />
           Members to re-engage
         </h2>
@@ -168,7 +168,7 @@ export function ReengagementSection() {
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm font-medium text-neutral-900 truncate">
+                    <p className="text-xs sm:text-sm font-medium text-neutral-100 truncate">
                       {member.name || member.email.split('@')[0]}
                     </p>
                     <p className="text-xs text-rose-700">
@@ -183,7 +183,7 @@ export function ReengagementSection() {
                   ) : (
                     <button
                       onClick={() => openNudgeModal(member)}
-                      className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-rose-700 bg-rose-100 hover:bg-rose-200 rounded-full transition-colors whitespace-nowrap"
+                      className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-rose-700 bg-rose-900 hover:bg-rose-200 rounded-full transition-colors whitespace-nowrap"
                     >
                       <Send className="w-3 h-3" />
                       Nudge
@@ -193,7 +193,7 @@ export function ReengagementSection() {
               </div>
             ))}
           </div>
-          <div className="px-3 py-2 bg-rose-100 border-t border-rose-200">
+          <div className="px-3 py-2 bg-rose-900 border-t border-rose-200">
             <p className="text-xs text-rose-800">
               Members who attended 2+ sessions but haven&apos;t been back in 3+ weeks.
             </p>
@@ -208,11 +208,11 @@ export function ReengagementSection() {
             className="absolute inset-0 bg-black/50"
             onClick={() => !modal.isSending && setModal(null)}
           />
-          <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="relative w-full max-w-lg bg-neutral-950 rounded-2xl shadow-xl overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-800">
               <div>
-                <h3 className="font-semibold text-neutral-900 text-base">
+                <h3 className="font-semibold text-neutral-100 text-base">
                   Send nudge
                 </h3>
                 <p className="text-xs text-neutral-500 mt-0.5">
@@ -221,7 +221,7 @@ export function ReengagementSection() {
               </div>
               <button
                 onClick={() => !modal.isSending && setModal(null)}
-                className="p-1 text-neutral-400 hover:text-neutral-600 transition-colors"
+                className="p-1 text-neutral-400 hover:text-neutral-400 transition-colors"
                 disabled={modal.isSending}
               >
                 <X className="w-5 h-5" />
@@ -237,10 +237,10 @@ export function ReengagementSection() {
                 </div>
               ) : modal.sent ? (
                 <div className="flex flex-col items-center justify-center py-8">
-                  <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-3">
-                    <Check className="w-6 h-6 text-green-600" />
+                  <div className="w-12 h-12 rounded-full bg-green-900 flex items-center justify-center mb-3">
+                    <Check className="w-6 h-6 text-green-400" />
                   </div>
-                  <p className="text-sm font-medium text-neutral-900">
+                  <p className="text-sm font-medium text-neutral-100">
                     Nudge sent!
                   </p>
                   <p className="text-xs text-neutral-500 mt-1">
@@ -250,7 +250,7 @@ export function ReengagementSection() {
               ) : (
                 <>
                   <div>
-                    <label className="block text-xs font-medium text-neutral-600 mb-1.5">
+                    <label className="block text-xs font-medium text-neutral-400 mb-1.5">
                       Subject
                     </label>
                     <input
@@ -259,11 +259,11 @@ export function ReengagementSection() {
                       onChange={(e) =>
                         setModal((prev) => (prev ? { ...prev, subject: e.target.value } : null))
                       }
-                      className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg bg-white text-neutral-900 focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none"
+                      className="w-full px-3 py-2 text-sm border border-neutral-800 rounded-lg bg-neutral-950 text-neutral-100 focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-neutral-600 mb-1.5">
+                    <label className="block text-xs font-medium text-neutral-400 mb-1.5">
                       Message
                     </label>
                     <textarea
@@ -272,14 +272,14 @@ export function ReengagementSection() {
                         setModal((prev) => (prev ? { ...prev, message: e.target.value } : null))
                       }
                       rows={5}
-                      className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg bg-white text-neutral-900 focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none resize-none"
+                      className="w-full px-3 py-2 text-sm border border-neutral-800 rounded-lg bg-neutral-950 text-neutral-100 focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none resize-none"
                     />
                     <p className="text-xs text-neutral-400 mt-1">
                       AI-drafted. Edit freely before sending.
                     </p>
                   </div>
                   {modal.error && (
-                    <p className="text-xs text-red-600">{modal.error}</p>
+                    <p className="text-xs text-red-400">{modal.error}</p>
                   )}
                 </>
               )}
@@ -287,11 +287,11 @@ export function ReengagementSection() {
 
             {/* Footer */}
             {!modal.isGenerating && (
-              <div className="flex items-center justify-end gap-2 px-5 py-3 border-t border-neutral-200">
+              <div className="flex items-center justify-end gap-2 px-5 py-3 border-t border-neutral-800">
                 {modal.sent ? (
                   <button
                     onClick={() => setModal(null)}
-                    className="px-4 py-2 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-neutral-300 bg-neutral-800 hover:bg-neutral-700 rounded-lg transition-colors"
                   >
                     Close
                   </button>
@@ -300,7 +300,7 @@ export function ReengagementSection() {
                     <button
                       onClick={() => setModal(null)}
                       disabled={modal.isSending}
-                      className="px-4 py-2 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors disabled:opacity-50"
+                      className="px-4 py-2 text-sm font-medium text-neutral-300 bg-neutral-800 hover:bg-neutral-700 rounded-lg transition-colors disabled:opacity-50"
                     >
                       Cancel
                     </button>

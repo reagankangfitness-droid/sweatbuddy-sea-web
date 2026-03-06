@@ -85,7 +85,7 @@ interface StatCardProps {
 
 function StatCard({ icon, value, label, subtext, color }: StatCardProps) {
   return (
-    <div className="flex items-start gap-3 sm:gap-4 bg-white border border-neutral-200 rounded-xl sm:rounded-2xl p-4 sm:p-5 hover:shadow-md transition-shadow">
+    <div className="flex items-start gap-3 sm:gap-4 bg-neutral-950 border border-neutral-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 hover:shadow-md transition-shadow">
       <div
         className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0"
         style={{ backgroundColor: `${color}15`, color }}
@@ -95,8 +95,8 @@ function StatCard({ icon, value, label, subtext, color }: StatCardProps) {
         </span>
       </div>
       <div className="flex-1 min-w-0">
-        <div className="text-xl sm:text-2xl font-bold text-neutral-900 truncate">{value}</div>
-        <div className="text-xs sm:text-sm font-medium text-neutral-600 mt-0.5">{label}</div>
+        <div className="text-xl sm:text-2xl font-bold text-neutral-100 truncate">{value}</div>
+        <div className="text-xs sm:text-sm font-medium text-neutral-400 mt-0.5">{label}</div>
         {subtext && (
           <div className="text-[10px] sm:text-xs text-neutral-400 mt-1 line-clamp-1">{subtext}</div>
         )}
@@ -169,7 +169,7 @@ export function HostStatsDashboard() {
     return (
       <div className="text-center py-8 sm:py-12 px-4">
         <BarChart3 className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 text-neutral-300" />
-        <h3 className="text-base sm:text-lg font-semibold text-neutral-700 mb-2">
+        <h3 className="text-base sm:text-lg font-semibold text-neutral-300 mb-2">
           No Statistics Yet
         </h3>
         <p className="text-neutral-500 max-w-md mx-auto text-sm sm:text-base">
@@ -234,32 +234,32 @@ export function HostStatsDashboard() {
       </div>
 
       {/* This Month Highlights */}
-      <div className="bg-amber-50 border border-amber-100 rounded-xl sm:rounded-2xl p-4 sm:p-6">
-        <h3 className="font-semibold text-neutral-800 mb-3 sm:mb-4 text-sm sm:text-base">This Month</h3>
+      <div className="bg-amber-950 border border-amber-100 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+        <h3 className="font-semibold text-neutral-200 mb-3 sm:mb-4 text-sm sm:text-base">This Month</h3>
         <div className="grid grid-cols-4 gap-2 sm:gap-4">
           <div className="text-center">
-            <div className="text-lg sm:text-2xl font-bold text-neutral-900">
+            <div className="text-lg sm:text-2xl font-bold text-neutral-100">
               {stats.eventsThisMonth}
             </div>
-            <div className="text-[10px] sm:text-sm text-neutral-600">Events</div>
+            <div className="text-[10px] sm:text-sm text-neutral-400">Events</div>
           </div>
           <div className="text-center">
-            <div className="text-lg sm:text-2xl font-bold text-neutral-900">
+            <div className="text-lg sm:text-2xl font-bold text-neutral-100">
               {stats.bookingsThisMonth}
             </div>
-            <div className="text-[10px] sm:text-sm text-neutral-600">Bookings</div>
+            <div className="text-[10px] sm:text-sm text-neutral-400">Bookings</div>
           </div>
           <div className="text-center">
-            <div className="text-lg sm:text-2xl font-bold text-neutral-900">
+            <div className="text-lg sm:text-2xl font-bold text-neutral-100">
               {stats.uniqueAttendeesThisMonth}
             </div>
-            <div className="text-[10px] sm:text-sm text-neutral-600">Attendees</div>
+            <div className="text-[10px] sm:text-sm text-neutral-400">Attendees</div>
           </div>
           <div className="text-center">
-            <div className="text-lg sm:text-2xl font-bold text-neutral-900">
+            <div className="text-lg sm:text-2xl font-bold text-neutral-100">
               <span className="hidden sm:inline">SGD </span>${stats.revenueThisMonth.toFixed(0)}
             </div>
-            <div className="text-[10px] sm:text-sm text-neutral-600">Revenue</div>
+            <div className="text-[10px] sm:text-sm text-neutral-400">Revenue</div>
           </div>
         </div>
       </div>
@@ -267,8 +267,8 @@ export function HostStatsDashboard() {
       {/* Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Top Activities */}
-        <div className="bg-white border border-neutral-200 rounded-xl sm:rounded-2xl p-4 sm:p-6">
-          <h3 className="font-semibold text-neutral-800 mb-3 sm:mb-4 text-sm sm:text-base">
+        <div className="bg-neutral-950 border border-neutral-800 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+          <h3 className="font-semibold text-neutral-200 mb-3 sm:mb-4 text-sm sm:text-base">
             Top Performing Activities
           </h3>
           {topActivities.length === 0 ? (
@@ -280,13 +280,13 @@ export function HostStatsDashboard() {
               {topActivities.map((activity, index) => (
                 <div
                   key={activity.id}
-                  className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 bg-neutral-50 rounded-lg sm:rounded-xl"
+                  className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 bg-neutral-900 rounded-lg sm:rounded-xl"
                 >
                   <div className="text-xs sm:text-sm font-semibold text-neutral-400 w-5 sm:w-6">
                     #{index + 1}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs sm:text-sm font-medium text-neutral-900 truncate">
+                    <div className="text-xs sm:text-sm font-medium text-neutral-100 truncate">
                       {activity.title}
                     </div>
                     <div className="text-[10px] sm:text-xs text-neutral-500">
@@ -296,7 +296,7 @@ export function HostStatsDashboard() {
                   </div>
                   <div className="text-right flex-shrink-0">
                     {activity.totalRevenue > 0 && (
-                      <div className="text-xs sm:text-sm font-medium text-emerald-600">
+                      <div className="text-xs sm:text-sm font-medium text-emerald-400">
                         ${activity.totalRevenue.toFixed(0)}
                       </div>
                     )}
@@ -308,8 +308,8 @@ export function HostStatsDashboard() {
         </div>
 
         {/* Top Repeat Attendees */}
-        <div className="bg-white border border-neutral-200 rounded-xl sm:rounded-2xl p-4 sm:p-6">
-          <h3 className="font-semibold text-neutral-800 mb-3 sm:mb-4 text-sm sm:text-base">Your Loyal Crew</h3>
+        <div className="bg-neutral-950 border border-neutral-800 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+          <h3 className="font-semibold text-neutral-200 mb-3 sm:mb-4 text-sm sm:text-base">Your Loyal Crew</h3>
           {topAttendees.length === 0 ? (
             <div className="text-center py-6 sm:py-8 text-neutral-400 text-sm">
               No repeat attendees yet
@@ -321,7 +321,7 @@ export function HostStatsDashboard() {
                   key={attendee.id}
                   className="flex items-center gap-2 sm:gap-3"
                 >
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-neutral-100 flex-shrink-0">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-neutral-800 flex-shrink-0">
                     {attendee.imageUrl ? (
                       <Image
                         src={attendee.imageUrl}
@@ -338,7 +338,7 @@ export function HostStatsDashboard() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs sm:text-sm font-medium text-neutral-900 truncate">
+                    <div className="text-xs sm:text-sm font-medium text-neutral-100 truncate">
                       {attendee.name || 'Anonymous'}
                     </div>
                     <div className="text-[10px] sm:text-xs text-neutral-500">
@@ -346,7 +346,7 @@ export function HostStatsDashboard() {
                     </div>
                   </div>
                   {attendee.totalSpent > 0 && (
-                    <div className="text-xs sm:text-sm font-medium text-emerald-600 flex-shrink-0">
+                    <div className="text-xs sm:text-sm font-medium text-emerald-400 flex-shrink-0">
                       ${attendee.totalSpent.toFixed(0)}
                     </div>
                   )}
@@ -359,8 +359,8 @@ export function HostStatsDashboard() {
 
       {/* Monthly Trend Chart */}
       {trends.monthly.length > 0 && (
-        <div className="bg-white border border-neutral-200 rounded-xl sm:rounded-2xl p-4 sm:p-6">
-          <h3 className="font-semibold text-neutral-800 mb-3 sm:mb-4 text-sm sm:text-base">Monthly Trend</h3>
+        <div className="bg-neutral-950 border border-neutral-800 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+          <h3 className="font-semibold text-neutral-200 mb-3 sm:mb-4 text-sm sm:text-base">Monthly Trend</h3>
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
             <div className="flex items-end gap-2 sm:gap-3 h-32 sm:h-40 min-w-[300px]">
               {trends.monthly.map((month, index) => {
@@ -383,7 +383,7 @@ export function HostStatsDashboard() {
                     key={index}
                     className="flex-1 flex flex-col items-center gap-1 sm:gap-2 min-w-[36px] sm:min-w-[40px]"
                   >
-                    <div className="text-[10px] sm:text-xs font-semibold text-neutral-700">
+                    <div className="text-[10px] sm:text-xs font-semibold text-neutral-300">
                       {month.totalBookings}
                     </div>
                     <div

@@ -29,10 +29,10 @@ export function VibeSection() {
         {/* Header */}
         <ScrollAnimator>
           <div className="text-center mb-12">
-            <span className="inline-block px-2.5 py-1 bg-neutral-100 rounded-md text-xs font-medium text-neutral-500 uppercase tracking-wide mb-3">
+            <span className="inline-block px-2.5 py-1 bg-neutral-800 rounded-md text-xs font-medium text-neutral-500 uppercase tracking-wide mb-3">
               More Than an App
             </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-bold text-neutral-100 tracking-tight">
               Why people choose SweatBuddies
             </h2>
           </div>
@@ -42,7 +42,7 @@ export function VibeSection() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           {cards.map((card, i) => (
             <ScrollAnimator key={card.title} delay={i * 100}>
-              <div className="bg-neutral-50 rounded-xl overflow-hidden h-full">
+              <div className="bg-neutral-900 rounded-xl overflow-hidden h-full">
                 {/* Photo */}
                 <div className="relative h-36 sm:h-40">
                   <Image
@@ -56,7 +56,7 @@ export function VibeSection() {
                 {/* Content */}
                 <div className="p-5 sm:p-6">
                   <span className="text-2xl block mb-2">{card.emoji}</span>
-                  <h3 className="font-bold text-neutral-900 mb-2">{card.title}</h3>
+                  <h3 className="font-bold text-neutral-100 mb-2">{card.title}</h3>
                   <p className="text-sm text-neutral-500 leading-relaxed">{card.desc}</p>
                 </div>
               </div>

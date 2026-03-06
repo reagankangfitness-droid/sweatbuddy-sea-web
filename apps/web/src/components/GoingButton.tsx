@@ -262,8 +262,8 @@ export function GoingButton({
     if (!isGoing) return null
 
     return (
-      <div className="mt-3 p-3 bg-neutral-50 rounded-xl">
-        <p className="text-sm text-neutral-600 mb-2">Bring a friend?</p>
+      <div className="mt-3 p-3 bg-neutral-900 rounded-xl">
+        <p className="text-sm text-neutral-400 mb-2">Bring a friend?</p>
         <button
           onClick={handleWhatsAppShare}
           className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#25D366] text-white text-sm font-semibold rounded-lg hover:bg-[#22c55e] transition-colors"
@@ -281,7 +281,7 @@ export function GoingButton({
   if (fullWidth) {
     if (isFull && !isGoing) {
       return (
-        <button disabled className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold bg-neutral-200 text-neutral-500 cursor-not-allowed">
+        <button disabled className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold bg-neutral-700 text-neutral-500 cursor-not-allowed">
           <span>Event Full</span>
           {count > 0 && <span className="text-neutral-400 ml-1">• {count} going</span>}
         </button>
@@ -297,7 +297,7 @@ export function GoingButton({
               ? 'bg-green-500 text-white'
               : isPaidEvent
               ? 'bg-neutral-800 text-white hover:bg-neutral-700'
-              : 'bg-neutral-900 text-white hover:bg-neutral-800'
+              : 'bg-white text-neutral-900 hover:bg-neutral-200'
           } ${isAnimating ? 'scale-[1.02]' : 'scale-100'}`}
         >
           {isGoing ? (
@@ -350,7 +350,7 @@ export function GoingButton({
   if (compact) {
     if (isFull && !isGoing) {
       return (
-        <button disabled className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-neutral-200 text-neutral-500 cursor-not-allowed">
+        <button disabled className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-neutral-700 text-neutral-500 cursor-not-allowed">
           <span>Full</span>
         </button>
       )
@@ -365,7 +365,7 @@ export function GoingButton({
               ? 'bg-green-500 text-white'
               : isPaidEvent
               ? 'bg-neutral-800 text-white hover:bg-neutral-700'
-              : 'bg-neutral-900 text-white hover:bg-neutral-800'
+              : 'bg-white text-neutral-900 hover:bg-neutral-200'
           } ${isAnimating ? 'scale-105' : 'scale-100'}`}
         >
           {isGoing && <Check className="w-3 h-3" />}
@@ -400,7 +400,7 @@ export function GoingButton({
   // Default button
   if (isFull && !isGoing) {
     return (
-      <button disabled className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-neutral-200 text-neutral-500 cursor-not-allowed">
+      <button disabled className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-neutral-700 text-neutral-500 cursor-not-allowed">
         <span>Event Full</span>
       </button>
     )
@@ -415,7 +415,7 @@ export function GoingButton({
             ? 'bg-green-500 text-white'
             : isPaidEvent
             ? 'bg-neutral-800 text-white hover:bg-neutral-700'
-            : 'bg-neutral-900 text-white hover:bg-neutral-800'
+            : 'bg-white text-neutral-900 hover:bg-neutral-200'
         } ${isAnimating ? 'scale-105' : 'scale-100'}`}
       >
         {isGoing && <Check className="w-4 h-4" />}

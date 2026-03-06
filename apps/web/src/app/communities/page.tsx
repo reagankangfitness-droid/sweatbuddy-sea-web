@@ -96,11 +96,11 @@ export default async function CommunitiesPage() {
   ])
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
       <header>
         <div className="max-w-6xl mx-auto px-4 pt-8 pb-4">
-          <h1 className="text-2xl font-bold text-neutral-900 mb-2">
+          <h1 className="text-2xl font-bold text-neutral-100 mb-2">
             Community
           </h1>
           <p className="text-sm text-neutral-500">
@@ -119,7 +119,7 @@ export default async function CommunitiesPage() {
                 <Link
                   key={city.slug}
                   href={`/cities/${city.slug}`}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-neutral-100 rounded-full text-sm font-medium text-neutral-700 border border-neutral-200 transition-colors whitespace-nowrap"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-neutral-950 hover:bg-neutral-800 rounded-full text-sm font-medium text-neutral-300 border border-neutral-800 transition-colors whitespace-nowrap"
                 >
                   <MapPin className="w-4 h-4" />
                   {city.name}
@@ -139,7 +139,7 @@ export default async function CommunitiesPage() {
               <Link
                 key={community.id}
                 href={`/communities/${community.slug}`}
-                className="group bg-white border border-neutral-100 rounded-2xl overflow-hidden hover:shadow-lg transition-all"
+                className="group bg-neutral-950 border border-neutral-800 rounded-2xl overflow-hidden hover:shadow-lg transition-all"
               >
                 {/* Cover Image */}
                 <div className={`relative h-32 bg-gradient-to-br ${getCategoryColor(community.category)}`}>
@@ -159,7 +159,7 @@ export default async function CommunitiesPage() {
                   )}
                   {/* Category Badge */}
                   <div className="absolute top-3 left-3">
-                    <span className="px-2.5 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-neutral-700 capitalize">
+                    <span className="px-2.5 py-1 bg-neutral-950/90 backdrop-blur-sm rounded-full text-xs font-medium text-neutral-300 capitalize">
                       {community.category}
                     </span>
                   </div>
@@ -169,7 +169,7 @@ export default async function CommunitiesPage() {
                 <div className="p-5">
                   <div className="flex items-start gap-3">
                     {/* Logo/Avatar */}
-                    <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center overflow-hidden flex-shrink-0 -mt-8 border-2 border-white shadow-sm">
+                    <div className="w-12 h-12 rounded-full bg-neutral-800 flex items-center justify-center overflow-hidden flex-shrink-0 -mt-8 border-2 border-neutral-700 shadow-sm">
                       {community.logoImage ? (
                         <Image
                           src={community.logoImage}
@@ -192,7 +192,7 @@ export default async function CommunitiesPage() {
                     </div>
 
                     <div className="flex-1 min-w-0 pt-1">
-                      <h3 className="font-semibold text-neutral-900 truncate group-hover:text-blue-600 transition-colors">
+                      <h3 className="font-semibold text-neutral-100 truncate group-hover:text-blue-600 transition-colors">
                         {community.name}
                       </h3>
                       {community.city && (
@@ -205,7 +205,7 @@ export default async function CommunitiesPage() {
                   </div>
 
                   {community.description && (
-                    <p className="mt-3 text-sm text-neutral-600 line-clamp-2">
+                    <p className="mt-3 text-sm text-neutral-400 line-clamp-2">
                       {community.description}
                     </p>
                   )}
@@ -229,25 +229,25 @@ export default async function CommunitiesPage() {
           {communities.length === 0 && (
             <div className="text-center py-16">
               <Users className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-neutral-900 mb-2">No communities yet</h3>
-              <p className="text-neutral-600">Be the first to create a community!</p>
+              <h3 className="text-lg font-medium text-neutral-100 mb-2">No communities yet</h3>
+              <p className="text-neutral-400">Be the first to create a community!</p>
             </div>
           )}
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-12 bg-white border-t border-neutral-100">
+      <section className="py-12 bg-neutral-950 border-t border-neutral-800">
         <div className="max-w-2xl mx-auto px-4 text-center">
-          <h2 className="font-semibold text-2xl text-neutral-900 mb-3">
+          <h2 className="font-semibold text-2xl text-neutral-100 mb-3">
             Want to start your own community?
           </h2>
-          <p className="text-neutral-600 mb-6">
+          <p className="text-neutral-400 mb-6">
             Create a community and start hosting events for your tribe.
           </p>
           <Link
             href="/host/community"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-neutral-900 text-white rounded-full font-semibold hover:bg-neutral-800 transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold hover:bg-neutral-200 transition-colors"
           >
             Create a Community
             <ArrowRight className="w-5 h-5" />

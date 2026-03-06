@@ -857,7 +857,7 @@ export function CompletionCardCreator({
                     onClick={() => handleShare('whatsapp')}
                     className="flex flex-col items-center gap-1 h-auto py-3"
                   >
-                    <MessageCircle className="w-5 h-5 text-green-600" />
+                    <MessageCircle className="w-5 h-5 text-green-400" />
                     <span className="text-xs">WhatsApp</span>
                   </Button>
                   <Button

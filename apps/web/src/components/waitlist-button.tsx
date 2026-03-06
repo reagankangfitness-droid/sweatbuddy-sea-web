@@ -141,20 +141,20 @@ export function WaitlistButton({
     return (
       <div
         className={cn(
-          'bg-gradient-to-r from-neutral-100 to-neutral-200 border-2 border-neutral-400 rounded-xl p-4',
+          'bg-gradient-to-r from-neutral-800 to-neutral-700 border-2 border-neutral-600 rounded-xl p-4',
           className
         )}
       >
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-neutral-900 text-white flex items-center justify-center animate-bounce">
+          <div className="w-11 h-11 rounded-xl bg-white text-neutral-900 flex items-center justify-center animate-bounce">
             <BellRing size={20} />
           </div>
           <div>
-            <div className="text-base font-bold text-neutral-900">A spot opened up!</div>
-            <div className="text-sm text-neutral-600">Book now before it&apos;s gone</div>
+            <div className="text-base font-bold text-neutral-100">A spot opened up!</div>
+            <div className="text-sm text-neutral-400">Book now before it&apos;s gone</div>
           </div>
         </div>
-        <div className="text-xs text-neutral-600 mt-3 pt-3 border-t border-neutral-300/50">
+        <div className="text-xs text-neutral-400 mt-3 pt-3 border-t border-neutral-300/50">
           Your spot expires in {getTimeRemaining(userWaitlistStatus?.expiresAt ?? null)}
         </div>
       </div>
@@ -175,8 +175,8 @@ export function WaitlistButton({
             <Check size={18} />
           </div>
           <div>
-            <div className="text-sm font-semibold text-neutral-900">You&apos;re on the waitlist!</div>
-            <div className="text-xs text-neutral-600">
+            <div className="text-sm font-semibold text-neutral-100">You&apos;re on the waitlist!</div>
+            <div className="text-xs text-neutral-400">
               Position #{position} {waitlistCount > 1 && `of ${waitlistCount}`}
             </div>
           </div>
@@ -184,7 +184,7 @@ export function WaitlistButton({
         <button
           onClick={handleLeaveWaitlist}
           disabled={loading}
-          className="flex items-center gap-1.5 text-sm font-medium px-3 py-2 rounded-lg border border-neutral-300 text-neutral-700 hover:bg-neutral-100 transition-colors disabled:opacity-50"
+          className="flex items-center gap-1.5 text-sm font-medium px-3 py-2 rounded-lg border border-neutral-700 text-neutral-300 hover:bg-neutral-800 transition-colors disabled:opacity-50"
         >
           {loading ? <Loader2 size={14} className="animate-spin" /> : <X size={14} />}
           Leave
@@ -196,7 +196,7 @@ export function WaitlistButton({
   // Show email input for non-logged-in users
   if (showEmailInput) {
     return (
-      <form onSubmit={handleJoinWaitlist} className={cn('bg-neutral-100 rounded-xl p-4', className)}>
+      <form onSubmit={handleJoinWaitlist} className={cn('bg-neutral-800 rounded-xl p-4', className)}>
         <div className="flex flex-col gap-2.5 mb-3">
           <Input
             type="email"
@@ -205,14 +205,14 @@ export function WaitlistButton({
             onChange={(e) => setEmail(e.target.value)}
             required
             autoFocus
-            className="bg-white"
+            className="bg-neutral-950"
           />
           <Input
             type="text"
             placeholder="Name (optional)"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="bg-white"
+            className="bg-neutral-950"
           />
         </div>
         <div className="flex gap-2.5">
@@ -287,7 +287,7 @@ export function WaitlistStatus({
   return (
     <div
       className={cn(
-        'inline-flex items-center gap-2 text-sm text-neutral-700 bg-success-light px-3 py-1.5 rounded-lg',
+        'inline-flex items-center gap-2 text-sm text-neutral-300 bg-success-light px-3 py-1.5 rounded-lg',
         className
       )}
     >

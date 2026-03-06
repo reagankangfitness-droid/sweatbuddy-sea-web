@@ -180,7 +180,7 @@ export function StepDetails({ userTimezone }: StepDetailsProps) {
         {/* Selected activity chip */}
         {eventType && (
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1.5 rounded-full text-sm bg-white text-neutral-900 border border-white font-medium">
+            <span className="px-3 py-1.5 rounded-full text-sm bg-neutral-950 text-neutral-100 border border-neutral-700 font-medium">
               {eventType}
             </span>
             <button
@@ -210,7 +210,7 @@ export function StepDetails({ userTimezone }: StepDetailsProps) {
                     onClick={() => setActiveGroup(isActive ? null : group.slug)}
                     className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
                       isActive
-                        ? 'bg-white text-neutral-900 border-white font-medium'
+                        ? 'bg-neutral-950 text-neutral-100 border-neutral-700 font-medium'
                         : 'bg-neutral-900 text-neutral-300 border-neutral-700 hover:bg-neutral-800 hover:border-neutral-600'
                     }`}
                   >

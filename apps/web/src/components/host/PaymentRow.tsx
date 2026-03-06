@@ -65,15 +65,15 @@ export function PaymentRow({ payment }: PaymentRowProps) {
         {/* Left: attendee info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <p className="font-semibold text-neutral-900 truncate">{payment.name || payment.email}</p>
+            <p className="font-semibold text-neutral-100 truncate">{payment.name || payment.email}</p>
             {isPaid && (
-              <span className="flex items-center gap-1 text-sm text-green-700 font-medium bg-green-50 px-2 py-0.5 rounded-full">
+              <span className="flex items-center gap-1 text-sm text-green-400 font-medium bg-green-950 px-2 py-0.5 rounded-full">
                 <Check className="w-3.5 h-3.5" />
                 Verified
               </span>
             )}
             {isFailed && (
-              <span className="flex items-center gap-1 text-sm text-red-700 font-medium bg-red-50 px-2 py-0.5 rounded-full">
+              <span className="flex items-center gap-1 text-sm text-red-400 font-medium bg-red-950 px-2 py-0.5 rounded-full">
                 <X className="w-3.5 h-3.5" />
                 Rejected
               </span>
@@ -85,9 +85,9 @@ export function PaymentRow({ payment }: PaymentRowProps) {
           <p className="text-sm text-neutral-500">{payment.eventName}</p>
 
           {/* Reference — prominent */}
-          <div className="mt-3 inline-flex items-center gap-2 bg-neutral-50 border border-neutral-200 rounded-lg px-3 py-2">
+          <div className="mt-3 inline-flex items-center gap-2 bg-neutral-900 border border-neutral-800 rounded-lg px-3 py-2">
             <span className="text-xs font-medium text-neutral-500 uppercase tracking-wide">Ref</span>
-            <span className="font-mono text-sm font-semibold text-neutral-900">{payment.paymentReference}</span>
+            <span className="font-mono text-sm font-semibold text-neutral-100">{payment.paymentReference}</span>
           </div>
 
           <p className="text-xs text-neutral-400 mt-2">{formattedDate}</p>
@@ -95,14 +95,14 @@ export function PaymentRow({ payment }: PaymentRowProps) {
 
         {/* Right: amount + actions */}
         <div className="flex flex-col items-end gap-3 flex-shrink-0">
-          <p className="text-lg font-bold text-neutral-900">${formattedAmount}</p>
+          <p className="text-lg font-bold text-neutral-100">${formattedAmount}</p>
 
           {isPending && (
             <div className="flex gap-2">
               <button
                 onClick={() => handleVerify('reject')}
                 disabled={isProcessing}
-                className="px-4 py-2 border border-neutral-200 rounded-full text-sm font-medium text-neutral-600 hover:border-red-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                className="px-4 py-2 border border-neutral-800 rounded-full text-sm font-medium text-neutral-400 hover:border-red-400 hover:text-red-600 hover:bg-red-950 transition-colors disabled:opacity-50"
               >
                 {isProcessing && actionType === 'reject' ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

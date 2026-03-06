@@ -195,62 +195,62 @@ export default function AdminAttendeesPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh] bg-neutral-50">
+      <div className="flex items-center justify-center min-h-[60vh] bg-neutral-900">
         <Loader2 className="w-8 h-8 text-neutral-400 animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-neutral-50 min-h-screen">
+    <div className="p-4 sm:p-6 lg:p-8 bg-neutral-900 min-h-screen">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Attendees & Subscribers</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-neutral-100">Attendees & Subscribers</h1>
         <p className="text-neutral-500 mt-1 text-sm sm:text-base">View experience attendees and newsletter subscribers</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
-        <div className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm">
+        <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Users className="w-5 h-5 text-blue-600" />
+            <div className="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center">
+              <Users className="w-5 h-5 text-blue-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-neutral-900">{stats.totalAttendees}</p>
+              <p className="text-2xl font-bold text-neutral-100">{stats.totalAttendees}</p>
               <p className="text-xs text-neutral-500">Total Attendees</p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm">
+        <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-              <Mail className="w-5 h-5 text-emerald-600" />
+              <Mail className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-neutral-900">{stats.totalSubscribers}</p>
+              <p className="text-2xl font-bold text-neutral-100">{stats.totalSubscribers}</p>
               <p className="text-xs text-neutral-500">Newsletter Subs</p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm">
+        <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-purple-900 rounded-lg flex items-center justify-center">
               <Calendar className="w-5 h-5 text-purple-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-neutral-900">{stats.eventsWithRsvps}</p>
+              <p className="text-2xl font-bold text-neutral-100">{stats.eventsWithRsvps}</p>
               <p className="text-xs text-neutral-500">Events w/ RSVPs</p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm">
+        <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-              <CheckCircle className="w-5 h-5 text-amber-600" />
+            <div className="w-10 h-10 bg-amber-900 rounded-lg flex items-center justify-center">
+              <CheckCircle className="w-5 h-5 text-amber-400" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-neutral-900">{stats.optInRate}%</p>
+              <p className="text-2xl font-bold text-neutral-100">{stats.optInRate}%</p>
               <p className="text-xs text-neutral-500">Newsletter Opt-in</p>
             </div>
           </div>
@@ -263,8 +263,8 @@ export default function AdminAttendeesPage() {
           onClick={() => setActiveTab('attendees')}
           className={`flex-1 sm:flex-none px-4 sm:px-6 py-3 rounded-lg font-medium transition-colors text-sm sm:text-base active:scale-[0.98] ${
             activeTab === 'attendees'
-              ? 'bg-neutral-900 text-white'
-              : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
+              ? 'bg-white text-neutral-900'
+              : 'bg-neutral-950 text-neutral-400 border border-neutral-800 hover:bg-neutral-900'
           }`}
         >
           Attendees ({stats.totalAttendees})
@@ -273,8 +273,8 @@ export default function AdminAttendeesPage() {
           onClick={() => setActiveTab('newsletter')}
           className={`flex-1 sm:flex-none px-4 sm:px-6 py-3 rounded-lg font-medium transition-colors text-sm sm:text-base active:scale-[0.98] ${
             activeTab === 'newsletter'
-              ? 'bg-neutral-900 text-white'
-              : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
+              ? 'bg-white text-neutral-900'
+              : 'bg-neutral-950 text-neutral-400 border border-neutral-800 hover:bg-neutral-900'
           }`}
         >
           Newsletter ({stats.totalSubscribers})
@@ -290,7 +290,7 @@ export default function AdminAttendeesPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by email, name, or experience..."
-            className="w-full pl-10 pr-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base"
+            className="w-full pl-10 pr-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white text-base"
           />
         </div>
 
@@ -300,7 +300,7 @@ export default function AdminAttendeesPage() {
             <select
               value={selectedEvent}
               onChange={(e) => setSelectedEvent(e.target.value)}
-              className="w-full sm:w-auto pl-10 pr-8 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 text-base appearance-none"
+              className="w-full sm:w-auto pl-10 pr-8 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:ring-2 focus:ring-white text-base appearance-none"
             >
               <option value="all">All Events</option>
               {uniqueEvents.map(event => (
@@ -321,7 +321,7 @@ export default function AdminAttendeesPage() {
 
       {/* Attendees Tab */}
       {activeTab === 'attendees' && (
-        <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
+        <div className="bg-neutral-950 rounded-xl border border-neutral-800 overflow-hidden shadow-sm">
           {filteredAttendees.length === 0 ? (
             <div className="text-center py-12">
               <Users className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
@@ -333,32 +333,32 @@ export default function AdminAttendeesPage() {
               <div className="hidden sm:block overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-neutral-200 bg-neutral-50">
-                      <th className="text-left p-4 text-neutral-600 text-sm font-medium">Email</th>
-                      <th className="text-left p-4 text-neutral-600 text-sm font-medium">Name</th>
-                      <th className="text-left p-4 text-neutral-600 text-sm font-medium">Event</th>
-                      <th className="text-left p-4 text-neutral-600 text-sm font-medium">Newsletter</th>
-                      <th className="text-left p-4 text-neutral-600 text-sm font-medium">Date</th>
-                      <th className="text-left p-4 text-neutral-600 text-sm font-medium">Actions</th>
+                    <tr className="border-b border-neutral-800 bg-neutral-900">
+                      <th className="text-left p-4 text-neutral-400 text-sm font-medium">Email</th>
+                      <th className="text-left p-4 text-neutral-400 text-sm font-medium">Name</th>
+                      <th className="text-left p-4 text-neutral-400 text-sm font-medium">Event</th>
+                      <th className="text-left p-4 text-neutral-400 text-sm font-medium">Newsletter</th>
+                      <th className="text-left p-4 text-neutral-400 text-sm font-medium">Date</th>
+                      <th className="text-left p-4 text-neutral-400 text-sm font-medium">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredAttendees.map((attendee) => (
-                      <tr key={attendee.id} className="border-b border-neutral-100 hover:bg-neutral-50">
+                      <tr key={attendee.id} className="border-b border-neutral-800 hover:bg-neutral-900">
                         <td className="p-4">
-                          <a href={`mailto:${attendee.email}`} className="text-blue-600 hover:underline">
+                          <a href={`mailto:${attendee.email}`} className="text-blue-400 hover:underline">
                             {attendee.email}
                           </a>
                         </td>
-                        <td className="p-4 text-neutral-900">{attendee.name || '-'}</td>
+                        <td className="p-4 text-neutral-100">{attendee.name || '-'}</td>
                         <td className="p-4">
-                          <span className="px-2 py-1 bg-neutral-100 rounded text-neutral-700 text-sm">
+                          <span className="px-2 py-1 bg-neutral-800 rounded text-neutral-300 text-sm">
                             {attendee.eventName}
                           </span>
                         </td>
                         <td className="p-4">
                           {attendee.subscribe ? (
-                            <CheckCircle className="w-5 h-5 text-emerald-600" />
+                            <CheckCircle className="w-5 h-5 text-emerald-400" />
                           ) : (
                             <XCircle className="w-5 h-5 text-neutral-300" />
                           )}
@@ -370,7 +370,7 @@ export default function AdminAttendeesPage() {
                           <button
                             onClick={() => removeAttendee(attendee.id, attendee.name)}
                             disabled={deletingId === attendee.id}
-                            className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                            className="p-2 text-red-400 hover:text-red-700 hover:bg-red-950 rounded-lg transition-colors disabled:opacity-50"
                             title="Remove attendee"
                           >
                             {deletingId === attendee.id ? (
@@ -387,28 +387,28 @@ export default function AdminAttendeesPage() {
               </div>
 
               {/* Mobile Cards */}
-              <div className="sm:hidden divide-y divide-neutral-100">
+              <div className="sm:hidden divide-y divide-neutral-800">
                 {filteredAttendees.map((attendee) => (
                   <div key={attendee.id} className="p-4">
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div className="flex-1 min-w-0">
-                        <a href={`mailto:${attendee.email}`} className="text-blue-600 hover:underline text-sm break-all">
+                        <a href={`mailto:${attendee.email}`} className="text-blue-400 hover:underline text-sm break-all">
                           {attendee.email}
                         </a>
                         {attendee.name && (
-                          <p className="text-neutral-900 font-medium mt-1">{attendee.name}</p>
+                          <p className="text-neutral-100 font-medium mt-1">{attendee.name}</p>
                         )}
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         {attendee.subscribe ? (
-                          <CheckCircle className="w-5 h-5 text-emerald-600" />
+                          <CheckCircle className="w-5 h-5 text-emerald-400" />
                         ) : (
                           <XCircle className="w-5 h-5 text-neutral-300" />
                         )}
                         <button
                           onClick={() => removeAttendee(attendee.id, attendee.name)}
                           disabled={deletingId === attendee.id}
-                          className="p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                          className="p-1.5 text-red-400 hover:text-red-700 hover:bg-red-950 rounded-lg transition-colors disabled:opacity-50"
                           title="Remove attendee"
                         >
                           {deletingId === attendee.id ? (
@@ -420,7 +420,7 @@ export default function AdminAttendeesPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="px-2 py-1 bg-neutral-100 rounded text-neutral-700 text-xs">
+                      <span className="px-2 py-1 bg-neutral-800 rounded text-neutral-300 text-xs">
                         {attendee.eventName}
                       </span>
                       <span className="text-neutral-400 text-xs">
@@ -433,7 +433,7 @@ export default function AdminAttendeesPage() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between p-4 border-t border-neutral-200">
+                <div className="flex items-center justify-between p-4 border-t border-neutral-800">
                   <p className="text-sm text-neutral-500">
                     Page {currentPage} of {totalPages}
                   </p>
@@ -441,14 +441,14 @@ export default function AdminAttendeesPage() {
                     <button
                       onClick={() => fetchAttendees(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className="px-3 py-1.5 text-sm bg-neutral-100 text-neutral-700 rounded-lg hover:bg-neutral-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-3 py-1.5 text-sm bg-neutral-800 text-neutral-300 rounded-lg hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Previous
                     </button>
                     <button
                       onClick={() => fetchAttendees(currentPage + 1)}
                       disabled={currentPage === totalPages}
-                      className="px-3 py-1.5 text-sm bg-neutral-100 text-neutral-700 rounded-lg hover:bg-neutral-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-3 py-1.5 text-sm bg-neutral-800 text-neutral-300 rounded-lg hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Next
                     </button>
@@ -462,7 +462,7 @@ export default function AdminAttendeesPage() {
 
       {/* Newsletter Tab */}
       {activeTab === 'newsletter' && (
-        <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden shadow-sm">
+        <div className="bg-neutral-950 rounded-xl border border-neutral-800 overflow-hidden shadow-sm">
           {filteredSubscribers.length === 0 ? (
             <div className="text-center py-12">
               <Mail className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
@@ -474,24 +474,24 @@ export default function AdminAttendeesPage() {
               <div className="hidden sm:block overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-neutral-200 bg-neutral-50">
-                      <th className="text-left p-4 text-neutral-600 text-sm font-medium">Email</th>
-                      <th className="text-left p-4 text-neutral-600 text-sm font-medium">Name</th>
-                      <th className="text-left p-4 text-neutral-600 text-sm font-medium">Source</th>
-                      <th className="text-left p-4 text-neutral-600 text-sm font-medium">Subscribed</th>
+                    <tr className="border-b border-neutral-800 bg-neutral-900">
+                      <th className="text-left p-4 text-neutral-400 text-sm font-medium">Email</th>
+                      <th className="text-left p-4 text-neutral-400 text-sm font-medium">Name</th>
+                      <th className="text-left p-4 text-neutral-400 text-sm font-medium">Source</th>
+                      <th className="text-left p-4 text-neutral-400 text-sm font-medium">Subscribed</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredSubscribers.map((subscriber) => (
-                      <tr key={subscriber.email} className="border-b border-neutral-100 hover:bg-neutral-50">
+                      <tr key={subscriber.email} className="border-b border-neutral-800 hover:bg-neutral-900">
                         <td className="p-4">
-                          <a href={`mailto:${subscriber.email}`} className="text-blue-600 hover:underline">
+                          <a href={`mailto:${subscriber.email}`} className="text-blue-400 hover:underline">
                             {subscriber.email}
                           </a>
                         </td>
-                        <td className="p-4 text-neutral-900">{subscriber.name || '-'}</td>
+                        <td className="p-4 text-neutral-100">{subscriber.name || '-'}</td>
                         <td className="p-4">
-                          <span className="px-2 py-1 bg-neutral-100 rounded text-neutral-700 text-sm capitalize">
+                          <span className="px-2 py-1 bg-neutral-800 rounded text-neutral-300 text-sm capitalize">
                             {subscriber.source.replace('_', ' ')}
                           </span>
                         </td>
@@ -505,21 +505,21 @@ export default function AdminAttendeesPage() {
               </div>
 
               {/* Mobile Cards */}
-              <div className="sm:hidden divide-y divide-neutral-100">
+              <div className="sm:hidden divide-y divide-neutral-800">
                 {filteredSubscribers.map((subscriber) => (
                   <div key={subscriber.email} className="p-4">
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div className="flex-1 min-w-0">
-                        <a href={`mailto:${subscriber.email}`} className="text-blue-600 hover:underline text-sm break-all">
+                        <a href={`mailto:${subscriber.email}`} className="text-blue-400 hover:underline text-sm break-all">
                           {subscriber.email}
                         </a>
                         {subscriber.name && (
-                          <p className="text-neutral-900 font-medium mt-1">{subscriber.name}</p>
+                          <p className="text-neutral-100 font-medium mt-1">{subscriber.name}</p>
                         )}
                       </div>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="px-2 py-1 bg-neutral-100 rounded text-neutral-700 text-xs capitalize">
+                      <span className="px-2 py-1 bg-neutral-800 rounded text-neutral-300 text-xs capitalize">
                         {subscriber.source.replace('_', ' ')}
                       </span>
                       <span className="text-neutral-400 text-xs">

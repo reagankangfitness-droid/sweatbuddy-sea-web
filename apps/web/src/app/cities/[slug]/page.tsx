@@ -128,14 +128,14 @@ export default async function CityPage({ params }: Props) {
 
   if (!city.isLaunched) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
         <div className="text-center px-4">
           <span className="text-6xl mb-4 block">{cityEmojis[slug] || '🌏'}</span>
-          <h1 className="text-3xl font-bold text-neutral-900 mb-2">{city.name}</h1>
-          <p className="text-neutral-600 mb-8">Coming soon to SweatBuddies!</p>
+          <h1 className="text-3xl font-bold text-neutral-100 mb-2">{city.name}</h1>
+          <p className="text-neutral-400 mb-8">Coming soon to SweatBuddies!</p>
           <Link
             href="/cities"
-            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+            className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-700 font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
             View all cities
@@ -151,19 +151,19 @@ export default async function CityPage({ params }: Props) {
   ])
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-neutral-950">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-100">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link
               href="/cities"
-              className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+              className="flex items-center gap-2 text-neutral-400 hover:text-neutral-100 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span className="font-medium">Cities</span>
             </Link>
-            <Link href="/" className="font-sans font-bold text-xl text-neutral-900">
+            <Link href="/" className="font-sans font-bold text-xl text-neutral-100">
               sweatbuddies
             </Link>
             <div className="w-20" />
@@ -210,10 +210,10 @@ export default async function CityPage({ params }: Props) {
       <section className="py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-neutral-900">Upcoming Events</h2>
+            <h2 className="text-2xl font-bold text-neutral-100">Upcoming Events</h2>
             <Link
               href={`/events?city=${slug}`}
-              className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1"
+              className="text-sm font-medium text-blue-400 hover:text-blue-700 flex items-center gap-1"
             >
               View all <ArrowRight className="w-4 h-4" />
             </Link>
@@ -225,19 +225,19 @@ export default async function CityPage({ params }: Props) {
                 <Link
                   key={event.id}
                   href={`/activities/${event.id}`}
-                  className="group block bg-white border border-neutral-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+                  className="group block bg-neutral-950 border border-neutral-800 rounded-xl p-4 hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-14 h-14 rounded-lg bg-neutral-100 flex flex-col items-center justify-center flex-shrink-0">
+                    <div className="w-14 h-14 rounded-lg bg-neutral-800 flex flex-col items-center justify-center flex-shrink-0">
                       <span className="text-xs text-neutral-500">
                         {event.startTime ? new Date(event.startTime).toLocaleDateString('en-US', { month: 'short' }) : ''}
                       </span>
-                      <span className="text-lg font-bold text-neutral-900">
+                      <span className="text-lg font-bold text-neutral-100">
                         {event.startTime ? new Date(event.startTime).getDate() : ''}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-neutral-900 group-hover:text-blue-600 transition-colors truncate">
+                      <h3 className="font-medium text-neutral-100 group-hover:text-blue-600 transition-colors truncate">
                         {event.title}
                       </h3>
                       <p className="text-sm text-neutral-500 mt-0.5">
@@ -258,22 +258,22 @@ export default async function CityPage({ params }: Props) {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 bg-neutral-50 rounded-xl">
+            <div className="text-center py-12 bg-neutral-900 rounded-xl">
               <Calendar className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
-              <p className="text-neutral-600">No upcoming experiences in {city.name}</p>
+              <p className="text-neutral-400">No upcoming experiences in {city.name}</p>
             </div>
           )}
         </div>
       </section>
 
       {/* Communities */}
-      <section className="py-12 bg-neutral-50">
+      <section className="py-12 bg-neutral-900">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-neutral-900">Communities</h2>
+            <h2 className="text-2xl font-bold text-neutral-100">Communities</h2>
             <Link
               href={`/communities?city=${slug}`}
-              className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1"
+              className="text-sm font-medium text-blue-400 hover:text-blue-700 flex items-center gap-1"
             >
               View all <ArrowRight className="w-4 h-4" />
             </Link>
@@ -285,10 +285,10 @@ export default async function CityPage({ params }: Props) {
                 <Link
                   key={community.id}
                   href={`/communities/${community.slug}`}
-                  className="group block bg-white border border-neutral-200 rounded-xl p-5 hover:shadow-md transition-shadow"
+                  className="group block bg-neutral-950 border border-neutral-800 rounded-xl p-5 hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-neutral-800 flex items-center justify-center overflow-hidden flex-shrink-0">
                       {community.createdBy?.imageUrl ? (
                         <Image
                           src={community.createdBy.imageUrl}
@@ -302,7 +302,7 @@ export default async function CityPage({ params }: Props) {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-neutral-900 group-hover:text-blue-600 transition-colors truncate">
+                      <h3 className="font-semibold text-neutral-100 group-hover:text-blue-600 transition-colors truncate">
                         {community.name}
                       </h3>
                       <p className="text-sm text-neutral-500 capitalize">{community.category}</p>
@@ -323,12 +323,12 @@ export default async function CityPage({ params }: Props) {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 bg-white rounded-xl">
+            <div className="text-center py-12 bg-neutral-950 rounded-xl">
               <Users className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
-              <p className="text-neutral-600">No communities in {city.name} yet</p>
+              <p className="text-neutral-400">No communities in {city.name} yet</p>
               <Link
                 href="/host/community"
-                className="inline-block mt-4 px-6 py-2 bg-neutral-900 text-white rounded-full text-sm font-medium hover:bg-neutral-800 transition-colors"
+                className="inline-block mt-4 px-6 py-2 bg-white text-neutral-900 rounded-full text-sm font-medium hover:bg-neutral-200 transition-colors"
               >
                 Start the first one
               </Link>
@@ -340,15 +340,15 @@ export default async function CityPage({ params }: Props) {
       {/* CTA */}
       <section className="py-16">
         <div className="max-w-2xl mx-auto px-4 text-center">
-          <h2 className="font-semibold text-2xl text-neutral-900 mb-3">
+          <h2 className="font-semibold text-2xl text-neutral-100 mb-3">
             Start a community in {city.name}
           </h2>
-          <p className="text-neutral-600 mb-6">
+          <p className="text-neutral-400 mb-6">
             Build your tribe and host experiences for the local fitness community.
           </p>
           <Link
             href="/host/community"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-neutral-900 text-white rounded-full font-semibold hover:bg-neutral-800 transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold hover:bg-neutral-200 transition-colors"
           >
             Create a Community
             <ArrowRight className="w-5 h-5" />

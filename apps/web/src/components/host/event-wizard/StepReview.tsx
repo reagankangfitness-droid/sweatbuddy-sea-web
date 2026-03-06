@@ -119,7 +119,7 @@ export function StepReview({ mode }: StepReviewProps) {
       <div
         className={`relative aspect-[16/9] bg-neutral-900 rounded-2xl overflow-hidden border-2 transition-colors ${
           isDragging
-            ? 'border-white border-dashed bg-neutral-800'
+            ? 'border-neutral-700 border-dashed bg-neutral-800'
             : 'border-neutral-800'
         }`}
         onDragEnter={handleDragEnter}
@@ -142,7 +142,7 @@ export function StepReview({ mode }: StepReviewProps) {
               <button
                 type="button"
                 onClick={() => setValue('imageUrl', null)}
-                className="flex items-center gap-2 px-3 py-1.5 bg-neutral-900/80 hover:bg-neutral-900 text-white text-sm rounded-full transition-colors"
+                className="flex items-center gap-2 px-3 py-1.5 bg-neutral-900/80 hover:bg-white text-neutral-900 text-sm rounded-full transition-colors"
               >
                 <ImageIcon className="w-4 h-4" />
                 Change image
@@ -170,7 +170,7 @@ export function StepReview({ mode }: StepReviewProps) {
                 </div>
                 <div className="text-center">
                   <p className="text-neutral-400 text-sm mb-1">Add cover image</p>
-                  <p className="text-neutral-600 text-xs">Recommended: 1080 x 1350px</p>
+                  <p className="text-neutral-400 text-xs">Recommended: 1080 x 1350px</p>
                 </div>
                 <UploadButton
                   endpoint="eventImage"
@@ -184,11 +184,11 @@ export function StepReview({ mode }: StepReviewProps) {
                     setUploadError(`Upload failed: ${error.message}`)
                   }}
                   appearance={{
-                    button: "bg-white hover:bg-neutral-100 text-neutral-900 font-medium px-5 py-2.5 rounded-full text-sm transition-colors",
+                    button: "bg-neutral-950 hover:bg-neutral-800 text-neutral-100 font-medium px-5 py-2.5 rounded-full text-sm transition-colors",
                     allowedContent: "hidden",
                   }}
                 />
-                <p className="text-neutral-600 text-xs">or drag and drop</p>
+                <p className="text-neutral-400 text-xs">or drag and drop</p>
               </>
             )}
           </div>

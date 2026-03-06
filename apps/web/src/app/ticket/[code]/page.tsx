@@ -89,7 +89,7 @@ export default async function TicketPage({ params }: TicketPageProps) {
         <div className="mb-4">
           <Link
             href={event.slug ? `/event/${event.slug}` : '/events'}
-            className="inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-300 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
             Back to event
@@ -97,7 +97,7 @@ export default async function TicketPage({ params }: TicketPageProps) {
         </div>
 
         {/* Ticket Card */}
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-neutral-200">
+        <div className="bg-neutral-950 rounded-2xl shadow-lg overflow-hidden border border-neutral-800">
           {/* Header */}
           <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-6 text-white text-center">
             <h1 className="text-xl font-bold mb-1">{event.eventName}</h1>
@@ -107,8 +107,8 @@ export default async function TicketPage({ params }: TicketPageProps) {
           {/* QR Code */}
           <div className="flex flex-col items-center py-6 px-4">
             {isCancelled ? (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center w-full">
-                <p className="text-red-700 font-semibold text-lg">Event Cancelled</p>
+              <div className="bg-red-950 border border-red-800 rounded-xl p-6 text-center w-full">
+                <p className="text-red-400 font-semibold text-lg">Event Cancelled</p>
                 <p className="text-red-500 text-sm mt-1">This event has been cancelled by the host.</p>
               </div>
             ) : (
@@ -119,7 +119,7 @@ export default async function TicketPage({ params }: TicketPageProps) {
                   alt="Check-in QR Code"
                   width={200}
                   height={200}
-                  className="rounded-lg border-4 border-neutral-100"
+                  className="rounded-lg border-4 border-neutral-800"
                 />
                 <p className="text-xs text-neutral-400 mt-2">Show this QR code at check-in</p>
               </>
@@ -131,7 +131,7 @@ export default async function TicketPage({ params }: TicketPageProps) {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-sm text-neutral-500">Attendee</p>
-                <p className="font-semibold text-neutral-900">{attendance.name || attendance.email}</p>
+                <p className="font-semibold text-neutral-100">{attendance.name || attendance.email}</p>
               </div>
               {getPaymentBadge(attendance.paymentStatus, attendance.paymentAmount)}
             </div>
@@ -139,7 +139,7 @@ export default async function TicketPage({ params }: TicketPageProps) {
 
           {/* Divider with holes */}
           <div className="relative">
-            <div className="border-t border-dashed border-neutral-200"></div>
+            <div className="border-t border-dashed border-neutral-800"></div>
             <div className="absolute -left-3 -top-3 w-6 h-6 bg-gradient-to-b from-amber-50 to-white rounded-full"></div>
             <div className="absolute -right-3 -top-3 w-6 h-6 bg-gradient-to-b from-amber-50 to-white rounded-full"></div>
           </div>
@@ -150,7 +150,7 @@ export default async function TicketPage({ params }: TicketPageProps) {
               <div className="flex items-start gap-3">
                 <span className="text-lg">📅</span>
                 <div>
-                  <p className="text-sm font-medium text-neutral-900">{formatDate(event.eventDate)}</p>
+                  <p className="text-sm font-medium text-neutral-100">{formatDate(event.eventDate)}</p>
                   <p className="text-xs text-neutral-500">{event.day} at {event.time}</p>
                 </div>
               </div>
@@ -163,7 +163,7 @@ export default async function TicketPage({ params }: TicketPageProps) {
                   href={mapsLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-medium text-amber-600 hover:text-amber-700 underline"
+                  className="text-sm font-medium text-amber-400 hover:text-amber-700 underline"
                 >
                   {event.location}
                 </a>
@@ -174,7 +174,7 @@ export default async function TicketPage({ params }: TicketPageProps) {
               <div className="flex items-start gap-3">
                 <span className="text-lg">✅</span>
                 <div>
-                  <p className="text-sm font-medium text-green-600">Checked in</p>
+                  <p className="text-sm font-medium text-green-400">Checked in</p>
                   <p className="text-xs text-neutral-500">
                     {new Date(attendance.checkedInAt).toLocaleString()}
                   </p>
@@ -190,7 +190,7 @@ export default async function TicketPage({ params }: TicketPageProps) {
                 href={calendarUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-full text-center py-2.5 bg-neutral-900 text-white rounded-lg text-sm font-medium hover:bg-neutral-800 transition-colors"
+                className="block w-full text-center py-2.5 bg-white text-neutral-900 rounded-lg text-sm font-medium hover:bg-neutral-200 transition-colors"
               >
                 Add to Google Calendar
               </a>
@@ -221,13 +221,13 @@ export default async function TicketPage({ params }: TicketPageProps) {
 function getPaymentBadge(status: string | null, amount: number | null) {
   if (status === 'paid') {
     return (
-      <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700">
+      <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-900 text-green-400">
         Paid {amount ? `$${(amount / 100).toFixed(2)}` : ''}
       </span>
     )
   }
   if (status === 'refunded') {
-    return <span className="px-3 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-700">Refunded</span>
+    return <span className="px-3 py-1 text-xs font-semibold rounded-full bg-amber-900 text-amber-400">Refunded</span>
   }
   return <span className="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-600">Free</span>
 }

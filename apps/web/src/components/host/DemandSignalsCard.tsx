@@ -78,11 +78,11 @@ export function DemandSignalsCard() {
   if (loading) {
     return (
       <section>
-        <h2 className="text-base sm:text-lg font-semibold text-neutral-900 mb-3 sm:mb-4 flex items-center gap-2">
+        <h2 className="text-base sm:text-lg font-semibold text-neutral-100 mb-3 sm:mb-4 flex items-center gap-2">
           <span>📊</span>
           Demand Signals
         </h2>
-        <div className="border border-neutral-200 rounded-xl p-6 bg-white flex items-center justify-center">
+        <div className="border border-neutral-800 rounded-xl p-6 bg-neutral-950 flex items-center justify-center">
           <Loader2 className="w-5 h-5 animate-spin text-neutral-400" />
         </div>
       </section>
@@ -95,24 +95,24 @@ export function DemandSignalsCard() {
 
   return (
     <section>
-      <h2 className="text-base sm:text-lg font-semibold text-neutral-900 mb-3 sm:mb-4 flex items-center gap-2">
+      <h2 className="text-base sm:text-lg font-semibold text-neutral-100 mb-3 sm:mb-4 flex items-center gap-2">
         <span>📊</span>
         Demand Signals
       </h2>
-      <div className="border border-neutral-200 rounded-xl overflow-hidden bg-white">
+      <div className="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-950">
         {/* Stats Row */}
-        <div className="grid grid-cols-3 divide-x divide-neutral-100 border-b border-neutral-100">
+        <div className="grid grid-cols-3 divide-x divide-neutral-800 border-b border-neutral-800">
           <div className="p-3 text-center">
             <div className="flex items-center justify-center gap-1 mb-1">
               <Users className="w-3.5 h-3.5 text-blue-500" />
             </div>
-            <div className="text-lg font-bold text-neutral-900">
+            <div className="text-lg font-bold text-neutral-100">
               {followers.total}
             </div>
             <div className="text-[10px] text-neutral-500">
               Followers
               {followers.newLast30Days > 0 && (
-                <span className="text-emerald-600 font-medium">
+                <span className="text-emerald-400 font-medium">
                   {' '}+{followers.newLast30Days}
                 </span>
               )}
@@ -122,7 +122,7 @@ export function DemandSignalsCard() {
             <div className="flex items-center justify-center gap-1 mb-1">
               <Hand className="w-3.5 h-3.5 text-amber-500" />
             </div>
-            <div className="text-lg font-bold text-neutral-900">
+            <div className="text-lg font-bold text-neutral-100">
               {interest.total}
             </div>
             <div className="text-[10px] text-neutral-500">
@@ -133,7 +133,7 @@ export function DemandSignalsCard() {
             <div className="flex items-center justify-center gap-1 mb-1">
               <Clock className="w-3.5 h-3.5 text-violet-500" />
             </div>
-            <div className="text-sm font-bold text-neutral-900 leading-tight">
+            <div className="text-sm font-bold text-neutral-100 leading-tight">
               {typicalSchedule.dayOfWeek
                 ? `${typicalSchedule.dayOfWeek.slice(0, 3)}${typicalSchedule.hourOfDay !== null ? ` ${formatHour(typicalSchedule.hourOfDay)}` : ''}`
                 : '—'}
@@ -146,7 +146,7 @@ export function DemandSignalsCard() {
 
         {/* Category Breakdown */}
         {interest.byCategory.length > 0 && (
-          <div className="px-3 py-2.5 border-b border-neutral-100">
+          <div className="px-3 py-2.5 border-b border-neutral-800">
             <p className="text-[10px] uppercase tracking-wider text-neutral-400 font-medium mb-2">
               What people want
             </p>
@@ -156,7 +156,7 @@ export function DemandSignalsCard() {
                   {item.categorySlug ? (
                     <CategoryBadge slug={item.categorySlug} size="small" />
                   ) : (
-                    <span className="text-xs bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded">
+                    <span className="text-xs bg-neutral-800 text-neutral-400 px-1.5 py-0.5 rounded">
                       General
                     </span>
                   )}
@@ -171,7 +171,7 @@ export function DemandSignalsCard() {
 
         {/* Recent Interest Signals */}
         {interest.recentSignals.length > 0 && (
-          <div className="divide-y divide-neutral-100">
+          <div className="divide-y divide-neutral-800">
             {interest.recentSignals.slice(0, 5).map((signal) => (
               <div key={signal.id} className="px-3 py-2 flex items-center gap-2.5">
                 <div className="w-6 h-6 rounded-full overflow-hidden bg-muted flex-shrink-0">
@@ -184,13 +184,13 @@ export function DemandSignalsCard() {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-amber-100 flex items-center justify-center text-[10px] font-bold text-amber-700">
+                    <div className="w-full h-full bg-amber-900 flex items-center justify-center text-[10px] font-bold text-amber-400">
                       {signal.user.firstName?.[0] || signal.user.name?.[0] || '?'}
                     </div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-neutral-900 truncate">
+                  <p className="text-xs text-neutral-100 truncate">
                     <span className="font-medium">
                       {signal.user.firstName || signal.user.name?.split(' ')[0] || 'Someone'}
                     </span>

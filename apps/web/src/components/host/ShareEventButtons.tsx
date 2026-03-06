@@ -61,13 +61,13 @@ export function ShareEventButtons({ event, compact = false }: ShareEventButtonsP
         {/* Copy Link */}
         <button
           onClick={handleCopyLink}
-          className="p-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 transition-colors"
+          className="p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors"
           title="Copy experience link"
         >
           {copied ? (
-            <Check className="w-4 h-4 text-green-600" />
+            <Check className="w-4 h-4 text-green-400" />
           ) : (
-            <Copy className="w-4 h-4 text-neutral-600" />
+            <Copy className="w-4 h-4 text-neutral-400" />
           )}
         </button>
 
@@ -100,10 +100,10 @@ export function ShareEventButtons({ event, compact = false }: ShareEventButtonsP
         {/* Native Share */}
         <button
           onClick={handleNativeShare}
-          className="p-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 transition-colors"
+          className="p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors"
           title="Share experience"
         >
-          <Share2 className="w-4 h-4 text-neutral-600" />
+          <Share2 className="w-4 h-4 text-neutral-400" />
         </button>
       </div>
     )
@@ -111,23 +111,23 @@ export function ShareEventButtons({ event, compact = false }: ShareEventButtonsP
 
   return (
     <div className="space-y-3">
-      <h4 className="text-sm font-medium text-neutral-700">Share this experience</h4>
+      <h4 className="text-sm font-medium text-neutral-300">Share this experience</h4>
 
       <div className="flex flex-wrap gap-2">
         {/* Copy Link */}
         <button
           onClick={handleCopyLink}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 transition-colors text-sm font-medium"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors text-sm font-medium"
         >
           {copied ? (
             <>
-              <Check className="w-4 h-4 text-green-600" />
-              <span className="text-green-600">Copied!</span>
+              <Check className="w-4 h-4 text-green-400" />
+              <span className="text-green-400">Copied!</span>
             </>
           ) : (
             <>
-              <Copy className="w-4 h-4 text-neutral-600" />
-              <span className="text-neutral-700">Copy Link</span>
+              <Copy className="w-4 h-4 text-neutral-400" />
+              <span className="text-neutral-300">Copy Link</span>
             </>
           )}
         </button>
@@ -160,7 +160,7 @@ export function ShareEventButtons({ event, compact = false }: ShareEventButtonsP
       </div>
 
       {/* Share text preview */}
-      <div className="mt-3 p-3 bg-neutral-50 rounded-lg text-xs text-neutral-600 font-mono whitespace-pre-wrap">
+      <div className="mt-3 p-3 bg-neutral-900 rounded-lg text-xs text-neutral-400 font-mono whitespace-pre-wrap">
         {shareText}
       </div>
     </div>

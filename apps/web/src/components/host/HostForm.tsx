@@ -422,7 +422,7 @@ export default function HostForm() {
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-white text-neutral-900 px-6 py-3 rounded-full font-semibold hover:bg-neutral-100 transition-colors"
+              className="inline-flex items-center gap-2 bg-neutral-950 text-neutral-100 px-6 py-3 rounded-full font-semibold hover:bg-neutral-800 transition-colors"
             >
               Back to Home
             </Link>
@@ -534,11 +534,11 @@ export default function HostForm() {
                     onClick={() => setIsRecurring(!isRecurring)}
                     className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
                       isRecurring
-                        ? 'bg-white border-white'
+                        ? 'bg-neutral-950 border-neutral-700'
                         : 'border-neutral-600 bg-transparent group-hover:border-neutral-500'
                     }`}
                   >
-                    {isRecurring && <Check className="w-3 h-3 text-neutral-900" />}
+                    {isRecurring && <Check className="w-3 h-3 text-neutral-100" />}
                   </button>
                   <span className="text-neutral-400 text-sm">Set this event to repeat</span>
                 </label>
@@ -582,11 +582,11 @@ export default function HostForm() {
                     onClick={() => setScheduleEnabled(!scheduleEnabled)}
                     className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
                       scheduleEnabled
-                        ? 'bg-white border-white'
+                        ? 'bg-neutral-950 border-neutral-700'
                         : 'border-neutral-600 bg-transparent group-hover:border-neutral-500'
                     }`}
                   >
-                    {scheduleEnabled && <Check className="w-3 h-3 text-neutral-900" />}
+                    {scheduleEnabled && <Check className="w-3 h-3 text-neutral-100" />}
                   </button>
                   <Clock className="w-4 h-4 text-neutral-500" />
                   <span className="text-neutral-400 text-sm">Schedule for later</span>
@@ -703,7 +703,7 @@ export default function HostForm() {
                   {/* Selected activity chip (shown when an activity is picked) */}
                   {formData.eventType && (
                     <div className="flex items-center gap-2">
-                      <span className="px-3 py-1.5 rounded-full text-sm bg-white text-neutral-900 border border-white font-medium">
+                      <span className="px-3 py-1.5 rounded-full text-sm bg-neutral-950 text-neutral-100 border border-neutral-700 font-medium">
                         {formData.eventType}
                       </span>
                       <button
@@ -737,7 +737,7 @@ export default function HostForm() {
                               onClick={() => setActiveGroup(isActive ? null : group.slug)}
                               className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
                                 isActive
-                                  ? 'bg-white text-neutral-900 border-white font-medium'
+                                  ? 'bg-neutral-950 text-neutral-100 border-neutral-700 font-medium'
                                   : hasSelection
                                     ? 'bg-neutral-800 text-white border-neutral-600 font-medium'
                                     : 'bg-neutral-900 text-neutral-300 border-neutral-700 hover:bg-neutral-800 hover:border-neutral-600'
@@ -905,7 +905,7 @@ export default function HostForm() {
                                 onClick={() => setFormData(prev => ({ ...prev, isFree: true }))}
                                 className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors ${
                                   formData.isFree
-                                    ? 'bg-white text-neutral-900'
+                                    ? 'bg-neutral-950 text-neutral-100'
                                     : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
                                 }`}
                               >
@@ -916,7 +916,7 @@ export default function HostForm() {
                                 onClick={() => setFormData(prev => ({ ...prev, isFree: false }))}
                                 className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors ${
                                   !formData.isFree
-                                    ? 'bg-white text-neutral-900'
+                                    ? 'bg-neutral-950 text-neutral-100'
                                     : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
                                 }`}
                               >
@@ -944,7 +944,7 @@ export default function HostForm() {
                                 <div>
                                   <p className="text-xs text-neutral-500 mb-2">PayNow QR Code</p>
                                   {formData.paynowQrCode ? (
-                                    <div className="relative w-32 h-32 bg-white rounded-lg overflow-hidden">
+                                    <div className="relative w-32 h-32 bg-neutral-950 rounded-lg overflow-hidden">
                                       <Image
                                         src={formData.paynowQrCode}
                                         alt="PayNow QR"
@@ -1016,7 +1016,7 @@ export default function HostForm() {
                   <div
                     className={`relative aspect-[1080/1350] bg-neutral-900 rounded-2xl overflow-hidden border-2 transition-colors ${
                       isDragging
-                        ? 'border-white border-dashed bg-neutral-800'
+                        ? 'border-neutral-700 border-dashed bg-neutral-800'
                         : 'border-neutral-800'
                     }`}
                     onDragEnter={handleDragEnter}
@@ -1039,7 +1039,7 @@ export default function HostForm() {
                           <button
                             type="button"
                             onClick={() => setImageUrl(null)}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-neutral-900/80 hover:bg-neutral-900 text-white text-sm rounded-full transition-colors"
+                            className="flex items-center gap-2 px-3 py-1.5 bg-neutral-900/80 hover:bg-white text-neutral-900 text-sm rounded-full transition-colors"
                           >
                             <ImageIcon className="w-4 h-4" />
                             Change image
@@ -1067,7 +1067,7 @@ export default function HostForm() {
                             </div>
                             <div className="text-center">
                               <p className="text-neutral-400 text-sm mb-1">Add cover image</p>
-                              <p className="text-neutral-600 text-xs">Recommended: 1080 x 1350px</p>
+                              <p className="text-neutral-400 text-xs">Recommended: 1080 x 1350px</p>
                             </div>
                             <UploadButton
                               endpoint="eventImage"
@@ -1081,11 +1081,11 @@ export default function HostForm() {
                                 setError(`Upload failed: ${error.message}`)
                               }}
                               appearance={{
-                                button: "bg-white hover:bg-neutral-100 text-neutral-900 font-medium px-5 py-2.5 rounded-full text-sm transition-colors",
+                                button: "bg-neutral-950 hover:bg-neutral-800 text-neutral-100 font-medium px-5 py-2.5 rounded-full text-sm transition-colors",
                                 allowedContent: "hidden",
                               }}
                             />
-                            <p className="text-neutral-600 text-xs">or drag and drop</p>
+                            <p className="text-neutral-400 text-xs">or drag and drop</p>
                           </>
                         )}
                       </div>
@@ -1139,7 +1139,7 @@ export default function HostForm() {
                 <div
                   className={`relative aspect-video bg-neutral-900 rounded-xl overflow-hidden border-2 transition-colors ${
                     isDragging
-                      ? 'border-white border-dashed bg-neutral-800'
+                      ? 'border-neutral-700 border-dashed bg-neutral-800'
                       : 'border-neutral-800'
                   }`}
                   onDragEnter={handleDragEnter}
@@ -1174,7 +1174,7 @@ export default function HostForm() {
                         </>
                       ) : (
                         <>
-                          <ImageIcon className="w-8 h-8 text-neutral-600" />
+                          <ImageIcon className="w-8 h-8 text-neutral-400" />
                           <UploadButton
                             endpoint="eventImage"
                             onUploadBegin={() => setIsUploading(true)}
@@ -1187,11 +1187,11 @@ export default function HostForm() {
                               setError(`Upload failed: ${error.message}`)
                             }}
                             appearance={{
-                              button: "bg-white text-neutral-900 font-medium px-4 py-2 rounded-full text-sm",
+                              button: "bg-neutral-950 text-neutral-100 font-medium px-4 py-2 rounded-full text-sm",
                               allowedContent: "hidden",
                             }}
                           />
-                          <p className="text-neutral-600 text-xs">or drag and drop</p>
+                          <p className="text-neutral-400 text-xs">or drag and drop</p>
                         </>
                       )}
                     </div>
@@ -1209,7 +1209,7 @@ export default function HostForm() {
               <button
                 type="submit"
                 disabled={isLoading || isUploading || isUploadingQr}
-                className="w-full bg-white text-neutral-900 py-4 rounded-full font-semibold text-lg hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-neutral-950 text-neutral-100 py-4 rounded-full font-semibold text-lg hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>

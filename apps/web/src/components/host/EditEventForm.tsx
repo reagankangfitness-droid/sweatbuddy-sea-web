@@ -108,14 +108,14 @@ export function EditEventForm({ event }: EditEventFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div className="p-4 bg-red-950 border border-red-800 rounded-lg text-red-400 text-sm">
           {error}
         </div>
       )}
 
       {/* Event Name */}
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-neutral-700 mb-2">
+        <label htmlFor="name" className="block text-sm font-medium text-neutral-300 mb-2">
           What&apos;s your experience called? *
         </label>
         <input
@@ -126,14 +126,14 @@ export function EditEventForm({ event }: EditEventFormProps) {
           onChange={handleChange}
           required
           placeholder="e.g., Saturday Morning Run Club"
-          className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
+          className="w-full px-4 py-3 border border-neutral-800 rounded-lg text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-500 transition-colors"
         />
         <p className="text-xs text-neutral-400 mt-1">Keep it short and specific</p>
       </div>
 
       {/* Category */}
       <div>
-        <label htmlFor="category" className="block text-sm font-medium text-neutral-700 mb-2">
+        <label htmlFor="category" className="block text-sm font-medium text-neutral-300 mb-2">
           What kind of workout is this? *
         </label>
         <select
@@ -142,7 +142,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
           value={formData.category}
           onChange={handleChange}
           required
-          className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:border-neutral-900 transition-colors bg-white"
+          className="w-full px-4 py-3 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:border-neutral-500 transition-colors bg-neutral-950"
         >
           <option value="">Pick a category</option>
           {CATEGORIES.map(cat => (
@@ -154,7 +154,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
 
       {/* Day */}
       <div>
-        <label htmlFor="day" className="block text-sm font-medium text-neutral-700 mb-2">
+        <label htmlFor="day" className="block text-sm font-medium text-neutral-300 mb-2">
           When does it happen? *
         </label>
         <input
@@ -165,14 +165,14 @@ export function EditEventForm({ event }: EditEventFormProps) {
           onChange={handleChange}
           placeholder="e.g., Saturdays or Dec 20"
           required
-          className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
+          className="w-full px-4 py-3 border border-neutral-800 rounded-lg text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-500 transition-colors"
         />
       </div>
 
       {/* Date & Time Row */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="date" className="block text-sm font-medium text-neutral-700 mb-2">
+          <label htmlFor="date" className="block text-sm font-medium text-neutral-300 mb-2">
             Date (optional)
           </label>
           <input
@@ -181,11 +181,11 @@ export function EditEventForm({ event }: EditEventFormProps) {
             name="date"
             value={formData.date}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 focus:outline-none focus:border-neutral-900 transition-colors"
+            className="w-full px-4 py-3 border border-neutral-800 rounded-lg text-neutral-100 focus:outline-none focus:border-neutral-500 transition-colors"
           />
         </div>
         <div>
-          <label htmlFor="time" className="block text-sm font-medium text-neutral-700 mb-2">
+          <label htmlFor="time" className="block text-sm font-medium text-neutral-300 mb-2">
             Time *
           </label>
           <input
@@ -196,14 +196,14 @@ export function EditEventForm({ event }: EditEventFormProps) {
             onChange={handleChange}
             placeholder="e.g. 7:00 AM"
             required
-            className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
+            className="w-full px-4 py-3 border border-neutral-800 rounded-lg text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-500 transition-colors"
           />
         </div>
       </div>
 
       {/* Location */}
       <div>
-        <label htmlFor="location" className="block text-sm font-medium text-neutral-700 mb-2">
+        <label htmlFor="location" className="block text-sm font-medium text-neutral-300 mb-2">
           Where should people meet? *
         </label>
         <input
@@ -214,14 +214,14 @@ export function EditEventForm({ event }: EditEventFormProps) {
           onChange={handleChange}
           placeholder="e.g., East Coast Park, Carpark C"
           required
-          className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
+          className="w-full px-4 py-3 border border-neutral-800 rounded-lg text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-500 transition-colors"
         />
         <p className="text-xs text-neutral-400 mt-1">Be specific—it helps people find you</p>
       </div>
 
       {/* Description */}
       <div>
-        <label htmlFor="description" className="block text-sm font-medium text-neutral-700 mb-2">
+        <label htmlFor="description" className="block text-sm font-medium text-neutral-300 mb-2">
           Tell people what to expect
         </label>
         <textarea
@@ -231,17 +231,17 @@ export function EditEventForm({ event }: EditEventFormProps) {
           onChange={handleChange}
           rows={4}
           placeholder="What will you do? Who's it for? What should they bring?"
-          className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors resize-none"
+          className="w-full px-4 py-3 border border-neutral-800 rounded-lg text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-500 transition-colors resize-none"
         />
       </div>
 
       {/* Event Image */}
       <div>
-        <label className="block text-sm font-medium text-neutral-700 mb-2">
+        <label className="block text-sm font-medium text-neutral-300 mb-2">
           Event Image
         </label>
         {imageUrl ? (
-          <div className="relative rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200">
+          <div className="relative rounded-xl overflow-hidden bg-neutral-800 border border-neutral-800">
             <Image
               src={imageUrl}
               alt="Event preview"
@@ -263,10 +263,10 @@ export function EditEventForm({ event }: EditEventFormProps) {
             </div>
           </div>
         ) : (
-          <div className="rounded-xl bg-neutral-50 border border-neutral-200 border-dashed p-6">
+          <div className="rounded-xl bg-neutral-900 border border-neutral-800 border-dashed p-6">
             {isUploading ? (
               <div className="flex flex-col items-center gap-2 text-neutral-500">
-                <Loader2 className="w-6 h-6 animate-spin text-neutral-900" />
+                <Loader2 className="w-6 h-6 animate-spin text-neutral-100" />
                 <span className="text-sm">Uploading...</span>
               </div>
             ) : (
@@ -301,8 +301,8 @@ export function EditEventForm({ event }: EditEventFormProps) {
       {/* Community Link - hidden for now */}
 
       {/* Pricing Section */}
-      <div className="pt-4 border-t border-neutral-200 space-y-4">
-        <h3 className="text-lg font-semibold text-neutral-900">Pricing</h3>
+      <div className="pt-4 border-t border-neutral-800 space-y-4">
+        <h3 className="text-lg font-semibold text-neutral-100">Pricing</h3>
 
         {/* Free or Paid Toggle */}
         <div className="flex gap-4">
@@ -312,9 +312,9 @@ export function EditEventForm({ event }: EditEventFormProps) {
               name="isFree"
               checked={formData.isFree}
               onChange={() => setFormData(prev => ({ ...prev, isFree: true }))}
-              className="w-4 h-4 text-neutral-900"
+              className="w-4 h-4 text-neutral-100"
             />
-            <span className="text-neutral-700">Free event</span>
+            <span className="text-neutral-300">Free event</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input
@@ -322,9 +322,9 @@ export function EditEventForm({ event }: EditEventFormProps) {
               name="isFree"
               checked={!formData.isFree}
               onChange={() => setFormData(prev => ({ ...prev, isFree: false }))}
-              className="w-4 h-4 text-neutral-900"
+              className="w-4 h-4 text-neutral-100"
             />
-            <span className="text-neutral-700">Paid event</span>
+            <span className="text-neutral-300">Paid event</span>
           </label>
         </div>
 
@@ -333,7 +333,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
           <div className="space-y-4">
             {/* Price Input */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-2">
+              <label className="block text-sm font-medium text-neutral-300 mb-2">
                 Price (SGD) *
               </label>
               <div className="relative">
@@ -346,18 +346,18 @@ export function EditEventForm({ event }: EditEventFormProps) {
                   value={formData.price}
                   onChange={handleChange}
                   placeholder="15.00"
-                  className="w-full pl-8 px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
+                  className="w-full pl-8 px-4 py-3 border border-neutral-800 rounded-lg text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-500 transition-colors"
                 />
               </div>
             </div>
 
             {/* PayNow Payment Info */}
-            <div className="p-4 bg-green-50 rounded-xl border border-green-100">
+            <div className="p-4 bg-green-950 rounded-xl border border-green-100">
               <div className="flex items-center gap-2 mb-2">
                 <span className="font-medium text-green-800">PayNow QR Code Payments</span>
-                <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-medium">Instant</span>
+                <span className="px-2 py-0.5 bg-green-900 text-green-400 text-xs rounded-full font-medium">Instant</span>
               </div>
-              <p className="text-sm text-green-700">
+              <p className="text-sm text-green-400">
                 Add your PayNow QR code in the event settings. Attendees pay you directly with no fees - payments go straight to your account instantly.
               </p>
             </div>
@@ -366,14 +366,14 @@ export function EditEventForm({ event }: EditEventFormProps) {
       </div>
 
       {/* Capacity Section */}
-      <div className="pt-4 border-t border-neutral-200 space-y-4">
-        <h3 className="text-lg font-semibold text-neutral-900">Capacity</h3>
+      <div className="pt-4 border-t border-neutral-800 space-y-4">
+        <h3 className="text-lg font-semibold text-neutral-100">Capacity</h3>
 
         {/* Current attendees info */}
         {event.currentAttendees !== undefined && (
-          <div className="p-3 bg-neutral-50 rounded-lg">
-            <p className="text-sm text-neutral-600">
-              <span className="font-semibold text-neutral-900">{event.currentAttendees}</span> people registered
+          <div className="p-3 bg-neutral-900 rounded-lg">
+            <p className="text-sm text-neutral-400">
+              <span className="font-semibold text-neutral-100">{event.currentAttendees}</span> people registered
               {formData.maxSpots && (
                 <span> / {formData.maxSpots} spots</span>
               )}
@@ -383,7 +383,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
 
         {/* Max Spots */}
         <div>
-          <label htmlFor="maxSpots" className="block text-sm font-medium text-neutral-700 mb-2">
+          <label htmlFor="maxSpots" className="block text-sm font-medium text-neutral-300 mb-2">
             Maximum spots (optional)
           </label>
           <input
@@ -394,15 +394,15 @@ export function EditEventForm({ event }: EditEventFormProps) {
             value={formData.maxSpots}
             onChange={handleChange}
             placeholder="Leave empty for unlimited"
-            className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-900 transition-colors"
+            className="w-full px-4 py-3 border border-neutral-800 rounded-lg text-neutral-100 placeholder:text-neutral-400 focus:outline-none focus:border-neutral-500 transition-colors"
           />
           <p className="text-xs text-neutral-400 mt-1">Registration closes automatically when full</p>
         </div>
 
         {/* Close Registration Toggle */}
-        <div className="flex items-center justify-between p-4 bg-neutral-50 rounded-xl">
+        <div className="flex items-center justify-between p-4 bg-neutral-900 rounded-xl">
           <div>
-            <p className="font-medium text-neutral-900">Close registration</p>
+            <p className="font-medium text-neutral-100">Close registration</p>
             <p className="text-sm text-neutral-500">Manually stop accepting new signups</p>
           </div>
           <button
@@ -413,14 +413,14 @@ export function EditEventForm({ event }: EditEventFormProps) {
             }`}
           >
             <span
-              className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+              className={`absolute top-1 w-5 h-5 bg-neutral-950 rounded-full shadow transition-transform ${
                 formData.isFull ? 'translate-x-6' : 'translate-x-1'
               }`}
             />
           </button>
         </div>
         {formData.isFull && (
-          <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
+          <p className="text-sm text-red-400 bg-red-950 p-3 rounded-lg">
             Registration is closed. New signups will be blocked.
           </p>
         )}
@@ -434,9 +434,9 @@ export function EditEventForm({ event }: EditEventFormProps) {
           name="recurring"
           checked={formData.recurring}
           onChange={handleChange}
-          className="w-5 h-5 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900"
+          className="w-5 h-5 rounded border-neutral-700 text-neutral-100 focus:ring-white"
         />
-        <label htmlFor="recurring" className="text-sm text-neutral-700">
+        <label htmlFor="recurring" className="text-sm text-neutral-300">
           This happens every week
         </label>
         <span className="text-xs text-neutral-400">(Regular events build loyal attendees)</span>
@@ -447,14 +447,14 @@ export function EditEventForm({ event }: EditEventFormProps) {
         <button
           type="button"
           onClick={() => router.push('/host/dashboard')}
-          className="flex-1 px-6 py-3.5 border border-neutral-200 rounded-full font-semibold text-neutral-700 hover:border-neutral-400 transition-colors"
+          className="flex-1 px-6 py-3.5 border border-neutral-800 rounded-full font-semibold text-neutral-300 hover:border-neutral-600 transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isSubmitting || isUploading}
-          className="flex-1 px-6 py-3.5 bg-neutral-900 text-white rounded-full font-semibold hover:bg-neutral-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 px-6 py-3.5 bg-white text-neutral-900 rounded-full font-semibold hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? 'Saving your changes...' : isUploading ? 'Uploading image...' : 'Save Changes'}
         </button>

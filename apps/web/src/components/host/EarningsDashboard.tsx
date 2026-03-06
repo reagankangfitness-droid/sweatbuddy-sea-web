@@ -100,20 +100,20 @@ export function EarningsDashboard() {
   if (loading) {
     return (
       <div className="animate-pulse space-y-6">
-        <div className="h-24 bg-neutral-100 rounded-xl"></div>
+        <div className="h-24 bg-neutral-800 rounded-xl"></div>
         <div className="grid grid-cols-3 gap-4">
-          <div className="h-28 bg-neutral-100 rounded-xl"></div>
-          <div className="h-28 bg-neutral-100 rounded-xl"></div>
-          <div className="h-28 bg-neutral-100 rounded-xl"></div>
+          <div className="h-28 bg-neutral-800 rounded-xl"></div>
+          <div className="h-28 bg-neutral-800 rounded-xl"></div>
+          <div className="h-28 bg-neutral-800 rounded-xl"></div>
         </div>
-        <div className="h-64 bg-neutral-100 rounded-xl"></div>
+        <div className="h-64 bg-neutral-800 rounded-xl"></div>
       </div>
     )
   }
 
   if (error || !data) {
     return (
-      <div className="bg-red-50 text-red-600 p-6 rounded-xl flex items-center gap-3">
+      <div className="bg-red-950 text-red-400 p-6 rounded-xl flex items-center gap-3">
         <AlertCircle className="w-5 h-5 flex-shrink-0" />
         <p>{error || 'Failed to load earnings data'}</p>
       </div>
@@ -126,19 +126,19 @@ export function EarningsDashboard() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-neutral-900">Earnings</h1>
+        <h1 className="text-2xl font-bold text-neutral-100">Earnings</h1>
         <p className="text-neutral-500 mt-1">
           Track your revenue from paid events
         </p>
       </div>
 
       {/* PayNow Info */}
-      <div className="bg-green-50 border border-green-200 p-4 rounded-xl">
+      <div className="bg-green-950 border border-green-800 p-4 rounded-xl">
         <div className="flex items-start gap-3">
-          <QrCode className="w-5 h-5 text-green-600 mt-0.5" />
+          <QrCode className="w-5 h-5 text-green-400 mt-0.5" />
           <div>
             <p className="font-medium text-green-800">Instant payments via PayNow</p>
-            <p className="text-sm text-green-700 mt-1">
+            <p className="text-sm text-green-400 mt-1">
               Attendees pay you directly via PayNow QR code. No fees, instant transfer to your account.
             </p>
           </div>
@@ -147,22 +147,22 @@ export function EarningsDashboard() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-green-50 p-6 rounded-xl border border-green-100">
-          <div className="flex items-center gap-2 text-green-600 mb-2">
+        <div className="bg-green-950 p-6 rounded-xl border border-green-100">
+          <div className="flex items-center gap-2 text-green-400 mb-2">
             <TrendingUp className="w-4 h-4" />
             <span className="text-sm font-medium">Total Revenue</span>
           </div>
-          <p className="text-3xl font-bold text-green-700">
+          <p className="text-3xl font-bold text-green-400">
             {formatCurrency(summary.totalRevenue)}
           </p>
-          <p className="text-sm text-green-600 mt-1">
+          <p className="text-sm text-green-400 mt-1">
             from {summary.transactionCount} sale{summary.transactionCount !== 1 ? 's' : ''}
           </p>
         </div>
 
-        <div className="bg-neutral-50 p-6 rounded-xl border border-neutral-200">
+        <div className="bg-neutral-900 p-6 rounded-xl border border-neutral-800">
           <p className="text-sm font-medium text-neutral-500 mb-2">Total Sales</p>
-          <p className="text-3xl font-bold text-neutral-900">
+          <p className="text-3xl font-bold text-neutral-100">
             {summary.transactionCount}
           </p>
           <p className="text-sm text-neutral-500 mt-1">recorded transactions</p>
@@ -171,15 +171,15 @@ export function EarningsDashboard() {
 
       {/* Refunds info */}
       {summary.totalRefunded > 0 && (
-        <div className="bg-neutral-100 p-4 rounded-xl text-sm text-neutral-600">
+        <div className="bg-neutral-800 p-4 rounded-xl text-sm text-neutral-400">
           <span className="font-medium">Refunds:</span> {formatCurrency(summary.totalRefunded)} refunded
         </div>
       )}
 
       {/* Revenue by Event Chart */}
       {eventEarnings.length > 0 && (
-        <div className="bg-white rounded-xl border border-neutral-200 p-6">
-          <h2 className="text-lg font-semibold text-neutral-900 mb-4">Revenue by Event</h2>
+        <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-6">
+          <h2 className="text-lg font-semibold text-neutral-100 mb-4">Revenue by Event</h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -222,7 +222,7 @@ export function EarningsDashboard() {
       )}
 
       {/* Tabs */}
-      <div className="border-b border-neutral-200">
+      <div className="border-b border-neutral-800">
         <nav className="flex gap-8">
           {(['overview', 'events', 'transactions'] as const).map((tab) => (
             <button
@@ -230,8 +230,8 @@ export function EarningsDashboard() {
               onClick={() => setActiveTab(tab)}
               className={`pb-3 text-sm font-medium transition-colors ${
                 activeTab === tab
-                  ? 'border-b-2 border-neutral-900 text-neutral-900'
-                  : 'text-neutral-500 hover:text-neutral-700'
+                  ? 'border-b-2 border-neutral-900 text-neutral-100'
+                  : 'text-neutral-500 hover:text-neutral-300'
               }`}
             >
               {tab === 'overview' ? 'Recent Sales' : tab === 'events' ? 'By Event' : 'All Transactions'}
@@ -254,16 +254,16 @@ export function EarningsDashboard() {
               {recentActivity.map((activity) => (
                 <div
                   key={activity.id}
-                  className="flex items-center justify-between p-4 bg-neutral-50 rounded-xl"
+                  className="flex items-center justify-between p-4 bg-neutral-900 rounded-xl"
                 >
                   <div>
-                    <p className="font-medium text-neutral-900">{activity.eventName}</p>
+                    <p className="font-medium text-neutral-100">{activity.eventName}</p>
                     <p className="text-sm text-neutral-500">
                       {activity.attendeeName || activity.attendeeEmail}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-green-600">
+                    <p className="font-semibold text-green-400">
                       +{formatCurrency(activity.amount)}
                     </p>
                     {activity.date && (
@@ -292,17 +292,17 @@ export function EarningsDashboard() {
               {eventEarnings.map((event) => (
                 <div
                   key={event.eventId}
-                  className="border border-neutral-200 rounded-xl p-5"
+                  className="border border-neutral-800 rounded-xl p-5"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="font-semibold text-neutral-900">{event.eventName}</h3>
+                      <h3 className="font-semibold text-neutral-100">{event.eventName}</h3>
                       <p className="text-sm text-neutral-500 mt-0.5">
                         {event.eventDate ? formatDate(event.eventDate) : 'Recurring'}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-green-600 text-lg">
+                      <p className="font-bold text-green-400 text-lg">
                         {formatCurrency(event.totalRevenue)}
                       </p>
                       <p className="text-xs text-neutral-400">total revenue</p>
@@ -312,20 +312,20 @@ export function EarningsDashboard() {
                   <div className="grid grid-cols-3 gap-4 text-sm">
                     <div>
                       <p className="text-neutral-500">Tickets Sold</p>
-                      <p className="font-semibold text-neutral-900">
+                      <p className="font-semibold text-neutral-100">
                         {event.ticketsSold}
                         {event.ticketLimit && ` / ${event.ticketLimit}`}
                       </p>
                     </div>
                     <div>
                       <p className="text-neutral-500">Price</p>
-                      <p className="font-semibold text-neutral-900">
+                      <p className="font-semibold text-neutral-100">
                         {formatCurrency(event.ticketPrice)}
                       </p>
                     </div>
                     <div>
                       <p className="text-neutral-500">Total Revenue</p>
-                      <p className="font-semibold text-green-600">
+                      <p className="font-semibold text-green-400">
                         {formatCurrency(event.totalRevenue)}
                       </p>
                     </div>
@@ -348,7 +348,7 @@ export function EarningsDashboard() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-neutral-200">
+                  <tr className="border-b border-neutral-800">
                     <th className="text-left py-3 font-medium text-neutral-500">Date</th>
                     <th className="text-left py-3 font-medium text-neutral-500">Event</th>
                     <th className="text-right py-3 font-medium text-neutral-500">Amount</th>
@@ -357,26 +357,26 @@ export function EarningsDashboard() {
                 </thead>
                 <tbody>
                   {transactions.map((tx) => (
-                    <tr key={tx.id} className="border-b border-neutral-100">
-                      <td className="py-3 text-neutral-600">
+                    <tr key={tx.id} className="border-b border-neutral-800">
+                      <td className="py-3 text-neutral-400">
                         {formatDate(tx.date)}
                       </td>
-                      <td className="py-3 font-medium text-neutral-900">
+                      <td className="py-3 font-medium text-neutral-100">
                         {tx.eventName}
                       </td>
-                      <td className="py-3 text-right font-medium text-green-600">
+                      <td className="py-3 text-right font-medium text-green-400">
                         {formatCurrency(tx.amount)}
                       </td>
                       <td className="py-3">
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-medium ${
                             tx.status === 'SUCCEEDED'
-                              ? 'bg-green-100 text-green-700'
+                              ? 'bg-green-900 text-green-400'
                               : tx.status === 'REFUNDED'
-                              ? 'bg-red-100 text-red-700'
+                              ? 'bg-red-900 text-red-400'
                               : tx.status === 'PENDING'
-                              ? 'bg-amber-100 text-amber-700'
-                              : 'bg-neutral-100 text-neutral-700'
+                              ? 'bg-amber-900 text-amber-400'
+                              : 'bg-neutral-800 text-neutral-300'
                           }`}
                         >
                           {tx.status === 'SUCCEEDED' ? 'Paid' : tx.status.toLowerCase()}
@@ -392,7 +392,7 @@ export function EarningsDashboard() {
       )}
 
       {/* Footer Info */}
-      <div className="bg-neutral-50 p-4 rounded-xl text-sm text-neutral-600">
+      <div className="bg-neutral-900 p-4 rounded-xl text-sm text-neutral-400">
         <p>
           <strong>How payments work:</strong> Attendees pay you directly via PayNow QR code when they RSVP.
           Payments are instant with no fees. This dashboard records all transactions for your reference.

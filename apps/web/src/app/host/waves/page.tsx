@@ -141,14 +141,14 @@ export default function HostWavesPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">Waves</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-100">Waves</h1>
           <p className="text-neutral-500 mt-1">
             Start a wave and rally people for spontaneous activities
           </p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-white text-neutral-900 rounded-lg hover:bg-neutral-200 transition-colors"
         >
           {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
           {showForm ? 'Cancel' : 'New Wave'}
@@ -157,12 +157,12 @@ export default function HostWavesPage() {
 
       {/* Creation Form */}
       {showForm && (
-        <form onSubmit={handleCreate} className="bg-white rounded-xl border border-neutral-200 p-6 shadow-sm mb-6">
-          <h2 className="text-lg font-semibold text-neutral-900 mb-4">Start a Wave</h2>
+        <form onSubmit={handleCreate} className="bg-neutral-950 rounded-xl border border-neutral-800 p-6 shadow-sm mb-6">
+          <h2 className="text-lg font-semibold text-neutral-100 mb-4">Start a Wave</h2>
 
           {/* Activity Type Picker */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-neutral-600 mb-2">
+            <label className="block text-sm font-medium text-neutral-400 mb-2">
               Activity Type *
             </label>
             <div className="space-y-3">
@@ -182,8 +182,8 @@ export default function HostWavesPage() {
                           onClick={() => setActivityType(type)}
                           className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                             activityType === type
-                              ? 'bg-neutral-900 text-white'
-                              : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                              ? 'bg-white text-neutral-900'
+                              : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
                           }`}
                         >
                           {info.emoji} {info.label}
@@ -198,7 +198,7 @@ export default function HostWavesPage() {
 
           {/* Area */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-neutral-600 mb-2">
+            <label className="block text-sm font-medium text-neutral-400 mb-2">
               Area / Location *
             </label>
             <input
@@ -207,13 +207,13 @@ export default function HostWavesPage() {
               onChange={(e) => setArea(e.target.value)}
               placeholder="e.g., East Coast Park, Marina Bay"
               maxLength={200}
-              className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white"
             />
           </div>
 
           {/* Thought */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-neutral-600 mb-2">
+            <label className="block text-sm font-medium text-neutral-400 mb-2">
               Quick thought (optional)
             </label>
             <input
@@ -222,14 +222,14 @@ export default function HostWavesPage() {
               onChange={(e) => setThought(e.target.value)}
               placeholder="e.g., Chill pace, first timers welcome"
               maxLength={140}
-              className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white"
             />
             <p className="text-xs text-neutral-400 mt-1">{thought.length}/140</p>
           </div>
 
           {/* Scheduled For */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-neutral-600 mb-2">
+            <label className="block text-sm font-medium text-neutral-400 mb-2">
               Schedule for later (optional)
             </label>
             <input
@@ -237,7 +237,7 @@ export default function HostWavesPage() {
               value={scheduledFor}
               onChange={(e) => setScheduledFor(e.target.value)}
               min={new Date().toISOString().slice(0, 16)}
-              className="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg text-neutral-900 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900"
+              className="w-full px-4 py-3 bg-neutral-950 border border-neutral-800 rounded-lg text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white"
             />
             <p className="text-xs text-neutral-400 mt-1">Leave empty to start the wave now (expires in 8 hours)</p>
           </div>
@@ -245,7 +245,7 @@ export default function HostWavesPage() {
           <button
             type="submit"
             disabled={creating || !activityType || !area.trim()}
-            className="w-full px-4 py-3 bg-neutral-900 text-white rounded-lg font-medium hover:bg-neutral-700 transition-colors disabled:opacity-50"
+            className="w-full px-4 py-3 bg-white text-neutral-900 rounded-lg font-medium hover:bg-neutral-200 transition-colors disabled:opacity-50"
           >
             {creating ? 'Creating...' : 'Start Wave'}
           </button>
@@ -255,20 +255,20 @@ export default function HostWavesPage() {
       {/* Active Waves */}
       {activeWaves.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-neutral-900 mb-3">Active Waves</h2>
+          <h2 className="text-lg font-semibold text-neutral-100 mb-3">Active Waves</h2>
           <div className="space-y-3">
             {activeWaves.map((wave) => {
               const info = WAVE_ACTIVITIES[wave.activityType as keyof typeof WAVE_ACTIVITIES]
               return (
                 <div
                   key={wave.id}
-                  className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm"
+                  className="bg-neutral-950 rounded-xl border border-neutral-800 p-4 shadow-sm"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
                       <span className="text-2xl">{info?.emoji || '?'}</span>
                       <div>
-                        <h3 className="font-semibold text-neutral-900">
+                        <h3 className="font-semibold text-neutral-100">
                           {info?.label || wave.activityType} in {wave.area}
                         </h3>
                         {wave.thought && (
@@ -284,7 +284,7 @@ export default function HostWavesPage() {
                             {timeRemaining(wave.expiresAt)}
                           </span>
                           {wave.isUnlocked && (
-                            <span className="flex items-center gap-1 text-green-600">
+                            <span className="flex items-center gap-1 text-green-400">
                               <MessageCircle className="w-3.5 h-3.5" />
                               Crew unlocked
                             </span>
@@ -317,12 +317,12 @@ export default function HostWavesPage() {
               return (
                 <div
                   key={wave.id}
-                  className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm"
+                  className="bg-neutral-950 rounded-xl border border-neutral-800 p-4 shadow-sm"
                 >
                   <div className="flex items-start gap-3">
                     <span className="text-2xl">{info?.emoji || '?'}</span>
                     <div>
-                      <h3 className="font-medium text-neutral-700">
+                      <h3 className="font-medium text-neutral-300">
                         {info?.label || wave.activityType} in {wave.area}
                       </h3>
                       <div className="flex items-center gap-4 mt-1 text-sm text-neutral-400">
@@ -348,15 +348,15 @@ export default function HostWavesPage() {
 
       {/* Empty State */}
       {waves.length === 0 && !showForm && (
-        <div className="text-center py-12 bg-white rounded-xl border border-neutral-200 shadow-sm">
+        <div className="text-center py-12 bg-neutral-950 rounded-xl border border-neutral-800 shadow-sm">
           <span className="text-4xl block mb-4">🏄</span>
-          <h2 className="text-xl font-semibold text-neutral-900 mb-2">No waves yet</h2>
+          <h2 className="text-xl font-semibold text-neutral-100 mb-2">No waves yet</h2>
           <p className="text-neutral-500 mb-4">
             Start a wave to find people for spontaneous workouts
           </p>
           <button
             onClick={() => setShowForm(true)}
-            className="px-4 py-2 bg-neutral-900 text-white rounded-lg hover:bg-neutral-700 transition-colors"
+            className="px-4 py-2 bg-white text-neutral-900 rounded-lg hover:bg-neutral-200 transition-colors"
           >
             Start Your First Wave
           </button>

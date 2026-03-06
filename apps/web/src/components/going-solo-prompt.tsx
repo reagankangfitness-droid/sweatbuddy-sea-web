@@ -55,10 +55,10 @@ export function GoingSoloPrompt({ activityId, onOptIn }: GoingSoloPromptProps) {
   if (!visible) return null
 
   return (
-    <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-4">
+    <div className="rounded-lg border border-amber-800 bg-amber-50/50 p-4">
       <div className="flex items-start gap-3">
-        <div className="rounded-full bg-amber-100 p-2 shrink-0">
-          <Users className="w-4 h-4 text-amber-600" />
+        <div className="rounded-full bg-amber-900 p-2 shrink-0">
+          <Users className="w-4 h-4 text-amber-400" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-foreground">

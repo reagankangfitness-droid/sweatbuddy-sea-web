@@ -105,11 +105,11 @@ export default function JoinInvitePage() {
   if (isLoading) {
     return (
       <>
-        <header className="sticky top-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+        <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="max-w-2xl mx-auto flex items-center gap-4 px-4 py-3">
-              <Link href="/events" className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200">
-                <ArrowLeft className="w-5 h-5 text-neutral-700" />
+              <Link href="/events" className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
+                <ArrowLeft className="w-5 h-5 text-neutral-300" />
               </Link>
               <span className="text-sm font-medium text-neutral-500">Join Invite</span>
             </div>
@@ -127,11 +127,11 @@ export default function JoinInvitePage() {
   if (error || !inviteData) {
     return (
       <>
-        <header className="sticky top-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+        <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="max-w-2xl mx-auto flex items-center gap-4 px-4 py-3">
-              <Link href="/events" className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200">
-                <ArrowLeft className="w-5 h-5 text-neutral-700" />
+              <Link href="/events" className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
+                <ArrowLeft className="w-5 h-5 text-neutral-300" />
               </Link>
               <span className="text-sm font-medium text-neutral-500">Join Invite</span>
             </div>
@@ -161,11 +161,11 @@ export default function JoinInvitePage() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+      <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-3xl mx-auto flex items-center gap-4 px-4 py-3">
-            <Link href="/events" className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200">
-              <ArrowLeft className="w-5 h-5 text-neutral-700" />
+            <Link href="/events" className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
+              <ArrowLeft className="w-5 h-5 text-neutral-300" />
             </Link>
             <span className="text-sm font-medium text-neutral-500">Join Invite</span>
           </div>
@@ -199,7 +199,7 @@ export default function JoinInvitePage() {
             </div>
 
             {/* Discount Badge */}
-            <div className="inline-flex items-center gap-2 bg-green-500/10 text-green-600 px-4 py-2 rounded-full font-semibold">
+            <div className="inline-flex items-center gap-2 bg-green-500/10 text-green-400 px-4 py-2 rounded-full font-semibold">
               <Tag className="w-4 h-4" />
               {inviteData.discount.value}% OFF - Save {inviteData.activity.currency} {savings.toFixed(2)}!
             </div>
@@ -280,13 +280,13 @@ export default function JoinInvitePage() {
                 <p className="text-sm text-muted-foreground line-through">
                   Original: {inviteData.activity.currency} {originalPrice.toFixed(2)}
                 </p>
-                <p className="text-3xl font-bold text-green-600">
+                <p className="text-3xl font-bold text-green-400">
                   {inviteData.activity.currency} {discountedPrice.toFixed(2)}
                 </p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">You save</p>
-                <p className="text-2xl font-semibold text-green-600">
+                <p className="text-2xl font-semibold text-green-400">
                   {inviteData.activity.currency} {savings.toFixed(2)}
                 </p>
               </div>

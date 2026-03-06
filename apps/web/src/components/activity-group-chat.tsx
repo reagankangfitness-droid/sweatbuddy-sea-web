@@ -278,7 +278,7 @@ export function ActivityGroupChat({
             </span>
           </DialogTitle>
           {isReadOnly && (
-            <div className="flex items-center gap-1.5 text-xs text-amber-600 mt-1">
+            <div className="flex items-center gap-1.5 text-xs text-amber-400 mt-1">
               <Clock className="w-3.5 h-3.5" />
               This chat is now read-only
             </div>
@@ -287,12 +287,12 @@ export function ActivityGroupChat({
 
         {/* Pinned messages banner */}
         {pinnedMessages.length > 0 && (
-          <div className="px-4 sm:px-6 py-2 bg-amber-50 border-b border-amber-100 shrink-0">
+          <div className="px-4 sm:px-6 py-2 bg-amber-950 border-b border-amber-100 shrink-0">
             <div className="flex items-start gap-2">
-              <Pin className="w-3.5 h-3.5 text-amber-600 mt-0.5 shrink-0" />
+              <Pin className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
               <div className="min-w-0">
                 <p className="text-xs font-medium text-amber-800">Pinned</p>
-                <p className="text-xs text-amber-700 truncate">
+                <p className="text-xs text-amber-400 truncate">
                   {pinnedMessages[0].content}
                 </p>
               </div>
@@ -353,8 +353,8 @@ export function ActivityGroupChat({
                       if (message.isIcebreaker) {
                         return (
                           <div key={message.id} className="flex justify-center mb-3">
-                            <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 max-w-[85%] sm:max-w-[75%] text-center">
-                              <span className="text-xs font-medium text-amber-700 block mb-1">
+                            <div className="bg-amber-950 border border-amber-800 rounded-lg px-4 py-3 max-w-[85%] sm:max-w-[75%] text-center">
+                              <span className="text-xs font-medium text-amber-400 block mb-1">
                                 ✨ Icebreaker
                               </span>
                               <p className="text-sm text-amber-900">

@@ -37,7 +37,7 @@ export function StepPricing({ mode, currentAttendees }: StepPricingProps) {
             onClick={() => setValue('isFree', true)}
             className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors ${
               isFree
-                ? 'bg-white text-neutral-900'
+                ? 'bg-neutral-950 text-neutral-100'
                 : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
             }`}
           >
@@ -48,7 +48,7 @@ export function StepPricing({ mode, currentAttendees }: StepPricingProps) {
             onClick={() => setValue('isFree', false)}
             className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors ${
               !isFree
-                ? 'bg-white text-neutral-900'
+                ? 'bg-neutral-950 text-neutral-100'
                 : 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
             }`}
           >
@@ -80,7 +80,7 @@ export function StepPricing({ mode, currentAttendees }: StepPricingProps) {
               <div>
                 <p className="text-xs text-neutral-500 mb-2">PayNow QR Code</p>
                 {paynowQrCode ? (
-                  <div className="relative w-32 h-32 bg-white rounded-lg overflow-hidden">
+                  <div className="relative w-32 h-32 bg-neutral-950 rounded-lg overflow-hidden">
                     <Image
                       src={paynowQrCode}
                       alt="PayNow QR"
@@ -183,7 +183,7 @@ export function StepPricing({ mode, currentAttendees }: StepPricingProps) {
                 }`}
               >
                 <span
-                  className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                  className={`absolute top-1 w-5 h-5 bg-neutral-950 rounded-full shadow transition-transform ${
                     isFull ? 'translate-x-6' : 'translate-x-1'
                   }`}
                 />

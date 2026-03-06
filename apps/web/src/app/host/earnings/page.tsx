@@ -30,7 +30,7 @@ export default function EarningsPage() {
 
   if (isVerifying) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-950">
         <div className="text-center animate-pulse">
           <span className="text-4xl mb-4 block">💰</span>
           <p className="text-neutral-400">Loading your earnings...</p>
@@ -40,15 +40,15 @@ export default function EarningsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-neutral-950">
       {/* Header */}
-      <header className="border-b border-neutral-100">
+      <header className="border-b border-neutral-800">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <BackButton fallbackHref="/host/dashboard" />
             <Link href="/" className="flex items-center gap-2">
               <Logo size={24} />
-              <span className="text-lg font-bold text-neutral-900 hidden sm:inline">sweatbuddies</span>
+              <span className="text-lg font-bold text-neutral-100 hidden sm:inline">sweatbuddies</span>
             </Link>
           </div>
         </div>

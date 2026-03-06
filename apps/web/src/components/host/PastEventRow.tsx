@@ -30,10 +30,10 @@ function formatDate(dateString: string | null): string {
 }
 
 function getShowUpBadge(rate: number): { color: string; text: string } {
-  if (rate >= 80) return { color: 'bg-green-100 text-green-700', text: 'Great' }
-  if (rate >= 60) return { color: 'bg-blue-100 text-blue-700', text: 'Good' }
-  if (rate >= 40) return { color: 'bg-amber-100 text-amber-700', text: 'Fair' }
-  return { color: 'bg-red-100 text-red-600', text: 'Low' }
+  if (rate >= 80) return { color: 'bg-green-900 text-green-400', text: 'Great' }
+  if (rate >= 60) return { color: 'bg-blue-900 text-blue-700', text: 'Good' }
+  if (rate >= 40) return { color: 'bg-amber-900 text-amber-400', text: 'Fair' }
+  return { color: 'bg-red-900 text-red-400', text: 'Low' }
 }
 
 export function PastEventRow({ event }: PastEventRowProps) {
@@ -42,12 +42,12 @@ export function PastEventRow({ event }: PastEventRowProps) {
     : null
 
   return (
-    <div className="px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between hover:bg-neutral-50 transition-colors gap-3">
+    <div className="px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between hover:bg-neutral-900 transition-colors gap-3">
       <Link
         href={`/host/events/${event.id}/attendees`}
         className="flex items-center gap-2 min-w-0 flex-1"
       >
-        <span className="font-medium text-neutral-900 text-sm sm:text-base truncate">{event.name}</span>
+        <span className="font-medium text-neutral-100 text-sm sm:text-base truncate">{event.name}</span>
         {event.date && (
           <>
             <span className="text-neutral-300 hidden sm:inline">·</span>
@@ -70,7 +70,7 @@ export function PastEventRow({ event }: PastEventRowProps) {
         />
         <Link
           href={`/host/events/${event.id}/duplicate`}
-          className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-neutral-100 text-neutral-600 hover:bg-neutral-200 transition-colors"
+          className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-neutral-800 text-neutral-400 hover:bg-neutral-700 transition-colors"
           onClick={e => e.stopPropagation()}
         >
           <Copy className="w-3 h-3" />
@@ -78,7 +78,7 @@ export function PastEventRow({ event }: PastEventRowProps) {
         </Link>
         <Link
           href={`/host/events/${event.id}/summary`}
-          className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors"
+          className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full bg-amber-950 text-amber-400 hover:bg-amber-900 transition-colors"
           onClick={e => e.stopPropagation()}
         >
           <Sparkles className="w-3 h-3" />

@@ -59,7 +59,7 @@ function Avatar({
 
   return (
     <div
-      className={`${sizeClasses} rounded-full bg-neutral-200 flex items-center justify-center flex-shrink-0`}
+      className={`${sizeClasses} rounded-full bg-neutral-700 flex items-center justify-center flex-shrink-0`}
     >
       <span className={`${textSize} font-medium text-neutral-500`}>
         {name.charAt(0).toUpperCase()}
@@ -74,7 +74,7 @@ function ActorLink({
   actor: FeedItem['actor']
 }) {
   const name = (
-    <span className="font-semibold text-neutral-900">
+    <span className="font-semibold text-neutral-100">
       {actor.name}
     </span>
   )
@@ -103,10 +103,10 @@ function EventPreview({ item }: { item: FeedItem }) {
   return (
     <Link
       href={url}
-      className="mt-3 flex gap-3 p-3 bg-neutral-50 rounded-xl hover:bg-neutral-100 transition-colors"
+      className="mt-3 flex gap-3 p-3 bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors"
     >
       {item.event.imageUrl ? (
-        <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-neutral-200 flex-shrink-0">
+        <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-neutral-700 flex-shrink-0">
           <Image
             src={item.event.imageUrl}
             alt={item.event.name}
@@ -116,13 +116,13 @@ function EventPreview({ item }: { item: FeedItem }) {
           />
         </div>
       ) : (
-        <div className="w-14 h-14 rounded-lg bg-neutral-200 flex items-center justify-center flex-shrink-0">
+        <div className="w-14 h-14 rounded-lg bg-neutral-700 flex items-center justify-center flex-shrink-0">
           <Calendar className="w-6 h-6 text-neutral-400" />
         </div>
       )}
 
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-neutral-900 text-sm truncate">
+        <p className="font-medium text-neutral-100 text-sm truncate">
           {item.event.name}
         </p>
         {item.event.category && (
@@ -176,7 +176,7 @@ export function FeedCard({
     !followedIds.has(item.actor.id)
 
   return (
-    <div className="bg-white rounded-2xl border border-neutral-100 p-4">
+    <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4">
       <div className="flex items-start gap-3">
         {/* Actor avatar */}
         {item.actor.slug ? (
@@ -189,7 +189,7 @@ export function FeedCard({
 
         <div className="flex-1 min-w-0">
           {/* Activity text */}
-          <p className="text-sm text-neutral-700">
+          <p className="text-sm text-neutral-300">
             <ActorLink actor={item.actor} />{' '}
             {item.type === 'event_joined' && 'joined'}
             {item.type === 'activity_joined' && 'joined'}
@@ -200,12 +200,12 @@ export function FeedCard({
                 {item.target?.slug ? (
                   <Link
                     href={`/user/${item.target.slug}`}
-                    className="font-semibold text-neutral-900"
+                    className="font-semibold text-neutral-100"
                   >
                     {item.target.name}
                   </Link>
                 ) : (
-                  <span className="font-semibold text-neutral-900">
+                  <span className="font-semibold text-neutral-100">
                     {item.target?.name}
                   </span>
                 )}
@@ -215,7 +215,7 @@ export function FeedCard({
               item.event && (
                 <>
                   {' '}
-                  <span className="font-semibold text-neutral-900">
+                  <span className="font-semibold text-neutral-100">
                     {item.event.name}
                   </span>
                 </>
@@ -245,7 +245,7 @@ export function FeedCard({
                     name={item.target.name}
                     size="sm"
                   />
-                  <span className="text-sm font-medium text-neutral-700">
+                  <span className="text-sm font-medium text-neutral-300">
                     {item.target.name}
                   </span>
                 </Link>
@@ -256,7 +256,7 @@ export function FeedCard({
                     name={item.target.name}
                     size="sm"
                   />
-                  <span className="text-sm font-medium text-neutral-700">
+                  <span className="text-sm font-medium text-neutral-300">
                     {item.target.name}
                   </span>
                 </div>
@@ -270,7 +270,7 @@ export function FeedCard({
           <button
             onClick={() => onFollow(item.actor.slug!, item.actor.id)}
             aria-label={`Follow ${item.actor.name}`}
-            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition-colors"
+            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-full border border-neutral-800 text-neutral-300 hover:bg-neutral-900 transition-colors"
           >
             <UserPlus className="w-3.5 h-3.5" />
             Follow

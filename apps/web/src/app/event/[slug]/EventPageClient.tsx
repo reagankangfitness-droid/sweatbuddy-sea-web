@@ -117,11 +117,11 @@ export function EventPageClient({ event }: { event: Event }) {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-neutral-950">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-neutral-100">
+      <header className="sticky top-0 z-50 bg-neutral-950/95 backdrop-blur-sm border-b border-neutral-800">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/#events" className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900">
+          <Link href="/#events" className="flex items-center gap-2 text-neutral-400 hover:text-neutral-100">
             <ArrowLeft className="w-5 h-5" />
             <span className="hidden sm:inline">Back to experiences</span>
           </Link>
@@ -133,7 +133,7 @@ export function EventPageClient({ event }: { event: Event }) {
             <button
               onClick={handleSave}
               className={`p-2 rounded-full transition-colors ${
-                isSaved ? 'text-red-500' : 'text-neutral-600 hover:text-neutral-900'
+                isSaved ? 'text-red-500' : 'text-neutral-400 hover:text-neutral-100'
               }`}
             >
               <Heart className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
@@ -143,7 +143,7 @@ export function EventPageClient({ event }: { event: Event }) {
       </header>
 
       {/* Hero Image */}
-      <div className="relative w-full h-64 sm:h-80 md:h-96 bg-neutral-100">
+      <div className="relative w-full h-64 sm:h-80 md:h-96 bg-neutral-800">
         {event.imageUrl ? (
           <Image
             src={event.imageUrl}
@@ -170,12 +170,12 @@ export function EventPageClient({ event }: { event: Event }) {
                 <span>{emoji}</span>
                 <span>{event.category}</span>
                 {event.recurring && (
-                  <span className="px-2 py-0.5 bg-neutral-100 rounded-full text-xs font-medium">
+                  <span className="px-2 py-0.5 bg-neutral-800 rounded-full text-xs font-medium">
                     Weekly
                   </span>
                 )}
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
+              <h1 className="text-3xl md:text-4xl font-bold text-neutral-100 mb-4">
                 {event.name}
               </h1>
               <div className="flex items-center justify-between">
@@ -188,13 +188,13 @@ export function EventPageClient({ event }: { event: Event }) {
                     {event.organizerName.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="font-medium text-neutral-900">Hosted by {event.organizerName}</p>
+                    <p className="font-medium text-neutral-100">Hosted by {event.organizerName}</p>
                     <p className="text-sm text-neutral-500">@{event.organizer}</p>
                   </div>
                 </Link>
                 <button
                   onClick={() => setShowChat(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-xl font-medium transition-colors"
+                  className="flex items-center gap-2 px-4 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-xl font-medium transition-colors"
                 >
                   <MessageCircle className="w-5 h-5" />
                   <span className="hidden sm:inline">Message</span>
@@ -203,31 +203,31 @@ export function EventPageClient({ event }: { event: Event }) {
             </div>
 
             {/* Divider */}
-            <div className="border-t border-neutral-200" />
+            <div className="border-t border-neutral-800" />
 
             {/* Event Info */}
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-neutral-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Calendar className="w-6 h-6 text-neutral-600" />
+                <div className="w-12 h-12 bg-neutral-800 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Calendar className="w-6 h-6 text-neutral-400" />
                 </div>
                 <div>
-                  <p className="font-semibold text-neutral-900">{formatDate()}</p>
+                  <p className="font-semibold text-neutral-100">{formatDate()}</p>
                   <p className="text-neutral-500">{event.time}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-neutral-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-6 h-6 text-neutral-600" />
+                <div className="w-12 h-12 bg-neutral-800 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-6 h-6 text-neutral-400" />
                 </div>
                 <div>
-                  <p className="font-semibold text-neutral-900">{event.location}</p>
+                  <p className="font-semibold text-neutral-100">{event.location}</p>
                   {event.latitude && event.longitude && (
                     <a
                       href={`https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-blue-600 hover:underline"
+                      className="text-sm text-blue-400 hover:underline"
                     >
                       Get directions
                     </a>
@@ -237,13 +237,13 @@ export function EventPageClient({ event }: { event: Event }) {
             </div>
 
             {/* Divider */}
-            <div className="border-t border-neutral-200" />
+            <div className="border-t border-neutral-800" />
 
             {/* Description */}
             {event.description && (
               <div>
-                <h2 className="text-xl font-semibold text-neutral-900 mb-4">About this experience</h2>
-                <p className="text-neutral-600 whitespace-pre-wrap leading-relaxed">
+                <h2 className="text-xl font-semibold text-neutral-100 mb-4">About this experience</h2>
+                <p className="text-neutral-400 whitespace-pre-wrap leading-relaxed">
                   {event.description}
                 </p>
               </div>
@@ -254,9 +254,9 @@ export function EventPageClient({ event }: { event: Event }) {
             {/* Event Recap */}
             {event.recap && (
               <>
-                <div className="border-t border-neutral-200" />
+                <div className="border-t border-neutral-800" />
                 <div className="bg-emerald-50 rounded-2xl p-6">
-                  <h2 className="text-xl font-semibold text-neutral-900 mb-4">
+                  <h2 className="text-xl font-semibold text-neutral-100 mb-4">
                     Event Recap
                   </h2>
                   {event.recap.photoUrl && (
@@ -270,7 +270,7 @@ export function EventPageClient({ event }: { event: Event }) {
                       />
                     </div>
                   )}
-                  <p className="text-neutral-700 leading-relaxed whitespace-pre-wrap">
+                  <p className="text-neutral-300 leading-relaxed whitespace-pre-wrap">
                     {event.recap.recapText}
                   </p>
                   <div className="mt-4 flex items-center gap-3 text-sm text-neutral-500">
@@ -294,9 +294,9 @@ export function EventPageClient({ event }: { event: Event }) {
             {/* Attendees */}
             {goingCount > 0 && (
               <>
-                <div className="border-t border-neutral-200" />
+                <div className="border-t border-neutral-800" />
                 <div>
-                  <h2 className="text-xl font-semibold text-neutral-900 mb-4 flex items-center gap-2">
+                  <h2 className="text-xl font-semibold text-neutral-100 mb-4 flex items-center gap-2">
                     <Users className="w-5 h-5" />
                     Who&apos;s going ({goingCount})
                   </h2>
@@ -304,12 +304,12 @@ export function EventPageClient({ event }: { event: Event }) {
                     {event.attendeesPreview.map((attendee) => (
                       <div
                         key={attendee.id}
-                        className="flex items-center gap-2 px-3 py-2 bg-neutral-50 rounded-full"
+                        className="flex items-center gap-2 px-3 py-2 bg-neutral-900 rounded-full"
                       >
-                        <div className="w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center text-sm font-medium text-neutral-600">
+                        <div className="w-8 h-8 bg-neutral-700 rounded-full flex items-center justify-center text-sm font-medium text-neutral-400">
                           {attendee.name.charAt(0).toUpperCase()}
                         </div>
-                        <span className="text-sm text-neutral-700">{attendee.name}</span>
+                        <span className="text-sm text-neutral-300">{attendee.name}</span>
                       </div>
                     ))}
                     {goingCount > event.attendeesPreview.length && (
@@ -326,20 +326,20 @@ export function EventPageClient({ event }: { event: Event }) {
           {/* Right Column - Sticky RSVP Widget */}
           <div className="lg:col-span-1 mt-8 lg:mt-0">
             <div className="lg:sticky lg:top-24">
-              <div className="bg-white border border-neutral-200 rounded-2xl p-6 shadow-lg">
+              <div className="bg-neutral-950 border border-neutral-800 rounded-2xl p-6 shadow-lg">
                 {/* Price */}
                 <div className="mb-6">
                   {isPaid ? (
                     <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-bold text-neutral-900">
+                      <span className="text-3xl font-bold text-neutral-100">
                         ${(event.price! / 100).toFixed(2)}
                       </span>
                       <span className="text-neutral-500">per person</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <span className="text-3xl font-bold text-green-600">Free</span>
-                      <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                      <span className="text-3xl font-bold text-green-400">Free</span>
+                      <span className="px-2 py-0.5 bg-green-900 text-green-400 rounded-full text-sm font-medium">
                         No payment required
                       </span>
                     </div>
@@ -350,7 +350,7 @@ export function EventPageClient({ event }: { event: Event }) {
                 {event.isFull ? (
                   <button
                     disabled
-                    className="w-full py-4 bg-neutral-200 text-neutral-500 rounded-xl font-semibold text-lg cursor-not-allowed"
+                    className="w-full py-4 bg-neutral-700 text-neutral-500 rounded-xl font-semibold text-lg cursor-not-allowed"
                   >
                     Event Full
                   </button>
@@ -358,7 +358,7 @@ export function EventPageClient({ event }: { event: Event }) {
                   <motion.button
                     onClick={handleRSVP}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full py-4 bg-green-100 text-green-700 rounded-xl font-semibold text-lg flex items-center justify-center gap-2"
+                    className="w-full py-4 bg-green-900 text-green-400 rounded-xl font-semibold text-lg flex items-center justify-center gap-2"
                   >
                     <span>✓</span> You&apos;re Going
                   </motion.button>
@@ -367,7 +367,7 @@ export function EventPageClient({ event }: { event: Event }) {
                     onClick={handleRSVP}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full py-4 bg-neutral-900 text-white rounded-xl font-semibold text-lg hover:bg-neutral-800 transition-colors"
+                    className="w-full py-4 bg-white text-neutral-900 rounded-xl font-semibold text-lg hover:bg-neutral-200 transition-colors"
                   >
                     {isPaid ? `Reserve for $${(event.price! / 100).toFixed(2)}` : "I'm In"}
                   </motion.button>
@@ -381,18 +381,18 @@ export function EventPageClient({ event }: { event: Event }) {
                 </p>
 
                 {/* Date & Time Summary */}
-                <div className="mt-6 pt-6 border-t border-neutral-200 space-y-3">
+                <div className="mt-6 pt-6 border-t border-neutral-800 space-y-3">
                   <div className="flex items-center gap-3 text-sm">
                     <Calendar className="w-4 h-4 text-neutral-400" />
-                    <span className="text-neutral-600">{formatDate()}</span>
+                    <span className="text-neutral-400">{formatDate()}</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <Clock className="w-4 h-4 text-neutral-400" />
-                    <span className="text-neutral-600">{event.time}</span>
+                    <span className="text-neutral-400">{event.time}</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
                     <MapPin className="w-4 h-4 text-neutral-400" />
-                    <span className="text-neutral-600 line-clamp-1">{event.location}</span>
+                    <span className="text-neutral-400 line-clamp-1">{event.location}</span>
                   </div>
                 </div>
               </div>
@@ -402,36 +402,36 @@ export function EventPageClient({ event }: { event: Event }) {
       </div>
 
       {/* Mobile Fixed Bottom CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 p-4 z-40">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-neutral-950 border-t border-neutral-800 p-4 z-40">
         <div className="flex items-center justify-between gap-4">
           <div>
             {isPaid ? (
-              <span className="text-xl font-bold text-neutral-900">
+              <span className="text-xl font-bold text-neutral-100">
                 ${(event.price! / 100).toFixed(2)}
               </span>
             ) : (
-              <span className="text-xl font-bold text-green-600">Free</span>
+              <span className="text-xl font-bold text-green-400">Free</span>
             )}
             <p className="text-sm text-neutral-500">{goingCount} going</p>
           </div>
           {event.isFull ? (
             <button
               disabled
-              className="flex-1 py-3 bg-neutral-200 text-neutral-500 rounded-xl font-semibold cursor-not-allowed"
+              className="flex-1 py-3 bg-neutral-700 text-neutral-500 rounded-xl font-semibold cursor-not-allowed"
             >
               Event Full
             </button>
           ) : isGoing ? (
             <button
               onClick={handleRSVP}
-              className="flex-1 py-3 bg-green-100 text-green-700 rounded-xl font-semibold"
+              className="flex-1 py-3 bg-green-900 text-green-400 rounded-xl font-semibold"
             >
               ✓ You&apos;re Going
             </button>
           ) : (
             <button
               onClick={handleRSVP}
-              className="flex-1 py-3 bg-neutral-900 text-white rounded-xl font-semibold"
+              className="flex-1 py-3 bg-white text-neutral-900 rounded-xl font-semibold"
             >
               {isPaid ? 'Reserve' : "I'm In"}
             </button>

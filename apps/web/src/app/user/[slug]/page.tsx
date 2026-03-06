@@ -199,7 +199,7 @@ export default function UserProfilePage() {
   // ——— Loading ———
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />
       </div>
     )
@@ -208,9 +208,9 @@ export default function UserProfilePage() {
   // ——— Error ———
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex flex-col items-center justify-center px-4">
+      <div className="min-h-screen bg-neutral-900 flex flex-col items-center justify-center px-4">
         <p className="text-neutral-500 mb-4">{error || 'Profile not found'}</p>
-        <Link href="/" className="text-neutral-900 font-medium hover:underline">Go back home</Link>
+        <Link href="/" className="text-neutral-100 font-medium hover:underline">Go back home</Link>
       </div>
     )
   }
@@ -220,16 +220,16 @@ export default function UserProfilePage() {
   // ——— Private profile ———
   if (!profile.isPublic && !isOwnProfile) {
     return (
-      <div className="min-h-screen bg-neutral-50">
-        <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-neutral-200">
+      <div className="min-h-screen bg-neutral-900">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-950 border-b border-neutral-800">
           <div className="max-w-lg mx-auto px-4 h-16 flex items-center">
-            <Link href="/" className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors">
-              <ArrowLeft className="w-5 h-5 text-neutral-700" />
+            <Link href="/" className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-800 hover:bg-neutral-700 transition-colors">
+              <ArrowLeft className="w-5 h-5 text-neutral-300" />
             </Link>
           </div>
         </header>
         <main className="pt-24 px-4 flex flex-col items-center justify-center">
-          <div className="w-24 h-24 rounded-full overflow-hidden mb-4 bg-neutral-100">
+          <div className="w-24 h-24 rounded-full overflow-hidden mb-4 bg-neutral-800">
             {profile.imageUrl ? (
               <Image src={profile.imageUrl} alt={profile.name || 'User'} width={96} height={96} className="w-full h-full object-cover" />
             ) : (
@@ -238,7 +238,7 @@ export default function UserProfilePage() {
               </div>
             )}
           </div>
-          <h2 className="text-xl font-bold text-neutral-900 mb-2">
+          <h2 className="text-xl font-bold text-neutral-100 mb-2">
             {profile.firstName || profile.name?.split(' ')[0] || 'User'}
           </h2>
           <div className="flex items-center gap-2 text-neutral-500">
@@ -252,15 +252,15 @@ export default function UserProfilePage() {
 
   // ——— Public profile ———
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-white border-b border-neutral-200">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-950 border-b border-neutral-800">
         <div className="max-w-lg mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors">
-            <ArrowLeft className="w-5 h-5 text-neutral-700" />
+          <Link href="/" className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-800 hover:bg-neutral-700 transition-colors">
+            <ArrowLeft className="w-5 h-5 text-neutral-300" />
           </Link>
-          <button onClick={handleShare} className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors">
-            <Share2 className="w-5 h-5 text-neutral-700" />
+          <button onClick={handleShare} className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-800 hover:bg-neutral-700 transition-colors">
+            <Share2 className="w-5 h-5 text-neutral-300" />
           </button>
         </div>
       </header>
@@ -270,9 +270,9 @@ export default function UserProfilePage() {
         <div className="max-w-lg mx-auto space-y-4">
 
           {/* Profile Card */}
-          <div className="bg-white rounded-2xl border border-neutral-200 p-6 text-center">
+          <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-6 text-center">
             {/* Avatar */}
-            <div className="w-28 h-28 rounded-full border-4 border-neutral-100 overflow-hidden mx-auto">
+            <div className="w-28 h-28 rounded-full border-4 border-neutral-800 overflow-hidden mx-auto">
               {profile.imageUrl ? (
                 <Image src={profile.imageUrl} alt={profile.name || 'User'} width={112} height={112} className="w-full h-full object-cover" />
               ) : (
@@ -283,23 +283,23 @@ export default function UserProfilePage() {
             </div>
 
             {/* Name + headline */}
-            <h1 className="text-2xl font-bold text-neutral-900 mt-4">{profile.name}</h1>
-            {profile.headline && <p className="text-neutral-600 mt-1">{profile.headline}</p>}
+            <h1 className="text-2xl font-bold text-neutral-100 mt-4">{profile.name}</h1>
+            {profile.headline && <p className="text-neutral-400 mt-1">{profile.headline}</p>}
 
             {/* Stats row */}
             <div className="flex justify-center gap-6 mt-4">
               {profile.attendedStats && (
                 <div className="text-center">
-                  <div className="text-lg font-bold text-neutral-900">{profile.attendedStats.activitiesAttended}</div>
+                  <div className="text-lg font-bold text-neutral-100">{profile.attendedStats.activitiesAttended}</div>
                   <div className="text-xs text-neutral-500">events</div>
                 </div>
               )}
               <button onClick={() => openModal('followers')} className="text-center hover:opacity-70 transition-opacity">
-                <div className="text-lg font-bold text-neutral-900">{localFollowCounts.followers}</div>
+                <div className="text-lg font-bold text-neutral-100">{localFollowCounts.followers}</div>
                 <div className="text-xs text-neutral-500">followers</div>
               </button>
               <button onClick={() => openModal('following')} className="text-center hover:opacity-70 transition-opacity">
-                <div className="text-lg font-bold text-neutral-900">{localFollowCounts.following}</div>
+                <div className="text-lg font-bold text-neutral-100">{localFollowCounts.following}</div>
                 <div className="text-xs text-neutral-500">following</div>
               </button>
             </div>
@@ -311,8 +311,8 @@ export default function UserProfilePage() {
                 disabled={followLoading}
                 className={`w-full mt-4 py-2.5 rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2 ${
                   localFollowing
-                    ? 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
-                    : 'bg-neutral-900 text-white hover:bg-neutral-700'
+                    ? 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
+                    : 'bg-white text-neutral-900 hover:bg-neutral-200'
                 }`}
               >
                 {followLoading ? (
@@ -329,7 +329,7 @@ export default function UserProfilePage() {
             {isOwnProfile && (
               <Link
                 href="/settings/profile"
-                className="block w-full mt-4 py-2.5 rounded-xl font-semibold text-sm text-center bg-neutral-100 text-neutral-700 hover:bg-neutral-200 transition-colors"
+                className="block w-full mt-4 py-2.5 rounded-xl font-semibold text-sm text-center bg-neutral-800 text-neutral-300 hover:bg-neutral-700 transition-colors"
               >
                 Edit Profile
               </Link>
@@ -337,7 +337,7 @@ export default function UserProfilePage() {
 
             {/* Going Solo badge */}
             {profile.goingSolo && (
-              <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-sm font-medium">
+              <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-950 border border-amber-800 text-amber-400 text-sm font-medium">
                 <span>&#x1f44b;</span> Going Solo
               </div>
             )}
@@ -358,7 +358,7 @@ export default function UserProfilePage() {
 
             {/* Bio */}
             {profile.bio && (
-              <p className="text-sm text-neutral-600 mt-4 leading-relaxed text-left">{profile.bio}</p>
+              <p className="text-sm text-neutral-400 mt-4 leading-relaxed text-left">{profile.bio}</p>
             )}
 
             {/* Fitness Interests */}
@@ -387,29 +387,29 @@ export default function UserProfilePage() {
 
             {/* Social Links */}
             {(profile.instagram || profile.twitter || profile.linkedin || profile.tiktok || profile.website) && (
-              <div className="flex flex-wrap justify-center gap-3 pt-4 border-t border-neutral-100 mt-4">
+              <div className="flex flex-wrap justify-center gap-3 pt-4 border-t border-neutral-800 mt-4">
                 {profile.instagram && (
-                  <a href={`https://instagram.com/${profile.instagram}`} target="_blank" rel="noopener noreferrer" className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors">
+                  <a href={`https://instagram.com/${profile.instagram}`} target="_blank" rel="noopener noreferrer" className="text-sm text-neutral-400 hover:text-neutral-100 transition-colors">
                     @{profile.instagram}
                   </a>
                 )}
                 {profile.twitter && (
-                  <a href={`https://x.com/${profile.twitter}`} target="_blank" rel="noopener noreferrer" className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors">
+                  <a href={`https://x.com/${profile.twitter}`} target="_blank" rel="noopener noreferrer" className="text-sm text-neutral-400 hover:text-neutral-100 transition-colors">
                     @{profile.twitter}
                   </a>
                 )}
                 {profile.linkedin && (
-                  <a href={`https://linkedin.com/in/${profile.linkedin}`} target="_blank" rel="noopener noreferrer" className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors">
+                  <a href={`https://linkedin.com/in/${profile.linkedin}`} target="_blank" rel="noopener noreferrer" className="text-sm text-neutral-400 hover:text-neutral-100 transition-colors">
                     LinkedIn
                   </a>
                 )}
                 {profile.tiktok && (
-                  <a href={`https://tiktok.com/@${profile.tiktok}`} target="_blank" rel="noopener noreferrer" className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors">
+                  <a href={`https://tiktok.com/@${profile.tiktok}`} target="_blank" rel="noopener noreferrer" className="text-sm text-neutral-400 hover:text-neutral-100 transition-colors">
                     TikTok
                   </a>
                 )}
                 {profile.website && (
-                  <a href={profile.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-sm text-neutral-600 hover:text-neutral-900 transition-colors">
+                  <a href={profile.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-sm text-neutral-400 hover:text-neutral-100 transition-colors">
                     <ExternalLink className="w-3 h-3" /> Website
                   </a>
                 )}
@@ -419,8 +419,8 @@ export default function UserProfilePage() {
 
           {/* Communities Section */}
           {communities.length > 0 && (
-            <div className="bg-white rounded-2xl border border-neutral-200 p-5">
-              <h2 className="text-base font-semibold text-neutral-900 mb-3">Communities</h2>
+            <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-5">
+              <h2 className="text-base font-semibold text-neutral-100 mb-3">Communities</h2>
               <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1">
                 {communities.map(community => (
                   <Link
@@ -428,7 +428,7 @@ export default function UserProfilePage() {
                     href={`/community/${community.slug}`}
                     className="flex-shrink-0 w-28 text-center group"
                   >
-                    <div className="w-16 h-16 rounded-2xl overflow-hidden mx-auto bg-neutral-100 border border-neutral-200">
+                    <div className="w-16 h-16 rounded-2xl overflow-hidden mx-auto bg-neutral-800 border border-neutral-800">
                       {community.logoImage ? (
                         <Image src={community.logoImage} alt={community.name} width={64} height={64} className="w-full h-full object-cover" />
                       ) : (
@@ -437,7 +437,7 @@ export default function UserProfilePage() {
                         </div>
                       )}
                     </div>
-                    <p className="text-xs font-medium text-neutral-900 mt-1.5 truncate group-hover:text-neutral-600">{community.name}</p>
+                    <p className="text-xs font-medium text-neutral-100 mt-1.5 truncate group-hover:text-neutral-400">{community.name}</p>
                     <p className="text-[10px] text-neutral-400">{community.memberCount} members</p>
                   </Link>
                 ))}
@@ -447,8 +447,8 @@ export default function UserProfilePage() {
 
           {/* Upcoming Events Section */}
           {upcomingEvents.length > 0 && (
-            <div className="bg-white rounded-2xl border border-neutral-200 p-5">
-              <h2 className="text-base font-semibold text-neutral-900 mb-3">Upcoming Events</h2>
+            <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-5">
+              <h2 className="text-base font-semibold text-neutral-100 mb-3">Upcoming Events</h2>
               <div className="space-y-3">
                 {upcomingEvents.map(event => {
                   const cat = event.categorySlug ? getCategoryDisplay(event.categorySlug) : null
@@ -458,7 +458,7 @@ export default function UserProfilePage() {
                       href={`/events/${event.id}`}
                       className="flex items-center gap-3 group"
                     >
-                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-neutral-100 flex-shrink-0">
+                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-neutral-800 flex-shrink-0">
                         {event.imageUrl ? (
                           <Image src={event.imageUrl} alt={event.title} width={56} height={56} className="w-full h-full object-cover" />
                         ) : (
@@ -468,7 +468,7 @@ export default function UserProfilePage() {
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-neutral-900 truncate group-hover:text-neutral-600">{event.title}</p>
+                        <p className="text-sm font-medium text-neutral-100 truncate group-hover:text-neutral-400">{event.title}</p>
                         <p className="text-xs text-neutral-500">{formatEventDate(event.startTime)}</p>
                         {event.city && <p className="text-xs text-neutral-400">{event.city}</p>}
                       </div>
@@ -481,7 +481,7 @@ export default function UserProfilePage() {
 
           {/* Back to Home */}
           <div className="text-center pt-4">
-            <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors">
+            <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-100 transition-colors">
               &larr; Back to SweatBuddies
             </Link>
           </div>
@@ -492,11 +492,11 @@ export default function UserProfilePage() {
       {modalType && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
           <div className="fixed inset-0 bg-black/40" onClick={() => setModalType(null)} />
-          <div className="relative bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-md max-h-[70vh] flex flex-col">
+          <div className="relative bg-neutral-950 rounded-t-2xl sm:rounded-2xl w-full max-w-md max-h-[70vh] flex flex-col">
             {/* Modal header */}
-            <div className="flex items-center justify-between p-4 border-b border-neutral-100">
-              <h3 className="text-lg font-semibold text-neutral-900 capitalize">{modalType}</h3>
-              <button onClick={() => setModalType(null)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-100">
+            <div className="flex items-center justify-between p-4 border-b border-neutral-800">
+              <h3 className="text-lg font-semibold text-neutral-100 capitalize">{modalType}</h3>
+              <button onClick={() => setModalType(null)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-neutral-800">
                 <X className="w-5 h-5 text-neutral-500" />
               </button>
             </div>
@@ -513,7 +513,7 @@ export default function UserProfilePage() {
                   {modalUsers.map(user => (
                     <div key={user.id} className="flex items-center gap-3">
                       <Link href={`/user/${user.slug}`} onClick={() => setModalType(null)} className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className="w-10 h-10 rounded-full overflow-hidden bg-neutral-100 flex-shrink-0">
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-neutral-800 flex-shrink-0">
                           {user.imageUrl ? (
                             <Image src={user.imageUrl} alt={user.name || ''} width={40} height={40} className="w-full h-full object-cover" />
                           ) : (
@@ -522,15 +522,15 @@ export default function UserProfilePage() {
                             </div>
                           )}
                         </div>
-                        <span className="text-sm font-medium text-neutral-900 truncate">{user.name || user.firstName || 'User'}</span>
+                        <span className="text-sm font-medium text-neutral-100 truncate">{user.name || user.firstName || 'User'}</span>
                       </Link>
                       {user.slug && (
                         <button
                           onClick={() => handleModalFollow(user.slug!, user.id)}
                           className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                             user.isFollowing
-                              ? 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-                              : 'bg-neutral-900 text-white hover:bg-neutral-700'
+                              ? 'bg-neutral-800 text-neutral-400 hover:bg-neutral-700'
+                              : 'bg-white text-neutral-900 hover:bg-neutral-200'
                           }`}
                         >
                           {user.isFollowing ? 'Following' : 'Follow'}

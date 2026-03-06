@@ -5,20 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 select-none",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 select-none",
   {
     variants: {
       variant: {
-        default: "bg-neutral-900 text-white shadow-md shadow-neutral-900/20 hover:bg-neutral-800 hover:shadow-lg hover:shadow-neutral-900/25 active:scale-[0.98] active:shadow-sm",
+        default: "bg-white text-neutral-900 shadow-md shadow-black/10 hover:bg-neutral-100 hover:shadow-lg active:scale-[0.98] active:shadow-sm",
         destructive:
           "bg-red-600 text-white shadow-md shadow-red-600/20 hover:bg-red-700 hover:shadow-lg active:scale-[0.98]",
         outline:
-          "border-2 border-neutral-200 bg-white text-neutral-900 hover:bg-neutral-50 hover:border-neutral-300 active:scale-[0.98] active:bg-neutral-100",
+          "border-2 border-neutral-700 bg-transparent text-neutral-100 hover:bg-neutral-800 hover:border-neutral-600 active:scale-[0.98] active:bg-neutral-700",
         secondary:
-          "bg-neutral-100 text-neutral-900 hover:bg-neutral-200 active:scale-[0.98] active:bg-neutral-300",
-        ghost: "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 active:scale-[0.98] active:bg-neutral-200",
-        link: "text-neutral-900 underline-offset-4 hover:underline focus-visible:underline",
-        gradient: "bg-gradient-to-r from-neutral-900 to-neutral-700 text-white shadow-lg shadow-neutral-900/30 hover:shadow-xl hover:from-neutral-800 hover:to-neutral-600 active:scale-[0.98]",
+          "bg-neutral-800 text-neutral-100 hover:bg-neutral-700 active:scale-[0.98] active:bg-neutral-600",
+        ghost: "text-neutral-400 hover:bg-neutral-800 hover:text-neutral-100 active:scale-[0.98] active:bg-neutral-700",
+        link: "text-neutral-100 underline-offset-4 hover:underline focus-visible:underline",
+        gradient: "bg-gradient-to-r from-white to-neutral-200 text-neutral-900 shadow-lg shadow-white/10 hover:shadow-xl hover:from-neutral-100 hover:to-neutral-300 active:scale-[0.98]",
       },
       size: {
         default: "h-12 px-6 py-3",

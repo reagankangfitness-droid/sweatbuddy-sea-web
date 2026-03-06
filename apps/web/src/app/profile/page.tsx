@@ -87,10 +87,10 @@ export default function ProfilePage() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <div className="animate-pulse">
-          <div className="w-20 h-20 bg-neutral-200 rounded-full mb-4" />
-          <div className="h-4 bg-neutral-200 rounded-lg w-32 mx-auto" />
+          <div className="w-20 h-20 bg-neutral-700 rounded-full mb-4" />
+          <div className="h-4 bg-neutral-700 rounded-lg w-32 mx-auto" />
         </div>
       </div>
     )
@@ -98,28 +98,28 @@ export default function ProfilePage() {
 
   if (!isSignedIn) {
     return (
-      <div className="min-h-screen bg-neutral-50">
-        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+      <div className="min-h-screen bg-neutral-900">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="flex items-center gap-4 px-4 py-3">
               <Link
                 href="/"
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800"
               >
-                <ArrowLeft className="w-5 h-5 text-neutral-700" />
+                <ArrowLeft className="w-5 h-5 text-neutral-300" />
               </Link>
-              <h1 className="text-lg font-semibold text-neutral-900">Profile</h1>
+              <h1 className="text-lg font-semibold text-neutral-100">Profile</h1>
             </div>
           </div>
         </header>
 
         <main className="pt-24 pb-24 px-4">
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-full border border-neutral-100 shadow-sm mb-6">
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-neutral-950 rounded-full border border-neutral-800 shadow-sm mb-6">
               <User className="w-12 h-12 text-neutral-300" />
             </div>
-            <h2 className="text-2xl font-bold text-neutral-900 mb-2">Join SweatBuddies</h2>
-            <p className="text-neutral-600 mb-8 max-w-xs mx-auto">
+            <h2 className="text-2xl font-bold text-neutral-100 mb-2">Join SweatBuddies</h2>
+            <p className="text-neutral-400 mb-8 max-w-xs mx-auto">
               Sign in to track your fitness journey and connect with your workout crew.
             </p>
 
@@ -139,18 +139,18 @@ export default function ProfilePage() {
   const isHost = profile?.isHost
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-50/95 backdrop-blur-lg border-b border-neutral-200">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center gap-4 px-4 py-3">
             <Link
               href="/events"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-neutral-200"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800"
             >
-              <ArrowLeft className="w-5 h-5 text-neutral-700" />
+              <ArrowLeft className="w-5 h-5 text-neutral-300" />
             </Link>
-            <h1 className="text-lg font-semibold text-neutral-900">Profile</h1>
+            <h1 className="text-lg font-semibold text-neutral-100">Profile</h1>
           </div>
         </div>
       </header>
@@ -158,10 +158,10 @@ export default function ProfilePage() {
       {/* Content */}
       <main className="pt-20 pb-24 px-4 max-w-lg mx-auto">
         {/* Profile Card */}
-        <div className="bg-white rounded-2xl border border-neutral-100 p-4 mb-8">
+        <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 mb-8">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-neutral-100 bg-neutral-100 flex-shrink-0">
+              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-neutral-800 bg-neutral-800 flex-shrink-0">
                 {user?.imageUrl ? (
                   <Image
                     src={user.imageUrl}
@@ -177,18 +177,18 @@ export default function ProfilePage() {
                 )}
               </div>
               {isHost && (
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center border-2 border-white">
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center border-2 border-neutral-700">
                   <BadgeCheck className="w-3.5 h-3.5 text-white" />
                 </div>
               )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-semibold text-neutral-900 truncate">
+                <h2 className="text-lg font-semibold text-neutral-100 truncate">
                   {user?.fullName || user?.firstName || 'SweatBuddy'}
                 </h2>
                 {isHost && (
-                  <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
+                  <span className="px-2 py-0.5 bg-amber-900 text-amber-400 text-xs font-medium rounded-full">
                     Host
                   </span>
                 )}
@@ -205,18 +205,18 @@ export default function ProfilePage() {
           <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider px-1 mb-2">
             My Activity
           </h3>
-          <div className="bg-white rounded-2xl border border-neutral-100 overflow-hidden">
+          <div className="bg-neutral-950 rounded-2xl border border-neutral-800 overflow-hidden">
             {isHost && (
               <Link
                 href="/host/dashboard"
-                className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
+                className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 bg-amber-100 rounded-lg flex items-center justify-center">
-                    <LayoutDashboard className="w-4 h-4 text-amber-600" />
+                  <div className="w-9 h-9 bg-amber-900 rounded-lg flex items-center justify-center">
+                    <LayoutDashboard className="w-4 h-4 text-amber-400" />
                   </div>
                   <div>
-                    <span className="text-neutral-800 text-sm font-medium">Host Dashboard</span>
+                    <span className="text-neutral-200 text-sm font-medium">Host Dashboard</span>
                     <p className="text-xs text-neutral-500">Manage experiences & community</p>
                   </div>
                 </div>
@@ -226,14 +226,14 @@ export default function ProfilePage() {
 
             <Link
               href="/my-bookings"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-100 rounded-lg flex items-center justify-center">
-                  <Ticket className="w-4 h-4 text-neutral-600" />
+                <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
+                  <Ticket className="w-4 h-4 text-neutral-400" />
                 </div>
                 <div>
-                  <span className="text-neutral-800 text-sm font-medium">My Bookings</span>
+                  <span className="text-neutral-200 text-sm font-medium">My Bookings</span>
                   <p className="text-xs text-neutral-500">Upcoming & past events</p>
                 </div>
               </div>
@@ -242,14 +242,14 @@ export default function ProfilePage() {
 
             <Link
               href="/saved"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-100 rounded-lg flex items-center justify-center">
-                  <Heart className="w-4 h-4 text-neutral-600" />
+                <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
+                  <Heart className="w-4 h-4 text-neutral-400" />
                 </div>
                 <div>
-                  <span className="text-neutral-800 text-sm font-medium">Saved</span>
+                  <span className="text-neutral-200 text-sm font-medium">Saved</span>
                   <p className="text-xs text-neutral-500">Events you&apos;ve saved</p>
                 </div>
               </div>
@@ -258,14 +258,14 @@ export default function ProfilePage() {
 
             <Link
               href="/crews"
-              className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-50 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-900 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-100 rounded-lg flex items-center justify-center">
-                  <MessageCircle className="w-4 h-4 text-neutral-600" />
+                <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
+                  <MessageCircle className="w-4 h-4 text-neutral-400" />
                 </div>
                 <div>
-                  <span className="text-neutral-800 text-sm font-medium">My Crews</span>
+                  <span className="text-neutral-200 text-sm font-medium">My Crews</span>
                   <p className="text-xs text-neutral-500">Communities you&apos;ve joined</p>
                 </div>
               </div>
@@ -280,17 +280,17 @@ export default function ProfilePage() {
             <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider px-1 mb-2">
               Host Tools
             </h3>
-            <div className="bg-white rounded-2xl border border-neutral-100 overflow-hidden">
+            <div className="bg-neutral-950 rounded-2xl border border-neutral-800 overflow-hidden">
               <Link
                 href="/host/dashboard"
-                className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-50 transition-colors"
+                className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-900 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 bg-neutral-100 rounded-lg flex items-center justify-center">
-                    <LayoutDashboard className="w-4 h-4 text-neutral-600" />
+                  <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
+                    <LayoutDashboard className="w-4 h-4 text-neutral-400" />
                   </div>
                   <div>
-                    <span className="text-neutral-800 text-sm font-medium">Host Dashboard</span>
+                    <span className="text-neutral-200 text-sm font-medium">Host Dashboard</span>
                     <p className="text-xs text-neutral-500">Manage experiences & community</p>
                   </div>
                 </div>
@@ -305,39 +305,39 @@ export default function ProfilePage() {
           <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider px-1 mb-2">
             Account
           </h3>
-          <div className="bg-white rounded-2xl border border-neutral-100 overflow-hidden">
+          <div className="bg-neutral-950 rounded-2xl border border-neutral-800 overflow-hidden">
             <Link
               href="/settings/profile"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-100 rounded-lg flex items-center justify-center">
-                  <Settings className="w-4 h-4 text-neutral-600" />
+                <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
+                  <Settings className="w-4 h-4 text-neutral-400" />
                 </div>
-                <span className="text-neutral-800 text-sm font-medium">Settings</span>
+                <span className="text-neutral-200 text-sm font-medium">Settings</span>
               </div>
               <ChevronRight className="w-5 h-5 text-neutral-300" />
             </Link>
 
             <Link
               href="/support"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-100 rounded-lg flex items-center justify-center">
-                  <HelpCircle className="w-4 h-4 text-neutral-600" />
+                <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
+                  <HelpCircle className="w-4 h-4 text-neutral-400" />
                 </div>
-                <span className="text-neutral-800 text-sm font-medium">Help & Support</span>
+                <span className="text-neutral-200 text-sm font-medium">Help & Support</span>
               </div>
               <ChevronRight className="w-5 h-5 text-neutral-300" />
             </Link>
 
             <button
               onClick={() => signOut(() => router.push('/'))}
-              className="w-full flex items-center px-4 py-3.5 text-neutral-600 hover:bg-neutral-50 transition-colors"
+              className="w-full flex items-center px-4 py-3.5 text-neutral-400 hover:bg-neutral-900 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-100 rounded-lg flex items-center justify-center">
+                <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
                   <LogOut className="w-4 h-4" />
                 </div>
                 <span className="text-sm font-medium">Sign Out</span>

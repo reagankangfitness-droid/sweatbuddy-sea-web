@@ -88,7 +88,7 @@ export function PostActivityPrompt({
             variant="secondary"
             size="sm"
             onClick={() => setShowCreator(true)}
-            className="flex-shrink-0 bg-white text-primary hover:bg-white/90"
+            className="flex-shrink-0 bg-neutral-950 text-primary hover:bg-neutral-950/90"
           >
             <Camera className="w-4 h-4 mr-1.5" />
             Create Card

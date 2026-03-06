@@ -72,7 +72,7 @@ export function JoinCommunityButton({
     return (
       <button
         disabled
-        className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-100 text-neutral-400 rounded-full font-medium"
+        className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-800 text-neutral-400 rounded-full font-medium"
       >
         <Loader2 className="w-5 h-5 animate-spin" />
         Loading...
@@ -84,7 +84,7 @@ export function JoinCommunityButton({
     return (
       <a
         href={`/host/communities/${communitySlug}`}
-        className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-900 text-white rounded-full font-medium hover:bg-neutral-800 transition-colors"
+        className="inline-flex items-center gap-2 px-6 py-3 bg-white text-neutral-900 rounded-full font-medium hover:bg-neutral-200 transition-colors"
       >
         <Settings className="w-5 h-5" />
         Manage
@@ -95,7 +95,7 @@ export function JoinCommunityButton({
   if (isMember) {
     return (
       <div className="flex items-center gap-2">
-        <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+        <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-950 text-green-400 rounded-full text-sm font-medium">
           <Check className="w-4 h-4" />
           Joined
         </span>
@@ -113,7 +113,7 @@ export function JoinCommunityButton({
     return (
       <button
         disabled
-        className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-100 text-neutral-500 rounded-full font-medium cursor-not-allowed"
+        className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-800 text-neutral-500 rounded-full font-medium cursor-not-allowed"
       >
         <LogIn className="w-5 h-5" />
         Invite Only
@@ -124,7 +124,7 @@ export function JoinCommunityButton({
   return (
     <button
       onClick={handleJoin}
-      className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-900 text-white rounded-full font-medium hover:bg-neutral-800 transition-colors"
+      className="inline-flex items-center gap-2 px-6 py-3 bg-white text-neutral-900 rounded-full font-medium hover:bg-neutral-200 transition-colors"
     >
       <Users className="w-5 h-5" />
       Join Community

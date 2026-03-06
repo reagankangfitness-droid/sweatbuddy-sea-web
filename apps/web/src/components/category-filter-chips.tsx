@@ -54,8 +54,8 @@ export function CategoryFilterChips({
             className={cn(
               'inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all',
               selected.length === 0
-                ? 'bg-neutral-900 text-white'
-                : 'bg-white border border-neutral-200 text-neutral-600 hover:border-neutral-300'
+                ? 'bg-white text-neutral-900'
+                : 'bg-neutral-950 border border-neutral-800 text-neutral-400 hover:border-neutral-600'
             )}
           >
             All
@@ -74,7 +74,7 @@ export function CategoryFilterChips({
                 'inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all',
                 isActive
                   ? 'bg-primary/10 border border-primary text-primary'
-                  : 'bg-white border border-neutral-200 text-neutral-600 hover:border-neutral-300 hover:bg-neutral-50'
+                  : 'bg-neutral-950 border border-neutral-800 text-neutral-400 hover:border-neutral-600 hover:bg-neutral-900'
               )}
             >
               <span>{category.emoji}</span>
@@ -97,7 +97,7 @@ export function CategoryFilterChips({
           <button
             type="button"
             onClick={() => setShowMore(true)}
-            className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-neutral-500 hover:text-neutral-700 transition-colors"
+            className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-neutral-500 hover:text-neutral-300 transition-colors"
           >
             +{ACTIVITY_CATEGORIES.length - maxVisible - 1} more
             <ChevronRight className="w-4 h-4" />
@@ -108,7 +108,7 @@ export function CategoryFilterChips({
           <button
             type="button"
             onClick={() => setShowMore(false)}
-            className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-neutral-500 hover:text-neutral-700 transition-colors"
+            className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-neutral-500 hover:text-neutral-300 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             Show less
@@ -162,8 +162,8 @@ export function CategoryFilterChipsCompact({
           className={cn(
             'flex-shrink-0 inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap',
             selected.length === 0
-              ? 'bg-neutral-900 text-white'
-              : 'bg-white border border-neutral-200 text-neutral-600'
+              ? 'bg-white text-neutral-900'
+              : 'bg-neutral-950 border border-neutral-800 text-neutral-400'
           )}
         >
           All
@@ -180,7 +180,7 @@ export function CategoryFilterChipsCompact({
                 'flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap',
                 isActive
                   ? 'bg-primary/10 border border-primary text-primary'
-                  : 'bg-white border border-neutral-200 text-neutral-600'
+                  : 'bg-neutral-950 border border-neutral-800 text-neutral-400'
               )}
             >
               <span>{category.emoji}</span>

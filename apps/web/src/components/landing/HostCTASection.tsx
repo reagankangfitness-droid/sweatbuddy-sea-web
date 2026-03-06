@@ -61,7 +61,7 @@ export function HostCTASection() {
 
                 <Link
                   href="/host"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-neutral-900 font-semibold text-sm rounded-md hover:bg-neutral-200 transition-colors"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-neutral-950 text-neutral-100 font-semibold text-sm rounded-md hover:bg-neutral-700 transition-colors"
                 >
                   Start hosting — it&apos;s free
                   <ArrowRight className="w-4 h-4" />

@@ -115,7 +115,7 @@ function AnimatedMessage({ message }: { message: ChatMessage }) {
         className={`max-w-[85%] px-3 py-2 rounded-xl text-sm ${
           message.role === 'user'
             ? 'bg-violet-600 text-white rounded-br-sm'
-            : 'bg-neutral-100 text-neutral-900 rounded-bl-sm'
+            : 'bg-neutral-800 text-neutral-100 rounded-bl-sm'
         }`}
       >
         <p className="whitespace-pre-wrap">
@@ -319,7 +319,7 @@ export function AgentChatWidget() {
         {/* Tooltip */}
         {showTooltip && !isOpen && (
           <div className="absolute bottom-full right-0 mb-3 animate-fade-in">
-            <div className="bg-neutral-900 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg whitespace-nowrap">
+            <div className="bg-white text-neutral-900 px-4 py-2 rounded-xl text-sm font-medium shadow-lg whitespace-nowrap">
               Need help? Ask your AI assistant!
               <div className="absolute -bottom-1 right-6 w-2 h-2 bg-neutral-900 rotate-45" />
             </div>
@@ -357,9 +357,9 @@ export function AgentChatWidget() {
 
       {/* Chat widget */}
       {isOpen && (
-        <div className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 h-[500px] max-h-[70vh] bg-white rounded-xl shadow-2xl border border-neutral-200 flex flex-col overflow-hidden">
+        <div className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 h-[500px] max-h-[70vh] bg-neutral-950 rounded-xl shadow-2xl border border-neutral-800 flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="p-3 sm:p-4 border-b border-neutral-200 bg-gradient-to-r from-violet-600 to-indigo-600 text-white">
+          <div className="p-3 sm:p-4 border-b border-neutral-800 bg-gradient-to-r from-violet-600 to-indigo-600 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
@@ -384,14 +384,14 @@ export function AgentChatWidget() {
           <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3">
             {isLoading ? (
               <div className="flex items-center justify-center h-full">
-                <Loader2 className="w-6 h-6 text-violet-600 animate-spin" />
+                <Loader2 className="w-6 h-6 text-violet-400 animate-spin" />
               </div>
             ) : messages.length === 0 ? (
               <div className="text-center py-4">
                 <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-indigo-500 rounded-xl flex items-center justify-center mx-auto mb-3">
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
-                <p className="text-sm font-medium text-neutral-900 mb-1">
+                <p className="text-sm font-medium text-neutral-100 mb-1">
                   Hey! How can I help?
                 </p>
                 <p className="text-xs text-neutral-500 mb-4">
@@ -409,7 +409,7 @@ export function AgentChatWidget() {
                         <button
                           key={i}
                           onClick={() => handleQuickQuestion(q.question)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100 hover:bg-violet-100 text-neutral-700 hover:text-violet-700 rounded-full text-xs font-medium transition-colors"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-neutral-800 hover:bg-violet-900 text-neutral-300 hover:text-violet-700 rounded-full text-xs font-medium transition-colors"
                         >
                           <span>{q.icon}</span>
                           <span>{q.label}</span>
@@ -428,7 +428,7 @@ export function AgentChatWidget() {
             )}
             {isSending && (
               <div className="flex justify-start">
-                <div className="bg-neutral-100 px-4 py-2 rounded-xl rounded-bl-sm">
+                <div className="bg-neutral-800 px-4 py-2 rounded-xl rounded-bl-sm">
                   <div className="flex items-center gap-1">
                     <span className="w-2 h-2 bg-violet-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                     <span className="w-2 h-2 bg-violet-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -448,7 +448,7 @@ export function AgentChatWidget() {
                   <button
                     key={i}
                     onClick={() => handleQuickQuestion(q.question)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-neutral-100 hover:bg-violet-100 text-neutral-600 hover:text-violet-700 rounded-full text-xs font-medium transition-colors whitespace-nowrap flex-shrink-0"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-neutral-800 hover:bg-violet-900 text-neutral-400 hover:text-violet-700 rounded-full text-xs font-medium transition-colors whitespace-nowrap flex-shrink-0"
                   >
                     <span>{q.icon}</span>
                     <span>{q.label}</span>
@@ -460,13 +460,13 @@ export function AgentChatWidget() {
 
           {/* Error */}
           {error && (
-            <div className="px-3 py-2 bg-red-50 border-t border-red-200">
-              <p className="text-xs text-red-600">{error}</p>
+            <div className="px-3 py-2 bg-red-950 border-t border-red-800">
+              <p className="text-xs text-red-400">{error}</p>
             </div>
           )}
 
           {/* Input */}
-          <div className="p-3 border-t border-neutral-200">
+          <div className="p-3 border-t border-neutral-800">
             <div className="flex items-end gap-2">
               <textarea
                 ref={inputRef}
@@ -475,7 +475,7 @@ export function AgentChatWidget() {
                 onKeyDown={handleKeyDown}
                 placeholder="Ask about your community..."
                 rows={1}
-                className="flex-1 px-3 py-2 bg-neutral-100 border-0 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-neutral-500"
+                className="flex-1 px-3 py-2 bg-neutral-800 border-0 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-neutral-500"
                 style={{ maxHeight: '100px' }}
                 disabled={isSending}
               />

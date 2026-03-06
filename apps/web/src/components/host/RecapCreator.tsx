@@ -98,15 +98,15 @@ export function RecapCreator({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-xl">
+      <div className="bg-neutral-950 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-neutral-200">
-          <h2 className="text-lg font-semibold text-neutral-900">
+        <div className="flex items-center justify-between p-4 border-b border-neutral-800">
+          <h2 className="text-lg font-semibold text-neutral-100">
             {step === 'published' ? 'Recap Published!' : 'Create Event Recap'}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-neutral-100 rounded-full transition-colors"
+            className="p-2 hover:bg-neutral-800 rounded-full transition-colors"
           >
             <X className="w-5 h-5 text-neutral-500" />
           </button>
@@ -115,8 +115,8 @@ export function RecapCreator({
         <div className="p-4 space-y-4">
           {/* Event Info */}
           {step !== 'published' && (
-            <div className="bg-neutral-50 rounded-xl p-3">
-              <p className="font-medium text-neutral-900 text-sm">{eventName}</p>
+            <div className="bg-neutral-900 rounded-xl p-3">
+              <p className="font-medium text-neutral-100 text-sm">{eventName}</p>
               <p className="text-xs text-neutral-500 mt-0.5">
                 {attendeeCount} {attendeeCount === 1 ? 'attendee' : 'attendees'} · {category}
               </p>
@@ -124,8 +124,8 @@ export function RecapCreator({
           )}
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-3">
-              <p className="text-sm text-red-700">{error}</p>
+            <div className="bg-red-950 border border-red-800 rounded-xl p-3">
+              <p className="text-sm text-red-400">{error}</p>
             </div>
           )}
 
@@ -133,20 +133,20 @@ export function RecapCreator({
           {step === 'form' && (
             <>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-300 mb-1.5">
                   How did it go? <span className="text-neutral-400 font-normal">(optional)</span>
                 </label>
                 <textarea
                   value={hostNotes}
                   onChange={(e) => setHostNotes(e.target.value)}
                   placeholder="e.g. Great energy today! We tried a new format and everyone loved it..."
-                  className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-sm text-neutral-900 bg-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900 resize-none"
+                  className="w-full px-3 py-2.5 border border-neutral-800 rounded-xl text-sm text-neutral-100 bg-neutral-950 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-white resize-none"
                   rows={3}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-300 mb-1.5">
                   Add a photo <span className="text-neutral-400 font-normal">(optional)</span>
                 </label>
                 {photoUrl ? (
@@ -177,7 +177,7 @@ export function RecapCreator({
                       setError(`Upload failed: ${err.message}`)
                     }}
                     appearance={{
-                      button: 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200 rounded-xl text-sm font-medium px-4 py-2.5 ut-uploading:bg-neutral-200',
+                      button: 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700 rounded-xl text-sm font-medium px-4 py-2.5 ut-uploading:bg-neutral-700',
                       allowedContent: 'text-xs text-neutral-400',
                     }}
                     content={{
@@ -196,7 +196,7 @@ export function RecapCreator({
               <button
                 onClick={handleGenerate}
                 disabled={isGenerating}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-neutral-900 text-white rounded-xl font-medium text-sm hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white text-neutral-900 rounded-xl font-medium text-sm hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isGenerating ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /> Generating...</>
@@ -211,13 +211,13 @@ export function RecapCreator({
           {step === 'preview' && (
             <>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-300 mb-1.5">
                   Recap text
                 </label>
                 <textarea
                   value={recapText}
                   onChange={(e) => setRecapText(e.target.value)}
-                  className="w-full px-3 py-2.5 border border-neutral-200 rounded-xl text-sm text-neutral-900 bg-white focus:outline-none focus:ring-2 focus:ring-neutral-900 resize-none"
+                  className="w-full px-3 py-2.5 border border-neutral-800 rounded-xl text-sm text-neutral-100 bg-neutral-950 focus:outline-none focus:ring-2 focus:ring-white resize-none"
                   rows={4}
                 />
               </div>
@@ -244,7 +244,7 @@ export function RecapCreator({
                 <button
                   onClick={handleGenerate}
                   disabled={isGenerating}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-neutral-100 text-neutral-700 rounded-xl font-medium text-sm hover:bg-neutral-200 transition-colors disabled:opacity-50"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-neutral-800 text-neutral-300 rounded-xl font-medium text-sm hover:bg-neutral-700 transition-colors disabled:opacity-50"
                 >
                   {isGenerating ? (
                     <><Loader2 className="w-4 h-4 animate-spin" /> Regenerating...</>
@@ -256,7 +256,7 @@ export function RecapCreator({
                 <button
                   onClick={handlePublish}
                   disabled={isPublishing || !recapText.trim()}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-neutral-900 text-white rounded-xl font-medium text-sm hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white text-neutral-900 rounded-xl font-medium text-sm hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isPublishing ? (
                     <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</>
@@ -271,10 +271,10 @@ export function RecapCreator({
           {/* Published state */}
           {step === 'published' && (
             <div className="text-center py-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Check className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="w-8 h-8 text-green-400" />
               </div>
-              <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+              <h3 className="text-lg font-semibold text-neutral-100 mb-2">
                 Recap published!
               </h3>
               <p className="text-sm text-neutral-500">
@@ -282,7 +282,7 @@ export function RecapCreator({
               </p>
               <button
                 onClick={onClose}
-                className="mt-6 px-6 py-2.5 bg-neutral-900 text-white rounded-xl font-medium text-sm hover:bg-neutral-800 transition-colors"
+                className="mt-6 px-6 py-2.5 bg-white text-neutral-900 rounded-xl font-medium text-sm hover:bg-neutral-200 transition-colors"
               >
                 Done
               </button>

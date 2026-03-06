@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight, Check } from 'lucide-react'
 import { MiniDashboard } from './MiniDashboard'
 import { ScrollAnimator } from './ScrollAnimator'
@@ -16,7 +17,17 @@ export function HostCTASection() {
     <section id="host" className="py-20 sm:py-24 px-5">
       <div className="max-w-6xl mx-auto">
         <ScrollAnimator>
-          <div className="bg-neutral-900 rounded-2xl p-5 sm:p-12 overflow-hidden relative">
+          <div className="rounded-2xl p-5 sm:p-12 overflow-hidden relative">
+            {/* Background image */}
+            <Image
+              src="/images/organizers-bg.jpg"
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 1280px) 100vw, 1200px"
+            />
+            {/* Dark overlay for readability */}
+            <div className="absolute inset-0 bg-neutral-900/85" />
             {/* Subtle glow */}
             <div
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-10 pointer-events-none"

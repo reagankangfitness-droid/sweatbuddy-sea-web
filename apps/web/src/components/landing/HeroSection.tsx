@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ScrollAnimator } from './ScrollAnimator'
 
 const categories = [
@@ -11,12 +12,28 @@ const categories = [
   { label: 'Calisthenics', param: 'calisthenics' },
 ]
 
+const heroImages = [
+  { src: '/images/hero/run-club.jpg', alt: 'Run club meetup' },
+  { src: '/images/hero/ice-bath.webp', alt: 'Ice bath recovery session' },
+  { src: '/images/hero/meditation.png', alt: 'Group meditation class' },
+]
+
 export function HeroSection() {
   return (
-    <section className="relative pt-28 pb-20 sm:pt-36 sm:pb-28 px-5 bg-neutral-50 overflow-hidden">
+    <section className="relative pt-28 pb-20 sm:pt-36 sm:pb-28 px-5 overflow-hidden">
+      {/* Background image with heavy white overlay */}
+      <Image
+        src="/images/hero-bg.jpg"
+        alt=""
+        fill
+        priority
+        className="object-cover"
+      />
+      <div className="absolute inset-0 bg-white/90" />
+
       {/* Gradient fade to white at bottom */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none z-[1]"
         style={{ background: 'linear-gradient(to bottom, transparent, white)' }}
       />
 
@@ -62,6 +79,27 @@ export function HeroSection() {
             >
               Start hosting
             </Link>
+          </div>
+        </ScrollAnimator>
+
+        {/* Photo collage strip */}
+        <ScrollAnimator delay={350}>
+          <div className="flex justify-center gap-3 sm:gap-4 mb-10">
+            {heroImages.map((img, i) => (
+              <div
+                key={img.src}
+                className="relative w-28 h-20 sm:w-44 sm:h-28 rounded-xl overflow-hidden shadow-md"
+                style={{ transform: i === 1 ? 'translateY(-8px)' : undefined }}
+              >
+                <Image
+                  src={img.src}
+                  alt={img.alt}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 112px, 176px"
+                />
+              </div>
+            ))}
           </div>
         </ScrollAnimator>
 

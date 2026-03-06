@@ -11,12 +11,15 @@ export function Providers({ children }: PropsWithChildren) {
       <ClerkProvider
         appearance={{
           variables: {
-            colorPrimary: '#0025CC',
-            colorBackground: '#FFFFFF',
-            colorText: '#171717',
+            colorPrimary: '#FFFFFF',
+            colorBackground: '#0A0A0A',
+            colorText: '#F5F5F5',
+            colorTextSecondary: '#A3A3A3',
+            colorInputBackground: '#171717',
+            colorInputText: '#F5F5F5',
           },
           elements: {
-            formButtonPrimary: 'bg-primary hover:bg-primary-hover text-primary-foreground',
+            formButtonPrimary: 'bg-white hover:bg-neutral-200 text-neutral-900',
             card: 'shadow-lg',
           },
         }}

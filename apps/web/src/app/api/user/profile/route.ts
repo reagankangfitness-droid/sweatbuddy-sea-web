@@ -29,10 +29,16 @@ export async function GET() {
       },
     })
 
+    // Count events attended
+    const eventsAttended = await prisma.eventAttendance.count({
+      where: { email: { equals: email.toLowerCase(), mode: 'insensitive' }, confirmed: true },
+    })
+
     return NextResponse.json({
       profile: dbUser ? {
         slug: dbUser.slug,
         isHost: dbUser.isHost,
+        eventsAttended,
       } : null,
     })
   } catch {

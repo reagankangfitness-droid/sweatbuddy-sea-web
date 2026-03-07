@@ -108,6 +108,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
+
 export default async function EventPage({ params }: PageProps) {
   const { slug } = await params
   const event = await getEvent(slug)
@@ -116,5 +118,40 @@ export default async function EventPage({ params }: PageProps) {
     notFound()
   }
 
-  return <EventPageClient event={event} />
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: event.name,
+    description: event.description || `${event.category} event hosted by ${event.organizer || 'SweatBuddies'}`,
+    startDate: event.eventDate || undefined,
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    eventStatus: 'https://schema.org/EventScheduled',
+    location: {
+      '@type': 'Place',
+      name: event.location,
+      address: { '@type': 'PostalAddress', addressLocality: 'Singapore', addressCountry: 'SG' },
+    },
+    organizer: {
+      '@type': 'Organization',
+      name: event.organizerName || 'SweatBuddies',
+      url: BASE_URL,
+    },
+    image: event.imageUrl || `${BASE_URL}/images/og-image.jpg`,
+    url: `${BASE_URL}/e/${event.slug || event.id}`,
+    ...(event.isFree
+      ? { isAccessibleForFree: true, offers: { '@type': 'Offer', price: 0, priceCurrency: 'SGD', availability: event.isFull ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock' } }
+      : event.price
+        ? { offers: { '@type': 'Offer', price: (event.price / 100).toFixed(2), priceCurrency: 'SGD', availability: event.isFull ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock' } }
+        : {}),
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <EventPageClient event={event} />
+    </>
+  )
 }

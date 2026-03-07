@@ -22,6 +22,7 @@ import Image from 'next/image'
 interface ProfileData {
   slug: string | null
   isHost: boolean
+  eventsAttended?: number
 }
 
 // Cache key for localStorage
@@ -199,6 +200,25 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
+
+        {/* Stats */}
+        {profile && (
+          <div className="grid grid-cols-2 gap-3 mb-8">
+            <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 text-center">
+              <p className="text-2xl font-bold text-neutral-100">{profile.eventsAttended || 0}</p>
+              <p className="text-xs text-neutral-500 mt-0.5">Events Attended</p>
+            </div>
+            <Link
+              href="/my-bookings"
+              className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 text-center hover:border-neutral-700 transition-colors"
+            >
+              <p className="text-2xl font-bold text-neutral-100">
+                <Ticket className="w-6 h-6 mx-auto text-neutral-400" />
+              </p>
+              <p className="text-xs text-neutral-500 mt-1">View Bookings</p>
+            </Link>
+          </div>
+        )}
 
         {/* My Activity Section */}
         <div className="mb-8">

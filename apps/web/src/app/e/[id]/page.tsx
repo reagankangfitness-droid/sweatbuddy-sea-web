@@ -136,8 +136,40 @@ export default async function EventDetailPage({ params }: Props) {
   const isToday = isTodaySG(eventDateObj)
   const isThisWeekend = isThisWeekendSG(eventDateObj)
 
+  // JSON-LD structured data for rich search results
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: event.name,
+    description: event.description || `${event.category} event hosted by ${event.organizer || 'SweatBuddies'}`,
+    startDate: event.eventDate || undefined,
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    eventStatus: 'https://schema.org/EventScheduled',
+    location: {
+      '@type': 'Place',
+      name: event.location,
+      address: { '@type': 'PostalAddress', addressLocality: 'Singapore', addressCountry: 'SG' },
+    },
+    organizer: {
+      '@type': 'Organization',
+      name: event.organizer || 'SweatBuddies',
+      url: `${BASE_URL}`,
+    },
+    image: event.imageUrl || `${BASE_URL}/images/og-image.jpg`,
+    url: `${BASE_URL}/e/${event.slug || id}`,
+    ...(event.isFree
+      ? { isAccessibleForFree: true, offers: { '@type': 'Offer', price: 0, priceCurrency: 'SGD', availability: event.isFull ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock' } }
+      : event.price
+        ? { offers: { '@type': 'Offer', price: (event.price / 100).toFixed(2), priceCurrency: 'SGD', availability: event.isFull ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock' } }
+        : {}),
+  }
+
   return (
     <div className="min-h-screen bg-neutral-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Back button header */}
       <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
         <div className="pt-[env(safe-area-inset-top,0px)]">

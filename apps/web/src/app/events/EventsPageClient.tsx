@@ -31,6 +31,7 @@ interface HostedEvent {
   participantCount?: number
   isEventSubmission?: boolean
   friendsGoing?: { id: string; name: string | null; firstName: string | null; imageUrl: string | null }[]
+  familiarFaces?: { name: string | null; firstName: string | null; imageUrl: string | null; sharedEventCount: number }[]
 }
 
 function getEventUrl(event: HostedEvent): string {
@@ -512,7 +513,7 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
             </span>
           </div>
 
-          {event.friendsGoing && event.friendsGoing.length > 0 && (
+          {event.friendsGoing && event.friendsGoing.length > 0 ? (
             <div className="flex items-center gap-1 mt-1.5">
               <Users className="w-3 h-3 flex-shrink-0 text-indigo-500" />
               <span className="text-xs text-indigo-600 truncate">
@@ -525,7 +526,20 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
                 )}
               </span>
             </div>
-          )}
+          ) : event.familiarFaces && event.familiarFaces.length > 0 ? (
+            <div className="flex items-center gap-1 mt-1.5">
+              <Users className="w-3 h-3 flex-shrink-0 text-emerald-500" />
+              <span className="text-xs text-emerald-500 truncate">
+                {event.familiarFaces.length === 1 ? (
+                  <><strong>{event.familiarFaces[0].firstName || event.familiarFaces[0].name}</strong> worked out with you before</>
+                ) : event.familiarFaces.length === 2 ? (
+                  <><strong>{event.familiarFaces[0].firstName || event.familiarFaces[0].name}</strong> and <strong>{event.familiarFaces[1].firstName || event.familiarFaces[1].name}</strong> you know are going</>
+                ) : (
+                  <><strong>{event.familiarFaces[0].firstName || event.familiarFaces[0].name}</strong> + <strong>{event.familiarFaces.length - 1} others</strong> you know are going</>
+                )}
+              </span>
+            </div>
+          ) : null}
         </div>
       </Link>
     </motion.div>

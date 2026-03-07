@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
+import { auth } from '@clerk/nextjs/server'
+import { getFamiliarFaces, type FamiliarFace } from '@/lib/familiar-faces'
 import { EventPageClient } from './EventPageClient'
 
 interface PageProps {
@@ -118,6 +120,17 @@ export default async function EventPage({ params }: PageProps) {
     notFound()
   }
 
+  // Familiar faces: people the user has previously attended events with
+  let familiarFaces: FamiliarFace[] = []
+  const { userId } = await auth()
+  if (userId) {
+    const dbUser = await prisma.user.findFirst({ where: { id: userId }, select: { email: true } })
+    if (dbUser?.email) {
+      const result = await getFamiliarFaces(dbUser.email, event.id)
+      familiarFaces = result.familiarFaces
+    }
+  }
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Event',
@@ -151,7 +164,7 @@ export default async function EventPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <EventPageClient event={event} />
+      <EventPageClient event={event} familiarFaces={familiarFaces} />
     </>
   )
 }

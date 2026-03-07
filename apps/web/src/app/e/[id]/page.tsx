@@ -8,6 +8,8 @@ import { EventAttendees } from '@/components/EventAttendees'
 import { formatEventDate, isTodaySG, isThisWeekendSG } from '@/lib/event-dates'
 import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { getFamiliarFaces } from '@/lib/familiar-faces'
+import { FamiliarFacesLine } from '@/components/FamiliarFacesLine'
 
 // Use ISR - revalidate every 30 seconds for fresh data with caching
 export const revalidate = 30
@@ -96,11 +98,14 @@ export default async function EventDetailPage({ params }: Props) {
     notFound()
   }
 
-  // Social proof: friends going
+  // Social proof: friends going + familiar faces
   type FriendGoing = { id: string; name: string | null; firstName: string | null; imageUrl: string | null }
   let friendsGoing: FriendGoing[] = []
+  let familiarFacesData: Awaited<ReturnType<typeof getFamiliarFaces>> = { familiarFaces: [], totalGoing: 0 }
   const { userId } = await auth()
   if (userId) {
+    const dbUser = await prisma.user.findFirst({ where: { id: userId }, select: { email: true } })
+
     const followRows = await prisma.userFollower.findMany({
       where: { followerId: userId },
       select: { followingId: true },
@@ -125,6 +130,16 @@ export default async function EventDetailPage({ params }: Props) {
           .filter((u) => attendingEmails.has(u.email.toLowerCase()))
           .map((u) => ({ id: u.id, name: u.name, firstName: u.firstName, imageUrl: u.imageUrl }))
       }
+    }
+
+    // Familiar faces: people you've previously attended events with
+    if (dbUser?.email) {
+      familiarFacesData = await getFamiliarFaces(dbUser.email, id)
+      // Deduplicate: remove anyone already in friendsGoing
+      const friendEmails = new Set(friendsGoing.map((f) => f.name?.toLowerCase()))
+      familiarFacesData.familiarFaces = familiarFacesData.familiarFaces.filter(
+        (ff) => !friendEmails.has(ff.name?.toLowerCase() ?? '')
+      )
     }
   }
 
@@ -344,6 +359,13 @@ export default async function EventDetailPage({ params }: Props) {
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* Familiar Faces */}
+              {familiarFacesData.familiarFaces.length > 0 && (
+                <div className="bg-neutral-950 rounded-xl p-5 border border-emerald-800/30">
+                  <FamiliarFacesLine familiarFaces={familiarFacesData.familiarFaces} />
                 </div>
               )}
 

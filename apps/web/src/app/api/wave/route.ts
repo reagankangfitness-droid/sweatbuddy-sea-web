@@ -5,6 +5,7 @@ import { WAVE_EXPIRY_MS, DEFAULT_RADIUS_KM, WAVE_ACTIVITY_TYPES } from '@/lib/wa
 import { WaveActivityType } from '@prisma/client'
 import { getBlockedUserIds } from '@/lib/blocks'
 import { getSGToday, isTodaySG, isThisWeekendSG, getNextOccurrenceSG, combineDateTimeSG } from '@/lib/event-dates'
+import { getFamiliarFacesForEvents, type FamiliarFace } from '@/lib/familiar-faces'
 
 const VALID_TYPES = new Set<string>(WAVE_ACTIVITY_TYPES)
 
@@ -405,11 +406,36 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Attach friendsGoing to each event
-  const hostedDataWithFriends = hostedData.map((e) => ({
-    ...e,
-    friendsGoing: friendsGoingMap.get(e.id) || [],
-  }))
+  // --- Familiar faces: people user has attended events with before ---
+  const familiarFacesMap = new Map<string, FamiliarFace[]>()
+
+  if (userId) {
+    const clerkUser = await currentUser()
+    const userEmail = clerkUser?.emailAddresses[0]?.emailAddress
+    if (userEmail) {
+      // Get raw event IDs for EventSubmission events only
+      const allRawEventIds = eventSubmissionData.map((e) => e.id.replace('event_', ''))
+      if (allRawEventIds.length > 0) {
+        const batchResult = await getFamiliarFacesForEvents(userEmail, allRawEventIds)
+        // Re-key with event_ prefix to match hostedData IDs
+        for (const [eventId, faces] of batchResult) {
+          familiarFacesMap.set(`event_${eventId}`, faces)
+        }
+      }
+    }
+  }
+
+  // Attach friendsGoing and familiarFaces to each event
+  const hostedDataWithFriends = hostedData.map((e) => {
+    const friendsGoing = friendsGoingMap.get(e.id) || []
+    // Deduplicate: remove familiar faces that are already in friendsGoing
+    const friendNames = new Set(friendsGoing.map((f) => f.name?.toLowerCase()))
+    const rawFamiliar = familiarFacesMap.get(e.id) || []
+    const familiarFaces = rawFamiliar.filter(
+      (ff) => !friendNames.has(ff.name?.toLowerCase() ?? '')
+    )
+    return { ...e, friendsGoing, familiarFaces }
+  })
 
   // If lat/lng provided, use Haversine raw query
   if (!isNaN(lat) && !isNaN(lng)) {

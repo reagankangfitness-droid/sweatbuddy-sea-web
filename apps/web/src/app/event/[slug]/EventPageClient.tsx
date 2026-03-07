@@ -12,6 +12,7 @@ import { Confetti, useConfetti } from '@/components/ui/Confetti'
 import { DirectChatWindow } from '@/components/DirectChatWindow'
 import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 import { formatEventDate } from '@/lib/event-dates'
+import { FamiliarFacesLine } from '@/components/FamiliarFacesLine'
 
 interface AttendeePreview {
   id: string
@@ -55,7 +56,14 @@ interface Event {
 
 import { getCategoryEmoji } from '@/lib/categories'
 
-export function EventPageClient({ event }: { event: Event }) {
+interface FamiliarFace {
+  name: string | null
+  firstName: string | null
+  imageUrl: string | null
+  sharedEventCount: number
+}
+
+export function EventPageClient({ event, familiarFaces = [] }: { event: Event; familiarFaces?: FamiliarFace[] }) {
   const [isGoing, setIsGoing] = useState(() => {
     if (typeof window === 'undefined') return false
     const going = safeGetJSON<string[]>('sweatbuddies_going', [])
@@ -287,6 +295,16 @@ export function EventPageClient({ event }: { event: Event }) {
                       })}
                     </span>
                   </div>
+                </div>
+              </>
+            )}
+
+            {/* Familiar Faces */}
+            {familiarFaces.length > 0 && (
+              <>
+                <div className="border-t border-neutral-800" />
+                <div className="py-2">
+                  <FamiliarFacesLine familiarFaces={familiarFaces} />
                 </div>
               </>
             )}

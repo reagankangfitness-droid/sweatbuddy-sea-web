@@ -97,6 +97,7 @@ export async function GET(request: NextRequest) {
       name: string | null
       eventsRSVPd: number
       eventsAttended: number
+      firstEventDate: Date | null
       lastEventDate: Date | null
       lastEventName: string | null
       totalSpent: number
@@ -114,9 +115,14 @@ export async function GET(request: NextRequest) {
           existing.eventsAttended++
           existing.hasAttended = true
         }
-        if (attendance.timestamp && (!existing.lastEventDate || attendance.timestamp > existing.lastEventDate)) {
-          existing.lastEventDate = attendance.timestamp
-          existing.lastEventName = attendance.eventName
+        if (attendance.timestamp) {
+          if (!existing.firstEventDate || attendance.timestamp < existing.firstEventDate) {
+            existing.firstEventDate = attendance.timestamp
+          }
+          if (!existing.lastEventDate || attendance.timestamp > existing.lastEventDate) {
+            existing.lastEventDate = attendance.timestamp
+            existing.lastEventName = attendance.eventName
+          }
         }
         if (attendance.paymentAmount) {
           existing.totalSpent += attendance.paymentAmount
@@ -131,6 +137,7 @@ export async function GET(request: NextRequest) {
           name: attendance.name,
           eventsRSVPd: 1,
           eventsAttended: attendance.actuallyAttended === true ? 1 : 0,
+          firstEventDate: attendance.timestamp,
           lastEventDate: attendance.timestamp,
           lastEventName: attendance.eventName,
           totalSpent: attendance.paymentAmount || 0,
@@ -184,16 +191,35 @@ export async function GET(request: NextRequest) {
       return order === 'desc' ? -comparison : comparison
     })
 
+    // Compute member status badges
+    const now = new Date()
+    const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000)
+    const threeWeeksAgo = new Date(now.getTime() - 21 * 24 * 60 * 60 * 1000)
+
+    function getMemberStatus(a: { eventsRSVPd: number; firstEventDate: Date | null; lastEventDate: Date | null }): 'regular' | 'new' | 'at_risk' | 'active' {
+      const isNew = a.firstEventDate && a.firstEventDate >= twoWeeksAgo
+      const isRegular = a.eventsRSVPd >= 5
+      const isInactive = a.lastEventDate && a.lastEventDate < threeWeeksAgo
+
+      if (isRegular && isInactive) return 'at_risk'
+      if (isRegular) return 'regular'
+      if (isNew) return 'new'
+      if (isInactive) return 'at_risk'
+      return 'active'
+    }
+
     // Format response
     const formattedAttendees = attendees.map(a => ({
       email: a.email,
       name: a.name,
       eventsRSVPd: a.eventsRSVPd,
       eventsAttended: a.eventsAttended,
+      firstEventDate: a.firstEventDate?.toISOString() || null,
       lastEventDate: a.lastEventDate?.toISOString() || null,
       lastEventName: a.lastEventName,
       totalSpent: a.totalSpent,
       notes: a.notes,
+      status: getMemberStatus(a),
     }))
 
     return NextResponse.json({

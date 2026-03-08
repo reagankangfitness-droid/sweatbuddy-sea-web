@@ -42,6 +42,7 @@ export function StepReview({ mode }: StepReviewProps) {
   const location = watch('location')
   const isFree = watch('isFree')
   const price = watch('price')
+  const stripeEnabled = watch('stripeEnabled')
   const organizerName = watch('organizerName')
   const instagramHandle = watch('instagramHandle')
   const email = watch('email')
@@ -237,6 +238,11 @@ export function StepReview({ mode }: StepReviewProps) {
               <span className={isFree ? 'text-green-400 font-medium' : 'text-white font-medium'}>
                 {isFree ? 'FREE' : `$${price || '0'}`}
               </span>
+              {!isFree && stripeEnabled && (
+                <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-xs rounded-full">
+                  Stripe
+                </span>
+              )}
             </div>
           </div>
 

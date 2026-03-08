@@ -33,6 +33,9 @@ interface Event {
   recurring: boolean
   isFree?: boolean
   price?: number | null
+  paynowQrCode?: string | null
+  paynowNumber?: string | null
+  stripeEnabled?: boolean
   maxSpots?: number | null
 }
 
@@ -53,6 +56,9 @@ function mapEventToFormData(event: Event): Partial<EventFormData> {
     eventDay: '',
     isFree: event.isFree ?? true,
     price: event.price ? (event.price / 100).toFixed(2) : '',
+    paynowQrCode: event.paynowQrCode || '',
+    paynowNumber: event.paynowNumber || '',
+    stripeEnabled: event.stripeEnabled || false,
     maxSpots: event.maxSpots?.toString() || '',
     isFull: false,
     imageUrl: event.imageUrl || null,

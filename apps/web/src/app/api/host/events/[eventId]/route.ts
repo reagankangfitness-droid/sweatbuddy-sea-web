@@ -40,6 +40,8 @@ export async function GET(
           // Pricing fields
           isFree: true,
           price: true,
+          paynowQrCode: true,
+          paynowNumber: true,
           stripeEnabled: true,
           // Capacity fields
           maxTickets: true,
@@ -81,6 +83,8 @@ export async function GET(
       // Pricing fields
       isFree: event.isFree,
       price: event.price,
+      paynowQrCode: event.paynowQrCode,
+      paynowNumber: event.paynowNumber,
       stripeEnabled: event.stripeEnabled,
       // Capacity fields
       maxSpots: event.maxTickets,

@@ -231,6 +231,7 @@ export function EventWizard({ mode, initialData, eventId, currentAttendees }: Ev
           paynowEnabled: !values.isFree && !!values.paynowQrCode,
           paynowQrCode: values.paynowQrCode || null,
           paynowNumber: values.paynowNumber || null,
+          stripeEnabled: values.stripeEnabled || false,
           clerkUserId: user?.id || null,
           maxSpots: values.maxSpots ? parseInt(values.maxSpots, 10) : null,
           scheduledPublishAt: values.scheduleEnabled && values.scheduleDate && values.scheduleTime
@@ -273,6 +274,9 @@ export function EventWizard({ mode, initialData, eventId, currentAttendees }: Ev
           imageUrl: values.imageUrl || null,
           isFree: values.isFree,
           price: values.isFree ? null : Math.round(parseFloat(values.price || '0') * 100),
+          paynowQrCode: values.paynowQrCode || null,
+          paynowNumber: values.paynowNumber || null,
+          stripeEnabled: values.stripeEnabled || false,
           maxSpots: values.maxSpots ? parseInt(values.maxSpots, 10) : null,
           isFull: values.isFull || false,
         }

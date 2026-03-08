@@ -24,6 +24,7 @@ import {
 import { format, formatDistanceToNow } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { CategoryBadge } from '@/components/category-badge'
+import { StarRating, RatingDistribution } from '@/components/star-rating'
 import { cn } from '@/lib/utils'
 
 interface Profile {
@@ -122,12 +123,22 @@ export default function HostProfilePage() {
   const [hasMoreActivities, setHasMoreActivities] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [showAllReviews, setShowAllReviews] = useState(false)
+  const [ratingDistribution, setRatingDistribution] = useState<{
+    fiveStar: number
+    fourStar: number
+    threeStar: number
+    twoStar: number
+    oneStar: number
+  } | null>(null)
 
   const fetchReviews = useCallback(async () => {
     try {
       const res = await fetch(`/api/profiles/${slug}/reviews?limit=5`)
       const data = await res.json()
       setReviews(data.reviews || [])
+      if (data.ratingDistribution) {
+        setRatingDistribution(data.ratingDistribution)
+      }
     } catch {
       // Error handled silently
     }
@@ -473,19 +484,20 @@ export default function HostProfilePage() {
           </div>
           <div className="w-px bg-border" />
           <div className="text-center">
-            <div className="text-2xl font-bold text-foreground flex items-center justify-center gap-1">
+            <div className="flex items-center justify-center">
               {hostStats && hostStats.averageRating > 0 ? (
-                <>
-                  <Star className="h-4 w-4 fill-primary text-primary" />
-                  {Number(hostStats.averageRating).toFixed(1)}
-                </>
+                <StarRating
+                  rating={Number(hostStats.averageRating)}
+                  size="sm"
+                  showValue
+                  showCount
+                  count={hostStats.totalReviews}
+                />
               ) : (
-                '—'
+                <span className="text-2xl font-bold text-foreground">—</span>
               )}
             </div>
-            <div className="text-xs text-muted-foreground">
-              {hostStats?.totalReviews || 0} reviews
-            </div>
+            <div className="text-xs text-muted-foreground">Rating</div>
           </div>
         </div>
       </div>
@@ -723,6 +735,32 @@ export default function HostProfilePage() {
               </Link>
             )}
           </div>
+
+          {/* Review Summary Card */}
+          {hostStats && hostStats.averageRating > 0 && ratingDistribution && (
+            <div className="bg-card rounded-2xl border p-5 mb-4">
+              <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+                <div className="flex flex-col items-center gap-1">
+                  <span className="text-4xl font-bold text-foreground">
+                    {Number(hostStats.averageRating).toFixed(1)}
+                  </span>
+                  <StarRating
+                    rating={Number(hostStats.averageRating)}
+                    size="md"
+                  />
+                  <span className="text-sm text-muted-foreground mt-1">
+                    Based on {hostStats.totalReviews} review{hostStats.totalReviews !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div className="flex-1 w-full sm:w-auto">
+                  <RatingDistribution
+                    distribution={ratingDistribution}
+                    totalReviews={hostStats.totalReviews}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="space-y-4">
             {(showAllReviews ? reviews : reviews.slice(0, 2)).map((review) => (

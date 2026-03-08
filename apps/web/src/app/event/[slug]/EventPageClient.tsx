@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, MapPin, Calendar, Clock, Users, Share2, Heart, ExternalLink, Instagram, MessageCircle } from 'lucide-react'
+import { ArrowLeft, MapPin, Calendar, Clock, Users, Share2, Heart, ExternalLink, Instagram, MessageCircle, Star } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { AttendanceModal } from '@/components/AttendanceModal'
 import { PaymentModal } from '@/components/event/PaymentModal'
@@ -14,6 +14,7 @@ import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 import { formatEventDate } from '@/lib/event-dates'
 import { FamiliarFacesLine } from '@/components/FamiliarFacesLine'
 import { FollowButton } from '@/components/community/FollowButton'
+import { StarRating, RatingBadge, RatingDistribution } from '@/components/star-rating'
 
 interface AttendeePreview {
   id: string
@@ -25,6 +26,28 @@ interface EventRecap {
   photoUrl: string | null
   publishedAt: string
   attendeeCount: number
+}
+
+interface EventReviewData {
+  id: string
+  rating: number
+  content: string | null
+  reviewerName: string | null
+  reviewerEmail: string
+  hostResponse: string | null
+  createdAt: string
+}
+
+interface ReviewSummary {
+  totalReviews: number
+  averageRating: number
+  ratingDistribution: {
+    fiveStar: number
+    fourStar: number
+    threeStar: number
+    twoStar: number
+    oneStar: number
+  }
 }
 
 interface Event {
@@ -53,6 +76,8 @@ interface Event {
   paynowNumber: string | null
   attendeesPreview: AttendeePreview[]
   recap: EventRecap | null
+  reviews: EventReviewData[]
+  reviewSummary: ReviewSummary
 }
 
 import { getCategoryEmoji } from '@/lib/categories'
@@ -352,6 +377,78 @@ export function EventPageClient({ event, familiarFaces = [], communityFollow }: 
                       </div>
                     )}
                   </div>
+                </div>
+              </>
+            )}
+
+            {/* Reviews */}
+            {event.reviewSummary.totalReviews > 0 && (
+              <>
+                <div className="border-t border-neutral-800" />
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <h2 className="text-xl font-semibold text-neutral-100 flex items-center gap-2">
+                      <Star className="w-5 h-5" />
+                      Reviews
+                    </h2>
+                    <RatingBadge
+                      rating={event.reviewSummary.averageRating}
+                      count={event.reviewSummary.totalReviews}
+                    />
+                  </div>
+
+                  <RatingDistribution
+                    distribution={event.reviewSummary.ratingDistribution}
+                    totalReviews={event.reviewSummary.totalReviews}
+                    className="mb-6"
+                  />
+
+                  <div className="space-y-4">
+                    {event.reviews.slice(0, 3).map((review) => (
+                      <div
+                        key={review.id}
+                        className="bg-neutral-900 rounded-xl p-4"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 bg-neutral-700 rounded-full flex items-center justify-center text-sm font-medium text-neutral-400">
+                              {(review.reviewerName || 'A').charAt(0).toUpperCase()}
+                            </div>
+                            <span className="text-sm font-medium text-neutral-200">
+                              {review.reviewerName || 'Anonymous'}
+                            </span>
+                          </div>
+                          <span className="text-xs text-neutral-500">
+                            {new Date(review.createdAt).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric',
+                            })}
+                          </span>
+                        </div>
+                        <StarRating rating={review.rating} size="sm" className="mb-2" />
+                        {review.content && (
+                          <p className="text-sm text-neutral-400 leading-relaxed">
+                            {review.content}
+                          </p>
+                        )}
+                        {review.hostResponse && (
+                          <div className="mt-3 pl-4 border-l-2 border-neutral-700">
+                            <p className="text-xs font-medium text-neutral-500 mb-1">Host response</p>
+                            <p className="text-sm text-neutral-400">
+                              {review.hostResponse}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {event.reviewSummary.totalReviews > 3 && (
+                    <p className="mt-4 text-sm text-neutral-500 text-center">
+                      See all {event.reviewSummary.totalReviews} reviews
+                    </p>
+                  )}
                 </div>
               </>
             )}

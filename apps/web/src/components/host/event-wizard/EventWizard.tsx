@@ -83,6 +83,7 @@ export function EventWizard({ mode, initialData, eventId, currentAttendees }: Ev
       price: '',
       paynowQrCode: '',
       paynowNumber: '',
+      stripeEnabled: false,
       maxSpots: '',
       isFull: false,
       imageUrl: null,

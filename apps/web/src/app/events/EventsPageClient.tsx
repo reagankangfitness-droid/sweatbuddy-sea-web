@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Plus, MapPin, Users, Clock, Calendar, TrendingUp } from 'lucide-react'
+import { Plus, MapPin, Users, Clock, Calendar, TrendingUp, Search } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { ACTIVITY_CATEGORIES } from '@/lib/categories'
 import { MyCommunities } from '@/components/community/MyCommunities'
@@ -103,10 +103,29 @@ export default function EventsPage() {
   const [events, setEvents] = useState<HostedEvent[]>([])
   const [loading, setLoading] = useState(true)
   const [categoryFilter, setCategoryFilter] = useState<string | null>(searchParams.get('cat'))
+  const [searchInput, setSearchInput] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+  const debounceRef = useRef<NodeJS.Timeout | null>(null)
   const categoryScrollRef = useRef<HTMLDivElement>(null)
+
+  // Debounce search input
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      setSearchQuery(searchInput)
+    }, 300)
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [searchInput])
+
   const fetchEvents = useCallback(async () => {
     try {
-      const waveRes = await fetch('/api/wave?lat=1.3521&lng=103.8198')
+      let url = '/api/wave?lat=1.3521&lng=103.8198'
+      if (searchQuery) {
+        url += `&q=${encodeURIComponent(searchQuery)}`
+      }
+      const waveRes = await fetch(url)
       if (waveRes.ok) {
         const data = await waveRes.json()
         if (data.hostedActivities) {
@@ -118,9 +137,10 @@ export default function EventsPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [searchQuery])
 
   useEffect(() => {
+    setLoading(true)
     fetchEvents()
   }, [fetchEvents])
 
@@ -200,8 +220,20 @@ export default function EventsPage() {
               </Link>
             </div>
 
+            {/* Search input */}
+            <div className="relative mb-3">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search events, locations, organizers..."
+                className="w-full pl-10 pr-4 py-2.5 bg-neutral-800 border border-neutral-700 rounded-xl text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-neutral-500 transition-colors"
+              />
+            </div>
+
             {/* Category filter pills - horizontal scroll */}
-            {availableCategories.length > 0 && (
+            {availableCategories.length > 0 && !searchQuery && (
               <div className="relative -mx-4">
                 <div className="absolute right-0 top-0 bottom-1 w-8 bg-gradient-to-l from-neutral-950 to-transparent pointer-events-none z-10" />
               <div
@@ -266,20 +298,38 @@ export default function EventsPage() {
               <Calendar className="w-8 h-8 text-neutral-400" />
             </div>
             <p className="text-neutral-100 font-semibold mb-1">
-              {categoryFilter ? 'No events in this category' : 'No events found'}
+              {searchQuery
+                ? `No events found for '${searchQuery}'`
+                : categoryFilter ? 'No events in this category' : 'No events found'}
             </p>
             <p className="text-neutral-500 text-sm max-w-xs mb-6">
-              {categoryFilter
-                ? 'Try a different category or check back later.'
-                : 'No upcoming events nearby. Start the movement!'}
+              {searchQuery
+                ? 'Try a different search term.'
+                : categoryFilter
+                  ? 'Try a different category or check back later.'
+                  : 'No upcoming events nearby. Start the movement!'}
             </p>
-            <Link
-              href="/host"
-              className="flex items-center gap-2 px-6 py-3 bg-white text-neutral-900 rounded-full font-semibold"
-            >
-              <Plus className="w-4 h-4" />
-              Host an event
-            </Link>
+            {!searchQuery && (
+              <Link
+                href="/host"
+                className="flex items-center gap-2 px-6 py-3 bg-white text-neutral-900 rounded-full font-semibold"
+              >
+                <Plus className="w-4 h-4" />
+                Host an event
+              </Link>
+            )}
+          </div>
+        ) : searchQuery ? (
+          /* Search results: flat list with count */
+          <div>
+            <p className="text-sm text-neutral-400 mb-4">
+              {filteredEvents.length} result{filteredEvents.length !== 1 ? 's' : ''} for &lsquo;{searchQuery}&rsquo;
+            </p>
+            <div className="flex flex-col gap-3 md:grid md:grid-cols-3 md:gap-4">
+              {filteredEvents.map((event, index) => (
+                <EventCard key={event.id} event={event} index={index} />
+              ))}
+            </div>
           </div>
         ) : (
           <div>

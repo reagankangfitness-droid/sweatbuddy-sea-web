@@ -9,7 +9,7 @@ import { CommunityStats } from '@/components/host/community/CommunityStats'
 import { MemberList } from '@/components/host/community/MemberList'
 import { AtRiskAlert } from '@/components/host/community/AtRiskAlert'
 import type { Member } from '@/components/host/community/MemberRow'
-import { MessageSquare, X } from 'lucide-react'
+import { MessageSquare, X, Megaphone } from 'lucide-react'
 
 interface HealthStats {
   totalMembers: number
@@ -42,6 +42,13 @@ export default function CommunityPage() {
   const [showMessageModal, setShowMessageModal] = useState(false)
   const [messageAudience, setMessageAudience] = useState<'all' | 'regulars'>('all')
 
+  // Announcement modal
+  const [showAnnouncementModal, setShowAnnouncementModal] = useState(false)
+  const [announcementContent, setAnnouncementContent] = useState('')
+  const [announcementPinned, setAnnouncementPinned] = useState(false)
+  const [sendingAnnouncement, setSendingAnnouncement] = useState(false)
+  const [communitySlug, setCommunitySlug] = useState<string | null>(null)
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -70,6 +77,17 @@ export default function CommunityPage() {
           const statsData = await statsRes.json()
           setHealthStats(statsData)
         }
+
+        // Fetch community slug for announcements
+        try {
+          const slugRes = await fetch('/api/host/community/slug')
+          if (slugRes.ok) {
+            const slugData = await slugRes.json()
+            setCommunitySlug(slugData.slug || null)
+          }
+        } catch {
+          // Non-critical, announcement feature just won't be available
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Something went wrong')
       } finally {
@@ -79,6 +97,33 @@ export default function CommunityPage() {
 
     fetchData()
   }, [router, filter, sort, search])
+
+  const sendAnnouncement = async () => {
+    if (!communitySlug || !announcementContent.trim()) return
+    setSendingAnnouncement(true)
+    try {
+      const res = await fetch(`/api/communities/${communitySlug}/announcements`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: announcementContent.trim(),
+          isPinned: announcementPinned,
+        }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Failed to send announcement')
+      }
+      toast.success('Announcement sent!')
+      setShowAnnouncementModal(false)
+      setAnnouncementContent('')
+      setAnnouncementPinned(false)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to send announcement')
+    } finally {
+      setSendingAnnouncement(false)
+    }
+  }
 
   const generateMessage = () => {
     if (!communityLink) {
@@ -125,13 +170,24 @@ export default function CommunityPage() {
             <h1 className="text-2xl font-bold text-neutral-100">Your Community</h1>
             <p className="text-neutral-500">Members across all your experiences</p>
           </div>
-          <button
-            onClick={() => setShowMessageModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-neutral-900 text-sm font-semibold rounded-full hover:bg-neutral-200 transition-colors"
-          >
-            <MessageSquare className="w-4 h-4" />
-            Quick Message
-          </button>
+          <div className="flex items-center gap-3">
+            {communitySlug && (
+              <button
+                onClick={() => setShowAnnouncementModal(true)}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-500 text-neutral-900 text-sm font-semibold rounded-full hover:bg-amber-400 transition-colors"
+              >
+                <Megaphone className="w-4 h-4" />
+                Send Announcement
+              </button>
+            )}
+            <button
+              onClick={() => setShowMessageModal(true)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-neutral-900 text-sm font-semibold rounded-full hover:bg-neutral-200 transition-colors"
+            >
+              <MessageSquare className="w-4 h-4" />
+              Quick Message
+            </button>
+          </div>
         </div>
 
         {/* Community Health Stats */}
@@ -165,6 +221,72 @@ export default function CommunityPage() {
           onSearchChange={setSearch}
         />
       </main>
+
+      {/* Announcement Modal */}
+      {showAnnouncementModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-neutral-950 border border-neutral-800 rounded-2xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-neutral-100">Send Announcement</h2>
+              <button
+                onClick={() => setShowAnnouncementModal(false)}
+                className="p-1 text-neutral-400 hover:text-neutral-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-sm text-neutral-500 mb-4">
+              Post an announcement visible to all community members on your community page.
+            </p>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-neutral-300 mb-2">
+                Message
+              </label>
+              <textarea
+                value={announcementContent}
+                onChange={(e) => setAnnouncementContent(e.target.value)}
+                placeholder="Write your announcement..."
+                maxLength={2000}
+                rows={4}
+                className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-lg text-sm text-neutral-100 placeholder-neutral-600 focus:outline-none focus:border-neutral-600 resize-none"
+              />
+              <p className="text-xs text-neutral-500 mt-1 text-right">
+                {announcementContent.length}/2000
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={announcementPinned}
+                  onChange={(e) => setAnnouncementPinned(e.target.checked)}
+                  className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-amber-500 focus:ring-amber-500"
+                />
+                <span className="text-sm text-neutral-300">Pin this announcement</span>
+              </label>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowAnnouncementModal(false)}
+                className="flex-1 px-4 py-2.5 border border-neutral-800 text-neutral-300 text-sm font-medium rounded-lg hover:bg-neutral-900"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={sendAnnouncement}
+                disabled={!announcementContent.trim() || sendingAnnouncement}
+                className="flex-1 px-4 py-2.5 bg-amber-500 text-neutral-900 text-sm font-medium rounded-lg hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {sendingAnnouncement ? 'Sending...' : 'Send'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Quick Message Modal */}
       {showMessageModal && (

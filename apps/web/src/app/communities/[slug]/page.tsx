@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, Users, Calendar, MapPin, Instagram, Globe, MessageCircle, CheckCircle } from 'lucide-react'
+import { ArrowLeft, Users, Calendar, MapPin, Instagram, Globe, MessageCircle, CheckCircle, Megaphone, Pin } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@clerk/nextjs/server'
 import { JoinCommunityButton } from '@/components/community/JoinCommunityButton'
@@ -90,6 +90,35 @@ async function getMembers(communityId: string) {
   return members
 }
 
+async function getAnnouncements(communityId: string) {
+  const chat = await prisma.communityChat.findUnique({
+    where: { communityId },
+  })
+  if (!chat) return []
+
+  const announcements = await prisma.communityMessage.findMany({
+    where: {
+      chatId: chat.id,
+      isAnnouncement: true,
+    },
+    orderBy: [
+      { isPinned: 'desc' },
+      { createdAt: 'desc' },
+    ],
+    take: 3,
+    include: {
+      sender: {
+        select: {
+          id: true,
+          name: true,
+          imageUrl: true,
+        },
+      },
+    },
+  })
+  return announcements
+}
+
 async function getMembership(communityId: string, userId: string | null) {
   if (!userId) return null
   const membership = await prisma.communityMember.findUnique({
@@ -130,13 +159,14 @@ export default async function CommunityPage({ params }: Props) {
     notFound()
   }
 
-  const [upcomingEvents, eventSubmissions, members, membership] = await Promise.all([
+  const [upcomingEvents, eventSubmissions, members, membership, announcements] = await Promise.all([
     getUpcomingEvents(community.id),
     community.instagramHandle
       ? getUpcomingEventSubmissions(community.instagramHandle)
       : Promise.resolve([]),
     getMembers(community.id),
     getMembership(community.id, userId),
+    getAnnouncements(community.id),
   ])
 
   // Merge activity events and event submissions into a unified list sorted by date
@@ -358,6 +388,74 @@ export default async function CommunityPage({ params }: Props) {
           </div>
         </div>
       </section>
+
+      {/* Announcements */}
+      {(announcements.length > 0 || isAdmin) && (
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Megaphone className="w-5 h-5 text-amber-400" />
+            <h2 className="text-xl font-semibold text-neutral-100">Announcements</h2>
+          </div>
+
+          {announcements.length > 0 ? (
+            <div className="space-y-3">
+              {announcements.map((announcement) => (
+                <div
+                  key={announcement.id}
+                  className="bg-neutral-900 border border-neutral-800 rounded-xl p-4"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-full bg-neutral-700 overflow-hidden flex-shrink-0">
+                      {announcement.sender.imageUrl ? (
+                        <Image
+                          src={announcement.sender.imageUrl}
+                          alt={announcement.sender.name || ''}
+                          width={32}
+                          height={32}
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Users className="w-4 h-4 text-neutral-400" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-medium text-neutral-200">
+                          {announcement.sender.name || 'Member'}
+                        </span>
+                        <span className="text-xs text-neutral-500">
+                          {new Date(announcement.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </span>
+                        {announcement.isPinned && (
+                          <span className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 bg-amber-900/50 text-amber-400 rounded">
+                            <Pin className="w-3 h-3" />
+                            Pinned
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-1 text-sm text-neutral-400 whitespace-pre-line">
+                        {announcement.content}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            isAdmin && (
+              <div className="text-center py-8 bg-neutral-900 rounded-xl">
+                <Megaphone className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
+                <p className="text-neutral-500 text-sm">No announcements yet</p>
+              </div>
+            )
+          )}
+        </section>
+      )}
 
       {/* Upcoming Events */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

@@ -24,7 +24,21 @@ export async function GET(
     }
 
     const result = await getHostReviews(profile.id, page, limit)
-    return NextResponse.json(result)
+
+    // Transform numeric distribution keys to named keys for the frontend
+    const dist = result.ratingDistribution as Record<number, number>
+    const ratingDistribution = {
+      fiveStar: dist[5] || 0,
+      fourStar: dist[4] || 0,
+      threeStar: dist[3] || 0,
+      twoStar: dist[2] || 0,
+      oneStar: dist[1] || 0,
+    }
+
+    return NextResponse.json({
+      ...result,
+      ratingDistribution,
+    })
   } catch (error) {
     console.error('Reviews fetch error:', error)
     return NextResponse.json(

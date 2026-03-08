@@ -22,6 +22,7 @@ export function StepPricing({ mode, currentAttendees }: StepPricingProps) {
   const paynowQrCode = watch('paynowQrCode')
   const maxSpots = watch('maxSpots')
   const isFull = watch('isFull')
+  const stripeEnabled = watch('stripeEnabled')
 
   return (
     <div className="space-y-6">
@@ -57,7 +58,8 @@ export function StepPricing({ mode, currentAttendees }: StepPricingProps) {
         </div>
 
         {!isFree && (
-          <div className="space-y-3 pt-2">
+          <div className="space-y-4 pt-2">
+            {/* Price input (shared for all payment methods) */}
             <div className="relative">
               <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
               <input
@@ -75,66 +77,112 @@ export function StepPricing({ mode, currentAttendees }: StepPricingProps) {
               <p className="text-red-400 text-sm">{errors.price.message}</p>
             )}
 
-            {/* PayNow QR Upload (create mode only) */}
-            {mode === 'create' && (
-              <div>
-                <p className="text-xs text-neutral-500 mb-2">PayNow QR Code</p>
-                {paynowQrCode ? (
-                  <div className="relative w-32 h-32 bg-neutral-950 rounded-lg overflow-hidden">
-                    <Image
-                      src={paynowQrCode}
-                      alt="PayNow QR"
-                      fill
-                      className="object-contain"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setValue('paynowQrCode', '')}
-                      className="absolute top-1 right-1 p-1 bg-neutral-900/80 rounded-full"
-                    >
-                      <X className="w-3 h-3 text-white" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="w-32">
-                    {isUploadingQr ? (
-                      <div className="h-32 flex items-center justify-center bg-neutral-800 rounded-lg">
-                        <Loader2 className="w-5 h-5 animate-spin text-neutral-400" />
-                      </div>
-                    ) : (
-                      <UploadButton
-                        endpoint="eventImage"
-                        onUploadBegin={() => { setIsUploadingQr(true); setUploadError('') }}
-                        onClientUploadComplete={(res) => {
-                          setIsUploadingQr(false)
-                          if (res?.[0]?.url) {
-                            setValue('paynowQrCode', res[0].url)
-                          }
-                        }}
-                        onUploadError={() => {
-                          setIsUploadingQr(false)
-                          setUploadError('Failed to upload QR code')
-                        }}
-                        appearance={{
-                          button: "bg-neutral-800 hover:bg-neutral-700 text-white text-xs px-3 py-2 rounded-lg",
-                          allowedContent: "hidden",
-                        }}
-                      />
-                    )}
-                    {uploadError && (
-                      <p className="text-red-400 text-xs mt-1">{uploadError}</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+            <h4 className="text-xs font-medium text-neutral-500 uppercase tracking-wider pt-1">Payment Methods</h4>
 
-            <input
-              type="text"
-              {...register('paynowNumber')}
-              placeholder="PayNow number (optional)"
-              className="w-full px-4 py-2.5 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-500 text-sm"
-            />
+            {/* PayNow Card */}
+            <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-4 space-y-3">
+              <div>
+                <p className="font-medium text-white flex items-center gap-2">
+                  <span>🇸🇬</span> PayNow
+                </p>
+                <p className="text-xs text-neutral-500">Manual payment via QR or number</p>
+              </div>
+
+              {/* PayNow QR Upload (create mode only) */}
+              {mode === 'create' && (
+                <div>
+                  <p className="text-xs text-neutral-500 mb-2">PayNow QR Code</p>
+                  {paynowQrCode ? (
+                    <div className="relative w-32 h-32 bg-neutral-950 rounded-lg overflow-hidden">
+                      <Image
+                        src={paynowQrCode}
+                        alt="PayNow QR"
+                        fill
+                        className="object-contain"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setValue('paynowQrCode', '')}
+                        className="absolute top-1 right-1 p-1 bg-neutral-900/80 rounded-full"
+                      >
+                        <X className="w-3 h-3 text-white" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-32">
+                      {isUploadingQr ? (
+                        <div className="h-32 flex items-center justify-center bg-neutral-800 rounded-lg">
+                          <Loader2 className="w-5 h-5 animate-spin text-neutral-400" />
+                        </div>
+                      ) : (
+                        <UploadButton
+                          endpoint="eventImage"
+                          onUploadBegin={() => { setIsUploadingQr(true); setUploadError('') }}
+                          onClientUploadComplete={(res) => {
+                            setIsUploadingQr(false)
+                            if (res?.[0]?.url) {
+                              setValue('paynowQrCode', res[0].url)
+                            }
+                          }}
+                          onUploadError={() => {
+                            setIsUploadingQr(false)
+                            setUploadError('Failed to upload QR code')
+                          }}
+                          appearance={{
+                            button: "bg-neutral-800 hover:bg-neutral-700 text-white text-xs px-3 py-2 rounded-lg",
+                            allowedContent: "hidden",
+                          }}
+                        />
+                      )}
+                      {uploadError && (
+                        <p className="text-red-400 text-xs mt-1">{uploadError}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <input
+                type="text"
+                {...register('paynowNumber')}
+                placeholder="PayNow number (optional)"
+                className="w-full px-4 py-2.5 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-500 text-sm"
+              />
+            </div>
+
+            {/* Stripe Card */}
+            <div className={`rounded-xl border p-4 space-y-3 transition-colors ${
+              stripeEnabled
+                ? 'border-emerald-600 bg-emerald-950/20'
+                : 'border-neutral-800 bg-neutral-900'
+            }`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-white flex items-center gap-2">
+                    <span>💳</span> Stripe
+                  </p>
+                  <p className="text-xs text-neutral-500">Accept card payments automatically</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setValue('stripeEnabled', !stripeEnabled)}
+                  className={`relative w-12 h-7 rounded-full transition-colors ${
+                    stripeEnabled ? 'bg-emerald-500' : 'bg-neutral-700'
+                  }`}
+                >
+                  <span
+                    className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                      stripeEnabled ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+              {stripeEnabled && (
+                <p className="text-xs text-emerald-400 bg-emerald-500/10 p-3 rounded-lg border border-emerald-500/20">
+                  After creating your event, you&apos;ll be guided to connect your Stripe account.
+                </p>
+              )}
+            </div>
           </div>
         )}
       </div>

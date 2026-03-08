@@ -25,6 +25,7 @@ export const eventFormSchema = z.object({
   price: z.string(),
   paynowQrCode: z.string(),
   paynowNumber: z.string(),
+  stripeEnabled: z.boolean(),
   maxSpots: z.string(),
   isFull: z.boolean(),
 
@@ -67,6 +68,7 @@ export const step3Schema = eventFormSchema
   .pick({
     isFree: true,
     price: true,
+    stripeEnabled: true,
     maxSpots: true,
   })
   .refine(

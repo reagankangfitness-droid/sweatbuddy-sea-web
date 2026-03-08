@@ -2792,12 +2792,16 @@ model CommunityMessage {
   senderId String
   content  String @db.Text
 
+  isAnnouncement Boolean @default(false)
+  isPinned       Boolean @default(false)
+
   createdAt DateTime @default(now())
 
   chat   CommunityChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
   sender User          @relation("CommunityMessagesSent", fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([chatId, createdAt])
+  @@index([chatId, isAnnouncement, createdAt])
   @@index([senderId])
   @@map("community_messages")
 }

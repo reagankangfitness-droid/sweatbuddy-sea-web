@@ -23,8 +23,8 @@ async function getEvent(slug: string) {
 
   if (!event) return null
 
-  // Query attendees and recap separately (no Prisma relation defined)
-  const [attendees, attendeeCount, recap] = await Promise.all([
+  // Query attendees, recap, and reviews separately (no Prisma relation defined)
+  const [attendees, attendeeCount, recap, reviews] = await Promise.all([
     prisma.eventAttendance.findMany({
       where: {
         eventId: event.id,
@@ -51,8 +51,40 @@ async function getEvent(slug: string) {
         publishedAt: true,
         attendeeCount: true,
       },
+    }),
+    prisma.eventReview.findMany({
+      where: {
+        eventId: event.id,
+        isPublished: true,
+        isFlagged: false,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 10,
+      select: {
+        id: true,
+        rating: true,
+        content: true,
+        reviewerName: true,
+        reviewerEmail: true,
+        hostResponse: true,
+        createdAt: true,
+      },
     })
   ])
+
+  // Compute review summary
+  const totalReviews = reviews.length
+  const averageRating = totalReviews > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
+    : 0
+  const ratingDistribution = {
+    fiveStar: reviews.filter(r => r.rating === 5).length,
+    fourStar: reviews.filter(r => r.rating === 4).length,
+    threeStar: reviews.filter(r => r.rating === 3).length,
+    twoStar: reviews.filter(r => r.rating === 2).length,
+    oneStar: reviews.filter(r => r.rating === 1).length,
+  }
+  const reviewSummary = { totalReviews, averageRating, ratingDistribution }
 
   return {
     id: event.id,
@@ -88,6 +120,16 @@ async function getEvent(slug: string) {
       publishedAt: recap.publishedAt.toISOString(),
       attendeeCount: recap.attendeeCount,
     } : null,
+    reviews: reviews.map(r => ({
+      id: r.id,
+      rating: r.rating,
+      content: r.content,
+      reviewerName: r.reviewerName,
+      reviewerEmail: r.reviewerEmail,
+      hostResponse: r.hostResponse,
+      createdAt: r.createdAt.toISOString(),
+    })),
+    reviewSummary,
   }
 }
 

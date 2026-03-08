@@ -135,6 +135,7 @@ export async function GET(request: NextRequest) {
   const lng = parseFloat(searchParams.get('lng') || '')
   const type = searchParams.get('type')
   const radiusKm = parseFloat(searchParams.get('radius') || String(DEFAULT_RADIUS_KM))
+  const q = searchParams.get('q')?.trim() || ''
 
   // Validate type if provided
   if (type && !VALID_TYPES.has(type)) {
@@ -163,24 +164,38 @@ export async function GET(request: NextRequest) {
 
   // --- Fetch hosted activities (published, with coordinates, upcoming) ---
   // Show all future activities with no date ceiling
+  const activityWhere: Record<string, unknown> = {
+    status: 'PUBLISHED',
+    deletedAt: null,
+    latitude: { not: 0 },
+    longitude: { not: 0 },
+    OR: [
+      // Has end time - must be in the future
+      { endTime: { gte: now } },
+      // No end time but has start time - must be upcoming (with 3 hour buffer for in-progress events)
+      {
+        endTime: null,
+        startTime: { gte: new Date(now.getTime() - 3 * 60 * 60 * 1000) },
+      },
+      // No specific time - always show
+      { startTime: null, endTime: null },
+    ],
+  }
+  if (q) {
+    activityWhere.AND = [
+      {
+        OR: [
+          { title: { contains: q, mode: 'insensitive' } },
+          { description: { contains: q, mode: 'insensitive' } },
+          { city: { contains: q, mode: 'insensitive' } },
+          { address: { contains: q, mode: 'insensitive' } },
+        ],
+      },
+    ]
+  }
+
   const hostedActivities = await prisma.activity.findMany({
-    where: {
-      status: 'PUBLISHED',
-      deletedAt: null,
-      latitude: { not: 0 },
-      longitude: { not: 0 },
-      OR: [
-        // Has end time - must be in the future
-        { endTime: { gte: now } },
-        // No end time but has start time - must be upcoming (with 3 hour buffer for in-progress events)
-        {
-          endTime: null,
-          startTime: { gte: new Date(now.getTime() - 3 * 60 * 60 * 1000) },
-        },
-        // No specific time - always show
-        { startTime: null, endTime: null },
-      ],
-    },
+    where: activityWhere,
     include: {
       user: { select: { id: true, name: true, imageUrl: true } },
       _count: { select: { userActivities: true } },
@@ -192,24 +207,36 @@ export async function GET(request: NextRequest) {
   // --- Fetch upcoming EventSubmissions ---
   // Show: recurring events (always) + all future one-time events
   // Use SGT-aware "today" for eventDate comparison since eventDate is stored as midnight UTC
+  const eventSubmissionAndFilters: Record<string, unknown>[] = [
+    {
+      OR: [
+        { scheduledPublishAt: null },
+        { scheduledPublishAt: { lte: now } },
+      ],
+    },
+    {
+      OR: [
+        { recurring: true },
+        { eventDate: { gte: today } },
+        { eventDate: null, recurring: true },
+      ],
+    },
+  ]
+  if (q) {
+    eventSubmissionAndFilters.push({
+      OR: [
+        { eventName: { contains: q, mode: 'insensitive' } },
+        { description: { contains: q, mode: 'insensitive' } },
+        { location: { contains: q, mode: 'insensitive' } },
+        { organizerName: { contains: q, mode: 'insensitive' } },
+      ],
+    })
+  }
+
   const eventSubmissions = await prisma.eventSubmission.findMany({
     where: {
       status: 'APPROVED',
-      AND: [
-        {
-          OR: [
-            { scheduledPublishAt: null },
-            { scheduledPublishAt: { lte: now } },
-          ],
-        },
-        {
-          OR: [
-            { recurring: true },
-            { eventDate: { gte: today } },
-            { eventDate: null, recurring: true },
-          ],
-        },
-      ],
+      AND: eventSubmissionAndFilters,
     },
     select: {
       id: true,

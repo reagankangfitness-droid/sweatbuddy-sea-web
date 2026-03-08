@@ -131,7 +131,7 @@ export default async function TicketPage({ params }: TicketPageProps) {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-sm text-neutral-500">Attendee</p>
-                <p className="font-semibold text-neutral-100">{attendance.name || attendance.email}</p>
+                <p className="font-semibold text-neutral-100">{attendance.name || (attendance.email ? attendance.email.slice(0, 2) + '***@' + attendance.email.split('@')[1] : 'Attendee')}</p>
               </div>
               {getPaymentBadge(attendance.paymentStatus, attendance.paymentAmount)}
             </div>

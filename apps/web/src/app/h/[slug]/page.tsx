@@ -114,6 +114,7 @@ export default function HostProfilePage() {
   const [activities, setActivities] = useState<Activity[]>([])
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [isFollowing, setIsFollowing] = useState(false)
   const [isInterestedState, setIsInterestedState] = useState(false)
   const [interestCount, setInterestCount] = useState(0)
@@ -149,7 +150,8 @@ export default function HostProfilePage() {
     try {
       const res = await fetch(`/api/profiles/${slug}`)
       if (res.status === 404) {
-        router.push('/404')
+        setError('Profile not found')
+        setLoading(false)
         return
       }
       const data = await res.json()
@@ -278,10 +280,10 @@ export default function HostProfilePage() {
     )
   }
 
-  if (!profile) {
+  if (error || !profile) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-muted-foreground">Profile not found</p>
+        <p className="text-muted-foreground">{error || 'Profile not found'}</p>
       </div>
     )
   }
@@ -460,18 +462,19 @@ export default function HostProfilePage() {
       </div>
 
       {/* Stats Bar */}
+      {hostStats && (
       <div className="max-w-4xl mx-auto mt-6 px-4 sm:px-6">
         <div className="bg-card rounded-2xl border p-4 flex justify-around">
           <div className="text-center">
             <div className="text-2xl font-bold text-foreground">
-              {hostStats?.totalEvents || 0}
+              {hostStats.totalEvents || 0}
             </div>
             <div className="text-xs text-muted-foreground">Events</div>
           </div>
           <div className="w-px bg-border" />
           <div className="text-center">
             <div className="text-2xl font-bold text-foreground">
-              {hostStats?.totalUniqueAttendees || 0}
+              {hostStats.totalUniqueAttendees || 0}
             </div>
             <div className="text-xs text-muted-foreground">Attendees</div>
           </div>
@@ -485,7 +488,7 @@ export default function HostProfilePage() {
           <div className="w-px bg-border" />
           <div className="text-center">
             <div className="flex items-center justify-center">
-              {hostStats && hostStats.averageRating > 0 ? (
+              {hostStats.averageRating > 0 ? (
                 <StarRating
                   rating={Number(hostStats.averageRating)}
                   size="sm"
@@ -501,6 +504,7 @@ export default function HostProfilePage() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Bio Section */}
       {profile.bio && (
@@ -727,12 +731,12 @@ export default function HostProfilePage() {
               </span>
             </h2>
             {hostStats && hostStats.totalReviews > 5 && (
-              <Link
-                href={`/h/${slug}/reviews`}
+              <a
+                href="#reviews"
                 className="text-sm font-medium text-primary hover:underline flex items-center gap-1"
               >
                 View all <ChevronRight className="h-4 w-4" />
-              </Link>
+              </a>
             )}
           </div>
 

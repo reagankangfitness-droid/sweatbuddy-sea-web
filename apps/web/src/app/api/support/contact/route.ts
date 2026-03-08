@@ -1,10 +1,22 @@
 import { NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email'
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { name, email, category, message } = body
+    const { name: rawName, email: rawEmail, category, message: rawMessage } = body
+    const name = rawName ? escapeHtml(String(rawName)) : ''
+    const email = rawEmail ? escapeHtml(String(rawEmail)) : ''
+    const message = rawMessage ? escapeHtml(String(rawMessage)) : ''
 
     if (!name || !email || !message) {
       return NextResponse.json(
@@ -35,7 +47,7 @@ export async function POST(request: Request) {
     const categoryLabel = categoryLabels[category] || 'General'
 
     // Send email to support team
-    const supportEmail = process.env.SUPPORT_EMAIL || 'support@sweatbuddies.sg'
+    const supportEmail = process.env.SUPPORT_EMAIL || 'support@sweatbuddies.co'
 
     await sendEmail({
       to: supportEmail,
@@ -132,7 +144,7 @@ Reply directly to this email to respond to ${name}.
               <p style="margin: 0; color: #6b7280; white-space: pre-wrap;">${message}</p>
             </div>
 
-            <p>In the meantime, you might find answers in our <a href="https://sweatbuddies.sg/support" style="color: #10b981; text-decoration: none;">FAQ section</a>.</p>
+            <p>In the meantime, you might find answers in our <a href="https://sweatbuddies.co/support" style="color: #10b981; text-decoration: none;">FAQ section</a>.</p>
 
             <p style="margin-bottom: 0;">
               Best,<br>
@@ -154,7 +166,7 @@ Thanks for reaching out to SweatBuddies! We've received your message and will ge
 Your message:
 ${message}
 
-In the meantime, you might find answers in our FAQ section at https://sweatbuddies.sg/support
+In the meantime, you might find answers in our FAQ section at https://sweatbuddies.co/support
 
 Best,
 The SweatBuddies Team

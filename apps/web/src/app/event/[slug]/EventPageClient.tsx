@@ -33,7 +33,6 @@ interface EventReviewData {
   rating: number
   content: string | null
   reviewerName: string | null
-  reviewerEmail: string
   hostResponse: string | null
   createdAt: string
 }
@@ -160,7 +159,7 @@ export function EventPageClient({ event, familiarFaces = [], communityFollow }: 
       {/* Header */}
       <header className="sticky top-0 z-50 bg-neutral-950/95 backdrop-blur-sm border-b border-neutral-800">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/#events" className="flex items-center gap-2 text-neutral-400 hover:text-neutral-100">
+          <Link href="/events" className="flex items-center gap-2 text-neutral-400 hover:text-neutral-100">
             <ArrowLeft className="w-5 h-5" />
             <span className="hidden sm:inline">Back to experiences</span>
           </Link>
@@ -304,8 +303,8 @@ export function EventPageClient({ event, familiarFaces = [], communityFollow }: 
             {event.recap && (
               <>
                 <div className="border-t border-neutral-800" />
-                <div className="bg-emerald-50 rounded-2xl p-6">
-                  <h2 className="text-xl font-semibold text-neutral-100 mb-4">
+                <div className="bg-emerald-950/30 rounded-2xl p-6">
+                  <h2 className="text-xl font-semibold text-emerald-200 mb-4">
                     Event Recap
                   </h2>
                   {event.recap.photoUrl && (

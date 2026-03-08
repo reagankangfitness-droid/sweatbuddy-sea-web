@@ -16,7 +16,9 @@ function SignInContent() {
   const intent = searchParams.get('intent') // 'rsvp', 'host', or null (general)
   const eventId = searchParams.get('eventId')
   const eventSlug = searchParams.get('eventSlug')
-  const redirectUrl = searchParams.get('redirect_url')
+  const rawRedirectUrl = searchParams.get('redirect_url')
+  // Prevent open redirect -- only allow relative paths
+  const redirectUrl = rawRedirectUrl && rawRedirectUrl.startsWith('/') && !rawRedirectUrl.startsWith('//') ? rawRedirectUrl : null
 
   // Store intent in sessionStorage for post-auth routing
   useEffect(() => {

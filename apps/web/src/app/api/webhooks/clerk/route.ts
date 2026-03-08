@@ -137,6 +137,18 @@ export async function POST(req: Request) {
       : first_name || null
 
     try {
+      // Generate slug for new users
+      let slug: string | undefined
+      if (eventType === 'user.created' && (name || first_name)) {
+        const baseName = (name || first_name || 'user').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+        slug = baseName
+        // Check uniqueness, append random suffix if needed
+        const existing = await prisma.user.findUnique({ where: { slug: baseName } })
+        if (existing) {
+          slug = `${baseName}-${Math.random().toString(36).slice(2, 6)}`
+        }
+      }
+
       // Upsert user into database
       await prisma.user.upsert({
         where: { id },
@@ -144,11 +156,14 @@ export async function POST(req: Request) {
           id,
           email,
           name,
+          firstName: first_name || null,
           imageUrl: image_url || null,
+          ...(slug ? { slug } : {}),
         },
         update: {
           email,
           name,
+          firstName: first_name || null,
           imageUrl: image_url || null,
         },
       })

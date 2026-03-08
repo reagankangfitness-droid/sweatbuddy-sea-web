@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@clerk/nextjs'
 import { Users, LogIn, Settings, Check, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface JoinCommunityButtonProps {
   communitySlug: string
@@ -43,7 +44,7 @@ export function JoinCommunityButton({
         router.refresh()
       }
     } catch {
-      // Error handled silently
+      toast.error('Something went wrong')
     } finally {
       setLoading(false)
     }
@@ -62,7 +63,7 @@ export function JoinCommunityButton({
         router.refresh()
       }
     } catch {
-      // Error handled silently
+      toast.error('Something went wrong')
     } finally {
       setLoading(false)
     }

@@ -260,7 +260,7 @@ export default function SupportPage() {
           {submitSuccess ? (
             <div className="bg-green-950 border border-green-800 rounded-xl p-6 text-center">
               <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-3" />
-              <h4 className="font-semibold text-green-900 mb-1">Message Sent!</h4>
+              <h4 className="font-semibold text-green-400 mb-1">Message Sent!</h4>
               <p className="text-green-400 text-sm">
                 We&apos;ll get back to you within 24 hours. Check your email for our response.
               </p>

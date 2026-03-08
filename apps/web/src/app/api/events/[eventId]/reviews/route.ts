@@ -1,3 +1,4 @@
+import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
@@ -105,6 +106,11 @@ export async function POST(
   { params }: { params: Promise<{ eventId: string }> }
 ) {
   try {
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { eventId } = await params
     const body = await request.json()
 
@@ -142,6 +148,13 @@ export async function POST(
       return NextResponse.json(
         { error: 'Attendance does not match this event' },
         { status: 400 }
+      )
+    }
+
+    if (attendance.actuallyAttended === false) {
+      return NextResponse.json(
+        { error: 'You must attend the event before reviewing' },
+        { status: 403 }
       )
     }
 

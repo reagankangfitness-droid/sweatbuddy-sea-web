@@ -49,6 +49,7 @@ export async function generateUserSlug(name: string | null, userId: string): Pro
  */
 export const publicProfileSelect = {
   id: true,
+  email: true,
   name: true,
   firstName: true,
   slug: true,

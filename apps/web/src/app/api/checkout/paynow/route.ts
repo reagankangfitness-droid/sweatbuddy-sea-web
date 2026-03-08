@@ -1,3 +1,4 @@
+import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendHostNewAttendeeNotification } from '@/lib/event-confirmation-email'
@@ -21,6 +22,11 @@ interface PayNowCheckoutRequest {
 
 export async function POST(request: Request) {
   try {
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const data: PayNowCheckoutRequest = await request.json()
 
     // Accept both paymentReference and transactionRef
@@ -75,6 +81,22 @@ export async function POST(request: Request) {
         { error: 'PayNow is not enabled for this event' },
         { status: 400 }
       )
+    }
+
+    // Check capacity
+    if (event.maxTickets && event.maxTickets > 0) {
+      const currentCount = await prisma.eventAttendance.count({
+        where: {
+          eventId: data.eventId,
+          paymentStatus: { in: ['pending', 'paid'] },
+        },
+      })
+      if (currentCount >= event.maxTickets) {
+        return NextResponse.json(
+          { error: 'This event is full' },
+          { status: 409 }
+        )
+      }
     }
 
     // Validate amount matches event price

@@ -1,5 +1,26 @@
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
+function sanitizeUrl(url: string): string {
+  try {
+    const parsed = new URL(url)
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') return url
+    return '#'
+  } catch {
+    // Allow relative paths
+    if (url.startsWith('/')) return url
+    return '#'
+  }
+}
+
 export function buildNotificationEmail(params: {
   title: string
   body: string
@@ -7,7 +28,17 @@ export function buildNotificationEmail(params: {
   linkLabel?: string
   imageUrl?: string
 }): string {
-  const { title, body, linkUrl, linkLabel, imageUrl } = params
+  const safeTitle = escapeHtml(params.title)
+  const safeBody = escapeHtml(params.body)
+  const safeLinkUrl = params.linkUrl ? sanitizeUrl(params.linkUrl) : undefined
+  const safeLinkLabel = params.linkLabel ? escapeHtml(params.linkLabel) : undefined
+  const safeImageUrl = params.imageUrl ? sanitizeUrl(params.imageUrl) : undefined
+
+  const title = safeTitle
+  const body = safeBody
+  const linkUrl = safeLinkUrl
+  const linkLabel = safeLinkLabel
+  const imageUrl = safeImageUrl
 
   const ctaButton = linkUrl
     ? `

@@ -306,8 +306,8 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
 async function handleCheckoutExpired(session: Stripe.Checkout.Session) {
   const sessionId = session.id
 
-
   try {
+    // Handle Activity bookings
     await prisma.userActivity.updateMany({
       where: {
         stripeCheckoutSessionId: sessionId,
@@ -319,6 +319,21 @@ async function handleCheckoutExpired(session: Stripe.Checkout.Session) {
       },
     })
 
+    // Handle EventSubmission ticket reservation rollback
+    const eventId = session.metadata?.eventId
+    const quantity = parseInt(session.metadata?.quantity || '1', 10)
+    if (eventId) {
+      const event = await prisma.eventSubmission.findUnique({
+        where: { id: eventId },
+        select: { maxTickets: true, ticketsSold: true },
+      })
+      if (event?.maxTickets && event.ticketsSold > 0) {
+        await prisma.eventSubmission.update({
+          where: { id: eventId },
+          data: { ticketsSold: { decrement: Math.min(quantity, event.ticketsSold) } },
+        })
+      }
+    }
   } catch (error) {
     console.error('Error handling checkout expiry:', error)
   }

@@ -202,48 +202,7 @@ export function ReviewForm({
         </p>
       </div>
 
-      {/* Photos */}
-      <div className="space-y-3">
-        <Label>Photos (optional)</Label>
-        <div className="flex flex-wrap gap-3">
-          {photos.map((photo, index) => (
-            <div
-              key={index}
-              className="relative w-20 h-20 rounded-lg overflow-hidden group"
-            >
-              <Image src={photo} alt={`Upload preview ${index + 1}`} fill className="object-cover" />
-              <button
-                type="button"
-                onClick={() => removePhoto(index)}
-                className="absolute top-1 right-1 p-1 bg-black/50 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <X size={14} />
-              </button>
-            </div>
-          ))}
-
-          {photos.length < 5 && (
-            <label className="w-20 h-20 flex items-center justify-center border-2 border-dashed border-muted-foreground/30 rounded-lg cursor-pointer hover:border-primary/50 hover:bg-muted/50 transition-colors">
-              {uploadingPhoto ? (
-                <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-              ) : (
-                <Camera className="w-5 h-5 text-muted-foreground" />
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handlePhotoUpload}
-                className="hidden"
-                disabled={uploadingPhoto}
-              />
-            </label>
-          )}
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Add up to 5 photos (max 5MB each)
-        </p>
-      </div>
+      {/* Photos - disabled until cloud upload is integrated */}
 
       {/* Submit */}
       <Button

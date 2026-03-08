@@ -42,15 +42,14 @@ export async function POST(
     }
 
     // Check privacy settings
-    if (community.privacy === 'INVITE_ONLY') {
+    if (community.privacy === 'INVITE_ONLY' || community.privacy === 'PRIVATE') {
       return NextResponse.json(
-        { error: 'This community requires an invite to join' },
+        { error: community.privacy === 'INVITE_ONLY'
+          ? 'This community requires an invite to join'
+          : 'This is a private community' },
         { status: 403 }
       )
     }
-
-    // For private communities, we could implement a request system
-    // For now, we'll allow joining but this could be enhanced later
 
     // Add as member
     const member = await prisma.communityMember.create({

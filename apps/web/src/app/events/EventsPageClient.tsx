@@ -18,11 +18,12 @@ interface HostedEvent {
   hostName: string
   hostImageUrl?: string
   locationName: string
+  address?: string
   latitude: number
   longitude: number
   startTime: string
   spotsLeft: number | null
-  totalSpots: number | null
+  totalSpots?: number | null
   price: number
   currency: string
   imageUrl?: string
@@ -35,6 +36,16 @@ interface HostedEvent {
   familiarFaces?: { name: string | null; firstName: string | null; imageUrl: string | null; sharedEventCount: number }[]
 }
 
+function enrichEvent(raw: Record<string, unknown>): HostedEvent {
+  const categorySlug = (raw.categorySlug as string) || ''
+  const cat = ACTIVITY_CATEGORIES.find(c => c.slug === categorySlug)
+  return {
+    ...raw,
+    emoji: (raw.emoji as string) || cat?.emoji || '',
+    locationName: (raw.locationName as string) || (raw.address as string) || '',
+  } as HostedEvent
+}
+
 function getEventUrl(event: HostedEvent): string {
   if (event.isEventSubmission || event.id.startsWith('event_')) {
     return `/e/${event.id.replace('event_', '')}`
@@ -45,7 +56,9 @@ function getEventUrl(event: HostedEvent): string {
 const SG_TZ = { timeZone: 'Asia/Singapore' } as const
 
 function formatEventTime(iso: string): string {
+  if (!iso) return ''
   const date = new Date(iso)
+  if (isNaN(date.getTime())) return ''
   const now = new Date()
   const tomorrow = new Date(now)
   tomorrow.setDate(tomorrow.getDate() + 1)
@@ -129,7 +142,7 @@ export default function EventsPage() {
       if (waveRes.ok) {
         const data = await waveRes.json()
         if (data.hostedActivities) {
-          setEvents(data.hostedActivities)
+          setEvents(data.hostedActivities.map(enrichEvent))
         }
       }
     } catch (error) {
@@ -425,7 +438,7 @@ export default function EventsPage() {
               if (groupKey === 'today' && heroEvent && !categoryFilter) return null
 
               return (
-                <section key={groupKey} className="py-6 md:py-12 first:pt-0 [&:not(:first-child)]:border-t [&:not(:first-child)]:border-neutral-100">
+                <section key={groupKey} className="py-6 md:py-12 first:pt-0 [&:not(:first-child)]:border-t [&:not(:first-child)]:border-neutral-800">
                   <h2 className="text-lg font-bold text-neutral-100 mb-4">
                     {TIME_GROUP_LABELS[groupKey]}
                   </h2>

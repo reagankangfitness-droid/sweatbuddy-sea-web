@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import {
@@ -25,9 +25,16 @@ export async function GET(
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
-    // Get current user session
+    // Get current user session — check both ID and email to handle CUID vs Clerk ID mismatch
     const { userId } = await auth()
-    const isOwnProfile = userId === profile.id
+    let isOwnProfile = userId === profile.id
+    if (!isOwnProfile && userId) {
+      const clerkUser = await currentUser()
+      const clerkEmail = clerkUser?.emailAddresses?.[0]?.emailAddress
+      if (clerkEmail && 'email' in profile && profile.email && clerkEmail.toLowerCase() === profile.email.toLowerCase()) {
+        isOwnProfile = true
+      }
+    }
 
     // If profile is private and not own profile, return limited data
     if (!profile.isPublic && !isOwnProfile) {
@@ -114,9 +121,11 @@ export async function GET(
       trackProfileView(profile.id, userId || null, 'direct').catch(console.error)
     }
 
+    // Strip email from public response (only used server-side for ownership check)
+    const { email: _email, ...publicProfile } = profile as Record<string, unknown>
     return NextResponse.json({
       profile: {
-        ...profile,
+        ...publicProfile,
         hostStats: showStats || isOwnProfile ? hostStats : null,
         attendedStats: showActivitiesAttended || isOwnProfile ? attendedStats : null,
         followCounts,

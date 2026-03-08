@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@clerk/nextjs'
 import { UserPlus, Check, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface FollowButtonProps {
   communityId: string | null
@@ -43,7 +44,7 @@ export function FollowButton({
         setIsFollowing(true)
       }
     } catch {
-      // Handled silently
+      toast.error('Something went wrong')
     } finally {
       setLoading(false)
     }
@@ -63,7 +64,7 @@ export function FollowButton({
         setIsFollowing(false)
       }
     } catch {
-      // Handled silently
+      toast.error('Something went wrong')
     } finally {
       setLoading(false)
     }

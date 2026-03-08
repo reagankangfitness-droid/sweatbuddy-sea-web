@@ -7,6 +7,9 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@clerk/nextjs/server'
 import { JoinCommunityButton } from '@/components/community/JoinCommunityButton'
 import { ShareButton } from '@/components/community/ShareButton'
+import { getUpcomingEventSubmissions } from '@/lib/community-system'
+
+export const revalidate = 60
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -127,11 +130,57 @@ export default async function CommunityPage({ params }: Props) {
     notFound()
   }
 
-  const [upcomingEvents, members, membership] = await Promise.all([
+  const [upcomingEvents, eventSubmissions, members, membership] = await Promise.all([
     getUpcomingEvents(community.id),
+    community.instagramHandle
+      ? getUpcomingEventSubmissions(community.instagramHandle)
+      : Promise.resolve([]),
     getMembers(community.id),
     getMembership(community.id, userId),
   ])
+
+  // Merge activity events and event submissions into a unified list sorted by date
+  type UnifiedEvent = {
+    id: string
+    title: string
+    date: Date | null
+    time: string | null
+    location: string | null
+    href: string
+    source: 'activity' | 'submission'
+    attendeeCount?: number
+  }
+
+  const activityEvents: UnifiedEvent[] = upcomingEvents.map((e) => ({
+    id: e.id,
+    title: e.title,
+    date: e.startTime,
+    time: e.startTime
+      ? new Date(e.startTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+      : null,
+    location: null,
+    href: `/activities/${e.id}`,
+    source: 'activity' as const,
+    attendeeCount: e._count.userActivities,
+  }))
+
+  const submissionEvents: UnifiedEvent[] = eventSubmissions.map((e) => ({
+    id: e.id,
+    title: e.eventName,
+    date: e.eventDate,
+    time: e.time,
+    location: e.location,
+    href: `/e/${e.slug || e.id}`,
+    source: 'submission' as const,
+  }))
+
+  const allUpcomingEvents = [...activityEvents, ...submissionEvents].sort(
+    (a, b) => {
+      if (!a.date) return 1
+      if (!b.date) return -1
+      return new Date(a.date).getTime() - new Date(b.date).getTime()
+    }
+  ).slice(0, 6)
 
   const isMember = !!membership
   const isOwner = membership?.role === 'OWNER'
@@ -221,7 +270,7 @@ export default async function CommunityPage({ params }: Props) {
                 </span>
                 <span className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  {community._count.activities} experiences
+                  {Math.max(community._count.activities, community.eventCount)} experiences
                 </span>
               </div>
 
@@ -316,34 +365,44 @@ export default async function CommunityPage({ params }: Props) {
           <h2 className="text-xl font-semibold text-neutral-100">Upcoming Events</h2>
         </div>
 
-        {upcomingEvents.length > 0 ? (
+        {allUpcomingEvents.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {upcomingEvents.map((event) => (
+            {allUpcomingEvents.map((event) => (
               <Link
-                key={event.id}
-                href={`/activities/${event.id}`}
+                key={`${event.source}-${event.id}`}
+                href={event.href}
                 className="group block bg-neutral-950 border border-neutral-800 rounded-xl p-4 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start gap-3">
                   <div className="w-14 h-14 rounded-lg bg-neutral-800 flex flex-col items-center justify-center flex-shrink-0">
                     <span className="text-xs text-neutral-500">
-                      {event.startTime ? new Date(event.startTime).toLocaleDateString('en-US', { month: 'short' }) : ''}
+                      {event.date ? new Date(event.date).toLocaleDateString('en-US', { month: 'short' }) : 'TBD'}
                     </span>
                     <span className="text-lg font-bold text-neutral-100">
-                      {event.startTime ? new Date(event.startTime).getDate() : ''}
+                      {event.date ? new Date(event.date).getDate() : '--'}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium text-neutral-100 group-hover:text-blue-600 transition-colors truncate">
                       {event.title}
                     </h3>
-                    <p className="text-sm text-neutral-500 mt-0.5">
-                      {event.startTime ? new Date(event.startTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : ''}
-                    </p>
-                    <div className="flex items-center gap-2 mt-2 text-xs text-neutral-400">
-                      <Users className="w-3.5 h-3.5" />
-                      {event._count.userActivities} going
-                    </div>
+                    {event.time && (
+                      <p className="text-sm text-neutral-500 mt-0.5">
+                        {event.time}
+                      </p>
+                    )}
+                    {event.location && (
+                      <p className="text-sm text-neutral-400 mt-0.5 flex items-center gap-1 min-w-0">
+                        <MapPin className="w-3 h-3 flex-shrink-0" />
+                        <span className="truncate">{event.location}</span>
+                      </p>
+                    )}
+                    {event.attendeeCount !== undefined && (
+                      <div className="flex items-center gap-2 mt-2 text-xs text-neutral-400">
+                        <Users className="w-3.5 h-3.5" />
+                        {event.attendeeCount} going
+                      </div>
+                    )}
                   </div>
                 </div>
               </Link>

@@ -292,6 +292,121 @@ export async function useInviteCode(code: string) {
 }
 
 /**
+ * Normalize an instagram handle: strip @ prefix, lowercase
+ */
+function normalizeInstagram(handle: string): string {
+  return handle.replace(/^@/, '').toLowerCase().trim()
+}
+
+/**
+ * Auto-create a Community record for an organizer.
+ * Returns existing community if one already matches by createdById or instagramHandle.
+ */
+export async function autoCreateCommunityForOrganizer(
+  userId: string,
+  instagramHandle: string,
+  organizerName: string,
+  category?: string
+) {
+  const normalized = normalizeInstagram(instagramHandle)
+
+  // Check if community already exists for this user or handle
+  const existing = await prisma.community.findFirst({
+    where: {
+      OR: [
+        { createdById: userId },
+        { instagramHandle: { equals: normalized, mode: 'insensitive' } },
+      ],
+    },
+  })
+
+  if (existing) return existing
+
+  const slug = await generateUniqueSlug(organizerName || normalized)
+
+  // Fallback name: capitalize handle, replace underscores with spaces
+  const name =
+    organizerName ||
+    normalized
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (c) => c.toUpperCase())
+
+  // Count approved event submissions for eventCount
+  const eventCount = await countApprovedEventSubmissions(instagramHandle)
+
+  const community = await prisma.community.create({
+    data: {
+      name,
+      slug,
+      category: category || 'fitness',
+      createdById: userId,
+      isActive: true,
+      instagramHandle: normalized,
+      memberCount: 1,
+      eventCount,
+    },
+  })
+
+  // Create owner membership
+  await prisma.communityMember.create({
+    data: {
+      communityId: community.id,
+      userId,
+      role: 'OWNER',
+    },
+  })
+
+  return community
+}
+
+/**
+ * Get upcoming approved EventSubmissions for a given instagram handle
+ */
+export async function getUpcomingEventSubmissions(instagramHandle: string) {
+  const normalized = normalizeInstagram(instagramHandle)
+  const withAt = `@${normalized}`
+
+  const submissions = await prisma.eventSubmission.findMany({
+    where: {
+      organizerInstagram: { in: [normalized, withAt], mode: 'insensitive' },
+      status: 'APPROVED',
+      eventDate: { gte: new Date() },
+      cancelledAt: null,
+    },
+    orderBy: { eventDate: 'asc' },
+    take: 6,
+    select: {
+      id: true,
+      eventName: true,
+      eventDate: true,
+      time: true,
+      location: true,
+      slug: true,
+      category: true,
+    },
+  })
+
+  return submissions
+}
+
+/**
+ * Count approved EventSubmissions for a given instagram handle
+ */
+export async function countApprovedEventSubmissions(
+  instagramHandle: string
+): Promise<number> {
+  const normalized = normalizeInstagram(instagramHandle)
+  const withAt = `@${normalized}`
+
+  return prisma.eventSubmission.count({
+    where: {
+      organizerInstagram: { in: [normalized, withAt], mode: 'insensitive' },
+      status: 'APPROVED',
+    },
+  })
+}
+
+/**
  * SEA Cities seed data
  */
 export const SEA_CITIES = [

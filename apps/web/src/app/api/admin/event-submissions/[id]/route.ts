@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { isAdminRequest } from '@/lib/admin-auth'
 import { sendEventApprovedEmail, sendEventRejectedEmail } from '@/lib/event-confirmation-email'
 import { sendEventRecommendationNudges } from '@/lib/nudges'
+import { autoCreateCommunityForOrganizer, countApprovedEventSubmissions } from '@/lib/community-system'
 
 // Geocode a location string to get coordinates
 async function geocodeLocation(location: string): Promise<{ lat: number; lng: number } | null> {
@@ -126,6 +127,55 @@ export async function PATCH(
           console.error('Failed to send rejection email:', err)
         })
       }
+    }
+
+    // Auto-create community for organizer on approval (fire and forget)
+    if (action === 'approve' && submission.organizerInstagram) {
+      ;(async () => {
+        try {
+          const handle = submission.organizerInstagram!
+          const normalizedHandle = handle.replace(/^@/, '').toLowerCase().trim()
+          const approvedCount = await countApprovedEventSubmissions(handle)
+
+          if (approvedCount >= 2) {
+            // Find User by matching instagram handle
+            const user = await prisma.user.findFirst({
+              where: {
+                instagram: { equals: normalizedHandle, mode: 'insensitive' },
+              },
+            })
+
+            if (user) {
+              // Check if community already exists
+              const existingCommunity = await prisma.community.findFirst({
+                where: {
+                  OR: [
+                    { createdById: user.id },
+                    { instagramHandle: { equals: normalizedHandle, mode: 'insensitive' } },
+                  ],
+                },
+              })
+
+              if (existingCommunity) {
+                // Update event count for existing community
+                await prisma.community.update({
+                  where: { id: existingCommunity.id },
+                  data: { eventCount: approvedCount },
+                })
+              } else {
+                await autoCreateCommunityForOrganizer(
+                  user.id,
+                  handle,
+                  submission.organizerName,
+                  submission.category || undefined
+                )
+              }
+            }
+          }
+        } catch (err) {
+          console.error('Failed to auto-create community for organizer:', err)
+        }
+      })()
     }
 
     return NextResponse.json({

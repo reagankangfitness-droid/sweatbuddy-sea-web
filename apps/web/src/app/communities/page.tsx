@@ -4,6 +4,8 @@ import Image from 'next/image'
 import { ArrowRight, Users, Calendar, MapPin } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 
+export const revalidate = 60
+
 export const metadata: Metadata = {
   title: 'Communities | SweatBuddies',
   description: 'Join fitness communities in Singapore and Bangkok. Find your tribe, attend events, and connect with like-minded people.',
@@ -218,7 +220,7 @@ export default async function CommunitiesPage() {
                     </span>
                     <span className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      {community._count.activities} events
+                      {Math.max(community._count.activities, community.eventCount)} events
                     </span>
                   </div>
                 </div>

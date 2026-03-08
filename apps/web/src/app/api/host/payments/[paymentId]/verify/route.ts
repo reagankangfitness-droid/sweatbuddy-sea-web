@@ -95,12 +95,13 @@ export async function POST(
             eventId: event.id,
           })
 
-          // Schedule 24-hour reminder for confirmed payment
+          // Schedule 24-hour and 2-hour reminders for confirmed payment
           if (event.eventDate) {
             scheduleEventReminder({
               attendanceId: paymentId,
               eventId: event.id,
               eventDate: event.eventDate,
+              eventTime: event.time || '08:00',
             }).catch((err) => {
               console.error('Failed to schedule reminder:', err)
             })

@@ -206,11 +206,12 @@ export async function POST(request: Request) {
       },
     }).then(async (event) => {
       if (event?.eventDate) {
-        // Schedule 24-hour pre-event reminder
+        // Schedule 24-hour and 2-hour pre-event reminders
         scheduleEventReminder({
           attendanceId: attendance.id,
           eventId,
           eventDate: event.eventDate,
+          eventTime: event.time || eventTime || '08:00',
         }).catch((err) => {
           console.error('Failed to schedule event reminder:', err)
         })

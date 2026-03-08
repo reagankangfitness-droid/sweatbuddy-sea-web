@@ -1818,18 +1818,20 @@ model EventAttendance {
   @@map("event_attendances")
 }
 
-// Event reminders (24h before event)
+// Event reminders (24h and 2h before event)
 model EventReminder {
-  id           String    @id @default(cuid())
-  attendanceId String    @unique // References EventAttendance.id
-  eventId      String // References EventSubmission.id
-  scheduledFor DateTime // When to send (24h before event)
+  id           String         @id @default(cuid())
+  attendanceId String         // References EventAttendance.id
+  eventId      String         // References EventSubmission.id
+  reminderType ReminderType   @default(ONE_DAY)
+  scheduledFor DateTime       // When to send
   status       ReminderStatus @default(PENDING)
   sentAt       DateTime?
   errorMessage String?        @db.Text
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
+  @@unique([attendanceId, reminderType])
   @@index([status, scheduledFor])
   @@index([eventId])
   @@map("event_reminders")

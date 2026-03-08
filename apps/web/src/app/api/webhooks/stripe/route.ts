@@ -589,13 +589,14 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
       }
     }
 
-    // Schedule 24-hour reminder email
+    // Schedule 24-hour and 2-hour reminder emails
     if (emailData.eventDate) {
       try {
         await scheduleEventReminder({
           attendanceId: emailData.attendanceId,
           eventId,
           eventDate: emailData.eventDate,
+          eventTime: emailData.eventTime || '08:00',
         })
       } catch (reminderError) {
         console.error('[EventSubmission] Failed to schedule reminder:', reminderError)

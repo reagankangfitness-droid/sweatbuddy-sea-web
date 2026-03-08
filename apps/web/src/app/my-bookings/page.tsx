@@ -359,10 +359,10 @@ export default function MyBookingsPage() {
                           <p
                             className={`font-medium ${
                               refundPreview.status === 'full'
-                                ? 'text-green-900'
+                                ? 'text-green-300'
                                 : refundPreview.status === 'partial'
-                                ? 'text-amber-900'
-                                : 'text-red-900'
+                                ? 'text-amber-300'
+                                : 'text-red-300'
                             }`}
                           >
                             {refundPreview.status === 'full'
@@ -386,10 +386,10 @@ export default function MyBookingsPage() {
                         <p
                           className={`text-xl font-bold ${
                             refundPreview.status === 'full'
-                              ? 'text-green-900'
+                              ? 'text-green-300'
                               : refundPreview.status === 'partial'
-                              ? 'text-amber-900'
-                              : 'text-red-900'
+                              ? 'text-amber-300'
+                              : 'text-red-300'
                           }`}
                         >
                           {refundPreview.currency} {refundPreview.amount.toFixed(2)}

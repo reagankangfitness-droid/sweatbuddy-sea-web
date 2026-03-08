@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, Users, Calendar, MapPin, Instagram, Globe, MessageCircle, CheckCircle, Megaphone, Pin } from 'lucide-react'
+import { getCategoryColor, getCategoryEmoji } from '@/lib/categories'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@clerk/nextjs/server'
 import { JoinCommunityButton } from '@/components/community/JoinCommunityButton'
@@ -238,14 +239,28 @@ export default async function CommunityPage({ params }: Props) {
       </header>
 
       {/* Cover Image */}
-      <div className="relative h-48 sm:h-64 bg-gradient-to-br from-blue-400 to-indigo-500">
-        {community.coverImage && (
+      <div
+        className="relative h-48 sm:h-64 overflow-hidden"
+        style={{
+          background: community.coverImage
+            ? undefined
+            : `linear-gradient(135deg, ${getCategoryColor(community.category)}40, ${getCategoryColor(community.category)}15)`,
+          backgroundColor: community.coverImage ? undefined : '#171717',
+        }}
+      >
+        {community.coverImage ? (
           <Image
             src={community.coverImage}
             alt={community.name}
             fill
             className="object-cover"
           />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-7xl sm:text-8xl opacity-20 select-none">
+              {getCategoryEmoji(community.category)}
+            </span>
+          </div>
         )}
       </div>
 
@@ -552,7 +567,7 @@ export default async function CommunityPage({ params }: Props) {
                 <span className="text-xs px-1.5 py-0.5 bg-amber-900 text-amber-400 rounded">Host</span>
               )}
               {member.role === 'ADMIN' && (
-                <span className="text-xs px-1.5 py-0.5 bg-blue-900 text-blue-700 rounded">Admin</span>
+                <span className="text-xs px-1.5 py-0.5 bg-blue-900 text-blue-400 rounded">Admin</span>
               )}
             </Link>
           ))}

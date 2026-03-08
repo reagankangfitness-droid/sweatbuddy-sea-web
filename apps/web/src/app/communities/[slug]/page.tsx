@@ -238,45 +238,33 @@ export default async function CommunityPage({ params }: Props) {
         </div>
       </header>
 
-      {/* Cover Image */}
-      <div
-        className="relative h-48 sm:h-64 overflow-hidden"
-        style={{
-          background: community.coverImage
-            ? undefined
-            : `linear-gradient(135deg, ${getCategoryColor(community.category)}40, ${getCategoryColor(community.category)}15)`,
-          backgroundColor: community.coverImage ? undefined : '#171717',
-        }}
-      >
-        {community.coverImage ? (
-          <Image
-            src={community.coverImage}
-            alt={community.name}
-            fill
-            className="object-cover"
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-7xl sm:text-8xl opacity-20 select-none">
-              {getCategoryEmoji(community.category)}
-            </span>
-          </div>
-        )}
-      </div>
-
       {/* Community Info */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <div className="bg-neutral-950 rounded-2xl shadow-lg p-6">
           <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-            {/* Logo */}
-            <div className="w-20 h-20 rounded-2xl bg-neutral-800 flex items-center justify-center overflow-hidden flex-shrink-0 border-4 border-neutral-700 shadow-md">
+            {/* Profile Circle */}
+            <div
+              className="w-20 h-20 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 shadow-lg"
+              style={{
+                border: `3px solid ${getCategoryColor(community.category)}`,
+                boxShadow: `0 0 20px ${getCategoryColor(community.category)}22`,
+              }}
+            >
               {community.logoImage ? (
                 <Image
                   src={community.logoImage}
                   alt={community.name}
                   width={80}
                   height={80}
-                  className="object-cover"
+                  className="object-cover w-full h-full"
+                />
+              ) : community.coverImage ? (
+                <Image
+                  src={community.coverImage}
+                  alt={community.name}
+                  width={80}
+                  height={80}
+                  className="object-cover w-full h-full"
                 />
               ) : community.createdBy?.imageUrl ? (
                 <Image
@@ -284,10 +272,20 @@ export default async function CommunityPage({ params }: Props) {
                   alt={community.createdBy.name || ''}
                   width={80}
                   height={80}
-                  className="object-cover"
+                  className="object-cover w-full h-full"
                 />
               ) : (
-                <Users className="w-8 h-8 text-neutral-400" />
+                <div
+                  className="w-full h-full flex items-center justify-center"
+                  style={{
+                    background: `linear-gradient(135deg, ${getCategoryColor(community.category)}40, ${getCategoryColor(community.category)}15)`,
+                    backgroundColor: '#262626',
+                  }}
+                >
+                  <span className="text-3xl select-none">
+                    {getCategoryEmoji(community.category)}
+                  </span>
+                </div>
               )}
             </div>
 

@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { Plus, MapPin, Users, Clock, Calendar, TrendingUp } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { ACTIVITY_CATEGORIES } from '@/lib/categories'
+import { MyCommunities } from '@/components/community/MyCommunities'
 
 interface HostedEvent {
   id: string
@@ -240,6 +241,9 @@ export default function EventsPage() {
 
       {/* Content */}
       <main className="px-4 pt-4 pb-24 md:pb-12">
+        {/* My Communities — only shown for signed-in users with follows */}
+        <MyCommunities />
+
         {loading ? (
           /* Loading skeleton - card grid */
           <div className="space-y-6">

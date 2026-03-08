@@ -9,6 +9,7 @@ import {
   moderateEventContent,
   containsBlockedContent,
 } from '@/lib/content-moderation'
+import { notifyFollowersOfNewEvent } from '@/lib/new-event-notification'
 
 // Geocode a location string to get coordinates
 async function geocodeLocation(location: string): Promise<{ lat: number; lng: number } | null> {
@@ -350,6 +351,22 @@ export async function POST(request: Request) {
     }).catch((err) => {
       console.error('Failed to send event submitted email:', err)
     })
+
+    // If auto-approved, notify community followers (fire and forget)
+    if (status === 'APPROVED') {
+      notifyFollowersOfNewEvent({
+        id: submission.id,
+        eventName: submission.eventName,
+        organizerName: submission.organizerName,
+        organizerInstagram: submission.organizerInstagram,
+        eventDate: submission.eventDate,
+        time: submission.time,
+        location: submission.location,
+        slug: submission.slug,
+      }).catch((err) => {
+        console.error('Failed to send follower notifications:', err)
+      })
+    }
 
     return NextResponse.json({
       success: true,

@@ -122,12 +122,44 @@ export default async function EventPage({ params }: PageProps) {
 
   // Familiar faces: people the user has previously attended events with
   let familiarFaces: FamiliarFace[] = []
+  let communityFollowData: { communityId: string | null; isFollowing: boolean } = {
+    communityId: null,
+    isFollowing: false,
+  }
   const { userId } = await auth()
   if (userId) {
-    const dbUser = await prisma.user.findFirst({ where: { id: userId }, select: { email: true } })
+    const dbUser = await prisma.user.findFirst({ where: { id: userId }, select: { id: true, email: true } })
     if (dbUser?.email) {
       const result = await getFamiliarFaces(dbUser.email, event.id)
       familiarFaces = result.familiarFaces
+    }
+
+    // Check if the organizer has a community and if the user follows it
+    if (event.organizer) {
+      const normalized = event.organizer.replace(/^@/, '').toLowerCase().trim()
+      const community = await prisma.community.findFirst({
+        where: { instagramHandle: { equals: normalized, mode: 'insensitive' } },
+        select: { id: true },
+      })
+      if (community && dbUser) {
+        communityFollowData.communityId = community.id
+        const membership = await prisma.communityMember.findUnique({
+          where: { communityId_userId: { communityId: community.id, userId: dbUser.id } },
+        })
+        communityFollowData.isFollowing = !!membership
+      }
+    }
+  } else {
+    // For unauthenticated users, still check if community exists to show the button
+    if (event.organizer) {
+      const normalized = event.organizer.replace(/^@/, '').toLowerCase().trim()
+      const community = await prisma.community.findFirst({
+        where: { instagramHandle: { equals: normalized, mode: 'insensitive' } },
+        select: { id: true },
+      })
+      if (community) {
+        communityFollowData.communityId = community.id
+      }
     }
   }
 
@@ -164,7 +196,7 @@ export default async function EventPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <EventPageClient event={event} familiarFaces={familiarFaces} />
+      <EventPageClient event={event} familiarFaces={familiarFaces} communityFollow={communityFollowData} />
     </>
   )
 }

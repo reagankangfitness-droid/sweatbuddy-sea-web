@@ -13,6 +13,7 @@ import { DirectChatWindow } from '@/components/DirectChatWindow'
 import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 import { formatEventDate } from '@/lib/event-dates'
 import { FamiliarFacesLine } from '@/components/FamiliarFacesLine'
+import { FollowButton } from '@/components/community/FollowButton'
 
 interface AttendeePreview {
   id: string
@@ -63,7 +64,12 @@ interface FamiliarFace {
   sharedEventCount: number
 }
 
-export function EventPageClient({ event, familiarFaces = [] }: { event: Event; familiarFaces?: FamiliarFace[] }) {
+interface CommunityFollow {
+  communityId: string | null
+  isFollowing: boolean
+}
+
+export function EventPageClient({ event, familiarFaces = [], communityFollow }: { event: Event; familiarFaces?: FamiliarFace[]; communityFollow?: CommunityFollow }) {
   const [isGoing, setIsGoing] = useState(() => {
     if (typeof window === 'undefined') return false
     const going = safeGetJSON<string[]>('sweatbuddies_going', [])
@@ -200,13 +206,23 @@ export function EventPageClient({ event, familiarFaces = [] }: { event: Event; f
                     <p className="text-sm text-neutral-500">@{event.organizer}</p>
                   </div>
                 </Link>
-                <button
-                  onClick={() => setShowChat(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-xl font-medium transition-colors"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  <span className="hidden sm:inline">Message</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  {communityFollow?.communityId && (
+                    <FollowButton
+                      communityId={communityFollow.communityId}
+                      instagramHandle={event.organizer}
+                      isFollowing={communityFollow.isFollowing}
+                      compact
+                    />
+                  )}
+                  <button
+                    onClick={() => setShowChat(true)}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-xl font-medium transition-colors"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    <span className="hidden sm:inline">Message</span>
+                  </button>
+                </div>
               </div>
             </div>
 

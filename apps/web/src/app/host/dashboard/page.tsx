@@ -72,6 +72,7 @@ interface DashboardData {
     paidAttendees?: number
     pendingPayments?: number
     atRiskCount?: number
+    followerCount?: number
   }
   upcoming: DashboardEvent[]
   past: DashboardEvent[]
@@ -372,9 +373,10 @@ export default function HostDashboard() {
         {/* Stats - horizontal scroll on mobile, 3-col grid on sm+ */}
         <div className="relative -mx-4 sm:mx-0 mb-4 sm:mb-8">
           <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none z-10 sm:hidden" />
-          <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 pb-1 sm:px-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible">
+          <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 pb-1 sm:px-0 sm:grid sm:grid-cols-4 sm:gap-4 sm:overflow-visible">
             <StatCard value={data.stats.activeEvents || 0} label="Events Live" className="flex-shrink-0 min-w-[140px] snap-start sm:min-w-0" />
             <StatCard value={data.stats.totalSignups || 0} label="People Joined" className="flex-shrink-0 min-w-[140px] snap-start sm:min-w-0" />
+            <StatCard value={data.stats.followerCount || 0} label="Followers" className="flex-shrink-0 min-w-[140px] snap-start sm:min-w-0" />
             <StatCard
               value={data.stats.totalEarnings ? `$${(data.stats.totalEarnings / 100).toFixed(0)}` : '—'}
               label="Earnings"

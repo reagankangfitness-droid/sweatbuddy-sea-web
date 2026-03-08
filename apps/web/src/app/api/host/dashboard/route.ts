@@ -346,6 +346,29 @@ export async function GET() {
       }
     }
 
+    // Get follower count from the host's communities
+    let followerCount = 0
+    const hostCommunities = await prisma.community.findMany({
+      where: {
+        OR: [
+          ...(userId ? [{ createdById: userId }] : []),
+          ...(instagramHandle
+            ? [{ instagramHandle: { equals: instagramHandle, mode: 'insensitive' as const } }]
+            : []),
+        ],
+      },
+      select: { id: true },
+    })
+
+    if (hostCommunities.length > 0) {
+      followerCount = await prisma.communityMember.count({
+        where: {
+          communityId: { in: hostCommunities.map((c) => c.id) },
+          role: { not: 'OWNER' },
+        },
+      })
+    }
+
     return NextResponse.json({
       stats: {
         activeEvents: upcoming.length,
@@ -356,6 +379,7 @@ export async function GET() {
         paidAttendees: paidAttendeesCount,
         pendingPayments: pendingPaymentsCount,
         atRiskCount: atRiskMembers.length,
+        followerCount,
       },
       upcoming,
       past,

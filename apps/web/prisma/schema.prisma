@@ -168,6 +168,13 @@ model User {
   betaInvitesRemaining Int       @default(3)
   betaJoinedAt         DateTime?
 
+  // P2P fields
+  fitnessLevel             String?  // 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
+  sessionsHostedCount      Int      @default(0)
+  sessionsAttendedCount    Int      @default(0)
+  p2pOnboardingCompleted   Boolean  @default(false)
+  p2pStripeConnectId       String?  // Direct Stripe Connect account ID for P2P hosting
+
   activities              Activity[]              @relation("CreatedActivities")
   hostedActivities        Activity[]              @relation("HostedActivities")
   groups                  UserGroup[]
@@ -245,6 +252,10 @@ model User {
   // Event chat relations
   eventChatMessages EventChatMessage[] @relation("EventChatMessagesSent")
 
+  // P2P relations
+  sessionComments   SessionComment[]   @relation("SessionCommentAuthor")
+  p2pReportsMade    P2PReport[]        @relation("P2PReportsMade")
+
   @@index([slug])
   @@index([username])
   @@index([isHost])
@@ -281,6 +292,12 @@ model Activity {
   updatedAt      DateTime       @updatedAt
   deletedAt      DateTime?
 
+  // P2P fields
+  activityMode     String  @default("MARKETPLACE") // 'MARKETPLACE' | 'P2P_FREE' | 'P2P_PAID'
+  fitnessLevel     String? // 'ALL' | 'INTERMEDIATE_PLUS' | 'ADVANCED'
+  whatToBring      String?
+  requiresApproval Boolean @default(false)
+
   // Community link (optional - activity can belong to a community)
   communityId String?
 
@@ -310,6 +327,10 @@ model Activity {
   // Event chat
   eventChat EventChat?
 
+  // P2P relations
+  sessionComments SessionComment[] @relation("ActivitySessionComments")
+  p2pReports      P2PReport[]      @relation("P2PActivityReports")
+
   @@index([userId])
   @@index([hostId])
   @@index([type])
@@ -323,6 +344,8 @@ model Activity {
   @@index([communityId])
   @@index([hostId, status])
   @@index([startTime, status])
+  @@index([activityMode])
+  @@index([activityMode, startTime, status])
   @@map("activities")
 }
 
@@ -3028,5 +3051,52 @@ model PostEventDraft {
   @@index([hostInstagram, status])
   @@index([status, createdAt])
   @@map("post_event_drafts")
+}
+
+// =====================================================
+// P2P SESSION COMMENTS
+// =====================================================
+
+model SessionComment {
+  id         String   @id @default(cuid())
+  activityId String
+  userId     String
+  content    String   @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  activity Activity @relation("ActivitySessionComments", fields: [activityId], references: [id], onDelete: Cascade)
+  user     User     @relation("SessionCommentAuthor", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([activityId])
+  @@index([userId])
+  @@index([activityId, createdAt])
+  @@map("session_comments")
+}
+
+// =====================================================
+// P2P REPORTS (users OR activities)
+// =====================================================
+
+model P2PReport {
+  id           String   @id @default(cuid())
+  reporterId   String
+  reportedType String   // 'USER' | 'ACTIVITY'
+  reportedId   String   // userId or activityId depending on reportedType
+  activityId   String?  // populated when reportedType = 'ACTIVITY'
+  reason       String   @db.Text
+  status       String   @default("PENDING") // 'PENDING' | 'REVIEWED' | 'RESOLVED'
+  adminNotes   String?  @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  reporter Activity? @relation("P2PActivityReports", fields: [activityId], references: [id], onDelete: SetNull)
+  reporterUser User  @relation("P2PReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
+
+  @@index([reportedType, reportedId])
+  @@index([reporterId])
+  @@index([status])
+  @@index([activityId])
+  @@map("p2p_reports")
 }
 

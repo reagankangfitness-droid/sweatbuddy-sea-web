@@ -1,0 +1,671 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { ArrowLeft, Loader2, MapPin, ChevronDown } from 'lucide-react'
+import { toast } from 'sonner'
+
+const ACTIVITY_TYPES = [
+  { slug: 'running', label: 'Running', emoji: '🏃' },
+  { slug: 'cycling', label: 'Cycling', emoji: '🚴' },
+  { slug: 'yoga', label: 'Yoga', emoji: '🧘' },
+  { slug: 'strength', label: 'Strength Training', emoji: '🏋️' },
+  { slug: 'hiking', label: 'Hiking', emoji: '🥾' },
+  { slug: 'bootcamp', label: 'Bootcamp', emoji: '🎖️' },
+  { slug: 'hiit', label: 'HIIT', emoji: '⚡' },
+  { slug: 'pilates', label: 'Pilates', emoji: '🦢' },
+  { slug: 'swimming', label: 'Swimming', emoji: '🏊' },
+  { slug: 'volleyball', label: 'Volleyball', emoji: '🏐' },
+  { slug: 'basketball', label: 'Basketball', emoji: '🏀' },
+  { slug: 'cold_plunge', label: 'Cold Plunge', emoji: '🧊' },
+  { slug: 'other', label: 'Other', emoji: '🏅' },
+]
+
+const FITNESS_LEVELS = [
+  { value: 'ALL', label: 'All levels welcome' },
+  { value: 'INTERMEDIATE_PLUS', label: 'Intermediate & above' },
+  { value: 'ADVANCED', label: 'Advanced only' },
+]
+
+type Step = 'basic' | 'details' | 'pricing' | 'preview'
+
+interface FormData {
+  title: string
+  description: string
+  categorySlug: string
+  city: string
+  address: string
+  latitude: string
+  longitude: string
+  startDate: string
+  startTime: string
+  endTime: string
+  maxPeople: string
+  fitnessLevel: string
+  whatToBring: string
+  price: string
+  currency: string
+}
+
+const INITIAL_FORM: FormData = {
+  title: '',
+  description: '',
+  categorySlug: '',
+  city: '',
+  address: '',
+  latitude: '',
+  longitude: '',
+  startDate: '',
+  startTime: '',
+  endTime: '',
+  maxPeople: '',
+  fitnessLevel: 'ALL',
+  whatToBring: '',
+  price: '0',
+  currency: 'SGD',
+}
+
+export default function NewSessionPage() {
+  const router = useRouter()
+  const [step, setStep] = useState<Step>('basic')
+  const [form, setForm] = useState<FormData>(INITIAL_FORM)
+  const [saving, setSaving] = useState(false)
+  const [stripeConnected, setStripeConnected] = useState<boolean | null>(null)
+
+  function update(field: keyof FormData, value: string) {
+    setForm((prev) => {
+      const updated = { ...prev, [field]: value }
+      // Auto-generate title suggestion when category + city are set
+      if ((field === 'categorySlug' || field === 'city') && updated.categorySlug && updated.city && !prev.title) {
+        const cat = ACTIVITY_TYPES.find((t) => t.slug === updated.categorySlug)
+        updated.title = cat ? `${cat.label} in ${updated.city}` : updated.title
+      }
+      return updated
+    })
+  }
+
+  function validateStep(s: Step): string | null {
+    if (s === 'basic') {
+      if (!form.title.trim()) return 'Title is required'
+      if (form.title.length > 100) return 'Title must be 100 chars or less'
+      if (!form.categorySlug) return 'Activity type is required'
+    }
+    if (s === 'details') {
+      if (!form.city.trim()) return 'City is required'
+      if (!form.startDate) return 'Date is required'
+      if (!form.startTime) return 'Start time is required'
+      const startDateTime = new Date(`${form.startDate}T${form.startTime}`)
+      if (startDateTime <= new Date()) return 'Start time must be in the future'
+    }
+    if (s === 'pricing') {
+      const price = Number(form.price)
+      if (isNaN(price) || price < 0) return 'Invalid price'
+      if (price > 0 && stripeConnected === false) return 'Connect Stripe to charge for sessions'
+    }
+    return null
+  }
+
+  function nextStep() {
+    const error = validateStep(step)
+    if (error) {
+      toast.error(error)
+      return
+    }
+    const steps: Step[] = ['basic', 'details', 'pricing', 'preview']
+    const idx = steps.indexOf(step)
+    if (idx < steps.length - 1) {
+      setStep(steps[idx + 1])
+    }
+  }
+
+  function prevStep() {
+    const steps: Step[] = ['basic', 'details', 'pricing', 'preview']
+    const idx = steps.indexOf(step)
+    if (idx > 0) setStep(steps[idx - 1])
+    else router.back()
+  }
+
+  async function checkStripeStatus() {
+    try {
+      const res = await fetch('/api/stripe/connect/status')
+      if (res.ok) {
+        const data = await res.json()
+        setStripeConnected(data.chargesEnabled ?? false)
+      }
+    } catch {
+      setStripeConnected(false)
+    }
+  }
+
+  // Check Stripe when reaching pricing step
+  async function goToPricing() {
+    const error = validateStep('details')
+    if (error) { toast.error(error); return }
+    await checkStripeStatus()
+    setStep('pricing')
+  }
+
+  async function handlePublish() {
+    setSaving(true)
+    try {
+      const startDateTime = new Date(`${form.startDate}T${form.startTime}`)
+      const endDateTime = form.endTime ? new Date(`${form.startDate}T${form.endTime}`) : null
+
+      const res = await fetch('/api/buddy/sessions/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: form.title.trim(),
+          description: form.description.trim() || null,
+          categorySlug: form.categorySlug,
+          city: form.city.trim(),
+          address: form.address.trim() || null,
+          latitude: form.latitude ? Number(form.latitude) : 1.3521, // Singapore default
+          longitude: form.longitude ? Number(form.longitude) : 103.8198,
+          startTime: startDateTime.toISOString(),
+          endTime: endDateTime?.toISOString() ?? null,
+          maxPeople: form.maxPeople ? Number(form.maxPeople) : null,
+          fitnessLevel: form.fitnessLevel,
+          whatToBring: form.whatToBring.trim() || null,
+          price: Number(form.price),
+          currency: form.currency,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        if (data.code === 'ONBOARDING_REQUIRED') {
+          router.push('/onboarding/p2p')
+          return
+        }
+        if (data.code === 'STRIPE_REQUIRED') {
+          toast.error('Connect Stripe first to charge for sessions')
+          return
+        }
+        toast.error(data.error || 'Failed to create session')
+        return
+      }
+
+      toast.success('Session published!')
+      router.push(`/activities/${data.activity.id}`)
+    } catch {
+      toast.error('Something went wrong')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const STEPS: Step[] = ['basic', 'details', 'pricing', 'preview']
+  const stepIdx = STEPS.indexOf(step)
+
+  const selectedType = ACTIVITY_TYPES.find((t) => t.slug === form.categorySlug)
+
+  return (
+    <div className="min-h-screen bg-white dark:bg-neutral-950">
+      {/* Header */}
+      <div className="sticky top-0 z-10 bg-white/90 dark:bg-neutral-950/90 backdrop-blur border-b border-neutral-100 dark:border-neutral-800">
+        <div className="max-w-lg mx-auto px-4 py-4 flex items-center gap-3">
+          <button onClick={prevStep} className="p-1 -ml-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800">
+            <ArrowLeft className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
+          </button>
+          <div className="flex-1">
+            <h1 className="text-base font-semibold text-neutral-900 dark:text-white">Host a Session</h1>
+            <div className="flex gap-1 mt-1">
+              {STEPS.map((s, i) => (
+                <div
+                  key={s}
+                  className={`h-1 flex-1 rounded-full transition-colors ${
+                    i <= stepIdx ? 'bg-black dark:bg-white' : 'bg-neutral-100 dark:bg-neutral-800'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-lg mx-auto px-4 py-8 pb-32">
+        {/* Step 1: Basic Info */}
+        {step === 'basic' && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-xl font-bold text-neutral-900 dark:text-white">What are you hosting?</h2>
+              <p className="text-sm text-neutral-500 mt-1">The basics about your session</p>
+            </div>
+
+            {/* Activity type */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+                Activity type <span className="text-red-500">*</span>
+              </label>
+              <div className="grid grid-cols-4 gap-2">
+                {ACTIVITY_TYPES.map((type) => (
+                  <button
+                    key={type.slug}
+                    type="button"
+                    onClick={() => update('categorySlug', type.slug)}
+                    className={`flex flex-col items-center gap-1 rounded-xl border p-3 text-xs font-medium transition-all ${
+                      form.categorySlug === type.slug
+                        ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
+                        : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400'
+                    }`}
+                  >
+                    <span className="text-xl">{type.emoji}</span>
+                    <span className="text-center leading-tight">{type.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Title */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Session title <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={form.title}
+                onChange={(e) => update('title', e.target.value)}
+                placeholder={
+                  selectedType
+                    ? `e.g. ${selectedType.label} at East Coast Park`
+                    : 'e.g. Morning Run at Marina Bay'
+                }
+                maxLength={100}
+                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+              />
+              <p className="mt-1 text-xs text-right text-neutral-400">{form.title.length}/100</p>
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Description <span className="text-neutral-400 font-normal">(optional)</span>
+              </label>
+              <textarea
+                value={form.description}
+                onChange={(e) => update('description', e.target.value)}
+                placeholder="What's the vibe? What should people expect?"
+                maxLength={500}
+                rows={4}
+                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white resize-none"
+              />
+              <p className="mt-1 text-xs text-right text-neutral-400">{form.description.length}/500</p>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Details */}
+        {step === 'details' && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-xl font-bold text-neutral-900 dark:text-white">When &amp; where?</h2>
+              <p className="text-sm text-neutral-500 mt-1">Help people show up on time</p>
+            </div>
+
+            {/* Date */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Date <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="date"
+                value={form.startDate}
+                onChange={(e) => update('startDate', e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+              />
+            </div>
+
+            {/* Time */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                  Start time <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="time"
+                  value={form.startTime}
+                  onChange={(e) => update('startTime', e.target.value)}
+                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                  End time <span className="text-neutral-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  type="time"
+                  value={form.endTime}
+                  onChange={(e) => update('endTime', e.target.value)}
+                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                />
+              </div>
+            </div>
+
+            {/* Location */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                City / Area <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                <input
+                  type="text"
+                  value={form.city}
+                  onChange={(e) => update('city', e.target.value)}
+                  placeholder="e.g. Singapore"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 pl-10 pr-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Meeting point <span className="text-neutral-400 font-normal">(optional)</span>
+              </label>
+              <input
+                type="text"
+                value={form.address}
+                onChange={(e) => update('address', e.target.value)}
+                placeholder="e.g. East Coast Park Area C"
+                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+              />
+            </div>
+
+            {/* Max people */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Max attendees <span className="text-neutral-400 font-normal">(optional — leave blank for unlimited)</span>
+              </label>
+              <input
+                type="number"
+                value={form.maxPeople}
+                onChange={(e) => update('maxPeople', e.target.value)}
+                placeholder="e.g. 10"
+                min={1}
+                max={500}
+                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+              />
+            </div>
+
+            {/* Fitness level */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Who should join?
+              </label>
+              <div className="relative">
+                <select
+                  value={form.fitnessLevel}
+                  onChange={(e) => update('fitnessLevel', e.target.value)}
+                  className="w-full appearance-none rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                >
+                  {FITNESS_LEVELS.map((l) => (
+                    <option key={l.value} value={l.value}>{l.label}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* What to bring */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                What to bring <span className="text-neutral-400 font-normal">(optional)</span>
+              </label>
+              <input
+                type="text"
+                value={form.whatToBring}
+                onChange={(e) => update('whatToBring', e.target.value)}
+                placeholder="e.g. Running shoes, water bottle"
+                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Pricing */}
+        {step === 'pricing' && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Free or paid?</h2>
+              <p className="text-sm text-neutral-500 mt-1">You can charge for your time and expertise</p>
+            </div>
+
+            {/* Free/Paid toggle */}
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { value: '0', label: 'Free', emoji: '🆓', sub: 'No charge, max impact' },
+                { value: '', label: 'Paid', emoji: '💰', sub: 'Charge for your session' },
+              ].map((opt) => {
+                const isFree = form.price === '0' || Number(form.price) === 0
+                const selected = opt.value === '0' ? isFree : !isFree
+                return (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => update('price', opt.value === '0' ? '0' : '')}
+                    className={`flex flex-col items-center gap-2 rounded-2xl border p-5 transition-all ${
+                      selected
+                        ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
+                        : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400'
+                    }`}
+                  >
+                    <span className="text-2xl">{opt.emoji}</span>
+                    <span className="font-semibold">{opt.label}</span>
+                    <span className={`text-xs ${selected ? 'opacity-70' : 'text-neutral-400'}`}>{opt.sub}</span>
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Price input (if paid) */}
+            {form.price !== '0' && Number(form.price) !== 0 && form.price !== '' ? (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                    Price per person
+                  </label>
+                  <div className="flex gap-2">
+                    <select
+                      value={form.currency}
+                      onChange={(e) => update('currency', e.target.value)}
+                      className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none"
+                    >
+                      {['SGD', 'USD', 'MYR', 'AUD', 'GBP', 'EUR'].map((c) => (
+                        <option key={c}>{c}</option>
+                      ))}
+                    </select>
+                    <input
+                      type="number"
+                      value={form.price}
+                      onChange={(e) => update('price', e.target.value)}
+                      placeholder="15"
+                      min={1}
+                      step={1}
+                      className="flex-1 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Stripe connect check */}
+                {stripeConnected === false && (
+                  <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4">
+                    <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+                      Connect Stripe to receive payments
+                    </p>
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                      You need a Stripe account to charge for sessions. You can save as draft and connect later.
+                    </p>
+                    <a
+                      href="/api/stripe/connect/create-account"
+                      className="inline-block mt-3 rounded-lg bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 transition-colors"
+                    >
+                      Connect Stripe →
+                    </a>
+                  </div>
+                )}
+
+                {stripeConnected === true && (
+                  <div className="rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-3">
+                    <p className="text-sm text-green-700 dark:text-green-400 flex items-center gap-2">
+                      <span>✓</span> Stripe connected — payments enabled
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              form.price === '' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                      Price per person
+                    </label>
+                    <div className="flex gap-2">
+                      <select
+                        value={form.currency}
+                        onChange={(e) => update('currency', e.target.value)}
+                        className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none"
+                      >
+                        {['SGD', 'USD', 'MYR', 'AUD', 'GBP', 'EUR'].map((c) => (
+                          <option key={c}>{c}</option>
+                        ))}
+                      </select>
+                      <input
+                        type="number"
+                        value={form.price}
+                        onChange={(e) => update('price', e.target.value)}
+                        placeholder="15"
+                        min={1}
+                        step={1}
+                        className="flex-1 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                      />
+                    </div>
+                  </div>
+                  {stripeConnected === false && (
+                    <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4">
+                      <p className="text-sm font-medium text-amber-800 dark:text-amber-300">Connect Stripe to receive payments</p>
+                      <a href="/api/stripe/connect/create-account" className="inline-block mt-3 rounded-lg bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700">Connect Stripe →</a>
+                    </div>
+                  )}
+                </div>
+              )
+            )}
+          </div>
+        )}
+
+        {/* Step 4: Preview */}
+        {step === 'preview' && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Looks good?</h2>
+              <p className="text-sm text-neutral-500 mt-1">Here&apos;s how your session will appear</p>
+            </div>
+
+            <div className="rounded-2xl border border-neutral-200 dark:border-neutral-700 p-5 space-y-4">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="text-xs text-neutral-400 mb-1">
+                    {ACTIVITY_TYPES.find((t) => t.slug === form.categorySlug)?.emoji}{' '}
+                    {ACTIVITY_TYPES.find((t) => t.slug === form.categorySlug)?.label}
+                  </div>
+                  <h3 className="text-base font-bold text-neutral-900 dark:text-white">{form.title}</h3>
+                  {form.description && (
+                    <p className="text-sm text-neutral-500 mt-1">{form.description}</p>
+                  )}
+                </div>
+                <span className={`text-sm font-semibold ${Number(form.price) > 0 ? 'text-neutral-900 dark:text-white' : 'text-green-600'}`}>
+                  {Number(form.price) > 0 ? `${form.currency} ${form.price}` : 'Free'}
+                </span>
+              </div>
+
+              <div className="space-y-2 text-sm text-neutral-500">
+                {form.startDate && form.startTime && (
+                  <div className="flex items-center gap-2">
+                    <span>📅</span>
+                    <span>
+                      {new Date(`${form.startDate}T${form.startTime}`).toLocaleDateString('en-US', {
+                        weekday: 'long', month: 'long', day: 'numeric',
+                      })}{' '}
+                      at {new Date(`${form.startDate}T${form.startTime}`).toLocaleTimeString('en-US', {
+                        hour: 'numeric', minute: '2-digit',
+                      })}
+                    </span>
+                  </div>
+                )}
+                {form.city && (
+                  <div className="flex items-center gap-2">
+                    <span>📍</span>
+                    <span>{form.address ? `${form.address}, ${form.city}` : form.city}</span>
+                  </div>
+                )}
+                {form.maxPeople && (
+                  <div className="flex items-center gap-2">
+                    <span>👥</span>
+                    <span>Max {form.maxPeople} people</span>
+                  </div>
+                )}
+                {form.fitnessLevel !== 'ALL' && (
+                  <div className="flex items-center gap-2">
+                    <span>💪</span>
+                    <span>{FITNESS_LEVELS.find((l) => l.value === form.fitnessLevel)?.label}</span>
+                  </div>
+                )}
+                {form.whatToBring && (
+                  <div className="flex items-center gap-2">
+                    <span>🎒</span>
+                    <span>{form.whatToBring}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Edit links */}
+            <div className="space-y-2">
+              {[
+                { label: 'Edit basic info', target: 'basic' as Step },
+                { label: 'Edit details', target: 'details' as Step },
+                { label: 'Edit pricing', target: 'pricing' as Step },
+              ].map((link) => (
+                <button
+                  key={link.target}
+                  onClick={() => setStep(link.target)}
+                  className="w-full text-left text-sm text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 underline"
+                >
+                  {link.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom CTA */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-neutral-950/90 backdrop-blur border-t border-neutral-100 dark:border-neutral-800 p-4">
+        <div className="max-w-lg mx-auto">
+          {step === 'preview' ? (
+            <button
+              onClick={handlePublish}
+              disabled={saving}
+              className="w-full rounded-xl bg-black dark:bg-white px-4 py-4 text-sm font-semibold text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-100 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+            >
+              {saving ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</>
+              ) : (
+                '🚀 Publish Session'
+              )}
+            </button>
+          ) : (
+            <button
+              onClick={step === 'details' ? goToPricing : nextStep}
+              className="w-full rounded-xl bg-black dark:bg-white px-4 py-4 text-sm font-semibold text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors"
+            >
+              Continue →
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}

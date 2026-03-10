@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { sendP2PSessionConfirmationEmail, sendP2PHostJoinNotificationEmail } from '@/lib/event-confirmation-email'
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -19,7 +20,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
 
     const dbUser = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
-      select: { id: true },
+      select: { id: true, name: true, email: true },
     })
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
@@ -29,6 +30,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       where: { id: activityId },
       include: {
         userActivities: { where: { status: { in: ['JOINED', 'COMPLETED'] } } },
+        user: { select: { id: true, name: true, email: true, bio: true } },
       },
     })
 
@@ -74,6 +76,37 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       where: { id: dbUser.id },
       data: { sessionsAttendedCount: { increment: 1 } },
     })
+
+    const newAttendeeCount = activity.userActivities.length + 1
+
+    // Send confirmation email to attendee (fire-and-forget)
+    sendP2PSessionConfirmationEmail({
+      to: dbUser.email,
+      attendeeName: dbUser.name,
+      activityId,
+      activityTitle: activity.title,
+      startTime: activity.startTime,
+      endTime: activity.endTime,
+      location: activity.address ?? activity.city,
+      hostName: activity.user.name,
+      hostBio: activity.user.bio,
+      isFree: true,
+    }).catch(() => {})
+
+    // Notify host (fire-and-forget)
+    if (activity.user.email) {
+      sendP2PHostJoinNotificationEmail({
+        to: activity.user.email,
+        hostName: activity.user.name,
+        attendeeName: dbUser.name,
+        activityId,
+        activityTitle: activity.title,
+        startTime: activity.startTime,
+        location: activity.address ?? activity.city,
+        totalAttendees: newAttendeeCount,
+        maxPeople: activity.maxPeople,
+      }).catch(() => {})
+    }
 
     return NextResponse.json({ userActivity })
   } catch (error) {

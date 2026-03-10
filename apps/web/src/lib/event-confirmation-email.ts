@@ -2550,3 +2550,288 @@ export async function sendActivityBookingConfirmationEmail(
     ],
   })
 }
+
+// ============= P2P SESSION EMAILS =============
+
+interface P2PSessionEmailParams {
+  to: string
+  attendeeName: string | null
+  activityId: string
+  activityTitle: string
+  startTime: Date | null
+  endTime: Date | null
+  location: string
+  hostName: string | null
+  hostBio?: string | null
+  isFree: boolean
+  currency?: string
+  amountPaidCents?: number
+}
+
+/**
+ * Confirmation email for joining a P2P session (casual tone)
+ */
+export async function sendP2PSessionConfirmationEmail(
+  params: P2PSessionEmailParams
+): Promise<{ success: boolean; error?: string }> {
+  const {
+    to,
+    attendeeName,
+    activityId,
+    activityTitle,
+    startTime,
+    endTime,
+    location,
+    hostName,
+    hostBio,
+    isFree,
+    currency = 'SGD',
+    amountPaidCents,
+  } = params
+
+  const displayName = escapeHtml(attendeeName || 'there')
+  const safeTitle = escapeHtml(activityTitle)
+  const safeLocation = escapeHtml(location)
+  const safeHost = hostName ? escapeHtml(hostName) : 'your host'
+  const safeHostBio = hostBio ? escapeHtml(hostBio) : null
+  const activityUrl = `${BASE_URL}/activities/${activityId}`
+  const buddyUrl = `${BASE_URL}/buddy`
+
+  const isPaid = !isFree && amountPaidCents && amountPaidCents > 0
+  const formattedAmount = isPaid ? `${currency} ${(amountPaidCents / 100).toFixed(2)}` : 'Free'
+
+  const dateStr = startTime ? formatDate(startTime) : 'Date TBD'
+  const timeStr = startTime ? formatTime(startTime) : ''
+
+  const calendarLink = startTime
+    ? generateCalendarLink({
+        title: activityTitle,
+        description: `Workout session with ${safeHost} — via SweatBuddies`,
+        location,
+        startTime,
+        endTime: endTime || undefined,
+      })
+    : null
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You're going to ${safeTitle}!</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="width: 100%; max-width: 580px; border-collapse: collapse;">
+
+          <!-- Header -->
+          <tr>
+            <td style="padding: 32px; background: #0a0a0a; border-radius: 16px 16px 0 0; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 12px;">🤝</div>
+              <h1 style="margin: 0; color: white; font-size: 26px; font-weight: 700;">You're going!</h1>
+              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.6); font-size: 15px;">
+                ${isFree ? 'Free session confirmed' : `Payment confirmed · ${formattedAmount}`}
+              </p>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding: 32px; background: #ffffff;">
+              <p style="font-size: 16px; color: #374151; line-height: 1.6; margin: 0 0 24px;">
+                Hey ${displayName} 👋 — you've locked in your spot for <strong>${safeTitle}</strong> with ${safeHost}.
+              </p>
+
+              <!-- Session Details -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; background: #f8fafc; border-radius: 12px; margin-bottom: 24px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                      <tr>
+                        <td style="padding: 6px 0; font-size: 15px; color: #374151;">
+                          📅 <strong>${dateStr}</strong>${timeStr ? ` · ${timeStr}` : ''}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 6px 0; font-size: 15px; color: #374151;">
+                          📍 ${safeLocation}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 6px 0; font-size: 15px; color: #374151;">
+                          💰 ${formattedAmount}
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              ${safeHostBio ? `
+              <!-- Host Bio -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 24px;">
+                <tr>
+                  <td style="padding: 16px 20px;">
+                    <p style="margin: 0 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #9ca3af; font-weight: 600;">Your host</p>
+                    <p style="margin: 0; font-size: 15px; font-weight: 600; color: #111827;">${safeHost}</p>
+                    <p style="margin: 6px 0 0; font-size: 14px; color: #6b7280; line-height: 1.5;">${safeHostBio}</p>
+                  </td>
+                </tr>
+              </table>
+              ` : ''}
+
+              <!-- CTAs -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+                <tr>
+                  <td style="padding-right: 8px;">
+                    <a href="${activityUrl}" style="display: block; text-align: center; background: #000000; color: white; text-decoration: none; padding: 14px 20px; border-radius: 10px; font-weight: 600; font-size: 15px;">
+                      View Session
+                    </a>
+                  </td>
+                  ${calendarLink ? `
+                  <td style="padding-left: 8px;">
+                    <a href="${calendarLink}" style="display: block; text-align: center; background: #f3f4f6; color: #374151; text-decoration: none; padding: 14px 20px; border-radius: 10px; font-weight: 600; font-size: 15px;">
+                      Add to Calendar
+                    </a>
+                  </td>
+                  ` : ''}
+                </tr>
+              </table>
+
+              <p style="font-size: 14px; color: #6b7280; line-height: 1.6; margin: 0 0 8px;">
+                Questions? Reply to this email or message ${safeHost} directly on SweatBuddies.
+              </p>
+              <p style="font-size: 14px; color: #6b7280; line-height: 1.6; margin: 0;">
+                Want to find more sessions? <a href="${buddyUrl}" style="color: #000000; font-weight: 600;">Browse all buddy sessions →</a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 20px 32px; background: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
+              <p style="font-size: 12px; color: #94a3b8; margin: 0;">SweatBuddies — Train with people, not alone</p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
+
+  return sendEmail({
+    to,
+    subject: `You're going to ${activityTitle}! 🤝`,
+    html,
+    tags: [
+      { name: 'type', value: 'p2p_session_confirmation' },
+      { name: 'activity_id', value: activityId },
+    ],
+  })
+}
+
+interface P2PHostNotificationParams {
+  to: string
+  hostName: string | null
+  attendeeName: string | null
+  activityId: string
+  activityTitle: string
+  startTime: Date | null
+  location: string
+  totalAttendees: number
+  maxPeople?: number | null
+}
+
+/**
+ * Notify P2P host when someone joins their session
+ */
+export async function sendP2PHostJoinNotificationEmail(
+  params: P2PHostNotificationParams
+): Promise<{ success: boolean; error?: string }> {
+  const {
+    to,
+    hostName,
+    attendeeName,
+    activityId,
+    activityTitle,
+    startTime,
+    location,
+    totalAttendees,
+    maxPeople,
+  } = params
+
+  const safeHost = escapeHtml(hostName || 'there')
+  const safeAttendee = escapeHtml(attendeeName || 'Someone')
+  const safeTitle = escapeHtml(activityTitle)
+  const safeLocation = escapeHtml(location)
+  const activityUrl = `${BASE_URL}/activities/${activityId}`
+  const dateStr = startTime ? formatDate(startTime) : 'Date TBD'
+  const timeStr = startTime ? formatTime(startTime) : ''
+  const spotsLeft = maxPeople ? maxPeople - totalAttendees : null
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="width: 100%; max-width: 580px; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 32px; background: #0a0a0a; border-radius: 16px 16px 0 0; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 12px;">🙌</div>
+              <h1 style="margin: 0; color: white; font-size: 24px; font-weight: 700;">New buddy joining!</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 32px; background: #ffffff;">
+              <p style="font-size: 16px; color: #374151; line-height: 1.6; margin: 0 0 20px;">
+                Hey ${safeHost} — <strong>${safeAttendee}</strong> just joined your session <strong>${safeTitle}</strong>.
+              </p>
+              <table role="presentation" style="width: 100%; border-collapse: collapse; background: #f8fafc; border-radius: 12px; margin-bottom: 24px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <p style="margin: 0 0 8px; font-size: 15px; color: #374151;">📅 ${dateStr}${timeStr ? ` · ${timeStr}` : ''}</p>
+                    <p style="margin: 0 0 8px; font-size: 15px; color: #374151;">📍 ${safeLocation}</p>
+                    <p style="margin: 0; font-size: 15px; color: #374151;">
+                      👥 ${totalAttendees} going${spotsLeft !== null ? ` · ${spotsLeft} spot${spotsLeft !== 1 ? 's' : ''} left` : ''}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              <a href="${activityUrl}" style="display: block; text-align: center; background: #000000; color: white; text-decoration: none; padding: 14px 20px; border-radius: 10px; font-weight: 600; font-size: 15px; margin-bottom: 16px;">
+                View Your Session
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 16px 32px; background: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
+              <p style="font-size: 12px; color: #94a3b8; margin: 0;">SweatBuddies — Train with people, not alone</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`
+
+  return sendEmail({
+    to,
+    subject: `${safeAttendee} joined your session — ${activityTitle}`,
+    html,
+    tags: [
+      { name: 'type', value: 'p2p_host_join_notification' },
+      { name: 'activity_id', value: activityId },
+    ],
+  })
+}

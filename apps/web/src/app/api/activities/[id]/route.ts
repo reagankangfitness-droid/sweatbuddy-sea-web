@@ -71,12 +71,22 @@ export async function GET(
         createdAt: true,
         updatedAt: true,
         deletedAt: true,
+        // P2P fields
+        activityMode: true,
+        fitnessLevel: true,
+        whatToBring: true,
+        requiresApproval: true,
         user: {
           select: {
             id: true,
             name: true,
             email: true,
             imageUrl: true,
+            slug: true,
+            bio: true,
+            sessionsHostedCount: true,
+            sessionsAttendedCount: true,
+            fitnessLevel: true,
           },
         },
         userActivities: {
@@ -86,6 +96,7 @@ export async function GET(
                 id: true,
                 name: true,
                 imageUrl: true,
+                slug: true,
               },
             },
           },

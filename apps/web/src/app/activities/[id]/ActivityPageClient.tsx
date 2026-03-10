@@ -14,11 +14,15 @@ import { ShareButton } from '@/components/share-button'
 import { SpotsIndicator } from '@/components/spots-indicator'
 import { WaitlistButton } from '@/components/waitlist-button'
 import { generateGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
-import { Calendar, MessageCircle, Users, ChevronDown, ChevronUp } from 'lucide-react'
+import { Calendar, MessageCircle, Users, ChevronDown, ChevronUp, Flag, Settings } from 'lucide-react'
 import type { UrgencyLevel } from '@/lib/waitlist'
 import { PostActivityPrompt } from '@/components/post-activity-prompt'
 import { GoingSoloPrompt } from '@/components/going-solo-prompt'
 import { getSignInUrl } from '@/lib/auth-utils'
+import { ReportModal } from '@/components/p2p/ReportModal'
+import { BlockUserButton } from '@/components/p2p/BlockUserButton'
+import { ManageAttendeesModal } from '@/components/p2p/ManageAttendeesModal'
+import { SessionComments } from '@/components/p2p/SessionComments'
 
 // Character limit for description before showing "Read More"
 const DESCRIPTION_CHAR_LIMIT = 300
@@ -65,11 +69,21 @@ interface Activity {
   currency: string
   hostId: string | null
   createdAt: Date
+  // P2P fields
+  activityMode?: string
+  fitnessLevel?: string | null
+  whatToBring?: string | null
+  requiresApproval?: boolean
   user: {
     id: string
     name: string | null
     email: string
     imageUrl: string | null
+    slug?: string | null
+    bio?: string | null
+    sessionsHostedCount?: number
+    sessionsAttendedCount?: number
+    fitnessLevel?: string | null
   }
   userActivities: Array<{
     id: string
@@ -79,6 +93,7 @@ interface Activity {
       id: string
       name: string | null
       imageUrl: string | null
+      slug?: string | null
     }
   }>
   friendsGoing?: { id: string; name: string | null; firstName: string | null; imageUrl: string | null }[]
@@ -99,6 +114,8 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
   const [showCompletionPrompt, setShowCompletionPrompt] = useState(true)
   const [showGoingSoloPrompt, setShowGoingSoloPrompt] = useState(false)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [showManageAttendees, setShowManageAttendees] = useState(false)
 
   // Handle payment status from URL params
   useEffect(() => {
@@ -191,6 +208,29 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
 
     setIsJoining(true)
 
+    // P2P free sessions use the buddy join endpoint
+    if (activity?.activityMode === 'P2P_FREE') {
+      try {
+        const res = await fetch(`/api/buddy/sessions/${params.id}/join`, { method: 'POST' })
+        const data = await res.json()
+        if (!res.ok) {
+          toast.error(data.error || 'Failed to join session')
+          return
+        }
+        toast.success("You're in!")
+        setHasJoined(true)
+        setShowGoingSoloPrompt(true)
+        const activityResponse = await fetch(`/api/activities/${params.id}`)
+        const activityData = await activityResponse.json()
+        setActivity(activityData)
+      } catch {
+        toast.error('Something went wrong')
+      } finally {
+        setIsJoining(false)
+      }
+      return
+    }
+
     // Get invite code from URL if present (for referral discounts)
     const inviteCode = searchParams.get('invite') || searchParams.get('code')
 
@@ -245,6 +285,29 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
     if (!user) return
 
     setIsJoining(true)
+
+    // P2P sessions use the buddy leave endpoint
+    if (activity?.activityMode?.startsWith('P2P')) {
+      try {
+        const res = await fetch(`/api/buddy/sessions/${params.id}/leave`, { method: 'POST' })
+        if (!res.ok) {
+          const data = await res.json()
+          toast.error(data.error || 'Failed to leave session')
+          return
+        }
+        toast.success('Left session')
+        setHasJoined(false)
+        const activityResponse = await fetch(`/api/activities/${params.id}`)
+        const data = await activityResponse.json()
+        setActivity(data)
+      } catch {
+        toast.error('Something went wrong')
+      } finally {
+        setIsJoining(false)
+      }
+      return
+    }
+
     try {
       const response = await fetch(`/api/activities/${params.id}/join`, {
         method: 'DELETE',
@@ -572,29 +635,119 @@ Organized via sweatbuddies
                 currentUserId={user?.id || null}
               />
 
-              <div className="rounded-lg border p-6">
-                <h2 className="text-xl font-semibold mb-3">Organizer</h2>
-                <div className="flex items-center gap-3">
-                  {activity.user.imageUrl ? (
-                    <Image
-                      src={activity.user.imageUrl}
-                      alt={activity.user.name || 'User'}
-                      className="w-10 h-10 rounded-full"
-                      width={40}
-                      height={40}
-                      unoptimized
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      {activity.user.name?.[0] || activity.user.email[0]}
+              {/* P2P Host section — replaces plain Organizer block for P2P sessions */}
+              {activity.activityMode?.startsWith('P2P') ? (
+                <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-5">
+                  <h2 className="text-base font-semibold text-neutral-900 dark:text-white mb-3">Your host</h2>
+                  <div className="flex items-start gap-3">
+                    <div className="relative flex-shrink-0">
+                      {activity.user.imageUrl ? (
+                        <Image
+                          src={activity.user.imageUrl}
+                          alt={activity.user.name || 'Host'}
+                          width={52}
+                          height={52}
+                          className="rounded-full object-cover ring-2 ring-neutral-100 dark:ring-neutral-800"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="w-13 h-13 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-lg font-semibold text-neutral-500">
+                          {(activity.user.name ?? '?')[0]}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-neutral-900 dark:text-white">{activity.user.name || 'Anonymous'}</p>
+                      <div className="flex items-center gap-3 mt-0.5 text-xs text-neutral-400">
+                        {(activity.user.sessionsHostedCount ?? 0) > 0 && (
+                          <span>{activity.user.sessionsHostedCount} sessions hosted</span>
+                        )}
+                        {activity.user.fitnessLevel && (
+                          <span className="capitalize">{activity.user.fitnessLevel.toLowerCase()}</span>
+                        )}
+                      </div>
+                      {activity.user.bio && (
+                        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">{activity.user.bio}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* P2P details */}
+                  {(activity.fitnessLevel || activity.whatToBring) && (
+                    <div className="mt-4 space-y-2 text-sm text-neutral-500 dark:text-neutral-400">
+                      {activity.fitnessLevel && activity.fitnessLevel !== 'ALL' && (
+                        <div className="flex items-center gap-2">
+                          <span>💪</span>
+                          <span>
+                            {activity.fitnessLevel === 'INTERMEDIATE_PLUS' ? 'Intermediate & above' :
+                             activity.fitnessLevel === 'ADVANCED' ? 'Advanced only' : 'All levels welcome'}
+                          </span>
+                        </div>
+                      )}
+                      {activity.whatToBring && (
+                        <div className="flex items-center gap-2">
+                          <span>🎒</span>
+                          <span>{activity.whatToBring}</span>
+                        </div>
+                      )}
                     </div>
                   )}
-                  <div>
-                    <p className="font-medium">{activity.user.name || 'Anonymous'}</p>
-                    <p className="text-sm text-muted-foreground">{activity.user.email}</p>
+
+                  {/* Report / Block — only for non-hosts */}
+                  {user && user.id !== activity.user.id && user.id !== activity.hostId && (
+                    <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800 flex items-center gap-4">
+                      <button
+                        onClick={() => setShowReportModal(true)}
+                        className="flex items-center gap-1.5 text-sm text-neutral-400 hover:text-amber-500 transition-colors"
+                      >
+                        <Flag className="w-4 h-4" />
+                        Report
+                      </button>
+                      <BlockUserButton
+                        blockedUserId={activity.user.id}
+                        blockedUserName={activity.user.name ?? undefined}
+                      />
+                    </div>
+                  )}
+
+                  {/* Manage Attendees — host only */}
+                  {user && (user.id === activity.user.id || user.id === activity.hostId) && (
+                    <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800">
+                      <button
+                        onClick={() => setShowManageAttendees(true)}
+                        className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
+                      >
+                        <Settings className="w-4 h-4" />
+                        Manage attendees
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="rounded-lg border p-6">
+                  <h2 className="text-xl font-semibold mb-3">Organizer</h2>
+                  <div className="flex items-center gap-3">
+                    {activity.user.imageUrl ? (
+                      <Image
+                        src={activity.user.imageUrl}
+                        alt={activity.user.name || 'User'}
+                        className="w-10 h-10 rounded-full"
+                        width={40}
+                        height={40}
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        {activity.user.name?.[0] || activity.user.email[0]}
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-medium">{activity.user.name || 'Anonymous'}</p>
+                      <p className="text-sm text-muted-foreground">{activity.user.email}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="rounded-lg border p-6">
@@ -847,6 +1000,17 @@ Organized via sweatbuddies
           )}
         </div>
 
+        {/* P2P Comments — injected below grid for P2P sessions */}
+        {activity?.activityMode?.startsWith('P2P') && (
+          <div className="max-w-4xl mx-auto mt-6">
+            <SessionComments
+              activityId={activity.id}
+              currentUserId={user?.id ?? null}
+              hostUserId={activity.user.id}
+            />
+          </div>
+        )}
+
         {activity && (
           <Suspense fallback={null}>
             {isMessagingOpen && (
@@ -865,6 +1029,33 @@ Organized via sweatbuddies
               />
             )}
           </Suspense>
+        )}
+
+        {/* P2P Safety Modals */}
+        {showReportModal && activity && (
+          <ReportModal
+            reportedType="ACTIVITY"
+            reportedId={activity.id}
+            reportedName={activity.title}
+            onClose={() => setShowReportModal(false)}
+          />
+        )}
+        {showManageAttendees && activity && (
+          <ManageAttendeesModal
+            activityId={activity.id}
+            attendees={activity.userActivities
+              .filter((ua) => ua.status === 'JOINED')
+              .map((ua) => ({ ...ua.user, slug: ua.user.slug ?? null }))}
+            onClose={() => setShowManageAttendees(false)}
+            onAttendeeRemoved={(userId) => {
+              setActivity((prev) => prev ? {
+                ...prev,
+                userActivities: prev.userActivities.map((ua) =>
+                  ua.userId === userId ? { ...ua, status: 'CANCELLED' } : ua
+                ),
+              } : prev)
+            }}
+          />
         )}
       </main>
     </>

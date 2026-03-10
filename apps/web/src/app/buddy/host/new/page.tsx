@@ -127,7 +127,7 @@ export default function NewSessionPage() {
 
   async function checkStripeStatus() {
     try {
-      const res = await fetch('/api/stripe/connect/status')
+      const res = await fetch('/api/stripe/connect/p2p')
       if (res.ok) {
         const data = await res.json()
         setStripeConnected(data.chargesEnabled ?? false)
@@ -499,7 +499,7 @@ export default function NewSessionPage() {
                       You need a Stripe account to charge for sessions. You can save as draft and connect later.
                     </p>
                     <a
-                      href="/api/stripe/connect/create-account"
+                      href="/buddy/host/connect"
                       className="inline-block mt-3 rounded-lg bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 transition-colors"
                     >
                       Connect Stripe →
@@ -546,7 +546,7 @@ export default function NewSessionPage() {
                   {stripeConnected === false && (
                     <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4">
                       <p className="text-sm font-medium text-amber-800 dark:text-amber-300">Connect Stripe to receive payments</p>
-                      <a href="/api/stripe/connect/create-account" className="inline-block mt-3 rounded-lg bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700">Connect Stripe →</a>
+                      <a href="/buddy/host/connect" className="inline-block mt-3 rounded-lg bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700">Connect Stripe →</a>
                     </div>
                   )}
                 </div>

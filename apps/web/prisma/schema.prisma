@@ -2002,7 +2002,10 @@ enum HostApplicationStatus {
   REJECTED
 }
 
-// Host applications from waitlist/intake form
+// Host applications from waitlist/intake form.
+// SCOPE: Standalone intake model — no FK relation to User or Organizer by design.
+// A prospective host fills the form at /host; admin reviews manually then onboards them
+// as an Organizer. Used by POST /api/host-applications. Not part of the P2P system.
 model HostApplication {
   id String @id @default(cuid())
 
@@ -2069,6 +2072,10 @@ model Organizer {
   communitySchedule      String?        @db.VarChar(500) // e.g., "Saturdays 6:30am, Tuesdays 7pm"
   communitySize          String?        @db.VarChar(50)  // e.g., "10-30", "30-100", "100+"
   onboardingCompletedAt  DateTime?
+
+  // Idempotency guard for weekly summary email — set to the Monday of the week
+  // the summary was sent. Prevents double-sending if Vercel retries the cron.
+  lastWeeklySummarySentAt DateTime?
 
   conversations      EventDirectConversation[]
   agentConversations AgentConversation[]
@@ -2300,7 +2307,10 @@ enum SubscriptionStatus {
   EXPIRED
 }
 
-// Stripe Connect accounts for hosts
+// Stripe Connect accounts for Organizer-portal hosts (System B).
+// SCOPE: Linked to EventSubmission, used by /api/stripe/connect/* routes with OrganizerMagicLink auth.
+// NOT used by P2P hosts — P2P Stripe Connect IDs are stored on User.p2pStripeConnectId
+// and managed by /api/stripe/connect/p2p.
 model HostStripeAccount {
   id                String @id @default(cuid())
   eventSubmissionId String @unique // Links to the event/host
@@ -2411,6 +2421,10 @@ model HostSubscription {
 
 // =====================================================
 // WAVE MODE — ACTIVITY-CENTERED CREW MATCHING
+// Distinct from Activity/P2P system. WaveActivity is a real-time crew-finding
+// feature where users post "I'm going for a run in 30 min, who's joining?"
+// Activity is a scheduled, bookable event (marketplace or P2P).
+// These are separate features with separate data models.
 // =====================================================
 
 enum WaveActivityType {

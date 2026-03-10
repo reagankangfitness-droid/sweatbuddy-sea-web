@@ -48,6 +48,7 @@ interface HostData {
     name: string | null
     instagramHandle: string
     communityName: string | null
+    lastWeeklySummarySentAt: Date | null
   }
   eventsThisWeek: number
   rsvpsThisWeek: number
@@ -70,6 +71,7 @@ async function gatherHostData(
       name: true,
       instagramHandle: true,
       communityName: true,
+      lastWeeklySummarySentAt: true,
     },
   })
   if (!organizer) return null
@@ -360,6 +362,20 @@ export async function processHostWeeklySummaries(): Promise<{
         continue
       }
 
+      // Idempotency guard: skip if we already sent a summary for this week.
+      // weekStart is the Monday 00:00 of the week being reported.
+      // If lastWeeklySummarySentAt >= weekStart, we already sent this week's email.
+      if (
+        data.organizer.lastWeeklySummarySentAt &&
+        data.organizer.lastWeeklySummarySentAt >= weekStart
+      ) {
+        console.log(
+          `[host-weekly-summary] Already sent for ${organizerInstagram} week of ${weekStart.toISOString()} — skipping`
+        )
+        results.skipped++
+        continue
+      }
+
       // Skip if zero activity this week — nothing interesting to report
       if (data.eventsThisWeek === 0 && data.rsvpsThisWeek === 0) {
         results.skipped++
@@ -385,6 +401,11 @@ export async function processHostWeeklySummaries(): Promise<{
       })
 
       if (result.success) {
+        // Mark this week as sent so retries won't re-send
+        await prisma.organizer.update({
+          where: { id: data.organizer.id },
+          data: { lastWeeklySummarySentAt: new Date() },
+        })
         results.sent++
       } else {
         results.errors++

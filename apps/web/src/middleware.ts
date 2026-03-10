@@ -1,3 +1,33 @@
+/**
+ * Middleware — Auth & Route Protection
+ *
+ * AUTH ARCHITECTURE (two separate systems):
+ *
+ * System A — Clerk (primary):
+ *   Used by all user-facing routes: /app, /buddy, /activities, /discover, /onboarding, etc.
+ *   JWT is validated by Clerk middleware automatically.
+ *   All new features (P2P) MUST use Clerk auth only.
+ *
+ * System B — OrganizerMagicLink (legacy):
+ *   Used exclusively by /organizer/* routes and their API counterparts /api/organizer/*.
+ *   Auth is cookie-based (getOrganizerSession() in /lib/organizer-session.ts).
+ *   Organizer records have NO foreign key relation to User records.
+ *   DO NOT use for new features.
+ *
+ * URL OWNERSHIP:
+ *   /activities/[id]   → Activity model (System A, Clerk users) — canonical event URL
+ *   /e/[id]            → EventSubmission model (System B, organizer events)
+ *   /event/[slug]      → EventSubmission model (System B, organizer events, by slug)
+ *   /events            → EventSubmission list (System B)
+ *   /my-events         → Attendee management for both systems
+ *   /buddy             → P2P sessions feed (System A, Clerk users)
+ *   /organizer         → Organizer portal (System B, magic link auth)
+ *   /host              → Host intake form → HostApplication model
+ *
+ * Note: /e/[id] and /event/[slug] are NOT short-links for /activities — they serve
+ * completely different data (EventSubmission vs Activity). They are the organizer
+ * portal's public event pages.
+ */
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 

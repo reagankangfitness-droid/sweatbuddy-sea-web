@@ -1,65 +1,78 @@
 'use client'
 
 import { useState } from 'react'
-import { Users, CalendarDays, User, ChevronRight, Plus, Handshake } from 'lucide-react'
+import { Compass, CalendarDays, User, ChevronRight, Plus } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Logo } from '@/components/logo'
 import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 
 const navItems = [
-  { id: 'events', label: 'Events', icon: CalendarDays, href: '/events' },
-  { id: 'buddy', label: 'Buddies', icon: Handshake, href: '/buddy' },
-  { id: 'community', label: 'Community', icon: Users, href: '/communities' },
+  { id: 'discover', label: 'Discover', icon: Compass, href: '/buddy' },
+  { id: 'sessions', label: 'My Sessions', icon: CalendarDays, href: '/buddy?tab=mine' },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile' },
 ]
 
 export function AppNav() {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const { user, isSignedIn } = useUser()
   const [isHovered, setIsHovered] = useState(false)
 
-  // Only show on app pages
-  const isAppPage = pathname.startsWith('/app') || pathname.startsWith('/community') || pathname.startsWith('/communities') || pathname.startsWith('/events') || pathname.startsWith('/profile') || pathname.startsWith('/buddy')
+  // Only show on P2P app pages
+  const isAppPage =
+    pathname.startsWith('/buddy') ||
+    pathname.startsWith('/profile') ||
+    pathname.startsWith('/activities') ||
+    pathname.startsWith('/onboarding') ||
+    pathname.startsWith('/my-bookings') ||
+    pathname.startsWith('/communities') ||
+    pathname.startsWith('/settings') ||
+    pathname.startsWith('/user')
+
   if (!isAppPage) return null
+
+  function isActive(item: typeof navItems[0]) {
+    if (item.id === 'sessions') {
+      return pathname.startsWith('/buddy') && searchParams.get('tab') === 'mine'
+    }
+    if (item.id === 'discover') {
+      return pathname.startsWith('/buddy') && searchParams.get('tab') !== 'mine'
+    }
+    return pathname.startsWith(item.href)
+  }
 
   return (
     <>
-      {/* Desktop Hover-Reveal Sidebar - hidden on mobile */}
+      {/* Desktop Hover-Reveal Sidebar */}
       <div
         className="hidden md:block fixed left-0 top-0 bottom-0 z-50"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Hover trigger zone - always visible */}
         <div className="absolute left-0 top-0 bottom-0 w-4 z-10" />
 
-        {/* Collapsed indicator strip - visible when not hovered */}
+        {/* Collapsed indicator strip */}
         <motion.div
           initial={false}
           animate={{ opacity: isHovered ? 0 : 1 }}
           transition={{ duration: 0.15 }}
           className="absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center py-6 bg-neutral-950/80 backdrop-blur-sm border-r border-neutral-800/50"
         >
-          {/* Small logo */}
           <div className="mb-6">
             <Logo size={24} />
           </div>
-
-          {/* Mini nav icons */}
           <div className="flex flex-col items-center gap-3 flex-1">
             {navItems.map((item) => {
-              const isActive = pathname.startsWith(item.href)
+              const active = isActive(item)
               const Icon = item.icon
               return (
                 <div
                   key={item.id}
                   className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                    isActive
-                      ? 'bg-white text-neutral-900'
-                      : 'text-neutral-400'
+                    active ? 'bg-white text-neutral-900' : 'text-neutral-400'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -67,14 +80,12 @@ export function AppNav() {
               )
             })}
           </div>
-
-          {/* Expand hint */}
           <div className="mt-auto flex items-center justify-center text-neutral-300">
             <ChevronRight className="w-4 h-4 animate-pulse" />
           </div>
         </motion.div>
 
-        {/* Expanded sidebar - visible on hover */}
+        {/* Expanded sidebar */}
         <AnimatePresence>
           {isHovered && (
             <motion.nav
@@ -86,57 +97,53 @@ export function AppNav() {
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
               className="absolute left-0 top-0 bottom-0 w-20 flex flex-col items-center py-6 bg-neutral-950/95 backdrop-blur-lg border-r border-neutral-800 shadow-xl"
             >
-              {/* Logo - links to home */}
-              <Link href="/" className="mb-8" title="Back to home">
+              <Link href="/" className="mb-8" title="Home">
                 <Logo size={32} />
               </Link>
 
-              {/* Nav Links */}
               <div className="flex flex-col items-center gap-2 flex-1">
                 {navItems.map((item) => {
-                  const isActive = pathname.startsWith(item.href)
+                  const active = isActive(item)
                   const Icon = item.icon
-
                   return (
                     <Link
                       key={item.id}
                       href={item.href}
                       aria-label={item.label}
-                      aria-current={isActive ? 'page' : undefined}
+                      aria-current={active ? 'page' : undefined}
                       className={`
                         relative flex flex-col items-center justify-center
-                        w-14 h-14 rounded-xl
-                        transition-all duration-200
-                        ${isActive
+                        w-14 h-14 rounded-xl transition-all duration-200
+                        ${active
                           ? 'text-neutral-100 bg-neutral-800'
                           : 'text-neutral-400 hover:text-neutral-400 hover:bg-neutral-900'
                         }
                       `}
                     >
-                      {isActive && (
+                      {active && (
                         <motion.div
                           layoutId="desktopSidebarIndicator"
                           className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full"
                           transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                         />
                       )}
-                      <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5px]' : ''}`} />
+                      <Icon className={`w-5 h-5 ${active ? 'stroke-[2.5px]' : ''}`} />
                       <span className="text-[10px] mt-1 font-medium">{item.label}</span>
                     </Link>
                   )
                 })}
               </div>
 
-              {/* Host CTA */}
+              {/* Host CTA → P2P session creation */}
               <Link
-                href="/host"
-                aria-label="Host an event"
+                href="/buddy/host/new"
+                aria-label="Host a session"
                 className="flex items-center justify-center w-12 h-12 rounded-xl bg-white text-neutral-900 hover:bg-neutral-200 transition-colors mb-3"
               >
                 <Plus className="w-5 h-5" />
               </Link>
 
-              {/* User Avatar at bottom */}
+              {/* User avatar */}
               <div className="mt-auto">
                 {isSignedIn && user ? (
                   <Link
@@ -174,42 +181,33 @@ export function AppNav() {
 
       {/* Mobile Bottom Nav */}
       <div className="md:hidden">
-        {/* Spacer */}
         <div className="h-20" />
-
         <nav
           role="navigation"
           aria-label="Main navigation"
           className="fixed bottom-0 left-0 right-0 z-50"
         >
           <div className="absolute inset-0 bg-neutral-950/95 backdrop-blur-lg border-t border-neutral-800" />
-
           <div className="relative flex items-center justify-around px-2 pt-2 pb-[env(safe-area-inset-bottom,8px)]">
             {navItems.map((item) => {
-              const isActive = pathname.startsWith(item.href)
+              const active = isActive(item)
               const Icon = item.icon
-
               return (
                 <Link
                   key={item.id}
                   href={item.href}
                   aria-label={item.label}
-                  aria-current={isActive ? 'page' : undefined}
+                  aria-current={active ? 'page' : undefined}
                   className={`
-                    flex flex-col items-center justify-center
-                    w-14 h-14
+                    flex flex-col items-center justify-center w-14 h-14
                     transition-all duration-200 relative
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 rounded-lg
-                    ${isActive
-                      ? 'text-neutral-100'
-                      : 'text-neutral-400 hover:text-neutral-400 active:scale-95'
-                    }
+                    ${active ? 'text-neutral-100' : 'text-neutral-400 active:scale-95'}
                   `}
                 >
-                  <Icon className={`w-6 h-6 transition-all duration-200 ${isActive ? 'stroke-[2.5px]' : ''}`} />
+                  <Icon className={`w-6 h-6 transition-all duration-200 ${active ? 'stroke-[2.5px]' : ''}`} />
                   <span className="text-[10px] mt-1 font-medium">{item.label}</span>
-
-                  {isActive && (
+                  {active && (
                     <motion.div
                       layoutId="mobileActiveIndicator"
                       className="absolute bottom-1 w-4 h-1 bg-white rounded-full"
@@ -222,8 +220,8 @@ export function AppNav() {
 
             {/* Host CTA */}
             <Link
-              href="/host"
-              aria-label="Host an event"
+              href="/buddy/host/new"
+              aria-label="Host a session"
               className="flex flex-col items-center justify-center w-14 h-14"
             >
               <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">

@@ -66,19 +66,22 @@ const nextConfig = {
     },
   },
 
-  // Redirects for removed stub pages
+  // Redirects
   async redirects() {
     return [
-      { source: '/discover', destination: '/events', permanent: true },
-      { source: '/explore', destination: '/events', permanent: true },
-      { source: '/app', destination: '/events', permanent: true },
-      { source: '/activities/create', destination: '/dashboard', permanent: true },
-      { source: '/organizer', destination: '/sign-in?intent=host', permanent: true },
-      { source: '/organizer/dashboard', destination: '/host/dashboard', permanent: true },
-      { source: '/organizer/dashboard/:eventId/edit', destination: '/host/events/:eventId/edit', permanent: true },
-      { source: '/organizer/dashboard/:eventId', destination: '/host/events/:eventId/attendees', permanent: true },
-      { source: '/my-events', destination: '/', permanent: false },
-      { source: '/my-activities', destination: '/dashboard', permanent: false },
+      // P2P reset — System B routes redirected to deprecation page (2026-03-11)
+      { source: '/host', destination: '/buddy/host/new', permanent: false },
+      { source: '/host/:path*', destination: '/organizer-deprecated', permanent: false },
+      { source: '/organizer/:path*', destination: '/organizer-deprecated', permanent: false },
+      { source: '/crews', destination: '/organizer-deprecated', permanent: false },
+
+      // Legacy routes
+      { source: '/discover', destination: '/buddy', permanent: true },
+      { source: '/explore', destination: '/buddy', permanent: true },
+      { source: '/app', destination: '/buddy', permanent: true },
+      { source: '/activities/create', destination: '/buddy/host/new', permanent: true },
+      { source: '/my-events', destination: '/my-bookings', permanent: false },
+      { source: '/my-activities', destination: '/my-bookings', permanent: false },
     ]
   },
 

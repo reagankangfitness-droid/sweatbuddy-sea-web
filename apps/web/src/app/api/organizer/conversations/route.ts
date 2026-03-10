@@ -1,69 +1,19 @@
+/**
+ * @deprecated System B (organizer portal) has been sunset as of 2026-03-11.
+ * EventSubmission data preserved for future migration.
+ * DO NOT DELETE — may need to reactivate temporarily during migration.
+ */
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { getOrganizerSession } from '@/lib/organizer-session'
 
-// Get all conversations for the organizer
-export async function GET() {
-  try {
-    const session = await getOrganizerSession()
+const GONE = () =>
+  NextResponse.json(
+    { error: 'Organizer portal has been sunset. Contact support@sweatbuddies.sg' },
+    { status: 410 }
+  )
 
-    if (!session) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      )
-    }
+export const GET = GONE
+export const POST = GONE
+export const PUT = GONE
+export const DELETE = GONE
+export const PATCH = GONE
 
-    // Find organizer in DB
-    const organizer = await prisma.organizer.findUnique({
-      where: { id: session.id },
-    })
-
-    if (!organizer) {
-      return NextResponse.json(
-        { error: 'Organizer not found' },
-        { status: 404 }
-      )
-    }
-
-    // Get all conversations with last message
-    const conversations = await prisma.eventDirectConversation.findMany({
-      where: { organizerId: organizer.id },
-      orderBy: { lastMessageAt: 'desc' },
-      include: {
-        messages: {
-          orderBy: { createdAt: 'desc' },
-          take: 1,
-        },
-        _count: {
-          select: { messages: true },
-        },
-      },
-    })
-
-    return NextResponse.json({
-      success: true,
-      conversations: conversations.map((c) => ({
-        id: c.id,
-        eventId: c.eventId,
-        attendeeEmail: c.attendeeEmail,
-        attendeeName: c.attendeeName,
-        lastMessageAt: c.lastMessageAt?.toISOString() || null,
-        messageCount: c._count.messages,
-        lastMessage: c.messages[0]
-          ? {
-              content: c.messages[0].content,
-              senderType: c.messages[0].senderType,
-              createdAt: c.messages[0].createdAt.toISOString(),
-            }
-          : null,
-      })),
-    })
-  } catch (error) {
-    console.error('Get organizer conversations error:', error)
-    return NextResponse.json(
-      { error: 'Failed to get conversations' },
-      { status: 500 }
-    )
-  }
-}

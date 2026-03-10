@@ -1,41 +1,15 @@
-import { auth } from '@clerk/nextjs/server'
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+/**
+ * @deprecated Wave feature has been sunset as of 2026-03-11.
+ * P2P (/buddy) serves the same use case. DO NOT DELETE.
+ */
+import { NextResponse } from 'next/server'
 
-export async function POST(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+const GONE = () =>
+  NextResponse.json({ error: 'Wave feature has been sunset. Use /buddy instead.' }, { status: 410 })
 
-  const { id } = await params
+export const GET = GONE
+export const POST = GONE
+export const PUT = GONE
+export const DELETE = GONE
+export const PATCH = GONE
 
-  // Prevent creator from leaving their own wave
-  const wave = await prisma.waveActivity.findUnique({ where: { id } })
-  if (!wave) return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
-  if (wave.creatorId === userId) {
-    return NextResponse.json({ error: 'Creator cannot leave their own activity' }, { status: 403 })
-  }
-
-  const participant = await prisma.waveParticipant.findUnique({
-    where: { waveActivityId_userId: { waveActivityId: id, userId } },
-  })
-
-  if (!participant) {
-    return NextResponse.json({ error: 'Not a participant' }, { status: 404 })
-  }
-
-  // Remove participant and crew chat membership atomically
-  await prisma.$transaction(async (tx) => {
-    await tx.waveParticipant.delete({ where: { id: participant.id } })
-
-    if (wave.chatId) {
-      await tx.crewChatMember.deleteMany({
-        where: { chatId: wave.chatId, userId },
-      })
-    }
-  })
-
-  return new NextResponse(null, { status: 204 })
-}

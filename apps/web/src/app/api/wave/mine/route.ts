@@ -1,33 +1,15 @@
-import { auth } from '@clerk/nextjs/server'
+/**
+ * @deprecated Wave feature has been sunset as of 2026-03-11.
+ * P2P (/buddy) serves the same use case. DO NOT DELETE.
+ */
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 
-export async function GET() {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+const GONE = () =>
+  NextResponse.json({ error: 'Wave feature has been sunset. Use /buddy instead.' }, { status: 410 })
 
-  const now = new Date()
+export const GET = GONE
+export const POST = GONE
+export const PUT = GONE
+export const DELETE = GONE
+export const PATCH = GONE
 
-  const waves = await prisma.waveActivity.findMany({
-    where: {
-      creatorId: userId,
-      expiresAt: { gt: now },
-    },
-    include: {
-      _count: { select: { participants: true } },
-    },
-    orderBy: { startedAt: 'desc' },
-  })
-
-  return NextResponse.json({
-    waves: waves.map((w) => ({
-      id: w.id,
-      activityType: w.activityType,
-      area: w.area,
-      thought: w.thought,
-      participantCount: w._count.participants,
-      startedAt: w.startedAt,
-      expiresAt: w.expiresAt,
-    })),
-  })
-}

@@ -8,28 +8,12 @@
       "schedule": "0 8 * * *"
     },
     {
-      "path": "/api/cron/process-event-reminders",
-      "schedule": "0 8 * * *"
-    },
-    {
-      "path": "/api/cron/weekly-pulse",
-      "schedule": "0 0 * * 1"
-    },
-    {
       "path": "/api/cron/process-nudges",
       "schedule": "0 1 * * *"
     },
     {
-      "path": "/api/cron/process-icebreakers",
-      "schedule": "0 7 * * *"
-    },
-    {
-      "path": "/api/cron/host-weekly-summary",
-      "schedule": "30 0 * * 1"
-    },
-    {
-      "path": "/api/cron/draft-post-event-emails",
-      "schedule": "0 16 * * *"
+      "path": "/api/cron/weekly-pulse",
+      "schedule": "0 0 * * 1"
     }
   ]
 }

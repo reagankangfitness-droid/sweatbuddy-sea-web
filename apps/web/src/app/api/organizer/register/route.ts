@@ -1,87 +1,19 @@
+/**
+ * @deprecated System B (organizer portal) has been sunset as of 2026-03-11.
+ * EventSubmission data preserved for future migration.
+ * DO NOT DELETE — may need to reactivate temporarily during migration.
+ */
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 
-export async function POST(request: Request) {
-  try {
-    const { email, instagramHandle, name } = await request.json()
+const GONE = () =>
+  NextResponse.json(
+    { error: 'Organizer portal has been sunset. Contact support@sweatbuddies.sg' },
+    { status: 410 }
+  )
 
-    // Validate required fields
-    if (!email || !email.includes('@')) {
-      return NextResponse.json(
-        { error: 'Valid email required' },
-        { status: 400 }
-      )
-    }
+export const GET = GONE
+export const POST = GONE
+export const PUT = GONE
+export const DELETE = GONE
+export const PATCH = GONE
 
-    if (!instagramHandle) {
-      return NextResponse.json(
-        { error: 'Instagram handle required' },
-        { status: 400 }
-      )
-    }
-
-    // Validate Instagram handle format (letters, numbers, periods, underscores, 1-30 chars)
-    const cleanHandle = instagramHandle.replace(/^@/, '').trim()
-    if (!/^[a-zA-Z0-9_.]{1,30}$/.test(cleanHandle)) {
-      return NextResponse.json(
-        { error: 'Invalid Instagram handle format' },
-        { status: 400 }
-      )
-    }
-
-    const normalizedEmail = email.toLowerCase().trim()
-    // Remove @ if user included it
-    const normalizedHandle = instagramHandle.replace(/^@/, '').toLowerCase().trim()
-
-    // Check if organizer already exists with this email
-    const existingByEmail = await prisma.organizer.findUnique({
-      where: { email: normalizedEmail },
-    })
-
-    if (existingByEmail) {
-      return NextResponse.json(
-        { error: 'An organizer with this email already exists' },
-        { status: 409 }
-      )
-    }
-
-    // Check if organizer already exists with this Instagram handle
-    const existingByInstagram = await prisma.organizer.findUnique({
-      where: { instagramHandle: normalizedHandle },
-    })
-
-    if (existingByInstagram) {
-      return NextResponse.json(
-        { error: 'This Instagram handle is already registered' },
-        { status: 409 }
-      )
-    }
-
-    // Create the organizer
-    const organizer = await prisma.organizer.create({
-      data: {
-        email: normalizedEmail,
-        instagramHandle: normalizedHandle,
-        name: name?.trim() || null,
-        isVerified: true, // Auto-verified in MVP (honor system)
-      },
-    })
-
-    return NextResponse.json({
-      success: true,
-      organizer: {
-        id: organizer.id,
-        email: organizer.email,
-        instagramHandle: organizer.instagramHandle,
-        name: organizer.name,
-        isVerified: organizer.isVerified,
-      },
-    })
-  } catch (error) {
-    console.error('Organizer registration error:', error)
-    return NextResponse.json(
-      { error: 'Failed to register organizer' },
-      { status: 500 }
-    )
-  }
-}

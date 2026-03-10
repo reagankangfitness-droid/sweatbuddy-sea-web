@@ -1,5 +1,6 @@
-import { CrewChatList } from '@/components/wave/CrewChatList'
+import { redirect } from 'next/navigation'
 
-export default function CrewsPage() {
-  return <CrewChatList />
+export default function CrewsDeprecated() {
+  redirect('/organizer-deprecated')
 }
+

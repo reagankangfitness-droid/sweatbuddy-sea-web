@@ -1,60 +1,15 @@
-import { auth } from '@clerk/nextjs/server'
+/**
+ * @deprecated Wave feature has been sunset as of 2026-03-11.
+ * P2P (/buddy) serves the same use case. DO NOT DELETE.
+ */
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 
-export const dynamic = 'force-dynamic'
+const GONE = () =>
+  NextResponse.json({ error: 'Wave feature has been sunset. Use /buddy instead.' }, { status: 410 })
 
-export async function GET() {
-  try {
-    const { userId } = await auth()
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+export const GET = GONE
+export const POST = GONE
+export const PUT = GONE
+export const DELETE = GONE
+export const PATCH = GONE
 
-    // Find the user's database ID
-    const dbUser = await prisma.user.findFirst({
-      where: { id: userId },
-      select: { id: true },
-    })
-
-    if (!dbUser) {
-      return NextResponse.json({ activities: [] })
-    }
-
-    // Get all waves created by this user (active and expired, last 30 days)
-    const thirtyDaysAgo = new Date()
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-
-    const waves = await prisma.waveActivity.findMany({
-      where: {
-        creatorId: dbUser.id,
-        startedAt: { gte: thirtyDaysAgo },
-      },
-      include: {
-        _count: { select: { participants: true } },
-      },
-      orderBy: { startedAt: 'desc' },
-      take: 50,
-    })
-
-    const activities = waves.map((w) => ({
-      id: w.id,
-      activityType: w.activityType,
-      area: w.area,
-      locationName: w.locationName,
-      thought: w.thought,
-      participantCount: w._count.participants,
-      waveThreshold: w.waveThreshold,
-      isUnlocked: w.isUnlocked,
-      chatId: w.chatId,
-      startedAt: w.startedAt.toISOString(),
-      expiresAt: w.expiresAt.toISOString(),
-      scheduledFor: w.scheduledFor?.toISOString() || null,
-    }))
-
-    return NextResponse.json({ activities })
-  } catch (error) {
-    console.error('Error fetching my activities:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
-}

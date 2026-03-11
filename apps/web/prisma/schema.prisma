@@ -152,6 +152,8 @@ model User {
   // Trust & Safety
   accountStatus  UserAccountStatus @default(ACTIVE)
   suspendedUntil DateTime?
+  bannedAt       DateTime?
+  banReason      String?   @db.Text
 
   // Host-specific fields
   hostSince      DateTime?

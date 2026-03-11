@@ -2140,3 +2140,17 @@
 .gm-style > div:last-child {
   display: none !important;
 }
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE SAFETY - Prevent horizontal overflow
+   ═══════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Ensure tables can scroll within their container */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+}

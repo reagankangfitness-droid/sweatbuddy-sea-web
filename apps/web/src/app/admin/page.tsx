@@ -166,7 +166,8 @@ export default function AdminStatsPage() {
           <div className="px-6 py-4 border-b border-neutral-800">
             <h2 className="font-semibold text-neutral-100">Top Hosts</h2>
           </div>
-          <table className="w-full">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[480px]">
             <thead>
               <tr className="border-b border-neutral-800">
                 <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-500 uppercase">Rank</th>
@@ -198,6 +199,7 @@ export default function AdminStatsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

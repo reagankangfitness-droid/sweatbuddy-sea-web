@@ -1,538 +1,217 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useAuth } from '@clerk/nextjs'
-import { format } from 'date-fns'
-import {
-  Calendar,
-  Users,
-  Mail,
-  TrendingUp,
-  Clock,
-  CheckCircle,
-  ArrowUpRight,
-  ArrowDownRight,
-  Loader2,
-  RefreshCw,
-  MessageCircle
-} from 'lucide-react'
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell
-} from 'recharts'
+import { Users, Activity, Calendar, TrendingUp, Loader2, RefreshCw } from 'lucide-react'
 
-interface Attendee {
-  id: string
-  eventId: string
-  eventName: string
-  email: string
+interface TopHost {
   name: string | null
-  subscribe: boolean
-  timestamp: string
-  confirmed: boolean
-}
-
-interface NewsletterSubscriber {
   email: string
-  name: string | null
-  subscribedAt: string
-  source: string
+  imageUrl: string | null
+  sessionsHostedCount: number
+  sessionsAttendedCount: number
 }
 
-interface Conversation {
-  id: string
-  eventId: string
-  attendeeEmail: string
-  attendeeName: string | null
-  organizerHandle: string
-  organizerName: string | null
-  lastMessage: string | null
-  lastMessageAt: string
-  lastMessageSender: 'attendee' | 'organizer' | null
+interface P2PStats {
+  totalUsers: number
+  usersOnboarded: number
+  totalP2PSessions: number
+  p2pFreeSessions: number
+  p2pPaidSessions: number
+  marketplaceSessions: number
+  upcomingSessions: number
+  totalAttendances: number
+  avgAttendeesPerSession: number
+  topHosts: TopHost[]
 }
 
-interface Stats {
-  totalEvents: number
-  pendingEvents: number
-  totalAttendees: number
-  totalSubscribers: number
-  attendeesThisWeek: number
-  subscribersThisWeek: number
-  optInRate: number
-  totalMessages: number
-  messagesThisWeek: number
-  activeConversations: number
-}
+const RANK_ICONS = ['🥇', '🥈', '🥉', '4', '5']
 
-// Warm dusk color palette for charts
-const COLORS = ['#E07A5F', '#2A9D8F', '#F4A261', '#264653', '#A84A36']
-
-export default function AdminDashboardPage() {
-  const { getToken, isLoaded } = useAuth()
+export default function AdminStatsPage() {
+  const [stats, setStats] = useState<P2PStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
-  const [attendees, setAttendees] = useState<Attendee[]>([])
-  const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([])
-  const [conversations, setConversations] = useState<Conversation[]>([])
-  const [chartData, setChartData] = useState<{ date: string; attendees: number; subscribers: number }[]>([])
-  const [topEvents, setTopEvents] = useState<{ name: string; value: number }[]>([])
-  const [sourceData, setSourceData] = useState<{ name: string; value: number }[]>([])
-  const [stats, setStats] = useState<Stats>({
-    totalEvents: 0,
-    pendingEvents: 0,
-    totalAttendees: 0,
-    totalSubscribers: 0,
-    attendeesThisWeek: 0,
-    subscribersThisWeek: 0,
-    optInRate: 0,
-    totalMessages: 0,
-    messagesThisWeek: 0,
-    activeConversations: 0,
-  })
 
-  const fetchData = useCallback(async () => {
-    if (!isLoaded) return
-
-    setLoading(true)
+  const fetchStats = useCallback(async () => {
     try {
-      const token = await getToken()
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-      }
-
-      // Fetch stats from dedicated endpoint (returns accurate totals from DB)
-      const [statsRes, messagesRes] = await Promise.all([
-        fetch('/api/admin/stats', { headers }),
-        fetch('/api/admin/messages', { headers }),
-      ])
-
-      const statsData = statsRes.ok ? await statsRes.json() : { stats: {}, recentAttendees: [], recentSubscribers: [] }
-      const messagesData = messagesRes.ok ? await messagesRes.json() : { stats: {}, conversations: [] }
-
-      const dbStats = statsData.stats || {}
-      const attendeesList = statsData.recentAttendees || []
-      const subscribersList = statsData.recentSubscribers || []
-      const conversationsList = messagesData.conversations || []
-
-      setAttendees(attendeesList)
-      setSubscribers(subscribersList)
-      setConversations(conversationsList)
-      setChartData(statsData.chartData || [])
-      setTopEvents(statsData.topEvents || [])
-      setSourceData(statsData.sourceData || [])
-
-      // Use stats directly from database
-      setStats({
-        totalEvents: dbStats.eventsWithRsvps || 0,
-        pendingEvents: dbStats.pendingEvents || 0,
-        totalAttendees: dbStats.totalAttendees || 0,
-        totalSubscribers: dbStats.totalSubscribers || 0,
-        attendeesThisWeek: dbStats.attendeesThisWeek || 0,
-        subscribersThisWeek: dbStats.subscribersThisWeek || 0,
-        optInRate: dbStats.optInRate || 0,
-        totalMessages: dbStats.totalMessages || 0,
-        messagesThisWeek: dbStats.messagesThisWeek || 0,
-        activeConversations: dbStats.activeConversations || 0,
-      })
+      const res = await fetch('/api/admin/p2p-stats')
+      if (!res.ok) throw new Error('Failed to fetch stats')
+      const data = await res.json()
+      setStats(data)
     } catch (err) {
-      console.error('Dashboard data fetch error:', err)
+      console.error('Stats error:', err)
     } finally {
       setLoading(false)
     }
-  }, [getToken, isLoaded])
+  }, [])
 
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
+  useEffect(() => { fetchStats() }, [fetchStats])
 
   const handleRefresh = async () => {
     setRefreshing(true)
-    await fetchData()
+    await fetchStats()
     setRefreshing(false)
   }
 
-  // Chart data now comes from the API
-
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh] bg-neutral-900">
+      <div className="flex items-center justify-center min-h-[60vh]">
         <Loader2 className="w-8 h-8 text-neutral-500 animate-spin" />
       </div>
     )
   }
 
-  // Use chart data from state (fetched from API)
-  const eventData = topEvents
+  const statCards = [
+    {
+      label: 'Total Users',
+      value: stats?.totalUsers ?? 0,
+      icon: Users,
+      color: 'text-blue-400',
+      border: 'border-blue-800/50',
+    },
+    {
+      label: 'Onboarded',
+      value: stats?.usersOnboarded ?? 0,
+      sub: stats && stats.totalUsers > 0
+        ? `${Math.round((stats.usersOnboarded / stats.totalUsers) * 100)}% of users`
+        : undefined,
+      icon: TrendingUp,
+      color: 'text-emerald-400',
+      border: 'border-emerald-800/50',
+    },
+    {
+      label: 'Total P2P Sessions',
+      value: stats?.totalP2PSessions ?? 0,
+      icon: Activity,
+      color: 'text-purple-400',
+      border: 'border-purple-800/50',
+    },
+    {
+      label: 'Upcoming Sessions',
+      value: stats?.upcomingSessions ?? 0,
+      icon: Calendar,
+      color: 'text-amber-400',
+      border: 'border-amber-800/50',
+    },
+    {
+      label: 'Total Attendances',
+      value: stats?.totalAttendances ?? 0,
+      icon: Users,
+      color: 'text-pink-400',
+      border: 'border-pink-800/50',
+    },
+    {
+      label: 'Avg Attendees / Session',
+      value: stats?.avgAttendeesPerSession ?? 0,
+      icon: TrendingUp,
+      color: 'text-sky-400',
+      border: 'border-sky-800/50',
+    },
+  ]
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-neutral-900 min-h-screen">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 sm:p-6 lg:p-8">
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-sans text-2xl sm:text-3xl font-bold text-neutral-100">Dashboard</h1>
-          <p className="text-sm text-neutral-500 mt-1">Overview of your SweatBuddies platform</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-100">P2P Dashboard</h1>
+          <p className="text-neutral-500 mt-1">SweatBuddies platform metrics</p>
         </div>
         <button
           onClick={handleRefresh}
           disabled={refreshing}
-          className="flex items-center gap-2 px-4 py-2 bg-white text-neutral-900 rounded-xl hover:bg-neutral-200 transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 bg-white text-neutral-900 rounded-xl hover:bg-neutral-200 transition-colors disabled:opacity-50 text-sm font-medium"
         >
           <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-          <span className="hidden sm:inline text-sm font-medium">Refresh</span>
+          Refresh
         </button>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-        <StatCard
-          title="Total Attendees"
-          value={stats.totalAttendees}
-          change={stats.attendeesThisWeek}
-          changeLabel="this week"
-          icon={Users}
-          iconBg="bg-blue-900"
-          iconColor="text-blue-400"
-        />
-        <StatCard
-          title="Newsletter Subscribers"
-          value={stats.totalSubscribers}
-          change={stats.subscribersThisWeek}
-          changeLabel="this week"
-          icon={Mail}
-          iconBg="bg-emerald-100"
-          iconColor="text-emerald-400"
-        />
-        <StatCard
-          title="Host Inquiries"
-          value={stats.totalMessages}
-          change={stats.messagesThisWeek}
-          changeLabel="this week"
-          icon={MessageCircle}
-          iconBg="bg-indigo-100"
-          iconColor="text-indigo-600"
-        />
-        <StatCard
-          title="Events with RSVPs"
-          value={stats.totalEvents}
-          icon={Calendar}
-          iconBg="bg-purple-900"
-          iconColor="text-purple-600"
-        />
-        <StatCard
-          title="Newsletter Opt-in Rate"
-          value={`${stats.optInRate}%`}
-          icon={TrendingUp}
-          iconBg="bg-amber-900"
-          iconColor="text-amber-400"
-        />
+      {/* Main stat grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        {statCards.map((card) => (
+          <div
+            key={card.label}
+            className={`bg-neutral-950 rounded-xl border p-5 ${card.border}`}
+          >
+            <card.icon className={`w-5 h-5 mb-3 ${card.color}`} />
+            <p className="text-3xl font-bold text-neutral-100">{card.value}</p>
+            <p className="text-sm text-neutral-500 mt-1">{card.label}</p>
+            {card.sub && <p className="text-xs text-neutral-600 mt-0.5">{card.sub}</p>}
+          </div>
+        ))}
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Activity Chart */}
-        <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 sm:p-6 shadow-sm">
-          <h3 className="font-semibold text-lg text-neutral-100 mb-4">Activity (Last 7 Days)</h3>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="attendeeGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="subscriberGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="date" stroke="#6B7280" fontSize={12} />
-                <YAxis stroke="#6B7280" fontSize={12} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #E5E7EB',
-                    borderRadius: '8px',
-                    color: '#171717',
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="attendees"
-                  stroke="#3B82F6"
-                  strokeWidth={2}
-                  fill="url(#attendeeGradient)"
-                  name="Attendees"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="subscribers"
-                  stroke="#10B981"
-                  strokeWidth={2}
-                  fill="url(#subscriberGradient)"
-                  name="Subscribers"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="flex items-center justify-center gap-6 mt-4">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-blue-500 rounded-full" />
-              <span className="text-neutral-400 text-sm">Attendees</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-emerald-500 rounded-full" />
-              <span className="text-neutral-400 text-sm">Subscribers</span>
-            </div>
-          </div>
+      {/* P2P mode breakdown */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="bg-neutral-950 rounded-xl border border-emerald-800/50 p-5">
+          <p className="text-sm text-neutral-500 mb-1">P2P Free Sessions</p>
+          <p className="text-4xl font-bold text-emerald-400">{stats?.p2pFreeSessions ?? 0}</p>
         </div>
-
-        {/* Event Distribution */}
-        <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 sm:p-6 shadow-sm">
-          <h3 className="font-semibold text-lg text-neutral-100 mb-4">Top Events by RSVPs</h3>
-          {eventData.length > 0 ? (
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={eventData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                  <XAxis type="number" stroke="#6B7280" fontSize={12} />
-                  <YAxis
-                    dataKey="name"
-                    type="category"
-                    stroke="#6B7280"
-                    fontSize={11}
-                    width={100}
-                    tick={{ fill: '#525252' }}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#FFFFFF',
-                      border: '1px solid #E5E7EB',
-                      borderRadius: '8px',
-                      color: '#171717',
-                    }}
-                  />
-                  <Bar dataKey="value" name="RSVPs" radius={[0, 6, 6, 0]}>
-                    {eventData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          ) : (
-            <div className="h-64 flex items-center justify-center text-neutral-500">
-              No event data yet
-            </div>
-          )}
+        <div className="bg-neutral-950 rounded-xl border border-amber-800/50 p-5">
+          <p className="text-sm text-neutral-500 mb-1">P2P Paid Sessions</p>
+          <p className="text-4xl font-bold text-amber-400">{stats?.p2pPaidSessions ?? 0}</p>
+        </div>
+        <div className="bg-neutral-950 rounded-xl border border-neutral-700/50 p-5">
+          <p className="text-sm text-neutral-500 mb-1">Marketplace Sessions</p>
+          <p className="text-4xl font-bold text-neutral-300">{stats?.marketplaceSessions ?? 0}</p>
+        </div>
+        <div className="bg-neutral-950 rounded-xl border border-sky-800/50 p-5">
+          <p className="text-sm text-neutral-500 mb-1">Avg Attendees (P2P)</p>
+          <p className="text-4xl font-bold text-sky-400">{stats?.avgAttendeesPerSession ?? 0}</p>
         </div>
       </div>
 
-      {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Subscriber Sources */}
-        <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 sm:p-6 shadow-sm">
-          <h3 className="font-semibold text-lg text-neutral-100 mb-4">Subscriber Sources</h3>
-          {sourceData.length > 0 ? (
-            <div className="h-48">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={sourceData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={40}
-                    outerRadius={70}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {sourceData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#FFFFFF',
-                      border: '1px solid #E5E7EB',
-                      borderRadius: '8px',
-                      color: '#171717',
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          ) : (
-            <div className="h-48 flex items-center justify-center text-neutral-500">
-              No source data yet
-            </div>
-          )}
-          <div className="flex flex-wrap justify-center gap-3 mt-2">
-            {sourceData.map((source, index) => (
-              <div key={source.name} className="flex items-center gap-2">
-                <div
-                  className="w-2.5 h-2.5 rounded-full"
-                  style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                />
-                <span className="text-neutral-400 text-xs capitalize">{source.name}</span>
-              </div>
-            ))}
+      {/* Top hosts leaderboard */}
+      {stats?.topHosts && stats.topHosts.length > 0 && (
+        <div className="bg-neutral-950 rounded-xl border border-neutral-800 mb-8">
+          <div className="px-6 py-4 border-b border-neutral-800">
+            <h2 className="font-semibold text-neutral-100">Top Hosts</h2>
           </div>
-        </div>
-
-        {/* Recent Attendees */}
-        <div className="lg:col-span-2 bg-neutral-950 rounded-2xl border border-neutral-800 p-4 sm:p-6 shadow-sm">
-          <h3 className="font-semibold text-lg text-neutral-100 mb-4">Recent Attendees</h3>
-          {attendees.length > 0 ? (
-            <div className="space-y-3">
-              {attendees.slice(0, 5).map((attendee) => (
-                <div
-                  key={attendee.id}
-                  className="flex items-center justify-between p-3 bg-neutral-900 rounded-xl"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-neutral-900 rounded-full flex items-center justify-center">
-                      <span className="text-white font-medium text-xs">
-                        {(attendee.name || attendee.email).charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-neutral-100 text-sm font-medium">
-                        {attendee.name || attendee.email}
-                      </p>
-                      <p className="text-neutral-500 text-xs">{attendee.eventName}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {attendee.subscribe && (
-                      <span className="text-emerald-400 text-xs flex items-center gap-1">
-                        <CheckCircle className="w-3 h-3" />
-                        <span className="hidden sm:inline">Subscribed</span>
-                      </span>
-                    )}
-                    <span className="text-neutral-400 text-xs">
-                      {format(new Date(attendee.timestamp), 'MMM d')}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="h-48 flex items-center justify-center text-neutral-500">
-              No attendees yet
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Recent Host Inquiries */}
-      <div className="mt-6 bg-neutral-950 rounded-2xl border border-neutral-800 p-4 sm:p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-lg text-neutral-100">Recent Host Inquiries</h3>
-          <span className="text-xs text-neutral-500">{stats.activeConversations} active conversations</span>
-        </div>
-        {conversations.length > 0 ? (
-          <div className="space-y-3">
-            {conversations.slice(0, 5).map((conv) => (
-              <div
-                key={conv.id}
-                className="flex items-center justify-between p-3 bg-neutral-900 rounded-xl"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
-                    <MessageCircle className="w-4 h-4 text-white" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-neutral-100 text-sm font-medium truncate">
-                      {conv.attendeeName || conv.attendeeEmail}
-                    </p>
-                    <p className="text-neutral-500 text-xs truncate">
-                      → @{conv.organizerHandle}
-                      {conv.lastMessage && (
-                        <span className="ml-2 text-neutral-400">
-                          &quot;{conv.lastMessage.length > 30 ? conv.lastMessage.slice(0, 30) + '...' : conv.lastMessage}&quot;
-                        </span>
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-neutral-800">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-500 uppercase">Rank</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-500 uppercase">Host</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-500 uppercase">Hosted</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-500 uppercase">Attended</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-800">
+              {stats.topHosts.map((host, i) => (
+                <tr key={host.email} className="hover:bg-neutral-900/50 transition-colors">
+                  <td className="px-6 py-4 text-xl">{RANK_ICONS[i] ?? i + 1}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      {host.imageUrl ? (
+                        <img src={host.imageUrl} alt={host.name ?? ''} className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-neutral-700 flex-shrink-0" />
                       )}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${
-                    conv.lastMessageSender === 'attendee'
-                      ? 'bg-amber-900 text-amber-400'
-                      : 'bg-emerald-100 text-emerald-700'
-                  }`}>
-                    {conv.lastMessageSender === 'attendee' ? 'Awaiting reply' : 'Replied'}
-                  </span>
-                  <span className="text-neutral-400 text-xs">
-                    {format(new Date(conv.lastMessageAt), 'MMM d')}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="h-32 flex items-center justify-center text-neutral-500">
-            <div className="text-center">
-              <MessageCircle className="w-8 h-8 mx-auto mb-2 text-neutral-300" />
-              <p>No host inquiries yet</p>
-              <p className="text-xs text-neutral-400 mt-1">Attendees can message hosts through event pages</p>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-function StatCard({
-  title,
-  value,
-  change,
-  changeLabel,
-  icon: Icon,
-  iconBg,
-  iconColor,
-}: {
-  title: string
-  value: number | string
-  change?: number
-  changeLabel?: string
-  icon: React.ElementType
-  iconBg: string
-  iconColor: string
-}) {
-  return (
-    <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 shadow-sm">
-      <div className="flex items-start justify-between">
-        <div className={`w-10 h-10 ${iconBg} rounded-xl flex items-center justify-center`}>
-          <Icon className={`w-5 h-5 ${iconColor}`} />
+                      <div>
+                        <p className="text-sm font-medium text-neutral-100">{host.name || 'Anonymous'}</p>
+                        <p className="text-xs text-neutral-500">{host.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-sm font-semibold text-neutral-200">{host.sessionsHostedCount}</td>
+                  <td className="px-6 py-4 text-sm text-neutral-400">{host.sessionsAttendedCount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        {change !== undefined && (
-          <div className="flex items-center gap-1 text-emerald-400 text-xs font-medium">
-            <ArrowUpRight className="w-3 h-3" />
-            <span>+{change}</span>
-          </div>
-        )}
-      </div>
-      <div className="mt-3">
-        <p className="text-2xl font-bold text-neutral-100">{value}</p>
-        <p className="text-xs text-neutral-500 mt-1">
-          {title}
-          {changeLabel && change !== undefined && (
-            <span className="text-neutral-400"> ({change} {changeLabel})</span>
-          )}
+      )}
+
+      {/* Kill metric */}
+      <div className="bg-neutral-950 border border-amber-700/60 rounded-xl p-6">
+        <h2 className="font-semibold text-neutral-100 mb-1">Kill Metric</h2>
+        <p className="text-neutral-400 text-sm mb-3">
+          Goal: <span className="font-bold text-white">100 P2P sessions/week by Day 90</span>
         </p>
+        <p className="text-4xl font-bold text-amber-400">
+          {(stats?.p2pFreeSessions ?? 0) + (stats?.p2pPaidSessions ?? 0)}
+        </p>
+        <p className="text-sm text-neutral-500 mt-1">total P2P sessions created</p>
+        <p className="text-xs text-neutral-600 mt-2">{stats?.upcomingSessions ?? 0} upcoming · weekly rate tracking TBD</p>
       </div>
     </div>
   )

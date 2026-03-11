@@ -39,17 +39,12 @@ export async function GET() {
       },
     })
 
-    // Wave stats
+    // Wave stats (feature sunset — always 0)
+    const wavesThisMonth = 0
+    const crewsJoined = 0
+
     const now = new Date()
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-
-    const wavesThisMonth = dbUser ? await prisma.waveParticipant.count({
-      where: { userId: dbUser.id, wavedAt: { gte: startOfMonth } },
-    }) : 0
-
-    const crewsJoined = dbUser ? await prisma.crewChatMember.count({
-      where: { userId: dbUser.id },
-    }) : 0
 
     // Get all attendance records for this user
     const attendances = await prisma.eventAttendance.findMany({

@@ -195,8 +195,8 @@ export function SessionCard({
           )}
         </div>
 
-        {/* Action button */}
-        {!isHost && (
+        {/* Action button — only when caller provides handlers (authenticated context) */}
+        {!isHost && (onJoin || onLeave) && (
           <Button
             variant={isAttending ? 'secondary' : 'default'}
             size="sm"
@@ -224,7 +224,7 @@ export function SessionCard({
           </Button>
         )}
 
-        {isHost && (
+        {isHost && (onJoin || onLeave) && (
           <Link href={`/activities/${session.id}`} className="block">
             <Button variant="outline" size="sm" className="w-full mt-1">
               Manage session

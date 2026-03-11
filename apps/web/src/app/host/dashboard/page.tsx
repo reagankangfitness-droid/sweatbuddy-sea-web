@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
-import { DollarSign, Users, Clock, CheckCircle, AlertCircle, CreditCard, ChevronRight, XCircle, Ban, AlertTriangle, Star, BarChart3, Wallet, Sparkles, TrendingUp, MessageSquare, ArrowRight, PartyPopper } from 'lucide-react'
+import { DollarSign, Users, Clock, CheckCircle, AlertCircle, CreditCard, ChevronRight, XCircle, Ban, AlertTriangle, Star, BarChart3, Sparkles, TrendingUp, MessageSquare, ArrowRight, PartyPopper } from 'lucide-react'
 import { DashboardHeader } from '@/components/host/DashboardHeader'
 import { StatCard } from '@/components/host/StatCard'
 import { UpcomingEventRow } from '@/components/host/UpcomingEventRow'
@@ -68,7 +68,7 @@ interface DashboardData {
     activeEvents: number
     pendingEvents: number
     totalSignups: number
-    totalEarnings?: number
+
     paidAttendees?: number
     pendingPayments?: number
     atRiskCount?: number
@@ -377,11 +377,6 @@ export default function HostDashboard() {
             <StatCard value={data.stats.activeEvents || 0} label="Events Live" className="flex-shrink-0 min-w-[140px] snap-start sm:min-w-0" />
             <StatCard value={data.stats.totalSignups || 0} label="People Joined" className="flex-shrink-0 min-w-[140px] snap-start sm:min-w-0" />
             <StatCard value={data.stats.followerCount || 0} label="Followers" className="flex-shrink-0 min-w-[140px] snap-start sm:min-w-0" />
-            <StatCard
-              value={data.stats.totalEarnings ? `$${(data.stats.totalEarnings / 100).toFixed(0)}` : '—'}
-              label="Earnings"
-              className="flex-shrink-0 min-w-[140px] snap-start sm:min-w-0"
-            />
           </div>
         </div>
 
@@ -400,13 +395,6 @@ export default function HostDashboard() {
           >
             <BarChart3 className="w-4 h-4" />
             Analytics
-          </Link>
-          <Link
-            href="/host/earnings"
-            className="flex items-center gap-2 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 rounded-full text-sm font-medium text-neutral-300 transition-colors whitespace-nowrap"
-          >
-            <Wallet className="w-4 h-4" />
-            Earnings
           </Link>
         </div>
 

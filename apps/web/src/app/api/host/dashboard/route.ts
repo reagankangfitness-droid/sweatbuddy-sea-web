@@ -176,22 +176,6 @@ export async function GET() {
     // Calculate stats
     const totalSignups = allEvents.reduce((sum, e) => sum + e.goingCount, 0)
 
-    // Get total Stripe earnings for this organizer's events
-    const eventTransactions = await prisma.eventTransaction.findMany({
-      where: {
-        eventSubmissionId: { in: eventIds },
-        status: 'SUCCEEDED',
-      },
-      select: {
-        netPayoutToHost: true,
-        totalCharged: true,
-        currency: true,
-      },
-    })
-
-    // Calculate totals (in cents)
-    const totalEarnings = eventTransactions.reduce((sum, t) => sum + (t.netPayoutToHost || 0), 0)
-    const totalRevenue = eventTransactions.reduce((sum, t) => sum + (t.totalCharged || 0), 0)
 
     // Get count of paid attendees
     const paidAttendeesCount = await prisma.eventAttendance.count({
@@ -374,8 +358,7 @@ export async function GET() {
         activeEvents: upcoming.length,
         pendingEvents: pendingEvents.length,
         totalSignups,
-        totalEarnings,
-        totalRevenue,
+
         paidAttendees: paidAttendeesCount,
         pendingPayments: pendingPaymentsCount,
         atRiskCount: atRiskMembers.length,

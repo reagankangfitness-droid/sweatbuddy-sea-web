@@ -21,10 +21,10 @@ export default function NotFound() {
             Go back home
           </Link>
           <Link
-            href="/events"
+            href="/browse"
             className="block w-full px-6 py-3 bg-neutral-800 text-neutral-300 rounded-full font-medium hover:bg-neutral-700 transition-colors text-center"
           >
-            Browse events
+            Browse sessions
           </Link>
         </div>
       </div>

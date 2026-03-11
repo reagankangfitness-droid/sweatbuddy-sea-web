@@ -59,6 +59,7 @@ export async function GET(
           isActive: true,
         },
         status: 'PUBLISHED',
+        deletedAt: null,
         startTime: { gte: new Date() },
       },
       include: {

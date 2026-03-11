@@ -47,6 +47,7 @@ async function getUpcomingEvents(communityId: string) {
     where: {
       communityId,
       status: 'PUBLISHED',
+      deletedAt: null,
       startTime: { gte: new Date() },
     },
     orderBy: { startTime: 'asc' },

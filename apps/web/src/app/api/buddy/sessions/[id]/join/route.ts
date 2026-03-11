@@ -27,7 +27,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     }
 
     const activity = await prisma.activity.findUnique({
-      where: { id: activityId },
+      where: { id: activityId, deletedAt: null },
       include: {
         userActivities: { where: { status: { in: ['JOINED', 'COMPLETED'] } } },
         user: { select: { id: true, name: true, email: true, bio: true } },

@@ -76,6 +76,7 @@ export async function GET(
     // Build query filters for Activities
     const activityWhereClause: any = {
       status: 'PUBLISHED',
+      deletedAt: null,
       AND: [
         {
           OR: [

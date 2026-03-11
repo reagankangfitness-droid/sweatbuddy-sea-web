@@ -53,6 +53,7 @@ export async function GET() {
           where: {
             OR: [{ userId }, { hostId: userId }],
             status: { in: ['PUBLISHED', 'COMPLETED'] },
+            deletedAt: null,
             startTime: { not: null },
           },
           orderBy: { startTime: 'desc' },

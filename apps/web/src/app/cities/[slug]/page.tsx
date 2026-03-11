@@ -68,6 +68,7 @@ async function getUpcomingEvents(cityId: string) {
         isActive: true,
       },
       status: 'PUBLISHED',
+      deletedAt: null,
       startTime: { gte: new Date() },
     },
     include: {

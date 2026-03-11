@@ -64,6 +64,7 @@ export async function GET(
       where: {
         communityId: community.id,
         status: 'PUBLISHED',
+        deletedAt: null,
         startTime: { gte: new Date() },
       },
       orderBy: { startTime: 'asc' },

@@ -3,11 +3,11 @@ import { Metadata } from 'next'
 import { Logo } from '@/components/logo'
 import { ActivityBadge } from '@/components/ui/ActivityBadge'
 import { prisma } from '@/lib/prisma'
-import { format, isToday, isTomorrow, formatDistanceToNow } from 'date-fns'
+import { format, isToday, isTomorrow } from 'date-fns'
 
 export const metadata: Metadata = {
-  title: 'SweatBuddies — Find Fitness Partners in Singapore',
-  description: 'Stop working out alone. Find fitness buddies and join free P2P sessions near you in Singapore.',
+  title: 'SweatBuddies — Discover Fitness Communities',
+  description: 'Discover fitness sessions and communities near you. Running clubs, yoga, gym sessions, hikes and more.',
 }
 
 const ACTIVITY_TYPES = [
@@ -31,7 +31,7 @@ export default async function HomePage() {
   const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
 
-  const [sessionsThisWeek, totalMembers, newMembersThisWeek, upcomingSessions, recentJoins] =
+  const [sessionsThisWeek, totalMembers, newMembersThisWeek, upcomingSessions, recentJoins, activityCounts] =
     await Promise.all([
       prisma.activity.count({
         where: {
@@ -67,7 +67,6 @@ export default async function HomePage() {
           },
         },
       }),
-      // Recent joins for the activity ticker
       prisma.userActivity.findMany({
         where: {
           status: { in: ['JOINED', 'COMPLETED'] },
@@ -84,15 +83,32 @@ export default async function HomePage() {
           activity: { select: { title: true, categorySlug: true } },
         },
       }),
+      // Session counts per activity type
+      prisma.activity.groupBy({
+        by: ['categorySlug'],
+        where: {
+          status: 'PUBLISHED',
+          deletedAt: null,
+          activityMode: { in: ['P2P_FREE', 'P2P_PAID'] },
+          startTime: { gte: now },
+        },
+        _count: { id: true },
+      }),
     ])
 
-  // Build hero stat line
+  // Map categorySlug → upcoming count
+  const countByType: Record<string, number> = {}
+  for (const row of activityCounts) {
+    if (row.categorySlug) countByType[row.categorySlug] = row._count.id
+  }
+
+  // Build hero stat line — no "Singapore", no "free"
   const heroLine =
     sessionsThisWeek > 0
-      ? `${sessionsThisWeek} session${sessionsThisWeek !== 1 ? 's' : ''} happening in Singapore this week`
+      ? `${sessionsThisWeek} session${sessionsThisWeek !== 1 ? 's' : ''} happening this week`
       : totalMembers > 0
-      ? `${totalMembers} people already working out together in Singapore`
-      : 'Free workout sessions in Singapore. No fees. No commitment.'
+      ? `${totalMembers} people already active`
+      : 'Sessions happening near you every day.'
 
   // Build ticker items from real data
   const tickerItems: string[] = recentJoins
@@ -103,12 +119,11 @@ export default async function HomePage() {
       return `${firstName} joined ${emoji} ${j.activity.title}`
     })
 
-  // Pad with context items if needed
   if (tickerItems.length < 4) {
-    if (sessionsThisWeek > 0) tickerItems.push(`${sessionsThisWeek} sessions this week in Singapore`)
-    if (newMembersThisWeek > 0) tickerItems.push(`${newMembersThisWeek} new members joined this week`)
-    tickerItems.push('All sessions are free to join')
-    tickerItems.push('No experience needed — first-timers welcome')
+    if (sessionsThisWeek > 0) tickerItems.push(`${sessionsThisWeek} sessions this week`)
+    if (newMembersThisWeek > 0) tickerItems.push(`${newMembersThisWeek} new members this week`)
+    tickerItems.push('Running · Yoga · Gym · Hiking · More')
+    tickerItems.push('New sessions added daily')
   }
 
   return (
@@ -135,7 +150,7 @@ export default async function HomePage() {
               href="/sign-up"
               className="px-4 py-2 bg-white text-neutral-900 text-sm font-semibold rounded-xl hover:bg-neutral-100 transition-colors"
             >
-              Join free
+              Join
             </Link>
           </nav>
         </div>
@@ -168,19 +183,19 @@ export default async function HomePage() {
 
         <div className="relative max-w-4xl mx-auto text-center">
           <p className="text-xs font-semibold tracking-widest text-neutral-500 uppercase mb-6">
-            SweatBuddies · Singapore
+            SweatBuddies
           </p>
 
-          <h1 className="text-5xl sm:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-            Stop Working Out<br />
-            <span className="text-neutral-400">Alone</span>
+          <h1 className="text-4xl sm:text-6xl font-bold leading-[1.08] tracking-tight mb-6">
+            Discover fitness communities
+            <span className="block text-neutral-400">in your city</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-neutral-400 max-w-2xl mx-auto mb-4 leading-relaxed">
             {heroLine}
           </p>
           <p className="text-sm text-neutral-600 mb-10">
-            Zero cost. Zero commitment. Just show up.
+            Running clubs, yoga sessions, gym meetups, hikes and more.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -188,17 +203,17 @@ export default async function HomePage() {
               href="/browse"
               className="px-8 py-4 bg-white text-neutral-900 text-base font-semibold rounded-xl hover:bg-neutral-100 transition-colors shadow-lg"
             >
-              See sessions this week →
+              Discover sessions →
             </Link>
             <Link
               href="/sign-up"
               className="px-8 py-4 bg-neutral-800 text-neutral-100 text-base font-semibold rounded-xl hover:bg-neutral-700 transition-colors border border-neutral-700"
             >
-              Create free account
+              Create account
             </Link>
           </div>
 
-          {/* Social proof */}
+          {/* Social proof — real counts only, no static copy */}
           <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-neutral-500">
             {sessionsThisWeek > 0 && (
               <div className="flex items-center gap-2">
@@ -218,10 +233,6 @@ export default async function HomePage() {
                 <span><strong className="text-neutral-200">{newMembersThisWeek}</strong> joined this week</span>
               </div>
             )}
-            <div className="flex items-center gap-2">
-              <span>🇸🇬</span>
-              <span>Singapore only</span>
-            </div>
           </div>
         </div>
 
@@ -230,8 +241,8 @@ export default async function HomePage() {
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
             {[
               { src: '/images/run-club.jpg', alt: 'Run club' },
-              { src: '/banner/running.jpg', alt: 'Running together' },
-              { src: '/banner/ice-bath.webp', alt: 'Ice bath' },
+              { src: '/banner/running.jpg', alt: 'Running session' },
+              { src: '/banner/ice-bath.webp', alt: 'Ice bath session' },
             ].map((img) => (
               <div key={img.src} className="h-36 sm:h-48 rounded-2xl overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -239,7 +250,7 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-          <p className="text-center text-xs text-neutral-600 mt-3">Real sessions. Real people. Singapore.</p>
+          <p className="text-center text-xs text-neutral-600 mt-3">Real sessions. Real people.</p>
         </div>
       </section>
 
@@ -250,7 +261,7 @@ export default async function HomePage() {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-lg font-semibold text-neutral-100">Happening soon</h2>
-                <p className="text-sm text-neutral-500">Real sessions. Real people. No login required to browse.</p>
+                <p className="text-sm text-neutral-500">Browse without an account.</p>
               </div>
               <Link
                 href="/browse"
@@ -265,7 +276,6 @@ export default async function HomePage() {
                 const attendeeCount = session.userActivities.length
                 const emoji = ACTIVITY_EMOJIS[session.categorySlug ?? 'other'] ?? '🏅'
                 const hostFirstName = session.user.name?.split(' ')[0] ?? 'Someone'
-                const isFree = session.price === 0
                 return (
                   <Link
                     key={session.id}
@@ -274,13 +284,11 @@ export default async function HomePage() {
                   >
                     <div className="flex items-start justify-between mb-3">
                       <span className="text-2xl">{emoji}</span>
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                        isFree
-                          ? 'bg-green-500/15 text-green-400'
-                          : 'bg-neutral-800 text-neutral-300'
-                      }`}>
-                        {isFree ? 'FREE' : `$${session.price}`}
-                      </span>
+                      {session.price > 0 && (
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-neutral-800 text-neutral-300">
+                          ${session.price}
+                        </span>
+                      )}
                     </div>
                     <h3 className="text-sm font-semibold text-neutral-100 leading-snug mb-2 group-hover:text-white">
                       {session.title}
@@ -293,18 +301,14 @@ export default async function HomePage() {
                       )}
                       {session.city && (
                         <p className="text-xs text-neutral-500 truncate">
-                          📍 {session.address ? `${session.address}` : session.city}
+                          📍 {session.address ? session.address : session.city}
                         </p>
                       )}
                     </div>
                     <div className="mt-3 pt-3 border-t border-neutral-800 flex items-center justify-between">
-                      <p className="text-xs text-neutral-500">
-                        By {hostFirstName}
-                      </p>
+                      <p className="text-xs text-neutral-500">By {hostFirstName}</p>
                       <p className="text-xs text-neutral-400">
-                        {attendeeCount > 0
-                          ? `${attendeeCount} going`
-                          : 'Be first to join'}
+                        {attendeeCount > 0 ? `${attendeeCount} going` : 'Be first'}
                       </p>
                     </div>
                   </Link>
@@ -317,48 +321,43 @@ export default async function HomePage() {
                 href="/sign-up"
                 className="inline-block px-6 py-2.5 bg-white text-neutral-900 text-sm font-semibold rounded-xl hover:bg-neutral-100 transition-colors"
               >
-                Join to see full details & RSVP
+                Join to RSVP →
               </Link>
             </div>
           </div>
         </section>
       )}
 
-      {/* ── Why solo workouts fail ────────────────────────── */}
+      {/* ── Every kind of session ─────────────────────────── */}
       <section className="py-20 sm:py-28 px-4 sm:px-6 border-b border-neutral-800/60">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-3">Sound familiar?</h2>
-            <p className="text-neutral-400">The three reasons people stop working out — and what fixes them</p>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-3">Every kind of session</h2>
+            <p className="text-neutral-400">From early morning runs to evening yoga — something for every schedule</p>
           </div>
 
           <div className="grid sm:grid-cols-3 gap-6">
             {[
               {
-                emoji: '😔',
-                problem: 'You skip the gym when no one\u2019s expecting you',
-                fix: 'When someone\u2019s waiting for you at 7am, you show up. Accountability isn\u2019t a willpower problem \u2014 it\u2019s a people problem.',
+                emoji: '🏃',
+                title: 'Run communities',
+                body: 'Morning routes, track sessions, trail runs. Find a pace group that matches yours.',
               },
               {
-                emoji: '🏙️',
-                problem: 'You\u2019re in Singapore but don\u2019t know anyone',
-                fix: 'Expats, locals, newcomers \u2014 everyone here is building their circle. The gym is full of people and somehow completely lonely.',
+                emoji: '🧘',
+                title: 'Mind & body',
+                body: 'Yoga, pilates, meditation. Park sessions, studio meetups, rooftop flows.',
               },
               {
-                emoji: '🥱',
-                problem: 'Working out alone gets old fast',
-                fix: 'The app can\u2019t replace someone who high-fives you at 6am. Real people make you work harder and enjoy it more.',
+                emoji: '🏋️',
+                title: 'Strength & conditioning',
+                body: 'Gym sessions, HIIT, bootcamp, calisthenics. All levels, all formats.',
               },
             ].map((item, i) => (
-              <div
-                key={i}
-                className="bg-neutral-900 border border-neutral-800 rounded-2xl p-7"
-              >
+              <div key={i} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-7">
                 <div className="text-4xl mb-4">{item.emoji}</div>
-                <p className="text-base font-semibold text-neutral-100 mb-3 leading-snug">
-                  &ldquo;{item.problem}&rdquo;
-                </p>
-                <p className="text-neutral-400 text-sm leading-relaxed">{item.fix}</p>
+                <h3 className="text-base font-semibold text-neutral-100 mb-3">{item.title}</h3>
+                <p className="text-neutral-400 text-sm leading-relaxed">{item.body}</p>
               </div>
             ))}
           </div>
@@ -369,10 +368,10 @@ export default async function HomePage() {
       <section className="py-10 border-b border-neutral-800/60 overflow-hidden">
         <div className="flex gap-3 px-4 sm:px-6 overflow-x-auto scrollbar-none pb-1">
           {[
-            { src: '/images/hosts/singapore-frontrunners.jpg', alt: 'Singapore Frontrunners' },
-            { src: '/images/hosts/run-alone-run-club.jpg', alt: 'Run Alone Run Club' },
-            { src: '/images/hosts/sunday-service.jpg', alt: 'Sunday Service' },
-            { src: '/images/hosts/slowflo-rc.jpg', alt: 'SlowFlo Run Club' },
+            { src: '/images/hosts/singapore-frontrunners.jpg', alt: 'Frontrunners' },
+            { src: '/images/hosts/run-alone-run-club.jpg', alt: 'Run club' },
+            { src: '/images/hosts/sunday-service.jpg', alt: 'Sunday session' },
+            { src: '/images/hosts/slowflo-rc.jpg', alt: 'SlowFlo' },
             { src: '/images/hosts/caliversity.jpg', alt: 'Caliversity' },
             { src: '/images/community-bonds.jpg', alt: 'Community' },
           ].map((photo) => (
@@ -387,7 +386,7 @@ export default async function HomePage() {
           ))}
         </div>
         <p className="text-center text-xs text-neutral-600 mt-4 px-4">
-          These are the kinds of groups that form on SweatBuddies
+          Communities that meet on SweatBuddies
         </p>
       </section>
 
@@ -396,31 +395,28 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">Three steps. No friction.</h2>
-            <p className="text-neutral-400">From &ldquo;I should work out more&rdquo; to actually working out</p>
+            <p className="text-neutral-400">Browse, join, show up.</p>
           </div>
 
           <div className="grid sm:grid-cols-3 gap-6">
             {[
               {
                 step: '01',
-                title: 'See what\u2019s happening',
-                body: 'Browse real sessions posted by real people \u2014 morning runs, gym sessions, yoga, hikes. Filter by time, level, or type. All free to view, no account needed.',
+                title: 'Discover what\u2019s on',
+                body: 'Browse sessions posted by real people \u2014 morning runs, gym sessions, yoga, hikes. Filter by time, level, or type. No account needed to browse.',
               },
               {
                 step: '02',
                 title: 'One tap to join',
-                body: 'No forms. No fees. No awkward intro emails. Tap join, show up at the meeting point. That\u2019s it.',
+                body: 'No forms. No awkward intro emails. Tap join, show up at the meeting point. That\u2019s it.',
               },
               {
                 step: '03',
-                title: 'You\u2019ll come back',
-                body: 'Show up once. You\u2019ll meet people. You\u2019ll want to come back. The hard part is always the first session.',
+                title: 'Come back for more',
+                body: 'Show up once. Meet people. Discover more sessions. The rest takes care of itself.',
               },
             ].map((step, i) => (
-              <div
-                key={i}
-                className="bg-neutral-900 border border-neutral-800 rounded-2xl p-7"
-              >
+              <div key={i} className="bg-neutral-900 border border-neutral-800 rounded-2xl p-7">
                 <p className="text-xs font-bold text-neutral-600 tracking-widest mb-4">{step.step}</p>
                 <h3 className="text-lg font-semibold mb-3">{step.title}</h3>
                 <p className="text-neutral-400 text-sm leading-relaxed">{step.body}</p>
@@ -430,31 +426,33 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Activity types ───────────────────────────────── */}
+      {/* ── Activity types with session counts ───────────── */}
       <section className="py-20 px-4 sm:px-6 border-b border-neutral-800/60">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-3">Whatever you&apos;re into</h2>
           <p className="text-neutral-400 mb-10">Morning runs, evening yoga, weekend hikes, lunchtime HIIT</p>
 
           <div className="flex flex-wrap justify-center gap-3">
-            {ACTIVITY_TYPES.map((type) => (
-              <Link key={type} href={`/browse?type=${type}`}>
-                <ActivityBadge type={type} size="md" className="cursor-pointer hover:opacity-80 transition-opacity" />
-              </Link>
-            ))}
+            {ACTIVITY_TYPES.map((type) => {
+              const count = countByType[type] ?? 0
+              return (
+                <Link key={type} href={`/browse?type=${type}`} className="group">
+                  <div className="flex items-center gap-1.5">
+                    <ActivityBadge type={type} size="md" className="cursor-pointer hover:opacity-80 transition-opacity" />
+                    {count > 0 && (
+                      <span className="text-xs text-neutral-600 group-hover:text-neutral-400 transition-colors">
+                        {count}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              )
+            })}
           </div>
-
-          <p className="mt-8 text-sm text-neutral-600">
-            Can&apos;t find your thing?{' '}
-            <Link href="/sign-up" className="text-neutral-400 hover:text-white underline underline-offset-2 transition-colors">
-              Host your own session
-            </Link>
-            {' '}in 2 minutes.
-          </p>
         </div>
       </section>
 
-      {/* ── First-timers ─────────────────────────────────── */}
+      {/* ── New here ─────────────────────────────────────── */}
       <section className="py-20 sm:py-28 px-4 sm:px-6 border-b border-neutral-800/60 bg-neutral-900/30">
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center gap-10 sm:gap-16">
@@ -462,19 +460,17 @@ export default async function HomePage() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/connect-people.webp"
-                alt="People connecting at a workout"
+                alt="People at a session"
                 className="w-full h-full object-cover"
               />
             </div>
             <div>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">First-timers encouraged</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">New here? Start anywhere.</h2>
               <p className="text-neutral-400 text-lg leading-relaxed mb-6">
-                Everyone remembers their first session. It&apos;s awkward for about 4 minutes, then someone
-                cracks a joke and you forget you were ever nervous.
+                Every session on SweatBuddies is open to new faces. Browse what&apos;s happening, pick something that fits your schedule, and show up.
               </p>
               <p className="text-neutral-500 text-sm">
-                No fitness test. No minimum commitment. No judgment.
-                The only rule: show up.
+                No fitness test. No minimum commitment. Sessions across all levels.
               </p>
             </div>
           </div>
@@ -486,27 +482,24 @@ export default async function HomePage() {
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl sm:text-5xl font-bold mb-4 leading-tight">
             {totalMembers > 0
-              ? `Join ${totalMembers} people working out together in Singapore`
-              : 'Your next workout partner is already here'}
+              ? `${totalMembers} people already active. Discover your community.`
+              : 'Discover fitness communities near you'}
           </h2>
-          <p className="text-neutral-400 text-lg mb-3">
-            Free. Always.
-          </p>
-          <p className="text-neutral-600 text-sm mb-10">
-            No subscription. No premium tier. No upsell. Just people who want to work out together.
+          <p className="text-neutral-400 text-lg mb-10">
+            Sessions added every day. Browse now, join when you&apos;re ready.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/sign-up"
               className="inline-block px-10 py-4 bg-white text-neutral-900 text-lg font-semibold rounded-xl hover:bg-neutral-100 transition-colors shadow-xl"
             >
-              Create free account
+              Get started
             </Link>
             <Link
               href="/browse"
               className="inline-block px-10 py-4 bg-transparent text-neutral-300 text-lg font-semibold rounded-xl border border-neutral-700 hover:border-neutral-500 transition-colors"
             >
-              Browse first
+              Browse sessions
             </Link>
           </div>
         </div>
@@ -517,7 +510,7 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-neutral-500">
           <div className="flex items-center gap-3">
             <Logo size={20} />
-            <span>© 2026 SweatBuddies · Singapore</span>
+            <span>© 2026 SweatBuddies</span>
           </div>
           <div className="flex gap-6">
             <Link href="/browse" className="hover:text-neutral-300 transition-colors">Browse sessions</Link>

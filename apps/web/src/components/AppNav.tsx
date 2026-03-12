@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { Compass, CalendarDays, User, ChevronRight, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
@@ -15,7 +15,16 @@ const navItems = [
   { id: 'profile', label: 'Profile', icon: User, href: '/profile' },
 ]
 
+// Wrap export in Suspense so useSearchParams() doesn't block static generation
 export function AppNav() {
+  return (
+    <Suspense fallback={null}>
+      <AppNavInner />
+    </Suspense>
+  )
+}
+
+function AppNavInner() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const { user, isSignedIn } = useUser()

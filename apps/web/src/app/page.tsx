@@ -115,7 +115,7 @@ export default async function HomePage() {
 
           <p className="text-lg sm:text-xl text-neutral-400 max-w-2xl mx-auto mb-10 leading-relaxed">
             Find fitness partners in Singapore. Join free sessions, host your own, and build the workout crew
-            you've always wanted.
+            you&apos;ve always wanted.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">

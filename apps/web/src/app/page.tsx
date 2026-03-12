@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { Metadata } from 'next'
 import { Logo } from '@/components/logo'
 import { ActivityBadge } from '@/components/ui/ActivityBadge'
@@ -227,35 +226,18 @@ export default async function HomePage() {
         </div>
 
         {/* Hero photo grid */}
-        <div className="relative mt-16 max-w-3xl mx-auto">
+        <div className="mt-16 max-w-3xl mx-auto">
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
-            <div className="relative h-36 sm:h-48 rounded-2xl overflow-hidden">
-              <Image
-                src="/images/run-club.jpg"
-                alt="Run club"
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 33vw, 300px"
-              />
-            </div>
-            <div className="relative h-36 sm:h-48 rounded-2xl overflow-hidden">
-              <Image
-                src="/banner/running.jpg"
-                alt="Running together"
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 33vw, 300px"
-              />
-            </div>
-            <div className="relative h-36 sm:h-48 rounded-2xl overflow-hidden">
-              <Image
-                src="/banner/ice-bath.webp"
-                alt="Ice bath"
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 33vw, 300px"
-              />
-            </div>
+            {[
+              { src: '/images/run-club.jpg', alt: 'Run club' },
+              { src: '/banner/running.jpg', alt: 'Running together' },
+              { src: '/banner/ice-bath.webp', alt: 'Ice bath' },
+            ].map((img) => (
+              <div key={img.src} className="h-36 sm:h-48 rounded-2xl overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={img.src} alt={img.alt} className="w-full h-full object-cover" />
+              </div>
+            ))}
           </div>
           <p className="text-center text-xs text-neutral-600 mt-3">Real sessions. Real people. Singapore.</p>
         </div>
@@ -398,13 +380,8 @@ export default async function HomePage() {
               key={photo.src}
               className="relative flex-shrink-0 w-48 h-32 sm:w-56 sm:h-36 rounded-2xl overflow-hidden"
             >
-              <Image
-                src={photo.src}
-                alt={photo.alt}
-                fill
-                className="object-cover"
-                sizes="224px"
-              />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={photo.src} alt={photo.alt} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-neutral-950/20" />
             </div>
           ))}
@@ -481,13 +458,12 @@ export default async function HomePage() {
       <section className="py-20 sm:py-28 px-4 sm:px-6 border-b border-neutral-800/60 bg-neutral-900/30">
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center gap-10 sm:gap-16">
-            <div className="relative w-full sm:w-80 h-64 sm:h-72 rounded-2xl overflow-hidden flex-shrink-0">
-              <Image
+            <div className="w-full sm:w-80 h-64 sm:h-72 rounded-2xl overflow-hidden flex-shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src="/images/connect-people.webp"
                 alt="People connecting at a workout"
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 100vw, 320px"
+                className="w-full h-full object-cover"
               />
             </div>
             <div>

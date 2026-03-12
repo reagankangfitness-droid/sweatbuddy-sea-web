@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Metadata } from 'next'
 import { Logo } from '@/components/logo'
 import { ActivityBadge } from '@/components/ui/ActivityBadge'
+import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
   title: 'SweatBuddies — Find Fitness Partners in Singapore',
@@ -45,7 +46,24 @@ const TESTIMONIALS = [
   },
 ]
 
-export default function HomePage() {
+export default async function HomePage() {
+  const now = new Date()
+  const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+
+  const [sessionsThisWeek, totalMembers] = await Promise.all([
+    prisma.activity.count({
+      where: {
+        status: 'PUBLISHED',
+        deletedAt: null,
+        activityMode: { in: ['P2P_FREE', 'P2P_PAID'] },
+        startTime: { gte: now, lte: nextWeek },
+      },
+    }),
+    prisma.user.count({
+      where: { p2pOnboardingCompleted: true },
+    }),
+  ])
+
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100">
       {/* ── Nav ──────────────────────────────────────────── */}
@@ -55,9 +73,9 @@ export default function HomePage() {
           <nav className="flex items-center gap-2">
             <Link
               href="/browse"
-              className="hidden sm:block px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+              className="px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors"
             >
-              Browse sessions
+              Browse
             </Link>
             <Link
               href="/sign-in"
@@ -119,15 +137,15 @@ export default function HomePage() {
           <div className="mt-14 flex flex-wrap items-center justify-center gap-8 text-sm text-neutral-500">
             <div className="flex items-center gap-2">
               <span className="text-xl">🏃</span>
-              <span><strong className="text-neutral-300">50+</strong> sessions this week</span>
+              <span><strong className="text-neutral-300">{sessionsThisWeek}</strong> session{sessionsThisWeek !== 1 ? 's' : ''} this week</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xl">👥</span>
-              <span><strong className="text-neutral-300">200+</strong> active members</span>
+              <span><strong className="text-neutral-300">{totalMembers}</strong> active member{totalMembers !== 1 ? 's' : ''}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xl">⭐</span>
-              <span><strong className="text-neutral-300">4.9 / 5</strong> avg rating</span>
+              <span className="text-xl">🇸🇬</span>
+              <span><strong className="text-neutral-300">Singapore</strong> based</span>
             </div>
           </div>
         </div>

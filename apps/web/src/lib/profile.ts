@@ -299,7 +299,7 @@ export async function getHostReviews(
     }),
     activityIds.length > 0
       ? prisma.activity.findMany({
-          where: { id: { in: activityIds } },
+          where: { id: { in: activityIds }, deletedAt: null },
           select: { id: true, title: true }
         })
       : []
@@ -356,7 +356,8 @@ export async function getHostedActivities(
   // Using Record to avoid complex Prisma type mapping
   const whereClause: Record<string, unknown> = {
     OR: [{ userId }, { hostId: userId }],
-    status: { in: ['PUBLISHED', 'COMPLETED'] }
+    status: { in: ['PUBLISHED', 'COMPLETED'] },
+    deletedAt: null,
   }
 
   if (type === 'upcoming') {

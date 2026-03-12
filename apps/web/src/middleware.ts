@@ -71,6 +71,7 @@ const isPublicRoute = createRouteMatcher([
   '/my-events',
   '/my-events/(.*)',
   // /admin pages require Clerk auth at middleware level
+  '/banned',
   '/explore',
   '/communities(.*)',
   '/api/map(.*)',

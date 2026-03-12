@@ -20,25 +20,28 @@ export async function GET() {
       return NextResponse.json({ profile: null })
     }
 
-    // Single lightweight query
     const dbUser = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       select: {
         slug: true,
         isHost: true,
+        bio: true,
+        fitnessLevel: true,
+        fitnessInterests: true,
+        sessionsHostedCount: true,
+        sessionsAttendedCount: true,
       },
-    })
-
-    // Count events attended
-    const eventsAttended = await prisma.eventAttendance.count({
-      where: { email: { equals: email.toLowerCase(), mode: 'insensitive' }, confirmed: true },
     })
 
     return NextResponse.json({
       profile: dbUser ? {
         slug: dbUser.slug,
         isHost: dbUser.isHost,
-        eventsAttended,
+        bio: dbUser.bio,
+        fitnessLevel: dbUser.fitnessLevel,
+        fitnessInterests: dbUser.fitnessInterests,
+        sessionsHostedCount: dbUser.sessionsHostedCount,
+        sessionsAttendedCount: dbUser.sessionsAttendedCount,
       } : null,
     })
   } catch {

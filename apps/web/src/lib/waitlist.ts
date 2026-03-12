@@ -71,8 +71,8 @@ export async function hasAvailableSpots(
   activityId: string,
   requestedQuantity = 1
 ): Promise<boolean> {
-  const activity = await prisma.activity.findUnique({
-    where: { id: activityId },
+  const activity = await prisma.activity.findFirst({
+    where: { id: activityId, deletedAt: null },
     select: {
       maxPeople: true,
       _count: {
@@ -96,8 +96,8 @@ export async function hasAvailableSpots(
  * Get spots info for an activity with urgency calculation
  */
 export async function getSpotsInfo(activityId: string): Promise<SpotsInfo | null> {
-  const activity = await prisma.activity.findUnique({
-    where: { id: activityId },
+  const activity = await prisma.activity.findFirst({
+    where: { id: activityId, deletedAt: null },
     select: {
       maxPeople: true,
       urgencySettings: true,
@@ -199,8 +199,8 @@ export async function joinWaitlist(
   }
 
   // Check if activity exists and get settings
-  const activity = await prisma.activity.findUnique({
-    where: { id: activityId },
+  const activity = await prisma.activity.findFirst({
+    where: { id: activityId, deletedAt: null },
     select: {
       id: true,
       title: true,
@@ -406,6 +406,7 @@ export async function getActivityWaitlist(
   const activity = await prisma.activity.findFirst({
     where: {
       id: activityId,
+      deletedAt: null,
       OR: [{ userId: hostId }, { hostId }],
     },
   })
@@ -481,8 +482,8 @@ export async function processWaitlistForSpot(
     return { notified: 0 }
   }
 
-  const activity = await prisma.activity.findUnique({
-    where: { id: activityId },
+  const activity = await prisma.activity.findFirst({
+    where: { id: activityId, deletedAt: null },
     select: {
       id: true,
       title: true,

@@ -806,7 +806,7 @@ export async function getHostReminderStats(hostId: string): Promise<{
 }> {
   // Get activities hosted by this user
   const activities = await prisma.activity.findMany({
-    where: { userId: hostId },
+    where: { userId: hostId, deletedAt: null },
     select: { id: true },
   })
 

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Metadata } from 'next'
 import { Logo } from '@/components/logo'
 import { ActivityBadge } from '@/components/ui/ActivityBadge'
@@ -224,6 +225,40 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
+
+        {/* Hero photo grid */}
+        <div className="relative mt-16 max-w-3xl mx-auto">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            <div className="relative h-36 sm:h-48 rounded-2xl overflow-hidden">
+              <Image
+                src="/images/run-club.jpg"
+                alt="Run club"
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 33vw, 300px"
+              />
+            </div>
+            <div className="relative h-36 sm:h-48 rounded-2xl overflow-hidden">
+              <Image
+                src="/banner/running.jpg"
+                alt="Running together"
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 33vw, 300px"
+              />
+            </div>
+            <div className="relative h-36 sm:h-48 rounded-2xl overflow-hidden">
+              <Image
+                src="/banner/ice-bath.webp"
+                alt="Ice bath"
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 33vw, 300px"
+              />
+            </div>
+          </div>
+          <p className="text-center text-xs text-neutral-600 mt-3">Real sessions. Real people. Singapore.</p>
+        </div>
       </section>
 
       {/* ── Live Sessions Preview ─────────────────────────── */}
@@ -348,6 +383,37 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Community photos strip ───────────────────────── */}
+      <section className="py-10 border-b border-neutral-800/60 overflow-hidden">
+        <div className="flex gap-3 px-4 sm:px-6 overflow-x-auto scrollbar-none pb-1">
+          {[
+            { src: '/images/hosts/singapore-frontrunners.jpg', alt: 'Singapore Frontrunners' },
+            { src: '/images/hosts/run-alone-run-club.jpg', alt: 'Run Alone Run Club' },
+            { src: '/images/hosts/sunday-service.jpg', alt: 'Sunday Service' },
+            { src: '/images/hosts/slowflo-rc.jpg', alt: 'SlowFlo Run Club' },
+            { src: '/images/hosts/caliversity.jpg', alt: 'Caliversity' },
+            { src: '/images/community-bonds.jpg', alt: 'Community' },
+          ].map((photo) => (
+            <div
+              key={photo.src}
+              className="relative flex-shrink-0 w-48 h-32 sm:w-56 sm:h-36 rounded-2xl overflow-hidden"
+            >
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                fill
+                className="object-cover"
+                sizes="224px"
+              />
+              <div className="absolute inset-0 bg-neutral-950/20" />
+            </div>
+          ))}
+        </div>
+        <p className="text-center text-xs text-neutral-600 mt-4 px-4">
+          These are the kinds of groups that form on SweatBuddies
+        </p>
+      </section>
+
       {/* ── How it works ─────────────────────────────────── */}
       <section className="py-20 sm:py-28 px-4 sm:px-6 border-b border-neutral-800/60">
         <div className="max-w-6xl mx-auto">
@@ -413,17 +479,29 @@ export default async function HomePage() {
 
       {/* ── First-timers ─────────────────────────────────── */}
       <section className="py-20 sm:py-28 px-4 sm:px-6 border-b border-neutral-800/60 bg-neutral-900/30">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="text-4xl mb-6">👋</p>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">First-timers encouraged</h2>
-          <p className="text-neutral-400 text-lg leading-relaxed mb-6">
-            Everyone remembers their first session. It&apos;s awkward for about 4 minutes, then someone
-            cracks a joke and you forget you were ever nervous.
-          </p>
-          <p className="text-neutral-500 text-sm">
-            No fitness test. No minimum commitment. No judgment.
-            The only rule: show up.
-          </p>
+        <div className="max-w-4xl mx-auto">
+          <div className="flex flex-col sm:flex-row items-center gap-10 sm:gap-16">
+            <div className="relative w-full sm:w-80 h-64 sm:h-72 rounded-2xl overflow-hidden flex-shrink-0">
+              <Image
+                src="/images/connect-people.webp"
+                alt="People connecting at a workout"
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 100vw, 320px"
+              />
+            </div>
+            <div>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">First-timers encouraged</h2>
+              <p className="text-neutral-400 text-lg leading-relaxed mb-6">
+                Everyone remembers their first session. It&apos;s awkward for about 4 minutes, then someone
+                cracks a joke and you forget you were ever nervous.
+              </p>
+              <p className="text-neutral-500 text-sm">
+                No fitness test. No minimum commitment. No judgment.
+                The only rule: show up.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 

@@ -76,6 +76,36 @@ export const ourFileRouter = {
     .onUploadComplete(async ({ metadata, file }) => {
       return { uploadedBy: metadata.userId, url: file.ufsUrl || file.url }
     }),
+
+  // PayNow QR code image upload for P2P session hosts
+  paynowQrImage: f({
+    image: { maxFileSize: "4MB", maxFileCount: 1 },
+  })
+    .middleware(async () => {
+      const { userId } = await auth()
+
+      if (!userId) throw new UploadThingError("Unauthorized")
+
+      return { userId }
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      return { uploadedBy: metadata.userId, url: file.ufsUrl || file.url }
+    }),
+
+  // Payment proof screenshot upload for P2P session attendees
+  paymentProof: f({
+    image: { maxFileSize: "4MB", maxFileCount: 1 },
+  })
+    .middleware(async () => {
+      const { userId } = await auth()
+
+      if (!userId) throw new UploadThingError("Unauthorized")
+
+      return { userId }
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      return { uploadedBy: metadata.userId, url: file.ufsUrl || file.url }
+    }),
 } satisfies FileRouter
 
 export type OurFileRouter = typeof ourFileRouter

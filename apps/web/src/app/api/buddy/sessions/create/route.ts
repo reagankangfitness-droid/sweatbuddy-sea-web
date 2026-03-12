@@ -45,6 +45,11 @@ export async function POST(request: Request) {
       price,
       currency,
       imageUrl,
+      acceptPayNow,
+      acceptStripe,
+      paynowQrImageUrl,
+      paynowPhoneNumber,
+      paynowName,
     } = body
 
     // Validate required fields
@@ -75,12 +80,28 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid price' }, { status: 400 })
     }
 
-    // If paid, must have Stripe connected
-    if (priceNum > 0 && !dbUser.p2pStripeConnectId) {
-      return NextResponse.json(
-        { error: 'Connect Stripe to charge for sessions', code: 'STRIPE_REQUIRED' },
-        { status: 400 }
-      )
+    // If paid, must have at least one payment method
+    if (priceNum > 0) {
+      const wantsPayNow = acceptPayNow === true
+      const wantsStripe = acceptStripe === true
+      if (!wantsPayNow && !wantsStripe) {
+        return NextResponse.json(
+          { error: 'Select at least one payment method for paid sessions', code: 'PAYMENT_METHOD_REQUIRED' },
+          { status: 400 }
+        )
+      }
+      if (wantsStripe && !dbUser.p2pStripeConnectId) {
+        return NextResponse.json(
+          { error: 'Connect Stripe to accept card payments', code: 'STRIPE_REQUIRED' },
+          { status: 400 }
+        )
+      }
+      if (wantsPayNow && !paynowQrImageUrl) {
+        return NextResponse.json(
+          { error: 'PayNow QR code image is required', code: 'PAYNOW_QR_REQUIRED' },
+          { status: 400 }
+        )
+      }
     }
 
     const activityMode = priceNum > 0 ? 'P2P_PAID' : 'P2P_FREE'
@@ -118,6 +139,11 @@ export async function POST(request: Request) {
         status: 'PUBLISHED',
         userId: dbUser.id,
         hostId: dbUser.id,
+        acceptPayNow: acceptPayNow === true,
+        acceptStripe: acceptStripe === true,
+        paynowQrImageUrl: paynowQrImageUrl ?? null,
+        paynowPhoneNumber: paynowPhoneNumber ?? null,
+        paynowName: paynowName ?? null,
       },
       select: {
         id: true,

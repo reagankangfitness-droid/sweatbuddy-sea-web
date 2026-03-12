@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import { MapPin, Users, Plus, Loader2, Calendar, ChevronRight, Lock } from 'lucide-react'
 import { toast } from 'sonner'
+import { PaymentModal } from '@/components/PaymentModal'
 
 interface Host {
   id: string
@@ -47,6 +48,11 @@ interface Session {
   attendeeCount: number
   isFull: boolean
   userStatus: string | null
+  acceptPayNow?: boolean
+  acceptStripe?: boolean
+  paynowQrImageUrl?: string | null
+  paynowName?: string | null
+  paynowPhoneNumber?: string | null
 }
 
 const FITNESS_FILTERS = [
@@ -79,6 +85,8 @@ export default function BuddyPage() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [joiningId, setJoiningId] = useState<string | null>(null)
+  const [pendingPaymentsCount, setPendingPaymentsCount] = useState(0)
+  const [paymentModalSession, setPaymentModalSession] = useState<Session | null>(null)
 
   const [typeFilter, setTypeFilter] = useState('')
   const [fitnessFilter, setFitnessFilter] = useState('')
@@ -127,6 +135,14 @@ export default function BuddyPage() {
     [tab, typeFilter, fitnessFilter, pricingFilter, router]
   )
 
+  // Fetch pending payments count for hosting tab notification
+  useEffect(() => {
+    fetch('/api/p2p/payments/pending')
+      .then((res) => res.ok ? res.json() : { payments: [] })
+      .then((data) => setPendingPaymentsCount(data.payments?.length ?? 0))
+      .catch(() => {})
+  }, [])
+
   useEffect(() => {
     // Check onboarding status
     async function checkOnboarding() {
@@ -156,11 +172,34 @@ export default function BuddyPage() {
   }, [tab, typeFilter, fitnessFilter, pricingFilter, fetchSessions])
 
   async function joinSession(sessionId: string) {
+    // Find session to check if paid
+    const session = sessions.find((s) => s.id === sessionId)
+    if (session && session.activityMode === 'P2P_PAID') {
+      // Open payment modal
+      setPaymentModalSession(session)
+      return
+    }
+
     setJoiningId(sessionId)
     try {
       const res = await fetch(`/api/buddy/sessions/${sessionId}/join`, { method: 'POST' })
       const data = await res.json()
       if (!res.ok) {
+        if (data.code === 'PAYMENT_REQUIRED') {
+          // Session is paid — show modal with session details
+          const s = sessions.find((sess) => sess.id === sessionId)
+          if (s) {
+            setPaymentModalSession({
+              ...s,
+              acceptPayNow: data.session?.acceptPayNow ?? false,
+              acceptStripe: data.session?.acceptStripe ?? false,
+              paynowQrImageUrl: data.session?.paynowQrImageUrl ?? null,
+              paynowName: data.session?.paynowName ?? null,
+              paynowPhoneNumber: data.session?.paynowPhoneNumber ?? null,
+            })
+          }
+          return
+        }
         if (data.code === 'USE_CHECKOUT') {
           router.push(`/e/${sessionId}`)
           return
@@ -194,6 +233,28 @@ export default function BuddyPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-neutral-950">
+      {/* Payment Modal */}
+      {paymentModalSession && (
+        <PaymentModal
+          session={{
+            id: paymentModalSession.id,
+            title: paymentModalSession.title,
+            price: paymentModalSession.price,
+            currency: paymentModalSession.currency,
+            acceptPayNow: paymentModalSession.acceptPayNow ?? false,
+            acceptStripe: paymentModalSession.acceptStripe ?? false,
+            paynowQrImageUrl: paymentModalSession.paynowQrImageUrl,
+            paynowName: paymentModalSession.paynowName,
+            paynowPhoneNumber: paymentModalSession.paynowPhoneNumber,
+          }}
+          onClose={() => setPaymentModalSession(null)}
+          onSuccess={() => {
+            setPaymentModalSession(null)
+            fetchSessions()
+          }}
+        />
+      )}
+
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/90 dark:bg-neutral-950/90 backdrop-blur border-b border-neutral-100 dark:border-neutral-800">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -330,6 +391,19 @@ export default function BuddyPage() {
         ) : (
           /* My Sessions tab */
           <div className="space-y-6 pt-4">
+            {/* Pending payments alert */}
+            {pendingPaymentsCount > 0 && (
+              <Link
+                href="/buddy/payments"
+                className="flex items-center justify-between rounded-xl bg-amber-500/10 border border-amber-500/30 px-4 py-3 text-sm font-medium text-amber-400 hover:bg-amber-500/20 transition-colors"
+              >
+                <span>
+                  ⏳ {pendingPaymentsCount} payment{pendingPaymentsCount !== 1 ? 's' : ''} waiting for verification
+                </span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            )}
+
             {/* Hosting */}
             {hosting.length > 0 && (
               <div>

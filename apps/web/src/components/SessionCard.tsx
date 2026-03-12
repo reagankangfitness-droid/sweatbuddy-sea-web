@@ -17,6 +17,7 @@ export interface SessionCardSession {
   address: string | null
   city: string
   price: number
+  currency?: string
   maxPeople: number | null
   fitnessLevel: string | null
   requiresApproval: boolean
@@ -36,6 +37,11 @@ export interface SessionCardSession {
   attendeeCount: number
   isFull: boolean
   userStatus: string | null
+  acceptPayNow?: boolean
+  acceptStripe?: boolean
+  paynowQrImageUrl?: string | null
+  paynowName?: string | null
+  paynowPhoneNumber?: string | null
 }
 
 interface SessionCardProps {

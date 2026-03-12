@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, MapPin, ChevronDown, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, Loader2, MapPin, ChevronDown, CheckCircle2, Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
 
 const ACTIVITY_TYPES = [
@@ -46,6 +46,11 @@ interface FormData {
   whatToBring: string
   price: string
   currency: string
+  acceptPayNow: boolean
+  acceptStripe: boolean
+  paynowQrImageUrl: string
+  paynowPhoneNumber: string
+  paynowName: string
 }
 
 const INITIAL_FORM: FormData = {
@@ -65,6 +70,11 @@ const INITIAL_FORM: FormData = {
   whatToBring: '',
   price: '0',
   currency: 'SGD',
+  acceptPayNow: false,
+  acceptStripe: false,
+  paynowQrImageUrl: '',
+  paynowPhoneNumber: '',
+  paynowName: '',
 }
 
 const WIZARD_DRAFT_KEY = 'sb_session_draft'
@@ -76,6 +86,9 @@ export default function NewSessionPage() {
   const [saving, setSaving] = useState(false)
   const [stripeConnected, setStripeConnected] = useState<boolean | null>(null)
   const [publishedId, setPublishedId] = useState<string | null>(null)
+  const [qrPreviewUrl, setQrPreviewUrl] = useState<string | null>(null)
+  const [qrFile, setQrFile] = useState<File | null>(null)
+  const qrInputRef = useRef<HTMLInputElement>(null)
 
   // Restore draft from localStorage on mount
   useEffect(() => {
@@ -95,7 +108,7 @@ export default function NewSessionPage() {
     } catch {}
   }, [form])
 
-  function update(field: keyof FormData, value: string) {
+  function update(field: keyof FormData, value: string | boolean) {
     setForm((prev) => {
       const updated = { ...prev, [field]: value }
       // Auto-suggest a specific title when category + city first set
@@ -139,7 +152,17 @@ export default function NewSessionPage() {
     if (s === 'pricing') {
       const price = Number(form.price)
       if (isNaN(price) || price < 0) return 'Invalid price'
-      if (price > 0 && stripeConnected === false) return 'Connect Stripe to charge for sessions'
+      if (price > 0) {
+        if (!form.acceptPayNow && !form.acceptStripe) {
+          return 'Select at least one payment method for paid sessions'
+        }
+        if (form.acceptPayNow && !form.paynowQrImageUrl) {
+          return 'Upload your PayNow QR code'
+        }
+        if (form.acceptStripe && stripeConnected === false) {
+          return 'Connect Stripe to accept card payments'
+        }
+      }
     }
     return null
   }
@@ -187,6 +210,21 @@ export default function NewSessionPage() {
   async function handlePublish() {
     setSaving(true)
     try {
+      // Upload QR if a new file was selected
+      let finalQrUrl = form.paynowQrImageUrl
+      if (qrFile) {
+        const fd = new FormData()
+        fd.append('file', qrFile)
+        const uploadRes = await fetch('/api/upload/paynow-qr', { method: 'POST', body: fd })
+        if (!uploadRes.ok) {
+          const err = await uploadRes.json()
+          toast.error(err.error || 'Failed to upload QR code')
+          return
+        }
+        const uploadData = await uploadRes.json()
+        finalQrUrl = uploadData.url
+      }
+
       const startDateTime = new Date(`${form.startDate}T${form.startTime}`)
       const endDateTime = form.endTime ? new Date(`${form.startDate}T${form.endTime}`) : null
 
@@ -209,6 +247,11 @@ export default function NewSessionPage() {
           whatToBring: form.whatToBring.trim() || null,
           price: Number(form.price),
           currency: form.currency,
+          acceptPayNow: form.acceptPayNow,
+          acceptStripe: form.acceptStripe,
+          paynowQrImageUrl: finalQrUrl || null,
+          paynowPhoneNumber: form.paynowPhoneNumber.trim() || null,
+          paynowName: form.paynowName.trim() || null,
         }),
       })
 
@@ -581,29 +624,149 @@ export default function NewSessionPage() {
                   </div>
                 </div>
 
-                {/* Only show Stripe warning after a price has been entered */}
-                {Number(form.price) > 0 && stripeConnected === false && (
-                  <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4">
-                    <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
-                      Connect Stripe to receive payments
-                    </p>
-                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
-                      You need a Stripe account to charge for sessions.
-                    </p>
-                    <a
-                      href="/buddy/host/connect"
-                      className="inline-block mt-3 rounded-lg bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 transition-colors"
-                    >
-                      Connect Stripe →
-                    </a>
-                  </div>
-                )}
+                {/* Payment methods — only shown when price > 0 */}
+                {Number(form.price) > 0 && (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+                        How will people pay? <span className="text-red-500">*</span>
+                      </label>
+                      <div className="space-y-3">
+                        {/* PayNow option */}
+                        <label className="flex items-start gap-3 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={form.acceptPayNow}
+                            onChange={(e) => update('acceptPayNow', e.target.checked)}
+                            className="mt-0.5 rounded"
+                          />
+                          <div>
+                            <p className="text-sm font-medium text-neutral-900 dark:text-white">PayNow (QR code)</p>
+                            <p className="text-xs text-neutral-500 mt-0.5">Attendees scan your QR and upload proof. You verify manually.</p>
+                          </div>
+                        </label>
 
-                {Number(form.price) > 0 && stripeConnected === true && (
-                  <div className="rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-3">
-                    <p className="text-sm text-green-700 dark:text-green-400 flex items-center gap-2">
-                      <span>✓</span> Stripe connected — payments enabled
-                    </p>
+                        {/* Stripe option */}
+                        <label className="flex items-start gap-3 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={form.acceptStripe}
+                            onChange={(e) => update('acceptStripe', e.target.checked)}
+                            className="mt-0.5 rounded"
+                          />
+                          <div>
+                            <p className="text-sm font-medium text-neutral-900 dark:text-white">Stripe (card / online)</p>
+                            <p className="text-xs text-neutral-500 mt-0.5">Instant card payments. Requires Stripe account connected.</p>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* PayNow details — shown when PayNow selected */}
+                    {form.acceptPayNow && (
+                      <div className="space-y-4 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
+                        <p className="text-sm font-semibold text-neutral-900 dark:text-white">PayNow details</p>
+
+                        <div>
+                          <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2">
+                            Your name (shown to payers)
+                          </label>
+                          <input
+                            type="text"
+                            value={form.paynowName}
+                            onChange={(e) => update('paynowName', e.target.value)}
+                            placeholder="e.g. Reagan Kang"
+                            className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2">
+                            Phone number (optional)
+                          </label>
+                          <input
+                            type="tel"
+                            value={form.paynowPhoneNumber}
+                            onChange={(e) => update('paynowPhoneNumber', e.target.value)}
+                            placeholder="e.g. +65 9123 4567"
+                            className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2">
+                            PayNow QR code <span className="text-red-500">*</span>
+                          </label>
+                          {qrPreviewUrl || form.paynowQrImageUrl ? (
+                            <div className="relative">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={qrPreviewUrl || form.paynowQrImageUrl}
+                                alt="PayNow QR"
+                                className="w-32 h-32 object-contain rounded-xl border border-neutral-200 dark:border-neutral-700"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setQrPreviewUrl(null)
+                                  setQrFile(null)
+                                  update('paynowQrImageUrl', '')
+                                  if (qrInputRef.current) qrInputRef.current.value = ''
+                                }}
+                                className="absolute -top-2 -right-2 rounded-full bg-neutral-800 p-1 text-white hover:bg-neutral-700"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => qrInputRef.current?.click()}
+                              className="flex items-center gap-2 rounded-xl border border-dashed border-neutral-300 dark:border-neutral-600 px-4 py-6 text-sm text-neutral-500 hover:border-neutral-500 dark:hover:border-neutral-400 transition-colors w-full justify-center"
+                            >
+                              <Upload className="w-4 h-4" />
+                              Upload QR image
+                            </button>
+                          )}
+                          <input
+                            ref={qrInputRef}
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0]
+                              if (!file) return
+                              setQrFile(file)
+                              const url = URL.createObjectURL(file)
+                              setQrPreviewUrl(url)
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Stripe warning/status */}
+                    {form.acceptStripe && stripeConnected === false && (
+                      <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4">
+                        <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+                          Connect Stripe to receive card payments
+                        </p>
+                        <a
+                          href="/buddy/host/connect"
+                          className="inline-block mt-3 rounded-lg bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 transition-colors"
+                        >
+                          Connect Stripe →
+                        </a>
+                      </div>
+                    )}
+
+                    {form.acceptStripe && stripeConnected === true && (
+                      <div className="rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-3">
+                        <p className="text-sm text-green-700 dark:text-green-400 flex items-center gap-2">
+                          <span>✓</span> Stripe connected — card payments enabled
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

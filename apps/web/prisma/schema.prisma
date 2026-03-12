@@ -294,6 +294,13 @@ model Activity {
   whatToBring      String?
   requiresApproval Boolean @default(false)
 
+  // P2P Payment method fields
+  acceptPayNow      Boolean @default(false)
+  acceptStripe      Boolean @default(false)
+  paynowQrImageUrl  String?
+  paynowPhoneNumber String?
+  paynowName        String?
+
   // Community link (optional - activity can belong to a community)
   communityId String?
 
@@ -430,6 +437,15 @@ model UserActivity {
   refundAmount            Int?
 
   goingSolo Boolean @default(false)
+
+  // P2P payment tracking fields
+  p2pPaymentStatus           String?   // 'PENDING' | 'VERIFIED' | 'REJECTED'
+  p2pPaymentMethod           String?   // 'PAYNOW' | 'STRIPE'
+  paymentProofUrl            String?
+  paymentProofUploadedAt     DateTime?
+  verifiedByHost             Boolean   @default(false)
+  verifiedAt                 DateTime?
+  hostVerificationNotes      String?
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)

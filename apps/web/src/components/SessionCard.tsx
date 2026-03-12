@@ -45,6 +45,8 @@ interface SessionCardProps {
   onLeave?: (id: string) => void
   loading?: boolean
   className?: string
+  /** When provided with no auth handlers, shows a sign-up CTA button */
+  guestSignUpHref?: string
 }
 
 export function SessionCard({
@@ -54,6 +56,7 @@ export function SessionCard({
   onLeave,
   loading = false,
   className,
+  guestSignUpHref,
 }: SessionCardProps) {
   const isHost = currentUserId === session.host.id
   const isAttending = session.userStatus === 'JOINED' || session.userStatus === 'APPROVED'
@@ -230,6 +233,18 @@ export function SessionCard({
               Manage session
             </Button>
           </Link>
+        )}
+
+        {/* Guest CTA — shown on public browse when no auth handlers provided */}
+        {!onJoin && !onLeave && guestSignUpHref && !session.isFull && (
+          <Link href={guestSignUpHref} className="block mt-1">
+            <Button variant="default" size="sm" className="w-full">
+              Sign up to join →
+            </Button>
+          </Link>
+        )}
+        {!onJoin && !onLeave && guestSignUpHref && session.isFull && (
+          <p className="text-xs text-neutral-500 font-medium mt-1">Session full</p>
         )}
       </div>
     </div>

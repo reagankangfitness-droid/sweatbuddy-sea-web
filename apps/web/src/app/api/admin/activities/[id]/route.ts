@@ -100,6 +100,41 @@ export async function PATCH(
   }
 }
 
+// DELETE - Hard-delete a P2P session (admin only)
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    if (!isAdminUser(userId)) {
+      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 })
+    }
+
+    const { id } = await params
+
+    const activity = await prisma.activity.findUnique({ where: { id } })
+    if (!activity) {
+      return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
+    }
+
+    // Soft-delete: set deletedAt so data is preserved
+    await prisma.activity.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    })
+
+    return NextResponse.json({ success: true, message: 'Session deleted' })
+  } catch (error) {
+    console.error('Error deleting activity:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
 // GET - Get single activity details for admin review
 export async function GET(
   request: Request,

@@ -18,6 +18,7 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url)
     const statusParam = searchParams.get('status') || 'PENDING_APPROVAL'
+    const activityModeParam = searchParams.get('activityMode') || ''
     const page = parseInt(searchParams.get('page') || '1', 10)
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 200)
     const skip = (page - 1) * limit
@@ -28,12 +29,21 @@ export async function GET(request: Request) {
       ? (statusParam as ActivityStatus)
       : 'PENDING_APPROVAL'
 
+    const validModes = ['MARKETPLACE', 'P2P_FREE', 'P2P_PAID'] as const
+    type ActivityMode = typeof validModes[number]
+    const modeFilter = validModes.includes(activityModeParam as ActivityMode)
+      ? (activityModeParam as ActivityMode)
+      : null
+
+    // Admin sees ALL activities including soft-deleted (no deletedAt filter)
+    const whereClause = {
+      status,
+      ...(modeFilter ? { activityMode: modeFilter } : {}),
+    }
+
     const [activities, total] = await Promise.all([
       prisma.activity.findMany({
-        where: {
-          status,
-          deletedAt: null,
-        },
+        where: whereClause,
         include: {
           user: {
             select: {
@@ -51,10 +61,7 @@ export async function GET(request: Request) {
         skip,
       }),
       prisma.activity.count({
-        where: {
-          status,
-          deletedAt: null,
-        },
+        where: whereClause,
       }),
     ])
 

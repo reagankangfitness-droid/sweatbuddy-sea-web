@@ -13,12 +13,17 @@ export const metadata: Metadata = {
 const TYPES = [
   { value: '', label: 'All', emoji: '✨' },
   { value: 'running', label: 'Running', emoji: '🏃' },
-  { value: 'gym', label: 'Gym', emoji: '🏋️' },
+  { value: 'strength', label: 'Strength', emoji: '🏋️' },
   { value: 'yoga', label: 'Yoga', emoji: '🧘' },
   { value: 'cycling', label: 'Cycling', emoji: '🚴' },
   { value: 'hiking', label: 'Hiking', emoji: '🥾' },
   { value: 'bootcamp', label: 'Bootcamp', emoji: '🎖️' },
   { value: 'hiit', label: 'HIIT', emoji: '⚡' },
+  { value: 'pilates', label: 'Pilates', emoji: '🦢' },
+  { value: 'swimming', label: 'Swimming', emoji: '🏊' },
+  { value: 'volleyball', label: 'Volleyball', emoji: '🏐' },
+  { value: 'basketball', label: 'Basketball', emoji: '🏀' },
+  { value: 'cold_plunge', label: 'Cold Plunge', emoji: '🧊' },
 ]
 
 interface PageProps {
@@ -170,7 +175,11 @@ export default async function BrowsePage({ searchParams }: PageProps) {
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {mapped.map((session) => (
-                <SessionCard key={session.id} session={session} />
+                <SessionCard
+                  key={session.id}
+                  session={session}
+                  guestSignUpHref={`/sign-up?redirect=/activities/${session.id}`}
+                />
               ))}
             </div>
           </>

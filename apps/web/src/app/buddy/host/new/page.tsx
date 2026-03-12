@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, MapPin, ChevronDown } from 'lucide-react'
+import { ArrowLeft, Loader2, MapPin, ChevronDown, CheckCircle2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 const ACTIVITY_TYPES = [
@@ -33,6 +33,7 @@ interface FormData {
   title: string
   description: string
   categorySlug: string
+  imageUrl: string
   city: string
   address: string
   latitude: string
@@ -51,6 +52,7 @@ const INITIAL_FORM: FormData = {
   title: '',
   description: '',
   categorySlug: '',
+  imageUrl: '',
   city: '',
   address: '',
   latitude: '',
@@ -65,20 +67,57 @@ const INITIAL_FORM: FormData = {
   currency: 'SGD',
 }
 
+const WIZARD_DRAFT_KEY = 'sb_session_draft'
+
 export default function NewSessionPage() {
   const router = useRouter()
   const [step, setStep] = useState<Step>('basic')
   const [form, setForm] = useState<FormData>(INITIAL_FORM)
   const [saving, setSaving] = useState(false)
   const [stripeConnected, setStripeConnected] = useState<boolean | null>(null)
+  const [publishedId, setPublishedId] = useState<string | null>(null)
+
+  // Restore draft from localStorage on mount
+  useEffect(() => {
+    try {
+      const draft = localStorage.getItem(WIZARD_DRAFT_KEY)
+      if (draft) {
+        const parsed = JSON.parse(draft)
+        setForm((prev) => ({ ...prev, ...parsed }))
+      }
+    } catch {}
+  }, [])
+
+  // Save draft to localStorage whenever form changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(WIZARD_DRAFT_KEY, JSON.stringify(form))
+    } catch {}
+  }, [form])
 
   function update(field: keyof FormData, value: string) {
     setForm((prev) => {
       const updated = { ...prev, [field]: value }
-      // Auto-generate title suggestion when category + city are set
+      // Auto-suggest a specific title when category + city first set
       if ((field === 'categorySlug' || field === 'city') && updated.categorySlug && updated.city && !prev.title) {
         const cat = ACTIVITY_TYPES.find((t) => t.slug === updated.categorySlug)
-        updated.title = cat ? `${cat.label} in ${updated.city}` : updated.title
+        const timeHints: Record<string, string> = {
+          running: 'Morning run',
+          cycling: 'Weekend ride',
+          yoga: 'Morning yoga',
+          strength: 'Gym session',
+          hiking: 'Trail hike',
+          bootcamp: 'Outdoor bootcamp',
+          hiit: 'HIIT session',
+          pilates: 'Pilates class',
+          swimming: 'Swim session',
+          volleyball: 'Beach volleyball',
+          basketball: 'Pick-up basketball',
+          cold_plunge: 'Cold plunge',
+          other: 'Workout session',
+        }
+        const hint = timeHints[updated.categorySlug] ?? (cat ? cat.label : 'Workout session')
+        updated.title = `${hint} in ${updated.city}`
       }
       return updated
     })
@@ -158,6 +197,7 @@ export default function NewSessionPage() {
           title: form.title.trim(),
           description: form.description.trim() || null,
           categorySlug: form.categorySlug,
+          imageUrl: form.imageUrl.trim() || null,
           city: form.city.trim(),
           address: form.address.trim() || null,
           latitude: form.latitude ? Number(form.latitude) : 1.3521, // Singapore default
@@ -187,8 +227,9 @@ export default function NewSessionPage() {
         return
       }
 
-      toast.success('Session published!')
-      router.push(`/activities/${data.activity.id}`)
+      // Clear draft and show success screen
+      try { localStorage.removeItem(WIZARD_DRAFT_KEY) } catch {}
+      setPublishedId(data.activity.id)
     } catch {
       toast.error('Something went wrong')
     } finally {
@@ -200,6 +241,33 @@ export default function NewSessionPage() {
   const stepIdx = STEPS.indexOf(step)
 
   const selectedType = ACTIVITY_TYPES.find((t) => t.slug === form.categorySlug)
+
+  // Success screen
+  if (publishedId) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-neutral-950 flex flex-col items-center justify-center px-4 text-center">
+        <CheckCircle2 className="w-16 h-16 text-green-500 mb-6" />
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Session published!</h1>
+        <p className="text-neutral-500 mb-8 max-w-xs">
+          Your session is live. Share it with friends to get people joining.
+        </p>
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          <button
+            onClick={() => router.push(`/activities/${publishedId}`)}
+            className="w-full rounded-xl bg-black dark:bg-white px-4 py-4 text-sm font-semibold text-white dark:text-black"
+          >
+            View my session →
+          </button>
+          <button
+            onClick={() => router.push('/buddy')}
+            className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 px-4 py-3 text-sm font-medium text-neutral-600 dark:text-neutral-300"
+          >
+            Back to Sessions
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-neutral-950">
@@ -292,6 +360,30 @@ export default function NewSessionPage() {
                 className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white resize-none"
               />
               <p className="mt-1 text-xs text-right text-neutral-400">{form.description.length}/500</p>
+            </div>
+
+            {/* Cover image */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Cover image URL <span className="text-neutral-400 font-normal">(optional)</span>
+              </label>
+              <input
+                type="url"
+                value={form.imageUrl}
+                onChange={(e) => update('imageUrl', e.target.value)}
+                placeholder="https://..."
+                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+              />
+              {form.imageUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={form.imageUrl}
+                  alt="Preview"
+                  className="mt-2 w-full h-32 object-cover rounded-xl border border-neutral-200 dark:border-neutral-700"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                  onLoad={(e) => { (e.target as HTMLImageElement).style.display = 'block' }}
+                />
+              )}
             </div>
           </div>
         )}
@@ -460,8 +552,8 @@ export default function NewSessionPage() {
               })}
             </div>
 
-            {/* Price input (if paid) */}
-            {form.price !== '0' && Number(form.price) !== 0 && form.price !== '' ? (
+            {/* Price input — shown only when Paid is selected */}
+            {form.price !== '0' && (
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
@@ -489,14 +581,14 @@ export default function NewSessionPage() {
                   </div>
                 </div>
 
-                {/* Stripe connect check */}
-                {stripeConnected === false && (
+                {/* Only show Stripe warning after a price has been entered */}
+                {Number(form.price) > 0 && stripeConnected === false && (
                   <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4">
                     <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
                       Connect Stripe to receive payments
                     </p>
                     <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
-                      You need a Stripe account to charge for sessions. You can save as draft and connect later.
+                      You need a Stripe account to charge for sessions.
                     </p>
                     <a
                       href="/buddy/host/connect"
@@ -507,7 +599,7 @@ export default function NewSessionPage() {
                   </div>
                 )}
 
-                {stripeConnected === true && (
+                {Number(form.price) > 0 && stripeConnected === true && (
                   <div className="rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-3">
                     <p className="text-sm text-green-700 dark:text-green-400 flex items-center gap-2">
                       <span>✓</span> Stripe connected — payments enabled
@@ -515,42 +607,6 @@ export default function NewSessionPage() {
                   </div>
                 )}
               </div>
-            ) : (
-              form.price === '' && (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                      Price per person
-                    </label>
-                    <div className="flex gap-2">
-                      <select
-                        value={form.currency}
-                        onChange={(e) => update('currency', e.target.value)}
-                        className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none"
-                      >
-                        {['SGD', 'USD', 'MYR', 'AUD', 'GBP', 'EUR'].map((c) => (
-                          <option key={c}>{c}</option>
-                        ))}
-                      </select>
-                      <input
-                        type="number"
-                        value={form.price}
-                        onChange={(e) => update('price', e.target.value)}
-                        placeholder="15"
-                        min={1}
-                        step={1}
-                        className="flex-1 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
-                      />
-                    </div>
-                  </div>
-                  {stripeConnected === false && (
-                    <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4">
-                      <p className="text-sm font-medium text-amber-800 dark:text-amber-300">Connect Stripe to receive payments</p>
-                      <a href="/buddy/host/connect" className="inline-block mt-3 rounded-lg bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700">Connect Stripe →</a>
-                    </div>
-                  )}
-                </div>
-              )
             )}
           </div>
         )}

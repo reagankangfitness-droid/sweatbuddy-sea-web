@@ -10,10 +10,8 @@ import {
   LogOut,
   ChevronRight,
   LayoutDashboard,
-  Ticket,
+  CalendarDays,
   BadgeCheck,
-  MessageCircle,
-  Heart,
   HelpCircle,
 } from 'lucide-react'
 import Link from 'next/link'
@@ -22,7 +20,11 @@ import Image from 'next/image'
 interface ProfileData {
   slug: string | null
   isHost: boolean
-  eventsAttended?: number
+  bio: string | null
+  fitnessLevel: string | null
+  fitnessInterests: string[]
+  sessionsHostedCount: number
+  sessionsAttendedCount: number
 }
 
 // Cache key for localStorage
@@ -45,7 +47,15 @@ export default function ProfilePage() {
           const parsed = JSON.parse(cached)
           // Validate cache belongs to current user
           if (parsed._userId === user.id) {
-            setProfile({ slug: parsed.slug, isHost: parsed.isHost })
+            setProfile({
+                slug: parsed.slug,
+                isHost: parsed.isHost,
+                bio: parsed.bio ?? null,
+                fitnessLevel: parsed.fitnessLevel ?? null,
+                fitnessInterests: parsed.fitnessInterests ?? [],
+                sessionsHostedCount: parsed.sessionsHostedCount ?? 0,
+                sessionsAttendedCount: parsed.sessionsAttendedCount ?? 0,
+              })
           }
         }
       } catch {}
@@ -146,7 +156,7 @@ export default function ProfilePage() {
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center gap-4 px-4 py-3">
             <Link
-              href="/events"
+              href="/buddy"
               className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800"
             >
               <ArrowLeft className="w-5 h-5 text-neutral-300" />
@@ -197,26 +207,47 @@ export default function ProfilePage() {
               <p className="text-sm text-neutral-500 truncate">
                 {user?.primaryEmailAddress?.emailAddress}
               </p>
+              {profile?.fitnessLevel && (
+                <p className="text-xs text-neutral-400 mt-0.5 capitalize">
+                  {profile.fitnessLevel.toLowerCase().replace('_', ' ')}
+                </p>
+              )}
             </div>
           </div>
+
+          {/* Bio */}
+          {profile?.bio && (
+            <p className="mt-4 text-sm text-neutral-400 leading-relaxed border-t border-neutral-800 pt-4">
+              {profile.bio}
+            </p>
+          )}
+
+          {/* Fitness interests */}
+          {profile?.fitnessInterests && profile.fitnessInterests.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {profile.fitnessInterests.map((interest) => (
+                <span
+                  key={interest}
+                  className="px-2.5 py-1 bg-neutral-800 text-neutral-300 text-xs rounded-full capitalize"
+                >
+                  {interest}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Stats */}
         {profile && (
           <div className="grid grid-cols-2 gap-3 mb-8">
             <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 text-center">
-              <p className="text-2xl font-bold text-neutral-100">{profile.eventsAttended || 0}</p>
-              <p className="text-xs text-neutral-500 mt-0.5">Events Attended</p>
+              <p className="text-2xl font-bold text-neutral-100">{profile.sessionsAttendedCount}</p>
+              <p className="text-xs text-neutral-500 mt-0.5">Sessions Attended</p>
             </div>
-            <Link
-              href="/my-bookings"
-              className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 text-center hover:border-neutral-700 transition-colors"
-            >
-              <p className="text-2xl font-bold text-neutral-100">
-                <Ticket className="w-6 h-6 mx-auto text-neutral-400" />
-              </p>
-              <p className="text-xs text-neutral-500 mt-1">View Bookings</p>
-            </Link>
+            <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 text-center">
+              <p className="text-2xl font-bold text-neutral-100">{profile.sessionsHostedCount}</p>
+              <p className="text-xs text-neutral-500 mt-0.5">Sessions Hosted</p>
+            </div>
           </div>
         )}
 
@@ -245,80 +276,22 @@ export default function ProfilePage() {
             )}
 
             <Link
-              href="/my-bookings"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
-                  <Ticket className="w-4 h-4 text-neutral-400" />
-                </div>
-                <div>
-                  <span className="text-neutral-200 text-sm font-medium">My Bookings</span>
-                  <p className="text-xs text-neutral-500">Upcoming & past events</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-neutral-300" />
-            </Link>
-
-            <Link
-              href="/saved"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
-                  <Heart className="w-4 h-4 text-neutral-400" />
-                </div>
-                <div>
-                  <span className="text-neutral-200 text-sm font-medium">Saved</span>
-                  <p className="text-xs text-neutral-500">Events you&apos;ve saved</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-neutral-300" />
-            </Link>
-
-            <Link
-              href="/crews"
+              href="/buddy?tab=mine"
               className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-900 transition-colors"
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
-                  <MessageCircle className="w-4 h-4 text-neutral-400" />
+                  <CalendarDays className="w-4 h-4 text-neutral-400" />
                 </div>
                 <div>
-                  <span className="text-neutral-200 text-sm font-medium">My Crews</span>
-                  <p className="text-xs text-neutral-500">Communities you&apos;ve joined</p>
+                  <span className="text-neutral-200 text-sm font-medium">My Sessions</span>
+                  <p className="text-xs text-neutral-500">Sessions you&apos;re hosting or attending</p>
                 </div>
               </div>
               <ChevronRight className="w-5 h-5 text-neutral-300" />
             </Link>
           </div>
         </div>
-
-        {/* Host Tools Section - Only show for non-hosts or when AI Tools not shown */}
-        {!isHost && (
-          <div className="mb-8">
-            <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider px-1 mb-2">
-              Host Tools
-            </h3>
-            <div className="bg-neutral-950 rounded-2xl border border-neutral-800 overflow-hidden">
-              <Link
-                href="/host/dashboard"
-                className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-900 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
-                    <LayoutDashboard className="w-4 h-4 text-neutral-400" />
-                  </div>
-                  <div>
-                    <span className="text-neutral-200 text-sm font-medium">Host Dashboard</span>
-                    <p className="text-xs text-neutral-500">Manage experiences & community</p>
-                  </div>
-                </div>
-                <ChevronRight className="w-5 h-5 text-neutral-300" />
-              </Link>
-            </div>
-          </div>
-        )}
 
         {/* Account Section */}
         <div className="mb-8">

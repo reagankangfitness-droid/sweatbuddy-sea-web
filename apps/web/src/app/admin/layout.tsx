@@ -17,17 +17,19 @@ import {
   Loader2,
   Lock,
   UserPlus,
-  Flag
+  Flag,
+  Activity
 } from 'lucide-react'
 import { Logo } from '@/components/logo'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Events', href: '/admin/events', icon: Calendar },
-  { name: 'Pending Events', href: '/admin/pending', icon: Clock },
-  { name: 'Hosts', href: '/admin/hosts', icon: UserPlus },
-  { name: 'Attendees', href: '/admin/attendees', icon: Users },
+  { name: 'Users', href: '/admin/users', icon: Users },
+  { name: 'Sessions', href: '/admin/sessions', icon: Activity },
+  { name: 'Activities', href: '/admin/activities', icon: Clock },
   { name: 'Reports', href: '/admin/reports', icon: Flag },
+  { name: 'Events', href: '/admin/events', icon: Calendar },
+  { name: 'Hosts', href: '/admin/hosts', icon: UserPlus },
   { name: 'Newsletter', href: '/admin/newsletter', icon: Mail },
   { name: 'Settings', href: '/admin/settings', icon: Settings },
 ]

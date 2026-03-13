@@ -218,7 +218,7 @@ export default function MyBookingsPage() {
     <div className="min-h-screen bg-neutral-900">
       <Header />
 
-      <main className="max-w-2xl mx-auto px-4 py-8">
+      <main className="max-w-2xl mx-auto px-4 py-8 pb-24 md:pb-8">
         <h1 className="text-2xl font-bold text-neutral-100 mb-2">
           My Bookings
         </h1>

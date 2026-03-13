@@ -272,7 +272,7 @@ export default function UserProfilePage() {
           {/* Profile Card */}
           <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-6 text-center">
             {/* Avatar */}
-            <div className="w-28 h-28 rounded-full border-4 border-neutral-800 overflow-hidden mx-auto">
+            <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full border-4 border-neutral-800 overflow-hidden mx-auto">
               {profile.imageUrl ? (
                 <Image src={profile.imageUrl} alt={profile.name || 'User'} width={112} height={112} className="w-full h-full object-cover" />
               ) : (

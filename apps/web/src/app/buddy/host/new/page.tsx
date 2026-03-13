@@ -346,7 +346,7 @@ export default function NewSessionPage() {
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
                 Activity type <span className="text-red-500">*</span>
               </label>
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {ACTIVITY_TYPES.map((type) => (
                   <button
                     key={type.slug}

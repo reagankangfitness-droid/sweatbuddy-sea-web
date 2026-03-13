@@ -768,7 +768,7 @@ Organized via sweatbuddies
 
           {/* RSVP Action Section - Sticky on mobile with safe area */}
           {user && (
-            <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-8 bg-background border-t md:border md:rounded-lg p-3 sm:p-4 shadow-lg md:shadow-none z-50 safe-area-inset-bottom">
+            <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-8 bg-background border-t md:border md:rounded-lg p-3 sm:p-4 shadow-lg md:shadow-none z-50 pb-[env(safe-area-inset-bottom,8px)]">
               <div className="container mx-auto max-w-4xl">
                 {user.id === activity.hostId || user.id === activity.user.id ? (
                   // Host view - simplified for mobile
@@ -956,7 +956,7 @@ Organized via sweatbuddies
 
           {/* Action bar for non-logged-in users */}
           {!user && userLoaded && (
-            <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-8 bg-background border-t md:border md:rounded-lg p-3 sm:p-4 shadow-lg md:shadow-none z-50 safe-area-inset-bottom">
+            <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-8 bg-background border-t md:border md:rounded-lg p-3 sm:p-4 shadow-lg md:shadow-none z-50 pb-[env(safe-area-inset-bottom,8px)]">
               <div className="container mx-auto max-w-4xl">
                 <div className="flex gap-2 sm:gap-3 items-center">
                   {/* Icon-only on mobile, with label on desktop */}

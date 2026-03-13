@@ -121,29 +121,32 @@ export default async function BrowsePage({ searchParams }: PageProps) {
 
       {/* Type filters */}
       <div className="border-b border-neutral-800 sticky top-[65px] z-20 bg-neutral-950/95 backdrop-blur">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex gap-2 overflow-x-auto scrollbar-hide">
-          {TYPES.map((t) => {
-            const active = (type ?? '') === t.value
-            return (
-              <Link
-                key={t.value}
-                href={t.value ? `/browse?type=${t.value}` : '/browse'}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium whitespace-nowrap border transition-all ${
-                  active
-                    ? 'bg-white text-neutral-900 border-white'
-                    : 'bg-neutral-900 text-neutral-400 border-neutral-800 hover:border-neutral-600 hover:text-neutral-200'
-                }`}
-              >
-                <span>{t.emoji}</span>
-                {t.label}
-                {t.isNew && !active && (
-                  <span className="text-[9px] font-bold px-1 py-0.5 rounded bg-emerald-500/20 text-emerald-400 leading-none">
-                    NEW
-                  </span>
-                )}
-              </Link>
-            )
-          })}
+        <div className="relative max-w-6xl mx-auto">
+          <div className="px-4 sm:px-6 py-3 flex gap-2 overflow-x-auto scrollbar-hide">
+            {TYPES.map((t) => {
+              const active = (type ?? '') === t.value
+              return (
+                <Link
+                  key={t.value}
+                  href={t.value ? `/browse?type=${t.value}` : '/browse'}
+                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium whitespace-nowrap border transition-all ${
+                    active
+                      ? 'bg-white text-neutral-900 border-white'
+                      : 'bg-neutral-900 text-neutral-400 border-neutral-800 hover:border-neutral-600 hover:text-neutral-200'
+                  }`}
+                >
+                  <span>{t.emoji}</span>
+                  {t.label}
+                  {t.isNew && !active && (
+                    <span className="text-[9px] font-bold px-1 py-0.5 rounded bg-emerald-500/20 text-emerald-400 leading-none">
+                      NEW
+                    </span>
+                  )}
+                </Link>
+              )
+            })}
+          </div>
+          <div className="sm:hidden pointer-events-none absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-neutral-950 to-transparent" />
         </div>
       </div>
 

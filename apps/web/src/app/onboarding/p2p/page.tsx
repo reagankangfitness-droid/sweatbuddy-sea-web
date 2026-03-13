@@ -179,7 +179,7 @@ export default function P2POnboardingPage() {
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
               What do you love? <span className="text-red-500">*</span>
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {FITNESS_INTERESTS.map((interest) => {
                 const selected = selectedInterests.includes(interest.slug)
                 return (

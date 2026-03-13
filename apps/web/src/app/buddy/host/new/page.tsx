@@ -332,7 +332,7 @@ export default function NewSessionPage() {
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-8 pb-32">
+      <div className="max-w-lg mx-auto px-4 py-8 pb-48 md:pb-32">
         {/* Step 1: Basic Info */}
         {step === 'basic' && (
           <div className="space-y-6">
@@ -857,7 +857,7 @@ export default function NewSessionPage() {
       </div>
 
       {/* Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-neutral-950/90 backdrop-blur border-t border-neutral-100 dark:border-neutral-800 p-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-neutral-950/90 backdrop-blur border-t border-neutral-100 dark:border-neutral-800 p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] md:pb-4 mb-[80px] md:mb-0">
         <div className="max-w-lg mx-auto">
           {step === 'preview' ? (
             <button

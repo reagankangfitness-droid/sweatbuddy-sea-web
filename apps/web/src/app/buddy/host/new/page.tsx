@@ -152,7 +152,7 @@ export default function NewSessionPage() {
         if (!form.acceptPayNow && !form.acceptStripe) {
           return 'Select at least one payment method for paid sessions'
         }
-        if (form.acceptPayNow && !form.paynowQrImageUrl) {
+        if (form.acceptPayNow && !form.paynowQrImageUrl && !qrFile) {
           return 'Upload your PayNow QR code'
         }
         if (form.acceptStripe && stripeConnected === false) {

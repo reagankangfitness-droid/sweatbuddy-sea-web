@@ -67,7 +67,7 @@ export async function GET() {
     const clerkUser = await currentUser()
     const email = clerkUser?.primaryEmailAddress?.emailAddress
     if (!email) {
-      return NextResponse.json({ completed: false })
+      return NextResponse.json({ completed: false, user: null })
     }
 
     const user = await prisma.user.findUnique({
@@ -87,6 +87,6 @@ export async function GET() {
     })
   } catch (error) {
     console.error('[p2p-onboarding] GET Error:', error)
-    return NextResponse.json({ completed: false })
+    return NextResponse.json({ completed: false, user: null })
   }
 }

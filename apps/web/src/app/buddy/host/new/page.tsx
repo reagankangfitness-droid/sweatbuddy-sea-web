@@ -493,7 +493,8 @@ export default function NewSessionPage() {
                 }}
                 onManualChange={(val) => update('address', val)}
                 placeholder="Search for a gym, park, or address"
-              /></div>
+              />
+            </div>
 
             {/* Max people */}
             <div>

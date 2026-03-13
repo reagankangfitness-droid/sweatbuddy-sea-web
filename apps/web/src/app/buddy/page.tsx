@@ -220,7 +220,8 @@ function BuddyPageInner() {
       fetchSessions()
     }
     checkOnboarding()
-  }, [router, fetchSessions])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router])
 
   // Sync tab state when URL changes
   useEffect(() => {

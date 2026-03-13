@@ -142,13 +142,13 @@ export default async function HomePage() {
           <nav className="flex items-center gap-2">
             <Link
               href="/browse"
-              className="px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+              className="hidden sm:inline px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors"
             >
               {sessionsThisWeek > 0 ? `${sessionsThisWeek} sessions this week` : 'Browse sessions'}
             </Link>
             <Link
               href="/sign-in"
-              className="px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+              className="hidden sm:inline px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors"
             >
               Log in
             </Link>
@@ -179,7 +179,7 @@ export default async function HomePage() {
       )}
 
       {/* ── Hero ─────────────────────────────────────────── */}
-      <section className="relative overflow-hidden py-20 sm:py-32 px-4 sm:px-6">
+      <section className="relative overflow-hidden py-14 sm:py-32 px-4 sm:px-6">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 flex items-center justify-center"
@@ -192,7 +192,7 @@ export default async function HomePage() {
             SweatBuddies
           </p>
 
-          <h1 className="text-5xl sm:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
+          <h1 className="text-4xl sm:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
             Friends don&apos;t let friends
             <span className="block text-neutral-400">workout alone.</span>
           </h1>
@@ -372,9 +372,9 @@ export default async function HomePage() {
             <p className="text-neutral-400">Morning runs, evening yoga, weekend hikes, lunchtime HIIT</p>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex sm:flex-wrap sm:justify-center gap-4 overflow-x-auto sm:overflow-visible scrollbar-none px-4 sm:px-0 -mx-4 sm:mx-0">
             {displayTypes.map(({ type, count, isNew }) => (
-              <Link key={type} href={`/browse?type=${type}`} className="group flex flex-col items-center gap-1">
+              <Link key={type} href={`/browse?type=${type}`} className="group flex-shrink-0 sm:flex-shrink flex flex-col items-center gap-1">
                 <div className="relative">
                   <ActivityBadge type={type} size="md" className="cursor-pointer group-hover:opacity-80 transition-opacity" />
                   {isNew && count === 0 && (
@@ -418,7 +418,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── How it works ─────────────────────────────────── */}
-      <section className="py-20 sm:py-28 px-4 sm:px-6 border-b border-neutral-800/60">
+      <section className="py-14 sm:py-28 px-4 sm:px-6 border-b border-neutral-800/60">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">Three steps. No friction.</h2>
@@ -454,7 +454,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Every kind of session ─────────────────────────── */}
-      <section className="py-20 sm:py-28 px-4 sm:px-6 border-b border-neutral-800/60">
+      <section className="py-14 sm:py-28 px-4 sm:px-6 border-b border-neutral-800/60">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">Every kind of session</h2>
@@ -524,7 +524,7 @@ export default async function HomePage() {
             <Logo size={20} />
             <span>© 2026 SweatBuddies</span>
           </div>
-          <div className="flex gap-6">
+          <div className="flex gap-3 sm:gap-6">
             <Link href="/browse" className="hover:text-neutral-300 transition-colors">Browse sessions</Link>
             <Link href="/sign-up" className="hover:text-neutral-300 transition-colors">Sign up</Link>
             <a href="mailto:support@sweatbuddies.sg" className="hover:text-neutral-300 transition-colors">Contact</a>

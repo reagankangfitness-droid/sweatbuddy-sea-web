@@ -269,7 +269,7 @@ export default async function HomePage() {
               <h2 className="text-lg font-semibold text-neutral-100">Happening soon</h2>
               <p className="text-sm text-neutral-500">Browse without an account.</p>
             </div>
-            <Link href="/browse" className="text-sm text-neutral-400 hover:text-white transition-colors py-2 -my-2 px-1">
+            <Link href="/browse" className="text-sm text-neutral-400 hover:text-white transition-colors py-3 -my-3 px-1">
               See all →
             </Link>
           </div>
@@ -525,9 +525,9 @@ export default async function HomePage() {
             <span>© 2026 SweatBuddies</span>
           </div>
           <div className="flex gap-3 sm:gap-6">
-            <Link href="/browse" className="hover:text-neutral-300 transition-colors py-2 -my-2">Browse sessions</Link>
-            <Link href="/sign-up" className="hover:text-neutral-300 transition-colors py-2 -my-2">Sign up</Link>
-            <a href="mailto:support@sweatbuddies.sg" className="hover:text-neutral-300 transition-colors py-2 -my-2">Contact</a>
+            <Link href="/browse" className="hover:text-neutral-300 transition-colors py-3 -my-3">Browse sessions</Link>
+            <Link href="/sign-up" className="hover:text-neutral-300 transition-colors py-3 -my-3">Sign up</Link>
+            <a href="mailto:support@sweatbuddies.sg" className="hover:text-neutral-300 transition-colors py-3 -my-3">Contact</a>
           </div>
         </div>
       </footer>

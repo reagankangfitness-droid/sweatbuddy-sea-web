@@ -129,7 +129,7 @@ export default async function BrowsePage({ searchParams }: PageProps) {
                 <Link
                   key={t.value}
                   href={t.value ? `/browse?type=${t.value}` : '/browse'}
-                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium whitespace-nowrap border transition-all ${
+                  className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap border transition-all ${
                     active
                       ? 'bg-white text-neutral-900 border-white'
                       : 'bg-neutral-900 text-neutral-400 border-neutral-800 hover:border-neutral-600 hover:text-neutral-200'

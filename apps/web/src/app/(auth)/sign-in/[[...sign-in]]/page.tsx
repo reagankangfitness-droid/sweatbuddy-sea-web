@@ -63,8 +63,8 @@ function SignInContent() {
         sessionStorage.removeItem('auth_intent')
       }
 
-      // Default redirect to homepage
-      router.push(redirectUrl || '/events')
+      // Default redirect to P2P sessions
+      router.push(redirectUrl || '/buddy')
     }
   }, [isLoaded, isSignedIn, router, redirectUrl])
 
@@ -161,7 +161,7 @@ function SignInContent() {
                 alertText: 'text-sm',
               }
             }}
-            redirectUrl={redirectUrl || '/events'}
+            redirectUrl={redirectUrl || '/buddy'}
           />
         </div>
 

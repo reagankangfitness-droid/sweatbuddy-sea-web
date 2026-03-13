@@ -61,7 +61,7 @@ function SignUpContent() {
         sessionStorage.removeItem('auth_intent')
       }
 
-      router.push(redirectUrl || '/events')
+      router.push(redirectUrl || '/buddy')
     }
   }, [isLoaded, isSignedIn, router, redirectUrl])
 
@@ -157,7 +157,7 @@ function SignUpContent() {
                 alertText: 'text-sm',
               }
             }}
-            redirectUrl={redirectUrl || '/events'}
+            redirectUrl={redirectUrl || '/buddy'}
           />
         </div>
 

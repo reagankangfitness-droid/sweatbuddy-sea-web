@@ -151,23 +151,8 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-neutral-900">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
-        <div className="pt-[env(safe-area-inset-top,0px)]">
-          <div className="flex items-center gap-4 px-4 py-3">
-            <Link
-              href="/buddy"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800"
-            >
-              <ArrowLeft className="w-5 h-5 text-neutral-300" />
-            </Link>
-            <h1 className="text-lg font-semibold text-neutral-100">Profile</h1>
-          </div>
-        </div>
-      </header>
-
       {/* Content */}
-      <main className="pt-20 pb-24 px-4 max-w-lg mx-auto">
+      <main className="pt-6 pb-24 px-4 max-w-lg mx-auto" style={{ paddingTop: 'max(1.5rem, env(safe-area-inset-top))' }}>
         {/* Profile Card */}
         <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 mb-8">
           <div className="flex items-center gap-4">

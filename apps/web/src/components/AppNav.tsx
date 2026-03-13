@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { Compass, CalendarDays, User, ChevronRight, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
@@ -9,10 +9,11 @@ import { Logo } from '@/components/logo'
 import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 
+// mobileOnly: true = show in mobile bottom nav only (not desktop sidebar)
 const navItems = [
-  { id: 'discover', label: 'Discover', icon: Compass, href: '/buddy' },
-  { id: 'sessions', label: 'My Sessions', icon: CalendarDays, href: '/buddy?tab=mine' },
-  { id: 'profile', label: 'Profile', icon: User, href: '/profile' },
+  { id: 'discover', label: 'Discover', icon: Compass, href: '/buddy', mobileOnly: false },
+  { id: 'sessions', label: 'My Sessions', icon: CalendarDays, href: '/buddy?tab=mine', mobileOnly: false },
+  { id: 'profile', label: 'Profile', icon: User, href: '/profile', mobileOnly: true },
 ]
 
 // Wrap export in Suspense so useSearchParams() doesn't block static generation
@@ -29,6 +30,15 @@ function AppNavInner() {
   const searchParams = useSearchParams()
   const { user, isSignedIn } = useUser()
   const [isHovered, setIsHovered] = useState(false)
+  const [pendingCount, setPendingCount] = useState(0)
+
+  useEffect(() => {
+    if (!isSignedIn) return
+    fetch('/api/p2p/payments/pending')
+      .then((r) => (r.ok ? r.json() : { payments: [] }))
+      .then((data) => setPendingCount(data.payments?.length ?? 0))
+      .catch(() => {})
+  }, [isSignedIn])
 
   // Only show on P2P app pages
   const isAppPage =
@@ -48,7 +58,12 @@ function AppNavInner() {
       return pathname.startsWith('/buddy') && searchParams.get('tab') === 'mine'
     }
     if (item.id === 'discover') {
-      return pathname.startsWith('/buddy') && searchParams.get('tab') !== 'mine'
+      // Don't mark active during create/connect flows
+      return (
+        (pathname === '/buddy' || pathname.startsWith('/buddy')) &&
+        searchParams.get('tab') !== 'mine' &&
+        !pathname.startsWith('/buddy/host')
+      )
     }
     return pathname.startsWith(item.href)
   }
@@ -74,17 +89,22 @@ function AppNavInner() {
             <Logo size={24} />
           </div>
           <div className="flex flex-col items-center gap-3 flex-1">
-            {navItems.map((item) => {
+            {navItems.filter((i) => !i.mobileOnly).map((item) => {
               const active = isActive(item)
               const Icon = item.icon
               return (
                 <div
                   key={item.id}
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                  className={`relative w-8 h-8 rounded-lg flex items-center justify-center ${
                     active ? 'bg-white text-neutral-900' : 'text-neutral-400'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
+                  {item.id === 'sessions' && pendingCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full text-[8px] text-white font-bold flex items-center justify-center leading-none">
+                      {pendingCount > 9 ? '9' : pendingCount}
+                    </span>
+                  )}
                 </div>
               )
             })}
@@ -111,7 +131,7 @@ function AppNavInner() {
               </Link>
 
               <div className="flex flex-col items-center gap-2 flex-1">
-                {navItems.map((item) => {
+                {navItems.filter((i) => !i.mobileOnly).map((item) => {
                   const active = isActive(item)
                   const Icon = item.icon
                   return (
@@ -138,6 +158,11 @@ function AppNavInner() {
                       )}
                       <Icon className={`w-5 h-5 ${active ? 'stroke-[2.5px]' : ''}`} />
                       <span className="text-[10px] mt-1 font-medium">{item.label}</span>
+                      {item.id === 'sessions' && pendingCount > 0 && (
+                        <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 rounded-full text-[9px] text-white font-bold flex items-center justify-center leading-none">
+                          {pendingCount > 9 ? '9+' : pendingCount}
+                        </span>
+                      )}
                     </Link>
                   )
                 })}
@@ -190,7 +215,6 @@ function AppNavInner() {
 
       {/* Mobile Bottom Nav */}
       <div className="md:hidden">
-        <div className="h-20" />
         <nav
           role="navigation"
           aria-label="Main navigation"
@@ -214,7 +238,14 @@ function AppNavInner() {
                     ${active ? 'text-neutral-100' : 'text-neutral-400 active:scale-95'}
                   `}
                 >
-                  <Icon className={`w-6 h-6 transition-all duration-200 ${active ? 'stroke-[2.5px]' : ''}`} />
+                  <span className="relative">
+                    <Icon className={`w-6 h-6 transition-all duration-200 ${active ? 'stroke-[2.5px]' : ''}`} />
+                    {item.id === 'sessions' && pendingCount > 0 && (
+                      <span className="absolute -top-1 -right-1.5 w-4 h-4 bg-red-500 rounded-full text-[9px] text-white font-bold flex items-center justify-center leading-none">
+                        {pendingCount > 9 ? '9+' : pendingCount}
+                      </span>
+                    )}
+                  </span>
                   <span className="text-[10px] mt-1 font-medium">{item.label}</span>
                   {active && (
                     <motion.div

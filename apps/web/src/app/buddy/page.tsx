@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { format } from 'date-fns'
@@ -75,8 +75,19 @@ const TYPE_FILTERS = [
 ]
 
 export default function BuddyPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-neutral-400" /></div>}>
+      <BuddyPageInner />
+    </Suspense>
+  )
+}
+
+function BuddyPageInner() {
   const router = useRouter()
-  const [tab, setTab] = useState<'happening' | 'mine'>('happening')
+  const searchParams = useSearchParams()
+  const [tab, setTab] = useState<'happening' | 'mine'>(
+    searchParams.get('tab') === 'mine' ? 'mine' : 'happening'
+  )
   const [sessions, setSessions] = useState<Session[]>([])
   const [hosting, setHosting] = useState<Session[]>([])
   const [attending, setAttending] = useState<Session[]>([])
@@ -163,6 +174,12 @@ export default function BuddyPage() {
     }
     checkOnboarding()
   }, [router, fetchSessions])
+
+  // Sync tab state when URL changes (e.g. nav link click while already on page)
+  useEffect(() => {
+    const urlTab = searchParams.get('tab') === 'mine' ? 'mine' : 'happening'
+    setTab(urlTab)
+  }, [searchParams])
 
   useEffect(() => {
     setSessions([])
@@ -257,18 +274,9 @@ export default function BuddyPage() {
 
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/90 dark:bg-neutral-950/90 backdrop-blur border-b border-neutral-100 dark:border-neutral-800">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-bold text-neutral-900 dark:text-white">Sessions</h1>
-            <p className="text-xs text-neutral-500">Find your next workout crew</p>
-          </div>
-          <Link
-            href="/buddy/host/new"
-            className="flex items-center gap-1.5 rounded-xl bg-black dark:bg-white px-4 py-2.5 text-xs font-semibold text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            Host Session
-          </Link>
+        <div className="max-w-2xl mx-auto px-4 py-4">
+          <h1 className="text-lg font-bold text-neutral-900 dark:text-white">Sessions</h1>
+          <p className="text-xs text-neutral-500">Find your next workout crew</p>
         </div>
 
         {/* Tabs */}
@@ -279,7 +287,7 @@ export default function BuddyPage() {
           ].map((t) => (
             <button
               key={t.key}
-              onClick={() => setTab(t.key as 'happening' | 'mine')}
+              onClick={() => router.push(t.key === 'mine' ? '/buddy?tab=mine' : '/buddy', { scroll: false })}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 tab === t.key
                   ? 'bg-black dark:bg-white text-white dark:text-black'

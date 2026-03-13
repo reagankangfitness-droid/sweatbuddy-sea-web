@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils'
-import { getActivityColor, getActivityIcon } from '@/lib/utils'
+import { getActivityColor } from '@/lib/utils'
+import { getActivityConfig } from '@/lib/activity-types'
 
 interface ActivityBadgeProps {
   type: string
@@ -15,7 +16,9 @@ const SIZE_CLASSES = {
 
 export function ActivityBadge({ type, size = 'md', showIcon = true, className }: ActivityBadgeProps) {
   const colors = getActivityColor(type)
-  const icon = getActivityIcon(type)
+  const config = getActivityConfig(type)
+  const icon = config?.emoji ?? '🏅'
+  const label = config?.label ?? (type.charAt(0).toUpperCase() + type.slice(1).replace(/_/g, ' '))
 
   return (
     <span
@@ -28,7 +31,7 @@ export function ActivityBadge({ type, size = 'md', showIcon = true, className }:
       )}
     >
       {showIcon && <span className="text-[10px] leading-none">{icon}</span>}
-      {type}
+      {label}
     </span>
   )
 }

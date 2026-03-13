@@ -4,6 +4,7 @@ import { Logo } from '@/components/logo'
 import { ActivityBadge } from '@/components/ui/ActivityBadge'
 import { prisma } from '@/lib/prisma'
 import { format, isToday, isTomorrow } from 'date-fns'
+import { ACTIVITY_TYPES as ACTIVITY_TYPES_CONFIG } from '@/lib/activity-types'
 
 export const revalidate = 60
 
@@ -12,15 +13,9 @@ export const metadata: Metadata = {
   description: 'Browse and join fitness sessions posted by people near you. Runs, yoga, gym, hikes and more.',
 }
 
-const ACTIVITY_TYPES = [
-  'running', 'gym', 'yoga', 'cycling', 'hiking', 'bootcamp', 'hiit', 'pilates', 'swimming',
-]
-
-const ACTIVITY_EMOJIS: Record<string, string> = {
-  running: '🏃', cycling: '🚴', yoga: '🧘', strength: '🏋️', gym: '🏋️',
-  hiking: '🥾', bootcamp: '🎖️', hiit: '⚡', pilates: '🦢',
-  swimming: '🏊', volleyball: '🏐', basketball: '🏀', cold_plunge: '🧊', other: '🏅',
-}
+const ACTIVITY_EMOJIS: Record<string, string> = Object.fromEntries(
+  ACTIVITY_TYPES_CONFIG.map((t) => [t.key, t.emoji])
+)
 
 const COMMUNITY_PHOTOS = [
   { src: '/images/hosts/singapore-frontrunners.jpg', caption: 'Singapore Frontrunners' },
@@ -106,16 +101,20 @@ export default async function HomePage() {
       }),
     ])
 
-  // Count per type — sorted by count desc, only types with sessions
+  // Count per type — tier 1+2 always shown, tier 3 only if sessions exist
   const countByType: Record<string, number> = {}
   for (const row of activityCounts) {
     if (row.categorySlug) countByType[row.categorySlug] = row._count.id
   }
-  const activeTypes = ACTIVITY_TYPES
-    .map((type) => ({ type, count: countByType[type] ?? 0 }))
-    .filter(({ count }) => count > 0)
-    .sort((a, b) => b.count - a.count)
-  const displayTypes = activeTypes.length > 0 ? activeTypes : ACTIVITY_TYPES.map((type) => ({ type, count: 0 }))
+  const displayTypes = ACTIVITY_TYPES_CONFIG
+    .filter((cfg) => cfg.tier <= 2 || (countByType[cfg.key] ?? 0) > 0)
+    .map((cfg) => ({ type: cfg.key, count: countByType[cfg.key] ?? 0, isNew: cfg.isNew ?? false }))
+    .sort((a, b) => {
+      // Types with sessions first, then by count desc, then stable order
+      if (a.count > 0 && b.count === 0) return -1
+      if (a.count === 0 && b.count > 0) return 1
+      return b.count - a.count
+    })
 
   // Ticker items from real joins
   const tickerItems: string[] = recentJoins
@@ -374,14 +373,25 @@ export default async function HomePage() {
           </div>
 
           <div className="flex flex-wrap justify-center gap-4">
-            {displayTypes.map(({ type, count }) => (
+            {displayTypes.map(({ type, count, isNew }) => (
               <Link key={type} href={`/browse?type=${type}`} className="group flex flex-col items-center gap-1">
-                <ActivityBadge type={type} size="md" className="cursor-pointer group-hover:opacity-80 transition-opacity" />
-                {count > 0 && (
+                <div className="relative">
+                  <ActivityBadge type={type} size="md" className="cursor-pointer group-hover:opacity-80 transition-opacity" />
+                  {isNew && count === 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 text-[8px] font-bold px-1 py-0.5 rounded bg-emerald-500/20 text-emerald-400 leading-none border border-emerald-500/30">
+                      NEW
+                    </span>
+                  )}
+                </div>
+                {count > 0 ? (
                   <span className="text-xs text-neutral-600 group-hover:text-neutral-400 transition-colors">
                     {count} session{count !== 1 ? 's' : ''}
                   </span>
-                )}
+                ) : isNew ? (
+                  <span className="text-xs text-emerald-600 group-hover:text-emerald-400 transition-colors">
+                    Coming soon
+                  </span>
+                ) : null}
               </Link>
             ))}
           </div>

@@ -4,6 +4,7 @@ import { ActivityBadge } from '@/components/ui/ActivityBadge'
 import Link from 'next/link'
 import { Logo } from '@/components/logo'
 import type { Metadata } from 'next'
+import { ACTIVITY_TYPES } from '@/lib/activity-types'
 
 export const metadata: Metadata = {
   title: 'Browse Sessions — SweatBuddies',
@@ -11,19 +12,8 @@ export const metadata: Metadata = {
 }
 
 const TYPES = [
-  { value: '', label: 'All', emoji: '✨' },
-  { value: 'running', label: 'Running', emoji: '🏃' },
-  { value: 'strength', label: 'Strength', emoji: '🏋️' },
-  { value: 'yoga', label: 'Yoga', emoji: '🧘' },
-  { value: 'cycling', label: 'Cycling', emoji: '🚴' },
-  { value: 'hiking', label: 'Hiking', emoji: '🥾' },
-  { value: 'bootcamp', label: 'Bootcamp', emoji: '🎖️' },
-  { value: 'hiit', label: 'HIIT', emoji: '⚡' },
-  { value: 'pilates', label: 'Pilates', emoji: '🦢' },
-  { value: 'swimming', label: 'Swimming', emoji: '🏊' },
-  { value: 'volleyball', label: 'Volleyball', emoji: '🏐' },
-  { value: 'basketball', label: 'Basketball', emoji: '🏀' },
-  { value: 'cold_plunge', label: 'Cold Plunge', emoji: '🧊' },
+  { value: '', label: 'All', emoji: '✨', isNew: false },
+  ...ACTIVITY_TYPES.map((t) => ({ value: t.key, label: t.label, emoji: t.emoji, isNew: t.isNew ?? false })),
 ]
 
 interface PageProps {
@@ -146,6 +136,11 @@ export default async function BrowsePage({ searchParams }: PageProps) {
               >
                 <span>{t.emoji}</span>
                 {t.label}
+                {t.isNew && !active && (
+                  <span className="text-[9px] font-bold px-1 py-0.5 rounded bg-emerald-500/20 text-emerald-400 leading-none">
+                    NEW
+                  </span>
+                )}
               </Link>
             )
           })}

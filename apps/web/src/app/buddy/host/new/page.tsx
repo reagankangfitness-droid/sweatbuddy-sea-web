@@ -4,20 +4,10 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Loader2, MapPin, ChevronDown, CheckCircle2, Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
+import { ACTIVITY_TYPES as ACTIVITY_TYPES_CONFIG } from '@/lib/activity-types'
 
 const ACTIVITY_TYPES = [
-  { slug: 'running', label: 'Running', emoji: '🏃' },
-  { slug: 'cycling', label: 'Cycling', emoji: '🚴' },
-  { slug: 'yoga', label: 'Yoga', emoji: '🧘' },
-  { slug: 'strength', label: 'Strength Training', emoji: '🏋️' },
-  { slug: 'hiking', label: 'Hiking', emoji: '🥾' },
-  { slug: 'bootcamp', label: 'Bootcamp', emoji: '🎖️' },
-  { slug: 'hiit', label: 'HIIT', emoji: '⚡' },
-  { slug: 'pilates', label: 'Pilates', emoji: '🦢' },
-  { slug: 'swimming', label: 'Swimming', emoji: '🏊' },
-  { slug: 'volleyball', label: 'Volleyball', emoji: '🏐' },
-  { slug: 'basketball', label: 'Basketball', emoji: '🏀' },
-  { slug: 'cold_plunge', label: 'Cold Plunge', emoji: '🧊' },
+  ...ACTIVITY_TYPES_CONFIG.map((t) => ({ slug: t.key, label: t.label, emoji: t.emoji })),
   { slug: 'other', label: 'Other', emoji: '🏅' },
 ]
 
@@ -119,6 +109,7 @@ export default function NewSessionPage() {
           cycling: 'Weekend ride',
           yoga: 'Morning yoga',
           strength: 'Gym session',
+          gym: 'Gym session',
           hiking: 'Trail hike',
           bootcamp: 'Outdoor bootcamp',
           hiit: 'HIIT session',
@@ -127,6 +118,11 @@ export default function NewSessionPage() {
           volleyball: 'Beach volleyball',
           basketball: 'Pick-up basketball',
           cold_plunge: 'Cold plunge',
+          pickleball: 'Pickleball session',
+          badminton: 'Badminton session',
+          combat_fitness: 'Muay Thai / Boxing session',
+          padel: 'Padel session',
+          dance_fitness: 'Dance fitness class',
           other: 'Workout session',
         }
         const hint = timeHints[updated.categorySlug] ?? (cat ? cat.label : 'Workout session')

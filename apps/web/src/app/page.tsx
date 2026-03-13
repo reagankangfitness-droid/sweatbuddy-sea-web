@@ -193,8 +193,8 @@ export default async function HomePage() {
           </p>
 
           <h1 className="text-5xl sm:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-            Fitness sessions,
-            <span className="block text-neutral-400">posted by real people</span>
+            Friends don&apos;t let friends
+            <span className="block text-neutral-400">workout alone.</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-neutral-400 max-w-2xl mx-auto mb-10 leading-relaxed">

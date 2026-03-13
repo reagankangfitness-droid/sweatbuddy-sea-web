@@ -2928,3 +2928,19 @@ model P2PReport {
   @@map("p2p_reports")
 }
 
+// =====================================================
+// HOST WAITLIST LEADS
+// =====================================================
+
+model HostLead {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  activityType String?  // e.g. "pilates", "running", "yoga"
+  city         String?
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("host_leads")
+}
+

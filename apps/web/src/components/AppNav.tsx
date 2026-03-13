@@ -11,7 +11,7 @@ import Image from 'next/image'
 
 // mobileOnly: true = show in mobile bottom nav only (not desktop sidebar)
 const navItems = [
-  { id: 'discover', label: 'Discover', icon: Compass, href: '/buddy', mobileOnly: false },
+  { id: 'discover', label: 'Discover', icon: Compass, href: '/discover', mobileOnly: false },
   { id: 'sessions', label: 'My Sessions', icon: CalendarDays, href: '/buddy?tab=mine', mobileOnly: false },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile', mobileOnly: true },
 ]
@@ -43,6 +43,7 @@ function AppNavInner() {
   // Only show on P2P app pages
   const isAppPage =
     pathname.startsWith('/buddy') ||
+    pathname.startsWith('/discover') ||
     pathname.startsWith('/profile') ||
     pathname.startsWith('/activities') ||
     pathname.startsWith('/onboarding') ||
@@ -58,12 +59,7 @@ function AppNavInner() {
       return pathname.startsWith('/buddy') && searchParams.get('tab') === 'mine'
     }
     if (item.id === 'discover') {
-      // Don't mark active during create/connect flows
-      return (
-        (pathname === '/buddy' || pathname.startsWith('/buddy')) &&
-        searchParams.get('tab') !== 'mine' &&
-        !pathname.startsWith('/buddy/host')
-      )
+      return pathname.startsWith('/discover')
     }
     return pathname.startsWith(item.href)
   }

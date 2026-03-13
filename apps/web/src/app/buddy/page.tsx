@@ -1,13 +1,17 @@
 'use client'
 
-import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { MapPin, Users, Plus, Loader2, Calendar, ChevronRight, Lock } from 'lucide-react'
+import { MapPin, Users, Plus, Loader2, Calendar, ChevronRight, Lock, Map, List, Crosshair, X, Clock } from 'lucide-react'
 import { toast } from 'sonner'
+import { motion, AnimatePresence } from 'framer-motion'
+import { GoogleMap, useLoadScript, OverlayView } from '@react-google-maps/api'
 import { PaymentModal } from '@/components/PaymentModal'
+import { DARK_MAP_STYLES } from '@/lib/wave/map-styles'
+import { ACTIVITY_TYPES } from '@/lib/activity-types'
 
 interface Host {
   id: string
@@ -55,6 +59,43 @@ interface Session {
   paynowPhoneNumber?: string | null
 }
 
+// ─── Map constants ───────────────────────────────────────────────────────────
+
+const SINGAPORE_CENTER = { lat: 1.3521, lng: 103.8198 }
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
+
+interface MapSession {
+  id: string
+  title: string
+  categorySlug: string
+  latitude: number
+  longitude: number
+  startTime: string | null
+  address: string | null
+  city: string
+  price: number
+  maxPeople: number | null
+  requiresApproval: boolean
+  attendeeCount: number
+  isFull: boolean
+  host: { id: string; name: string | null; imageUrl: string | null; slug: string | null }
+}
+
+const CATEGORY_COLORS: Record<string, string> = {
+  running: 'bg-orange-500', pickleball: 'bg-green-500', yoga: 'bg-purple-500',
+  bootcamp: 'bg-red-500', gym: 'bg-blue-500', cycling: 'bg-yellow-500',
+  badminton: 'bg-emerald-500', combat_fitness: 'bg-rose-600', pilates: 'bg-pink-500',
+  hiking: 'bg-lime-600', swimming: 'bg-cyan-500', padel: 'bg-teal-500',
+  dance_fitness: 'bg-fuchsia-500', volleyball: 'bg-amber-500', basketball: 'bg-orange-600',
+  cold_plunge: 'bg-sky-500', other: 'bg-neutral-500',
+}
+
+const EMOJI_MAP = Object.fromEntries(ACTIVITY_TYPES.map((t) => [t.key, t.emoji]))
+function pinEmoji(slug: string) { return EMOJI_MAP[slug] ?? '🏅' }
+function pinColor(slug: string) { return CATEGORY_COLORS[slug] ?? CATEGORY_COLORS.other }
+
+// ─── Fitness / type filters ───────────────────────────────────────────────────
+
 const FITNESS_FILTERS = [
   { value: '', label: 'All levels' },
   { value: 'BEGINNER', label: 'Beginner' },
@@ -85,9 +126,15 @@ export default function BuddyPage() {
 function BuddyPageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [tab, setTab] = useState<'happening' | 'mine'>(
-    searchParams.get('tab') === 'mine' ? 'mine' : 'happening'
+  const [tab, setTab] = useState<'happening' | 'map' | 'mine'>(
+    searchParams.get('tab') === 'mine' ? 'mine' : searchParams.get('tab') === 'map' ? 'map' : 'happening'
   )
+  const mapRef = useRef<google.maps.Map | null>(null)
+  const [mapSessions, setMapSessions] = useState<MapSession[]>([])
+  const [mapLoading, setMapLoading] = useState(false)
+  const [mapSelected, setMapSelected] = useState<MapSession | null>(null)
+  const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral | null>(null)
+  const { isLoaded: mapsLoaded } = useLoadScript({ googleMapsApiKey: GOOGLE_MAPS_API_KEY })
   const [sessions, setSessions] = useState<Session[]>([])
   const [hosting, setHosting] = useState<Session[]>([])
   const [attending, setAttending] = useState<Session[]>([])
@@ -175,11 +222,31 @@ function BuddyPageInner() {
     checkOnboarding()
   }, [router, fetchSessions])
 
-  // Sync tab state when URL changes (e.g. nav link click while already on page)
+  // Sync tab state when URL changes
   useEffect(() => {
-    const urlTab = searchParams.get('tab') === 'mine' ? 'mine' : 'happening'
-    setTab(urlTab)
+    const t = searchParams.get('tab')
+    setTab(t === 'mine' ? 'mine' : t === 'map' ? 'map' : 'happening')
   }, [searchParams])
+
+  // Fetch map sessions when map tab is active
+  useEffect(() => {
+    if (tab !== 'map') return
+    setMapLoading(true)
+    fetch('/api/discover/sessions')
+      .then((r) => r.ok ? r.json() : { sessions: [] })
+      .then((d) => setMapSessions(d.sessions ?? []))
+      .catch(() => {})
+      .finally(() => setMapLoading(false))
+  }, [tab])
+
+  // Get user location for map
+  useEffect(() => {
+    if (!navigator.geolocation) return
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => {}
+    )
+  }, [])
 
   useEffect(() => {
     setSessions([])
@@ -282,24 +349,175 @@ function BuddyPageInner() {
         {/* Tabs */}
         <div className="max-w-2xl mx-auto px-4 flex gap-1 pb-3">
           {[
-            { key: 'happening', label: 'Happening Soon' },
+            { key: 'happening', label: 'Sessions' },
+            { key: 'map', label: 'Map', icon: Map },
             { key: 'mine', label: 'My Sessions' },
-          ].map((t) => (
-            <button
-              key={t.key}
-              onClick={() => router.push(t.key === 'mine' ? '/buddy?tab=mine' : '/buddy', { scroll: false })}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                tab === t.key
-                  ? 'bg-black dark:bg-white text-white dark:text-black'
-                  : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
+          ].map((t) => {
+            const href = t.key === 'mine' ? '/buddy?tab=mine' : t.key === 'map' ? '/buddy?tab=map' : '/buddy'
+            return (
+              <button
+                key={t.key}
+                onClick={() => router.push(href, { scroll: false })}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  tab === t.key
+                    ? 'bg-black dark:bg-white text-white dark:text-black'
+                    : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
+                }`}
+              >
+                {t.icon && <t.icon className="w-3.5 h-3.5" />}
+                {t.label}
+              </button>
+            )
+          })}
         </div>
       </div>
 
+      {/* ── Map Tab ── */}
+      {tab === 'map' && (
+        <div className="relative" style={{ height: 'calc(100dvh - 128px)' }}>
+          {!GOOGLE_MAPS_API_KEY || !mapsLoaded ? (
+            <div className="flex flex-col items-center justify-center h-full gap-3 text-neutral-500">
+              {!GOOGLE_MAPS_API_KEY ? (
+                <p className="text-sm">Maps not configured.</p>
+              ) : (
+                <Loader2 className="w-6 h-6 animate-spin" />
+              )}
+            </div>
+          ) : (
+            <>
+              <GoogleMap
+                mapContainerStyle={{ width: '100%', height: '100%' }}
+                center={SINGAPORE_CENTER}
+                zoom={12}
+                onLoad={(map) => { mapRef.current = map }}
+                onClick={() => setMapSelected(null)}
+                options={{
+                  disableDefaultUI: true,
+                  styles: DARK_MAP_STYLES,
+                  clickableIcons: false,
+                  gestureHandling: 'greedy',
+                }}
+              >
+                {mapSessions.map((s) => (
+                  <OverlayView
+                    key={s.id}
+                    position={{ lat: s.latitude, lng: s.longitude }}
+                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                  >
+                    <div
+                      onClick={(e) => { e.stopPropagation(); setMapSelected(s) }}
+                      className="cursor-pointer select-none"
+                      style={{ transform: 'translate(-50%, -50%)' }}
+                    >
+                      <div className={`flex items-center justify-center rounded-full shadow-lg border-2 border-white transition-all duration-150 ${
+                        mapSelected?.id === s.id ? 'w-12 h-12 text-2xl scale-110 ring-2 ring-white/40' : 'w-9 h-9 text-lg hover:scale-110'
+                      } ${pinColor(s.categorySlug)}`}>
+                        {pinEmoji(s.categorySlug)}
+                      </div>
+                    </div>
+                  </OverlayView>
+                ))}
+
+                {userLocation && (
+                  <OverlayView position={userLocation} mapPaneName={OverlayView.OVERLAY_LAYER}>
+                    <div className="w-4 h-4 rounded-full bg-blue-500 border-2 border-white shadow-lg" style={{ transform: 'translate(-50%, -50%)' }} />
+                  </OverlayView>
+                )}
+              </GoogleMap>
+
+              {/* Loading / count badge */}
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+                {mapLoading ? (
+                  <div className="bg-neutral-900/80 backdrop-blur border border-neutral-700/60 px-3 py-1.5 rounded-full flex items-center gap-2">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-neutral-400" />
+                    <span className="text-xs text-neutral-400">Loading…</span>
+                  </div>
+                ) : (
+                  <div className="bg-neutral-900/80 backdrop-blur border border-neutral-700/60 text-neutral-300 text-xs font-medium px-3 py-1.5 rounded-full">
+                    {mapSessions.length === 0 ? 'No sessions nearby' : `${mapSessions.length} session${mapSessions.length !== 1 ? 's' : ''} nearby`}
+                  </div>
+                )}
+              </div>
+
+              {/* Recenter */}
+              <button
+                onClick={() => {
+                  if (!mapRef.current) return
+                  mapRef.current.panTo(userLocation ?? SINGAPORE_CENTER)
+                  mapRef.current.setZoom(12)
+                }}
+                className="absolute bottom-24 right-4 z-10 w-11 h-11 rounded-full bg-neutral-900/95 backdrop-blur border border-neutral-700 flex items-center justify-center shadow-lg"
+                aria-label="Recenter"
+              >
+                <Crosshair className="w-5 h-5 text-neutral-300" />
+              </button>
+
+              {/* Session detail sheet */}
+              <AnimatePresence>
+                {mapSelected && (
+                  <motion.div
+                    key="buddy-map-sheet"
+                    initial={{ y: '100%' }}
+                    animate={{ y: 0 }}
+                    exit={{ y: '100%' }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 40 }}
+                    className="absolute bottom-0 left-0 right-0 z-20"
+                    drag="y"
+                    dragConstraints={{ top: 0 }}
+                    dragElastic={0.1}
+                    onDragEnd={(_, info) => { if (info.offset.y > 80) setMapSelected(null) }}
+                  >
+                    <div className="bg-neutral-950 border-t border-neutral-800 rounded-t-2xl shadow-2xl">
+                      <div className="flex justify-center pt-3 pb-1">
+                        <div className="w-10 h-1 rounded-full bg-neutral-700" />
+                      </div>
+                      <div className="px-4 pb-6 pt-2">
+                        <div className="flex items-start justify-between gap-3 mb-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xl">{pinEmoji(mapSelected.categorySlug)}</span>
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${mapSelected.price === 0 ? 'bg-emerald-500/15 text-emerald-400' : 'bg-neutral-800 text-neutral-200'}`}>
+                                {mapSelected.price === 0 ? 'FREE' : `$${mapSelected.price}`}
+                              </span>
+                            </div>
+                            <Link href={`/activities/${mapSelected.id}`} className="text-base font-bold text-neutral-100 leading-snug line-clamp-2 block">
+                              {mapSelected.title}
+                            </Link>
+                          </div>
+                          <button onClick={() => setMapSelected(null)} className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center flex-shrink-0">
+                            <X className="w-4 h-4 text-neutral-400" />
+                          </button>
+                        </div>
+                        <div className="flex flex-col gap-1.5 text-sm text-neutral-400 mb-4">
+                          {mapSelected.startTime && (
+                            <div className="flex items-center gap-2">
+                              <Clock className="w-3.5 h-3.5" />
+                              {format(new Date(mapSelected.startTime), 'EEE, MMM d · h:mm a')}
+                            </div>
+                          )}
+                          <div className="flex items-center gap-2">
+                            <MapPin className="w-3.5 h-3.5" />
+                            {mapSelected.address ?? mapSelected.city}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Users className="w-3.5 h-3.5" />
+                            {mapSelected.attendeeCount} going{mapSelected.maxPeople ? ` · ${mapSelected.maxPeople - mapSelected.attendeeCount} spots left` : ''}
+                          </div>
+                        </div>
+                        <Link href={`/activities/${mapSelected.id}`} className="block w-full py-3.5 rounded-xl bg-white text-neutral-900 text-sm font-bold text-center hover:bg-neutral-100 transition-colors">
+                          {mapSelected.requiresApproval ? 'Request to join →' : "I'm going →"}
+                        </Link>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </>
+          )}
+        </div>
+      )}
+
+      <div className={tab === 'map' ? 'hidden' : ''}>
       <div className="max-w-2xl mx-auto px-4 pb-24">
         {/* Filters (happening tab only) */}
         {tab === 'happening' && (
@@ -478,6 +696,7 @@ function BuddyPageInner() {
             )}
           </div>
         )}
+      </div>
       </div>
     </div>
   )

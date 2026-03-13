@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, Loader2, MapPin, ChevronDown, CheckCircle2, Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { ACTIVITY_TYPES as ACTIVITY_TYPES_CONFIG } from '@/lib/activity-types'
+import { LocationAutocomplete } from '@/components/host/LocationAutocomplete'
 
 const ACTIVITY_TYPES = [
   ...ACTIVITY_TYPES_CONFIG.map((t) => ({ slug: t.key, label: t.label, emoji: t.emoji })),
@@ -234,8 +235,8 @@ export default function NewSessionPage() {
           imageUrl: form.imageUrl.trim() || null,
           city: form.city.trim(),
           address: form.address.trim() || null,
-          latitude: form.latitude ? Number(form.latitude) : 1.3521, // Singapore default
-          longitude: form.longitude ? Number(form.longitude) : 103.8198,
+          latitude: Number(form.latitude) || 1.3521,
+          longitude: Number(form.longitude) || 103.8198,
           startTime: startDateTime.toISOString(),
           endTime: endDateTime?.toISOString() ?? null,
           maxPeople: form.maxPeople ? Number(form.maxPeople) : null,
@@ -478,32 +479,21 @@ export default function NewSessionPage() {
             {/* Location */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                City / Area <span className="text-red-500">*</span>
+                Meeting point <span className="text-red-500">*</span>
               </label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
-                <input
-                  type="text"
-                  value={form.city}
-                  onChange={(e) => update('city', e.target.value)}
-                  placeholder="e.g. Singapore"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 pl-10 pr-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                Meeting point <span className="text-neutral-400 font-normal">(optional)</span>
-              </label>
-              <input
-                type="text"
+              <LocationAutocomplete
                 value={form.address}
-                onChange={(e) => update('address', e.target.value)}
-                placeholder="e.g. East Coast Park Area C"
-                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
-              />
-            </div>
+                onChange={(data) => {
+                  update('address', data.location)
+                  update('latitude', String(data.latitude))
+                  update('longitude', String(data.longitude))
+                  // Extract city from the place name
+                  const cityMatch = data.location.match(/Singapore|Bangkok|Kuala Lumpur|Jakarta|Manila|Ho Chi Minh/i)
+                  update('city', cityMatch ? cityMatch[0] : 'Singapore')
+                }}
+                onManualChange={(val) => update('address', val)}
+                placeholder="Search for a gym, park, or address"
+              /></div>
 
             {/* Max people */}
             <div>

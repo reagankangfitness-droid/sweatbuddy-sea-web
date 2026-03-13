@@ -332,7 +332,7 @@ export default function NewSessionPage() {
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-8 pb-48 md:pb-32">
+      <div className="max-w-lg mx-auto px-4 py-8 pb-48 md:pb-32 overflow-hidden">
         {/* Step 1: Basic Info */}
         {step === 'basic' && (
           <div className="space-y-6">
@@ -436,7 +436,7 @@ export default function NewSessionPage() {
             </div>
 
             {/* Date */}
-            <div>
+            <div className="overflow-hidden">
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                 Date <span className="text-red-500">*</span>
               </label>
@@ -445,13 +445,13 @@ export default function NewSessionPage() {
                 value={form.startDate}
                 onChange={(e) => update('startDate', e.target.value)}
                 min={new Date().toISOString().split('T')[0]}
-                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                className="w-full min-w-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white box-border"
               />
             </div>
 
             {/* Time */}
             <div className="grid grid-cols-2 gap-3">
-              <div>
+              <div className="overflow-hidden">
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                   Start time <span className="text-red-500">*</span>
                 </label>
@@ -459,10 +459,10 @@ export default function NewSessionPage() {
                   type="time"
                   value={form.startTime}
                   onChange={(e) => update('startTime', e.target.value)}
-                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                  className="w-full min-w-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white box-border"
                 />
               </div>
-              <div>
+              <div className="overflow-hidden">
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                   End time <span className="text-neutral-400 font-normal">(optional)</span>
                 </label>
@@ -470,7 +470,7 @@ export default function NewSessionPage() {
                   type="time"
                   value={form.endTime}
                   onChange={(e) => update('endTime', e.target.value)}
-                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                  className="w-full min-w-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white box-border"
                 />
               </div>
             </div>

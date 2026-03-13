@@ -50,7 +50,7 @@ export default function BecomeAHostPage() {
       {/* ── Left: Hero image ── */}
       <div className="relative lg:w-1/2 h-64 lg:h-screen lg:sticky lg:top-0 overflow-hidden">
         <Image
-          src="/images/hero/pilates.jpg"
+          src="/images/hero-2.jpg"
           alt="Pilates session"
           fill
           className="object-cover object-center"

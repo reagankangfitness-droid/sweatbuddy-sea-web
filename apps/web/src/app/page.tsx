@@ -154,7 +154,7 @@ export default async function HomePage() {
             </Link>
             <Link
               href="/sign-up"
-              className="px-4 py-2 bg-white text-neutral-900 text-sm font-semibold rounded-xl hover:bg-neutral-100 transition-colors"
+              className="px-4 py-3 bg-white text-neutral-900 text-sm font-semibold rounded-xl hover:bg-neutral-100 transition-colors"
             >
               Join
             </Link>
@@ -269,7 +269,7 @@ export default async function HomePage() {
               <h2 className="text-lg font-semibold text-neutral-100">Happening soon</h2>
               <p className="text-sm text-neutral-500">Browse without an account.</p>
             </div>
-            <Link href="/browse" className="text-sm text-neutral-400 hover:text-white transition-colors">
+            <Link href="/browse" className="text-sm text-neutral-400 hover:text-white transition-colors py-2 -my-2 px-1">
               See all →
             </Link>
           </div>
@@ -355,7 +355,7 @@ export default async function HomePage() {
             <div className="mt-6 text-center">
               <Link
                 href="/sign-up"
-                className="inline-block px-6 py-2.5 bg-white text-neutral-900 text-sm font-semibold rounded-xl hover:bg-neutral-100 transition-colors"
+                className="inline-block px-6 py-3 bg-white text-neutral-900 text-sm font-semibold rounded-xl hover:bg-neutral-100 transition-colors"
               >
                 Join to RSVP →
               </Link>
@@ -525,9 +525,9 @@ export default async function HomePage() {
             <span>© 2026 SweatBuddies</span>
           </div>
           <div className="flex gap-3 sm:gap-6">
-            <Link href="/browse" className="hover:text-neutral-300 transition-colors">Browse sessions</Link>
-            <Link href="/sign-up" className="hover:text-neutral-300 transition-colors">Sign up</Link>
-            <a href="mailto:support@sweatbuddies.sg" className="hover:text-neutral-300 transition-colors">Contact</a>
+            <Link href="/browse" className="hover:text-neutral-300 transition-colors py-2 -my-2">Browse sessions</Link>
+            <Link href="/sign-up" className="hover:text-neutral-300 transition-colors py-2 -my-2">Sign up</Link>
+            <a href="mailto:support@sweatbuddies.sg" className="hover:text-neutral-300 transition-colors py-2 -my-2">Contact</a>
           </div>
         </div>
       </footer>

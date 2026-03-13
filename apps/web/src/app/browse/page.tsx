@@ -89,19 +89,19 @@ export default async function BrowsePage({ searchParams }: PageProps) {
       {/* Nav */}
       <header className="sticky top-0 z-30 bg-neutral-950/95 backdrop-blur border-b border-neutral-800">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <Link href="/">
+          <Link href="/" className="flex items-center h-11">
             <Logo size={28} />
           </Link>
           <div className="flex items-center gap-2">
             <Link
               href="/sign-in"
-              className="px-4 py-2 text-sm font-medium text-neutral-300 hover:text-white transition-colors"
+              className="px-4 py-3 text-sm font-medium text-neutral-300 hover:text-white transition-colors"
             >
               Log in
             </Link>
             <Link
               href="/sign-up"
-              className="px-4 py-2 bg-white text-neutral-900 text-sm font-semibold rounded-xl hover:bg-neutral-100 transition-colors"
+              className="px-4 py-3 bg-white text-neutral-900 text-sm font-semibold rounded-xl hover:bg-neutral-100 transition-colors"
             >
               Sign up free
             </Link>

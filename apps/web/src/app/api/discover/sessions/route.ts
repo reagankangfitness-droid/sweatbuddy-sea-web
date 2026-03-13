@@ -9,6 +9,8 @@ export async function GET(request: Request) {
     const category = searchParams.get('category') || ''
 
     const now = new Date()
+    const windowStart = new Date(now.getTime() - 60 * 60 * 1000)       // -1 hour (session in progress)
+    const windowEnd   = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000) // +30 days
 
     const activities = await prisma.activity.findMany({
       where: {
@@ -18,8 +20,8 @@ export async function GET(request: Request) {
         latitude: { not: 0 },
         longitude: { not: 0 },
         OR: [
-          { startTime: null },
-          { startTime: { gte: now } },
+          { startTime: null },                                           // recurring — always show
+          { startTime: { gte: windowStart, lte: windowEnd } },          // within 30-day window
         ],
         ...(category ? { categorySlug: category } : {}),
       },

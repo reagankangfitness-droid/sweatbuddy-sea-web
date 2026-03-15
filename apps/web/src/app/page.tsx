@@ -19,12 +19,12 @@ const ACTIVITY_EMOJIS: Record<string, string> = Object.fromEntries(
 )
 
 const COMMUNITY_PHOTOS = [
-  { src: '/images/hosts/singapore-frontrunners.jpg', caption: 'Singapore Frontrunners' },
-  { src: '/images/hosts/run-alone-run-club.jpg', caption: 'Run Alone Run Club' },
-  { src: '/images/hosts/sunday-service.jpg', caption: 'Sunday Service' },
-  { src: '/images/hosts/slowflo-rc.jpg', caption: 'SlowFlo RC' },
-  { src: '/images/hosts/caliversity.jpg', caption: 'Caliversity' },
-  { src: '/images/community-bonds.jpg', caption: 'SweatBuddies Community' },
+  { src: '/images/community-bonds.jpg', caption: 'Pickleball Crew' },
+  { src: '/banner/running.jpg', caption: 'Run Club' },
+  { src: '/banner/athletics.jpg', caption: 'Beach Fitness' },
+  { src: '/images/hero-2.jpg', caption: 'Yoga in the Park' },
+  { src: '/images/hero-3.jpg', caption: 'Cold Plunge Crew' },
+  { src: '/banner/run-club.jpg', caption: 'Running Together' },
 ]
 
 function formatSessionTime(date: Date): string {

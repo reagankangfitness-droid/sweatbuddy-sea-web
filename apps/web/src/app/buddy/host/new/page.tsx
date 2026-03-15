@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, MapPin, ChevronDown, CheckCircle2, Upload, X } from 'lucide-react'
+import { ArrowLeft, Loader2, MapPin, ChevronDown, CheckCircle2, Upload, X, ImagePlus } from 'lucide-react'
 import { toast } from 'sonner'
 import { ACTIVITY_TYPES as ACTIVITY_TYPES_CONFIG } from '@/lib/activity-types'
 import { LocationAutocomplete } from '@/components/host/LocationAutocomplete'
+import { useUploadThing } from '@/lib/uploadthing'
 
 const ACTIVITY_TYPES = [
   ...ACTIVITY_TYPES_CONFIG.map((t) => ({ slug: t.key, label: t.label, emoji: t.emoji })),
@@ -80,6 +81,10 @@ export default function NewSessionPage() {
   const [qrPreviewUrl, setQrPreviewUrl] = useState<string | null>(null)
   const [qrFile, setQrFile] = useState<File | null>(null)
   const qrInputRef = useRef<HTMLInputElement>(null)
+  const [coverUploading, setCoverUploading] = useState(false)
+  const coverInputRef = useRef<HTMLInputElement>(null)
+
+  const { startUpload } = useUploadThing('activityImage')
 
   // Restore draft from localStorage on mount
   useEffect(() => {
@@ -403,28 +408,76 @@ export default function NewSessionPage() {
               <p className="mt-1 text-xs text-right text-neutral-400">{form.description.length}/500</p>
             </div>
 
-            {/* Cover image */}
+            {/* Cover image upload */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                Cover image URL <span className="text-neutral-400 font-normal">(optional)</span>
+                Cover image <span className="text-neutral-400 font-normal">(optional)</span>
               </label>
-              <input
-                type="url"
-                value={form.imageUrl}
-                onChange={(e) => update('imageUrl', e.target.value)}
-                placeholder="https://..."
-                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
-              />
-              {form.imageUrl && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={form.imageUrl}
-                  alt="Preview"
-                  className="mt-2 w-full h-32 object-cover rounded-xl border border-neutral-200 dark:border-neutral-700"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                  onLoad={(e) => { (e.target as HTMLImageElement).style.display = 'block' }}
-                />
+              {form.imageUrl ? (
+                <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={form.imageUrl}
+                    alt="Cover preview"
+                    className="w-full h-40 object-cover rounded-xl border border-neutral-200 dark:border-neutral-700"
+                  />
+                  <button
+                    type="button"
+                    aria-label="Remove cover image"
+                    onClick={() => update('imageUrl', '')}
+                    className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white hover:bg-black/80 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  disabled={coverUploading}
+                  onClick={() => coverInputRef.current?.click()}
+                  className="w-full h-32 rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800/50 flex flex-col items-center justify-center gap-2 text-neutral-500 dark:text-neutral-400 hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors active:scale-[0.98]"
+                >
+                  {coverUploading ? (
+                    <>
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                      <span className="text-sm">Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ImagePlus className="w-6 h-6" />
+                      <span className="text-sm font-medium">Tap to upload photo</span>
+                      <span className="text-xs text-neutral-400">JPG, PNG up to 8MB</span>
+                    </>
+                  )}
+                </button>
               )}
+              <input
+                ref={coverInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0]
+                  if (!file) return
+                  if (file.size > 8 * 1024 * 1024) {
+                    toast.error('Image must be under 8MB')
+                    return
+                  }
+                  setCoverUploading(true)
+                  try {
+                    const res = await startUpload([file])
+                    if (res?.[0]?.url) {
+                      update('imageUrl', res[0].url)
+                      toast.success('Cover image uploaded')
+                    }
+                  } catch {
+                    toast.error('Failed to upload image')
+                  } finally {
+                    setCoverUploading(false)
+                    if (coverInputRef.current) coverInputRef.current.value = ''
+                  }
+                }}
+              />
             </div>
           </div>
         )}

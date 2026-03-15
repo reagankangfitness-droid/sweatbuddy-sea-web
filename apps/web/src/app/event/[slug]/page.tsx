@@ -214,7 +214,7 @@ export default async function EventPage({ params }: PageProps) {
     location: {
       '@type': 'Place',
       name: event.location,
-      address: { '@type': 'PostalAddress', addressLocality: 'Singapore', addressCountry: 'SG' },
+      address: { '@type': 'PostalAddress', addressLocality: `${event.location || 'Singapore'}`, addressCountry: `${event.location?.toLowerCase().includes('bangkok') ? 'TH' : 'SG'}` },
     },
     organizer: {
       '@type': 'Organization',

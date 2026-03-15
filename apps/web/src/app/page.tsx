@@ -10,8 +10,8 @@ import { SUPPORT_EMAIL } from '@/config/constants'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'SweatBuddies — Fitness Sessions Posted by Real People',
-  description: 'Browse and join fitness sessions posted by people near you. Runs, yoga, gym, hikes and more.',
+  title: 'SweatBuddies — Group Fitness Sessions Posted by Real People',
+  description: 'Find and join group workouts near you — runs, yoga, gym sessions, hikes and more. Free and paid sessions posted by real people.',
 }
 
 const ACTIVITY_EMOJIS: Record<string, string> = Object.fromEntries(
@@ -117,6 +117,11 @@ export default async function HomePage() {
       return b.count - a.count
     })
 
+  // Threshold checks — only show numbers when impressive
+  const showMemberCount = totalMembers >= 500
+  const showSessionCount = sessionsThisWeek >= 15
+  const showNewMembers = newMembersThisWeek >= 20
+
   // Ticker items from real joins
   const tickerItems: string[] = recentJoins
     .filter((j) => j.user.name)
@@ -127,10 +132,9 @@ export default async function HomePage() {
     })
 
   if (tickerItems.length < 4) {
-    if (sessionsThisWeek > 0) tickerItems.push(`${sessionsThisWeek} sessions this week`)
-    if (newMembersThisWeek > 0) tickerItems.push(`${newMembersThisWeek} new members this week`)
-    tickerItems.push('Running · Yoga · Gym · Hiking · More')
     tickerItems.push('New sessions added daily')
+    tickerItems.push('Free to browse and join')
+    tickerItems.push('Running · Yoga · Gym · Hiking · More')
   }
 
   return (
@@ -145,7 +149,7 @@ export default async function HomePage() {
               href="/browse"
               className="hidden sm:inline px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors"
             >
-              {sessionsThisWeek > 0 ? `${sessionsThisWeek} sessions this week` : 'Browse sessions'}
+              {showSessionCount ? `${sessionsThisWeek} sessions this week` : 'Browse sessions'}
             </Link>
             <Link
               href="/sign-in"
@@ -194,16 +198,14 @@ export default async function HomePage() {
           </p>
 
           <h1 className="text-4xl sm:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-            Friends don&apos;t let friends
-            <span className="block text-neutral-400">workout alone.</span>
+            Show up. Sweat.
+            <span className="block text-neutral-400">Make friends.</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-neutral-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            {sessionsThisWeek > 0
+            {showSessionCount
               ? `${sessionsThisWeek} session${sessionsThisWeek !== 1 ? 's' : ''} happening this week — posted by people near you.`
-              : totalMembers > 0
-              ? `${totalMembers} members posting and joining sessions near you.`
-              : 'Browse runs, yoga, gym sessions, hikes and more — posted by people near you.'}
+              : 'Real sessions posted by real people near you — runs, yoga, gym, hikes, and more.'}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -221,27 +223,29 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          {/* Social proof */}
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-neutral-500">
-            {sessionsThisWeek > 0 && (
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-500" />
-                <span><strong className="text-neutral-200">{sessionsThisWeek}</strong> session{sessionsThisWeek !== 1 ? 's' : ''} this week</span>
-              </div>
-            )}
-            {totalMembers > 0 && (
-              <div className="flex items-center gap-2">
-                <span>👥</span>
-                <span><strong className="text-neutral-200">{totalMembers}</strong> member{totalMembers !== 1 ? 's' : ''}</span>
-              </div>
-            )}
-            {newMembersThisWeek > 0 && (
-              <div className="flex items-center gap-2">
-                <span>📈</span>
-                <span><strong className="text-neutral-200">{newMembersThisWeek}</strong> joined this week</span>
-              </div>
-            )}
-          </div>
+          {/* Social proof — only show when numbers are impressive */}
+          {(showSessionCount || showMemberCount || showNewMembers) && (
+            <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-neutral-500">
+              {showSessionCount && (
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-500" />
+                  <span><strong className="text-neutral-200">{sessionsThisWeek}</strong> session{sessionsThisWeek !== 1 ? 's' : ''} this week</span>
+                </div>
+              )}
+              {showMemberCount && (
+                <div className="flex items-center gap-2">
+                  <span>👥</span>
+                  <span><strong className="text-neutral-200">{totalMembers}</strong> member{totalMembers !== 1 ? 's' : ''}</span>
+                </div>
+              )}
+              {showNewMembers && (
+                <div className="flex items-center gap-2">
+                  <span>📈</span>
+                  <span><strong className="text-neutral-200">{newMembersThisWeek}</strong> joined this week</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Hero photo grid */}
@@ -322,9 +326,9 @@ export default async function HomePage() {
             /* Empty state — show what a session looks like */
             <div className="grid sm:grid-cols-3 gap-3">
               {[
-                { emoji: '🏃', title: 'Morning Run — East Coast Park', time: 'Sat 7:00 AM', location: 'East Coast Park' },
-                { emoji: '🧘', title: 'Yoga in the Park', time: 'Sun 8:00 AM', location: 'Botanic Gardens' },
-                { emoji: '🏋️', title: 'Gym Session — Push Day', time: 'Mon 6:30 PM', location: 'Tanjong Pagar' },
+                { emoji: '🏃', title: 'Morning Run — Waterfront Park', time: 'Sat 7:00 AM', location: 'Waterfront Park' },
+                { emoji: '🧘', title: 'Yoga in the Park', time: 'Sun 8:00 AM', location: 'City Park' },
+                { emoji: '🏋️', title: 'Gym Session — Push Day', time: 'Mon 6:30 PM', location: 'City Centre' },
               ].map((example, i) => (
                 <div
                   key={i}
@@ -436,7 +440,7 @@ export default async function HomePage() {
               {
                 step: '02',
                 title: 'One tap to join',
-                body: 'No forms. No awkward intro emails. Tap join, show up at the meeting point. That\u2019s it.',
+                body: 'No forms. No awkward intros. Tap join, show up at the meeting point. That\u2019s it.',
               },
               {
                 step: '03',
@@ -494,7 +498,7 @@ export default async function HomePage() {
       <section className="py-24 px-4 sm:px-6">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl sm:text-5xl font-bold mb-4 leading-tight">
-            {totalMembers > 0
+            {showMemberCount
               ? `${totalMembers} people already posting and joining sessions.`
               : 'Real people posting sessions near you.'}
           </h2>

@@ -8,10 +8,10 @@ export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Communities | SweatBuddies',
-  description: 'Join fitness communities in Singapore and Bangkok. Find your tribe, attend events, and connect with like-minded people.',
+  description: 'Join fitness communities near you. Find your crew, attend sessions, and connect with like-minded people.',
   openGraph: {
     title: 'Communities | SweatBuddies',
-    description: 'Join fitness communities in Singapore and Bangkok. Find your tribe.',
+    description: 'Join fitness communities near you. Find your crew, attend sessions, and connect with like-minded people.',
     url: 'https://www.sweatbuddies.co/communities',
   },
 }

@@ -432,7 +432,7 @@ function BookingSuccessContent() {
           <div className="mt-6 p-4 bg-primary/5 rounded-xl">
             <p className="text-sm font-medium text-foreground mb-1">Quick tip</p>
             <p className="text-sm text-muted-foreground">
-              Say hi in the group chat! It&apos;s a great way to connect with others before the workout.
+              Say hi in the group chat — it&apos;s a great way to meet your crew before the session.
             </p>
           </div>
         </div>

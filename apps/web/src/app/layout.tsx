@@ -34,11 +34,11 @@ const BASE_URL = 'https://www.sweatbuddies.co'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'SweatBuddies | Find Fitness Buddies in Singapore',
+    default: 'SweatBuddies | Find Workout Buddies & Group Fitness Near You',
     template: '%s | SweatBuddies',
   },
-  description: 'Stop working out alone. Find free P2P fitness sessions and workout buddies in Singapore — running, gym, yoga, hiking and more.',
-  keywords: ['fitness buddies', 'workout partners', 'Singapore', 'run club', 'yoga', 'bootcamp', 'P2P fitness', 'community workout', 'HIIT', 'group fitness', 'free sessions'],
+  description: 'Find group workouts, run clubs, and fitness sessions near you. Browse free and paid sessions posted by real people — running, yoga, gym, hiking and more.',
+  keywords: ['workout buddy', 'group fitness', 'fitness events', 'run club', 'social fitness', 'workout partner', 'fitness meetup', 'group workouts near me', 'gym buddy', 'fitness community', 'workout accountability', 'free fitness events'],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
   icons: {
@@ -48,11 +48,11 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   openGraph: {
     type: 'website',
-    locale: 'en_SG',
+    locale: 'en',
     url: BASE_URL,
     siteName: 'SweatBuddies',
-    title: 'SweatBuddies | Find Fitness Buddies in Singapore',
-    description: 'Stop working out alone. Find free P2P fitness sessions and workout buddies in Singapore.',
+    title: 'SweatBuddies | Find Workout Buddies & Group Fitness Near You',
+    description: 'Find group workouts, run clubs, and fitness sessions near you. Browse free and paid sessions posted by real people — running, yoga, gym, hiking and more.',
     images: [
       {
         url: '/images/og-image.jpg',
@@ -64,8 +64,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SweatBuddies | Find Fitness Buddies in Singapore',
-    description: 'Stop working out alone. Find free P2P fitness sessions and workout buddies in Singapore.',
+    title: 'SweatBuddies | Find Workout Buddies & Group Fitness Near You',
+    description: 'Find group workouts, run clubs, and fitness sessions near you. Browse free and paid sessions posted by real people — running, yoga, gym, hiking and more.',
     images: ['/images/og-image.jpg'],
   },
   robots: {

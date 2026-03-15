@@ -123,10 +123,10 @@ export default function P2POnboardingPage() {
         <div className="text-center mb-10">
           <div className="text-4xl mb-3">🤝</div>
           <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
-            Set up your buddy profile
+            Tell us what you&apos;re into
           </h1>
           <p className="mt-2 text-neutral-500 dark:text-neutral-400 text-sm">
-            Takes 60 seconds. Help others know who they&apos;re working out with.
+            Takes 60 seconds. Help your crew know who they&apos;re working out with.
           </p>
         </div>
 
@@ -242,7 +242,7 @@ export default function P2POnboardingPage() {
                 Setting up...
               </>
             ) : (
-              'Find my workout buddies →'
+              'I\'m ready →'
             )}
           </button>
         </form>

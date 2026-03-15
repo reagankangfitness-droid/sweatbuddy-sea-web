@@ -13,21 +13,21 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
   if (category) {
     return {
-      title: `${category.emoji} ${category.name} Events in Singapore`,
+      title: `${category.emoji} ${category.name} Events Near You | SweatBuddies`,
       description: `Find ${category.name.toLowerCase()} events near you. ${category.description}. Browse upcoming sessions and join the community on SweatBuddies.`,
       openGraph: {
         title: `${category.name} Events | SweatBuddies`,
-        description: `Discover ${category.name.toLowerCase()} events in Singapore. ${category.description}`,
+        description: `Discover ${category.name.toLowerCase()} events near you. ${category.description}`,
       },
     }
   }
 
   return {
-    title: 'Events | SweatBuddies',
-    description: 'Discover fitness events near you — running clubs, yoga sessions, HIIT workouts, and more. Browse upcoming events and join the SweatBuddies community.',
+    title: 'Fitness Events Near You | SweatBuddies',
+    description: 'Discover fitness events near you — run clubs, yoga sessions, HIIT workouts, and more. Browse upcoming sessions and join the community.',
     openGraph: {
-      title: 'Events | SweatBuddies',
-      description: 'Discover fitness events near you — running clubs, yoga, HIIT, and more.',
+      title: 'Fitness Events Near You | SweatBuddies',
+      description: 'Discover fitness events near you — run clubs, yoga sessions, HIIT workouts, and more. Browse upcoming sessions and join the community.',
     },
   }
 }

@@ -131,7 +131,7 @@ export default function ProfilePage() {
             </div>
             <h2 className="text-2xl font-bold text-neutral-100 mb-2">Join SweatBuddies</h2>
             <p className="text-neutral-400 mb-8 max-w-xs mx-auto">
-              Sign in to track your fitness journey and connect with your workout crew.
+              Sign in to find sessions, join your crew, and keep track of your workouts.
             </p>
 
             <SignInButton mode="modal">

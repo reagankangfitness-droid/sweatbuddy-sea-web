@@ -344,7 +344,7 @@ function BuddyPageInner() {
       <div className="sticky top-0 z-10 bg-white/90 dark:bg-neutral-950/90 backdrop-blur border-b border-neutral-100 dark:border-neutral-800">
         <div className="max-w-2xl mx-auto px-4 py-4">
           <h1 className="text-lg font-bold text-neutral-900 dark:text-white">Sessions</h1>
-          <p className="text-xs text-neutral-500">Find your next workout crew</p>
+          <p className="text-xs text-neutral-500">See who&apos;s working out near you</p>
         </div>
 
         {/* Tabs */}
@@ -582,8 +582,8 @@ function BuddyPageInner() {
             {sessions.length === 0 ? (
               <div className="text-center py-20">
                 <div className="text-5xl mb-4">🏋️</div>
-                <p className="text-neutral-500 font-medium">No sessions yet</p>
-                <p className="text-neutral-400 text-sm mt-1">Start the community — host the first one.</p>
+                <p className="text-neutral-500 font-medium">Nothing happening yet.</p>
+                <p className="text-neutral-400 text-sm mt-1">Be the first to post a session.</p>
                 <Link
                   href="/buddy/host/new"
                   className="inline-flex items-center gap-2 mt-6 rounded-xl bg-black dark:bg-white px-5 py-3 text-sm font-semibold text-white dark:text-black"
@@ -682,8 +682,8 @@ function BuddyPageInner() {
             {hosting.length === 0 && attending.length === 0 && (
               <div className="text-center py-20">
                 <div className="text-5xl mb-4">👀</div>
-                <p className="text-neutral-500 font-medium">No sessions yet</p>
-                <p className="text-neutral-400 text-sm mt-1">Host or join one to get started</p>
+                <p className="text-neutral-500 font-medium">Your calendar&apos;s wide open.</p>
+                <p className="text-neutral-400 text-sm mt-1">Find something nearby.</p>
                 <div className="flex gap-3 justify-center mt-6">
                   <Link
                     href="/buddy/host/new"

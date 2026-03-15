@@ -37,7 +37,7 @@ function getWelcomeEmailHtml(name: string | null): string {
               </p>
 
               <p style="margin: 0 0 20px; color: #374151; font-size: 16px; line-height: 1.6;">
-                You're now part of Southeast Asia's fitness community. Here's what you can do:
+                You're now part of a fitness community built for real people. Here's what you can do:
               </p>
 
               <ul style="margin: 0 0 24px; padding-left: 20px; color: #374151; font-size: 16px; line-height: 1.8;">

@@ -252,7 +252,7 @@ export default async function HomePage() {
         <div className="mt-16 max-w-3xl mx-auto">
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
             {[
-              { src: '/images/run-club.jpg', alt: 'Run club' },
+              { src: '/banner/run-club.jpg', alt: 'Run club' },
               { src: '/banner/running.jpg', alt: 'Running session' },
               { src: '/banner/ice-bath.webp', alt: 'Ice bath session' },
             ].map((img) => (

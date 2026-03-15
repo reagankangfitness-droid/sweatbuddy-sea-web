@@ -530,7 +530,7 @@ function BuddyPageInner() {
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
               aria-label="Filter by activity type"
-              className="shrink-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-xs text-neutral-700 dark:text-neutral-300 focus:outline-none"
+              className="shrink-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-2.5 text-xs text-neutral-700 dark:text-neutral-300 focus:outline-none"
             >
               {TYPE_FILTERS.map((f) => (
                 <option key={f.value} value={f.value}>
@@ -543,7 +543,7 @@ function BuddyPageInner() {
               value={fitnessFilter}
               onChange={(e) => setFitnessFilter(e.target.value)}
               aria-label="Filter by fitness level"
-              className="shrink-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-xs text-neutral-700 dark:text-neutral-300 focus:outline-none"
+              className="shrink-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-2.5 text-xs text-neutral-700 dark:text-neutral-300 focus:outline-none"
             >
               {FITNESS_FILTERS.map((f) => (
                 <option key={f.value} value={f.value}>
@@ -560,7 +560,7 @@ function BuddyPageInner() {
               <button
                 key={f.value}
                 onClick={() => setPricingFilter(f.value)}
-                className={`shrink-0 rounded-xl border px-3 py-2 text-xs font-medium transition-colors ${
+                className={`shrink-0 rounded-xl border px-4 py-2.5 text-xs font-medium transition-colors ${
                   pricingFilter === f.value
                     ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
                     : 'border-neutral-200 text-neutral-600 hover:border-neutral-400 dark:border-neutral-700 dark:text-neutral-400'

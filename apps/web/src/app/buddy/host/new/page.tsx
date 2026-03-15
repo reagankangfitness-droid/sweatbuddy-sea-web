@@ -597,7 +597,7 @@ export default function NewSessionPage() {
                       value={form.currency}
                       onChange={(e) => update('currency', e.target.value)}
                       aria-label="Currency"
-                      className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none"
+                      className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-base text-neutral-900 dark:text-white focus:outline-none min-w-[80px]"
                     >
                       {['SGD', 'USD', 'MYR', 'AUD', 'GBP', 'EUR'].map((c) => (
                         <option key={c}>{c}</option>

@@ -103,6 +103,7 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
     handleWaitlistChange,
     checkJoinStatus,
     setHasJoined,
+    joinButtonText,
   } = useActivityJoin(params.id, user?.id ?? null, {
     activityMode: activity?.activityMode,
     userActivities: activity?.userActivities,
@@ -594,7 +595,7 @@ Organized via sweatbuddies
                   <div className="space-y-2 sm:space-y-3">
                     <div className="flex gap-2 sm:gap-3">
                       <Link href={`/activities/${activity.id}/edit`} className="flex-1">
-                        <Button size="sm" className="w-full h-10 sm:h-9 text-xs sm:text-sm">
+                        <Button size="sm" className="w-full h-11 sm:h-10 text-xs sm:text-sm">
                           Edit
                         </Button>
                       </Link>
@@ -602,7 +603,7 @@ Organized via sweatbuddies
                         size="sm"
                         onClick={() => setIsGroupChatOpen(true)}
                         variant="default"
-                        className="flex-1 h-10 sm:h-9 text-xs sm:text-sm"
+                        className="flex-1 h-11 sm:h-10 text-xs sm:text-sm"
                       >
                         <Users className="w-4 h-4 sm:mr-2" />
                         <span className="hidden sm:inline">Group Chat</span>
@@ -638,7 +639,7 @@ Organized via sweatbuddies
                         size="sm"
                         onClick={() => setIsGroupChatOpen(true)}
                         variant="default"
-                        className="flex-1 h-10 sm:h-9 text-xs sm:text-sm"
+                        className="flex-1 h-11 sm:h-10 text-xs sm:text-sm"
                       >
                         <Users className="w-4 h-4 sm:mr-2" />
                         <span className="hidden sm:inline">Group Chat</span>
@@ -648,7 +649,7 @@ Organized via sweatbuddies
                         size="sm"
                         onClick={() => setIsMessagingOpen(true)}
                         variant="outline"
-                        className="flex-1 h-10 sm:h-9 text-xs sm:text-sm"
+                        className="flex-1 h-11 sm:h-10 text-xs sm:text-sm"
                       >
                         <MessageCircle className="w-4 h-4 sm:mr-2" />
                         <span className="hidden sm:inline">Message Host</span>
@@ -669,7 +670,7 @@ Organized via sweatbuddies
                         size="sm"
                         onClick={handleAddToGoogleCalendar}
                         variant="outline"
-                        className="flex-1 h-10 sm:h-9 text-xs sm:text-sm"
+                        className="flex-1 h-11 sm:h-10 text-xs sm:text-sm"
                       >
                         <Calendar className="w-4 h-4 sm:mr-2" />
                         <span className="hidden sm:inline">Add to Calendar</span>
@@ -759,12 +760,7 @@ Organized via sweatbuddies
                         disabled={isJoining}
                         className="flex-1 h-12 sm:h-11 text-sm sm:text-base touch-manipulation"
                       >
-                        {isJoining
-                          ? 'Processing...'
-                          : activity.price > 0
-                            ? `Pay ${activity.currency} ${(activity.price / 100).toFixed(2)} & Join`
-                            : 'Join Activity'
-                        }
+                        {isJoining ? 'Processing...' : joinButtonText}
                       </Button>
                     </div>
                   </div>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
+import { checkApiRateLimit } from '@/lib/rate-limit'
 
 // SECURITY: Admin password MUST be set via environment variable
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
@@ -55,6 +56,9 @@ function verifyToken(token: string): boolean {
 // POST: Login with password
 export async function POST(request: NextRequest) {
   try {
+    const rateLimited = await checkApiRateLimit(request, 'auth')
+    if (rateLimited) return rateLimited
+
     // SECURITY: Fail if admin password not configured
     if (!ADMIN_PASSWORD || !SECRET_KEY) {
       console.error('Admin auth not configured')
@@ -64,7 +68,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { password } = body
 
-    if (password !== ADMIN_PASSWORD) {
+    // SECURITY: Use timing-safe comparison to prevent timing attacks
+    const passwordBuffer = Buffer.from(password)
+    const adminPasswordBuffer = Buffer.from(ADMIN_PASSWORD)
+    if (
+      passwordBuffer.length !== adminPasswordBuffer.length ||
+      !crypto.timingSafeEqual(passwordBuffer, adminPasswordBuffer)
+    ) {
       return NextResponse.json({ error: 'Invalid password' }, { status: 401 })
     }
 
@@ -74,9 +84,9 @@ export async function POST(request: NextRequest) {
     response.cookies.set(COOKIE_NAME, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'strict',
       maxAge: 24 * 60 * 60, // 24 hours
-      path: '/',
+      path: '/admin',
     })
 
     return response
@@ -88,7 +98,13 @@ export async function POST(request: NextRequest) {
 // DELETE: Logout
 export async function DELETE() {
   const response = NextResponse.json({ success: true })
-  response.cookies.delete(COOKIE_NAME)
+  response.cookies.set(COOKIE_NAME, '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 0,
+    path: '/admin',
+  })
   return response
 }
 

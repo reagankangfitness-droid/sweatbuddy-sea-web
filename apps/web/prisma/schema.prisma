@@ -177,6 +177,13 @@ model User {
   p2pOnboardingCompleted   Boolean  @default(false)
   p2pStripeConnectId       String?  // Direct Stripe Connect account ID for P2P hosting
 
+  // Host tier & reliability
+  hostTier               HostTier  @default(NEW)
+  hostTierUpdatedAt      DateTime?
+  reliabilityScore       Float     @default(100)
+  noShowCount            Int       @default(0)
+  lateCancellationCount  Int       @default(0)
+
   activities              Activity[]              @relation("CreatedActivities")
   hostedActivities        Activity[]              @relation("HostedActivities")
   groups                  UserGroup[]
@@ -252,6 +259,13 @@ model User {
   sessionComments   SessionComment[]   @relation("SessionCommentAuthor")
   p2pReportsMade    P2PReport[]        @relation("P2PReportsMade")
 
+  // Crew relations
+  crewsCreated    Crew[]         @relation("CrewsCreated")
+  crewMemberships CrewMember[]   @relation("CrewMemberships")
+
+  // Badge relations
+  earnedBadges EarnedBadge[] @relation("EarnedBadges")
+
   @@index([slug])
   @@index([username])
   @@index([isHost])
@@ -300,6 +314,13 @@ model Activity {
   paynowQrImageUrl  String?
   paynowPhoneNumber String?
   paynowName        String?
+
+  // Deposit & recurring settings
+  requiresDeposit Boolean @default(false)
+  depositAmount   Int?    // in cents (e.g., 500 = $5.00 SGD)
+  isRecurring     Boolean @default(false)
+  recurrenceDay   String? // e.g., 'MONDAY', 'TUESDAY'
+  recurrenceEndDate DateTime?
 
   // Community link (optional - activity can belong to a community)
   communityId String?
@@ -437,6 +458,17 @@ model UserActivity {
   refundAmount            Int?
 
   goingSolo Boolean @default(false)
+
+  // Deposit tracking
+  depositAmount         Int?           // in cents
+  depositStatus         DepositStatus?
+  depositRefundedAt     DateTime?
+
+  // Attendance tracking
+  checkedIn             Boolean   @default(false)
+  checkedInAt           DateTime?
+  reconfirmationSentAt  DateTime?
+  reconfirmedAt         DateTime?
 
   // P2P payment tracking fields
   p2pPaymentStatus           String?   // 'PENDING' | 'VERIFIED' | 'REJECTED'
@@ -2417,6 +2449,19 @@ enum UserAccountStatus {
   BANNED
 }
 
+enum HostTier {
+  NEW
+  COMMUNITY
+  VERIFIED
+  ANCHOR
+}
+
+enum DepositStatus {
+  HELD
+  REFUNDED
+  FORFEITED
+}
+
 // User reports for trust & safety
 model UserReport {
   id             String       @id @default(cuid())
@@ -2942,5 +2987,98 @@ model HostLead {
 
   @@index([createdAt])
   @@map("host_leads")
+}
+
+// =====================================================
+// CREWS (Persistent Fitness Groups)
+// =====================================================
+
+model Crew {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  imageUrl    String?
+  activityType String? // e.g., 'running', 'yoga', 'hiking'
+  maxMembers  Int      @default(8)
+  isActive    Boolean  @default(true)
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy   User         @relation("CrewsCreated", fields: [createdById], references: [id], onDelete: Cascade)
+  members     CrewMember[]
+
+  @@index([createdById])
+  @@index([activityType])
+  @@index([isActive])
+  @@map("crews")
+}
+
+model CrewMember {
+  id        String   @id @default(cuid())
+  crewId    String
+  userId    String
+  role      String   @default("MEMBER") // 'LEADER' | 'MEMBER'
+  joinedAt  DateTime @default(now())
+
+  crew User @relation("CrewMemberships", fields: [userId], references: [id], onDelete: Cascade)
+  crewRef Crew @relation(fields: [crewId], references: [id], onDelete: Cascade)
+
+  @@unique([crewId, userId])
+  @@index([crewId])
+  @@index([userId])
+  @@map("crew_members")
+}
+
+// =====================================================
+// BADGES (Milestone Achievements)
+// =====================================================
+
+model Badge {
+  id          String   @id @default(cuid())
+  slug        String   @unique // e.g., 'first-sweat', 'regular', 'anchor'
+  name        String   // e.g., 'First Sweat', 'Regular', 'Anchor'
+  description String
+  emoji       String   // e.g., '🏃', '⭐', '🏆'
+  criteria    String   // Human-readable criteria
+  threshold   Int      // e.g., 1, 10, 25 sessions
+  category    String   // 'attendance', 'hosting', 'streak', 'social'
+  createdAt   DateTime @default(now())
+
+  earnedBy EarnedBadge[]
+
+  @@map("badges")
+}
+
+model EarnedBadge {
+  id       String   @id @default(cuid())
+  userId   String
+  badgeId  String
+  earnedAt DateTime @default(now())
+
+  user  User  @relation("EarnedBadges", fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+  @@map("earned_badges")
+}
+
+// =====================================================
+// ADMIN AUDIT LOG
+// =====================================================
+
+model AdminAuditLog {
+  id        String   @id @default(cuid())
+  action    String   // e.g. "BAN_USER", "DELETE_EVENT", "CREATE_HOST", "APPROVE_EVENT"
+  targetType String  // e.g. "User", "Activity", "EventSubmission", "Host"
+  targetId  String   // ID of the affected record
+  adminId   String   // Clerk user ID of the admin who performed the action
+  details   Json?    // Optional additional context
+  createdAt DateTime @default(now())
+
+  @@index([adminId])
+  @@index([targetType, targetId])
+  @@index([createdAt])
 }
 

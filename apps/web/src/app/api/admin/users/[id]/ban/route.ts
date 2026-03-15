@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminRequest } from '@/lib/admin-auth'
+import { logAdminAction } from '@/lib/admin-audit'
 
 export async function POST(
   request: Request,
@@ -21,6 +23,15 @@ export async function POST(
         bannedAt: ban ? new Date() : null,
         banReason: ban ? (reason || null) : null,
       },
+    })
+
+    const { userId: adminId } = await auth()
+    await logAdminAction({
+      action: ban ? 'BAN_USER' : 'UNBAN_USER',
+      targetType: 'User',
+      targetId: id,
+      adminId: adminId || 'admin',
+      details: ban ? { reason: reason || null } : undefined,
     })
 
     return NextResponse.json({ success: true })

@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
 import { revalidatePath, revalidateTag } from 'next/cache'
+import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminRequest } from '@/lib/admin-auth'
+import { logAdminAction } from '@/lib/admin-audit'
 import { sendEventApprovedEmail, sendEventRejectedEmail } from '@/lib/event-confirmation-email'
 import { sendEventRecommendationNudges } from '@/lib/nudges'
 import { autoCreateCommunityForOrganizer, countApprovedEventSubmissions } from '@/lib/community-system'
@@ -78,6 +80,15 @@ export async function PATCH(
         rejectionReason: action === 'reject' ? rejectionReason : null,
         ...geocodeData,
       },
+    })
+
+    const { userId: adminId } = await auth()
+    await logAdminAction({
+      action: action === 'approve' ? 'APPROVE_EVENT' : 'REJECT_EVENT',
+      targetType: 'EventSubmission',
+      targetId: id,
+      adminId: adminId || 'admin',
+      details: action === 'reject' ? { rejectionReason: rejectionReason || null } : undefined,
     })
 
     // Revalidate caches so approved events appear immediately

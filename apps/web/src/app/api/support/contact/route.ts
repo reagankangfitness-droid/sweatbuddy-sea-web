@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email'
+import { SUPPORT_EMAIL } from '@/config/constants'
 
 function escapeHtml(str: string): string {
   return str
@@ -47,10 +48,8 @@ export async function POST(request: Request) {
     const categoryLabel = categoryLabels[category] || 'General'
 
     // Send email to support team
-    const supportEmail = process.env.SUPPORT_EMAIL || 'support@sweatbuddies.co'
-
     await sendEmail({
-      to: supportEmail,
+      to: SUPPORT_EMAIL,
       subject: `[SweatBuddies Support] ${categoryLabel} from ${name}`,
       replyTo: email,
       html: `

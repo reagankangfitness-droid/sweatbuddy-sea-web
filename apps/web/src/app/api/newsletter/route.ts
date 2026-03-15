@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email'
-
-// Your email to receive notifications
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hello@sweatbuddies.co'
+import { HELLO_EMAIL } from '@/config/constants'
 
 export async function POST(request: Request) {
   try {
@@ -75,7 +73,7 @@ export async function POST(request: Request) {
     // Send both emails in parallel
     const [adminResult, welcomeResult] = await Promise.all([
       sendEmail({
-        to: ADMIN_EMAIL,
+        to: HELLO_EMAIL,
         subject: `New Newsletter Subscriber: ${email}`,
         html: adminEmailHtml,
         tags: [{ name: 'type', value: 'newsletter-signup' }],

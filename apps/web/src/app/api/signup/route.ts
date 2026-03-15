@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { checkApiRateLimit } from '@/lib/rate-limit'
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const rateLimited = await checkApiRateLimit(request, 'auth')
+    if (rateLimited) return rateLimited
+
     const { email } = await request.json()
 
     if (!email || typeof email !== 'string') {

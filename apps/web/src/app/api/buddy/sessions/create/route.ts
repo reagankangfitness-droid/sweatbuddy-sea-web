@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { checkAndAwardBadges } from '@/lib/badges'
 
 export async function POST(request: Request) {
   try {
@@ -50,6 +51,8 @@ export async function POST(request: Request) {
       paynowQrImageUrl,
       paynowPhoneNumber,
       paynowName,
+      requiresDeposit,
+      depositAmount,
     } = body
 
     // Validate required fields
@@ -73,6 +76,14 @@ export async function POST(request: Request) {
     }
     if (new Date(startTime) <= new Date()) {
       return NextResponse.json({ error: 'Start time must be in the future' }, { status: 400 })
+    }
+    const oneYearFromNow = new Date()
+    oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1)
+    if (new Date(startTime) > oneYearFromNow) {
+      return NextResponse.json({ error: 'Start time cannot be more than 1 year in the future' }, { status: 400 })
+    }
+    if (endTime && new Date(endTime) <= new Date(startTime)) {
+      return NextResponse.json({ error: 'End time must be after start time' }, { status: 400 })
     }
 
     const priceNum = Number(price ?? 0)
@@ -106,6 +117,12 @@ export async function POST(request: Request) {
 
     const activityMode = priceNum > 0 ? 'P2P_PAID' : 'P2P_FREE'
 
+    // Deposit defaults: if requiresDeposit is true but no amount specified, default to 500 ($5.00 SGD)
+    const resolvedRequiresDeposit = requiresDeposit === true
+    const resolvedDepositAmount = resolvedRequiresDeposit
+      ? (depositAmount && Number(depositAmount) > 0 ? Number(depositAmount) : 500)
+      : null
+
     // Map categorySlug to legacy ActivityType for backward compat
     const typeMap: Record<string, string> = {
       running: 'RUN',
@@ -128,7 +145,7 @@ export async function POST(request: Request) {
         longitude: Number(longitude),
         startTime: new Date(startTime),
         endTime: endTime ? new Date(endTime) : null,
-        maxPeople: maxPeople ? Number(maxPeople) : null,
+        maxPeople: maxPeople ? Math.max(1, Math.min(Number(maxPeople), 1000)) : null,
         price: Math.round(priceNum * 100), // store in cents
         currency: currency ?? 'SGD',
         imageUrl: imageUrl ?? null,
@@ -144,6 +161,8 @@ export async function POST(request: Request) {
         paynowQrImageUrl: paynowQrImageUrl ?? null,
         paynowPhoneNumber: paynowPhoneNumber ?? null,
         paynowName: paynowName ?? null,
+        requiresDeposit: resolvedRequiresDeposit,
+        depositAmount: resolvedDepositAmount,
       },
       select: {
         id: true,
@@ -160,6 +179,9 @@ export async function POST(request: Request) {
       where: { id: dbUser.id },
       data: { sessionsHostedCount: { increment: 1 } },
     })
+
+    // Check and award any hosting badges
+    await checkAndAwardBadges(dbUser.id)
 
     return NextResponse.json({ activity }, { status: 201 })
   } catch (error) {

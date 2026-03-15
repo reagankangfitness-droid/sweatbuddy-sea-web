@@ -103,6 +103,67 @@ export async function getPublicProfile(slug: string) {
 }
 
 /**
+ * Get full profile with stats, communities, and counts in a single optimized query.
+ * Replaces multiple separate queries (getPublicProfile + getFollowCounts + communities)
+ * with one Prisma query using include and _count.
+ */
+export async function getFullProfile(slug: string) {
+  const user = await prisma.user.findUnique({
+    where: { slug },
+    select: {
+      ...publicProfileSelect,
+      hostStats: {
+        select: {
+          totalEvents: true,
+          completedEvents: true,
+          totalUniqueAttendees: true,
+          averageRating: true,
+          totalReviews: true,
+          repeatAttendeeRate: true,
+          totalProfileViews: true,
+        },
+      },
+      communityMemberships: {
+        include: {
+          community: {
+            select: {
+              name: true,
+              slug: true,
+              logoImage: true,
+              category: true,
+              memberCount: true,
+            },
+          },
+        },
+      },
+      _count: {
+        select: {
+          followers: true,
+          following: true,
+          interestSignalsReceived: true,
+        },
+      },
+    },
+  })
+
+  if (!user) return null
+
+  // Check if profile is public
+  if (!user.isPublic) {
+    return {
+      id: user.id,
+      name: user.firstName || user.name?.split(' ')[0] || 'User',
+      slug: user.slug,
+      imageUrl: user.imageUrl,
+      isPublic: false as const,
+      isHost: user.isHost,
+    }
+  }
+
+  return user
+}
+
+/**
  * Get host stats for a user
  */
 export async function getHostStats(userId: string) {

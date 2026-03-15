@@ -30,11 +30,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     let paymentMethod: string | null = null
     let paymentProofUrl: string | null = null
     let amountPaid: number | null = null
+    let requestDepositAmount: number | null = null
     try {
       const body = await req.json().catch(() => ({}))
       paymentMethod = body.paymentMethod ?? null
       paymentProofUrl = body.paymentProofUrl ?? null
       amountPaid = body.amountPaid ?? null
+      requestDepositAmount = body.depositAmount ?? null
     } catch { /* no body is fine for free sessions */ }
 
     const activity = await prisma.activity.findUnique({
@@ -141,11 +143,20 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ userActivity, paymentStatus: p2pPaymentStatus })
     }
 
+    // Determine deposit fields for free sessions with deposits
+    const hasDeposit = (activity as { requiresDeposit?: boolean }).requiresDeposit === true
+    const depositAmount = hasDeposit
+      ? (requestDepositAmount ?? (activity as { depositAmount?: number | null }).depositAmount ?? 500)
+      : null
+    const depositData = hasDeposit
+      ? { depositAmount, depositStatus: 'HELD' as const }
+      : {}
+
     // Upsert for free sessions
     const userActivity = await prisma.userActivity.upsert({
       where: { userId_activityId: { userId: dbUser.id, activityId } },
-      create: { userId: dbUser.id, activityId, status: 'JOINED', p2pPaymentStatus: 'VERIFIED' },
-      update: { status: 'JOINED', p2pPaymentStatus: 'VERIFIED' },
+      create: { userId: dbUser.id, activityId, status: 'JOINED', p2pPaymentStatus: 'VERIFIED', ...depositData },
+      update: { status: 'JOINED', p2pPaymentStatus: 'VERIFIED', ...depositData },
     })
 
     // Increment attendee count

@@ -43,7 +43,7 @@ export async function notifyFollowersOfNewEvent(submission: {
   })
 
   if (recentApprovals > 0) {
-    console.log(`Skipping follower notification for ${community.name}: another event was approved in the last 24h`)
+    console.info(`Skipping follower notification for ${community.name}: another event was approved in the last 24h`)
     return
   }
 
@@ -98,7 +98,7 @@ export async function notifyFollowersOfNewEvent(submission: {
   const results = await sendBatchEmails(emails)
   const sent = results.filter((r) => r.success).length
   const failed = results.filter((r) => !r.success).length
-  console.log(`New event notification for "${community.name}": ${sent} sent, ${failed} failed`)
+  console.info(`New event notification for "${community.name}": ${sent} sent, ${failed} failed`)
 }
 
 function buildNewEventEmail(params: {

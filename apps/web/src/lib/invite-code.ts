@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 import { prisma } from './prisma'
+import { APP_URL } from '@/config/constants'
 
 const INVITE_CODE_PREFIX = 'SB'
 const INVITE_CODE_LENGTH = 6
@@ -44,7 +45,7 @@ export async function generateInviteCode(): Promise<string> {
  * Generates the full invite link for a given invite code
  */
 export function generateInviteLink(inviteCode: string, baseUrl?: string): string {
-  const base = baseUrl || process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
+  const base = baseUrl || APP_URL
   return `${base}/join/${inviteCode}`
 }
 

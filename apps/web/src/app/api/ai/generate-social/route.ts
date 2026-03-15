@@ -81,7 +81,7 @@ Start with the ---INSTAGRAM--- marker.`,
     const whatsapp = whatsappMatch?.[1]?.trim() || ''
     const story = storyMatch?.[1]?.trim() || ''
 
-    console.log(`[ai/generate-social] user=${session.id} event="${eventTitle}" remaining=${limit.remaining}`)
+    console.info(`[ai/generate-social] user=${session.id} event="${eventTitle}" remaining=${limit.remaining}`)
 
     return NextResponse.json({ instagram, whatsapp, story, remaining: limit.remaining })
   } catch (error) {

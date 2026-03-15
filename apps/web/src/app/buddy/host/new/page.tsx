@@ -314,12 +314,12 @@ export default function NewSessionPage() {
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/90 dark:bg-neutral-950/90 backdrop-blur border-b border-neutral-100 dark:border-neutral-800">
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center gap-3">
-          <button onClick={prevStep} className="p-1 -ml-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800">
+          <button onClick={prevStep} aria-label="Go back" className="p-1 -ml-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800">
             <ArrowLeft className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
           </button>
           <div className="flex-1">
             <h1 className="text-base font-semibold text-neutral-900 dark:text-white">Host a Session</h1>
-            <div className="flex gap-1 mt-1">
+            <div className="flex gap-1 mt-1" role="progressbar" aria-label={`Step ${stepIdx + 1} of ${STEPS.length}: ${step === 'basic' ? 'Basic Info' : step === 'details' ? 'Details' : step === 'pricing' ? 'Pricing' : 'Preview'}`} aria-valuenow={stepIdx + 1} aria-valuemin={1} aria-valuemax={STEPS.length}>
               {STEPS.map((s, i) => (
                 <div
                   key={s}
@@ -381,6 +381,7 @@ export default function NewSessionPage() {
                     : 'e.g. Morning Run at Marina Bay'
                 }
                 maxLength={100}
+                aria-required="true"
                 className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
               />
               <p className="mt-1 text-xs text-right text-neutral-400">{form.title.length}/100</p>
@@ -446,6 +447,7 @@ export default function NewSessionPage() {
                 value={form.startDate}
                 onChange={(e) => update('startDate', e.target.value)}
                 min={new Date().toISOString().split('T')[0]}
+                aria-required="true"
                 className="w-full min-w-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white box-border"
               />
             </div>
@@ -460,6 +462,7 @@ export default function NewSessionPage() {
                   type="time"
                   value={form.startTime}
                   onChange={(e) => update('startTime', e.target.value)}
+                  aria-required="true"
                   className="w-full min-w-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white box-border"
                 />
               </div>
@@ -593,6 +596,7 @@ export default function NewSessionPage() {
                     <select
                       value={form.currency}
                       onChange={(e) => update('currency', e.target.value)}
+                      aria-label="Currency"
                       className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none"
                     >
                       {['SGD', 'USD', 'MYR', 'AUD', 'GBP', 'EUR'].map((c) => (
@@ -694,6 +698,7 @@ export default function NewSessionPage() {
                               />
                               <button
                                 type="button"
+                                aria-label="Remove QR code image"
                                 onClick={() => {
                                   setQrPreviewUrl(null)
                                   setQrFile(null)

@@ -57,7 +57,7 @@ Additional context: ${additionalContext || 'none provided'}`,
     const textBlock = message.content.find((b) => b.type === 'text')
     const description = textBlock ? textBlock.text.trim() : ''
 
-    console.log(`[ai/generate-description] user=${session.id} title="${title}" remaining=${limit.remaining}`)
+    console.info(`[ai/generate-description] user=${session.id} title="${title}" remaining=${limit.remaining}`)
 
     return NextResponse.json({ description, remaining: limit.remaining })
   } catch (error) {

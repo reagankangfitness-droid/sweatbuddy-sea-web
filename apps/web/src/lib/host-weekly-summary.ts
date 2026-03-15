@@ -369,7 +369,7 @@ export async function processHostWeeklySummaries(): Promise<{
         data.organizer.lastWeeklySummarySentAt &&
         data.organizer.lastWeeklySummarySentAt >= weekStart
       ) {
-        console.log(
+        console.info(
           `[host-weekly-summary] Already sent for ${organizerInstagram} week of ${weekStart.toISOString()} — skipping`
         )
         results.skipped++

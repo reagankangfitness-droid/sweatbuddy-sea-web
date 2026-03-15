@@ -6,6 +6,7 @@ import {
   getEventStats,
   formatProfileSummary,
 } from '@/lib/profile-events'
+import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
@@ -63,14 +64,37 @@ export async function GET(request: Request, { params }: Props) {
       })
     }
 
-    // Get event stats for this user
-    const stats = await getEventStats(profileUser.email)
+    // Get event stats and earned badges for this user
+    const [stats, earnedBadges] = await Promise.all([
+      getEventStats(profileUser.email),
+      prisma.earnedBadge.findMany({
+        where: { userId: profileUser.id },
+        select: {
+          earnedAt: true,
+          badge: {
+            select: {
+              slug: true,
+              name: true,
+              emoji: true,
+            },
+          },
+        },
+        orderBy: { earnedAt: 'desc' },
+      }),
+    ])
 
     // Format the summary
     const summary = formatProfileSummary(
       profileUser.name || profileUser.firstName || 'This user',
       stats
     )
+
+    const badges = earnedBadges.map((eb) => ({
+      slug: eb.badge.slug,
+      name: eb.badge.name,
+      emoji: eb.badge.emoji,
+      earnedAt: eb.earnedAt.toISOString(),
+    }))
 
     return NextResponse.json({
       user: {
@@ -90,6 +114,7 @@ export async function GET(request: Request, { params }: Props) {
       },
       stats,
       summary,
+      badges,
       isOwnProfile,
       isPrivate: false,
     })

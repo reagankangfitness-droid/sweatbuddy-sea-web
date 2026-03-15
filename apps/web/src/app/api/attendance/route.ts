@@ -1,7 +1,9 @@
 import crypto from 'crypto'
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { checkApiRateLimit } from '@/lib/rate-limit'
 import { sendEventConfirmationEmail, sendHostNewAttendeeNotification } from '@/lib/event-confirmation-email'
 import { scheduleEventReminder } from '@/lib/event-reminders'
 import { schedulePostEventFollowUp } from '@/lib/post-event-followup'
@@ -23,8 +25,11 @@ function generateId(): string {
   return `att_${crypto.randomBytes(12).toString('hex')}`
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const rateLimited = await checkApiRateLimit(request, 'api')
+    if (rateLimited) return rateLimited
+
     // Require authentication
     const { userId } = await auth()
     if (!userId) {

@@ -3,10 +3,11 @@
 import { notFound, useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
-import { useEffect, useState, lazy, Suspense } from 'react'
+import { useEffect, useState, lazy, Suspense, useCallback } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { useActivityJoin } from '@/hooks/useActivityJoin'
 import Link from 'next/link'
 import { AvatarStack } from '@/components/avatar-stack'
 import { WhosGoing } from '@/components/whos-going'
@@ -15,7 +16,6 @@ import { SpotsIndicator } from '@/components/spots-indicator'
 import { WaitlistButton } from '@/components/waitlist-button'
 import { generateGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
 import { Calendar, MessageCircle, Users, ChevronDown, ChevronUp, Flag, Settings } from 'lucide-react'
-import type { UrgencyLevel } from '@/lib/waitlist'
 import { PostActivityPrompt } from '@/components/post-activity-prompt'
 import { GoingSoloPrompt } from '@/components/going-solo-prompt'
 import { getSignInUrl } from '@/lib/auth-utils'
@@ -24,29 +24,7 @@ import { BlockUserButton } from '@/components/p2p/BlockUserButton'
 import { ManageAttendeesModal } from '@/components/p2p/ManageAttendeesModal'
 import { SessionComments } from '@/components/p2p/SessionComments'
 
-// Character limit for description before showing "Read More"
-const DESCRIPTION_CHAR_LIMIT = 300
-
-interface SpotsInfo {
-  totalSpots: number
-  spotsRemaining: number
-  spotsTaken: number
-  percentFilled: number
-  urgencyLevel: UrgencyLevel
-  showSpotsRemaining: boolean
-  urgencyThreshold: number
-  waitlistEnabled: boolean
-  waitlistLimit: number
-  waitlistCount: number
-  isFull: boolean
-  userWaitlistStatus?: {
-    isOnWaitlist: boolean
-    position: number
-    status: string
-    notifiedAt: Date | null
-    expiresAt: Date | null
-  } | null
-}
+import { DESCRIPTION_CHAR_LIMIT } from '@/config/constants'
 
 // Lazy load heavy components
 const ActivityMessaging = lazy(() => import('@/components/activity-messaging').then(m => ({ default: m.ActivityMessaging })))
@@ -105,17 +83,32 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
   const { user, isLoaded: userLoaded } = useUser()
   const [activity, setActivity] = useState<Activity | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [isJoining, setIsJoining] = useState(false)
-  const [hasJoined, setHasJoined] = useState(false)
   const [isMessagingOpen, setIsMessagingOpen] = useState(false)
   const [isGroupChatOpen, setIsGroupChatOpen] = useState(false)
-  const [spotsInfo, setSpotsInfo] = useState<SpotsInfo | null>(null)
-  const [userBookingId, setUserBookingId] = useState<string | null>(null)
   const [showCompletionPrompt, setShowCompletionPrompt] = useState(true)
   const [showGoingSoloPrompt, setShowGoingSoloPrompt] = useState(false)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const [showReportModal, setShowReportModal] = useState(false)
   const [showManageAttendees, setShowManageAttendees] = useState(false)
+
+  const onShowGoingSoloPrompt = useCallback(() => setShowGoingSoloPrompt(true), [])
+
+  const {
+    isJoining,
+    hasJoined,
+    spotsInfo,
+    userBookingId,
+    handleJoin,
+    handleLeave,
+    handleWaitlistChange,
+    checkJoinStatus,
+    setHasJoined,
+  } = useActivityJoin(params.id, user?.id ?? null, {
+    activityMode: activity?.activityMode,
+    userActivities: activity?.userActivities,
+    onActivityRefresh: setActivity,
+    onShowGoingSoloPrompt,
+  })
 
   // Handle payment status from URL params
   useEffect(() => {
@@ -124,8 +117,7 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
 
     if (paymentStatus === 'success' || sessionId) {
       toast.success('Payment successful! You have joined the activity.')
-      setHasJoined(true)
-      setShowGoingSoloPrompt(true)
+      checkJoinStatus()
       // Remove the query param
       router.replace(`/activities/${params.id}`)
     } else if (paymentStatus === 'cancelled') {
@@ -133,7 +125,7 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
       // Remove the query param
       router.replace(`/activities/${params.id}`)
     }
-  }, [searchParams, router, params.id])
+  }, [searchParams, router, params.id, checkJoinStatus])
 
   // Fetch activity data immediately (don't wait for auth)
   useEffect(() => {
@@ -154,183 +146,6 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
     }
     fetchActivity()
   }, [params.id])
-
-  // Check if user has joined (separate effect that runs when user loads)
-  useEffect(() => {
-    if (user && activity?.userActivities) {
-      const userRsvp = activity.userActivities.find(
-        (ua: any) => ua.userId === user.id && ua.status === 'JOINED'
-      )
-      setHasJoined(!!userRsvp)
-      setUserBookingId(userRsvp?.id || null)
-    }
-  }, [user, activity])
-
-  // Fetch spots info including waitlist status
-  useEffect(() => {
-    async function fetchSpotsInfo() {
-      if (!activity?.id) return
-
-      try {
-        const response = await fetch(`/api/waitlist/status?activityId=${activity.id}`)
-        if (response.ok) {
-          const data = await response.json()
-          setSpotsInfo(data)
-        }
-      } catch {
-        // Error handled silently
-      }
-    }
-
-    fetchSpotsInfo()
-  }, [activity?.id])
-
-  // Refresh spots info when waitlist status changes
-  const handleWaitlistChange = async () => {
-    if (!activity?.id) return
-
-    try {
-      const response = await fetch(`/api/waitlist/status?activityId=${activity.id}`)
-      if (response.ok) {
-        const data = await response.json()
-        setSpotsInfo(data)
-      }
-    } catch {
-      // Error handled silently
-    }
-  }
-
-  const handleJoin = async () => {
-    if (!user) {
-      toast.error('Please sign in to join activities')
-      return
-    }
-
-    setIsJoining(true)
-
-    // P2P free sessions use the buddy join endpoint
-    if (activity?.activityMode === 'P2P_FREE') {
-      try {
-        const res = await fetch(`/api/buddy/sessions/${params.id}/join`, { method: 'POST' })
-        const data = await res.json()
-        if (!res.ok) {
-          toast.error(data.error || 'Failed to join session')
-          return
-        }
-        toast.success("You're in!")
-        setHasJoined(true)
-        setShowGoingSoloPrompt(true)
-        const activityResponse = await fetch(`/api/activities/${params.id}`)
-        const activityData = await activityResponse.json()
-        setActivity(activityData)
-      } catch {
-        toast.error('Something went wrong')
-      } finally {
-        setIsJoining(false)
-      }
-      return
-    }
-
-    // Get invite code from URL if present (for referral discounts)
-    const inviteCode = searchParams.get('invite') || searchParams.get('code')
-
-    try {
-      // Use the checkout session API for both free and paid activities
-      // This ensures consistent handling and proper referral tracking
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          activityId: params.id,
-          inviteCode: inviteCode || undefined,
-        }),
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to process booking')
-      }
-
-      const data = await response.json()
-
-      // Handle free activities (no Stripe redirect)
-      if (data.isFree) {
-        toast.success('Successfully joined the activity!')
-        setHasJoined(true)
-        setShowGoingSoloPrompt(true)
-
-        // Refresh activity data
-        const activityResponse = await fetch(`/api/activities/${params.id}`)
-        const activityData = await activityResponse.json()
-        setActivity(activityData)
-        setIsJoining(false)
-        return
-      }
-
-      // For paid activities, redirect to Stripe Checkout
-      if (data.url) {
-        window.location.href = data.url
-      } else {
-        throw new Error('No checkout URL received')
-      }
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to process booking')
-      setIsJoining(false)
-    }
-  }
-
-  const handleLeave = async () => {
-    if (!user) return
-
-    setIsJoining(true)
-
-    // P2P sessions use the buddy leave endpoint
-    if (activity?.activityMode?.startsWith('P2P')) {
-      try {
-        const res = await fetch(`/api/buddy/sessions/${params.id}/leave`, { method: 'POST' })
-        if (!res.ok) {
-          const data = await res.json()
-          toast.error(data.error || 'Failed to leave session')
-          return
-        }
-        toast.success('Left session')
-        setHasJoined(false)
-        const activityResponse = await fetch(`/api/activities/${params.id}`)
-        const data = await activityResponse.json()
-        setActivity(data)
-      } catch {
-        toast.error('Something went wrong')
-      } finally {
-        setIsJoining(false)
-      }
-      return
-    }
-
-    try {
-      const response = await fetch(`/api/activities/${params.id}/join`, {
-        method: 'DELETE',
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.message || 'Failed to leave activity')
-      }
-
-      toast.success('Successfully left the activity')
-      setHasJoined(false)
-
-      // Refresh activity data
-      const activityResponse = await fetch(`/api/activities/${params.id}`)
-      const data = await activityResponse.json()
-      setActivity(data)
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to leave activity')
-    } finally {
-      setIsJoining(false)
-    }
-  }
 
   const handleAddToGoogleCalendar = () => {
     if (!activity || !activity.startTime) {
@@ -408,7 +223,7 @@ Organized via sweatbuddies
         <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
+              <button onClick={() => router.back()} aria-label="Go back" className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
                 <ArrowLeft className="w-5 h-5 text-neutral-300" />
               </button>
               <span className="text-sm font-medium text-neutral-500">Activity Details</span>
@@ -541,6 +356,8 @@ Organized via sweatbuddies
                         )}
                         <button
                           onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                          aria-expanded={isDescriptionExpanded}
+                          aria-label={isDescriptionExpanded ? 'Show less description' : 'Read more description'}
                           className="mt-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
                         >
                           {isDescriptionExpanded ? (
@@ -698,6 +515,7 @@ Organized via sweatbuddies
                     <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800 flex items-center gap-4">
                       <button
                         onClick={() => setShowReportModal(true)}
+                        aria-label="Report this activity"
                         className="flex items-center gap-1.5 text-sm text-neutral-400 hover:text-amber-500 transition-colors"
                       >
                         <Flag className="w-4 h-4" />
@@ -715,6 +533,7 @@ Organized via sweatbuddies
                     <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800">
                       <button
                         onClick={() => setShowManageAttendees(true)}
+                        aria-label="Manage session attendees"
                         className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
                       >
                         <Settings className="w-4 h-4" />

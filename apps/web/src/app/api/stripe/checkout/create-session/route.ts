@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { stripe, calculateEventSubmissionFees } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
+import { checkApiRateLimit } from '@/lib/rate-limit'
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
 
@@ -12,8 +14,11 @@ interface CreateCheckoutRequest {
   quantity?: number
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const rateLimited = await checkApiRateLimit(request, 'payment')
+    if (rateLimited) return rateLimited
+
     // Require authentication
     const { userId } = await auth()
     if (!userId) {

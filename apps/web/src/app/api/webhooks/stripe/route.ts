@@ -8,6 +8,11 @@ import { sendPaidEventConfirmationEmail, sendHostBookingNotificationEmail, sendR
 import { scheduleEventReminder } from '@/lib/event-reminders'
 import { generateCheckInCode } from '@/lib/generate-checkin-qr'
 
+/** Estimate Stripe processing fee for a given amount in cents */
+function estimateStripeFee(amountCents: number): number {
+  return Math.round(amountCents * STRIPE_FEE_PERCENT / 100) + STRIPE_FEE_FIXED_CENTS
+}
+
 // Disable body parsing - Stripe requires raw body for signature verification
 export const runtime = 'nodejs'
 
@@ -86,8 +91,8 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Webhook handler error:', error)
     return NextResponse.json(
-      { error: 'Webhook handler failed' },
-      { status: 500 }
+      { error: 'Webhook handler failed', received: true },
+      { status: 200 }
     )
   }
 }
@@ -125,6 +130,18 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     return
   }
 
+  // Idempotency check - prevent duplicate Activity booking if webhook is retried
+  const existingBooking = await prisma.userActivity.findFirst({
+    where: {
+      userId: userId,
+      activityId: activityId,
+      status: 'JOINED',
+    },
+  })
+  if (existingBooking) {
+    console.log('Duplicate Activity booking detected, skipping:', { userId, activityId, sessionId })
+    return
+  }
 
   try {
     // Use transaction to ensure all updates succeed together
@@ -495,7 +512,7 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
       // 4. Create EventTransaction record for audit trail
       if (hostStripeAccount) {
         // Calculate Stripe fee estimate using shared constants
-        const stripeFeeEstimate = Math.round(amountTotal * STRIPE_FEE_PERCENT / 100) + STRIPE_FEE_FIXED_CENTS
+        const stripeFeeEstimate = estimateStripeFee(amountTotal)
         const netPayoutToHost = amountTotal - platformFeeNum - stripeFeeEstimate
         const feeHandlingValue = feeHandling === 'PASS' ? 'PASS' : 'ABSORB'
 
@@ -547,7 +564,7 @@ async function handleEventSubmissionPayment(session: Stripe.Checkout.Session) {
         ticketQuantity: ticketQty,
         stripePaymentId: paymentIntentId,
         hostEmail: event.contactEmail,
-        netPayoutToHost: hostStripeAccount ? amountTotal - platformFeeNum - (Math.round(amountTotal * STRIPE_FEE_PERCENT / 100) + STRIPE_FEE_FIXED_CENTS) : 0,
+        netPayoutToHost: hostStripeAccount ? amountTotal - platformFeeNum - estimateStripeFee(amountTotal) : 0,
       }
 
       // Store for use outside transaction

@@ -69,7 +69,7 @@ Write ONLY the recap text, no labels or prefixes.`,
     const textBlock = message.content.find((b) => b.type === 'text')
     const recap = textBlock ? textBlock.text.trim() : ''
 
-    console.log(`[ai/generate-recap] user=${session.id} event="${eventTitle}" remaining=${limit.remaining}`)
+    console.info(`[ai/generate-recap] user=${session.id} event="${eventTitle}" remaining=${limit.remaining}`)
 
     return NextResponse.json({ recap, remaining: limit.remaining })
   } catch (error) {

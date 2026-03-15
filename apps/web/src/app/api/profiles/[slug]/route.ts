@@ -2,14 +2,12 @@ import { auth, currentUser } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import {
-  getPublicProfile,
-  getHostStats,
+  getFullProfile,
   getAttendedStats,
-  getFollowCounts,
   isFollowing,
   trackProfileView
 } from '@/lib/profile'
-import { getInterestCount, isInterested } from '@/lib/interest'
+import { isInterested } from '@/lib/interest'
 
 export async function GET(
   request: Request,
@@ -18,8 +16,8 @@ export async function GET(
   try {
     const { slug } = await params
 
-    // Get profile
-    const profile = await getPublicProfile(slug)
+    // Single combined query: profile + hostStats + communities + follow/interest counts
+    const profile = await getFullProfile(slug)
 
     if (!profile) {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
@@ -51,32 +49,30 @@ export async function GET(
       })
     }
 
-    // Get additional data - check if profile has full data (public profile)
+    // Profile is public — extract data from the combined query
     const showActivitiesAttended = 'showActivitiesAttended' in profile ? profile.showActivitiesAttended : false
     const showStats = 'showStats' in profile ? profile.showStats : false
 
-    const [hostStats, attendedStats, followCounts, interestCount, communities, upcomingEvents] = await Promise.all([
-      profile.isHost ? getHostStats(profile.id) : null,
-      showActivitiesAttended || isOwnProfile
+    // Extract pre-loaded data from the combined query
+    const hostStats = '_count' in profile ? ('hostStats' in profile ? profile.hostStats : null) : null
+    const communities = 'communityMemberships' in profile ? profile.communityMemberships : []
+    const followCounts = '_count' in profile
+      ? { followers: profile._count.followers, following: profile._count.following }
+      : { followers: 0, following: 0 }
+    const interestCount = '_count' in profile ? profile._count.interestSignalsReceived : 0
+
+    // Remaining queries that couldn't be combined — run in parallel
+    // This replaces the original two sequential Promise.all blocks with one
+    const needsAttendedStats = showActivitiesAttended || isOwnProfile
+    const needsUpcomingEvents = showActivitiesAttended || isOwnProfile
+    const needsFollowCheck = !!userId && !isOwnProfile
+    const needsInterestCheck = !!userId && !isOwnProfile && profile.isHost
+
+    const [attendedStats, upcomingEvents, followStatus, interestStatus] = await Promise.all([
+      needsAttendedStats
         ? getAttendedStats(profile.id)
         : null,
-      getFollowCounts(profile.id),
-      profile.isHost ? getInterestCount(profile.id) : 0,
-      prisma.communityMember.findMany({
-        where: { userId: profile.id },
-        include: {
-          community: {
-            select: {
-              name: true,
-              slug: true,
-              logoImage: true,
-              category: true,
-              memberCount: true,
-            }
-          }
-        }
-      }),
-      (showActivitiesAttended || isOwnProfile)
+      needsUpcomingEvents
         ? prisma.userActivity.findMany({
             where: {
               userId: profile.id,
@@ -102,42 +98,53 @@ export async function GET(
             }
           })
         : [],
+      needsFollowCheck
+        ? isFollowing(userId!, profile.id)
+        : false,
+      needsInterestCheck
+        ? isInterested(userId!, profile.id)
+        : false,
     ])
-
-    // Check if current user is following this profile and interested
-    let isFollowingProfile = false
-    let isInterestedInProfile = false
-    if (userId && !isOwnProfile) {
-      const [followStatus, interestStatus] = await Promise.all([
-        isFollowing(userId, profile.id),
-        profile.isHost ? isInterested(userId, profile.id) : false,
-      ])
-      isFollowingProfile = followStatus
-      isInterestedInProfile = interestStatus
-    }
 
     // Track profile view (don't await to avoid slowing response)
     if (!isOwnProfile) {
       trackProfileView(profile.id, userId || null, 'direct').catch(console.error)
     }
 
-    // Strip email from public response (only used server-side for ownership check)
-    const { email: _email, ...publicProfile } = profile as Record<string, unknown>
+    // Build the public profile response, stripping internal fields
+    const {
+      email: _email,
+      hostStats: _hostStats,
+      communityMemberships: _memberships,
+      _count,
+      ...publicProfile
+    } = profile as Record<string, unknown>
+
+    const defaultHostStats = {
+      totalEvents: 0,
+      completedEvents: 0,
+      totalUniqueAttendees: 0,
+      averageRating: 0,
+      totalReviews: 0,
+      repeatAttendeeRate: 0,
+      totalProfileViews: 0,
+    }
+
     return NextResponse.json({
       profile: {
         ...publicProfile,
-        hostStats: showStats || isOwnProfile ? hostStats : null,
-        attendedStats: showActivitiesAttended || isOwnProfile ? attendedStats : null,
+        hostStats: (showStats || isOwnProfile) ? (hostStats || defaultHostStats) : null,
+        attendedStats: (showActivitiesAttended || isOwnProfile) ? attendedStats : null,
         followCounts,
         interestCount,
       },
-      communities: communities.map(cm => ({
+      communities: Array.isArray(communities) ? communities.map((cm: { community: { name: string; slug: string | null; logoImage: string | null; category: string | null; memberCount: number } }) => ({
         name: cm.community.name,
         slug: cm.community.slug,
         logoImage: cm.community.logoImage,
         category: cm.community.category,
         memberCount: cm.community.memberCount,
-      })),
+      })) : [],
       upcomingEvents: Array.isArray(upcomingEvents) ? upcomingEvents.map((ua) => ({
         id: ua.activity.id,
         title: ua.activity.title,
@@ -147,8 +154,8 @@ export async function GET(
         categorySlug: ua.activity.categorySlug,
       })) : [],
       isOwnProfile,
-      isFollowing: isFollowingProfile,
-      isInterested: isInterestedInProfile,
+      isFollowing: followStatus,
+      isInterested: interestStatus,
     })
   } catch (error) {
     console.error('Profile fetch error:', error)

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminRequest } from '@/lib/admin-auth'
+import { logAdminAction } from '@/lib/admin-audit'
 
 const CLERK_SECRET_KEY = process.env.CLERK_SECRET_KEY
 
@@ -177,6 +179,15 @@ export async function POST(request: NextRequest) {
         name: name || normalizedInstagram,
         isVerified: true,
       },
+    })
+
+    const { userId: adminId } = await auth()
+    await logAdminAction({
+      action: 'CREATE_HOST',
+      targetType: 'Host',
+      targetId: user.id,
+      adminId: adminId || 'admin',
+      details: { email: normalizedEmail, instagram: normalizedInstagram, clerkUserExists },
     })
 
     return NextResponse.json({

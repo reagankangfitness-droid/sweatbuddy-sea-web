@@ -227,7 +227,7 @@ export async function GET(request: Request) {
       orderBy: upcoming === 'true'
         ? { startTime: 'asc' }
         : { createdAt: 'desc' },
-      take: limit ? Math.min(parseInt(limit, 10), 100) : 20,
+      take: limit ? Math.max(1, Math.min(isNaN(parseInt(limit, 10)) ? 20 : parseInt(limit, 10), 100)) : 20,
       skip: offset ? parseInt(offset, 10) : undefined,
     })
 

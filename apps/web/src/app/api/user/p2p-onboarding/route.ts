@@ -19,8 +19,8 @@ export async function POST(request: Request) {
     const { bio, fitnessInterests, fitnessLevel } = body
 
     // Validate required fields
-    if (!bio || typeof bio !== 'string' || bio.trim().length === 0) {
-      return NextResponse.json({ error: 'Bio is required' }, { status: 400 })
+    if (!bio || typeof bio !== 'string' || bio.trim().length < 3) {
+      return NextResponse.json({ error: 'Bio must be at least 3 characters' }, { status: 400 })
     }
     if (bio.trim().length > 100) {
       return NextResponse.json({ error: 'Bio must be 100 characters or less' }, { status: 400 })
@@ -30,6 +30,9 @@ export async function POST(request: Request) {
     }
     if (!Array.isArray(fitnessInterests) || fitnessInterests.length === 0) {
       return NextResponse.json({ error: 'At least one fitness interest is required' }, { status: 400 })
+    }
+    if (fitnessInterests.length > 20) {
+      return NextResponse.json({ error: 'Maximum 20 fitness interests allowed' }, { status: 400 })
     }
 
     const updatedUser = await prisma.user.update({

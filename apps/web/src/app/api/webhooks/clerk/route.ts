@@ -50,7 +50,7 @@ function getWelcomeEmailHtml(name: string | null): string {
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center">
-                    <a href="https://www.sweatbuddies.co" style="display: inline-block; padding: 16px 32px; background-color: #E07A5F; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 50px;">
+                    <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'}" style="display: inline-block; padding: 16px 32px; background-color: #E07A5F; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 50px;">
                       Browse Events
                     </a>
                   </td>
@@ -142,31 +142,43 @@ export async function POST(req: Request) {
       if (eventType === 'user.created' && (name || first_name)) {
         const baseName = (name || first_name || 'user').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
         slug = baseName
-        // Check uniqueness, append random suffix if needed
-        const existing = await prisma.user.findUnique({ where: { slug: baseName } })
-        if (existing) {
-          slug = `${baseName}-${Math.random().toString(36).slice(2, 6)}`
-        }
       }
 
-      // Upsert user into database
-      await prisma.user.upsert({
-        where: { id },
-        create: {
-          id,
-          email,
-          name,
-          firstName: first_name || null,
-          imageUrl: image_url || null,
-          ...(slug ? { slug } : {}),
-        },
-        update: {
-          email,
-          name,
-          firstName: first_name || null,
-          imageUrl: image_url || null,
-        },
-      })
+      // Upsert user into database with retry on slug conflict
+      const MAX_SLUG_RETRIES = 3
+      for (let attempt = 0; attempt <= MAX_SLUG_RETRIES; attempt++) {
+        try {
+          await prisma.user.upsert({
+            where: { id },
+            create: {
+              id,
+              email,
+              name,
+              firstName: first_name || null,
+              imageUrl: image_url || null,
+              ...(slug ? { slug } : {}),
+            },
+            update: {
+              email,
+              name,
+              firstName: first_name || null,
+              imageUrl: image_url || null,
+            },
+          })
+          break // success
+        } catch (upsertError: unknown) {
+          const isUniqueConstraint =
+            upsertError instanceof Error &&
+            upsertError.message.includes('Unique constraint') &&
+            upsertError.message.includes('slug')
+          if (isUniqueConstraint && slug && attempt < MAX_SLUG_RETRIES) {
+            const baseName = (name || first_name || 'user').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+            slug = `${baseName}-${Math.random().toString(36).slice(2, 6)}`
+            continue
+          }
+          throw upsertError
+        }
+      }
 
 
       // Send welcome email only for new users

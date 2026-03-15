@@ -86,54 +86,38 @@ export async function POST(request: NextRequest) {
       results.reviewReminders = { error: String(e) }
     }
 
-    // 4. Process waitlist notifications
-    try {
-      const waitlistResult = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL || 'https://sweatbuddies.co'}/api/cron/process-waitlist`,
-        {
+    // 4-7. Run remaining jobs in parallel with per-request timeouts
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sweatbuddies.co'
+
+    const fetchWithTimeout = async (url: string): Promise<unknown> => {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 15_000)
+      try {
+        const res = await fetch(url, {
           method: 'POST',
           headers: { Authorization: `Bearer ${CRON_SECRET}` },
-        }
-      )
-      results.waitlist = await waitlistResult.json()
-    } catch (e) {
-      results.waitlist = { error: String(e) }
+          signal: controller.signal,
+        })
+        return await res.json()
+      } finally {
+        clearTimeout(timeoutId)
+      }
     }
 
-    // 5. Process activity reminders
-    try {
-      const remindersResult = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL || 'https://sweatbuddies.co'}/api/cron/process-reminders`,
-        {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${CRON_SECRET}` },
-        }
-      )
-      results.reminders = await remindersResult.json()
-    } catch (e) {
-      results.reminders = { error: String(e) }
-    }
+    const parallelJobs = await Promise.allSettled([
+      fetchWithTimeout(`${baseUrl}/api/cron/process-waitlist`),
+      fetchWithTimeout(`${baseUrl}/api/cron/process-reminders`),
+      fetchWithTimeout(`${baseUrl}/api/cron/aggregate-stats?job=full`),
+      processPostEventFollowUps(),
+    ])
 
-    // 6. Aggregate stats
-    try {
-      const statsResult = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL || 'https://sweatbuddies.co'}/api/cron/aggregate-stats?job=full`,
-        {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${CRON_SECRET}` },
-        }
-      )
-      results.stats = await statsResult.json()
-    } catch (e) {
-      results.stats = { error: String(e) }
-    }
-
-    // 7. Process post-event follow-up emails
-    try {
-      results.postEventFollowUps = await processPostEventFollowUps()
-    } catch (e) {
-      results.postEventFollowUps = { error: String(e) }
-    }
+    const jobKeys = ['waitlist', 'reminders', 'stats', 'postEventFollowUps'] as const
+    parallelJobs.forEach((result, i) => {
+      results[jobKeys[i]] =
+        result.status === 'fulfilled'
+          ? result.value
+          : { error: String(result.reason) }
+    })
 
     return NextResponse.json({
       success: true,

@@ -348,7 +348,7 @@ function BuddyPageInner() {
         </div>
 
         {/* Tabs */}
-        <div className="max-w-2xl mx-auto px-4 flex gap-1 pb-3">
+        <div className="max-w-2xl mx-auto px-4 flex gap-1 pb-3" role="tablist" aria-label="Session views">
           {[
             { key: 'happening', label: 'Sessions' },
             { key: 'map', label: 'Map', icon: Map },
@@ -358,6 +358,9 @@ function BuddyPageInner() {
             return (
               <button
                 key={t.key}
+                role="tab"
+                aria-selected={tab === t.key}
+                aria-controls={`tabpanel-${t.key}`}
                 onClick={() => router.push(href, { scroll: false })}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   tab === t.key
@@ -375,7 +378,7 @@ function BuddyPageInner() {
 
       {/* ── Map Tab ── */}
       {tab === 'map' && (
-        <div className="relative" style={{ height: 'calc(100dvh - 128px)' }}>
+        <div id="tabpanel-map" role="tabpanel" aria-labelledby="tabpanel-map" className="relative" style={{ height: 'calc(100dvh - 128px)' }}>
           {!GOOGLE_MAPS_API_KEY || !mapsLoaded ? (
             <div className="flex flex-col items-center justify-center h-full gap-3 text-neutral-500">
               {!GOOGLE_MAPS_API_KEY ? (
@@ -485,7 +488,7 @@ function BuddyPageInner() {
                               {mapSelected.title}
                             </Link>
                           </div>
-                          <button onClick={() => setMapSelected(null)} className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center flex-shrink-0">
+                          <button onClick={() => setMapSelected(null)} aria-label="Close session details" className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center flex-shrink-0">
                             <X className="w-4 h-4 text-neutral-400" />
                           </button>
                         </div>
@@ -518,7 +521,7 @@ function BuddyPageInner() {
         </div>
       )}
 
-      <div className={tab === 'map' ? 'hidden' : ''}>
+      <div id={`tabpanel-${tab === 'mine' ? 'mine' : 'happening'}`} role="tabpanel" aria-labelledby={`tabpanel-${tab === 'mine' ? 'mine' : 'happening'}`} className={tab === 'map' ? 'hidden' : ''}>
       <div className="max-w-2xl mx-auto px-4 pb-24">
         {/* Filters (happening tab only) */}
         {tab === 'happening' && (
@@ -526,6 +529,7 @@ function BuddyPageInner() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
+              aria-label="Filter by activity type"
               className="shrink-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-xs text-neutral-700 dark:text-neutral-300 focus:outline-none"
             >
               {TYPE_FILTERS.map((f) => (
@@ -538,6 +542,7 @@ function BuddyPageInner() {
             <select
               value={fitnessFilter}
               onChange={(e) => setFitnessFilter(e.target.value)}
+              aria-label="Filter by fitness level"
               className="shrink-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-xs text-neutral-700 dark:text-neutral-300 focus:outline-none"
             >
               {FITNESS_FILTERS.map((f) => (

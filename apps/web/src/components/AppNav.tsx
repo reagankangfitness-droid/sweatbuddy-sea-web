@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { Compass, CalendarDays, User, ChevronRight, Plus } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Logo } from '@/components/logo'
 import { useUser } from '@clerk/nextjs'
@@ -11,12 +11,12 @@ import Image from 'next/image'
 
 // mobileOnly: true = show in mobile bottom nav only (not desktop sidebar)
 const navItems = [
-  { id: 'discover', label: 'Discover', icon: Compass, href: '/buddy?tab=map', mobileOnly: false },
-  { id: 'sessions', label: 'My Sessions', icon: CalendarDays, href: '/buddy?tab=mine', mobileOnly: false },
+  { id: 'discover', label: 'Discover', icon: Compass, href: '/buddy', mobileOnly: false },
+  { id: 'events', label: 'Events', icon: CalendarDays, href: '/events', mobileOnly: false },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile', mobileOnly: true },
 ]
 
-// Wrap export in Suspense so useSearchParams() doesn't block static generation
+// Wrap export in Suspense boundary for client-side navigation hooks
 export function AppNav() {
   return (
     <Suspense fallback={null}>
@@ -27,7 +27,6 @@ export function AppNav() {
 
 function AppNavInner() {
   const pathname = usePathname()
-  const searchParams = useSearchParams()
   const { user, isSignedIn } = useUser()
   const [isHovered, setIsHovered] = useState(false)
   const [pendingCount, setPendingCount] = useState(0)
@@ -44,6 +43,7 @@ function AppNavInner() {
   const isAppPage =
     pathname.startsWith('/buddy') ||
     pathname.startsWith('/discover') ||
+    pathname.startsWith('/events') ||
     pathname.startsWith('/profile') ||
     pathname.startsWith('/activities') ||
     pathname.startsWith('/onboarding') ||
@@ -55,11 +55,11 @@ function AppNavInner() {
   if (!isAppPage) return null
 
   function isActive(item: typeof navItems[0]) {
-    if (item.id === 'sessions') {
-      return pathname.startsWith('/buddy') && searchParams.get('tab') === 'mine'
-    }
     if (item.id === 'discover') {
-      return pathname.startsWith('/discover') || (pathname.startsWith('/buddy') && searchParams.get('tab') === 'map')
+      return pathname.startsWith('/discover') || pathname.startsWith('/buddy')
+    }
+    if (item.id === 'events') {
+      return pathname.startsWith('/events')
     }
     return pathname.startsWith(item.href)
   }
@@ -96,7 +96,7 @@ function AppNavInner() {
                   }`}
                 >
                   <Icon className="w-4 h-4" />
-                  {item.id === 'sessions' && pendingCount > 0 && (
+                  {item.id === 'events' && pendingCount > 0 && (
                     <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full text-[8px] text-white font-bold flex items-center justify-center leading-none">
                       {pendingCount > 9 ? '9' : pendingCount}
                     </span>
@@ -154,7 +154,7 @@ function AppNavInner() {
                       )}
                       <Icon className={`w-5 h-5 ${active ? 'stroke-[2.5px]' : ''}`} />
                       <span className="text-[10px] mt-1 font-medium">{item.label}</span>
-                      {item.id === 'sessions' && pendingCount > 0 && (
+                      {item.id === 'events' && pendingCount > 0 && (
                         <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 rounded-full text-[9px] text-white font-bold flex items-center justify-center leading-none">
                           {pendingCount > 9 ? '9+' : pendingCount}
                         </span>
@@ -236,7 +236,7 @@ function AppNavInner() {
                 >
                   <span className="relative">
                     <Icon className={`w-6 h-6 transition-all duration-200 ${active ? 'stroke-[2.5px]' : ''}`} />
-                    {item.id === 'sessions' && pendingCount > 0 && (
+                    {item.id === 'events' && pendingCount > 0 && (
                       <span className="absolute -top-1 -right-1.5 w-4 h-4 bg-red-500 rounded-full text-[9px] text-white font-bold flex items-center justify-center leading-none">
                         {pendingCount > 9 ? '9+' : pendingCount}
                       </span>

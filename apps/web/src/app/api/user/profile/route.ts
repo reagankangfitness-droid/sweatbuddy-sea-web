@@ -25,6 +25,8 @@ export async function GET() {
       select: {
         slug: true,
         isHost: true,
+        isCoach: true,
+        coachVerificationStatus: true,
         bio: true,
         fitnessLevel: true,
         fitnessInterests: true,
@@ -37,6 +39,8 @@ export async function GET() {
       profile: dbUser ? {
         slug: dbUser.slug,
         isHost: dbUser.isHost,
+        isCoach: dbUser.isCoach,
+        coachVerificationStatus: dbUser.coachVerificationStatus,
         bio: dbUser.bio,
         fitnessLevel: dbUser.fitnessLevel,
         fitnessInterests: dbUser.fitnessInterests,

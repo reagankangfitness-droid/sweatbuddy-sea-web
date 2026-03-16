@@ -34,11 +34,11 @@ const BASE_URL = 'https://www.sweatbuddies.co'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'SweatBuddies | Discover Fitness Communities Near You',
+    default: 'SweatBuddies | Find Your Fitness Crew',
     template: '%s | SweatBuddies',
   },
-  description: 'Find and join run clubs, yoga groups, swimming squads, and fitness communities near you. Real communities, real people.',
-  keywords: ['fitness community', 'run club', 'yoga group', 'workout group', 'fitness near me', 'join a community', 'group fitness', 'social fitness', 'fitness meetup', 'group workouts near me', 'swimming squad'],
+  description: 'Run clubs, yoga circles, swimming squads, and more. Real people, moving together. Find your crew.',
+  keywords: ['fitness community', 'run club', 'yoga group', 'workout group', 'fitness near me', 'join a community', 'group fitness', 'social fitness', 'fitness meetup', 'group workouts near me', 'swimming squad', 'find your crew', 'fitness crew', 'workout crew'],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
   icons: {
@@ -51,21 +51,21 @@ export const metadata: Metadata = {
     locale: 'en',
     url: BASE_URL,
     siteName: 'SweatBuddies',
-    title: 'SweatBuddies | Discover Fitness Communities Near You',
-    description: 'Find and join run clubs, yoga groups, swimming squads, and fitness communities near you. Real communities, real people.',
+    title: 'SweatBuddies | Find Your Fitness Crew',
+    description: 'Run clubs, yoga circles, swimming squads, and more. Real people, moving together. Find your crew.',
     images: [
       {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SweatBuddies — Discover fitness communities near you.',
+        alt: 'SweatBuddies — Find your fitness crew.',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SweatBuddies | Discover Fitness Communities Near You',
-    description: 'Find and join run clubs, yoga groups, swimming squads, and fitness communities near you. Real communities, real people.',
+    title: 'SweatBuddies | Find Your Fitness Crew',
+    description: 'Run clubs, yoga circles, swimming squads, and more. Real people, moving together. Find your crew.',
     images: ['/images/og-image.jpg'],
   },
   robots: {

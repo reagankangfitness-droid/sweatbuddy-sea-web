@@ -123,10 +123,10 @@ export default function P2POnboardingPage() {
         <div className="text-center mb-10">
           <div className="text-4xl mb-3">🤝</div>
           <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
-            Set up your profile
+            Help us find your crew
           </h1>
           <p className="mt-2 text-neutral-500 dark:text-neutral-400 text-sm">
-            Takes 30 seconds. Help coaches and other members know what you&apos;re looking for.
+            Takes 30 seconds. We&apos;ll match you with communities that fit your vibe.
           </p>
         </div>
 
@@ -177,7 +177,7 @@ export default function P2POnboardingPage() {
           {/* Fitness Interests */}
           <div>
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
-              What do you love? <span className="text-red-500">*</span>
+              What gets you moving? <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {FITNESS_INTERESTS.map((interest) => {
@@ -242,7 +242,7 @@ export default function P2POnboardingPage() {
                 Setting up...
               </>
             ) : (
-              'Let\'s go →'
+              'Find my crew →'
             )}
           </button>
         </form>

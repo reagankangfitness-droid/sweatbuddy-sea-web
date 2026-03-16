@@ -26,7 +26,7 @@ export default function Error({
           Something went wrong
         </h2>
         <p className="text-neutral-500 mb-6">
-          Not your fault. Let&apos;s try that again.
+          Not your fault. We&apos;re on it.
         </p>
         <div className="space-y-3">
           <button

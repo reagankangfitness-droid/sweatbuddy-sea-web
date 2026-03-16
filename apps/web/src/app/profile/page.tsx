@@ -134,7 +134,7 @@ export default function ProfilePage() {
             </div>
             <h2 className="text-2xl font-bold text-neutral-100 mb-2">Join SweatBuddies</h2>
             <p className="text-neutral-400 mb-8 max-w-xs mx-auto">
-              Sign in to find sessions, join your crew, and keep track of your workouts.
+              Find your crew, show up, and never work out alone again.
             </p>
 
             <SignInButton mode="modal">
@@ -272,8 +272,8 @@ export default function ProfilePage() {
                     <BadgeCheck className="w-4 h-4 text-emerald-400" />
                   </div>
                   <div>
-                    <span className="text-neutral-200 text-sm font-medium">Start a community</span>
-                    <p className="text-xs text-neutral-500">Create and grow your fitness group</p>
+                    <span className="text-neutral-200 text-sm font-medium">Lead the movement</span>
+                    <p className="text-xs text-neutral-500">Start a crew and bring people together</p>
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-neutral-300" />
@@ -289,8 +289,8 @@ export default function ProfilePage() {
                   <Users className="w-4 h-4 text-neutral-400" />
                 </div>
                 <div>
-                  <span className="text-neutral-200 text-sm font-medium">My Communities</span>
-                  <p className="text-xs text-neutral-500">Communities you&apos;ve joined</p>
+                  <span className="text-neutral-200 text-sm font-medium">My Crews</span>
+                  <p className="text-xs text-neutral-500">Your people</p>
                 </div>
               </div>
               <ChevronRight className="w-5 h-5 text-neutral-300" />

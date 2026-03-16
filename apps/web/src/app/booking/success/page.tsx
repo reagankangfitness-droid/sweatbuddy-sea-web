@@ -247,15 +247,9 @@ function BookingSuccessContent() {
             <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-10 h-10 text-success" />
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Session booked!</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-2">You&apos;re in!</h1>
             <p className="text-muted-foreground">
-              {isFree
-                ? (booking?.activity?.user?.name
-                    ? `Your session with ${booking.activity.user.name} is confirmed!`
-                    : 'Your session is confirmed!')
-                : (booking?.activity?.user?.name
-                    ? `Payment successful - your session with ${booking.activity.user.name} is confirmed!`
-                    : 'Payment successful - your session is confirmed!')}
+              See you there.
             </p>
           </div>
 
@@ -436,9 +430,9 @@ function BookingSuccessContent() {
 
           {/* Tip Section */}
           <div className="mt-6 p-4 bg-primary/5 rounded-xl">
-            <p className="text-sm font-medium text-foreground mb-1">Quick tip</p>
+            <p className="text-sm font-medium text-foreground mb-1">Pro tip</p>
             <p className="text-sm text-muted-foreground">
-              Your coach will send you any pre-session instructions. Check the group chat for updates.
+              Say hi in the group chat. The regulars are friendly.
             </p>
           </div>
         </div>

@@ -8,21 +8,21 @@ import { SUPPORT_EMAIL } from '@/config/constants'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'SweatBuddies — Discover Fitness Communities Near You',
+  title: 'SweatBuddies — Find Your Fitness Crew',
   description:
-    'Find and join run clubs, yoga groups, swimming squads, tennis crews, and more. Real communities, real people, near you.',
+    'Run clubs, yoga circles, swimming squads, and more. Real people, moving together. Find your crew.',
 }
 
 const CATEGORY_CARDS = [
-  { emoji: '🏃', label: 'Running Clubs', slug: 'running' },
-  { emoji: '🧘', label: 'Yoga Groups', slug: 'yoga' },
-  { emoji: '🏊', label: 'Swimming Squads', slug: 'swimming' },
-  { emoji: '🎾', label: 'Tennis Crews', slug: 'padel' },
-  { emoji: '🏋️', label: 'Gym & Strength', slug: 'gym' },
-  { emoji: '🏸', label: 'Badminton Groups', slug: 'badminton' },
-  { emoji: '🥾', label: 'Hiking Crews', slug: 'hiking' },
-  { emoji: '⚡', label: 'HIIT & Bootcamp', slug: 'bootcamp' },
-  { emoji: '🧊', label: 'Cold Plunge', slug: 'cold_plunge' },
+  { emoji: '🏃', label: 'Running Clubs', vibe: 'Dawn routes, coffee after', slug: 'running' },
+  { emoji: '🧘', label: 'Yoga Groups', vibe: 'Park flows, rooftop sessions', slug: 'yoga' },
+  { emoji: '🏊', label: 'Swimming Squads', vibe: 'Laps, lessons, ocean swims', slug: 'swimming' },
+  { emoji: '🎾', label: 'Tennis Crews', vibe: 'Rallies, drills, match days', slug: 'padel' },
+  { emoji: '🏋️', label: 'Gym & Strength', vibe: 'Spotters, PRs, push days', slug: 'gym' },
+  { emoji: '🏸', label: 'Badminton Groups', vibe: 'Doubles, smashes, court nights', slug: 'badminton' },
+  { emoji: '🥾', label: 'Hiking Crews', vibe: 'Trail mornings, summit coffees', slug: 'hiking' },
+  { emoji: '⚡', label: 'HIIT & Bootcamp', vibe: 'No excuses, just effort', slug: 'bootcamp' },
+  { emoji: '🧊', label: 'Cold Plunge', vibe: 'Breathe, dip, feel alive', slug: 'cold_plunge' },
 ]
 
 export default async function HomePage() {
@@ -68,7 +68,7 @@ export default async function HomePage() {
               href="/communities"
               className="hidden sm:inline px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors"
             >
-              Browse communities
+              Find your crew
             </Link>
             <Link
               href="/sign-in"
@@ -101,13 +101,13 @@ export default async function HomePage() {
           </p>
 
           <h1 className="text-4xl sm:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-            Discover fitness communities
-            <span className="block text-neutral-400">near you.</span>
+            Your people are already
+            <span className="block text-neutral-400">warming up.</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-neutral-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Run clubs, yoga groups, swimming squads, tennis crews — find your
-            people and start moving together.
+            Run clubs at sunrise. Yoga in the park. Cold plunge crews on Sunday.
+            Real people, moving together — and saving you a spot.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -115,13 +115,13 @@ export default async function HomePage() {
               href="/communities"
               className="px-8 py-4 bg-white text-neutral-900 text-base font-semibold rounded-xl hover:bg-neutral-100 transition-colors shadow-lg"
             >
-              Browse communities &rarr;
+              Find your crew
             </Link>
             <Link
               href="/host/community"
               className="px-8 py-4 bg-neutral-800 text-neutral-100 text-base font-semibold rounded-xl hover:bg-neutral-700 transition-colors border border-neutral-700"
             >
-              Start a community
+              Lead the movement
             </Link>
           </div>
         </div>
@@ -132,7 +132,7 @@ export default async function HomePage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-              Find your kind of community
+              What gets you moving?
             </h2>
           </div>
 
@@ -146,6 +146,9 @@ export default async function HomePage() {
                 <span className="text-3xl block mb-2">{cat.emoji}</span>
                 <span className="text-sm font-semibold text-neutral-200 group-hover:text-white transition-colors">
                   {cat.label}
+                </span>
+                <span className="block text-xs text-neutral-500 mt-1">
+                  {cat.vibe}
                 </span>
               </Link>
             ))}
@@ -206,16 +209,16 @@ export default async function HomePage() {
           ) : (
             <div className="text-center">
               <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-                Communities launching soon
+                Your crew is forming.
               </h2>
               <p className="text-neutral-400 mb-8">
-                Be the first to start a community in your area.
+                Be one of the first to bring people together.
               </p>
               <Link
                 href="/host/community"
                 className="inline-block px-6 py-3 bg-neutral-800 text-neutral-300 text-sm font-medium rounded-xl hover:bg-neutral-700 transition-colors border border-neutral-700"
               >
-                Start the first one &rarr;
+                Lead the movement &rarr;
               </Link>
             </div>
           )}
@@ -227,27 +230,27 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-              Three steps. Zero friction.
+              Belonging starts with showing up.
             </h2>
-            <p className="text-neutral-400">Discover, join, show up.</p>
+            <p className="text-neutral-400">No sign-up forms. No awkward intros. Just people who get it.</p>
           </div>
 
           <div className="grid sm:grid-cols-3 gap-6">
             {[
               {
                 step: '01',
-                title: 'Find your community',
-                body: 'Browse run clubs, yoga groups, tennis crews, and more. Filter by activity, location, or vibe.',
+                title: 'See what\u2019s happening',
+                body: 'People near you are running, stretching, swimming, lifting \u2014 right now. See who and where.',
               },
               {
                 step: '02',
-                title: 'Join with one tap',
-                body: 'No forms. No commitments. Join a community and see what\u2019s happening this week.',
+                title: 'Say \u2018I\u2019m in\u2019',
+                body: 'One tap. No commitment. No awkward first message. Just show up when it feels right.',
               },
               {
                 step: '03',
-                title: 'Show up and belong',
-                body: 'Attend your first session. By the end, you\u2019ll know someone\u2019s name. That\u2019s how regulars get made.',
+                title: 'Know someone by the end',
+                body: 'Show up once. You\u2019ll leave knowing someone\u2019s name. Come back next week and they\u2019ll save you a spot.',
               },
             ].map((s, i) => (
               <div
@@ -272,7 +275,7 @@ export default async function HomePage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-              Every kind of community
+              However you move, there&apos;s a crew for that.
             </h2>
           </div>
 
@@ -281,17 +284,17 @@ export default async function HomePage() {
               {
                 emoji: '🏃',
                 title: 'Sports & Movement',
-                body: 'Run clubs, tennis groups, swimming squads, badminton crews. Find your sport.',
+                body: 'The Tuesday night tennis crew. The Saturday sunrise runners. The lane 4 swimmers who always grab coffee after.',
               },
               {
                 emoji: '🏋️',
                 title: 'Fitness & Training',
-                body: 'Gym groups, HIIT bootcamps, CrossFit boxes, calisthenics crews. Push together.',
+                body: 'The 6am bootcamp that became your alarm clock. The gym crew who won\u2019t let you skip leg day.',
               },
               {
                 emoji: '🧘',
                 title: 'Wellness & Recovery',
-                body: 'Yoga circles, pilates groups, cold plunge crews, meditation communities. Feel better.',
+                body: 'The Sunday yoga circle where nobody judges your balance. The cold plunge crew that makes you feel invincible.',
               },
             ].map((item, i) => (
               <div
@@ -327,23 +330,24 @@ export default async function HomePage() {
       <section className="py-24 px-4 sm:px-6">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl sm:text-5xl font-bold mb-4 leading-tight">
-            Your community is already out there.
+            Somewhere near you, a group just finished stretching and someone
+            said &lsquo;same time next week?&rsquo;
           </h2>
           <p className="text-neutral-400 text-lg mb-10">
-            They meet every week. They just need a place to find each other.
+            They meet every week. They just haven&apos;t met you yet.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/communities"
               className="inline-block px-10 py-4 bg-white text-neutral-900 text-lg font-semibold rounded-xl hover:bg-neutral-100 transition-colors shadow-xl"
             >
-              Browse communities
+              Find your crew
             </Link>
             <Link
               href="/host/community"
               className="inline-block px-10 py-4 bg-transparent text-neutral-300 text-lg font-semibold rounded-xl border border-neutral-700 hover:border-neutral-500 transition-colors"
             >
-              Start a community
+              Lead the movement
             </Link>
           </div>
         </div>
@@ -361,13 +365,13 @@ export default async function HomePage() {
               href="/communities"
               className="hover:text-neutral-300 transition-colors py-3 -my-3"
             >
-              Browse communities
+              Find your crew
             </Link>
             <Link
               href="/host/community"
               className="hover:text-neutral-300 transition-colors py-3 -my-3"
             >
-              Start a community
+              Lead the movement
             </Link>
             <a
               href={`mailto:${SUPPORT_EMAIL}`}

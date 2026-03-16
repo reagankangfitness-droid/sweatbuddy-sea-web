@@ -11,7 +11,7 @@ import Image from 'next/image'
 
 // mobileOnly: true = show in mobile bottom nav only (not desktop sidebar)
 const navItems = [
-  { id: 'communities', label: 'Communities', icon: Compass, href: '/communities', mobileOnly: false },
+  { id: 'communities', label: 'Discover', icon: Compass, href: '/communities', mobileOnly: false },
   { id: 'sessions', label: 'Sessions', icon: CalendarDays, href: '/buddy', mobileOnly: false },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile', mobileOnly: true },
 ]

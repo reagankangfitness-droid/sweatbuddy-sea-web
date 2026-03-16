@@ -12,10 +12,10 @@ export default function OnboardingRoleSelectionPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
-            Welcome to SweatBuddies
+            Ready to find your people?
           </h1>
           <p className="mt-3 text-neutral-500 dark:text-neutral-400 text-sm">
-            What brings you here?
+            How do you want to start?
           </p>
         </div>
 
@@ -32,13 +32,13 @@ export default function OnboardingRoleSelectionPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
-                  I&apos;m looking for a coach
+                  I want to join a community
                 </h2>
                 <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                  Find verified coaches for fitness, sports, and wellness
+                  Find people who move like you — run clubs, yoga circles, swimming crews, and more.
                 </p>
                 <span className="inline-block mt-3 text-sm font-medium text-neutral-900 dark:text-white group-hover:translate-x-1 transition-transform">
-                  Find a coach &rarr;
+                  Let&apos;s go &rarr;
                 </span>
               </div>
             </div>
@@ -55,13 +55,13 @@ export default function OnboardingRoleSelectionPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
-                  I am a coach
+                  I lead a community
                 </h2>
                 <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                  Get discovered by students and grow your coaching business
+                  Already running a fitness group? Give your crew a home and grow it.
                 </p>
                 <span className="inline-block mt-3 text-sm font-medium text-neutral-900 dark:text-white group-hover:translate-x-1 transition-transform">
-                  Apply as a coach &rarr;
+                  Set up your community &rarr;
                 </span>
               </div>
             </div>

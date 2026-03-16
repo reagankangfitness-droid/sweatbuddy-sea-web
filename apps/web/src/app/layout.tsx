@@ -34,11 +34,11 @@ const BASE_URL = 'https://www.sweatbuddies.co'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'SweatBuddies | Find Your Fitness Crew',
+    default: 'SweatBuddies | Move Better Together',
     template: '%s | SweatBuddies',
   },
-  description: 'Run clubs, yoga circles, swimming squads, and more. Real people, moving together. Find your crew.',
-  keywords: ['fitness community', 'run club', 'yoga group', 'workout group', 'fitness near me', 'join a community', 'group fitness', 'social fitness', 'fitness meetup', 'group workouts near me', 'swimming squad', 'find your crew', 'fitness crew', 'workout crew'],
+  description: 'Join fitness communities that push you further. Run clubs, yoga groups, swimming squads, and more. Real people, real progress.',
+  keywords: ['fitness community', 'run club', 'yoga group', 'workout group', 'fitness near me', 'group fitness', 'social fitness', 'fitness crew', 'move better together', 'training partners', 'fitness goals', 'workout motivation'],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
   icons: {
@@ -51,21 +51,21 @@ export const metadata: Metadata = {
     locale: 'en',
     url: BASE_URL,
     siteName: 'SweatBuddies',
-    title: 'SweatBuddies | Find Your Fitness Crew',
-    description: 'Run clubs, yoga circles, swimming squads, and more. Real people, moving together. Find your crew.',
+    title: 'SweatBuddies | Move Better Together',
+    description: 'Join fitness communities that push you further. Run clubs, yoga groups, swimming squads, and more. Real people, real progress.',
     images: [
       {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SweatBuddies — Find your fitness crew.',
+        alt: 'SweatBuddies — Move better together.',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SweatBuddies | Find Your Fitness Crew',
-    description: 'Run clubs, yoga circles, swimming squads, and more. Real people, moving together. Find your crew.',
+    title: 'SweatBuddies | Move Better Together',
+    description: 'Join fitness communities that push you further. Run clubs, yoga groups, swimming squads, and more. Real people, real progress.',
     images: ['/images/og-image.jpg'],
   },
   robots: {

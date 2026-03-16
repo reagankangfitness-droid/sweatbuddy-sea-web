@@ -8,21 +8,21 @@ import { SUPPORT_EMAIL } from '@/config/constants'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'SweatBuddies — Find Your Fitness Crew',
+  title: 'SweatBuddies — Move Better Together',
   description:
-    'Run clubs, yoga circles, swimming squads, and more. Real people, moving together. Find your crew.',
+    'Join run clubs, yoga groups, swimming squads, and fitness communities that push you further. Real people, real progress.',
 }
 
 const CATEGORY_CARDS = [
-  { emoji: '🏃', label: 'Running Clubs', vibe: 'Dawn routes, coffee after', slug: 'running' },
-  { emoji: '🧘', label: 'Yoga Groups', vibe: 'Park flows, rooftop sessions', slug: 'yoga' },
-  { emoji: '🏊', label: 'Swimming Squads', vibe: 'Laps, lessons, ocean swims', slug: 'swimming' },
-  { emoji: '🎾', label: 'Tennis Crews', vibe: 'Rallies, drills, match days', slug: 'padel' },
-  { emoji: '🏋️', label: 'Gym & Strength', vibe: 'Spotters, PRs, push days', slug: 'gym' },
-  { emoji: '🏸', label: 'Badminton Groups', vibe: 'Doubles, smashes, court nights', slug: 'badminton' },
-  { emoji: '🥾', label: 'Hiking Crews', vibe: 'Trail mornings, summit coffees', slug: 'hiking' },
-  { emoji: '⚡', label: 'HIIT & Bootcamp', vibe: 'No excuses, just effort', slug: 'bootcamp' },
-  { emoji: '🧊', label: 'Cold Plunge', vibe: 'Breathe, dip, feel alive', slug: 'cold_plunge' },
+  { emoji: '🏃', label: 'Running Clubs', vibe: 'Find your pace, push your limits', slug: 'running' },
+  { emoji: '🧘', label: 'Yoga Groups', vibe: 'Deepen your practice together', slug: 'yoga' },
+  { emoji: '🏊', label: 'Swimming Squads', vibe: 'Faster laps, better form', slug: 'swimming' },
+  { emoji: '🎾', label: 'Tennis Crews', vibe: 'Sharpen your game, find your match', slug: 'padel' },
+  { emoji: '🏋️', label: 'Gym & Strength', vibe: 'Spotters, PRs, no skipped days', slug: 'gym' },
+  { emoji: '🏸', label: 'Badminton Groups', vibe: 'Smash harder, play smarter', slug: 'badminton' },
+  { emoji: '🥾', label: 'Hiking Crews', vibe: 'Conquer trails, earn the view', slug: 'hiking' },
+  { emoji: '⚡', label: 'HIIT & Bootcamp', vibe: 'Outwork yesterday, together', slug: 'bootcamp' },
+  { emoji: '🧊', label: 'Cold Plunge', vibe: 'Build resilience, feel alive', slug: 'cold_plunge' },
 ]
 
 export default async function HomePage() {
@@ -101,13 +101,12 @@ export default async function HomePage() {
           </p>
 
           <h1 className="text-4xl sm:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-            Your people are already
-            <span className="block text-neutral-400">warming up.</span>
+            Move better.
+            <span className="block text-neutral-400">Together.</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-neutral-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Run clubs at sunrise. Yoga in the park. Cold plunge crews on Sunday.
-            Real people, moving together — and saving you a spot.
+            Run clubs pushing your pace. Yoga groups deepening your practice. Swim squads shaving your time. The crew that makes you better &mdash; and keeps you coming back.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -230,27 +229,27 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-              Belonging starts with showing up.
+              You get better faster with the right crew.
             </h2>
-            <p className="text-neutral-400">No sign-up forms. No awkward intros. Just people who get it.</p>
+            <p className="text-neutral-400">No sign-up forms. No awkward intros. Just people who push each other.</p>
           </div>
 
           <div className="grid sm:grid-cols-3 gap-6">
             {[
               {
                 step: '01',
-                title: 'See what\u2019s happening',
-                body: 'People near you are running, stretching, swimming, lifting \u2014 right now. See who and where.',
+                title: 'Find your level',
+                body: 'Browse communities by sport, intensity, and location. See who\u2019s training, when, and where.',
               },
               {
                 step: '02',
-                title: 'Say \u2018I\u2019m in\u2019',
-                body: 'One tap. No commitment. No awkward first message. Just show up when it feels right.',
+                title: 'Show up',
+                body: 'One tap to join. No commitment. Just bring your energy and let the crew handle the rest.',
               },
               {
                 step: '03',
-                title: 'Know someone by the end',
-                body: 'Show up once. You\u2019ll leave knowing someone\u2019s name. Come back next week and they\u2019ll save you a spot.',
+                title: 'Level up together',
+                body: 'The crew pushes you further than you\u2019d go alone. Come for the workout, stay for the people.',
               },
             ].map((s, i) => (
               <div
@@ -275,7 +274,7 @@ export default async function HomePage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-              However you move, there&apos;s a crew for that.
+              However you train, there&apos;s a crew for that.
             </h2>
           </div>
 
@@ -284,17 +283,17 @@ export default async function HomePage() {
               {
                 emoji: '🏃',
                 title: 'Sports & Movement',
-                body: 'The Tuesday night tennis crew. The Saturday sunrise runners. The lane 4 swimmers who always grab coffee after.',
+                body: 'The runners who made you faster. The tennis crew that sharpened your backhand. The swimmers who turned laps into PRs.',
               },
               {
                 emoji: '🏋️',
                 title: 'Fitness & Training',
-                body: 'The 6am bootcamp that became your alarm clock. The gym crew who won\u2019t let you skip leg day.',
+                body: 'The 6am bootcamp that rewired your discipline. The gym crew who won\u2019t let you plateau. The HIIT squad that made hard feel normal.',
               },
               {
                 emoji: '🧘',
                 title: 'Wellness & Recovery',
-                body: 'The Sunday yoga circle where nobody judges your balance. The cold plunge crew that makes you feel invincible.',
+                body: 'The yoga circle that unlocked your flexibility. The cold plunge crew that built your resilience. The pilates group that fixed your posture.',
               },
             ].map((item, i) => (
               <div
@@ -330,11 +329,10 @@ export default async function HomePage() {
       <section className="py-24 px-4 sm:px-6">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl sm:text-5xl font-bold mb-4 leading-tight">
-            Somewhere near you, a group just finished stretching and someone
-            said &lsquo;same time next week?&rsquo;
+            The best version of you needs the right crew.
           </h2>
           <p className="text-neutral-400 text-lg mb-10">
-            They meet every week. They just haven&apos;t met you yet.
+            Every PR, every new skill, every breakthrough &mdash; it happens faster when you&apos;re not doing it alone.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link

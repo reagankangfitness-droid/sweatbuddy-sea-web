@@ -6,6 +6,7 @@ import { useUser, SignInButton, useClerk } from '@clerk/nextjs'
 import {
   ArrowLeft,
   User,
+  Users,
   Settings,
   LogOut,
   ChevronRight,
@@ -263,7 +264,7 @@ export default function ProfilePage() {
               </Link>
             ) : !profile?.isCoach ? (
               <Link
-                href="/onboarding/coach"
+                href="/host/community"
                 className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
               >
                 <div className="flex items-center gap-3">
@@ -271,13 +272,29 @@ export default function ProfilePage() {
                     <BadgeCheck className="w-4 h-4 text-emerald-400" />
                   </div>
                   <div>
-                    <span className="text-neutral-200 text-sm font-medium">Become a coach</span>
-                    <p className="text-xs text-neutral-500">Get verified and start coaching</p>
+                    <span className="text-neutral-200 text-sm font-medium">Start a community</span>
+                    <p className="text-xs text-neutral-500">Create and grow your fitness group</p>
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-neutral-300" />
               </Link>
             ) : null}
+
+            <Link
+              href="/communities?joined=true"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
+                  <Users className="w-4 h-4 text-neutral-400" />
+                </div>
+                <div>
+                  <span className="text-neutral-200 text-sm font-medium">My Communities</span>
+                  <p className="text-xs text-neutral-500">Communities you&apos;ve joined</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-neutral-300" />
+            </Link>
 
             <Link
               href="/buddy?tab=mine"

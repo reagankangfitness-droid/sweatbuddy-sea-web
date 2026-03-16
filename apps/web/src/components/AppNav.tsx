@@ -11,8 +11,8 @@ import Image from 'next/image'
 
 // mobileOnly: true = show in mobile bottom nav only (not desktop sidebar)
 const navItems = [
-  { id: 'discover', label: 'Discover', icon: Compass, href: '/buddy', mobileOnly: false },
-  { id: 'sessions', label: 'My Sessions', icon: CalendarDays, href: '/buddy?tab=mine', mobileOnly: false },
+  { id: 'communities', label: 'Communities', icon: Compass, href: '/communities', mobileOnly: false },
+  { id: 'sessions', label: 'Sessions', icon: CalendarDays, href: '/buddy', mobileOnly: false },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile', mobileOnly: true },
 ]
 
@@ -55,8 +55,8 @@ function AppNavInner() {
   if (!isAppPage) return null
 
   function isActive(item: typeof navItems[0]) {
-    if (item.id === 'discover') {
-      return pathname.startsWith('/discover') || pathname.startsWith('/buddy')
+    if (item.id === 'communities') {
+      return pathname.startsWith('/communities')
     }
     if (item.id === 'sessions') {
       return pathname.startsWith('/buddy')

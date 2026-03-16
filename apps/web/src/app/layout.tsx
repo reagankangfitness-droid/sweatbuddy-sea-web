@@ -34,11 +34,11 @@ const BASE_URL = 'https://www.sweatbuddies.co'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'SweatBuddies | Find Verified Fitness & Sports Coaches Near You',
+    default: 'SweatBuddies | Discover Fitness Communities Near You',
     template: '%s | SweatBuddies',
   },
-  description: 'Find verified fitness and sports coaches near you. Browse sessions led by verified coaches — running, yoga, gym, hiking and more.',
-  keywords: ['find a coach', 'personal trainer', 'sports coach', 'fitness coach', 'book a coach', 'verified coaches', 'group fitness', 'fitness events', 'run club', 'social fitness', 'fitness meetup', 'group workouts near me', 'fitness community'],
+  description: 'Find and join run clubs, yoga groups, swimming squads, and fitness communities near you. Real communities, real people.',
+  keywords: ['fitness community', 'run club', 'yoga group', 'workout group', 'fitness near me', 'join a community', 'group fitness', 'social fitness', 'fitness meetup', 'group workouts near me', 'swimming squad'],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
   icons: {
@@ -51,21 +51,21 @@ export const metadata: Metadata = {
     locale: 'en',
     url: BASE_URL,
     siteName: 'SweatBuddies',
-    title: 'SweatBuddies | Find Verified Fitness & Sports Coaches Near You',
-    description: 'Find verified fitness and sports coaches near you. Browse sessions led by verified coaches — running, yoga, gym, hiking and more.',
+    title: 'SweatBuddies | Discover Fitness Communities Near You',
+    description: 'Find and join run clubs, yoga groups, swimming squads, and fitness communities near you. Real communities, real people.',
     images: [
       {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SweatBuddies — Find verified fitness & sports coaches near you.',
+        alt: 'SweatBuddies — Discover fitness communities near you.',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SweatBuddies | Find Verified Fitness & Sports Coaches Near You',
-    description: 'Find verified fitness and sports coaches near you. Browse sessions led by verified coaches — running, yoga, gym, hiking and more.',
+    title: 'SweatBuddies | Discover Fitness Communities Near You',
+    description: 'Find and join run clubs, yoga groups, swimming squads, and fitness communities near you. Real communities, real people.',
     images: ['/images/og-image.jpg'],
   },
   robots: {

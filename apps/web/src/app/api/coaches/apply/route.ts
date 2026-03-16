@@ -25,6 +25,10 @@ export async function POST(request: NextRequest) {
       hourlyRate,
       groupRate,
       languages,
+      goals,
+      venues,
+      freeTrialOffered,
+      cancellationPolicy,
     } = body
 
     // Validate required fields
@@ -72,13 +76,28 @@ export async function POST(request: NextRequest) {
 
     // Create CoachProfile and update User in a transaction
     const result = await prisma.$transaction(async (tx) => {
+      const venuesList = Array.isArray(venues)
+        ? venues
+        : typeof venues === 'string'
+          ? venues.split(',').map((v: string) => v.trim()).filter(Boolean)
+          : []
+
       const coachProfile = await tx.coachProfile.create({
         data: {
           userId,
           displayName: body.displayName || existingUser.name || 'Coach',
+          bio: bio || null,
           specializations: specializations || [],
           sportsOffered: sportsOffered || [],
+          goalsServed: goals || [],
           serviceCity,
+          trainingVenues: venuesList,
+          sessionPrice: groupRate ? Math.round(parseFloat(String(groupRate)) * 100) : null,
+          groupPrice: groupRate ? Math.round(parseFloat(String(groupRate)) * 100) : null,
+          offersTrial: !!freeTrialOffered,
+          trialPrice: freeTrialOffered ? 0 : null,
+          cancellationPolicy: cancellationPolicy || null,
+          cancellationHours: cancellationPolicy === '12h' ? 12 : cancellationPolicy === 'none' ? 0 : 24,
           isActive: false,
         },
       })

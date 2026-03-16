@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, MapPin, ChevronDown, CheckCircle2, Upload, X, ImagePlus } from 'lucide-react'
+import Link from 'next/link'
+import { ArrowLeft, Loader2, MapPin, ChevronDown, CheckCircle2, Upload, X, ImagePlus, ShieldX } from 'lucide-react'
 import { toast } from 'sonner'
 import { ACTIVITY_TYPES as ACTIVITY_TYPES_CONFIG } from '@/lib/activity-types'
 import { LocationAutocomplete } from '@/components/host/LocationAutocomplete'
@@ -17,6 +18,12 @@ const FITNESS_LEVELS = [
   { value: 'ALL', label: 'All levels welcome' },
   { value: 'INTERMEDIATE_PLUS', label: 'Intermediate & above' },
   { value: 'ADVANCED', label: 'Advanced only' },
+]
+
+const CANCELLATION_POLICIES = [
+  { value: '24h', label: '24 hours notice' },
+  { value: '12h', label: '12 hours notice' },
+  { value: 'none', label: 'No cancellations' },
 ]
 
 type Step = 'basic' | 'details' | 'pricing' | 'preview'
@@ -43,6 +50,7 @@ interface FormData {
   paynowQrImageUrl: string
   paynowPhoneNumber: string
   paynowName: string
+  cancellationPolicy: string
 }
 
 const INITIAL_FORM: FormData = {
@@ -67,6 +75,7 @@ const INITIAL_FORM: FormData = {
   paynowQrImageUrl: '',
   paynowPhoneNumber: '',
   paynowName: '',
+  cancellationPolicy: '24h',
 }
 
 const WIZARD_DRAFT_KEY = 'sb_session_draft'
@@ -84,7 +93,23 @@ export default function NewSessionPage() {
   const [coverUploading, setCoverUploading] = useState(false)
   const coverInputRef = useRef<HTMLInputElement>(null)
 
+  const [coachStatus, setCoachStatus] = useState<'loading' | 'verified' | 'blocked'>('loading')
+
   const { startUpload } = useUploadThing('activityImage')
+
+  // Check if user is a verified coach
+  useEffect(() => {
+    fetch('/api/user/profile')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.user?.isCoach && data?.user?.coachVerificationStatus === 'VERIFIED') {
+          setCoachStatus('verified')
+        } else {
+          setCoachStatus('blocked')
+        }
+      })
+      .catch(() => setCoachStatus('blocked'))
+  }, [])
 
   // Restore draft from localStorage on mount
   useEffect(() => {
@@ -254,6 +279,7 @@ export default function NewSessionPage() {
           paynowQrImageUrl: finalQrUrl || null,
           paynowPhoneNumber: form.paynowPhoneNumber.trim() || null,
           paynowName: form.paynowName.trim() || null,
+          cancellationPolicy: form.cancellationPolicy,
         }),
       })
 
@@ -287,14 +313,50 @@ export default function NewSessionPage() {
 
   const selectedType = ACTIVITY_TYPES.find((t) => t.slug === form.categorySlug)
 
+  // Loading coach status
+  if (coachStatus === 'loading') {
+    return (
+      <div className="min-h-screen bg-white dark:bg-neutral-950 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+      </div>
+    )
+  }
+
+  // Blocked state for non-verified coaches
+  if (coachStatus === 'blocked') {
+    return (
+      <div className="min-h-screen bg-white dark:bg-neutral-950 flex flex-col items-center justify-center px-4 text-center">
+        <ShieldX className="w-16 h-16 text-neutral-400 mb-6" />
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Only verified coaches can create sessions</h1>
+        <p className="text-neutral-500 mb-8 max-w-xs">
+          Apply to become a verified coach to start creating and hosting sessions for students.
+        </p>
+        <div className="flex flex-col gap-3 w-full max-w-xs">
+          <Link
+            href="/onboarding/coach"
+            className="w-full rounded-xl bg-black dark:bg-white px-4 py-4 text-sm font-semibold text-white dark:text-black text-center"
+          >
+            Apply to become a coach &rarr;
+          </Link>
+          <Link
+            href="/buddy"
+            className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 px-4 py-3 text-sm font-medium text-neutral-600 dark:text-neutral-300 text-center"
+          >
+            Back to sessions
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   // Success screen
   if (publishedId) {
     return (
       <div className="min-h-screen bg-white dark:bg-neutral-950 flex flex-col items-center justify-center px-4 text-center">
         <CheckCircle2 className="w-16 h-16 text-green-500 mb-6" />
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Session published!</h1>
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Session created!</h1>
         <p className="text-neutral-500 mb-8 max-w-xs">
-          Your session is live. Share it with friends to get people joining.
+          Your session is live. Students can now find and book it.
         </p>
         <div className="flex flex-col gap-3 w-full max-w-xs">
           <button
@@ -323,7 +385,7 @@ export default function NewSessionPage() {
             <ArrowLeft className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
           </button>
           <div className="flex-1">
-            <h1 className="text-base font-semibold text-neutral-900 dark:text-white">Host a Session</h1>
+            <h1 className="text-base font-semibold text-neutral-900 dark:text-white">Create a Session</h1>
             <div className="flex gap-1 mt-1" role="progressbar" aria-label={`Step ${stepIdx + 1} of ${STEPS.length}: ${step === 'basic' ? 'Basic Info' : step === 'details' ? 'Details' : step === 'pricing' ? 'Pricing' : 'Preview'}`} aria-valuenow={stepIdx + 1} aria-valuemin={1} aria-valuemax={STEPS.length}>
               {STEPS.map((s, i) => (
                 <div
@@ -478,6 +540,25 @@ export default function NewSessionPage() {
                   }
                 }}
               />
+            </div>
+
+            {/* Cancellation policy */}
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Cancellation policy
+              </label>
+              <div className="relative">
+                <select
+                  value={form.cancellationPolicy}
+                  onChange={(e) => update('cancellationPolicy', e.target.value)}
+                  className="w-full appearance-none rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                >
+                  {CANCELLATION_POLICIES.map((p) => (
+                    <option key={p.value} value={p.value}>{p.label}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
+              </div>
             </div>
           </div>
         )}

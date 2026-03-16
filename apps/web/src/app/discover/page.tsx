@@ -308,7 +308,7 @@ function SessionDetailSheet({ session, onClose, onJoin, joining, currentUserId }
                   ) : session.requiresApproval ? (
                     'Request to join →'
                   ) : (
-                    "I'm going →"
+                    "Book →"
                   )}
                 </button>
               )}
@@ -514,7 +514,7 @@ export default function DiscoverPage() {
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
           <div className="bg-neutral-900/80 backdrop-blur border border-neutral-700/60 text-neutral-300 text-xs font-medium px-3 py-1.5 rounded-full">
             {sessions.length === 0
-              ? 'No sessions in this area'
+              ? 'No coaches in this area yet'
               : `${sessions.length} session${sessions.length !== 1 ? 's' : ''} nearby`}
           </div>
         </div>
@@ -549,7 +549,7 @@ export default function DiscoverPage() {
         className="absolute right-4 z-30"
         style={{ bottom: 'calc(80px + env(safe-area-inset-bottom, 0px) + 16px)' }}
       >
-        <Link href="/buddy/host/new" aria-label="Host a session">
+        <Link href="/buddy/host/new" aria-label="Create a session">
           <div className="w-14 h-14 rounded-full bg-white shadow-xl flex items-center justify-center hover:bg-neutral-100 transition-colors active:scale-95">
             <Plus className="w-6 h-6 text-neutral-900" />
           </div>

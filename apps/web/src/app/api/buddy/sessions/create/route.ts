@@ -18,11 +18,19 @@ export async function POST(request: Request) {
 
     const dbUser = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
-      select: { id: true, p2pOnboardingCompleted: true, p2pStripeConnectId: true },
+      select: { id: true, p2pOnboardingCompleted: true, p2pStripeConnectId: true, isCoach: true, coachVerificationStatus: true },
     })
 
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    // Only verified coaches can create sessions
+    if (!dbUser.isCoach || dbUser.coachVerificationStatus !== 'VERIFIED') {
+      return NextResponse.json(
+        { error: 'Only verified coaches can create sessions. Apply at /onboarding/coach' },
+        { status: 403 }
+      )
     }
 
     if (!dbUser.p2pOnboardingCompleted) {
@@ -53,6 +61,7 @@ export async function POST(request: Request) {
       paynowName,
       requiresDeposit,
       depositAmount,
+      cancellationPolicy,
     } = body
 
     // Validate required fields
@@ -161,6 +170,8 @@ export async function POST(request: Request) {
         paynowQrImageUrl: paynowQrImageUrl ?? null,
         paynowPhoneNumber: paynowPhoneNumber ?? null,
         paynowName: paynowName ?? null,
+        sessionType: 'COACH_LED',
+        cancellationPolicy: cancellationPolicy ?? null,
         requiresDeposit: resolvedRequiresDeposit,
         depositAmount: resolvedDepositAmount,
       },

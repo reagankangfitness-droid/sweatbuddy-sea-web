@@ -167,7 +167,7 @@ function AppNavInner() {
               {/* Host CTA → P2P session creation */}
               <Link
                 href="/buddy/host/new"
-                aria-label="Host a session"
+                aria-label="Create a session"
                 className="flex items-center justify-center w-12 h-12 rounded-xl bg-white text-neutral-900 hover:bg-neutral-200 transition-colors mb-3"
               >
                 <Plus className="w-5 h-5" />
@@ -257,7 +257,7 @@ function AppNavInner() {
             {/* Host CTA */}
             <Link
               href="/buddy/host/new"
-              aria-label="Host a session"
+              aria-label="Create a session"
               className="flex flex-col items-center justify-center w-14 h-14"
             >
               <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">

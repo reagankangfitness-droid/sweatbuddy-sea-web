@@ -247,9 +247,15 @@ function BookingSuccessContent() {
             <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-10 h-10 text-success" />
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">You&apos;re in!</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Session booked!</h1>
             <p className="text-muted-foreground">
-              {isFree ? 'Your spot is confirmed!' : 'Payment successful - your spot is confirmed!'}
+              {isFree
+                ? (booking?.activity?.user?.name
+                    ? `Your session with ${booking.activity.user.name} is confirmed!`
+                    : 'Your session is confirmed!')
+                : (booking?.activity?.user?.name
+                    ? `Payment successful - your session with ${booking.activity.user.name} is confirmed!`
+                    : 'Payment successful - your session is confirmed!')}
             </p>
           </div>
 
@@ -415,7 +421,7 @@ function BookingSuccessContent() {
               <Link href={`/activities/${booking.activity.id}`} className="block">
                 <Button variant="outline" className="w-full gap-2">
                   <Users className="w-4 h-4" />
-                  View Activity & Group Chat
+                  View Session & Chat
                 </Button>
               </Link>
             )}
@@ -432,7 +438,7 @@ function BookingSuccessContent() {
           <div className="mt-6 p-4 bg-primary/5 rounded-xl">
             <p className="text-sm font-medium text-foreground mb-1">Quick tip</p>
             <p className="text-sm text-muted-foreground">
-              Say hi in the group chat — it&apos;s a great way to meet your crew before the session.
+              Your coach will send you any pre-session instructions. Check the group chat for updates.
             </p>
           </div>
         </div>

@@ -20,6 +20,8 @@ import Image from 'next/image'
 interface ProfileData {
   slug: string | null
   isHost: boolean
+  isCoach?: boolean
+  coachVerificationStatus?: string | null
   bio: string | null
   fitnessLevel: string | null
   fitnessInterests: string[]
@@ -148,6 +150,7 @@ export default function ProfilePage() {
   }
 
   const isHost = profile?.isHost
+  const isVerifiedCoach = profile?.isCoach && profile?.coachVerificationStatus === 'VERIFIED'
 
   return (
     <div className="min-h-screen bg-neutral-900">
@@ -242,7 +245,7 @@ export default function ProfilePage() {
             My Activity
           </h3>
           <div className="bg-neutral-950 rounded-2xl border border-neutral-800 overflow-hidden">
-            {isHost && (
+            {isVerifiedCoach ? (
               <Link
                 href="/host/dashboard"
                 className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
@@ -252,13 +255,29 @@ export default function ProfilePage() {
                     <LayoutDashboard className="w-4 h-4 text-amber-400" />
                   </div>
                   <div>
-                    <span className="text-neutral-200 text-sm font-medium">Host Dashboard</span>
-                    <p className="text-xs text-neutral-500">Manage experiences & community</p>
+                    <span className="text-neutral-200 text-sm font-medium">Coach Dashboard</span>
+                    <p className="text-xs text-neutral-500">Manage sessions & students</p>
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-neutral-300" />
               </Link>
-            )}
+            ) : !profile?.isCoach ? (
+              <Link
+                href="/onboarding/coach"
+                className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 bg-emerald-900 rounded-lg flex items-center justify-center">
+                    <BadgeCheck className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <div>
+                    <span className="text-neutral-200 text-sm font-medium">Become a coach</span>
+                    <p className="text-xs text-neutral-500">Get verified and start coaching</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-neutral-300" />
+              </Link>
+            ) : null}
 
             <Link
               href="/buddy?tab=mine"

@@ -68,7 +68,7 @@ export function HeroSection() {
         <ScrollAnimator delay={300}>
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
             <Link
-              href="/events"
+              href="/buddy"
               className="inline-flex items-center justify-center px-7 py-3.5 bg-white text-neutral-900 font-semibold text-sm rounded-md hover:bg-neutral-200 transition-colors"
             >
               Find events near me
@@ -109,7 +109,7 @@ export function HeroSection() {
             {categories.map((cat) => (
               <Link
                 key={cat.param}
-                href={`/events?cat=${cat.param}`}
+                href={`/buddy?cat=${cat.param}`}
                 className="px-3.5 py-1.5 bg-neutral-950 border border-neutral-800 rounded-full text-xs font-medium text-neutral-400 hover:border-neutral-600 hover:text-neutral-100 transition-colors"
               >
                 {cat.label}

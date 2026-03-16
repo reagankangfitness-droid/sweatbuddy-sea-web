@@ -17,7 +17,7 @@ export function FinalCTASection() {
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
             <Link
-              href="/events"
+              href="/buddy"
               className="inline-flex items-center justify-center px-7 py-3.5 bg-white text-neutral-900 font-semibold text-sm rounded-md hover:bg-neutral-200 transition-colors"
             >
               Browse events

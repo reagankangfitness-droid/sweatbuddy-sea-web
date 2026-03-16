@@ -6,7 +6,7 @@ export default function ActivityLoading() {
       <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-            <Link href="/events" className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
+            <Link href="/buddy" className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
               <svg className="w-5 h-5 text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
               </svg>

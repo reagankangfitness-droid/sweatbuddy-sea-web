@@ -78,6 +78,7 @@ const nextConfig = {
       { source: '/crews', destination: '/organizer-deprecated', permanent: false },
 
       // Legacy routes
+      { source: '/events', destination: '/buddy', permanent: true },
       { source: '/discover', destination: '/buddy', permanent: true },
       { source: '/explore', destination: '/buddy', permanent: true },
       { source: '/app', destination: '/buddy', permanent: true },

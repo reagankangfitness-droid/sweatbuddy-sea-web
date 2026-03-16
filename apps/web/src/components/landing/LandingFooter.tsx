@@ -10,7 +10,7 @@ export function LandingFooter() {
             <LogoWithText size={24} />
           </Link>
           <nav className="flex flex-wrap justify-center items-center gap-x-5 gap-y-2 text-sm text-neutral-500">
-            <Link href="/events" className="hover:text-neutral-100 transition-colors">Events</Link>
+            <Link href="/buddy" className="hover:text-neutral-100 transition-colors">Sessions</Link>
             <Link href="/communities" className="hover:text-neutral-100 transition-colors">Communities</Link>
             <Link href="/host" className="hover:text-neutral-100 transition-colors">Host</Link>
             <Link href="/support" className="hover:text-neutral-100 transition-colors">Support</Link>

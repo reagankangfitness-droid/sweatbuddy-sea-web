@@ -458,7 +458,7 @@ export default function BookingSuccessPage() {
       <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-2xl mx-auto flex items-center gap-4 px-4 py-3">
-            <Link href="/events" className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
+            <Link href="/buddy" className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
               <ArrowLeft className="w-5 h-5 text-neutral-300" />
             </Link>
             <span className="text-sm font-medium text-neutral-500">Booking Confirmed</span>

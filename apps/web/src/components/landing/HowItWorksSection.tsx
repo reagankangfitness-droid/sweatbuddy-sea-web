@@ -54,7 +54,7 @@ export function HowItWorksSection() {
               </div>
 
               <Link
-                href="/events"
+                href="/buddy"
                 className="mt-7 inline-flex items-center justify-center gap-2 w-full py-3 bg-white text-neutral-900 text-sm font-semibold rounded-md hover:bg-neutral-200 transition-colors"
               >
                 Browse events

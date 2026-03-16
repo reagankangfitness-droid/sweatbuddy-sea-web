@@ -95,8 +95,8 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <link rel="preconnect" href="https://utfs.io" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://utfs.io" />
 
-        {/* Prefetch events API for faster data loading */}
-        <link rel="prefetch" href="/api/events" as="fetch" crossOrigin="anonymous" />
+        {/* Prefetch activities API for faster data loading */}
+        <link rel="prefetch" href="/api/activities" as="fetch" crossOrigin="anonymous" />
       </head>
       <body className={`${plusJakarta.variable} ${outfit.variable} ${dmSans.variable} font-sans antialiased bg-[#0A0A0A] text-neutral-100`}>
         <Providers>

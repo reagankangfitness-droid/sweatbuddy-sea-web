@@ -27,7 +27,7 @@ export function LandingPage({ data }: { data: LandingData }) {
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {
-      router.replace('/events')
+      router.replace('/buddy')
     }
   }, [isLoaded, isSignedIn, router])
 

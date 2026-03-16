@@ -25,7 +25,7 @@ export function HappeningSection({ events }: HappeningSectionProps) {
               </h2>
             </div>
             <Link
-              href="/events"
+              href="/buddy"
               className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
             >
               See all events
@@ -46,7 +46,7 @@ export function HappeningSection({ events }: HappeningSectionProps) {
         {/* Mobile "See all" link */}
         <div className="text-center mt-8 sm:hidden">
           <Link
-            href="/events"
+            href="/buddy"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
           >
             See all events

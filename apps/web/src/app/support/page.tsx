@@ -77,12 +77,12 @@ const faqs: FAQItem[] = [
   // Hosting
   {
     category: 'hosting',
-    question: 'How do I become a host?',
-    answer: 'Sign in to SweatBuddies, go to your Profile, and click "Host Dashboard". You can submit your first experience for review. Once approved, your experience will be live on the platform.'
+    question: 'How do I become a coach?',
+    answer: 'Sign in to SweatBuddies, go to your Profile, and click "Coach Dashboard". You can submit your first experience for review. Once approved, your experience will be live on the platform.'
   },
   {
     category: 'hosting',
-    question: 'How do I get paid as a host?',
+    question: 'How do I get paid as a coach?',
     answer: 'For Stripe payments, earnings are transferred to your connected Stripe account (usually within 2-7 business days). For PayNow, you receive payments directly to your PayNow account.'
   },
   {
@@ -384,7 +384,7 @@ export default function SupportPage() {
             >
               <Users className="w-5 h-5 text-purple-600" />
               <div>
-                <p className="font-medium text-neutral-100">Host Dashboard</p>
+                <p className="font-medium text-neutral-100">Coach Dashboard</p>
                 <p className="text-sm text-neutral-500">Manage your experiences</p>
               </div>
             </Link>

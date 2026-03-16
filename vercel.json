@@ -20,6 +20,10 @@
     {
       "path": "/api/cron/calculate-reliability",
       "schedule": "0 3 * * 1"
+    },
+    {
+      "path": "/api/cron/generate-recurring-sessions",
+      "schedule": "0 2 * * *"
     }
   ]
 }

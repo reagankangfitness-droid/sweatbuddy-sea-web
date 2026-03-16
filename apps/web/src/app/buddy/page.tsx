@@ -604,7 +604,7 @@ function BuddyPageInner() {
                   className="inline-flex items-center gap-2 mt-6 rounded-xl bg-black dark:bg-white px-5 py-3 text-sm font-semibold text-white dark:text-black"
                 >
                   <Plus className="w-4 h-4" />
-                  Host a Session
+                  Create a Session
                 </Link>
               </div>
             ) : (
@@ -655,7 +655,7 @@ function BuddyPageInner() {
             {hosting.length > 0 && (
               <div>
                 <h2 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">
-                  Hosting
+                  Coaching
                 </h2>
                 <div className="space-y-3">
                   {hosting.map((session) => (
@@ -704,7 +704,7 @@ function BuddyPageInner() {
                     href="/buddy/host/new"
                     className="rounded-xl bg-black dark:bg-white px-5 py-3 text-sm font-semibold text-white dark:text-black"
                   >
-                    Host a Session
+                    Create a Session
                   </Link>
                   <button
                     onClick={() => setTab('happening')}
@@ -781,7 +781,7 @@ function SessionCard({
                   )}
                   {isHosting && (
                     <span className="text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full font-medium">
-                      Hosting
+                      Coaching
                     </span>
                   )}
                   {isJoined && !isHosting && (

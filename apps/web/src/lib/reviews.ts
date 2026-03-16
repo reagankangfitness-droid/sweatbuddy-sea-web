@@ -1141,7 +1141,7 @@ async function notifyReviewerOfResponse(reviewId: string): Promise<void> {
 
   await sendEmail({
     to: review.reviewer.email,
-    subject: `${review.host.name || 'Host'} responded to your review`,
+    subject: `${review.host.name || 'Coach'} responded to your review`,
     html,
   })
 }

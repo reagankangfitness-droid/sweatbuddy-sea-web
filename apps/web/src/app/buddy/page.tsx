@@ -20,6 +20,8 @@ interface Host {
   slug: string | null
   sessionsHostedCount: number
   fitnessLevel: string | null
+  isCoach?: boolean
+  coachVerificationStatus?: string | null
 }
 
 interface Attendee {
@@ -149,6 +151,7 @@ function BuddyPageInner() {
   const [typeFilter, setTypeFilter] = useState('')
   const [fitnessFilter, setFitnessFilter] = useState('')
   const [pricingFilter, setPricingFilter] = useState('')
+  const [verifiedFilter, setVerifiedFilter] = useState(false)
 
   const fetchSessions = useCallback(
     async (cursor?: string) => {
@@ -160,6 +163,7 @@ function BuddyPageInner() {
         if (typeFilter) params.set('type', typeFilter)
         if (fitnessFilter) params.set('fitnessLevel', fitnessFilter)
         if (pricingFilter) params.set('pricing', pricingFilter)
+        if (verifiedFilter) params.set('verified', 'true')
         if (cursor) params.set('cursor', cursor)
 
         const res = await fetch(`/api/buddy/sessions?${params}`)
@@ -190,7 +194,7 @@ function BuddyPageInner() {
         setLoadingMore(false)
       }
     },
-    [tab, typeFilter, fitnessFilter, pricingFilter, router]
+    [tab, typeFilter, fitnessFilter, pricingFilter, verifiedFilter, router]
   )
 
   // Fetch pending payments count for hosting tab notification
@@ -254,7 +258,7 @@ function BuddyPageInner() {
     setHosting([])
     setAttending([])
     fetchSessions()
-  }, [tab, typeFilter, fitnessFilter, pricingFilter, fetchSessions])
+  }, [tab, typeFilter, fitnessFilter, pricingFilter, verifiedFilter, fetchSessions])
 
   async function joinSession(sessionId: string) {
     // Find session to check if paid
@@ -344,7 +348,7 @@ function BuddyPageInner() {
       <div className="sticky top-0 z-10 bg-white/90 dark:bg-neutral-950/90 backdrop-blur border-b border-neutral-100 dark:border-neutral-800">
         <div className="max-w-2xl mx-auto px-4 py-4">
           <h1 className="text-lg font-bold text-neutral-900 dark:text-white">Sessions</h1>
-          <p className="text-xs text-neutral-500">See who&apos;s working out near you</p>
+          <p className="text-xs text-neutral-500">Browse coach-led sessions near you</p>
         </div>
 
         {/* Tabs */}
@@ -569,6 +573,17 @@ function BuddyPageInner() {
                 {f.label}
               </button>
             ))}
+
+            <button
+              onClick={() => setVerifiedFilter((v) => !v)}
+              className={`shrink-0 rounded-xl border px-4 py-2.5 text-xs font-medium transition-colors ${
+                verifiedFilter
+                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-500 dark:border-emerald-400 dark:text-emerald-400'
+                  : 'border-neutral-200 text-neutral-600 hover:border-neutral-400 dark:border-neutral-700 dark:text-neutral-400'
+              }`}
+            >
+              ✓ Verified coaches only
+            </button>
           </div>
         )}
 
@@ -761,6 +776,9 @@ function SessionCard({
                   <span className="text-xs font-medium text-neutral-400">
                     {session.host?.name ?? 'Someone'}&apos;s session
                   </span>
+                  {session.host?.isCoach && session.host?.coachVerificationStatus === 'VERIFIED' && (
+                    <span className="inline-flex items-center gap-0.5 text-xs font-medium text-emerald-500">✓ PRO</span>
+                  )}
                   {isHosting && (
                     <span className="text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full font-medium">
                       Hosting

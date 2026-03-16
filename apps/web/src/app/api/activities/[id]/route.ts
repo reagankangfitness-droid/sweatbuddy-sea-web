@@ -87,6 +87,10 @@ export async function GET(
             sessionsHostedCount: true,
             sessionsAttendedCount: true,
             fitnessLevel: true,
+            isCoach: true,
+            coachType: true,
+            coachVerificationStatus: true,
+            coachBio: true,
           },
         },
         userActivities: {

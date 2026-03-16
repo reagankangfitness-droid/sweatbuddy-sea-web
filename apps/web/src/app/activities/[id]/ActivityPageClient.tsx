@@ -62,6 +62,10 @@ interface Activity {
     sessionsHostedCount?: number
     sessionsAttendedCount?: number
     fitnessLevel?: string | null
+    isCoach?: boolean
+    coachType?: string | null
+    coachVerificationStatus?: string | null
+    coachBio?: string | null
   }
   userActivities: Array<{
     id: string
@@ -456,7 +460,9 @@ Organized via sweatbuddies
               {/* P2P Host section — replaces plain Organizer block for P2P sessions */}
               {activity.activityMode?.startsWith('P2P') ? (
                 <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-5">
-                  <h2 className="text-base font-semibold text-neutral-900 dark:text-white mb-3">Your host</h2>
+                  <h2 className="text-base font-semibold text-neutral-900 dark:text-white mb-3">
+                    {activity.user.isCoach && activity.user.coachVerificationStatus === 'VERIFIED' ? 'Your coach' : 'Your host'}
+                  </h2>
                   <div className="flex items-start gap-3">
                     <div className="relative flex-shrink-0">
                       {activity.user.imageUrl ? (
@@ -475,7 +481,15 @@ Organized via sweatbuddies
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-neutral-900 dark:text-white">{activity.user.name || 'Anonymous'}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-neutral-900 dark:text-white">{activity.user.name || 'Anonymous'}</p>
+                        {activity.user.isCoach && activity.user.coachVerificationStatus === 'VERIFIED' && (
+                          <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-500">✓ Verified Coach</span>
+                        )}
+                      </div>
+                      {activity.user.isCoach && activity.user.coachVerificationStatus === 'VERIFIED' && activity.user.coachType && (
+                        <p className="text-xs text-neutral-400 mt-0.5">{activity.user.coachType}</p>
+                      )}
                       <div className="flex items-center gap-3 mt-0.5 text-xs text-neutral-400">
                         {(activity.user.sessionsHostedCount ?? 0) > 0 && (
                           <span>{activity.user.sessionsHostedCount} sessions hosted</span>
@@ -484,9 +498,11 @@ Organized via sweatbuddies
                           <span className="capitalize">{activity.user.fitnessLevel.toLowerCase()}</span>
                         )}
                       </div>
-                      {activity.user.bio && (
+                      {activity.user.isCoach && activity.user.coachVerificationStatus === 'VERIFIED' && activity.user.coachBio ? (
+                        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">{activity.user.coachBio}</p>
+                      ) : activity.user.bio ? (
                         <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">{activity.user.bio}</p>
-                      )}
+                      ) : null}
                     </div>
                   </div>
 
@@ -760,7 +776,7 @@ Organized via sweatbuddies
                         disabled={isJoining}
                         className="flex-1 h-12 sm:h-11 text-sm sm:text-base touch-manipulation"
                       >
-                        {isJoining ? 'Processing...' : joinButtonText}
+                        {isJoining ? 'Processing...' : activity.user.isCoach ? 'Book Session' : joinButtonText}
                       </Button>
                     </div>
                   </div>

@@ -35,6 +35,7 @@ export async function GET(request: Request) {
     const PAGE_SIZE = 20
 
     const blockedUserIds = dbUser.blocksMade.map((b) => b.blockedUserId)
+    const verifiedFilter = searchParams.get('verified') ?? ''
 
     if (tab === 'mine') {
       // Sessions the user is hosting OR attending
@@ -99,6 +100,9 @@ export async function GET(request: Request) {
     if (fitnessLevel) where.fitnessLevel = fitnessLevel
     if (pricingFilter === 'free') where.activityMode = 'P2P_FREE'
     if (pricingFilter === 'paid') where.activityMode = 'P2P_PAID'
+    if (verifiedFilter === 'true') {
+      where.user = { isCoach: true, coachVerificationStatus: 'VERIFIED' }
+    }
     if (cursor) where.id = { lt: cursor }
 
     const sessions = await prisma.activity.findMany({
@@ -112,6 +116,8 @@ export async function GET(request: Request) {
             slug: true,
             sessionsHostedCount: true,
             fitnessLevel: true,
+            isCoach: true,
+            coachVerificationStatus: true,
           },
         },
         userActivities: {

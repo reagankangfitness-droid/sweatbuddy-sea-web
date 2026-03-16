@@ -184,6 +184,17 @@ model User {
   noShowCount            Int       @default(0)
   lateCancellationCount  Int       @default(0)
 
+  // Coach marketplace fields
+  isCoach                  Boolean  @default(false)
+  coachType                String?  // 'PT' | 'SPORTS_COACH' | 'YOGA' | 'PHYSIO' | 'PILATES' | 'SWIMMING' | 'TENNIS' | 'OTHER'
+  coachVerificationStatus  String   @default("UNVERIFIED") // 'UNVERIFIED' | 'PENDING' | 'VERIFIED' | 'REJECTED' | 'SUSPENDED'
+  coachVerifiedAt          DateTime?
+  coachBio                 String?  @db.Text
+  experienceYears          Int?
+  languages                String[] @default([])
+  hourlyRate               Int?     // in cents
+  groupRate                Int?     // in cents (per person for group sessions)
+
   activities              Activity[]              @relation("CreatedActivities")
   hostedActivities        Activity[]              @relation("HostedActivities")
   groups                  UserGroup[]
@@ -266,9 +277,15 @@ model User {
   // Badge relations
   earnedBadges EarnedBadge[] @relation("EarnedBadges")
 
+  // Coach relations
+  coachProfile       CoachProfile?
+  coachVerifications CoachVerification[] @relation("CoachVerifications")
+  sessionTemplates   SessionTemplate[]   @relation("CoachSessionTemplates")
+
   @@index([slug])
   @@index([username])
   @@index([isHost])
+  @@index([isCoach])
   @@index([isPublic])
   @@map("users")
 }
@@ -304,6 +321,9 @@ model Activity {
 
   // P2P fields
   activityMode     String  @default("MARKETPLACE") // 'MARKETPLACE' | 'P2P_FREE' | 'P2P_PAID'
+  sessionType      String?  // 'COACH_LED' | 'COMMUNITY' — null for legacy
+  cancellationPolicy String? @db.Text
+  sessionTemplateId String? // optional link to SessionTemplate
   fitnessLevel     String? // 'ALL' | 'INTERMEDIATE_PLUS' | 'ADVANCED'
   whatToBring      String?
   requiresApproval Boolean @default(false)
@@ -355,6 +375,9 @@ model Activity {
   sessionComments SessionComment[] @relation("ActivitySessionComments")
   p2pReports      P2PReport[]      @relation("P2PActivityReports")
 
+  // Coach marketplace relations
+  sessionTemplate SessionTemplate? @relation("TemplateActivities", fields: [sessionTemplateId], references: [id], onDelete: SetNull)
+
   @@index([userId])
   @@index([hostId])
   @@index([type])
@@ -370,6 +393,7 @@ model Activity {
   @@index([startTime, status])
   @@index([activityMode])
   @@index([activityMode, startTime, status])
+  @@index([sessionTemplateId])
   @@map("activities")
 }
 
@@ -3028,6 +3052,126 @@ model CrewMember {
   @@index([crewId])
   @@index([userId])
   @@map("crew_members")
+}
+
+// =====================================================
+// COACH MARKETPLACE
+// =====================================================
+
+model CoachProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  displayName     String
+  tagline         String?  // "Certified PT | 8 years experience"
+  bio             String?  @db.Text
+  coverImageUrl   String?
+  galleryUrls     String[] @default([])
+
+  // Specializations
+  specializations String[] @default([]) // e.g., ["weight-loss", "strength", "rehabilitation"]
+  sportsOffered   String[] @default([]) // e.g., ["tennis", "swimming", "badminton"]
+  goalsServed     String[] @default([]) // e.g., ["lose-weight", "build-muscle", "learn-to-swim"]
+
+  // Location
+  serviceCity     String
+  serviceRadius   Int?     // km radius for mobile coaches
+  trainingVenues  String[] @default([]) // e.g., ["Bishan Tennis Centre", "East Coast Park"]
+
+  // Pricing
+  sessionPrice    Int?     // per session in cents
+  groupPrice      Int?     // per person per group session in cents
+  currency        String   @default("SGD")
+  offersTrial     Boolean  @default(false)
+  trialPrice      Int?     // trial session price in cents (0 = free trial)
+
+  // Policies
+  cancellationHours Int    @default(24)
+  cancellationPolicy String? @db.Text
+
+  // Metrics (denormalized for search performance)
+  averageRating   Float    @default(0)
+  totalReviews    Int      @default(0)
+  totalSessions   Int      @default(0)
+  totalStudents   Int      @default(0)
+  responseTimeMin Int?     // average response time in minutes
+
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([serviceCity])
+  @@index([isActive])
+  @@index([averageRating])
+  @@index([totalReviews])
+  @@map("coach_profiles")
+}
+
+model CoachVerification {
+  id              String   @id @default(cuid())
+  userId          String
+  type            String   // 'IDENTITY' | 'CERTIFICATION' | 'INSURANCE' | 'BACKGROUND_CHECK'
+  status          String   @default("PENDING") // 'PENDING' | 'APPROVED' | 'REJECTED' | 'EXPIRED'
+  documentUrl     String?
+  documentName    String?
+  issuingBody     String?  // e.g., "NASM", "ACE", "SSI", "ITF"
+  certificationName String? // e.g., "Certified Personal Trainer"
+  expiresAt       DateTime?
+  verifiedAt      DateTime?
+  verifiedByAdminId String?
+  rejectionReason String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation("CoachVerifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+  @@map("coach_verifications")
+}
+
+model SessionTemplate {
+  id              String   @id @default(cuid())
+  coachId         String
+  title           String
+  description     String?  @db.Text
+  categorySlug    String?
+  sessionType     String   @default("GROUP") // 'GROUP' | 'ONE_ON_ONE' | 'WORKSHOP'
+
+  // Schedule
+  daysOfWeek      String[] @default([]) // e.g., ["MONDAY", "WEDNESDAY"]
+  startTime       String   // "06:00" (HH:mm local)
+  endTime         String?  // "07:00"
+  timezone        String   @default("Asia/Singapore")
+
+  // Pricing
+  price           Int?     // in cents; null = free
+  currency        String   @default("SGD")
+
+  // Capacity
+  maxParticipants Int?     // null = unlimited
+  fitnessLevel    String?  // 'ALL' | 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
+  whatToBring     String?
+
+  // Location
+  locationName    String?
+  address         String?
+  latitude        Float?
+  longitude       Float?
+
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  coach           User     @relation("CoachSessionTemplates", fields: [coachId], references: [id], onDelete: Cascade)
+  sessions        Activity[] @relation("TemplateActivities")
+
+  @@index([coachId])
+  @@index([categorySlug])
+  @@index([isActive])
+  @@map("session_templates")
 }
 
 // =====================================================

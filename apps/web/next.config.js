@@ -71,13 +71,13 @@ const nextConfig = {
   // Redirects
   async redirects() {
     return [
-      // P2P reset — System B routes redirected to deprecation page (2026-03-11)
+      // Legacy route redirects
       { source: '/host', destination: '/buddy/host/new', permanent: false },
-      { source: '/host/:path*', destination: '/organizer-deprecated', permanent: false },
-      { source: '/organizer/:path*', destination: '/organizer-deprecated', permanent: false },
-      { source: '/crews', destination: '/organizer-deprecated', permanent: false },
+      { source: '/host/:path*', destination: '/browse', permanent: false },
+      { source: '/organizer/:path*', destination: '/browse', permanent: false },
+      { source: '/crews', destination: '/buddy', permanent: false },
 
-      // Legacy routes
+      // SEO preservation
       { source: '/events', destination: '/buddy', permanent: true },
       { source: '/discover', destination: '/buddy', permanent: true },
       { source: '/explore', destination: '/buddy', permanent: true },

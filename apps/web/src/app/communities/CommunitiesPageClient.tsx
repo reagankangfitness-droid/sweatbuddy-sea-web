@@ -189,6 +189,23 @@ export default function CommunitiesPageClient({
               />
             </div>
           </motion.div>
+
+          {/* Community photo strip */}
+          <div className="mt-10 flex gap-3 overflow-x-auto scrollbar-none pb-2 px-2">
+            {[
+              { src: '/images/community-bonds.jpg', alt: 'Pickleball crew' },
+              { src: '/banner/running.jpg', alt: 'Run club' },
+              { src: '/images/hero-2.jpg', alt: 'Yoga in the park' },
+              { src: '/banner/athletics.jpg', alt: 'Beach fitness' },
+              { src: '/images/hero-3.jpg', alt: 'Cold plunge crew' },
+              { src: '/banner/run-club.jpg', alt: 'Running together' },
+            ].map((img) => (
+              <div key={img.src} className="flex-shrink-0 w-40 h-24 sm:w-48 sm:h-28 rounded-xl overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={img.src} alt={img.alt} className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity" />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

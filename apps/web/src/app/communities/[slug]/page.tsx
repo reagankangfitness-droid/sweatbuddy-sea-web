@@ -7,6 +7,7 @@ import { getCategoryColor, getCategoryEmoji } from '@/lib/categories'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@clerk/nextjs/server'
 import { JoinCommunityButton } from '@/components/community/JoinCommunityButton'
+import { CommunityShareButtons } from '@/components/community/CommunityShareButtons'
 import { ShareButton } from '@/components/community/ShareButton'
 import { getUpcomingEventSubmissions } from '@/lib/community-system'
 
@@ -364,6 +365,12 @@ export default async function CommunityPage({ params }: Props) {
               />
             </div>
           </div>
+
+          {/* Share section */}
+          <CommunityShareButtons
+            communityName={community.name}
+            communitySlug={community.slug}
+          />
 
           {/* Description */}
           {community.description && (

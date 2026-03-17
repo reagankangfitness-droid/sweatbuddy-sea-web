@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { generateUniqueSlug, updateCommunityMemberCount } from '@/lib/community-system'
+import { trackEvent, EVENTS } from '@/lib/analytics'
 
 // GET /api/communities - List communities
 export async function GET(request: NextRequest) {
@@ -235,6 +236,14 @@ export async function POST(request: NextRequest) {
         data: { communityCount: { increment: 1 } },
       })
     }
+
+    // Track analytics event
+    await trackEvent(EVENTS.COMMUNITY_CREATED, userId, {
+      communityId: community.id,
+      communitySlug: community.slug,
+      communityName: community.name,
+      category: community.category,
+    })
 
     return NextResponse.json({ community }, { status: 201 })
   } catch {

@@ -3,6 +3,7 @@ import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendEmail } from '@/lib/email'
+import { trackEvent, EVENTS } from '@/lib/analytics'
 
 // Welcome email template
 function getWelcomeEmailHtml(name: string | null): string {
@@ -180,6 +181,13 @@ export async function POST(req: Request) {
         }
       }
 
+
+      // Track signup event
+      if (eventType === 'user.created') {
+        await trackEvent(EVENTS.SIGNUP, id, {
+          email,
+        })
+      }
 
       // Send welcome email only for new users
       if (eventType === 'user.created' && email) {

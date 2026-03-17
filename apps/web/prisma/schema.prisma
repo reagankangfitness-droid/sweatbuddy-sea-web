@@ -3209,6 +3209,23 @@ model EarnedBadge {
 }
 
 // =====================================================
+// ANALYTICS EVENTS (PMF Tracking)
+// =====================================================
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  event     String   // 'page_view', 'community_joined', 'community_created', 'signup', 'return_visit'
+  userId    String?  // null for anonymous
+  metadata  Json?    // { communityId, communitySlug, page, referrer, etc. }
+  createdAt DateTime @default(now())
+
+  @@index([event])
+  @@index([createdAt])
+  @@index([userId])
+  @@map("analytics_events")
+}
+
+// =====================================================
 // ADMIN AUDIT LOG
 // =====================================================
 

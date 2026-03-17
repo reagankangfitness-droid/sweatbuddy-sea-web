@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { updateCommunityMemberCount } from '@/lib/community-system'
+import { trackEvent, EVENTS } from '@/lib/analytics'
 
 // POST /api/communities/[slug]/join - Join a community
 export async function POST(
@@ -62,6 +63,13 @@ export async function POST(
 
     // Update member count
     await updateCommunityMemberCount(community.id)
+
+    // Track analytics event
+    await trackEvent(EVENTS.COMMUNITY_JOINED, userId, {
+      communityId: community.id,
+      communitySlug: slug,
+      communityName: community.name,
+    })
 
     return NextResponse.json({
       member,

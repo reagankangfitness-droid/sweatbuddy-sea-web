@@ -50,6 +50,7 @@ interface Session {
   requiresApproval: boolean
   imageUrl: string | null
   host: Host
+  community?: { id: string; name: string; logoImage: string | null; slug: string } | null
   attendees: Attendee[]
   attendeeCount: number
   isFull: boolean
@@ -754,9 +755,17 @@ function SessionCard({
     >
       <div className="p-4">
         <div className="flex items-start gap-3">
-          {/* Host avatar */}
+          {/* Host/Community avatar */}
           <div className="shrink-0">
-            {session.host?.imageUrl ? (
+            {session.community?.logoImage ? (
+              <Image
+                src={session.community.logoImage}
+                alt={session.community.name}
+                width={40}
+                height={40}
+                className="rounded-full object-cover"
+              />
+            ) : session.host?.imageUrl ? (
               <Image
                 src={session.host.imageUrl}
                 alt={session.host.name ?? ''}
@@ -766,7 +775,7 @@ function SessionCard({
               />
             ) : (
               <div className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-sm font-medium text-neutral-500">
-                {(session.host?.name ?? '?')[0]}
+                {(session.community?.name ?? session.host?.name ?? '?')[0]}
               </div>
             )}
           </div>
@@ -777,7 +786,7 @@ function SessionCard({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-xs font-medium text-neutral-400">
-                    {session.host?.name ?? 'Someone'}&apos;s session
+                    {session.community?.name ? `by ${session.community.name}` : `${session.host?.name ?? 'Someone'}\u2019s session`}
                   </span>
                   {session.host?.isCoach && session.host?.coachVerificationStatus === 'VERIFIED' && (
                     <span className="inline-flex items-center gap-0.5 text-xs font-medium text-emerald-500">✓ PRO</span>

@@ -124,6 +124,9 @@ export async function GET(request: Request) {
           where: { status: { in: ['JOINED', 'COMPLETED'] } },
           include: { user: { select: { id: true, name: true, imageUrl: true, slug: true } } },
         },
+        community: {
+          select: { id: true, name: true, logoImage: true, slug: true },
+        },
       },
       orderBy: { startTime: 'asc' },
       take: PAGE_SIZE + 1,

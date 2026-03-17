@@ -176,6 +176,7 @@ function formatSession(activity: ReturnType<typeof Object.assign>, userStatus?: 
     requiresApproval: activity.requiresApproval,
     imageUrl: activity.imageUrl,
     host: activity.user,
+    community: activity.community ?? null,
     attendees: attendees.map((ua: Record<string, unknown>) => ua.user),
     attendeeCount: attendees.length,
     isFull,

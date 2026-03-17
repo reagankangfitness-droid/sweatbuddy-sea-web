@@ -8,7 +8,7 @@ import { ACTIVITY_TYPES } from '@/lib/activity-types'
 
 export const metadata: Metadata = {
   title: 'Browse Sessions — SweatBuddies',
-  description: 'Browse sessions led by verified coaches near you. Running, gym, yoga, hiking and more.',
+  description: 'Browse sessions led by hosts near you. Running, gym, yoga, hiking and more.',
 }
 
 const TYPES = [
@@ -114,7 +114,7 @@ export default async function BrowsePage({ searchParams }: PageProps) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">Browse Sessions</h1>
           <p className="text-neutral-400">
-            Browse sessions led by verified coaches — no login needed to browse.
+            Browse sessions led by hosts near you — no login needed to browse.
           </p>
         </div>
       </div>

@@ -167,7 +167,7 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
 📍 Location: ${location}
 🔗 Maps: ${mapsLink}
 
-👤 Coach: ${activity.user.name || 'Anonymous'} (${activity.user.email})
+👤 Host: ${activity.user.name || 'Anonymous'} (${activity.user.email})
 💰 Price: ${activity.currency} ${(activity.price / 100).toFixed(2)}
 👥 Participants: ${joinedCount}${activity.maxPeople ? ` of ${activity.maxPeople}` : ''}
 
@@ -201,7 +201,7 @@ Organized via sweatbuddies - Find local workouts and wellness activities
 Location: ${location}
 Maps: ${mapsLink}
 
-Coach: ${activity.user.name || 'Anonymous'} (${activity.user.email})
+Host: ${activity.user.name || 'Anonymous'} (${activity.user.email})
 Price: ${activity.currency} ${(activity.price / 100).toFixed(2)}
 Participants: ${joinedCount}${activity.maxPeople ? ` of ${activity.maxPeople}` : ''}
 
@@ -328,7 +328,7 @@ Organized via sweatbuddies
                 userActivityId={userBookingId}
                 activityTitle={activity.title}
                 activityImage={activity.imageUrl}
-                hostName={activity.user.name || 'Coach'}
+                hostName={activity.user.name || 'Host'}
                 hostAvatar={activity.user.imageUrl}
                 completedAt={new Date(activity.startTime)}
                 durationMinutes={
@@ -644,7 +644,7 @@ Organized via sweatbuddies
                       />
                     </div>
                     <p className="text-xs sm:text-sm text-muted-foreground text-center">
-                      You are the coach
+                      You are the host
                     </p>
                   </div>
                 ) : hasJoined ? (
@@ -668,8 +668,8 @@ Organized via sweatbuddies
                         className="flex-1 h-11 sm:h-10 text-xs sm:text-sm"
                       >
                         <MessageCircle className="w-4 h-4 sm:mr-2" />
-                        <span className="hidden sm:inline">Message Coach</span>
-                        <span className="sm:hidden">Coach</span>
+                        <span className="hidden sm:inline">Message Host</span>
+                        <span className="sm:hidden">Host</span>
                       </Button>
                       <ShareButton
                         activityId={activity.id}

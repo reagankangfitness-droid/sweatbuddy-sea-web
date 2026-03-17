@@ -575,6 +575,7 @@ function BuddyPageInner() {
               </button>
             ))}
 
+            {/* Verified hosts filter — hidden for now
             <button
               onClick={() => setVerifiedFilter((v) => !v)}
               className={`shrink-0 rounded-xl border px-4 py-2.5 text-xs font-medium transition-colors ${
@@ -583,8 +584,9 @@ function BuddyPageInner() {
                   : 'border-neutral-200 text-neutral-600 hover:border-neutral-400 dark:border-neutral-700 dark:text-neutral-400'
               }`}
             >
-              ✓ Verified coaches only
+              ✓ Verified hosts
             </button>
+            */}
           </div>
         )}
 
@@ -656,7 +658,7 @@ function BuddyPageInner() {
             {hosting.length > 0 && (
               <div>
                 <h2 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">
-                  Coaching
+                  Hosting
                 </h2>
                 <div className="space-y-3">
                   {hosting.map((session) => (
@@ -782,7 +784,7 @@ function SessionCard({
                   )}
                   {isHosting && (
                     <span className="text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full font-medium">
-                      Coaching
+                      Hosting
                     </span>
                   )}
                   {isJoined && !isHosting && (

@@ -134,7 +134,7 @@ export function GoingButton({
     // Paid event - show payment modal or error if no payment method
     if (isPaidEvent) {
       if (!hasPaymentMethod) {
-        toast.error('Payment not yet set up. Contact the coach to join.', {
+        toast.error('Payment not yet set up. Contact the host to join.', {
           duration: 4000,
         })
         return

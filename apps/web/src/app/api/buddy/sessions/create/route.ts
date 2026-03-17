@@ -25,14 +25,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Only verified coaches can create sessions
-    if (!dbUser.isCoach || dbUser.coachVerificationStatus !== 'VERIFIED') {
-      return NextResponse.json(
-        { error: 'Only verified coaches can create sessions. Apply at /onboarding/coach' },
-        { status: 403 }
-      )
-    }
-
     if (!dbUser.p2pOnboardingCompleted) {
       return NextResponse.json({ error: 'Complete P2P onboarding first', code: 'ONBOARDING_REQUIRED' }, { status: 403 })
     }
@@ -170,7 +162,7 @@ export async function POST(request: Request) {
         paynowQrImageUrl: paynowQrImageUrl ?? null,
         paynowPhoneNumber: paynowPhoneNumber ?? null,
         paynowName: paynowName ?? null,
-        sessionType: 'COACH_LED',
+        sessionType: 'COMMUNITY',
         cancellationPolicy: cancellationPolicy ?? null,
         requiresDeposit: resolvedRequiresDeposit,
         depositAmount: resolvedDepositAmount,

@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { ArrowLeft, Loader2, MapPin, ChevronDown, CheckCircle2, Upload, X, ImagePlus, ShieldX } from 'lucide-react'
+import { ArrowLeft, Loader2, MapPin, ChevronDown, CheckCircle2, Upload, X, ImagePlus } from 'lucide-react'
 import { toast } from 'sonner'
 import { ACTIVITY_TYPES as ACTIVITY_TYPES_CONFIG } from '@/lib/activity-types'
 import { LocationAutocomplete } from '@/components/host/LocationAutocomplete'
@@ -93,23 +92,7 @@ export default function NewSessionPage() {
   const [coverUploading, setCoverUploading] = useState(false)
   const coverInputRef = useRef<HTMLInputElement>(null)
 
-  const [coachStatus, setCoachStatus] = useState<'loading' | 'verified' | 'blocked'>('loading')
-
   const { startUpload } = useUploadThing('activityImage')
-
-  // Check if user is a verified coach
-  useEffect(() => {
-    fetch('/api/user/profile')
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (data?.user?.isCoach && data?.user?.coachVerificationStatus === 'VERIFIED') {
-          setCoachStatus('verified')
-        } else {
-          setCoachStatus('blocked')
-        }
-      })
-      .catch(() => setCoachStatus('blocked'))
-  }, [])
 
   // Restore draft from localStorage on mount
   useEffect(() => {
@@ -313,41 +296,6 @@ export default function NewSessionPage() {
 
   const selectedType = ACTIVITY_TYPES.find((t) => t.slug === form.categorySlug)
 
-  // Loading coach status
-  if (coachStatus === 'loading') {
-    return (
-      <div className="min-h-screen bg-white dark:bg-neutral-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
-      </div>
-    )
-  }
-
-  // Blocked state for non-verified coaches
-  if (coachStatus === 'blocked') {
-    return (
-      <div className="min-h-screen bg-white dark:bg-neutral-950 flex flex-col items-center justify-center px-4 text-center">
-        <ShieldX className="w-16 h-16 text-neutral-400 mb-6" />
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Only verified coaches can create sessions</h1>
-        <p className="text-neutral-500 mb-8 max-w-xs">
-          Apply to become a verified coach to start creating and hosting sessions for students.
-        </p>
-        <div className="flex flex-col gap-3 w-full max-w-xs">
-          <Link
-            href="/onboarding/coach"
-            className="w-full rounded-xl bg-black dark:bg-white px-4 py-4 text-sm font-semibold text-white dark:text-black text-center"
-          >
-            Apply to become a coach &rarr;
-          </Link>
-          <Link
-            href="/buddy"
-            className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 px-4 py-3 text-sm font-medium text-neutral-600 dark:text-neutral-300 text-center"
-          >
-            Back to sessions
-          </Link>
-        </div>
-      </div>
-    )
-  }
 
   // Success screen
   if (publishedId) {

@@ -514,7 +514,7 @@ export default function DiscoverPage() {
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
           <div className="bg-neutral-900/80 backdrop-blur border border-neutral-700/60 text-neutral-300 text-xs font-medium px-3 py-1.5 rounded-full">
             {sessions.length === 0
-              ? 'No coaches in this area yet'
+              ? 'No sessions nearby yet'
               : `${sessions.length} session${sessions.length !== 1 ? 's' : ''} nearby`}
           </div>
         </div>

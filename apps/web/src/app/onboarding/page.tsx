@@ -46,7 +46,7 @@ export default function OnboardingRoleSelectionPage() {
 
           {/* I am a coach */}
           <button
-            onClick={() => router.push('/onboarding/coach')}
+            onClick={() => router.push('/onboarding/p2p')}
             className="w-full text-left rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-6 hover:border-neutral-400 dark:hover:border-neutral-500 transition-all group"
           >
             <div className="flex items-start gap-4">
@@ -58,10 +58,10 @@ export default function OnboardingRoleSelectionPage() {
                   I lead a community
                 </h2>
                 <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                  Already running a fitness group? Give your crew a home and grow it.
+                  Set up your profile and start hosting sessions for your community.
                 </p>
                 <span className="inline-block mt-3 text-sm font-medium text-neutral-900 dark:text-white group-hover:translate-x-1 transition-transform">
-                  Set up your community &rarr;
+                  Get started &rarr;
                 </span>
               </div>
             </div>

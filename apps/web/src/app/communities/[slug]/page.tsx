@@ -141,7 +141,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${community.name} | SweatBuddies`,
-    description: community.description || `Join ${community.name} on SweatBuddies. ${community._count.members} members, ${community._count.activities} experiences.`,
+    description: community.description || `Join ${community.name} on SweatBuddies. ${community._count.members} members, ${community._count.activities} sessions.`,
     openGraph: {
       title: `${community.name} | SweatBuddies`,
       description: community.description || `Join ${community.name} on SweatBuddies.`,
@@ -314,7 +314,7 @@ export default async function CommunityPage({ params }: Props) {
                 </span>
                 <span className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  {Math.max(community._count.activities, community.eventCount)} experiences
+                  {Math.max(community._count.activities, community.eventCount)} sessions
                 </span>
               </div>
 
@@ -372,35 +372,6 @@ export default async function CommunityPage({ params }: Props) {
             </p>
           )}
 
-          {/* Host */}
-          <div className="mt-6 pt-6 border-t border-neutral-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-neutral-800 overflow-hidden">
-                {community.createdBy?.imageUrl ? (
-                  <Image
-                    src={community.createdBy.imageUrl}
-                    alt={community.createdBy.name || ''}
-                    width={40}
-                    height={40}
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Users className="w-5 h-5 text-neutral-400" />
-                  </div>
-                )}
-              </div>
-              <div>
-                <p className="text-sm text-neutral-500">Hosted by</p>
-                <p className="font-medium text-neutral-100">
-                  {community.createdBy?.name || community.createdBy?.username}
-                  {community.createdBy?.isVerified && (
-                    <CheckCircle className="w-4 h-4 text-blue-500 inline ml-1" />
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -475,7 +446,7 @@ export default async function CommunityPage({ params }: Props) {
       {/* Upcoming Events */}
       <section id="upcoming-events" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-neutral-100">Upcoming Events</h2>
+          <h2 className="text-xl font-semibold text-neutral-100">Upcoming Sessions</h2>
         </div>
 
         {allUpcomingEvents.length > 0 ? (
@@ -524,7 +495,7 @@ export default async function CommunityPage({ params }: Props) {
         ) : (
           <div className="text-center py-12 bg-neutral-900 rounded-xl">
             <Calendar className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
-            <p className="text-neutral-400">No upcoming experiences</p>
+            <p className="text-neutral-400">No upcoming sessions</p>
           </div>
         )}
       </section>
@@ -579,6 +550,34 @@ export default async function CommunityPage({ params }: Props) {
           </p>
         )}
       </section>
+
+      {/* Community creator */}
+      {community.createdBy && (
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+          <div className="flex items-center gap-2 text-sm text-neutral-500">
+            {community.createdBy.imageUrl && (
+              <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0">
+                <Image
+                  src={community.createdBy.imageUrl}
+                  alt={community.createdBy.name || ''}
+                  width={20}
+                  height={20}
+                  className="object-cover"
+                />
+              </div>
+            )}
+            <span>
+              Community created by{' '}
+              <span className="text-neutral-400 font-medium">
+                {community.createdBy.name || community.createdBy.username}
+              </span>
+              {community.createdBy.isVerified && (
+                <CheckCircle className="w-3.5 h-3.5 text-blue-500 inline ml-1" />
+              )}
+            </span>
+          </div>
+        </section>
+      )}
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Metadata } from 'next'
 import { Logo } from '@/components/logo'
 import { prisma } from '@/lib/prisma'
@@ -117,7 +118,7 @@ export default async function HomePage() {
               Find your crew
             </Link>
             <Link
-              href="/host/community"
+              href="/communities/create"
               className="px-8 py-4 bg-neutral-800 text-neutral-100 text-base font-semibold rounded-xl hover:bg-neutral-700 transition-colors border border-neutral-700"
             >
               Lead the movement
@@ -172,34 +173,62 @@ export default async function HomePage() {
                     href={`/communities/${community.slug}`}
                     className="group bg-neutral-900 border border-neutral-800 hover:border-neutral-600 rounded-2xl overflow-hidden transition-all"
                   >
-                    {community.coverImage ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={community.coverImage}
-                        alt={community.name}
-                        className="w-full h-36 object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-36 bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center text-4xl">
-                        {categoryEmoji[community.category] ?? '🏅'}
-                      </div>
-                    )}
-                    <div className="p-5">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-lg">
+                    {/* Cover */}
+                    <div className="relative h-36">
+                      {community.coverImage ? (
+                        <Image
+                          src={community.coverImage}
+                          alt={community.name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center text-4xl">
                           {categoryEmoji[community.category] ?? '🏅'}
+                        </div>
+                      )}
+                      {/* Category badge on cover */}
+                      <div className="absolute top-3 left-3">
+                        <span className="px-2.5 py-1 bg-neutral-950/80 backdrop-blur-sm rounded-full text-xs font-medium text-neutral-300 capitalize">
+                          {categoryEmoji[community.category] ?? '🏅'}{' '}
+                          {community.category.replace(/_/g, ' ')}
                         </span>
-                        <h3 className="text-base font-semibold text-neutral-100 group-hover:text-white transition-colors truncate">
-                          {community.name}
-                        </h3>
                       </div>
-                      <div className="flex items-center gap-3 text-sm text-neutral-400 mt-2">
-                        <span>
-                          {community.memberCount}{' '}
-                          {community.memberCount === 1 ? 'member' : 'members'}
-                        </span>
-                        {community.city && <span>{community.city.name}</span>}
+                    </div>
+
+                    <div className="p-5">
+                      <div className="flex items-start gap-3">
+                        {/* Community logo overlapping cover */}
+                        {community.logoImage && (
+                          <div className="w-10 h-10 rounded-full bg-neutral-800 overflow-hidden flex-shrink-0 -mt-8 border-2 border-neutral-700 shadow-sm">
+                            <Image
+                              src={community.logoImage}
+                              alt={community.name}
+                              width={40}
+                              height={40}
+                              className="object-cover w-full h-full"
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-base font-semibold text-neutral-100 group-hover:text-white transition-colors truncate">
+                            {community.name}
+                          </h3>
+                          <div className="flex items-center gap-3 text-sm text-neutral-400 mt-1">
+                            <span>
+                              {community.memberCount}{' '}
+                              {community.memberCount === 1 ? 'member' : 'members'}
+                            </span>
+                            {community.city && <span>{community.city.name}</span>}
+                          </div>
+                        </div>
                       </div>
+                      {/* Description preview */}
+                      {community.description && (
+                        <p className="mt-2 text-xs text-neutral-500 line-clamp-1">
+                          {community.description}
+                        </p>
+                      )}
                     </div>
                   </Link>
                 ))}
@@ -214,7 +243,7 @@ export default async function HomePage() {
                 Be one of the first to bring people together.
               </p>
               <Link
-                href="/host/community"
+                href="/communities/create"
                 className="inline-block px-6 py-3 bg-neutral-800 text-neutral-300 text-sm font-medium rounded-xl hover:bg-neutral-700 transition-colors border border-neutral-700"
               >
                 Lead the movement &rarr;
@@ -342,7 +371,7 @@ export default async function HomePage() {
               Find your crew
             </Link>
             <Link
-              href="/host/community"
+              href="/communities/create"
               className="inline-block px-10 py-4 bg-transparent text-neutral-300 text-lg font-semibold rounded-xl border border-neutral-700 hover:border-neutral-500 transition-colors"
             >
               Lead the movement
@@ -366,7 +395,7 @@ export default async function HomePage() {
               Find your crew
             </Link>
             <Link
-              href="/host/community"
+              href="/communities/create"
               className="hover:text-neutral-300 transition-colors py-3 -my-3"
             >
               Lead the movement

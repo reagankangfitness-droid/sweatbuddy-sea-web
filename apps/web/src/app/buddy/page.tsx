@@ -755,7 +755,7 @@ function SessionCard({
     >
       <div className="p-4">
         <div className="flex items-start gap-3">
-          {/* Host/Community avatar */}
+          {/* Host/Community avatar — community takes priority */}
           <div className="shrink-0">
             {session.community?.logoImage ? (
               <Image
@@ -765,6 +765,10 @@ function SessionCard({
                 height={40}
                 className="rounded-full object-cover"
               />
+            ) : session.community ? (
+              <div className="w-10 h-10 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-sm font-bold text-neutral-600 dark:text-neutral-300">
+                {session.community.name[0]}
+              </div>
             ) : session.host?.imageUrl ? (
               <Image
                 src={session.host.imageUrl}
@@ -775,7 +779,7 @@ function SessionCard({
               />
             ) : (
               <div className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-sm font-medium text-neutral-500">
-                {(session.community?.name ?? session.host?.name ?? '?')[0]}
+                {(session.host?.name ?? '?')[0]}
               </div>
             )}
           </div>

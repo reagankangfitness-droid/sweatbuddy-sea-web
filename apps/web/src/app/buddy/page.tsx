@@ -755,33 +755,26 @@ function SessionCard({
     >
       <div className="p-4">
         <div className="flex items-start gap-3">
-          {/* Host/Community avatar — community takes priority */}
+          {/* Avatar: community logo → host avatar (if host name matches community) → community initial → fallback */}
           <div className="shrink-0">
-            {session.community?.logoImage ? (
-              <Image
-                src={session.community.logoImage}
-                alt={session.community.name}
-                width={40}
-                height={40}
-                className="rounded-full object-cover"
-              />
-            ) : session.community ? (
-              <div className="w-10 h-10 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-sm font-bold text-neutral-600 dark:text-neutral-300">
-                {session.community.name[0]}
-              </div>
-            ) : session.host?.imageUrl ? (
-              <Image
-                src={session.host.imageUrl}
-                alt={session.host.name ?? ''}
-                width={40}
-                height={40}
-                className="rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-sm font-medium text-neutral-500">
-                {(session.host?.name ?? '?')[0]}
-              </div>
-            )}
+            {(() => {
+              const communityLogo = session.community?.logoImage
+              const hostAvatar = session.host?.imageUrl
+              const hostIsRealOrganizer = session.host?.name && session.host.name !== 'sweatbuddies' && session.host.name !== 'SweatBuddies'
+              const displayName = session.community?.name ?? session.host?.name ?? '?'
+
+              if (communityLogo) return (
+                <Image src={communityLogo} alt={displayName} width={40} height={40} className="rounded-full object-cover" />
+              )
+              if (hostAvatar && hostIsRealOrganizer) return (
+                <Image src={hostAvatar} alt={displayName} width={40} height={40} className="rounded-full object-cover" />
+              )
+              return (
+                <div className="w-10 h-10 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-sm font-bold text-neutral-600 dark:text-neutral-300">
+                  {displayName[0]}
+                </div>
+              )
+            })()}
           </div>
 
           <div className="flex-1 min-w-0">

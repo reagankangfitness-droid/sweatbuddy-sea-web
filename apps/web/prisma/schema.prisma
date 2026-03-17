@@ -2631,6 +2631,12 @@ model Community {
   // Ownership
   createdById String
 
+  // Seeding & claiming
+  isSeeded      Boolean   @default(false)
+  claimableBy   String?   // Instagram handle that can claim (e.g., "@runclub")
+  claimedAt     DateTime?
+  claimedById   String?   // User ID who claimed this community
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

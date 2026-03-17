@@ -25,4 +25,6 @@ export const EVENTS = {
   COMMUNITY_LEFT: 'community_left',
   SIGNUP: 'signup',
   SEARCH_USED: 'search_used',
+  COMMUNITY_SEEDED: 'community_seeded',
+  COMMUNITY_CLAIMED: 'community_claimed',
 } as const

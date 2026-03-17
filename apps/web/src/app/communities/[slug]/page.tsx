@@ -8,6 +8,7 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@clerk/nextjs/server'
 import { JoinCommunityButton } from '@/components/community/JoinCommunityButton'
 import { CommunityShareButtons } from '@/components/community/CommunityShareButtons'
+import { ClaimCommunityButton } from '@/components/community/ClaimCommunityButton'
 import { ShareButton } from '@/components/community/ShareButton'
 import { getUpcomingEventSubmissions } from '@/lib/community-system'
 
@@ -370,6 +371,14 @@ export default async function CommunityPage({ params }: Props) {
           <CommunityShareButtons
             communityName={community.name}
             communitySlug={community.slug}
+          />
+
+          <ClaimCommunityButton
+            communitySlug={community.slug}
+            communityName={community.name}
+            isSeeded={community.isSeeded}
+            claimedAt={community.claimedAt?.toISOString() ?? null}
+            claimableBy={community.claimableBy}
           />
 
           {/* Description */}

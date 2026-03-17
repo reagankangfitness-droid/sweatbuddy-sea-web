@@ -18,7 +18,8 @@ import {
   Lock,
   UserPlus,
   Flag,
-  Activity
+  Activity,
+  Building2
 } from 'lucide-react'
 import { Logo } from '@/components/logo'
 
@@ -28,6 +29,7 @@ const navigation = [
   { name: 'Sessions', href: '/admin/sessions', icon: Activity },
   { name: 'Activities', href: '/admin/activities', icon: Clock },
   { name: 'Reports', href: '/admin/reports', icon: Flag },
+  { name: 'Communities', href: '/admin/communities', icon: Building2 },
   { name: 'Events', href: '/admin/events', icon: Calendar },
   { name: 'Hosts', href: '/admin/hosts', icon: UserPlus },
   { name: 'Newsletter', href: '/admin/newsletter', icon: Mail },

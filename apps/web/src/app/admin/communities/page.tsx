@@ -1,7 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { Loader2, Plus, Pencil, X, Power } from 'lucide-react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { Loader2, Plus, Pencil, X, Power, ImagePlus } from 'lucide-react'
+import { useUploadThing } from '@/lib/uploadthing'
+import { toast } from 'sonner'
 
 interface AdminCommunity {
   id: string
@@ -69,6 +71,31 @@ export default function AdminCommunitiesPage() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState<CommunityForm>(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [logoUploading, setLogoUploading] = useState(false)
+  const [coverUploading, setCoverUploading] = useState(false)
+  const logoInputRef = useRef<HTMLInputElement>(null)
+  const coverInputRef = useRef<HTMLInputElement>(null)
+  const { startUpload } = useUploadThing('activityImage')
+
+  const handleImageUpload = async (file: File, type: 'logo' | 'cover') => {
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error('Image must be under 8MB')
+      return
+    }
+    const setUploading = type === 'logo' ? setLogoUploading : setCoverUploading
+    setUploading(true)
+    try {
+      const res = await startUpload([file])
+      if (res?.[0]?.url) {
+        setForm(prev => ({ ...prev, [type === 'logo' ? 'logoImage' : 'coverImage']: res[0].url }))
+        toast.success(`${type === 'logo' ? 'Logo' : 'Cover'} uploaded`)
+      }
+    } catch {
+      toast.error('Failed to upload image')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const fetchCommunities = useCallback(async () => {
     try {
@@ -257,28 +284,48 @@ export default function AdminCommunitiesPage() {
                 />
               </div>
 
-              {/* Logo Image URL */}
+              {/* Logo Image */}
               <div>
-                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Logo Image URL</label>
-                <input
-                  type="text"
-                  value={form.logoImage}
-                  onChange={(e) => setForm({ ...form, logoImage: e.target.value })}
-                  className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
-                  placeholder="Paste UploadThing URL"
-                />
+                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2">Logo Image</label>
+                {form.logoImage ? (
+                  <div className="relative inline-block">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={form.logoImage} alt="Logo" className="w-16 h-16 rounded-full object-cover border border-neutral-700" />
+                    <button type="button" onClick={() => setForm({ ...form, logoImage: '' })} className="absolute -top-1 -right-1 w-5 h-5 bg-red-600 rounded-full flex items-center justify-center"><X className="w-3 h-3 text-white" /></button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={logoUploading}
+                    onClick={() => logoInputRef.current?.click()}
+                    className="w-16 h-16 rounded-full border-2 border-dashed border-neutral-600 flex flex-col items-center justify-center text-neutral-500 hover:border-neutral-400 hover:text-neutral-400 transition-colors"
+                  >
+                    {logoUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImagePlus className="w-5 h-5" />}
+                  </button>
+                )}
+                <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f, 'logo'); if (logoInputRef.current) logoInputRef.current.value = '' }} />
               </div>
 
-              {/* Cover Image URL */}
+              {/* Cover Image */}
               <div>
-                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Cover Image URL</label>
-                <input
-                  type="text"
-                  value={form.coverImage}
-                  onChange={(e) => setForm({ ...form, coverImage: e.target.value })}
-                  className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
-                  placeholder="Paste UploadThing URL"
-                />
+                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2">Cover Image</label>
+                {form.coverImage ? (
+                  <div className="relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={form.coverImage} alt="Cover" className="w-full h-28 rounded-lg object-cover border border-neutral-700" />
+                    <button type="button" onClick={() => setForm({ ...form, coverImage: '' })} className="absolute top-1 right-1 w-5 h-5 bg-red-600 rounded-full flex items-center justify-center"><X className="w-3 h-3 text-white" /></button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={coverUploading}
+                    onClick={() => coverInputRef.current?.click()}
+                    className="w-full h-28 rounded-lg border-2 border-dashed border-neutral-600 flex flex-col items-center justify-center gap-1 text-neutral-500 hover:border-neutral-400 hover:text-neutral-400 transition-colors"
+                  >
+                    {coverUploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><ImagePlus className="w-5 h-5" /><span className="text-xs">Upload cover</span></>}
+                  </button>
+                )}
+                <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(f, 'cover'); if (coverInputRef.current) coverInputRef.current.value = '' }} />
               </div>
 
               {/* Instagram Handle */}

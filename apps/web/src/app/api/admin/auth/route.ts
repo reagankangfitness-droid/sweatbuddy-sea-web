@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 24 * 60 * 60, // 24 hours
-      path: '/admin',
+      path: '/',
     })
 
     return response
@@ -103,7 +103,7 @@ export async function DELETE() {
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
     maxAge: 0,
-    path: '/admin',
+    path: '/',
   })
   return response
 }

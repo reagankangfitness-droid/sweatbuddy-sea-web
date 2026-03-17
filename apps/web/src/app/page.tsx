@@ -14,6 +14,23 @@ export const metadata: Metadata = {
     'Join run clubs, yoga groups, swimming squads, and fitness communities that push you further. Real people, real progress.',
 }
 
+// Fallback cover photos for communities without a cover image
+const CATEGORY_COVER_FALLBACKS: Record<string, string> = {
+  running: '/banner/running.jpg',
+  yoga: '/images/hero-2.jpg',
+  swimming: '/banner/athletics.jpg',
+  gym: '/images/hero-1.webp',
+  bootcamp: '/banner/athletics.jpg',
+  hiking: '/images/hero-3.jpg',
+  cycling: '/banner/running.jpg',
+  badminton: '/images/community-bonds.jpg',
+  pilates: '/images/hero-2.jpg',
+  cold_plunge: '/images/hero-3.jpg',
+  padel: '/images/community-bonds.jpg',
+  combat_fitness: '/banner/athletics.jpg',
+  pickleball: '/images/community-bonds.jpg',
+}
+
 const CATEGORY_CARDS = [
   { emoji: '🏃', label: 'Running Clubs', vibe: 'Find your pace, push your limits', slug: 'running' },
   { emoji: '🧘', label: 'Yoga Groups', vibe: 'Deepen your practice together', slug: 'yoga' },
@@ -209,9 +226,9 @@ export default async function HomePage() {
                   >
                     {/* Cover */}
                     <div className="relative h-36">
-                      {community.coverImage ? (
+                      {community.coverImage || CATEGORY_COVER_FALLBACKS[community.category] ? (
                         <Image
-                          src={community.coverImage}
+                          src={community.coverImage || CATEGORY_COVER_FALLBACKS[community.category] || '/banner/running.jpg'}
                           alt={community.name}
                           fill
                           className="object-cover"

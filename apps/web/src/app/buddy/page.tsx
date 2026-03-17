@@ -213,7 +213,8 @@ function BuddyPageInner() {
         if (res.ok) {
           const data = await res.json()
           if (!data.completed) {
-            router.replace('/onboarding/p2p')
+            const currentPath = window.location.pathname + window.location.search
+            router.replace('/onboarding/p2p?redirect=' + encodeURIComponent(currentPath))
             return
           }
           setCurrentUserId(data.user?.id ?? null)

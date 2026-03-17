@@ -357,6 +357,7 @@ export default async function CommunityPage({ params }: Props) {
             <div className="sm:ml-auto">
               <JoinCommunityButton
                 communitySlug={community.slug}
+                communityName={community.name}
                 isMember={isMember}
                 isOwner={isOwner}
                 privacy={community.privacy}
@@ -472,7 +473,7 @@ export default async function CommunityPage({ params }: Props) {
       )}
 
       {/* Upcoming Events */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <section id="upcoming-events" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-neutral-100">Upcoming Events</h2>
         </div>

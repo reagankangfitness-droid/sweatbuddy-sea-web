@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 import { Loader2, Camera } from 'lucide-react'
@@ -30,7 +30,9 @@ const FITNESS_LEVELS = [
 
 export default function P2POnboardingPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user: clerkUser, isLoaded } = useUser()
+  const redirectTo = searchParams.get('redirect') || '/buddy'
 
   const [bio, setBio] = useState('')
   const [selectedInterests, setSelectedInterests] = useState<string[]>([])
@@ -46,7 +48,7 @@ export default function P2POnboardingPage() {
         if (res.ok) {
           const data = await res.json()
           if (data.completed) {
-            router.replace('/buddy')
+            router.replace(redirectTo)
             return
           }
           // Pre-fill existing data
@@ -61,7 +63,7 @@ export default function P2POnboardingPage() {
       }
     }
     if (isLoaded) check()
-  }, [isLoaded, router])
+  }, [isLoaded, router, redirectTo])
 
   function toggleInterest(slug: string) {
     setSelectedInterests((prev) =>
@@ -100,7 +102,7 @@ export default function P2POnboardingPage() {
       }
 
       toast.success('Profile set up!')
-      router.push('/buddy')
+      router.push(redirectTo)
     } catch {
       toast.error('Something went wrong')
     } finally {

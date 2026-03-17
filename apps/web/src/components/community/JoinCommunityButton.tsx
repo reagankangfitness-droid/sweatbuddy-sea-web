@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@clerk/nextjs'
 import { Users, LogIn, Settings, Check, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface JoinCommunityButtonProps {
   communitySlug: string
+  communityName: string
   isMember: boolean
   isOwner: boolean
   privacy: 'PUBLIC' | 'PRIVATE' | 'INVITE_ONLY'
@@ -15,17 +16,28 @@ interface JoinCommunityButtonProps {
 
 export function JoinCommunityButton({
   communitySlug,
+  communityName,
   isMember,
   isOwner,
   privacy,
 }: JoinCommunityButtonProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { isSignedIn } = useAuth()
   const [loading, setLoading] = useState(false)
+  const [joining, setJoining] = useState(false)
+
+  // Auto-join when user arrives with action=join after auth
+  useEffect(() => {
+    if (isSignedIn && searchParams.get('action') === 'join' && !isMember && !isOwner && privacy !== 'INVITE_ONLY') {
+      handleJoin()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSignedIn, searchParams])
 
   const handleJoin = async () => {
     if (!isSignedIn) {
-      router.push(`/sign-in?redirect=/communities/${communitySlug}`)
+      router.push(`/sign-up?redirect_url=${encodeURIComponent(`/communities/${communitySlug}?action=join`)}`)
       return
     }
 
@@ -35,18 +47,29 @@ export function JoinCommunityButton({
     }
 
     setLoading(true)
+    setJoining(true)
     try {
       const response = await fetch(`/api/communities/${communitySlug}/join`, {
         method: 'POST',
       })
 
       if (response.ok) {
+        toast.success(`You're in! Welcome to ${communityName}.`)
         router.refresh()
+
+        // After successful join, scroll to events section
+        setTimeout(() => {
+          const eventsSection = document.getElementById('upcoming-events')
+          if (eventsSection) {
+            eventsSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+        }, 500)
       }
     } catch {
       toast.error('Something went wrong')
     } finally {
       setLoading(false)
+      setJoining(false)
     }
   }
 
@@ -76,7 +99,7 @@ export function JoinCommunityButton({
         className="inline-flex items-center gap-2 px-6 py-3 bg-neutral-800 text-neutral-400 rounded-full font-medium"
       >
         <Loader2 className="w-5 h-5 animate-spin" />
-        Loading...
+        {joining ? 'Joining...' : 'Loading...'}
       </button>
     )
   }

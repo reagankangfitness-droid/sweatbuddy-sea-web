@@ -125,6 +125,40 @@ export default async function HomePage() {
             </Link>
           </div>
         </div>
+
+        {/* Hero photo grid */}
+        <div className="mt-16 max-w-3xl mx-auto">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            {[
+              { src: '/images/community-bonds.jpg', alt: 'Pickleball crew' },
+              { src: '/banner/running.jpg', alt: 'Run club' },
+              { src: '/banner/athletics.jpg', alt: 'Beach fitness' },
+            ].map((img) => (
+              <div key={img.src} className="h-36 sm:h-48 rounded-2xl overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={img.src} alt={img.alt} className="w-full h-full object-cover" />
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-xs text-neutral-600 mt-3">Real communities. Real people. Moving together.</p>
+        </div>
+
+        {/* Community photo strip */}
+        <div className="mt-10 max-w-4xl mx-auto">
+          <div className="flex gap-3 overflow-x-auto scrollbar-none pb-1">
+            {[
+              { src: '/images/hero-2.jpg', alt: 'Yoga in the park' },
+              { src: '/images/hero-3.jpg', alt: 'Cold plunge crew' },
+              { src: '/banner/run-club.jpg', alt: 'Running together' },
+              { src: '/banner/ice-bath.webp', alt: 'Ice bath session' },
+            ].map((img) => (
+              <div key={img.src} className="flex-shrink-0 w-44 h-28 sm:w-52 sm:h-32 rounded-xl overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={img.src} alt={img.alt} className="w-full h-full object-cover" />
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* -- Category browsing --------------------------------- */}

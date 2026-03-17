@@ -23,10 +23,10 @@ export default function Error({
           <span className="text-3xl">😅</span>
         </div>
         <h2 className="text-xl font-bold text-neutral-100 mb-2">
-          Something went wrong
+          Something broke.
         </h2>
         <p className="text-neutral-500 mb-6">
-          Not your fault. We&apos;re on it.
+          Not you &mdash; us. We&apos;re on it.
         </p>
         <div className="space-y-3">
           <button

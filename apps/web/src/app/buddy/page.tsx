@@ -348,8 +348,8 @@ function BuddyPageInner() {
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/90 dark:bg-neutral-950/90 backdrop-blur border-b border-neutral-100 dark:border-neutral-800">
         <div className="max-w-2xl mx-auto px-4 py-4">
-          <h1 className="text-lg font-bold text-neutral-900 dark:text-white">Sessions</h1>
-          <p className="text-xs text-neutral-500">What&apos;s happening near you</p>
+          <h1 className="text-lg font-bold text-neutral-900 dark:text-white">Experiences</h1>
+          <p className="text-xs text-neutral-500">Discover fitness &amp; wellness experiences</p>
         </div>
 
         {/* Tabs */}

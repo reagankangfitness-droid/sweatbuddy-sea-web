@@ -8,10 +8,10 @@ export default function NotFound() {
           <span className="text-4xl">🔍</span>
         </div>
         <h1 className="text-2xl font-bold text-neutral-100 mb-2">
-          Looks like you took a wrong turn.
+          Wrong turn.
         </h1>
         <p className="text-neutral-500 mb-8">
-          This page doesn&apos;t exist — but your next crew does.
+          This page doesn&apos;t exist. But your crew does.
         </p>
         <div className="space-y-3">
           <Link
@@ -24,7 +24,7 @@ export default function NotFound() {
             href="/communities"
             className="block w-full px-6 py-3 bg-neutral-800 text-neutral-300 rounded-full font-medium hover:bg-neutral-700 transition-colors text-center"
           >
-            Find your crew
+            Find them
           </Link>
         </div>
       </div>

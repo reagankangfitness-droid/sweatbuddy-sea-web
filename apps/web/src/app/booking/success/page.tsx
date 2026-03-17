@@ -249,7 +249,7 @@ function BookingSuccessContent() {
             </div>
             <h1 className="text-3xl font-bold text-foreground mb-2">You&apos;re in!</h1>
             <p className="text-muted-foreground">
-              See you there.
+              They&apos;re expecting you.
             </p>
           </div>
 
@@ -430,9 +430,9 @@ function BookingSuccessContent() {
 
           {/* Tip Section */}
           <div className="mt-6 p-4 bg-primary/5 rounded-xl">
-            <p className="text-sm font-medium text-foreground mb-1">Pro tip</p>
+            <p className="text-sm font-medium text-foreground mb-1">Tip</p>
             <p className="text-sm text-muted-foreground">
-              Say hi in the group chat. The regulars are friendly.
+              The regulars are friendly. Say hi.
             </p>
           </div>
         </div>

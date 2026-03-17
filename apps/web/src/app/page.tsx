@@ -9,9 +9,9 @@ import { SUPPORT_EMAIL } from '@/config/constants'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'SweatBuddies — Move Better Together',
+  title: 'SweatBuddies — Discover Fitness & Wellness Experiences',
   description:
-    'Join run clubs, yoga groups, swimming squads, and fitness communities that push you further. Real people, real progress.',
+    'Discover fitness and wellness experiences. Sunrise yoga, beach bootcamps, run clubs, cold plunge socials — whatever moves you, it\'s happening.',
 }
 
 // Fallback cover photos for communities without a cover image
@@ -83,10 +83,10 @@ export default async function HomePage() {
           <Logo size={28} />
           <nav className="flex items-center gap-2">
             <Link
-              href="/communities"
+              href="/buddy"
               className="hidden sm:inline px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors"
             >
-              Find your crew
+              Discover experiences
             </Link>
             <Link
               href="/sign-in"
@@ -119,26 +119,26 @@ export default async function HomePage() {
           </p>
 
           <h1 className="text-4xl sm:text-7xl font-bold leading-[1.05] tracking-tight mb-6">
-            Move better.
-            <span className="block text-neutral-400">Together.</span>
+            Sweat is better
+            <span className="block text-neutral-400">shared.</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-neutral-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Run clubs pushing your pace. Yoga groups deepening your practice. Swim squads shaving your time. The crew that makes you better &mdash; and keeps you coming back.
+            Sunrise yoga. Beach bootcamps. Run clubs. Cold plunge socials. Discover fitness and wellness experiences — and the people who make them unforgettable.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              href="/communities"
+              href="/buddy"
               className="px-8 py-4 bg-white text-neutral-900 text-base font-semibold rounded-xl hover:bg-neutral-100 transition-colors shadow-lg"
             >
-              Find your crew
+              Discover experiences
             </Link>
             <Link
               href="/communities/create"
               className="px-8 py-4 bg-neutral-800 text-neutral-100 text-base font-semibold rounded-xl hover:bg-neutral-700 transition-colors border border-neutral-700"
             >
-              Lead the movement
+              Start something
             </Link>
           </div>
         </div>
@@ -183,7 +183,7 @@ export default async function HomePage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-              What gets you moving?
+              What makes you sweat?
             </h2>
           </div>
 
@@ -214,7 +214,7 @@ export default async function HomePage() {
             <>
               <div className="text-center mb-10">
                 <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-                  Featured communities
+                  Who&apos;s hosting
                 </h2>
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -291,13 +291,13 @@ export default async function HomePage() {
                 Your crew is forming.
               </h2>
               <p className="text-neutral-400 mb-8">
-                Be one of the first to bring people together.
+                The best communities started with one person who said &apos;who&apos;s in?&apos;
               </p>
               <Link
                 href="/communities/create"
                 className="inline-block px-6 py-3 bg-neutral-800 text-neutral-300 text-sm font-medium rounded-xl hover:bg-neutral-700 transition-colors border border-neutral-700"
               >
-                Lead the movement &rarr;
+                Start something &rarr;
               </Link>
             </div>
           )}
@@ -309,27 +309,27 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-              You get better faster with the right crew.
+              The right crew changes everything.
             </h2>
-            <p className="text-neutral-400">No sign-up forms. No awkward intros. Just people who push each other.</p>
+            <p className="text-neutral-400">No sign-up forms. No small talk. Just sweat, progress, and people who get it.</p>
           </div>
 
           <div className="grid sm:grid-cols-3 gap-6">
             {[
               {
                 step: '01',
-                title: 'Find your level',
-                body: 'Browse communities by sport, intensity, and location. See who\u2019s training, when, and where.',
+                title: 'Discover',
+                body: 'Browse experiences by what moves you — running, yoga, strength, swimming, and more.',
               },
               {
                 step: '02',
                 title: 'Show up',
-                body: 'One tap to join. No commitment. Just bring your energy and let the crew handle the rest.',
+                body: 'One tap. No commitment. Just you, showing up.',
               },
               {
                 step: '03',
-                title: 'Level up together',
-                body: 'The crew pushes you further than you\u2019d go alone. Come for the workout, stay for the people.',
+                title: 'Earn your spot',
+                body: 'Show up once, you\u2019re new. Show up twice, you\u2019re one of them. Show up every week, they save your spot.',
               },
             ].map((s, i) => (
               <div
@@ -354,7 +354,7 @@ export default async function HomePage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3">
-              However you train, there&apos;s a crew for that.
+              Every sweat has a crew.
             </h2>
           </div>
 
@@ -363,17 +363,17 @@ export default async function HomePage() {
               {
                 emoji: '🏃',
                 title: 'Sports & Movement',
-                body: 'The runners who made you faster. The tennis crew that sharpened your backhand. The swimmers who turned laps into PRs.',
+                body: 'The runners who turned your pace into a PR. The tennis crew that sharpened your serve. The swimmers who made 6am feel worth it.',
               },
               {
                 emoji: '🏋️',
                 title: 'Fitness & Training',
-                body: 'The 6am bootcamp that rewired your discipline. The gym crew who won\u2019t let you plateau. The HIIT squad that made hard feel normal.',
+                body: 'The bootcamp that broke you in the best way. The gym crew who made leg day non-negotiable. The HIIT squad where \u2018one more rep\u2019 is a love language.',
               },
               {
                 emoji: '🧘',
                 title: 'Wellness & Recovery',
-                body: 'The yoga circle that unlocked your flexibility. The cold plunge crew that built your resilience. The pilates group that fixed your posture.',
+                body: 'The yoga circle where silence says everything. The cold plunge crew that proved you\u2019re tougher than you think. The pilates group that fixed what sitting broke.',
               },
             ].map((item, i) => (
               <div
@@ -409,23 +409,23 @@ export default async function HomePage() {
       <section className="py-24 px-4 sm:px-6">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl sm:text-5xl font-bold mb-4 leading-tight">
-            The best version of you needs the right crew.
+            You already know you&apos;re better with the right people.
           </h2>
           <p className="text-neutral-400 text-lg mb-10">
-            Every PR, every new skill, every breakthrough &mdash; it happens faster when you&apos;re not doing it alone.
+            Every 5am alarm answered. Every PR earned. Every &apos;same time next week?&apos; That&apos;s what the right crew does.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              href="/communities"
+              href="/buddy"
               className="inline-block px-10 py-4 bg-white text-neutral-900 text-lg font-semibold rounded-xl hover:bg-neutral-100 transition-colors shadow-xl"
             >
-              Find your crew
+              Discover experiences
             </Link>
             <Link
               href="/communities/create"
               className="inline-block px-10 py-4 bg-transparent text-neutral-300 text-lg font-semibold rounded-xl border border-neutral-700 hover:border-neutral-500 transition-colors"
             >
-              Lead the movement
+              Start something
             </Link>
           </div>
         </div>
@@ -440,16 +440,16 @@ export default async function HomePage() {
           </div>
           <div className="flex gap-3 sm:gap-6">
             <Link
-              href="/communities"
+              href="/buddy"
               className="hover:text-neutral-300 transition-colors py-3 -my-3"
             >
-              Find your crew
+              Discover experiences
             </Link>
             <Link
               href="/communities/create"
               className="hover:text-neutral-300 transition-colors py-3 -my-3"
             >
-              Lead the movement
+              Start something
             </Link>
             <a
               href={`mailto:${SUPPORT_EMAIL}`}

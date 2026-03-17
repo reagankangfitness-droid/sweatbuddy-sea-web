@@ -74,6 +74,7 @@ const isPublicRoute = createRouteMatcher([
   '/banned',
   '/explore',
   '/communities(.*)',
+  '/buddy',
   '/api/map(.*)',
   '/api/test(.*)',
   '/api/cron(.*)',

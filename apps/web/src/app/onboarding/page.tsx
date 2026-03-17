@@ -12,11 +12,8 @@ export default function OnboardingRoleSelectionPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
-            Ready to find your people?
+            What brings you here?
           </h1>
-          <p className="mt-3 text-neutral-500 dark:text-neutral-400 text-sm">
-            How do you want to start?
-          </p>
         </div>
 
         {/* Role cards */}
@@ -32,10 +29,10 @@ export default function OnboardingRoleSelectionPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
-                  I want to join a community
+                  I want to discover experiences
                 </h2>
                 <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                  Find people who move like you — run clubs, yoga circles, swimming crews, and more.
+                  Fitness, wellness, and everything that gets you moving.
                 </p>
                 <span className="inline-block mt-3 text-sm font-medium text-neutral-900 dark:text-white group-hover:translate-x-1 transition-transform">
                   Let&apos;s go &rarr;
@@ -55,13 +52,13 @@ export default function OnboardingRoleSelectionPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
-                  I lead a community
+                  I organize experiences
                 </h2>
                 <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                  Set up your profile and start hosting sessions for your community.
+                  Create and manage fitness &amp; wellness experiences. Grow your community.
                 </p>
                 <span className="inline-block mt-3 text-sm font-medium text-neutral-900 dark:text-white group-hover:translate-x-1 transition-transform">
-                  Get started &rarr;
+                  Let&apos;s go &rarr;
                 </span>
               </div>
             </div>

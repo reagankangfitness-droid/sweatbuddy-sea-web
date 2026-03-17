@@ -168,9 +168,9 @@ export default function CommunitiesPageClient({
             className="text-center"
           >
             <h1 className="text-3xl md:text-5xl font-bold text-neutral-100 mb-4">
-              Find Your{' '}
+              Find People Worth{' '}
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Fitness Tribe
+                Sweating With
               </span>
             </h1>
             <p className="text-neutral-400 text-base md:text-lg max-w-xl mx-auto mb-8">
@@ -182,7 +182,7 @@ export default function CommunitiesPageClient({
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
               <input
                 type="text"
-                placeholder="Search communities…"
+                placeholder="Search your people…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-11 pr-4 py-3 bg-neutral-900 border border-neutral-800 rounded-xl text-sm text-neutral-100 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-neutral-700 transition-all"
@@ -389,13 +389,13 @@ export default function CommunitiesPageClient({
               </div>
               <h3 className="text-lg font-semibold text-neutral-200 mb-2">
                 {hasFilters
-                  ? 'No communities found'
-                  : 'No communities yet'}
+                  ? 'Nothing here yet. Try a different search.'
+                  : 'No crews here yet. Be the first.'}
               </h3>
               <p className="text-neutral-500 text-sm max-w-sm mx-auto">
                 {hasFilters
-                  ? 'Try adjusting your search or filters to find what you\'re looking for.'
-                  : 'Be the first to create a community!'}
+                  ? ''
+                  : ''}
               </p>
             </div>
           )}
@@ -423,20 +423,20 @@ export default function CommunitiesPageClient({
           className="relative max-w-2xl mx-auto px-4 py-16 md:py-24 text-center"
         >
           <h2 className="text-2xl md:text-3xl font-bold text-neutral-100 mb-4">
-            Ready to lead the{' '}
+            Ready to start{' '}
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              movement
+              something
             </span>
             ?
           </h2>
           <p className="text-neutral-400 text-base md:text-lg mb-8 max-w-md mx-auto">
-            Create a community and start hosting events for your tribe. It&apos;s free to get started.
+            The best communities started with one person who said &apos;who&apos;s in?&apos;
           </p>
           <Link
             href="/host/community"
             className="inline-flex items-center gap-2 px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold hover:bg-neutral-200 transition-colors"
           >
-            Create a Community
+            Start a crew
             <ArrowRight className="w-5 h-5" />
           </Link>
         </motion.div>

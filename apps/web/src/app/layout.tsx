@@ -34,11 +34,11 @@ const BASE_URL = 'https://www.sweatbuddies.co'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'SweatBuddies | Move Better Together',
+    default: 'SweatBuddies | Discover Fitness & Wellness Experiences',
     template: '%s | SweatBuddies',
   },
-  description: 'Join fitness communities that push you further. Run clubs, yoga groups, swimming squads, and more. Real people, real progress.',
-  keywords: ['fitness community', 'run club', 'yoga group', 'workout group', 'fitness near me', 'group fitness', 'social fitness', 'fitness crew', 'move better together', 'training partners', 'fitness goals', 'workout motivation'],
+  description: 'Discover fitness and wellness experiences. Sunrise yoga, beach bootcamps, run clubs, cold plunge socials — whatever moves you.',
+  keywords: ['sweat is better shared', 'fitness crew', 'run club', 'yoga group', 'workout community', 'find your crew', 'fitness belonging', 'group fitness', 'discover experiences', 'fitness experiences', 'wellness experiences'],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
   icons: {
@@ -51,21 +51,21 @@ export const metadata: Metadata = {
     locale: 'en',
     url: BASE_URL,
     siteName: 'SweatBuddies',
-    title: 'SweatBuddies | Move Better Together',
-    description: 'Join fitness communities that push you further. Run clubs, yoga groups, swimming squads, and more. Real people, real progress.',
+    title: 'SweatBuddies | Discover Fitness & Wellness Experiences',
+    description: 'Discover fitness and wellness experiences. Sunrise yoga, beach bootcamps, run clubs, cold plunge socials — whatever moves you.',
     images: [
       {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SweatBuddies — Move better together.',
+        alt: 'SweatBuddies — Sweat is better shared.',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SweatBuddies | Move Better Together',
-    description: 'Join fitness communities that push you further. Run clubs, yoga groups, swimming squads, and more. Real people, real progress.',
+    title: 'SweatBuddies | Discover Fitness & Wellness Experiences',
+    description: 'Discover fitness and wellness experiences. Sunrise yoga, beach bootcamps, run clubs, cold plunge socials — whatever moves you.',
     images: ['/images/og-image.jpg'],
   },
   robots: {

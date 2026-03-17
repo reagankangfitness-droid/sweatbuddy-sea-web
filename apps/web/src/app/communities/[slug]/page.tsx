@@ -396,7 +396,7 @@ export default async function CommunityPage({ params }: Props) {
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
           <div className="flex items-center gap-2 mb-4">
             <Megaphone className="w-5 h-5 text-amber-400" />
-            <h2 className="text-xl font-semibold text-neutral-100">Announcements</h2>
+            <h2 className="text-xl font-semibold text-neutral-100">From the crew</h2>
           </div>
 
           {announcements.length > 0 ? (
@@ -452,7 +452,7 @@ export default async function CommunityPage({ params }: Props) {
             isAdmin && (
               <div className="text-center py-8 bg-neutral-900 rounded-xl">
                 <Megaphone className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
-                <p className="text-neutral-500 text-sm">No announcements yet</p>
+                <p className="text-neutral-500 text-sm">Quiet for now.</p>
               </div>
             )
           )}
@@ -462,7 +462,7 @@ export default async function CommunityPage({ params }: Props) {
       {/* Upcoming Events */}
       <section id="upcoming-events" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-neutral-100">Upcoming Sessions</h2>
+          <h2 className="text-xl font-semibold text-neutral-100">What&apos;s next</h2>
         </div>
 
         {allUpcomingEvents.length > 0 ? (
@@ -511,7 +511,7 @@ export default async function CommunityPage({ params }: Props) {
         ) : (
           <div className="text-center py-12 bg-neutral-900 rounded-xl">
             <Calendar className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
-            <p className="text-neutral-400">No upcoming sessions</p>
+            <p className="text-neutral-400">Nothing scheduled yet.</p>
           </div>
         )}
       </section>
@@ -519,7 +519,7 @@ export default async function CommunityPage({ params }: Props) {
       {/* Members */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-neutral-100">Members</h2>
+          <h2 className="text-xl font-semibold text-neutral-100">The crew</h2>
           <span className="text-sm text-neutral-500">
             {community._count.members} total
           </span>
@@ -583,7 +583,7 @@ export default async function CommunityPage({ params }: Props) {
               </div>
             )}
             <span>
-              Community created by{' '}
+              Started by{' '}
               <span className="text-neutral-400 font-medium">
                 {community.createdBy.name || community.createdBy.username}
               </span>

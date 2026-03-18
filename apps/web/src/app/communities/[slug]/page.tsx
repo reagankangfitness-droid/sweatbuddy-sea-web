@@ -10,6 +10,8 @@ import { JoinCommunityButton } from '@/components/community/JoinCommunityButton'
 import { CommunityShareButtons } from '@/components/community/CommunityShareButtons'
 import { ClaimCommunityButton } from '@/components/community/ClaimCommunityButton'
 import { ShareButton } from '@/components/community/ShareButton'
+import { CommunityChat } from '@/components/community/CommunityChat'
+import { IntroduceYourself } from '@/components/community/IntroduceYourself'
 import { getUpcomingEventSubmissions } from '@/lib/community-system'
 
 export const revalidate = 60
@@ -391,6 +393,17 @@ export default async function CommunityPage({ params }: Props) {
         </div>
       </section>
 
+      {/* Introduce Yourself (members only, first visit) */}
+      {isMember && (
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+          <IntroduceYourself
+            communitySlug={community.slug}
+            communityName={community.name}
+            hasIntroduced={false}
+          />
+        </section>
+      )}
+
       {/* Announcements */}
       {(announcements.length > 0 || isAdmin) && (
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
@@ -458,6 +471,14 @@ export default async function CommunityPage({ params }: Props) {
           )}
         </section>
       )}
+
+      {/* Crew Chat */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <CommunityChat
+          communitySlug={community.slug}
+          isMember={isMember}
+        />
+      </section>
 
       {/* Upcoming Events */}
       <section id="upcoming-events" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

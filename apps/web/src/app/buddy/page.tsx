@@ -851,33 +851,45 @@ function SessionCard({
               )}
             </div>
 
-            {/* Attendee avatars */}
+            {/* Attendee avatars + names */}
             {session.attendees.length > 0 && (
-              <div className="flex items-center gap-1 mt-2">
-                <div className="flex -space-x-1.5">
-                  {session.attendees.slice(0, 5).map((a) =>
-                    a.imageUrl ? (
-                      <Image
-                        key={a.id}
-                        src={a.imageUrl}
-                        alt={a.name ?? ''}
-                        width={20}
-                        height={20}
-                        className="rounded-full ring-1 ring-white object-cover"
-                      />
-                    ) : (
-                      <div
-                        key={a.id}
-                        className="w-5 h-5 rounded-full ring-1 ring-white bg-[#FFFBF8] flex items-center justify-center text-[9px] font-medium text-[#9A9AAA]"
-                      >
-                        {(a.name ?? '?')[0]}
-                      </div>
-                    )
+              <div className="mt-2">
+                <div className="flex items-center gap-1">
+                  <div className="flex -space-x-1.5">
+                    {session.attendees.slice(0, 5).map((a) =>
+                      a.imageUrl ? (
+                        <Image
+                          key={a.id}
+                          src={a.imageUrl}
+                          alt={a.name ?? ''}
+                          width={20}
+                          height={20}
+                          className="rounded-full ring-1 ring-white object-cover"
+                        />
+                      ) : (
+                        <div
+                          key={a.id}
+                          className="w-5 h-5 rounded-full ring-1 ring-white bg-[#FFFBF8] flex items-center justify-center text-[9px] font-medium text-[#9A9AAA]"
+                        >
+                          {(a.name ?? '?')[0]}
+                        </div>
+                      )
+                    )}
+                  </div>
+                  {session.attendees.length > 5 && (
+                    <span className="text-xs text-[#9A9AAA]">+{session.attendees.length - 5}</span>
                   )}
                 </div>
-                {session.attendees.length > 5 && (
-                  <span className="text-xs text-[#9A9AAA]">+{session.attendees.length - 5}</span>
-                )}
+                <p className="text-xs text-[#9A9AAA] mt-1">
+                  {session.attendees
+                    .slice(0, 3)
+                    .map((a) => a.name?.split(' ')[0] || 'Someone')
+                    .join(', ')}
+                  {session.attendees.length > 3 && ` +${session.attendees.length - 3} more`}
+                  {session.community && (
+                    <span className="text-[#9A9AAA]"> from {session.community.name}</span>
+                  )}
+                </p>
               </div>
             )}
           </div>

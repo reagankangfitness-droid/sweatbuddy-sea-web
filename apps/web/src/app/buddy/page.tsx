@@ -546,7 +546,7 @@ function BuddyPageInner() {
       )}
 
       <div id={`tabpanel-${tab === 'mine' ? 'mine' : 'happening'}`} role="tabpanel" aria-labelledby={`tabpanel-${tab === 'mine' ? 'mine' : 'happening'}`} className={tab === 'map' ? 'hidden' : ''}>
-      <div className="max-w-2xl mx-auto px-4 pb-24">
+      <div className="max-w-2xl mx-auto px-4 pb-32">
         {/* Filters (happening tab only) */}
         {tab === 'happening' && (
           <div className="py-4 flex gap-2 overflow-x-auto no-scrollbar">

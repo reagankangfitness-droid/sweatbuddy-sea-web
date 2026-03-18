@@ -649,7 +649,7 @@ export default async function CommunityPage({ params }: Props) {
 
       {/* Community creator */}
       {community.createdBy && (
-        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-32 md:pb-12">
           <div className="flex items-center gap-2 text-sm text-[#71717A]">
             {community.createdBy.imageUrl && (
               <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0">

@@ -427,7 +427,7 @@ export default async function EventDetailPage({ params }: Props) {
       </main>
 
       {/* Mobile Fixed Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 md:hidden bg-neutral-950 border-t border-neutral-800 p-4 safe-area-inset-bottom z-50">
+      <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white/95 backdrop-blur-lg border-t border-black/[0.06] p-4 safe-area-inset-bottom z-40 mb-[96px] md:mb-0">
         <UnifiedEventClient
           event={{
             id: event.id,

@@ -532,36 +532,36 @@ export function EventPageClient({ event, familiarFaces = [], communityFollow }: 
       </div>
 
       {/* Mobile Fixed Bottom CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-neutral-950 border-t border-neutral-800 p-4 z-40">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-black/[0.06] p-4 pb-[env(safe-area-inset-bottom,8px)] z-40 mb-[96px] lg:mb-0">
         <div className="flex items-center justify-between gap-4">
           <div>
             {isPaid ? (
-              <span className="text-xl font-bold text-neutral-100">
+              <span className="text-xl font-bold text-[#1A1A1A]">
                 ${(event.price! / 100).toFixed(2)}
               </span>
             ) : (
-              <span className="text-xl font-bold text-green-400">Free</span>
+              <span className="text-xl font-bold text-green-600">Free</span>
             )}
-            <p className="text-sm text-neutral-500">{goingCount} going</p>
+            <p className="text-sm text-[#71717A]">{goingCount} going</p>
           </div>
           {event.isFull ? (
             <button
               disabled
-              className="flex-1 py-3 bg-neutral-700 text-neutral-500 rounded-xl font-semibold cursor-not-allowed"
+              className="flex-1 py-3 bg-neutral-200 text-neutral-500 rounded-xl font-semibold cursor-not-allowed"
             >
               Event Full
             </button>
           ) : isGoing ? (
             <button
               onClick={handleRSVP}
-              className="flex-1 py-3 bg-green-900 text-green-400 rounded-xl font-semibold"
+              className="flex-1 py-3 bg-green-100 text-green-700 rounded-xl font-semibold"
             >
               ✓ You&apos;re Going
             </button>
           ) : (
             <button
               onClick={handleRSVP}
-              className="flex-1 py-3 bg-white text-neutral-900 rounded-xl font-semibold"
+              className="flex-1 py-3 bg-[#1A1A1A] text-white rounded-xl font-semibold"
             >
               {isPaid ? 'Reserve' : "I'm In"}
             </button>

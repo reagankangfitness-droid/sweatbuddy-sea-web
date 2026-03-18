@@ -225,13 +225,13 @@ Organized via sweatbuddies
   if (isLoading) {
     return (
       <>
-        <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
+        <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-lg border-b border-black/[0.06]">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-              <button onClick={() => router.back()} aria-label="Go back" className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
-                <ArrowLeft className="w-5 h-5 text-neutral-300" />
+              <button onClick={() => router.back()} aria-label="Go back" className="w-10 h-10 flex items-center justify-center rounded-full bg-[#FFFBF8] border border-black/[0.06]">
+                <ArrowLeft className="w-5 h-5 text-[#71717A]" />
               </button>
-              <span className="text-sm font-medium text-neutral-500">Activity Details</span>
+              <span className="text-sm font-medium text-[#71717A]">Activity Details</span>
             </div>
           </div>
         </header>
@@ -250,13 +250,13 @@ Organized via sweatbuddies
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-lg border-b border-black/[0.06]">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
-              <ArrowLeft className="w-5 h-5 text-neutral-300" />
+            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-[#FFFBF8] border border-black/[0.06]">
+              <ArrowLeft className="w-5 h-5 text-[#71717A]" />
             </button>
-            <span className="text-sm font-medium text-neutral-500">Activity Details</span>
+            <span className="text-sm font-medium text-[#71717A]">Activity Details</span>
           </div>
         </div>
       </header>
@@ -459,8 +459,8 @@ Organized via sweatbuddies
 
               {/* P2P Host section — replaces plain Organizer block for P2P sessions */}
               {activity.activityMode?.startsWith('P2P') ? (
-                <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-5">
-                  <h2 className="text-base font-semibold text-neutral-900 dark:text-white mb-3">
+                <div className="rounded-xl border border-black/[0.06] p-5">
+                  <h2 className="text-base font-semibold text-[#1A1A1A] mb-3">
                     {activity.user.isCoach && activity.user.coachVerificationStatus === 'VERIFIED' ? 'Your coach' : 'Your host'}
                   </h2>
                   <div className="flex items-start gap-3">
@@ -471,26 +471,26 @@ Organized via sweatbuddies
                           alt={activity.user.name || 'Host'}
                           width={52}
                           height={52}
-                          className="rounded-full object-cover ring-2 ring-neutral-100 dark:ring-neutral-800"
+                          className="rounded-full object-cover ring-2 ring-neutral-100"
                           unoptimized
                         />
                       ) : (
-                        <div className="w-13 h-13 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-lg font-semibold text-neutral-500">
+                        <div className="w-13 h-13 rounded-full bg-neutral-100 flex items-center justify-center text-lg font-semibold text-[#71717A]">
                           {(activity.user.name ?? '?')[0]}
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className="font-semibold text-neutral-900 dark:text-white">{activity.user.name || 'Anonymous'}</p>
+                        <p className="font-semibold text-[#1A1A1A]">{activity.user.name || 'Anonymous'}</p>
                         {activity.user.isCoach && activity.user.coachVerificationStatus === 'VERIFIED' && (
                           <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-500">✓ Verified Coach</span>
                         )}
                       </div>
                       {activity.user.isCoach && activity.user.coachVerificationStatus === 'VERIFIED' && activity.user.coachType && (
-                        <p className="text-xs text-neutral-400 mt-0.5">{activity.user.coachType}</p>
+                        <p className="text-xs text-[#71717A] mt-0.5">{activity.user.coachType}</p>
                       )}
-                      <div className="flex items-center gap-3 mt-0.5 text-xs text-neutral-400">
+                      <div className="flex items-center gap-3 mt-0.5 text-xs text-[#71717A]">
                         {(activity.user.sessionsHostedCount ?? 0) > 0 && (
                           <span>{activity.user.sessionsHostedCount} sessions hosted</span>
                         )}
@@ -499,16 +499,16 @@ Organized via sweatbuddies
                         )}
                       </div>
                       {activity.user.isCoach && activity.user.coachVerificationStatus === 'VERIFIED' && activity.user.coachBio ? (
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">{activity.user.coachBio}</p>
+                        <p className="text-sm text-[#71717A] mt-2">{activity.user.coachBio}</p>
                       ) : activity.user.bio ? (
-                        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">{activity.user.bio}</p>
+                        <p className="text-sm text-[#71717A] mt-2">{activity.user.bio}</p>
                       ) : null}
                     </div>
                   </div>
 
                   {/* P2P details */}
                   {(activity.fitnessLevel || activity.whatToBring) && (
-                    <div className="mt-4 space-y-2 text-sm text-neutral-500 dark:text-neutral-400">
+                    <div className="mt-4 space-y-2 text-sm text-[#71717A]">
                       {activity.fitnessLevel && activity.fitnessLevel !== 'ALL' && (
                         <div className="flex items-center gap-2">
                           <span>💪</span>
@@ -529,11 +529,11 @@ Organized via sweatbuddies
 
                   {/* Report / Block — only for non-hosts */}
                   {user && user.id !== activity.user.id && user.id !== activity.hostId && (
-                    <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800 flex items-center gap-4">
+                    <div className="mt-4 pt-4 border-t border-black/[0.06] flex items-center gap-4">
                       <button
                         onClick={() => setShowReportModal(true)}
                         aria-label="Report this activity"
-                        className="flex items-center gap-1.5 text-sm text-neutral-400 hover:text-amber-500 transition-colors"
+                        className="flex items-center gap-1.5 text-sm text-[#71717A] hover:text-amber-500 transition-colors"
                       >
                         <Flag className="w-4 h-4" />
                         Report
@@ -547,11 +547,11 @@ Organized via sweatbuddies
 
                   {/* Manage Attendees — host only */}
                   {user && (user.id === activity.user.id || user.id === activity.hostId) && (
-                    <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800">
+                    <div className="mt-4 pt-4 border-t border-black/[0.06]">
                       <button
                         onClick={() => setShowManageAttendees(true)}
                         aria-label="Manage session attendees"
-                        className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
+                        className="flex items-center gap-1.5 text-sm text-[#71717A] hover:text-[#1A1A1A] transition-colors"
                       >
                         <Settings className="w-4 h-4" />
                         Manage attendees
@@ -604,7 +604,7 @@ Organized via sweatbuddies
 
           {/* RSVP Action Section - Sticky on mobile with safe area */}
           {user && (
-            <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-8 bg-background border-t md:border md:rounded-lg p-3 sm:p-4 shadow-lg md:shadow-none z-50 pb-[env(safe-area-inset-bottom,8px)]">
+            <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-8 bg-white/95 backdrop-blur-lg border-t border-black/[0.06] md:border md:rounded-lg p-3 sm:p-4 shadow-lg md:shadow-none z-40 mb-[72px] md:mb-0 pb-[env(safe-area-inset-bottom,8px)]">
               <div className="container mx-auto max-w-4xl">
                 {user.id === activity.hostId || user.id === activity.user.id ? (
                   // Host view - simplified for mobile
@@ -787,7 +787,7 @@ Organized via sweatbuddies
 
           {/* Action bar for non-logged-in users */}
           {!user && userLoaded && (
-            <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-8 bg-background border-t md:border md:rounded-lg p-3 sm:p-4 shadow-lg md:shadow-none z-50 pb-[env(safe-area-inset-bottom,8px)]">
+            <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-8 bg-white/95 backdrop-blur-lg border-t border-black/[0.06] md:border md:rounded-lg p-3 sm:p-4 shadow-lg md:shadow-none z-40 mb-[72px] md:mb-0 pb-[env(safe-area-inset-bottom,8px)]">
               <div className="container mx-auto max-w-4xl">
                 <div className="flex gap-2 sm:gap-3 items-center">
                   {/* Icon-only on mobile, with label on desktop */}

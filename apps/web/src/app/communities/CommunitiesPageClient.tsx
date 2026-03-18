@@ -166,13 +166,13 @@ export default function CommunitiesPageClient({
 
             {/* Search */}
             <div className="max-w-md mx-auto relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9A9AAA]" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#71717A]" />
               <input
                 type="text"
                 placeholder="Search your people…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-white border border-black/[0.06] rounded-xl text-sm text-[#1A1A1A] placeholder:text-[#9A9AAA] focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-black/[0.12] transition-all shadow-sm"
+                className="w-full pl-11 pr-4 py-3 bg-white border border-black/[0.06] rounded-xl text-sm text-[#1A1A1A] placeholder:text-[#71717A] focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-black/[0.12] transition-all shadow-sm"
               />
             </div>
           </motion.div>
@@ -193,7 +193,7 @@ export default function CommunitiesPageClient({
                 className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
                   !categoryFilter && !cityFilter
                     ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
-                    : 'bg-white text-[#9A9AAA] border-black/[0.06] hover:border-black/[0.12]'
+                    : 'bg-white text-[#71717A] border-black/[0.06] hover:border-black/[0.12]'
                 }`}
               >
                 All
@@ -212,7 +212,7 @@ export default function CommunitiesPageClient({
                   className={`flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
                     categoryFilter === cat.slug
                       ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
-                      : 'bg-white text-[#9A9AAA] border-black/[0.06] hover:border-black/[0.12]'
+                      : 'bg-white text-[#71717A] border-black/[0.06] hover:border-black/[0.12]'
                   }`}
                 >
                   <span>{cat.emoji}</span>
@@ -236,7 +236,7 @@ export default function CommunitiesPageClient({
                       className={`flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
                         cityFilter === city.slug
                           ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
-                          : 'bg-white text-[#9A9AAA] border-black/[0.06] hover:border-black/[0.12]'
+                          : 'bg-white text-[#71717A] border-black/[0.06] hover:border-black/[0.12]'
                       }`}
                     >
                       <MapPin className="w-3.5 h-3.5" />
@@ -372,14 +372,14 @@ export default function CommunitiesPageClient({
             /* ── Empty state ─── */
             <div className="text-center py-20">
               <div className="w-14 h-14 rounded-2xl bg-white border border-black/[0.06] flex items-center justify-center mx-auto mb-4 shadow-sm">
-                <Users className="w-6 h-6 text-[#9A9AAA]" />
+                <Users className="w-6 h-6 text-[#71717A]" />
               </div>
               <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
                 {hasFilters
                   ? 'Nothing here yet. Try a different search.'
                   : 'No crews here yet. Be the first.'}
               </h3>
-              <p className="text-[#9A9AAA] text-sm max-w-sm mx-auto">
+              <p className="text-[#71717A] text-sm max-w-sm mx-auto">
                 {hasFilters
                   ? ''
                   : ''}
@@ -514,7 +514,7 @@ function CommunityCard({ community }: { community: CommunityData }) {
                   className="object-cover w-full h-full"
                 />
               ) : (
-                <Users className="w-5 h-5 text-[#9A9AAA]" />
+                <Users className="w-5 h-5 text-[#71717A]" />
               )}
             </div>
 
@@ -523,7 +523,7 @@ function CommunityCard({ community }: { community: CommunityData }) {
                 {community.name}
               </h3>
               {community.cityName && (
-                <p className="text-sm text-[#9A9AAA] flex items-center gap-1">
+                <p className="text-sm text-[#71717A] flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5" />
                   {community.cityName}
                 </p>
@@ -546,7 +546,7 @@ function CommunityCard({ community }: { community: CommunityData }) {
                 size="xs"
               />
             )}
-            <div className="flex items-center gap-3 text-xs text-[#9A9AAA]">
+            <div className="flex items-center gap-3 text-xs text-[#71717A]">
               <span className="flex items-center gap-1">
                 <Users className="w-3.5 h-3.5" />
                 {community.memberCount}
@@ -561,11 +561,11 @@ function CommunityCard({ community }: { community: CommunityData }) {
           {/* Next event teaser */}
           {community.nextEvent && (
             <div className="mt-3 flex items-center gap-2 px-3 py-2 bg-[#FFFBF8] rounded-lg border border-black/[0.06]">
-              <Calendar className="w-3.5 h-3.5 text-[#9A9AAA] flex-shrink-0" />
+              <Calendar className="w-3.5 h-3.5 text-[#71717A] flex-shrink-0" />
               <span className="text-xs text-[#4A4A5A] truncate">
                 {community.nextEvent.title}
               </span>
-              <span className="text-xs text-[#9A9AAA] flex-shrink-0 ml-auto">
+              <span className="text-xs text-[#71717A] flex-shrink-0 ml-auto">
                 {formatEventDate(community.nextEvent.startTime)}
               </span>
             </div>

@@ -113,7 +113,7 @@ export default function P2POnboardingPage() {
   if (!isLoaded || checking) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-[#9A9AAA]" />
+        <Loader2 className="w-6 h-6 animate-spin text-[#71717A]" />
       </div>
     )
   }
@@ -127,7 +127,7 @@ export default function P2POnboardingPage() {
           <h1 className="text-2xl font-bold text-[#1A1A1A]">
             Who should we introduce you to?
           </h1>
-          <p className="mt-2 text-[#9A9AAA] text-sm">
+          <p className="mt-2 text-[#71717A] text-sm">
             30 seconds. We&apos;ll find the crews that sweat like you do.
           </p>
         </div>
@@ -146,12 +146,12 @@ export default function P2POnboardingPage() {
                 />
               ) : (
                 <div className="w-20 h-20 rounded-full bg-white border border-black/[0.06] flex items-center justify-center">
-                  <Camera className="w-7 h-7 text-[#9A9AAA]" />
+                  <Camera className="w-7 h-7 text-[#71717A]" />
                 </div>
               )}
             </div>
             {!clerkUser?.imageUrl && (
-              <p className="text-xs text-[#9A9AAA]">
+              <p className="text-xs text-[#71717A]">
                 Add a photo in your{' '}
                 <a href="/settings/profile" className="underline">
                   profile settings
@@ -171,9 +171,9 @@ export default function P2POnboardingPage() {
               placeholder="e.g. Morning runner, love exploring new routes. 5 days/week."
               maxLength={100}
               rows={3}
-              className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#9A9AAA] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] resize-none"
+              className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] resize-none"
             />
-            <p className="mt-1 text-xs text-[#9A9AAA] text-right">{bio.length}/100</p>
+            <p className="mt-1 text-xs text-[#71717A] text-right">{bio.length}/100</p>
           </div>
 
           {/* Fitness Interests */}
@@ -223,7 +223,7 @@ export default function P2POnboardingPage() {
                     }`}
                   >
                     <span className="font-medium">{level.label}</span>
-                    <span className={`text-xs ${selected ? 'opacity-70' : 'text-[#9A9AAA]'}`}>
+                    <span className={`text-xs ${selected ? 'opacity-70' : 'text-[#71717A]'}`}>
                       {level.description}
                     </span>
                   </button>

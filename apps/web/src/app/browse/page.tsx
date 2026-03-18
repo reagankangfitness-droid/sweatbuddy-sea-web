@@ -113,7 +113,7 @@ export default async function BrowsePage({ searchParams }: PageProps) {
       <div className="border-b border-black/[0.04] bg-white/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
           <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-[#1A1A1A]">Browse Sessions</h1>
-          <p className="text-[#9A9AAA]">
+          <p className="text-[#71717A]">
             Browse sessions led by hosts near you — no login needed to browse.
           </p>
         </div>
@@ -156,7 +156,7 @@ export default async function BrowsePage({ searchParams }: PageProps) {
           <div className="flex flex-col items-center text-center py-20">
             <div className="text-5xl mb-4 opacity-40">🏋️</div>
             <h3 className="text-lg font-semibold mb-2 text-[#1A1A1A]">No sessions found</h3>
-            <p className="text-sm text-[#9A9AAA] mb-6">
+            <p className="text-sm text-[#71717A] mb-6">
               Be the first to host a session in this category.
             </p>
             <Link
@@ -168,7 +168,7 @@ export default async function BrowsePage({ searchParams }: PageProps) {
           </div>
         ) : (
           <>
-            <p className="text-sm text-[#9A9AAA] mb-6">
+            <p className="text-sm text-[#71717A] mb-6">
               {mapped.length} upcoming session{mapped.length !== 1 ? 's' : ''}
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -188,7 +188,7 @@ export default async function BrowsePage({ searchParams }: PageProps) {
       <div className="border-t border-black/[0.04] bg-white/50 mt-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 text-center">
           <h2 className="text-2xl font-bold mb-3 text-[#1A1A1A]">Want to host or join sessions?</h2>
-          <p className="text-[#9A9AAA] mb-6">It&apos;s free. Takes 2 minutes.</p>
+          <p className="text-[#71717A] mb-6">It&apos;s free. Takes 2 minutes.</p>
           <Link
             href="/sign-up"
             className="inline-block px-8 py-3.5 bg-[#1A1A1A] text-white font-semibold rounded-full hover:bg-neutral-800 transition-colors"

@@ -229,7 +229,7 @@ function SessionDetailSheet({ session, onClose, onJoin, joining, currentUserId }
                       {isFree ? 'FREE' : `$${session.price}`}
                     </span>
                     {session.requiresApproval && (
-                      <span className="flex items-center gap-0.5 text-[10px] text-[#9A9AAA]">
+                      <span className="flex items-center gap-0.5 text-[10px] text-[#71717A]">
                         <Lock className="w-3 h-3" /> Approval
                       </span>
                     )}
@@ -245,12 +245,12 @@ function SessionDetailSheet({ session, onClose, onJoin, joining, currentUserId }
                   onClick={onClose}
                   className="flex-shrink-0 w-8 h-8 rounded-full bg-[#FFFBF8] flex items-center justify-center hover:bg-neutral-100"
                 >
-                  <X className="w-4 h-4 text-[#9A9AAA]" />
+                  <X className="w-4 h-4 text-[#71717A]" />
                 </button>
               </div>
 
               {/* Details */}
-              <div className="flex flex-col gap-1.5 text-sm text-[#9A9AAA] mb-3">
+              <div className="flex flex-col gap-1.5 text-sm text-[#71717A] mb-3">
                 {session.startTime && (
                   <div className="flex items-center gap-2">
                     <Clock className="w-3.5 h-3.5 flex-shrink-0" />
@@ -291,7 +291,7 @@ function SessionDetailSheet({ session, onClose, onJoin, joining, currentUserId }
                     <div className="w-full h-full bg-neutral-100" />
                   )}
                 </div>
-                <span className="text-xs text-[#9A9AAA]">
+                <span className="text-xs text-[#71717A]">
                   Hosted by <span className="text-[#1A1A1A] font-medium">{session.host.name ?? 'Someone'}</span>
                 </span>
               </div>
@@ -313,7 +313,7 @@ function SessionDetailSheet({ session, onClose, onJoin, joining, currentUserId }
                 </button>
               )}
               {session.isFull && (
-                <p className="text-center text-sm text-[#9A9AAA] py-3">Session full</p>
+                <p className="text-center text-sm text-[#71717A] py-3">Session full</p>
               )}
               {isHost && (
                 <Link href={`/activities/${session.id}`} className="block">
@@ -432,8 +432,8 @@ export default function DiscoverPage() {
   if (loadError || !GOOGLE_MAPS_API_KEY) {
     return (
       <div className="fixed inset-0 bg-[#FFFBF8] flex flex-col items-center justify-center gap-4 px-6 text-center">
-        <MapPin className="w-10 h-10 text-[#9A9AAA]" />
-        <p className="text-[#9A9AAA] text-sm">
+        <MapPin className="w-10 h-10 text-[#71717A]" />
+        <p className="text-[#71717A] text-sm">
           {!GOOGLE_MAPS_API_KEY
             ? 'Maps API key not configured.'
             : 'Failed to load Google Maps.'}
@@ -448,7 +448,7 @@ export default function DiscoverPage() {
   if (!isLoaded) {
     return (
       <div className="fixed inset-0 bg-[#FFFBF8] flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-[#9A9AAA]" />
+        <Loader2 className="w-6 h-6 animate-spin text-[#71717A]" />
       </div>
     )
   }
@@ -524,8 +524,8 @@ export default function DiscoverPage() {
       {loading && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-20">
           <div className="bg-white/80 backdrop-blur border border-black/[0.06] px-3 py-1.5 rounded-full flex items-center gap-2">
-            <Loader2 className="w-3.5 h-3.5 animate-spin text-[#9A9AAA]" />
-            <span className="text-xs text-[#9A9AAA]">Loading…</span>
+            <Loader2 className="w-3.5 h-3.5 animate-spin text-[#71717A]" />
+            <span className="text-xs text-[#71717A]">Loading…</span>
           </div>
         </div>
       )}

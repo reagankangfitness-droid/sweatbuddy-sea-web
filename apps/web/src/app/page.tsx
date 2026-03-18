@@ -85,13 +85,13 @@ export default async function HomePage() {
           <nav className="flex items-center gap-3">
             <Link
               href="/buddy"
-              className="hidden sm:inline px-4 py-2 text-sm font-medium text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors"
+              className="hidden sm:inline px-4 py-2 text-sm font-medium text-[#71717A] hover:text-[#1A1A1A] transition-colors"
             >
               Discover experiences
             </Link>
             <Link
               href="/sign-in"
-              className="hidden sm:inline px-4 py-2 text-sm font-medium text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors"
+              className="hidden sm:inline px-4 py-2 text-sm font-medium text-[#71717A] hover:text-[#1A1A1A] transition-colors"
             >
               Log in
             </Link>
@@ -109,13 +109,13 @@ export default async function HomePage() {
       <section className="relative overflow-hidden py-20 sm:py-36 px-5 sm:px-8">
 
         <div className="relative max-w-5xl mx-auto text-center">
-          <p className="animate-fade-up text-xs font-semibold tracking-[0.2em] text-[#9A9AAA] uppercase mb-8">
+          <p className="animate-fade-up text-xs font-semibold tracking-[0.2em] text-[#71717A] uppercase mb-8">
             SweatBuddies
           </p>
 
           <h1 className="animate-fade-up-delay-1 text-5xl sm:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight mb-8 text-[#1A1A1A]">
             Sweat is better
-            <span className="block text-[#9A9AAA]">shared.</span>
+            <span className="block text-[#71717A]">shared.</span>
           </h1>
 
           <p className="animate-fade-up-delay-2 text-lg sm:text-xl text-[#4A4A5A] max-w-2xl mx-auto mb-12 leading-relaxed">
@@ -152,7 +152,7 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-          <p className="text-center text-xs text-[#9A9AAA] mt-4 tracking-wide">Real communities. Real people. Moving together.</p>
+          <p className="text-center text-xs text-[#71717A] mt-4 tracking-wide">Real communities. Real people. Moving together.</p>
         </div>
 
         {/* Photo strip */}
@@ -194,7 +194,7 @@ export default async function HomePage() {
                   <span className="text-sm font-semibold text-[#1A1A1A] group-hover:text-black transition-colors">
                     {cat.label}
                   </span>
-                  <span className="block text-xs text-[#9A9AAA] mt-1.5 leading-relaxed">
+                  <span className="block text-xs text-[#71717A] mt-1.5 leading-relaxed">
                     {cat.vibe}
                   </span>
                 </Link>
@@ -265,7 +265,7 @@ export default async function HomePage() {
                             <h3 className="text-base font-semibold text-[#1A1A1A] group-hover:text-black transition-colors truncate">
                               {community.name}
                             </h3>
-                            <div className="flex items-center gap-3 text-xs text-[#9A9AAA] mt-1.5">
+                            <div className="flex items-center gap-3 text-xs text-[#71717A] mt-1.5">
                               <span className="font-medium">
                                 {community.memberCount}{' '}
                                 {community.memberCount === 1 ? 'member' : 'members'}
@@ -275,7 +275,7 @@ export default async function HomePage() {
                           </div>
                         </div>
                         {community.description && (
-                          <p className="mt-3 text-xs text-[#9A9AAA] line-clamp-2 leading-relaxed">
+                          <p className="mt-3 text-xs text-[#71717A] line-clamp-2 leading-relaxed">
                             {community.description}
                           </p>
                         )}
@@ -337,7 +337,7 @@ export default async function HomePage() {
                   key={i}
                   className="bg-white border border-black/[0.06] rounded-2xl p-8 hover:bg-neutral-50 hover:border-black/[0.1] transition-all shadow-sm"
                 >
-                  <p className="text-2xl font-bold text-[#9A9AAA] mb-4">
+                  <p className="text-2xl font-bold text-[#71717A] mb-4">
                     {s.step}
                   </p>
                   <h3 className="text-xl font-semibold text-[#1A1A1A] mb-4">{s.title}</h3>
@@ -405,15 +405,15 @@ export default async function HomePage() {
               <div className="grid grid-cols-3 gap-8 text-center">
                 <div>
                   <p className="text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-1">{communityCount}</p>
-                  <p className="text-xs sm:text-sm text-[#9A9AAA]">communities</p>
+                  <p className="text-xs sm:text-sm text-[#71717A]">communities</p>
                 </div>
                 <div>
                   <p className="text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-1">{memberCount.toLocaleString()}</p>
-                  <p className="text-xs sm:text-sm text-[#9A9AAA]">members</p>
+                  <p className="text-xs sm:text-sm text-[#71717A]">members</p>
                 </div>
                 <div>
                   <p className="text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-1">{sessionsThisWeek}</p>
-                  <p className="text-xs sm:text-sm text-[#9A9AAA]">experiences this week</p>
+                  <p className="text-xs sm:text-sm text-[#71717A]">experiences this week</p>
                 </div>
               </div>
             </FadeInSection>
@@ -458,27 +458,27 @@ export default async function HomePage() {
                 <Logo size={24} />
                 <span className="font-semibold text-[#1A1A1A]">SweatBuddies</span>
               </div>
-              <p className="text-xs text-[#9A9AAA] leading-relaxed max-w-xs">Discover fitness and wellness experiences. The right crew changes everything.</p>
+              <p className="text-xs text-[#71717A] leading-relaxed max-w-xs">Discover fitness and wellness experiences. The right crew changes everything.</p>
             </div>
             <div>
-              <p className="text-xs font-semibold text-[#9A9AAA] uppercase tracking-wider mb-4">Product</p>
+              <p className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-4">Product</p>
               <ul className="space-y-3">
-                <li><Link href="/buddy" className="text-sm text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors">Discover experiences</Link></li>
-                <li><Link href="/communities" className="text-sm text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors">Communities</Link></li>
-                <li><Link href="/communities/create" className="text-sm text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors">Start something</Link></li>
+                <li><Link href="/buddy" className="text-sm text-[#71717A] hover:text-[#1A1A1A] transition-colors">Discover experiences</Link></li>
+                <li><Link href="/communities" className="text-sm text-[#71717A] hover:text-[#1A1A1A] transition-colors">Communities</Link></li>
+                <li><Link href="/communities/create" className="text-sm text-[#71717A] hover:text-[#1A1A1A] transition-colors">Start something</Link></li>
               </ul>
             </div>
             <div>
-              <p className="text-xs font-semibold text-[#9A9AAA] uppercase tracking-wider mb-4">Support</p>
+              <p className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-4">Support</p>
               <ul className="space-y-3">
-                <li><a href={`mailto:${SUPPORT_EMAIL}`} className="text-sm text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors">Contact</a></li>
-                <li><Link href="/support" className="text-sm text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors">Help &amp; FAQ</Link></li>
+                <li><a href={`mailto:${SUPPORT_EMAIL}`} className="text-sm text-[#71717A] hover:text-[#1A1A1A] transition-colors">Contact</a></li>
+                <li><Link href="/support" className="text-sm text-[#71717A] hover:text-[#1A1A1A] transition-colors">Help &amp; FAQ</Link></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-black/[0.04] pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-[#9A9AAA]">&copy; 2026 SweatBuddies. All rights reserved.</p>
-            <p className="text-xs text-[#9A9AAA]">Sweat is better shared.</p>
+            <p className="text-xs text-[#71717A]">&copy; 2026 SweatBuddies. All rights reserved.</p>
+            <p className="text-xs text-[#71717A]">Sweat is better shared.</p>
           </div>
         </div>
       </footer>

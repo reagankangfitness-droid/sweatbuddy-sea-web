@@ -88,7 +88,7 @@ function AppNavInner() {
                 <div
                   key={item.id}
                   className={`relative w-8 h-8 rounded-lg flex items-center justify-center ${
-                    active ? 'bg-[#1A1A1A] text-white' : 'text-[#9A9AAA]'
+                    active ? 'bg-[#1A1A1A] text-white' : 'text-[#71717A]'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -101,7 +101,7 @@ function AppNavInner() {
               )
             })}
           </div>
-          <div className="mt-auto flex items-center justify-center text-[#9A9AAA]">
+          <div className="mt-auto flex items-center justify-center text-[#71717A]">
             <ChevronRight className="w-4 h-4 animate-pulse" />
           </div>
         </motion.div>
@@ -137,7 +137,7 @@ function AppNavInner() {
                         w-14 h-14 rounded-xl transition-all duration-200
                         ${active
                           ? 'text-[#1A1A1A] bg-[#FFFBF8]'
-                          : 'text-[#9A9AAA] hover:text-[#4A4A5A] hover:bg-[#FFFBF8]'
+                          : 'text-[#71717A] hover:text-[#4A4A5A] hover:bg-[#FFFBF8]'
                         }
                       `}
                     >
@@ -186,7 +186,7 @@ function AppNavInner() {
                       />
                     ) : (
                       <div className="w-full h-full bg-[#FFFBF8] flex items-center justify-center">
-                        <User className="w-5 h-5 text-[#9A9AAA]" />
+                        <User className="w-5 h-5 text-[#71717A]" />
                       </div>
                     )}
                   </Link>
@@ -227,7 +227,7 @@ function AppNavInner() {
                     flex flex-col items-center justify-center w-14 h-14
                     transition-all duration-200 relative
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus-visible:ring-offset-2 rounded-lg
-                    ${active ? 'text-[#1A1A1A]' : 'text-[#9A9AAA] active:scale-95'}
+                    ${active ? 'text-[#1A1A1A]' : 'text-[#71717A] active:scale-95'}
                   `}
                 >
                   <span className="relative">

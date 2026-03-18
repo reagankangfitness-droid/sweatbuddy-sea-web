@@ -133,7 +133,7 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
           {/* Overlay */}
           <div className="absolute inset-0 flex items-center justify-center bg-white/60">
             <div className="text-center">
-              <MessageCircle className="w-8 h-8 text-[#9A9AAA] mx-auto mb-2" />
+              <MessageCircle className="w-8 h-8 text-[#71717A] mx-auto mb-2" />
               <p className="text-sm font-medium text-[#4A4A5A]">Join to chat with the crew</p>
             </div>
           </div>
@@ -146,10 +146,10 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
     <div className="bg-white border border-black/[0.06] rounded-2xl overflow-hidden">
       {/* Header */}
       <div className="px-4 py-3 border-b border-black/[0.06] flex items-center gap-2">
-        <MessageCircle className="w-5 h-5 text-[#9A9AAA]" />
+        <MessageCircle className="w-5 h-5 text-[#71717A]" />
         <h3 className="text-base font-semibold text-[#1A1A1A]">Crew Chat</h3>
         {!loading && (
-          <span className="text-xs text-[#9A9AAA]">
+          <span className="text-xs text-[#71717A]">
             {messages.length} message{messages.length !== 1 ? 's' : ''}
           </span>
         )}
@@ -162,12 +162,12 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
       >
         {loading ? (
           <div className="flex justify-center py-8">
-            <Loader2 className="w-5 h-5 animate-spin text-[#9A9AAA]" />
+            <Loader2 className="w-5 h-5 animate-spin text-[#71717A]" />
           </div>
         ) : messages.length === 0 ? (
           <div className="text-center py-8">
-            <MessageCircle className="w-8 h-8 text-[#9A9AAA] mx-auto mb-2" />
-            <p className="text-sm text-[#9A9AAA]">No messages yet. Start the conversation!</p>
+            <MessageCircle className="w-8 h-8 text-[#71717A] mx-auto mb-2" />
+            <p className="text-sm text-[#71717A]">No messages yet. Start the conversation!</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -189,7 +189,7 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
                       />
                     ) : (
                       <div className="w-full h-full bg-[#FFFBF8] flex items-center justify-center">
-                        <Users className="w-3.5 h-3.5 text-[#9A9AAA]" />
+                        <Users className="w-3.5 h-3.5 text-[#71717A]" />
                       </div>
                     )}
                   </div>
@@ -198,7 +198,7 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
                       <span className="text-xs font-semibold text-[#1A1A1A]">
                         {msg.sender.name || 'Member'}
                       </span>
-                      <span className="text-[10px] text-[#9A9AAA]">
+                      <span className="text-[10px] text-[#71717A]">
                         {formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true })}
                       </span>
                     </div>
@@ -219,7 +219,7 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
         <div className="px-4 pb-2">
           <button
             onClick={() => setExpanded((v) => !v)}
-            className="text-xs font-medium text-[#9A9AAA] hover:text-[#4A4A5A] transition-colors"
+            className="text-xs font-medium text-[#71717A] hover:text-[#4A4A5A] transition-colors"
           >
             {expanded ? 'Show less' : `See all ${messages.length} messages`}
           </button>
@@ -240,7 +240,7 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Say something..."
-            className="flex-1 text-sm text-[#1A1A1A] placeholder:text-[#9A9AAA] bg-transparent outline-none"
+            className="flex-1 text-sm text-[#1A1A1A] placeholder:text-[#71717A] bg-transparent outline-none"
             maxLength={5000}
           />
           <button

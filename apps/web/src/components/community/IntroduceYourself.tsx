@@ -74,7 +74,7 @@ export function IntroduceYourself({
         value={introText}
         onChange={(e) => setIntroText(e.target.value)}
         placeholder="Hey, I'm [name]. I love running and I'm looking for a crew to push my pace..."
-        className="mt-3 w-full rounded-xl border border-amber-200 bg-white px-3 py-2.5 text-sm text-[#1A1A1A] placeholder:text-[#9A9AAA] outline-none focus:border-amber-300 resize-none"
+        className="mt-3 w-full rounded-xl border border-amber-200 bg-white px-3 py-2.5 text-sm text-[#1A1A1A] placeholder:text-[#71717A] outline-none focus:border-amber-300 resize-none"
         rows={3}
         maxLength={5000}
       />

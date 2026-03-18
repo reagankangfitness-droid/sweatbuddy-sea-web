@@ -73,7 +73,7 @@ export function ClaimCommunityButton({
             <p className="text-amber-400 font-medium text-sm">
               Are you the owner of this community?
             </p>
-            <p className="text-neutral-400 text-xs mt-0.5">
+            <p className="text-[#71717A] text-xs mt-0.5">
               Verify with your Instagram handle to take control.
             </p>
           </div>
@@ -97,7 +97,7 @@ export function ClaimCommunityButton({
               placeholder="@your_instagram"
               value={instagramHandle}
               onChange={(e) => setInstagramHandle(e.target.value)}
-              className="flex-1 px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-200 text-sm placeholder:text-neutral-500 focus:outline-none focus:border-amber-500/50"
+              className="flex-1 px-3 py-2 bg-white border border-black/[0.08] rounded-lg text-[#1A1A1A] text-sm placeholder:text-[#71717A] focus:outline-none focus:border-amber-500/50"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleClaim()
               }}

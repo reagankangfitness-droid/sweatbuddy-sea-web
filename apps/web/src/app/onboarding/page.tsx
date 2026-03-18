@@ -31,7 +31,7 @@ export default function OnboardingRoleSelectionPage() {
                 <h2 className="text-lg font-semibold text-[#1A1A1A]">
                   I want to discover experiences
                 </h2>
-                <p className="mt-1 text-sm text-[#9A9AAA]">
+                <p className="mt-1 text-sm text-[#71717A]">
                   Fitness, wellness, and everything that gets you moving.
                 </p>
                 <span className="inline-block mt-3 text-sm font-medium text-[#1A1A1A] group-hover:translate-x-1 transition-transform">
@@ -54,7 +54,7 @@ export default function OnboardingRoleSelectionPage() {
                 <h2 className="text-lg font-semibold text-[#1A1A1A]">
                   I organize experiences
                 </h2>
-                <p className="mt-1 text-sm text-[#9A9AAA]">
+                <p className="mt-1 text-sm text-[#71717A]">
                   Create and manage fitness &amp; wellness experiences. Grow your community.
                 </p>
                 <span className="inline-block mt-3 text-sm font-medium text-[#1A1A1A] group-hover:translate-x-1 transition-transform">

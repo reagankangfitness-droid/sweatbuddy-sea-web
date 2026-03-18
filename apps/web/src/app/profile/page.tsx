@@ -130,10 +130,10 @@ export default function ProfilePage() {
         <main className="pt-24 pb-24 px-4">
           <div className="text-center py-12">
             <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-full border border-black/[0.06] shadow-sm mb-6">
-              <User className="w-12 h-12 text-[#9A9AAA]" />
+              <User className="w-12 h-12 text-[#71717A]" />
             </div>
             <h2 className="text-2xl font-bold text-[#1A1A1A] mb-2">Join SweatBuddies</h2>
-            <p className="text-[#9A9AAA] mb-8 max-w-xs mx-auto">
+            <p className="text-[#71717A] mb-8 max-w-xs mx-auto">
               Find your crew, show up, and never work out alone again.
             </p>
 
@@ -170,7 +170,7 @@ export default function ProfilePage() {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <User className="w-8 h-8 text-[#9A9AAA]" />
+                    <User className="w-8 h-8 text-[#71717A]" />
                   </div>
                 )}
               </div>
@@ -191,11 +191,11 @@ export default function ProfilePage() {
                   </span>
                 )}
               </div>
-              <p className="text-sm text-[#9A9AAA] truncate">
+              <p className="text-sm text-[#71717A] truncate">
                 {user?.primaryEmailAddress?.emailAddress}
               </p>
               {profile?.fitnessLevel && (
-                <p className="text-xs text-[#9A9AAA] mt-0.5 capitalize">
+                <p className="text-xs text-[#71717A] mt-0.5 capitalize">
                   {profile.fitnessLevel.toLowerCase().replace('_', ' ')}
                 </p>
               )}
@@ -229,18 +229,18 @@ export default function ProfilePage() {
           <div className="grid grid-cols-2 gap-3 mb-8">
             <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm p-4 text-center">
               <p className="text-2xl font-bold text-[#1A1A1A]">{profile.sessionsAttendedCount}</p>
-              <p className="text-xs text-[#9A9AAA] mt-0.5">Sessions Attended</p>
+              <p className="text-xs text-[#71717A] mt-0.5">Sessions Attended</p>
             </div>
             <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm p-4 text-center">
               <p className="text-2xl font-bold text-[#1A1A1A]">{profile.sessionsHostedCount}</p>
-              <p className="text-xs text-[#9A9AAA] mt-0.5">Sessions Hosted</p>
+              <p className="text-xs text-[#71717A] mt-0.5">Sessions Hosted</p>
             </div>
           </div>
         )}
 
         {/* My Activity Section */}
         <div className="mb-8">
-          <h3 className="text-xs font-semibold text-[#9A9AAA] uppercase tracking-wider px-1 mb-2">
+          <h3 className="text-xs font-semibold text-[#71717A] uppercase tracking-wider px-1 mb-2">
             My Activity
           </h3>
           <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm overflow-hidden">
@@ -254,10 +254,10 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <span className="text-[#1A1A1A] text-sm font-medium">Host Dashboard</span>
-                  <p className="text-xs text-[#9A9AAA]">Manage sessions & attendees</p>
+                  <p className="text-xs text-[#71717A]">Manage sessions & attendees</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#9A9AAA]" />
+              <ChevronRight className="w-5 h-5 text-[#71717A]" />
             </Link>
 
             <Link
@@ -266,14 +266,14 @@ export default function ProfilePage() {
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">
-                  <Users className="w-4 h-4 text-[#9A9AAA]" />
+                  <Users className="w-4 h-4 text-[#71717A]" />
                 </div>
                 <div>
                   <span className="text-[#1A1A1A] text-sm font-medium">My Crews</span>
-                  <p className="text-xs text-[#9A9AAA]">Your people</p>
+                  <p className="text-xs text-[#71717A]">Your people</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#9A9AAA]" />
+              <ChevronRight className="w-5 h-5 text-[#71717A]" />
             </Link>
 
             <Link
@@ -282,21 +282,21 @@ export default function ProfilePage() {
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">
-                  <CalendarDays className="w-4 h-4 text-[#9A9AAA]" />
+                  <CalendarDays className="w-4 h-4 text-[#71717A]" />
                 </div>
                 <div>
                   <span className="text-[#1A1A1A] text-sm font-medium">My Sessions</span>
-                  <p className="text-xs text-[#9A9AAA]">Sessions you&apos;re hosting or attending</p>
+                  <p className="text-xs text-[#71717A]">Sessions you&apos;re hosting or attending</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#9A9AAA]" />
+              <ChevronRight className="w-5 h-5 text-[#71717A]" />
             </Link>
           </div>
         </div>
 
         {/* Account Section */}
         <div className="mb-8">
-          <h3 className="text-xs font-semibold text-[#9A9AAA] uppercase tracking-wider px-1 mb-2">
+          <h3 className="text-xs font-semibold text-[#71717A] uppercase tracking-wider px-1 mb-2">
             Account
           </h3>
           <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm overflow-hidden">
@@ -306,11 +306,11 @@ export default function ProfilePage() {
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">
-                  <Settings className="w-4 h-4 text-[#9A9AAA]" />
+                  <Settings className="w-4 h-4 text-[#71717A]" />
                 </div>
                 <span className="text-[#1A1A1A] text-sm font-medium">Settings</span>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#9A9AAA]" />
+              <ChevronRight className="w-5 h-5 text-[#71717A]" />
             </Link>
 
             <Link
@@ -319,16 +319,16 @@ export default function ProfilePage() {
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">
-                  <HelpCircle className="w-4 h-4 text-[#9A9AAA]" />
+                  <HelpCircle className="w-4 h-4 text-[#71717A]" />
                 </div>
                 <span className="text-[#1A1A1A] text-sm font-medium">Help & Support</span>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#9A9AAA]" />
+              <ChevronRight className="w-5 h-5 text-[#71717A]" />
             </Link>
 
             <button
               onClick={() => signOut(() => router.push('/'))}
-              className="w-full flex items-center px-4 py-3.5 text-[#9A9AAA] hover:bg-[#FFFBF8] transition-colors"
+              className="w-full flex items-center px-4 py-3.5 text-[#71717A] hover:bg-[#FFFBF8] transition-colors"
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">

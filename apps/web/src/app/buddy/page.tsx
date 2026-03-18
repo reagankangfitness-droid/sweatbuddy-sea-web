@@ -121,7 +121,7 @@ const TYPE_FILTERS = [
 
 export default function BuddyPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-[#9A9AAA]" /></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-[#71717A]" /></div>}>
       <BuddyPageInner />
     </Suspense>
   )
@@ -368,7 +368,7 @@ function BuddyPageInner() {
       <div className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-black/[0.06]">
         <div className="max-w-2xl mx-auto px-4 py-4">
           <h1 className="text-lg font-bold text-[#1A1A1A]">Experiences</h1>
-          <p className="text-xs text-[#9A9AAA]">Discover fitness &amp; wellness experiences</p>
+          <p className="text-xs text-[#71717A]">Discover fitness &amp; wellness experiences</p>
         </div>
 
         {/* Tabs */}
@@ -389,7 +389,7 @@ function BuddyPageInner() {
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   tab === t.key
                     ? 'bg-[#1A1A1A] text-white'
-                    : 'text-[#9A9AAA] hover:text-[#4A4A5A]'
+                    : 'text-[#71717A] hover:text-[#4A4A5A]'
                 }`}
               >
                 {t.icon && <t.icon className="w-3.5 h-3.5" />}
@@ -404,7 +404,7 @@ function BuddyPageInner() {
       {tab === 'map' && (
         <div id="tabpanel-map" role="tabpanel" aria-labelledby="tabpanel-map" className="relative" style={{ height: 'calc(100dvh - 128px)' }}>
           {!GOOGLE_MAPS_API_KEY || !mapsLoaded ? (
-            <div className="flex flex-col items-center justify-center h-full gap-3 text-[#9A9AAA]">
+            <div className="flex flex-col items-center justify-center h-full gap-3 text-[#71717A]">
               {!GOOGLE_MAPS_API_KEY ? (
                 <p className="text-sm">Maps not configured.</p>
               ) : (
@@ -457,8 +457,8 @@ function BuddyPageInner() {
               <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
                 {mapLoading ? (
                   <div className="bg-white/80 backdrop-blur border border-black/[0.06] px-3 py-1.5 rounded-full flex items-center gap-2">
-                    <Loader2 className="w-3.5 h-3.5 animate-spin text-[#9A9AAA]" />
-                    <span className="text-xs text-[#9A9AAA]">Loading…</span>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-[#71717A]" />
+                    <span className="text-xs text-[#71717A]">Loading…</span>
                   </div>
                 ) : (
                   <div className="bg-white/80 backdrop-blur border border-black/[0.06] text-[#4A4A5A] text-xs font-medium px-3 py-1.5 rounded-full">
@@ -513,10 +513,10 @@ function BuddyPageInner() {
                             </Link>
                           </div>
                           <button onClick={() => setMapSelected(null)} aria-label="Close session details" className="w-8 h-8 rounded-full bg-[#FFFBF8] flex items-center justify-center flex-shrink-0">
-                            <X className="w-4 h-4 text-[#9A9AAA]" />
+                            <X className="w-4 h-4 text-[#71717A]" />
                           </button>
                         </div>
-                        <div className="flex flex-col gap-1.5 text-sm text-[#9A9AAA] mb-4">
+                        <div className="flex flex-col gap-1.5 text-sm text-[#71717A] mb-4">
                           {mapSelected.startTime && (
                             <div className="flex items-center gap-2">
                               <Clock className="w-3.5 h-3.5" />
@@ -612,7 +612,7 @@ function BuddyPageInner() {
         {/* Content */}
         {loading ? (
           <div className="flex justify-center py-20">
-            <Loader2 className="w-6 h-6 animate-spin text-[#9A9AAA]" />
+            <Loader2 className="w-6 h-6 animate-spin text-[#71717A]" />
           </div>
         ) : tab === 'happening' ? (
           <>
@@ -620,7 +620,7 @@ function BuddyPageInner() {
               <div className="text-center py-20">
                 <div className="text-5xl mb-4">🏋️</div>
                 <p className="text-[#4A4A5A] font-medium">Nothing happening nearby — yet.</p>
-                <p className="text-[#9A9AAA] text-sm mt-1">Check back soon, or start something.</p>
+                <p className="text-[#71717A] text-sm mt-1">Check back soon, or start something.</p>
                 <Link
                   href="/buddy/host/new"
                   className="inline-flex items-center gap-2 mt-6 rounded-full bg-[#1A1A1A] px-5 py-3 text-sm font-semibold text-white hover:bg-black"
@@ -645,7 +645,7 @@ function BuddyPageInner() {
                   <button
                     onClick={() => fetchSessions(nextCursor)}
                     disabled={loadingMore}
-                    className="w-full py-3 text-sm text-[#9A9AAA] hover:text-[#4A4A5A] flex items-center justify-center gap-2"
+                    className="w-full py-3 text-sm text-[#71717A] hover:text-[#4A4A5A] flex items-center justify-center gap-2"
                   >
                     {loadingMore ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -676,7 +676,7 @@ function BuddyPageInner() {
             {/* Hosting */}
             {hosting.length > 0 && (
               <div>
-                <h2 className="text-xs font-semibold text-[#9A9AAA] uppercase tracking-wider mb-3">
+                <h2 className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-3">
                   Hosting
                 </h2>
                 <div className="space-y-3">
@@ -698,7 +698,7 @@ function BuddyPageInner() {
             {/* Attending */}
             {attending.length > 0 && (
               <div>
-                <h2 className="text-xs font-semibold text-[#9A9AAA] uppercase tracking-wider mb-3">
+                <h2 className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-3">
                   Attending
                 </h2>
                 <div className="space-y-3">
@@ -720,7 +720,7 @@ function BuddyPageInner() {
               <div className="text-center py-20">
                 <div className="text-5xl mb-4">👀</div>
                 <p className="text-[#4A4A5A] font-medium">No sessions yet.</p>
-                <p className="text-[#9A9AAA] text-sm mt-1">Join a community and you&apos;ll never have an empty week.</p>
+                <p className="text-[#71717A] text-sm mt-1">Join a community and you&apos;ll never have an empty week.</p>
                 <div className="flex gap-3 justify-center mt-6">
                   <Link
                     href="/buddy/host/new"
@@ -800,7 +800,7 @@ function SessionCard({
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-medium text-[#9A9AAA]">
+                  <span className="text-xs font-medium text-[#71717A]">
                     {session.community?.name ? `by ${session.community.name}` : `${session.host?.name ?? 'Someone'}\u2019s session`}
                   </span>
                   {session.isFeatured && (
@@ -822,7 +822,7 @@ function SessionCard({
                     </span>
                   )}
                   {isPast && (
-                    <span className="text-xs bg-[#FFFBF8] text-[#9A9AAA] px-2 py-0.5 rounded-full">
+                    <span className="text-xs bg-[#FFFBF8] text-[#71717A] px-2 py-0.5 rounded-full">
                       Past
                     </span>
                   )}
@@ -843,7 +843,7 @@ function SessionCard({
             </div>
 
             {/* Meta row */}
-            <div className="flex items-center gap-3 mt-2 text-xs text-[#9A9AAA] flex-wrap">
+            <div className="flex items-center gap-3 mt-2 text-xs text-[#71717A] flex-wrap">
               {session.startTime && (
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
@@ -883,7 +883,7 @@ function SessionCard({
                 )
               })()}
               {session.fitnessLevel && (
-                <span className="capitalize text-[#9A9AAA]">
+                <span className="capitalize text-[#71717A]">
                   {session.fitnessLevel.toLowerCase()}
                 </span>
               )}
@@ -913,7 +913,7 @@ function SessionCard({
                       ) : (
                         <div
                           key={a.id}
-                          className="w-5 h-5 rounded-full ring-1 ring-white bg-[#FFFBF8] flex items-center justify-center text-[9px] font-medium text-[#9A9AAA]"
+                          className="w-5 h-5 rounded-full ring-1 ring-white bg-[#FFFBF8] flex items-center justify-center text-[9px] font-medium text-[#71717A]"
                         >
                           {(a.name ?? '?')[0]}
                         </div>
@@ -921,17 +921,17 @@ function SessionCard({
                     )}
                   </div>
                   {session.attendees.length > 5 && (
-                    <span className="text-xs text-[#9A9AAA]">+{session.attendees.length - 5}</span>
+                    <span className="text-xs text-[#71717A]">+{session.attendees.length - 5}</span>
                   )}
                 </div>
-                <p className="text-xs text-[#9A9AAA] mt-1">
+                <p className="text-xs text-[#71717A] mt-1">
                   {session.attendees
                     .slice(0, 3)
                     .map((a) => a.name?.split(' ')[0] || 'Someone')
                     .join(', ')}
                   {session.attendees.length > 3 && ` +${session.attendees.length - 3} more`}
                   {session.community && (
-                    <span className="text-[#9A9AAA]"> from {session.community.name}</span>
+                    <span className="text-[#71717A]"> from {session.community.name}</span>
                   )}
                 </p>
               </div>
@@ -954,9 +954,9 @@ function SessionCard({
               className="w-8 h-8 rounded-full bg-[#FFFBF8] flex items-center justify-center"
               aria-label="Share this experience"
             >
-              <Share2 className="w-3.5 h-3.5 text-[#9A9AAA]" />
+              <Share2 className="w-3.5 h-3.5 text-[#71717A]" />
             </button>
-            <ChevronRight className="w-4 h-4 text-[#9A9AAA]" />
+            <ChevronRight className="w-4 h-4 text-[#71717A]" />
           </div>
         </div>
 
@@ -969,12 +969,12 @@ function SessionCard({
                   e.preventDefault()
                   onLeave(session.id)
                 }}
-                className="text-xs text-[#9A9AAA] hover:text-red-500 transition-colors"
+                className="text-xs text-[#71717A] hover:text-red-500 transition-colors"
               >
                 Leave session
               </button>
             ) : session.isFull ? (
-              <span className="text-xs text-[#9A9AAA]">Session full</span>
+              <span className="text-xs text-[#71717A]">Session full</span>
             ) : (
               <button
                 onClick={(e) => {

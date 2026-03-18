@@ -76,39 +76,28 @@ export default async function HomePage() {
     communityCount >= 10 && memberCount >= 100
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-neutral-100">
-
-      {/* Noise texture */}
-      <div
-        aria-hidden
-        className="fixed inset-0 z-0 pointer-events-none opacity-[0.015]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat',
-          backgroundSize: '256px 256px',
-        }}
-      />
+    <div className="min-h-screen bg-[#FFFBF8] text-[#1A1A1A]">
 
       {/* ── Nav ──────────────────────────────────────────── */}
-      <header className="sticky top-0 z-30 bg-[#0A0A0F]/95 backdrop-blur-lg border-b border-white/5">
+      <header className="sticky top-0 z-30 bg-[#FFFBF8]/85 backdrop-blur-xl border-b border-black/[0.06]">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 py-5 flex items-center justify-between">
           <Logo size={36} />
           <nav className="flex items-center gap-3">
             <Link
               href="/buddy"
-              className="hidden sm:inline px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+              className="hidden sm:inline px-4 py-2 text-sm font-medium text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors"
             >
               Discover experiences
             </Link>
             <Link
               href="/sign-in"
-              className="hidden sm:inline px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+              className="hidden sm:inline px-4 py-2 text-sm font-medium text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors"
             >
               Log in
             </Link>
             <Link
               href="/sign-up"
-              className="px-5 py-2.5 bg-white text-neutral-900 text-sm font-semibold rounded-full hover:bg-neutral-100 transition-all shadow-md hover:shadow-lg"
+              className="px-5 py-2.5 bg-[#1A1A1A] text-white text-sm font-semibold rounded-full hover:bg-black transition-all shadow-sm hover:shadow-md"
             >
               Join
             </Link>
@@ -118,42 +107,31 @@ export default async function HomePage() {
 
       {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative overflow-hidden py-20 sm:py-36 px-5 sm:px-8">
-        {/* Ambient glow */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 flex items-center justify-center"
-        >
-          <div className="h-[700px] w-[700px] rounded-full bg-blue-500/[0.04] blur-[120px]" />
-        </div>
-        <div
-          aria-hidden
-          className="pointer-events-none absolute top-20 right-1/4 h-[400px] w-[400px] rounded-full bg-purple-500/[0.03] blur-[100px]"
-        />
 
         <div className="relative max-w-5xl mx-auto text-center">
-          <p className="animate-fade-up text-xs font-semibold tracking-[0.2em] text-neutral-400 uppercase mb-8">
+          <p className="animate-fade-up text-xs font-semibold tracking-[0.2em] text-[#9A9AAA] uppercase mb-8">
             SweatBuddies
           </p>
 
-          <h1 className="animate-fade-up-delay-1 text-5xl sm:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight mb-8">
+          <h1 className="animate-fade-up-delay-1 text-5xl sm:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight mb-8 text-[#1A1A1A]">
             Sweat is better
-            <span className="block text-neutral-400">shared.</span>
+            <span className="block text-[#9A9AAA]">shared.</span>
           </h1>
 
-          <p className="animate-fade-up-delay-2 text-lg sm:text-xl text-neutral-400 max-w-2xl mx-auto mb-12 leading-relaxed">
+          <p className="animate-fade-up-delay-2 text-lg sm:text-xl text-[#4A4A5A] max-w-2xl mx-auto mb-12 leading-relaxed">
             Sunrise yoga. Beach bootcamps. Run clubs. Cold plunge socials. Discover fitness and wellness experiences — and the people who make them unforgettable.
           </p>
 
           <div className="animate-fade-up-delay-3 flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/buddy"
-              className="px-8 py-4 bg-white text-neutral-900 text-base font-semibold rounded-full hover:bg-neutral-100 transition-all shadow-lg shadow-white/20 hover:shadow-xl hover:shadow-white/30 hover:scale-[1.02]"
+              className="px-8 py-4 bg-[#1A1A1A] text-white text-base font-semibold rounded-full hover:bg-black transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]"
             >
               Discover experiences
             </Link>
             <Link
               href="/communities/create"
-              className="px-8 py-4 bg-white/5 text-neutral-100 text-base font-semibold rounded-full hover:bg-white/10 transition-all border border-white/10 backdrop-blur-sm"
+              className="px-8 py-4 bg-white text-[#1A1A1A] text-base font-semibold rounded-full hover:bg-neutral-50 transition-all border border-black/[0.08]"
             >
               Start something
             </Link>
@@ -168,13 +146,13 @@ export default async function HomePage() {
               { src: '/banner/running.jpg', alt: 'Run club' },
               { src: '/banner/athletics.jpg', alt: 'Beach fitness' },
             ].map((img) => (
-              <div key={img.src} className="group h-40 sm:h-56 rounded-2xl overflow-hidden shadow-lg">
+              <div key={img.src} className="group h-40 sm:h-56 rounded-2xl overflow-hidden shadow-sm">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={img.src} alt={img.alt} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
             ))}
           </div>
-          <p className="text-center text-xs text-neutral-500 mt-4 tracking-wide">Real communities. Real people. Moving together.</p>
+          <p className="text-center text-xs text-[#9A9AAA] mt-4 tracking-wide">Real communities. Real people. Moving together.</p>
         </div>
 
         {/* Photo strip */}
@@ -186,9 +164,9 @@ export default async function HomePage() {
               { src: '/banner/run-club.jpg', alt: 'Running together' },
               { src: '/banner/ice-bath.webp', alt: 'Ice bath session' },
             ].map((img) => (
-              <div key={img.src} className="group flex-shrink-0 w-44 h-28 sm:w-52 sm:h-32 rounded-xl overflow-hidden shadow-md">
+              <div key={img.src} className="group flex-shrink-0 w-44 h-28 sm:w-52 sm:h-32 rounded-xl overflow-hidden shadow-sm">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.src} alt={img.alt} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+                <img src={img.src} alt={img.alt} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" />
               </div>
             ))}
           </div>
@@ -196,11 +174,11 @@ export default async function HomePage() {
       </section>
 
       {/* ── Category browsing ────────────────────────────── */}
-      <section className="px-5 sm:px-8 pb-20 border-b border-white/5">
+      <section className="px-5 sm:px-8 pb-20 border-b border-black/[0.04]">
         <div className="max-w-6xl mx-auto">
           <FadeInSection>
             <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-5xl font-bold">
+              <h2 className="text-3xl sm:text-5xl font-bold text-[#1A1A1A]">
                 What makes you sweat?
               </h2>
             </div>
@@ -210,13 +188,13 @@ export default async function HomePage() {
                 <Link
                   key={cat.slug}
                   href={`/communities?category=${cat.slug}`}
-                  className="group bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.07] hover:border-white/[0.12] rounded-2xl p-6 transition-all text-center hover:shadow-lg hover:shadow-white/[0.02] hover:-translate-y-0.5"
+                  className="group bg-white border border-black/[0.06] hover:bg-neutral-50 hover:border-black/[0.1] rounded-2xl p-6 transition-all text-center hover:shadow-md hover:-translate-y-0.5"
                 >
                   <span className="text-3xl sm:text-4xl block mb-3">{cat.emoji}</span>
-                  <span className="text-sm font-semibold text-neutral-100 group-hover:text-white transition-colors">
+                  <span className="text-sm font-semibold text-[#1A1A1A] group-hover:text-black transition-colors">
                     {cat.label}
                   </span>
-                  <span className="block text-xs text-neutral-400 mt-1.5 leading-relaxed">
+                  <span className="block text-xs text-[#9A9AAA] mt-1.5 leading-relaxed">
                     {cat.vibe}
                   </span>
                 </Link>
@@ -227,13 +205,13 @@ export default async function HomePage() {
       </section>
 
       {/* ── Featured communities ─────────────────────────── */}
-      <section className="py-20 sm:py-32 px-5 sm:px-8 border-b border-white/5">
+      <section className="py-20 sm:py-32 px-5 sm:px-8 border-b border-black/[0.04]">
         <div className="max-w-7xl mx-auto">
           <FadeInSection>
             {featuredCommunities.length > 0 ? (
               <>
                 <div className="text-center mb-14">
-                  <h2 className="text-3xl sm:text-5xl font-bold">
+                  <h2 className="text-3xl sm:text-5xl font-bold text-[#1A1A1A]">
                     Who&apos;s hosting
                   </h2>
                 </div>
@@ -242,7 +220,7 @@ export default async function HomePage() {
                     <Link
                       key={community.id}
                       href={`/communities/${community.slug}`}
-                      className="group bg-white/[0.03] border border-white/[0.06] hover:border-white/[0.12] rounded-2xl overflow-hidden transition-all hover:shadow-xl hover:shadow-white/[0.03] hover:-translate-y-1"
+                      className="group bg-white border border-black/[0.06] hover:border-black/[0.1] rounded-2xl overflow-hidden transition-all shadow-sm hover:shadow-lg hover:-translate-y-1"
                     >
                       {/* Cover */}
                       <div className="relative h-44 sm:h-52 overflow-hidden">
@@ -254,15 +232,15 @@ export default async function HomePage() {
                             className="object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center text-5xl">
+                          <div className="w-full h-full bg-gradient-to-br from-neutral-200 to-neutral-300 flex items-center justify-center text-5xl">
                             {categoryEmoji[community.category] ?? '🏅'}
                           </div>
                         )}
                         {/* Gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F]/60 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                         {/* Category badge */}
                         <div className="absolute top-4 left-4">
-                          <span className="px-3 py-1.5 bg-black/60 backdrop-blur-md rounded-full text-xs font-medium text-neutral-200 capitalize">
+                          <span className="px-3 py-1.5 bg-white/80 backdrop-blur-md rounded-full text-xs font-medium text-[#4A4A5A] capitalize">
                             {categoryEmoji[community.category] ?? '🏅'}{' '}
                             {community.category.replace(/_/g, ' ')}
                           </span>
@@ -273,7 +251,7 @@ export default async function HomePage() {
                         <div className="flex items-start gap-3">
                           {/* Logo overlapping cover */}
                           {community.logoImage && (
-                            <div className="w-12 h-12 rounded-full bg-neutral-800 overflow-hidden flex-shrink-0 -mt-10 border-2 border-[#0A0A0F] shadow-lg ring-1 ring-white/10">
+                            <div className="w-12 h-12 rounded-full bg-neutral-100 overflow-hidden flex-shrink-0 -mt-10 border-2 border-white shadow-lg ring-1 ring-black/[0.06]">
                               <Image
                                 src={community.logoImage}
                                 alt={community.name}
@@ -284,10 +262,10 @@ export default async function HomePage() {
                             </div>
                           )}
                           <div className="flex-1 min-w-0">
-                            <h3 className="text-base font-semibold text-neutral-100 group-hover:text-white transition-colors truncate">
+                            <h3 className="text-base font-semibold text-[#1A1A1A] group-hover:text-black transition-colors truncate">
                               {community.name}
                             </h3>
-                            <div className="flex items-center gap-3 text-xs text-neutral-500 mt-1.5">
+                            <div className="flex items-center gap-3 text-xs text-[#9A9AAA] mt-1.5">
                               <span className="font-medium">
                                 {community.memberCount}{' '}
                                 {community.memberCount === 1 ? 'member' : 'members'}
@@ -297,7 +275,7 @@ export default async function HomePage() {
                           </div>
                         </div>
                         {community.description && (
-                          <p className="mt-3 text-xs text-neutral-400 line-clamp-2 leading-relaxed">
+                          <p className="mt-3 text-xs text-[#9A9AAA] line-clamp-2 leading-relaxed">
                             {community.description}
                           </p>
                         )}
@@ -308,15 +286,15 @@ export default async function HomePage() {
               </>
             ) : (
               <div className="text-center">
-                <h2 className="text-3xl sm:text-5xl font-bold mb-4">
+                <h2 className="text-3xl sm:text-5xl font-bold mb-4 text-[#1A1A1A]">
                   Your crew is forming.
                 </h2>
-                <p className="text-neutral-400 text-lg mb-10 max-w-lg mx-auto">
+                <p className="text-[#4A4A5A] text-lg mb-10 max-w-lg mx-auto">
                   The best communities started with one person who said &apos;who&apos;s in?&apos;
                 </p>
                 <Link
                   href="/communities/create"
-                  className="inline-block px-8 py-4 bg-white/5 text-neutral-200 text-sm font-semibold rounded-full hover:bg-white/10 transition-all border border-white/10"
+                  className="inline-block px-8 py-4 bg-white text-[#1A1A1A] text-sm font-semibold rounded-full hover:bg-neutral-50 transition-all border border-black/[0.08]"
                 >
                   Start something &rarr;
                 </Link>
@@ -327,14 +305,14 @@ export default async function HomePage() {
       </section>
 
       {/* ── How it works ─────────────────────────────────── */}
-      <section className="py-20 sm:py-32 px-5 sm:px-8 border-b border-white/5">
+      <section className="py-20 sm:py-32 px-5 sm:px-8 border-b border-black/[0.04]">
         <div className="max-w-6xl mx-auto">
           <FadeInSection>
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-5xl font-bold mb-6">
+              <h2 className="text-3xl sm:text-5xl font-bold mb-6 text-[#1A1A1A]">
                 The right crew changes everything.
               </h2>
-              <p className="text-neutral-400 text-lg max-w-xl mx-auto">No sign-up forms. No small talk. Just sweat, progress, and people who get it.</p>
+              <p className="text-[#4A4A5A] text-lg max-w-xl mx-auto">No sign-up forms. No small talk. Just sweat, progress, and people who get it.</p>
             </div>
 
             <div className="grid sm:grid-cols-3 gap-6 sm:gap-8">
@@ -357,13 +335,13 @@ export default async function HomePage() {
               ].map((s, i) => (
                 <div
                   key={i}
-                  className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 hover:bg-white/[0.06] hover:border-white/[0.1] transition-all"
+                  className="bg-white border border-black/[0.06] rounded-2xl p-8 hover:bg-neutral-50 hover:border-black/[0.1] transition-all shadow-sm"
                 >
-                  <p className="text-2xl font-bold text-neutral-500 mb-4">
+                  <p className="text-2xl font-bold text-[#9A9AAA] mb-4">
                     {s.step}
                   </p>
-                  <h3 className="text-xl font-semibold text-white mb-4">{s.title}</h3>
-                  <p className="text-neutral-400 text-sm leading-relaxed">
+                  <h3 className="text-xl font-semibold text-[#1A1A1A] mb-4">{s.title}</h3>
+                  <p className="text-[#4A4A5A] text-sm leading-relaxed">
                     {s.body}
                   </p>
                 </div>
@@ -374,11 +352,11 @@ export default async function HomePage() {
       </section>
 
       {/* ── Community types ──────────────────────────────── */}
-      <section className="py-20 sm:py-32 px-5 sm:px-8 border-b border-white/5">
+      <section className="py-20 sm:py-32 px-5 sm:px-8 border-b border-black/[0.04]">
         <div className="max-w-6xl mx-auto">
           <FadeInSection>
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-5xl font-bold">
+              <h2 className="text-3xl sm:text-5xl font-bold text-[#1A1A1A]">
                 Every sweat has a crew.
               </h2>
             </div>
@@ -403,13 +381,13 @@ export default async function HomePage() {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 hover:bg-white/[0.06] hover:border-white/[0.1] transition-all"
+                  className="bg-white border border-black/[0.06] rounded-2xl p-8 hover:bg-neutral-50 hover:border-black/[0.1] transition-all shadow-sm"
                 >
                   <div className="text-5xl mb-6">{item.emoji}</div>
-                  <h3 className="text-lg font-semibold text-white mb-4">
+                  <h3 className="text-lg font-semibold text-[#1A1A1A] mb-4">
                     {item.title}
                   </h3>
-                  <p className="text-neutral-400 text-sm leading-relaxed">
+                  <p className="text-[#4A4A5A] text-sm leading-relaxed">
                     {item.body}
                   </p>
                 </div>
@@ -421,21 +399,21 @@ export default async function HomePage() {
 
       {/* ── Social proof ─────────────────────────────────── */}
       {showStats && (
-        <section className="py-16 sm:py-24 px-5 sm:px-8 border-b border-white/5">
+        <section className="py-16 sm:py-24 px-5 sm:px-8 border-b border-black/[0.04]">
           <div className="max-w-4xl mx-auto">
             <FadeInSection>
               <div className="grid grid-cols-3 gap-8 text-center">
                 <div>
-                  <p className="text-3xl sm:text-4xl font-bold text-white mb-1">{communityCount}</p>
-                  <p className="text-xs sm:text-sm text-neutral-500">communities</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-1">{communityCount}</p>
+                  <p className="text-xs sm:text-sm text-[#9A9AAA]">communities</p>
                 </div>
                 <div>
-                  <p className="text-3xl sm:text-4xl font-bold text-white mb-1">{memberCount.toLocaleString()}</p>
-                  <p className="text-xs sm:text-sm text-neutral-500">members</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-1">{memberCount.toLocaleString()}</p>
+                  <p className="text-xs sm:text-sm text-[#9A9AAA]">members</p>
                 </div>
                 <div>
-                  <p className="text-3xl sm:text-4xl font-bold text-white mb-1">{sessionsThisWeek}</p>
-                  <p className="text-xs sm:text-sm text-neutral-500">experiences this week</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-1">{sessionsThisWeek}</p>
+                  <p className="text-xs sm:text-sm text-[#9A9AAA]">experiences this week</p>
                 </div>
               </div>
             </FadeInSection>
@@ -447,22 +425,22 @@ export default async function HomePage() {
       <section className="py-28 sm:py-36 px-5 sm:px-8">
         <div className="max-w-3xl mx-auto text-center">
           <FadeInSection>
-            <h2 className="text-4xl sm:text-6xl font-bold mb-6 leading-tight">
+            <h2 className="text-4xl sm:text-6xl font-bold mb-6 leading-tight text-[#1A1A1A]">
               You already know you&apos;re better with the right people.
             </h2>
-            <p className="text-neutral-400 text-lg mb-12 max-w-xl mx-auto leading-relaxed">
+            <p className="text-[#4A4A5A] text-lg mb-12 max-w-xl mx-auto leading-relaxed">
               Every 5am alarm answered. Every PR earned. Every &apos;same time next week?&apos; That&apos;s what the right crew does.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
               <Link
                 href="/buddy"
-                className="px-10 py-4 bg-white text-neutral-900 text-lg font-semibold rounded-full hover:bg-neutral-100 transition-all shadow-xl hover:shadow-2xl hover:scale-[1.02]"
+                className="px-10 py-4 bg-[#1A1A1A] text-white text-lg font-semibold rounded-full hover:bg-black transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]"
               >
                 Discover experiences
               </Link>
               <Link
                 href="/communities/create"
-                className="px-10 py-4 bg-white/5 text-neutral-200 text-lg font-semibold rounded-full border border-white/10 hover:bg-white/10 transition-all"
+                className="px-10 py-4 bg-white text-[#1A1A1A] text-lg font-semibold rounded-full border border-black/[0.08] hover:bg-neutral-50 transition-all"
               >
                 Start something
               </Link>
@@ -472,35 +450,35 @@ export default async function HomePage() {
       </section>
 
       {/* ── Footer ───────────────────────────────────────── */}
-      <footer className="border-t border-white/5 py-12 sm:py-16 px-5 sm:px-8">
+      <footer className="border-t border-black/[0.04] py-12 sm:py-16 px-5 sm:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-10">
             <div>
               <div className="flex items-center gap-3 mb-3">
                 <Logo size={24} />
-                <span className="font-semibold text-neutral-200">SweatBuddies</span>
+                <span className="font-semibold text-[#1A1A1A]">SweatBuddies</span>
               </div>
-              <p className="text-xs text-neutral-500 leading-relaxed max-w-xs">Discover fitness and wellness experiences. The right crew changes everything.</p>
+              <p className="text-xs text-[#9A9AAA] leading-relaxed max-w-xs">Discover fitness and wellness experiences. The right crew changes everything.</p>
             </div>
             <div>
-              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-4">Product</p>
+              <p className="text-xs font-semibold text-[#9A9AAA] uppercase tracking-wider mb-4">Product</p>
               <ul className="space-y-3">
-                <li><Link href="/buddy" className="text-sm text-neutral-500 hover:text-neutral-300 transition-colors">Discover experiences</Link></li>
-                <li><Link href="/communities" className="text-sm text-neutral-500 hover:text-neutral-300 transition-colors">Communities</Link></li>
-                <li><Link href="/communities/create" className="text-sm text-neutral-500 hover:text-neutral-300 transition-colors">Start something</Link></li>
+                <li><Link href="/buddy" className="text-sm text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors">Discover experiences</Link></li>
+                <li><Link href="/communities" className="text-sm text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors">Communities</Link></li>
+                <li><Link href="/communities/create" className="text-sm text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors">Start something</Link></li>
               </ul>
             </div>
             <div>
-              <p className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-4">Support</p>
+              <p className="text-xs font-semibold text-[#9A9AAA] uppercase tracking-wider mb-4">Support</p>
               <ul className="space-y-3">
-                <li><a href={`mailto:${SUPPORT_EMAIL}`} className="text-sm text-neutral-500 hover:text-neutral-300 transition-colors">Contact</a></li>
-                <li><Link href="/support" className="text-sm text-neutral-500 hover:text-neutral-300 transition-colors">Help &amp; FAQ</Link></li>
+                <li><a href={`mailto:${SUPPORT_EMAIL}`} className="text-sm text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors">Contact</a></li>
+                <li><Link href="/support" className="text-sm text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors">Help &amp; FAQ</Link></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-neutral-600">&copy; 2026 SweatBuddies. All rights reserved.</p>
-            <p className="text-xs text-neutral-600">Sweat is better shared.</p>
+          <div className="border-t border-black/[0.04] pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-[#9A9AAA]">&copy; 2026 SweatBuddies. All rights reserved.</p>
+            <p className="text-xs text-[#9A9AAA]">Sweat is better shared.</p>
           </div>
         </div>
       </footer>

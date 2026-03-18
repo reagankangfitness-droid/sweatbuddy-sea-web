@@ -3168,6 +3168,9 @@ model SessionTemplate {
   latitude        Float?
   longitude       Float?
 
+  // Image
+  imageUrl        String?
+
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

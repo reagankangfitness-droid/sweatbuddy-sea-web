@@ -170,6 +170,7 @@ export async function GET(request: NextRequest) {
               sessionTemplateId: template.id,
               fitnessLevel: template.fitnessLevel,
               whatToBring: template.whatToBring,
+              imageUrl: template.imageUrl,
               activityMode: template.price && template.price > 0 ? 'P2P_PAID' : 'P2P_FREE',
             },
           })

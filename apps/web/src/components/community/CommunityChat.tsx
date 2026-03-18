@@ -30,6 +30,7 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const [input, setInput] = useState('')
+  const [expanded, setExpanded] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
@@ -157,7 +158,7 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
       {/* Messages */}
       <div
         ref={scrollContainerRef}
-        className="max-h-[400px] overflow-y-auto p-4"
+        className={`${expanded ? 'max-h-[400px]' : 'max-h-[220px]'} overflow-y-auto p-4 transition-all duration-300`}
       >
         {loading ? (
           <div className="flex justify-center py-8">
@@ -170,7 +171,7 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
           </div>
         ) : (
           <div className="space-y-3">
-            {messages.map((msg) => {
+            {(expanded ? messages : messages.slice(-3)).map((msg) => {
               const isOwn = msg.sender.id === user?.id
               return (
                 <div
@@ -212,6 +213,18 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
           </div>
         )}
       </div>
+
+      {/* See all / collapse toggle */}
+      {!loading && messages.length > 3 && (
+        <div className="px-4 pb-2">
+          <button
+            onClick={() => setExpanded((v) => !v)}
+            className="text-xs font-medium text-[#9A9AAA] hover:text-[#4A4A5A] transition-colors"
+          >
+            {expanded ? 'Show less' : `See all ${messages.length} messages`}
+          </button>
+        </div>
+      )}
 
       {/* Input */}
       <div className="border-t border-black/[0.06] px-4 py-3">

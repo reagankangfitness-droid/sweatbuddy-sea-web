@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { MapPin, Users, Plus, Loader2, Calendar, ChevronRight, Lock, Map, List, Crosshair, X, Clock } from 'lucide-react'
+import { MapPin, Users, Plus, Loader2, Calendar, ChevronRight, Lock, Map, List, Crosshair, X, Clock, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GoogleMap, useLoadScript, OverlayView } from '@react-google-maps/api'
@@ -894,7 +894,26 @@ function SessionCard({
             )}
           </div>
 
-          <ChevronRight className="w-4 h-4 text-[#9A9AAA] shrink-0 mt-1" />
+          <div className="flex flex-col items-center gap-1.5 shrink-0 mt-1">
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                const url = `${window.location.origin}/activities/${session.id}`
+                if (navigator.share) {
+                  navigator.share({ title: session.title, url })
+                } else {
+                  navigator.clipboard.writeText(url)
+                  toast.success('Link copied!')
+                }
+              }}
+              className="w-8 h-8 rounded-full bg-[#FFFBF8] flex items-center justify-center"
+              aria-label="Share this experience"
+            >
+              <Share2 className="w-3.5 h-3.5 text-[#9A9AAA]" />
+            </button>
+            <ChevronRight className="w-4 h-4 text-[#9A9AAA]" />
+          </div>
         </div>
 
         {/* Action buttons */}

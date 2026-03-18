@@ -12,6 +12,7 @@ import { ClaimCommunityButton } from '@/components/community/ClaimCommunityButto
 import { ShareButton } from '@/components/community/ShareButton'
 import { CommunityChat } from '@/components/community/CommunityChat'
 import { IntroduceYourself } from '@/components/community/IntroduceYourself'
+import { PostSessionPhotos } from '@/components/community/PostSessionPhotos'
 import { getUpcomingEventSubmissions } from '@/lib/community-system'
 
 export const revalidate = 60
@@ -135,6 +136,50 @@ async function getMembership(communityId: string, userId: string | null) {
   return membership
 }
 
+async function getPastSessionPhotos(communityId: string) {
+  const sessions = await prisma.activity.findMany({
+    where: {
+      communityId,
+      status: 'PUBLISHED',
+      deletedAt: null,
+      imageUrl: { not: null },
+      startTime: { lt: new Date() },
+    },
+    orderBy: { startTime: 'desc' },
+    take: 12,
+    select: {
+      id: true,
+      title: true,
+      imageUrl: true,
+      startTime: true,
+    },
+  })
+  return sessions
+    .filter((s): s is typeof s & { imageUrl: string; startTime: Date } => !!s.imageUrl && !!s.startTime)
+    .map((s) => ({
+      id: s.id,
+      title: s.title,
+      imageUrl: s.imageUrl,
+      startTime: s.startTime.toISOString(),
+    }))
+}
+
+async function getMemberAttendance(communityId: string) {
+  const attendance = await prisma.userActivity.groupBy({
+    by: ['userId'],
+    where: {
+      activity: { communityId },
+      status: { in: ['JOINED', 'COMPLETED'] },
+    },
+    _count: { id: true },
+  })
+  const map: Record<string, number> = {}
+  for (const row of attendance) {
+    map[row.userId] = row._count.id
+  }
+  return map
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const community = await getCommunity(slug)
@@ -165,7 +210,7 @@ export default async function CommunityPage({ params }: Props) {
     notFound()
   }
 
-  const [upcomingEvents, eventSubmissions, members, membership, announcements] = await Promise.all([
+  const [upcomingEvents, eventSubmissions, members, membership, announcements, pastPhotos, memberAttendance] = await Promise.all([
     getUpcomingEvents(community.id),
     community.instagramHandle
       ? getUpcomingEventSubmissions(community.instagramHandle)
@@ -173,6 +218,8 @@ export default async function CommunityPage({ params }: Props) {
     getMembers(community.id),
     getMembership(community.id, userId),
     getAnnouncements(community.id),
+    getPastSessionPhotos(community.id),
+    getMemberAttendance(community.id),
   ])
 
   // Merge activity events and event submissions into a unified list sorted by date
@@ -480,6 +527,13 @@ export default async function CommunityPage({ params }: Props) {
         />
       </section>
 
+      {/* Moments — past session photos */}
+      {pastPhotos.length > 0 && (
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+          <PostSessionPhotos sessions={pastPhotos} />
+        </section>
+      )}
+
       {/* Upcoming Events */}
       <section id="upcoming-events" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-6">
@@ -577,6 +631,11 @@ export default async function CommunityPage({ params }: Props) {
               {member.role === 'ADMIN' && (
                 <span className="text-xs px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded">Admin</span>
               )}
+              {(memberAttendance[member.user.id] ?? 0) >= 10 ? (
+                <span className="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded-full">OG</span>
+              ) : (memberAttendance[member.user.id] ?? 0) >= 5 ? (
+                <span className="text-[10px] bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded-full">Regular</span>
+              ) : null}
             </Link>
           ))}
         </div>

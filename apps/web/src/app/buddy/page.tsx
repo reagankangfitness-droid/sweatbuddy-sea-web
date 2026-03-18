@@ -806,7 +806,7 @@ function SessionCard({
         )}
 
         {/* Gradient overlay at bottom for readability */}
-        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/40 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
 
         {/* Price badge — top right */}
         <div className="absolute top-3 right-3">
@@ -822,22 +822,22 @@ function SessionCard({
         {/* Status badges — top left */}
         <div className="absolute top-3 left-3 flex gap-1.5">
           {session.isFeatured && (
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400/90 text-white backdrop-blur-sm">
+            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/90 text-white backdrop-blur-sm">
               ⭐ Featured
             </span>
           )}
           {isJoined && !isHosting && (
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/90 text-white backdrop-blur-sm">
+            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/90 text-white backdrop-blur-sm">
               Going
             </span>
           )}
           {isHosting && (
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/90 text-white backdrop-blur-sm">
+            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-500/90 text-white backdrop-blur-sm">
               Hosting
             </span>
           )}
           {isFull && (
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/90 text-white backdrop-blur-sm">
+            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-red-500/90 text-white backdrop-blur-sm">
               Full
             </span>
           )}
@@ -846,7 +846,7 @@ function SessionCard({
         {/* Spots left — bottom right on image */}
         {almostFull && !isFull && (
           <div className="absolute bottom-3 right-3">
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-400/90 text-white backdrop-blur-sm">
+            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/90 text-white backdrop-blur-sm">
               {spotsLeft} spot{spotsLeft !== 1 ? 's' : ''} left
             </span>
           </div>
@@ -869,14 +869,14 @@ function SessionCard({
                 ) : (
                   <div
                     key={a.id}
-                    className="w-[22px] h-[22px] rounded-full ring-2 ring-white bg-neutral-200 flex items-center justify-center text-[8px] font-bold text-[#4A4A5A]"
+                    className="w-[22px] h-[22px] rounded-full ring-2 ring-white bg-neutral-200 flex items-center justify-center text-[10px] font-bold text-[#4A4A5A]"
                   >
                     {(a.name ?? '?')[0]}
                   </div>
                 )
               )}
             </div>
-            <span className="text-[10px] font-semibold text-white drop-shadow-sm">
+            <span className="text-xs font-bold text-white drop-shadow-md">
               {session.attendeeCount} going
             </span>
           </div>
@@ -890,11 +890,11 @@ function SessionCard({
           {avatarSrc ? (
             <Image src={avatarSrc} alt={displayName} width={20} height={20} className="rounded-full object-cover" />
           ) : (
-            <div className="w-5 h-5 rounded-full bg-neutral-100 flex items-center justify-center text-[9px] font-bold text-[#4A4A5A]">
+            <div className="w-5 h-5 rounded-full bg-neutral-100 flex items-center justify-center text-[10px] font-bold text-[#4A4A5A]">
               {displayName[0]}
             </div>
           )}
-          <span className="text-[11px] font-medium text-[#71717A] truncate">{displayName}</span>
+          <span className="text-xs font-medium text-[#71717A] truncate">{displayName}</span>
         </div>
 
         {/* Title */}
@@ -903,7 +903,7 @@ function SessionCard({
         </h3>
 
         {/* Date + Location */}
-        <div className="flex flex-col gap-0.5 text-[11px] text-[#71717A]">
+        <div className="flex flex-col gap-0.5 text-xs text-[#71717A]">
           {session.startTime && (
             <span className="flex items-center gap-1">
               <Calendar className="w-3 h-3 shrink-0" />

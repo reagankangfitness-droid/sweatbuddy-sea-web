@@ -113,21 +113,21 @@ export default function P2POnboardingPage() {
   if (!isLoaded || checking) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
+        <Loader2 className="w-6 h-6 animate-spin text-[#9A9AAA]" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950">
+    <div className="min-h-screen bg-[#FFFBF8]">
       <div className="max-w-lg mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-10">
           <div className="text-4xl mb-3">🤝</div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-[#1A1A1A]">
             Who should we introduce you to?
           </h1>
-          <p className="mt-2 text-neutral-500 dark:text-neutral-400 text-sm">
+          <p className="mt-2 text-[#9A9AAA] text-sm">
             30 seconds. We&apos;ll find the crews that sweat like you do.
           </p>
         </div>
@@ -142,16 +142,16 @@ export default function P2POnboardingPage() {
                   alt="Your photo"
                   width={80}
                   height={80}
-                  className="rounded-full object-cover ring-2 ring-neutral-200 dark:ring-neutral-700"
+                  className="rounded-full object-cover ring-2 ring-black/[0.06]"
                 />
               ) : (
-                <div className="w-20 h-20 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center">
-                  <Camera className="w-7 h-7 text-neutral-400" />
+                <div className="w-20 h-20 rounded-full bg-white border border-black/[0.06] flex items-center justify-center">
+                  <Camera className="w-7 h-7 text-[#9A9AAA]" />
                 </div>
               )}
             </div>
             {!clerkUser?.imageUrl && (
-              <p className="text-xs text-neutral-400">
+              <p className="text-xs text-[#9A9AAA]">
                 Add a photo in your{' '}
                 <a href="/settings/profile" className="underline">
                   profile settings
@@ -162,7 +162,7 @@ export default function P2POnboardingPage() {
 
           {/* Bio */}
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+            <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
               Bio <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -171,14 +171,14 @@ export default function P2POnboardingPage() {
               placeholder="e.g. Morning runner, love exploring new routes. 5 days/week."
               maxLength={100}
               rows={3}
-              className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white resize-none"
+              className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#9A9AAA] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] resize-none"
             />
-            <p className="mt-1 text-xs text-neutral-400 text-right">{bio.length}/100</p>
+            <p className="mt-1 text-xs text-[#9A9AAA] text-right">{bio.length}/100</p>
           </div>
 
           {/* Fitness Interests */}
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+            <label className="block text-sm font-medium text-[#4A4A5A] mb-3">
               What makes you sweat? <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -191,8 +191,8 @@ export default function P2POnboardingPage() {
                     onClick={() => toggleInterest(interest.slug)}
                     className={`flex flex-col items-center gap-1 rounded-xl border p-3 text-xs font-medium transition-all ${
                       selected
-                        ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
-                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300'
+                        ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
+                        : 'border-black/[0.06] bg-white text-[#4A4A5A] hover:border-black/[0.12]'
                     }`}
                   >
                     <span className="text-xl">{interest.emoji}</span>
@@ -205,7 +205,7 @@ export default function P2POnboardingPage() {
 
           {/* Fitness Level */}
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+            <label className="block text-sm font-medium text-[#4A4A5A] mb-3">
               Fitness level <span className="text-red-500">*</span>
             </label>
             <div className="space-y-2">
@@ -218,12 +218,12 @@ export default function P2POnboardingPage() {
                     onClick={() => setFitnessLevel(level.value)}
                     className={`w-full flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition-all ${
                       selected
-                        ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
-                        : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300'
+                        ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
+                        : 'border-black/[0.06] bg-white text-[#4A4A5A] hover:border-black/[0.12]'
                     }`}
                   >
                     <span className="font-medium">{level.label}</span>
-                    <span className={`text-xs ${selected ? 'opacity-70' : 'text-neutral-400'}`}>
+                    <span className={`text-xs ${selected ? 'opacity-70' : 'text-[#9A9AAA]'}`}>
                       {level.description}
                     </span>
                   </button>
@@ -236,7 +236,7 @@ export default function P2POnboardingPage() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full rounded-xl bg-black dark:bg-white px-4 py-4 text-sm font-semibold text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+            className="w-full rounded-full bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
           >
             {saving ? (
               <>

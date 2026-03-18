@@ -300,22 +300,22 @@ export default function NewSessionPage() {
   // Success screen
   if (publishedId) {
     return (
-      <div className="min-h-screen bg-white dark:bg-neutral-950 flex flex-col items-center justify-center px-4 text-center">
+      <div className="min-h-screen bg-[#FFFBF8] flex flex-col items-center justify-center px-4 text-center">
         <CheckCircle2 className="w-16 h-16 text-green-500 mb-6" />
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Session created!</h1>
+        <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">Session created!</h1>
         <p className="text-neutral-500 mb-8 max-w-xs">
           Your session is live. Students can now find and book it.
         </p>
         <div className="flex flex-col gap-3 w-full max-w-xs">
           <button
             onClick={() => router.push(`/activities/${publishedId}`)}
-            className="w-full rounded-xl bg-black dark:bg-white px-4 py-4 text-sm font-semibold text-white dark:text-black"
+            className="w-full rounded-xl bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white"
           >
             View my session →
           </button>
           <button
             onClick={() => router.push('/buddy')}
-            className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 px-4 py-3 text-sm font-medium text-neutral-600 dark:text-neutral-300"
+            className="w-full rounded-xl border border-black/[0.06] px-4 py-3 text-sm font-medium text-[#4A4A5A]"
           >
             Back to Sessions
           </button>
@@ -325,21 +325,21 @@ export default function NewSessionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950">
+    <div className="min-h-screen bg-[#FFFBF8]">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white/90 dark:bg-neutral-950/90 backdrop-blur border-b border-neutral-100 dark:border-neutral-800">
+      <div className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-black/[0.06]">
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center gap-3">
-          <button onClick={prevStep} aria-label="Go back" className="p-1 -ml-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800">
-            <ArrowLeft className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
+          <button onClick={prevStep} aria-label="Go back" className="p-1 -ml-1 rounded-lg hover:bg-[#FFFBF8]">
+            <ArrowLeft className="w-5 h-5 text-[#4A4A5A]" />
           </button>
           <div className="flex-1">
-            <h1 className="text-base font-semibold text-neutral-900 dark:text-white">Create a Session</h1>
+            <h1 className="text-base font-semibold text-[#1A1A1A]">Create a Session</h1>
             <div className="flex gap-1 mt-1" role="progressbar" aria-label={`Step ${stepIdx + 1} of ${STEPS.length}: ${step === 'basic' ? 'Basic Info' : step === 'details' ? 'Details' : step === 'pricing' ? 'Pricing' : 'Preview'}`} aria-valuenow={stepIdx + 1} aria-valuemin={1} aria-valuemax={STEPS.length}>
               {STEPS.map((s, i) => (
                 <div
                   key={s}
                   className={`h-1 flex-1 rounded-full transition-colors ${
-                    i <= stepIdx ? 'bg-black dark:bg-white' : 'bg-neutral-100 dark:bg-neutral-800'
+                    i <= stepIdx ? 'bg-[#1A1A1A]' : 'bg-black/[0.06]'
                   }`}
                 />
               ))}
@@ -353,13 +353,13 @@ export default function NewSessionPage() {
         {step === 'basic' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-bold text-neutral-900 dark:text-white">What are you hosting?</h2>
+              <h2 className="text-xl font-bold text-[#1A1A1A]">What are you hosting?</h2>
               <p className="text-sm text-neutral-500 mt-1">The basics about your session</p>
             </div>
 
             {/* Activity type */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+              <label className="block text-sm font-medium text-[#4A4A5A] mb-3">
                 Activity type <span className="text-red-500">*</span>
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -370,8 +370,8 @@ export default function NewSessionPage() {
                     onClick={() => update('categorySlug', type.slug)}
                     className={`flex flex-col items-center gap-1 rounded-xl border p-3 text-xs font-medium transition-all ${
                       form.categorySlug === type.slug
-                        ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
-                        : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400'
+                        ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
+                        : 'border-black/[0.06] bg-white text-[#4A4A5A] hover:border-black/[0.12]'
                     }`}
                   >
                     <span className="text-xl">{type.emoji}</span>
@@ -383,7 +383,7 @@ export default function NewSessionPage() {
 
             {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
                 Session title <span className="text-red-500">*</span>
               </label>
               <input
@@ -397,14 +397,14 @@ export default function NewSessionPage() {
                 }
                 maxLength={100}
                 aria-required="true"
-                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
               />
               <p className="mt-1 text-xs text-right text-neutral-400">{form.title.length}/100</p>
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
                 Description <span className="text-neutral-400 font-normal">(optional)</span>
               </label>
               <textarea
@@ -413,14 +413,14 @@ export default function NewSessionPage() {
                 placeholder="What's the vibe? What should people expect?"
                 maxLength={500}
                 rows={4}
-                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white resize-none"
+                className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] resize-none"
               />
               <p className="mt-1 text-xs text-right text-neutral-400">{form.description.length}/500</p>
             </div>
 
             {/* Cover image upload */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
                 Cover image <span className="text-neutral-400 font-normal">(optional)</span>
               </label>
               {form.imageUrl ? (
@@ -429,7 +429,7 @@ export default function NewSessionPage() {
                   <img
                     src={form.imageUrl}
                     alt="Cover preview"
-                    className="w-full h-40 object-cover rounded-xl border border-neutral-200 dark:border-neutral-700"
+                    className="w-full h-40 object-cover rounded-xl border border-black/[0.06]"
                   />
                   <button
                     type="button"
@@ -445,7 +445,7 @@ export default function NewSessionPage() {
                   type="button"
                   disabled={coverUploading}
                   onClick={() => coverInputRef.current?.click()}
-                  className="w-full h-32 rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800/50 flex flex-col items-center justify-center gap-2 text-neutral-500 dark:text-neutral-400 hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors active:scale-[0.98]"
+                  className="w-full h-32 rounded-xl border-2 border-dashed border-black/[0.12] bg-white flex flex-col items-center justify-center gap-2 text-[#9A9AAA] hover:border-black/[0.12] transition-colors active:scale-[0.98]"
                 >
                   {coverUploading ? (
                     <>
@@ -492,14 +492,14 @@ export default function NewSessionPage() {
 
             {/* Cancellation policy */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
                 Cancellation policy
               </label>
               <div className="relative">
                 <select
                   value={form.cancellationPolicy}
                   onChange={(e) => update('cancellationPolicy', e.target.value)}
-                  className="w-full appearance-none rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                  className="w-full appearance-none rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
                 >
                   {CANCELLATION_POLICIES.map((p) => (
                     <option key={p.value} value={p.value}>{p.label}</option>
@@ -515,13 +515,13 @@ export default function NewSessionPage() {
         {step === 'details' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-bold text-neutral-900 dark:text-white">When &amp; where?</h2>
+              <h2 className="text-xl font-bold text-[#1A1A1A]">When &amp; where?</h2>
               <p className="text-sm text-neutral-500 mt-1">Help people show up on time</p>
             </div>
 
             {/* Date */}
             <div className="overflow-hidden">
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
                 Date <span className="text-red-500">*</span>
               </label>
               <input
@@ -530,14 +530,14 @@ export default function NewSessionPage() {
                 onChange={(e) => update('startDate', e.target.value)}
                 min={new Date().toISOString().split('T')[0]}
                 aria-required="true"
-                className="w-full min-w-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white box-border"
+                className="w-full min-w-0 rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] box-border"
               />
             </div>
 
             {/* Time */}
             <div className="grid grid-cols-2 gap-3">
               <div className="overflow-hidden">
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
                   Start time <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -545,25 +545,25 @@ export default function NewSessionPage() {
                   value={form.startTime}
                   onChange={(e) => update('startTime', e.target.value)}
                   aria-required="true"
-                  className="w-full min-w-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white box-border"
+                  className="w-full min-w-0 rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] box-border"
                 />
               </div>
               <div className="overflow-hidden">
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
                   End time <span className="text-neutral-400 font-normal">(optional)</span>
                 </label>
                 <input
                   type="time"
                   value={form.endTime}
                   onChange={(e) => update('endTime', e.target.value)}
-                  className="w-full min-w-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white box-border"
+                  className="w-full min-w-0 rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] box-border"
                 />
               </div>
             </div>
 
             {/* Location */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
                 Meeting point <span className="text-red-500">*</span>
               </label>
               <LocationAutocomplete
@@ -583,7 +583,7 @@ export default function NewSessionPage() {
 
             {/* Max people */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
                 Max attendees <span className="text-neutral-400 font-normal">(optional — leave blank for unlimited)</span>
               </label>
               <input
@@ -593,20 +593,20 @@ export default function NewSessionPage() {
                 placeholder="e.g. 10"
                 min={1}
                 max={500}
-                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
               />
             </div>
 
             {/* Fitness level */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
                 Who should join?
               </label>
               <div className="relative">
                 <select
                   value={form.fitnessLevel}
                   onChange={(e) => update('fitnessLevel', e.target.value)}
-                  className="w-full appearance-none rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                  className="w-full appearance-none rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
                 >
                   {FITNESS_LEVELS.map((l) => (
                     <option key={l.value} value={l.value}>{l.label}</option>
@@ -618,7 +618,7 @@ export default function NewSessionPage() {
 
             {/* What to bring */}
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
                 What to bring <span className="text-neutral-400 font-normal">(optional)</span>
               </label>
               <input
@@ -626,7 +626,7 @@ export default function NewSessionPage() {
                 value={form.whatToBring}
                 onChange={(e) => update('whatToBring', e.target.value)}
                 placeholder="e.g. Running shoes, water bottle"
-                className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
               />
             </div>
           </div>
@@ -636,7 +636,7 @@ export default function NewSessionPage() {
         {step === 'pricing' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Free or paid?</h2>
+              <h2 className="text-xl font-bold text-[#1A1A1A]">Free or paid?</h2>
               <p className="text-sm text-neutral-500 mt-1">You can charge for your time and expertise</p>
             </div>
 
@@ -655,8 +655,8 @@ export default function NewSessionPage() {
                     onClick={() => update('price', opt.value === '0' ? '0' : '')}
                     className={`flex flex-col items-center gap-2 rounded-2xl border p-5 transition-all ${
                       selected
-                        ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
-                        : 'border-neutral-200 bg-white text-neutral-600 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400'
+                        ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
+                        : 'border-black/[0.06] bg-white text-[#4A4A5A] hover:border-black/[0.12]'
                     }`}
                   >
                     <span className="text-2xl">{opt.emoji}</span>
@@ -671,7 +671,7 @@ export default function NewSessionPage() {
             {form.price !== '0' && (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                  <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
                     Price per person
                   </label>
                   <div className="flex gap-2">
@@ -679,7 +679,7 @@ export default function NewSessionPage() {
                       value={form.currency}
                       onChange={(e) => update('currency', e.target.value)}
                       aria-label="Currency"
-                      className="rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-base text-neutral-900 dark:text-white focus:outline-none min-w-[80px]"
+                      className="rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-base text-[#1A1A1A] focus:outline-none min-w-[80px]"
                     >
                       {['SGD', 'USD', 'MYR', 'AUD', 'GBP', 'EUR'].map((c) => (
                         <option key={c}>{c}</option>
@@ -692,7 +692,7 @@ export default function NewSessionPage() {
                       placeholder="15"
                       min={1}
                       step={1}
-                      className="flex-1 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                      className="flex-1 rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
                     />
                   </div>
                 </div>
@@ -701,12 +701,12 @@ export default function NewSessionPage() {
                 {Number(form.price) > 0 && (
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+                      <label className="block text-sm font-medium text-[#4A4A5A] mb-3">
                         How will people pay? <span className="text-red-500">*</span>
                       </label>
                       <div className="space-y-3">
                         {/* PayNow option */}
-                        <label className="flex items-start gap-3 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors">
+                        <label className="flex items-start gap-3 rounded-xl border border-black/[0.06] p-4 cursor-pointer hover:border-black/[0.12] transition-colors">
                           <input
                             type="checkbox"
                             checked={form.acceptPayNow}
@@ -714,13 +714,13 @@ export default function NewSessionPage() {
                             className="mt-0.5 rounded"
                           />
                           <div>
-                            <p className="text-sm font-medium text-neutral-900 dark:text-white">PayNow (QR code)</p>
+                            <p className="text-sm font-medium text-[#1A1A1A]">PayNow (QR code)</p>
                             <p className="text-xs text-neutral-500 mt-0.5">Attendees scan your QR and upload proof. You verify manually.</p>
                           </div>
                         </label>
 
                         {/* Stripe option */}
-                        <label className="flex items-start gap-3 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 cursor-pointer hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors">
+                        <label className="flex items-start gap-3 rounded-xl border border-black/[0.06] p-4 cursor-pointer hover:border-black/[0.12] transition-colors">
                           <input
                             type="checkbox"
                             checked={form.acceptStripe}
@@ -728,7 +728,7 @@ export default function NewSessionPage() {
                             className="mt-0.5 rounded"
                           />
                           <div>
-                            <p className="text-sm font-medium text-neutral-900 dark:text-white">Stripe (card / online)</p>
+                            <p className="text-sm font-medium text-[#1A1A1A]">Stripe (card / online)</p>
                             <p className="text-xs text-neutral-500 mt-0.5">Instant card payments. Requires Stripe account connected.</p>
                           </div>
                         </label>
@@ -737,11 +737,11 @@ export default function NewSessionPage() {
 
                     {/* PayNow details — shown when PayNow selected */}
                     {form.acceptPayNow && (
-                      <div className="space-y-4 rounded-xl border border-neutral-200 dark:border-neutral-700 p-4">
-                        <p className="text-sm font-semibold text-neutral-900 dark:text-white">PayNow details</p>
+                      <div className="space-y-4 rounded-xl border border-black/[0.06] p-4">
+                        <p className="text-sm font-semibold text-[#1A1A1A]">PayNow details</p>
 
                         <div>
-                          <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2">
+                          <label className="block text-xs font-medium text-[#4A4A5A] mb-2">
                             Your name (shown to payers)
                           </label>
                           <input
@@ -749,12 +749,12 @@ export default function NewSessionPage() {
                             value={form.paynowName}
                             onChange={(e) => update('paynowName', e.target.value)}
                             placeholder="e.g. Reagan Kang"
-                            className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                            className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2">
+                          <label className="block text-xs font-medium text-[#4A4A5A] mb-2">
                             Phone number (optional)
                           </label>
                           <input
@@ -762,12 +762,12 @@ export default function NewSessionPage() {
                             value={form.paynowPhoneNumber}
                             onChange={(e) => update('paynowPhoneNumber', e.target.value)}
                             placeholder="e.g. +65 9123 4567"
-                            className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                            className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-2">
+                          <label className="block text-xs font-medium text-[#4A4A5A] mb-2">
                             PayNow QR code <span className="text-red-500">*</span>
                           </label>
                           {qrPreviewUrl || form.paynowQrImageUrl ? (
@@ -776,7 +776,7 @@ export default function NewSessionPage() {
                               <img
                                 src={qrPreviewUrl || form.paynowQrImageUrl}
                                 alt="PayNow QR"
-                                className="w-32 h-32 object-contain rounded-xl border border-neutral-200 dark:border-neutral-700"
+                                className="w-32 h-32 object-contain rounded-xl border border-black/[0.06]"
                               />
                               <button
                                 type="button"
@@ -796,7 +796,7 @@ export default function NewSessionPage() {
                             <button
                               type="button"
                               onClick={() => qrInputRef.current?.click()}
-                              className="flex items-center gap-2 rounded-xl border border-dashed border-neutral-300 dark:border-neutral-600 px-4 py-6 text-sm text-neutral-500 hover:border-neutral-500 dark:hover:border-neutral-400 transition-colors w-full justify-center"
+                              className="flex items-center gap-2 rounded-xl border border-dashed border-black/[0.12] px-4 py-6 text-sm text-neutral-500 hover:border-neutral-500  transition-colors w-full justify-center"
                             >
                               <Upload className="w-4 h-4" />
                               Upload QR image
@@ -821,8 +821,8 @@ export default function NewSessionPage() {
 
                     {/* Stripe warning/status */}
                     {form.acceptStripe && stripeConnected === false && (
-                      <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4">
-                        <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
+                      <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
+                        <p className="text-sm font-medium text-amber-800">
                           Connect Stripe to receive card payments
                         </p>
                         <a
@@ -835,8 +835,8 @@ export default function NewSessionPage() {
                     )}
 
                     {form.acceptStripe && stripeConnected === true && (
-                      <div className="rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-3">
-                        <p className="text-sm text-green-700 dark:text-green-400 flex items-center gap-2">
+                      <div className="rounded-xl bg-green-50 border border-green-200 p-3">
+                        <p className="text-sm text-green-700 flex items-center gap-2">
                           <span>✓</span> Stripe connected — card payments enabled
                         </p>
                       </div>
@@ -852,23 +852,23 @@ export default function NewSessionPage() {
         {step === 'preview' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Looks good?</h2>
+              <h2 className="text-xl font-bold text-[#1A1A1A]">Looks good?</h2>
               <p className="text-sm text-neutral-500 mt-1">Here&apos;s how your session will appear</p>
             </div>
 
-            <div className="rounded-2xl border border-neutral-200 dark:border-neutral-700 p-5 space-y-4">
+            <div className="rounded-2xl border border-black/[0.06] p-5 space-y-4">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="text-xs text-neutral-400 mb-1">
                     {ACTIVITY_TYPES.find((t) => t.slug === form.categorySlug)?.emoji}{' '}
                     {ACTIVITY_TYPES.find((t) => t.slug === form.categorySlug)?.label}
                   </div>
-                  <h3 className="text-base font-bold text-neutral-900 dark:text-white">{form.title}</h3>
+                  <h3 className="text-base font-bold text-[#1A1A1A]">{form.title}</h3>
                   {form.description && (
                     <p className="text-sm text-neutral-500 mt-1">{form.description}</p>
                   )}
                 </div>
-                <span className={`text-sm font-semibold ${Number(form.price) > 0 ? 'text-neutral-900 dark:text-white' : 'text-green-600'}`}>
+                <span className={`text-sm font-semibold ${Number(form.price) > 0 ? 'text-[#1A1A1A]' : 'text-green-600'}`}>
                   {Number(form.price) > 0 ? `${form.currency} ${form.price}` : 'Free'}
                 </span>
               </div>
@@ -924,7 +924,7 @@ export default function NewSessionPage() {
                 <button
                   key={link.target}
                   onClick={() => setStep(link.target)}
-                  className="w-full text-left text-sm text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 underline"
+                  className="w-full text-left text-sm text-neutral-400 hover:text-neutral-600 hover:text-[#4A4A5A] underline"
                 >
                   {link.label}
                 </button>
@@ -935,13 +935,13 @@ export default function NewSessionPage() {
       </div>
 
       {/* Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-neutral-950/90 backdrop-blur border-t border-neutral-100 dark:border-neutral-800 p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] md:pb-4 mb-[80px] md:mb-0">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur border-t border-black/[0.06] p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] md:pb-4 mb-[80px] md:mb-0">
         <div className="max-w-lg mx-auto">
           {step === 'preview' ? (
             <button
               onClick={handlePublish}
               disabled={saving}
-              className="w-full rounded-xl bg-black dark:bg-white px-4 py-4 text-sm font-semibold text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-100 disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+              className="w-full rounded-xl bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white hover:bg-black disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
             >
               {saving ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</>
@@ -952,7 +952,7 @@ export default function NewSessionPage() {
           ) : (
             <button
               onClick={step === 'details' ? goToPricing : nextStep}
-              className="w-full rounded-xl bg-black dark:bg-white px-4 py-4 text-sm font-semibold text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors"
+              className="w-full rounded-xl bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white hover:bg-black transition-colors"
             >
               Continue →
             </button>

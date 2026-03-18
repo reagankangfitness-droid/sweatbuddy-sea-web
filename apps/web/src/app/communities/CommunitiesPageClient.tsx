@@ -144,22 +144,9 @@ export default function CommunitiesPageClient({
   }, [filteredCommunities, featuredIds])
 
   return (
-    <div className="min-h-screen bg-neutral-950">
+    <div className="min-h-screen bg-[#FFFBF8]">
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-neutral-900 via-neutral-950 to-neutral-950">
-        {/* Dot pattern overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle, #ffffff 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
-          }}
-        />
-        {/* Gradient orbs */}
-        <div className="absolute top-20 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px]" />
-        <div className="absolute top-40 right-1/4 w-80 h-80 bg-purple-500/8 rounded-full blur-[100px]" />
-
+      <section className="relative overflow-hidden bg-[#FFFBF8]">
         <div className="relative max-w-6xl mx-auto px-4 pt-16 pb-12 md:pt-24 md:pb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -167,25 +154,25 @@ export default function CommunitiesPageClient({
             transition={{ duration: 0.5 }}
             className="text-center"
           >
-            <h1 className="text-3xl md:text-5xl font-bold text-neutral-100 mb-4">
+            <h1 className="text-3xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
               Find People Worth{' '}
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
                 Sweating With
               </span>
             </h1>
-            <p className="text-neutral-400 text-base md:text-lg max-w-xl mx-auto mb-8">
+            <p className="text-[#4A4A5A] text-base md:text-lg max-w-xl mx-auto mb-8">
               {subtitle}
             </p>
 
             {/* Search */}
             <div className="max-w-md mx-auto relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9A9AAA]" />
               <input
                 type="text"
                 placeholder="Search your people…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-neutral-900 border border-neutral-800 rounded-xl text-sm text-neutral-100 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-neutral-700 transition-all"
+                className="w-full pl-11 pr-4 py-3 bg-white border border-black/[0.06] rounded-xl text-sm text-[#1A1A1A] placeholder:text-[#9A9AAA] focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-black/[0.12] transition-all shadow-sm"
               />
             </div>
           </motion.div>
@@ -193,7 +180,7 @@ export default function CommunitiesPageClient({
       </section>
 
       {/* ── Filter Bar ───────────────────────────────────────── */}
-      <div className="sticky top-0 z-40 bg-neutral-950/80 backdrop-blur-xl border-b border-neutral-800/50">
+      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-black/[0.06]">
         <div className="max-w-6xl mx-auto px-4 py-3">
           <div className="relative">
             <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
@@ -205,8 +192,8 @@ export default function CommunitiesPageClient({
                 }}
                 className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
                   !categoryFilter && !cityFilter
-                    ? 'bg-white text-neutral-900 border-white'
-                    : 'bg-neutral-900 text-neutral-400 border-neutral-800 hover:border-neutral-600'
+                    ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
+                    : 'bg-white text-[#9A9AAA] border-black/[0.06] hover:border-black/[0.12]'
                 }`}
               >
                 All
@@ -224,8 +211,8 @@ export default function CommunitiesPageClient({
                   }}
                   className={`flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
                     categoryFilter === cat.slug
-                      ? 'bg-white text-neutral-900 border-white'
-                      : 'bg-neutral-900 text-neutral-400 border-neutral-800 hover:border-neutral-600'
+                      ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
+                      : 'bg-white text-[#9A9AAA] border-black/[0.06] hover:border-black/[0.12]'
                   }`}
                 >
                   <span>{cat.emoji}</span>
@@ -236,7 +223,7 @@ export default function CommunitiesPageClient({
               {/* City divider + pills */}
               {cities.length > 1 && (
                 <>
-                  <div className="flex-shrink-0 w-px h-5 bg-neutral-700 mx-1" />
+                  <div className="flex-shrink-0 w-px h-5 bg-black/[0.06] mx-1" />
                   {cities.map((city) => (
                     <button
                       key={city.slug}
@@ -248,8 +235,8 @@ export default function CommunitiesPageClient({
                       }}
                       className={`flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
                         cityFilter === city.slug
-                          ? 'bg-white text-neutral-900 border-white'
-                          : 'bg-neutral-900 text-neutral-400 border-neutral-800 hover:border-neutral-600'
+                          ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
+                          : 'bg-white text-[#9A9AAA] border-black/[0.06] hover:border-black/[0.12]'
                       }`}
                     >
                       <MapPin className="w-3.5 h-3.5" />
@@ -260,7 +247,7 @@ export default function CommunitiesPageClient({
               )}
             </div>
             {/* Scroll fade */}
-            <div className="absolute right-0 top-0 bottom-1 w-12 bg-gradient-to-l from-neutral-950/80 to-transparent pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-1 w-12 bg-gradient-to-l from-white/80 to-transparent pointer-events-none" />
           </div>
         </div>
       </div>
@@ -275,7 +262,7 @@ export default function CommunitiesPageClient({
           >
             <div className="flex items-center gap-2 mb-5">
               <Sparkles className="w-4 h-4 text-amber-400" />
-              <span className="text-sm font-semibold text-neutral-300 uppercase tracking-wide">
+              <span className="text-sm font-semibold text-[#4A4A5A] uppercase tracking-wide">
                 Featured
               </span>
             </div>
@@ -300,7 +287,7 @@ export default function CommunitiesPageClient({
                         className="w-full h-full flex items-center justify-center"
                         style={{
                           background: `linear-gradient(135deg, ${getCategoryColor(community.category)}40, ${getCategoryColor(community.category)}15)`,
-                          backgroundColor: '#171717',
+                          backgroundColor: '#f5f0eb',
                         }}
                       >
                         <span className="text-6xl md:text-7xl opacity-20 select-none">
@@ -384,15 +371,15 @@ export default function CommunitiesPageClient({
           ) : (
             /* ── Empty state ─── */
             <div className="text-center py-20">
-              <div className="w-14 h-14 rounded-2xl bg-neutral-900 flex items-center justify-center mx-auto mb-4">
-                <Users className="w-6 h-6 text-neutral-500" />
+              <div className="w-14 h-14 rounded-2xl bg-white border border-black/[0.06] flex items-center justify-center mx-auto mb-4 shadow-sm">
+                <Users className="w-6 h-6 text-[#9A9AAA]" />
               </div>
-              <h3 className="text-lg font-semibold text-neutral-200 mb-2">
+              <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">
                 {hasFilters
                   ? 'Nothing here yet. Try a different search.'
                   : 'No crews here yet. Be the first.'}
               </h3>
-              <p className="text-neutral-500 text-sm max-w-sm mx-auto">
+              <p className="text-[#9A9AAA] text-sm max-w-sm mx-auto">
                 {hasFilters
                   ? ''
                   : ''}
@@ -403,18 +390,7 @@ export default function CommunitiesPageClient({
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-t border-neutral-800/50">
-        {/* Background pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle, #ffffff 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
-          }}
-        />
-        <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-blue-500/8 rounded-full blur-[100px]" />
-
+      <section className="relative overflow-hidden border-t border-black/[0.06]">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -422,19 +398,19 @@ export default function CommunitiesPageClient({
           transition={{ duration: 0.6 }}
           className="relative max-w-2xl mx-auto px-4 py-16 md:py-24 text-center"
         >
-          <h2 className="text-2xl md:text-3xl font-bold text-neutral-100 mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-4">
             Ready to start{' '}
-            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
               something
             </span>
             ?
           </h2>
-          <p className="text-neutral-400 text-base md:text-lg mb-8 max-w-md mx-auto">
+          <p className="text-[#4A4A5A] text-base md:text-lg mb-8 max-w-md mx-auto">
             The best communities started with one person who said &apos;who&apos;s in?&apos;
           </p>
           <Link
             href="/host/community"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold hover:bg-neutral-200 transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-[#1A1A1A] text-white rounded-full font-semibold hover:bg-black transition-colors"
           >
             Start a crew
             <ArrowRight className="w-5 h-5" />
@@ -463,7 +439,7 @@ function CommunityCard({ community }: { community: CommunityData }) {
     >
       <Link
         href={`/communities/${community.slug}`}
-        className="group block bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden hover:border-neutral-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+        className="group block bg-white border border-black/[0.06] rounded-2xl overflow-hidden shadow-sm hover:border-black/[0.12] hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
       >
         {/* Cover */}
         <div className="relative h-40 overflow-hidden">
@@ -479,7 +455,7 @@ function CommunityCard({ community }: { community: CommunityData }) {
               className="w-full h-full flex items-center justify-center"
               style={{
                 background: `linear-gradient(135deg, ${categoryColor}40, ${categoryColor}15)`,
-                backgroundColor: '#171717',
+                backgroundColor: '#f5f0eb',
               }}
             >
               <span className="text-5xl opacity-20 select-none">
@@ -501,8 +477,8 @@ function CommunityCard({ community }: { community: CommunityData }) {
           {community.isVerified && (
             <div className="absolute top-3 right-3 z-10">
               <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-500/20 backdrop-blur-sm">
-                <CheckCircle2 className="w-3 h-3 text-blue-400" />
-                <span className="text-[10px] font-medium text-blue-300">
+                <CheckCircle2 className="w-3 h-3 text-blue-500" />
+                <span className="text-[10px] font-medium text-blue-600">
                   Verified
                 </span>
               </div>
@@ -515,7 +491,7 @@ function CommunityCard({ community }: { community: CommunityData }) {
           <div className="flex items-start gap-3">
             {/* Avatar overlapping cover */}
             <div
-              className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 -mt-9 bg-neutral-800 shadow-lg"
+              className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 -mt-9 bg-white shadow-lg"
               style={{
                 border: `2.5px solid ${categoryColor}`,
                 boxShadow: `0 0 12px ${categoryColor}22`,
@@ -538,16 +514,16 @@ function CommunityCard({ community }: { community: CommunityData }) {
                   className="object-cover w-full h-full"
                 />
               ) : (
-                <Users className="w-5 h-5 text-neutral-400" />
+                <Users className="w-5 h-5 text-[#9A9AAA]" />
               )}
             </div>
 
             <div className="flex-1 min-w-0 pt-1">
-              <h3 className="font-semibold text-neutral-100 truncate group-hover:text-blue-400 transition-colors">
+              <h3 className="font-semibold text-[#1A1A1A] truncate group-hover:text-blue-500 transition-colors">
                 {community.name}
               </h3>
               {community.cityName && (
-                <p className="text-sm text-neutral-500 flex items-center gap-1">
+                <p className="text-sm text-[#9A9AAA] flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5" />
                   {community.cityName}
                 </p>
@@ -556,7 +532,7 @@ function CommunityCard({ community }: { community: CommunityData }) {
           </div>
 
           {community.description && (
-            <p className="mt-3 text-sm text-neutral-400 line-clamp-2">
+            <p className="mt-3 text-sm text-[#4A4A5A] line-clamp-2">
               {community.description}
             </p>
           )}
@@ -570,7 +546,7 @@ function CommunityCard({ community }: { community: CommunityData }) {
                 size="xs"
               />
             )}
-            <div className="flex items-center gap-3 text-xs text-neutral-500">
+            <div className="flex items-center gap-3 text-xs text-[#9A9AAA]">
               <span className="flex items-center gap-1">
                 <Users className="w-3.5 h-3.5" />
                 {community.memberCount}
@@ -584,12 +560,12 @@ function CommunityCard({ community }: { community: CommunityData }) {
 
           {/* Next event teaser */}
           {community.nextEvent && (
-            <div className="mt-3 flex items-center gap-2 px-3 py-2 bg-neutral-800/50 rounded-lg border border-neutral-800">
-              <Calendar className="w-3.5 h-3.5 text-neutral-500 flex-shrink-0" />
-              <span className="text-xs text-neutral-400 truncate">
+            <div className="mt-3 flex items-center gap-2 px-3 py-2 bg-[#FFFBF8] rounded-lg border border-black/[0.06]">
+              <Calendar className="w-3.5 h-3.5 text-[#9A9AAA] flex-shrink-0" />
+              <span className="text-xs text-[#4A4A5A] truncate">
                 {community.nextEvent.title}
               </span>
-              <span className="text-xs text-neutral-500 flex-shrink-0 ml-auto">
+              <span className="text-xs text-[#9A9AAA] flex-shrink-0 ml-auto">
                 {formatEventDate(community.nextEvent.startTime)}
               </span>
             </div>

@@ -101,10 +101,10 @@ export default function ProfilePage() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-[#FFFBF8] flex items-center justify-center">
         <div className="animate-pulse">
-          <div className="w-20 h-20 bg-neutral-700 rounded-full mb-4" />
-          <div className="h-4 bg-neutral-700 rounded-lg w-32 mx-auto" />
+          <div className="w-20 h-20 bg-black/[0.06] rounded-full mb-4" />
+          <div className="h-4 bg-black/[0.06] rounded-lg w-32 mx-auto" />
         </div>
       </div>
     )
@@ -112,33 +112,33 @@ export default function ProfilePage() {
 
   if (!isSignedIn) {
     return (
-      <div className="min-h-screen bg-neutral-900">
-        <header className="fixed top-0 left-0 right-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
+      <div className="min-h-screen bg-[#FFFBF8]">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-lg border-b border-black/[0.06]">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="flex items-center gap-4 px-4 py-3">
               <Link
                 href="/"
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-[#FFFBF8] border border-black/[0.06]"
               >
-                <ArrowLeft className="w-5 h-5 text-neutral-300" />
+                <ArrowLeft className="w-5 h-5 text-[#4A4A5A]" />
               </Link>
-              <h1 className="text-lg font-semibold text-neutral-100">Profile</h1>
+              <h1 className="text-lg font-semibold text-[#1A1A1A]">Profile</h1>
             </div>
           </div>
         </header>
 
         <main className="pt-24 pb-24 px-4">
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-neutral-950 rounded-full border border-neutral-800 shadow-sm mb-6">
-              <User className="w-12 h-12 text-neutral-300" />
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-full border border-black/[0.06] shadow-sm mb-6">
+              <User className="w-12 h-12 text-[#9A9AAA]" />
             </div>
-            <h2 className="text-2xl font-bold text-neutral-100 mb-2">Join SweatBuddies</h2>
-            <p className="text-neutral-400 mb-8 max-w-xs mx-auto">
+            <h2 className="text-2xl font-bold text-[#1A1A1A] mb-2">Join SweatBuddies</h2>
+            <p className="text-[#9A9AAA] mb-8 max-w-xs mx-auto">
               Find your crew, show up, and never work out alone again.
             </p>
 
             <SignInButton mode="modal">
-              <button className="w-full max-w-xs bg-neutral-900 py-4 text-base font-semibold rounded-full shadow-md hover:bg-neutral-700 transition-colors text-white">
+              <button className="w-full max-w-xs bg-[#1A1A1A] py-4 text-base font-semibold rounded-full shadow-md hover:bg-black transition-colors text-white">
                 Sign In / Sign Up
               </button>
             </SignInButton>
@@ -152,14 +152,14 @@ export default function ProfilePage() {
 
   const isHost = profile?.isHost
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-[#FFFBF8]">
       {/* Content */}
       <main className="pt-6 pb-24 px-4 max-w-lg mx-auto" style={{ paddingTop: 'max(1.5rem, env(safe-area-inset-top))' }}>
         {/* Profile Card */}
-        <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 mb-8">
+        <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm p-4 mb-8">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-neutral-800 bg-neutral-800 flex-shrink-0">
+              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-black/[0.06] bg-[#FFFBF8] flex-shrink-0">
                 {user?.imageUrl ? (
                   <Image
                     src={user.imageUrl}
@@ -170,32 +170,32 @@ export default function ProfilePage() {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <User className="w-8 h-8 text-neutral-400" />
+                    <User className="w-8 h-8 text-[#9A9AAA]" />
                   </div>
                 )}
               </div>
               {isHost && (
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center border-2 border-neutral-700">
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center border-2 border-white">
                   <BadgeCheck className="w-3.5 h-3.5 text-white" />
                 </div>
               )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-semibold text-neutral-100 truncate">
+                <h2 className="text-lg font-semibold text-[#1A1A1A] truncate">
                   {user?.fullName || user?.firstName || 'SweatBuddy'}
                 </h2>
                 {isHost && (
-                  <span className="px-2 py-0.5 bg-amber-900 text-amber-400 text-xs font-medium rounded-full">
+                  <span className="px-2 py-0.5 bg-amber-50 text-amber-600 text-xs font-medium rounded-full">
                     Host
                   </span>
                 )}
               </div>
-              <p className="text-sm text-neutral-500 truncate">
+              <p className="text-sm text-[#9A9AAA] truncate">
                 {user?.primaryEmailAddress?.emailAddress}
               </p>
               {profile?.fitnessLevel && (
-                <p className="text-xs text-neutral-400 mt-0.5 capitalize">
+                <p className="text-xs text-[#9A9AAA] mt-0.5 capitalize">
                   {profile.fitnessLevel.toLowerCase().replace('_', ' ')}
                 </p>
               )}
@@ -204,7 +204,7 @@ export default function ProfilePage() {
 
           {/* Bio */}
           {profile?.bio && (
-            <p className="mt-4 text-sm text-neutral-400 leading-relaxed border-t border-neutral-800 pt-4">
+            <p className="mt-4 text-sm text-[#4A4A5A] leading-relaxed border-t border-black/[0.06] pt-4">
               {profile.bio}
             </p>
           )}
@@ -215,7 +215,7 @@ export default function ProfilePage() {
               {profile.fitnessInterests.map((interest) => (
                 <span
                   key={interest}
-                  className="px-2.5 py-1 bg-neutral-800 text-neutral-300 text-xs rounded-full capitalize"
+                  className="px-2.5 py-1 bg-[#FFFBF8] text-[#4A4A5A] text-xs rounded-full capitalize"
                 >
                   {interest}
                 </span>
@@ -227,111 +227,111 @@ export default function ProfilePage() {
         {/* Stats */}
         {profile && (
           <div className="grid grid-cols-2 gap-3 mb-8">
-            <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 text-center">
-              <p className="text-2xl font-bold text-neutral-100">{profile.sessionsAttendedCount}</p>
-              <p className="text-xs text-neutral-500 mt-0.5">Sessions Attended</p>
+            <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm p-4 text-center">
+              <p className="text-2xl font-bold text-[#1A1A1A]">{profile.sessionsAttendedCount}</p>
+              <p className="text-xs text-[#9A9AAA] mt-0.5">Sessions Attended</p>
             </div>
-            <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4 text-center">
-              <p className="text-2xl font-bold text-neutral-100">{profile.sessionsHostedCount}</p>
-              <p className="text-xs text-neutral-500 mt-0.5">Sessions Hosted</p>
+            <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm p-4 text-center">
+              <p className="text-2xl font-bold text-[#1A1A1A]">{profile.sessionsHostedCount}</p>
+              <p className="text-xs text-[#9A9AAA] mt-0.5">Sessions Hosted</p>
             </div>
           </div>
         )}
 
         {/* My Activity Section */}
         <div className="mb-8">
-          <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider px-1 mb-2">
+          <h3 className="text-xs font-semibold text-[#9A9AAA] uppercase tracking-wider px-1 mb-2">
             My Activity
           </h3>
-          <div className="bg-neutral-950 rounded-2xl border border-neutral-800 overflow-hidden">
+          <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm overflow-hidden">
             <Link
               href="/host/dashboard"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-black/[0.06] hover:bg-[#FFFBF8] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-amber-900 rounded-lg flex items-center justify-center">
-                  <LayoutDashboard className="w-4 h-4 text-amber-400" />
+                <div className="w-9 h-9 bg-amber-50 rounded-lg flex items-center justify-center">
+                  <LayoutDashboard className="w-4 h-4 text-amber-500" />
                 </div>
                 <div>
-                  <span className="text-neutral-200 text-sm font-medium">Host Dashboard</span>
-                  <p className="text-xs text-neutral-500">Manage sessions & attendees</p>
+                  <span className="text-[#1A1A1A] text-sm font-medium">Host Dashboard</span>
+                  <p className="text-xs text-[#9A9AAA]">Manage sessions & attendees</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-neutral-300" />
+              <ChevronRight className="w-5 h-5 text-[#9A9AAA]" />
             </Link>
 
             <Link
               href="/communities?joined=true"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-black/[0.06] hover:bg-[#FFFBF8] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
-                  <Users className="w-4 h-4 text-neutral-400" />
+                <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">
+                  <Users className="w-4 h-4 text-[#9A9AAA]" />
                 </div>
                 <div>
-                  <span className="text-neutral-200 text-sm font-medium">My Crews</span>
-                  <p className="text-xs text-neutral-500">Your people</p>
+                  <span className="text-[#1A1A1A] text-sm font-medium">My Crews</span>
+                  <p className="text-xs text-[#9A9AAA]">Your people</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-neutral-300" />
+              <ChevronRight className="w-5 h-5 text-[#9A9AAA]" />
             </Link>
 
             <Link
               href="/buddy?tab=mine"
-              className="flex items-center justify-between px-4 py-3.5 hover:bg-neutral-900 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 hover:bg-[#FFFBF8] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
-                  <CalendarDays className="w-4 h-4 text-neutral-400" />
+                <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">
+                  <CalendarDays className="w-4 h-4 text-[#9A9AAA]" />
                 </div>
                 <div>
-                  <span className="text-neutral-200 text-sm font-medium">My Sessions</span>
-                  <p className="text-xs text-neutral-500">Sessions you&apos;re hosting or attending</p>
+                  <span className="text-[#1A1A1A] text-sm font-medium">My Sessions</span>
+                  <p className="text-xs text-[#9A9AAA]">Sessions you&apos;re hosting or attending</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-neutral-300" />
+              <ChevronRight className="w-5 h-5 text-[#9A9AAA]" />
             </Link>
           </div>
         </div>
 
         {/* Account Section */}
         <div className="mb-8">
-          <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider px-1 mb-2">
+          <h3 className="text-xs font-semibold text-[#9A9AAA] uppercase tracking-wider px-1 mb-2">
             Account
           </h3>
-          <div className="bg-neutral-950 rounded-2xl border border-neutral-800 overflow-hidden">
+          <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm overflow-hidden">
             <Link
               href="/settings/profile"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-black/[0.06] hover:bg-[#FFFBF8] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
-                  <Settings className="w-4 h-4 text-neutral-400" />
+                <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">
+                  <Settings className="w-4 h-4 text-[#9A9AAA]" />
                 </div>
-                <span className="text-neutral-200 text-sm font-medium">Settings</span>
+                <span className="text-[#1A1A1A] text-sm font-medium">Settings</span>
               </div>
-              <ChevronRight className="w-5 h-5 text-neutral-300" />
+              <ChevronRight className="w-5 h-5 text-[#9A9AAA]" />
             </Link>
 
             <Link
               href="/support"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-neutral-800 hover:bg-neutral-900 transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-black/[0.06] hover:bg-[#FFFBF8] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
-                  <HelpCircle className="w-4 h-4 text-neutral-400" />
+                <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">
+                  <HelpCircle className="w-4 h-4 text-[#9A9AAA]" />
                 </div>
-                <span className="text-neutral-200 text-sm font-medium">Help & Support</span>
+                <span className="text-[#1A1A1A] text-sm font-medium">Help & Support</span>
               </div>
-              <ChevronRight className="w-5 h-5 text-neutral-300" />
+              <ChevronRight className="w-5 h-5 text-[#9A9AAA]" />
             </Link>
 
             <button
               onClick={() => signOut(() => router.push('/'))}
-              className="w-full flex items-center px-4 py-3.5 text-neutral-400 hover:bg-neutral-900 transition-colors"
+              className="w-full flex items-center px-4 py-3.5 text-[#9A9AAA] hover:bg-[#FFFBF8] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-neutral-800 rounded-lg flex items-center justify-center">
+                <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">
                   <LogOut className="w-4 h-4" />
                 </div>
                 <span className="text-sm font-medium">Sign Out</span>

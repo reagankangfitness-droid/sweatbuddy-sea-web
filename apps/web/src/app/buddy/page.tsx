@@ -120,7 +120,7 @@ const TYPE_FILTERS = [
 
 export default function BuddyPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-neutral-400" /></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-[#9A9AAA]" /></div>}>
       <BuddyPageInner />
     </Suspense>
   )
@@ -323,7 +323,7 @@ function BuddyPageInner() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950">
+    <div className="min-h-screen bg-[#FFFBF8]">
       {/* Payment Modal */}
       {paymentModalSession && (
         <PaymentModal
@@ -347,10 +347,10 @@ function BuddyPageInner() {
       )}
 
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white/90 dark:bg-neutral-950/90 backdrop-blur border-b border-neutral-100 dark:border-neutral-800">
+      <div className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-black/[0.06]">
         <div className="max-w-2xl mx-auto px-4 py-4">
-          <h1 className="text-lg font-bold text-neutral-900 dark:text-white">Experiences</h1>
-          <p className="text-xs text-neutral-500">Discover fitness &amp; wellness experiences</p>
+          <h1 className="text-lg font-bold text-[#1A1A1A]">Experiences</h1>
+          <p className="text-xs text-[#9A9AAA]">Discover fitness &amp; wellness experiences</p>
         </div>
 
         {/* Tabs */}
@@ -368,10 +368,10 @@ function BuddyPageInner() {
                 aria-selected={tab === t.key}
                 aria-controls={`tabpanel-${t.key}`}
                 onClick={() => router.push(href, { scroll: false })}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   tab === t.key
-                    ? 'bg-black dark:bg-white text-white dark:text-black'
-                    : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'
+                    ? 'bg-[#1A1A1A] text-white'
+                    : 'text-[#9A9AAA] hover:text-[#4A4A5A]'
                 }`}
               >
                 {t.icon && <t.icon className="w-3.5 h-3.5" />}
@@ -386,7 +386,7 @@ function BuddyPageInner() {
       {tab === 'map' && (
         <div id="tabpanel-map" role="tabpanel" aria-labelledby="tabpanel-map" className="relative" style={{ height: 'calc(100dvh - 128px)' }}>
           {!GOOGLE_MAPS_API_KEY || !mapsLoaded ? (
-            <div className="flex flex-col items-center justify-center h-full gap-3 text-neutral-500">
+            <div className="flex flex-col items-center justify-center h-full gap-3 text-[#9A9AAA]">
               {!GOOGLE_MAPS_API_KEY ? (
                 <p className="text-sm">Maps not configured.</p>
               ) : (
@@ -438,12 +438,12 @@ function BuddyPageInner() {
               {/* Loading / count badge */}
               <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
                 {mapLoading ? (
-                  <div className="bg-neutral-900/80 backdrop-blur border border-neutral-700/60 px-3 py-1.5 rounded-full flex items-center gap-2">
-                    <Loader2 className="w-3.5 h-3.5 animate-spin text-neutral-400" />
-                    <span className="text-xs text-neutral-400">Loading…</span>
+                  <div className="bg-white/80 backdrop-blur border border-black/[0.06] px-3 py-1.5 rounded-full flex items-center gap-2">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-[#9A9AAA]" />
+                    <span className="text-xs text-[#9A9AAA]">Loading…</span>
                   </div>
                 ) : (
-                  <div className="bg-neutral-900/80 backdrop-blur border border-neutral-700/60 text-neutral-300 text-xs font-medium px-3 py-1.5 rounded-full">
+                  <div className="bg-white/80 backdrop-blur border border-black/[0.06] text-[#4A4A5A] text-xs font-medium px-3 py-1.5 rounded-full">
                     {mapSessions.length === 0 ? 'No sessions nearby' : `${mapSessions.length} session${mapSessions.length !== 1 ? 's' : ''} nearby`}
                   </div>
                 )}
@@ -456,10 +456,10 @@ function BuddyPageInner() {
                   mapRef.current.panTo(userLocation ?? SINGAPORE_CENTER)
                   mapRef.current.setZoom(12)
                 }}
-                className="absolute bottom-24 right-4 z-10 w-11 h-11 rounded-full bg-neutral-900/95 backdrop-blur border border-neutral-700 flex items-center justify-center shadow-lg"
+                className="absolute bottom-24 right-4 z-10 w-11 h-11 rounded-full bg-white/95 backdrop-blur border border-black/[0.06] flex items-center justify-center shadow-lg"
                 aria-label="Recenter"
               >
-                <Crosshair className="w-5 h-5 text-neutral-300" />
+                <Crosshair className="w-5 h-5 text-[#4A4A5A]" />
               </button>
 
               {/* Session detail sheet */}
@@ -477,28 +477,28 @@ function BuddyPageInner() {
                     dragElastic={0.1}
                     onDragEnd={(_, info) => { if (info.offset.y > 80) setMapSelected(null) }}
                   >
-                    <div className="bg-neutral-950 border-t border-neutral-800 rounded-t-2xl shadow-2xl">
+                    <div className="bg-white border-t border-black/[0.06] rounded-t-2xl shadow-2xl">
                       <div className="flex justify-center pt-3 pb-1">
-                        <div className="w-10 h-1 rounded-full bg-neutral-700" />
+                        <div className="w-10 h-1 rounded-full bg-black/[0.06]" />
                       </div>
                       <div className="px-4 pb-6 pt-2">
                         <div className="flex items-start justify-between gap-3 mb-3">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               <span className="text-xl">{pinEmoji(mapSelected.categorySlug)}</span>
-                              <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${mapSelected.price === 0 ? 'bg-emerald-500/15 text-emerald-400' : 'bg-neutral-800 text-neutral-200'}`}>
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${mapSelected.price === 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-[#FFFBF8] text-[#1A1A1A]'}`}>
                                 {mapSelected.price === 0 ? 'FREE' : `$${mapSelected.price}`}
                               </span>
                             </div>
-                            <Link href={`/activities/${mapSelected.id}`} className="text-base font-bold text-neutral-100 leading-snug line-clamp-2 block">
+                            <Link href={`/activities/${mapSelected.id}`} className="text-base font-bold text-[#1A1A1A] leading-snug line-clamp-2 block">
                               {mapSelected.title}
                             </Link>
                           </div>
-                          <button onClick={() => setMapSelected(null)} aria-label="Close session details" className="w-8 h-8 rounded-full bg-neutral-800 flex items-center justify-center flex-shrink-0">
-                            <X className="w-4 h-4 text-neutral-400" />
+                          <button onClick={() => setMapSelected(null)} aria-label="Close session details" className="w-8 h-8 rounded-full bg-[#FFFBF8] flex items-center justify-center flex-shrink-0">
+                            <X className="w-4 h-4 text-[#9A9AAA]" />
                           </button>
                         </div>
-                        <div className="flex flex-col gap-1.5 text-sm text-neutral-400 mb-4">
+                        <div className="flex flex-col gap-1.5 text-sm text-[#9A9AAA] mb-4">
                           {mapSelected.startTime && (
                             <div className="flex items-center gap-2">
                               <Clock className="w-3.5 h-3.5" />
@@ -514,7 +514,7 @@ function BuddyPageInner() {
                             {mapSelected.attendeeCount} going{mapSelected.maxPeople ? ` · ${mapSelected.maxPeople - mapSelected.attendeeCount} spots left` : ''}
                           </div>
                         </div>
-                        <Link href={`/activities/${mapSelected.id}`} className="block w-full py-3.5 rounded-xl bg-white text-neutral-900 text-sm font-bold text-center hover:bg-neutral-100 transition-colors">
+                        <Link href={`/activities/${mapSelected.id}`} className="block w-full py-3.5 rounded-full bg-[#1A1A1A] text-white text-sm font-bold text-center hover:bg-black transition-colors">
                           {mapSelected.requiresApproval ? 'Request to join →' : "I'm going →"}
                         </Link>
                       </div>
@@ -536,7 +536,7 @@ function BuddyPageInner() {
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
               aria-label="Filter by activity type"
-              className="shrink-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-2.5 text-xs text-neutral-700 dark:text-neutral-300 focus:outline-none"
+              className="shrink-0 rounded-full border border-black/[0.06] bg-white px-4 py-2.5 text-xs text-[#4A4A5A] focus:outline-none"
             >
               {TYPE_FILTERS.map((f) => (
                 <option key={f.value} value={f.value}>
@@ -549,7 +549,7 @@ function BuddyPageInner() {
               value={fitnessFilter}
               onChange={(e) => setFitnessFilter(e.target.value)}
               aria-label="Filter by fitness level"
-              className="shrink-0 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-2.5 text-xs text-neutral-700 dark:text-neutral-300 focus:outline-none"
+              className="shrink-0 rounded-full border border-black/[0.06] bg-white px-4 py-2.5 text-xs text-[#4A4A5A] focus:outline-none"
             >
               {FITNESS_FILTERS.map((f) => (
                 <option key={f.value} value={f.value}>
@@ -566,10 +566,10 @@ function BuddyPageInner() {
               <button
                 key={f.value}
                 onClick={() => setPricingFilter(f.value)}
-                className={`shrink-0 rounded-xl border px-4 py-2.5 text-xs font-medium transition-colors ${
+                className={`shrink-0 rounded-full border px-4 py-2.5 text-xs font-medium transition-colors ${
                   pricingFilter === f.value
-                    ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
-                    : 'border-neutral-200 text-neutral-600 hover:border-neutral-400 dark:border-neutral-700 dark:text-neutral-400'
+                    ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
+                    : 'border-black/[0.06] text-[#4A4A5A] hover:border-black/[0.12]'
                 }`}
               >
                 {f.label}
@@ -579,10 +579,10 @@ function BuddyPageInner() {
             {/* Verified hosts filter — hidden for now
             <button
               onClick={() => setVerifiedFilter((v) => !v)}
-              className={`shrink-0 rounded-xl border px-4 py-2.5 text-xs font-medium transition-colors ${
+              className={`shrink-0 rounded-full border px-4 py-2.5 text-xs font-medium transition-colors ${
                 verifiedFilter
-                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-500 dark:border-emerald-400 dark:text-emerald-400'
-                  : 'border-neutral-200 text-neutral-600 hover:border-neutral-400 dark:border-neutral-700 dark:text-neutral-400'
+                  ? 'border-emerald-500 bg-emerald-50 text-emerald-600'
+                  : 'border-black/[0.06] text-[#4A4A5A] hover:border-black/[0.12]'
               }`}
             >
               ✓ Verified hosts
@@ -594,18 +594,18 @@ function BuddyPageInner() {
         {/* Content */}
         {loading ? (
           <div className="flex justify-center py-20">
-            <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
+            <Loader2 className="w-6 h-6 animate-spin text-[#9A9AAA]" />
           </div>
         ) : tab === 'happening' ? (
           <>
             {sessions.length === 0 ? (
               <div className="text-center py-20">
                 <div className="text-5xl mb-4">🏋️</div>
-                <p className="text-neutral-500 font-medium">Nothing happening nearby — yet.</p>
-                <p className="text-neutral-400 text-sm mt-1">Check back soon, or start something.</p>
+                <p className="text-[#4A4A5A] font-medium">Nothing happening nearby — yet.</p>
+                <p className="text-[#9A9AAA] text-sm mt-1">Check back soon, or start something.</p>
                 <Link
                   href="/buddy/host/new"
-                  className="inline-flex items-center gap-2 mt-6 rounded-xl bg-black dark:bg-white px-5 py-3 text-sm font-semibold text-white dark:text-black"
+                  className="inline-flex items-center gap-2 mt-6 rounded-full bg-[#1A1A1A] px-5 py-3 text-sm font-semibold text-white hover:bg-black"
                 >
                   <Plus className="w-4 h-4" />
                   Create a Session
@@ -627,7 +627,7 @@ function BuddyPageInner() {
                   <button
                     onClick={() => fetchSessions(nextCursor)}
                     disabled={loadingMore}
-                    className="w-full py-3 text-sm text-neutral-500 hover:text-neutral-700 flex items-center justify-center gap-2"
+                    className="w-full py-3 text-sm text-[#9A9AAA] hover:text-[#4A4A5A] flex items-center justify-center gap-2"
                   >
                     {loadingMore ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -646,7 +646,7 @@ function BuddyPageInner() {
             {pendingPaymentsCount > 0 && (
               <Link
                 href="/buddy/payments"
-                className="flex items-center justify-between rounded-xl bg-amber-500/10 border border-amber-500/30 px-4 py-3 text-sm font-medium text-amber-400 hover:bg-amber-500/20 transition-colors"
+                className="flex items-center justify-between rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm font-medium text-amber-700 hover:bg-amber-100 transition-colors"
               >
                 <span>
                   ⏳ {pendingPaymentsCount} payment{pendingPaymentsCount !== 1 ? 's' : ''} waiting for verification
@@ -658,7 +658,7 @@ function BuddyPageInner() {
             {/* Hosting */}
             {hosting.length > 0 && (
               <div>
-                <h2 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">
+                <h2 className="text-xs font-semibold text-[#9A9AAA] uppercase tracking-wider mb-3">
                   Hosting
                 </h2>
                 <div className="space-y-3">
@@ -680,7 +680,7 @@ function BuddyPageInner() {
             {/* Attending */}
             {attending.length > 0 && (
               <div>
-                <h2 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">
+                <h2 className="text-xs font-semibold text-[#9A9AAA] uppercase tracking-wider mb-3">
                   Attending
                 </h2>
                 <div className="space-y-3">
@@ -701,18 +701,18 @@ function BuddyPageInner() {
             {hosting.length === 0 && attending.length === 0 && (
               <div className="text-center py-20">
                 <div className="text-5xl mb-4">👀</div>
-                <p className="text-neutral-500 font-medium">No sessions yet.</p>
-                <p className="text-neutral-400 text-sm mt-1">Join a community and you&apos;ll never have an empty week.</p>
+                <p className="text-[#4A4A5A] font-medium">No sessions yet.</p>
+                <p className="text-[#9A9AAA] text-sm mt-1">Join a community and you&apos;ll never have an empty week.</p>
                 <div className="flex gap-3 justify-center mt-6">
                   <Link
                     href="/buddy/host/new"
-                    className="rounded-xl bg-black dark:bg-white px-5 py-3 text-sm font-semibold text-white dark:text-black"
+                    className="rounded-full bg-[#1A1A1A] px-5 py-3 text-sm font-semibold text-white hover:bg-black"
                   >
                     Create a Session
                   </Link>
                   <button
                     onClick={() => setTab('happening')}
-                    className="rounded-xl border border-neutral-200 dark:border-neutral-700 px-5 py-3 text-sm font-semibold text-neutral-700 dark:text-neutral-300"
+                    className="rounded-full border border-black/[0.08] bg-white px-5 py-3 text-sm font-semibold text-[#1A1A1A]"
                   >
                     Browse Sessions
                   </button>
@@ -751,7 +751,7 @@ function SessionCard({
   return (
     <Link
       href={`/activities/${session.id}`}
-      className="block rounded-2xl border border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden hover:border-neutral-300 dark:hover:border-neutral-600 transition-colors"
+      className="block rounded-2xl border border-black/[0.06] bg-white overflow-hidden shadow-sm hover:border-black/[0.12] transition-colors"
     >
       <div className="p-4">
         <div className="flex items-start gap-3">
@@ -770,7 +770,7 @@ function SessionCard({
                 <Image src={hostAvatar} alt={displayName} width={40} height={40} className="rounded-full object-cover" />
               )
               return (
-                <div className="w-10 h-10 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-sm font-bold text-neutral-600 dark:text-neutral-300">
+                <div className="w-10 h-10 rounded-full bg-[#FFFBF8] flex items-center justify-center text-sm font-bold text-[#4A4A5A]">
                   {displayName[0]}
                 </div>
               )
@@ -782,36 +782,36 @@ function SessionCard({
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-medium text-neutral-400">
+                  <span className="text-xs font-medium text-[#9A9AAA]">
                     {session.community?.name ? `by ${session.community.name}` : `${session.host?.name ?? 'Someone'}\u2019s session`}
                   </span>
                   {session.host?.isCoach && session.host?.coachVerificationStatus === 'VERIFIED' && (
                     <span className="inline-flex items-center gap-0.5 text-xs font-medium text-emerald-500">✓ PRO</span>
                   )}
                   {isHosting && (
-                    <span className="text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full font-medium">
+                    <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-medium">
                       Hosting
                     </span>
                   )}
                   {isJoined && !isHosting && (
-                    <span className="text-xs bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full font-medium">
+                    <span className="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-full font-medium">
                       Going
                     </span>
                   )}
                   {isPast && (
-                    <span className="text-xs bg-neutral-100 dark:bg-neutral-800 text-neutral-500 px-2 py-0.5 rounded-full">
+                    <span className="text-xs bg-[#FFFBF8] text-[#9A9AAA] px-2 py-0.5 rounded-full">
                       Past
                     </span>
                   )}
                 </div>
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-white mt-0.5 truncate">
+                <h3 className="text-sm font-semibold text-[#1A1A1A] mt-0.5 truncate">
                   {session.title}
                 </h3>
               </div>
               <div className="shrink-0 text-right">
                 <span
                   className={`text-sm font-semibold ${
-                    isPaid ? 'text-neutral-900 dark:text-white' : 'text-green-600 dark:text-green-400'
+                    isPaid ? 'text-[#1A1A1A]' : 'text-green-600'
                   }`}
                 >
                   {priceDisplay}
@@ -820,7 +820,7 @@ function SessionCard({
             </div>
 
             {/* Meta row */}
-            <div className="flex items-center gap-3 mt-2 text-xs text-neutral-400 flex-wrap">
+            <div className="flex items-center gap-3 mt-2 text-xs text-[#9A9AAA] flex-wrap">
               {session.startTime && (
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
@@ -839,7 +839,7 @@ function SessionCard({
                 {session.maxPeople ? `/${session.maxPeople}` : ''} going
               </span>
               {session.fitnessLevel && (
-                <span className="capitalize text-neutral-300 dark:text-neutral-600">
+                <span className="capitalize text-[#9A9AAA]">
                   {session.fitnessLevel.toLowerCase()}
                 </span>
               )}
@@ -863,12 +863,12 @@ function SessionCard({
                         alt={a.name ?? ''}
                         width={20}
                         height={20}
-                        className="rounded-full ring-1 ring-white dark:ring-neutral-900 object-cover"
+                        className="rounded-full ring-1 ring-white object-cover"
                       />
                     ) : (
                       <div
                         key={a.id}
-                        className="w-5 h-5 rounded-full ring-1 ring-white dark:ring-neutral-900 bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-[9px] font-medium text-neutral-500"
+                        className="w-5 h-5 rounded-full ring-1 ring-white bg-[#FFFBF8] flex items-center justify-center text-[9px] font-medium text-[#9A9AAA]"
                       >
                         {(a.name ?? '?')[0]}
                       </div>
@@ -876,30 +876,30 @@ function SessionCard({
                   )}
                 </div>
                 {session.attendees.length > 5 && (
-                  <span className="text-xs text-neutral-400">+{session.attendees.length - 5}</span>
+                  <span className="text-xs text-[#9A9AAA]">+{session.attendees.length - 5}</span>
                 )}
               </div>
             )}
           </div>
 
-          <ChevronRight className="w-4 h-4 text-neutral-300 dark:text-neutral-600 shrink-0 mt-1" />
+          <ChevronRight className="w-4 h-4 text-[#9A9AAA] shrink-0 mt-1" />
         </div>
 
         {/* Action buttons */}
         {!isPast && !isHost && (
-          <div className="mt-3 pt-3 border-t border-neutral-50 dark:border-neutral-800">
+          <div className="mt-3 pt-3 border-t border-black/[0.06]">
             {isJoined ? (
               <button
                 onClick={(e) => {
                   e.preventDefault()
                   onLeave(session.id)
                 }}
-                className="text-xs text-neutral-400 hover:text-red-500 transition-colors"
+                className="text-xs text-[#9A9AAA] hover:text-red-500 transition-colors"
               >
                 Leave session
               </button>
             ) : session.isFull ? (
-              <span className="text-xs text-neutral-400">Session full</span>
+              <span className="text-xs text-[#9A9AAA]">Session full</span>
             ) : (
               <button
                 onClick={(e) => {
@@ -907,7 +907,7 @@ function SessionCard({
                   onJoin(session.id)
                 }}
                 disabled={joiningId === session.id}
-                className="flex items-center gap-1.5 rounded-lg bg-black dark:bg-white px-3 py-1.5 text-xs font-semibold text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-100 disabled:opacity-50 transition-colors"
+                className="flex items-center gap-1.5 rounded-full bg-[#1A1A1A] px-3 py-1.5 text-xs font-semibold text-white hover:bg-black disabled:opacity-50 transition-colors"
               >
                 {joiningId === session.id ? (
                   <Loader2 className="w-3 h-3 animate-spin" />

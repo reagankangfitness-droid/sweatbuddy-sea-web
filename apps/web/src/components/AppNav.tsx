@@ -79,7 +79,7 @@ function AppNavInner() {
           initial={false}
           animate={{ opacity: isHovered ? 0 : 1 }}
           transition={{ duration: 0.15 }}
-          className="absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center py-6 bg-neutral-950/80 backdrop-blur-sm border-r border-neutral-800/50"
+          className="absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center py-6 bg-white/80 backdrop-blur-sm border-r border-black/[0.06]"
         >
           <div className="mb-6">
             <Logo size={24} />
@@ -92,7 +92,7 @@ function AppNavInner() {
                 <div
                   key={item.id}
                   className={`relative w-8 h-8 rounded-lg flex items-center justify-center ${
-                    active ? 'bg-white text-neutral-900' : 'text-neutral-400'
+                    active ? 'bg-[#1A1A1A] text-white' : 'text-[#9A9AAA]'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -105,7 +105,7 @@ function AppNavInner() {
               )
             })}
           </div>
-          <div className="mt-auto flex items-center justify-center text-neutral-300">
+          <div className="mt-auto flex items-center justify-center text-[#9A9AAA]">
             <ChevronRight className="w-4 h-4 animate-pulse" />
           </div>
         </motion.div>
@@ -120,7 +120,7 @@ function AppNavInner() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -80, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-              className="absolute left-0 top-0 bottom-0 w-20 flex flex-col items-center py-6 bg-neutral-950/95 backdrop-blur-lg border-r border-neutral-800 shadow-xl"
+              className="absolute left-0 top-0 bottom-0 w-20 flex flex-col items-center py-6 bg-white/95 backdrop-blur-lg border-r border-black/[0.06] shadow-xl"
             >
               <Link href="/" className="mb-8" title="Home">
                 <Logo size={32} />
@@ -140,15 +140,15 @@ function AppNavInner() {
                         relative flex flex-col items-center justify-center
                         w-14 h-14 rounded-xl transition-all duration-200
                         ${active
-                          ? 'text-neutral-100 bg-neutral-800'
-                          : 'text-neutral-400 hover:text-neutral-400 hover:bg-neutral-900'
+                          ? 'text-[#1A1A1A] bg-[#FFFBF8]'
+                          : 'text-[#9A9AAA] hover:text-[#4A4A5A] hover:bg-[#FFFBF8]'
                         }
                       `}
                     >
                       {active && (
                         <motion.div
                           layoutId="desktopSidebarIndicator"
-                          className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full"
+                          className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#1A1A1A] rounded-r-full"
                           transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                         />
                       )}
@@ -164,11 +164,11 @@ function AppNavInner() {
                 })}
               </div>
 
-              {/* Host CTA → P2P session creation */}
+              {/* Host CTA */}
               <Link
                 href="/buddy/host/new"
                 aria-label="Create a session"
-                className="flex items-center justify-center w-12 h-12 rounded-xl bg-white text-neutral-900 hover:bg-neutral-200 transition-colors mb-3"
+                className="flex items-center justify-center w-12 h-12 rounded-xl bg-[#1A1A1A] text-white hover:bg-black transition-colors mb-3"
               >
                 <Plus className="w-5 h-5" />
               </Link>
@@ -178,7 +178,7 @@ function AppNavInner() {
                 {isSignedIn && user ? (
                   <Link
                     href="/profile"
-                    className="block w-10 h-10 rounded-full overflow-hidden border-2 border-neutral-800 hover:border-neutral-600 transition-colors"
+                    className="block w-10 h-10 rounded-full overflow-hidden border-2 border-black/[0.06] hover:border-black/[0.12] transition-colors"
                   >
                     {user.imageUrl ? (
                       <Image
@@ -189,15 +189,15 @@ function AppNavInner() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-neutral-700 flex items-center justify-center">
-                        <User className="w-5 h-5 text-neutral-500" />
+                      <div className="w-full h-full bg-[#FFFBF8] flex items-center justify-center">
+                        <User className="w-5 h-5 text-[#9A9AAA]" />
                       </div>
                     )}
                   </Link>
                 ) : (
                   <Link
                     href="/sign-in"
-                    className="flex items-center justify-center w-10 h-10 rounded-full bg-white text-neutral-900 hover:opacity-90 transition-opacity"
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-[#1A1A1A] text-white hover:opacity-90 transition-opacity"
                     title="Sign In"
                   >
                     <User className="w-5 h-5" />
@@ -216,7 +216,7 @@ function AppNavInner() {
           aria-label="Main navigation"
           className="fixed bottom-0 left-0 right-0 z-50"
         >
-          <div className="absolute inset-0 bg-neutral-950/95 backdrop-blur-lg border-t border-neutral-800" />
+          <div className="absolute inset-0 bg-white/95 backdrop-blur-lg border-t border-black/[0.06]" />
           <div className="relative flex items-center justify-around px-2 pt-2 pb-[env(safe-area-inset-bottom,8px)]">
             {navItems.map((item) => {
               const active = isActive(item)
@@ -230,8 +230,8 @@ function AppNavInner() {
                   className={`
                     flex flex-col items-center justify-center w-14 h-14
                     transition-all duration-200 relative
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 rounded-lg
-                    ${active ? 'text-neutral-100' : 'text-neutral-400 active:scale-95'}
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1A1A1A] focus-visible:ring-offset-2 rounded-lg
+                    ${active ? 'text-[#1A1A1A]' : 'text-[#9A9AAA] active:scale-95'}
                   `}
                 >
                   <span className="relative">
@@ -246,7 +246,7 @@ function AppNavInner() {
                   {active && (
                     <motion.div
                       layoutId="mobileActiveIndicator"
-                      className="absolute bottom-1 w-4 h-1 bg-white rounded-full"
+                      className="absolute bottom-1 w-4 h-1 bg-[#1A1A1A] rounded-full"
                       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                     />
                   )}
@@ -260,8 +260,8 @@ function AppNavInner() {
               aria-label="Create a session"
               className="flex flex-col items-center justify-center w-14 h-14"
             >
-              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                <Plus className="w-5 h-5 text-neutral-900" />
+              <div className="w-10 h-10 rounded-full bg-[#1A1A1A] flex items-center justify-center">
+                <Plus className="w-5 h-5 text-white" />
               </div>
             </Link>
           </div>

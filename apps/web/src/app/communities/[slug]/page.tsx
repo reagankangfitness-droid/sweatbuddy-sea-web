@@ -221,19 +221,19 @@ export default async function CommunityPage({ params }: Props) {
   const isAdmin = membership?.role === 'ADMIN' || isOwner
 
   return (
-    <div className="min-h-screen bg-neutral-950">
+    <div className="min-h-screen bg-[#FFFBF8]">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-800">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-black/[0.06]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link
               href="/communities"
-              className="flex items-center gap-2 text-neutral-400 hover:text-neutral-100 transition-colors"
+              className="flex items-center gap-2 text-[#9A9AAA] hover:text-[#1A1A1A] transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span className="font-medium">Communities</span>
             </Link>
-            <Link href="/" className="font-sans font-bold text-xl text-neutral-100">
+            <Link href="/" className="font-sans font-bold text-xl text-[#1A1A1A]">
               sweatbuddies
             </Link>
             <ShareButton />
@@ -243,7 +243,7 @@ export default async function CommunityPage({ params }: Props) {
 
       {/* Community Info */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <div className="bg-neutral-950 rounded-2xl shadow-lg p-6">
+        <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm p-6">
           <div className="flex flex-col sm:flex-row sm:items-start gap-4">
             {/* Profile Circle */}
             <div
@@ -282,7 +282,7 @@ export default async function CommunityPage({ params }: Props) {
                   className="w-full h-full flex items-center justify-center"
                   style={{
                     background: `linear-gradient(135deg, ${getCategoryColor(community.category)}40, ${getCategoryColor(community.category)}15)`,
-                    backgroundColor: '#262626',
+                    backgroundColor: '#f5f0eb',
                   }}
                 >
                   <span className="text-3xl select-none">
@@ -295,7 +295,7 @@ export default async function CommunityPage({ params }: Props) {
             {/* Info */}
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl sm:text-3xl font-bold text-neutral-100">
+                <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">
                   {community.name}
                 </h1>
                 {community.isVerified && (
@@ -303,7 +303,7 @@ export default async function CommunityPage({ params }: Props) {
                 )}
               </div>
 
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-neutral-500">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-[#9A9AAA]">
                 {community.city && (
                   <span className="flex items-center gap-1">
                     <MapPin className="w-4 h-4" />
@@ -327,7 +327,7 @@ export default async function CommunityPage({ params }: Props) {
                     href={`https://instagram.com/${community.instagramHandle}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-neutral-400 hover:text-pink-500 transition-colors"
+                    className="text-[#9A9AAA] hover:text-pink-500 transition-colors"
                   >
                     <Instagram className="w-5 h-5" />
                   </a>
@@ -337,7 +337,7 @@ export default async function CommunityPage({ params }: Props) {
                     href={community.websiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-neutral-400 hover:text-blue-500 transition-colors"
+                    className="text-[#9A9AAA] hover:text-blue-500 transition-colors"
                   >
                     <Globe className="w-5 h-5" />
                   </a>
@@ -347,7 +347,7 @@ export default async function CommunityPage({ params }: Props) {
                     href={community.communityLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-neutral-400 hover:text-green-500 transition-colors"
+                    className="text-[#9A9AAA] hover:text-green-500 transition-colors"
                   >
                     <MessageCircle className="w-5 h-5" />
                   </a>
@@ -383,7 +383,7 @@ export default async function CommunityPage({ params }: Props) {
 
           {/* Description */}
           {community.description && (
-            <p className="mt-6 text-neutral-400 whitespace-pre-line">
+            <p className="mt-6 text-[#4A4A5A] whitespace-pre-line">
               {community.description}
             </p>
           )}
@@ -396,7 +396,7 @@ export default async function CommunityPage({ params }: Props) {
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
           <div className="flex items-center gap-2 mb-4">
             <Megaphone className="w-5 h-5 text-amber-400" />
-            <h2 className="text-xl font-semibold text-neutral-100">From the crew</h2>
+            <h2 className="text-xl font-semibold text-[#1A1A1A]">From the crew</h2>
           </div>
 
           {announcements.length > 0 ? (
@@ -404,10 +404,10 @@ export default async function CommunityPage({ params }: Props) {
               {announcements.map((announcement) => (
                 <div
                   key={announcement.id}
-                  className="bg-neutral-900 border border-neutral-800 rounded-xl p-4"
+                  className="bg-white border border-black/[0.06] shadow-sm rounded-xl p-4"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-neutral-700 overflow-hidden flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full bg-[#FFFBF8] overflow-hidden flex-shrink-0">
                       {announcement.sender.imageUrl ? (
                         <Image
                           src={announcement.sender.imageUrl}
@@ -418,29 +418,29 @@ export default async function CommunityPage({ params }: Props) {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Users className="w-4 h-4 text-neutral-400" />
+                          <Users className="w-4 h-4 text-[#9A9AAA]" />
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-medium text-neutral-200">
+                        <span className="text-sm font-medium text-[#1A1A1A]">
                           {announcement.sender.name || 'Member'}
                         </span>
-                        <span className="text-xs text-neutral-500">
+                        <span className="text-xs text-[#9A9AAA]">
                           {new Date(announcement.createdAt).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',
                           })}
                         </span>
                         {announcement.isPinned && (
-                          <span className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 bg-amber-900/50 text-amber-400 rounded">
+                          <span className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 bg-amber-50 text-amber-600 rounded">
                             <Pin className="w-3 h-3" />
                             Pinned
                           </span>
                         )}
                       </div>
-                      <p className="mt-1 text-sm text-neutral-400 whitespace-pre-line">
+                      <p className="mt-1 text-sm text-[#4A4A5A] whitespace-pre-line">
                         {announcement.content}
                       </p>
                     </div>
@@ -450,9 +450,9 @@ export default async function CommunityPage({ params }: Props) {
             </div>
           ) : (
             isAdmin && (
-              <div className="text-center py-8 bg-neutral-900 rounded-xl">
-                <Megaphone className="w-8 h-8 text-neutral-600 mx-auto mb-2" />
-                <p className="text-neutral-500 text-sm">Quiet for now.</p>
+              <div className="text-center py-8 bg-white border border-black/[0.06] shadow-sm rounded-xl">
+                <Megaphone className="w-8 h-8 text-[#9A9AAA] mx-auto mb-2" />
+                <p className="text-[#9A9AAA] text-sm">Quiet for now.</p>
               </div>
             )
           )}
@@ -462,7 +462,7 @@ export default async function CommunityPage({ params }: Props) {
       {/* Upcoming Events */}
       <section id="upcoming-events" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-neutral-100">What&apos;s next</h2>
+          <h2 className="text-xl font-semibold text-[#1A1A1A]">What&apos;s next</h2>
         </div>
 
         {allUpcomingEvents.length > 0 ? (
@@ -471,34 +471,34 @@ export default async function CommunityPage({ params }: Props) {
               <Link
                 key={`${event.source}-${event.id}`}
                 href={event.href}
-                className="group block bg-neutral-950 border border-neutral-800 rounded-xl p-4 hover:shadow-md transition-shadow"
+                className="group block bg-white border border-black/[0.06] shadow-sm rounded-xl p-4 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-14 h-14 rounded-lg bg-neutral-800 flex flex-col items-center justify-center flex-shrink-0">
-                    <span className="text-xs text-neutral-500">
+                  <div className="w-14 h-14 rounded-lg bg-[#FFFBF8] flex flex-col items-center justify-center flex-shrink-0">
+                    <span className="text-xs text-[#9A9AAA]">
                       {event.date ? new Date(event.date).toLocaleDateString('en-US', { month: 'short' }) : 'TBD'}
                     </span>
-                    <span className="text-lg font-bold text-neutral-100">
+                    <span className="text-lg font-bold text-[#1A1A1A]">
                       {event.date ? new Date(event.date).getDate() : '--'}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-neutral-100 group-hover:text-blue-600 transition-colors truncate">
+                    <h3 className="font-medium text-[#1A1A1A] group-hover:text-blue-600 transition-colors truncate">
                       {event.title}
                     </h3>
                     {event.time && (
-                      <p className="text-sm text-neutral-500 mt-0.5">
+                      <p className="text-sm text-[#9A9AAA] mt-0.5">
                         {event.time}
                       </p>
                     )}
                     {event.location && (
-                      <p className="text-sm text-neutral-400 mt-0.5 flex items-center gap-1 min-w-0">
+                      <p className="text-sm text-[#4A4A5A] mt-0.5 flex items-center gap-1 min-w-0">
                         <MapPin className="w-3 h-3 flex-shrink-0" />
                         <span className="truncate">{event.location}</span>
                       </p>
                     )}
                     {event.attendeeCount !== undefined && (
-                      <div className="flex items-center gap-2 mt-2 text-xs text-neutral-400">
+                      <div className="flex items-center gap-2 mt-2 text-xs text-[#9A9AAA]">
                         <Users className="w-3.5 h-3.5" />
                         {event.attendeeCount} going
                       </div>
@@ -509,9 +509,9 @@ export default async function CommunityPage({ params }: Props) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 bg-neutral-900 rounded-xl">
-            <Calendar className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
-            <p className="text-neutral-400">Nothing scheduled yet.</p>
+          <div className="text-center py-12 bg-white border border-black/[0.06] shadow-sm rounded-xl">
+            <Calendar className="w-10 h-10 text-[#9A9AAA] mx-auto mb-3" />
+            <p className="text-[#4A4A5A]">Nothing scheduled yet.</p>
           </div>
         )}
       </section>
@@ -519,8 +519,8 @@ export default async function CommunityPage({ params }: Props) {
       {/* Members */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-neutral-100">The crew</h2>
-          <span className="text-sm text-neutral-500">
+          <h2 className="text-xl font-semibold text-[#1A1A1A]">The crew</h2>
+          <span className="text-sm text-[#9A9AAA]">
             {community._count.members} total
           </span>
         </div>
@@ -530,9 +530,9 @@ export default async function CommunityPage({ params }: Props) {
             <Link
               key={member.id}
               href={`/user/${member.user.id}`}
-              className="group flex items-center gap-2 px-3 py-2 bg-neutral-900 hover:bg-neutral-800 rounded-full transition-colors"
+              className="group flex items-center gap-2 px-3 py-2 bg-white border border-black/[0.06] shadow-sm hover:bg-[#FFFBF8] rounded-full transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-neutral-700 overflow-hidden">
+              <div className="w-8 h-8 rounded-full bg-[#FFFBF8] overflow-hidden">
                 {member.user.imageUrl ? (
                   <Image
                     src={member.user.imageUrl}
@@ -543,25 +543,25 @@ export default async function CommunityPage({ params }: Props) {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Users className="w-4 h-4 text-neutral-400" />
+                    <Users className="w-4 h-4 text-[#9A9AAA]" />
                   </div>
                 )}
               </div>
-              <span className="text-sm font-medium text-neutral-300 group-hover:text-neutral-100">
+              <span className="text-sm font-medium text-[#4A4A5A] group-hover:text-[#1A1A1A]">
                 {member.user.name?.split(' ')[0] || 'Member'}
               </span>
               {member.role === 'OWNER' && (
-                <span className="text-xs px-1.5 py-0.5 bg-amber-900 text-amber-400 rounded">Host</span>
+                <span className="text-xs px-1.5 py-0.5 bg-amber-50 text-amber-600 rounded">Host</span>
               )}
               {member.role === 'ADMIN' && (
-                <span className="text-xs px-1.5 py-0.5 bg-blue-900 text-blue-400 rounded">Admin</span>
+                <span className="text-xs px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded">Admin</span>
               )}
             </Link>
           ))}
         </div>
 
         {community._count.members > 12 && (
-          <p className="mt-4 text-sm text-neutral-500">
+          <p className="mt-4 text-sm text-[#9A9AAA]">
             +{community._count.members - 12} more members
           </p>
         )}
@@ -570,7 +570,7 @@ export default async function CommunityPage({ params }: Props) {
       {/* Community creator */}
       {community.createdBy && (
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-          <div className="flex items-center gap-2 text-sm text-neutral-500">
+          <div className="flex items-center gap-2 text-sm text-[#9A9AAA]">
             {community.createdBy.imageUrl && (
               <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0">
                 <Image
@@ -584,7 +584,7 @@ export default async function CommunityPage({ params }: Props) {
             )}
             <span>
               Started by{' '}
-              <span className="text-neutral-400 font-medium">
+              <span className="text-[#4A4A5A] font-medium">
                 {community.createdBy.name || community.createdBy.username}
               </span>
               {community.createdBy.isVerified && (

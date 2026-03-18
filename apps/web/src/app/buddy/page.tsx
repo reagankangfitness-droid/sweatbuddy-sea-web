@@ -55,6 +55,7 @@ interface Session {
   attendeeCount: number
   isFull: boolean
   userStatus: string | null
+  isFeatured?: boolean
   acceptPayNow?: boolean
   acceptStripe?: boolean
   paynowQrImageUrl?: string | null
@@ -299,6 +300,23 @@ function BuddyPageInner() {
         return
       }
       toast.success("You're in!")
+      setTimeout(() => {
+        toast('Know someone who\'d enjoy this?', {
+          action: {
+            label: 'Share',
+            onClick: () => {
+              const url = `${window.location.origin}/activities/${sessionId}`
+              if (navigator.share) {
+                navigator.share({ title: 'Check this out on SweatBuddies', url })
+              } else {
+                navigator.clipboard.writeText(url)
+                toast.success('Link copied!')
+              }
+            },
+          },
+          duration: 5000,
+        })
+      }, 1500)
       fetchSessions()
     } catch {
       toast.error('Something went wrong')
@@ -785,6 +803,11 @@ function SessionCard({
                   <span className="text-xs font-medium text-[#9A9AAA]">
                     {session.community?.name ? `by ${session.community.name}` : `${session.host?.name ?? 'Someone'}\u2019s session`}
                   </span>
+                  {session.isFeatured && (
+                    <span className="text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-semibold">
+                      ⭐ Featured
+                    </span>
+                  )}
                   {session.host?.isCoach && session.host?.coachVerificationStatus === 'VERIFIED' && (
                     <span className="inline-flex items-center gap-0.5 text-xs font-medium text-emerald-500">✓ PRO</span>
                   )}
@@ -833,11 +856,32 @@ function SessionCard({
                   {session.city}
                 </span>
               )}
-              <span className="flex items-center gap-1">
-                <Users className="w-3 h-3" />
-                {session.attendeeCount}
-                {session.maxPeople ? `/${session.maxPeople}` : ''} going
-              </span>
+              {(() => {
+                if (session.maxPeople) {
+                  const spotsLeft = session.maxPeople - session.attendeeCount
+                  if (spotsLeft <= 0) {
+                    return (
+                      <span className="bg-red-50 text-red-600 text-xs font-medium px-2 py-0.5 rounded-full">
+                        Full
+                      </span>
+                    )
+                  }
+                  if (spotsLeft <= Math.ceil(session.maxPeople * 0.3)) {
+                    return (
+                      <span className="bg-amber-50 text-amber-600 text-xs font-medium px-2 py-0.5 rounded-full">
+                        {spotsLeft} spot{spotsLeft !== 1 ? 's' : ''} left
+                      </span>
+                    )
+                  }
+                }
+                return (
+                  <span className="flex items-center gap-1">
+                    <Users className="w-3 h-3" />
+                    {session.attendeeCount}
+                    {session.maxPeople ? `/${session.maxPeople}` : ''} going
+                  </span>
+                )
+              })()}
               {session.fitnessLevel && (
                 <span className="capitalize text-[#9A9AAA]">
                   {session.fitnessLevel.toLowerCase()}

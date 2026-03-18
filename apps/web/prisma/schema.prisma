@@ -327,6 +327,7 @@ model Activity {
   fitnessLevel     String? // 'ALL' | 'INTERMEDIATE_PLUS' | 'ADVANCED'
   whatToBring      String?
   requiresApproval Boolean @default(false)
+  isFeatured       Boolean @default(false)
 
   // P2P Payment method fields
   acceptPayNow      Boolean @default(false)

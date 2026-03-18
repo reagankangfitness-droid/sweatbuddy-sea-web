@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { Compass, Users, User, ChevronRight, Plus } from 'lucide-react'
+import { Compass, User, ChevronRight, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -12,8 +12,7 @@ import Image from 'next/image'
 // mobileOnly: true = show in mobile bottom nav only (not desktop sidebar)
 const navItems = [
   { id: 'discover', label: 'Discover', icon: Compass, href: '/buddy', mobileOnly: false },
-  { id: 'communities', label: 'Communities', icon: Users, href: '/communities', mobileOnly: false },
-  { id: 'profile', label: 'Profile', icon: User, href: '/profile', mobileOnly: true },
+  { id: 'profile', label: 'Profile', icon: User, href: '/profile', mobileOnly: false },
 ]
 
 // Wrap export in Suspense boundary for client-side navigation hooks
@@ -57,9 +56,6 @@ function AppNavInner() {
   function isActive(item: typeof navItems[0]) {
     if (item.id === 'discover') {
       return pathname.startsWith('/buddy')
-    }
-    if (item.id === 'communities') {
-      return pathname.startsWith('/communities')
     }
     return pathname.startsWith(item.href)
   }

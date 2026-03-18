@@ -128,7 +128,10 @@ export async function GET(request: Request) {
           select: { id: true, name: true, logoImage: true, slug: true },
         },
       },
-      orderBy: { startTime: 'asc' },
+      orderBy: [
+        { isFeatured: 'desc' },
+        { startTime: 'asc' },
+      ],
       take: PAGE_SIZE + 1,
     })
 
@@ -180,6 +183,7 @@ function formatSession(activity: ReturnType<typeof Object.assign>, userStatus?: 
     attendees: attendees.map((ua: Record<string, unknown>) => ua.user),
     attendeeCount: attendees.length,
     isFull,
+    isFeatured: activity.isFeatured ?? false,
     userStatus: userStatus ?? null,
   }
 }

@@ -18,7 +18,7 @@ export function StickyBottomBar({ children, show = true, maxWidth = '2xl' }: Sti
   if (!show) return null
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-neutral-950 border-t border-neutral-800 p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px)+4rem)] z-30">
+    <div className="fixed bottom-0 left-0 right-0 bg-[#FFFBF8] border-t border-black/[0.06] p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px)+4rem)] z-30">
       <div className={`${maxWidthClasses[maxWidth]} mx-auto`}>
         {children}
       </div>

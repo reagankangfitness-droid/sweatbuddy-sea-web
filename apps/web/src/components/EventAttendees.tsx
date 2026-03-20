@@ -56,7 +56,7 @@ export function EventAttendees({ eventId, refreshTrigger = 0 }: EventAttendeesPr
   return (
     <div>
       {/* Section Header */}
-      <h3 className="text-sm font-semibold text-neutral-100 mb-3 flex items-center gap-2">
+      <h3 className="text-sm font-semibold text-[#1A1A1A] mb-3 flex items-center gap-2">
         <span className="text-base">👥</span> Who&apos;s Going
       </h3>
 
@@ -66,7 +66,7 @@ export function EventAttendees({ eventId, refreshTrigger = 0 }: EventAttendeesPr
           {displayedAttendees.map((attendee, index) => (
             <div
               key={attendee.id}
-              className="relative w-9 h-9 rounded-full border-2 border-neutral-700 shadow-sm transition-transform hover:scale-110 hover:z-20 overflow-hidden"
+              className="relative w-9 h-9 rounded-full border-2 border-black/[0.06] shadow-sm transition-transform hover:scale-110 hover:z-20 overflow-hidden"
               style={{ zIndex: maxDisplay - index }}
               title={attendee.name}
             >
@@ -91,7 +91,7 @@ export function EventAttendees({ eventId, refreshTrigger = 0 }: EventAttendeesPr
 
           {surplus > 0 && (
             <div
-              className="w-9 h-9 rounded-full border-2 border-neutral-700 bg-neutral-800 text-neutral-400 flex items-center justify-center text-xs font-semibold shadow-sm"
+              className="w-9 h-9 rounded-full border-2 border-black/[0.06] bg-neutral-100 text-[#71717A] flex items-center justify-center text-xs font-semibold shadow-sm"
               style={{ zIndex: 0 }}
               title={`${surplus} more people`}
             >
@@ -101,8 +101,8 @@ export function EventAttendees({ eventId, refreshTrigger = 0 }: EventAttendeesPr
         </div>
 
         {/* Count text */}
-        <div className="flex items-center gap-1.5 text-neutral-400">
-          <Users className="w-4 h-4 text-neutral-400" />
+        <div className="flex items-center gap-1.5 text-[#71717A]">
+          <Users className="w-4 h-4 text-[#71717A]" />
           <span className="text-sm font-medium">
             {count} {count === 1 ? 'person' : 'people'} going
           </span>
@@ -151,7 +151,7 @@ export function EventAttendeesCompact({ eventId, refreshTrigger = 0 }: EventAtte
         {displayedAttendees.map((attendee, index) => (
           <div
             key={attendee.id}
-            className="relative w-6 h-6 rounded-full border-2 border-neutral-700 shadow-sm overflow-hidden"
+            className="relative w-6 h-6 rounded-full border-2 border-black/[0.06] shadow-sm overflow-hidden"
             style={{ zIndex: 10 - index }}
             title={attendee.name}
           >
@@ -176,7 +176,7 @@ export function EventAttendeesCompact({ eventId, refreshTrigger = 0 }: EventAtte
 
         {surplus > 0 && (
           <div
-            className="w-6 h-6 rounded-full border-2 border-neutral-700 bg-neutral-800 text-neutral-500 flex items-center justify-center text-[10px] font-medium shadow-sm"
+            className="w-6 h-6 rounded-full border-2 border-black/[0.06] bg-neutral-100 text-[#71717A] flex items-center justify-center text-[10px] font-medium shadow-sm"
             style={{ zIndex: 0 }}
           >
             +{surplus}
@@ -184,7 +184,7 @@ export function EventAttendeesCompact({ eventId, refreshTrigger = 0 }: EventAtte
         )}
       </div>
 
-      <span className="text-xs text-neutral-500 font-medium">
+      <span className="text-xs text-[#71717A] font-medium">
         {count === 1 ? '1 person going' : `${count} people going`}
       </span>
     </div>

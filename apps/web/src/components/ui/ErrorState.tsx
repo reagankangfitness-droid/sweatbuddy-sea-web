@@ -19,8 +19,8 @@ export function ErrorState({
   return (
     <div className={cn('flex flex-col items-center text-center py-16 px-6', className)}>
       <div className="text-5xl mb-4 opacity-50">⚠️</div>
-      <h3 className="text-lg font-semibold text-neutral-100 mb-2">{title}</h3>
-      <p className="text-sm text-neutral-500 max-w-xs leading-relaxed mb-6">{description}</p>
+      <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">{title}</h3>
+      <p className="text-sm text-[#71717A] max-w-xs leading-relaxed mb-6">{description}</p>
       {action && (
         <button
           onClick={action.onClick}

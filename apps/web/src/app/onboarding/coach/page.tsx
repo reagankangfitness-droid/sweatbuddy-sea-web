@@ -209,20 +209,20 @@ export default function CoachOnboardingPage() {
   // Success screen
   if (submitted) {
     return (
-      <div className="min-h-screen bg-white dark:bg-neutral-950 flex items-center justify-center">
+      <div className="min-h-screen bg-white dark:bg-[#FFFBF8] flex items-center justify-center">
         <div className="max-w-md mx-auto px-4 text-center">
           <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto mb-6">
             <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
           </div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-3">
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-[#1A1A1A] mb-3">
             Application submitted!
           </h1>
-          <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-8">
+          <p className="text-neutral-500 dark:text-[#71717A] text-sm mb-8">
             We&apos;ll review your application within 48 hours. You&apos;ll receive an email once your coach profile is approved.
           </p>
           <button
             onClick={() => router.push('/buddy')}
-            className="rounded-xl bg-black dark:bg-white px-6 py-3 text-sm font-semibold text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors"
+            className="rounded-xl bg-black dark:bg-[#1A1A1A] px-6 py-3 text-sm font-semibold text-white dark:text-white hover:bg-neutral-800 dark:hover:bg-neutral-50 transition-colors"
           >
             Go to homepage
           </button>
@@ -232,7 +232,7 @@ export default function CoachOnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950">
+    <div className="min-h-screen bg-white dark:bg-[#FFFBF8]">
       <div className="max-w-lg mx-auto px-4 py-12">
         {/* Progress bar */}
         <div className="flex items-center gap-2 mb-8">
@@ -241,8 +241,8 @@ export default function CoachOnboardingPage() {
               key={i}
               className={`h-1.5 flex-1 rounded-full transition-colors ${
                 i < step
-                  ? 'bg-black dark:bg-white'
-                  : 'bg-neutral-200 dark:bg-neutral-700'
+                  ? 'bg-black dark:bg-[#1A1A1A]'
+                  : 'bg-neutral-200 dark:bg-neutral-200'
               }`}
             />
           ))}
@@ -251,17 +251,17 @@ export default function CoachOnboardingPage() {
         {/* Step 1: About you */}
         {step === 1 && (
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
+            <h1 className="text-2xl font-bold text-neutral-900 dark:text-[#1A1A1A] mb-1">
               About you
             </h1>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-8">
+            <p className="text-sm text-neutral-500 dark:text-[#71717A] mb-8">
               Tell us about your coaching background.
             </p>
 
             <div className="space-y-6">
               {/* Coach type */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-[#4A4A5A] mb-3">
                   Coach type <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -274,8 +274,8 @@ export default function CoachOnboardingPage() {
                         onClick={() => updateField('coachType', type.key)}
                         className={`flex flex-col items-center gap-1 rounded-xl border p-3 text-xs font-medium transition-all ${
                           selected
-                            ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
-                            : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300'
+                            ? 'border-black bg-black text-white dark:border-[#1A1A1A] dark:bg-[#1A1A1A] dark:text-white'
+                            : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 dark:border-black/[0.06] dark:bg-[#1A1A1A] dark:text-[#4A4A5A]'
                         }`}
                       >
                         <span className="text-xl">{type.emoji}</span>
@@ -288,7 +288,7 @@ export default function CoachOnboardingPage() {
 
               {/* Display name */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-[#4A4A5A] mb-2">
                   Display name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -296,13 +296,13 @@ export default function CoachOnboardingPage() {
                   value={form.displayName}
                   onChange={(e) => updateField('displayName', e.target.value)}
                   placeholder="Your name"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-neutral-900 dark:text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
                 />
               </div>
 
               {/* Bio */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-[#4A4A5A] mb-2">
                   Short bio <span className="text-red-500">*</span>
                 </label>
                 <textarea
@@ -311,14 +311,14 @@ export default function CoachOnboardingPage() {
                   placeholder="e.g. Certified personal trainer with 5 years of experience. Specializing in strength and conditioning."
                   maxLength={500}
                   rows={4}
-                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white resize-none"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-neutral-900 dark:text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20 resize-none"
                 />
                 <p className="mt-1 text-xs text-neutral-400 text-right">{form.bio.length}/500</p>
               </div>
 
               {/* Years of experience */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-[#4A4A5A] mb-2">
                   Years of experience <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -328,13 +328,13 @@ export default function CoachOnboardingPage() {
                   value={form.yearsExperience}
                   onChange={(e) => updateField('yearsExperience', e.target.value)}
                   placeholder="e.g. 5"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-neutral-900 dark:text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
                 />
               </div>
 
               {/* Languages */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-[#4A4A5A] mb-3">
                   Languages <span className="text-red-500">*</span>
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -347,8 +347,8 @@ export default function CoachOnboardingPage() {
                         onClick={() => toggleArrayField('languages', lang)}
                         className={`rounded-full px-4 py-2 text-xs font-medium border transition-all ${
                           selected
-                            ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
-                            : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300'
+                            ? 'border-black bg-black text-white dark:border-[#1A1A1A] dark:bg-[#1A1A1A] dark:text-white'
+                            : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 dark:border-black/[0.06] dark:bg-[#1A1A1A] dark:text-[#4A4A5A]'
                         }`}
                       >
                         {lang}
@@ -364,17 +364,17 @@ export default function CoachOnboardingPage() {
         {/* Step 2: What you offer */}
         {step === 2 && (
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
+            <h1 className="text-2xl font-bold text-neutral-900 dark:text-[#1A1A1A] mb-1">
               What you offer
             </h1>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-8">
+            <p className="text-sm text-neutral-500 dark:text-[#71717A] mb-8">
               Help students find the right coach.
             </p>
 
             <div className="space-y-6">
               {/* Specializations */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-[#4A4A5A] mb-3">
                   Specializations <span className="text-red-500">*</span>
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -387,8 +387,8 @@ export default function CoachOnboardingPage() {
                         onClick={() => toggleArrayField('specializations', spec)}
                         className={`rounded-full px-4 py-2 text-xs font-medium border transition-all ${
                           selected
-                            ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
-                            : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300'
+                            ? 'border-black bg-black text-white dark:border-[#1A1A1A] dark:bg-[#1A1A1A] dark:text-white'
+                            : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 dark:border-black/[0.06] dark:bg-[#1A1A1A] dark:text-[#4A4A5A]'
                         }`}
                       >
                         {spec}
@@ -400,7 +400,7 @@ export default function CoachOnboardingPage() {
 
               {/* Activities */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-[#4A4A5A] mb-3">
                   Sports / activities you coach <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -413,8 +413,8 @@ export default function CoachOnboardingPage() {
                         onClick={() => toggleArrayField('activities', activity.key)}
                         className={`flex flex-col items-center gap-1 rounded-xl border p-3 text-xs font-medium transition-all ${
                           selected
-                            ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
-                            : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300'
+                            ? 'border-black bg-black text-white dark:border-[#1A1A1A] dark:bg-[#1A1A1A] dark:text-white'
+                            : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 dark:border-black/[0.06] dark:bg-[#1A1A1A] dark:text-[#4A4A5A]'
                         }`}
                       >
                         <span className="text-xl">{activity.emoji}</span>
@@ -427,7 +427,7 @@ export default function CoachOnboardingPage() {
 
               {/* Goals */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-[#4A4A5A] mb-3">
                   Goals you help with <span className="text-red-500">*</span>
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -440,8 +440,8 @@ export default function CoachOnboardingPage() {
                         onClick={() => toggleArrayField('goals', goal)}
                         className={`rounded-full px-4 py-2 text-xs font-medium border transition-all ${
                           selected
-                            ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
-                            : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300'
+                            ? 'border-black bg-black text-white dark:border-[#1A1A1A] dark:bg-[#1A1A1A] dark:text-white'
+                            : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 dark:border-black/[0.06] dark:bg-[#1A1A1A] dark:text-[#4A4A5A]'
                         }`}
                       >
                         {goal}
@@ -457,17 +457,17 @@ export default function CoachOnboardingPage() {
         {/* Step 3: Pricing & location */}
         {step === 3 && (
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
+            <h1 className="text-2xl font-bold text-neutral-900 dark:text-[#1A1A1A] mb-1">
               Pricing &amp; location
             </h1>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-8">
+            <p className="text-sm text-neutral-500 dark:text-[#71717A] mb-8">
               Set your rates and where you coach.
             </p>
 
             <div className="space-y-6">
               {/* Session price */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-[#4A4A5A] mb-2">
                   Group session price (SGD per person) <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -477,13 +477,13 @@ export default function CoachOnboardingPage() {
                   value={form.sessionPrice}
                   onChange={(e) => updateField('sessionPrice', e.target.value)}
                   placeholder="e.g. 25"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-neutral-900 dark:text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
                 />
               </div>
 
               {/* Private session price */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-[#4A4A5A] mb-2">
                   Private session price (SGD, 1-on-1) <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -493,13 +493,13 @@ export default function CoachOnboardingPage() {
                   value={form.privateSessionPrice}
                   onChange={(e) => updateField('privateSessionPrice', e.target.value)}
                   placeholder="e.g. 80"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-neutral-900 dark:text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
                 />
               </div>
 
               {/* Free trial toggle */}
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                <label className="text-sm font-medium text-neutral-700 dark:text-[#4A4A5A]">
                   Offer free trial session?
                 </label>
                 <button
@@ -507,12 +507,12 @@ export default function CoachOnboardingPage() {
                   onClick={() => updateField('freeTrialOffered', !form.freeTrialOffered)}
                   className={`relative w-12 h-7 rounded-full transition-colors ${
                     form.freeTrialOffered
-                      ? 'bg-black dark:bg-white'
-                      : 'bg-neutral-200 dark:bg-neutral-700'
+                      ? 'bg-black dark:bg-[#1A1A1A]'
+                      : 'bg-neutral-200 dark:bg-neutral-200'
                   }`}
                 >
                   <span
-                    className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white dark:bg-neutral-900 transition-transform shadow-sm ${
+                    className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white dark:bg-[#1A1A1A] transition-transform shadow-sm ${
                       form.freeTrialOffered ? 'translate-x-5' : 'translate-x-0'
                     }`}
                   />
@@ -521,7 +521,7 @@ export default function CoachOnboardingPage() {
 
               {/* City */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-[#4A4A5A] mb-2">
                   City <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -529,13 +529,13 @@ export default function CoachOnboardingPage() {
                   value={form.city}
                   onChange={(e) => updateField('city', e.target.value)}
                   placeholder="Singapore"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-neutral-900 dark:text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
                 />
               </div>
 
               {/* Venues */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-[#4A4A5A] mb-2">
                   Training venues
                 </label>
                 <input
@@ -543,14 +543,14 @@ export default function CoachOnboardingPage() {
                   value={form.venues}
                   onChange={(e) => updateField('venues', e.target.value)}
                   placeholder="e.g. ActiveSG Gym, East Coast Park, Online"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-neutral-900 dark:text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
                 />
                 <p className="mt-1 text-xs text-neutral-400">Comma separated</p>
               </div>
 
               {/* Cancellation policy */}
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-[#4A4A5A] mb-3">
                   Cancellation policy
                 </label>
                 <div className="space-y-2">
@@ -563,8 +563,8 @@ export default function CoachOnboardingPage() {
                         onClick={() => updateField('cancellationPolicy', policy.value)}
                         className={`w-full flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition-all ${
                           selected
-                            ? 'border-black bg-black text-white dark:border-white dark:bg-white dark:text-black'
-                            : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300'
+                            ? 'border-black bg-black text-white dark:border-[#1A1A1A] dark:bg-[#1A1A1A] dark:text-white'
+                            : 'border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 dark:border-black/[0.06] dark:bg-[#1A1A1A] dark:text-[#4A4A5A]'
                         }`}
                       >
                         <span className="font-medium">{policy.label}</span>
@@ -580,16 +580,16 @@ export default function CoachOnboardingPage() {
         {/* Step 4: Review & submit */}
         {step === 4 && (
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
+            <h1 className="text-2xl font-bold text-neutral-900 dark:text-[#1A1A1A] mb-1">
               Review &amp; submit
             </h1>
-            <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-8">
+            <p className="text-sm text-neutral-500 dark:text-[#71717A] mb-8">
               Make sure everything looks good.
             </p>
 
             <div className="space-y-6">
               {/* Summary sections */}
-              <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 divide-y divide-neutral-200 dark:divide-neutral-700">
+              <div className="rounded-xl border border-neutral-200 dark:border-black/[0.06] divide-y divide-neutral-200 dark:divide-black/[0.06]">
                 <SummarySection title="About you">
                   <SummaryRow label="Coach type" value={COACH_TYPES.find((t) => t.key === form.coachType)?.label || '-'} />
                   <SummaryRow label="Display name" value={form.displayName} />
@@ -620,9 +620,9 @@ export default function CoachOnboardingPage() {
                   type="checkbox"
                   checked={confirmed}
                   onChange={(e) => setConfirmed(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 rounded border-neutral-300 dark:border-neutral-600 text-black dark:text-white focus:ring-black dark:focus:ring-white"
+                  className="mt-0.5 w-4 h-4 rounded border-neutral-300 dark:border-black/[0.08] text-black dark:text-[#1A1A1A] focus:ring-black dark:focus:ring-black/20"
                 />
-                <span className="text-sm text-neutral-700 dark:text-neutral-300">
+                <span className="text-sm text-neutral-700 dark:text-[#4A4A5A]">
                   I confirm my information is accurate
                 </span>
               </label>
@@ -640,7 +640,7 @@ export default function CoachOnboardingPage() {
             <button
               type="button"
               onClick={prevStep}
-              className="flex items-center gap-1 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-3 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:border-neutral-400 dark:hover:border-neutral-500 transition-colors"
+              className="flex items-center gap-1 rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm font-medium text-neutral-700 dark:text-[#4A4A5A] hover:border-neutral-400 dark:hover:border-black/[0.12] transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
               Back
@@ -653,7 +653,7 @@ export default function CoachOnboardingPage() {
             <button
               type="button"
               onClick={nextStep}
-              className="flex items-center gap-1 rounded-xl bg-black dark:bg-white px-6 py-3 text-sm font-semibold text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors"
+              className="flex items-center gap-1 rounded-xl bg-black dark:bg-[#1A1A1A] px-6 py-3 text-sm font-semibold text-white dark:text-white hover:bg-neutral-800 dark:hover:bg-neutral-50 transition-colors"
             >
               Next
               <ChevronRight className="w-4 h-4" />
@@ -663,7 +663,7 @@ export default function CoachOnboardingPage() {
               type="button"
               onClick={handleSubmit}
               disabled={submitting}
-              className="flex items-center gap-2 rounded-xl bg-black dark:bg-white px-6 py-3 text-sm font-semibold text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 rounded-xl bg-black dark:bg-[#1A1A1A] px-6 py-3 text-sm font-semibold text-white dark:text-white hover:bg-neutral-800 dark:hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {submitting ? (
                 <>
@@ -697,8 +697,8 @@ function SummarySection({ title, children }: { title: string; children: React.Re
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start gap-3 text-sm">
-      <span className="text-neutral-500 dark:text-neutral-400 flex-shrink-0 w-28">{label}</span>
-      <span className="text-neutral-900 dark:text-white">{value || '-'}</span>
+      <span className="text-neutral-500 dark:text-[#71717A] flex-shrink-0 w-28">{label}</span>
+      <span className="text-neutral-900 dark:text-[#1A1A1A]">{value || '-'}</span>
     </div>
   )
 }

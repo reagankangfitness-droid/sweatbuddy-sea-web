@@ -90,15 +90,15 @@ export function TimePickerDropdown({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className={`flex items-center gap-2 px-4 py-2.5 bg-neutral-900 border rounded-full cursor-pointer hover:bg-neutral-800 transition-colors text-sm ${
-          hasError ? 'border-red-500' : 'border-neutral-700'
+        className={`flex items-center gap-2 px-4 py-2.5 bg-white border rounded-full cursor-pointer hover:bg-neutral-100 transition-colors text-sm ${
+          hasError ? 'border-red-500' : 'border-black/[0.06]'
         }`}
       >
-        <Clock className="w-4 h-4 text-neutral-400" />
+        <Clock className="w-4 h-4 text-[#71717A]" />
         {displayText ? (
-          <span className="text-white">{displayText}</span>
+          <span className="text-[#1A1A1A]">{displayText}</span>
         ) : (
-          <span className="text-neutral-500">{placeholder}</span>
+          <span className="text-[#71717A]">{placeholder}</span>
         )}
       </button>
 
@@ -110,7 +110,7 @@ export function TimePickerDropdown({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full left-0 mt-2 z-50 bg-neutral-900 border border-neutral-700 rounded-xl shadow-lg overflow-hidden w-[160px]"
+            className="absolute top-full left-0 mt-2 z-50 bg-white border border-black/[0.06] rounded-xl shadow-lg overflow-hidden w-[160px]"
           >
             <div ref={listRef} className="max-h-[280px] overflow-y-auto py-1">
               {slots.map((slot) => {
@@ -126,8 +126,8 @@ export function TimePickerDropdown({
                     }}
                     className={`w-full text-left px-4 py-2 text-sm transition-colors ${
                       isSelected
-                        ? 'bg-neutral-950 text-neutral-100 font-semibold'
-                        : 'text-neutral-300 hover:bg-neutral-800'
+                        ? 'bg-[#FFFBF8] text-[#1A1A1A] font-semibold'
+                        : 'text-[#4A4A5A] hover:bg-neutral-100'
                     }`}
                   >
                     {slot.label}

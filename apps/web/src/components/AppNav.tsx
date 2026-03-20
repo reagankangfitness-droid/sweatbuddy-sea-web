@@ -64,7 +64,7 @@ function AppNavInner() {
     <>
       {/* Desktop Hover-Reveal Sidebar */}
       <div
-        className="hidden md:block fixed left-0 top-0 bottom-0 z-50"
+        className="hidden md:block fixed left-0 top-0 bottom-0 z-30"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -210,7 +210,7 @@ function AppNavInner() {
         <nav
           role="navigation"
           aria-label="Main navigation"
-          className="fixed bottom-0 left-0 right-0 z-50"
+          className="fixed bottom-0 left-0 right-0 z-30"
         >
           <div className="absolute inset-0 bg-white/95 backdrop-blur-lg border-t border-black/[0.06]" />
           <div className="relative flex items-center justify-around px-2 pt-2 pb-[env(safe-area-inset-bottom,8px)]">

@@ -1203,7 +1203,7 @@ export default function HostForm() {
         </main>
 
         {/* Sticky Bottom Publish Bar */}
-        <div className="fixed bottom-[72px] md:bottom-0 left-0 right-0 z-40">
+        <div className="fixed bottom-0 left-0 right-0 z-40">
           <div className="bg-neutral-950/95 backdrop-blur-lg border-t border-neutral-800 p-4">
             <div className="max-w-6xl mx-auto">
               <button

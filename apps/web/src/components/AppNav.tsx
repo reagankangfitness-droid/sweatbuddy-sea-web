@@ -38,20 +38,28 @@ function AppNavInner() {
       .catch(() => {})
   }, [isSignedIn])
 
-  // Only show on P2P app pages
+  // Only show on main browsing pages — NOT on detail/edit/form pages with their own action bars
   const isAppPage =
-    pathname.startsWith('/buddy') ||
+    pathname === '/buddy' ||
+    pathname.startsWith('/buddy?') ||
     pathname.startsWith('/discover') ||
-    pathname.startsWith('/sessions') ||
-    pathname.startsWith('/profile') ||
-    pathname.startsWith('/activities') ||
-    pathname.startsWith('/onboarding') ||
+    pathname === '/profile' ||
     pathname.startsWith('/my-bookings') ||
     pathname.startsWith('/communities') ||
     pathname.startsWith('/settings') ||
-    pathname.startsWith('/user')
+    pathname.startsWith('/user') ||
+    pathname.startsWith('/saved')
 
-  if (!isAppPage) return null
+  // Hide on pages with their own fixed action bars (prevents overlap)
+  const hasOwnActionBar =
+    pathname.match(/^\/activities\/[^/]+$/) || // activity detail
+    pathname.match(/^\/activities\/[^/]+\/edit/) || // activity edit
+    pathname.startsWith('/buddy/host') || // session creation
+    pathname.startsWith('/onboarding') || // onboarding flows
+    pathname.match(/^\/e\/[^/]+$/) || // event detail
+    pathname.match(/^\/event\/[^/]+$/) // event detail
+
+  if (!isAppPage || hasOwnActionBar) return null
 
   function isActive(item: typeof navItems[0]) {
     if (item.id === 'discover') {

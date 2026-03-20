@@ -486,7 +486,7 @@ export function EventWizard({ mode, initialData, eventId, currentAttendees }: Ev
       </FormProvider>
 
       {/* Sticky Bottom Nav */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 safe-area-inset-bottom mb-[96px] md:mb-0">
+      <div className="fixed bottom-[72px] md:bottom-0 left-0 right-0 z-40">
         <div className="bg-neutral-950/95 backdrop-blur-lg border-t border-neutral-800 p-4">
           <div className="max-w-2xl mx-auto flex items-center gap-3">
             {currentStep > 1 && (

@@ -532,7 +532,7 @@ export function EventPageClient({ event, familiarFaces = [], communityFollow }: 
       </div>
 
       {/* Mobile Fixed Bottom CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-black/[0.06] p-4 pb-[env(safe-area-inset-bottom,8px)] z-40 mb-[96px] lg:mb-0">
+      <div className="lg:hidden fixed bottom-[72px] lg:bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-black/[0.06] p-4 z-40">
         <div className="flex items-center justify-between gap-4">
           <div>
             {isPaid ? (

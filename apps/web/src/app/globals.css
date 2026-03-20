@@ -3,9 +3,10 @@
 @tailwind utilities;
 
 @layer base {
-  /* Smooth scrolling for hash links */
+  /* Force light color scheme for native form elements */
   html {
     scroll-behavior: smooth;
+    color-scheme: light;
   }
 
   /* Offset for fixed header when scrolling to sections */

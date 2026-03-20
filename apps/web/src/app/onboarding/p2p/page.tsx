@@ -120,7 +120,7 @@ export default function P2POnboardingPage() {
 
   return (
     <div className="min-h-screen bg-[#FFFBF8]">
-      <div className="max-w-lg mx-auto px-4 py-12">
+      <div className="max-w-lg mx-auto px-4 pt-12 pb-32">
         {/* Header */}
         <div className="text-center mb-10">
           <div className="text-4xl mb-3">🤝</div>

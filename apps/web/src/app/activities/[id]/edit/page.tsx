@@ -374,7 +374,7 @@ export default function EditActivityPage({ params }: { params: { id: string } })
           </div>
         </div>
       </header>
-      <main className="container mx-auto px-4 pt-4 pb-8 sm:px-8 sm:pt-8">
+      <main className="container mx-auto px-4 pt-4 pb-32 sm:px-8 sm:pt-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-6">Edit Activity</h1>
 

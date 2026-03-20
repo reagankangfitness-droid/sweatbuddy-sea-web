@@ -232,8 +232,8 @@ export default function CoachOnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#FFFBF8]">
-      <div className="max-w-lg mx-auto px-4 py-12">
+    <div className="min-h-screen bg-[#FFFBF8]">
+      <div className="max-w-lg mx-auto px-4 pt-12 pb-32">
         {/* Progress bar */}
         <div className="flex items-center gap-2 mb-8">
           {Array.from({ length: TOTAL_STEPS }).map((_, i) => (

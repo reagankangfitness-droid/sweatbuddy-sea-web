@@ -313,13 +313,13 @@ export default function EditActivityPage({ params }: { params: { id: string } })
   if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === 'YOUR_GOOGLE_MAPS_API_KEY') {
     return (
       <>
-        <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
+        <header className="sticky top-0 z-40 bg-[#FFFBF8]/85 backdrop-blur-xl border-b border-black/[0.06]">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
-                <ArrowLeft className="w-5 h-5 text-neutral-300" />
+              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-black/[0.06]">
+                <ArrowLeft className="w-5 h-5 text-[#71717A]" />
               </button>
-              <span className="text-sm font-medium text-neutral-500">Edit Activity</span>
+              <span className="text-sm font-medium text-[#71717A]">Edit Activity</span>
             </div>
           </div>
         </header>
@@ -343,13 +343,13 @@ export default function EditActivityPage({ params }: { params: { id: string } })
   if (isLoading || !mapLoaded) {
     return (
       <>
-        <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
+        <header className="sticky top-0 z-40 bg-[#FFFBF8]/85 backdrop-blur-xl border-b border-black/[0.06]">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
-                <ArrowLeft className="w-5 h-5 text-neutral-300" />
+              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-black/[0.06]">
+                <ArrowLeft className="w-5 h-5 text-[#71717A]" />
               </button>
-              <span className="text-sm font-medium text-neutral-500">Edit Activity</span>
+              <span className="text-sm font-medium text-[#71717A]">Edit Activity</span>
             </div>
           </div>
         </header>
@@ -364,13 +364,13 @@ export default function EditActivityPage({ params }: { params: { id: string } })
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">
+      <header className="sticky top-0 z-40 bg-[#FFFBF8]/85 backdrop-blur-xl border-b border-black/[0.06]">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800">
-              <ArrowLeft className="w-5 h-5 text-neutral-300" />
+            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-black/[0.06]">
+              <ArrowLeft className="w-5 h-5 text-[#71717A]" />
             </button>
-            <span className="text-sm font-medium text-neutral-500">Edit Activity</span>
+            <span className="text-sm font-medium text-[#71717A]">Edit Activity</span>
           </div>
         </div>
       </header>

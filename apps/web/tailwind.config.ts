@@ -60,10 +60,10 @@ const config: Config = {
         'success': '#16A34A',
         'error': '#DC2626',
 
-        // Backgrounds
-        'background': '#0A0A0A',
-        'foreground': '#F5F5F5',
-        'surface': '#141414',
+        // Backgrounds — warm light theme
+        'background': '#FFFBF8',
+        'foreground': '#1A1A1A',
+        'surface': '#FFFFFF',
 
         // Legacy compatibility - map to neutrals
         'gray': {
@@ -149,12 +149,12 @@ const config: Config = {
         },
 
         // Success state colors
-        'success-light': '#052E16',
+        'success-light': '#F0FDF4',
 
         // Secondary
         'secondary': {
-          DEFAULT: '#262626',
-          foreground: '#F5F5F5',
+          DEFAULT: '#F5F0EB',
+          foreground: '#1A1A1A',
         },
 
         // Semantic
@@ -164,38 +164,38 @@ const config: Config = {
         },
 
         'muted': {
-          DEFAULT: '#262626',
-          foreground: '#A3A3A3',
+          DEFAULT: '#F5F0EB',
+          foreground: '#71717A',
         },
 
-        // Borders
-        'border': '#262626',
-        'border-light': '#1C1C1C',
-        'border-subtle': '#171717',
-        'input': '#404040',
-        'ring': '#FFFFFF',
+        // Borders — warm light theme
+        'border': 'rgba(0, 0, 0, 0.06)',
+        'border-light': 'rgba(0, 0, 0, 0.04)',
+        'border-subtle': 'rgba(0, 0, 0, 0.03)',
+        'input': 'rgba(0, 0, 0, 0.06)',
+        'ring': '#1A1A1A',
 
         // Cards & Popovers
         'popover': {
-          DEFAULT: '#171717',
-          foreground: '#F5F5F5',
+          DEFAULT: '#FFFFFF',
+          foreground: '#1A1A1A',
         },
         'card': {
-          DEFAULT: '#171717',
-          foreground: '#F5F5F5',
+          DEFAULT: '#FFFFFF',
+          foreground: '#1A1A1A',
         },
 
-        // Accent colors (all neutral now)
+        // Accent colors
         'accent': {
-          DEFAULT: '#262626',
-          foreground: '#F5F5F5',
-          teal: '#171717',
-          purple: '#525252',
-          orange: '#737373',
-          yellow: '#A3A3A3',
-          pink: '#525252',
+          DEFAULT: '#F5F0EB',
+          foreground: '#1A1A1A',
+          teal: '#0D9488',
+          purple: '#7C3AED',
+          orange: '#F97316',
+          yellow: '#EAB308',
+          pink: '#EC4899',
           green: '#16A34A',
-          blue: '#171717',
+          blue: '#3B82F6',
         },
       },
 

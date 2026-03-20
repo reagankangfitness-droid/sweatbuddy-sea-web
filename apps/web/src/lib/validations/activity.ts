@@ -15,8 +15,14 @@ export const activitySchema = z.object({
   placeId: z.string().max(300).optional(),        // Google Maps Place ID
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
-  startTime: z.string().datetime({ message: 'Invalid start time format' }),
-  endTime: z.string().datetime({ message: 'Invalid end time format' }),
+  startTime: z.string().refine(
+    (val) => !val || !isNaN(Date.parse(val)),
+    { message: 'Invalid start time format' }
+  ),
+  endTime: z.string().refine(
+    (val) => !val || !isNaN(Date.parse(val)),
+    { message: 'Invalid end time format' }
+  ),
   maxPeople: z.number().int().positive().max(100000).optional(),
   imageUrl: z.string(),
   price: z.number().nonnegative().max(999999, 'Price too high'),

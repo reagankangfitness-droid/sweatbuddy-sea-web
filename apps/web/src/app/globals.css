@@ -6,6 +6,11 @@
   /* Force light color scheme for native form elements */
   html {
     scroll-behavior: smooth;
+    color-scheme: light only;
+  }
+
+  /* Force light appearance on all native form elements */
+  input, select, textarea, button {
     color-scheme: light;
   }
 

@@ -659,27 +659,31 @@ export default function EditActivityPage({ params }: { params: { id: string } })
                 </GoogleMap>
               </div>
 
-              <div className="flex gap-4 justify-between">
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={() => setShowDeleteDialog(true)}
-                  disabled={isSubmitting || isDeleting}
-                >
-                  Delete Activity
-                </Button>
-                <div className="flex gap-4">
+              <div className="sticky bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-black/[0.06] -mx-4 px-4 py-4 mt-6 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+                <div className="flex gap-3 justify-between">
                   <Button
                     type="button"
-                    variant="outline"
-                    onClick={() => router.back()}
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setShowDeleteDialog(true)}
                     disabled={isSubmitting || isDeleting}
                   >
-                    Cancel
+                    Delete
                   </Button>
-                  <Button type="submit" disabled={isSubmitting || isDeleting || !markerPosition}>
-                    {isSubmitting ? 'Updating...' : 'Update Activity'}
-                  </Button>
+                  <div className="flex gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => router.back()}
+                      disabled={isSubmitting || isDeleting}
+                    >
+                      Cancel
+                    </Button>
+                    <Button type="submit" size="sm" disabled={isSubmitting || isDeleting || !markerPosition}>
+                      {isSubmitting ? 'Updating...' : 'Update'}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </form>

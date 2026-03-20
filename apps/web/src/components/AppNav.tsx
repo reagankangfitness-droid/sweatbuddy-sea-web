@@ -56,6 +56,7 @@ function AppNavInner() {
     pathname.match(/^\/activities\/[^/]+\/edit/) || // activity edit
     pathname.startsWith('/buddy/host') || // session creation
     pathname.startsWith('/onboarding') || // onboarding flows
+    pathname.startsWith('/communities/create') || // community creation
     pathname.match(/^\/e\/[^/]+$/) || // event detail
     pathname.match(/^\/event\/[^/]+$/) // event detail
 

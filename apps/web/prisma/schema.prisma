@@ -280,7 +280,7 @@ model User {
   // Coach relations
   coachProfile       CoachProfile?
   coachVerifications CoachVerification[] @relation("CoachVerifications")
-  sessionTemplates   SessionTemplate[]   @relation("CoachSessionTemplates")
+  sessionTemplates   SessionTemplate[]   @relation("HostSessionTemplates")
 
   @@index([slug])
   @@index([username])
@@ -3141,7 +3141,7 @@ model CoachVerification {
 
 model SessionTemplate {
   id              String   @id @default(cuid())
-  coachId         String
+  hostId          String
   title           String
   description     String?  @db.Text
   categorySlug    String?
@@ -3152,6 +3152,8 @@ model SessionTemplate {
   startTime       String   // "06:00" (HH:mm local)
   endTime         String?  // "07:00"
   timezone        String   @default("Asia/Singapore")
+  endDate         DateTime? // optional end date for recurrence
+  skippedDates    String[] @default([]) // ISO date strings to skip e.g. ["2026-04-06"]
 
   // Pricing
   price           Int?     // in cents; null = free
@@ -3165,20 +3167,30 @@ model SessionTemplate {
   // Location
   locationName    String?
   address         String?
+  city            String?
   latitude        Float?
   longitude       Float?
 
   // Image
   imageUrl        String?
 
+  // Payment
+  acceptPayNow       Boolean @default(false)
+  acceptStripe       Boolean @default(false)
+  paynowQrImageUrl   String?
+  paynowPhoneNumber  String?
+  paynowName         String?
+  cancellationPolicy String?
+
   isActive        Boolean  @default(true)
+  deletedAt       DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  coach           User     @relation("CoachSessionTemplates", fields: [coachId], references: [id], onDelete: Cascade)
+  host            User     @relation("HostSessionTemplates", fields: [hostId], references: [id], onDelete: Cascade)
   sessions        Activity[] @relation("TemplateActivities")
 
-  @@index([coachId])
+  @@index([hostId])
   @@index([categorySlug])
   @@index([isActive])
   @@map("session_templates")

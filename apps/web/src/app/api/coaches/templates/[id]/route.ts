@@ -26,7 +26,7 @@ export async function GET(
       return NextResponse.json({ error: 'Template not found' }, { status: 404 })
     }
 
-    if (template.coachId !== userId) {
+    if (template.hostId !== userId) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -64,7 +64,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Template not found' }, { status: 404 })
     }
 
-    if (existing.coachId !== userId) {
+    if (existing.hostId !== userId) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -155,7 +155,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Template not found' }, { status: 404 })
     }
 
-    if (existing.coachId !== userId) {
+    if (existing.hostId !== userId) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

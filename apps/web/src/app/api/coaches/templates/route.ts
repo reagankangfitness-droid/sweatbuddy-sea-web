@@ -24,7 +24,7 @@ export async function GET() {
     }
 
     const templates = await prisma.sessionTemplate.findMany({
-      where: { coachId: userId, isActive: true },
+      where: { hostId: userId, isActive: true },
       orderBy: { createdAt: 'desc' },
     })
 
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
 
     const template = await prisma.sessionTemplate.create({
       data: {
-        coachId: userId,
+        hostId: userId,
         title: title.trim(),
         description: description?.trim() || null,
         categorySlug: categorySlug || null,

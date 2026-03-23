@@ -27,6 +27,16 @@ const CANCELLATION_POLICIES = [
 
 type Step = 'basic' | 'details' | 'pricing' | 'preview'
 
+const DAYS_OF_WEEK = [
+  { value: 'MONDAY', label: 'Mon' },
+  { value: 'TUESDAY', label: 'Tue' },
+  { value: 'WEDNESDAY', label: 'Wed' },
+  { value: 'THURSDAY', label: 'Thu' },
+  { value: 'FRIDAY', label: 'Fri' },
+  { value: 'SATURDAY', label: 'Sat' },
+  { value: 'SUNDAY', label: 'Sun' },
+]
+
 interface FormData {
   title: string
   description: string
@@ -36,6 +46,9 @@ interface FormData {
   address: string
   latitude: string
   longitude: string
+  isRecurring: boolean
+  daysOfWeek: string[]
+  recurrenceEndDate: string
   startDate: string
   startTime: string
   endTime: string
@@ -61,6 +74,9 @@ const INITIAL_FORM: FormData = {
   address: '',
   latitude: '',
   longitude: '',
+  isRecurring: false,
+  daysOfWeek: [],
+  recurrenceEndDate: '',
   startDate: '',
   startTime: '',
   endTime: '',
@@ -86,6 +102,7 @@ export default function NewSessionPage() {
   const [saving, setSaving] = useState(false)
   const [stripeConnected, setStripeConnected] = useState<boolean | null>(null)
   const [publishedId, setPublishedId] = useState<string | null>(null)
+  const [isRecurringSuccess, setIsRecurringSuccess] = useState(false)
   const [qrPreviewUrl, setQrPreviewUrl] = useState<string | null>(null)
   const [qrFile, setQrFile] = useState<File | null>(null)
   const qrInputRef = useRef<HTMLInputElement>(null)
@@ -154,10 +171,14 @@ export default function NewSessionPage() {
     }
     if (s === 'details') {
       if (!form.city.trim()) return 'City is required'
-      if (!form.startDate) return 'Date is required'
       if (!form.startTime) return 'Start time is required'
-      const startDateTime = new Date(`${form.startDate}T${form.startTime}`)
-      if (startDateTime <= new Date()) return 'Start time must be in the future'
+      if (form.isRecurring) {
+        if (form.daysOfWeek.length === 0) return 'Select at least one day'
+      } else {
+        if (!form.startDate) return 'Date is required'
+        const startDateTime = new Date(`${form.startDate}T${form.startTime}`)
+        if (startDateTime <= new Date()) return 'Start time must be in the future'
+      }
     }
     if (s === 'pricing') {
       const price = Number(form.price)
@@ -235,55 +256,93 @@ export default function NewSessionPage() {
         finalQrUrl = uploadData.url
       }
 
-      const startDateTime = new Date(`${form.startDate}T${form.startTime}`)
-      const endDateTime = form.endTime ? new Date(`${form.startDate}T${form.endTime}`) : null
+      if (form.isRecurring) {
+        // Create a recurring template
+        const res = await fetch('/api/host/templates', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: form.title.trim(),
+            description: form.description.trim() || null,
+            categorySlug: form.categorySlug,
+            imageUrl: form.imageUrl.trim() || null,
+            city: form.city.trim(),
+            address: form.address.trim() || null,
+            latitude: Number(form.latitude) || 1.3521,
+            longitude: Number(form.longitude) || 103.8198,
+            daysOfWeek: form.daysOfWeek,
+            startTime: form.startTime,
+            endTime: form.endTime || null,
+            endDate: form.recurrenceEndDate || null,
+            maxPeople: form.maxPeople ? Number(form.maxPeople) : null,
+            fitnessLevel: form.fitnessLevel,
+            whatToBring: form.whatToBring.trim() || null,
+            price: Number(form.price),
+            currency: form.currency,
+            acceptPayNow: form.acceptPayNow,
+            acceptStripe: form.acceptStripe,
+            paynowQrImageUrl: finalQrUrl || null,
+            paynowPhoneNumber: form.paynowPhoneNumber.trim() || null,
+            paynowName: form.paynowName.trim() || null,
+            cancellationPolicy: form.cancellationPolicy,
+          }),
+        })
 
-      const res = await fetch('/api/buddy/sessions/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: form.title.trim(),
-          description: form.description.trim() || null,
-          categorySlug: form.categorySlug,
-          imageUrl: form.imageUrl.trim() || null,
-          city: form.city.trim(),
-          address: form.address.trim() || null,
-          latitude: Number(form.latitude) || 1.3521,
-          longitude: Number(form.longitude) || 103.8198,
-          startTime: startDateTime.toISOString(),
-          endTime: endDateTime?.toISOString() ?? null,
-          maxPeople: form.maxPeople ? Number(form.maxPeople) : null,
-          fitnessLevel: form.fitnessLevel,
-          whatToBring: form.whatToBring.trim() || null,
-          price: Number(form.price),
-          currency: form.currency,
-          acceptPayNow: form.acceptPayNow,
-          acceptStripe: form.acceptStripe,
-          paynowQrImageUrl: finalQrUrl || null,
-          paynowPhoneNumber: form.paynowPhoneNumber.trim() || null,
-          paynowName: form.paynowName.trim() || null,
-          cancellationPolicy: form.cancellationPolicy,
-        }),
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        if (data.code === 'ONBOARDING_REQUIRED') {
-          router.push('/onboarding/p2p')
+        const data = await res.json()
+        if (!res.ok) {
+          if (data.code === 'ONBOARDING_REQUIRED') { router.push('/onboarding/p2p'); return }
+          if (data.code === 'STRIPE_REQUIRED') { toast.error('Connect Stripe first to charge for sessions'); return }
+          toast.error(data.error || 'Failed to create recurring session')
           return
         }
-        if (data.code === 'STRIPE_REQUIRED') {
-          toast.error('Connect Stripe first to charge for sessions')
+
+        try { localStorage.removeItem(WIZARD_DRAFT_KEY) } catch {}
+        setPublishedId(data.template.id)
+        setIsRecurringSuccess(true)
+      } else {
+        // Create a one-time session
+        const startDateTime = new Date(`${form.startDate}T${form.startTime}`)
+        const endDateTime = form.endTime ? new Date(`${form.startDate}T${form.endTime}`) : null
+
+        const res = await fetch('/api/buddy/sessions/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: form.title.trim(),
+            description: form.description.trim() || null,
+            categorySlug: form.categorySlug,
+            imageUrl: form.imageUrl.trim() || null,
+            city: form.city.trim(),
+            address: form.address.trim() || null,
+            latitude: Number(form.latitude) || 1.3521,
+            longitude: Number(form.longitude) || 103.8198,
+            startTime: startDateTime.toISOString(),
+            endTime: endDateTime?.toISOString() ?? null,
+            maxPeople: form.maxPeople ? Number(form.maxPeople) : null,
+            fitnessLevel: form.fitnessLevel,
+            whatToBring: form.whatToBring.trim() || null,
+            price: Number(form.price),
+            currency: form.currency,
+            acceptPayNow: form.acceptPayNow,
+            acceptStripe: form.acceptStripe,
+            paynowQrImageUrl: finalQrUrl || null,
+            paynowPhoneNumber: form.paynowPhoneNumber.trim() || null,
+            paynowName: form.paynowName.trim() || null,
+            cancellationPolicy: form.cancellationPolicy,
+          }),
+        })
+
+        const data = await res.json()
+        if (!res.ok) {
+          if (data.code === 'ONBOARDING_REQUIRED') { router.push('/onboarding/p2p'); return }
+          if (data.code === 'STRIPE_REQUIRED') { toast.error('Connect Stripe first to charge for sessions'); return }
+          toast.error(data.error || 'Failed to create session')
           return
         }
-        toast.error(data.error || 'Failed to create session')
-        return
+
+        try { localStorage.removeItem(WIZARD_DRAFT_KEY) } catch {}
+        setPublishedId(data.activity.id)
       }
-
-      // Clear draft and show success screen
-      try { localStorage.removeItem(WIZARD_DRAFT_KEY) } catch {}
-      setPublishedId(data.activity.id)
     } catch {
       toast.error('Something went wrong')
     } finally {
@@ -302,22 +361,35 @@ export default function NewSessionPage() {
     return (
       <div className="min-h-screen bg-[#FFFBF8] flex flex-col items-center justify-center px-4 text-center">
         <CheckCircle2 className="w-16 h-16 text-green-500 mb-6" />
-        <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">Session created!</h1>
+        <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">
+          {isRecurringSuccess ? 'Recurring session created!' : 'Session created!'}
+        </h1>
         <p className="text-[#71717A] mb-8 max-w-xs">
-          Your session is live. Students can now find and book it.
+          {isRecurringSuccess
+            ? 'Sessions will auto-generate for the next 4 weeks. You can manage your recurring sessions anytime.'
+            : 'Your session is live. People can now find and join it.'}
         </p>
         <div className="flex flex-col gap-3 w-full max-w-xs">
-          <button
-            onClick={() => router.push(`/activities/${publishedId}`)}
-            className="w-full rounded-xl bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white"
-          >
-            View my session →
-          </button>
+          {isRecurringSuccess ? (
+            <button
+              onClick={() => router.push('/host/templates')}
+              className="w-full rounded-xl bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white"
+            >
+              Manage recurring sessions →
+            </button>
+          ) : (
+            <button
+              onClick={() => router.push(`/activities/${publishedId}`)}
+              className="w-full rounded-xl bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white"
+            >
+              View my session →
+            </button>
+          )}
           <button
             onClick={() => router.push('/buddy')}
             className="w-full rounded-xl border border-black/[0.06] px-4 py-3 text-sm font-medium text-[#4A4A5A]"
           >
-            Back to Sessions
+            Back to Discover
           </button>
         </div>
       </div>
@@ -519,20 +591,84 @@ export default function NewSessionPage() {
               <p className="text-sm text-[#71717A] mt-1">Help people show up on time</p>
             </div>
 
-            {/* Date */}
-            <div className="overflow-hidden">
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
-                Date <span className="text-red-500">*</span>
+            {/* One-time / Recurring toggle */}
+            <div>
+              <label className="block text-sm font-medium text-[#4A4A5A] mb-3">
+                Session type
               </label>
-              <input
-                type="date"
-                value={form.startDate}
-                onChange={(e) => update('startDate', e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
-                aria-required="true"
-                className="w-full min-w-0 rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] box-border"
-              />
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { value: false, label: 'One-time', sub: 'Single session' },
+                  { value: true, label: 'Recurring', sub: 'Repeats weekly' },
+                ].map((opt) => (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => setForm((prev) => ({ ...prev, isRecurring: opt.value }))}
+                    className={`flex flex-col items-center gap-1 rounded-xl border p-4 text-sm font-medium transition-all ${
+                      form.isRecurring === opt.value
+                        ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
+                        : 'border-black/[0.06] bg-white text-[#4A4A5A] hover:border-black/[0.12]'
+                    }`}
+                  >
+                    <span className="font-semibold">{opt.label}</span>
+                    <span className={`text-xs ${form.isRecurring === opt.value ? 'opacity-70' : 'text-[#71717A]'}`}>{opt.sub}</span>
+                  </button>
+                ))}
+              </div>
             </div>
+
+            {/* Recurring: Day-of-week selector */}
+            {form.isRecurring && (
+              <div>
+                <label className="block text-sm font-medium text-[#4A4A5A] mb-3">
+                  Which days? <span className="text-red-500">*</span>
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {DAYS_OF_WEEK.map((day) => {
+                    const selected = form.daysOfWeek.includes(day.value)
+                    return (
+                      <button
+                        key={day.value}
+                        type="button"
+                        onClick={() => {
+                          setForm((prev) => ({
+                            ...prev,
+                            daysOfWeek: selected
+                              ? prev.daysOfWeek.filter((d) => d !== day.value)
+                              : [...prev.daysOfWeek, day.value],
+                          }))
+                        }}
+                        className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
+                          selected
+                            ? 'bg-[#1A1A1A] text-white'
+                            : 'bg-white border border-black/[0.06] text-[#4A4A5A] hover:border-black/[0.12]'
+                        }`}
+                      >
+                        {day.label}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* One-time: Date picker */}
+            {!form.isRecurring && (
+              <div className="overflow-hidden">
+                <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+                  Date <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="date"
+                  value={form.startDate}
+                  onChange={(e) => update('startDate', e.target.value)}
+                  min={new Date().toISOString().split('T')[0]}
+                  aria-required="true"
+                  className="w-full min-w-0 rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] box-border"
+                />
+              </div>
+            )}
 
             {/* Time */}
             <div className="grid grid-cols-2 gap-3">
@@ -560,6 +696,22 @@ export default function NewSessionPage() {
                 />
               </div>
             </div>
+
+            {/* Recurring: End date (optional) */}
+            {form.isRecurring && (
+              <div className="overflow-hidden">
+                <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+                  Runs until <span className="text-[#71717A] font-normal">(optional — leave blank for ongoing)</span>
+                </label>
+                <input
+                  type="date"
+                  value={form.recurrenceEndDate}
+                  onChange={(e) => update('recurrenceEndDate', e.target.value)}
+                  min={new Date().toISOString().split('T')[0]}
+                  className="w-full min-w-0 rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] box-border"
+                />
+              </div>
+            )}
 
             {/* Location */}
             <div>
@@ -874,7 +1026,17 @@ export default function NewSessionPage() {
               </div>
 
               <div className="space-y-2 text-sm text-[#71717A]">
-                {form.startDate && form.startTime && (
+                {form.isRecurring ? (
+                  <div className="flex items-center gap-2">
+                    <span>🔁</span>
+                    <span>
+                      Every {form.daysOfWeek.map((d) => DAYS_OF_WEEK.find((dw) => dw.value === d)?.label).join(', ')}{' '}
+                      at {form.startTime}
+                      {form.endTime ? ` – ${form.endTime}` : ''}
+                      {form.recurrenceEndDate ? ` until ${new Date(form.recurrenceEndDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : ''}
+                    </span>
+                  </div>
+                ) : form.startDate && form.startTime ? (
                   <div className="flex items-center gap-2">
                     <span>📅</span>
                     <span>
@@ -886,7 +1048,7 @@ export default function NewSessionPage() {
                       })}
                     </span>
                   </div>
-                )}
+                ) : null}
                 {form.city && (
                   <div className="flex items-center gap-2">
                     <span>📍</span>
@@ -946,7 +1108,7 @@ export default function NewSessionPage() {
               {saving ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</>
               ) : (
-                '🚀 Publish Session'
+                form.isRecurring ? '🔁 Publish Recurring Session' : '🚀 Publish Session'
               )}
             </button>
           ) : (

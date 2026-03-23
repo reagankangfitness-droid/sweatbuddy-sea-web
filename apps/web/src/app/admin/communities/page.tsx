@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { Loader2, Plus, Pencil, X, Power, ImagePlus } from 'lucide-react'
+import { Loader2, Plus, Pencil, X, Power, ImagePlus, CalendarPlus } from 'lucide-react'
 import { useUploadThing } from '@/lib/uploadthing'
 import { toast } from 'sonner'
 
@@ -52,6 +52,78 @@ const emptyForm: CommunityForm = {
   communityLink: '',
 }
 
+const DAYS_OF_WEEK = [
+  { value: 'MONDAY', label: 'Mon' },
+  { value: 'TUESDAY', label: 'Tue' },
+  { value: 'WEDNESDAY', label: 'Wed' },
+  { value: 'THURSDAY', label: 'Thu' },
+  { value: 'FRIDAY', label: 'Fri' },
+  { value: 'SATURDAY', label: 'Sat' },
+  { value: 'SUNDAY', label: 'Sun' },
+]
+
+interface SessionForm {
+  title: string
+  description: string
+  categorySlug: string
+  city: string
+  address: string
+  latitude: string
+  longitude: string
+  isRecurring: boolean
+  daysOfWeek: string[]
+  startDate: string
+  startTime: string
+  endTime: string
+  endDate: string
+  maxPeople: string
+  fitnessLevel: string
+  price: string
+  currency: string
+}
+
+const emptySessionForm: SessionForm = {
+  title: '',
+  description: '',
+  categorySlug: '',
+  city: 'Singapore',
+  address: '',
+  latitude: '',
+  longitude: '',
+  isRecurring: true,
+  daysOfWeek: [],
+  startDate: '',
+  startTime: '08:00',
+  endTime: '',
+  endDate: '',
+  maxPeople: '',
+  fitnessLevel: 'ALL',
+  price: '0',
+  currency: 'SGD',
+}
+
+const activityCategories = [
+  { slug: 'running', label: 'Running' },
+  { slug: 'cycling', label: 'Cycling' },
+  { slug: 'yoga', label: 'Yoga' },
+  { slug: 'hiking', label: 'Hiking' },
+  { slug: 'gym', label: 'Gym' },
+  { slug: 'strength', label: 'Strength' },
+  { slug: 'hiit', label: 'HIIT' },
+  { slug: 'bootcamp', label: 'Bootcamp' },
+  { slug: 'pilates', label: 'Pilates' },
+  { slug: 'swimming', label: 'Swimming' },
+  { slug: 'volleyball', label: 'Volleyball' },
+  { slug: 'pickleball', label: 'Pickleball' },
+  { slug: 'badminton', label: 'Badminton' },
+  { slug: 'basketball', label: 'Basketball' },
+  { slug: 'cold_plunge', label: 'Cold Plunge' },
+  { slug: 'dance_fitness', label: 'Dance Fitness' },
+  { slug: 'combat_fitness', label: 'Combat Fitness' },
+  { slug: 'padel', label: 'Padel' },
+  { slug: 'other', label: 'Other' },
+]
+
 const categories = [
   'Run Club', 'Running', 'Cycling', 'HIIT', 'Swimming', 'Dance Fitness',
   'Strength Training', 'Bootcamp', 'CrossFit', 'Hyrox', 'Functional Fitness',
@@ -75,6 +147,11 @@ export default function AdminCommunitiesPage() {
   const [coverUploading, setCoverUploading] = useState(false)
   const logoInputRef = useRef<HTMLInputElement>(null)
   const coverInputRef = useRef<HTMLInputElement>(null)
+  const [showSessionForm, setShowSessionForm] = useState(false)
+  const [sessionCommunity, setSessionCommunity] = useState<AdminCommunity | null>(null)
+  const [sessionForm, setSessionForm] = useState<SessionForm>(emptySessionForm)
+  const [savingSession, setSavingSession] = useState(false)
+
   const { startUpload } = useUploadThing('activityImage')
 
   const handleImageUpload = async (file: File, type: 'logo' | 'cover') => {
@@ -177,6 +254,52 @@ export default function AdminCommunitiesPage() {
       await fetchCommunities()
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Deactivate failed')
+    }
+  }
+
+  const handleOpenSessionForm = (c: AdminCommunity) => {
+    setSessionCommunity(c)
+    setSessionForm({ ...emptySessionForm, categorySlug: c.category.toLowerCase().replace(/\s+/g, '_') })
+    setShowSessionForm(true)
+  }
+
+  const handleCloseSessionForm = () => {
+    setShowSessionForm(false)
+    setSessionCommunity(null)
+    setSessionForm(emptySessionForm)
+  }
+
+  const handleSaveSession = async () => {
+    if (!sessionCommunity || !sessionForm.title.trim() || !sessionForm.startTime) return
+    if (sessionForm.isRecurring && sessionForm.daysOfWeek.length === 0) {
+      toast.error('Select at least one day')
+      return
+    }
+    if (!sessionForm.isRecurring && !sessionForm.startDate) {
+      toast.error('Date is required for one-time sessions')
+      return
+    }
+
+    setSavingSession(true)
+    try {
+      const res = await fetch(`/api/admin/communities/${sessionCommunity.id}/sessions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sessionForm),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to create session')
+
+      if (sessionForm.isRecurring) {
+        toast.success(`Recurring template created! ${data.sessionsGenerated} sessions generated for the next 4 weeks.`)
+      } else {
+        toast.success('Session created!')
+      }
+      handleCloseSessionForm()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to create session')
+    } finally {
+      setSavingSession(false)
     }
   }
 
@@ -385,6 +508,245 @@ export default function AdminCommunitiesPage() {
         </div>
       )}
 
+      {/* Session Creation Modal */}
+      {showSessionForm && sessionCommunity && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-neutral-950 border border-neutral-800 rounded-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-semibold text-neutral-100">Create Session</h2>
+                <p className="text-sm text-neutral-500">for {sessionCommunity.name}</p>
+              </div>
+              <button onClick={handleCloseSessionForm} className="text-neutral-400 hover:text-neutral-100">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Title */}
+              <div>
+                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Title *</label>
+                <input
+                  type="text"
+                  value={sessionForm.title}
+                  onChange={(e) => setSessionForm({ ...sessionForm, title: e.target.value })}
+                  className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                  placeholder="e.g. Saturday Morning Run"
+                />
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Description</label>
+                <textarea
+                  value={sessionForm.description}
+                  onChange={(e) => setSessionForm({ ...sessionForm, description: e.target.value })}
+                  rows={2}
+                  className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white resize-none"
+                  placeholder="What's the session about?"
+                />
+              </div>
+
+              {/* Category */}
+              <div>
+                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Category</label>
+                <select
+                  value={sessionForm.categorySlug}
+                  onChange={(e) => setSessionForm({ ...sessionForm, categorySlug: e.target.value })}
+                  className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                >
+                  <option value="">Select category</option>
+                  {activityCategories.map((cat) => (
+                    <option key={cat.slug} value={cat.slug}>{cat.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* One-time / Recurring */}
+              <div>
+                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2">Type</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { value: false, label: 'One-time' },
+                    { value: true, label: 'Recurring (weekly)' },
+                  ].map((opt) => (
+                    <button
+                      key={opt.label}
+                      type="button"
+                      onClick={() => setSessionForm({ ...sessionForm, isRecurring: opt.value })}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                        sessionForm.isRecurring === opt.value
+                          ? 'bg-white text-neutral-900'
+                          : 'bg-neutral-900 border border-neutral-700 text-neutral-400 hover:border-neutral-500'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recurring: Day picker */}
+              {sessionForm.isRecurring && (
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2">Days *</label>
+                  <div className="flex flex-wrap gap-2">
+                    {DAYS_OF_WEEK.map((day) => {
+                      const selected = sessionForm.daysOfWeek.includes(day.value)
+                      return (
+                        <button
+                          key={day.value}
+                          type="button"
+                          onClick={() => {
+                            setSessionForm((prev) => ({
+                              ...prev,
+                              daysOfWeek: selected
+                                ? prev.daysOfWeek.filter((d) => d !== day.value)
+                                : [...prev.daysOfWeek, day.value],
+                            }))
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                            selected
+                              ? 'bg-white text-neutral-900'
+                              : 'bg-neutral-900 border border-neutral-700 text-neutral-400 hover:border-neutral-500'
+                          }`}
+                        >
+                          {day.label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* One-time: Date */}
+              {!sessionForm.isRecurring && (
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Date *</label>
+                  <input
+                    type="date"
+                    value={sessionForm.startDate}
+                    onChange={(e) => setSessionForm({ ...sessionForm, startDate: e.target.value })}
+                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                  />
+                </div>
+              )}
+
+              {/* Time */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Start time *</label>
+                  <input
+                    type="time"
+                    value={sessionForm.startTime}
+                    onChange={(e) => setSessionForm({ ...sessionForm, startTime: e.target.value })}
+                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">End time</label>
+                  <input
+                    type="time"
+                    value={sessionForm.endTime}
+                    onChange={(e) => setSessionForm({ ...sessionForm, endTime: e.target.value })}
+                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                  />
+                </div>
+              </div>
+
+              {/* Recurring: End date */}
+              {sessionForm.isRecurring && (
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Runs until (optional)</label>
+                  <input
+                    type="date"
+                    value={sessionForm.endDate}
+                    onChange={(e) => setSessionForm({ ...sessionForm, endDate: e.target.value })}
+                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                  />
+                </div>
+              )}
+
+              {/* Location */}
+              <div>
+                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Location / Address</label>
+                <input
+                  type="text"
+                  value={sessionForm.address}
+                  onChange={(e) => setSessionForm({ ...sessionForm, address: e.target.value })}
+                  className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                  placeholder="e.g. East Coast Park, Singapore"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Latitude</label>
+                  <input
+                    type="text"
+                    value={sessionForm.latitude}
+                    onChange={(e) => setSessionForm({ ...sessionForm, latitude: e.target.value })}
+                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                    placeholder="1.3521"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Longitude</label>
+                  <input
+                    type="text"
+                    value={sessionForm.longitude}
+                    onChange={(e) => setSessionForm({ ...sessionForm, longitude: e.target.value })}
+                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                    placeholder="103.8198"
+                  />
+                </div>
+              </div>
+
+              {/* Max people + Price */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Max people</label>
+                  <input
+                    type="number"
+                    value={sessionForm.maxPeople}
+                    onChange={(e) => setSessionForm({ ...sessionForm, maxPeople: e.target.value })}
+                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                    placeholder="Unlimited"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Price ({sessionForm.currency})</label>
+                  <input
+                    type="number"
+                    value={sessionForm.price}
+                    onChange={(e) => setSessionForm({ ...sessionForm, price: e.target.value })}
+                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                    placeholder="0 = free"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center justify-end gap-3 mt-6">
+              <button
+                onClick={handleCloseSessionForm}
+                className="px-4 py-2 text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveSession}
+                disabled={savingSession || !sessionForm.title.trim() || !sessionForm.startTime}
+                className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-500 transition-colors disabled:opacity-50"
+              >
+                {savingSession ? 'Creating...' : sessionForm.isRecurring ? 'Create Recurring' : 'Create Session'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Communities Table */}
       <div className="bg-neutral-950 rounded-xl border border-neutral-800 overflow-hidden">
         <div className="overflow-x-auto">
@@ -464,6 +826,13 @@ export default function AdminCommunitiesPage() {
                   {/* Actions */}
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleOpenSessionForm(c)}
+                        className="p-1.5 text-neutral-400 hover:text-emerald-400 hover:bg-emerald-950 rounded-lg transition-colors"
+                        title="Create Session"
+                      >
+                        <CalendarPlus className="w-4 h-4" />
+                      </button>
                       <button
                         onClick={() => handleOpenEdit(c)}
                         className="p-1.5 text-neutral-400 hover:text-neutral-100 hover:bg-neutral-800 rounded-lg transition-colors"

@@ -68,8 +68,6 @@ interface SessionForm {
   categorySlug: string
   city: string
   address: string
-  latitude: string
-  longitude: string
   isRecurring: boolean
   daysOfWeek: string[]
   startDate: string
@@ -88,8 +86,6 @@ const emptySessionForm: SessionForm = {
   categorySlug: '',
   city: 'Singapore',
   address: '',
-  latitude: '',
-  longitude: '',
   isRecurring: true,
   daysOfWeek: [],
   startDate: '',
@@ -100,6 +96,26 @@ const emptySessionForm: SessionForm = {
   fitnessLevel: 'ALL',
   price: '0',
   currency: 'SGD',
+}
+
+interface CommunitySession {
+  id: string
+  title: string
+  startTime: string | null
+  status: string
+  price: number
+  currency: string
+  _count: { userActivities: number }
+}
+
+interface CommunityTemplate {
+  id: string
+  title: string
+  daysOfWeek: string[]
+  startTime: string
+  endTime: string | null
+  isActive: boolean
+  _count: { sessions: number }
 }
 
 const activityCategories = [
@@ -151,8 +167,28 @@ export default function AdminCommunitiesPage() {
   const [sessionCommunity, setSessionCommunity] = useState<AdminCommunity | null>(null)
   const [sessionForm, setSessionForm] = useState<SessionForm>(emptySessionForm)
   const [savingSession, setSavingSession] = useState(false)
+  const [viewSessionsCommunity, setViewSessionsCommunity] = useState<AdminCommunity | null>(null)
+  const [communitySessions, setCommunitySessions] = useState<CommunitySession[]>([])
+  const [communityTemplates, setCommunityTemplates] = useState<CommunityTemplate[]>([])
+  const [loadingSessions, setLoadingSessions] = useState(false)
 
   const { startUpload } = useUploadThing('activityImage')
+
+  const fetchCommunitySessions = async (communityId: string) => {
+    setLoadingSessions(true)
+    try {
+      const res = await fetch(`/api/admin/communities/${communityId}/sessions`)
+      if (res.ok) {
+        const data = await res.json()
+        setCommunitySessions(data.sessions ?? [])
+        setCommunityTemplates(data.templates ?? [])
+      }
+    } catch {
+      toast.error('Failed to load sessions')
+    } finally {
+      setLoadingSessions(false)
+    }
+  }
 
   const handleImageUpload = async (file: File, type: 'logo' | 'cover') => {
     if (file.size > 8 * 1024 * 1024) {
@@ -294,6 +330,11 @@ export default function AdminCommunitiesPage() {
         toast.success(`Recurring template created! ${data.sessionsGenerated} sessions generated for the next 4 weeks.`)
       } else {
         toast.success('Session created!')
+      }
+      // Show sessions panel for this community
+      if (sessionCommunity) {
+        setViewSessionsCommunity(sessionCommunity)
+        fetchCommunitySessions(sessionCommunity.id)
       }
       handleCloseSessionForm()
     } catch (err) {
@@ -677,29 +718,7 @@ export default function AdminCommunitiesPage() {
                   className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
                   placeholder="e.g. East Coast Park, Singapore"
                 />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Latitude</label>
-                  <input
-                    type="text"
-                    value={sessionForm.latitude}
-                    onChange={(e) => setSessionForm({ ...sessionForm, latitude: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
-                    placeholder="1.3521"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Longitude</label>
-                  <input
-                    type="text"
-                    value={sessionForm.longitude}
-                    onChange={(e) => setSessionForm({ ...sessionForm, longitude: e.target.value })}
-                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
-                    placeholder="103.8198"
-                  />
-                </div>
+                <p className="text-xs text-neutral-600 mt-1">Coordinates are auto-generated from the address</p>
               </div>
 
               {/* Max people + Price */}
@@ -747,6 +766,96 @@ export default function AdminCommunitiesPage() {
         </div>
       )}
 
+      {/* Sessions Viewer Modal */}
+      {viewSessionsCommunity && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-neutral-950 border border-neutral-800 rounded-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-semibold text-neutral-100">Sessions</h2>
+                <p className="text-sm text-neutral-500">{viewSessionsCommunity.name}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { handleOpenSessionForm(viewSessionsCommunity); setViewSessionsCommunity(null) }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-medium hover:bg-emerald-500"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  Add Session
+                </button>
+                <button onClick={() => setViewSessionsCommunity(null)} className="text-neutral-400 hover:text-neutral-100">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {loadingSessions ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-neutral-500" />
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Recurring Templates */}
+                {communityTemplates.length > 0 && (
+                  <div>
+                    <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2">Recurring Templates</h3>
+                    <div className="space-y-2">
+                      {communityTemplates.map((t) => (
+                        <div key={t.id} className="flex items-center justify-between px-3 py-2 bg-neutral-900 rounded-lg border border-neutral-800">
+                          <div>
+                            <p className="text-sm text-neutral-100">{t.title}</p>
+                            <p className="text-xs text-neutral-500">
+                              {t.daysOfWeek.map((d) => d.slice(0, 3)).join(', ')} at {t.startTime}
+                              {t.endTime ? ` – ${t.endTime}` : ''}
+                              {' · '}{t._count.sessions} sessions
+                            </p>
+                          </div>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${t.isActive ? 'bg-emerald-900/50 text-emerald-400' : 'bg-neutral-800 text-neutral-500'}`}>
+                            {t.isActive ? 'Active' : 'Paused'}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Upcoming Sessions */}
+                <div>
+                  <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2">
+                    Sessions ({communitySessions.length})
+                  </h3>
+                  {communitySessions.length === 0 ? (
+                    <p className="text-sm text-neutral-600 py-4 text-center">No sessions yet</p>
+                  ) : (
+                    <div className="space-y-1">
+                      {communitySessions.map((s) => (
+                        <div key={s.id} className="flex items-center justify-between px-3 py-2 bg-neutral-900 rounded-lg border border-neutral-800">
+                          <div>
+                            <p className="text-sm text-neutral-100">{s.title}</p>
+                            <p className="text-xs text-neutral-500">
+                              {s.startTime ? new Date(s.startTime).toLocaleString('en-SG', { dateStyle: 'medium', timeStyle: 'short' }) : 'No date'}
+                              {' · '}{s._count.userActivities} RSVP{s._count.userActivities !== 1 ? 's' : ''}
+                              {s.price > 0 ? ` · ${s.currency} ${(s.price / 100).toFixed(0)}` : ' · Free'}
+                            </p>
+                          </div>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${
+                            s.status === 'PUBLISHED' ? 'bg-emerald-900/50 text-emerald-400'
+                            : s.status === 'CANCELLED' ? 'bg-red-900/50 text-red-400'
+                            : 'bg-neutral-800 text-neutral-500'
+                          }`}>
+                            {s.status}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Communities Table */}
       <div className="bg-neutral-950 rounded-xl border border-neutral-800 overflow-hidden">
         <div className="overflow-x-auto">
@@ -780,7 +889,11 @@ export default function AdminCommunitiesPage() {
                       ) : (
                         <div className="w-12 h-8 rounded bg-neutral-800 flex-shrink-0" />
                       )}
-                      <p className="text-sm font-medium text-neutral-100 truncate max-w-[200px]">{c.name}</p>
+                      <button
+                        onClick={() => { setViewSessionsCommunity(c); fetchCommunitySessions(c.id) }}
+                        className="text-sm font-medium text-neutral-100 truncate max-w-[200px] hover:text-white hover:underline text-left"
+                        title="View sessions"
+                      >{c.name}</button>
                     </div>
                   </td>
 

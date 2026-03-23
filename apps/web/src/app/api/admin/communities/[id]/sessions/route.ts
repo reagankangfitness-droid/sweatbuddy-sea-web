@@ -2,6 +2,24 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminRequest } from '@/lib/admin-auth'
 
+// Auto-geocode an address to lat/lng
+async function geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+  if (!apiKey || !address) return null
+  try {
+    const query = address.toLowerCase().includes('singapore') ? address : `${address}, Singapore`
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(query)}&key=${apiKey}`
+    const res = await fetch(url)
+    const data = await res.json()
+    if (data.status === 'OK' && data.results?.[0]?.geometry?.location) {
+      return data.results[0].geometry.location
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
 // POST - Create a session (one-time or recurring template) for a community
 export async function POST(
   request: NextRequest,
@@ -24,11 +42,21 @@ export async function POST(
     const body = await request.json()
     const {
       title, description, categorySlug, imageUrl,
-      city, address, latitude, longitude,
+      city, address,
       isRecurring, daysOfWeek, startTime, endTime,
       startDate, endDate,
       maxPeople, fitnessLevel, price, currency,
     } = body
+
+    // Auto-geocode if address provided but no coordinates
+    let { latitude, longitude } = body
+    if (address && (!latitude || !longitude || latitude === '1.3521')) {
+      const coords = await geocodeAddress(address)
+      if (coords) {
+        latitude = coords.lat
+        longitude = coords.lng
+      }
+    }
 
     if (!title?.trim()) {
       return NextResponse.json({ error: 'Title is required' }, { status: 400 })

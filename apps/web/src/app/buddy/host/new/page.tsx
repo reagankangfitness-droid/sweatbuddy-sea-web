@@ -46,6 +46,7 @@ interface FormData {
   address: string
   latitude: string
   longitude: string
+  communityId: string
   isRecurring: boolean
   daysOfWeek: string[]
   recurrenceEndDate: string
@@ -74,6 +75,7 @@ const INITIAL_FORM: FormData = {
   address: '',
   latitude: '',
   longitude: '',
+  communityId: '',
   isRecurring: false,
   daysOfWeek: [],
   recurrenceEndDate: '',
@@ -108,8 +110,17 @@ export default function NewSessionPage() {
   const qrInputRef = useRef<HTMLInputElement>(null)
   const [coverUploading, setCoverUploading] = useState(false)
   const coverInputRef = useRef<HTMLInputElement>(null)
+  const [myCommunities, setMyCommunities] = useState<{ id: string; name: string; slug: string }[]>([])
 
   const { startUpload } = useUploadThing('activityImage')
+
+  // Fetch user's communities
+  useEffect(() => {
+    fetch('/api/communities/mine')
+      .then((r) => r.ok ? r.json() : { communities: [] })
+      .then((data) => setMyCommunities(data.communities ?? []))
+      .catch(() => {})
+  }, [])
 
   // Restore draft from localStorage on mount
   useEffect(() => {
@@ -285,6 +296,7 @@ export default function NewSessionPage() {
             paynowPhoneNumber: form.paynowPhoneNumber.trim() || null,
             paynowName: form.paynowName.trim() || null,
             cancellationPolicy: form.cancellationPolicy,
+            communityId: form.communityId || null,
           }),
         })
 
@@ -329,6 +341,7 @@ export default function NewSessionPage() {
             paynowPhoneNumber: form.paynowPhoneNumber.trim() || null,
             paynowName: form.paynowName.trim() || null,
             cancellationPolicy: form.cancellationPolicy,
+            communityId: form.communityId || null,
           }),
         })
 
@@ -473,6 +486,29 @@ export default function NewSessionPage() {
               />
               <p className="mt-1 text-xs text-right text-[#71717A]">{form.title.length}/100</p>
             </div>
+
+            {/* Community selector */}
+            {myCommunities.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+                  Community <span className="text-[#71717A] font-normal">(optional)</span>
+                </label>
+                <div className="relative">
+                  <select
+                    value={form.communityId}
+                    onChange={(e) => update('communityId', e.target.value)}
+                    className="w-full appearance-none rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                  >
+                    <option value="">No community (personal session)</option>
+                    {myCommunities.map((c) => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#71717A] pointer-events-none" />
+                </div>
+                <p className="mt-1 text-xs text-[#71717A]">Link this session to one of your communities</p>
+              </div>
+            )}
 
             {/* Description */}
             <div>
@@ -1049,6 +1085,12 @@ export default function NewSessionPage() {
                     </span>
                   </div>
                 ) : null}
+                {form.communityId && (
+                  <div className="flex items-center gap-2">
+                    <span>👥</span>
+                    <span>{myCommunities.find((c) => c.id === form.communityId)?.name}</span>
+                  </div>
+                )}
                 {form.city && (
                   <div className="flex items-center gap-2">
                     <span>📍</span>

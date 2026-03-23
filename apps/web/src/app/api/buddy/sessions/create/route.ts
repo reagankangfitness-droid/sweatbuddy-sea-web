@@ -54,6 +54,7 @@ export async function POST(request: Request) {
       requiresDeposit,
       depositAmount,
       cancellationPolicy,
+      communityId,
     } = body
 
     // Validate required fields
@@ -163,6 +164,7 @@ export async function POST(request: Request) {
         paynowPhoneNumber: paynowPhoneNumber ?? null,
         paynowName: paynowName ?? null,
         sessionType: 'COMMUNITY',
+        communityId: communityId || null,
         cancellationPolicy: cancellationPolicy ?? null,
         requiresDeposit: resolvedRequiresDeposit,
         depositAmount: resolvedDepositAmount,

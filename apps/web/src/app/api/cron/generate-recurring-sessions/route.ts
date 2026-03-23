@@ -156,6 +156,7 @@ export async function GET(request: NextRequest) {
               paynowPhoneNumber: template.paynowPhoneNumber,
               paynowName: template.paynowName,
               cancellationPolicy: template.cancellationPolicy,
+              communityId: template.communityId,
             },
           })
 

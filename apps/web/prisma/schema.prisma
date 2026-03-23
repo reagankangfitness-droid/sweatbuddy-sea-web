@@ -2645,9 +2645,10 @@ model Community {
   city       City?             @relation("CityCommunities", fields: [cityId], references: [id], onDelete: SetNull)
   createdBy  User              @relation("CommunitiesOwned", fields: [createdById], references: [id], onDelete: Cascade)
   members    CommunityMember[]
-  activities Activity[]        @relation("CommunityActivities")
-  chat       CommunityChat?
-  invites    CommunityInvite[]
+  activities        Activity[]        @relation("CommunityActivities")
+  sessionTemplates  SessionTemplate[] @relation("CommunitySessionTemplates")
+  chat              CommunityChat?
+  invites           CommunityInvite[]
 
   @@index([cityId])
   @@index([category])
@@ -3187,12 +3188,17 @@ model SessionTemplate {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
+  // Community link (optional)
+  communityId     String?
+
   host            User     @relation("HostSessionTemplates", fields: [hostId], references: [id], onDelete: Cascade)
+  community       Community? @relation("CommunitySessionTemplates", fields: [communityId], references: [id], onDelete: SetNull)
   sessions        Activity[] @relation("TemplateActivities")
 
   @@index([hostId])
   @@index([categorySlug])
   @@index([isActive])
+  @@index([communityId])
   @@map("session_templates")
 }
 

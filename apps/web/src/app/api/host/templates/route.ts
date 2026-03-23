@@ -86,6 +86,7 @@ export async function POST(request: Request) {
       acceptPayNow, acceptStripe,
       paynowQrImageUrl, paynowPhoneNumber, paynowName,
       cancellationPolicy,
+      communityId,
     } = body
 
     // Validate
@@ -153,6 +154,7 @@ export async function POST(request: Request) {
         paynowPhoneNumber: paynowPhoneNumber?.trim() || null,
         paynowName: paynowName?.trim() || null,
         cancellationPolicy: cancellationPolicy || null,
+        communityId: communityId || null,
         isActive: true,
       },
     })
@@ -213,6 +215,7 @@ export async function POST(request: Request) {
             paynowPhoneNumber: template.paynowPhoneNumber,
             paynowName: template.paynowName,
             cancellationPolicy: template.cancellationPolicy,
+            communityId: template.communityId,
           },
         })
         sessionsGenerated++

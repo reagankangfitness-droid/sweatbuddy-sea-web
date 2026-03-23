@@ -1,24 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminRequest } from '@/lib/admin-auth'
-
-// Auto-geocode an address to lat/lng
-async function geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-  if (!apiKey || !address) return null
-  try {
-    const query = address.toLowerCase().includes('singapore') ? address : `${address}, Singapore`
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(query)}&key=${apiKey}`
-    const res = await fetch(url)
-    const data = await res.json()
-    if (data.status === 'OK' && data.results?.[0]?.geometry?.location) {
-      return data.results[0].geometry.location
-    }
-    return null
-  } catch {
-    return null
-  }
-}
+import { geocodeAddress } from '@/lib/geocode'
 
 // POST - Create a session (one-time or recurring template) for a community
 export async function POST(
@@ -50,11 +33,27 @@ export async function POST(
 
     // Auto-geocode if address provided but no coordinates
     let { latitude, longitude } = body
-    if (address && (!latitude || !longitude || latitude === '1.3521')) {
+    let resolvedCity = city?.trim() || 'Singapore'
+    if (address) {
       const coords = await geocodeAddress(address)
       if (coords) {
         latitude = coords.lat
         longitude = coords.lng
+        // Extract city from address or displayName
+        if (!city?.trim() || city === 'Singapore') {
+          const addrLower = address.toLowerCase()
+          if (addrLower.includes('bangkok')) resolvedCity = 'Bangkok'
+          else if (addrLower.includes('kuala lumpur')) resolvedCity = 'Kuala Lumpur'
+          else if (addrLower.includes('jakarta')) resolvedCity = 'Jakarta'
+          else if (addrLower.includes('manila')) resolvedCity = 'Manila'
+          else if (addrLower.includes('ho chi minh')) resolvedCity = 'Ho Chi Minh City'
+          else if (addrLower.includes('singapore')) resolvedCity = 'Singapore'
+          else if (coords.displayName) {
+            // Try to extract city from Nominatim displayName
+            const parts = coords.displayName.split(',').map((p: string) => p.trim())
+            if (parts.length >= 3) resolvedCity = parts[parts.length - 3]
+          }
+        }
       }
     }
 
@@ -92,7 +91,7 @@ export async function POST(
           startTime,
           endTime: endTime || null,
           endDate: endDate ? new Date(endDate) : null,
-          city: city?.trim() || 'Singapore',
+          city: resolvedCity,
           address: address?.trim() || null,
           latitude: latitude ? Number(latitude) : null,
           longitude: longitude ? Number(longitude) : null,
@@ -147,7 +146,7 @@ export async function POST(
               description: template.description,
               type: activityType as never,
               categorySlug: template.categorySlug,
-              city: template.city || 'Singapore',
+              city: template.city || resolvedCity,
               address: template.address,
               latitude: template.latitude ?? 1.3521,
               longitude: template.longitude ?? 103.8198,
@@ -190,7 +189,7 @@ export async function POST(
           description: description?.trim() || null,
           type: activityType as never,
           categorySlug: categorySlug || null,
-          city: city?.trim() || 'Singapore',
+          city: resolvedCity,
           address: address?.trim() || null,
           latitude: latitude ? Number(latitude) : 1.3521,
           longitude: longitude ? Number(longitude) : 103.8198,

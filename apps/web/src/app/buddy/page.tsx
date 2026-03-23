@@ -247,11 +247,17 @@ function BuddyPageInner() {
       .finally(() => setMapLoading(false))
   }, [tab])
 
-  // Get user location for map
+  // Get user location for map — pan to it when received
   useEffect(() => {
     if (!navigator.geolocation) return
     navigator.geolocation.getCurrentPosition(
-      (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      (pos) => {
+        const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude }
+        setUserLocation(loc)
+        if (mapRef.current) {
+          mapRef.current.panTo(loc)
+        }
+      },
       () => {}
     )
   }, [])
@@ -415,9 +421,9 @@ function BuddyPageInner() {
             <>
               <GoogleMap
                 mapContainerStyle={{ width: '100%', height: '100%' }}
-                center={SINGAPORE_CENTER}
+                center={userLocation ?? SINGAPORE_CENTER}
                 zoom={12}
-                onLoad={(map) => { mapRef.current = map }}
+                onLoad={(map) => { mapRef.current = map; if (userLocation) map.panTo(userLocation) }}
                 onClick={() => setMapSelected(null)}
                 options={{
                   disableDefaultUI: true,

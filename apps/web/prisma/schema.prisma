@@ -2655,6 +2655,7 @@ model Community {
   @@index([slug])
   @@index([createdById])
   @@index([isActive])
+  @@index([memberCount])
   @@map("communities")
 }
 
@@ -3196,8 +3197,10 @@ model SessionTemplate {
   sessions        Activity[] @relation("TemplateActivities")
 
   @@index([hostId])
+  @@index([hostId, deletedAt])
   @@index([categorySlug])
   @@index([isActive])
+  @@index([isActive, deletedAt])
   @@index([communityId])
   @@map("session_templates")
 }

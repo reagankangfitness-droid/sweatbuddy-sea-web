@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export async function GET(request: Request) {
   try {
@@ -9,8 +10,8 @@ export async function GET(request: Request) {
     const category = searchParams.get('category') || ''
 
     const now = new Date()
-    const windowStart = new Date(now.getTime() - 60 * 60 * 1000)       // -1 hour (session in progress)
-    const windowEnd   = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000) // +30 days
+    const windowStart = new Date(now.getTime() - 60 * 60 * 1000)
+    const windowEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
 
     const activities = await prisma.activity.findMany({
       where: {
@@ -20,8 +21,8 @@ export async function GET(request: Request) {
         latitude: { not: 0 },
         longitude: { not: 0 },
         OR: [
-          { startTime: null },                                           // recurring — always show
-          { startTime: { gte: windowStart, lte: windowEnd } },          // within 30-day window
+          { startTime: null },
+          { startTime: { gte: windowStart, lte: windowEnd } },
         ],
         ...(category ? { categorySlug: category } : {}),
       },
@@ -40,26 +41,29 @@ export async function GET(request: Request) {
         maxPeople: true,
         requiresApproval: true,
         fitnessLevel: true,
-        user: {
+        userId: true,
+        // Use _count instead of fetching all userActivity rows
+        _count: {
           select: {
-            id: true,
-            name: true,
-            imageUrl: true,
-            slug: true,
+            userActivities: { where: { status: { in: ['JOINED', 'COMPLETED'] } } },
           },
-        },
-        userActivities: {
-          where: { status: { in: ['JOINED', 'COMPLETED'] } },
-          select: { id: true },
         },
       },
       orderBy: { startTime: 'asc' },
-      take: 200,
+      take: 100,
     })
 
+    // Batch-fetch hosts in one query instead of N includes
+    const hostIds = [...new Set(activities.map((a) => a.userId))]
+    const hosts = await prisma.user.findMany({
+      where: { id: { in: hostIds } },
+      select: { id: true, name: true, imageUrl: true, slug: true },
+    })
+    const hostMap = new Map(hosts.map((h) => [h.id, h]))
+
     const sessions = activities.map((a) => {
-      const attendeeCount = a.userActivities.length
-      const isFull = a.maxPeople ? attendeeCount >= a.maxPeople : false
+      const attendeeCount = a._count.userActivities
+      const host = hostMap.get(a.userId)
       return {
         id: a.id,
         title: a.title,
@@ -76,13 +80,8 @@ export async function GET(request: Request) {
         requiresApproval: a.requiresApproval,
         fitnessLevel: a.fitnessLevel,
         attendeeCount,
-        isFull,
-        host: {
-          id: a.user.id,
-          name: a.user.name,
-          imageUrl: a.user.imageUrl,
-          slug: a.user.slug,
-        },
+        isFull: a.maxPeople ? attendeeCount >= a.maxPeople : false,
+        host: host ? { id: host.id, name: host.name, imageUrl: host.imageUrl, slug: host.slug } : null,
       }
     })
 

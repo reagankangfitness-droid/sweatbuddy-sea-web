@@ -167,14 +167,14 @@ export async function POST(request: Request) {
     const activityType = typeMap[categorySlug] ?? 'OTHER'
     const activityMode = priceCents > 0 ? 'P2P_PAID' : 'P2P_FREE'
 
-    let sessionsGenerated = 0
+    // Build all session data first, then batch insert
+    const sessionData: Parameters<typeof prisma.activity.create>[0]['data'][] = []
     for (const dayName of daysOfWeek) {
       const dayNum = DAY_MAP[dayName]
       if (dayNum === undefined) continue
       const dates = getNextDates(dayNum, startTime, now, 4)
 
       for (const startDate of dates) {
-        // Respect endDate
         if (template.endDate && startDate > template.endDate) continue
 
         let activityEndTime: Date | null = null
@@ -185,44 +185,48 @@ export async function POST(request: Request) {
           if (durationMs > 0) activityEndTime = new Date(startDate.getTime() + durationMs)
         }
 
-        await prisma.activity.create({
-          data: {
-            title: template.title,
-            description: template.description,
-            type: activityType as never,
-            categorySlug: template.categorySlug,
-            city: template.city || 'Singapore',
-            address: template.address,
-            latitude: template.latitude ?? 1.3521,
-            longitude: template.longitude ?? 103.8198,
-            startTime: startDate,
-            endTime: activityEndTime,
-            maxPeople: template.maxParticipants,
-            price: priceCents,
-            currency: template.currency,
-            imageUrl: template.imageUrl,
-            status: 'PUBLISHED',
-            userId: dbUser.id,
-            hostId: dbUser.id,
-            sessionType: 'COMMUNITY',
-            sessionTemplateId: template.id,
-            activityMode,
-            fitnessLevel: template.fitnessLevel,
-            whatToBring: template.whatToBring,
-            acceptPayNow: template.acceptPayNow,
-            acceptStripe: template.acceptStripe,
-            paynowQrImageUrl: template.paynowQrImageUrl,
-            paynowPhoneNumber: template.paynowPhoneNumber,
-            paynowName: template.paynowName,
-            cancellationPolicy: template.cancellationPolicy,
-            communityId: template.communityId,
-          },
+        sessionData.push({
+          title: template.title,
+          description: template.description,
+          type: activityType as never,
+          categorySlug: template.categorySlug,
+          city: template.city || 'Singapore',
+          address: template.address,
+          latitude: template.latitude ?? 1.3521,
+          longitude: template.longitude ?? 103.8198,
+          startTime: startDate,
+          endTime: activityEndTime,
+          maxPeople: template.maxParticipants,
+          price: priceCents,
+          currency: template.currency,
+          imageUrl: template.imageUrl,
+          status: 'PUBLISHED',
+          userId: dbUser.id,
+          hostId: dbUser.id,
+          sessionType: 'COMMUNITY',
+          sessionTemplateId: template.id,
+          activityMode,
+          fitnessLevel: template.fitnessLevel,
+          whatToBring: template.whatToBring,
+          acceptPayNow: template.acceptPayNow,
+          acceptStripe: template.acceptStripe,
+          paynowQrImageUrl: template.paynowQrImageUrl,
+          paynowPhoneNumber: template.paynowPhoneNumber,
+          paynowName: template.paynowName,
+          cancellationPolicy: template.cancellationPolicy,
+          communityId: template.communityId,
         })
-        sessionsGenerated++
       }
     }
 
-    return NextResponse.json({ template, sessionsGenerated }, { status: 201 })
+    // Batch insert all sessions in a single transaction
+    if (sessionData.length > 0) {
+      await prisma.$transaction(
+        sessionData.map((data) => prisma.activity.create({ data }))
+      )
+    }
+
+    return NextResponse.json({ template, sessionsGenerated: sessionData.length }, { status: 201 })
   } catch (error) {
     console.error('[host/templates] POST error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

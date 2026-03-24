@@ -199,34 +199,31 @@ function BuddyPageInner() {
     [tab, typeFilter, fitnessFilter, pricingFilter, verifiedFilter, router]
   )
 
-  // Fetch pending payments count for hosting tab notification
+  // Parallelize initial data fetches — don't block sessions on onboarding check
   useEffect(() => {
-    fetch('/api/p2p/payments/pending')
-      .then((res) => res.ok ? res.json() : { payments: [] })
-      .then((data) => setPendingPaymentsCount(data.payments?.length ?? 0))
-      .catch(() => {})
-  }, [])
+    // Fire all initial fetches in parallel
+    const loadInitialData = async () => {
+      const [onboardingRes] = await Promise.allSettled([
+        fetch('/api/user/p2p-onboarding').then((r) => r.ok ? r.json() : null),
+        fetch('/api/p2p/payments/pending')
+          .then((r) => r.ok ? r.json() : { payments: [] })
+          .then((data) => setPendingPaymentsCount(data.payments?.length ?? 0))
+          .catch(() => {}),
+        fetchSessions(), // Start loading sessions immediately
+      ])
 
-  useEffect(() => {
-    // Check onboarding status
-    async function checkOnboarding() {
-      try {
-        const res = await fetch('/api/user/p2p-onboarding')
-        if (res.ok) {
-          const data = await res.json()
-          if (!data.completed) {
-            const currentPath = window.location.pathname + window.location.search
-            router.replace('/onboarding/p2p?redirect=' + encodeURIComponent(currentPath))
-            return
-          }
-          setCurrentUserId(data.user?.id ?? null)
+      // Handle onboarding redirect after sessions already started loading
+      if (onboardingRes.status === 'fulfilled' && onboardingRes.value) {
+        const data = onboardingRes.value
+        if (!data.completed) {
+          const currentPath = window.location.pathname + window.location.search
+          router.replace('/onboarding/p2p?redirect=' + encodeURIComponent(currentPath))
+          return
         }
-      } catch {
-        // ignore
+        setCurrentUserId(data.user?.id ?? null)
       }
-      fetchSessions()
     }
-    checkOnboarding()
+    loadInitialData()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router])
 

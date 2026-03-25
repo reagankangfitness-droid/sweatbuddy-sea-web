@@ -85,7 +85,51 @@ export async function GET(request: Request) {
       }
     })
 
-    return NextResponse.json({ sessions, total: sessions.length })
+    // Also fetch communities with coordinates
+    const communityWhere: Record<string, unknown> = {
+      isActive: true,
+      latitude: { not: null },
+      longitude: { not: null },
+    }
+    if (category) communityWhere.category = category
+
+    const communityRecords = await prisma.community.findMany({
+      where: communityWhere,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        category: true,
+        description: true,
+        logoImage: true,
+        coverImage: true,
+        latitude: true,
+        longitude: true,
+        address: true,
+        memberCount: true,
+        instagramHandle: true,
+        city: { select: { name: true } },
+      },
+      take: 200,
+    })
+
+    const communities = communityRecords.map((c) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      category: c.category,
+      description: c.description,
+      logoImage: c.logoImage,
+      coverImage: c.coverImage,
+      latitude: c.latitude!,
+      longitude: c.longitude!,
+      address: c.address,
+      city: c.city?.name ?? null,
+      memberCount: c.memberCount,
+      instagramHandle: c.instagramHandle,
+    }))
+
+    return NextResponse.json({ sessions, communities, total: sessions.length })
   } catch (err) {
     console.error('[discover/sessions]', err)
     return NextResponse.json({ error: 'Failed to load sessions' }, { status: 500 })

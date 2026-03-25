@@ -52,6 +52,22 @@ interface DiscoverSession {
   }
 }
 
+interface DiscoverCommunity {
+  id: string
+  name: string
+  slug: string
+  category: string
+  description: string | null
+  logoImage: string | null
+  coverImage: string | null
+  latitude: number
+  longitude: number
+  address: string | null
+  city: string | null
+  memberCount: number
+  instagramHandle: string | null
+}
+
 // ─── Constants ───────────────────────────────────────────────────────────────
 
 const SINGAPORE_CENTER = { lat: 1.3521, lng: 103.8198 }
@@ -131,6 +147,48 @@ function SessionPin({ session, isSelected, onClick }: PinProps) {
           ${session.price}
         </div>
       )}
+    </div>
+  )
+}
+
+// ─── Community Pin Component ─────────────────────────────────────────────────
+
+interface CommunityPinProps {
+  community: DiscoverCommunity
+  isSelected: boolean
+  onClick: () => void
+}
+
+function CommunityPin({ community, isSelected, onClick }: CommunityPinProps) {
+  return (
+    <div
+      onClick={(e) => {
+        e.stopPropagation()
+        onClick()
+      }}
+      className="cursor-pointer select-none"
+      style={{ transform: 'translate(-50%, -50%)' }}
+    >
+      <div
+        className={`
+          flex items-center justify-center rounded-xl
+          shadow-lg border-2 transition-all duration-150
+          ${isSelected
+            ? 'w-12 h-12 border-white scale-110 ring-2 ring-white/40'
+            : 'w-9 h-9 border-white/80 hover:scale-110'
+          }
+          bg-[#1A1A1A]
+        `}
+      >
+        {community.logoImage ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={community.logoImage} alt="" className="w-full h-full object-cover rounded-lg" />
+        ) : (
+          <span className={isSelected ? 'text-lg' : 'text-sm'}>
+            {getCategoryEmoji(community.category)}
+          </span>
+        )}
+      </div>
     </div>
   )
 }
@@ -330,6 +388,94 @@ function SessionDetailSheet({ session, onClose, onJoin, joining, currentUserId }
   )
 }
 
+// ─── Community Detail Sheet ───────────────────────────────────────────────────
+
+interface CommunitySheetProps {
+  community: DiscoverCommunity | null
+  onClose: () => void
+}
+
+function CommunityDetailSheet({ community, onClose }: CommunitySheetProps) {
+  if (!community) return null
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        key="community-sheet"
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{ type: 'spring', stiffness: 400, damping: 40 }}
+        className="absolute bottom-0 left-0 right-0 z-40"
+        drag="y"
+        dragConstraints={{ top: 0 }}
+        dragElastic={0.1}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 80) onClose()
+        }}
+      >
+        <div className="mb-[80px] md:mb-0">
+          <div className="bg-white border-t border-black/[0.06] rounded-t-2xl shadow-2xl">
+            <div className="flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 rounded-full bg-black/[0.1]" />
+            </div>
+
+            <div className="px-4 pb-6 pt-2">
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl">{getCategoryEmoji(community.category)}</span>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[#1A1A1A]/10 text-[#1A1A1A]">
+                      Community
+                    </span>
+                  </div>
+                  <Link
+                    href={`/communities/${community.slug}`}
+                    className="text-base font-bold text-[#1A1A1A] leading-snug hover:text-[#1A1A1A] line-clamp-2 block"
+                  >
+                    {community.name}
+                  </Link>
+                </div>
+                <button
+                  onClick={onClose}
+                  className="flex-shrink-0 w-8 h-8 rounded-full bg-[#FFFBF8] flex items-center justify-center hover:bg-neutral-100"
+                >
+                  <X className="w-4 h-4 text-[#71717A]" />
+                </button>
+              </div>
+
+              {community.description && (
+                <p className="text-sm text-[#71717A] mb-3 line-clamp-2">
+                  {community.description.split('\n')[0]}
+                </p>
+              )}
+
+              <div className="flex flex-col gap-1.5 text-sm text-[#71717A] mb-3">
+                {(community.address || community.city) && (
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span className="truncate">{community.address ?? community.city}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2">
+                  <Users className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span>{community.memberCount} member{community.memberCount !== 1 ? 's' : ''}</span>
+                </div>
+              </div>
+
+              <Link href={`/communities/${community.slug}`} className="block">
+                <button className="w-full py-3.5 rounded-full bg-[#1A1A1A] text-white text-sm font-bold hover:bg-neutral-800 transition-colors">
+                  View community →
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </AnimatePresence>
+  )
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function DiscoverPage() {
@@ -338,9 +484,11 @@ export default function DiscoverPage() {
   const mapRef = useRef<google.maps.Map | null>(null)
 
   const [sessions, setSessions] = useState<DiscoverSession[]>([])
+  const [communities, setCommunities] = useState<DiscoverCommunity[]>([])
   const [loading, setLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState('')
   const [selected, setSelected] = useState<DiscoverSession | null>(null)
+  const [selectedCommunity, setSelectedCommunity] = useState<DiscoverCommunity | null>(null)
   const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral | null>(null)
   const [joining, setJoining] = useState(false)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
@@ -368,6 +516,7 @@ export default function DiscoverPage() {
       if (!res.ok) throw new Error('Failed')
       const data = await res.json()
       setSessions(data.sessions ?? [])
+      setCommunities(data.communities ?? [])
     } catch {
       toast.error('Could not load sessions')
     } finally {
@@ -398,6 +547,7 @@ export default function DiscoverPage() {
   function handleFilterChange(value: string) {
     setActiveFilter(value)
     setSelected(null)
+    setSelectedCommunity(null)
   }
 
   async function handleJoin(sessionId: string) {
@@ -461,7 +611,7 @@ export default function DiscoverPage() {
         center={SINGAPORE_CENTER}
         zoom={DEFAULT_ZOOM}
         onLoad={(map) => { mapRef.current = map }}
-        onClick={() => setSelected(null)}
+        onClick={() => { setSelected(null); setSelectedCommunity(null) }}
         options={{
           disableDefaultUI: true,
           zoomControl: false,
@@ -481,6 +631,21 @@ export default function DiscoverPage() {
               session={session}
               isSelected={selected?.id === session.id}
               onClick={() => setSelected(session)}
+            />
+          </OverlayView>
+        ))}
+
+        {/* Community pins */}
+        {communities.map((community) => (
+          <OverlayView
+            key={`c-${community.id}`}
+            position={{ lat: community.latitude, lng: community.longitude }}
+            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+          >
+            <CommunityPin
+              community={community}
+              isSelected={selectedCommunity?.id === community.id}
+              onClick={() => { setSelectedCommunity(community); setSelected(null) }}
             />
           </OverlayView>
         ))}
@@ -513,9 +678,9 @@ export default function DiscoverPage() {
       {!loading && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
           <div className="bg-white/80 backdrop-blur border border-black/[0.06] text-[#4A4A5A] text-xs font-medium px-3 py-1.5 rounded-full">
-            {sessions.length === 0
+            {sessions.length === 0 && communities.length === 0
               ? 'No sessions nearby yet'
-              : `${sessions.length} session${sessions.length !== 1 ? 's' : ''} nearby`}
+              : `${sessions.length + communities.length} on map`}
           </div>
         </div>
       )}
@@ -563,6 +728,12 @@ export default function DiscoverPage() {
         onJoin={handleJoin}
         joining={joining}
         currentUserId={currentUserId}
+      />
+
+      {/* ── Community detail bottom sheet ── */}
+      <CommunityDetailSheet
+        community={selectedCommunity}
+        onClose={() => setSelectedCommunity(null)}
       />
     </div>
   )

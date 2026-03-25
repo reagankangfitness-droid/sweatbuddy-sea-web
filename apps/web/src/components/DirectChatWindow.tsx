@@ -99,8 +99,13 @@ export function DirectChatWindow({
     if (isOpen && userEmail) {
       fetchMessages()
 
-      // Poll for new messages every 5 seconds
-      const interval = setInterval(fetchMessages, 5000)
+      // Poll for new messages every 5 seconds with in-flight guard
+      let fetching = false
+      const interval = setInterval(async () => {
+        if (fetching) return
+        fetching = true
+        try { await fetchMessages() } finally { fetching = false }
+      }, 5000)
       return () => clearInterval(interval)
     }
   }, [isOpen, eventId, userEmail, fetchMessages])

@@ -56,9 +56,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (activity.status !== 'PUBLISHED') {
       return NextResponse.json({ error: 'Session is not available' }, { status: 400 })
     }
-    if (activity.userId === dbUser.id) {
-      return NextResponse.json({ error: 'Cannot join your own session' }, { status: 400 })
-    }
+    const isHost = activity.userId === dbUser.id
     if (activity.startTime && activity.startTime < new Date()) {
       return NextResponse.json({ error: 'Session has already started' }, { status: 400 })
     }
@@ -181,8 +179,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       isFree: true,
     }).catch(() => {})
 
-    // Notify host (fire-and-forget)
-    if (activity.user.email) {
+    // Notify host (fire-and-forget) — skip if the host is joining their own session
+    if (activity.user.email && !isHost) {
       sendP2PHostJoinNotificationEmail({
         to: activity.user.email,
         hostName: activity.user.name,

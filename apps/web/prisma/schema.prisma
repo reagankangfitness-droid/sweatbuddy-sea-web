@@ -282,6 +282,9 @@ model User {
   coachVerifications CoachVerification[] @relation("CoachVerifications")
   sessionTemplates   SessionTemplate[]   @relation("HostSessionTemplates")
 
+  // Reminder preferences
+  reminderPreferences ReminderPreferences?
+
   @@index([slug])
   @@index([username])
   @@index([isHost])
@@ -1534,6 +1537,7 @@ model PushSubscription {
 model ReminderPreferences {
   id     String @id @default(cuid())
   userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Reminder type preferences
   enableOneWeekReminder Boolean @default(false)
@@ -2058,6 +2062,7 @@ model EventChatMessage {
   user User      @relation("EventChatMessagesSent", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([chatId, createdAt])
+  @@index([userId])
   @@map("event_chat_messages")
 }
 
@@ -2612,8 +2617,11 @@ model Community {
   logoImage   String?
 
   // Location & Category
-  cityId   String?
-  category String // Primary activity type slug
+  cityId    String?
+  category  String // Primary activity type slug
+  latitude  Float?
+  longitude Float?
+  address   String? @db.VarChar(500)
 
   // Settings
   privacy    CommunityPrivacy @default(PUBLIC)

@@ -297,10 +297,14 @@ export function AgentChatWidget() {
 
   useEffect(() => {
     // Show tooltip for first-time users
-    const hasSeenTooltip = localStorage.getItem('ai-chat-tooltip-seen')
-    if (!hasSeenTooltip && !isOpen) {
-      const timer = setTimeout(() => setShowTooltip(true), 2000)
-      return () => clearTimeout(timer)
+    try {
+      const hasSeenTooltip = localStorage.getItem('ai-chat-tooltip-seen')
+      if (!hasSeenTooltip && !isOpen) {
+        const timer = setTimeout(() => setShowTooltip(true), 2000)
+        return () => clearTimeout(timer)
+      }
+    } catch {
+      // localStorage unavailable (private browsing, quota exceeded)
     }
   }, [isOpen])
 
@@ -308,7 +312,7 @@ export function AgentChatWidget() {
     setIsOpen(!isOpen)
     if (showTooltip) {
       setShowTooltip(false)
-      localStorage.setItem('ai-chat-tooltip-seen', 'true')
+      try { localStorage.setItem('ai-chat-tooltip-seen', 'true') } catch {}
     }
   }
 

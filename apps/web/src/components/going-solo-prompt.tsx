@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'
 import { Users } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface GoingSoloPromptProps {
   activityId: string
@@ -43,6 +44,7 @@ export function GoingSoloPrompt({ activityId, onOptIn }: GoingSoloPromptProps) {
       setVisible(false)
       onOptIn()
     } catch {
+      toast.error('Something went wrong. Please try again.')
       setIsSubmitting(false)
     }
   }

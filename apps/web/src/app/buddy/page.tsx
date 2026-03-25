@@ -150,10 +150,8 @@ function BuddyPageInner() {
   )
   const mapRef = useRef<google.maps.Map | null>(null)
   const [mapSessions, setMapSessions] = useState<MapSession[]>([])
-  const [mapCommunities, setMapCommunities] = useState<MapCommunity[]>([])
   const [mapLoading, setMapLoading] = useState(false)
   const [mapSelected, setMapSelected] = useState<MapSession | null>(null)
-  const [mapSelectedCommunity, setMapSelectedCommunity] = useState<MapCommunity | null>(null)
   const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral | null>(null)
   const { isLoaded: mapsLoaded } = useLoadScript({ googleMapsApiKey: GOOGLE_MAPS_API_KEY })
   const [sessions, setSessions] = useState<Session[]>([])
@@ -256,7 +254,7 @@ function BuddyPageInner() {
     setMapLoading(true)
     fetch('/api/discover/sessions')
       .then((r) => r.ok ? r.json() : { sessions: [] })
-      .then((d) => { setMapSessions(d.sessions ?? []); setMapCommunities(d.communities ?? []) })
+      .then((d) => setMapSessions(d.sessions ?? []))
       .catch(() => {})
       .finally(() => setMapLoading(false))
   }, [tab])
@@ -438,7 +436,7 @@ function BuddyPageInner() {
                 center={userLocation ?? SINGAPORE_CENTER}
                 zoom={12}
                 onLoad={(map) => { mapRef.current = map; if (userLocation) map.panTo(userLocation) }}
-                onClick={() => { setMapSelected(null); setMapSelectedCommunity(null) }}
+                onClick={() => setMapSelected(null)}
                 options={{
                   disableDefaultUI: true,
                   styles: DARK_MAP_STYLES,
@@ -453,7 +451,7 @@ function BuddyPageInner() {
                     mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                   >
                     <div
-                      onClick={(e) => { e.stopPropagation(); setMapSelected(s); setMapSelectedCommunity(null) }}
+                      onClick={(e) => { e.stopPropagation(); setMapSelected(s) }}
                       className="cursor-pointer select-none"
                       style={{ transform: 'translate(-50%, -50%)' }}
                     >
@@ -461,27 +459,6 @@ function BuddyPageInner() {
                         mapSelected?.id === s.id ? 'w-12 h-12 text-2xl scale-110 ring-2 ring-white/40' : 'w-9 h-9 text-lg hover:scale-110'
                       } ${pinColor(s.categorySlug)}`}>
                         {pinEmoji(s.categorySlug)}
-                      </div>
-                    </div>
-                  </OverlayView>
-                ))}
-
-                {/* Community pins */}
-                {mapCommunities.map((c) => (
-                  <OverlayView
-                    key={`c-${c.id}`}
-                    position={{ lat: c.latitude, lng: c.longitude }}
-                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                  >
-                    <div
-                      onClick={(e) => { e.stopPropagation(); setMapSelectedCommunity(c); setMapSelected(null) }}
-                      className="cursor-pointer select-none"
-                      style={{ transform: 'translate(-50%, -50%)' }}
-                    >
-                      <div className={`flex items-center justify-center rounded-xl shadow-lg border-2 border-white/80 transition-all duration-150 bg-[#1A1A1A] ${
-                        mapSelectedCommunity?.id === c.id ? 'w-12 h-12 text-lg scale-110 ring-2 ring-white/40' : 'w-9 h-9 text-sm hover:scale-110'
-                      }`}>
-                        {pinEmoji(c.category)}
                       </div>
                     </div>
                   </OverlayView>
@@ -503,7 +480,7 @@ function BuddyPageInner() {
                   </div>
                 ) : (
                   <div className="bg-white/80 backdrop-blur border border-black/[0.06] text-[#4A4A5A] text-xs font-medium px-3 py-1.5 rounded-full">
-                    {mapSessions.length + mapCommunities.length === 0 ? 'No sessions nearby' : `${mapSessions.length + mapCommunities.length} on map`}
+                    {mapSessions.length === 0 ? 'No sessions nearby' : `${mapSessions.length} session${mapSessions.length !== 1 ? 's' : ''} nearby`}
                   </div>
                 )}
               </div>
@@ -582,63 +559,6 @@ function BuddyPageInner() {
                 )}
               </AnimatePresence>
 
-              {/* Community detail sheet */}
-              <AnimatePresence>
-                {mapSelectedCommunity && (
-                  <motion.div
-                    key="buddy-community-sheet"
-                    initial={{ y: '100%' }}
-                    animate={{ y: 0 }}
-                    exit={{ y: '100%' }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 40 }}
-                    className="absolute bottom-0 left-0 right-0 z-20"
-                    drag="y"
-                    dragConstraints={{ top: 0 }}
-                    dragElastic={0.1}
-                    onDragEnd={(_, info) => { if (info.offset.y > 80) setMapSelectedCommunity(null) }}
-                  >
-                    <div className="bg-white border-t border-black/[0.06] rounded-t-2xl shadow-2xl">
-                      <div className="flex justify-center pt-3 pb-1">
-                        <div className="w-10 h-1 rounded-full bg-black/[0.06]" />
-                      </div>
-                      <div className="px-4 pb-6 pt-2">
-                        <div className="flex items-start justify-between gap-3 mb-3">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-xl">{pinEmoji(mapSelectedCommunity.category)}</span>
-                              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[#1A1A1A]/10 text-[#1A1A1A]">Community</span>
-                            </div>
-                            <Link href={`/communities/${mapSelectedCommunity.slug}`} className="text-base font-bold text-[#1A1A1A] leading-snug line-clamp-2 block">
-                              {mapSelectedCommunity.name}
-                            </Link>
-                          </div>
-                          <button onClick={() => setMapSelectedCommunity(null)} aria-label="Close" className="w-8 h-8 rounded-full bg-[#FFFBF8] flex items-center justify-center flex-shrink-0">
-                            <X className="w-4 h-4 text-[#71717A]" />
-                          </button>
-                        </div>
-                        {mapSelectedCommunity.description && (
-                          <p className="text-sm text-[#71717A] mb-3 line-clamp-2">{mapSelectedCommunity.description.split('\n')[0]}</p>
-                        )}
-                        <div className="flex flex-col gap-1.5 text-sm text-[#71717A] mb-4">
-                          {(mapSelectedCommunity.address || mapSelectedCommunity.city) && (
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-3.5 h-3.5" />
-                              {mapSelectedCommunity.address ?? mapSelectedCommunity.city}
-                            </div>
-                          )}
-                          <div className="flex items-center gap-2">
-                            <Users className="w-3.5 h-3.5" />
-                            {mapSelectedCommunity.memberCount} member{mapSelectedCommunity.memberCount !== 1 ? 's' : ''}
-                          </div>
-                        </div>
-                        <Link href={`/communities/${mapSelectedCommunity.slug}`} className="block w-full py-3.5 rounded-full bg-[#1A1A1A] text-white text-sm font-bold text-center hover:bg-black transition-colors">
-                          View community →
-                        </Link>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </>
           )}
         </div>

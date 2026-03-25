@@ -484,11 +484,9 @@ export default function DiscoverPage() {
   const mapRef = useRef<google.maps.Map | null>(null)
 
   const [sessions, setSessions] = useState<DiscoverSession[]>([])
-  const [communities, setCommunities] = useState<DiscoverCommunity[]>([])
   const [loading, setLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState('')
   const [selected, setSelected] = useState<DiscoverSession | null>(null)
-  const [selectedCommunity, setSelectedCommunity] = useState<DiscoverCommunity | null>(null)
   const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral | null>(null)
   const [joining, setJoining] = useState(false)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
@@ -516,7 +514,6 @@ export default function DiscoverPage() {
       if (!res.ok) throw new Error('Failed')
       const data = await res.json()
       setSessions(data.sessions ?? [])
-      setCommunities(data.communities ?? [])
     } catch {
       toast.error('Could not load sessions')
     } finally {
@@ -547,7 +544,6 @@ export default function DiscoverPage() {
   function handleFilterChange(value: string) {
     setActiveFilter(value)
     setSelected(null)
-    setSelectedCommunity(null)
   }
 
   async function handleJoin(sessionId: string) {
@@ -611,7 +607,7 @@ export default function DiscoverPage() {
         center={SINGAPORE_CENTER}
         zoom={DEFAULT_ZOOM}
         onLoad={(map) => { mapRef.current = map }}
-        onClick={() => { setSelected(null); setSelectedCommunity(null) }}
+        onClick={() => setSelected(null)}
         options={{
           disableDefaultUI: true,
           zoomControl: false,
@@ -631,21 +627,6 @@ export default function DiscoverPage() {
               session={session}
               isSelected={selected?.id === session.id}
               onClick={() => setSelected(session)}
-            />
-          </OverlayView>
-        ))}
-
-        {/* Community pins */}
-        {communities.map((community) => (
-          <OverlayView
-            key={`c-${community.id}`}
-            position={{ lat: community.latitude, lng: community.longitude }}
-            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-          >
-            <CommunityPin
-              community={community}
-              isSelected={selectedCommunity?.id === community.id}
-              onClick={() => { setSelectedCommunity(community); setSelected(null) }}
             />
           </OverlayView>
         ))}
@@ -678,9 +659,9 @@ export default function DiscoverPage() {
       {!loading && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
           <div className="bg-white/80 backdrop-blur border border-black/[0.06] text-[#4A4A5A] text-xs font-medium px-3 py-1.5 rounded-full">
-            {sessions.length === 0 && communities.length === 0
+            {sessions.length === 0
               ? 'No sessions nearby yet'
-              : `${sessions.length + communities.length} on map`}
+              : `${sessions.length} session${sessions.length !== 1 ? 's' : ''} nearby`}
           </div>
         </div>
       )}
@@ -730,11 +711,6 @@ export default function DiscoverPage() {
         currentUserId={currentUserId}
       />
 
-      {/* ── Community detail bottom sheet ── */}
-      <CommunityDetailSheet
-        community={selectedCommunity}
-        onClose={() => setSelectedCommunity(null)}
-      />
     </div>
   )
 }

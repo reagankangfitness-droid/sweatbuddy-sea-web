@@ -63,7 +63,7 @@ async function getCommunities(): Promise<CommunityData[]> {
       },
     },
     orderBy: { memberCount: 'desc' },
-    take: 50,
+    take: 100,
   })
 
   return communities.map((c) => ({

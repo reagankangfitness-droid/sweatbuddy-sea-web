@@ -13,19 +13,36 @@ export async function GET(request: Request) {
     const windowStart = new Date(now.getTime() - 60 * 60 * 1000)
     const windowEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
 
+    // Location-based filtering — 25km radius bounding box
+    const where: Record<string, unknown> = {
+      status: 'PUBLISHED',
+      deletedAt: null,
+      activityMode: { in: ['P2P_FREE', 'P2P_PAID'] },
+      latitude: { not: 0 },
+      longitude: { not: 0 },
+      OR: [
+        { startTime: null },
+        { startTime: { gte: windowStart, lte: windowEnd } },
+      ],
+    }
+    if (category) where.categorySlug = category
+
+    const lat = searchParams.get('lat')
+    const lng = searchParams.get('lng')
+    if (lat && lng) {
+      const userLat = parseFloat(lat)
+      const userLng = parseFloat(lng)
+      if (!isNaN(userLat) && !isNaN(userLng)) {
+        const radiusKm = 25
+        const latDelta = radiusKm / 111
+        const lngDelta = radiusKm / (111 * Math.cos(userLat * (Math.PI / 180)))
+        where.latitude = { gte: userLat - latDelta, lte: userLat + latDelta }
+        where.longitude = { gte: userLng - lngDelta, lte: userLng + lngDelta }
+      }
+    }
+
     const activities = await prisma.activity.findMany({
-      where: {
-        status: 'PUBLISHED',
-        deletedAt: null,
-        activityMode: { in: ['P2P_FREE', 'P2P_PAID'] },
-        latitude: { not: 0 },
-        longitude: { not: 0 },
-        OR: [
-          { startTime: null },
-          { startTime: { gte: windowStart, lte: windowEnd } },
-        ],
-        ...(category ? { categorySlug: category } : {}),
-      },
+      where,
       select: {
         id: true,
         title: true,

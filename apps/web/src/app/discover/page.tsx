@@ -510,6 +510,10 @@ export default function DiscoverPage() {
     try {
       const params = new URLSearchParams()
       if (category) params.set('category', category)
+      if (userLocation) {
+        params.set('lat', String(userLocation.lat))
+        params.set('lng', String(userLocation.lng))
+      }
       const res = await fetch(`/api/discover/sessions?${params}`)
       if (!res.ok) throw new Error('Failed')
       const data = await res.json()
@@ -519,7 +523,7 @@ export default function DiscoverPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [userLocation])
 
   useEffect(() => {
     fetchSessions(activeFilter)

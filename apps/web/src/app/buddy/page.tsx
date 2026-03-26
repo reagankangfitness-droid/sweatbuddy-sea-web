@@ -355,12 +355,17 @@ function BuddyPageInner() {
   useEffect(() => {
     if (tab !== 'map') return
     setMapLoading(true)
-    fetch('/api/discover/sessions')
+    const params = new URLSearchParams()
+    if (userLocation) {
+      params.set('lat', String(userLocation.lat))
+      params.set('lng', String(userLocation.lng))
+    }
+    fetch(`/api/discover/sessions?${params}`)
       .then((r) => r.ok ? r.json() : { sessions: [] })
       .then((d) => setMapSessions(d.sessions ?? []))
       .catch(() => {})
       .finally(() => setMapLoading(false))
-  }, [tab])
+  }, [tab, userLocation])
 
   // Pan map to user location when it becomes available
   useEffect(() => {

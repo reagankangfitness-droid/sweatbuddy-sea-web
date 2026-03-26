@@ -264,16 +264,6 @@ function AppNavInner() {
               )
             })}
 
-            {/* Host CTA — Quick Post */}
-            <Link
-              href="/buddy/host/quick"
-              aria-label="Quick post a session"
-              className="flex flex-col items-center justify-center w-14 h-14"
-            >
-              <div className="w-10 h-10 rounded-full bg-[#1A1A1A] flex items-center justify-center">
-                <Plus className="w-5 h-5 text-white" />
-              </div>
-            </Link>
           </div>
         </nav>
       </div>

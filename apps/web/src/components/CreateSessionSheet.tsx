@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
 import { LocationAutocomplete } from '@/components/host/LocationAutocomplete'
+import { ShareSessionSheet } from '@/components/ShareSessionSheet'
 
 // ─── Smart defaults ──────────────────────────────────────────────────────────
 
@@ -118,6 +119,10 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
   const [showTimePicker, setShowTimePicker] = useState(false)
   const [showLocationPicker, setShowLocationPicker] = useState(false)
 
+  // Share sheet after creation
+  const [shareOpen, setShareOpen] = useState(false)
+  const [createdSession, setCreatedSession] = useState<{ id: string; title: string } | null>(null)
+
   // Reset and set smart defaults when sheet opens/closes
   useEffect(() => {
     if (open) {
@@ -197,8 +202,12 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
       }
 
       toast.success('Posted! Your session is live.')
+      const postedTitle = note.trim() || generateTitle(categorySlug, selectedTime!)
+      setCreatedSession({ id: data.activity.id, title: postedTitle })
       onClose()
       onSuccess?.()
+      // Show share sheet after a brief delay for the creation sheet to animate out
+      setTimeout(() => setShareOpen(true), 300)
     } catch {
       toast.error('Something went wrong')
     } finally {
@@ -212,6 +221,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
     : 'Pick an activity to post'
 
   return (
+    <>
     <AnimatePresence>
       {open && (
         <>
@@ -461,5 +471,19 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
         </>
       )}
     </AnimatePresence>
+
+    {/* Share sheet after creation */}
+    <ShareSessionSheet
+      open={shareOpen}
+      onClose={() => { setShareOpen(false); setCreatedSession(null) }}
+      sessionId={createdSession?.id ?? ''}
+      sessionTitle={createdSession?.title ?? ''}
+      sessionTime={selectedTime?.toISOString()}
+      sessionLocation={address || city}
+      spotsLeft={spots > 0 ? spots : null}
+      goingCount={1}
+      context="created"
+    />
+    </>
   )
 }

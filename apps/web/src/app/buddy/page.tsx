@@ -13,6 +13,7 @@ import { PaymentModal } from '@/components/PaymentModal'
 import { DARK_MAP_STYLES } from '@/lib/wave/map-styles'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
 import { CreateSessionSheet } from '@/components/CreateSessionSheet'
+import { ShareSessionSheet } from '@/components/ShareSessionSheet'
 
 interface Host {
   id: string
@@ -243,6 +244,7 @@ function BuddyPageInner() {
   const [pricingFilter, setPricingFilter] = useState('')
   const [verifiedFilter, setVerifiedFilter] = useState(false)
   const [showCreateSheet, setShowCreateSheet] = useState(false)
+  const [shareSession, setShareSession] = useState<Session | null>(null)
 
   const fetchSessions = useCallback(
     async (cursor?: string) => {
@@ -394,25 +396,13 @@ function BuddyPageInner() {
         toast.error(data.error || 'Failed to join')
         return
       }
-      toast.success("You're in!")
-      setTimeout(() => {
-        toast('Know someone who\'d enjoy this?', {
-          action: {
-            label: 'Share',
-            onClick: () => {
-              const url = `${window.location.origin}/activities/${sessionId}`
-              if (navigator.share) {
-                navigator.share({ title: 'Check this out on SweatBuddies', url })
-              } else {
-                navigator.clipboard.writeText(url)
-                toast.success('Link copied!')
-              }
-            },
-          },
-          duration: 5000,
-        })
-      }, 1500)
+      toast.success("You're in! 🎉")
+      const joinedSession = sessions.find((s) => s.id === sessionId)
       fetchSessions()
+      // Show share sheet after brief delay
+      if (joinedSession) {
+        setTimeout(() => setShareSession(joinedSession), 500)
+      }
     } catch {
       toast.error('Something went wrong')
     } finally {
@@ -439,6 +429,19 @@ function BuddyPageInner() {
     <div className="min-h-screen bg-[#FFFBF8]">
       {/* Create Session Sheet */}
       <CreateSessionSheet open={showCreateSheet} onClose={() => setShowCreateSheet(false)} onSuccess={() => fetchSessions()} />
+
+      {/* Post-Join Share Sheet */}
+      <ShareSessionSheet
+        open={!!shareSession}
+        onClose={() => setShareSession(null)}
+        sessionId={shareSession?.id ?? ''}
+        sessionTitle={shareSession?.title ?? ''}
+        sessionTime={shareSession?.startTime}
+        sessionLocation={shareSession?.address ?? shareSession?.city ?? undefined}
+        spotsLeft={shareSession?.maxPeople ? shareSession.maxPeople - shareSession.attendeeCount : null}
+        goingCount={shareSession ? shareSession.attendeeCount + 1 : 0}
+        context="joined"
+      />
 
       {/* Floating Create Button */}
       <button

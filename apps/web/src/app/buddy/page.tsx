@@ -456,9 +456,14 @@ function BuddyPageInner() {
 
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-black/[0.06]">
-        <div className="max-w-2xl mx-auto px-4 py-4">
-          <h1 className="text-lg font-bold text-[#1A1A1A]">Experiences</h1>
-          <p className="text-xs text-[#71717A]">Discover fitness &amp; wellness experiences</p>
+        <div className="max-w-2xl mx-auto px-4 py-3">
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-bold text-[#1A1A1A] tracking-tight">What&apos;s happening</h1>
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -721,14 +726,22 @@ function BuddyPageInner() {
                 </Link>
               </div>
             ) : (
-              <div className="space-y-6 pt-4">
+              <div className="space-y-8 pt-4">
                 {bucketSessions(sessions).map((bucket) => (
                   <div key={bucket.key}>
-                    <h2 className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-3 px-1">
-                      {bucket.label}
-                    </h2>
-                    <div className="grid grid-cols-2 gap-4">
-                      {bucket.sessions.map((session) => (
+                    <div className="flex items-center gap-2 mb-4 px-1">
+                      {bucket.key === 'now' && (
+                        <span className="relative flex h-2.5 w-2.5">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
+                        </span>
+                      )}
+                      <h2 className="text-sm font-bold text-[#1A1A1A] tracking-tight">
+                        {bucket.label}
+                      </h2>
+                    </div>
+                    <div className="space-y-3">
+                      {bucket.sessions.map((session, i) => (
                         <SessionCard
                           key={session.id}
                           session={session}
@@ -736,6 +749,7 @@ function BuddyPageInner() {
                           onJoin={joinSession}
                           onLeave={leaveSession}
                           joiningId={joiningId}
+                          index={i}
                         />
                       ))}
                     </div>
@@ -776,11 +790,11 @@ function BuddyPageInner() {
             {/* Hosting */}
             {hosting.length > 0 && (
               <div>
-                <h2 className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-3">
+                <h2 className="text-sm font-bold text-[#1A1A1A] tracking-tight mb-4">
                   Hosting
                 </h2>
-                <div className="grid grid-cols-2 gap-4">
-                  {hosting.map((session) => (
+                <div className="space-y-3">
+                  {hosting.map((session, i) => (
                     <SessionCard
                       key={session.id}
                       session={session}
@@ -789,6 +803,7 @@ function BuddyPageInner() {
                       onLeave={leaveSession}
                       joiningId={joiningId}
                       isHosting
+                      index={i}
                     />
                   ))}
                 </div>
@@ -798,11 +813,11 @@ function BuddyPageInner() {
             {/* Attending */}
             {attending.length > 0 && (
               <div>
-                <h2 className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-3">
+                <h2 className="text-sm font-bold text-[#1A1A1A] tracking-tight mb-4">
                   Attending
                 </h2>
-                <div className="grid grid-cols-2 gap-4">
-                  {attending.map((session) => (
+                <div className="space-y-3">
+                  {attending.map((session, i) => (
                     <SessionCard
                       key={session.id}
                       session={session}
@@ -810,6 +825,7 @@ function BuddyPageInner() {
                       onJoin={joinSession}
                       onLeave={leaveSession}
                       joiningId={joiningId}
+                      index={i}
                     />
                   ))}
                 </div>
@@ -852,6 +868,7 @@ function SessionCard({
   onLeave,
   joiningId,
   isHosting = false,
+  index = 0,
 }: {
   session: Session
   currentUserId: string | null
@@ -859,168 +876,179 @@ function SessionCard({
   onLeave: (id: string) => void
   joiningId: string | null
   isHosting?: boolean
+  index?: number
 }) {
   const isJoined = session.userStatus === 'JOINED' || session.userStatus === 'COMPLETED'
   const isPaid = session.activityMode === 'P2P_PAID'
   const priceDisplay = isPaid ? `$${(session.price / 100).toFixed(0)}` : 'Free'
+  const isHost = currentUserId === session.host?.id
 
-  // Get display name and avatar
+  const displayName = session.community?.name ?? session.host?.name ?? 'Someone'
   const communityLogo = session.community?.logoImage
   const hostAvatar = session.host?.imageUrl
-  const hostIsRealOrganizer = session.host?.name && session.host.name !== 'sweatbuddies' && session.host.name !== 'SweatBuddies'
-  const displayName = session.community?.name ?? session.host?.name ?? 'Someone'
-  const avatarSrc = communityLogo || (hostIsRealOrganizer ? hostAvatar : null)
+  const hostIsReal = session.host?.name && session.host.name !== 'sweatbuddies' && session.host.name !== 'SweatBuddies'
+  const avatarSrc = communityLogo || (hostIsReal ? hostAvatar : null)
 
-  // Category emoji
-  const categoryEmoji: Record<string, string> = {
-    running: '\u{1F3C3}', yoga: '\u{1F9D8}', swimming: '\u{1F3CA}', gym: '\u{1F3CB}\uFE0F', bootcamp: '\u{1F4AA}',
-    cycling: '\u{1F6B4}', badminton: '\u{1F3F8}', hiking: '\u{1F97E}', pilates: '\u{1F938}', cold_plunge: '\u{1F9CA}',
-    padel: '\u{1F3BE}', combat_fitness: '\u{1F94A}', pickleball: '\u{1F3D3}', volleyball: '\u{1F3D0}',
-    basketball: '\u{1F3C0}', dance_fitness: '\u{1F483}',
-  }
-  const emoji = categoryEmoji[session.categorySlug ?? ''] ?? '\u{1F3C5}'
+  const emoji = pinEmoji(session.categorySlug ?? 'other')
 
-  // Spots left
   const spotsLeft = session.maxPeople ? session.maxPeople - session.attendeeCount : null
   const almostFull = spotsLeft !== null && spotsLeft > 0 && spotsLeft <= Math.ceil((session.maxPeople ?? 0) * 0.3)
   const isFull = spotsLeft !== null && spotsLeft <= 0
+  const isJoining = joiningId === session.id
 
   return (
-    <Link
-      href={`/activities/${session.id}`}
-      className="group block rounded-2xl border border-black/[0.06] bg-white overflow-hidden shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300"
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.05, ease: [0.25, 0.1, 0.25, 1] }}
     >
-      {/* Cover Image */}
-      <div className="relative aspect-[4/3] bg-neutral-100 overflow-hidden">
-        {session.imageUrl ? (
-          <Image
-            src={session.imageUrl}
-            alt={session.title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-neutral-50 to-neutral-100 flex items-center justify-center">
-            <span className="text-4xl">{emoji}</span>
-          </div>
-        )}
-
-        {/* Gradient overlay at bottom for readability */}
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
-
-        {/* Price badge — top right */}
-        <div className="absolute top-3 right-3">
-          <span className={`px-2.5 py-1 rounded-full text-xs font-bold backdrop-blur-sm ${
-            isPaid
-              ? 'bg-white/90 text-[#1A1A1A]'
-              : 'bg-emerald-500/90 text-white'
-          }`}>
-            {priceDisplay}
-          </span>
-        </div>
-
-        {/* Status badges — top left */}
-        <div className="absolute top-3 left-3 flex gap-1.5">
-          {session.isFeatured && (
-            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/90 text-white backdrop-blur-sm">
-              ⭐ Featured
-            </span>
-          )}
-          {isJoined && !isHosting && (
-            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/90 text-white backdrop-blur-sm">
-              Going
-            </span>
-          )}
-          {isHosting && (
-            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-500/90 text-white backdrop-blur-sm">
-              Hosting
-            </span>
-          )}
-          {isFull && (
-            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-red-500/90 text-white backdrop-blur-sm">
-              Full
-            </span>
-          )}
-        </div>
-
-        {/* Spots left — bottom right on image */}
-        {almostFull && !isFull && (
-          <div className="absolute bottom-3 right-3">
-            <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-400/90 text-white backdrop-blur-sm">
-              {spotsLeft} spot{spotsLeft !== 1 ? 's' : ''} left
-            </span>
-          </div>
-        )}
-
-        {/* Attendee avatars — bottom left on image */}
-        {session.attendees.length > 0 && (
-          <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
-            <div className="flex -space-x-1.5">
-              {session.attendees.slice(0, 4).map((a) =>
-                a.imageUrl ? (
-                  <Image
-                    key={a.id}
-                    src={a.imageUrl}
-                    alt={a.name ?? ''}
-                    width={22}
-                    height={22}
-                    className="rounded-full ring-2 ring-white object-cover"
-                  />
-                ) : (
-                  <div
-                    key={a.id}
-                    className="w-[22px] h-[22px] rounded-full ring-2 ring-white bg-neutral-200 flex items-center justify-center text-[10px] font-bold text-[#4A4A5A]"
-                  >
-                    {(a.name ?? '?')[0]}
-                  </div>
-                )
-              )}
+      <div className="group bg-white rounded-2xl border border-black/[0.06] shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 overflow-hidden">
+        <Link href={`/activities/${session.id}`} className="block p-4">
+          {/* Row 1: Emoji + Title + Time badge */}
+          <div className="flex items-start gap-3">
+            {/* Large emoji */}
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${pinColor(session.categorySlug ?? 'other')}`}>
+              <span className="text-2xl">{emoji}</span>
             </div>
-            <span className="text-xs font-bold text-white drop-shadow-md">
-              {session.attendeeCount} going
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-0.5">
+                {/* Host/Community name */}
+                <div className="flex items-center gap-1.5 min-w-0">
+                  {avatarSrc ? (
+                    <Image src={avatarSrc} alt={displayName} width={16} height={16} className="rounded-full object-cover flex-shrink-0" />
+                  ) : (
+                    <div className="w-4 h-4 rounded-full bg-neutral-100 flex items-center justify-center text-[8px] font-bold text-[#71717A] flex-shrink-0">
+                      {displayName[0]}
+                    </div>
+                  )}
+                  <span className="text-xs text-[#71717A] truncate">{displayName}</span>
+                </div>
+
+                {/* Status pills */}
+                {isJoined && !isHosting && (
+                  <span className="flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">
+                    Going
+                  </span>
+                )}
+                {isHosting && (
+                  <span className="flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-200">
+                    Hosting
+                  </span>
+                )}
+              </div>
+
+              {/* Title */}
+              <h3 className="text-[15px] font-semibold text-[#1A1A1A] leading-snug line-clamp-2 tracking-tight">
+                {session.title}
+              </h3>
+            </div>
+
+            {/* Price badge */}
+            <span className={`flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-bold ${
+              isPaid
+                ? 'bg-[#FFFBF8] text-[#1A1A1A] border border-black/[0.06]'
+                : 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+            }`}>
+              {priceDisplay}
             </span>
           </div>
-        )}
-      </div>
 
-      {/* Content */}
-      <div className="p-3.5">
-        {/* Community/Host — small row */}
-        <div className="flex items-center gap-2 mb-1.5">
-          {avatarSrc ? (
-            <Image src={avatarSrc} alt={displayName} width={20} height={20} className="rounded-full object-cover" />
-          ) : (
-            <div className="w-5 h-5 rounded-full bg-neutral-100 flex items-center justify-center text-[10px] font-bold text-[#4A4A5A]">
-              {displayName[0]}
-            </div>
-          )}
-          <span className="text-xs font-medium text-[#71717A] truncate">{displayName}</span>
-        </div>
-
-        {/* Title */}
-        <h3 className="text-sm font-semibold text-[#1A1A1A] leading-snug line-clamp-2 mb-1.5">
-          {session.title}
-        </h3>
-
-        {/* Date + Location */}
-        <div className="flex flex-col gap-0.5 text-xs text-[#71717A]">
-          {session.startTime && (
-            <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3 shrink-0" />
-              <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${getUrgencyStyle(session.startTime)}`}>
-                {getRelativeTime(session.startTime)}
+          {/* Row 2: Time + Location */}
+          <div className="flex items-center gap-3 mt-3 text-xs text-[#71717A]">
+            {session.startTime && (
+              <span className="flex items-center gap-1.5">
+                <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${getUrgencyStyle(session.startTime)}`}>
+                  {getRelativeTime(session.startTime)}
+                </span>
+                <span>{format(new Date(session.startTime), 'EEE, MMM d')}</span>
               </span>
-              <span className="text-[#9A9AAA]">{format(new Date(session.startTime), 'EEE, MMM d')}</span>
-            </span>
-          )}
-          {(session.address || session.city) && (
-            <span className="flex items-center gap-1 truncate">
-              <MapPin className="w-3 h-3 shrink-0" />
-              {session.address ?? session.city}
-            </span>
-          )}
-        </div>
+            )}
+            {(session.address || session.city) && (
+              <span className="flex items-center gap-1 truncate text-[#9A9AAA]">
+                <MapPin className="w-3 h-3 flex-shrink-0" />
+                <span className="truncate">{session.address ?? session.city}</span>
+              </span>
+            )}
+          </div>
+
+          {/* Row 3: Avatars + Social proof + Spots */}
+          <div className="flex items-center justify-between mt-3">
+            <div className="flex items-center gap-2">
+              {/* Avatar stack */}
+              {session.attendees.length > 0 && (
+                <div className="flex -space-x-2">
+                  {session.attendees.slice(0, 5).map((a) =>
+                    a.imageUrl ? (
+                      <Image
+                        key={a.id}
+                        src={a.imageUrl}
+                        alt={a.name ?? ''}
+                        width={28}
+                        height={28}
+                        className="rounded-full ring-2 ring-white object-cover"
+                      />
+                    ) : (
+                      <div
+                        key={a.id}
+                        className="w-7 h-7 rounded-full ring-2 ring-white bg-neutral-100 flex items-center justify-center text-[10px] font-bold text-[#71717A]"
+                      >
+                        {(a.name ?? '?')[0]}
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
+              <span className="text-xs font-semibold text-[#4A4A5A]">
+                {session.attendeeCount > 0 ? `${session.attendeeCount} going 🔥` : 'Be the first!'}
+              </span>
+            </div>
+
+            {/* Spots left badge */}
+            {almostFull && !isFull && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-200">
+                {spotsLeft} spot{spotsLeft !== 1 ? 's' : ''} left
+              </span>
+            )}
+            {isFull && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-500 border border-red-200">
+                Full
+              </span>
+            )}
+          </div>
+        </Link>
+
+        {/* Row 4: Inline action button */}
+        {!isHost && !isHosting && !isFull && (
+          <div className="px-4 pb-4 pt-0">
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                if (isJoined) {
+                  onLeave(session.id)
+                } else {
+                  onJoin(session.id)
+                }
+              }}
+              disabled={isJoining}
+              className={`w-full py-2.5 rounded-full text-sm font-semibold transition-all ${
+                isJoined
+                  ? 'bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-red-50 hover:text-red-500 hover:border-red-200'
+                  : 'bg-[#1A1A1A] text-white hover:bg-black'
+              }`}
+            >
+              {isJoining ? (
+                <span className="flex items-center justify-center gap-2"><Loader2 className="w-3.5 h-3.5 animate-spin" /> Joining...</span>
+              ) : isJoined ? (
+                "You're in ✓"
+              ) : (
+                "I'm in →"
+              )}
+            </button>
+          </div>
+        )}
       </div>
-    </Link>
+    </motion.div>
   )
 }

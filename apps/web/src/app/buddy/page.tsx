@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { MapPin, Users, Plus, Loader2, Calendar, ChevronRight, Map, Crosshair, X, Clock, Zap } from 'lucide-react'
+import { MapPin, Plus, Loader2, Crosshair, Clock, Zap } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GoogleMap, useLoadScript, OverlayView } from '@react-google-maps/api'
@@ -41,6 +41,8 @@ interface Session {
   categorySlug: string | null
   city: string
   address: string | null
+  latitude?: number
+  longitude?: number
   startTime: string | null
   endTime: string | null
   maxPeople: number | null
@@ -239,33 +241,24 @@ export default function BuddyPage() {
 
 function BuddyPageInner() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const [tab, setTab] = useState<'happening' | 'map' | 'mine'>(
-    searchParams.get('tab') === 'mine' ? 'mine' : searchParams.get('tab') === 'map' ? 'map' : 'happening'
-  )
   const mapRef = useRef<google.maps.Map | null>(null)
-  const [mapSessions, setMapSessions] = useState<MapSession[]>([])
-  const [mapLoading, setMapLoading] = useState(false)
-  const [mapSelected, setMapSelected] = useState<MapSession | null>(null)
   const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral | null>(null)
   const { isLoaded: mapsLoaded } = useLoadScript({ googleMapsApiKey: GOOGLE_MAPS_API_KEY })
   const [sessions, setSessions] = useState<Session[]>([])
-  const [hosting, setHosting] = useState<Session[]>([])
-  const [attending, setAttending] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
   const [nextCursor, setNextCursor] = useState<string | null>(null)
   const [loadingMore, setLoadingMore] = useState(false)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [joiningId, setJoiningId] = useState<string | null>(null)
-  const [pendingPaymentsCount, setPendingPaymentsCount] = useState(0)
   const [paymentModalSession, setPaymentModalSession] = useState<Session | null>(null)
 
   const [typeFilter, setTypeFilter] = useState('')
-  const [fitnessFilter, setFitnessFilter] = useState('')
   const [pricingFilter, setPricingFilter] = useState('')
-  const [verifiedFilter, setVerifiedFilter] = useState(false)
   const [showCreateSheet, setShowCreateSheet] = useState(false)
   const [shareSession, setShareSession] = useState<Session | null>(null)
+
+  // Sheet position: 'peek' (shows 1 card), 'half' (50%), 'full' (85%)
+  const [sheetMode, setSheetMode] = useState<'peek' | 'half' | 'full'>('half')
 
   const fetchSessions = useCallback(
     async (cursor?: string) => {
@@ -273,11 +266,9 @@ function BuddyPageInner() {
       else setLoadingMore(true)
 
       try {
-        const params = new URLSearchParams({ tab })
+        const params = new URLSearchParams({ tab: 'happening' })
         if (typeFilter) params.set('type', typeFilter)
-        if (fitnessFilter) params.set('fitnessLevel', fitnessFilter)
         if (pricingFilter) params.set('pricing', pricingFilter)
-        if (verifiedFilter) params.set('verified', 'true')
         if (cursor) params.set('cursor', cursor)
         if (userLocation) {
           params.set('lat', String(userLocation.lat))
@@ -293,18 +284,13 @@ function BuddyPageInner() {
 
         const data = await res.json()
 
-        if (tab === 'mine') {
-          setHosting(data.hosting ?? [])
-          setAttending(data.attending ?? [])
+        if (cursor) {
+          setSessions((prev) => [...prev, ...(data.sessions ?? [])])
         } else {
-          if (cursor) {
-            setSessions((prev) => [...prev, ...(data.sessions ?? [])])
-          } else {
-            setSessions(data.sessions ?? [])
-          }
-          setNextCursor(data.nextCursor ?? null)
-          if (data.currentUserId) setCurrentUserId(data.currentUserId)
+          setSessions(data.sessions ?? [])
         }
+        setNextCursor(data.nextCursor ?? null)
+        if (data.currentUserId) setCurrentUserId(data.currentUserId)
       } catch {
         toast.error('Failed to load sessions')
       } finally {
@@ -312,7 +298,7 @@ function BuddyPageInner() {
         setLoadingMore(false)
       }
     },
-    [tab, typeFilter, fitnessFilter, pricingFilter, verifiedFilter, userLocation, router]
+    [typeFilter, pricingFilter, userLocation, router]
   )
 
   const [locationReady, setLocationReady] = useState(false)
@@ -345,10 +331,6 @@ function BuddyPageInner() {
     const loadInitialData = async () => {
       const [onboardingRes] = await Promise.allSettled([
         fetch('/api/user/p2p-onboarding').then((r) => r.ok ? r.json() : null),
-        fetch('/api/p2p/payments/pending')
-          .then((r) => r.ok ? r.json() : { payments: [] })
-          .then((data) => setPendingPaymentsCount(data.payments?.length ?? 0))
-          .catch(() => {}),
         fetchSessions(),
       ])
 
@@ -366,28 +348,6 @@ function BuddyPageInner() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locationReady, router])
 
-  // Sync tab state when URL changes
-  useEffect(() => {
-    const t = searchParams.get('tab')
-    setTab(t === 'mine' ? 'mine' : t === 'map' ? 'map' : 'happening')
-  }, [searchParams])
-
-  // Fetch map sessions when map tab is active
-  useEffect(() => {
-    if (tab !== 'map') return
-    setMapLoading(true)
-    const params = new URLSearchParams()
-    if (userLocation) {
-      params.set('lat', String(userLocation.lat))
-      params.set('lng', String(userLocation.lng))
-    }
-    fetch(`/api/discover/sessions?${params}`)
-      .then((r) => r.ok ? r.json() : { sessions: [] })
-      .then((d) => setMapSessions(d.sessions ?? []))
-      .catch(() => {})
-      .finally(() => setMapLoading(false))
-  }, [tab, userLocation])
-
   // Pan map to user location when it becomes available
   useEffect(() => {
     if (userLocation && mapRef.current) {
@@ -395,12 +355,11 @@ function BuddyPageInner() {
     }
   }, [userLocation])
 
+  // Refetch when filters change
   useEffect(() => {
     setSessions([])
-    setHosting([])
-    setAttending([])
     fetchSessions()
-  }, [tab, typeFilter, fitnessFilter, pricingFilter, verifiedFilter, fetchSessions])
+  }, [typeFilter, pricingFilter, fetchSessions])
 
   async function joinSession(sessionId: string) {
     // Find session to check if paid
@@ -467,8 +426,10 @@ function BuddyPageInner() {
     }
   }
 
+  const sheetHeight = sheetMode === 'full' ? '85dvh' : sheetMode === 'half' ? '45dvh' : '140px'
+
   return (
-    <div className="min-h-screen bg-[#FFFBF8]">
+    <div className="fixed inset-0 bg-[#FFFBF8]">
       {/* Create Session Sheet */}
       <CreateSessionSheet open={showCreateSheet} onClose={() => setShowCreateSheet(false)} onSuccess={() => fetchSessions()} />
 
@@ -485,16 +446,6 @@ function BuddyPageInner() {
         context="joined"
       />
 
-      {/* Floating Create Button */}
-      <button
-        onClick={() => setShowCreateSheet(true)}
-        className="fixed right-4 z-30 w-14 h-14 rounded-full bg-[#1A1A1A] shadow-xl flex items-center justify-center hover:bg-black transition-colors active:scale-95"
-        style={{ bottom: 'calc(80px + env(safe-area-inset-bottom, 0px) + 16px)' }}
-        aria-label="Create a session"
-      >
-        <Plus className="w-6 h-6 text-white" />
-      </button>
-
       {/* Payment Modal */}
       {paymentModalSession && (
         <PaymentModal
@@ -510,459 +461,231 @@ function BuddyPageInner() {
             paynowPhoneNumber: paymentModalSession.paynowPhoneNumber,
           }}
           onClose={() => setPaymentModalSession(null)}
-          onSuccess={() => {
-            setPaymentModalSession(null)
-            fetchSessions()
-          }}
+          onSuccess={() => { setPaymentModalSession(null); fetchSessions() }}
         />
       )}
 
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-black/[0.06]">
-        <div className="max-w-2xl mx-auto px-4 py-3">
-          <div className="flex items-center gap-2">
-            <h1 className="text-lg font-bold text-[#1A1A1A] tracking-tight">What&apos;s happening</h1>
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="max-w-2xl mx-auto px-4 flex gap-1 pb-3" role="tablist" aria-label="Session views">
-          {[
-            { key: 'happening', label: 'Sessions' },
-            { key: 'map', label: 'Map', icon: Map },
-            { key: 'mine', label: 'My Sessions' },
-          ].map((t) => {
-            const href = t.key === 'mine' ? '/buddy?tab=mine' : t.key === 'map' ? '/buddy?tab=map' : '/buddy'
+      {/* ── Full-screen map background ── */}
+      {mapsLoaded && GOOGLE_MAPS_API_KEY ? (
+        <GoogleMap
+          mapContainerStyle={{ width: '100%', height: '100%' }}
+          center={userLocation ?? SINGAPORE_CENTER}
+          zoom={12}
+          onLoad={(map) => { mapRef.current = map; if (userLocation) map.panTo(userLocation) }}
+          options={{
+            disableDefaultUI: true,
+            zoomControl: false,
+            styles: DARK_MAP_STYLES,
+            clickableIcons: false,
+            gestureHandling: 'greedy',
+          }}
+        >
+          {/* Session pins from main feed data */}
+          {sessions.filter((s) => s.latitude && s.longitude).map((s) => {
             return (
-              <button
-                key={t.key}
-                role="tab"
-                aria-selected={tab === t.key}
-                aria-controls={`tabpanel-${t.key}`}
-                onClick={() => router.push(href, { scroll: false })}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  tab === t.key
-                    ? 'bg-[#1A1A1A] text-white'
-                    : 'text-[#71717A] hover:text-[#4A4A5A]'
-                }`}
+              <OverlayView
+                key={s.id}
+                position={{ lat: s.latitude!, lng: s.longitude! }}
+                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
               >
-                {t.icon && <t.icon className="w-3.5 h-3.5" />}
-                {t.label}
-              </button>
+                <div
+                  onClick={(e) => { e.stopPropagation(); setSheetMode('half') }}
+                  className="cursor-pointer select-none"
+                  style={{ transform: 'translate(-50%, -50%)' }}
+                >
+                  <div className={`flex items-center justify-center rounded-full shadow-lg border-2 border-white/80 w-9 h-9 text-lg hover:scale-110 transition-all ${pinColor(s.categorySlug ?? 'other')}`}>
+                    {pinEmoji(s.categorySlug ?? 'other')}
+                  </div>
+                </div>
+              </OverlayView>
             )
-          })}
-        </div>
-      </div>
+          }).filter(Boolean)}
 
-      {/* ── Map Tab ── */}
-      {tab === 'map' && (
-        <div id="tabpanel-map" role="tabpanel" aria-labelledby="tabpanel-map" className="relative" style={{ height: 'calc(100dvh - 128px)' }}>
-          {!GOOGLE_MAPS_API_KEY || !mapsLoaded ? (
-            <div className="flex flex-col items-center justify-center h-full gap-3 text-[#71717A]">
-              {!GOOGLE_MAPS_API_KEY ? (
-                <p className="text-sm">Maps not configured.</p>
-              ) : (
-                <Loader2 className="w-6 h-6 animate-spin" />
-              )}
-            </div>
-          ) : (
-            <>
-              <GoogleMap
-                mapContainerStyle={{ width: '100%', height: '100%' }}
-                center={userLocation ?? SINGAPORE_CENTER}
-                zoom={12}
-                onLoad={(map) => { mapRef.current = map; if (userLocation) map.panTo(userLocation) }}
-                onClick={() => setMapSelected(null)}
-                options={{
-                  disableDefaultUI: true,
-                  styles: DARK_MAP_STYLES,
-                  clickableIcons: false,
-                  gestureHandling: 'greedy',
-                }}
-              >
-                {mapSessions.map((s) => (
-                  <OverlayView
-                    key={s.id}
-                    position={{ lat: s.latitude, lng: s.longitude }}
-                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                  >
-                    <div
-                      onClick={(e) => { e.stopPropagation(); setMapSelected(s) }}
-                      className="cursor-pointer select-none"
-                      style={{ transform: 'translate(-50%, -50%)' }}
-                    >
-                      <div className={`flex items-center justify-center rounded-full shadow-lg border-2 border-white transition-all duration-150 ${
-                        mapSelected?.id === s.id ? 'w-12 h-12 text-2xl scale-110 ring-2 ring-white/40' : 'w-9 h-9 text-lg hover:scale-110'
-                      } ${pinColor(s.categorySlug)}`}>
-                        {pinEmoji(s.categorySlug)}
-                      </div>
-                    </div>
-                  </OverlayView>
-                ))}
-
-                {userLocation && (
-                  <OverlayView position={userLocation} mapPaneName={OverlayView.OVERLAY_LAYER}>
-                    <div className="w-4 h-4 rounded-full bg-blue-500 border-2 border-white shadow-lg" style={{ transform: 'translate(-50%, -50%)' }} />
-                  </OverlayView>
-                )}
-              </GoogleMap>
-
-              {/* Loading / count badge */}
-              <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-                {mapLoading ? (
-                  <div className="bg-white/80 backdrop-blur border border-black/[0.06] px-3 py-1.5 rounded-full flex items-center gap-2">
-                    <Loader2 className="w-3.5 h-3.5 animate-spin text-[#71717A]" />
-                    <span className="text-xs text-[#71717A]">Loading…</span>
-                  </div>
-                ) : (
-                  <div className="bg-white/80 backdrop-blur border border-black/[0.06] text-[#4A4A5A] text-xs font-medium px-3 py-1.5 rounded-full">
-                    {mapSessions.length === 0 ? 'No sessions nearby' : `${mapSessions.length} session${mapSessions.length !== 1 ? 's' : ''} nearby`}
-                  </div>
-                )}
-              </div>
-
-              {/* Recenter */}
-              <button
-                onClick={() => {
-                  if (!mapRef.current) return
-                  mapRef.current.panTo(userLocation ?? SINGAPORE_CENTER)
-                  mapRef.current.setZoom(12)
-                }}
-                className="absolute bottom-24 right-4 z-10 w-11 h-11 rounded-full bg-white/95 backdrop-blur border border-black/[0.06] flex items-center justify-center shadow-lg"
-                aria-label="Recenter"
-              >
-                <Crosshair className="w-5 h-5 text-[#4A4A5A]" />
-              </button>
-
-              {/* Session detail sheet */}
-              <AnimatePresence>
-                {mapSelected && (
-                  <motion.div
-                    key="buddy-map-sheet"
-                    initial={{ y: '100%' }}
-                    animate={{ y: 0 }}
-                    exit={{ y: '100%' }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 40 }}
-                    className="absolute bottom-0 left-0 right-0 z-20"
-                    drag="y"
-                    dragConstraints={{ top: 0 }}
-                    dragElastic={0.1}
-                    onDragEnd={(_, info) => { if (info.offset.y > 80) setMapSelected(null) }}
-                  >
-                    <div className="bg-white border-t border-black/[0.06] rounded-t-2xl shadow-2xl">
-                      <div className="flex justify-center pt-3 pb-1">
-                        <div className="w-10 h-1 rounded-full bg-black/[0.08]" />
-                      </div>
-                      <div className="px-4 pb-6 pt-2">
-                        {/* Match feed card layout */}
-                        <div className="flex items-start gap-3 mb-3">
-                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${pinColor(mapSelected.categorySlug)}`}>
-                            <span className="text-2xl">{pinEmoji(mapSelected.categorySlug)}</span>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <Link href={`/activities/${mapSelected.id}`} className="text-[15px] font-semibold text-[#1A1A1A] leading-snug line-clamp-2 block tracking-tight">
-                              {mapSelected.title}
-                            </Link>
-                          </div>
-                          <div className="flex items-center gap-2 flex-shrink-0">
-                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${mapSelected.price === 0 ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-[#FFFBF8] text-[#1A1A1A] border border-black/[0.06]'}`}>
-                              {mapSelected.price === 0 ? 'Free' : `$${mapSelected.price}`}
-                            </span>
-                            <button onClick={() => setMapSelected(null)} aria-label="Close" className="w-8 h-8 rounded-full bg-[#FFFBF8] flex items-center justify-center">
-                              <X className="w-4 h-4 text-[#71717A]" />
-                            </button>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs mb-3">
-                          {mapSelected.startTime && (
-                            <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold flex-shrink-0 ${getUrgencyStyle(mapSelected.startTime)}`}>
-                              {getRelativeTime(mapSelected.startTime)}
-                            </span>
-                          )}
-                          <span className="flex items-center gap-1 min-w-0 text-[#9A9AAA]">
-                            <MapPin className="w-3 h-3 flex-shrink-0" />
-                            <span className="truncate">{formatAddress(mapSelected.address ?? mapSelected.city)}</span>
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 mb-4">
-                          <span className="text-xs font-semibold text-[#4A4A5A]">
-                            {mapSelected.attendeeCount > 0 ? `${mapSelected.attendeeCount} going 🔥` : 'Be the first!'}
-                            {mapSelected.maxPeople ? ` · ${mapSelected.maxPeople - mapSelected.attendeeCount} spots left` : ''}
-                          </span>
-                        </div>
-                        <Link href={`/activities/${mapSelected.id}`} className="block w-full py-3 rounded-full bg-[#1A1A1A] text-white text-sm font-bold text-center hover:bg-black transition-colors">
-                          {mapSelected.requiresApproval ? 'Request to join →' : "I'm in →"}
-                        </Link>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-            </>
+          {/* User location dot */}
+          {userLocation && (
+            <OverlayView position={userLocation} mapPaneName={OverlayView.OVERLAY_LAYER}>
+              <div className="w-4 h-4 rounded-full bg-blue-500 border-2 border-white shadow-lg" style={{ transform: 'translate(-50%, -50%)' }} />
+            </OverlayView>
           )}
+        </GoogleMap>
+      ) : (
+        <div className="w-full h-full bg-neutral-100 flex items-center justify-center">
+          <Loader2 className="w-6 h-6 animate-spin text-[#71717A]" />
         </div>
       )}
 
-      <div id={`tabpanel-${tab === 'mine' ? 'mine' : 'happening'}`} role="tabpanel" aria-labelledby={`tabpanel-${tab === 'mine' ? 'mine' : 'happening'}`} className={tab === 'map' ? 'hidden' : ''}>
-      <div className="max-w-2xl mx-auto px-4 pb-32">
-        {/* Filters (happening tab only) */}
-        {tab === 'happening' && (
-          <div className="py-3 flex gap-2 overflow-x-auto no-scrollbar">
+      {/* ── Filter pills — top overlay ── */}
+      <div className="absolute left-0 right-0 z-20 pt-[env(safe-area-inset-top,8px)]" style={{ top: 0 }}>
+        <div className="pt-2 pb-2 bg-gradient-to-b from-white/80 to-transparent backdrop-blur-[2px]">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar px-4">
             {TYPE_FILTERS.map((f) => (
               <button
                 key={f.value}
                 onClick={() => setTypeFilter(typeFilter === f.value ? '' : f.value)}
-                className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-medium transition-all ${
+                className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-semibold transition-all ${
                   typeFilter === f.value
                     ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white shadow-md'
-                    : 'border-black/[0.06] bg-white text-[#4A4A5A] hover:border-black/[0.12]'
+                    : 'border-black/[0.06] bg-white/90 text-[#4A4A5A] hover:border-black/[0.12] backdrop-blur'
                 }`}
               >
                 <span>{f.emoji}</span>
                 {f.label}
               </button>
             ))}
-
-            <div className="shrink-0 w-px h-5 self-center bg-black/[0.06] mx-0.5" />
-
-            {[
-              { value: '', label: 'All prices' },
-              { value: 'free', label: 'Free' },
-              { value: 'paid', label: 'Paid' },
-            ].map((f) => (
-              <button
-                key={f.value}
-                onClick={() => setPricingFilter(f.value)}
-                className={`shrink-0 rounded-full border px-3.5 py-2 text-xs font-medium transition-all ${
-                  pricingFilter === f.value
-                    ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white shadow-md'
-                    : 'border-black/[0.06] bg-white text-[#4A4A5A] hover:border-black/[0.12]'
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-
-            {/* Verified hosts filter — hidden for now
-            <button
-              onClick={() => setVerifiedFilter((v) => !v)}
-              className={`shrink-0 rounded-full border px-4 py-2.5 text-xs font-medium transition-colors ${
-                verifiedFilter
-                  ? 'border-emerald-500 bg-emerald-50 text-emerald-600'
-                  : 'border-black/[0.06] text-[#4A4A5A] hover:border-black/[0.12]'
-              }`}
-            >
-              ✓ Verified hosts
-            </button>
-            */}
           </div>
-        )}
+        </div>
+      </div>
 
-        {/* Content */}
-        {loading ? (
-          <div className="space-y-3 pt-4">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-white rounded-2xl border border-black/[0.06] p-4 animate-pulse">
-                <div className="flex items-start gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-neutral-100 flex-shrink-0" />
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 rounded-full bg-neutral-100" />
+      {/* ── Recenter button ── */}
+      <button
+        onClick={() => {
+          if (!mapRef.current) return
+          mapRef.current.panTo(userLocation ?? SINGAPORE_CENTER)
+          mapRef.current.setZoom(12)
+        }}
+        className="absolute right-4 z-20 w-11 h-11 rounded-full bg-white/95 backdrop-blur border border-black/[0.06] flex items-center justify-center shadow-lg"
+        style={{ top: 'calc(env(safe-area-inset-top, 8px) + 56px)' }}
+        aria-label="Recenter"
+      >
+        <Crosshair className="w-5 h-5 text-[#4A4A5A]" />
+      </button>
+
+      {/* ── FAB — create session ── */}
+      <button
+        onClick={() => setShowCreateSheet(true)}
+        className="absolute right-4 z-20 w-14 h-14 rounded-full bg-[#1A1A1A] shadow-xl flex items-center justify-center hover:bg-black transition-colors active:scale-95"
+        style={{ top: 'calc(env(safe-area-inset-top, 8px) + 112px)' }}
+        aria-label="Create a session"
+      >
+        <Plus className="w-6 h-6 text-white" />
+      </button>
+
+      {/* ── Draggable session list sheet ── */}
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 z-30 bg-white rounded-t-2xl shadow-2xl border-t border-black/[0.06]"
+        style={{ height: sheetHeight, marginBottom: '72px' }}
+        animate={{ height: sheetHeight }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      >
+        {/* Drag handle + header */}
+        <div
+          className="cursor-grab active:cursor-grabbing"
+          onClick={() => setSheetMode(sheetMode === 'peek' ? 'half' : sheetMode === 'half' ? 'full' : 'half')}
+        >
+          <div className="flex justify-center pt-2.5 pb-1">
+            <div className="w-10 h-1.5 rounded-full bg-black/[0.08]" />
+          </div>
+          <div className="flex items-center justify-between px-4 pb-2">
+            <div className="flex items-center gap-2">
+              <h2 className="text-sm font-bold text-[#1A1A1A] tracking-tight">What&apos;s happening</h2>
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+            </div>
+            {!loading && (
+              <span className="text-xs text-[#71717A] font-medium">
+                {sessions.length === 0 ? 'No sessions' : `${sessions.length} nearby`}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Session list — scrollable content */}
+        <div className="overflow-y-auto px-4 pb-8" style={{ height: 'calc(100% - 52px)' }}>
+          {loading ? (
+            <div className="space-y-3 pt-2">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="bg-[#FFFBF8] rounded-2xl border border-black/[0.04] p-4 animate-pulse">
+                  <div className="flex items-start gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-neutral-100 flex-shrink-0" />
+                    <div className="flex-1 space-y-2">
                       <div className="h-3 w-20 bg-neutral-100 rounded" />
+                      <div className="h-4 w-3/4 bg-neutral-100 rounded" />
                     </div>
-                    <div className="h-4 w-3/4 bg-neutral-100 rounded" />
                   </div>
-                  <div className="w-12 h-6 rounded-full bg-neutral-100" />
                 </div>
-                <div className="flex gap-3 mt-3">
-                  <div className="h-5 w-24 bg-neutral-100 rounded-full" />
-                  <div className="h-5 w-32 bg-neutral-100 rounded-full" />
-                </div>
-                <div className="flex items-center gap-2 mt-3">
-                  <div className="flex -space-x-2">
-                    <div className="w-7 h-7 rounded-full bg-neutral-100 ring-2 ring-white" />
-                    <div className="w-7 h-7 rounded-full bg-neutral-100 ring-2 ring-white" />
-                  </div>
-                  <div className="h-3 w-16 bg-neutral-100 rounded" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : tab === 'happening' ? (
-          <>
-            {sessions.length === 0 ? (
-              <div className="text-center py-20">
-                <div className="text-5xl mb-4">🏋️</div>
-                <p className="text-[#4A4A5A] font-medium">Nothing happening nearby — yet.</p>
-                <p className="text-[#71717A] text-sm mt-1">Be the first — start something.</p>
-                <button
-                  onClick={() => setShowCreateSheet(true)}
-                  className="inline-flex items-center gap-2 mt-6 rounded-full bg-[#1A1A1A] px-5 py-3 text-sm font-semibold text-white hover:bg-black"
-                >
-                  <Zap className="w-4 h-4" />
-                  Post a session
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-8 pt-4">
-                {bucketSessions(sessions).map((bucket) => (
-                  <div key={bucket.key}>
-                    <div className="flex items-center gap-2 mb-4 px-1">
-                      {bucket.key === 'now' && (
-                        <span className="relative flex h-2.5 w-2.5">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
-                        </span>
-                      )}
-                      <h2 className="text-sm font-bold text-[#1A1A1A] tracking-tight">
-                        {bucket.label}
-                      </h2>
-                    </div>
-                    <div className="space-y-3">
-                      {bucket.sessions.map((session, i) => (
-                        <SessionCard
-                          key={session.id}
-                          session={session}
-                          currentUserId={currentUserId}
-                          onJoin={joinSession}
-                          onLeave={leaveSession}
-                          joiningId={joiningId}
-                          index={i}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-                {nextCursor && (
-                  <button
-                    onClick={() => fetchSessions(nextCursor)}
-                    disabled={loadingMore}
-                    className="w-full py-3 text-sm text-[#71717A] hover:text-[#4A4A5A] flex items-center justify-center gap-2"
-                  >
-                    {loadingMore ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      'Load more'
-                    )}
-                  </button>
-                )}
-
-                {/* Sparse feed upsell */}
-                {sessions.length > 0 && sessions.length < 6 && !nextCursor && (
-                  <div className="mt-8 text-center py-8 border-t border-black/[0.04]">
-                    <p className="text-sm text-[#71717A] mb-1">That&apos;s everything nearby.</p>
-                    <p className="text-xs text-[#9A9AAA] mb-4">More sessions pop up every day — or start one yourself.</p>
-                    <div className="flex gap-2 justify-center">
-                      <button
-                        onClick={() => setShowCreateSheet(true)}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-[#1A1A1A] px-4 py-2.5 text-xs font-semibold text-white hover:bg-black"
-                      >
-                        <Zap className="w-3.5 h-3.5" />
-                        Post a session
-                      </button>
-                      <Link
-                        href="/communities"
-                        className="inline-flex items-center gap-1.5 rounded-full border border-black/[0.06] bg-white px-4 py-2.5 text-xs font-semibold text-[#4A4A5A] hover:border-black/[0.12]"
-                      >
-                        Browse crews
-                      </Link>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </>
-        ) : (
-          /* My Sessions tab */
-          <div className="space-y-6 pt-4">
-            {/* Pending payments alert */}
-            {pendingPaymentsCount > 0 && (
-              <Link
-                href="/buddy/payments"
-                className="flex items-center justify-between rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm font-medium text-amber-700 hover:bg-amber-100 transition-colors"
+              ))}
+            </div>
+          ) : sessions.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-4xl mb-3">🏋️</div>
+              <p className="text-sm font-medium text-[#4A4A5A]">Nothing happening nearby — yet.</p>
+              <p className="text-xs text-[#9A9AAA] mt-1">Be the first — start something.</p>
+              <button
+                onClick={() => setShowCreateSheet(true)}
+                className="inline-flex items-center gap-1.5 mt-4 rounded-full bg-[#1A1A1A] px-4 py-2.5 text-xs font-semibold text-white hover:bg-black"
               >
-                <span>
-                  ⏳ {pendingPaymentsCount} payment{pendingPaymentsCount !== 1 ? 's' : ''} waiting for verification
-                </span>
-                <ChevronRight className="w-4 h-4" />
-              </Link>
-            )}
-
-            {/* Hosting */}
-            {hosting.length > 0 && (
-              <div>
-                <h2 className="text-sm font-bold text-[#1A1A1A] tracking-tight mb-4">
-                  Hosting
-                </h2>
-                <div className="space-y-3">
-                  {hosting.map((session, i) => (
-                    <SessionCard
-                      key={session.id}
-                      session={session}
-                      currentUserId={currentUserId}
-                      onJoin={joinSession}
-                      onLeave={leaveSession}
-                      joiningId={joiningId}
-                      isHosting
-                      index={i}
-                    />
-                  ))}
+                <Zap className="w-3.5 h-3.5" />
+                Post a session
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-6 pt-1">
+              {bucketSessions(sessions).map((bucket) => (
+                <div key={bucket.key}>
+                  <div className="flex items-center gap-2 mb-3 px-1">
+                    {bucket.key === 'now' && (
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
+                      </span>
+                    )}
+                    <h3 className="text-xs font-bold text-[#71717A] uppercase tracking-wider">
+                      {bucket.label}
+                    </h3>
+                  </div>
+                  <div className="space-y-2.5">
+                    {bucket.sessions.map((session, i) => (
+                      <SessionCard
+                        key={session.id}
+                        session={session}
+                        currentUserId={currentUserId}
+                        onJoin={joinSession}
+                        onLeave={leaveSession}
+                        joiningId={joiningId}
+                        index={i}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              ))}
 
-            {/* Attending */}
-            {attending.length > 0 && (
-              <div>
-                <h2 className="text-sm font-bold text-[#1A1A1A] tracking-tight mb-4">
-                  Attending
-                </h2>
-                <div className="space-y-3">
-                  {attending.map((session, i) => (
-                    <SessionCard
-                      key={session.id}
-                      session={session}
-                      currentUserId={currentUserId}
-                      onJoin={joinSession}
-                      onLeave={leaveSession}
-                      joiningId={joiningId}
-                      index={i}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
+              {nextCursor && (
+                <button
+                  onClick={() => fetchSessions(nextCursor)}
+                  disabled={loadingMore}
+                  className="w-full py-3 text-sm text-[#71717A] hover:text-[#4A4A5A] flex items-center justify-center gap-2"
+                >
+                  {loadingMore ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Load more'}
+                </button>
+              )}
 
-            {hosting.length === 0 && attending.length === 0 && (
-              <div className="text-center py-20">
-                <div className="text-5xl mb-4">👀</div>
-                <p className="text-[#4A4A5A] font-medium">No sessions yet.</p>
-                <p className="text-[#71717A] text-sm mt-1">Join a community and you&apos;ll never have an empty week.</p>
-                <div className="flex gap-3 justify-center mt-6">
-                  <button
-                    onClick={() => setShowCreateSheet(true)}
-                    className="rounded-full bg-[#1A1A1A] px-5 py-3 text-sm font-semibold text-white hover:bg-black"
-                  >
-                    Post a session
-                  </button>
-                  <button
-                    onClick={() => setTab('happening')}
-                    className="rounded-full border border-black/[0.08] bg-white px-5 py-3 text-sm font-semibold text-[#1A1A1A]"
-                  >
-                    Browse Sessions
-                  </button>
+              {sessions.length > 0 && sessions.length < 6 && !nextCursor && (
+                <div className="text-center py-6 border-t border-black/[0.04]">
+                  <p className="text-xs text-[#9A9AAA] mb-3">That&apos;s everything nearby.</p>
+                  <div className="flex gap-2 justify-center">
+                    <button
+                      onClick={() => setShowCreateSheet(true)}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-[#1A1A1A] px-3.5 py-2 text-xs font-semibold text-white"
+                    >
+                      <Zap className="w-3 h-3" />
+                      Post a session
+                    </button>
+                    <Link
+                      href="/communities"
+                      className="inline-flex items-center gap-1 rounded-full border border-black/[0.06] bg-white px-3.5 py-2 text-xs font-semibold text-[#4A4A5A]"
+                    >
+                      Browse crews
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-      </div>
+              )}
+            </div>
+          )}
+        </div>
+      </motion.div>
+
     </div>
   )
 }

@@ -634,43 +634,50 @@ function BuddyPageInner() {
                   >
                     <div className="bg-white border-t border-black/[0.06] rounded-t-2xl shadow-2xl">
                       <div className="flex justify-center pt-3 pb-1">
-                        <div className="w-10 h-1 rounded-full bg-black/[0.06]" />
+                        <div className="w-10 h-1 rounded-full bg-black/[0.08]" />
                       </div>
                       <div className="px-4 pb-6 pt-2">
-                        <div className="flex items-start justify-between gap-3 mb-3">
+                        {/* Match feed card layout */}
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${pinColor(mapSelected.categorySlug)}`}>
+                            <span className="text-2xl">{pinEmoji(mapSelected.categorySlug)}</span>
+                          </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-xl">{pinEmoji(mapSelected.categorySlug)}</span>
-                              <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${mapSelected.price === 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-[#FFFBF8] text-[#1A1A1A]'}`}>
-                                {mapSelected.price === 0 ? 'FREE' : `$${mapSelected.price}`}
-                              </span>
-                            </div>
-                            <Link href={`/activities/${mapSelected.id}`} className="text-base font-bold text-[#1A1A1A] leading-snug line-clamp-2 block">
+                            <Link href={`/activities/${mapSelected.id}`} className="text-[15px] font-semibold text-[#1A1A1A] leading-snug line-clamp-2 block tracking-tight">
                               {mapSelected.title}
                             </Link>
                           </div>
-                          <button onClick={() => setMapSelected(null)} aria-label="Close session details" className="w-8 h-8 rounded-full bg-[#FFFBF8] flex items-center justify-center flex-shrink-0">
-                            <X className="w-4 h-4 text-[#71717A]" />
-                          </button>
+                          <div className="flex items-center gap-2 flex-shrink-0">
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${mapSelected.price === 0 ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-[#FFFBF8] text-[#1A1A1A] border border-black/[0.06]'}`}>
+                              {mapSelected.price === 0 ? 'Free' : `$${mapSelected.price}`}
+                            </span>
+                            <button onClick={() => setMapSelected(null)} aria-label="Close" className="w-8 h-8 rounded-full bg-[#FFFBF8] flex items-center justify-center">
+                              <X className="w-4 h-4 text-[#71717A]" />
+                            </button>
+                          </div>
                         </div>
-                        <div className="flex flex-col gap-1.5 text-sm text-[#71717A] mb-4">
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#71717A] mb-3">
                           {mapSelected.startTime && (
-                            <div className="flex items-center gap-2">
-                              <Clock className="w-3.5 h-3.5" />
-                              {format(new Date(mapSelected.startTime), 'EEE, MMM d · h:mm a')}
-                            </div>
+                            <span className="flex items-center gap-1.5">
+                              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${getUrgencyStyle(mapSelected.startTime)}`}>
+                                {getRelativeTime(mapSelected.startTime)}
+                              </span>
+                              <span>{format(new Date(mapSelected.startTime), 'EEE, MMM d · h:mm a')}</span>
+                            </span>
                           )}
-                          <div className="flex items-center gap-2">
-                            <MapPin className="w-3.5 h-3.5" />
-                            {mapSelected.address ?? mapSelected.city}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Users className="w-3.5 h-3.5" />
-                            {mapSelected.attendeeCount} going{mapSelected.maxPeople ? ` · ${mapSelected.maxPeople - mapSelected.attendeeCount} spots left` : ''}
-                          </div>
+                          <span className="flex items-center gap-1 text-[#9A9AAA]">
+                            <MapPin className="w-3 h-3" />
+                            {(mapSelected.address ?? mapSelected.city)?.split(',')[0]}
+                          </span>
                         </div>
-                        <Link href={`/activities/${mapSelected.id}`} className="block w-full py-3.5 rounded-full bg-[#1A1A1A] text-white text-sm font-bold text-center hover:bg-black transition-colors">
-                          {mapSelected.requiresApproval ? 'Request to join →' : "I'm going →"}
+                        <div className="flex items-center gap-2 mb-4">
+                          <span className="text-xs font-semibold text-[#4A4A5A]">
+                            {mapSelected.attendeeCount > 0 ? `${mapSelected.attendeeCount} going 🔥` : 'Be the first!'}
+                            {mapSelected.maxPeople ? ` · ${mapSelected.maxPeople - mapSelected.attendeeCount} spots left` : ''}
+                          </span>
+                        </div>
+                        <Link href={`/activities/${mapSelected.id}`} className="block w-full py-3 rounded-full bg-[#1A1A1A] text-white text-sm font-bold text-center hover:bg-black transition-colors">
+                          {mapSelected.requiresApproval ? 'Request to join →' : "I'm in →"}
                         </Link>
                       </div>
                     </div>
@@ -740,8 +747,33 @@ function BuddyPageInner() {
 
         {/* Content */}
         {loading ? (
-          <div className="flex justify-center py-20">
-            <Loader2 className="w-6 h-6 animate-spin text-[#71717A]" />
+          <div className="space-y-3 pt-4">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-white rounded-2xl border border-black/[0.06] p-4 animate-pulse">
+                <div className="flex items-start gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-neutral-100 flex-shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-neutral-100" />
+                      <div className="h-3 w-20 bg-neutral-100 rounded" />
+                    </div>
+                    <div className="h-4 w-3/4 bg-neutral-100 rounded" />
+                  </div>
+                  <div className="w-12 h-6 rounded-full bg-neutral-100" />
+                </div>
+                <div className="flex gap-3 mt-3">
+                  <div className="h-5 w-24 bg-neutral-100 rounded-full" />
+                  <div className="h-5 w-32 bg-neutral-100 rounded-full" />
+                </div>
+                <div className="flex items-center gap-2 mt-3">
+                  <div className="flex -space-x-2">
+                    <div className="w-7 h-7 rounded-full bg-neutral-100 ring-2 ring-white" />
+                    <div className="w-7 h-7 rounded-full bg-neutral-100 ring-2 ring-white" />
+                  </div>
+                  <div className="h-3 w-16 bg-neutral-100 rounded" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : tab === 'happening' ? (
           <>
@@ -988,19 +1020,19 @@ function SessionCard({
           </div>
 
           {/* Row 2: Time + Location */}
-          <div className="flex items-center gap-3 mt-3 text-xs text-[#71717A]">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-xs text-[#71717A]">
             {session.startTime && (
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center gap-1.5 flex-shrink-0">
                 <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${getUrgencyStyle(session.startTime)}`}>
                   {getRelativeTime(session.startTime)}
                 </span>
-                <span>{format(new Date(session.startTime), 'EEE, MMM d')}</span>
+                <span>{format(new Date(session.startTime), 'EEE, MMM d · h:mm a')}</span>
               </span>
             )}
             {(session.address || session.city) && (
-              <span className="flex items-center gap-1 truncate text-[#9A9AAA]">
+              <span className="flex items-center gap-1 min-w-0 text-[#9A9AAA]">
                 <MapPin className="w-3 h-3 flex-shrink-0" />
-                <span className="truncate">{session.address ?? session.city}</span>
+                <span className="truncate">{(session.address ?? session.city)?.split(',')[0]}</span>
               </span>
             )}
           </div>

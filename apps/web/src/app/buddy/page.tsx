@@ -254,6 +254,10 @@ function BuddyPageInner() {
         if (pricingFilter) params.set('pricing', pricingFilter)
         if (verifiedFilter) params.set('verified', 'true')
         if (cursor) params.set('cursor', cursor)
+        if (userLocation) {
+          params.set('lat', String(userLocation.lat))
+          params.set('lng', String(userLocation.lng))
+        }
 
         const res = await fetch(`/api/buddy/sessions?${params}`)
         if (res.status === 401) {
@@ -283,12 +287,20 @@ function BuddyPageInner() {
         setLoadingMore(false)
       }
     },
-    [tab, typeFilter, fitnessFilter, pricingFilter, verifiedFilter, router]
+    [tab, typeFilter, fitnessFilter, pricingFilter, verifiedFilter, userLocation, router]
   )
+
+  // Get user location on mount
+  useEffect(() => {
+    if (!navigator.geolocation) return
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => {} // GPS denied — will show all sessions
+    )
+  }, [])
 
   // Parallelize initial data fetches — don't block sessions on onboarding check
   useEffect(() => {
-    // Fire all initial fetches in parallel
     const loadInitialData = async () => {
       const [onboardingRes] = await Promise.allSettled([
         fetch('/api/user/p2p-onboarding').then((r) => r.ok ? r.json() : null),
@@ -296,10 +308,9 @@ function BuddyPageInner() {
           .then((r) => r.ok ? r.json() : { payments: [] })
           .then((data) => setPendingPaymentsCount(data.payments?.length ?? 0))
           .catch(() => {}),
-        fetchSessions(), // Start loading sessions immediately
+        fetchSessions(),
       ])
 
-      // Handle onboarding redirect after sessions already started loading
       if (onboardingRes.status === 'fulfilled' && onboardingRes.value) {
         const data = onboardingRes.value
         if (!data.completed) {
@@ -331,20 +342,12 @@ function BuddyPageInner() {
       .finally(() => setMapLoading(false))
   }, [tab])
 
-  // Get user location for map — pan to it when received
+  // Pan map to user location when it becomes available
   useEffect(() => {
-    if (!navigator.geolocation) return
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude }
-        setUserLocation(loc)
-        if (mapRef.current) {
-          mapRef.current.panTo(loc)
-        }
-      },
-      () => {}
-    )
-  }, [])
+    if (userLocation && mapRef.current) {
+      mapRef.current.panTo(userLocation)
+    }
+  }, [userLocation])
 
   useEffect(() => {
     setSessions([])

@@ -96,6 +96,21 @@ export async function GET(request: Request) {
       userId: { notIn: blockedUserIds.length > 0 ? blockedUserIds : undefined },
     }
 
+    // Location-based filtering — 25km radius bounding box
+    const lat = searchParams.get('lat')
+    const lng = searchParams.get('lng')
+    if (lat && lng) {
+      const userLat = parseFloat(lat)
+      const userLng = parseFloat(lng)
+      if (!isNaN(userLat) && !isNaN(userLng)) {
+        const radiusKm = 25
+        const latDelta = radiusKm / 111 // ~111km per degree latitude
+        const lngDelta = radiusKm / (111 * Math.cos(userLat * (Math.PI / 180)))
+        where.latitude = { gte: userLat - latDelta, lte: userLat + latDelta }
+        where.longitude = { gte: userLng - lngDelta, lte: userLng + lngDelta }
+      }
+    }
+
     if (activityType) where.categorySlug = activityType
     if (fitnessLevel) where.fitnessLevel = fitnessLevel
     if (pricingFilter === 'free') where.activityMode = 'P2P_FREE'

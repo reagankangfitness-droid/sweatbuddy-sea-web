@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { sendP2PSessionConfirmationEmail, sendP2PHostJoinNotificationEmail } from '@/lib/event-confirmation-email'
+import { notify } from '@/lib/notifications/service'
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -179,7 +180,29 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       isFree: true,
     }).catch(() => {})
 
-    // Notify host (fire-and-forget) — skip if the host is joining their own session
+    // Push notify host — skip if host is joining their own session
+    if (!isHost) {
+      notify({
+        userId: activity.userId,
+        type: 'ACTIVITY_UPDATE',
+        title: `${dbUser.name ?? 'Someone'} joined your session`,
+        body: `${activity.title} — ${newAttendeeCount} going${activity.maxPeople ? ` / ${activity.maxPeople} spots` : ''}`,
+        linkUrl: `/activities/${activityId}`,
+      }).catch(() => {})
+
+      // Alert if session is almost full (80%+)
+      if (activity.maxPeople && newAttendeeCount >= activity.maxPeople * 0.8) {
+        notify({
+          userId: activity.userId,
+          type: 'ACTIVITY_UPDATE',
+          title: 'Your session is almost full!',
+          body: `${activity.title} — only ${activity.maxPeople - newAttendeeCount} spot${activity.maxPeople - newAttendeeCount === 1 ? '' : 's'} left`,
+          linkUrl: `/activities/${activityId}`,
+        }).catch(() => {})
+      }
+    }
+
+    // Email notify host (fire-and-forget) — skip if host is joining their own session
     if (activity.user.email && !isHost) {
       sendP2PHostJoinNotificationEmail({
         to: activity.user.email,

@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { MapPin, Users, Plus, Loader2, Calendar, ChevronRight, Map, Crosshair, X, Clock } from 'lucide-react'
+import { MapPin, Users, Plus, Loader2, Calendar, ChevronRight, Map, Crosshair, X, Clock, Zap } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GoogleMap, useLoadScript, OverlayView } from '@react-google-maps/api'
@@ -98,6 +98,78 @@ interface MapCommunity {
   city: string | null
   memberCount: number
   instagramHandle: string | null
+}
+
+// ─── Time helpers ─────────────────────────────────────────────────────────────
+
+interface TimeBucket {
+  key: string
+  label: string
+  sessions: Session[]
+}
+
+function getRelativeTime(startTime: string): string {
+  const now = new Date()
+  const start = new Date(startTime)
+  const diffMs = start.getTime() - now.getTime()
+  const diffMin = Math.floor(diffMs / (1000 * 60))
+  const diffHrs = Math.floor(diffMs / (1000 * 60 * 60))
+
+  if (diffMin < 0) return 'Started'
+  if (diffMin < 60) return `In ${diffMin} min`
+  if (diffHrs < 3) return `In ${diffHrs}h ${diffMin % 60}m`
+  if (diffHrs < 24) {
+    const hour = start.getHours()
+    const ampm = hour >= 12 ? 'PM' : 'AM'
+    const h = hour % 12 || 12
+    return `Today ${h}${ampm}`
+  }
+  return format(start, 'EEE h:mm a')
+}
+
+function getUrgencyStyle(startTime: string): string {
+  const diffMs = new Date(startTime).getTime() - Date.now()
+  const diffHrs = diffMs / (1000 * 60 * 60)
+  if (diffHrs < 0) return 'bg-red-500/90 text-white animate-pulse'
+  if (diffHrs < 2) return 'bg-red-500/90 text-white'
+  if (diffHrs < 6) return 'bg-amber-400/90 text-white'
+  return 'bg-[#1A1A1A]/70 text-white'
+}
+
+function bucketSessions(sessions: Session[]): TimeBucket[] {
+  const now = new Date()
+  const endOfToday = new Date(now)
+  endOfToday.setHours(23, 59, 59, 999)
+
+  const endOfTomorrow = new Date(endOfToday)
+  endOfTomorrow.setDate(endOfTomorrow.getDate() + 1)
+
+  const happeningNow: Session[] = []
+  const nextFewHours: Session[] = []
+  const today: Session[] = []
+  const tomorrow: Session[] = []
+  const later: Session[] = []
+
+  for (const s of sessions) {
+    if (!s.startTime) { later.push(s); continue }
+    const start = new Date(s.startTime)
+    const diffMs = start.getTime() - now.getTime()
+    const diffHrs = diffMs / (1000 * 60 * 60)
+
+    if (diffHrs < 0 && diffHrs > -2) happeningNow.push(s)
+    else if (diffHrs >= 0 && diffHrs < 3) nextFewHours.push(s)
+    else if (start <= endOfToday) today.push(s)
+    else if (start <= endOfTomorrow) tomorrow.push(s)
+    else later.push(s)
+  }
+
+  const buckets: TimeBucket[] = []
+  if (happeningNow.length) buckets.push({ key: 'now', label: '🔴  Happening now', sessions: happeningNow })
+  if (nextFewHours.length) buckets.push({ key: 'soon', label: '🟠  Next few hours', sessions: nextFewHours })
+  if (today.length) buckets.push({ key: 'today', label: '🟡  Later today', sessions: today })
+  if (tomorrow.length) buckets.push({ key: 'tomorrow', label: '📅  Tomorrow', sessions: tomorrow })
+  if (later.length) buckets.push({ key: 'later', label: 'This week & beyond', sessions: later })
+  return buckets
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -641,7 +713,7 @@ function BuddyPageInner() {
                 <p className="text-[#4A4A5A] font-medium">Nothing happening nearby — yet.</p>
                 <p className="text-[#71717A] text-sm mt-1">Check back soon, or start something.</p>
                 <Link
-                  href="/buddy/host/new"
+                  href="/buddy/host/quick"
                   className="inline-flex items-center gap-2 mt-6 rounded-full bg-[#1A1A1A] px-5 py-3 text-sm font-semibold text-white hover:bg-black"
                 >
                   <Plus className="w-4 h-4" />
@@ -649,16 +721,25 @@ function BuddyPageInner() {
                 </Link>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-4 pt-4">
-                {sessions.map((session) => (
-                  <SessionCard
-                    key={session.id}
-                    session={session}
-                    currentUserId={currentUserId}
-                    onJoin={joinSession}
-                    onLeave={leaveSession}
-                    joiningId={joiningId}
-                  />
+              <div className="space-y-6 pt-4">
+                {bucketSessions(sessions).map((bucket) => (
+                  <div key={bucket.key}>
+                    <h2 className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-3 px-1">
+                      {bucket.label}
+                    </h2>
+                    <div className="grid grid-cols-2 gap-4">
+                      {bucket.sessions.map((session) => (
+                        <SessionCard
+                          key={session.id}
+                          session={session}
+                          currentUserId={currentUserId}
+                          onJoin={joinSession}
+                          onLeave={leaveSession}
+                          joiningId={joiningId}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 ))}
                 {nextCursor && (
                   <button
@@ -742,7 +823,7 @@ function BuddyPageInner() {
                 <p className="text-[#71717A] text-sm mt-1">Join a community and you&apos;ll never have an empty week.</p>
                 <div className="flex gap-3 justify-center mt-6">
                   <Link
-                    href="/buddy/host/new"
+                    href="/buddy/host/quick"
                     className="rounded-full bg-[#1A1A1A] px-5 py-3 text-sm font-semibold text-white hover:bg-black"
                   >
                     Create a Session
@@ -925,8 +1006,11 @@ function SessionCard({
         <div className="flex flex-col gap-0.5 text-xs text-[#71717A]">
           {session.startTime && (
             <span className="flex items-center gap-1">
-              <Calendar className="w-3 h-3 shrink-0" />
-              {format(new Date(session.startTime), 'EEE, MMM d · h:mm a')}
+              <Clock className="w-3 h-3 shrink-0" />
+              <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${getUrgencyStyle(session.startTime)}`}>
+                {getRelativeTime(session.startTime)}
+              </span>
+              <span className="text-[#9A9AAA]">{format(new Date(session.startTime), 'EEE, MMM d')}</span>
             </span>
           )}
           {(session.address || session.city) && (

@@ -55,7 +55,8 @@ function AppNavInner() {
   const hasOwnActionBar =
     pathname.match(/^\/activities\/[^/]+$/) || // activity detail
     pathname.match(/^\/activities\/[^/]+\/edit/) || // activity edit
-    pathname.startsWith('/buddy/host') || // session creation
+    pathname.startsWith('/buddy/host/new') || // full session creation
+    pathname.startsWith('/buddy/host/quick') || // quick post
     pathname.startsWith('/onboarding') || // onboarding flows
     pathname.startsWith('/communities/create') || // community creation
     pathname.match(/^\/e\/[^/]+$/) || // event detail
@@ -173,10 +174,10 @@ function AppNavInner() {
                 })}
               </div>
 
-              {/* Host CTA */}
+              {/* Host CTA — Quick Post */}
               <Link
-                href="/buddy/host/new"
-                aria-label="Create a session"
+                href="/buddy/host/quick"
+                aria-label="Quick post a session"
                 className="flex items-center justify-center w-12 h-12 rounded-xl bg-[#1A1A1A] text-white hover:bg-black transition-colors mb-3"
               >
                 <Plus className="w-5 h-5" />
@@ -263,10 +264,10 @@ function AppNavInner() {
               )
             })}
 
-            {/* Host CTA */}
+            {/* Host CTA — Quick Post */}
             <Link
-              href="/buddy/host/new"
-              aria-label="Create a session"
+              href="/buddy/host/quick"
+              aria-label="Quick post a session"
               className="flex flex-col items-center justify-center w-14 h-14"
             >
               <div className="w-10 h-10 rounded-full bg-[#1A1A1A] flex items-center justify-center">

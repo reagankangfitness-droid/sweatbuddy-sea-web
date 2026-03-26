@@ -426,7 +426,7 @@ function BuddyPageInner() {
     }
   }
 
-  const sheetHeight = sheetMode === 'full' ? '85dvh' : sheetMode === 'half' ? '45dvh' : '140px'
+  const sheetHeight = sheetMode === 'full' ? '75dvh' : sheetMode === 'half' ? '20dvh' : '80px'
 
   return (
     <div className="fixed inset-0 bg-[#FFFBF8]">

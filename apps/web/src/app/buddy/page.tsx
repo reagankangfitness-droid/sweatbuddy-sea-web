@@ -120,13 +120,21 @@ function getRelativeTime(startTime: string): string {
   if (diffMin < 0) return 'Started'
   if (diffMin < 60) return `In ${diffMin} min`
   if (diffHrs < 3) return `In ${diffHrs}h ${diffMin % 60}m`
-  if (diffHrs < 24) {
-    const hour = start.getHours()
-    const ampm = hour >= 12 ? 'PM' : 'AM'
-    const h = hour % 12 || 12
-    return `Today ${h}${ampm}`
-  }
-  return format(start, 'EEE h:mm a')
+
+  // Check if same calendar day
+  const isToday = start.toDateString() === now.toDateString()
+  const tomorrow = new Date(now)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  const isTomorrow = start.toDateString() === tomorrow.toDateString()
+
+  const h = start.getHours() % 12 || 12
+  const ampm = start.getHours() >= 12 ? 'PM' : 'AM'
+  const min = start.getMinutes()
+  const timeStr = min === 0 ? `${h} ${ampm}` : `${h}:${String(min).padStart(2, '0')} ${ampm}`
+
+  if (isToday) return `Today ${timeStr}`
+  if (isTomorrow) return `Tomorrow ${timeStr}`
+  return format(start, 'EEE, MMM d') + ` · ${timeStr}`
 }
 
 function getUrgencyStyle(startTime: string): string {
@@ -172,6 +180,19 @@ function bucketSessions(sessions: Session[]): TimeBucket[] {
   if (tomorrow.length) buckets.push({ key: 'tomorrow', label: '📅  Tomorrow', sessions: tomorrow })
   if (later.length) buckets.push({ key: 'later', label: 'This week & beyond', sessions: later })
   return buckets
+}
+
+function formatAddress(raw: string): string {
+  // "Bangkok Khlong Toei District 10110 Thailand" → "Khlong Toei, Bangkok"
+  // "Benjakitti Park | Bangkok" → "Benjakitti Park"
+  // "60 Thanon Ratchadaphisek" → "Thanon Ratchadaphisek"
+  const cleaned = raw.replace(/\d{4,6}/g, '').replace(/\s+/g, ' ').trim()
+  const parts = cleaned.split(/[,|]/).map((p) => p.trim()).filter(Boolean)
+  if (parts.length === 0) return raw
+  // Return first meaningful part (skip country names)
+  const skip = ['singapore', 'thailand', 'indonesia', 'malaysia', 'philippines', 'vietnam']
+  const meaningful = parts.filter((p) => !skip.includes(p.toLowerCase()))
+  return meaningful[0] ?? parts[0]
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -656,18 +677,15 @@ function BuddyPageInner() {
                             </button>
                           </div>
                         </div>
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[#71717A] mb-3">
+                        <div className="flex items-center gap-2 text-xs mb-3">
                           {mapSelected.startTime && (
-                            <span className="flex items-center gap-1.5">
-                              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${getUrgencyStyle(mapSelected.startTime)}`}>
-                                {getRelativeTime(mapSelected.startTime)}
-                              </span>
-                              <span>{format(new Date(mapSelected.startTime), 'EEE, MMM d · h:mm a')}</span>
+                            <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold flex-shrink-0 ${getUrgencyStyle(mapSelected.startTime)}`}>
+                              {getRelativeTime(mapSelected.startTime)}
                             </span>
                           )}
-                          <span className="flex items-center gap-1 text-[#9A9AAA]">
-                            <MapPin className="w-3 h-3" />
-                            {(mapSelected.address ?? mapSelected.city)?.split(',')[0]}
+                          <span className="flex items-center gap-1 min-w-0 text-[#9A9AAA]">
+                            <MapPin className="w-3 h-3 flex-shrink-0" />
+                            <span className="truncate">{formatAddress(mapSelected.address ?? mapSelected.city)}</span>
                           </span>
                         </div>
                         <div className="flex items-center gap-2 mb-4">
@@ -832,6 +850,29 @@ function BuddyPageInner() {
                       'Load more'
                     )}
                   </button>
+                )}
+
+                {/* Sparse feed upsell */}
+                {sessions.length > 0 && sessions.length < 6 && !nextCursor && (
+                  <div className="mt-8 text-center py-8 border-t border-black/[0.04]">
+                    <p className="text-sm text-[#71717A] mb-1">That&apos;s everything nearby.</p>
+                    <p className="text-xs text-[#9A9AAA] mb-4">More sessions pop up every day — or start one yourself.</p>
+                    <div className="flex gap-2 justify-center">
+                      <button
+                        onClick={() => setShowCreateSheet(true)}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-[#1A1A1A] px-4 py-2.5 text-xs font-semibold text-white hover:bg-black"
+                      >
+                        <Zap className="w-3.5 h-3.5" />
+                        Post a session
+                      </button>
+                      <Link
+                        href="/communities"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-black/[0.06] bg-white px-4 py-2.5 text-xs font-semibold text-[#4A4A5A] hover:border-black/[0.12]"
+                      >
+                        Browse crews
+                      </Link>
+                    </div>
+                  </div>
                 )}
               </div>
             )}
@@ -1020,19 +1061,16 @@ function SessionCard({
           </div>
 
           {/* Row 2: Time + Location */}
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-xs text-[#71717A]">
+          <div className="flex items-center gap-2 mt-3 text-xs">
             {session.startTime && (
-              <span className="flex items-center gap-1.5 flex-shrink-0">
-                <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${getUrgencyStyle(session.startTime)}`}>
-                  {getRelativeTime(session.startTime)}
-                </span>
-                <span>{format(new Date(session.startTime), 'EEE, MMM d · h:mm a')}</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold flex-shrink-0 ${getUrgencyStyle(session.startTime)}`}>
+                {getRelativeTime(session.startTime)}
               </span>
             )}
             {(session.address || session.city) && (
               <span className="flex items-center gap-1 min-w-0 text-[#9A9AAA]">
                 <MapPin className="w-3 h-3 flex-shrink-0" />
-                <span className="truncate">{(session.address ?? session.city)?.split(',')[0]}</span>
+                <span className="truncate">{formatAddress(session.address ?? session.city ?? '')}</span>
               </span>
             )}
           </div>
@@ -1065,7 +1103,11 @@ function SessionCard({
                 </div>
               )}
               <span className="text-xs font-semibold text-[#4A4A5A]">
-                {session.attendeeCount > 0 ? `${session.attendeeCount} going 🔥` : 'Be the first!'}
+                {session.attendeeCount > 0
+                  ? `${session.attendeeCount} going 🔥`
+                  : session.community
+                    ? `${session.community.name} crew`
+                    : 'Be the first! 👋'}
               </span>
             </div>
 

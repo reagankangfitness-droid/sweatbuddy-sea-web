@@ -294,17 +294,33 @@ function BuddyPageInner() {
     [tab, typeFilter, fitnessFilter, pricingFilter, verifiedFilter, userLocation, router]
   )
 
-  // Get user location on mount
+  const [locationReady, setLocationReady] = useState(false)
+
+  // Get user location on mount — resolve quickly with timeout fallback
   useEffect(() => {
-    if (!navigator.geolocation) return
+    if (!navigator.geolocation) { setLocationReady(true); return }
+
+    let settled = false
+    const settle = () => { if (!settled) { settled = true; setLocationReady(true) } }
+
     navigator.geolocation.getCurrentPosition(
-      (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      () => {} // GPS denied — will show all sessions
+      (pos) => {
+        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+        settle()
+      },
+      () => settle(), // GPS denied
+      { timeout: 3000, maximumAge: 60000 }
     )
+
+    // Fallback: don't wait longer than 3s for GPS
+    const timer = setTimeout(settle, 3000)
+    return () => clearTimeout(timer)
   }, [])
 
-  // Parallelize initial data fetches — don't block sessions on onboarding check
+  // Fetch sessions once location is resolved (or timed out)
   useEffect(() => {
+    if (!locationReady) return
+
     const loadInitialData = async () => {
       const [onboardingRes] = await Promise.allSettled([
         fetch('/api/user/p2p-onboarding').then((r) => r.ok ? r.json() : null),
@@ -327,7 +343,7 @@ function BuddyPageInner() {
     }
     loadInitialData()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router])
+  }, [locationReady, router])
 
   // Sync tab state when URL changes
   useEffect(() => {

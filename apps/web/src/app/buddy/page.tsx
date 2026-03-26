@@ -12,6 +12,7 @@ import { GoogleMap, useLoadScript, OverlayView } from '@react-google-maps/api'
 import { PaymentModal } from '@/components/PaymentModal'
 import { DARK_MAP_STYLES } from '@/lib/wave/map-styles'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
+import { CreateSessionSheet } from '@/components/CreateSessionSheet'
 
 interface Host {
   id: string
@@ -241,6 +242,7 @@ function BuddyPageInner() {
   const [fitnessFilter, setFitnessFilter] = useState('')
   const [pricingFilter, setPricingFilter] = useState('')
   const [verifiedFilter, setVerifiedFilter] = useState(false)
+  const [showCreateSheet, setShowCreateSheet] = useState(false)
 
   const fetchSessions = useCallback(
     async (cursor?: string) => {
@@ -435,6 +437,19 @@ function BuddyPageInner() {
 
   return (
     <div className="min-h-screen bg-[#FFFBF8]">
+      {/* Create Session Sheet */}
+      <CreateSessionSheet open={showCreateSheet} onClose={() => setShowCreateSheet(false)} />
+
+      {/* Floating Create Button */}
+      <button
+        onClick={() => setShowCreateSheet(true)}
+        className="fixed right-4 z-30 w-14 h-14 rounded-full bg-[#1A1A1A] shadow-xl flex items-center justify-center hover:bg-black transition-colors active:scale-95"
+        style={{ bottom: 'calc(80px + env(safe-area-inset-bottom, 0px) + 16px)' }}
+        aria-label="Create a session"
+      >
+        <Plus className="w-6 h-6 text-white" />
+      </button>
+
       {/* Payment Modal */}
       {paymentModalSession && (
         <PaymentModal
@@ -710,14 +725,14 @@ function BuddyPageInner() {
               <div className="text-center py-20">
                 <div className="text-5xl mb-4">🏋️</div>
                 <p className="text-[#4A4A5A] font-medium">Nothing happening nearby — yet.</p>
-                <p className="text-[#71717A] text-sm mt-1">Check back soon, or start something.</p>
-                <Link
-                  href="/buddy/host/quick"
+                <p className="text-[#71717A] text-sm mt-1">Be the first — start something.</p>
+                <button
+                  onClick={() => setShowCreateSheet(true)}
                   className="inline-flex items-center gap-2 mt-6 rounded-full bg-[#1A1A1A] px-5 py-3 text-sm font-semibold text-white hover:bg-black"
                 >
-                  <Plus className="w-4 h-4" />
-                  Create a Session
-                </Link>
+                  <Zap className="w-4 h-4" />
+                  Post a session
+                </button>
               </div>
             ) : (
               <div className="space-y-8 pt-4">
@@ -832,12 +847,12 @@ function BuddyPageInner() {
                 <p className="text-[#4A4A5A] font-medium">No sessions yet.</p>
                 <p className="text-[#71717A] text-sm mt-1">Join a community and you&apos;ll never have an empty week.</p>
                 <div className="flex gap-3 justify-center mt-6">
-                  <Link
-                    href="/buddy/host/quick"
+                  <button
+                    onClick={() => setShowCreateSheet(true)}
                     className="rounded-full bg-[#1A1A1A] px-5 py-3 text-sm font-semibold text-white hover:bg-black"
                   >
-                    Create a Session
-                  </Link>
+                    Post a session
+                  </button>
                   <button
                     onClick={() => setTab('happening')}
                     className="rounded-full border border-black/[0.08] bg-white px-5 py-3 text-sm font-semibold text-[#1A1A1A]"

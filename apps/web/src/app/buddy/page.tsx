@@ -645,45 +645,36 @@ function BuddyPageInner() {
       <div className="max-w-2xl mx-auto px-4 pb-32">
         {/* Filters (happening tab only) */}
         {tab === 'happening' && (
-          <div className="py-4 flex gap-2 overflow-x-auto no-scrollbar">
-            <select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              aria-label="Filter by activity type"
-              className="shrink-0 rounded-full border border-black/[0.06] bg-white px-4 py-2.5 text-xs text-[#4A4A5A] focus:outline-none"
-            >
-              {TYPE_FILTERS.map((f) => (
-                <option key={f.value} value={f.value}>
-                  {f.emoji} {f.label}
-                </option>
-              ))}
-            </select>
+          <div className="py-3 flex gap-2 overflow-x-auto no-scrollbar">
+            {TYPE_FILTERS.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => setTypeFilter(typeFilter === f.value ? '' : f.value)}
+                className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-medium transition-all ${
+                  typeFilter === f.value
+                    ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white shadow-md'
+                    : 'border-black/[0.06] bg-white text-[#4A4A5A] hover:border-black/[0.12]'
+                }`}
+              >
+                <span>{f.emoji}</span>
+                {f.label}
+              </button>
+            ))}
 
-            <select
-              value={fitnessFilter}
-              onChange={(e) => setFitnessFilter(e.target.value)}
-              aria-label="Filter by fitness level"
-              className="shrink-0 rounded-full border border-black/[0.06] bg-white px-4 py-2.5 text-xs text-[#4A4A5A] focus:outline-none"
-            >
-              {FITNESS_FILTERS.map((f) => (
-                <option key={f.value} value={f.value}>
-                  {f.label}
-                </option>
-              ))}
-            </select>
+            <div className="shrink-0 w-px h-5 self-center bg-black/[0.06] mx-0.5" />
 
             {[
-              { value: '', label: 'All' },
-              { value: 'free', label: '🆓 Free' },
-              { value: 'paid', label: '💰 Paid' },
+              { value: '', label: 'All prices' },
+              { value: 'free', label: 'Free' },
+              { value: 'paid', label: 'Paid' },
             ].map((f) => (
               <button
                 key={f.value}
                 onClick={() => setPricingFilter(f.value)}
-                className={`shrink-0 rounded-full border px-4 py-2.5 text-xs font-medium transition-colors ${
+                className={`shrink-0 rounded-full border px-3.5 py-2 text-xs font-medium transition-all ${
                   pricingFilter === f.value
-                    ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
-                    : 'border-black/[0.06] text-[#4A4A5A] hover:border-black/[0.12]'
+                    ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white shadow-md'
+                    : 'border-black/[0.06] bg-white text-[#4A4A5A] hover:border-black/[0.12]'
                 }`}
               >
                 {f.label}

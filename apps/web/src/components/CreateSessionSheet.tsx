@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MapPin, Loader2, Zap, ChevronDown, Minus, Plus, X, Clock, Camera } from 'lucide-react'
+import { MapPin, Loader2, Zap, ChevronDown, Minus, Plus, X, Clock } from 'lucide-react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
@@ -94,9 +94,10 @@ const CATEGORIES = ACTIVITY_TYPES.filter((t) => t.tier <= 2).map((t) => ({
 interface CreateSessionSheetProps {
   open: boolean
   onClose: () => void
+  onSuccess?: () => void
 }
 
-export function CreateSessionSheet({ open, onClose }: CreateSessionSheetProps) {
+export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSheetProps) {
   const router = useRouter()
 
   // Core fields
@@ -117,21 +118,27 @@ export function CreateSessionSheet({ open, onClose }: CreateSessionSheetProps) {
   const [showTimePicker, setShowTimePicker] = useState(false)
   const [showLocationPicker, setShowLocationPicker] = useState(false)
 
-  // Set smart defaults
+  // Reset and set smart defaults when sheet opens/closes
   useEffect(() => {
     if (open) {
       const smart = getSmartTime()
       setSelectedTime(smart.value)
       setTimeLabel(smart.label)
+      setCategorySlug('')
+      setNote('')
+      setSpots(0)
+      setExpanded(false)
+      setShowTimePicker(false)
+      setShowLocationPicker(false)
     }
   }, [open])
 
-  // Auto-detect location
+  // Auto-detect location on open
   useEffect(() => {
     if (!open) return
-    if (latitude !== 0) { setLocationLoading(false); return }
     if (!navigator.geolocation) { setLocationLoading(false); setCity('Singapore'); return }
 
+    setLocationLoading(true)
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const { latitude: lat, longitude: lng } = pos.coords
@@ -149,7 +156,8 @@ export function CreateSessionSheet({ open, onClose }: CreateSessionSheetProps) {
         setLocationLoading(false)
       }
     )
-  }, [open, latitude])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
 
   const canPost = categorySlug && selectedTime && latitude !== 0
 
@@ -190,19 +198,13 @@ export function CreateSessionSheet({ open, onClose }: CreateSessionSheetProps) {
 
       toast.success('Posted! Your session is live.')
       onClose()
-      // Reset
-      setCategorySlug('')
-      setNote('')
-      setSpots(0)
-      setExpanded(false)
-      // Refresh the feed
-      window.location.reload()
+      onSuccess?.()
     } catch {
       toast.error('Something went wrong')
     } finally {
       setPosting(false)
     }
-  }, [canPost, posting, categorySlug, selectedTime, city, address, latitude, longitude, spots, note, onClose, router])
+  }, [canPost, posting, categorySlug, selectedTime, city, address, latitude, longitude, spots, note, onClose, onSuccess, router])
 
   const catLabel = CATEGORIES.find((c) => c.slug === categorySlug)?.label ?? ''
   const previewText = catLabel && timeLabel
@@ -366,6 +368,7 @@ export function CreateSessionSheet({ open, onClose }: CreateSessionSheetProps) {
                     className="overflow-hidden mb-3"
                   >
                     <LocationAutocomplete
+                      variant="light"
                       value={address}
                       onChange={(data) => {
                         setAddress(data.location)

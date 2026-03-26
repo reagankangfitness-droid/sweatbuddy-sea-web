@@ -29,6 +29,7 @@ interface LocationAutocompleteProps {
   onManualChange: (value: string) => void
   hasError?: boolean
   placeholder?: string
+  variant?: 'dark' | 'light'
 }
 
 export function LocationAutocomplete({
@@ -37,6 +38,7 @@ export function LocationAutocomplete({
   onManualChange,
   hasError = false,
   placeholder = 'Add location',
+  variant = 'dark',
 }: LocationAutocompleteProps) {
   const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -77,12 +79,21 @@ export function LocationAutocomplete({
     }
   }, [autocomplete, onChange])
 
+  const isDark = variant === 'dark'
+  const wrapperCls = isDark
+    ? `flex items-center gap-3 px-4 py-3 bg-neutral-900 border rounded-xl focus-within:border-neutral-500 transition-colors ${hasError ? 'border-red-500' : 'border-neutral-700'}`
+    : `flex items-center gap-3 px-3.5 py-2.5 bg-[#FFFBF8] border rounded-xl focus-within:border-black/[0.12] transition-colors ${hasError ? 'border-red-500' : 'border-black/[0.04]'}`
+  const iconCls = isDark ? 'w-5 h-5 text-neutral-500 shrink-0' : 'w-4 h-4 text-[#71717A] shrink-0'
+  const inputCls = isDark
+    ? 'flex-1 bg-transparent text-white placeholder:text-neutral-500 focus:outline-none'
+    : 'flex-1 bg-transparent text-[#1A1A1A] text-sm placeholder:text-[#9A9AAA] focus:outline-none'
+
   // Show loading state
   if (!isLoaded) {
     return (
-      <div className={`flex items-center gap-3 px-4 py-3 bg-neutral-900 border rounded-xl ${hasError ? 'border-red-500' : 'border-neutral-700'}`}>
-        <Loader2 className="w-5 h-5 text-neutral-500 shrink-0 animate-spin" />
-        <span className="text-neutral-500">Loading location search...</span>
+      <div className={wrapperCls}>
+        <Loader2 className={`${iconCls} animate-spin`} />
+        <span className={isDark ? 'text-neutral-500' : 'text-[#9A9AAA] text-sm'}>Loading location search...</span>
       </div>
     )
   }
@@ -90,14 +101,14 @@ export function LocationAutocomplete({
   // If there's a load error or no API key, fall back to basic input
   if (loadError || !GOOGLE_MAPS_API_KEY) {
     return (
-      <div className={`flex items-center gap-3 px-4 py-3 bg-neutral-900 border rounded-xl focus-within:border-neutral-500 transition-colors ${hasError ? 'border-red-500' : 'border-neutral-700'}`}>
-        <MapPin className="w-5 h-5 text-neutral-500 shrink-0" />
+      <div className={wrapperCls}>
+        <MapPin className={iconCls} />
         <input
           type="text"
           value={value}
           onChange={(e) => onManualChange(e.target.value)}
           placeholder={placeholder}
-          className="flex-1 bg-transparent text-white placeholder:text-neutral-500 focus:outline-none"
+          className={inputCls}
         />
       </div>
     )
@@ -109,15 +120,15 @@ export function LocationAutocomplete({
       onPlaceChanged={onPlaceChanged}
       options={AUTOCOMPLETE_OPTIONS}
     >
-      <div className={`flex items-center gap-3 px-4 py-3 bg-neutral-900 border rounded-xl focus-within:border-neutral-500 transition-colors ${hasError ? 'border-red-500' : 'border-neutral-700'}`}>
-        <MapPin className="w-5 h-5 text-neutral-500 shrink-0" />
+      <div className={wrapperCls}>
+        <MapPin className={iconCls} />
         <input
           ref={inputRef}
           type="text"
           value={value}
           onChange={(e) => onManualChange(e.target.value)}
           placeholder={placeholder}
-          className="flex-1 bg-transparent text-white placeholder:text-neutral-500 focus:outline-none"
+          className={inputCls}
         />
       </div>
     </Autocomplete>

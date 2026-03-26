@@ -438,7 +438,7 @@ function BuddyPageInner() {
   return (
     <div className="min-h-screen bg-[#FFFBF8]">
       {/* Create Session Sheet */}
-      <CreateSessionSheet open={showCreateSheet} onClose={() => setShowCreateSheet(false)} />
+      <CreateSessionSheet open={showCreateSheet} onClose={() => setShowCreateSheet(false)} onSuccess={() => fetchSessions()} />
 
       {/* Floating Create Button */}
       <button

@@ -293,7 +293,7 @@ export async function sendPostEventFollowUpEmail(
         ${upcomingEvents.map(evt => {
           const evtUrl = evt.slug ? `${BASE_URL}/e/${evt.slug}` : `${BASE_URL}/e/${evt.id}`
           const evtDate = evt.eventDate
-            ? new Date(evt.eventDate).toLocaleDateString('en-SG', { weekday: 'short', month: 'short', day: 'numeric' })
+            ? new Date(evt.eventDate).toLocaleDateString('en-SG', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'Asia/Singapore' })
             : ''
           return `
             <tr>

@@ -138,7 +138,7 @@ async function generateDraftContent(params: {
 
   const nextEventInfo =
     nextEventName && nextEventDate
-      ? `${nextEventName} on ${nextEventDate.toLocaleDateString('en-SG', { weekday: 'long', month: 'long', day: 'numeric' })}`
+      ? `${nextEventName} on ${nextEventDate.toLocaleDateString('en-SG', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'Asia/Singapore' })}`
       : null
 
   const prompt = `Write a short post-event thank-you email for attendees of ${eventName}, a ${category} event hosted by ${hostName} at ${location}. ${attendeeCount} people attended. Be warm, thank them for showing up, and mention the next upcoming event if provided: ${nextEventInfo || 'none'}. Keep it to 3-4 sentences. End with a CTA to RSVP for the next one if there is one. Do not include a subject line — only the body text. Do not include greetings like "Hi" or sign-offs like "Best regards" — just the core message.`

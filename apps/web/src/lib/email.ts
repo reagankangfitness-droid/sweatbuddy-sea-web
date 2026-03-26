@@ -86,7 +86,9 @@ export async function sendBatchEmails(
   return results
 }
 
-// Email template helpers
+// Email template helpers — always format in Asia/Singapore timezone
+const EMAIL_TIMEZONE = 'Asia/Singapore'
+
 export function formatDate(date: Date | string): string {
   const parsed = new Date(date)
   if (isNaN(parsed.getTime())) return 'Date unavailable'
@@ -95,6 +97,7 @@ export function formatDate(date: Date | string): string {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    timeZone: EMAIL_TIMEZONE,
   })
 }
 
@@ -105,6 +108,7 @@ export function formatTime(date: Date | string): string {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
+    timeZone: EMAIL_TIMEZONE,
   })
 }
 

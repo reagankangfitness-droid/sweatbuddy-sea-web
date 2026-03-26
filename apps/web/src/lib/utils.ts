@@ -22,6 +22,7 @@ export function formatDate(date: Date | string): string {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
+    timeZone: 'Asia/Singapore',
   })
 }
 
@@ -31,6 +32,7 @@ export function formatTime(date: Date | string): string {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
+    timeZone: 'Asia/Singapore',
   })
 }
 

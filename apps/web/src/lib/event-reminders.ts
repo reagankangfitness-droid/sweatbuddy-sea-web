@@ -441,6 +441,7 @@ export async function sendSocialReminderEmail(
         weekday: 'long',
         month: 'long',
         day: 'numeric',
+        timeZone: 'Asia/Singapore',
       })
     : eventDay
 

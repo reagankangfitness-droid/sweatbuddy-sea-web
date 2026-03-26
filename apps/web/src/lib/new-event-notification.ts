@@ -68,6 +68,7 @@ export async function notifyFollowersOfNewEvent(submission: {
         weekday: 'short',
         month: 'short',
         day: 'numeric',
+        timeZone: 'Asia/Singapore',
       })
     : submission.time || 'Date TBD'
   const timeStr = submission.time || ''

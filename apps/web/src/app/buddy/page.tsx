@@ -72,38 +72,6 @@ interface Session {
 const SINGAPORE_CENTER = { lat: 1.3521, lng: 103.8198 }
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 
-interface MapSession {
-  id: string
-  title: string
-  categorySlug: string
-  latitude: number
-  longitude: number
-  startTime: string | null
-  address: string | null
-  city: string
-  price: number
-  maxPeople: number | null
-  requiresApproval: boolean
-  attendeeCount: number
-  isFull: boolean
-  host: { id: string; name: string | null; imageUrl: string | null; slug: string | null }
-}
-
-interface MapCommunity {
-  id: string
-  name: string
-  slug: string
-  category: string
-  description: string | null
-  logoImage: string | null
-  latitude: number
-  longitude: number
-  address: string | null
-  city: string | null
-  memberCount: number
-  instagramHandle: string | null
-}
-
 // ─── Time helpers ─────────────────────────────────────────────────────────────
 
 interface TimeBucket {
@@ -211,13 +179,6 @@ function pinEmoji(slug: string) { return EMOJI_MAP[slug] ?? '🏅' }
 function pinColor(slug: string) { return CATEGORY_COLORS[slug] ?? CATEGORY_COLORS.other }
 
 // ─── Fitness / type filters ───────────────────────────────────────────────────
-
-const FITNESS_FILTERS = [
-  { value: '', label: 'All levels' },
-  { value: 'BEGINNER', label: 'Beginner' },
-  { value: 'INTERMEDIATE', label: 'Intermediate' },
-  { value: 'ADVANCED', label: 'Advanced' },
-]
 
 const TYPE_FILTERS = [
   { value: '', label: 'All types', emoji: '🏃' },
@@ -426,7 +387,7 @@ function BuddyPageInner() {
     }
   }
 
-  const sheetHeight = sheetMode === 'full' ? '75dvh' : sheetMode === 'half' ? '20dvh' : '80px'
+  const sheetHeight = sheetMode === 'full' ? '75%' : sheetMode === 'half' ? '20%' : '80px'
 
   return (
     <div className="fixed inset-0 bg-[#FFFBF8]">
@@ -570,7 +531,7 @@ function BuddyPageInner() {
         {/* Drag handle + header */}
         <div
           className="cursor-grab active:cursor-grabbing"
-          onClick={() => setSheetMode(sheetMode === 'peek' ? 'half' : sheetMode === 'half' ? 'full' : 'half')}
+          onClick={() => setSheetMode(sheetMode === 'peek' ? 'half' : sheetMode === 'half' ? 'full' : 'peek')}
         >
           <div className="flex justify-center pt-2.5 pb-1">
             <div className="w-10 h-1.5 rounded-full bg-black/[0.08]" />

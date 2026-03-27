@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { Compass, User, ChevronRight, Plus, Users2 } from 'lucide-react'
+import { Compass, User, ChevronRight, Users2 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -174,14 +174,6 @@ function AppNavInner() {
                 })}
               </div>
 
-              {/* Host CTA — Quick Post */}
-              <Link
-                href="/buddy/host/quick"
-                aria-label="Quick post a session"
-                className="flex items-center justify-center w-12 h-12 rounded-xl bg-[#1A1A1A] text-white hover:bg-black transition-colors mb-3"
-              >
-                <Plus className="w-5 h-5" />
-              </Link>
 
               {/* User avatar */}
               <div className="mt-auto">

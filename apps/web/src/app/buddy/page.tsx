@@ -217,6 +217,7 @@ function BuddyPageInner() {
   const [pricingFilter, setPricingFilter] = useState('')
   const [showCreateSheet, setShowCreateSheet] = useState(false)
   const [shareSession, setShareSession] = useState<Session | null>(null)
+  const [selectedPin, setSelectedPin] = useState<Session | null>(null)
 
   // Sheet position: 'peek' (shows 1 card), 'half' (50%), 'full' (85%)
   const [sheetMode, setSheetMode] = useState<'peek' | 'half' | 'full'>('half')
@@ -433,6 +434,7 @@ function BuddyPageInner() {
           center={userLocation ?? SINGAPORE_CENTER}
           zoom={12}
           onLoad={(map) => { mapRef.current = map; if (userLocation) map.panTo(userLocation) }}
+          onClick={() => setSelectedPin(null)}
           options={{
             disableDefaultUI: true,
             zoomControl: false,
@@ -450,11 +452,15 @@ function BuddyPageInner() {
                 mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
               >
                 <div
-                  onClick={(e) => { e.stopPropagation(); setSheetMode('half') }}
+                  onClick={(e) => { e.stopPropagation(); setSelectedPin(selectedPin?.id === s.id ? null : s); setSheetMode('peek') }}
                   className="cursor-pointer select-none"
                   style={{ transform: 'translate(-50%, -50%)' }}
                 >
-                  <div className={`flex items-center justify-center rounded-full shadow-lg border-2 border-white/80 w-9 h-9 text-lg hover:scale-110 transition-all ${pinColor(s.categorySlug ?? 'other')}`}>
+                  <div className={`flex items-center justify-center rounded-full shadow-lg border-2 transition-all duration-150 ${
+                    selectedPin?.id === s.id
+                      ? 'w-12 h-12 text-2xl border-white scale-110 ring-2 ring-white/40'
+                      : 'w-9 h-9 text-lg border-white/80 hover:scale-110'
+                  } ${pinColor(s.categorySlug ?? 'other')}`}>
                     {pinEmoji(s.categorySlug ?? 'other')}
                   </div>
                 </div>
@@ -520,6 +526,77 @@ function BuddyPageInner() {
       >
         <Plus className="w-6 h-6 text-white" />
       </button>
+
+      {/* ── Selected pin detail card ── */}
+      <AnimatePresence>
+        {selectedPin && (
+          <motion.div
+            key="pin-detail"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.2 }}
+            className="absolute left-4 right-4 z-25"
+            style={{ bottom: 'calc(72px + 20% + 12px)' }}
+          >
+            <div className="bg-white rounded-2xl border border-black/[0.06] shadow-xl p-4">
+              <div className="flex items-start gap-3">
+                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 ${pinColor(selectedPin.categorySlug ?? 'other')}`}>
+                  <span className="text-xl">{pinEmoji(selectedPin.categorySlug ?? 'other')}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <Link href={`/activities/${selectedPin.id}`} className="text-sm font-semibold text-[#1A1A1A] leading-snug line-clamp-1 block tracking-tight">
+                    {selectedPin.title}
+                  </Link>
+                  <div className="flex items-center gap-2 mt-1 text-xs text-[#71717A]">
+                    {selectedPin.startTime && (
+                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${getUrgencyStyle(selectedPin.startTime)}`}>
+                        {getRelativeTime(selectedPin.startTime)}
+                      </span>
+                    )}
+                    {(selectedPin.address || selectedPin.city) && (
+                      <span className="truncate text-[#9A9AAA]">
+                        {formatAddress(selectedPin.address ?? selectedPin.city ?? '')}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <span className="text-xs font-semibold text-[#4A4A5A]">
+                      {selectedPin.attendeeCount > 0 ? `${selectedPin.attendeeCount} going 🔥` : 'Be the first! 👋'}
+                    </span>
+                    {selectedPin.maxPeople && selectedPin.attendeeCount < selectedPin.maxPeople && (
+                      <span className="text-[10px] text-[#9A9AAA]">
+                        {selectedPin.maxPeople - selectedPin.attendeeCount} spots left
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setSelectedPin(null) }}
+                  className="w-7 h-7 rounded-full bg-[#FFFBF8] flex items-center justify-center flex-shrink-0"
+                >
+                  <span className="text-[#9A9AAA] text-xs">✕</span>
+                </button>
+              </div>
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={() => { joinSession(selectedPin.id); setSelectedPin(null) }}
+                  disabled={joiningId === selectedPin.id || selectedPin.isFull}
+                  className="flex-1 py-2.5 rounded-full bg-[#1A1A1A] text-white text-xs font-semibold hover:bg-black disabled:opacity-40 transition-all"
+                >
+                  {joiningId === selectedPin.id ? 'Joining...' : selectedPin.isFull ? 'Full' : "I'm in →"}
+                </button>
+                <Link
+                  href={`/activities/${selectedPin.id}`}
+                  className="px-4 py-2.5 rounded-full border border-black/[0.06] bg-white text-xs font-semibold text-[#4A4A5A] hover:bg-[#FFFBF8] transition-all"
+                >
+                  Details
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Draggable session list sheet ── */}
       <motion.div

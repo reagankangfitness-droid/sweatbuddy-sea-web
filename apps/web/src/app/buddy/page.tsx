@@ -13,6 +13,7 @@ import { DARK_MAP_STYLES } from '@/lib/wave/map-styles'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
 import { CreateSessionSheet } from '@/components/CreateSessionSheet'
 import { ShareSessionSheet } from '@/components/ShareSessionSheet'
+import { SessionFeedbackSheet } from '@/components/SessionFeedbackSheet'
 
 interface Host {
   id: string
@@ -217,6 +218,7 @@ function BuddyPageInner() {
   const [showCreateSheet, setShowCreateSheet] = useState(false)
   const [shareSession, setShareSession] = useState<Session | null>(null)
   const [selectedPin, setSelectedPin] = useState<Session | null>(null)
+  const [feedbackSession, setFeedbackSession] = useState<{ id: string; title: string; hostId: string; hostName: string | null } | null>(null)
 
   // Sheet position: 'peek' (shows 1 card), 'half' (50%), 'full' (85%)
   const [sheetMode, setSheetMode] = useState<'peek' | 'half' | 'full'>('half')
@@ -308,6 +310,20 @@ function BuddyPageInner() {
     loadInitialData()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locationReady, router])
+
+  // Check for pending feedback on past sessions
+  useEffect(() => {
+    if (!currentUserId) return
+    fetch('/api/buddy/sessions/pending-feedback')
+      .then((r) => r.ok ? r.json() : { sessions: [] })
+      .then((data) => {
+        if (data.sessions?.length > 0) {
+          // Show feedback for the first pending session after a short delay
+          setTimeout(() => setFeedbackSession(data.sessions[0]), 2000)
+        }
+      })
+      .catch(() => {})
+  }, [currentUserId])
 
   // Pan map to user location when it becomes available
   useEffect(() => {
@@ -405,6 +421,16 @@ function BuddyPageInner() {
         spotsLeft={shareSession?.maxPeople ? shareSession.maxPeople - shareSession.attendeeCount : null}
         goingCount={shareSession ? shareSession.attendeeCount + 1 : 0}
         context="joined"
+      />
+
+      {/* Post-Session Feedback */}
+      <SessionFeedbackSheet
+        open={!!feedbackSession}
+        onClose={() => setFeedbackSession(null)}
+        sessionId={feedbackSession?.id ?? ''}
+        sessionTitle={feedbackSession?.title ?? ''}
+        hostId={feedbackSession?.hostId ?? ''}
+        hostName={feedbackSession?.hostName ?? null}
       />
 
       {/* Payment Modal */}

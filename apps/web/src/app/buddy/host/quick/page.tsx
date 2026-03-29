@@ -176,7 +176,8 @@ export default function QuickPostPage() {
 
       if (!res.ok) {
         if (data.code === 'ONBOARDING_REQUIRED') {
-          router.push('/onboarding/p2p')
+          toast.error('Join a session first to set up your profile, then you can host.')
+          router.push('/buddy')
           return
         }
         toast.error(data.error || 'Failed to post')

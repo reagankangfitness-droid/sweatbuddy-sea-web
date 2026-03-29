@@ -194,7 +194,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
       if (!res.ok) {
         if (data.code === 'ONBOARDING_REQUIRED') {
           onClose()
-          router.push('/onboarding/p2p')
+          toast.error('Join a session first to set up your profile, then you can host.')
           return
         }
         toast.error(data.error || 'Failed to post')

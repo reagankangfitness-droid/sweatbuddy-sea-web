@@ -293,7 +293,7 @@ export default function NewSessionPage() {
 
         const data = await res.json()
         if (!res.ok) {
-          if (data.code === 'ONBOARDING_REQUIRED') { router.push('/onboarding/p2p'); return }
+          if (data.code === 'ONBOARDING_REQUIRED') { toast.error('Join a session first to set up your profile, then you can host.'); router.push('/buddy'); return }
           if (data.code === 'STRIPE_REQUIRED') { toast.error('Connect Stripe first to charge for sessions'); return }
           toast.error(data.error || 'Failed to create recurring session')
           return
@@ -338,7 +338,7 @@ export default function NewSessionPage() {
 
         const data = await res.json()
         if (!res.ok) {
-          if (data.code === 'ONBOARDING_REQUIRED') { router.push('/onboarding/p2p'); return }
+          if (data.code === 'ONBOARDING_REQUIRED') { toast.error('Join a session first to set up your profile, then you can host.'); router.push('/buddy'); return }
           if (data.code === 'STRIPE_REQUIRED') { toast.error('Connect Stripe first to charge for sessions'); return }
           toast.error(data.error || 'Failed to create session')
           return

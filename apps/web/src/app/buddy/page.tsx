@@ -14,6 +14,7 @@ import { ACTIVITY_TYPES } from '@/lib/activity-types'
 import { CreateSessionSheet } from '@/components/CreateSessionSheet'
 import { ShareSessionSheet } from '@/components/ShareSessionSheet'
 import { SessionFeedbackSheet } from '@/components/SessionFeedbackSheet'
+import { BioPromptSheet } from '@/components/BioPromptSheet'
 
 interface Host {
   id: string
@@ -219,6 +220,7 @@ function BuddyPageInner() {
   const [shareSession, setShareSession] = useState<Session | null>(null)
   const [selectedPin, setSelectedPin] = useState<Session | null>(null)
   const [feedbackSession, setFeedbackSession] = useState<{ id: string; title: string; hostId: string; hostName: string | null } | null>(null)
+  const [showBioPrompt, setShowBioPrompt] = useState(false)
 
   // Sheet position: 'peek' (shows 1 card), 'half' (50%), 'full' (85%)
   const [sheetMode, setSheetMode] = useState<'peek' | 'half' | 'full'>('half')
@@ -311,15 +313,30 @@ function BuddyPageInner() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locationReady, router])
 
-  // Check for pending feedback on past sessions
+  // Check for pending feedback + bio prompt on past sessions
   useEffect(() => {
     if (!currentUserId) return
+
+    // Check pending feedback
     fetch('/api/buddy/sessions/pending-feedback')
       .then((r) => r.ok ? r.json() : { sessions: [] })
       .then((data) => {
         if (data.sessions?.length > 0) {
-          // Show feedback for the first pending session after a short delay
           setTimeout(() => setFeedbackSession(data.sessions[0]), 2000)
+        }
+      })
+      .catch(() => {})
+
+    // Check if bio prompt should show (3+ sessions, no bio, not dismissed)
+    try {
+      if (localStorage.getItem('sb_bio_prompted')) return
+    } catch { return }
+    fetch('/api/user/profile')
+      .then((r) => r.ok ? r.json() : null)
+      .then((data) => {
+        if (data?.profile && !data.profile.bio && data.profile.sessionsAttendedCount >= 3) {
+          // Show after feedback dismisses (or 5s if no feedback)
+          setTimeout(() => setShowBioPrompt(true), 5000)
         }
       })
       .catch(() => {})
@@ -422,6 +439,9 @@ function BuddyPageInner() {
         goingCount={shareSession ? shareSession.attendeeCount + 1 : 0}
         context="joined"
       />
+
+      {/* Bio Prompt */}
+      <BioPromptSheet open={showBioPrompt && !feedbackSession} onClose={() => setShowBioPrompt(false)} />
 
       {/* Post-Session Feedback */}
       <SessionFeedbackSheet

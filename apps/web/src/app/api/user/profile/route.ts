@@ -52,3 +52,43 @@ export async function GET() {
     return NextResponse.json({ profile: null })
   }
 }
+
+// Update bio and basic profile fields
+export async function PATCH(request: Request) {
+  try {
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
+
+    const clerkUser = await currentUser()
+    const email = clerkUser?.primaryEmailAddress?.emailAddress
+    if (!email) {
+      return NextResponse.json({ error: 'No email' }, { status: 400 })
+    }
+
+    const body = await request.json()
+    const updates: Record<string, unknown> = {}
+
+    if (typeof body.bio === 'string') {
+      updates.bio = body.bio.trim().slice(0, 200)
+    }
+    if (typeof body.headline === 'string') {
+      updates.headline = body.headline.trim().slice(0, 200)
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
+    }
+
+    await prisma.user.update({
+      where: { email: email.toLowerCase() },
+      data: updates,
+    })
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('[user/profile PATCH] Error:', error)
+    return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 })
+  }
+}

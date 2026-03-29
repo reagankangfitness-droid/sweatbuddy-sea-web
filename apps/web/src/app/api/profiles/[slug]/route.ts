@@ -68,7 +68,7 @@ export async function GET(
     const needsFollowCheck = !!userId && !isOwnProfile
     const needsInterestCheck = !!userId && !isOwnProfile && profile.isHost
 
-    const [attendedStats, upcomingEvents, followStatus, interestStatus] = await Promise.all([
+    const [attendedStats, upcomingEvents, followStatus, interestStatus, feedbackStats, activityInterests] = await Promise.all([
       needsAttendedStats
         ? getAttendedStats(profile.id)
         : null,
@@ -104,6 +104,23 @@ export async function GET(
       needsInterestCheck
         ? isInterested(userId!, profile.id)
         : false,
+      // Feedback rating stats (reviews received as host)
+      prisma.userReview.aggregate({
+        where: { revieweeId: profile.id },
+        _avg: { rating: true },
+        _count: true,
+      }),
+      // Auto-populate activity interests from session history
+      prisma.userActivity.findMany({
+        where: {
+          userId: profile.id,
+          status: { in: ['JOINED', 'COMPLETED'] },
+          activity: { categorySlug: { not: null } },
+        },
+        select: { activity: { select: { categorySlug: true } } },
+        distinct: ['activityId'],
+        take: 50,
+      }),
     ])
 
     // Track profile view (don't await to avoid slowing response)
@@ -130,6 +147,24 @@ export async function GET(
       totalProfileViews: 0,
     }
 
+    // Compute rating from feedback
+    const rating = feedbackStats._count > 0
+      ? { average: Math.round((feedbackStats._avg.rating ?? 0) * 10) / 10, count: feedbackStats._count }
+      : null
+
+    // Compute activity-based interests (top categories from sessions attended)
+    const interestCounts: Record<string, number> = {}
+    if (Array.isArray(activityInterests)) {
+      for (const ua of activityInterests) {
+        const slug = (ua as { activity: { categorySlug: string | null } }).activity.categorySlug
+        if (slug) interestCounts[slug] = (interestCounts[slug] || 0) + 1
+      }
+    }
+    const derivedInterests = Object.entries(interestCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([slug]) => slug)
+
     return NextResponse.json({
       profile: {
         ...publicProfile,
@@ -137,6 +172,8 @@ export async function GET(
         attendedStats: (showActivitiesAttended || isOwnProfile) ? attendedStats : null,
         followCounts,
         interestCount,
+        rating,
+        derivedInterests,
       },
       communities: Array.isArray(communities) ? communities.map((cm: { community: { name: string; slug: string | null; logoImage: string | null; category: string | null; memberCount: number } }) => ({
         name: cm.community.name,

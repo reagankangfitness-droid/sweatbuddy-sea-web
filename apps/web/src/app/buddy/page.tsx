@@ -390,7 +390,7 @@ function BuddyPageInner() {
   const sheetHeight = sheetMode === 'full' ? '75%' : sheetMode === 'half' ? '20%' : '80px'
 
   return (
-    <div className="fixed inset-0 bg-[#FFFBF8]">
+    <div className="relative h-[100dvh] bg-[#FFFBF8] overflow-hidden">
       {/* Create Session Sheet */}
       <CreateSessionSheet open={showCreateSheet} onClose={() => setShowCreateSheet(false)} onSuccess={() => fetchSessions()} />
 

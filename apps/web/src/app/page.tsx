@@ -2,483 +2,228 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Metadata } from 'next'
 import { Logo } from '@/components/logo'
-import { FadeInSection } from '@/components/FadeInSection'
 import { prisma } from '@/lib/prisma'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
-import { SUPPORT_EMAIL } from '@/config/constants'
 
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'SweatBuddies — Discover Fitness & Wellness Experiences',
+  title: 'SweatBuddies — Find Fitness Sessions Near You',
   description:
-    'Discover fitness and wellness experiences. Sunrise yoga, beach bootcamps, run clubs, cold plunge socials — whatever moves you, it\'s happening.',
+    'Discover fitness and wellness sessions happening near you. Running, yoga, HIIT, cold plunge, cycling — join in 2 taps.',
 }
-
-// Fallback cover photos for communities without a cover image
-const CATEGORY_COVER_FALLBACKS: Record<string, string> = {
-  running: '/banner/running.jpg',
-  yoga: '/images/hero-2.jpg',
-  swimming: '/banner/athletics.jpg',
-  gym: '/images/hero-1.webp',
-  bootcamp: '/banner/athletics.jpg',
-  hiking: '/images/hero-3.jpg',
-  cycling: '/banner/running.jpg',
-  badminton: '/images/community-bonds.jpg',
-  pilates: '/images/hero-2.jpg',
-  cold_plunge: '/images/hero-3.jpg',
-  padel: '/images/community-bonds.jpg',
-  combat_fitness: '/banner/athletics.jpg',
-  pickleball: '/images/community-bonds.jpg',
-}
-
-const CATEGORY_CARDS = [
-  { emoji: '🏃', label: 'Running Clubs', vibe: 'Find your pace, push your limits', slug: 'running' },
-  { emoji: '🧘', label: 'Yoga Groups', vibe: 'Deepen your practice together', slug: 'yoga' },
-  { emoji: '🏊', label: 'Swimming Squads', vibe: 'Faster laps, better form', slug: 'swimming' },
-  { emoji: '🎾', label: 'Tennis Crews', vibe: 'Sharpen your game, find your match', slug: 'padel' },
-  { emoji: '🏋️', label: 'Gym & Strength', vibe: 'Spotters, PRs, no skipped days', slug: 'gym' },
-  { emoji: '🏸', label: 'Badminton Groups', vibe: 'Smash harder, play smarter', slug: 'badminton' },
-  { emoji: '🥾', label: 'Hiking Crews', vibe: 'Conquer trails, earn the view', slug: 'hiking' },
-  { emoji: '⚡', label: 'HIIT & Bootcamp', vibe: 'Outwork yesterday, together', slug: 'bootcamp' },
-  { emoji: '🧊', label: 'Cold Plunge', vibe: 'Build resilience, feel alive', slug: 'cold_plunge' },
-]
 
 export default async function HomePage() {
-  const [featuredCommunities, communityCount, memberCount, sessionsThisWeek] =
-    await Promise.all([
-      prisma.community.findMany({
-        where: { isActive: true },
-        take: 6,
-        orderBy: { memberCount: 'desc' },
-        include: {
-          createdBy: { select: { name: true, imageUrl: true } },
-          city: { select: { name: true } },
-        },
-      }),
-      prisma.community.count({ where: { isActive: true } }),
-      prisma.communityMember.count(),
-      prisma.activity.count({
-        where: {
-          startTime: {
-            gte: new Date(),
-            lte: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-          },
-        },
-      }),
-    ])
+  const now = new Date()
+  const oneWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
 
-  const categoryEmoji = Object.fromEntries(
-    ACTIVITY_TYPES.map((a) => [a.key, a.emoji]),
-  )
+  const [communityCount, sessionsThisWeek, upcomingSessions, cities] = await Promise.all([
+    prisma.community.count({ where: { isActive: true } }),
+    prisma.activity.count({
+      where: {
+        status: 'PUBLISHED',
+        deletedAt: null,
+        activityMode: { in: ['P2P_FREE', 'P2P_PAID'] },
+        startTime: { gte: now, lte: oneWeek },
+      },
+    }),
+    prisma.activity.findMany({
+      where: {
+        status: 'PUBLISHED',
+        deletedAt: null,
+        activityMode: { in: ['P2P_FREE', 'P2P_PAID'] },
+        startTime: { gte: now },
+      },
+      select: {
+        id: true,
+        title: true,
+        categorySlug: true,
+        startTime: true,
+        city: true,
+        address: true,
+        _count: { select: { userActivities: { where: { status: { in: ['JOINED', 'COMPLETED'] } } } } },
+      },
+      orderBy: { startTime: 'asc' },
+      take: 5,
+    }),
+    prisma.city.findMany({
+      where: { isLaunched: true, communityCount: { gt: 0 } },
+      select: { name: true, communityCount: true },
+      orderBy: { communityCount: 'desc' },
+    }),
+  ])
 
-  const showStats =
-    communityCount >= 10 && memberCount >= 100
+  const categoryEmoji = Object.fromEntries(ACTIVITY_TYPES.map((a) => [a.key, a.emoji]))
+
+  function formatSessionTime(date: Date): string {
+    const diff = date.getTime() - now.getTime()
+    const hours = diff / (1000 * 60 * 60)
+    const isToday = date.toDateString() === now.toDateString()
+    const tomorrow = new Date(now)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const isTomorrow = date.toDateString() === tomorrow.toDateString()
+
+    const h = date.getHours() % 12 || 12
+    const ampm = date.getHours() >= 12 ? 'PM' : 'AM'
+    const time = `${h}:${String(date.getMinutes()).padStart(2, '0')} ${ampm}`
+
+    if (hours < 2) return `In ${Math.round(hours * 60)} min`
+    if (isToday) return `Today ${time}`
+    if (isTomorrow) return `Tomorrow ${time}`
+    return date.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Asia/Singapore' }) + ` ${time}`
+  }
 
   return (
     <div className="min-h-screen bg-[#FFFBF8] text-[#1A1A1A]">
-
-      {/* ── Nav ──────────────────────────────────────────── */}
+      {/* ── Nav ── */}
       <header className="sticky top-0 z-30 bg-[#FFFBF8]/85 backdrop-blur-xl border-b border-black/[0.06]">
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-5 flex items-center justify-between">
-          <Logo size={36} />
-          <nav className="flex items-center gap-3">
-            <Link
-              href="/buddy"
-              className="hidden sm:inline px-4 py-2 text-sm font-medium text-[#71717A] hover:text-[#1A1A1A] transition-colors"
-            >
-              Discover experiences
-            </Link>
-            <Link
-              href="/sign-in"
-              className="hidden sm:inline px-4 py-2 text-sm font-medium text-[#71717A] hover:text-[#1A1A1A] transition-colors"
-            >
-              Log in
-            </Link>
-            <Link
-              href="/sign-up"
-              className="px-5 py-2.5 bg-[#1A1A1A] text-white text-sm font-semibold rounded-full hover:bg-black transition-all shadow-sm hover:shadow-md"
-            >
-              Join
-            </Link>
-          </nav>
+        <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
+          <Logo size={32} />
+          <Link
+            href="/buddy"
+            className="px-5 py-2.5 bg-[#1A1A1A] text-white text-sm font-semibold rounded-full hover:bg-black transition-all"
+          >
+            Open app
+          </Link>
         </div>
       </header>
 
-      {/* ── Hero ─────────────────────────────────────────── */}
-      <section className="relative overflow-hidden py-20 sm:py-36 px-5 sm:px-8">
-
-        <div className="relative max-w-5xl mx-auto text-center">
-          <p className="animate-fade-up text-xs font-semibold tracking-[0.2em] text-[#71717A] uppercase mb-8">
-            SweatBuddies
-          </p>
-
-          <h1 className="animate-fade-up-delay-1 text-5xl sm:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight mb-8 text-[#1A1A1A]">
+      {/* ── Hero ── */}
+      <section className="px-5 pt-16 pb-12 sm:pt-24 sm:pb-16">
+        <div className="max-w-2xl mx-auto text-center">
+          <h1 className="text-4xl sm:text-6xl font-bold leading-[1.08] tracking-tight mb-5">
             Sweat is better
             <span className="block text-[#71717A]">shared.</span>
           </h1>
 
-          <p className="animate-fade-up-delay-2 text-lg sm:text-xl text-[#4A4A5A] max-w-2xl mx-auto mb-12 leading-relaxed">
-            Sunrise yoga. Beach bootcamps. Run clubs. Cold plunge socials. Discover fitness and wellness experiences — and the people who make them unforgettable.
+          <p className="text-base sm:text-lg text-[#4A4A5A] max-w-md mx-auto mb-8 leading-relaxed">
+            Find fitness sessions happening near you. Join in 2 taps.
           </p>
 
-          <div className="animate-fade-up-delay-3 flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/buddy"
-              className="px-8 py-4 bg-[#1A1A1A] text-white text-base font-semibold rounded-full hover:bg-black transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]"
-            >
-              Discover experiences
-            </Link>
-            <Link
-              href="/communities/create"
-              className="px-8 py-4 bg-white text-[#1A1A1A] text-base font-semibold rounded-full hover:bg-neutral-50 transition-all border border-black/[0.08]"
-            >
-              Start something
-            </Link>
+          <Link
+            href="/buddy"
+            className="inline-block px-8 py-4 bg-[#1A1A1A] text-white text-base font-semibold rounded-full hover:bg-black transition-all shadow-lg hover:shadow-xl"
+          >
+            See what&apos;s happening →
+          </Link>
+
+          {/* Live stats */}
+          <div className="flex items-center justify-center gap-2 mt-8">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <p className="text-sm text-[#71717A]">
+              <span className="font-semibold text-[#1A1A1A]">{sessionsThisWeek}</span> sessions this week
+              {communityCount > 0 && <> · <span className="font-semibold text-[#1A1A1A]">{communityCount}</span> crews</>}
+            </p>
           </div>
-        </div>
 
-        {/* Hero photo grid */}
-        <div className="mt-20 max-w-4xl mx-auto">
-          <div className="grid grid-cols-3 gap-3 sm:gap-4">
-            {[
-              { src: '/images/community-bonds.jpg', alt: 'Pickleball crew' },
-              { src: '/banner/running.jpg', alt: 'Run club' },
-              { src: '/banner/athletics.jpg', alt: 'Beach fitness' },
-            ].map((img) => (
-              <div key={img.src} className="group h-40 sm:h-56 rounded-2xl overflow-hidden shadow-sm">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.src} alt={img.alt} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              </div>
-            ))}
-          </div>
-          <p className="text-center text-xs text-[#71717A] mt-4 tracking-wide">Real communities. Real people. Moving together.</p>
-        </div>
-
-        {/* Photo strip */}
-        <div className="mt-10 max-w-4xl mx-auto relative">
-          <div className="flex gap-3 overflow-x-auto scrollbar-none pb-1">
-            {[
-              { src: '/images/hero-2.jpg', alt: 'Yoga in the park' },
-              { src: '/images/hero-3.jpg', alt: 'Cold plunge crew' },
-              { src: '/banner/run-club.jpg', alt: 'Running together' },
-              { src: '/banner/ice-bath.webp', alt: 'Ice bath session' },
-            ].map((img) => (
-              <div key={img.src} className="group flex-shrink-0 w-44 h-28 sm:w-52 sm:h-32 rounded-xl overflow-hidden shadow-sm">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img.src} alt={img.alt} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Category browsing ────────────────────────────── */}
-      <section className="px-5 sm:px-8 pb-20 border-b border-black/[0.04]">
-        <div className="max-w-6xl mx-auto">
-          <FadeInSection>
-            <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-5xl font-bold text-[#1A1A1A]">
-                What makes you sweat?
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
-              {CATEGORY_CARDS.map((cat) => (
-                <Link
-                  key={cat.slug}
-                  href={`/communities?category=${cat.slug}`}
-                  className="group bg-white border border-black/[0.06] hover:bg-neutral-50 hover:border-black/[0.1] rounded-2xl p-6 transition-all text-center hover:shadow-md hover:-translate-y-0.5"
-                >
-                  <span className="text-3xl sm:text-4xl block mb-3">{cat.emoji}</span>
-                  <span className="text-sm font-semibold text-[#1A1A1A] group-hover:text-black transition-colors">
-                    {cat.label}
-                  </span>
-                  <span className="block text-xs text-[#71717A] mt-1.5 leading-relaxed">
-                    {cat.vibe}
-                  </span>
-                </Link>
+          {/* City pills */}
+          {cities.length > 0 && (
+            <div className="flex flex-wrap gap-2 justify-center mt-4">
+              {cities.map((c) => (
+                <span key={c.name} className="px-3 py-1 rounded-full bg-white border border-black/[0.06] text-xs text-[#71717A]">
+                  {c.name} <span className="font-semibold text-[#4A4A5A]">{c.communityCount}</span>
+                </span>
               ))}
             </div>
-          </FadeInSection>
-        </div>
-      </section>
-
-      {/* ── Featured communities ─────────────────────────── */}
-      <section className="py-20 sm:py-32 px-5 sm:px-8 border-b border-black/[0.04]">
-        <div className="max-w-7xl mx-auto">
-          <FadeInSection>
-            {featuredCommunities.length > 0 ? (
-              <>
-                <div className="text-center mb-14">
-                  <h2 className="text-3xl sm:text-5xl font-bold text-[#1A1A1A]">
-                    Who&apos;s hosting
-                  </h2>
-                </div>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                  {featuredCommunities.map((community) => (
-                    <Link
-                      key={community.id}
-                      href={`/communities/${community.slug}`}
-                      className="group bg-white border border-black/[0.06] hover:border-black/[0.1] rounded-2xl overflow-hidden transition-all shadow-sm hover:shadow-lg hover:-translate-y-1"
-                    >
-                      {/* Cover */}
-                      <div className="relative h-44 sm:h-52 overflow-hidden">
-                        {community.coverImage || CATEGORY_COVER_FALLBACKS[community.category] ? (
-                          <Image
-                            src={community.coverImage || CATEGORY_COVER_FALLBACKS[community.category] || '/banner/running.jpg'}
-                            alt={community.name}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-neutral-200 to-neutral-300 flex items-center justify-center text-5xl">
-                            {categoryEmoji[community.category] ?? '🏅'}
-                          </div>
-                        )}
-                        {/* Gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                        {/* Category badge */}
-                        <div className="absolute top-4 left-4">
-                          <span className="px-3 py-1.5 bg-white/80 backdrop-blur-md rounded-full text-xs font-medium text-[#4A4A5A] capitalize">
-                            {categoryEmoji[community.category] ?? '🏅'}{' '}
-                            {community.category.replace(/_/g, ' ')}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="p-6">
-                        <div className="flex items-start gap-3">
-                          {/* Logo overlapping cover */}
-                          {community.logoImage && (
-                            <div className="w-12 h-12 rounded-full bg-neutral-100 overflow-hidden flex-shrink-0 -mt-10 border-2 border-white shadow-lg ring-1 ring-black/[0.06]">
-                              <Image
-                                src={community.logoImage}
-                                alt={community.name}
-                                width={48}
-                                height={48}
-                                className="object-cover w-full h-full"
-                              />
-                            </div>
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-base font-semibold text-[#1A1A1A] group-hover:text-black transition-colors truncate">
-                              {community.name}
-                            </h3>
-                            <div className="flex items-center gap-3 text-xs text-[#71717A] mt-1.5">
-                              <span className="font-medium">
-                                {community.memberCount}{' '}
-                                {community.memberCount === 1 ? 'member' : 'members'}
-                              </span>
-                              {community.city && <span>&middot; {community.city.name}</span>}
-                            </div>
-                          </div>
-                        </div>
-                        {community.description && (
-                          <p className="mt-3 text-xs text-[#71717A] line-clamp-2 leading-relaxed">
-                            {community.description}
-                          </p>
-                        )}
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div className="text-center">
-                <h2 className="text-3xl sm:text-5xl font-bold mb-4 text-[#1A1A1A]">
-                  Your crew is forming.
-                </h2>
-                <p className="text-[#4A4A5A] text-lg mb-10 max-w-lg mx-auto">
-                  The best communities started with one person who said &apos;who&apos;s in?&apos;
-                </p>
-                <Link
-                  href="/communities/create"
-                  className="inline-block px-8 py-4 bg-white text-[#1A1A1A] text-sm font-semibold rounded-full hover:bg-neutral-50 transition-all border border-black/[0.08]"
-                >
-                  Start something &rarr;
-                </Link>
-              </div>
           )}
-          </FadeInSection>
         </div>
       </section>
 
-      {/* ── How it works ─────────────────────────────────── */}
-      <section className="py-20 sm:py-32 px-5 sm:px-8 border-b border-black/[0.04]">
-        <div className="max-w-6xl mx-auto">
-          <FadeInSection>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-5xl font-bold mb-6 text-[#1A1A1A]">
-                The right crew changes everything.
-              </h2>
-              <p className="text-[#4A4A5A] text-lg max-w-xl mx-auto">No sign-up forms. No small talk. Just sweat, progress, and people who get it.</p>
+      {/* ── Happening soon ── */}
+      {upcomingSessions.length > 0 && (
+        <section className="px-5 pb-16">
+          <div className="max-w-lg mx-auto">
+            <p className="text-xs font-semibold text-[#9A9AAA] uppercase tracking-widest mb-4 text-center">
+              Happening soon
+            </p>
+            <div className="space-y-2">
+              {upcomingSessions.map((s) => {
+                const going = s._count.userActivities
+                return (
+                  <Link
+                    key={s.id}
+                    href="/buddy"
+                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-black/[0.02] transition-all"
+                  >
+                    <span className="text-2xl flex-shrink-0">{categoryEmoji[s.categorySlug ?? ''] ?? '🏅'}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-[#1A1A1A] truncate">{s.title}</p>
+                      <p className="text-xs text-[#71717A] truncate">
+                        {s.startTime ? formatSessionTime(s.startTime) : ''}
+                        {s.address ? ` · ${s.address.split(',')[0]}` : s.city ? ` · ${s.city}` : ''}
+                      </p>
+                    </div>
+                    <span className="text-xs text-[#9A9AAA] flex-shrink-0">
+                      {going > 0 ? `${going} going` : 'Be first'}
+                    </span>
+                  </Link>
+                )
+              })}
             </div>
-
-            <div className="grid sm:grid-cols-3 gap-6 sm:gap-8">
-              {[
-                {
-                  step: '01',
-                  title: 'Discover',
-                  body: 'Browse experiences by what moves you — running, yoga, strength, swimming, and more.',
-                },
-                {
-                  step: '02',
-                  title: 'Show up',
-                  body: 'One tap. No commitment. Just you, showing up.',
-                },
-                {
-                  step: '03',
-                  title: 'Earn your spot',
-                  body: 'Show up once, you\u2019re new. Show up twice, you\u2019re one of them. Show up every week, they save your spot.',
-                },
-              ].map((s, i) => (
-                <div
-                  key={i}
-                  className="bg-white border border-black/[0.06] rounded-2xl p-8 hover:bg-neutral-50 hover:border-black/[0.1] transition-all shadow-sm"
-                >
-                  <p className="text-2xl font-bold text-[#71717A] mb-4">
-                    {s.step}
-                  </p>
-                  <h3 className="text-xl font-semibold text-[#1A1A1A] mb-4">{s.title}</h3>
-                  <p className="text-[#4A4A5A] text-sm leading-relaxed">
-                    {s.body}
-                  </p>
-                </div>
-              ))}
+            <div className="text-center mt-4">
+              <Link href="/buddy" className="text-xs font-semibold text-[#71717A] hover:text-[#1A1A1A] transition-colors">
+                See all sessions →
+              </Link>
             </div>
-          </FadeInSection>
-        </div>
-      </section>
-
-      {/* ── Community types ──────────────────────────────── */}
-      <section className="py-20 sm:py-32 px-5 sm:px-8 border-b border-black/[0.04]">
-        <div className="max-w-6xl mx-auto">
-          <FadeInSection>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-5xl font-bold text-[#1A1A1A]">
-                Every sweat has a crew.
-              </h2>
-            </div>
-
-            <div className="grid sm:grid-cols-3 gap-6 sm:gap-8">
-              {[
-                {
-                  emoji: '🏃',
-                  title: 'Sports & Movement',
-                  body: 'The runners who turned your pace into a PR. The tennis crew that sharpened your serve. The swimmers who made 6am feel worth it.',
-                },
-                {
-                  emoji: '🏋️',
-                  title: 'Fitness & Training',
-                  body: 'The bootcamp that broke you in the best way. The gym crew who made leg day non-negotiable. The HIIT squad where \u2018one more rep\u2019 is a love language.',
-                },
-                {
-                  emoji: '🧘',
-                  title: 'Wellness & Recovery',
-                  body: 'The yoga circle where silence says everything. The cold plunge crew that proved you\u2019re tougher than you think. The pilates group that fixed what sitting broke.',
-                },
-              ].map((item, i) => (
-                <div
-                  key={i}
-                  className="bg-white border border-black/[0.06] rounded-2xl p-8 hover:bg-neutral-50 hover:border-black/[0.1] transition-all shadow-sm"
-                >
-                  <div className="text-5xl mb-6">{item.emoji}</div>
-                  <h3 className="text-lg font-semibold text-[#1A1A1A] mb-4">
-                    {item.title}
-                  </h3>
-                  <p className="text-[#4A4A5A] text-sm leading-relaxed">
-                    {item.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </FadeInSection>
-        </div>
-      </section>
-
-      {/* ── Social proof ─────────────────────────────────── */}
-      {showStats && (
-        <section className="py-16 sm:py-24 px-5 sm:px-8 border-b border-black/[0.04]">
-          <div className="max-w-4xl mx-auto">
-            <FadeInSection>
-              <div className="grid grid-cols-3 gap-8 text-center">
-                <div>
-                  <p className="text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-1">{communityCount}</p>
-                  <p className="text-xs sm:text-sm text-[#71717A]">communities</p>
-                </div>
-                <div>
-                  <p className="text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-1">{memberCount.toLocaleString()}</p>
-                  <p className="text-xs sm:text-sm text-[#71717A]">members</p>
-                </div>
-                <div>
-                  <p className="text-3xl sm:text-4xl font-bold text-[#1A1A1A] mb-1">{sessionsThisWeek}</p>
-                  <p className="text-xs sm:text-sm text-[#71717A]">experiences this week</p>
-                </div>
-              </div>
-            </FadeInSection>
           </div>
         </section>
       )}
 
-      {/* ── Final CTA ────────────────────────────────────── */}
-      <section className="py-28 sm:py-36 px-5 sm:px-8">
-        <div className="max-w-3xl mx-auto text-center">
-          <FadeInSection>
-            <h2 className="text-4xl sm:text-6xl font-bold mb-6 leading-tight text-[#1A1A1A]">
-              You already know you&apos;re better with the right people.
-            </h2>
-            <p className="text-[#4A4A5A] text-lg mb-12 max-w-xl mx-auto leading-relaxed">
-              Every 5am alarm answered. Every PR earned. Every &apos;same time next week?&apos; That&apos;s what the right crew does.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
-              <Link
-                href="/buddy"
-                className="px-10 py-4 bg-[#1A1A1A] text-white text-lg font-semibold rounded-full hover:bg-black transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]"
-              >
-                Discover experiences
-              </Link>
-              <Link
-                href="/communities/create"
-                className="px-10 py-4 bg-white text-[#1A1A1A] text-lg font-semibold rounded-full border border-black/[0.08] hover:bg-neutral-50 transition-all"
-              >
-                Start something
-              </Link>
-            </div>
-          </FadeInSection>
+      {/* ── How it works ── */}
+      <section className="px-5 py-16 border-t border-black/[0.04]">
+        <div className="max-w-lg mx-auto">
+          <div className="space-y-8">
+            {[
+              { step: '1', title: 'Browse', body: 'See sessions on the map. Filter by what moves you.' },
+              { step: '2', title: 'Join', body: 'Tap "I\'m in." That\'s it. No forms, no commitments.' },
+              { step: '3', title: 'Show up', body: 'Meet your crew. Come back next week.' },
+            ].map((s) => (
+              <div key={s.step} className="flex gap-4">
+                <div className="w-8 h-8 rounded-full bg-[#1A1A1A] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                  {s.step}
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-[#1A1A1A]">{s.title}</h3>
+                  <p className="text-xs text-[#71717A] mt-0.5">{s.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ── Footer ───────────────────────────────────────── */}
-      <footer className="border-t border-black/[0.04] py-12 sm:py-16 px-5 sm:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-10">
-            <div>
-              <div className="flex items-center gap-3 mb-3">
-                <Logo size={24} />
-                <span className="font-semibold text-[#1A1A1A]">SweatBuddies</span>
-              </div>
-              <p className="text-xs text-[#71717A] leading-relaxed max-w-xs">Discover fitness and wellness experiences. The right crew changes everything.</p>
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-4">Product</p>
-              <ul className="space-y-3">
-                <li><Link href="/buddy" className="text-sm text-[#71717A] hover:text-[#1A1A1A] transition-colors">Discover experiences</Link></li>
-                <li><Link href="/communities" className="text-sm text-[#71717A] hover:text-[#1A1A1A] transition-colors">Communities</Link></li>
-                <li><Link href="/communities/create" className="text-sm text-[#71717A] hover:text-[#1A1A1A] transition-colors">Start something</Link></li>
-              </ul>
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-4">Support</p>
-              <ul className="space-y-3">
-                <li><a href={`mailto:${SUPPORT_EMAIL}`} className="text-sm text-[#71717A] hover:text-[#1A1A1A] transition-colors">Contact</a></li>
-                <li><Link href="/support" className="text-sm text-[#71717A] hover:text-[#1A1A1A] transition-colors">Help &amp; FAQ</Link></li>
-              </ul>
-            </div>
+      {/* ── Final CTA ── */}
+      <section className="px-5 py-20 border-t border-black/[0.04]">
+        <div className="max-w-lg mx-auto text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 tracking-tight">
+            The right crew changes everything.
+          </h2>
+          <p className="text-sm text-[#4A4A5A] mb-8 max-w-sm mx-auto">
+            Every 5am alarm answered. Every PR earned. Every &apos;same time next week?&apos;
+          </p>
+          <Link
+            href="/buddy"
+            className="inline-block px-8 py-4 bg-[#1A1A1A] text-white text-base font-semibold rounded-full hover:bg-black transition-all shadow-lg"
+          >
+            See what&apos;s happening →
+          </Link>
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
+      <footer className="border-t border-black/[0.04] py-10 px-5">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <Logo size={20} />
+            <span className="text-xs text-[#71717A]">&copy; 2026 SweatBuddies</span>
           </div>
-          <div className="border-t border-black/[0.04] pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-xs text-[#71717A]">&copy; 2026 SweatBuddies. All rights reserved.</p>
-            <p className="text-xs text-[#71717A]">Sweat is better shared.</p>
+          <div className="flex gap-4 text-xs text-[#71717A]">
+            <Link href="/buddy" className="hover:text-[#1A1A1A] transition-colors">Discover</Link>
+            <Link href="/communities" className="hover:text-[#1A1A1A] transition-colors">Crews</Link>
+            <Link href="/support" className="hover:text-[#1A1A1A] transition-colors">Help</Link>
           </div>
         </div>
       </footer>

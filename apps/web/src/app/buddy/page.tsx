@@ -15,6 +15,7 @@ import { CreateSessionSheet } from '@/components/CreateSessionSheet'
 import { ShareSessionSheet } from '@/components/ShareSessionSheet'
 import { SessionFeedbackSheet } from '@/components/SessionFeedbackSheet'
 import { BioPromptSheet } from '@/components/BioPromptSheet'
+import { JoinGateSheet } from '@/components/JoinGateSheet'
 
 interface Host {
   id: string
@@ -221,6 +222,9 @@ function BuddyPageInner() {
   const [selectedPin, setSelectedPin] = useState<Session | null>(null)
   const [feedbackSession, setFeedbackSession] = useState<{ id: string; title: string; hostId: string; hostName: string | null } | null>(null)
   const [showBioPrompt, setShowBioPrompt] = useState(false)
+  const [showJoinGate, setShowJoinGate] = useState(false)
+  const [pendingJoinId, setPendingJoinId] = useState<string | null>(null)
+  const [isOnboarded, setIsOnboarded] = useState(true) // assume true until checked
 
   // Sheet position: 'peek' (shows 1 card), 'half' (50%), 'full' (85%)
   const [sheetMode, setSheetMode] = useState<'peek' | 'half' | 'full'>('half')
@@ -301,12 +305,10 @@ function BuddyPageInner() {
 
       if (onboardingRes.status === 'fulfilled' && onboardingRes.value) {
         const data = onboardingRes.value
-        if (!data.completed) {
-          const currentPath = window.location.pathname + window.location.search
-          router.replace('/onboarding/p2p?redirect=' + encodeURIComponent(currentPath))
-          return
-        }
-        setCurrentUserId(data.user?.id ?? null)
+        // No redirect — let users see the feed first
+        // Onboarding happens via join gate when they try to join a session
+        if (data.user?.id) setCurrentUserId(data.user.id)
+        setIsOnboarded(!!data.completed)
       }
     }
     loadInitialData()
@@ -356,6 +358,13 @@ function BuddyPageInner() {
   }, [typeFilter, pricingFilter, fetchSessions])
 
   async function joinSession(sessionId: string) {
+    // If user hasn't completed onboarding, show the join gate first
+    if (!isOnboarded) {
+      setPendingJoinId(sessionId)
+      setShowJoinGate(true)
+      return
+    }
+
     // Find session to check if paid
     const session = sessions.find((s) => s.id === sessionId)
     if (session && session.activityMode === 'P2P_PAID') {
@@ -438,6 +447,23 @@ function BuddyPageInner() {
         spotsLeft={shareSession?.maxPeople ? shareSession.maxPeople - shareSession.attendeeCount : null}
         goingCount={shareSession ? shareSession.attendeeCount + 1 : 0}
         context="joined"
+      />
+
+      {/* Join Gate — shown when un-onboarded user tries to join */}
+      <JoinGateSheet
+        open={showJoinGate}
+        onClose={() => { setShowJoinGate(false); setPendingJoinId(null) }}
+        onComplete={() => {
+          setShowJoinGate(false)
+          setIsOnboarded(true)
+          toast.success('Welcome! 🎉')
+          // Now actually join the session they tapped
+          if (pendingJoinId) {
+            const id = pendingJoinId
+            setPendingJoinId(null)
+            setTimeout(() => joinSession(id), 300)
+          }
+        }}
       />
 
       {/* Bio Prompt */}

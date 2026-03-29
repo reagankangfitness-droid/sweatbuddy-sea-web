@@ -18,15 +18,9 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { bio, fitnessInterests, fitnessLevel } = body
 
-    // Validate required fields
-    if (!bio || typeof bio !== 'string' || bio.trim().length < 3) {
-      return NextResponse.json({ error: 'Bio must be at least 3 characters' }, { status: 400 })
-    }
-    if (bio.trim().length > 100) {
-      return NextResponse.json({ error: 'Bio must be 100 characters or less' }, { status: 400 })
-    }
-    if (!fitnessLevel || !['BEGINNER', 'INTERMEDIATE', 'ADVANCED'].includes(fitnessLevel)) {
-      return NextResponse.json({ error: 'Valid fitness level is required' }, { status: 400 })
+    // Validate — only interests are required, bio and fitness level are optional
+    if (bio && typeof bio === 'string' && bio.trim().length > 200) {
+      return NextResponse.json({ error: 'Bio must be 200 characters or less' }, { status: 400 })
     }
     if (!Array.isArray(fitnessInterests) || fitnessInterests.length === 0) {
       return NextResponse.json({ error: 'At least one fitness interest is required' }, { status: 400 })
@@ -35,14 +29,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Maximum 20 fitness interests allowed' }, { status: 400 })
     }
 
+    const updateData: Record<string, unknown> = {
+      fitnessInterests,
+      p2pOnboardingCompleted: true,
+    }
+    if (bio && typeof bio === 'string' && bio.trim().length > 0) {
+      updateData.bio = bio.trim()
+    }
+    if (fitnessLevel && ['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'ALL'].includes(fitnessLevel)) {
+      updateData.fitnessLevel = fitnessLevel === 'ALL' ? null : fitnessLevel
+    }
+
     const updatedUser = await prisma.user.update({
       where: { email: email.toLowerCase() },
-      data: {
-        bio: bio.trim(),
-        fitnessInterests,
-        fitnessLevel,
-        p2pOnboardingCompleted: true,
-      },
+      data: updateData,
       select: {
         id: true,
         slug: true,

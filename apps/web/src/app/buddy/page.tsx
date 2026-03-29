@@ -2,12 +2,11 @@
 
 import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { MapPin, Plus, Loader2, Crosshair, Clock, Zap } from 'lucide-react'
+import { Plus, Loader2, Zap } from 'lucide-react'
 import { toast } from 'sonner'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { GoogleMap, useLoadScript, OverlayView } from '@react-google-maps/api'
 import { PaymentModal } from '@/components/PaymentModal'
 import { DARK_MAP_STYLES } from '@/lib/wave/map-styles'
@@ -144,11 +143,11 @@ function bucketSessions(sessions: Session[]): TimeBucket[] {
   }
 
   const buckets: TimeBucket[] = []
-  if (happeningNow.length) buckets.push({ key: 'now', label: '🔴  Happening now', sessions: happeningNow })
-  if (nextFewHours.length) buckets.push({ key: 'soon', label: '🟠  Next few hours', sessions: nextFewHours })
-  if (today.length) buckets.push({ key: 'today', label: '🟡  Later today', sessions: today })
-  if (tomorrow.length) buckets.push({ key: 'tomorrow', label: '📅  Tomorrow', sessions: tomorrow })
-  if (later.length) buckets.push({ key: 'later', label: 'This week & beyond', sessions: later })
+  if (happeningNow.length) buckets.push({ key: 'now', label: 'Now', sessions: happeningNow })
+  if (nextFewHours.length) buckets.push({ key: 'soon', label: 'Soon', sessions: nextFewHours })
+  if (today.length) buckets.push({ key: 'today', label: 'Today', sessions: today })
+  if (tomorrow.length) buckets.push({ key: 'tomorrow', label: 'Tomorrow', sessions: tomorrow })
+  if (later.length) buckets.push({ key: 'later', label: 'This week', sessions: later })
   return buckets
 }
 
@@ -452,7 +451,16 @@ function BuddyPageInner() {
                 mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
               >
                 <div
-                  onClick={(e) => { e.stopPropagation(); setSelectedPin(selectedPin?.id === s.id ? null : s); setSheetMode('peek') }}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setSelectedPin(selectedPin?.id === s.id ? null : s)
+                    setSheetMode('half')
+                    // Scroll to the card in the sheet
+                    setTimeout(() => {
+                      const el = document.getElementById(`session-${s.id}`)
+                      el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                    }, 300)
+                  }}
                   className="cursor-pointer select-none"
                   style={{ transform: 'translate(-50%, -50%)' }}
                 >
@@ -481,122 +489,35 @@ function BuddyPageInner() {
         </div>
       )}
 
-      {/* ── Filter pills — top overlay ── */}
-      <div className="absolute left-0 right-0 z-20 pt-[env(safe-area-inset-top,8px)]" style={{ top: 0 }}>
-        <div className="pt-2 pb-2 bg-gradient-to-b from-white/80 to-transparent backdrop-blur-[2px]">
-          <div className="flex gap-2 overflow-x-auto no-scrollbar px-4">
-            {TYPE_FILTERS.map((f) => (
-              <button
-                key={f.value}
-                onClick={() => setTypeFilter(typeFilter === f.value ? '' : f.value)}
-                className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-semibold transition-all ${
-                  typeFilter === f.value
-                    ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white shadow-md'
-                    : 'border-black/[0.06] bg-white/90 text-[#4A4A5A] hover:border-black/[0.12] backdrop-blur'
-                }`}
-              >
-                <span>{f.emoji}</span>
-                {f.label}
-              </button>
-            ))}
-          </div>
+      {/* ── Filter emojis — top overlay ── */}
+      <div className="absolute left-0 right-0 z-20 pt-[env(safe-area-inset-top,6px)]" style={{ top: 0 }}>
+        <div className="flex items-center gap-1 px-3 pt-1.5 pb-1">
+          {TYPE_FILTERS.map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setTypeFilter(typeFilter === f.value ? '' : f.value)}
+              className={`w-10 h-10 rounded-full flex items-center justify-center text-lg transition-all ${
+                typeFilter === f.value
+                  ? 'bg-[#1A1A1A] shadow-lg scale-110'
+                  : 'bg-white/90 backdrop-blur shadow-sm'
+              }`}
+              title={f.label}
+            >
+              {f.emoji}
+            </button>
+          ))}
+
+          {/* Spacer + FAB */}
+          <div className="flex-1" />
+          <button
+            onClick={() => setShowCreateSheet(true)}
+            className="w-10 h-10 rounded-full bg-[#1A1A1A] shadow-lg flex items-center justify-center hover:bg-black transition-colors active:scale-95"
+            aria-label="Create a session"
+          >
+            <Plus className="w-5 h-5 text-white" />
+          </button>
         </div>
       </div>
-
-      {/* ── Recenter button ── */}
-      <button
-        onClick={() => {
-          if (!mapRef.current) return
-          mapRef.current.panTo(userLocation ?? SINGAPORE_CENTER)
-          mapRef.current.setZoom(12)
-        }}
-        className="absolute right-4 z-20 w-11 h-11 rounded-full bg-white/95 backdrop-blur border border-black/[0.06] flex items-center justify-center shadow-lg"
-        style={{ top: 'calc(env(safe-area-inset-top, 8px) + 56px)' }}
-        aria-label="Recenter"
-      >
-        <Crosshair className="w-5 h-5 text-[#4A4A5A]" />
-      </button>
-
-      {/* ── FAB — create session ── */}
-      <button
-        onClick={() => setShowCreateSheet(true)}
-        className="absolute right-4 z-20 w-14 h-14 rounded-full bg-[#1A1A1A] shadow-xl flex items-center justify-center hover:bg-black transition-colors active:scale-95"
-        style={{ top: 'calc(env(safe-area-inset-top, 8px) + 112px)' }}
-        aria-label="Create a session"
-      >
-        <Plus className="w-6 h-6 text-white" />
-      </button>
-
-      {/* ── Selected pin detail card ── */}
-      <AnimatePresence>
-        {selectedPin && (
-          <motion.div
-            key="pin-detail"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.2 }}
-            className="absolute left-4 right-4 z-25"
-            style={{ bottom: 'calc(72px + 20% + 12px)' }}
-          >
-            <div className="bg-white rounded-2xl border border-black/[0.06] shadow-xl p-4">
-              <div className="flex items-start gap-3">
-                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 ${pinColor(selectedPin.categorySlug ?? 'other')}`}>
-                  <span className="text-xl">{pinEmoji(selectedPin.categorySlug ?? 'other')}</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <Link href={`/activities/${selectedPin.id}`} className="text-sm font-semibold text-[#1A1A1A] leading-snug line-clamp-1 block tracking-tight">
-                    {selectedPin.title}
-                  </Link>
-                  <div className="flex items-center gap-2 mt-1 text-xs text-[#71717A]">
-                    {selectedPin.startTime && (
-                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${getUrgencyStyle(selectedPin.startTime)}`}>
-                        {getRelativeTime(selectedPin.startTime)}
-                      </span>
-                    )}
-                    {(selectedPin.address || selectedPin.city) && (
-                      <span className="truncate text-[#9A9AAA]">
-                        {formatAddress(selectedPin.address ?? selectedPin.city ?? '')}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <span className="text-xs font-semibold text-[#4A4A5A]">
-                      {selectedPin.attendeeCount > 0 ? `${selectedPin.attendeeCount} going 🔥` : 'Be the first! 👋'}
-                    </span>
-                    {selectedPin.maxPeople && selectedPin.attendeeCount < selectedPin.maxPeople && (
-                      <span className="text-[10px] text-[#9A9AAA]">
-                        {selectedPin.maxPeople - selectedPin.attendeeCount} spots left
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <button
-                  onClick={(e) => { e.stopPropagation(); setSelectedPin(null) }}
-                  className="w-7 h-7 rounded-full bg-[#FFFBF8] flex items-center justify-center flex-shrink-0"
-                >
-                  <span className="text-[#9A9AAA] text-xs">✕</span>
-                </button>
-              </div>
-              <div className="flex gap-2 mt-3">
-                <button
-                  onClick={() => { joinSession(selectedPin.id); setSelectedPin(null) }}
-                  disabled={joiningId === selectedPin.id || selectedPin.isFull}
-                  className="flex-1 py-2.5 rounded-full bg-[#1A1A1A] text-white text-xs font-semibold hover:bg-black disabled:opacity-40 transition-all"
-                >
-                  {joiningId === selectedPin.id ? 'Joining...' : selectedPin.isFull ? 'Full' : "I'm in →"}
-                </button>
-                <Link
-                  href={`/activities/${selectedPin.id}`}
-                  className="px-4 py-2.5 rounded-full border border-black/[0.06] bg-white text-xs font-semibold text-[#4A4A5A] hover:bg-[#FFFBF8] transition-all"
-                >
-                  Details
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ── Draggable session list sheet ── */}
       <motion.div
@@ -610,21 +531,14 @@ function BuddyPageInner() {
           className="cursor-grab active:cursor-grabbing"
           onClick={() => setSheetMode(sheetMode === 'peek' ? 'half' : sheetMode === 'half' ? 'full' : 'peek')}
         >
-          <div className="flex justify-center pt-2.5 pb-1">
-            <div className="w-10 h-1.5 rounded-full bg-black/[0.08]" />
+          <div className="flex justify-center pt-2 pb-0.5">
+            <div className="w-8 h-1 rounded-full bg-black/[0.1]" />
           </div>
-          <div className="flex items-center justify-between px-4 pb-2">
-            <div className="flex items-center gap-2">
-              <h2 className="text-sm font-bold text-[#1A1A1A] tracking-tight">What&apos;s happening</h2>
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-            </div>
+          <div className="px-4 py-2">
             {!loading && (
-              <span className="text-xs text-[#71717A] font-medium">
-                {sessions.length === 0 ? 'No sessions' : `${sessions.length} nearby`}
-              </span>
+              <p className="text-xs font-medium text-[#71717A]">
+                {sessions.length === 0 ? 'No sessions nearby' : `${sessions.length} session${sessions.length !== 1 ? 's' : ''} near you`}
+              </p>
             )}
           </div>
         </div>
@@ -632,16 +546,15 @@ function BuddyPageInner() {
         {/* Session list — scrollable content */}
         <div className="overflow-y-auto px-4 pb-8" style={{ height: 'calc(100% - 52px)' }}>
           {loading ? (
-            <div className="space-y-3 pt-2">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className="bg-[#FFFBF8] rounded-2xl border border-black/[0.04] p-4 animate-pulse">
-                  <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-neutral-100 flex-shrink-0" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-3 w-20 bg-neutral-100 rounded" />
-                      <div className="h-4 w-3/4 bg-neutral-100 rounded" />
-                    </div>
+            <div className="space-y-1 pt-1">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center gap-3 p-3 animate-pulse">
+                  <div className="w-8 h-8 rounded-full bg-neutral-100 flex-shrink-0" />
+                  <div className="flex-1 space-y-1.5">
+                    <div className="h-3.5 w-2/3 bg-neutral-100 rounded" />
+                    <div className="h-3 w-1/2 bg-neutral-100 rounded" />
                   </div>
+                  <div className="h-6 w-10 bg-neutral-100 rounded-full" />
                 </div>
               ))}
             </div>
@@ -662,18 +575,10 @@ function BuddyPageInner() {
             <div className="space-y-6 pt-1">
               {bucketSessions(sessions).map((bucket) => (
                 <div key={bucket.key}>
-                  <div className="flex items-center gap-2 mb-3 px-1">
-                    {bucket.key === 'now' && (
-                      <span className="relative flex h-2.5 w-2.5">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
-                      </span>
-                    )}
-                    <h3 className="text-xs font-bold text-[#71717A] uppercase tracking-wider">
-                      {bucket.label}
-                    </h3>
-                  </div>
-                  <div className="space-y-2.5">
+                  <p className="text-[11px] font-medium text-[#9A9AAA] uppercase tracking-widest px-3 mb-1">
+                    {bucket.label}
+                  </p>
+                  <div className="space-y-0.5">
                     {bucket.sessions.map((session, i) => (
                       <SessionCard
                         key={session.id}
@@ -763,160 +668,80 @@ function SessionCard({
   const isFull = spotsLeft !== null && spotsLeft <= 0
   const isJoining = joiningId === session.id
 
+  const isSelected = false // Will be set by parent via prop in future
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      id={`session-${session.id}`}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.05, ease: [0.25, 0.1, 0.25, 1] }}
+      transition={{ duration: 0.25, delay: index * 0.04 }}
     >
-      <div className="group bg-white rounded-2xl border border-black/[0.06] shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 overflow-hidden">
-        <Link href={`/activities/${session.id}`} className="block p-4">
-          {/* Row 1: Emoji + Title + Time badge */}
-          <div className="flex items-start gap-3">
-            {/* Large emoji */}
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${pinColor(session.categorySlug ?? 'other')}`}>
-              <span className="text-2xl">{emoji}</span>
-            </div>
+      <Link
+        href={`/activities/${session.id}`}
+        className={`group flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${
+          isSelected
+            ? 'bg-[#1A1A1A]/5 ring-1 ring-[#1A1A1A]/10'
+            : 'hover:bg-black/[0.02] active:bg-black/[0.04]'
+        }`}
+      >
+        {/* Emoji */}
+        <span className="text-2xl flex-shrink-0">{emoji}</span>
 
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-0.5">
-                {/* Host/Community name */}
-                <div className="flex items-center gap-1.5 min-w-0">
-                  {avatarSrc ? (
-                    <Image src={avatarSrc} alt={displayName} width={16} height={16} className="rounded-full object-cover flex-shrink-0" />
-                  ) : (
-                    <div className="w-4 h-4 rounded-full bg-neutral-100 flex items-center justify-center text-[8px] font-bold text-[#71717A] flex-shrink-0">
-                      {displayName[0]}
-                    </div>
-                  )}
-                  <span className="text-xs text-[#71717A] truncate">{displayName}</span>
-                </div>
-
-                {/* Status pills */}
-                {isJoined && !isHosting && (
-                  <span className="flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">
-                    Going
-                  </span>
-                )}
-                {isHosting && (
-                  <span className="flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-600 border border-blue-200">
-                    Hosting
-                  </span>
-                )}
-              </div>
-
-              {/* Title */}
-              <h3 className="text-[15px] font-semibold text-[#1A1A1A] leading-snug line-clamp-2 tracking-tight">
-                {session.title}
-              </h3>
-            </div>
-
-            {/* Price badge */}
-            <span className={`flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-bold ${
-              isPaid
-                ? 'bg-[#FFFBF8] text-[#1A1A1A] border border-black/[0.06]'
-                : 'bg-emerald-50 text-emerald-600 border border-emerald-200'
-            }`}>
-              {priceDisplay}
-            </span>
-          </div>
-
-          {/* Row 2: Time + Location */}
-          <div className="flex items-center gap-2 mt-3 text-xs">
-            {session.startTime && (
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold flex-shrink-0 ${getUrgencyStyle(session.startTime)}`}>
-                {getRelativeTime(session.startTime)}
-              </span>
-            )}
-            {(session.address || session.city) && (
-              <span className="flex items-center gap-1 min-w-0 text-[#9A9AAA]">
-                <MapPin className="w-3 h-3 flex-shrink-0" />
-                <span className="truncate">{formatAddress(session.address ?? session.city ?? '')}</span>
-              </span>
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          {/* Row 1: Title */}
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-[#1A1A1A] truncate tracking-tight">
+              {session.title}
+            </h3>
+            {isJoined && !isHosting && (
+              <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-500" />
             )}
           </div>
 
-          {/* Row 3: Avatars + Social proof + Spots */}
-          <div className="flex items-center justify-between mt-3">
-            <div className="flex items-center gap-2">
-              {/* Avatar stack */}
-              {session.attendees.length > 0 && (
-                <div className="flex -space-x-2">
-                  {session.attendees.slice(0, 5).map((a) =>
-                    a.imageUrl ? (
-                      <Image
-                        key={a.id}
-                        src={a.imageUrl}
-                        alt={a.name ?? ''}
-                        width={28}
-                        height={28}
-                        className="rounded-full ring-2 ring-white object-cover"
-                      />
-                    ) : (
-                      <div
-                        key={a.id}
-                        className="w-7 h-7 rounded-full ring-2 ring-white bg-neutral-100 flex items-center justify-center text-[10px] font-bold text-[#71717A]"
-                      >
-                        {(a.name ?? '?')[0]}
-                      </div>
-                    )
-                  )}
-                </div>
-              )}
-              <span className="text-xs font-semibold text-[#4A4A5A]">
-                {session.attendeeCount > 0
-                  ? `${session.attendeeCount} going 🔥`
-                  : session.community
-                    ? `${session.community.name} crew`
-                    : 'Be the first! 👋'}
-              </span>
-            </div>
+          {/* Row 2: Time · Location */}
+          <p className="text-xs text-[#71717A] mt-0.5 truncate">
+            {session.startTime ? getRelativeTime(session.startTime) : ''}
+            {session.startTime && (session.address || session.city) ? ' · ' : ''}
+            {formatAddress(session.address ?? session.city ?? '')}
+          </p>
 
-            {/* Spots left badge */}
-            {almostFull && !isFull && (
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-200">
-                {spotsLeft} spot{spotsLeft !== 1 ? 's' : ''} left
-              </span>
-            )}
-            {isFull && (
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-500 border border-red-200">
-                Full
-              </span>
-            )}
-          </div>
-        </Link>
+          {/* Row 3: Social proof */}
+          <p className="text-xs text-[#9A9AAA] mt-0.5">
+            {session.attendeeCount > 0
+              ? `${session.attendeeCount} going 🔥`
+              : 'Be the first'}
+            {spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 ? ` · ${spotsLeft} left` : ''}
+          </p>
+        </div>
 
-        {/* Row 4: Inline action button */}
-        {!isHost && !isHosting && !isFull && (
-          <div className="px-4 pb-4 pt-0">
+        {/* Right: Price + Join */}
+        <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+          <span className={`text-xs font-semibold ${isPaid ? 'text-[#1A1A1A]' : 'text-emerald-600'}`}>
+            {priceDisplay}
+          </span>
+          {!isHost && !isHosting && !isFull && !isJoined && (
             <button
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
-                if (isJoined) {
-                  onLeave(session.id)
-                } else {
-                  onJoin(session.id)
-                }
+                onJoin(session.id)
               }}
               disabled={isJoining}
-              className={`w-full py-2.5 rounded-full text-sm font-semibold transition-all ${
-                isJoined
-                  ? 'bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-red-50 hover:text-red-500 hover:border-red-200'
-                  : 'bg-[#1A1A1A] text-white hover:bg-black'
-              }`}
+              className="px-3 py-1 rounded-full bg-[#1A1A1A] text-white text-[11px] font-semibold hover:bg-black disabled:opacity-40 transition-all"
             >
-              {isJoining ? (
-                <span className="flex items-center justify-center gap-2"><Loader2 className="w-3.5 h-3.5 animate-spin" /> Joining...</span>
-              ) : isJoined ? (
-                "You're in ✓"
-              ) : (
-                "I'm in →"
-              )}
+              {isJoining ? '...' : 'Join'}
             </button>
-          </div>
-        )}
-      </div>
+          )}
+          {isJoined && (
+            <span className="text-[11px] font-semibold text-emerald-600">Going ✓</span>
+          )}
+          {isFull && (
+            <span className="text-[11px] text-[#9A9AAA]">Full</span>
+          )}
+        </div>
+      </Link>
     </motion.div>
   )
 }

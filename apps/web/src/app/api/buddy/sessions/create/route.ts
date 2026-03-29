@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
     const dbUser = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
-      select: { id: true, p2pOnboardingCompleted: true, p2pStripeConnectId: true, isCoach: true, coachVerificationStatus: true },
+      select: { id: true, p2pOnboardingCompleted: true, p2pStripeConnectId: true, isCoach: true, coachVerificationStatus: true, hostTier: true },
     })
 
     if (!dbUser) {
@@ -27,6 +27,24 @@ export async function POST(request: Request) {
 
     if (!dbUser.p2pOnboardingCompleted) {
       return NextResponse.json({ error: 'Complete P2P onboarding first', code: 'ONBOARDING_REQUIRED' }, { status: 403 })
+    }
+
+    // Session caps for new hosts (hostTier = NEW)
+    if (dbUser.hostTier === 'NEW') {
+      const activeSessionCount = await prisma.activity.count({
+        where: {
+          userId: dbUser.id,
+          status: 'PUBLISHED',
+          deletedAt: null,
+          startTime: { gt: new Date() },
+        },
+      })
+      if (activeSessionCount >= 3) {
+        return NextResponse.json(
+          { error: 'New hosts can have up to 3 active sessions. Complete a few sessions to unlock more.', code: 'SESSION_CAP' },
+          { status: 403 }
+        )
+      }
     }
 
     const body = await request.json()
@@ -147,7 +165,9 @@ export async function POST(request: Request) {
         longitude: Number(longitude),
         startTime: new Date(startTime),
         endTime: endTime ? new Date(endTime) : null,
-        maxPeople: maxPeople ? Math.max(1, Math.min(Number(maxPeople), 1000)) : null,
+        maxPeople: maxPeople
+          ? Math.max(1, Math.min(Number(maxPeople), dbUser.hostTier === 'NEW' ? 8 : 1000))
+          : (dbUser.hostTier === 'NEW' ? 8 : null),
         price: Math.round(priceNum * 100), // store in cents
         currency: currency ?? 'SGD',
         imageUrl: imageUrl ?? null,
@@ -187,6 +207,20 @@ export async function POST(request: Request) {
 
     // Check and award any hosting badges
     await checkAndAwardBadges(dbUser.id)
+
+    // Auto-upgrade host tier based on session count
+    if (dbUser.hostTier === 'NEW') {
+      const totalHosted = await prisma.user.findUnique({
+        where: { id: dbUser.id },
+        select: { sessionsHostedCount: true, reliabilityScore: true, noShowCount: true },
+      })
+      if (totalHosted && totalHosted.sessionsHostedCount >= 5 && totalHosted.reliabilityScore >= 90 && totalHosted.noShowCount === 0) {
+        await prisma.user.update({
+          where: { id: dbUser.id },
+          data: { hostTier: 'COMMUNITY', hostTierUpdatedAt: new Date() },
+        })
+      }
+    }
 
     return NextResponse.json({ activity }, { status: 201 })
   } catch (error) {

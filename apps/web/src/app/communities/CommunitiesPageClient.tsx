@@ -265,7 +265,7 @@ export default function CommunitiesPageClient({
                 Featured
               </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {featuredCommunities.map((community, i) => (
                 <Link
                   key={community.id}
@@ -318,7 +318,7 @@ export default function CommunitiesPageClient({
                     <h3 className="text-lg font-bold text-white mb-1.5">
                       {community.name}
                     </h3>
-                    <div className="flex items-center gap-3 text-sm text-neutral-300">
+                    <div className="flex items-center gap-3 text-sm text-white/80">
                       {community.cityName && (
                         <span className="flex items-center gap-1">
                           <MapPin className="w-3.5 h-3.5" />
@@ -337,7 +337,7 @@ export default function CommunitiesPageClient({
                         size="sm"
                       />
                       {community.nextEvent && (
-                        <span className="text-xs text-neutral-400">
+                        <span className="text-xs text-white/60">
                           Next: {formatEventDate(community.nextEvent.startTime)}
                         </span>
                       )}
@@ -378,11 +378,6 @@ export default function CommunitiesPageClient({
                   ? 'Nothing here yet. Try a different search.'
                   : 'No crews here yet. Be the first.'}
               </h3>
-              <p className="text-[#71717A] text-sm max-w-sm mx-auto">
-                {hasFilters
-                  ? ''
-                  : ''}
-              </p>
             </div>
           )}
         </div>

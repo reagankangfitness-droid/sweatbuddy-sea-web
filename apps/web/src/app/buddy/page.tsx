@@ -527,13 +527,12 @@ function BuddyPageInner() {
                     e.stopPropagation()
                     setSelectedPin(selectedPin?.id === s.id ? null : s)
                     setSheetMode('half')
-                    // Scroll to the card in the sheet
                     setTimeout(() => {
                       const el = document.getElementById(`session-${s.id}`)
                       el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
                     }, 300)
                   }}
-                  className="cursor-pointer select-none"
+                  className="cursor-pointer select-none relative"
                   style={{ transform: 'translate(-50%, -50%)' }}
                 >
                   <div className={`flex items-center justify-center rounded-full shadow-lg border-2 transition-all duration-150 ${
@@ -543,6 +542,12 @@ function BuddyPageInner() {
                   } ${pinColor(s.categorySlug ?? 'other')}`}>
                     {pinEmoji(s.categorySlug ?? 'other')}
                   </div>
+                  {/* Attendee count badge */}
+                  {s.attendeeCount > 0 && (
+                    <div className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-white shadow-md border border-black/[0.06] flex items-center justify-center px-1">
+                      <span className="text-[10px] font-bold text-[#1A1A1A] leading-none">{s.attendeeCount}</span>
+                    </div>
+                  )}
                 </div>
               </OverlayView>
             )

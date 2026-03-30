@@ -5,6 +5,7 @@ import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
 import { AppNav } from '@/components/AppNav'
 import { PushPromptBanner } from '@/components/push-prompt-banner'
+import { SupportChatWidget } from '@/components/SupportChatWidget'
 import './globals.css'
 
 // Plus Jakarta Sans - closest free alternative to Airbnb Cereal
@@ -105,6 +106,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
           <Toaster />
           <AppNav />
           <PushPromptBanner />
+          <SupportChatWidget />
         </Providers>
       </body>
     </html>

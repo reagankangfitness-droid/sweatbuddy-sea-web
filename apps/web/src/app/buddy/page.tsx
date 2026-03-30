@@ -542,10 +542,22 @@ function BuddyPageInner() {
                   } ${pinColor(s.categorySlug ?? 'other')}`}>
                     {pinEmoji(s.categorySlug ?? 'other')}
                   </div>
+                  {/* Host avatar */}
+                  {s.host?.imageUrl ? (
+                    <div className="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full overflow-hidden border-2 border-white shadow-md">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={s.host.imageUrl} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  ) : s.community?.logoImage ? (
+                    <div className="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full overflow-hidden border-2 border-white shadow-md">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={s.community.logoImage} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  ) : null}
                   {/* Attendee count badge */}
                   {s.attendeeCount > 0 && (
-                    <div className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-white shadow-md border border-black/[0.06] flex items-center justify-center px-1">
-                      <span className="text-[10px] font-bold text-[#1A1A1A] leading-none">{s.attendeeCount}</span>
+                    <div className="absolute -top-1 -left-1 min-w-[16px] h-[16px] rounded-full bg-[#1A1A1A] shadow-md flex items-center justify-center px-0.5">
+                      <span className="text-[9px] font-bold text-white leading-none">{s.attendeeCount}</span>
                     </div>
                   )}
                 </div>

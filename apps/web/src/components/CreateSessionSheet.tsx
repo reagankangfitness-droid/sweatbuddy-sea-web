@@ -101,6 +101,10 @@ interface CreateSessionSheetProps {
 export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSheetProps) {
   const router = useRouter()
 
+  // Community selector
+  const [communities, setCommunities] = useState<{ id: string; name: string; slug: string }[]>([])
+  const [selectedCommunity, setSelectedCommunity] = useState<string | null>(null)
+
   // Core fields
   const [categorySlug, setCategorySlug] = useState('')
   const [selectedTime, setSelectedTime] = useState<Date | null>(null)
@@ -135,6 +139,17 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
       setExpanded(false)
       setShowTimePicker(false)
       setShowLocationPicker(false)
+      setSelectedCommunity(null)
+
+      // Fetch user's communities (filter for OWNER/ADMIN roles)
+      fetch('/api/user/communities')
+        .then((r) => r.ok ? r.json() : { communities: [] })
+        .then((d) => {
+          const owned = (d.communities ?? [])
+            .filter((c: { role: string }) => c.role === 'OWNER' || c.role === 'ADMIN')
+          setCommunities(owned)
+        })
+        .catch(() => {})
     }
   }, [open])
 
@@ -186,6 +201,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
           longitude,
           startTime: selectedTime!.toISOString(),
           maxPeople: spots > 0 ? spots : null,
+          communityId: selectedCommunity || undefined,
         }),
       })
 
@@ -254,6 +270,38 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
             </div>
 
             <div className="px-4 pb-[env(safe-area-inset-bottom,16px)] overflow-y-auto" style={{ maxHeight: 'calc(85dvh - 24px)' }}>
+              {/* Community selector — only shows if user has communities */}
+              {communities.length > 0 && (
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-[11px] text-[#9A9AAA]">Posting as</span>
+                  <div className="flex gap-1.5 overflow-x-auto no-scrollbar flex-1">
+                    <button
+                      onClick={() => setSelectedCommunity(null)}
+                      className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                        !selectedCommunity
+                          ? 'bg-[#1A1A1A] text-white'
+                          : 'bg-[#FFFBF8] text-[#71717A] border border-black/[0.04]'
+                      }`}
+                    >
+                      Myself
+                    </button>
+                    {communities.map((c) => (
+                      <button
+                        key={c.id}
+                        onClick={() => setSelectedCommunity(c.id)}
+                        className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                          selectedCommunity === c.id
+                            ? 'bg-[#1A1A1A] text-white'
+                            : 'bg-[#FFFBF8] text-[#71717A] border border-black/[0.04]'
+                        }`}
+                      >
+                        {c.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Category emoji row */}
               <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-3">
                 {CATEGORIES.map((cat) => (

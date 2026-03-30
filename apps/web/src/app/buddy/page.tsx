@@ -757,8 +757,6 @@ function SessionCard({
   const isFull = spotsLeft !== null && spotsLeft <= 0
   const isJoining = joiningId === session.id
 
-  const isSelected = false // Will be set by parent via prop in future
-
   return (
     <motion.div
       id={`session-${session.id}`}
@@ -768,11 +766,7 @@ function SessionCard({
     >
       <Link
         href={`/activities/${session.id}`}
-        className={`group flex items-center gap-3 p-3 rounded-xl transition-all duration-200 ${
-          isSelected
-            ? 'bg-[#1A1A1A]/5 ring-1 ring-[#1A1A1A]/10'
-            : 'hover:bg-black/[0.02] active:bg-black/[0.04]'
-        }`}
+        className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:bg-black/[0.02] active:bg-black/[0.04]"
       >
         {/* Emoji */}
         <span className="text-2xl flex-shrink-0">{emoji}</span>

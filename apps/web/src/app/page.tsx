@@ -56,21 +56,21 @@ export default async function HomePage() {
   const categoryEmoji = Object.fromEntries(ACTIVITY_TYPES.map((a) => [a.key, a.emoji]))
 
   function formatSessionTime(date: Date): string {
+    const TZ = 'Asia/Singapore'
     const diff = date.getTime() - now.getTime()
     const hours = diff / (1000 * 60 * 60)
-    const isToday = date.toDateString() === now.toDateString()
-    const tomorrow = new Date(now)
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    const isTomorrow = date.toDateString() === tomorrow.toDateString()
 
-    const h = date.getHours() % 12 || 12
-    const ampm = date.getHours() >= 12 ? 'PM' : 'AM'
-    const time = `${h}:${String(date.getMinutes()).padStart(2, '0')} ${ampm}`
+    // Use timezone-aware formatting for all cases
+    const time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: TZ })
+    const todaySG = now.toLocaleDateString('en-CA', { timeZone: TZ })
+    const dateSG = date.toLocaleDateString('en-CA', { timeZone: TZ })
+    const tomorrowDate = new Date(now.getTime() + 24 * 60 * 60 * 1000)
+    const tomorrowSG = tomorrowDate.toLocaleDateString('en-CA', { timeZone: TZ })
 
-    if (hours < 2) return `In ${Math.round(hours * 60)} min`
-    if (isToday) return `Today ${time}`
-    if (isTomorrow) return `Tomorrow ${time}`
-    return date.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Asia/Singapore' }) + ` ${time}`
+    if (hours < 2 && hours > 0) return `In ${Math.round(hours * 60)} min`
+    if (dateSG === todaySG) return `Today ${time}`
+    if (dateSG === tomorrowSG) return `Tomorrow ${time}`
+    return date.toLocaleDateString('en-US', { weekday: 'short', timeZone: TZ }) + ` ${time}`
   }
 
   return (

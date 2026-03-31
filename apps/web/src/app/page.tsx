@@ -95,11 +95,12 @@ export default async function HomePage() {
           {['🏃','🧘','💪','🚴','🧊','🏊','🥊','🤸','🏓','🏋️','🥾','🏐','💃','🎾'].map((emoji, i) => (
             <span
               key={i}
-              className="absolute text-2xl opacity-[0.07] select-none"
+              className="absolute text-3xl select-none"
               style={{
                 left: `${(i * 7.3 + 3) % 100}%`,
                 top: '-40px',
-                animation: `emojifall ${12 + (i % 5) * 3}s linear ${i * 0.8}s infinite`,
+                opacity: 0.15,
+                animation: `emojifall ${10 + (i % 5) * 2}s linear ${i * 0.6}s infinite`,
               }}
             >
               {emoji}
@@ -109,10 +110,10 @@ export default async function HomePage() {
 
         <style>{`
           @keyframes emojifall {
-            0% { transform: translateY(-40px) rotate(0deg); opacity: 0.07; }
-            10% { opacity: 0.07; }
-            90% { opacity: 0.04; }
-            100% { transform: translateY(calc(100vh + 40px)) rotate(45deg); opacity: 0; }
+            0% { transform: translateY(-40px) rotate(0deg); opacity: 0.15; }
+            10% { opacity: 0.18; }
+            80% { opacity: 0.12; }
+            100% { transform: translateY(calc(100vh + 40px)) rotate(35deg); opacity: 0; }
           }
         `}</style>
 

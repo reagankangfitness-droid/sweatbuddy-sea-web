@@ -175,6 +175,13 @@ export default function CommunitiesPageClient({
                 className="w-full pl-11 pr-4 py-3 bg-white border border-black/[0.06] rounded-xl text-sm text-[#1A1A1A] placeholder:text-[#71717A] focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-black/[0.12] transition-all shadow-sm"
               />
             </div>
+
+            <p className="text-xs text-[#9A9AAA] mt-4">
+              Don&apos;t see your crew?{' '}
+              <Link href="/communities/create" className="text-[#1A1A1A] font-semibold hover:underline">
+                Start one →
+              </Link>
+            </p>
           </motion.div>
         </div>
       </section>
@@ -403,7 +410,7 @@ export default function CommunitiesPageClient({
             The best communities started with one person who said &apos;who&apos;s in?&apos;
           </p>
           <Link
-            href="/host/community"
+            href="/communities/create"
             className="inline-flex items-center gap-2 px-8 py-4 bg-[#1A1A1A] text-white rounded-full font-semibold hover:bg-black transition-colors"
           >
             Start a crew

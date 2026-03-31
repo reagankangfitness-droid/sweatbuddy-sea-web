@@ -135,8 +135,8 @@ export default function CreateCommunityPage() {
       try {
         localStorage.removeItem(DRAFT_KEY)
       } catch {}
-      toast.success('Community created!')
-      router.push(`/communities/${data.community.slug}`)
+      toast.success('Community created! Post your first session.')
+      router.push('/hub')
     } catch {
       toast.error('Something went wrong')
     } finally {

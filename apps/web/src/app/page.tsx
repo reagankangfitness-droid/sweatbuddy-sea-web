@@ -89,8 +89,34 @@ export default async function HomePage() {
       </header>
 
       {/* ── Hero ── */}
-      <section className="px-5 pt-16 pb-12 sm:pt-24 sm:pb-16">
-        <div className="max-w-2xl mx-auto text-center">
+      <section className="relative px-5 pt-16 pb-12 sm:pt-24 sm:pb-16 overflow-hidden">
+        {/* Emoji rain — CSS-only, no JS */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+          {['🏃','🧘','💪','🚴','🧊','🏊','🥊','🤸','🏓','🏋️','🥾','🏐','💃','🎾'].map((emoji, i) => (
+            <span
+              key={i}
+              className="absolute text-2xl opacity-[0.07] select-none"
+              style={{
+                left: `${(i * 7.3 + 3) % 100}%`,
+                top: '-40px',
+                animation: `emojifall ${12 + (i % 5) * 3}s linear ${i * 0.8}s infinite`,
+              }}
+            >
+              {emoji}
+            </span>
+          ))}
+        </div>
+
+        <style>{`
+          @keyframes emojifall {
+            0% { transform: translateY(-40px) rotate(0deg); opacity: 0.07; }
+            10% { opacity: 0.07; }
+            90% { opacity: 0.04; }
+            100% { transform: translateY(calc(100vh + 40px)) rotate(45deg); opacity: 0; }
+          }
+        `}</style>
+
+        <div className="relative max-w-2xl mx-auto text-center">
           <h1 className="text-4xl sm:text-6xl font-bold leading-[1.08] tracking-tight mb-5">
             Sweat is better
             <span className="block text-[#71717A]">shared.</span>

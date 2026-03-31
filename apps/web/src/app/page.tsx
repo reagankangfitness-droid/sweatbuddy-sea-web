@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { Metadata } from 'next'
 import { Logo } from '@/components/logo'
 import { prisma } from '@/lib/prisma'
@@ -8,9 +7,9 @@ import { ACTIVITY_TYPES } from '@/lib/activity-types'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'SweatBuddies — Find Fitness Sessions Near You',
+  title: 'SweatBuddies — The OS for Fitness Community Leaders',
   description:
-    'Discover fitness and wellness sessions happening near you. Running, yoga, HIIT, cold plunge, cycling — join in 2 taps.',
+    'Stop juggling WhatsApp, Instagram, PayNow and spreadsheets. One tool to post sessions, track who shows up, and grow your crew.',
 }
 
 export default async function HomePage() {
@@ -59,14 +58,11 @@ export default async function HomePage() {
     const TZ = 'Asia/Singapore'
     const diff = date.getTime() - now.getTime()
     const hours = diff / (1000 * 60 * 60)
-
-    // Use timezone-aware formatting for all cases
     const time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: TZ })
     const todaySG = now.toLocaleDateString('en-CA', { timeZone: TZ })
     const dateSG = date.toLocaleDateString('en-CA', { timeZone: TZ })
     const tomorrowDate = new Date(now.getTime() + 24 * 60 * 60 * 1000)
     const tomorrowSG = tomorrowDate.toLocaleDateString('en-CA', { timeZone: TZ })
-
     if (hours < 2 && hours > 0) return `In ${Math.round(hours * 60)} min`
     if (dateSG === todaySG) return `Today ${time}`
     if (dateSG === tomorrowSG) return `Tomorrow ${time}`
@@ -79,18 +75,23 @@ export default async function HomePage() {
       <header className="sticky top-0 z-30 bg-[#FFFBF8]/85 backdrop-blur-xl border-b border-black/[0.06]">
         <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
           <Logo size={32} />
-          <Link
-            href="/buddy"
-            className="px-5 py-2.5 bg-[#1A1A1A] text-white text-sm font-semibold rounded-full hover:bg-black transition-all"
-          >
-            Open app
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/buddy" className="text-sm text-[#71717A] hover:text-[#1A1A1A] transition-colors hidden sm:inline">
+              Explore sessions
+            </Link>
+            <Link
+              href="/communities"
+              className="px-5 py-2.5 bg-[#1A1A1A] text-white text-sm font-semibold rounded-full hover:bg-black transition-all"
+            >
+              Start your crew
+            </Link>
+          </div>
         </div>
       </header>
 
-      {/* ── Hero ── */}
+      {/* ── Hero — for hosts ── */}
       <section className="relative px-5 pt-16 pb-12 sm:pt-24 sm:pb-16 overflow-hidden">
-        {/* Emoji rain — CSS-only, no JS */}
+        {/* Emoji rain */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
           {['🏃','🧘','💪','🚴','🧊','🏊','🥊','🤸','🏓','🏋️','🥾','🏐','💃','🎾'].map((emoji, i) => (
             <span
@@ -107,7 +108,6 @@ export default async function HomePage() {
             </span>
           ))}
         </div>
-
         <style>{`
           @keyframes emojifall {
             0% { transform: translateY(-40px) rotate(0deg); opacity: 0.15; }
@@ -118,20 +118,23 @@ export default async function HomePage() {
         `}</style>
 
         <div className="relative max-w-2xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-6xl font-bold leading-[1.08] tracking-tight mb-5">
-            Sweat is better
-            <span className="block bg-gradient-to-r from-[#FF6B35] to-[#FFB347] bg-clip-text text-transparent">shared.</span>
+          <h1 className="text-3xl sm:text-5xl font-bold leading-[1.1] tracking-tight mb-5">
+            Stop juggling 5 apps to{' '}
+            <span className="bg-gradient-to-r from-[#FF6B35] to-[#FFB347] bg-clip-text text-transparent">
+              run your crew.
+            </span>
           </h1>
 
-          <p className="text-base sm:text-lg text-[#4A4A5A] max-w-md mx-auto mb-8 leading-relaxed">
-            Find fitness sessions happening near you. Join in 2 taps.
+          <p className="text-base text-[#4A4A5A] max-w-md mx-auto mb-8 leading-relaxed">
+            WhatsApp. Instagram. PayNow. Google Sheets. Linktree.
+            <span className="block mt-1 font-medium text-[#1A1A1A]">One tool replaces all of them.</span>
           </p>
 
           <Link
-            href="/buddy"
-            className="inline-block px-8 py-4 bg-gradient-to-r from-[#FF6B35] to-[#FF8B55] text-white text-base font-semibold rounded-full hover:from-[#E8612F] hover:to-[#FF6B35] transition-all shadow-lg shadow-[#FF6B35]/20 hover:shadow-xl hover:shadow-[#FF6B35]/30"
+            href="/communities"
+            className="inline-block px-8 py-4 bg-gradient-to-r from-[#FF6B35] to-[#FF8B55] text-white text-base font-semibold rounded-full hover:from-[#E8612F] hover:to-[#FF6B35] transition-all shadow-lg shadow-[#FF6B35]/20"
           >
-            See what&apos;s happening →
+            Set up your crew — free →
           </Link>
 
           {/* Live stats */}
@@ -141,39 +144,94 @@ export default async function HomePage() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF6B35]" />
             </span>
             <p className="text-sm text-[#71717A]">
-              <span className="font-semibold text-[#1A1A1A]">{sessionsThisWeek}</span> sessions this week
-              {communityCount > 0 && <> · <span className="font-semibold text-[#1A1A1A]">{communityCount}</span> crews</>}
+              <span className="font-semibold text-[#1A1A1A]">{communityCount}</span> crews
+              {sessionsThisWeek > 0 && <> · <span className="font-semibold text-[#1A1A1A]">{sessionsThisWeek}</span> sessions this week</>}
+              {cities.length > 0 && <> · {cities.length} cities</>}
             </p>
           </div>
+        </div>
+      </section>
 
-          {/* City pills */}
-          {cities.length > 0 && (
-            <div className="flex flex-wrap gap-2 justify-center mt-4">
+      {/* ── Pain points ── */}
+      <section className="px-5 pb-16">
+        <div className="max-w-lg mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {[
+            { emoji: '📱', pain: 'WhatsApp groups don\u2019t track who shows up' },
+            { emoji: '📊', pain: 'Spreadsheets can\u2019t send reminders' },
+            { emoji: '🔗', pain: 'Linktree can\u2019t take RSVPs' },
+          ].map((p) => (
+            <div key={p.emoji} className="bg-white rounded-xl border border-black/[0.06] p-4 text-center">
+              <span className="text-2xl block mb-2">{p.emoji}</span>
+              <p className="text-xs text-[#4A4A5A] leading-relaxed">{p.pain}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── What you get ── */}
+      <section className="px-5 pb-16 border-t border-black/[0.04] pt-16">
+        <div className="max-w-lg mx-auto">
+          <h2 className="text-xl sm:text-2xl font-bold text-center mb-8 tracking-tight">
+            Everything your crew needs. Nothing it doesn&apos;t.
+          </h2>
+          <div className="space-y-6">
+            {[
+              { icon: '⚡', title: 'Post sessions in 30 seconds', body: 'Pick an activity, set a time, done. Your crew sees it instantly.' },
+              { icon: '👥', title: 'See who\u2019s coming', body: 'Names, not numbers. Know who\u2019s new and who\u2019s a regular.' },
+              { icon: '📣', title: 'Your community page', body: 'A home for your crew. Members, sessions, schedule — all in one link.' },
+              { icon: '📍', title: 'Show up on the map', body: 'People nearby discover your sessions. Organic growth, no ads.' },
+            ].map((f) => (
+              <div key={f.title} className="flex gap-4">
+                <span className="text-xl flex-shrink-0 mt-0.5">{f.icon}</span>
+                <div>
+                  <h3 className="text-sm font-semibold text-[#1A1A1A]">{f.title}</h3>
+                  <p className="text-xs text-[#71717A] mt-0.5 leading-relaxed">{f.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-xs text-[#9A9AAA] mt-8">Free. No lock-in. No fees on free events.</p>
+        </div>
+      </section>
+
+      {/* ── City pills (social proof) ── */}
+      {cities.length > 0 && (
+        <section className="px-5 pb-16">
+          <div className="max-w-lg mx-auto text-center">
+            <p className="text-[11px] text-[#9A9AAA] uppercase tracking-widest mb-4">Crews across</p>
+            <div className="flex flex-wrap gap-2 justify-center">
               {cities.map((c) => (
-                <span key={c.name} className="px-3 py-1 rounded-full bg-white border border-black/[0.06] text-xs text-[#71717A]">
+                <span key={c.name} className="px-3 py-1.5 rounded-full bg-white border border-black/[0.06] text-xs text-[#71717A]">
                   {c.name} <span className="font-semibold text-[#4A4A5A]">{c.communityCount}</span>
                 </span>
               ))}
             </div>
-          )}
+          </div>
+        </section>
+      )}
+
+      {/* ── Divider — switch to attendee audience ── */}
+      <section className="px-5 py-12 border-t border-black/[0.04]">
+        <div className="max-w-lg mx-auto text-center">
+          <p className="text-xs text-[#9A9AAA]">— or just looking to join? —</p>
         </div>
       </section>
 
-      {/* ── Host callout ── */}
-      <section className="px-5 pb-12">
-        <div className="max-w-md mx-auto">
-          <div className="bg-white rounded-2xl border border-black/[0.06] p-5 text-center">
-            <p className="text-sm font-semibold text-[#1A1A1A]">Run a fitness community?</p>
-            <p className="text-xs text-[#71717A] mt-1 mb-4">
-              Post sessions, track who&apos;s coming, grow your crew — free.
-            </p>
-            <Link
-              href="/communities"
-              className="inline-block px-5 py-2.5 border border-black/[0.06] text-sm font-semibold text-[#1A1A1A] rounded-full hover:bg-[#FFFBF8] transition-all"
-            >
-              Set up your crew →
-            </Link>
-          </div>
+      {/* ── Attendee section ── */}
+      <section className="px-5 pb-16">
+        <div className="max-w-lg mx-auto text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3">
+            Find sessions near you.
+          </h2>
+          <p className="text-sm text-[#4A4A5A] mb-6">
+            Running, yoga, HIIT, cold plunge, cycling — whatever moves you.
+          </p>
+          <Link
+            href="/buddy"
+            className="inline-block px-8 py-4 bg-[#1A1A1A] text-white text-base font-semibold rounded-full hover:bg-black transition-all shadow-lg"
+          >
+            See what&apos;s happening →
+          </Link>
         </div>
       </section>
 
@@ -181,10 +239,10 @@ export default async function HomePage() {
       {upcomingSessions.length > 0 && (
         <section className="px-5 pb-16">
           <div className="max-w-lg mx-auto">
-            <p className="text-xs font-semibold text-[#9A9AAA] uppercase tracking-widest mb-4 text-center">
+            <p className="text-[11px] text-[#9A9AAA] uppercase tracking-widest mb-4 text-center">
               Happening soon
             </p>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {upcomingSessions.map((s) => {
                 const going = s._count.userActivities
                 return (
@@ -208,52 +266,22 @@ export default async function HomePage() {
                 )
               })}
             </div>
-            <div className="text-center mt-4">
-              <Link href="/buddy" className="text-xs font-semibold text-[#71717A] hover:text-[#1A1A1A] transition-colors">
-                See all sessions →
-              </Link>
-            </div>
           </div>
         </section>
       )}
 
-      {/* ── How it works ── */}
-      <section className="px-5 py-16 border-t border-black/[0.04]">
-        <div className="max-w-lg mx-auto">
-          <div className="space-y-8">
-            {[
-              { step: '1', title: 'Browse', body: 'See sessions on the map. Filter by what moves you.' },
-              { step: '2', title: 'Join', body: 'Tap "I\'m in." That\'s it. No forms, no commitments.' },
-              { step: '3', title: 'Show up', body: 'Meet your crew. Come back next week.' },
-            ].map((s) => (
-              <div key={s.step} className="flex gap-4">
-                <div className="w-8 h-8 rounded-full bg-[#FF6B35] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
-                  {s.step}
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-[#1A1A1A]">{s.title}</h3>
-                  <p className="text-xs text-[#71717A] mt-0.5">{s.body}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── Final CTA ── */}
       <section className="px-5 py-20 border-t border-black/[0.04]">
         <div className="max-w-lg mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-4 tracking-tight">
-            The right crew changes everything.
+          <h2 className="text-xl sm:text-2xl font-bold mb-3 tracking-tight">
+            Ready to stop duct-taping your community?
           </h2>
-          <p className="text-sm text-[#4A4A5A] mb-8 max-w-sm mx-auto">
-            Every 5am alarm answered. Every PR earned. Every &apos;same time next week?&apos;
-          </p>
+          <p className="text-xs text-[#71717A] mb-6">15 seconds to set up. Free forever for free events.</p>
           <Link
-            href="/buddy"
+            href="/communities"
             className="inline-block px-8 py-4 bg-gradient-to-r from-[#FF6B35] to-[#FF8B55] text-white text-base font-semibold rounded-full hover:from-[#E8612F] hover:to-[#FF6B35] transition-all shadow-lg shadow-[#FF6B35]/20"
           >
-            See what&apos;s happening →
+            Set up your crew →
           </Link>
         </div>
       </section>
@@ -268,6 +296,7 @@ export default async function HomePage() {
           <div className="flex gap-4 text-xs text-[#71717A]">
             <Link href="/buddy" className="hover:text-[#1A1A1A] transition-colors">Discover</Link>
             <Link href="/communities" className="hover:text-[#1A1A1A] transition-colors">Crews</Link>
+            <Link href="/hub" className="hover:text-[#1A1A1A] transition-colors">Host Hub</Link>
             <Link href="/support" className="hover:text-[#1A1A1A] transition-colors">Help</Link>
           </div>
         </div>

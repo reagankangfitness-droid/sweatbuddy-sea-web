@@ -120,7 +120,7 @@ export default async function HomePage() {
         <div className="relative max-w-2xl mx-auto text-center">
           <h1 className="text-4xl sm:text-6xl font-bold leading-[1.08] tracking-tight mb-5">
             Sweat is better
-            <span className="block text-[#71717A]">shared.</span>
+            <span className="block bg-gradient-to-r from-[#FF6B35] to-[#FFB347] bg-clip-text text-transparent">shared.</span>
           </h1>
 
           <p className="text-base sm:text-lg text-[#4A4A5A] max-w-md mx-auto mb-8 leading-relaxed">
@@ -129,7 +129,7 @@ export default async function HomePage() {
 
           <Link
             href="/buddy"
-            className="inline-block px-8 py-4 bg-[#1A1A1A] text-white text-base font-semibold rounded-full hover:bg-black transition-all shadow-lg hover:shadow-xl"
+            className="inline-block px-8 py-4 bg-gradient-to-r from-[#FF6B35] to-[#FF8B55] text-white text-base font-semibold rounded-full hover:from-[#E8612F] hover:to-[#FF6B35] transition-all shadow-lg shadow-[#FF6B35]/20 hover:shadow-xl hover:shadow-[#FF6B35]/30"
           >
             See what&apos;s happening →
           </Link>
@@ -137,8 +137,8 @@ export default async function HomePage() {
           {/* Live stats */}
           <div className="flex items-center justify-center gap-2 mt-8">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF6B35] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF6B35]" />
             </span>
             <p className="text-sm text-[#71717A]">
               <span className="font-semibold text-[#1A1A1A]">{sessionsThisWeek}</span> sessions this week
@@ -227,7 +227,7 @@ export default async function HomePage() {
               { step: '3', title: 'Show up', body: 'Meet your crew. Come back next week.' },
             ].map((s) => (
               <div key={s.step} className="flex gap-4">
-                <div className="w-8 h-8 rounded-full bg-[#1A1A1A] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-[#FF6B35] text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
                   {s.step}
                 </div>
                 <div>
@@ -251,7 +251,7 @@ export default async function HomePage() {
           </p>
           <Link
             href="/buddy"
-            className="inline-block px-8 py-4 bg-[#1A1A1A] text-white text-base font-semibold rounded-full hover:bg-black transition-all shadow-lg"
+            className="inline-block px-8 py-4 bg-gradient-to-r from-[#FF6B35] to-[#FF8B55] text-white text-base font-semibold rounded-full hover:from-[#E8612F] hover:to-[#FF6B35] transition-all shadow-lg shadow-[#FF6B35]/20"
           >
             See what&apos;s happening →
           </Link>

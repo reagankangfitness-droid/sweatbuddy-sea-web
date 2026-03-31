@@ -112,9 +112,9 @@ function getRelativeTime(startTime: string): string {
 function getUrgencyStyle(startTime: string): string {
   const diffMs = new Date(startTime).getTime() - Date.now()
   const diffHrs = diffMs / (1000 * 60 * 60)
-  if (diffHrs < 0) return 'bg-red-500/90 text-white animate-pulse'
-  if (diffHrs < 2) return 'bg-red-500/90 text-white'
-  if (diffHrs < 6) return 'bg-amber-400/90 text-white'
+  if (diffHrs < 0) return 'bg-[#FF6B35] text-white animate-pulse'
+  if (diffHrs < 2) return 'bg-[#FF6B35] text-white'
+  if (diffHrs < 6) return 'bg-[#FFB347] text-white'
   return 'bg-[#1A1A1A]/70 text-white'
 }
 
@@ -600,7 +600,7 @@ function BuddyPageInner() {
           <div className="flex-1" />
           <button
             onClick={() => setShowCreateSheet(true)}
-            className="w-10 h-10 rounded-full bg-[#1A1A1A] shadow-lg flex items-center justify-center hover:bg-black transition-colors active:scale-95"
+            className="w-10 h-10 rounded-full bg-[#FF6B35] shadow-lg shadow-[#FF6B35]/20 flex items-center justify-center hover:bg-[#E8612F] transition-colors active:scale-95"
             aria-label="Create a session"
           >
             <Plus className="w-5 h-5 text-white" />

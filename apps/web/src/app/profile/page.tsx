@@ -245,7 +245,7 @@ export default function ProfilePage() {
           </h3>
           <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm overflow-hidden">
             <Link
-              href="/host/dashboard"
+              href="/hub"
               className="flex items-center justify-between px-4 py-3.5 border-b border-black/[0.06] hover:bg-[#FFFBF8] transition-colors"
             >
               <div className="flex items-center gap-3">

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Metadata } from 'next'
-import { Logo } from '@/components/logo'
+import { LogoWithText } from '@/components/logo'
 import { prisma } from '@/lib/prisma'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
 
@@ -74,7 +74,7 @@ export default async function HomePage() {
       {/* ── Nav ── */}
       <header className="sticky top-0 z-30 bg-[#FFFBF8]/85 backdrop-blur-xl border-b border-black/[0.06]">
         <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
-          <Logo size={32} />
+          <LogoWithText size={28} color="#FF6B35" textColor="#FF6B35" />
           <div className="flex items-center gap-3">
             <Link href="/buddy" className="text-sm text-[#71717A] hover:text-[#1A1A1A] transition-colors hidden sm:inline">
               Explore sessions
@@ -290,8 +290,8 @@ export default async function HomePage() {
       <footer className="border-t border-black/[0.04] py-10 px-5">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <Logo size={20} />
-            <span className="text-xs text-[#71717A]">&copy; 2026 SweatBuddies</span>
+            <LogoWithText size={16} color="#FF6B35" textColor="#9A9AAA" />
+            <span className="text-xs text-[#71717A]">&copy; 2026</span>
           </div>
           <div className="flex gap-4 text-xs text-[#71717A]">
             <Link href="/buddy" className="hover:text-[#1A1A1A] transition-colors">Discover</Link>

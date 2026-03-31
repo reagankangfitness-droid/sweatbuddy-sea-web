@@ -104,12 +104,6 @@ export default function ContentPage() {
   useEffect(() => {
     const init = async () => {
       try {
-        const sessionRes = await fetch('/api/organizer/verify', { method: 'POST' })
-        if (!sessionRes.ok) {
-          router.push('/sign-in?intent=host')
-          return
-        }
-
         // Fetch events and content history in parallel
         const [eventsRes, historyRes] = await Promise.all([
           fetch('/api/host/dashboard'),

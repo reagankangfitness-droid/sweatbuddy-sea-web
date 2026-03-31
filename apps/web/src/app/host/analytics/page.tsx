@@ -167,12 +167,6 @@ export default function AnalyticsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const sessionRes = await fetch('/api/organizer/verify', { method: 'POST' })
-        if (!sessionRes.ok) {
-          router.push('/sign-in?intent=host')
-          return
-        }
-
         const res = await fetch('/api/host/analytics')
         if (!res.ok) throw new Error('Failed to load analytics')
 

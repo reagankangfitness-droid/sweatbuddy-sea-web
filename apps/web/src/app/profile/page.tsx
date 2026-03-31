@@ -261,7 +261,7 @@ export default function ProfilePage() {
             </Link>
 
             <Link
-              href="/communities?joined=true"
+              href="/communities"
               className="flex items-center justify-between px-4 py-3.5 border-b border-black/[0.06] hover:bg-[#FFFBF8] transition-colors"
             >
               <div className="flex items-center gap-3">
@@ -277,7 +277,7 @@ export default function ProfilePage() {
             </Link>
 
             <Link
-              href="/buddy?tab=mine"
+              href="/my-bookings"
               className="flex items-center justify-between px-4 py-3.5 hover:bg-[#FFFBF8] transition-colors"
             >
               <div className="flex items-center gap-3">

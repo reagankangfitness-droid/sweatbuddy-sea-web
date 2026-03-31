@@ -46,9 +46,16 @@ export default async function HubPage() {
     },
   })
 
-  // Also include communities created by this user
+  // Also include communities created by this user (check both Clerk ID and DB ID)
   const owned = await prisma.community.findMany({
-    where: { createdById: dbUser.id, isActive: true },
+    where: {
+      isActive: true,
+      OR: [
+        { createdById: userId },
+        { createdById: dbUser.id },
+        { claimedById: userId },
+      ],
+    },
     select: { id: true, name: true, slug: true, memberCount: true, category: true },
   })
 

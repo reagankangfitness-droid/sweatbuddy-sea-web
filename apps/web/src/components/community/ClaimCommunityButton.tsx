@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Loader2, CheckCircle2 } from 'lucide-react'
 
 interface ClaimCommunityButtonProps {
   communitySlug: string
@@ -16,19 +18,16 @@ export function ClaimCommunityButton({
   isSeeded,
   claimedAt,
 }: ClaimCommunityButtonProps) {
+  const router = useRouter()
   const [state, setState] = useState<'default' | 'claiming' | 'success' | 'error'>('default')
   const [instagramHandle, setInstagramHandle] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Only render if seeded and not yet claimed
-  if (!isSeeded || claimedAt) {
-    return null
-  }
+  if (!isSeeded || claimedAt) return null
 
   async function handleClaim() {
     if (!instagramHandle.trim()) return
-
     setIsSubmitting(true)
     setErrorMessage('')
 
@@ -38,11 +37,12 @@ export function ClaimCommunityButton({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ instagramHandle: instagramHandle.trim() }),
       })
-
       const data = await res.json()
 
       if (res.ok) {
         setState('success')
+        // Redirect to Hub after a brief success message
+        setTimeout(() => router.push('/hub'), 1500)
       } else {
         setErrorMessage(data.error || 'Failed to claim community')
         setState('error')
@@ -57,69 +57,66 @@ export function ClaimCommunityButton({
 
   if (state === 'success') {
     return (
-      <div className="mt-4 bg-green-500/10 border border-green-500/20 rounded-xl p-4">
-        <p className="text-green-400 font-medium">
-          Community claimed! You are now the owner of {communityName}.
+      <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-2xl p-5 text-center">
+        <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
+        <p className="text-sm font-semibold text-[#1A1A1A]">
+          You now own {communityName}!
         </p>
+        <p className="text-xs text-[#71717A] mt-1">Taking you to your dashboard...</p>
       </div>
     )
   }
 
   return (
-    <div className="mt-4 bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
+    <div className="mt-4 bg-white border border-black/[0.06] rounded-2xl p-5">
       {state === 'default' && (
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <p className="text-amber-400 font-medium text-sm">
-              Are you the owner of this community?
-            </p>
-            <p className="text-[#71717A] text-xs mt-0.5">
-              Verify with your Instagram handle to take control.
-            </p>
-          </div>
+        <div className="text-center">
+          <p className="text-sm font-semibold text-[#1A1A1A]">
+            Is this your community?
+          </p>
+          <p className="text-xs text-[#71717A] mt-1 mb-4">
+            Claim it to manage sessions, see who&apos;s coming, and grow your crew.
+          </p>
           <button
             onClick={() => setState('claiming')}
-            className="px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
+            className="px-5 py-2.5 bg-[#1A1A1A] text-white text-sm font-semibold rounded-full hover:bg-black transition-colors"
           >
-            Claim it
+            Claim this community
           </button>
         </div>
       )}
 
       {(state === 'claiming' || state === 'error') && (
         <div>
-          <p className="text-amber-400 font-medium text-sm mb-3">
-            Are you the owner of this community?
+          <p className="text-sm font-semibold text-[#1A1A1A] mb-1">
+            Verify you&apos;re the owner
           </p>
-          <div className="flex flex-col sm:flex-row gap-2">
+          <p className="text-xs text-[#71717A] mb-3">
+            Enter the Instagram handle linked to this community.
+          </p>
+          <div className="flex gap-2">
             <input
               type="text"
               placeholder="@your_instagram"
               value={instagramHandle}
               onChange={(e) => setInstagramHandle(e.target.value)}
-              className="flex-1 px-3 py-2 bg-white border border-black/[0.08] rounded-lg text-[#1A1A1A] text-sm placeholder:text-[#71717A] focus:outline-none focus:border-amber-500/50"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleClaim()
-              }}
+              className="flex-1 px-3.5 py-2.5 bg-[#FFFBF8] border border-black/[0.04] rounded-xl text-sm text-[#1A1A1A] placeholder:text-[#9A9AAA] focus:outline-none focus:border-black/[0.12]"
+              onKeyDown={(e) => { if (e.key === 'Enter') handleClaim() }}
+              autoFocus
             />
             <button
               onClick={handleClaim}
               disabled={isSubmitting || !instagramHandle.trim()}
-              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-black text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
+              className="px-4 py-2.5 bg-[#1A1A1A] text-white text-sm font-semibold rounded-xl hover:bg-black disabled:opacity-40 transition-colors flex items-center gap-1.5"
             >
-              {isSubmitting ? 'Claiming...' : 'Claim this community'}
+              {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+              {isSubmitting ? 'Verifying...' : 'Verify'}
             </button>
           </div>
           {state === 'error' && errorMessage && (
-            <div className="mt-2">
-              <p className="text-red-400 text-xs">{errorMessage}</p>
-              <a
-                href="mailto:support@sweatbuddies.co"
-                className="text-amber-400 hover:text-amber-300 text-xs underline mt-1 inline-block"
-              >
-                Contact support
-              </a>
-            </div>
+            <p className="text-xs text-red-500 mt-2">
+              {errorMessage} — <a href="mailto:support@sweatbuddies.co" className="underline">contact support</a>
+            </p>
           )}
         </div>
       )}

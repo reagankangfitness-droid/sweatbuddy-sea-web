@@ -125,10 +125,12 @@ export default function HubClient({
           </div>
         ) : (
           <div className="bg-white rounded-2xl border border-black/[0.06] p-6 text-center">
-            <p className="text-sm text-[#71717A] mb-3">No upcoming sessions</p>
+            <div className="text-3xl mb-2">🎉</div>
+            <p className="text-sm font-semibold text-[#1A1A1A] mb-1">Your community is set up!</p>
+            <p className="text-xs text-[#71717A] mb-4">Post your first session — it takes 30 seconds.</p>
             <button
               onClick={() => setShowCreate(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-[#1A1A1A] text-white text-xs font-semibold"
+              className="inline-flex items-center gap-1.5 px-5 py-3 rounded-full bg-[#1A1A1A] text-white text-sm font-semibold"
             >
               <Zap className="w-3.5 h-3.5" />
               Post a session

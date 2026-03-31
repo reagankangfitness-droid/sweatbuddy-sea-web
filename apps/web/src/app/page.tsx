@@ -132,6 +132,24 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Host callout ── */}
+      <section className="px-5 pb-12">
+        <div className="max-w-md mx-auto">
+          <div className="bg-white rounded-2xl border border-black/[0.06] p-5 text-center">
+            <p className="text-sm font-semibold text-[#1A1A1A]">Run a fitness community?</p>
+            <p className="text-xs text-[#71717A] mt-1 mb-4">
+              Post sessions, track who&apos;s coming, grow your crew — free.
+            </p>
+            <Link
+              href="/communities"
+              className="inline-block px-5 py-2.5 border border-black/[0.06] text-sm font-semibold text-[#1A1A1A] rounded-full hover:bg-[#FFFBF8] transition-all"
+            >
+              Set up your crew →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── Happening soon ── */}
       {upcomingSessions.length > 0 && (
         <section className="px-5 pb-16">

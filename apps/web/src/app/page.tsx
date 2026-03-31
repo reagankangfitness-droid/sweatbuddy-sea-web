@@ -94,7 +94,7 @@ export default async function HomePage() {
         {/* Background photo — subtle, blurred */}
         <div className="absolute inset-0 z-0" aria-hidden="true">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/hero-bg.jpg" alt="" className="w-full h-full object-cover opacity-[0.06] blur-sm" />
+          <img src="/images/hero-bg.jpg" alt="" className="w-full h-full object-cover opacity-[0.15]" />
         </div>
         {/* Emoji rain */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">

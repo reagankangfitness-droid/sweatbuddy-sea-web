@@ -91,6 +91,11 @@ export default async function HomePage() {
 
       {/* ── Hero — for hosts ── */}
       <section className="relative px-5 pt-16 pb-12 sm:pt-24 sm:pb-16 overflow-hidden">
+        {/* Background photo — subtle, blurred */}
+        <div className="absolute inset-0 z-0" aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/hero-bg.jpg" alt="" className="w-full h-full object-cover opacity-[0.06] blur-sm" />
+        </div>
         {/* Emoji rain */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
           {['🏃','🧘','💪','🚴','🧊','🏊','🥊','🤸','🏓','🏋️','🥾','🏐','💃','🎾'].map((emoji, i) => (
@@ -160,7 +165,7 @@ export default async function HomePage() {
             { emoji: '📊', pain: 'Spreadsheets can\u2019t send reminders' },
             { emoji: '🔗', pain: 'Linktree can\u2019t take RSVPs' },
           ].map((p) => (
-            <div key={p.emoji} className="bg-white rounded-xl border border-black/[0.06] p-4 text-center">
+            <div key={p.emoji} className="bg-white rounded-xl shadow-sm p-4 text-center">
               <span className="text-2xl block mb-2">{p.emoji}</span>
               <p className="text-xs text-[#4A4A5A] leading-relaxed">{p.pain}</p>
             </div>
@@ -201,7 +206,7 @@ export default async function HomePage() {
             <p className="text-[11px] text-[#9A9AAA] uppercase tracking-widest mb-4">Crews across</p>
             <div className="flex flex-wrap gap-2 justify-center">
               {cities.map((c) => (
-                <span key={c.name} className="px-3 py-1.5 rounded-full bg-white border border-black/[0.06] text-xs text-[#71717A]">
+                <span key={c.name} className="px-3 py-1.5 rounded-full bg-white shadow-sm text-xs text-[#71717A]">
                   {c.name} <span className="font-semibold text-[#4A4A5A]">{c.communityCount}</span>
                 </span>
               ))}

@@ -610,7 +610,7 @@ function BuddyPageInner() {
 
       {/* ── Draggable session list sheet ── */}
       <motion.div
-        className="absolute bottom-0 left-0 right-0 z-30 bg-white rounded-t-2xl shadow-2xl border-t border-black/[0.06]"
+        className="absolute bottom-0 left-0 right-0 z-30 bg-[#F8F6F3] rounded-t-2xl shadow-2xl"
         style={{ height: sheetHeight, marginBottom: '72px' }}
         animate={{ height: sheetHeight }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
@@ -635,17 +635,33 @@ function BuddyPageInner() {
         {/* Session list — scrollable content */}
         <div className="overflow-y-auto px-4 pb-8" style={{ height: 'calc(100% - 52px)' }}>
           {loading ? (
-            <div className="space-y-1 pt-1">
+            <div className="space-y-2 pt-1">
               {[0, 1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center gap-3 p-3 animate-pulse">
-                  <div className="w-8 h-8 rounded-full bg-neutral-100 flex-shrink-0" />
-                  <div className="flex-1 space-y-1.5">
-                    <div className="h-3.5 w-2/3 bg-neutral-100 rounded" />
-                    <div className="h-3 w-1/2 bg-neutral-100 rounded" />
+                <div key={i} className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white shadow-sm">
+                  <div className="w-8 h-8 rounded-full bg-neutral-50 flex-shrink-0 shimmer" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3.5 w-2/3 bg-neutral-50 rounded shimmer" />
+                    <div className="h-3 w-1/2 bg-neutral-50 rounded shimmer" />
+                    <div className="flex gap-1">
+                      <div className="w-5 h-5 rounded-full bg-neutral-50 shimmer" />
+                      <div className="w-5 h-5 rounded-full bg-neutral-50 shimmer" />
+                      <div className="h-3 w-12 bg-neutral-50 rounded shimmer" />
+                    </div>
                   </div>
-                  <div className="h-6 w-10 bg-neutral-100 rounded-full" />
+                  <div className="h-6 w-10 bg-neutral-50 rounded-full shimmer" />
                 </div>
               ))}
+              <style>{`
+                .shimmer {
+                  background: linear-gradient(90deg, #f5f5f5 25%, #ebebeb 50%, #f5f5f5 75%);
+                  background-size: 200% 100%;
+                  animation: shimmer 1.5s infinite;
+                }
+                @keyframes shimmer {
+                  0% { background-position: 200% 0; }
+                  100% { background-position: -200% 0; }
+                }
+              `}</style>
             </div>
           ) : sessions.length === 0 ? (
             <div className="text-center py-12">
@@ -667,7 +683,7 @@ function BuddyPageInner() {
                   <p className="text-[11px] font-medium text-[#9A9AAA] uppercase tracking-widest px-3 mb-1">
                     {bucket.label}
                   </p>
-                  <div className="space-y-0.5">
+                  <div className="space-y-2">
                     {bucket.sessions.map((session, i) => (
                       <SessionCard
                         key={session.id}
@@ -760,22 +776,22 @@ function SessionCard({
   return (
     <motion.div
       id={`session-${session.id}`}
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25, delay: index * 0.04 }}
+      transition={{ duration: 0.2, delay: index * 0.03 }}
     >
       <Link
         href={`/activities/${session.id}`}
-        className="group flex items-center gap-3 p-3 rounded-xl transition-all duration-200 hover:bg-black/[0.02] active:bg-black/[0.04]"
+        className="group flex items-center gap-3.5 p-3.5 rounded-2xl bg-white shadow-sm hover:shadow-md active:shadow-sm transition-all duration-200"
       >
         {/* Emoji */}
         <span className="text-2xl flex-shrink-0">{emoji}</span>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          {/* Row 1: Title */}
+          {/* Title */}
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-[#1A1A1A] truncate tracking-tight">
+            <h3 className="text-[14px] font-semibold text-[#1A1A1A] truncate leading-tight">
               {session.title}
             </h3>
             {isJoined && !isHosting && (
@@ -783,25 +799,40 @@ function SessionCard({
             )}
           </div>
 
-          {/* Row 2: Time · Location */}
-          <p className="text-xs text-[#71717A] mt-0.5 truncate">
+          {/* Time · Location */}
+          <p className="text-[12px] text-[#71717A] mt-1 truncate leading-none">
             {session.startTime ? getRelativeTime(session.startTime) : ''}
             {session.startTime && (session.address || session.city) ? ' · ' : ''}
             {formatAddress(session.address ?? session.city ?? '')}
           </p>
 
-          {/* Row 3: Social proof */}
-          <p className="text-xs text-[#9A9AAA] mt-0.5">
-            {session.attendeeCount > 0
-              ? `${session.attendeeCount} going 🔥`
-              : 'Be the first'}
-            {spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 ? ` · ${spotsLeft} left` : ''}
-          </p>
+          {/* Avatar stack + social proof */}
+          <div className="flex items-center gap-1.5 mt-1.5">
+            {session.attendees.length > 0 && (
+              <div className="flex -space-x-1.5">
+                {session.attendees.slice(0, 3).map((a) =>
+                  a.imageUrl ? (
+                    <img key={a.id} src={a.imageUrl} alt="" className="w-5 h-5 rounded-full ring-2 ring-white object-cover" />
+                  ) : (
+                    <div key={a.id} className="w-5 h-5 rounded-full ring-2 ring-white bg-neutral-100 flex items-center justify-center text-[8px] font-bold text-[#9A9AAA]">
+                      {(a.name ?? '?')[0]}
+                    </div>
+                  )
+                )}
+              </div>
+            )}
+            <span className="text-[11px] text-[#9A9AAA] leading-none">
+              {session.attendeeCount > 0
+                ? `${session.attendeeCount} going`
+                : 'Be the first'}
+              {spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 ? ` · ${spotsLeft} left` : ''}
+            </span>
+          </div>
         </div>
 
         {/* Right: Price + Join */}
         <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-          <span className={`text-xs font-semibold ${isPaid ? 'text-[#1A1A1A]' : 'text-emerald-600'}`}>
+          <span className={`text-[12px] font-semibold ${isPaid ? 'text-[#1A1A1A]' : 'text-emerald-600'}`}>
             {priceDisplay}
           </span>
           {!isHost && !isHosting && !isFull && !isJoined && (

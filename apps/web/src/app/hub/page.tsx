@@ -90,6 +90,14 @@ export default async function HubPage() {
         categorySlug: true,
         maxPeople: true,
         _count: { select: { userActivities: { where: { status: { in: ['JOINED', 'COMPLETED'] } } } } },
+        userActivities: {
+          where: { status: { in: ['JOINED', 'COMPLETED'] } },
+          select: {
+            user: { select: { id: true, name: true, imageUrl: true, sessionsAttendedCount: true } },
+          },
+          take: 10,
+          orderBy: { createdAt: 'desc' },
+        },
       },
       orderBy: { startTime: 'asc' },
       take: 10,
@@ -125,6 +133,12 @@ export default async function HubPage() {
         categorySlug: s.categorySlug,
         maxPeople: s.maxPeople,
         goingCount: s._count.userActivities,
+        attendees: s.userActivities.map((ua) => ({
+          id: ua.user.id,
+          name: ua.user.name,
+          imageUrl: ua.user.imageUrl,
+          isNew: (ua.user.sessionsAttendedCount ?? 0) <= 1,
+        })),
       }))}
       totalMembers={totalMembers}
       activeThisMonth={activeThisMonth}

@@ -812,6 +812,7 @@ function SessionCard({
               <div className="flex -space-x-1.5">
                 {session.attendees.slice(0, 3).map((a) =>
                   a.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img key={a.id} src={a.imageUrl} alt="" className="w-5 h-5 rounded-full ring-2 ring-white object-cover" />
                   ) : (
                     <div key={a.id} className="w-5 h-5 rounded-full ring-2 ring-white bg-neutral-100 flex items-center justify-center text-[8px] font-bold text-[#9A9AAA]">

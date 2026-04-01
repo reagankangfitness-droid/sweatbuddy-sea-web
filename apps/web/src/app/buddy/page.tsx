@@ -432,7 +432,7 @@ function BuddyPageInner() {
   const sheetHeight = sheetMode === 'full' ? '75%' : sheetMode === 'half' ? '20%' : '80px'
 
   return (
-    <div className="relative h-[100dvh] bg-[#FFFBF8] overflow-hidden">
+    <div className="relative bg-[#FFFBF8]" style={{ height: '100dvh', overflow: 'hidden' }}>
       {/* Create Session Sheet */}
       <CreateSessionSheet open={showCreateSheet} onClose={() => setShowCreateSheet(false)} onSuccess={() => fetchSessions()} />
 
@@ -610,7 +610,7 @@ function BuddyPageInner() {
 
       {/* ── Draggable session list sheet ── */}
       <motion.div
-        className="absolute bottom-0 left-0 right-0 z-30 bg-[#F8F6F3] rounded-t-2xl shadow-2xl"
+        className="absolute bottom-0 left-0 right-0 z-20 bg-[#F8F6F3] rounded-t-2xl shadow-2xl"
         style={{ height: sheetHeight, marginBottom: '72px' }}
         animate={{ height: sheetHeight }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}

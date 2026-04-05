@@ -91,7 +91,7 @@ export function ShareButton({ eventId, eventSlug, eventName, compact = false, ic
 
   const shareModal = mounted && showMenu ? createPortal(
     <div
-      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()

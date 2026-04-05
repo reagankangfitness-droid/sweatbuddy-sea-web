@@ -85,12 +85,6 @@ export default function AttendeesPage() {
     const fetchData = async () => {
       try {
         // Verify session
-        const sessionRes = await fetch('/api/organizer/verify', { method: 'POST' })
-        if (!sessionRes.ok) {
-          router.push('/sign-in?intent=host')
-          return
-        }
-
         // Fetch event details
         const eventRes = await fetch(`/api/host/events/${eventId}`)
         if (!eventRes.ok) {

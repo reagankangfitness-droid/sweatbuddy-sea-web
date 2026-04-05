@@ -53,12 +53,6 @@ export default function CommunityPage() {
     const fetchData = async () => {
       try {
         // Verify session
-        const sessionRes = await fetch('/api/organizer/verify', { method: 'POST' })
-        if (!sessionRes.ok) {
-          router.push('/sign-in?intent=host')
-          return
-        }
-
         // Fetch community data + health stats in parallel
         const params = new URLSearchParams({ filter, sort, search })
         const [communityRes, statsRes] = await Promise.all([

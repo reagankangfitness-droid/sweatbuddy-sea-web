@@ -30,12 +30,6 @@ export default function PaymentsPage() {
     const fetchPayments = async () => {
       try {
         // First verify session
-        const sessionRes = await fetch('/api/organizer/verify', { method: 'POST' })
-        if (!sessionRes.ok) {
-          router.push('/sign-in?intent=host')
-          return
-        }
-
         // Fetch payments
         const paymentsRes = await fetch('/api/host/payments/pending')
         if (!paymentsRes.ok) {

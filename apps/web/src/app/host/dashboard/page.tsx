@@ -104,16 +104,6 @@ export default function HostDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const sessionRes = await fetch('/api/organizer/verify', { method: 'POST' })
-        if (!sessionRes.ok) {
-          // Not authenticated or not a host - redirect to sign-in with host intent
-          router.push('/sign-in?intent=host')
-          return
-        }
-
-        const sessionData = await sessionRes.json()
-        setUserName(sessionData.user?.name || null)
-
         // Check onboarding status
         const onboardingRes = await fetch('/api/host/onboarding')
         if (onboardingRes.ok) {

@@ -94,12 +94,6 @@ export default function EditEventPage() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const sessionRes = await fetch('/api/organizer/verify', { method: 'POST' })
-        if (!sessionRes.ok) {
-          router.push('/sign-in?intent=host')
-          return
-        }
-
         const eventRes = await fetch(`/api/host/events/${eventId}`)
         if (!eventRes.ok) {
           if (eventRes.status === 401) {

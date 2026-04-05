@@ -108,12 +108,6 @@ export default function GrowthPage() {
     setError(null)
 
     try {
-      const sessionRes = await fetch('/api/organizer/verify', { method: 'POST' })
-      if (!sessionRes.ok) {
-        router.push('/sign-in?intent=host')
-        return
-      }
-
       const res = await fetch('/api/host/growth')
       if (res.ok) {
         const growthData = await res.json()

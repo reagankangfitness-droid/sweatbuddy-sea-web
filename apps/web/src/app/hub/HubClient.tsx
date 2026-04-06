@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Plus, ChevronRight, Zap, Copy, Check, MessageCircle, Bell, UserCheck } from 'lucide-react'
+import { Plus, ChevronRight, Zap, Copy, Check, MessageCircle, Bell, UserCheck, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
 import { CreateSessionSheet } from '@/components/CreateSessionSheet'
@@ -214,6 +214,13 @@ export default function HubClient({
                 <MessageCircle className="w-3.5 h-3.5" />
                 WhatsApp
               </button>
+              <Link
+                href={`/activities/${nextSession.id}/edit`}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#FFFBF8] text-xs font-medium text-[#4A4A5A] hover:bg-neutral-100 transition-all"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+                Edit
+              </Link>
               {nextSession.goingCount > 0 && (
                 <button
                   onClick={() => notifyAttendees(nextSession)}
@@ -315,6 +322,13 @@ export default function HubClient({
                       <MessageCircle className="w-3 h-3" />
                       Share
                     </button>
+                    <Link
+                      href={`/activities/${s.id}/edit`}
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-neutral-50 text-[10px] font-medium text-[#71717A]"
+                    >
+                      <Pencil className="w-3 h-3" />
+                      Edit
+                    </Link>
                     <Link
                       href={`/activities/${s.id}`}
                       className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-neutral-50 text-[10px] font-medium text-[#71717A]"

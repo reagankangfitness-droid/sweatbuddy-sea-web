@@ -535,7 +535,7 @@ function BuddyPageInner() {
             </div>
             <button
               onClick={() => setShowCreateSheet(true)}
-              className="w-9 h-9 rounded-full bg-[#FF6B35] shadow-lg shadow-[#FF6B35]/20 flex items-center justify-center hover:bg-[#E8612F] transition-colors active:scale-95 flex-shrink-0"
+              className="w-10 h-10 rounded-full bg-[#FF6B35] shadow-lg shadow-[#FF6B35]/20 flex items-center justify-center hover:bg-[#E8612F] transition-colors active:scale-95 flex-shrink-0"
               aria-label="Create a session"
             >
               <Plus className="w-4 h-4 text-white" />
@@ -548,7 +548,7 @@ function BuddyPageInner() {
               <button
                 key={f.value}
                 onClick={() => setTypeFilter(typeFilter === f.value ? '' : f.value)}
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all flex-shrink-0 ${
+                className={`w-9 h-9 rounded-full flex items-center justify-center text-sm transition-all flex-shrink-0 ${
                   typeFilter === f.value
                     ? 'bg-[#1A1A1A] shadow-md scale-110'
                     : 'bg-white/80 shadow-sm'
@@ -825,7 +825,7 @@ function SessionCard({
         className="group flex rounded-2xl bg-white shadow-sm hover:shadow-md active:shadow-sm transition-all duration-200 overflow-hidden"
       >
         {/* Left: Square thumbnail */}
-        <div className="relative w-28 h-28 flex-shrink-0 overflow-hidden">
+        <div className="relative w-24 sm:w-28 h-24 sm:h-28 flex-shrink-0 overflow-hidden">
           {session.imageUrl ? (
             <>
               {/* eslint-disable-next-line @next/next/no-img-element */}

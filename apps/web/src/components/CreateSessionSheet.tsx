@@ -317,7 +317,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
             {/* Header */}
             <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-black/[0.04]">
               <h2 className="text-lg font-bold text-[#1A1A1A]">Create Session</h2>
-              <button onClick={onClose} className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 transition-colors">
+              <button onClick={onClose} className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 transition-colors">
                 <X className="w-4 h-4 text-[#4A4A5A]" />
               </button>
             </div>

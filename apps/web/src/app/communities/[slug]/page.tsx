@@ -343,8 +343,8 @@ export default async function CommunityPage({ params }: Props) {
 
             {/* Info */}
             <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">
+              <div className="flex items-center gap-2 min-w-0">
+                <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] line-clamp-2">
                   {community.name}
                 </h1>
                 {community.isVerified && (
@@ -369,13 +369,13 @@ export default async function CommunityPage({ params }: Props) {
               </div>
 
               {/* Social Links */}
-              <div className="flex items-center gap-3 mt-3">
+              <div className="flex items-center gap-1 mt-3">
                 {community.instagramHandle && (
                   <a
                     href={`https://instagram.com/${community.instagramHandle}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#71717A] hover:text-pink-500 transition-colors"
+                    className="w-10 h-10 flex items-center justify-center rounded-full text-[#71717A] hover:text-pink-500 hover:bg-pink-50 transition-colors"
                   >
                     <Instagram className="w-5 h-5" />
                   </a>
@@ -385,7 +385,7 @@ export default async function CommunityPage({ params }: Props) {
                     href={community.websiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#71717A] hover:text-blue-500 transition-colors"
+                    className="w-10 h-10 flex items-center justify-center rounded-full text-[#71717A] hover:text-blue-500 hover:bg-blue-50 transition-colors"
                   >
                     <Globe className="w-5 h-5" />
                   </a>
@@ -395,7 +395,7 @@ export default async function CommunityPage({ params }: Props) {
                     href={community.communityLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#71717A] hover:text-green-500 transition-colors"
+                    className="w-10 h-10 flex items-center justify-center rounded-full text-[#71717A] hover:text-green-500 hover:bg-green-50 transition-colors"
                   >
                     <MessageCircle className="w-5 h-5" />
                   </a>

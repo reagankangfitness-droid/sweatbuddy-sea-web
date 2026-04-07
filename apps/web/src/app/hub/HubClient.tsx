@@ -210,13 +210,13 @@ export default function HubClient({
       {attendanceSessionId && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
           <div className="absolute inset-0 bg-black/40" onClick={() => setAttendanceSessionId(null)} />
-          <div className="relative bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[80vh] overflow-hidden">
+          <div className="relative bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[80vh] overflow-hidden pb-[env(safe-area-inset-bottom,0px)]">
             <div className="px-5 py-4 border-b border-black/[0.06] flex items-center justify-between">
               <div>
                 <p className="text-[14px] font-semibold text-[#1A1A1A]">Mark Attendance</p>
                 <p className="text-[11px] text-[#9A9AAA]">{attendanceSession?.title}</p>
               </div>
-              <button onClick={() => setAttendanceSessionId(null)} className="p-1.5 rounded-full hover:bg-neutral-100">
+              <button onClick={() => setAttendanceSessionId(null)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-neutral-100">
                 <X className="w-4 h-4 text-[#9A9AAA]" />
               </button>
             </div>
@@ -241,7 +241,7 @@ export default function HubClient({
                       <button
                         onClick={() => toggleAttendance(attendanceSessionId, a.id, a.actuallyAttended)}
                         disabled={togglingAttendee === a.id}
-                        className={`w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-50 ${
+                        className={`w-11 h-11 rounded-full flex items-center justify-center transition-all disabled:opacity-50 ${
                           a.actuallyAttended === true
                             ? 'bg-emerald-100 text-emerald-600'
                             : a.actuallyAttended === false

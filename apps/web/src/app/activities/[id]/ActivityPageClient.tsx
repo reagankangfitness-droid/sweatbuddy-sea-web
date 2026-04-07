@@ -317,7 +317,7 @@ Organized via sweatbuddies
             {/* Title overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
               <div className="max-w-2xl mx-auto">
-                <h1 className="text-xl md:text-2xl font-bold text-white leading-tight mb-1">{activity.title}</h1>
+                <h1 className="text-xl md:text-2xl font-bold text-white leading-tight mb-1 line-clamp-2">{activity.title}</h1>
                 {activity.startTime && (
                   <p className="text-sm text-white/80 font-medium">{formatEventDate(new Date(activity.startTime))}</p>
                 )}
@@ -330,7 +330,7 @@ Organized via sweatbuddies
             {/* Title overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
               <div className="max-w-2xl mx-auto">
-                <h1 className="text-xl md:text-2xl font-bold text-[#1A1A1A] leading-tight mb-1">{activity.title}</h1>
+                <h1 className="text-xl md:text-2xl font-bold text-[#1A1A1A] leading-tight mb-1 line-clamp-2">{activity.title}</h1>
                 {activity.startTime && (
                   <p className="text-sm text-[#4A4A5A] font-medium">{formatEventDate(new Date(activity.startTime))}</p>
                 )}
@@ -416,7 +416,7 @@ Organized via sweatbuddies
             </div>
 
             {/* Price + Spots row */}
-            <div className="flex items-center gap-3 pt-0.5">
+            <div className="flex items-center gap-2 pt-0.5 flex-wrap">
               <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[12px] font-semibold ${
                 activity.price === 0
                   ? 'bg-emerald-50 text-emerald-600'
@@ -740,7 +740,7 @@ Organized via sweatbuddies
 
         {/* ─── STICKY BOTTOM CTA ─── */}
         {user && (
-          <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-4 bg-white/95 backdrop-blur-lg border-t border-black/[0.06] md:border md:rounded-2xl p-3 sm:p-4 shadow-lg md:shadow-sm z-40 pb-[env(safe-area-inset-bottom,8px)]">
+          <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-4 bg-white/95 backdrop-blur-lg border-t border-black/[0.06] md:border md:rounded-2xl p-3 sm:p-4 shadow-lg md:shadow-sm z-40 pb-[env(safe-area-inset-bottom,16px)]">
             <div className="max-w-2xl mx-auto">
               {isHost ? (
                 /* Host view */
@@ -925,7 +925,7 @@ Organized via sweatbuddies
 
         {/* Action bar for non-logged-in users */}
         {!user && userLoaded && (
-          <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-4 bg-white/95 backdrop-blur-lg border-t border-black/[0.06] md:border md:rounded-2xl p-3 sm:p-4 shadow-lg md:shadow-sm z-40 pb-[env(safe-area-inset-bottom,8px)]">
+          <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-4 bg-white/95 backdrop-blur-lg border-t border-black/[0.06] md:border md:rounded-2xl p-3 sm:p-4 shadow-lg md:shadow-sm z-40 pb-[env(safe-area-inset-bottom,16px)]">
             <div className="max-w-2xl mx-auto">
               <div className="flex gap-2 sm:gap-3 items-center">
                 <ShareButton

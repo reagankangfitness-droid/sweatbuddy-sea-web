@@ -217,6 +217,7 @@ function BuddyPageInner() {
 
   const [typeFilter, setTypeFilter] = useState('')
   const [pricingFilter, setPricingFilter] = useState('')
+  const [dateFilter, setDateFilter] = useState('')
   const [showCreateSheet, setShowCreateSheet] = useState(false)
   const [shareSession, setShareSession] = useState<Session | null>(null)
   const [selectedPin, setSelectedPin] = useState<Session | null>(null)
@@ -238,6 +239,7 @@ function BuddyPageInner() {
         const params = new URLSearchParams({ tab: 'happening' })
         if (typeFilter) params.set('type', typeFilter)
         if (pricingFilter) params.set('pricing', pricingFilter)
+        if (dateFilter) params.set('date', dateFilter)
         if (cursor) params.set('cursor', cursor)
         if (userLocation) {
           params.set('lat', String(userLocation.lat))
@@ -267,7 +269,7 @@ function BuddyPageInner() {
         setLoadingMore(false)
       }
     },
-    [typeFilter, pricingFilter, userLocation, router]
+    [typeFilter, pricingFilter, dateFilter, userLocation, router]
   )
 
   const [locationReady, setLocationReady] = useState(false)
@@ -355,7 +357,7 @@ function BuddyPageInner() {
   useEffect(() => {
     setSessions([])
     fetchSessions()
-  }, [typeFilter, pricingFilter, fetchSessions])
+  }, [typeFilter, pricingFilter, dateFilter, fetchSessions])
 
   async function joinSession(sessionId: string) {
     // If user hasn't completed onboarding, show the join gate first
@@ -578,33 +580,65 @@ function BuddyPageInner() {
         </div>
       )}
 
-      {/* ── Filter emojis — top overlay ── */}
-      <div className="absolute left-0 right-0 z-20 pt-[env(safe-area-inset-top,6px)]" style={{ top: 0 }}>
-        <div className="flex items-center gap-1 px-3 pt-1.5 pb-1">
-          {TYPE_FILTERS.map((f) => (
+      {/* ── Filters — top overlay ── */}
+      <div className="absolute left-0 right-0 z-20 pt-[env(safe-area-inset-top,4px)]" style={{ top: 0 }}>
+        <div className="bg-gradient-to-b from-[#FFFBF8]/90 to-transparent backdrop-blur-[2px] px-3 pt-1 pb-2 space-y-1.5">
+          {/* Row 1: Date strip */}
+          <div className="flex items-center gap-1.5">
+            <div className="flex gap-1 overflow-x-auto no-scrollbar flex-1">
+              {(() => {
+                const days = []
+                const now = new Date()
+                for (let i = 0; i < 7; i++) {
+                  const d = new Date(now)
+                  d.setDate(d.getDate() + i)
+                  const dateStr = d.toLocaleDateString('en-CA', { timeZone: 'Asia/Singapore' })
+                  const dayLabel = i === 0 ? 'Today' : i === 1 ? 'Tmr' : d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Asia/Singapore' })
+                  const dateNum = d.toLocaleDateString('en-US', { day: 'numeric', timeZone: 'Asia/Singapore' })
+                  days.push(
+                    <button
+                      key={dateStr}
+                      onClick={() => setDateFilter(dateFilter === dateStr ? '' : dateStr)}
+                      className={`flex-shrink-0 flex flex-col items-center px-2.5 py-1.5 rounded-xl text-center transition-all min-w-[44px] ${
+                        dateFilter === dateStr
+                          ? 'bg-[#1A1A1A] text-white shadow-md'
+                          : 'bg-white/90 backdrop-blur text-[#4A4A5A] shadow-sm'
+                      }`}
+                    >
+                      <span className="text-[10px] font-medium leading-tight">{dayLabel}</span>
+                      <span className="text-[13px] font-bold leading-tight">{dateNum}</span>
+                    </button>
+                  )
+                }
+                return days
+              })()}
+            </div>
             <button
-              key={f.value}
-              onClick={() => setTypeFilter(typeFilter === f.value ? '' : f.value)}
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-lg transition-all ${
-                typeFilter === f.value
-                  ? 'bg-[#1A1A1A] shadow-lg scale-110'
-                  : 'bg-white/90 backdrop-blur shadow-sm'
-              }`}
-              title={f.label}
+              onClick={() => setShowCreateSheet(true)}
+              className="w-9 h-9 rounded-full bg-[#FF6B35] shadow-lg shadow-[#FF6B35]/20 flex items-center justify-center hover:bg-[#E8612F] transition-colors active:scale-95 flex-shrink-0"
+              aria-label="Create a session"
             >
-              {f.emoji}
+              <Plus className="w-4 h-4 text-white" />
             </button>
-          ))}
+          </div>
 
-          {/* Spacer + FAB */}
-          <div className="flex-1" />
-          <button
-            onClick={() => setShowCreateSheet(true)}
-            className="w-10 h-10 rounded-full bg-[#FF6B35] shadow-lg shadow-[#FF6B35]/20 flex items-center justify-center hover:bg-[#E8612F] transition-colors active:scale-95"
-            aria-label="Create a session"
-          >
-            <Plus className="w-5 h-5 text-white" />
-          </button>
+          {/* Row 2: Category emojis */}
+          <div className="flex gap-1 overflow-x-auto no-scrollbar">
+            {TYPE_FILTERS.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => setTypeFilter(typeFilter === f.value ? '' : f.value)}
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all flex-shrink-0 ${
+                  typeFilter === f.value
+                    ? 'bg-[#1A1A1A] shadow-md scale-110'
+                    : 'bg-white/80 backdrop-blur shadow-sm'
+                }`}
+                title={f.label}
+              >
+                {f.emoji}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -782,78 +816,103 @@ function SessionCard({
     >
       <Link
         href={`/activities/${session.id}`}
-        className="group flex items-center gap-3.5 p-3.5 rounded-2xl bg-white shadow-sm hover:shadow-md active:shadow-sm transition-all duration-200"
+        className="group rounded-2xl bg-white shadow-sm hover:shadow-md active:shadow-sm transition-all duration-200 overflow-hidden block"
       >
-        {/* Emoji */}
-        <span className="text-2xl flex-shrink-0">{emoji}</span>
-
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          {/* Title */}
-          <div className="flex items-center gap-2">
-            <h3 className="text-[14px] font-semibold text-[#1A1A1A] truncate leading-tight">
-              {session.title}
-            </h3>
+        {/* Cover image (if available) */}
+        {session.imageUrl && (
+          <div className="relative h-32 overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={session.imageUrl} alt="" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            {/* Price badge on image */}
+            <span className={`absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[11px] font-bold ${isPaid ? 'bg-white/90 text-[#1A1A1A]' : 'bg-emerald-500/90 text-white'}`}>
+              {priceDisplay}
+            </span>
             {isJoined && !isHosting && (
-              <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/90 text-white">Going</span>
             )}
           </div>
+        )}
 
-          {/* Time · Location */}
-          <p className="text-[12px] text-[#71717A] mt-1 truncate leading-none">
-            {session.startTime ? getRelativeTime(session.startTime) : ''}
-            {session.startTime && (session.address || session.city) ? ' · ' : ''}
-            {formatAddress(session.address ?? session.city ?? '')}
-          </p>
+        <div className={`flex items-start gap-3 ${session.imageUrl ? 'p-3' : 'p-3.5'}`}>
+          {/* Emoji (only when no cover image) */}
+          {!session.imageUrl && <span className="text-2xl flex-shrink-0">{emoji}</span>}
 
-          {/* Avatar stack + social proof */}
-          <div className="flex items-center gap-1.5 mt-1.5">
-            {session.attendees.length > 0 && (
-              <div className="flex -space-x-1.5">
-                {session.attendees.slice(0, 3).map((a) =>
-                  a.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img key={a.id} src={a.imageUrl} alt="" className="w-5 h-5 rounded-full ring-2 ring-white object-cover" />
-                  ) : (
-                    <div key={a.id} className="w-5 h-5 rounded-full ring-2 ring-white bg-neutral-100 flex items-center justify-center text-[8px] font-bold text-[#9A9AAA]">
-                      {(a.name ?? '?')[0]}
-                    </div>
-                  )
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            {/* Community badge */}
+            {session.community && (
+              <div className="flex items-center gap-1.5 mb-1">
+                {session.community.logoImage ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={session.community.logoImage} alt="" className="w-4 h-4 rounded-full object-cover" />
+                ) : (
+                  <span className="text-xs">{emoji}</span>
                 )}
+                <span className="text-[11px] text-[#9A9AAA] truncate">{session.community.name}</span>
               </div>
             )}
-            <span className="text-[11px] text-[#9A9AAA] leading-none">
-              {session.attendeeCount > 0
-                ? `${session.attendeeCount} going`
-                : 'Be the first'}
-              {spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 ? ` · ${spotsLeft} left` : ''}
-            </span>
-          </div>
-        </div>
 
-        {/* Right: Price + Join */}
-        <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-          <span className={`text-[12px] font-semibold ${isPaid ? 'text-[#1A1A1A]' : 'text-emerald-600'}`}>
-            {priceDisplay}
-          </span>
-          {!isHost && !isHosting && !isFull && !isJoined && (
-            <button
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                onJoin(session.id)
-              }}
-              disabled={isJoining}
-              className="px-3 py-1 rounded-full bg-[#1A1A1A] text-white text-[11px] font-semibold hover:bg-black disabled:opacity-40 transition-all"
-            >
-              {isJoining ? '...' : 'Join'}
-            </button>
-          )}
-          {isJoined && (
-            <span className="text-[11px] font-semibold text-emerald-600">Going ✓</span>
-          )}
-          {isFull && (
-            <span className="text-[11px] text-[#9A9AAA]">Full</span>
+            {/* Title */}
+            <div className="flex items-center gap-2">
+              <h3 className="text-[14px] font-semibold text-[#1A1A1A] truncate leading-tight">
+                {session.title}
+              </h3>
+              {!session.imageUrl && isJoined && !isHosting && (
+                <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              )}
+            </div>
+
+            {/* Time · Location */}
+            <p className="text-[12px] text-[#71717A] mt-1 truncate leading-none">
+              {session.startTime ? getRelativeTime(session.startTime) : ''}
+              {session.startTime && (session.address || session.city) ? ' · ' : ''}
+              {formatAddress(session.address ?? session.city ?? '')}
+            </p>
+
+            {/* Avatar stack + social proof */}
+            <div className="flex items-center gap-1.5 mt-1.5">
+              {session.attendees.length > 0 && (
+                <div className="flex -space-x-1.5">
+                  {session.attendees.slice(0, 3).map((a) =>
+                    a.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img key={a.id} src={a.imageUrl} alt="" className="w-5 h-5 rounded-full ring-2 ring-white object-cover" />
+                    ) : (
+                      <div key={a.id} className="w-5 h-5 rounded-full ring-2 ring-white bg-neutral-100 flex items-center justify-center text-[8px] font-bold text-[#9A9AAA]">
+                        {(a.name ?? '?')[0]}
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
+              <span className="text-[11px] text-[#9A9AAA] leading-none">
+                {session.attendeeCount > 0
+                  ? `${session.attendeeCount} going`
+                  : 'Be the first'}
+                {spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 ? ` · ${spotsLeft} left` : ''}
+              </span>
+            </div>
+          </div>
+
+          {/* Right: Price + Join (only when no cover image) */}
+          {!session.imageUrl && (
+            <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+              <span className={`text-[12px] font-semibold ${isPaid ? 'text-[#1A1A1A]' : 'text-emerald-600'}`}>
+                {priceDisplay}
+              </span>
+              {!isHost && !isHosting && !isFull && !isJoined && (
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); onJoin(session.id) }}
+                  disabled={isJoining}
+                  className="px-3 py-1 rounded-full bg-[#1A1A1A] text-white text-[11px] font-semibold hover:bg-black disabled:opacity-40 transition-all"
+                >
+                  {isJoining ? '...' : 'Join'}
+                </button>
+              )}
+              {isJoined && <span className="text-[11px] font-semibold text-emerald-600">Going ✓</span>}
+              {isFull && <span className="text-[11px] text-[#9A9AAA]">Full</span>}
+            </div>
           )}
         </div>
       </Link>

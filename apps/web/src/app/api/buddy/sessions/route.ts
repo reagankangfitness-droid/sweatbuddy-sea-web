@@ -111,6 +111,14 @@ export async function GET(request: Request) {
       }
     }
 
+    // Date filtering — show sessions on a specific date
+    const dateFilter = searchParams.get('date')
+    if (dateFilter) {
+      const filterDate = new Date(dateFilter + 'T00:00:00+08:00') // Parse as SGT
+      const nextDay = new Date(filterDate.getTime() + 24 * 60 * 60 * 1000)
+      where.startTime = { gte: filterDate, lt: nextDay }
+    }
+
     if (activityType) where.categorySlug = activityType
     if (fitnessLevel) where.fitnessLevel = fitnessLevel
     if (pricingFilter === 'free') where.activityMode = 'P2P_FREE'

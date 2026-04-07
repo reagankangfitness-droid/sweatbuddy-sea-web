@@ -100,6 +100,7 @@ interface CreateSessionSheetProps {
 
 export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSheetProps) {
   const { startUpload } = useUploadThing('activityImage')
+  const { startUpload: startQrUpload } = useUploadThing('paynowQrImage')
   const [imageUrl, setImageUrl] = useState('')
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -123,6 +124,16 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
   const [spots, setSpots] = useState(0) // 0 = unlimited
   const [showLocationPicker, setShowLocationPicker] = useState(false)
 
+  // Pricing
+  const [isPaid, setIsPaid] = useState(false)
+  const [price, setPrice] = useState('') // dollars as string for input
+  const [acceptPayNow, setAcceptPayNow] = useState(false)
+  const [paynowPhone, setPaynowPhone] = useState('')
+  const [paynowName, setPaynowName] = useState('')
+  const [paynowQrUrl, setPaynowQrUrl] = useState('')
+  const [isUploadingQr, setIsUploadingQr] = useState(false)
+  const qrInputRef = useRef<HTMLInputElement>(null)
+
   // Share sheet after creation
   const [shareOpen, setShareOpen] = useState(false)
   const [createdSession, setCreatedSession] = useState<{ id: string; title: string } | null>(null)
@@ -140,6 +151,12 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
       setSelectedCommunity(null)
       setImageUrl('')
       setIsUploading(false)
+      setIsPaid(false)
+      setPrice('')
+      setAcceptPayNow(false)
+      setPaynowPhone('')
+      setPaynowName('')
+      setPaynowQrUrl('')
 
       // Fetch user's communities (filter for OWNER/ADMIN roles)
       fetch('/api/user/communities')
@@ -196,6 +213,23 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
     }
   }
 
+  const handleQrUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setIsUploadingQr(true)
+    try {
+      const result = await startQrUpload([file])
+      if (result && result[0]) {
+        setPaynowQrUrl(`https://utfs.io/f/${result[0].key}`)
+        toast.success('QR code uploaded!')
+      }
+    } catch {
+      toast.error('Failed to upload QR code')
+    } finally {
+      setIsUploadingQr(false)
+    }
+  }
+
   const canPost = categorySlug && selectedTime && latitude !== 0
 
   const handlePost = useCallback(async () => {
@@ -220,6 +254,12 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
           maxPeople: spots > 0 ? spots : null,
           communityId: selectedCommunity || undefined,
           imageUrl: imageUrl || undefined,
+          price: isPaid && price ? parseFloat(price) : 0,
+          currency: 'SGD',
+          acceptPayNow: isPaid && acceptPayNow,
+          paynowPhoneNumber: isPaid && acceptPayNow && paynowPhone ? paynowPhone : undefined,
+          paynowName: isPaid && acceptPayNow && paynowName ? paynowName : undefined,
+          paynowQrImageUrl: isPaid && acceptPayNow && paynowQrUrl ? paynowQrUrl : undefined,
         }),
       })
 
@@ -247,7 +287,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
     } finally {
       setPosting(false)
     }
-  }, [canPost, posting, categorySlug, selectedTime, city, address, latitude, longitude, spots, note, imageUrl, onClose, onSuccess])
+  }, [canPost, posting, categorySlug, selectedTime, city, address, latitude, longitude, spots, note, imageUrl, isPaid, price, acceptPayNow, paynowPhone, paynowName, paynowQrUrl, selectedCommunity, onClose, onSuccess])
 
   const catLabel = CATEGORIES.find((c) => c.slug === categorySlug)?.label ?? ''
 
@@ -489,6 +529,134 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                   </button>
                   <span className="text-xs text-[#9A9AAA]">{spots === 0 ? 'Unlimited' : `${spots} spots max`}</span>
                 </div>
+              </div>
+
+              {/* Pricing */}
+              <div>
+                <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2 block">Pricing</label>
+                {/* Free / Paid toggle */}
+                <div className="flex gap-2 mb-3">
+                  <button
+                    onClick={() => { setIsPaid(false); setPrice('') }}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                      !isPaid
+                        ? 'bg-[#1A1A1A] text-white shadow-md'
+                        : 'bg-[#FFFBF8] text-[#71717A] border border-black/[0.04]'
+                    }`}
+                  >
+                    Free
+                  </button>
+                  <button
+                    onClick={() => setIsPaid(true)}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                      isPaid
+                        ? 'bg-[#1A1A1A] text-white shadow-md'
+                        : 'bg-[#FFFBF8] text-[#71717A] border border-black/[0.04]'
+                    }`}
+                  >
+                    Paid
+                  </button>
+                </div>
+
+                {/* Paid options */}
+                {isPaid && (
+                  <div className="space-y-3">
+                    {/* Price input */}
+                    <div>
+                      <label className="text-[11px] text-[#9A9AAA] mb-1 block">Price (SGD)</label>
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-semibold text-[#4A4A5A]">$</span>
+                        <input
+                          type="number"
+                          inputMode="decimal"
+                          min="0"
+                          step="0.01"
+                          value={price}
+                          onChange={(e) => setPrice(e.target.value)}
+                          placeholder="0.00"
+                          className="w-full pl-8 pr-3.5 py-3 bg-[#FFFBF8] rounded-xl border border-black/[0.04] text-sm text-[#1A1A1A] focus:outline-none focus:border-[#FF6B35]/40"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Payment method */}
+                    <div>
+                      <label className="text-[11px] text-[#9A9AAA] mb-1.5 block">Payment method</label>
+                      <button
+                        onClick={() => setAcceptPayNow(!acceptPayNow)}
+                        className={`flex items-center gap-3 w-full px-3.5 py-3 rounded-xl border transition-all ${
+                          acceptPayNow
+                            ? 'bg-[#FFFBF8] border-[#FF6B35]/30'
+                            : 'bg-[#FFFBF8] border-black/[0.04] hover:border-black/[0.1]'
+                        }`}
+                      >
+                        <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+                          acceptPayNow ? 'bg-[#FF6B35] border-[#FF6B35]' : 'border-black/[0.12]'
+                        }`}>
+                          {acceptPayNow && <span className="text-white text-[10px] font-bold">✓</span>}
+                        </div>
+                        <span className="text-sm font-medium text-[#1A1A1A]">PayNow</span>
+                      </button>
+                    </div>
+
+                    {/* PayNow details */}
+                    {acceptPayNow && (
+                      <div className="space-y-2 pl-1">
+                        <input
+                          type="text"
+                          value={paynowName}
+                          onChange={(e) => setPaynowName(e.target.value)}
+                          placeholder="PayNow name"
+                          className="w-full px-3.5 py-2.5 bg-[#FFFBF8] rounded-xl border border-black/[0.04] text-sm text-[#1A1A1A] placeholder:text-[#C4C4CC] focus:outline-none focus:border-[#FF6B35]/40"
+                        />
+                        <input
+                          type="tel"
+                          value={paynowPhone}
+                          onChange={(e) => setPaynowPhone(e.target.value)}
+                          placeholder="PayNow phone number"
+                          className="w-full px-3.5 py-2.5 bg-[#FFFBF8] rounded-xl border border-black/[0.04] text-sm text-[#1A1A1A] placeholder:text-[#C4C4CC] focus:outline-none focus:border-[#FF6B35]/40"
+                        />
+                        {/* QR code upload */}
+                        <input
+                          ref={qrInputRef}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleQrUpload}
+                        />
+                        {paynowQrUrl ? (
+                          <div className="flex items-center gap-3 p-2 rounded-xl bg-[#FFFBF8] border border-black/[0.04]">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={paynowQrUrl} alt="QR" className="w-14 h-14 rounded-lg object-cover" />
+                            <div className="flex-1">
+                              <p className="text-xs font-medium text-[#1A1A1A]">PayNow QR uploaded</p>
+                              <button
+                                type="button"
+                                onClick={() => qrInputRef.current?.click()}
+                                className="text-[11px] text-[#FF6B35] font-medium mt-0.5"
+                              >
+                                Change
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => qrInputRef.current?.click()}
+                            disabled={isUploadingQr}
+                            className="w-full py-2.5 rounded-xl border border-dashed border-black/[0.08] bg-[#FFFBF8] text-xs font-medium text-[#9A9AAA] hover:border-[#FF6B35]/30 transition-all flex items-center justify-center gap-2"
+                          >
+                            {isUploadingQr ? (
+                              <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading...</>
+                            ) : (
+                              'Upload PayNow QR code (optional)'
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Community selector */}

@@ -824,60 +824,62 @@ function SessionCard({
         href={`/activities/${session.id}`}
         className="group rounded-2xl bg-white shadow-sm hover:shadow-md active:shadow-sm transition-all duration-200 overflow-hidden block"
       >
-        {/* Cover image (if available) */}
-        {session.imageUrl && (
-          <div className="relative h-32 overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={session.imageUrl} alt="" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-            {/* Price badge on image */}
-            <span className={`absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[11px] font-bold ${isPaid ? 'bg-white/90 text-[#1A1A1A]' : 'bg-emerald-500/90 text-white'}`}>
-              {priceDisplay}
-            </span>
-            {isJoined && !isHosting && (
-              <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/90 text-white">Going</span>
-            )}
-          </div>
-        )}
-
-        <div className={`flex items-start gap-3 ${session.imageUrl ? 'p-3' : 'p-3.5'}`}>
-          {/* Emoji (only when no cover image) */}
-          {!session.imageUrl && <span className="text-2xl flex-shrink-0">{emoji}</span>}
-
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            {/* Community badge */}
-            {session.community && (
-              <div className="flex items-center gap-1.5 mb-1">
-                {session.community.logoImage ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={session.community.logoImage} alt="" className="w-4 h-4 rounded-full object-cover" />
-                ) : (
-                  <span className="text-xs">{emoji}</span>
-                )}
-                <span className="text-[11px] text-[#9A9AAA] truncate">{session.community.name}</span>
-              </div>
-            )}
-
-            {/* Title */}
-            <div className="flex items-center gap-2">
-              <h3 className="text-[14px] font-semibold text-[#1A1A1A] truncate leading-tight">
-                {session.title}
-              </h3>
-              {!session.imageUrl && isJoined && !isHosting && (
-                <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              )}
+        {/* Hero image area */}
+        <div className="relative h-44 overflow-hidden">
+          {session.imageUrl ? (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={session.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+            </>
+          ) : (
+            <div className={`w-full h-full flex items-center justify-center ${pinColor(session.categorySlug ?? 'other')}`}>
+              <span className="text-5xl">{emoji}</span>
             </div>
+          )}
 
-            {/* Time · Location */}
-            <p className="text-[12px] text-[#71717A] mt-1 truncate leading-none">
+          {/* Top badges */}
+          <span className={`absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-bold backdrop-blur-sm ${isPaid ? 'bg-white/90 text-[#1A1A1A]' : 'bg-emerald-500/90 text-white'}`}>
+            {priceDisplay}
+          </span>
+          {isJoined && !isHosting && (
+            <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/90 text-white backdrop-blur-sm">Going</span>
+          )}
+
+          {/* Title overlaid on image bottom */}
+          <div className="absolute bottom-0 left-0 right-0 px-3.5 pb-3">
+            <h3 className="text-[15px] font-bold text-white leading-snug line-clamp-2 drop-shadow-sm">
+              {session.title}
+            </h3>
+          </div>
+        </div>
+
+        {/* Card body */}
+        <div className="px-3.5 py-3 space-y-2">
+          {/* Time + Location row */}
+          <div className="flex items-center gap-1.5 text-[12px] text-[#71717A]">
+            <span className="truncate">
               {session.startTime ? getRelativeTime(session.startTime) : ''}
               {session.startTime && (session.address || session.city) ? ' · ' : ''}
               {formatAddress(session.address ?? session.city ?? '')}
-            </p>
+            </span>
+          </div>
 
-            {/* Avatar stack + social proof */}
-            <div className="flex items-center gap-1.5 mt-1.5">
+          {/* Community/host badge + social proof row */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 min-w-0">
+              {/* Avatar */}
+              {avatarSrc ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={avatarSrc} alt="" className="w-5 h-5 rounded-full object-cover flex-shrink-0" />
+              ) : (
+                <div className="w-5 h-5 rounded-full bg-neutral-100 flex items-center justify-center text-[10px] flex-shrink-0">{emoji}</div>
+              )}
+              <span className="text-[12px] text-[#4A4A5A] truncate">{displayName}</span>
+            </div>
+
+            {/* Social proof */}
+            <div className="flex items-center gap-1.5 flex-shrink-0">
               {session.attendees.length > 0 && (
                 <div className="flex -space-x-1.5">
                   {session.attendees.slice(0, 3).map((a) =>
@@ -892,34 +894,11 @@ function SessionCard({
                   )}
                 </div>
               )}
-              <span className="text-[11px] text-[#9A9AAA] leading-none">
-                {session.attendeeCount > 0
-                  ? `${session.attendeeCount} going`
-                  : 'Be the first'}
-                {spotsLeft !== null && spotsLeft > 0 && spotsLeft <= 5 ? ` · ${spotsLeft} left` : ''}
+              <span className="text-[11px] text-[#9A9AAA]">
+                {session.attendeeCount > 0 ? `${session.attendeeCount} going` : 'Be first'}
               </span>
             </div>
           </div>
-
-          {/* Right: Price + Join (only when no cover image) */}
-          {!session.imageUrl && (
-            <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-              <span className={`text-[12px] font-semibold ${isPaid ? 'text-[#1A1A1A]' : 'text-emerald-600'}`}>
-                {priceDisplay}
-              </span>
-              {!isHost && !isHosting && !isFull && !isJoined && (
-                <button
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); onJoin(session.id) }}
-                  disabled={isJoining}
-                  className="px-3 py-1 rounded-full bg-[#1A1A1A] text-white text-[11px] font-semibold hover:bg-black disabled:opacity-40 transition-all"
-                >
-                  {isJoining ? '...' : 'Join'}
-                </button>
-              )}
-              {isJoined && <span className="text-[11px] font-semibold text-emerald-600">Going ✓</span>}
-              {isFull && <span className="text-[11px] text-[#9A9AAA]">Full</span>}
-            </div>
-          )}
         </div>
       </Link>
     </motion.div>

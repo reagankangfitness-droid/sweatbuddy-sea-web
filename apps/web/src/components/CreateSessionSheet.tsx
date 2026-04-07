@@ -378,53 +378,59 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
               {/* Date & Time */}
               <div>
                 <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2 block">Date & Time</label>
+                {/* Date and time inputs */}
+                <div className="flex gap-2 mb-3">
+                  <div className="flex-1">
+                    <label className="text-[11px] text-[#9A9AAA] mb-1 block">Date</label>
+                    <input
+                      type="date"
+                      min={new Date().toISOString().split('T')[0]}
+                      value={selectedTime ? selectedTime.toISOString().split('T')[0] : ''}
+                      onChange={(e) => {
+                        if (!e.target.value) return
+                        const current = selectedTime ?? new Date()
+                        const [y, m, d] = e.target.value.split('-').map(Number)
+                        const next = new Date(current)
+                        next.setFullYear(y, m - 1, d)
+                        setSelectedTime(next)
+                        setTimeLabel(next.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + ' ' + next.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }))
+                      }}
+                      className="w-full px-3.5 py-3 bg-[#FFFBF8] rounded-xl border border-black/[0.04] text-sm text-[#1A1A1A] focus:outline-none focus:border-[#FF6B35]/40"
+                    />
+                  </div>
+                  <div className="w-32">
+                    <label className="text-[11px] text-[#9A9AAA] mb-1 block">Time</label>
+                    <input
+                      type="time"
+                      value={selectedTime ? `${String(selectedTime.getHours()).padStart(2, '0')}:${String(selectedTime.getMinutes()).padStart(2, '0')}` : ''}
+                      onChange={(e) => {
+                        if (!e.target.value) return
+                        const [h, m] = e.target.value.split(':').map(Number)
+                        const current = selectedTime ?? new Date()
+                        const next = new Date(current)
+                        next.setHours(h, m, 0, 0)
+                        setSelectedTime(next)
+                        setTimeLabel(next.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + ' ' + next.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }))
+                      }}
+                      className="w-full px-3.5 py-3 bg-[#FFFBF8] rounded-xl border border-black/[0.04] text-sm text-[#1A1A1A] focus:outline-none focus:border-[#FF6B35]/40"
+                    />
+                  </div>
+                </div>
                 {/* Quick presets */}
-                <div className="flex flex-wrap gap-2 mb-3">
+                <div className="flex flex-wrap gap-1.5">
                   {getTimeOptions().map((opt) => (
                     <button
                       key={opt.label}
                       onClick={() => { setSelectedTime(opt.value); setTimeLabel(opt.label) }}
-                      className={`px-3.5 py-2 rounded-full text-xs font-medium border transition-all ${
+                      className={`px-3 py-1.5 rounded-full text-[11px] font-medium border transition-all ${
                         timeLabel === opt.label
                           ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
-                          : 'bg-white text-[#4A4A5A] border-black/[0.06] hover:border-black/[0.12]'
+                          : 'bg-white text-[#71717A] border-black/[0.06] hover:border-black/[0.12]'
                       }`}
                     >
                       {opt.label}
                     </button>
                   ))}
-                </div>
-                {/* Custom pickers */}
-                <div className="flex gap-2">
-                  <input
-                    type="date"
-                    min={new Date().toISOString().split('T')[0]}
-                    value={selectedTime ? selectedTime.toISOString().split('T')[0] : ''}
-                    onChange={(e) => {
-                      if (!e.target.value) return
-                      const current = selectedTime ?? new Date()
-                      const [y, m, d] = e.target.value.split('-').map(Number)
-                      const next = new Date(current)
-                      next.setFullYear(y, m - 1, d)
-                      setSelectedTime(next)
-                      setTimeLabel(next.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + ' ' + next.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }))
-                    }}
-                    className="flex-1 px-3.5 py-3 bg-[#FFFBF8] rounded-xl border border-black/[0.04] text-sm text-[#1A1A1A] focus:outline-none focus:border-[#FF6B35]/40"
-                  />
-                  <input
-                    type="time"
-                    value={selectedTime ? `${String(selectedTime.getHours()).padStart(2, '0')}:${String(selectedTime.getMinutes()).padStart(2, '0')}` : ''}
-                    onChange={(e) => {
-                      if (!e.target.value) return
-                      const [h, m] = e.target.value.split(':').map(Number)
-                      const current = selectedTime ?? new Date()
-                      const next = new Date(current)
-                      next.setHours(h, m, 0, 0)
-                      setSelectedTime(next)
-                      setTimeLabel(next.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + ' ' + next.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }))
-                    }}
-                    className="w-28 px-3.5 py-3 bg-[#FFFBF8] rounded-xl border border-black/[0.04] text-sm text-[#1A1A1A] focus:outline-none focus:border-[#FF6B35]/40"
-                  />
                 </div>
               </div>
 

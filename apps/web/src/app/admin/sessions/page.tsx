@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
 import { DeleteSessionButton } from '@/components/admin/DeleteSessionButton'
 import { formatDateTime } from '@/lib/utils'
@@ -121,7 +122,15 @@ export default function AdminSessionsPage() {
                     {session.userActivities.length}
                   </td>
                   <td className="px-6 py-4">
-                    <DeleteSessionButton sessionId={session.id} />
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/activities/${session.id}/edit`}
+                        className="px-3 py-1.5 text-xs font-medium text-neutral-300 bg-neutral-800 hover:bg-neutral-700 rounded-lg transition-colors"
+                      >
+                        Edit
+                      </Link>
+                      <DeleteSessionButton sessionId={session.id} />
+                    </div>
                   </td>
                 </tr>
               ))}

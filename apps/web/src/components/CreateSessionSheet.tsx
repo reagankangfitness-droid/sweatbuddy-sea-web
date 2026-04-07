@@ -2,9 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MapPin, Loader2, Zap, ChevronDown, Minus, Plus, X, Clock } from 'lucide-react'
+import { MapPin, Loader2, Zap, Minus, Plus, X } from 'lucide-react'
 import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
 import { LocationAutocomplete } from '@/components/host/LocationAutocomplete'
 import { ShareSessionSheet } from '@/components/ShareSessionSheet'
@@ -99,8 +98,6 @@ interface CreateSessionSheetProps {
 }
 
 export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSheetProps) {
-  const router = useRouter()
-
   // Community selector
   const [communities, setCommunities] = useState<{ id: string; name: string; slug: string }[]>([])
   const [selectedCommunity, setSelectedCommunity] = useState<string | null>(null)
@@ -116,11 +113,8 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
   const [locationLoading, setLocationLoading] = useState(true)
   const [posting, setPosting] = useState(false)
 
-  // Expanded fields
-  const [expanded, setExpanded] = useState(false)
   const [note, setNote] = useState('')
   const [spots, setSpots] = useState(0) // 0 = unlimited
-  const [showTimePicker, setShowTimePicker] = useState(false)
   const [showLocationPicker, setShowLocationPicker] = useState(false)
 
   // Share sheet after creation
@@ -136,8 +130,6 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
       setCategorySlug('')
       setNote('')
       setSpots(0)
-      setExpanded(false)
-      setShowTimePicker(false)
       setShowLocationPicker(false)
       setSelectedCommunity(null)
 
@@ -229,12 +221,9 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
     } finally {
       setPosting(false)
     }
-  }, [canPost, posting, categorySlug, selectedTime, city, address, latitude, longitude, spots, note, onClose, onSuccess, router])
+  }, [canPost, posting, categorySlug, selectedTime, city, address, latitude, longitude, spots, note, onClose, onSuccess])
 
   const catLabel = CATEGORIES.find((c) => c.slug === categorySlug)?.label ?? ''
-  const previewText = catLabel && timeLabel
-    ? `${catLabel} · ${timeLabel}${address ? ` · ${address.split(',')[0]}` : ''}`
-    : 'Pick an activity to post'
 
   return (
     <>
@@ -247,37 +236,183 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-0 bg-black/30 z-40"
+            className="fixed inset-0 bg-black/40 z-40"
             onClick={onClose}
           />
 
-          {/* Sheet */}
+          {/* Full-screen sheet */}
           <motion.div
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 400, damping: 36 }}
-            drag="y"
-            dragConstraints={{ top: 0 }}
-            dragElastic={0.15}
-            onDragEnd={(_, info) => { if (info.offset.y > 100) onClose() }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl shadow-2xl"
-            style={{ maxHeight: '85dvh' }}
+            className="fixed inset-x-0 bottom-0 top-[env(safe-area-inset-top,40px)] z-50 bg-white rounded-t-2xl shadow-2xl flex flex-col"
           >
-            {/* Drag handle */}
-            <div className="flex justify-center pt-3 pb-2">
-              <div className="w-10 h-1.5 rounded-full bg-black/[0.08]" />
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-black/[0.04]">
+              <h2 className="text-lg font-bold text-[#1A1A1A]">Create Session</h2>
+              <button onClick={onClose} className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-neutral-200 transition-colors">
+                <X className="w-4 h-4 text-[#4A4A5A]" />
+              </button>
             </div>
 
-            <div className="px-4 pb-[env(safe-area-inset-bottom,16px)] overflow-y-auto" style={{ maxHeight: 'calc(85dvh - 24px)' }}>
-              {/* Community selector — only shows if user has communities */}
+            {/* Scrollable form body */}
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
+
+              {/* Session name */}
+              <div>
+                <input
+                  type="text"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="Session name"
+                  maxLength={100}
+                  className="w-full text-xl font-bold text-[#1A1A1A] placeholder:text-[#C4C4CC] focus:outline-none border-none bg-transparent"
+                />
+                <p className="text-[11px] text-[#9A9AAA] mt-1">
+                  {catLabel ? `Auto: ${generateTitle(categorySlug, selectedTime ?? new Date())}` : 'Give it a name or we\u2019ll generate one'}
+                </p>
+              </div>
+
+              {/* Activity type */}
+              <div>
+                <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2 block">Activity</label>
+                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                  {CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.slug}
+                      onClick={() => setCategorySlug(categorySlug === cat.slug ? '' : cat.slug)}
+                      className={`flex flex-col items-center gap-1.5 px-3.5 py-2.5 rounded-xl border transition-all flex-shrink-0 min-w-[68px] ${
+                        categorySlug === cat.slug
+                          ? 'bg-[#1A1A1A] text-white border-[#1A1A1A] shadow-md'
+                          : 'bg-[#FFFBF8] text-[#4A4A5A] border-black/[0.04] hover:border-black/[0.1]'
+                      }`}
+                    >
+                      <span className="text-xl">{cat.emoji}</span>
+                      <span className="text-[10px] font-medium leading-tight">{cat.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Date & Time */}
+              <div>
+                <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2 block">Date & Time</label>
+                {/* Quick presets */}
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {getTimeOptions().map((opt) => (
+                    <button
+                      key={opt.label}
+                      onClick={() => { setSelectedTime(opt.value); setTimeLabel(opt.label) }}
+                      className={`px-3.5 py-2 rounded-full text-xs font-medium border transition-all ${
+                        timeLabel === opt.label
+                          ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
+                          : 'bg-white text-[#4A4A5A] border-black/[0.06] hover:border-black/[0.12]'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                {/* Custom pickers */}
+                <div className="flex gap-2">
+                  <input
+                    type="date"
+                    min={new Date().toISOString().split('T')[0]}
+                    value={selectedTime ? selectedTime.toISOString().split('T')[0] : ''}
+                    onChange={(e) => {
+                      if (!e.target.value) return
+                      const current = selectedTime ?? new Date()
+                      const [y, m, d] = e.target.value.split('-').map(Number)
+                      const next = new Date(current)
+                      next.setFullYear(y, m - 1, d)
+                      setSelectedTime(next)
+                      setTimeLabel(next.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + ' ' + next.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }))
+                    }}
+                    className="flex-1 px-3.5 py-3 bg-[#FFFBF8] rounded-xl border border-black/[0.04] text-sm text-[#1A1A1A] focus:outline-none focus:border-[#FF6B35]/40"
+                  />
+                  <input
+                    type="time"
+                    value={selectedTime ? `${String(selectedTime.getHours()).padStart(2, '0')}:${String(selectedTime.getMinutes()).padStart(2, '0')}` : ''}
+                    onChange={(e) => {
+                      if (!e.target.value) return
+                      const [h, m] = e.target.value.split(':').map(Number)
+                      const current = selectedTime ?? new Date()
+                      const next = new Date(current)
+                      next.setHours(h, m, 0, 0)
+                      setSelectedTime(next)
+                      setTimeLabel(next.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + ' ' + next.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }))
+                    }}
+                    className="w-28 px-3.5 py-3 bg-[#FFFBF8] rounded-xl border border-black/[0.04] text-sm text-[#1A1A1A] focus:outline-none focus:border-[#FF6B35]/40"
+                  />
+                </div>
+              </div>
+
+              {/* Location */}
+              <div>
+                <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2 block">Location</label>
+                {showLocationPicker ? (
+                  <LocationAutocomplete
+                    variant="light"
+                    value={address}
+                    onChange={(data) => {
+                      setAddress(data.location)
+                      setLatitude(data.latitude)
+                      setLongitude(data.longitude)
+                      const parts = data.location.split(',')
+                      setCity(parts[parts.length - 2]?.trim() || parts[parts.length - 1]?.trim() || 'Singapore')
+                      setShowLocationPicker(false)
+                    }}
+                    onManualChange={(val) => setAddress(val)}
+                    placeholder="Search for a place..."
+                  />
+                ) : (
+                  <button
+                    onClick={() => setShowLocationPicker(true)}
+                    className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-[#FFFBF8] border border-black/[0.04] hover:border-black/[0.1] transition-all text-left"
+                  >
+                    <MapPin className="w-4 h-4 text-[#71717A] flex-shrink-0" />
+                    {locationLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin text-[#9A9AAA]" />
+                    ) : (
+                      <span className="text-sm text-[#4A4A5A] truncate">{address || city || 'Add location'}</span>
+                    )}
+                  </button>
+                )}
+              </div>
+
+              {/* Spots */}
+              <div>
+                <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2 block">Spots</label>
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() => setSpots(Math.max(0, spots - 1))}
+                    disabled={spots === 0}
+                    className="w-10 h-10 rounded-full border border-black/[0.06] flex items-center justify-center hover:bg-neutral-50 disabled:opacity-30 transition-all"
+                  >
+                    <Minus className="w-4 h-4 text-[#4A4A5A]" />
+                  </button>
+                  <span className="text-base font-bold text-[#1A1A1A] w-16 text-center">
+                    {spots === 0 ? 'Open' : spots}
+                  </span>
+                  <button
+                    onClick={() => setSpots(spots + 1)}
+                    className="w-10 h-10 rounded-full border border-black/[0.06] flex items-center justify-center hover:bg-neutral-50 transition-all"
+                  >
+                    <Plus className="w-4 h-4 text-[#4A4A5A]" />
+                  </button>
+                  <span className="text-xs text-[#9A9AAA]">{spots === 0 ? 'Unlimited' : `${spots} spots max`}</span>
+                </div>
+              </div>
+
+              {/* Community selector */}
               {communities.length > 0 && (
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-[11px] text-[#9A9AAA]">Posting as</span>
-                  <div className="flex gap-1.5 overflow-x-auto no-scrollbar flex-1">
+                <div>
+                  <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2 block">Posting as</label>
+                  <div className="flex gap-2 flex-wrap">
                     <button
                       onClick={() => setSelectedCommunity(null)}
-                      className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                      className={`px-4 py-2.5 rounded-full text-xs font-medium transition-all ${
                         !selectedCommunity
                           ? 'bg-[#1A1A1A] text-white'
                           : 'bg-[#FFFBF8] text-[#71717A] border border-black/[0.04]'
@@ -289,7 +424,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                       <button
                         key={c.id}
                         onClick={() => setSelectedCommunity(c.id)}
-                        className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                        className={`px-4 py-2.5 rounded-full text-xs font-medium transition-all ${
                           selectedCommunity === c.id
                             ? 'bg-[#1A1A1A] text-white'
                             : 'bg-[#FFFBF8] text-[#71717A] border border-black/[0.04]'
@@ -301,217 +436,19 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                   </div>
                 </div>
               )}
+            </div>
 
-              {/* Category emoji row */}
-              <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-3">
-                {CATEGORIES.map((cat) => (
-                  <button
-                    key={cat.slug}
-                    onClick={() => setCategorySlug(categorySlug === cat.slug ? '' : cat.slug)}
-                    className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl border transition-all flex-shrink-0 min-w-[64px] ${
-                      categorySlug === cat.slug
-                        ? 'bg-[#1A1A1A] text-white border-[#1A1A1A] shadow-md scale-105'
-                        : 'bg-[#FFFBF8] text-[#4A4A5A] border-black/[0.04] hover:border-black/[0.1]'
-                    }`}
-                  >
-                    <span className="text-xl">{cat.emoji}</span>
-                    <span className="text-[10px] font-medium leading-tight">{cat.label}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Time + Location row */}
-              <div className="flex gap-2 mb-3">
-                {/* Time chip */}
-                <button
-                  onClick={() => setShowTimePicker(!showTimePicker)}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#FFFBF8] border border-black/[0.04] text-sm text-[#4A4A5A] hover:border-black/[0.1] transition-all flex-shrink-0"
-                >
-                  <Clock className="w-3.5 h-3.5 text-[#71717A]" />
-                  <span className="font-medium text-xs">{timeLabel || 'When?'}</span>
-                  <ChevronDown className="w-3 h-3 text-[#9A9AAA]" />
-                </button>
-
-                {/* Location chip */}
-                <button
-                  onClick={() => setShowLocationPicker(!showLocationPicker)}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#FFFBF8] border border-black/[0.04] text-sm text-[#4A4A5A] hover:border-black/[0.1] transition-all min-w-0 flex-1"
-                >
-                  <MapPin className="w-3.5 h-3.5 text-[#71717A] flex-shrink-0" />
-                  {locationLoading ? (
-                    <Loader2 className="w-3 h-3 animate-spin text-[#9A9AAA]" />
-                  ) : (
-                    <span className="font-medium text-xs truncate">{address || city || 'Where?'}</span>
-                  )}
-                </button>
-              </div>
-
-              {/* Time picker dropdown */}
-              <AnimatePresence>
-                {showTimePicker && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden mb-3"
-                  >
-                    <div className="space-y-3 pb-1">
-                      {/* Quick presets */}
-                      <div className="flex flex-wrap gap-2">
-                        {getTimeOptions().map((opt) => (
-                          <button
-                            key={opt.label}
-                            onClick={() => {
-                              setSelectedTime(opt.value)
-                              setTimeLabel(opt.label)
-                              setShowTimePicker(false)
-                            }}
-                            className={`px-3 py-2 rounded-full text-xs font-medium border transition-all ${
-                              timeLabel === opt.label
-                                ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
-                                : 'bg-white text-[#4A4A5A] border-black/[0.06] hover:border-black/[0.12]'
-                            }`}
-                          >
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
-
-                      {/* Custom date + time picker */}
-                      <div className="flex gap-2">
-                        <input
-                          type="date"
-                          min={new Date().toISOString().split('T')[0]}
-                          value={selectedTime ? selectedTime.toISOString().split('T')[0] : ''}
-                          onChange={(e) => {
-                            if (!e.target.value) return
-                            const current = selectedTime ?? new Date()
-                            const [y, m, d] = e.target.value.split('-').map(Number)
-                            const next = new Date(current)
-                            next.setFullYear(y, m - 1, d)
-                            setSelectedTime(next)
-                            setTimeLabel(next.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + ' ' + next.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }))
-                          }}
-                          className="flex-1 px-3 py-2.5 bg-[#FFFBF8] rounded-xl border border-black/[0.04] text-xs text-[#1A1A1A] focus:outline-none focus:border-black/[0.12]"
-                        />
-                        <input
-                          type="time"
-                          value={selectedTime ? `${String(selectedTime.getHours()).padStart(2, '0')}:${String(selectedTime.getMinutes()).padStart(2, '0')}` : ''}
-                          onChange={(e) => {
-                            if (!e.target.value) return
-                            const [h, m] = e.target.value.split(':').map(Number)
-                            const current = selectedTime ?? new Date()
-                            const next = new Date(current)
-                            next.setHours(h, m, 0, 0)
-                            setSelectedTime(next)
-                            setTimeLabel(next.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + ' ' + next.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }))
-                          }}
-                          className="w-28 px-3 py-2.5 bg-[#FFFBF8] rounded-xl border border-black/[0.04] text-xs text-[#1A1A1A] focus:outline-none focus:border-black/[0.12]"
-                        />
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Location picker dropdown */}
-              <AnimatePresence>
-                {showLocationPicker && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden mb-3"
-                  >
-                    <LocationAutocomplete
-                      variant="light"
-                      value={address}
-                      onChange={(data) => {
-                        setAddress(data.location)
-                        setLatitude(data.latitude)
-                        setLongitude(data.longitude)
-                        // Extract city from address
-                        const parts = data.location.split(',')
-                        setCity(parts[parts.length - 2]?.trim() || parts[parts.length - 1]?.trim() || 'Singapore')
-                        setShowLocationPicker(false)
-                      }}
-                      onManualChange={(val) => setAddress(val)}
-                      placeholder="Search for a place..."
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Expanded options */}
-              <AnimatePresence>
-                {expanded && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.25 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="space-y-3 pb-3">
-                      {/* Note */}
-                      <input
-                        type="text"
-                        value={note}
-                        onChange={(e) => setNote(e.target.value)}
-                        placeholder="What should people know? (optional)"
-                        maxLength={100}
-                        className="w-full px-3.5 py-2.5 bg-[#FFFBF8] rounded-xl border border-black/[0.04] text-sm text-[#1A1A1A] placeholder:text-[#9A9AAA] focus:outline-none focus:border-black/[0.12] transition-all"
-                      />
-
-                      {/* Spots stepper */}
-                      <div className="flex items-center justify-between px-1">
-                        <span className="text-xs font-medium text-[#71717A]">Spots</span>
-                        <div className="flex items-center gap-3">
-                          <button
-                            onClick={() => setSpots(Math.max(0, spots - 1))}
-                            disabled={spots === 0}
-                            className="w-8 h-8 rounded-full border border-black/[0.06] flex items-center justify-center hover:bg-neutral-50 disabled:opacity-30 transition-all"
-                          >
-                            <Minus className="w-3.5 h-3.5 text-[#4A4A5A]" />
-                          </button>
-                          <span className="text-sm font-semibold text-[#1A1A1A] w-12 text-center">
-                            {spots === 0 ? 'Open' : spots}
-                          </span>
-                          <button
-                            onClick={() => setSpots(spots + 1)}
-                            className="w-8 h-8 rounded-full border border-black/[0.06] flex items-center justify-center hover:bg-neutral-50 transition-all"
-                          >
-                            <Plus className="w-3.5 h-3.5 text-[#4A4A5A]" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Add details toggle */}
-              {!expanded && (
-                <button
-                  onClick={() => setExpanded(true)}
-                  className="text-xs text-[#71717A] hover:text-[#4A4A5A] mb-3 transition-colors"
-                >
-                  + Add details
-                </button>
-              )}
-
-              {/* CTA */}
+            {/* Sticky bottom CTA */}
+            <div className="px-5 py-4 border-t border-black/[0.04] pb-[env(safe-area-inset-bottom,16px)]">
               <button
                 onClick={handlePost}
                 disabled={!canPost || posting}
-                className="w-full py-3.5 rounded-full bg-[#1A1A1A] text-white text-sm font-bold hover:bg-black disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 mb-2"
+                className="w-full py-4 rounded-full bg-gradient-to-r from-[#FF6B35] to-[#FF8B55] text-white text-sm font-bold hover:from-[#E8612F] hover:to-[#FF6B35] disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#FF6B35]/20"
               >
                 {posting ? (
-                  <><Loader2 className="w-4 h-4 animate-spin" /> Posting...</>
+                  <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</>
                 ) : (
-                  <><Zap className="w-4 h-4" /> {canPost ? previewText : 'Pick an activity'}</>
+                  <><Zap className="w-4 h-4" /> Publish Session</>
                 )}
               </button>
             </div>

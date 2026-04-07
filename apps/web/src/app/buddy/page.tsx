@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { Plus, Loader2, Zap } from 'lucide-react'
+import { Plus, Loader2, Zap, Map, List } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 import { GoogleMap, useLoadScript, OverlayView } from '@react-google-maps/api'
@@ -227,8 +227,9 @@ function BuddyPageInner() {
   const [pendingJoinId, setPendingJoinId] = useState<string | null>(null)
   const [isOnboarded, setIsOnboarded] = useState(true) // assume true until checked
 
-  // Sheet position: 'peek' (shows 1 card), 'half' (50%), 'full' (85%)
-  const [sheetMode, setSheetMode] = useState<'peek' | 'half' | 'full'>('half')
+  // View mode: list-first (default) or map
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
+
 
   const fetchSessions = useCallback(
     async (cursor?: string) => {
@@ -431,10 +432,9 @@ function BuddyPageInner() {
     }
   }
 
-  const sheetHeight = sheetMode === 'full' ? '75%' : sheetMode === 'half' ? '20%' : '80px'
 
   return (
-    <div className="relative bg-[#FFFBF8]" style={{ height: '100dvh', overflow: 'hidden' }}>
+    <div className="flex flex-col bg-[#FFFBF8]" style={{ height: '100dvh', overflow: 'hidden' }}>
       {/* Create Session Sheet */}
       <CreateSessionSheet open={showCreateSheet} onClose={() => setShowCreateSheet(false)} onSuccess={() => fetchSessions()} />
 
@@ -500,89 +500,9 @@ function BuddyPageInner() {
         />
       )}
 
-      {/* ── Full-screen map background ── */}
-      {mapsLoaded && GOOGLE_MAPS_API_KEY ? (
-        <GoogleMap
-          mapContainerStyle={{ width: '100%', height: '100%' }}
-          center={userLocation ?? SINGAPORE_CENTER}
-          zoom={12}
-          onLoad={(map) => { mapRef.current = map; if (userLocation) map.panTo(userLocation) }}
-          onClick={() => setSelectedPin(null)}
-          options={{
-            disableDefaultUI: true,
-            zoomControl: false,
-            styles: DARK_MAP_STYLES,
-            clickableIcons: false,
-            gestureHandling: 'greedy',
-          }}
-        >
-          {/* Session pins from main feed data */}
-          {sessions.filter((s) => s.latitude && s.longitude).map((s) => {
-            return (
-              <OverlayView
-                key={s.id}
-                position={{ lat: s.latitude!, lng: s.longitude! }}
-                mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-              >
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setSelectedPin(selectedPin?.id === s.id ? null : s)
-                    setSheetMode('half')
-                    setTimeout(() => {
-                      const el = document.getElementById(`session-${s.id}`)
-                      el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                    }, 300)
-                  }}
-                  className="cursor-pointer select-none relative"
-                  style={{ transform: 'translate(-50%, -50%)' }}
-                >
-                  <div className={`flex items-center justify-center rounded-full shadow-lg border-2 transition-all duration-150 ${
-                    selectedPin?.id === s.id
-                      ? 'w-12 h-12 text-2xl border-white scale-110 ring-2 ring-white/40'
-                      : 'w-9 h-9 text-lg border-white/80 hover:scale-110'
-                  } ${pinColor(s.categorySlug ?? 'other')}`}>
-                    {pinEmoji(s.categorySlug ?? 'other')}
-                  </div>
-                  {/* Host avatar */}
-                  {s.host?.imageUrl ? (
-                    <div className="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full overflow-hidden border-2 border-white shadow-md">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={s.host.imageUrl} alt="" className="w-full h-full object-cover" />
-                    </div>
-                  ) : s.community?.logoImage ? (
-                    <div className="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full overflow-hidden border-2 border-white shadow-md">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={s.community.logoImage} alt="" className="w-full h-full object-cover" />
-                    </div>
-                  ) : null}
-                  {/* Attendee count badge */}
-                  {s.attendeeCount > 0 && (
-                    <div className="absolute -top-1 -left-1 min-w-[16px] h-[16px] rounded-full bg-[#1A1A1A] shadow-md flex items-center justify-center px-0.5">
-                      <span className="text-[9px] font-bold text-white leading-none">{s.attendeeCount}</span>
-                    </div>
-                  )}
-                </div>
-              </OverlayView>
-            )
-          }).filter(Boolean)}
-
-          {/* User location dot */}
-          {userLocation && (
-            <OverlayView position={userLocation} mapPaneName={OverlayView.OVERLAY_LAYER}>
-              <div className="w-4 h-4 rounded-full bg-blue-500 border-2 border-white shadow-lg" style={{ transform: 'translate(-50%, -50%)' }} />
-            </OverlayView>
-          )}
-        </GoogleMap>
-      ) : (
-        <div className="w-full h-full bg-neutral-100 flex items-center justify-center">
-          <Loader2 className="w-6 h-6 animate-spin text-[#71717A]" />
-        </div>
-      )}
-
-      {/* ── Filters — top overlay ── */}
-      <div className="absolute left-0 right-0 z-20 pt-[env(safe-area-inset-top,4px)]" style={{ top: 0 }}>
-        <div className="bg-gradient-to-b from-[#FFFBF8]/90 to-transparent backdrop-blur-[2px] px-3 pt-1 pb-2 space-y-1.5">
+      {/* ── Filters — sticky top bar ── */}
+      <div className="sticky top-0 z-20 pt-[env(safe-area-inset-top,4px)]">
+        <div className="bg-[#FFFBF8] px-3 pt-1 pb-2 space-y-1.5 border-b border-black/[0.04]">
           {/* Row 1: Date strip */}
           <div className="flex items-center gap-1.5">
             <div className="flex gap-1 overflow-x-auto no-scrollbar flex-1">
@@ -602,7 +522,7 @@ function BuddyPageInner() {
                       className={`flex-shrink-0 flex flex-col items-center px-2.5 py-1.5 rounded-xl text-center transition-all min-w-[44px] ${
                         dateFilter === dateStr
                           ? 'bg-[#1A1A1A] text-white shadow-md'
-                          : 'bg-white/90 backdrop-blur text-[#4A4A5A] shadow-sm'
+                          : 'bg-white/90 text-[#4A4A5A] shadow-sm'
                       }`}
                     >
                       <span className="text-[10px] font-medium leading-tight">{dayLabel}</span>
@@ -631,7 +551,7 @@ function BuddyPageInner() {
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all flex-shrink-0 ${
                   typeFilter === f.value
                     ? 'bg-[#1A1A1A] shadow-md scale-110'
-                    : 'bg-white/80 backdrop-blur shadow-sm'
+                    : 'bg-white/80 shadow-sm'
                 }`}
                 title={f.label}
               >
@@ -642,131 +562,217 @@ function BuddyPageInner() {
         </div>
       </div>
 
-      {/* ── Draggable session list sheet ── */}
-      <motion.div
-        className="absolute bottom-0 left-0 right-0 z-20 bg-[#F8F6F3] rounded-t-2xl shadow-2xl"
-        style={{ height: sheetHeight, marginBottom: '72px' }}
-        animate={{ height: sheetHeight }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      >
-        {/* Drag handle + header */}
-        <div
-          className="cursor-grab active:cursor-grabbing"
-          onClick={() => setSheetMode(sheetMode === 'peek' ? 'half' : sheetMode === 'half' ? 'full' : 'peek')}
-        >
-          <div className="flex justify-center pt-2 pb-0.5">
-            <div className="w-8 h-1 rounded-full bg-black/[0.1]" />
-          </div>
-          <div className="px-4 py-2">
-            {!loading && (
-              <p className="text-xs font-medium text-[#71717A]">
-                {sessions.length === 0 ? 'No sessions nearby' : `${sessions.length} session${sessions.length !== 1 ? 's' : ''} near you`}
+      {viewMode === 'list' ? (
+        <>
+          {/* ── List view — full-screen session cards ── */}
+          <div className="flex-1 overflow-y-auto px-4 pb-24">
+            {/* Session count header */}
+            {!loading && sessions.length > 0 && (
+              <p className="text-xs font-medium text-[#71717A] py-3">
+                {sessions.length} session{sessions.length !== 1 ? 's' : ''} near you
               </p>
             )}
-          </div>
-        </div>
 
-        {/* Session list — scrollable content */}
-        <div className="overflow-y-auto px-4 pb-8" style={{ height: 'calc(100% - 52px)' }}>
-          {loading ? (
-            <div className="space-y-2 pt-1">
-              {[0, 1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white shadow-sm">
-                  <div className="w-8 h-8 rounded-full bg-neutral-50 flex-shrink-0 shimmer" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-3.5 w-2/3 bg-neutral-50 rounded shimmer" />
-                    <div className="h-3 w-1/2 bg-neutral-50 rounded shimmer" />
-                    <div className="flex gap-1">
-                      <div className="w-5 h-5 rounded-full bg-neutral-50 shimmer" />
-                      <div className="w-5 h-5 rounded-full bg-neutral-50 shimmer" />
-                      <div className="h-3 w-12 bg-neutral-50 rounded shimmer" />
+            {loading ? (
+              <div className="space-y-2 pt-3">
+                {[0, 1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white shadow-sm">
+                    <div className="w-8 h-8 rounded-full bg-neutral-50 flex-shrink-0 shimmer" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-3.5 w-2/3 bg-neutral-50 rounded shimmer" />
+                      <div className="h-3 w-1/2 bg-neutral-50 rounded shimmer" />
+                      <div className="flex gap-1">
+                        <div className="w-5 h-5 rounded-full bg-neutral-50 shimmer" />
+                        <div className="w-5 h-5 rounded-full bg-neutral-50 shimmer" />
+                        <div className="h-3 w-12 bg-neutral-50 rounded shimmer" />
+                      </div>
+                    </div>
+                    <div className="h-6 w-10 bg-neutral-50 rounded-full shimmer" />
+                  </div>
+                ))}
+                <style>{`
+                  .shimmer {
+                    background: linear-gradient(90deg, #f5f5f5 25%, #ebebeb 50%, #f5f5f5 75%);
+                    background-size: 200% 100%;
+                    animation: shimmer 1.5s infinite;
+                  }
+                  @keyframes shimmer {
+                    0% { background-position: 200% 0; }
+                    100% { background-position: -200% 0; }
+                  }
+                `}</style>
+              </div>
+            ) : sessions.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="text-4xl mb-3">🏋️</div>
+                <p className="text-sm font-medium text-[#4A4A5A]">Nothing happening nearby — yet.</p>
+                <p className="text-xs text-[#9A9AAA] mt-1">Be the first — start something.</p>
+                <button
+                  onClick={() => setShowCreateSheet(true)}
+                  className="inline-flex items-center gap-1.5 mt-4 rounded-full bg-[#1A1A1A] px-4 py-2.5 text-xs font-semibold text-white hover:bg-black"
+                >
+                  <Zap className="w-3.5 h-3.5" />
+                  Post a session
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-6 pt-1">
+                {bucketSessions(sessions).map((bucket) => (
+                  <div key={bucket.key}>
+                    <p className="text-[11px] font-medium text-[#9A9AAA] uppercase tracking-widest px-3 mb-1">
+                      {bucket.label}
+                    </p>
+                    <div className="space-y-2">
+                      {bucket.sessions.map((session, i) => (
+                        <SessionCard
+                          key={session.id}
+                          session={session}
+                          currentUserId={currentUserId}
+                          onJoin={joinSession}
+                          onLeave={leaveSession}
+                          joiningId={joiningId}
+                          index={i}
+                        />
+                      ))}
                     </div>
                   </div>
-                  <div className="h-6 w-10 bg-neutral-50 rounded-full shimmer" />
-                </div>
-              ))}
-              <style>{`
-                .shimmer {
-                  background: linear-gradient(90deg, #f5f5f5 25%, #ebebeb 50%, #f5f5f5 75%);
-                  background-size: 200% 100%;
-                  animation: shimmer 1.5s infinite;
-                }
-                @keyframes shimmer {
-                  0% { background-position: 200% 0; }
-                  100% { background-position: -200% 0; }
-                }
-              `}</style>
-            </div>
-          ) : sessions.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-4xl mb-3">🏋️</div>
-              <p className="text-sm font-medium text-[#4A4A5A]">Nothing happening nearby — yet.</p>
-              <p className="text-xs text-[#9A9AAA] mt-1">Be the first — start something.</p>
-              <button
-                onClick={() => setShowCreateSheet(true)}
-                className="inline-flex items-center gap-1.5 mt-4 rounded-full bg-[#1A1A1A] px-4 py-2.5 text-xs font-semibold text-white hover:bg-black"
+                ))}
+
+                {nextCursor && (
+                  <button
+                    onClick={() => fetchSessions(nextCursor)}
+                    disabled={loadingMore}
+                    className="w-full py-3 text-sm text-[#71717A] hover:text-[#4A4A5A] flex items-center justify-center gap-2"
+                  >
+                    {loadingMore ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Load more'}
+                  </button>
+                )}
+
+                {sessions.length > 0 && sessions.length < 6 && !nextCursor && (
+                  <div className="text-center py-6 border-t border-black/[0.04]">
+                    <p className="text-xs text-[#9A9AAA] mb-3">That&apos;s everything nearby.</p>
+                    <div className="flex gap-2 justify-center">
+                      <button
+                        onClick={() => setShowCreateSheet(true)}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-[#1A1A1A] px-3.5 py-2 text-xs font-semibold text-white"
+                      >
+                        <Zap className="w-3 h-3" />
+                        Post a session
+                      </button>
+                      <Link
+                        href="/communities"
+                        className="inline-flex items-center gap-1 rounded-full border border-black/[0.06] bg-white px-3.5 py-2 text-xs font-semibold text-[#4A4A5A]"
+                      >
+                        Browse crews
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          {/* ── Map view ── */}
+          <div className="flex-1 relative">
+            {mapsLoaded && GOOGLE_MAPS_API_KEY ? (
+              <GoogleMap
+                mapContainerStyle={{ width: '100%', height: '100%' }}
+                center={userLocation ?? SINGAPORE_CENTER}
+                zoom={12}
+                onLoad={(map) => { mapRef.current = map; if (userLocation) map.panTo(userLocation) }}
+                onClick={() => setSelectedPin(null)}
+                options={{
+                  disableDefaultUI: true,
+                  zoomControl: false,
+                  styles: DARK_MAP_STYLES,
+                  clickableIcons: false,
+                  gestureHandling: 'greedy',
+                }}
               >
-                <Zap className="w-3.5 h-3.5" />
-                Post a session
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-6 pt-1">
-              {bucketSessions(sessions).map((bucket) => (
-                <div key={bucket.key}>
-                  <p className="text-[11px] font-medium text-[#9A9AAA] uppercase tracking-widest px-3 mb-1">
-                    {bucket.label}
-                  </p>
-                  <div className="space-y-2">
-                    {bucket.sessions.map((session, i) => (
-                      <SessionCard
-                        key={session.id}
-                        session={session}
-                        currentUserId={currentUserId}
-                        onJoin={joinSession}
-                        onLeave={leaveSession}
-                        joiningId={joiningId}
-                        index={i}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
-
-              {nextCursor && (
-                <button
-                  onClick={() => fetchSessions(nextCursor)}
-                  disabled={loadingMore}
-                  className="w-full py-3 text-sm text-[#71717A] hover:text-[#4A4A5A] flex items-center justify-center gap-2"
-                >
-                  {loadingMore ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Load more'}
-                </button>
-              )}
-
-              {sessions.length > 0 && sessions.length < 6 && !nextCursor && (
-                <div className="text-center py-6 border-t border-black/[0.04]">
-                  <p className="text-xs text-[#9A9AAA] mb-3">That&apos;s everything nearby.</p>
-                  <div className="flex gap-2 justify-center">
-                    <button
-                      onClick={() => setShowCreateSheet(true)}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-[#1A1A1A] px-3.5 py-2 text-xs font-semibold text-white"
+                {sessions.filter((s) => s.latitude && s.longitude).map((s) => (
+                  <OverlayView
+                    key={s.id}
+                    position={{ lat: s.latitude!, lng: s.longitude! }}
+                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                  >
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setSelectedPin(selectedPin?.id === s.id ? null : s)
+                      }}
+                      className="cursor-pointer select-none relative"
+                      style={{ transform: 'translate(-50%, -50%)' }}
                     >
-                      <Zap className="w-3 h-3" />
-                      Post a session
-                    </button>
-                    <Link
-                      href="/communities"
-                      className="inline-flex items-center gap-1 rounded-full border border-black/[0.06] bg-white px-3.5 py-2 text-xs font-semibold text-[#4A4A5A]"
-                    >
-                      Browse crews
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </motion.div>
+                      <div className={`flex items-center justify-center rounded-full shadow-lg border-2 transition-all duration-150 ${
+                        selectedPin?.id === s.id
+                          ? 'w-12 h-12 text-2xl border-white scale-110 ring-2 ring-white/40'
+                          : 'w-9 h-9 text-lg border-white/80 hover:scale-110'
+                      } ${pinColor(s.categorySlug ?? 'other')}`}>
+                        {pinEmoji(s.categorySlug ?? 'other')}
+                      </div>
+                      {s.host?.imageUrl ? (
+                        <div className="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full overflow-hidden border-2 border-white shadow-md">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={s.host.imageUrl} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      ) : s.community?.logoImage ? (
+                        <div className="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full overflow-hidden border-2 border-white shadow-md">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={s.community.logoImage} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      ) : null}
+                      {s.attendeeCount > 0 && (
+                        <div className="absolute -top-1 -left-1 min-w-[16px] h-[16px] rounded-full bg-[#1A1A1A] shadow-md flex items-center justify-center px-0.5">
+                          <span className="text-[9px] font-bold text-white leading-none">{s.attendeeCount}</span>
+                        </div>
+                      )}
+                    </div>
+                  </OverlayView>
+                ))}
+
+                {userLocation && (
+                  <OverlayView position={userLocation} mapPaneName={OverlayView.OVERLAY_LAYER}>
+                    <div className="w-4 h-4 rounded-full bg-blue-500 border-2 border-white shadow-lg" style={{ transform: 'translate(-50%, -50%)' }} />
+                  </OverlayView>
+                )}
+              </GoogleMap>
+            ) : (
+              <div className="w-full h-full bg-neutral-100 flex items-center justify-center">
+                <Loader2 className="w-6 h-6 animate-spin text-[#71717A]" />
+              </div>
+            )}
+
+            {/* Selected pin card overlay */}
+            {selectedPin && (
+              <div className="absolute bottom-4 left-4 right-4 z-20">
+                <SessionCard
+                  session={selectedPin}
+                  currentUserId={currentUserId}
+                  onJoin={joinSession}
+                  onLeave={leaveSession}
+                  joiningId={joiningId}
+                  index={0}
+                />
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* ── Floating Map/List toggle — above bottom nav ── */}
+      <button
+        onClick={() => { setViewMode(viewMode === 'list' ? 'map' : 'list'); setSelectedPin(null) }}
+        className="fixed z-30 left-1/2 -translate-x-1/2 flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1A1A1A] text-white text-sm font-semibold shadow-xl shadow-black/20 hover:bg-black active:scale-95 transition-all"
+        style={{ bottom: 'calc(72px + env(safe-area-inset-bottom, 0px) + 12px)' }}
+      >
+        {viewMode === 'list' ? (
+          <><Map className="w-4 h-4" /> Map</>
+        ) : (
+          <><List className="w-4 h-4" /> List</>
+        )}
+      </button>
 
     </div>
   )

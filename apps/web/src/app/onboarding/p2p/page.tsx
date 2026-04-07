@@ -1,32 +1,66 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
-import { Loader2, Camera } from 'lucide-react'
+import { Loader2, Check } from 'lucide-react'
 import { toast } from 'sonner'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ACTIVITY_TYPES } from '@/lib/activity-types'
 
-const FITNESS_INTERESTS = [
-  { slug: 'running', label: 'Running', emoji: '🏃' },
-  { slug: 'cycling', label: 'Cycling', emoji: '🚴' },
-  { slug: 'yoga', label: 'Yoga', emoji: '🧘' },
-  { slug: 'strength', label: 'Strength Training', emoji: '🏋️' },
-  { slug: 'hiking', label: 'Hiking', emoji: '🥾' },
-  { slug: 'bootcamp', label: 'Bootcamp', emoji: '🎖️' },
-  { slug: 'pilates', label: 'Pilates', emoji: '🦢' },
-  { slug: 'hiit', label: 'HIIT', emoji: '⚡' },
-  { slug: 'swimming', label: 'Swimming', emoji: '🏊' },
-  { slug: 'volleyball', label: 'Volleyball', emoji: '🏐' },
-  { slug: 'basketball', label: 'Basketball', emoji: '🏀' },
-  { slug: 'cold_plunge', label: 'Cold Plunge', emoji: '🧊' },
-]
+const ONBOARDING_ACTIVITIES = ACTIVITY_TYPES.filter((a) => a.tier === 1 || a.tier === 2)
 
 const FITNESS_LEVELS = [
-  { value: 'BEGINNER', label: 'Beginner', description: 'Just getting started' },
-  { value: 'INTERMEDIATE', label: 'Intermediate', description: 'Comfortable with most workouts' },
-  { value: 'ADVANCED', label: 'Advanced', description: 'Training regularly, high intensity' },
-]
+  {
+    value: 'BEGINNER',
+    emoji: '🌱',
+    label: 'Beginner',
+    description: 'Just getting started or getting back into it',
+  },
+  {
+    value: 'INTERMEDIATE',
+    emoji: '💪',
+    label: 'Intermediate',
+    description: 'Regular workouts, comfortable with most activities',
+  },
+  {
+    value: 'ADVANCED',
+    emoji: '🔥',
+    label: 'Advanced',
+    description: 'Pushing limits, love a challenge',
+  },
+] as const
+
+const slideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 300 : -300,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: number) => ({
+    x: direction > 0 ? -300 : 300,
+    opacity: 0,
+  }),
+}
+
+function ProgressDots({ current, total }: { current: number; total: number }) {
+  return (
+    <div className="flex items-center justify-center gap-2 py-6">
+      {Array.from({ length: total }).map((_, i) => (
+        <div
+          key={i}
+          className={`h-2 rounded-full transition-all duration-300 ${
+            i === current ? 'w-6 bg-[#FF6B35]' : i < current ? 'w-2 bg-[#FF6B35]/40' : 'w-2 bg-black/10'
+          }`}
+        />
+      ))}
+    </div>
+  )
+}
 
 export default function P2POnboardingPage() {
   const router = useRouter()
@@ -34,11 +68,21 @@ export default function P2POnboardingPage() {
   const { user: clerkUser, isLoaded } = useUser()
   const redirectTo = searchParams.get('redirect') || '/buddy'
 
-  const [bio, setBio] = useState('')
+  const [step, setStep] = useState(0)
+  const [direction, setDirection] = useState(1)
+  const [firstName, setFirstName] = useState('')
   const [selectedInterests, setSelectedInterests] = useState<string[]>([])
   const [fitnessLevel, setFitnessLevel] = useState('')
   const [saving, setSaving] = useState(false)
   const [checking, setChecking] = useState(true)
+  const [completed, setCompleted] = useState(false)
+
+  // Pre-fill first name from Clerk
+  useEffect(() => {
+    if (clerkUser?.firstName) {
+      setFirstName(clerkUser.firstName)
+    }
+  }, [clerkUser?.firstName])
 
   // Check if already onboarded
   useEffect(() => {
@@ -51,8 +95,6 @@ export default function P2POnboardingPage() {
             router.replace(redirectTo)
             return
           }
-          // Pre-fill existing data
-          if (data.user?.bio) setBio(data.user.bio)
           if (data.user?.fitnessInterests?.length) setSelectedInterests(data.user.fitnessInterests)
           if (data.user?.fitnessLevel) setFitnessLevel(data.user.fitnessLevel)
         }
@@ -65,23 +107,23 @@ export default function P2POnboardingPage() {
     if (isLoaded) check()
   }, [isLoaded, router, redirectTo])
 
-  function toggleInterest(slug: string) {
+  function goNext() {
+    setDirection(1)
+    setStep((s) => Math.min(s + 1, 2))
+  }
+
+  function goBack() {
+    setDirection(-1)
+    setStep((s) => Math.max(s - 1, 0))
+  }
+
+  function toggleInterest(key: string) {
     setSelectedInterests((prev) =>
-      prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]
+      prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key]
     )
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-
-    if (!bio.trim()) {
-      toast.error('Add a short bio')
-      return
-    }
-    if (selectedInterests.length === 0) {
-      toast.error('Pick at least one interest')
-      return
-    }
+  const handleComplete = useCallback(async () => {
     if (!fitnessLevel) {
       toast.error('Select your fitness level')
       return
@@ -92,7 +134,11 @@ export default function P2POnboardingPage() {
       const res = await fetch('/api/user/p2p-onboarding', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bio: bio.trim(), fitnessInterests: selectedInterests, fitnessLevel }),
+        body: JSON.stringify({
+          bio: '',
+          fitnessInterests: selectedInterests,
+          fitnessLevel,
+        }),
       })
 
       if (!res.ok) {
@@ -101,153 +147,259 @@ export default function P2POnboardingPage() {
         return
       }
 
-      toast.success('Profile set up!')
-      router.push(redirectTo)
+      setCompleted(true)
+      setTimeout(() => {
+        router.push(redirectTo)
+      }, 1000)
     } catch {
       toast.error('Something went wrong')
     } finally {
       setSaving(false)
     }
-  }
+  }, [fitnessLevel, selectedInterests, redirectTo, router])
 
   if (!isLoaded || checking) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-[#71717A]" />
+      <div className="min-h-screen flex items-center justify-center bg-[#FFFBF8]">
+        <Loader2 className="w-6 h-6 animate-spin text-[#9A9AAA]" />
+      </div>
+    )
+  }
+
+  // Completion state
+  if (completed) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FFFBF8]">
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+          className="w-20 h-20 rounded-full bg-gradient-to-br from-[#FF6B35] to-[#FF8B55] flex items-center justify-center"
+        >
+          <Check className="w-10 h-10 text-white" strokeWidth={3} />
+        </motion.div>
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mt-6 text-xl font-semibold text-[#1A1A1A]"
+        >
+          You&apos;re all set!
+        </motion.p>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-[#FFFBF8]">
-      <div className="max-w-lg mx-auto px-4 pt-12 pb-32">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <div className="text-4xl mb-3">🤝</div>
-          <h1 className="text-2xl font-bold text-[#1A1A1A]">
-            Who should we introduce you to?
-          </h1>
-          <p className="mt-2 text-[#71717A] text-sm">
-            30 seconds. We&apos;ll find the crews that sweat like you do.
-          </p>
-        </div>
+      <div className="max-w-lg mx-auto px-4 pt-4 pb-32">
+        <ProgressDots current={step} total={3} />
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Profile photo */}
-          <div className="flex flex-col items-center gap-3">
-            <div className="relative">
-              {clerkUser?.imageUrl ? (
-                <Image
-                  src={clerkUser.imageUrl}
-                  alt="Your photo"
-                  width={80}
-                  height={80}
-                  className="rounded-full object-cover ring-2 ring-black/[0.06]"
-                />
-              ) : (
-                <div className="w-20 h-20 rounded-full bg-white border border-black/[0.06] flex items-center justify-center">
-                  <Camera className="w-7 h-7 text-[#71717A]" />
-                </div>
-              )}
-            </div>
-            {!clerkUser?.imageUrl && (
-              <p className="text-xs text-[#71717A]">
-                Add a photo in your{' '}
-                <a href="/settings/profile" className="underline">
-                  profile settings
-                </a>
-              </p>
-            )}
-          </div>
-
-          {/* Bio */}
-          <div>
-            <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
-              Bio <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              placeholder="e.g. Morning runner, love exploring new routes. 5 days/week."
-              maxLength={100}
-              rows={3}
-              className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] resize-none"
-            />
-            <p className="mt-1 text-xs text-[#71717A] text-right">{bio.length}/100</p>
-          </div>
-
-          {/* Fitness Interests */}
-          <div>
-            <label className="block text-sm font-medium text-[#4A4A5A] mb-3">
-              What makes you sweat? <span className="text-red-500">*</span>
-            </label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {FITNESS_INTERESTS.map((interest) => {
-                const selected = selectedInterests.includes(interest.slug)
-                return (
-                  <button
-                    key={interest.slug}
-                    type="button"
-                    onClick={() => toggleInterest(interest.slug)}
-                    className={`flex flex-col items-center gap-1 rounded-xl border p-3 text-xs font-medium transition-all ${
-                      selected
-                        ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
-                        : 'border-black/[0.06] bg-white text-[#4A4A5A] hover:border-black/[0.12]'
-                    }`}
-                  >
-                    <span className="text-xl">{interest.emoji}</span>
-                    <span>{interest.label}</span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Fitness Level */}
-          <div>
-            <label className="block text-sm font-medium text-[#4A4A5A] mb-3">
-              Fitness level <span className="text-red-500">*</span>
-            </label>
-            <div className="space-y-2">
-              {FITNESS_LEVELS.map((level) => {
-                const selected = fitnessLevel === level.value
-                return (
-                  <button
-                    key={level.value}
-                    type="button"
-                    onClick={() => setFitnessLevel(level.value)}
-                    className={`w-full flex items-center justify-between rounded-xl border px-4 py-3 text-sm transition-all ${
-                      selected
-                        ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
-                        : 'border-black/[0.06] bg-white text-[#4A4A5A] hover:border-black/[0.12]'
-                    }`}
-                  >
-                    <span className="font-medium">{level.label}</span>
-                    <span className={`text-xs ${selected ? 'opacity-70' : 'text-[#71717A]'}`}>
-                      {level.description}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Submit */}
+        {/* Back button for steps > 0 */}
+        {step > 0 && (
           <button
-            type="submit"
-            disabled={saving}
-            className="w-full rounded-full bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+            onClick={goBack}
+            className="mb-4 text-sm text-[#9A9AAA] hover:text-[#4A4A5A] transition-colors"
           >
-            {saving ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Setting up...
-              </>
-            ) : (
-              'Show me my people →'
-            )}
+            ← Back
           </button>
-        </form>
+        )}
+
+        <div className="relative overflow-hidden">
+          <AnimatePresence mode="wait" custom={direction}>
+            {/* Step 1: Welcome */}
+            {step === 0 && (
+              <motion.div
+                key="step-0"
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="space-y-8"
+              >
+                <div className="text-center pt-8">
+                  <h1 className="text-3xl font-bold text-[#1A1A1A]">
+                    Welcome to SweatBuddies
+                  </h1>
+                  <p className="mt-3 text-[#4A4A5A]">
+                    Let&apos;s personalize your experience
+                  </p>
+                </div>
+
+                <div className="flex flex-col items-center gap-4">
+                  {clerkUser?.imageUrl ? (
+                    <Image
+                      src={clerkUser.imageUrl}
+                      alt="Your photo"
+                      width={80}
+                      height={80}
+                      className="w-20 h-20 rounded-full object-cover ring-2 ring-black/[0.06]"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#FF6B35] to-[#FF8B55] flex items-center justify-center text-white text-2xl font-bold">
+                      {firstName?.charAt(0)?.toUpperCase() || '?'}
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+                    First name
+                  </label>
+                  <input
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Your first name"
+                    className="w-full rounded-2xl border border-black/[0.04] bg-white px-4 py-3.5 text-[#1A1A1A] placeholder-[#9A9AAA] focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/30 focus:border-[#FF6B35]"
+                  />
+                </div>
+
+                <button
+                  onClick={goNext}
+                  disabled={!firstName.trim()}
+                  className="w-full rounded-full bg-gradient-to-r from-[#FF6B35] to-[#FF8B55] px-4 py-4 text-sm font-semibold text-white shadow-sm hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                >
+                  Continue
+                </button>
+              </motion.div>
+            )}
+
+            {/* Step 2: Activities */}
+            {step === 1 && (
+              <motion.div
+                key="step-1"
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="space-y-6"
+              >
+                <div className="text-center pt-4">
+                  <h1 className="text-2xl font-bold text-[#1A1A1A]">
+                    What are you into?
+                  </h1>
+                  <p className="mt-2 text-sm text-[#4A4A5A]">
+                    Pick the activities you love (select as many as you want)
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
+                  {ONBOARDING_ACTIVITIES.map((activity) => {
+                    const selected = selectedInterests.includes(activity.key)
+                    return (
+                      <button
+                        key={activity.key}
+                        type="button"
+                        onClick={() => toggleInterest(activity.key)}
+                        className={`flex flex-col items-center gap-1.5 rounded-xl p-3 transition-all duration-200 ${
+                          selected
+                            ? 'bg-[#1A1A1A] text-white scale-105 shadow-md'
+                            : 'bg-white border border-black/[0.04] text-[#4A4A5A] hover:border-black/[0.08]'
+                        }`}
+                      >
+                        <span className="text-3xl">{activity.emoji}</span>
+                        <span className="text-xs font-medium leading-tight text-center">
+                          {activity.label}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                <div className="space-y-3 pt-2">
+                  <button
+                    onClick={goNext}
+                    disabled={selectedInterests.length === 0}
+                    className="w-full rounded-full bg-gradient-to-r from-[#FF6B35] to-[#FF8B55] px-4 py-4 text-sm font-semibold text-white shadow-sm hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  >
+                    Continue
+                  </button>
+                  <button
+                    onClick={goNext}
+                    className="w-full text-sm text-[#9A9AAA] hover:text-[#4A4A5A] transition-colors py-2"
+                  >
+                    Skip
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Step 3: Fitness Level */}
+            {step === 2 && (
+              <motion.div
+                key="step-2"
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="space-y-6"
+              >
+                <div className="text-center pt-4">
+                  <h1 className="text-2xl font-bold text-[#1A1A1A]">
+                    What&apos;s your fitness level?
+                  </h1>
+                  <p className="mt-2 text-sm text-[#4A4A5A]">
+                    No judgment — this helps us match you with the right sessions
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  {FITNESS_LEVELS.map((level) => {
+                    const selected = fitnessLevel === level.value
+                    return (
+                      <button
+                        key={level.value}
+                        type="button"
+                        onClick={() => setFitnessLevel(level.value)}
+                        className={`w-full flex items-start gap-4 rounded-2xl p-5 text-left transition-all duration-200 ${
+                          selected
+                            ? 'bg-[#1A1A1A] text-white shadow-md scale-[1.02]'
+                            : 'bg-white border border-black/[0.04] text-[#4A4A5A] hover:border-black/[0.08]'
+                        }`}
+                      >
+                        <span className="text-3xl mt-0.5">{level.emoji}</span>
+                        <div>
+                          <span className="text-base font-semibold block">
+                            {level.label}
+                          </span>
+                          <span
+                            className={`text-sm mt-0.5 block ${
+                              selected ? 'text-white/70' : 'text-[#9A9AAA]'
+                            }`}
+                          >
+                            {level.description}
+                          </span>
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                <button
+                  onClick={handleComplete}
+                  disabled={!fitnessLevel || saving}
+                  className="w-full rounded-full bg-gradient-to-r from-[#FF6B35] to-[#FF8B55] px-4 py-4 text-sm font-semibold text-white shadow-sm hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                >
+                  {saving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Setting up...
+                    </>
+                  ) : (
+                    "Let's go!"
+                  )}
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   )

@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MapPin, Loader2, Zap, Minus, Plus, X } from 'lucide-react'
+import { MapPin, Loader2, Zap, Minus, Plus, X, ImagePlus } from 'lucide-react'
 import { toast } from 'sonner'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
 import { LocationAutocomplete } from '@/components/host/LocationAutocomplete'
 import { ShareSessionSheet } from '@/components/ShareSessionSheet'
+import { useUploadThing } from '@/lib/uploadthing'
 
 // ─── Smart defaults ──────────────────────────────────────────────────────────
 
@@ -98,6 +99,11 @@ interface CreateSessionSheetProps {
 }
 
 export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSheetProps) {
+  const { startUpload } = useUploadThing('activityImage')
+  const [imageUrl, setImageUrl] = useState('')
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   // Community selector
   const [communities, setCommunities] = useState<{ id: string; name: string; slug: string }[]>([])
   const [selectedCommunity, setSelectedCommunity] = useState<string | null>(null)
@@ -132,6 +138,8 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
       setSpots(0)
       setShowLocationPicker(false)
       setSelectedCommunity(null)
+      setImageUrl('')
+      setIsUploading(false)
 
       // Fetch user's communities (filter for OWNER/ADMIN roles)
       fetch('/api/user/communities')
@@ -171,6 +179,23 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setIsUploading(true)
+    try {
+      const result = await startUpload([file])
+      if (result && result[0]) {
+        setImageUrl(`https://utfs.io/f/${result[0].key}`)
+        toast.success('Image uploaded!')
+      }
+    } catch {
+      toast.error('Failed to upload image')
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
   const canPost = categorySlug && selectedTime && latitude !== 0
 
   const handlePost = useCallback(async () => {
@@ -194,6 +219,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
           startTime: selectedTime!.toISOString(),
           maxPeople: spots > 0 ? spots : null,
           communityId: selectedCommunity || undefined,
+          imageUrl: imageUrl || undefined,
         }),
       })
 
@@ -221,7 +247,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
     } finally {
       setPosting(false)
     }
-  }, [canPost, posting, categorySlug, selectedTime, city, address, latitude, longitude, spots, note, onClose, onSuccess])
+  }, [canPost, posting, categorySlug, selectedTime, city, address, latitude, longitude, spots, note, imageUrl, onClose, onSuccess])
 
   const catLabel = CATEGORIES.find((c) => c.slug === categorySlug)?.label ?? ''
 
@@ -258,6 +284,60 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
 
             {/* Scrollable form body */}
             <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
+
+              {/* Cover image upload */}
+              <div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageUpload}
+                />
+                {imageUrl ? (
+                  <div className="relative rounded-xl overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={imageUrl} alt="Cover" className="w-full h-44 object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                    <div className="absolute bottom-3 right-3 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm text-[11px] font-semibold text-[#1A1A1A] hover:bg-white transition-colors"
+                      >
+                        Change
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setImageUrl('')}
+                        className="px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm text-[11px] font-semibold text-white hover:bg-black/70 transition-colors"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="w-full h-36 rounded-xl border-2 border-dashed border-black/[0.08] bg-[#FFFBF8] flex flex-col items-center justify-center gap-2 hover:border-[#FF6B35]/30 hover:bg-[#FFF8F4] transition-all"
+                  >
+                    {isUploading ? (
+                      <>
+                        <Loader2 className="w-6 h-6 animate-spin text-[#FF6B35]" />
+                        <span className="text-xs text-[#9A9AAA]">Uploading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ImagePlus className="w-6 h-6 text-[#9A9AAA]" />
+                        <span className="text-xs font-medium text-[#9A9AAA]">Add cover image</span>
+                        <span className="text-[10px] text-[#C4C4CC]">Makes your session stand out</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
 
               {/* Session name */}
               <div>

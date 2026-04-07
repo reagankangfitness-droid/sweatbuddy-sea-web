@@ -822,79 +822,71 @@ function SessionCard({
     >
       <Link
         href={`/activities/${session.id}`}
-        className="group rounded-2xl bg-white shadow-sm hover:shadow-md active:shadow-sm transition-all duration-200 overflow-hidden block"
+        className="group flex rounded-2xl bg-white shadow-sm hover:shadow-md active:shadow-sm transition-all duration-200 overflow-hidden"
       >
-        {/* Hero image area */}
-        <div className="relative h-44 overflow-hidden">
+        {/* Left: Square thumbnail */}
+        <div className="relative w-28 h-28 flex-shrink-0 overflow-hidden">
           {session.imageUrl ? (
             <>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={session.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
             </>
           ) : (
             <div className={`w-full h-full flex items-center justify-center ${pinColor(session.categorySlug ?? 'other')}`}>
-              <span className="text-5xl">{emoji}</span>
+              <span className="text-3xl">{emoji}</span>
             </div>
           )}
-
-          {/* Top badges */}
-          <span className={`absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-bold backdrop-blur-sm ${isPaid ? 'bg-white/90 text-[#1A1A1A]' : 'bg-emerald-500/90 text-white'}`}>
+          {/* Price badge */}
+          <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold backdrop-blur-sm ${isPaid ? 'bg-white/90 text-[#1A1A1A]' : 'bg-emerald-500/90 text-white'}`}>
             {priceDisplay}
           </span>
           {isJoined && !isHosting && (
-            <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/90 text-white backdrop-blur-sm">Going</span>
+            <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/90 text-white backdrop-blur-sm">Going</span>
           )}
-
-          {/* Title overlaid on image bottom */}
-          <div className="absolute bottom-0 left-0 right-0 px-3.5 pb-3">
-            <h3 className="text-[15px] font-bold text-white leading-snug line-clamp-2 drop-shadow-sm">
-              {session.title}
-            </h3>
-          </div>
         </div>
 
-        {/* Card body */}
-        <div className="px-3.5 py-3 space-y-2">
-          {/* Time + Location row */}
-          <div className="flex items-center gap-1.5 text-[12px] text-[#71717A]">
-            <span className="truncate">
+        {/* Right: Details */}
+        <div className="flex-1 min-w-0 p-3 flex flex-col justify-between">
+          <div>
+            {/* Title */}
+            <h3 className="text-[14px] font-bold text-[#1A1A1A] leading-snug line-clamp-2">
+              {session.title}
+            </h3>
+            {/* Time + Location */}
+            <p className="text-[12px] text-[#71717A] mt-1 truncate">
               {session.startTime ? getRelativeTime(session.startTime) : ''}
               {session.startTime && (session.address || session.city) ? ' · ' : ''}
               {formatAddress(session.address ?? session.city ?? '')}
-            </span>
+            </p>
           </div>
 
-          {/* Community/host badge + social proof row */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 min-w-0">
-              {/* Avatar */}
+          {/* Bottom row: host + social proof */}
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center gap-1.5 min-w-0">
               {avatarSrc ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={avatarSrc} alt="" className="w-5 h-5 rounded-full object-cover flex-shrink-0" />
+                <img src={avatarSrc} alt="" className="w-4 h-4 rounded-full object-cover flex-shrink-0" />
               ) : (
-                <div className="w-5 h-5 rounded-full bg-neutral-100 flex items-center justify-center text-[10px] flex-shrink-0">{emoji}</div>
+                <div className="w-4 h-4 rounded-full bg-neutral-100 flex items-center justify-center text-[9px] flex-shrink-0">{emoji}</div>
               )}
-              <span className="text-[12px] text-[#4A4A5A] truncate">{displayName}</span>
+              <span className="text-[11px] text-[#9A9AAA] truncate">{displayName}</span>
             </div>
-
-            {/* Social proof */}
-            <div className="flex items-center gap-1.5 flex-shrink-0">
+            <div className="flex items-center gap-1 flex-shrink-0">
               {session.attendees.length > 0 && (
-                <div className="flex -space-x-1.5">
+                <div className="flex -space-x-1">
                   {session.attendees.slice(0, 3).map((a) =>
                     a.imageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img key={a.id} src={a.imageUrl} alt="" className="w-5 h-5 rounded-full ring-2 ring-white object-cover" />
+                      <img key={a.id} src={a.imageUrl} alt="" className="w-4 h-4 rounded-full ring-1 ring-white object-cover" />
                     ) : (
-                      <div key={a.id} className="w-5 h-5 rounded-full ring-2 ring-white bg-neutral-100 flex items-center justify-center text-[8px] font-bold text-[#9A9AAA]">
+                      <div key={a.id} className="w-4 h-4 rounded-full ring-1 ring-white bg-neutral-100 flex items-center justify-center text-[7px] font-bold text-[#9A9AAA]">
                         {(a.name ?? '?')[0]}
                       </div>
                     )
                   )}
                 </div>
               )}
-              <span className="text-[11px] text-[#9A9AAA]">
+              <span className="text-[10px] text-[#9A9AAA]">
                 {session.attendeeCount > 0 ? `${session.attendeeCount} going` : 'Be first'}
               </span>
             </div>

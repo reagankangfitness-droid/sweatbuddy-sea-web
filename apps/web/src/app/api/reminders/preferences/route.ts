@@ -48,6 +48,7 @@ export async function PUT(request: NextRequest) {
       'enableOneWeekReminder',
       'enableOneDayReminder',
       'enableTwoHourReminder',
+      'enableOneHourReminder',
       'emailReminders',
       'pushReminders',
       'smsReminders',

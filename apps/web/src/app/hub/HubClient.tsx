@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Plus, ChevronRight, Zap, Copy, Check, MessageCircle, Bell, UserCheck, Pencil } from 'lucide-react'
+import { Plus, ChevronRight, Zap, Copy, Check, MessageCircle, Bell, UserCheck, Pencil, ClipboardCheck, X, Minus } from 'lucide-react'
 import { toast } from 'sonner'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
 import { CreateSessionSheet } from '@/components/CreateSessionSheet'
@@ -16,6 +16,7 @@ interface HubAttendee {
   name: string | null
   imageUrl: string | null
   isNew: boolean
+  actuallyAttended?: boolean
 }
 
 interface HubSession {
@@ -43,6 +44,7 @@ interface HubClientProps {
   hostName: string | null
   communities: HubCommunity[]
   upcomingSessions: HubSession[]
+  pastSessions: HubSession[]
   totalMembers: number
   activeThisMonth: number
 }
@@ -70,10 +72,18 @@ function getDayLabel(iso: string): string {
   return d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Asia/Singapore' })
 }
 
+interface AttendanceRecord {
+  id: string
+  name: string | null
+  imageUrl: string | null
+  actuallyAttended: boolean | null
+}
+
 export default function HubClient({
   hostName,
   communities,
   upcomingSessions,
+  pastSessions,
   totalMembers,
   activeThisMonth,
 }: HubClientProps) {
@@ -82,6 +92,10 @@ export default function HubClient({
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [notifying, setNotifying] = useState<string | null>(null)
+  const [attendanceSessionId, setAttendanceSessionId] = useState<string | null>(null)
+  const [attendanceList, setAttendanceList] = useState<AttendanceRecord[]>([])
+  const [attendanceLoading, setAttendanceLoading] = useState(false)
+  const [togglingAttendee, setTogglingAttendee] = useState<string | null>(null)
 
   const nextSession = upcomingSessions[0]
 
@@ -129,6 +143,53 @@ export default function HubClient({
     }
   }
 
+  async function openAttendance(sessionId: string) {
+    setAttendanceSessionId(sessionId)
+    setAttendanceLoading(true)
+    try {
+      const res = await fetch(`/api/buddy/sessions/${sessionId}/attendance`)
+      if (!res.ok) {
+        toast.error('Failed to load attendees')
+        setAttendanceSessionId(null)
+        return
+      }
+      const data = await res.json()
+      setAttendanceList(data.attendees)
+    } catch {
+      toast.error('Something went wrong')
+      setAttendanceSessionId(null)
+    } finally {
+      setAttendanceLoading(false)
+    }
+  }
+
+  async function toggleAttendance(sessionId: string, attendeeId: string, current: boolean | null) {
+    // Cycle: null -> true -> false -> null
+    const next = current === null ? true : current === true ? false : null
+    setTogglingAttendee(attendeeId)
+    try {
+      const res = await fetch(`/api/buddy/sessions/${sessionId}/attendance`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ attendeeId, attended: next }),
+      })
+      if (!res.ok) {
+        toast.error('Failed to update')
+        return
+      }
+      const updated = await res.json()
+      setAttendanceList((prev) =>
+        prev.map((a) => (a.id === attendeeId ? { ...a, actuallyAttended: updated.actuallyAttended } : a))
+      )
+    } catch {
+      toast.error('Something went wrong')
+    } finally {
+      setTogglingAttendee(null)
+    }
+  }
+
+  const attendanceSession = pastSessions.find((s) => s.id === attendanceSessionId)
+
   return (
     <div className="min-h-screen bg-[#FFFBF8] pb-24">
       <CreateSessionSheet open={showCreate} onClose={() => setShowCreate(false)} onSuccess={() => window.location.reload()} />
@@ -144,6 +205,69 @@ export default function HubClient({
         goingCount={shareSession?.goingCount ?? 0}
         context="created"
       />
+
+      {/* Attendance Modal */}
+      {attendanceSessionId && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setAttendanceSessionId(null)} />
+          <div className="relative bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[80vh] overflow-hidden">
+            <div className="px-5 py-4 border-b border-black/[0.06] flex items-center justify-between">
+              <div>
+                <p className="text-[14px] font-semibold text-[#1A1A1A]">Mark Attendance</p>
+                <p className="text-[11px] text-[#9A9AAA]">{attendanceSession?.title}</p>
+              </div>
+              <button onClick={() => setAttendanceSessionId(null)} className="p-1.5 rounded-full hover:bg-neutral-100">
+                <X className="w-4 h-4 text-[#9A9AAA]" />
+              </button>
+            </div>
+            <div className="px-5 py-3 overflow-y-auto max-h-[60vh]">
+              {attendanceLoading ? (
+                <p className="text-[12px] text-[#9A9AAA] text-center py-8">Loading...</p>
+              ) : attendanceList.length === 0 ? (
+                <p className="text-[12px] text-[#9A9AAA] text-center py-8">No attendees</p>
+              ) : (
+                <div className="space-y-1">
+                  {attendanceList.map((a) => (
+                    <div key={a.id} className="flex items-center gap-3 py-2.5">
+                      {a.imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={a.imageUrl} alt="" className="w-8 h-8 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-[11px] font-bold text-[#9A9AAA]">
+                          {(a.name ?? '?')[0]}
+                        </div>
+                      )}
+                      <span className="text-[13px] text-[#1A1A1A] flex-1">{a.name ?? 'Anonymous'}</span>
+                      <button
+                        onClick={() => toggleAttendance(attendanceSessionId, a.id, a.actuallyAttended)}
+                        disabled={togglingAttendee === a.id}
+                        className={`w-9 h-9 rounded-full flex items-center justify-center transition-all disabled:opacity-50 ${
+                          a.actuallyAttended === true
+                            ? 'bg-emerald-100 text-emerald-600'
+                            : a.actuallyAttended === false
+                              ? 'bg-red-100 text-red-500'
+                              : 'bg-neutral-100 text-[#9A9AAA]'
+                        }`}
+                      >
+                        {a.actuallyAttended === true ? (
+                          <Check className="w-4 h-4" />
+                        ) : a.actuallyAttended === false ? (
+                          <X className="w-4 h-4" />
+                        ) : (
+                          <Minus className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="px-5 py-3 border-t border-black/[0.06]">
+              <p className="text-[10px] text-[#9A9AAA] text-center">Tap to cycle: unmarked → attended → no-show</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <div className="px-5 pt-[env(safe-area-inset-top,16px)] pb-2">
@@ -339,6 +463,50 @@ export default function HubClient({
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Past sessions — attendance marking */}
+        {pastSessions.length > 0 && (
+          <div>
+            <p className="text-[11px] text-[#9A9AAA] uppercase tracking-widest mb-3">Past sessions</p>
+            <div className="space-y-2">
+              {pastSessions.map((s) => {
+                const allMarked = s.attendees && s.attendees.length > 0 && s.attendees.every((a) => a.actuallyAttended !== undefined)
+                return (
+                  <div key={s.id} className="bg-white rounded-xl shadow-sm p-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-lg">{EMOJI_MAP[s.categorySlug ?? ''] ?? '🏅'}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[13px] font-medium text-[#1A1A1A] truncate">{s.title}</p>
+                        <p className="text-[11px] text-[#9A9AAA]">{s.startTime ? formatTime(s.startTime) : ''}</p>
+                      </div>
+                      <span className="text-[12px] font-semibold text-[#4A4A5A]">{s.goingCount}</span>
+                    </div>
+                    <div className="flex gap-1.5 mt-2">
+                      <button
+                        onClick={() => openAttendance(s.id)}
+                        className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[10px] font-medium ${
+                          allMarked
+                            ? 'bg-emerald-50 text-emerald-600'
+                            : 'bg-[#FF6B35]/10 text-[#FF6B35]'
+                        }`}
+                      >
+                        <ClipboardCheck className="w-3 h-3" />
+                        {allMarked ? 'Attendance done' : 'Mark Attendance'}
+                      </button>
+                      <Link
+                        href={`/activities/${s.id}`}
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-neutral-50 text-[10px] font-medium text-[#71717A]"
+                      >
+                        <UserCheck className="w-3 h-3" />
+                        View
+                      </Link>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}

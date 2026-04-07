@@ -71,6 +71,8 @@ export async function GET(
         createdAt: true,
         updatedAt: true,
         deletedAt: true,
+        categorySlug: true,
+        address: true,
         // P2P fields
         activityMode: true,
         fitnessLevel: true,

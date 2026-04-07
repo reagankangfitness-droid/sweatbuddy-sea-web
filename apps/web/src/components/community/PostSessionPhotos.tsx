@@ -32,12 +32,12 @@ export function PostSessionPhotos({ sessions }: PostSessionPhotosProps) {
             href={`/activities/${session.id}`}
             className="shrink-0 group"
           >
-            <div className="relative w-44 h-32 rounded-xl overflow-hidden">
+            <div className="relative w-44 h-32 rounded-2xl overflow-hidden shadow-sm">
               <Image
                 src={session.imageUrl}
                 alt={session.title}
                 fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                className="object-cover group-hover:scale-110 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-2.5">

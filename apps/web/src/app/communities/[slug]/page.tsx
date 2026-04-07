@@ -359,9 +359,8 @@ export default async function CommunityPage({ params }: Props) {
                     {community.city.name}
                   </span>
                 )}
-                <span className="flex items-center gap-1">
-                  <Users className="w-4 h-4" />
-                  {community._count.members} members
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#FF6B35]/10 text-[#FF6B35] font-semibold rounded-full text-sm">
+                  🔥 {community._count.members} members strong
                 </span>
                 <span className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
@@ -541,44 +540,43 @@ export default async function CommunityPage({ params }: Props) {
         </div>
 
         {allUpcomingEvents.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
             {allUpcomingEvents.map((event) => (
               <Link
                 key={`${event.source}-${event.id}`}
                 href={event.href}
-                className="group block bg-white border border-black/[0.06] shadow-sm rounded-xl p-4 hover:shadow-md transition-shadow"
+                className="group block min-w-[200px] max-w-[240px] flex-shrink-0 bg-white border border-black/[0.06] shadow-sm rounded-2xl overflow-hidden hover:shadow-md transition-shadow"
               >
-                <div className="flex items-start gap-3">
-                  <div className="w-14 h-14 rounded-lg bg-[#FFFBF8] flex flex-col items-center justify-center flex-shrink-0">
-                    <span className="text-xs text-[#71717A]">
-                      {event.date ? new Date(event.date).toLocaleDateString('en-US', { month: 'short' }) : 'TBD'}
-                    </span>
-                    <span className="text-lg font-bold text-[#1A1A1A]">
-                      {event.date ? new Date(event.date).getDate() : '--'}
-                    </span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-[#1A1A1A] group-hover:text-blue-600 transition-colors truncate">
-                      {event.title}
-                    </h3>
-                    {event.time && (
-                      <p className="text-sm text-[#71717A] mt-0.5">
-                        {event.time}
-                      </p>
-                    )}
-                    {event.location && (
-                      <p className="text-sm text-[#4A4A5A] mt-0.5 flex items-center gap-1 min-w-0">
-                        <MapPin className="w-3 h-3 flex-shrink-0" />
-                        <span className="truncate">{event.location}</span>
-                      </p>
-                    )}
-                    {event.attendeeCount !== undefined && (
-                      <div className="flex items-center gap-2 mt-2 text-xs text-[#71717A]">
-                        <Users className="w-3.5 h-3.5" />
-                        {event.attendeeCount} going
-                      </div>
-                    )}
-                  </div>
+                <div className="h-32 bg-[#FFFBF8] flex flex-col items-center justify-center">
+                  <span className="text-xs text-[#71717A]">
+                    {event.date ? new Date(event.date).toLocaleDateString('en-US', { month: 'short' }) : 'TBD'}
+                  </span>
+                  <span className="text-3xl font-bold text-[#1A1A1A]">
+                    {event.date ? new Date(event.date).getDate() : '--'}
+                  </span>
+                  <span className="text-2xl mt-1">{getCategoryEmoji(community.category)}</span>
+                </div>
+                <div className="p-3">
+                  <h3 className="font-medium text-sm text-[#1A1A1A] group-hover:text-[#FF6B35] transition-colors truncate">
+                    {event.title}
+                  </h3>
+                  {event.time && (
+                    <p className="text-xs text-[#71717A] mt-1">
+                      {event.time}
+                    </p>
+                  )}
+                  {event.location && (
+                    <p className="text-xs text-[#4A4A5A] mt-0.5 flex items-center gap-1 min-w-0">
+                      <MapPin className="w-3 h-3 flex-shrink-0" />
+                      <span className="truncate">{event.location}</span>
+                    </p>
+                  )}
+                  {event.attendeeCount !== undefined && (
+                    <div className="flex items-center gap-1.5 mt-2 text-xs text-[#71717A]">
+                      <Users className="w-3.5 h-3.5" />
+                      {event.attendeeCount} going
+                    </div>
+                  )}
                 </div>
               </Link>
             ))}
@@ -593,58 +591,62 @@ export default async function CommunityPage({ params }: Props) {
 
       {/* Members */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-[#1A1A1A]">The crew</h2>
           <span className="text-sm text-[#71717A]">
             {community._count.members} total
           </span>
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
           {members.map((member) => (
             <Link
               key={member.id}
               href={`/user/${member.user.id}`}
-              className="group flex items-center gap-2 px-3 py-2 bg-white border border-black/[0.06] shadow-sm hover:bg-[#FFFBF8] rounded-full transition-colors"
+              className="group flex flex-col items-center gap-1 flex-shrink-0"
             >
-              <div className="w-8 h-8 rounded-full bg-[#FFFBF8] overflow-hidden">
-                {member.user.imageUrl ? (
-                  <Image
-                    src={member.user.imageUrl}
-                    alt={member.user.name || ''}
-                    width={32}
-                    height={32}
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <Users className="w-4 h-4 text-[#71717A]" />
-                  </div>
+              <div className="relative">
+                <div className="w-10 h-10 rounded-full bg-[#FFFBF8] overflow-hidden ring-2 ring-white shadow-sm">
+                  {member.user.imageUrl ? (
+                    <Image
+                      src={member.user.imageUrl}
+                      alt={member.user.name || ''}
+                      width={40}
+                      height={40}
+                      className="object-cover w-full h-full"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Users className="w-4 h-4 text-[#71717A]" />
+                    </div>
+                  )}
+                </div>
+                {member.role === 'OWNER' && (
+                  <span className="absolute -bottom-1 -right-1 text-[8px] px-1 py-0.5 bg-amber-400 text-white rounded-full font-bold leading-none">Host</span>
+                )}
+                {member.role === 'ADMIN' && (
+                  <span className="absolute -bottom-1 -right-1 text-[8px] px-1 py-0.5 bg-blue-500 text-white rounded-full font-bold leading-none">Admin</span>
                 )}
               </div>
-              <span className="text-sm font-medium text-[#4A4A5A] group-hover:text-[#1A1A1A]">
+              <span className="text-[10px] text-[#4A4A5A] group-hover:text-[#1A1A1A] text-center w-12 truncate">
                 {member.user.name?.split(' ')[0] || 'Member'}
               </span>
-              {member.role === 'OWNER' && (
-                <span className="text-xs px-1.5 py-0.5 bg-amber-50 text-amber-600 rounded">Host</span>
-              )}
-              {member.role === 'ADMIN' && (
-                <span className="text-xs px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded">Admin</span>
-              )}
               {(memberAttendance[member.user.id] ?? 0) >= 10 ? (
-                <span className="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded-full">OG</span>
+                <span className="text-[8px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded-full leading-none">OG</span>
               ) : (memberAttendance[member.user.id] ?? 0) >= 5 ? (
-                <span className="text-[10px] bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded-full">Regular</span>
+                <span className="text-[8px] bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded-full leading-none">Regular</span>
               ) : null}
             </Link>
           ))}
+          {community._count.members > 12 && (
+            <div className="flex flex-col items-center justify-center gap-1 flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-[#FFFBF8] border-2 border-dashed border-[#9A9AAA] flex items-center justify-center">
+                <span className="text-xs font-medium text-[#71717A]">+{community._count.members - 12}</span>
+              </div>
+              <span className="text-[10px] text-[#9A9AAA]">more</span>
+            </div>
+          )}
         </div>
-
-        {community._count.members > 12 && (
-          <p className="mt-4 text-sm text-[#71717A]">
-            +{community._count.members - 12} more members
-          </p>
-        )}
       </section>
 
       {/* Community creator */}

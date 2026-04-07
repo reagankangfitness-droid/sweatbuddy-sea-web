@@ -72,7 +72,9 @@ export default async function HubPage() {
   const communityIds = communities.map((c) => c.id)
 
   // Get upcoming sessions for these communities
-  const [upcomingSessions, recentAttendees] = await Promise.all([
+  const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+
+  const [upcomingSessions, pastSessions, recentAttendees] = await Promise.all([
     prisma.activity.findMany({
       where: {
         communityId: { in: communityIds },
@@ -100,6 +102,37 @@ export default async function HubPage() {
         },
       },
       orderBy: { startTime: 'asc' },
+      take: 10,
+    }),
+    // Past sessions from last 7 days for attendance marking
+    prisma.activity.findMany({
+      where: {
+        communityId: { in: communityIds },
+        status: 'PUBLISHED',
+        deletedAt: null,
+        startTime: { gte: oneWeekAgo, lt: now },
+      },
+      select: {
+        id: true,
+        title: true,
+        startTime: true,
+        address: true,
+        city: true,
+        communityId: true,
+        categorySlug: true,
+        maxPeople: true,
+        _count: { select: { userActivities: { where: { status: { in: ['JOINED', 'COMPLETED'] } } } } },
+        userActivities: {
+          where: { status: { in: ['JOINED', 'COMPLETED'] } },
+          select: {
+            actuallyAttended: true,
+            user: { select: { id: true, name: true, imageUrl: true, sessionsAttendedCount: true } },
+          },
+          take: 10,
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+      orderBy: { startTime: 'desc' },
       take: 10,
     }),
     // Get total active members across all communities (attended in last 30 days)
@@ -138,6 +171,24 @@ export default async function HubPage() {
           name: ua.user.name,
           imageUrl: ua.user.imageUrl,
           isNew: (ua.user.sessionsAttendedCount ?? 0) <= 1,
+        })),
+      }))}
+      pastSessions={pastSessions.map((s) => ({
+        id: s.id,
+        title: s.title,
+        startTime: s.startTime?.toISOString() ?? null,
+        address: s.address,
+        city: s.city,
+        communityId: s.communityId,
+        categorySlug: s.categorySlug,
+        maxPeople: s.maxPeople,
+        goingCount: s._count.userActivities,
+        attendees: s.userActivities.map((ua) => ({
+          id: ua.user.id,
+          name: ua.user.name,
+          imageUrl: ua.user.imageUrl,
+          isNew: (ua.user.sessionsAttendedCount ?? 0) <= 1,
+          actuallyAttended: ua.actuallyAttended ?? undefined,
         })),
       }))}
       totalMembers={totalMembers}

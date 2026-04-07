@@ -498,6 +498,11 @@ model UserActivity {
   reconfirmationSentAt  DateTime?
   reconfirmedAt         DateTime?
 
+  // Post-session attendance marking by host
+  actuallyAttended      Boolean?
+  markedAttendedAt      DateTime?
+  markedAttendedBy      String?
+
   // P2P payment tracking fields
   p2pPaymentStatus           String?   // 'PENDING' | 'VERIFIED' | 'REJECTED'
   p2pPaymentMethod           String?   // 'PAYNOW' | 'STRIPE'
@@ -1378,6 +1383,7 @@ enum ReminderType {
   ONE_WEEK // 7 days before (optional)
   ONE_DAY // 24 hours before
   TWO_HOURS // 2 hours before
+  ONE_HOUR // 1 hour before
 }
 
 enum ReminderStatus {
@@ -1481,12 +1487,15 @@ model HostReminderSettings {
   enableOneWeekReminder Boolean @default(false)
   enableOneDayReminder  Boolean @default(true)
   enableTwoHourReminder Boolean @default(true)
+  enableOneHourReminder Boolean @default(true)
 
   // Custom messages (optional)
   oneDaySubject  String? @db.VarChar(200)
   oneDayMessage  String? @db.Text
   twoHourSubject String? @db.VarChar(200)
   twoHourMessage String? @db.Text
+  oneHourSubject String? @db.VarChar(200)
+  oneHourMessage String? @db.Text
   oneWeekSubject String? @db.VarChar(200)
   oneWeekMessage String? @db.Text
 
@@ -1543,6 +1552,7 @@ model ReminderPreferences {
   enableOneWeekReminder Boolean @default(false)
   enableOneDayReminder  Boolean @default(true)
   enableTwoHourReminder Boolean @default(true)
+  enableOneHourReminder Boolean @default(true)
 
   // Channel preferences
   emailReminders Boolean @default(true)

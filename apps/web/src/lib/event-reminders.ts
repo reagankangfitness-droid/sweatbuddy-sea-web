@@ -116,13 +116,20 @@ export async function scheduleEventReminder(params: {
   const twoHoursBefore = new Date(eventStartTime)
   twoHoursBefore.setHours(twoHoursBefore.getHours() - 2)
 
-  const toSchedule: Array<{ type: 'ONE_DAY' | 'TWO_HOURS'; scheduledFor: Date }> = []
+  // 1-hour reminder: eventStartTime - 1h
+  const oneHourBefore = new Date(eventStartTime)
+  oneHourBefore.setHours(oneHourBefore.getHours() - 1)
+
+  const toSchedule: Array<{ type: 'ONE_DAY' | 'TWO_HOURS' | 'ONE_HOUR'; scheduledFor: Date }> = []
 
   if (oneDayBefore > now) {
     toSchedule.push({ type: 'ONE_DAY', scheduledFor: oneDayBefore })
   }
   if (twoHoursBefore > now) {
     toSchedule.push({ type: 'TWO_HOURS', scheduledFor: twoHoursBefore })
+  }
+  if (oneHourBefore > now) {
+    toSchedule.push({ type: 'ONE_HOUR', scheduledFor: oneHourBefore })
   }
 
   if (toSchedule.length === 0) {
@@ -317,6 +324,14 @@ export async function processEventReminders(): Promise<{
               stats.skipped++
               continue
             }
+            if (reminder.reminderType === 'ONE_HOUR' && !prefs.enableOneHourReminder) {
+              await prisma.eventReminder.update({
+                where: { id: reminder.id },
+                data: { status: 'SKIPPED', errorMessage: 'One-hour reminder disabled' },
+              })
+              stats.skipped++
+              continue
+            }
           }
           // No prefs record → default to sending both (matches schema defaults)
         }
@@ -349,7 +364,7 @@ export async function processEventReminders(): Promise<{
           eventId: event.id,
           organizerInstagram: event.organizerInstagram,
           communityLink: event.communityLink,
-          reminderType: reminder.reminderType as 'ONE_DAY' | 'TWO_HOURS',
+          reminderType: reminder.reminderType as 'ONE_DAY' | 'TWO_HOURS' | 'ONE_HOUR',
           familiarFaces,
           totalGoing,
           unsubscribeUrl,
@@ -398,7 +413,7 @@ interface SocialReminderEmailParams {
   eventId: string
   organizerInstagram: string | null
   communityLink: string | null
-  reminderType: 'ONE_DAY' | 'TWO_HOURS'
+  reminderType: 'ONE_DAY' | 'TWO_HOURS' | 'ONE_HOUR'
   familiarFaces: FamiliarFace[]
   totalGoing: number
   unsubscribeUrl: string
@@ -429,6 +444,7 @@ export async function sendSocialReminderEmail(
   } = params
 
   const isOneDay = reminderType === 'ONE_DAY'
+  const isOneHour = reminderType === 'ONE_HOUR'
   const displayName = escapeHtml(attendeeName || 'there')
   const safeEventName = escapeHtml(eventName)
   const safeEventTime = escapeHtml(eventTime)
@@ -459,16 +475,20 @@ export async function sendSocialReminderEmail(
   // Subject line
   const subject = isOneDay
     ? `Tomorrow: ${eventName}`
-    : `Starting Soon: ${eventName}`
+    : isOneHour
+      ? `Starting in 1 hour: ${eventName}`
+      : `Starting Soon: ${eventName}`
 
   // Header content
   const headerEmoji = isOneDay ? '🏃' : '🔥'
-  const headerTitle = isOneDay ? 'See You Tomorrow!' : 'Starting in 2 Hours!'
+  const headerTitle = isOneDay ? 'See You Tomorrow!' : isOneHour ? 'Starting in 1 Hour!' : 'Starting in 2 Hours!'
   const headerSubtitle = isOneDay ? 'Your experience is coming up' : 'Get ready to go!'
   const emailTitle = isOneDay ? 'Experience Tomorrow!' : 'Starting Soon!'
   const reminderText = isOneDay
     ? `Just a friendly reminder that you're signed up for <strong>${safeEventName}</strong> tomorrow!`
-    : `<strong>${safeEventName}</strong> is starting in just 2 hours! Time to get moving!`
+    : isOneHour
+      ? `<strong>${safeEventName}</strong> is starting in just 1 hour at ${safeEventLocation}! Time to get moving!`
+      : `<strong>${safeEventName}</strong> is starting in just 2 hours! Time to get moving!`
 
   // Social context section
   const socialHtml = buildSocialContextHtml(familiarFaces, totalGoing)

@@ -28,6 +28,7 @@ const REMINDER_INTERVALS = {
   ONE_WEEK: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
   ONE_DAY: 24 * 60 * 60 * 1000, // 24 hours in ms
   TWO_HOURS: 2 * 60 * 60 * 1000, // 2 hours in ms
+  ONE_HOUR: 60 * 60 * 1000, // 1 hour in ms
 } as const
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
@@ -153,6 +154,31 @@ export async function scheduleRemindersForBooking(
       remindersToSchedule.push({
         type: 'TWO_HOURS' as ReminderType,
         scheduledFor: twoHoursBefore,
+        channel: 'EMAIL' as ReminderChannel,
+      })
+    }
+  }
+
+  // One Hour Reminder (default enabled)
+  const oneHourBefore = new Date(startTime.getTime() - REMINDER_INTERVALS.ONE_HOUR)
+  if (
+    oneHourBefore > now &&
+    (hostSettings?.enableOneHourReminder ?? true) &&
+    (userPreferences?.enableOneHourReminder ?? true)
+  ) {
+    // Push notification for 1-hour reminder
+    if (userPreferences?.pushReminders ?? true) {
+      remindersToSchedule.push({
+        type: 'ONE_HOUR' as ReminderType,
+        scheduledFor: oneHourBefore,
+        channel: 'PUSH' as ReminderChannel,
+      })
+    }
+    // Also send email for 1-hour reminder
+    if (userPreferences?.emailReminders ?? true) {
+      remindersToSchedule.push({
+        type: 'ONE_HOUR' as ReminderType,
+        scheduledFor: oneHourBefore,
         channel: 'EMAIL' as ReminderChannel,
       })
     }
@@ -389,6 +415,10 @@ async function sendEmailReminder(
       subject = hostSettings?.twoHourSubject || `Starting Soon: ${activity.title}`
       customMessage = hostSettings?.twoHourMessage || null
       break
+    case 'ONE_HOUR':
+      subject = hostSettings?.oneHourSubject || `Starting in 1 hour: ${activity.title}`
+      customMessage = hostSettings?.oneHourMessage || null
+      break
     default:
       subject = `Reminder: ${activity.title}`
   }
@@ -477,14 +507,19 @@ async function sendPushReminder(
 
   // Build notification payload
   const title =
-    reminderType === 'TWO_HOURS'
-      ? `Starting in 2 hours: ${activity.title}`
-      : `Reminder: ${activity.title}`
+    reminderType === 'ONE_HOUR'
+      ? `Starting in 1 hour: ${activity.title}`
+      : reminderType === 'TWO_HOURS'
+        ? `Starting in 2 hours: ${activity.title}`
+        : `Reminder: ${activity.title}`
 
+  const locationText = activity.address || activity.city || ''
   const body =
-    reminderType === 'TWO_HOURS'
-      ? `${activity.title} starts at ${formatTime(activity.startTime!)}. Tap to view details.`
-      : `Don't forget about ${activity.title} on ${formatDate(activity.startTime!)}`
+    reminderType === 'ONE_HOUR'
+      ? `${activity.title} starts at ${formatTime(activity.startTime!)}${locationText ? ` at ${locationText}` : ''}. Tap to view details.`
+      : reminderType === 'TWO_HOURS'
+        ? `${activity.title} starts at ${formatTime(activity.startTime!)}. Tap to view details.`
+        : `Don't forget about ${activity.title} on ${formatDate(activity.startTime!)}`
 
   const payload = JSON.stringify({
     title,
@@ -552,18 +587,22 @@ async function sendInAppReminder(
   const { activity, user } = booking
 
   const title =
-    reminderType === 'TWO_HOURS'
-      ? `Starting in 2 hours!`
-      : reminderType === 'ONE_DAY'
-        ? `Tomorrow!`
-        : `Coming up next week`
+    reminderType === 'ONE_HOUR'
+      ? `Starting in 1 hour!`
+      : reminderType === 'TWO_HOURS'
+        ? `Starting in 2 hours!`
+        : reminderType === 'ONE_DAY'
+          ? `Tomorrow!`
+          : `Coming up next week`
 
   const content = `${activity.title} ${
-    reminderType === 'TWO_HOURS'
-      ? `starts at ${formatTime(activity.startTime!)}`
-      : reminderType === 'ONE_DAY'
-        ? `is tomorrow at ${formatTime(activity.startTime!)}`
-        : `is on ${formatDate(activity.startTime!)}`
+    reminderType === 'ONE_HOUR'
+      ? `starts at ${formatTime(activity.startTime!)}${activity.address || activity.city ? ` at ${activity.address || activity.city}` : ''}`
+      : reminderType === 'TWO_HOURS'
+        ? `starts at ${formatTime(activity.startTime!)}`
+        : reminderType === 'ONE_DAY'
+          ? `is tomorrow at ${formatTime(activity.startTime!)}`
+          : `is on ${formatDate(activity.startTime!)}`
   }`
 
   await createNotification({
@@ -623,11 +662,13 @@ function buildReminderEmailHtml(params: {
   } = params
 
   const urgencyText =
-    reminderType === 'TWO_HOURS'
-      ? 'Your session starts in 2 hours!'
-      : reminderType === 'ONE_DAY'
-        ? 'Your session is tomorrow!'
-        : 'Your session is coming up next week!'
+    reminderType === 'ONE_HOUR'
+      ? 'Your session starts in 1 hour!'
+      : reminderType === 'TWO_HOURS'
+        ? 'Your session starts in 2 hours!'
+        : reminderType === 'ONE_DAY'
+          ? 'Your session is tomorrow!'
+          : 'Your session is coming up next week!'
 
   return `
 <!DOCTYPE html>
@@ -867,6 +908,7 @@ export async function getUserReminderPreferences(
         enableOneWeekReminder: false,
         enableOneDayReminder: true,
         enableTwoHourReminder: true,
+        enableOneHourReminder: true,
         emailReminders: true,
         pushReminders: true,
         smsReminders: false,
@@ -887,6 +929,7 @@ export async function updateUserReminderPreferences(
     enableOneWeekReminder: boolean
     enableOneDayReminder: boolean
     enableTwoHourReminder: boolean
+    enableOneHourReminder: boolean
     emailReminders: boolean
     pushReminders: boolean
     smsReminders: boolean

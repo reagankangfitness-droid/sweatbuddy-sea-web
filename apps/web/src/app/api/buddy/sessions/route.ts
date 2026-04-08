@@ -186,7 +186,6 @@ function formatSession(activity: ReturnType<typeof Object.assign>, userStatus?: 
     description: activity.description,
     activityMode: activity.activityMode,
     categorySlug: activity.categorySlug,
-    type: activity.type,
     city: activity.city,
     address: activity.address,
     latitude: activity.latitude,

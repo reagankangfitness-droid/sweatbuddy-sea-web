@@ -7,15 +7,16 @@ import { createMentionNotifications } from '@/lib/notifications'
 // GET /api/activities/[id]/group/messages - Fetch all group messages
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const { userId } = await auth()
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const activityId = params.id
+    const activityId = id
 
     // Check if activity exists
     const activity = await prisma.activity.findUnique({
@@ -159,15 +160,16 @@ export async function GET(
 // POST /api/activities/[id]/group/messages - Send a message to the group
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const { userId } = await auth()
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const activityId = params.id
+    const activityId = id
     const body = await request.json()
     const { content } = body
 

@@ -1,7 +1,8 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
-import { MessageCircle, Instagram, Link2, Check, X } from 'lucide-react'
+import { motion, AnimatePresence } from 'motion/react'
+import { MessageCircle, Link2, Check, X } from 'lucide-react'
+import { Instagram } from '@/components/icons/InstagramIcon'
 import { useState } from 'react'
 import { toast } from 'sonner'
 

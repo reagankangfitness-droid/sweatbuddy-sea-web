@@ -14,14 +14,15 @@ async function getDbUser() {
 // GET: fetch single template with session count
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { templateId: string } }
+  { params }: { params: Promise<{ templateId: string }> }
 ) {
   try {
+    const { templateId } = await params
     const dbUser = await getDbUser()
     if (!dbUser) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
     const template = await prisma.sessionTemplate.findFirst({
-      where: { id: params.templateId, hostId: dbUser.id, deletedAt: null },
+      where: { id: templateId, hostId: dbUser.id, deletedAt: null },
       include: {
         _count: { select: { sessions: true } },
         sessions: {
@@ -47,14 +48,15 @@ export async function GET(
 // PUT: update template, apply changes to future un-RSVPd sessions
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { templateId: string } }
+  { params }: { params: Promise<{ templateId: string }> }
 ) {
   try {
+    const { templateId } = await params
     const dbUser = await getDbUser()
     if (!dbUser) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
     const existing = await prisma.sessionTemplate.findFirst({
-      where: { id: params.templateId, hostId: dbUser.id, deletedAt: null },
+      where: { id: templateId, hostId: dbUser.id, deletedAt: null },
     })
     if (!existing) return NextResponse.json({ error: 'Template not found' }, { status: 404 })
 
@@ -73,7 +75,7 @@ export async function PUT(
     const priceCents = price !== undefined ? Math.round(Number(price) * 100) : undefined
 
     const template = await prisma.sessionTemplate.update({
-      where: { id: params.templateId },
+      where: { id: templateId },
       data: {
         ...(title !== undefined && { title: title.trim() }),
         ...(description !== undefined && { description: description?.trim() || null }),
@@ -105,7 +107,7 @@ export async function PUT(
     // Update future sessions that have 0 RSVPs
     const futureEmptySessions = await prisma.activity.findMany({
       where: {
-        sessionTemplateId: params.templateId,
+        sessionTemplateId: templateId,
         startTime: { gt: new Date() },
         deletedAt: null,
         status: { not: 'CANCELLED' },
@@ -154,27 +156,28 @@ export async function PUT(
 // DELETE: soft-delete template, optionally cancel future un-RSVPd sessions
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { templateId: string } }
+  { params }: { params: Promise<{ templateId: string }> }
 ) {
   try {
+    const { templateId } = await params
     const dbUser = await getDbUser()
     if (!dbUser) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
     const template = await prisma.sessionTemplate.findFirst({
-      where: { id: params.templateId, hostId: dbUser.id, deletedAt: null },
+      where: { id: templateId, hostId: dbUser.id, deletedAt: null },
     })
     if (!template) return NextResponse.json({ error: 'Template not found' }, { status: 404 })
 
     // Soft delete the template
     await prisma.sessionTemplate.update({
-      where: { id: params.templateId },
+      where: { id: templateId },
       data: { isActive: false, deletedAt: new Date() },
     })
 
     // Cancel future sessions with no RSVPs
     const cancelled = await prisma.activity.updateMany({
       where: {
-        sessionTemplateId: params.templateId,
+        sessionTemplateId: templateId,
         startTime: { gt: new Date() },
         deletedAt: null,
         status: { not: 'CANCELLED' },

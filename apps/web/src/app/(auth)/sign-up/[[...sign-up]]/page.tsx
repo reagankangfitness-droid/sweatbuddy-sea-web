@@ -133,7 +133,7 @@ function SignUpContent() {
                 alertText: 'text-sm',
               }
             }}
-            redirectUrl={redirectUrl || '/buddy'}
+            forceRedirectUrl={redirectUrl || '/buddy'}
           />
         </div>
 

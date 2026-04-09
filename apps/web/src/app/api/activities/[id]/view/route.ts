@@ -4,10 +4,11 @@ import { trackActivityView } from '@/lib/stats/realtime'
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const activityId = params.id
+    const { id } = await params
+    const activityId = id
 
     // Get user if logged in (optional)
     let userId: string | null = null

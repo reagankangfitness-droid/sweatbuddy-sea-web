@@ -14,14 +14,15 @@ async function getDbUser() {
 // POST: skip a specific date
 export async function POST(
   request: NextRequest,
-  { params }: { params: { templateId: string } }
+  { params }: { params: Promise<{ templateId: string }> }
 ) {
   try {
+    const { templateId } = await params
     const dbUser = await getDbUser()
     if (!dbUser) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
     const template = await prisma.sessionTemplate.findFirst({
-      where: { id: params.templateId, hostId: dbUser.id, deletedAt: null },
+      where: { id: templateId, hostId: dbUser.id, deletedAt: null },
     })
     if (!template) return NextResponse.json({ error: 'Template not found' }, { status: 404 })
 
@@ -36,7 +37,7 @@ export async function POST(
       : [...template.skippedDates, date]
 
     await prisma.sessionTemplate.update({
-      where: { id: params.templateId },
+      where: { id: templateId },
       data: { skippedDates },
     })
 
@@ -46,7 +47,7 @@ export async function POST(
 
     await prisma.activity.updateMany({
       where: {
-        sessionTemplateId: params.templateId,
+        sessionTemplateId: templateId,
         startTime: { gte: dateStart, lte: dateEnd },
         deletedAt: null,
         status: { not: 'CANCELLED' },
@@ -65,14 +66,15 @@ export async function POST(
 // DELETE: unskip a date
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { templateId: string } }
+  { params }: { params: Promise<{ templateId: string }> }
 ) {
   try {
+    const { templateId } = await params
     const dbUser = await getDbUser()
     if (!dbUser) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
     const template = await prisma.sessionTemplate.findFirst({
-      where: { id: params.templateId, hostId: dbUser.id, deletedAt: null },
+      where: { id: templateId, hostId: dbUser.id, deletedAt: null },
     })
     if (!template) return NextResponse.json({ error: 'Template not found' }, { status: 404 })
 
@@ -80,7 +82,7 @@ export async function DELETE(
     const skippedDates = template.skippedDates.filter((d) => d !== date)
 
     await prisma.sessionTemplate.update({
-      where: { id: params.templateId },
+      where: { id: templateId },
       data: { skippedDates },
     })
 

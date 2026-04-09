@@ -10,10 +10,10 @@ import {
   XCircle,
   Copy,
   ExternalLink,
-  Instagram,
   Mail,
   User,
 } from 'lucide-react'
+import { Instagram } from '@/components/icons/InstagramIcon'
 
 type Tab = 'create-host' | 'create-event' | 'magic-link'
 

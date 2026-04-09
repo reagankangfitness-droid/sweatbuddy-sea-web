@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useForm } from 'react-hook-form'
@@ -79,7 +79,8 @@ function utcToLocalDateTimeString(utcDate: Date | string): string {
   return `${year}-${month}-${day}T${hours}:${minutes}`
 }
 
-export default function EditActivityPage({ params }: { params: { id: string } }) {
+export default function EditActivityPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const router = useRouter()
   const { isLoaded: mapLoaded } = useLoadScript({
     googleMapsApiKey: GOOGLE_MAPS_API_KEY,
@@ -124,7 +125,7 @@ export default function EditActivityPage({ params }: { params: { id: string } })
   useEffect(() => {
     async function fetchActivity() {
       try {
-        const response = await fetch(`/api/activities/${params.id}`)
+        const response = await fetch(`/api/activities/${id}`)
         if (!response.ok) {
           throw new Error('Activity not found')
         }
@@ -166,7 +167,7 @@ export default function EditActivityPage({ params }: { params: { id: string } })
     }
 
     fetchActivity()
-  }, [params.id, form, router])
+  }, [id, form, router])
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldOnChange: (url: string) => void) => {
     const file = e.target.files?.[0]
@@ -265,7 +266,7 @@ export default function EditActivityPage({ params }: { params: { id: string } })
       const data = form.getValues()
       // Include timezone offset so the server can properly convert datetime-local to UTC
       const timezoneOffset = new Date().getTimezoneOffset()
-      const response = await fetch(`/api/activities/${params.id}`, {
+      const response = await fetch(`/api/activities/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -292,7 +293,7 @@ export default function EditActivityPage({ params }: { params: { id: string } })
     setIsDeleting(true)
 
     try {
-      const response = await fetch(`/api/activities/${params.id}`, {
+      const response = await fetch(`/api/activities/${id}`, {
         method: 'DELETE',
       })
 

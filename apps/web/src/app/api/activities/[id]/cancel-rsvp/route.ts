@@ -10,16 +10,17 @@ import { processWaitlistForSpot } from '@/lib/waitlist'
  */
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const { userId } = await auth()
 
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const activityId = params.id
+    const activityId = id
 
     // Find the user's JOINED booking for this activity
     const userActivity = await prisma.userActivity.findFirst({

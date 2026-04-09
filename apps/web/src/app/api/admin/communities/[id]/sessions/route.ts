@@ -6,14 +6,15 @@ import { geocodeAddress } from '@/lib/geocode'
 // POST - Create a session (one-time or recurring template) for a community
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!(await isAdminRequest(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
-    const communityId = params.id
+    const { id } = await params
+    const communityId = id
     const community = await prisma.community.findUnique({
       where: { id: communityId },
       select: { id: true, name: true, createdById: true },
@@ -220,15 +221,16 @@ export async function POST(
 // GET - List sessions for a community
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!(await isAdminRequest(request))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
+    const { id } = await params
     const sessions = await prisma.activity.findMany({
-      where: { communityId: params.id, deletedAt: null },
+      where: { communityId: id, deletedAt: null },
       select: {
         id: true, title: true, startTime: true, endTime: true,
         status: true, price: true, currency: true,
@@ -238,7 +240,7 @@ export async function GET(
     })
 
     const templates = await prisma.sessionTemplate.findMany({
-      where: { communityId: params.id, deletedAt: null },
+      where: { communityId: id, deletedAt: null },
       select: {
         id: true, title: true, daysOfWeek: true, startTime: true, endTime: true,
         isActive: true, _count: { select: { sessions: true } },

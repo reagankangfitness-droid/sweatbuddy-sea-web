@@ -8,16 +8,17 @@ import { createNotification } from '@/lib/notifications'
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     // Authenticate with Clerk
     const { userId } = await auth()
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const activityId = params.id
+    const activityId = id
 
     // Get user details from Clerk and sync to database
     const client = await clerkClient()
@@ -211,16 +212,17 @@ export async function POST(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     // Authenticate with Clerk
     const { userId } = await auth()
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const activityId = params.id
+    const activityId = id
 
     // Find the activity first (for stats update)
     const activity = await prisma.activity.findUnique({

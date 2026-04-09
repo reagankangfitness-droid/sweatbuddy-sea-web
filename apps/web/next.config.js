@@ -12,7 +12,7 @@ const nextConfig = {
   // Experimental features for performance
   experimental: {
     // Optimize package imports for smaller bundles
-    optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts', 'date-fns'],
+    optimizePackageImports: ['lucide-react', 'motion', 'recharts', 'date-fns'],
   },
 
   // Optimized image settings
@@ -59,13 +59,6 @@ const nextConfig = {
   // Remove console logs in production
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
-  },
-
-  // Modular imports for smaller bundles
-  modularizeImports: {
-    'lucide-react': {
-      transform: 'lucide-react/dist/esm/icons/{{kebabCase member}}',
-    },
   },
 
   // Redirects

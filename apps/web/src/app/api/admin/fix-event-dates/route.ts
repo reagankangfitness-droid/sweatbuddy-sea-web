@@ -141,7 +141,7 @@ export async function POST(request: Request) {
     }
 
     // Revalidate the events cache
-    revalidateTag('events')
+    revalidateTag('events', 'default')
 
     return NextResponse.json({
       success: true,

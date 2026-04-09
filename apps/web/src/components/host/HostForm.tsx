@@ -6,13 +6,12 @@ import Image from 'next/image'
 import dynamicImport from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import {
   ArrowLeft,
   Calendar,
   MapPin,
   Clock,
-  Instagram,
   Mail,
   User,
   FileText,
@@ -32,6 +31,7 @@ import {
   Sparkles,
   RefreshCw
 } from 'lucide-react'
+import { Instagram } from '@/components/icons/InstagramIcon'
 import { UploadButton, useUploadThing } from '@/lib/uploadthing'
 import { ACTIVITY_CATEGORIES, CATEGORY_GROUPS, getCategoriesByGroup } from '@/lib/categories'
 import { parseLocalDate } from '@/lib/event-dates'

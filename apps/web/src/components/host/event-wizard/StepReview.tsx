@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { useFormContext } from 'react-hook-form'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import {
   ImageIcon,
   X,
@@ -12,10 +12,10 @@ import {
   MapPin,
   Clock,
   User,
-  Instagram,
   Mail,
   ChevronDown,
 } from 'lucide-react'
+import { Instagram } from '@/components/icons/InstagramIcon'
 import { UploadButton, useUploadThing } from '@/lib/uploadthing'
 import type { EventFormData } from '@/lib/validations/event'
 

@@ -4,9 +4,10 @@ import { getActivityWaitlist } from '@/lib/waitlist'
 
 export async function GET(
   request: Request,
-  { params }: { params: { activityId: string } }
+  { params }: { params: Promise<{ activityId: string }> }
 ) {
   try {
+    const { activityId } = await params
     const { userId } = await auth()
 
     if (!userId) {
@@ -16,7 +17,7 @@ export async function GET(
       )
     }
 
-    const result = await getActivityWaitlist(params.activityId, userId)
+    const result = await getActivityWaitlist(activityId, userId)
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 404 })

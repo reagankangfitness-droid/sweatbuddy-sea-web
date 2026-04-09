@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'motion/react'
 import { MapPin, Loader2, Zap, Minus, Plus, X, ImagePlus } from 'lucide-react'
 import { toast } from 'sonner'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'

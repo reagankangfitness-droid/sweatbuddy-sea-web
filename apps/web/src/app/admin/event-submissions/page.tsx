@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
-import { Check, X, Clock, MapPin, Calendar, Mail, Instagram, User, Copy, Loader2 } from 'lucide-react'
+import { Check, X, Clock, MapPin, Calendar, Mail, User, Copy, Loader2 } from 'lucide-react'
+import { Instagram } from '@/components/icons/InstagramIcon'
 import { toast } from 'sonner'
 import Image from 'next/image'
 

@@ -5,7 +5,8 @@ import { useAuth } from '@clerk/nextjs'
 import { toast } from 'sonner'
 import Image from 'next/image'
 import { format } from 'date-fns'
-import { Pencil, Trash2, X, Save, Calendar, Clock, MapPin, Instagram, ImageIcon, Check, Mail, User, Loader2, Upload, DollarSign, CreditCard, Link2, Users, Navigation } from 'lucide-react'
+import { Pencil, Trash2, X, Save, Calendar, Clock, MapPin, ImageIcon, Check, Mail, User, Loader2, Upload, DollarSign, CreditCard, Link2, Users, Navigation } from 'lucide-react'
+import { Instagram } from '@/components/icons/InstagramIcon'
 import { UploadButton } from '@/lib/uploadthing'
 
 interface Event {

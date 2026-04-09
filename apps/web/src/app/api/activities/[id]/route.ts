@@ -43,12 +43,13 @@ function parseLocalDateTime(dateTimeLocal: string, timezoneOffset?: number): Dat
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const activity = await prisma.activity.findUnique({
       where: {
-        id: params.id,
+        id,
         deletedAt: null,
       },
       select: {
@@ -146,9 +147,10 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     // Authenticate with Clerk
     const { userId } = await auth()
     if (!userId) {
@@ -158,7 +160,7 @@ export async function PUT(
     // Check if activity exists and belongs to user
     const existingActivity = await prisma.activity.findUnique({
       where: {
-        id: params.id,
+        id,
         deletedAt: null,
       },
       select: {
@@ -183,7 +185,7 @@ export async function PUT(
 
     const updatedActivity = await prisma.activity.update({
       where: {
-        id: params.id,
+        id,
       },
       data: {
         title: body.title,
@@ -210,9 +212,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     // Authenticate with Clerk
     const { userId } = await auth()
     if (!userId) {
@@ -222,7 +225,7 @@ export async function DELETE(
     // Check if activity exists and belongs to user
     const activity = await prisma.activity.findUnique({
       where: {
-        id: params.id,
+        id,
         deletedAt: null,
       },
       select: {
@@ -242,7 +245,7 @@ export async function DELETE(
     // Soft delete the activity
     await prisma.activity.update({
       where: {
-        id: params.id,
+        id,
       },
       data: {
         deletedAt: new Date(),

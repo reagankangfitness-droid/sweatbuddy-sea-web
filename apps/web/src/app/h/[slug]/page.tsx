@@ -10,7 +10,6 @@ import {
   Calendar,
   Star,
   ExternalLink,
-  Instagram,
   Share2,
   UserPlus,
   UserCheck,
@@ -21,6 +20,7 @@ import {
   Lock,
   Hand
 } from 'lucide-react'
+import { Instagram } from '@/components/icons/InstagramIcon'
 import { format, formatDistanceToNow } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { CategoryBadge } from '@/components/category-badge'

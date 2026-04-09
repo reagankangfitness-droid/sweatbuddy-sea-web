@@ -94,8 +94,8 @@ export async function PATCH(
     // Revalidate caches so approved events appear immediately
     if (action === 'approve') {
       // Revalidate all cache tags
-      revalidateTag('events')
-      revalidateTag('attendance')
+      revalidateTag('events', 'default')
+      revalidateTag('attendance', 'default')
 
       // Revalidate all relevant paths
       revalidatePath('/', 'layout')

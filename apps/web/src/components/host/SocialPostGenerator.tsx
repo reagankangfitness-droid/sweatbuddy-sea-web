@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { X, Copy, Check, Loader2, RefreshCcw, Instagram, MessageCircle, Type } from 'lucide-react'
+import { X, Copy, Check, Loader2, RefreshCcw, MessageCircle, Type } from 'lucide-react'
+import { Instagram } from '@/components/icons/InstagramIcon'
 
 type Tab = 'instagram' | 'whatsapp' | 'story'
 

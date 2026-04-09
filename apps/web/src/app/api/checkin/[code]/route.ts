@@ -5,10 +5,10 @@ import { auth } from '@clerk/nextjs/server'
 // GET: Validate check-in code and return attendee info
 export async function GET(
   request: Request,
-  { params }: { params: { code: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
-    const { code } = params
+    const { code } = await params
 
     if (!code) {
       return NextResponse.json(
@@ -70,10 +70,10 @@ export async function GET(
 // POST: Mark attendee as checked in
 export async function POST(
   request: Request,
-  { params }: { params: { code: string } }
+  { params }: { params: Promise<{ code: string }> }
 ) {
   try {
-    const { code } = params
+    const { code } = await params
 
     if (!code) {
       return NextResponse.json(

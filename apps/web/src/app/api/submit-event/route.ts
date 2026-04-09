@@ -339,7 +339,7 @@ export async function POST(request: Request) {
 
     // Bust the events cache so new event appears immediately
     if (status === 'APPROVED') {
-      revalidateTag('events')
+      revalidateTag('events', 'default')
     }
 
     // Send confirmation email to host (fire and forget)

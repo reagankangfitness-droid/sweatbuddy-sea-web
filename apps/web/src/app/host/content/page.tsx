@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { DashboardHeader } from '@/components/host/DashboardHeader'
 import {
-  Instagram,
   MessageCircle,
   Mail,
   FileText,
@@ -17,6 +16,7 @@ import {
   RefreshCw,
   History,
 } from 'lucide-react'
+import { Instagram } from '@/components/icons/InstagramIcon'
 import { StickyBottomBar } from '@/components/ui/StickyBottomBar'
 
 type ContentType = 'instagram_caption' | 'whatsapp_message' | 'event_description' | 'email'

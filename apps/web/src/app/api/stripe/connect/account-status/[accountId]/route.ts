@@ -67,7 +67,7 @@ export async function GET(
     })
   } catch (error) {
     console.error('Error retrieving account status:', error)
-    const message = error instanceof Error ? error.message : 'Failed to fetch account status'
+    const message = process.env.NODE_ENV === 'production' ? 'Something went wrong' : (error instanceof Error ? error.message : 'Failed to fetch account status')
     return NextResponse.json(
       { error: { message } },
       { status: 400 }

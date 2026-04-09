@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(review, { status: 201 })
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to submit review' },
+      { error: process.env.NODE_ENV === 'production' ? 'Something went wrong' : (error instanceof Error ? error.message : 'Failed to submit review') },
       { status: 500 }
     )
   }

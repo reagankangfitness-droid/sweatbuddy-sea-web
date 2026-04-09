@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Coach verification upload error:', error)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to upload verification document' },
+      { error: process.env.NODE_ENV === 'production' ? 'Something went wrong' : (error instanceof Error ? error.message : 'Failed to upload verification document') },
       { status: 500 }
     )
   }
@@ -101,7 +101,7 @@ export async function GET() {
   } catch (error) {
     console.error('Coach verification fetch error:', error)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to fetch verification documents' },
+      { error: process.env.NODE_ENV === 'production' ? 'Something went wrong' : (error instanceof Error ? error.message : 'Failed to fetch verification documents') },
       { status: 500 }
     )
   }

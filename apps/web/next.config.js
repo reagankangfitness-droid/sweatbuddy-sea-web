@@ -119,6 +119,10 @@ const nextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(self)',
           },
+          {
+            key: 'Content-Security-Policy',
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://utfs.io https://img.clerk.com https://images.clerk.dev https://*.googleapis.com; font-src 'self'; connect-src 'self' https://*.clerk.com https://*.clerk.dev https://api.uploadthing.com https://*.googleapis.com https://nominatim.openstreetmap.org; frame-src 'self' https://accounts.clerk.com",
+          },
         ],
       },
       {

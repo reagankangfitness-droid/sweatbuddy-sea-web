@@ -81,7 +81,7 @@ export async function POST(request: Request) {
     })
   } catch (error) {
     console.error('Error creating Connect account:', error)
-    const message = error instanceof Error ? error.message : 'Failed to create account'
+    const message = process.env.NODE_ENV === 'production' ? 'Something went wrong' : (error instanceof Error ? error.message : 'Failed to create account')
     return NextResponse.json(
       { error: { message } },
       { status: 400 }

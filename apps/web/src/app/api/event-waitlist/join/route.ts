@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
@@ -102,6 +103,17 @@ export async function POST(request: Request) {
 
 // Get waitlist status for a user
 export async function GET(request: Request) {
+  const { userId } = await auth()
+  if (!userId) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  }
+
+  const clerkUser = await currentUser()
+  const userEmail = clerkUser?.primaryEmailAddress?.emailAddress?.toLowerCase()
+  if (!userEmail) {
+    return NextResponse.json({ error: 'No email found' }, { status: 400 })
+  }
+
   const { searchParams } = new URL(request.url)
   const eventId = searchParams.get('eventId')
   const email = searchParams.get('email')
@@ -110,6 +122,14 @@ export async function GET(request: Request) {
     return NextResponse.json(
       { error: 'Event ID and email are required' },
       { status: 400 }
+    )
+  }
+
+  // Ensure the requesting user can only check their own waitlist status
+  if (email.toLowerCase() !== userEmail) {
+    return NextResponse.json(
+      { error: 'You can only check your own waitlist status' },
+      { status: 403 }
     )
   }
 

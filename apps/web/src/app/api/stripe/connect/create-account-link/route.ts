@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ url: accountLink.url })
   } catch (error) {
     console.error('Error creating account link:', error)
-    const message = error instanceof Error ? error.message : 'Failed to create account link'
+    const message = process.env.NODE_ENV === 'production' ? 'Something went wrong' : (error instanceof Error ? error.message : 'Failed to create account link')
     return NextResponse.json(
       { error: { message } },
       { status: 400 }

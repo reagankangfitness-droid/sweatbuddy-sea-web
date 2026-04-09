@@ -183,7 +183,7 @@ export default async function EventDetailPage({ params }: Props) {
     <div className="min-h-screen bg-neutral-900">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c').replace(/>/g, '\\u003e') }}
       />
       {/* Back button header */}
       <header className="sticky top-0 z-40 bg-neutral-900/95 backdrop-blur-lg border-b border-neutral-800">

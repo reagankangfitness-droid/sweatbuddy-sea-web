@@ -4,6 +4,11 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { userId } = await auth()
+    if (!userId) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
+
     const { id: activityId } = await params
 
     const comments = await prisma.sessionComment.findMany({

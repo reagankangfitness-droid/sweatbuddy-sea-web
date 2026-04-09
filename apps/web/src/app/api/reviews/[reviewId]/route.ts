@@ -88,7 +88,7 @@ export async function PUT(
   } catch (error) {
     console.error('Error updating review:', error)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to update review' },
+      { error: process.env.NODE_ENV === 'production' ? 'Something went wrong' : (error instanceof Error ? error.message : 'Failed to update review') },
       { status: 500 }
     )
   }
@@ -117,7 +117,7 @@ export async function DELETE(
   } catch (error) {
     console.error('Error deleting review:', error)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to delete review' },
+      { error: process.env.NODE_ENV === 'production' ? 'Something went wrong' : (error instanceof Error ? error.message : 'Failed to delete review') },
       { status: 500 }
     )
   }

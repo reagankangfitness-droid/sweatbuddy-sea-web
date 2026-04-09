@@ -222,7 +222,7 @@ export async function POST(
       console.error('Error stack:', error.stack)
     }
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to send message' },
+      { error: process.env.NODE_ENV === 'production' ? 'Something went wrong' : (error instanceof Error ? error.message : 'Failed to send message') },
       { status: 500 }
     )
   }

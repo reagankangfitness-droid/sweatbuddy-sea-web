@@ -7,6 +7,16 @@ import { useEffect, Suspense } from 'react'
 import { Loader2, ArrowLeft } from 'lucide-react'
 import { Logo } from '@/components/logo'
 
+function isValidRedirect(url: string): boolean {
+  if (!url || !url.startsWith('/')) return false
+  try {
+    const parsed = new URL(url, 'http://localhost')
+    return parsed.origin === 'http://localhost'
+  } catch {
+    return false
+  }
+}
+
 function SignInContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -16,7 +26,7 @@ function SignInContent() {
   const eventId = searchParams.get('eventId')
   const eventSlug = searchParams.get('eventSlug')
   const rawRedirectUrl = searchParams.get('redirect_url')
-  const redirectUrl = rawRedirectUrl && rawRedirectUrl.startsWith('/') && !rawRedirectUrl.startsWith('//') ? rawRedirectUrl : null
+  const redirectUrl = rawRedirectUrl && isValidRedirect(rawRedirectUrl) ? rawRedirectUrl : null
 
   useEffect(() => {
     if (intent) {

@@ -1,6 +1,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 // GET /api/activities/[id]/messages - Fetch messages for current user and host
 export async function GET(
@@ -119,6 +120,15 @@ export async function POST(
     const { userId } = await auth()
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Rate limit: max 30 messages per user per minute
+    const rl = checkRateLimit(userId, 'activity-messages', 30, 60 * 1000)
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many messages. Please slow down.' },
+        { status: 429, headers: { 'Retry-After': String(rl.retryAfterSeconds) } }
+      )
     }
 
     const activityId = params.id

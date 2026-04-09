@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Coach application error:', error)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to submit coach application' },
+      { error: process.env.NODE_ENV === 'production' ? 'Something went wrong' : (error instanceof Error ? error.message : 'Failed to submit coach application') },
       { status: 500 }
     )
   }

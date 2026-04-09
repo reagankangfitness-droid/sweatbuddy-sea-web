@@ -4,6 +4,13 @@ import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
+function maskEmail(email: string): string {
+  const [local, domain] = email.split('@')
+  if (!domain) return '***'
+  const visible = local.slice(0, 2)
+  return `${visible}***@${domain}`
+}
+
 // GET /api/host/community - Get all attendees across all host's events
 export async function GET(request: NextRequest) {
   try {
@@ -210,7 +217,7 @@ export async function GET(request: NextRequest) {
 
     // Format response
     const formattedAttendees = attendees.map(a => ({
-      email: a.email,
+      email: maskEmail(a.email),
       name: a.name,
       eventsRSVPd: a.eventsRSVPd,
       eventsAttended: a.eventsAttended,

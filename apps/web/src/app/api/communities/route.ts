@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { generateUniqueSlug, updateCommunityMemberCount } from '@/lib/community-system'
 import { trackEvent, EVENTS } from '@/lib/analytics'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 // GET /api/communities - List communities
 export async function GET(request: NextRequest) {
@@ -146,6 +147,15 @@ export async function POST(request: NextRequest) {
     const { userId } = await auth()
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Rate limit: max 5 community creations per user per hour
+    const rl = checkRateLimit(userId, 'communities/create', 5, 60 * 60 * 1000)
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many communities created. Please try again later.' },
+        { status: 429, headers: { 'Retry-After': String(rl.retryAfterSeconds) } }
+      )
     }
 
     const body = await request.json()

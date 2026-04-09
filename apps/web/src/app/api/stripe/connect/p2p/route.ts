@@ -79,7 +79,7 @@ export async function POST() {
     return NextResponse.json({ url: accountLink.url, accountId })
   } catch (error) {
     console.error('[stripe/connect/p2p] Error:', error)
-    const message = error instanceof Error ? error.message : 'Failed to create Connect account'
+    const message = process.env.NODE_ENV === 'production' ? 'Something went wrong' : (error instanceof Error ? error.message : 'Failed to create Connect account')
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }

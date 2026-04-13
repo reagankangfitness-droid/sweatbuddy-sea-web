@@ -93,7 +93,7 @@ export async function GET(request: Request) {
       status: 'PUBLISHED',
       startTime: { gt: new Date() },
       deletedAt: null,
-      userId: { notIn: blockedUserIds.length > 0 ? blockedUserIds : undefined },
+      ...(blockedUserIds.length > 0 ? { userId: { notIn: blockedUserIds } } : {}),
     }
 
     // Location-based filtering — 25km radius bounding box

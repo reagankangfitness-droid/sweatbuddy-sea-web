@@ -6,7 +6,7 @@ import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 import { Loader2, Check } from 'lucide-react'
 import { toast } from 'sonner'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
 
 const ONBOARDING_ACTIVITIES = ACTIVITY_TYPES.filter((a) => a.tier === 1 || a.tier === 2)

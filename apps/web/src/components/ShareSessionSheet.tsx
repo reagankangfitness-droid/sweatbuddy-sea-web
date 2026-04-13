@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { MessageCircle, Link2, Check, X } from 'lucide-react'
 import { Instagram } from '@/components/icons/InstagramIcon'
 import { useState } from 'react'

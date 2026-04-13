@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Plus, MapPin, Users, Clock, Calendar, TrendingUp, Search } from 'lucide-react'
-import { motion } from 'motion/react'
+import { motion } from 'framer-motion'
 import { ACTIVITY_CATEGORIES } from '@/lib/categories'
 import { MyCommunities } from '@/components/community/MyCommunities'
 

@@ -12,7 +12,7 @@ const nextConfig = {
   // Experimental features for performance
   experimental: {
     // Optimize package imports for smaller bundles
-    optimizePackageImports: ['lucide-react', 'motion', 'recharts', 'date-fns'],
+    optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts', 'date-fns'],
   },
 
   // Optimized image settings

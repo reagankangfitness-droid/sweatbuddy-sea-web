@@ -2,7 +2,7 @@
 
 import dynamicImport from 'next/dynamic'
 import { useFormContext } from 'react-hook-form'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { MapPin, Clock, Check } from 'lucide-react'
 import { DatePickerDropdown } from '@/components/ui/DatePickerDropdown'
 import { TimePickerDropdown } from '@/components/ui/TimePickerDropdown'

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useCallback } from 'react'
-import { motion, AnimatePresence, PanInfo } from 'motion/react'
+import { motion, AnimatePresence, PanInfo } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'

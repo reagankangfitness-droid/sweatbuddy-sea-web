@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { X, Send, MessageCircle, Loader2, Mail, CheckCircle } from 'lucide-react'
 import { Instagram } from '@/components/icons/InstagramIcon'
 import { safeGetJSON } from '@/lib/safe-storage'

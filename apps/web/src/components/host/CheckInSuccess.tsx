@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Check, X, AlertCircle } from 'lucide-react'
 
 interface CheckInSuccessProps {

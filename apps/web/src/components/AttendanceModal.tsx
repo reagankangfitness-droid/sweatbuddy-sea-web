@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { X, Check, Loader2, Calendar, MessageCircle } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
 import { safeGetJSON, safeSetJSON } from '@/lib/safe-storage'

@@ -6,7 +6,7 @@ import Image from 'next/image'
 import dynamicImport from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft,
   Calendar,

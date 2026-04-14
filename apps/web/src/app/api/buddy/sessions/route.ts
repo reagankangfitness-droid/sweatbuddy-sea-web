@@ -6,24 +6,19 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(request: Request) {
   try {
+    // Auth is optional — unauthenticated users can browse sessions
+    let dbUser: { id: string; blocksMade: { blockedUserId: string }[] } | null = null
+
     const { userId } = await auth()
-    if (!userId) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
-    }
-
-    const clerkUser = await currentUser()
-    const email = clerkUser?.primaryEmailAddress?.emailAddress
-    if (!email) {
-      return NextResponse.json({ error: 'No email found' }, { status: 400 })
-    }
-
-    const dbUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
-      select: { id: true, blocksMade: { select: { blockedUserId: true } } },
-    })
-
-    if (!dbUser) {
-      return NextResponse.json({ sessions: [] })
+    if (userId) {
+      const clerkUser = await currentUser()
+      const email = clerkUser?.primaryEmailAddress?.emailAddress
+      if (email) {
+        dbUser = await prisma.user.findUnique({
+          where: { email: email.toLowerCase() },
+          select: { id: true, blocksMade: { select: { blockedUserId: true } } },
+        })
+      }
     }
 
     const { searchParams } = new URL(request.url)
@@ -34,10 +29,11 @@ export async function GET(request: Request) {
     const cursor = searchParams.get('cursor') ?? undefined
     const PAGE_SIZE = 20
 
-    const blockedUserIds = dbUser.blocksMade.map((b) => b.blockedUserId)
+    const blockedUserIds = dbUser?.blocksMade.map((b) => b.blockedUserId) ?? []
     const verifiedFilter = searchParams.get('verified') ?? ''
 
     if (tab === 'mine') {
+      if (!dbUser) return NextResponse.json({ hosting: [], attending: [] })
       // Sessions the user is hosting OR attending
       const [hosting, attending] = await Promise.all([
         prisma.activity.findMany({
@@ -165,7 +161,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       sessions: items.map((a) => formatSession(a)),
       nextCursor,
-      currentUserId: dbUser.id,
+      currentUserId: dbUser?.id ?? null,
     })
   } catch (error) {
     console.error('[buddy/sessions] Error:', error)

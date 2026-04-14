@@ -248,10 +248,6 @@ function BuddyPageInner() {
         }
 
         const res = await fetch(`/api/buddy/sessions?${params}`)
-        if (res.status === 401) {
-          router.push('/sign-in')
-          return
-        }
         if (!res.ok) throw new Error('Failed to fetch')
 
         const data = await res.json()

@@ -818,71 +818,77 @@ function SessionCard({
     >
       <Link
         href={`/activities/${session.id}`}
-        className="group flex rounded-2xl bg-[#18181B] shadow-none hover:bg-[#27272A] active:bg-[#18181B] transition-all duration-200 overflow-hidden"
+        className="group rounded-2xl bg-[#18181B] hover:bg-[#1e1e21] active:bg-[#18181B] transition-all duration-200 overflow-hidden block"
       >
-        {/* Left: Square thumbnail */}
-        <div className="relative w-24 sm:w-28 h-24 sm:h-28 flex-shrink-0 overflow-hidden">
+        {/* Hero image */}
+        <div className="relative h-40 overflow-hidden">
           {session.imageUrl ? (
             <>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={session.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#18181B] via-transparent to-transparent" />
             </>
           ) : (
             <div className={`w-full h-full flex items-center justify-center ${pinColor(session.categorySlug ?? 'other')}`}>
-              <span className="text-3xl">{emoji}</span>
+              <span className="text-5xl">{emoji}</span>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#18181B] via-transparent to-transparent" />
             </div>
           )}
-          {/* Price badge */}
-          <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold backdrop-blur-sm ${isPaid ? 'bg-[#27272A] text-[#FAFAFA]' : 'bg-[#10B981]/20 text-[#10B981]'}`}>
-            {priceDisplay}
-          </span>
-          {isJoined && !isHosting && (
-            <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/90 text-white backdrop-blur-sm">Going</span>
-          )}
-        </div>
 
-        {/* Right: Details */}
-        <div className="flex-1 min-w-0 p-3 flex flex-col justify-between">
-          <div>
-            {/* Title */}
-            <h3 className="text-[14px] font-bold text-[#FAFAFA] leading-snug line-clamp-2">
-              {session.title}
-            </h3>
-            {/* Time + Location */}
-            <p className="text-[12px] text-[#71717A] mt-1 truncate">
-              {session.startTime ? getRelativeTime(session.startTime) : ''}
-              {session.startTime && (session.address || session.city) ? ' · ' : ''}
-              {formatAddress(session.address ?? session.city ?? '')}
-            </p>
+          {/* Top badges */}
+          <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+            <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-md ${isPaid ? 'bg-[#27272A]/80 text-[#FAFAFA]' : 'bg-[#10B981]/20 text-[#10B981]'}`}>
+              {priceDisplay}
+            </span>
+            {isJoined && !isHosting && (
+              <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#10B981]/90 text-[#09090B] backdrop-blur-md">Going</span>
+            )}
           </div>
 
-          {/* Bottom row: host + social proof */}
-          <div className="flex items-center justify-between mt-2">
+          {/* Title overlaid on gradient */}
+          <div className="absolute bottom-0 left-0 right-0 px-3.5 pb-3">
+            <h3 className="text-[15px] font-bold text-[#FAFAFA] leading-snug line-clamp-2 drop-shadow-lg">
+              {session.title}
+            </h3>
+          </div>
+        </div>
+
+        {/* Card body */}
+        <div className="px-3.5 py-2.5 space-y-2">
+          {/* Time + Location */}
+          <p className="text-[12px] text-[#A1A1AA] truncate">
+            {session.startTime ? getRelativeTime(session.startTime) : ''}
+            {session.startTime && (session.address || session.city) ? ' · ' : ''}
+            {formatAddress(session.address ?? session.city ?? '')}
+          </p>
+
+          {/* Host + social proof */}
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 min-w-0">
               {avatarSrc ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={avatarSrc} alt="" className="w-4 h-4 rounded-full object-cover flex-shrink-0" />
+                <img src={avatarSrc} alt="" className="w-5 h-5 rounded-full object-cover flex-shrink-0 ring-1 ring-white/[0.08]" />
               ) : (
-                <div className="w-4 h-4 rounded-full bg-[#27272A] flex items-center justify-center text-[9px] flex-shrink-0">{emoji}</div>
+                <div className="w-5 h-5 rounded-full bg-[#27272A] flex items-center justify-center text-[10px] flex-shrink-0">{emoji}</div>
               )}
-              <span className="text-[11px] text-[#71717A] truncate">{displayName}</span>
+              <span className="text-[12px] text-[#71717A] truncate">{displayName}</span>
             </div>
-            <div className="flex items-center gap-1 flex-shrink-0">
+            <div className="flex items-center gap-1.5 flex-shrink-0">
               {session.attendees.length > 0 && (
-                <div className="flex -space-x-1">
+                <div className="flex -space-x-1.5">
                   {session.attendees.slice(0, 3).map((a) =>
                     a.imageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img key={a.id} src={a.imageUrl} alt="" className="w-4 h-4 rounded-full ring-1 ring-[#18181B] object-cover" />
+                      <img key={a.id} src={a.imageUrl} alt="" className="w-5 h-5 rounded-full ring-1 ring-[#18181B] object-cover" />
                     ) : (
-                      <div key={a.id} className="w-4 h-4 rounded-full ring-1 ring-[#18181B] bg-[#27272A] flex items-center justify-center text-[7px] font-bold text-[#71717A]">
+                      <div key={a.id} className="w-5 h-5 rounded-full ring-1 ring-[#18181B] bg-[#27272A] flex items-center justify-center text-[8px] font-bold text-[#71717A]">
                         {(a.name ?? '?')[0]}
                       </div>
                     )
                   )}
                 </div>
               )}
-              <span className="text-[10px] text-[#71717A]">
+              <span className="text-[11px] text-[#71717A]">
                 {session.attendeeCount > 0 ? `${session.attendeeCount} going` : 'Be first'}
               </span>
             </div>

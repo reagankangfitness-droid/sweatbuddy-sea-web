@@ -176,6 +176,29 @@ const CATEGORY_COLORS: Record<string, string> = {
   cold_plunge: 'bg-sky-500', other: 'bg-neutral-500',
 }
 
+// Gradient pairs for poster-style fallback cards (from → to)
+const CATEGORY_GRADIENTS: Record<string, [string, string]> = {
+  running: ['#EA580C', '#9A3412'],
+  yoga: ['#9333EA', '#581C87'],
+  hiit: ['#DC2626', '#991B1B'],
+  bootcamp: ['#DC2626', '#7F1D1D'],
+  cycling: ['#CA8A04', '#854D0E'],
+  swimming: ['#0891B2', '#155E75'],
+  volleyball: ['#D97706', '#92400E'],
+  basketball: ['#EA580C', '#7C2D12'],
+  pilates: ['#DB2777', '#831843'],
+  hiking: ['#65A30D', '#3F6212'],
+  strength: ['#4F46E5', '#312E81'],
+  gym: ['#2563EB', '#1E3A5F'],
+  cold_plunge: ['#0284C7', '#0C4A6E'],
+  dance_fitness: ['#C026D3', '#701A75'],
+  badminton: ['#059669', '#064E3B'],
+  padel: ['#0D9488', '#134E4A'],
+  combat_fitness: ['#E11D48', '#881337'],
+  pickleball: ['#16A34A', '#14532D'],
+  other: ['#525252', '#262626'],
+}
+
 const EMOJI_MAP = Object.fromEntries(ACTIVITY_TYPES.map((t) => [t.key, t.emoji]))
 function pinEmoji(slug: string) { return EMOJI_MAP[slug] ?? '🏅' }
 function pinColor(slug: string) { return CATEGORY_COLORS[slug] ?? CATEGORY_COLORS.other }
@@ -832,8 +855,25 @@ function SessionCard({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={session.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
           ) : (
-            <div className={`w-full h-full flex items-center justify-center ${pinColor(session.categorySlug ?? 'other')}`}>
-              <span className="text-5xl">{emoji}</span>
+            /* Rich poster fallback — gradient bg + emoji + title + time */
+            <div
+              className="w-full h-full flex flex-col items-center justify-between p-4 text-center"
+              style={{ background: `linear-gradient(145deg, ${(CATEGORY_GRADIENTS[session.categorySlug ?? 'other'] ?? CATEGORY_GRADIENTS.other)[0]}, ${(CATEGORY_GRADIENTS[session.categorySlug ?? 'other'] ?? CATEGORY_GRADIENTS.other)[1]})` }}
+            >
+              <div />
+              <div>
+                <span className="text-5xl drop-shadow-lg block mb-3">{emoji}</span>
+                <h4 className="text-sm font-bold text-white uppercase tracking-wider leading-snug line-clamp-3 drop-shadow-md">
+                  {session.title}
+                </h4>
+              </div>
+              <div className="w-full">
+                <div className="border-t border-white/20 pt-2 mt-2">
+                  <p className="text-[10px] text-white/70 uppercase tracking-widest font-medium">
+                    {session.startTime ? format(new Date(session.startTime), 'EEE, MMM d · h:mm a') : ''}
+                  </p>
+                </div>
+              </div>
             </div>
           )}
           {isJoined && !isHosting && (

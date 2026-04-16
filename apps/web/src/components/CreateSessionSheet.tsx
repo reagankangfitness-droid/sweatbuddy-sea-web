@@ -312,13 +312,13 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 400, damping: 36 }}
-            className="fixed inset-x-0 bottom-0 top-[env(safe-area-inset-top,40px)] z-50 bg-[#18181B] rounded-t-2xl shadow-2xl flex flex-col"
+            className="fixed inset-x-0 bottom-0 top-[env(safe-area-inset-top,40px)] z-50 bg-[#1A1A1A] rounded-t-2xl shadow-2xl flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-white/[0.06]">
-              <h2 className="text-lg font-bold text-[#FAFAFA]">Create Session</h2>
-              <button onClick={onClose} className="w-10 h-10 rounded-full bg-[#27272A] flex items-center justify-center hover:bg-[#3f3f46] transition-colors">
-                <X className="w-4 h-4 text-[#A1A1AA]" />
+            <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-[#333333]">
+              <h2 className="text-lg font-bold text-white">Create Session</h2>
+              <button onClick={onClose} className="w-10 h-10 rounded-full bg-[#2A2A2A] flex items-center justify-center hover:bg-[#333333] transition-colors">
+                <X className="w-4 h-4 text-[#999999]" />
               </button>
             </div>
 
@@ -361,18 +361,18 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isUploading}
-                    className="w-full h-36 rounded-xl border-2 border-dashed border-white/[0.1] bg-[#27272A] flex flex-col items-center justify-center gap-2 hover:border-[#10B981]/30 transition-all"
+                    className="w-full h-36 rounded-xl border-2 border-dashed border-white/10 bg-[#2A2A2A] flex flex-col items-center justify-center gap-2 hover:border-white/20 transition-all"
                   >
                     {isUploading ? (
                       <>
-                        <Loader2 className="w-6 h-6 animate-spin text-[#10B981]" />
-                        <span className="text-xs text-[#71717A]">Uploading...</span>
+                        <Loader2 className="w-6 h-6 animate-spin text-white" />
+                        <span className="text-xs text-[#666666]">Uploading...</span>
                       </>
                     ) : (
                       <>
-                        <ImagePlus className="w-6 h-6 text-[#71717A]" />
-                        <span className="text-xs font-medium text-[#71717A]">Add cover image</span>
-                        <span className="text-[10px] text-[#52525B]">Makes your session stand out</span>
+                        <ImagePlus className="w-6 h-6 text-[#666666]" />
+                        <span className="text-xs font-medium text-[#666666]">Add cover image</span>
+                        <span className="text-[10px] text-[#555555]">Makes your session stand out</span>
                       </>
                     )}
                   </button>
@@ -387,16 +387,16 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Session name"
                   maxLength={100}
-                  className="w-full text-xl font-bold text-[#FAFAFA] placeholder:text-[#52525B] focus:outline-none border-none bg-transparent"
+                  className="w-full text-xl font-bold text-white placeholder:text-[#555555] focus:outline-none border-none bg-transparent"
                 />
-                <p className="text-[11px] text-[#71717A] mt-1">
+                <p className="text-[11px] text-[#666666] mt-1">
                   {catLabel ? `Auto: ${generateTitle(categorySlug, selectedTime ?? new Date())}` : 'Give it a name or we\u2019ll generate one'}
                 </p>
               </div>
 
               {/* Activity type */}
               <div>
-                <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2 block">Activity</label>
+                <label className="text-xs font-semibold text-[#666666] uppercase tracking-wider mb-2 block">Activity</label>
                 <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
                   {CATEGORIES.map((cat) => (
                     <button
@@ -404,8 +404,8 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                       onClick={() => setCategorySlug(categorySlug === cat.slug ? '' : cat.slug)}
                       className={`flex flex-col items-center gap-1.5 px-3.5 py-2.5 rounded-xl border transition-all flex-shrink-0 min-w-[68px] ${
                         categorySlug === cat.slug
-                          ? 'bg-[#10B981] text-white border-[#10B981] shadow-md'
-                          : 'bg-[#27272A] text-[#A1A1AA] border-white/[0.06] hover:border-white/[0.12]'
+                          ? 'bg-white text-black border-white shadow-md'
+                          : 'bg-[#2A2A2A] text-[#999999] border-[#333333] hover:border-white/[0.12]'
                       }`}
                     >
                       <span className="text-xl">{cat.emoji}</span>
@@ -417,11 +417,11 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
 
               {/* Date & Time */}
               <div>
-                <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2 block">Date & Time</label>
+                <label className="text-xs font-semibold text-[#666666] uppercase tracking-wider mb-2 block">Date & Time</label>
                 {/* Date and time inputs */}
                 <div className="flex gap-2 mb-3">
                   <div className="flex-1">
-                    <label className="text-[11px] text-[#71717A] mb-1 block">Date</label>
+                    <label className="text-[11px] text-[#666666] mb-1 block">Date</label>
                     <input
                       type="date"
                       min={new Date().toISOString().split('T')[0]}
@@ -435,11 +435,11 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                         setSelectedTime(next)
                         setTimeLabel(next.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + ' ' + next.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }))
                       }}
-                      className="w-full px-3.5 py-3 bg-[#27272A] rounded-xl border border-white/[0.06] text-sm text-[#FAFAFA] focus:outline-none focus:border-[#10B981]/40"
+                      className="w-full px-3.5 py-3 bg-[#2A2A2A] rounded-xl border border-[#333333] text-sm text-white focus:outline-none focus:border-white/30"
                     />
                   </div>
                   <div className="w-32">
-                    <label className="text-[11px] text-[#71717A] mb-1 block">Time</label>
+                    <label className="text-[11px] text-[#666666] mb-1 block">Time</label>
                     <input
                       type="time"
                       value={selectedTime ? `${String(selectedTime.getHours()).padStart(2, '0')}:${String(selectedTime.getMinutes()).padStart(2, '0')}` : ''}
@@ -452,7 +452,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                         setSelectedTime(next)
                         setTimeLabel(next.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + ' ' + next.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }))
                       }}
-                      className="w-full px-3.5 py-3 bg-[#27272A] rounded-xl border border-white/[0.06] text-sm text-[#FAFAFA] focus:outline-none focus:border-[#10B981]/40"
+                      className="w-full px-3.5 py-3 bg-[#2A2A2A] rounded-xl border border-[#333333] text-sm text-white focus:outline-none focus:border-white/30"
                     />
                   </div>
                 </div>
@@ -464,8 +464,8 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                       onClick={() => { setSelectedTime(opt.value); setTimeLabel(opt.label) }}
                       className={`px-3 py-1.5 rounded-full text-[11px] font-medium border transition-all ${
                         timeLabel === opt.label
-                          ? 'bg-[#10B981] text-white border-[#10B981]'
-                          : 'bg-[#18181B] text-[#71717A] border-white/[0.08] hover:border-white/[0.16]'
+                          ? 'bg-white text-black border-white'
+                          : 'bg-[#1A1A1A] text-[#666666] border-white/10 hover:border-white/[0.16]'
                       }`}
                     >
                       {opt.label}
@@ -476,7 +476,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
 
               {/* Location */}
               <div>
-                <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2 block">Location</label>
+                <label className="text-xs font-semibold text-[#666666] uppercase tracking-wider mb-2 block">Location</label>
                 {showLocationPicker ? (
                   <LocationAutocomplete
                     variant="light"
@@ -495,13 +495,13 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                 ) : (
                   <button
                     onClick={() => setShowLocationPicker(true)}
-                    className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-[#27272A] border border-white/[0.06] hover:border-white/[0.12] transition-all text-left"
+                    className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-[#2A2A2A] border border-[#333333] hover:border-white/[0.12] transition-all text-left"
                   >
-                    <MapPin className="w-4 h-4 text-[#71717A] flex-shrink-0" />
+                    <MapPin className="w-4 h-4 text-[#666666] flex-shrink-0" />
                     {locationLoading ? (
-                      <Loader2 className="w-4 h-4 animate-spin text-[#71717A]" />
+                      <Loader2 className="w-4 h-4 animate-spin text-[#666666]" />
                     ) : (
-                      <span className="text-sm text-[#A1A1AA] truncate">{address || city || 'Add location'}</span>
+                      <span className="text-sm text-[#999999] truncate">{address || city || 'Add location'}</span>
                     )}
                   </button>
                 )}
@@ -509,39 +509,39 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
 
               {/* Spots */}
               <div>
-                <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2 block">Spots</label>
+                <label className="text-xs font-semibold text-[#666666] uppercase tracking-wider mb-2 block">Spots</label>
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => setSpots(Math.max(0, spots - 1))}
                     disabled={spots === 0}
-                    className="w-10 h-10 rounded-full border border-white/[0.08] flex items-center justify-center hover:bg-[#27272A] disabled:opacity-30 transition-all"
+                    className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-[#2A2A2A] disabled:opacity-30 transition-all"
                   >
-                    <Minus className="w-4 h-4 text-[#A1A1AA]" />
+                    <Minus className="w-4 h-4 text-[#999999]" />
                   </button>
-                  <span className="text-base font-bold text-[#FAFAFA] w-16 text-center">
+                  <span className="text-base font-bold text-white w-16 text-center">
                     {spots === 0 ? 'Open' : spots}
                   </span>
                   <button
                     onClick={() => setSpots(spots + 1)}
-                    className="w-10 h-10 rounded-full border border-white/[0.08] flex items-center justify-center hover:bg-[#27272A] transition-all"
+                    className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-[#2A2A2A] transition-all"
                   >
-                    <Plus className="w-4 h-4 text-[#A1A1AA]" />
+                    <Plus className="w-4 h-4 text-[#999999]" />
                   </button>
-                  <span className="text-xs text-[#71717A]">{spots === 0 ? 'Unlimited' : `${spots} spots max`}</span>
+                  <span className="text-xs text-[#666666]">{spots === 0 ? 'Unlimited' : `${spots} spots max`}</span>
                 </div>
               </div>
 
               {/* Pricing */}
               <div>
-                <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2 block">Pricing</label>
+                <label className="text-xs font-semibold text-[#666666] uppercase tracking-wider mb-2 block">Pricing</label>
                 {/* Free / Paid toggle */}
                 <div className="flex gap-2 mb-3">
                   <button
                     onClick={() => { setIsPaid(false); setPrice('') }}
                     className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                       !isPaid
-                        ? 'bg-[#10B981] text-white shadow-md'
-                        : 'bg-[#27272A] text-[#71717A] border border-white/[0.06]'
+                        ? 'bg-white text-black shadow-md'
+                        : 'bg-[#2A2A2A] text-[#666666] border border-[#333333]'
                     }`}
                   >
                     Free
@@ -550,8 +550,8 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                     onClick={() => setIsPaid(true)}
                     className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                       isPaid
-                        ? 'bg-[#10B981] text-white shadow-md'
-                        : 'bg-[#27272A] text-[#71717A] border border-white/[0.06]'
+                        ? 'bg-white text-black shadow-md'
+                        : 'bg-[#2A2A2A] text-[#666666] border border-[#333333]'
                     }`}
                   >
                     Paid
@@ -563,9 +563,9 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                   <div className="space-y-3">
                     {/* Price input */}
                     <div>
-                      <label className="text-[11px] text-[#71717A] mb-1 block">Price (SGD)</label>
+                      <label className="text-[11px] text-[#666666] mb-1 block">Price (SGD)</label>
                       <div className="relative">
-                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-semibold text-[#A1A1AA]">$</span>
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-semibold text-[#999999]">$</span>
                         <input
                           type="number"
                           inputMode="decimal"
@@ -574,28 +574,28 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                           value={price}
                           onChange={(e) => setPrice(e.target.value)}
                           placeholder="0.00"
-                          className="w-full pl-8 pr-3.5 py-3 bg-[#27272A] rounded-xl border border-white/[0.06] text-sm text-[#FAFAFA] focus:outline-none focus:border-[#10B981]/40"
+                          className="w-full pl-8 pr-3.5 py-3 bg-[#2A2A2A] rounded-xl border border-[#333333] text-sm text-white focus:outline-none focus:border-white/30"
                         />
                       </div>
                     </div>
 
                     {/* Payment method */}
                     <div>
-                      <label className="text-[11px] text-[#71717A] mb-1.5 block">Payment method</label>
+                      <label className="text-[11px] text-[#666666] mb-1.5 block">Payment method</label>
                       <button
                         onClick={() => setAcceptPayNow(!acceptPayNow)}
                         className={`flex items-center gap-3 w-full px-3.5 py-3 rounded-xl border transition-all ${
                           acceptPayNow
-                            ? 'bg-[#27272A] border-[#10B981]/30'
-                            : 'bg-[#27272A] border-white/[0.06] hover:border-white/[0.12]'
+                            ? 'bg-[#2A2A2A] border-white/20'
+                            : 'bg-[#2A2A2A] border-[#333333] hover:border-white/[0.12]'
                         }`}
                       >
                         <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
-                          acceptPayNow ? 'bg-[#10B981] border-[#10B981]' : 'border-white/[0.12]'
+                          acceptPayNow ? 'bg-white border-white' : 'border-white/[0.12]'
                         }`}>
                           {acceptPayNow && <span className="text-white text-[10px] font-bold">&#10003;</span>}
                         </div>
-                        <span className="text-sm font-medium text-[#FAFAFA]">PayNow</span>
+                        <span className="text-sm font-medium text-white">PayNow</span>
                       </button>
                     </div>
 
@@ -607,14 +607,14 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                           value={paynowName}
                           onChange={(e) => setPaynowName(e.target.value)}
                           placeholder="PayNow name"
-                          className="w-full px-3.5 py-2.5 bg-[#27272A] rounded-xl border border-white/[0.06] text-sm text-[#FAFAFA] placeholder:text-[#52525B] focus:outline-none focus:border-[#10B981]/40"
+                          className="w-full px-3.5 py-2.5 bg-[#2A2A2A] rounded-xl border border-[#333333] text-sm text-white placeholder:text-[#555555] focus:outline-none focus:border-white/30"
                         />
                         <input
                           type="tel"
                           value={paynowPhone}
                           onChange={(e) => setPaynowPhone(e.target.value)}
                           placeholder="PayNow phone number"
-                          className="w-full px-3.5 py-2.5 bg-[#27272A] rounded-xl border border-white/[0.06] text-sm text-[#FAFAFA] placeholder:text-[#52525B] focus:outline-none focus:border-[#10B981]/40"
+                          className="w-full px-3.5 py-2.5 bg-[#2A2A2A] rounded-xl border border-[#333333] text-sm text-white placeholder:text-[#555555] focus:outline-none focus:border-white/30"
                         />
                         {/* QR code upload */}
                         <input
@@ -625,15 +625,15 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                           onChange={handleQrUpload}
                         />
                         {paynowQrUrl ? (
-                          <div className="flex items-center gap-3 p-2 rounded-xl bg-[#27272A] border border-white/[0.06]">
+                          <div className="flex items-center gap-3 p-2 rounded-xl bg-[#2A2A2A] border border-[#333333]">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={paynowQrUrl} alt="QR" className="w-14 h-14 rounded-lg object-cover" />
                             <div className="flex-1">
-                              <p className="text-xs font-medium text-[#FAFAFA]">PayNow QR uploaded</p>
+                              <p className="text-xs font-medium text-white">PayNow QR uploaded</p>
                               <button
                                 type="button"
                                 onClick={() => qrInputRef.current?.click()}
-                                className="text-[11px] text-[#10B981] font-medium mt-0.5"
+                                className="text-[11px] text-white font-medium mt-0.5"
                               >
                                 Change
                               </button>
@@ -644,7 +644,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                             type="button"
                             onClick={() => qrInputRef.current?.click()}
                             disabled={isUploadingQr}
-                            className="w-full py-2.5 rounded-xl border border-dashed border-white/[0.1] bg-[#27272A] text-xs font-medium text-[#71717A] hover:border-[#10B981]/30 transition-all flex items-center justify-center gap-2"
+                            className="w-full py-2.5 rounded-xl border border-dashed border-white/10 bg-[#2A2A2A] text-xs font-medium text-[#666666] hover:border-white/20 transition-all flex items-center justify-center gap-2"
                           >
                             {isUploadingQr ? (
                               <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading...</>
@@ -662,14 +662,14 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
               {/* Community selector */}
               {communities.length > 0 && (
                 <div>
-                  <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2 block">Posting as</label>
+                  <label className="text-xs font-semibold text-[#666666] uppercase tracking-wider mb-2 block">Posting as</label>
                   <div className="flex gap-2 flex-wrap">
                     <button
                       onClick={() => setSelectedCommunity(null)}
                       className={`px-4 py-2.5 rounded-full text-xs font-medium transition-all ${
                         !selectedCommunity
-                          ? 'bg-[#10B981] text-white'
-                          : 'bg-[#27272A] text-[#71717A] border border-white/[0.06]'
+                          ? 'bg-white text-black'
+                          : 'bg-[#2A2A2A] text-[#666666] border border-[#333333]'
                       }`}
                     >
                       Myself
@@ -680,8 +680,8 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                         onClick={() => setSelectedCommunity(c.id)}
                         className={`px-4 py-2.5 rounded-full text-xs font-medium transition-all ${
                           selectedCommunity === c.id
-                            ? 'bg-[#10B981] text-white'
-                            : 'bg-[#27272A] text-[#71717A] border border-white/[0.06]'
+                            ? 'bg-white text-black'
+                            : 'bg-[#2A2A2A] text-[#666666] border border-[#333333]'
                         }`}
                       >
                         {c.name}
@@ -693,11 +693,11 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
             </div>
 
             {/* Sticky bottom CTA */}
-            <div className="px-5 py-4 border-t border-white/[0.06] pb-[env(safe-area-inset-bottom,16px)]">
+            <div className="px-5 py-4 border-t border-[#333333] pb-[env(safe-area-inset-bottom,16px)]">
               <button
                 onClick={handlePost}
                 disabled={!canPost || posting}
-                className="w-full py-4 rounded-full bg-gradient-to-r from-[#10B981] to-[#059669] text-white text-sm font-bold hover:from-[#059669] hover:to-[#10B981] disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#10B981]/20"
+                className="w-full py-4 rounded-full bg-white text-black text-sm font-bold uppercase tracking-wider hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
               >
                 {posting ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</>

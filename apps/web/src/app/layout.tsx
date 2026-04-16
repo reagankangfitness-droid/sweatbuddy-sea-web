@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import type { PropsWithChildren } from 'react'
-import { Plus_Jakarta_Sans, Outfit, DM_Sans } from 'next/font/google'
+import { Plus_Jakarta_Sans, Outfit, DM_Sans, Barlow_Condensed } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
 import { AppNav } from '@/components/AppNav'
@@ -26,6 +26,13 @@ const outfit = Outfit({
 const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-dm-sans',
+  display: 'swap',
+})
+
+const barlowCondensed = Barlow_Condensed({
+  subsets: ['latin'],
+  weight: ['600', '700', '800'],
+  variable: '--font-barlow',
   display: 'swap',
 })
 
@@ -79,7 +86,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#09090B',
+  themeColor: '#0D0D0D',
   colorScheme: 'dark',
   width: 'device-width',
   initialScale: 1,
@@ -99,7 +106,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
         {/* Prefetch activities API for faster data loading */}
         <link rel="prefetch" href="/api/activities" as="fetch" crossOrigin="anonymous" />
       </head>
-      <body className={`${plusJakarta.variable} ${outfit.variable} ${dmSans.variable} font-sans antialiased bg-[#09090B] text-[#FAFAFA]`}>
+      <body className={`${plusJakarta.variable} ${outfit.variable} ${dmSans.variable} ${barlowCondensed.variable} font-sans antialiased bg-[#0D0D0D] text-[#FAFAFA]`}>
         <Providers>
           {children}
           <Toaster />

@@ -54,7 +54,7 @@ function ProgressDots({ current, total }: { current: number; total: number }) {
         <div
           key={i}
           className={`h-2 rounded-full transition-all duration-300 ${
-            i === current ? 'w-6 bg-[#10B981]' : i < current ? 'w-2 bg-[#10B981]/40' : 'w-2 bg-white/10'
+            i === current ? 'w-6 bg-white' : i < current ? 'w-2 bg-white/40' : 'w-2 bg-white/10'
           }`}
         />
       ))}
@@ -160,8 +160,8 @@ export default function P2POnboardingPage() {
 
   if (!isLoaded || checking) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#09090B]">
-        <Loader2 className="w-6 h-6 animate-spin text-[#71717A]" />
+      <div className="min-h-screen flex items-center justify-center bg-[#0D0D0D]">
+        <Loader2 className="w-6 h-6 animate-spin text-[#666666]" />
       </div>
     )
   }
@@ -169,20 +169,20 @@ export default function P2POnboardingPage() {
   // Completion state
   if (completed) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#09090B]">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#0D0D0D]">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-          className="w-20 h-20 rounded-full bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center"
+          className="w-20 h-20 rounded-full bg-white flex items-center justify-center"
         >
-          <Check className="w-10 h-10 text-white" strokeWidth={3} />
+          <Check className="w-10 h-10 text-black" strokeWidth={3} />
         </motion.div>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="mt-6 text-xl font-semibold text-[#FAFAFA]"
+          className="mt-6 text-xl font-semibold text-white"
         >
           You&apos;re all set!
         </motion.p>
@@ -191,7 +191,7 @@ export default function P2POnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#09090B]">
+    <div className="min-h-screen bg-[#0D0D0D]">
       <div className="max-w-lg mx-auto px-4 pt-4 pb-32">
         <ProgressDots current={step} total={3} />
 
@@ -199,7 +199,7 @@ export default function P2POnboardingPage() {
         {step > 0 && (
           <button
             onClick={goBack}
-            className="mb-4 text-sm text-[#71717A] hover:text-[#A1A1AA] transition-colors"
+            className="mb-4 text-sm text-[#666666] hover:text-[#999999] transition-colors"
           >
             &#8592; Back
           </button>
@@ -220,10 +220,10 @@ export default function P2POnboardingPage() {
                 className="space-y-8"
               >
                 <div className="text-center pt-8">
-                  <h1 className="text-3xl font-bold text-[#FAFAFA]">
+                  <h1 className="text-3xl font-bold text-white">
                     Welcome to SweatBuddies
                   </h1>
-                  <p className="mt-3 text-[#A1A1AA]">
+                  <p className="mt-3 text-[#999999]">
                     Let&apos;s personalize your experience
                   </p>
                 </div>
@@ -235,17 +235,17 @@ export default function P2POnboardingPage() {
                       alt="Your photo"
                       width={80}
                       height={80}
-                      className="w-20 h-20 rounded-full object-cover ring-2 ring-white/[0.08]"
+                      className="w-20 h-20 rounded-full object-cover ring-2 ring-white/10"
                     />
                   ) : (
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center text-white text-2xl font-bold">
+                    <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center text-black text-2xl font-bold">
                       {firstName?.charAt(0)?.toUpperCase() || '?'}
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#A1A1AA] mb-2">
+                  <label className="block text-sm font-medium text-[#999999] mb-2">
                     First name
                   </label>
                   <input
@@ -253,14 +253,14 @@ export default function P2POnboardingPage() {
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder="Your first name"
-                    className="w-full rounded-2xl border border-white/[0.06] bg-[#18181B] px-4 py-3.5 text-[#FAFAFA] placeholder-[#52525B] focus:outline-none focus:ring-2 focus:ring-[#10B981]/30 focus:border-[#10B981]"
+                    className="w-full rounded-2xl border border-[#333333] bg-[#1A1A1A] px-4 py-3.5 text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30"
                   />
                 </div>
 
                 <button
                   onClick={goNext}
                   disabled={!firstName.trim()}
-                  className="w-full rounded-full bg-gradient-to-r from-[#10B981] to-[#059669] px-4 py-4 text-sm font-semibold text-white shadow-sm hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  className="w-full rounded-full bg-white px-4 py-4 text-sm font-bold uppercase tracking-wider text-black hover:bg-white/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                 >
                   Continue
                 </button>
@@ -280,10 +280,10 @@ export default function P2POnboardingPage() {
                 className="space-y-6"
               >
                 <div className="text-center pt-4">
-                  <h1 className="text-2xl font-bold text-[#FAFAFA]">
+                  <h1 className="text-2xl font-bold text-white">
                     What are you into?
                   </h1>
-                  <p className="mt-2 text-sm text-[#A1A1AA]">
+                  <p className="mt-2 text-sm text-[#999999]">
                     Pick the activities you love (select as many as you want)
                   </p>
                 </div>
@@ -298,8 +298,8 @@ export default function P2POnboardingPage() {
                         onClick={() => toggleInterest(activity.key)}
                         className={`flex flex-col items-center gap-1.5 rounded-xl p-3 transition-all duration-200 ${
                           selected
-                            ? 'bg-[#10B981] text-white scale-105 shadow-md'
-                            : 'bg-[#18181B] border border-white/[0.06] text-[#A1A1AA] hover:border-white/[0.1]'
+                            ? 'bg-white text-black scale-105 shadow-md'
+                            : 'bg-[#1A1A1A] border border-[#333333] text-[#999999] hover:border-white/[0.1]'
                         }`}
                       >
                         <span className="text-3xl">{activity.emoji}</span>
@@ -315,13 +315,13 @@ export default function P2POnboardingPage() {
                   <button
                     onClick={goNext}
                     disabled={selectedInterests.length === 0}
-                    className="w-full rounded-full bg-gradient-to-r from-[#10B981] to-[#059669] px-4 py-4 text-sm font-semibold text-white shadow-sm hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                    className="w-full rounded-full bg-white px-4 py-4 text-sm font-bold uppercase tracking-wider text-black hover:bg-white/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                   >
                     Continue
                   </button>
                   <button
                     onClick={goNext}
-                    className="w-full text-sm text-[#71717A] hover:text-[#A1A1AA] transition-colors py-2"
+                    className="w-full text-sm text-[#666666] hover:text-[#999999] transition-colors py-2"
                   >
                     Skip
                   </button>
@@ -342,10 +342,10 @@ export default function P2POnboardingPage() {
                 className="space-y-6"
               >
                 <div className="text-center pt-4">
-                  <h1 className="text-2xl font-bold text-[#FAFAFA]">
+                  <h1 className="text-2xl font-bold text-white">
                     What&apos;s your fitness level?
                   </h1>
-                  <p className="mt-2 text-sm text-[#A1A1AA]">
+                  <p className="mt-2 text-sm text-[#999999]">
                     No judgment — this helps us match you with the right sessions
                   </p>
                 </div>
@@ -360,8 +360,8 @@ export default function P2POnboardingPage() {
                         onClick={() => setFitnessLevel(level.value)}
                         className={`w-full flex items-start gap-4 rounded-2xl p-5 text-left transition-all duration-200 ${
                           selected
-                            ? 'bg-[#10B981] text-white shadow-md scale-[1.02]'
-                            : 'bg-[#18181B] border border-white/[0.06] text-[#A1A1AA] hover:border-white/[0.1]'
+                            ? 'bg-white text-black shadow-md scale-[1.02]'
+                            : 'bg-[#1A1A1A] border border-[#333333] text-[#999999] hover:border-white/[0.1]'
                         }`}
                       >
                         <span className="text-3xl mt-0.5">{level.emoji}</span>
@@ -371,7 +371,7 @@ export default function P2POnboardingPage() {
                           </span>
                           <span
                             className={`text-sm mt-0.5 block ${
-                              selected ? 'text-white/70' : 'text-[#71717A]'
+                              selected ? 'text-white/70' : 'text-[#666666]'
                             }`}
                           >
                             {level.description}
@@ -385,7 +385,7 @@ export default function P2POnboardingPage() {
                 <button
                   onClick={handleComplete}
                   disabled={!fitnessLevel || saving}
-                  className="w-full rounded-full bg-gradient-to-r from-[#10B981] to-[#059669] px-4 py-4 text-sm font-semibold text-white shadow-sm hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                  className="w-full rounded-full bg-white px-4 py-4 text-sm font-bold uppercase tracking-wider text-black hover:bg-white/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                 >
                   {saving ? (
                     <>

@@ -95,18 +95,18 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#09090B] text-[#FAFAFA]">
+    <div className="min-h-screen bg-[#0D0D0D] text-[#FAFAFA]">
       {/* ── Nav ── */}
-      <header className="sticky top-0 z-30 bg-[#09090B]/95 backdrop-blur-xl border-b border-white/[0.08]">
+      <header className="sticky top-0 z-30 bg-[#0D0D0D]/95 backdrop-blur-xl border-b border-white/[0.08]">
         <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
-          <LogoWithText size={28} color="#10B981" textColor="#10B981" />
+          <LogoWithText size={28} color="#FFFFFF" textColor="#FFFFFF" />
           <div className="flex items-center gap-3">
-            <Link href="/buddy" className="text-sm text-[#A1A1AA] hover:text-[#FAFAFA] transition-colors hidden sm:inline">
+            <Link href="/buddy" className="text-sm text-[#999999] hover:text-white transition-colors hidden sm:inline">
               Explore
             </Link>
             <Link
               href="/communities"
-              className="px-5 py-2.5 bg-[#FAFAFA] text-[#09090B] text-sm font-semibold rounded-full hover:bg-white transition-all"
+              className="px-5 py-2.5 bg-white text-black text-sm font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-all"
             >
               Start your crew
             </Link>
@@ -133,26 +133,26 @@ export default async function HomePage() {
         <div className="relative max-w-2xl mx-auto text-center">
           <h1 className="text-4xl sm:text-6xl font-bold leading-[1.05] tracking-tight mb-5">
             Stop juggling 5 apps to{' '}
-            <span className="bg-gradient-to-r from-[#10B981] to-[#34D399] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-white to-[#999999] bg-clip-text text-transparent">
               run your crew.
             </span>
           </h1>
-          <p className="text-base text-[#A1A1AA] max-w-md mx-auto mb-8 leading-relaxed">
+          <p className="text-base text-[#999999] max-w-md mx-auto mb-8 leading-relaxed">
             WhatsApp. Instagram. PayNow. Google Sheets. Linktree.
             <span className="block mt-1 font-medium text-[#FAFAFA]">One tool replaces all of them.</span>
           </p>
           <Link
             href="/communities"
-            className="inline-block px-8 py-4 bg-gradient-to-r from-[#10B981] to-[#059669] text-white text-base font-semibold rounded-full hover:from-[#059669] hover:to-[#10B981] transition-all shadow-lg shadow-[#10B981]/20"
+            className="inline-block px-8 py-4 bg-white text-black text-base font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-all"
           >
             Set up your crew — free →
           </Link>
           <div className="flex items-center justify-center gap-2 mt-8">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#10B981]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
             </span>
-            <p className="text-sm text-[#71717A]">
+            <p className="text-sm text-[#666666]">
               <span className="font-semibold text-[#FAFAFA]">{communityCount}</span> crews
               {sessionsThisWeek > 0 && <> · <span className="font-semibold text-[#FAFAFA]">{sessionsThisWeek}</span> sessions this week</>}
               {cities.length > 0 && <> · {cities.length} cities</>}
@@ -183,9 +183,9 @@ export default async function HomePage() {
             { emoji: '📊', pain: 'Spreadsheets can\u2019t send reminders' },
             { emoji: '🔗', pain: 'Linktree can\u2019t take RSVPs' },
           ].map((p) => (
-            <div key={p.emoji} className="bg-[#18181B] rounded-xl shadow-sm p-4 text-center">
+            <div key={p.emoji} className="bg-[#1A1A1A] rounded-xl shadow-sm p-4 text-center">
               <span className="text-2xl block mb-2">{p.emoji}</span>
-              <p className="text-xs text-[#A1A1AA] leading-relaxed">{p.pain}</p>
+              <p className="text-xs text-[#999999] leading-relaxed">{p.pain}</p>
             </div>
           ))}
         </div>
@@ -194,9 +194,9 @@ export default async function HomePage() {
       {/* ── S4: Split pitch — Hosts / Members (SweatPals-inspired) ── */}
       <section className="grid grid-cols-1 sm:grid-cols-2 min-h-[400px]">
         {/* Left — For Hosts */}
-        <div className="bg-[#18181B] px-8 py-16 flex flex-col justify-center">
+        <div className="bg-[#1A1A1A] px-8 py-16 flex flex-col justify-center">
           <span className="inline-block px-3 py-1 rounded-full border border-white/20 text-[11px] text-white/70 font-medium uppercase tracking-widest mb-6 w-fit">
-            For Hosts
+            FOR HOSTS
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight tracking-tight mb-4">
             Build your crew.
@@ -206,7 +206,7 @@ export default async function HomePage() {
           </p>
           <Link
             href="/communities"
-            className="inline-block px-6 py-3 bg-gradient-to-r from-[#10B981] to-[#059669] text-white text-sm font-semibold rounded-full w-fit hover:from-[#059669] hover:to-[#10B981] transition-all shadow-lg shadow-[#10B981]/20"
+            className="inline-block px-6 py-3 bg-white text-black text-sm font-bold uppercase tracking-wide rounded-full w-fit hover:bg-neutral-200 transition-all"
           >
             Set up your crew →
           </Link>
@@ -229,7 +229,7 @@ export default async function HomePage() {
             </p>
             <Link
               href="/buddy"
-              className="inline-block px-6 py-3 bg-white text-[#09090B] text-sm font-semibold rounded-full w-fit hover:bg-neutral-200 transition-all shadow-lg"
+              className="inline-block px-6 py-3 border border-white/20 text-white text-sm font-bold uppercase tracking-wide rounded-full w-fit hover:bg-white/10 transition-all"
             >
               See what&apos;s happening →
             </Link>
@@ -254,12 +254,12 @@ export default async function HomePage() {
                 <span className="text-xl flex-shrink-0 mt-0.5">{f.icon}</span>
                 <div>
                   <h3 className="text-sm font-semibold text-[#FAFAFA]">{f.title}</h3>
-                  <p className="text-xs text-[#71717A] mt-0.5 leading-relaxed">{f.body}</p>
+                  <p className="text-xs text-[#666666] mt-0.5 leading-relaxed">{f.body}</p>
                 </div>
               </div>
             ))}
           </div>
-          <p className="text-center text-xs text-[#71717A] mt-8">Free. No lock-in. No fees on free events.</p>
+          <p className="text-center text-xs text-[#666666] mt-8">Free. No lock-in. No fees on free events.</p>
         </div>
       </section>
 
@@ -267,11 +267,11 @@ export default async function HomePage() {
       {cities.length > 0 && (
         <section className="px-5 pb-12">
           <div className="max-w-lg mx-auto text-center">
-            <p className="text-[11px] text-[#71717A] uppercase tracking-widest mb-4">Crews across</p>
+            <p className="text-[11px] text-[#666666] uppercase tracking-widest mb-4">Crews across</p>
             <div className="flex flex-wrap gap-2 justify-center">
               {cities.map((c) => (
-                <span key={c.name} className="px-3 py-1.5 rounded-full bg-[#18181B] shadow-sm text-xs text-[#71717A]">
-                  {c.name} <span className="font-semibold text-[#A1A1AA]">{c.communityCount}</span>
+                <span key={c.name} className="px-3 py-1.5 rounded-full bg-[#1A1A1A] shadow-sm text-xs text-[#666666]">
+                  {c.name} <span className="font-semibold text-[#999999]">{c.communityCount}</span>
                 </span>
               ))}
             </div>
@@ -283,7 +283,7 @@ export default async function HomePage() {
       {upcomingSessions.length > 0 && (
         <section className="px-5 pb-16">
           <div className="max-w-lg mx-auto">
-            <p className="text-[11px] text-[#71717A] uppercase tracking-widest mb-4 text-center">Happening soon</p>
+            <p className="text-[11px] text-[#666666] uppercase tracking-widest mb-4 text-center">Happening soon</p>
             <div className="space-y-1">
               {upcomingSessions.map((s) => {
                 const going = s._count.userActivities
@@ -292,12 +292,12 @@ export default async function HomePage() {
                     <span className="text-2xl flex-shrink-0">{categoryEmoji[s.categorySlug ?? ''] ?? '🏅'}</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-[#FAFAFA] truncate">{s.title}</p>
-                      <p className="text-xs text-[#71717A] truncate">
+                      <p className="text-xs text-[#666666] truncate">
                         {s.startTime ? formatSessionTime(s.startTime) : ''}
                         {s.address ? ` · ${s.address.split(',')[0]}` : s.city ? ` · ${s.city}` : ''}
                       </p>
                     </div>
-                    <span className="text-xs text-[#71717A] flex-shrink-0">{going > 0 ? `${going} going` : 'Be first'}</span>
+                    <span className="text-xs text-[#666666] flex-shrink-0">{going > 0 ? `${going} going` : 'Be first'}</span>
                   </Link>
                 )
               })}
@@ -312,10 +312,10 @@ export default async function HomePage() {
           <h2 className="text-xl sm:text-2xl font-bold mb-3 tracking-tight">
             Ready to stop duct-taping your community?
           </h2>
-          <p className="text-xs text-[#71717A] mb-6">15 seconds to set up. Free forever for free events.</p>
+          <p className="text-xs text-[#666666] mb-6">15 seconds to set up. Free forever for free events.</p>
           <Link
             href="/communities"
-            className="inline-block px-8 py-4 bg-gradient-to-r from-[#10B981] to-[#059669] text-white text-base font-semibold rounded-full hover:from-[#059669] hover:to-[#10B981] transition-all shadow-lg shadow-[#10B981]/20"
+            className="inline-block px-8 py-4 bg-white text-black text-base font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-all"
           >
             Set up your crew →
           </Link>
@@ -326,10 +326,10 @@ export default async function HomePage() {
       <footer className="border-t border-white/[0.06] py-10 px-5">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <LogoWithText size={16} color="#10B981" textColor="#71717A" />
-            <span className="text-xs text-[#71717A]">&copy; 2026</span>
+            <LogoWithText size={16} color="#FFFFFF" textColor="#666666" />
+            <span className="text-xs text-[#666666]">&copy; 2026</span>
           </div>
-          <div className="flex gap-4 text-xs text-[#71717A]">
+          <div className="flex gap-4 text-xs text-[#666666]">
             <Link href="/buddy" className="hover:text-[#FAFAFA] transition-colors">Discover</Link>
             <Link href="/communities" className="hover:text-[#FAFAFA] transition-colors">Crews</Link>
             <Link href="/hub" className="hover:text-[#FAFAFA] transition-colors">Host Hub</Link>

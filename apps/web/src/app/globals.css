@@ -46,13 +46,13 @@
 
     /* Text Colors — dark theme */
     --text-primary: #FAFAFA;
-    --text-secondary: #A1A1AA;
-    --text-tertiary: #71717A;
-    --text-muted: #71717A;
+    --text-secondary: #999999;
+    --text-tertiary: #666666;
+    --text-muted: #666666;
 
     /* Backgrounds */
-    --background-secondary: #27272A;
-    --surface: #18181B;
+    --background-secondary: #2A2A2A;
+    --surface: #1A1A1A;
 
     /* Primary */
     --primary-hover: #000000;
@@ -98,14 +98,14 @@
     --mist: #F5F5F5;
 
     /* shadcn/ui compatibility — dark theme */
-    --background: #09090B;
+    --background: #0D0D0D;
     --foreground: #FAFAFA;
     --card: #18181B;
     --card-foreground: #FAFAFA;
     --popover: #27272A;
     --popover-foreground: #FAFAFA;
-    --primary: #10B981;
-    --primary-foreground: #09090B;
+    --primary: #FFFFFF;
+    --primary-foreground: #000000;
     --secondary: #27272A;
     --secondary-foreground: #FAFAFA;
     --muted: #27272A;
@@ -115,12 +115,12 @@
     --destructive: #EF4444;
     --destructive-foreground: #FAFAFA;
     --input: #27272A;
-    --ring: #10B981;
+    --ring: #FFFFFF;
 
     /* Borders - subtle on dark */
-    --border: rgba(63, 63, 70, 0.5);
-    --border-light: rgba(63, 63, 70, 0.3);
-    --border-subtle: rgba(63, 63, 70, 0.2);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-light: rgba(255, 255, 255, 0.07);
+    --border-subtle: rgba(255, 255, 255, 0.05);
 
     /* Shadows - near-invisible on dark */
     --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);

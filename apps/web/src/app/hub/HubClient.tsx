@@ -243,7 +243,7 @@ export default function HubClient({
                         disabled={togglingAttendee === a.id}
                         className={`w-11 h-11 rounded-full flex items-center justify-center transition-all disabled:opacity-50 ${
                           a.actuallyAttended === true
-                            ? 'bg-emerald-100 text-emerald-600'
+                            ? 'bg-neutral-900 text-white'
                             : a.actuallyAttended === false
                               ? 'bg-red-100 text-red-500'
                               : 'bg-neutral-100 text-[#9A9AAA]'
@@ -311,7 +311,7 @@ export default function HubClient({
               <span className="text-2xl">{EMOJI_MAP[nextSession.categorySlug ?? ''] ?? '🏅'}</span>
               <div className="flex-1 min-w-0">
                 <p className="text-[14px] font-semibold text-[#1A1A1A] truncate">{nextSession.title}</p>
-                <p className="text-[12px] text-[#71717A]">
+                <p className="text-[12px] text-[#666666]">
                   {nextSession.startTime ? formatTime(nextSession.startTime) : 'No date'}
                   {nextSession.address ? ` · ${nextSession.address.split(',')[0]}` : ''}
                 </p>
@@ -328,7 +328,7 @@ export default function HubClient({
                 onClick={() => copyLink(nextSession.id)}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#FFFBF8] text-xs font-medium text-[#4A4A5A] hover:bg-neutral-100 transition-all"
               >
-                {copiedId === nextSession.id ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                {copiedId === nextSession.id ? <Check className="w-3.5 h-3.5 text-black" /> : <Copy className="w-3.5 h-3.5" />}
                 {copiedId === nextSession.id ? 'Copied' : 'Copy link'}
               </button>
               <button
@@ -404,7 +404,7 @@ export default function HubClient({
           <div className="bg-white rounded-2xl shadow-sm p-6 text-center">
             <div className="text-3xl mb-2">🎉</div>
             <p className="text-[14px] font-semibold text-[#1A1A1A] mb-1">Your community is set up!</p>
-            <p className="text-[12px] text-[#71717A] mb-4">Post your first session — it takes 30 seconds.</p>
+            <p className="text-[12px] text-[#666666] mb-4">Post your first session — it takes 30 seconds.</p>
             <button
               onClick={() => setShowCreate(true)}
               className="inline-flex items-center gap-1.5 px-5 py-3 rounded-full bg-[#1A1A1A] text-white text-[14px] font-semibold"
@@ -434,9 +434,9 @@ export default function HubClient({
                   <div className="flex gap-1.5 mt-2">
                     <button
                       onClick={() => copyLink(s.id)}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#FFFBF8] text-[10px] font-medium text-[#71717A] hover:bg-neutral-100"
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#FFFBF8] text-[10px] font-medium text-[#666666] hover:bg-neutral-100"
                     >
-                      {copiedId === s.id ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                      {copiedId === s.id ? <Check className="w-3 h-3 text-black" /> : <Copy className="w-3 h-3" />}
                       {copiedId === s.id ? 'Copied' : 'Link'}
                     </button>
                     <button
@@ -448,14 +448,14 @@ export default function HubClient({
                     </button>
                     <Link
                       href={`/activities/${s.id}/edit`}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-neutral-50 text-[10px] font-medium text-[#71717A]"
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-neutral-50 text-[10px] font-medium text-[#666666]"
                     >
                       <Pencil className="w-3 h-3" />
                       Edit
                     </Link>
                     <Link
                       href={`/activities/${s.id}`}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-neutral-50 text-[10px] font-medium text-[#71717A]"
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-neutral-50 text-[10px] font-medium text-[#666666]"
                     >
                       <UserCheck className="w-3 h-3" />
                       Attendees
@@ -489,7 +489,7 @@ export default function HubClient({
                         onClick={() => openAttendance(s.id)}
                         className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[10px] font-medium ${
                           allMarked
-                            ? 'bg-emerald-50 text-emerald-600'
+                            ? 'bg-neutral-100 text-neutral-900'
                             : 'bg-[#FF6B35]/10 text-[#FF6B35]'
                         }`}
                       >
@@ -498,7 +498,7 @@ export default function HubClient({
                       </button>
                       <Link
                         href={`/activities/${s.id}`}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-neutral-50 text-[10px] font-medium text-[#71717A]"
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-neutral-50 text-[10px] font-medium text-[#666666]"
                       >
                         <UserCheck className="w-3 h-3" />
                         View

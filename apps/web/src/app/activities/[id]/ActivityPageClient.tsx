@@ -245,22 +245,22 @@ Organized via sweatbuddies
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#09090B]">
-        <header className="sticky top-0 z-40 bg-[#18181B]/90 backdrop-blur-lg border-b border-white/[0.08]">
+      <div className="min-h-screen bg-[#0D0D0D]">
+        <header className="sticky top-0 z-40 bg-[#1A1A1A]/90 backdrop-blur-lg border-b border-white/10">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="max-w-2xl mx-auto flex items-center gap-4 px-4 py-3">
-              <button onClick={() => router.back()} aria-label="Go back" className="w-10 h-10 flex items-center justify-center rounded-full bg-[#09090B] border border-white/[0.08]">
-                <ArrowLeft className="w-5 h-5 text-[#71717A]" />
+              <button onClick={() => router.back()} aria-label="Go back" className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0D0D0D] border border-white/10">
+                <ArrowLeft className="w-5 h-5 text-[#666666]" />
               </button>
-              <span className="text-sm font-medium text-[#71717A]">Activity Details</span>
+              <span className="text-sm font-medium text-[#666666]">Activity Details</span>
             </div>
           </div>
         </header>
         <main className="max-w-2xl mx-auto p-8">
           <div className="text-center">
-            <div className="w-full h-56 bg-[#27272A] rounded-2xl animate-pulse mb-6" />
-            <div className="h-6 bg-[#27272A] rounded-lg animate-pulse w-2/3 mx-auto mb-3" />
-            <div className="h-4 bg-[#27272A] rounded-lg animate-pulse w-1/2 mx-auto" />
+            <div className="w-full h-56 bg-[#2A2A2A] rounded-2xl animate-pulse mb-6" />
+            <div className="h-6 bg-[#2A2A2A] rounded-lg animate-pulse w-2/3 mx-auto mb-3" />
+            <div className="h-4 bg-[#2A2A2A] rounded-lg animate-pulse w-1/2 mx-auto" />
           </div>
         </main>
       </div>
@@ -281,14 +281,14 @@ Organized via sweatbuddies
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationDisplay)}`
 
   return (
-    <div className="min-h-screen bg-[#09090B]">
+    <div className="min-h-screen bg-[#0D0D0D]">
       {/* ─── HERO ─── */}
       <div className="relative">
         {/* Back button overlay */}
         <div className="absolute top-0 left-0 right-0 z-40 pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-3">
-            <button onClick={() => router.back()} aria-label="Go back" className="w-10 h-10 flex items-center justify-center rounded-full bg-[#18181B]/80 backdrop-blur-sm border border-white/[0.08] shadow-sm">
-              <ArrowLeft className="w-5 h-5 text-[#FAFAFA]" />
+            <button onClick={() => router.back()} aria-label="Go back" className="w-10 h-10 flex items-center justify-center rounded-full bg-[#1A1A1A]/80 backdrop-blur-sm border border-white/10 shadow-sm">
+              <ArrowLeft className="w-5 h-5 text-white" />
             </button>
             <ShareButton
               activityId={activity.id}
@@ -296,7 +296,7 @@ Organized via sweatbuddies
               activityDescription={activity.description}
               variant="outline"
               size="icon"
-              className="w-10 h-10 rounded-full bg-[#18181B]/80 backdrop-blur-sm border border-white/[0.08] shadow-sm"
+              className="w-10 h-10 rounded-full bg-[#1A1A1A]/80 backdrop-blur-sm border border-white/10 shadow-sm"
               showLabel={false}
             />
           </div>
@@ -325,14 +325,14 @@ Organized via sweatbuddies
             </div>
           </div>
         ) : (
-          <div className="relative h-56 md:h-72 w-full bg-gradient-to-br from-[#10B981]/20 via-[#059669]/10 to-[#09090B] flex items-center justify-center">
+          <div className="relative h-56 md:h-72 w-full bg-gradient-to-br from-white/10 via-white/5 to-[#0D0D0D] flex items-center justify-center">
             <span className="text-7xl md:text-8xl">{emoji}</span>
             {/* Title overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
               <div className="max-w-2xl mx-auto">
-                <h1 className="text-xl md:text-2xl font-bold text-[#FAFAFA] leading-tight mb-1 line-clamp-2">{activity.title}</h1>
+                <h1 className="text-xl md:text-2xl font-bold text-white leading-tight mb-1 line-clamp-2">{activity.title}</h1>
                 {activity.startTime && (
-                  <p className="text-sm text-[#A1A1AA] font-medium">{formatEventDate(new Date(activity.startTime))}</p>
+                  <p className="text-sm text-[#999999] font-medium">{formatEventDate(new Date(activity.startTime))}</p>
                 )}
               </div>
             </div>
@@ -376,20 +376,20 @@ Organized via sweatbuddies
         )}
 
         {/* ─── STRUCTURED INFO CARD ─── */}
-        <div className="bg-[#18181B] rounded-2xl shadow-sm border border-white/[0.06] p-4 mb-4">
+        <div className="bg-[#1A1A1A] rounded-2xl shadow-sm border border-[#333333] p-4 mb-4">
           <div className="space-y-3.5">
             {/* Date/time */}
             {activity.startTime && (
               <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-xl bg-[#10B981]/10 flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-4.5 h-4.5 text-[#10B981]" />
+                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-4.5 h-4.5 text-white" />
                 </div>
                 <div>
-                  <p className="text-[14px] font-semibold text-[#FAFAFA]">
+                  <p className="text-[14px] font-semibold text-white">
                     {formatEventDate(new Date(activity.startTime))}
                   </p>
                   {activity.endTime && (
-                    <p className="text-[12px] text-[#71717A] mt-0.5">
+                    <p className="text-[12px] text-[#666666] mt-0.5">
                       Ends {new Date(activity.endTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Singapore' })}
                     </p>
                   )}
@@ -399,19 +399,19 @@ Organized via sweatbuddies
 
             {/* Location */}
             <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#10B981]/10 flex items-center justify-center flex-shrink-0">
-                <MapPin className="w-4.5 h-4.5 text-[#10B981]" />
+              <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                <MapPin className="w-4.5 h-4.5 text-white" />
               </div>
               <div>
                 <a
                   href={mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[14px] font-semibold text-[#FAFAFA] hover:text-[#10B981] transition-colors"
+                  className="text-[14px] font-semibold text-white hover:text-white transition-colors"
                 >
                   {locationDisplay}
                 </a>
-                <p className="text-[12px] text-[#10B981] mt-0.5">Open in Google Maps</p>
+                <p className="text-[12px] text-white mt-0.5">Open in Google Maps</p>
               </div>
             </div>
 
@@ -419,8 +419,8 @@ Organized via sweatbuddies
             <div className="flex items-center gap-2 pt-0.5 flex-wrap">
               <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[12px] font-semibold ${
                 activity.price === 0
-                  ? 'bg-emerald-950 text-emerald-400'
-                  : 'bg-[#10B981]/10 text-[#10B981]'
+                  ? 'bg-white/10 text-white'
+                  : 'bg-white/10 text-white'
               }`}>
                 {activity.price === 0 ? (
                   'Free'
@@ -429,7 +429,7 @@ Organized via sweatbuddies
                 )}
               </span>
 
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#27272A] text-[12px] font-semibold text-[#A1A1AA]">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#2A2A2A] text-[12px] font-semibold text-[#999999]">
                 <Users className="w-3.5 h-3.5" />
                 {activity.maxPeople
                   ? `${joinedCount}/${activity.maxPeople} spots filled`
@@ -439,7 +439,7 @@ Organized via sweatbuddies
                 }
               </span>
 
-              <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-[#27272A] text-[12px] font-medium text-[#A1A1AA]">
+              <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-[#2A2A2A] text-[12px] font-medium text-[#999999]">
                 {activity.type}
               </span>
             </div>
@@ -447,13 +447,13 @@ Organized via sweatbuddies
         </div>
 
         {/* ─── INLINE ATTENDEE PREVIEW ─── */}
-        <div className="bg-[#18181B] rounded-2xl shadow-sm border border-white/[0.06] p-4 mb-4">
+        <div className="bg-[#1A1A1A] rounded-2xl shadow-sm border border-[#333333] p-4 mb-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-[14px] font-semibold text-[#FAFAFA]">Who&apos;s going</h3>
+            <h3 className="text-[14px] font-semibold text-white">Who&apos;s going</h3>
             {joinedCount > 0 && (
               <button
                 onClick={() => setShowAllAttendees(true)}
-                className="text-[12px] font-medium text-[#10B981] hover:text-[#10B981]/80 transition-colors"
+                className="text-[12px] font-medium text-white hover:text-white/60 transition-colors"
               >
                 See all
               </button>
@@ -473,13 +473,13 @@ Organized via sweatbuddies
                       alt={ua.user.name || 'Attendee'}
                       width={36}
                       height={36}
-                      className="w-9 h-9 rounded-full border-2 border-[#18181B] object-cover"
+                      className="w-9 h-9 rounded-full border-2 border-[#1A1A1A] object-cover"
                       unoptimized
                     />
                   ) : (
                     <div
                       key={ua.id}
-                      className="w-9 h-9 rounded-full border-2 border-[#18181B] bg-[#27272A] flex items-center justify-center text-[12px] font-semibold text-[#71717A]"
+                      className="w-9 h-9 rounded-full border-2 border-[#1A1A1A] bg-[#2A2A2A] flex items-center justify-center text-[12px] font-semibold text-[#666666]"
                     >
                       {(ua.user.name ?? '?')[0]}
                     </div>
@@ -487,11 +487,11 @@ Organized via sweatbuddies
                 ))}
               </div>
               {joinedCount > 5 && (
-                <span className="text-[13px] font-medium text-[#A1A1AA]">+{joinedCount - 5} more</span>
+                <span className="text-[13px] font-medium text-[#999999]">+{joinedCount - 5} more</span>
               )}
             </button>
           ) : (
-            <p className="text-[13px] text-[#71717A] mt-2">Be the first to join!</p>
+            <p className="text-[13px] text-[#666666] mt-2">Be the first to join!</p>
           )}
         </div>
 
@@ -529,8 +529,8 @@ Organized via sweatbuddies
         )}
 
         {/* ─── MEET YOUR HOST CARD ─── */}
-        <div className="bg-[#18181B] rounded-2xl shadow-sm border border-white/[0.06] p-4 mb-4">
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-[#71717A] mb-3">
+        <div className="bg-[#1A1A1A] rounded-2xl shadow-sm border border-[#333333] p-4 mb-4">
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-[#666666] mb-3">
             {isVerifiedCoach ? 'Your coach' : 'Meet your host'}
           </h3>
           <div className="flex items-start gap-3">
@@ -543,11 +543,11 @@ Organized via sweatbuddies
                       alt={activity.user.name || 'Host'}
                       width={48}
                       height={48}
-                      className="w-12 h-12 rounded-full object-cover ring-2 ring-[#27272A]"
+                      className="w-12 h-12 rounded-full object-cover ring-2 ring-[#2A2A2A]"
                       unoptimized
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-[#27272A] flex items-center justify-center text-lg font-semibold text-[#71717A]">
+                    <div className="w-12 h-12 rounded-full bg-[#2A2A2A] flex items-center justify-center text-lg font-semibold text-[#666666]">
                       {(activity.user.name ?? '?')[0]}
                     </div>
                   )}
@@ -559,11 +559,11 @@ Organized via sweatbuddies
                     alt={activity.user.name || 'Host'}
                     width={48}
                     height={48}
-                    className="w-12 h-12 rounded-full object-cover ring-2 ring-[#27272A]"
+                    className="w-12 h-12 rounded-full object-cover ring-2 ring-[#2A2A2A]"
                     unoptimized
                   />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-[#27272A] flex items-center justify-center text-lg font-semibold text-[#71717A]">
+                  <div className="w-12 h-12 rounded-full bg-[#2A2A2A] flex items-center justify-center text-lg font-semibold text-[#666666]">
                     {(activity.user.name ?? '?')[0]}
                   </div>
                 )
@@ -572,51 +572,51 @@ Organized via sweatbuddies
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 {activity.user.slug ? (
-                  <Link href={`/user/${activity.user.slug}`} className="font-semibold text-[15px] text-[#FAFAFA] hover:text-[#10B981] transition-colors">
+                  <Link href={`/user/${activity.user.slug}`} className="font-semibold text-[15px] text-white hover:text-white transition-colors">
                     {activity.user.name || 'Anonymous'}
                   </Link>
                 ) : (
-                  <p className="font-semibold text-[15px] text-[#FAFAFA]">{activity.user.name || 'Anonymous'}</p>
+                  <p className="font-semibold text-[15px] text-white">{activity.user.name || 'Anonymous'}</p>
                 )}
                 {isVerifiedCoach && (
-                  <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-600">
+                  <span className="inline-flex items-center gap-0.5 rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-medium text-white">
                     <BadgeCheck className="w-3 h-3" /> Verified
                   </span>
                 )}
               </div>
               {isVerifiedCoach && activity.user.coachType && (
-                <p className="text-[12px] text-[#71717A] mt-0.5">{activity.user.coachType}</p>
+                <p className="text-[12px] text-[#666666] mt-0.5">{activity.user.coachType}</p>
               )}
               {/* Stats row */}
-              <div className="flex items-center gap-2 mt-1 text-[12px] text-[#71717A]">
+              <div className="flex items-center gap-2 mt-1 text-[12px] text-[#666666]">
                 {(activity.user.sessionsHostedCount ?? 0) > 0 && (
                   <span>{activity.user.sessionsHostedCount} sessions hosted</span>
                 )}
                 {(activity.user.sessionsHostedCount ?? 0) > 0 && (activity.user.sessionsAttendedCount ?? 0) > 0 && (
-                  <span className="text-[#71717A]">&middot;</span>
+                  <span className="text-[#666666]">&middot;</span>
                 )}
                 {(activity.user.sessionsAttendedCount ?? 0) > 0 && (
                   <span>{activity.user.sessionsAttendedCount} attended</span>
                 )}
                 {activity.user.fitnessLevel && (
                   <>
-                    <span className="text-[#71717A]">&middot;</span>
+                    <span className="text-[#666666]">&middot;</span>
                     <span className="capitalize">{activity.user.fitnessLevel.toLowerCase()}</span>
                   </>
                 )}
               </div>
               {/* Bio */}
               {isVerifiedCoach && activity.user.coachBio ? (
-                <p className="text-[13px] text-[#A1A1AA] mt-2 line-clamp-2">{activity.user.coachBio}</p>
+                <p className="text-[13px] text-[#999999] mt-2 line-clamp-2">{activity.user.coachBio}</p>
               ) : activity.user.bio ? (
-                <p className="text-[13px] text-[#A1A1AA] mt-2 line-clamp-2">{activity.user.bio}</p>
+                <p className="text-[13px] text-[#999999] mt-2 line-clamp-2">{activity.user.bio}</p>
               ) : null}
             </div>
           </div>
 
           {/* P2P details */}
           {activity.activityMode?.startsWith('P2P') && (activity.fitnessLevel || activity.whatToBring) && (
-            <div className="mt-4 pt-3 border-t border-white/[0.06] space-y-2 text-[13px] text-[#A1A1AA]">
+            <div className="mt-4 pt-3 border-t border-[#333333] space-y-2 text-[13px] text-[#999999]">
               {activity.fitnessLevel && activity.fitnessLevel !== 'ALL' && (
                 <div className="flex items-center gap-2">
                   <span>💪</span>
@@ -637,11 +637,11 @@ Organized via sweatbuddies
 
           {/* Report / Block -- only for non-hosts */}
           {user && user.id !== activity.user.id && user.id !== activity.hostId && (
-            <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center gap-4">
+            <div className="mt-4 pt-3 border-t border-[#333333] flex items-center gap-4">
               <button
                 onClick={() => setShowReportModal(true)}
                 aria-label="Report this activity"
-                className="flex items-center gap-1.5 text-[12px] text-[#71717A] hover:text-amber-500 transition-colors"
+                className="flex items-center gap-1.5 text-[12px] text-[#666666] hover:text-amber-500 transition-colors"
               >
                 <Flag className="w-3.5 h-3.5" />
                 Report
@@ -655,11 +655,11 @@ Organized via sweatbuddies
 
           {/* Manage Attendees -- host only */}
           {user && (user.id === activity.user.id || user.id === activity.hostId) && (
-            <div className="mt-4 pt-3 border-t border-white/[0.06]">
+            <div className="mt-4 pt-3 border-t border-[#333333]">
               <button
                 onClick={() => setShowManageAttendees(true)}
                 aria-label="Manage session attendees"
-                className="flex items-center gap-1.5 text-[12px] text-[#71717A] hover:text-[#FAFAFA] transition-colors"
+                className="flex items-center gap-1.5 text-[12px] text-[#666666] hover:text-white transition-colors"
               >
                 <Settings className="w-3.5 h-3.5" />
                 Manage attendees
@@ -670,10 +670,10 @@ Organized via sweatbuddies
 
         {/* ─── DESCRIPTION ─── */}
         {activity.description && (
-          <div className="bg-[#18181B] rounded-2xl shadow-sm border border-white/[0.06] p-4 mb-4">
-            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-[#71717A] mb-3">About this session</h3>
+          <div className="bg-[#1A1A1A] rounded-2xl shadow-sm border border-[#333333] p-4 mb-4">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-[#666666] mb-3">About this session</h3>
             <div className="relative">
-              <p className={`text-[14px] text-[#A1A1AA] whitespace-pre-wrap break-words leading-relaxed ${
+              <p className={`text-[14px] text-[#999999] whitespace-pre-wrap break-words leading-relaxed ${
                 !isDescriptionExpanded && activity.description.length > DESCRIPTION_CHAR_LIMIT
                   ? 'line-clamp-4'
                   : ''
@@ -683,13 +683,13 @@ Organized via sweatbuddies
               {activity.description.length > DESCRIPTION_CHAR_LIMIT && (
                 <>
                   {!isDescriptionExpanded && (
-                    <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#18181B] to-transparent pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#1A1A1A] to-transparent pointer-events-none" />
                   )}
                   <button
                     onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
                     aria-expanded={isDescriptionExpanded}
                     aria-label={isDescriptionExpanded ? 'Show less description' : 'Read more description'}
-                    className="mt-2 text-[13px] font-medium text-[#10B981] hover:text-[#10B981]/80 transition-colors flex items-center gap-1"
+                    className="mt-2 text-[13px] font-medium text-white hover:text-white/60 transition-colors flex items-center gap-1"
                   >
                     {isDescriptionExpanded ? (
                       <>
@@ -710,11 +710,11 @@ Organized via sweatbuddies
         )}
 
         {/* ─── MAP ─── */}
-        <div className="bg-[#18181B] rounded-2xl shadow-sm border border-white/[0.06] p-4 mb-4">
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-[#71717A] mb-3">Location</h3>
+        <div className="bg-[#1A1A1A] rounded-2xl shadow-sm border border-[#333333] p-4 mb-4">
+          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-[#666666] mb-3">Location</h3>
           <Suspense fallback={
-            <div className="w-full h-[200px] bg-[#27272A] rounded-xl animate-pulse flex items-center justify-center">
-              <p className="text-[13px] text-[#71717A]">Loading map...</p>
+            <div className="w-full h-[200px] bg-[#2A2A2A] rounded-xl animate-pulse flex items-center justify-center">
+              <p className="text-[13px] text-[#666666]">Loading map...</p>
             </div>
           }>
             <div className="rounded-xl overflow-hidden">
@@ -740,7 +740,7 @@ Organized via sweatbuddies
 
         {/* ─── STICKY BOTTOM CTA ─── */}
         {user && (
-          <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-4 bg-[#18181B]/95 backdrop-blur-lg border-t border-white/[0.08] md:border md:rounded-2xl p-3 sm:p-4 shadow-lg md:shadow-sm z-40 pb-[env(safe-area-inset-bottom,16px)]">
+          <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-4 bg-[#1A1A1A]/95 backdrop-blur-lg border-t border-white/10 md:border md:rounded-2xl p-3 sm:p-4 shadow-lg md:shadow-sm z-40 pb-[env(safe-area-inset-bottom,16px)]">
             <div className="max-w-2xl mx-auto">
               {isHost ? (
                 /* Host view */
@@ -779,7 +779,7 @@ Organized via sweatbuddies
                       className="hidden sm:flex flex-1"
                     />
                   </div>
-                  <p className="text-xs sm:text-sm text-[#71717A] text-center">
+                  <p className="text-xs sm:text-sm text-[#666666] text-center">
                     You are the host
                   </p>
                 </div>
@@ -833,7 +833,7 @@ Organized via sweatbuddies
                       variant="ghost"
                       onClick={handleLeave}
                       disabled={isJoining}
-                      className="text-xs sm:text-sm text-[#71717A]"
+                      className="text-xs sm:text-sm text-[#666666]"
                     >
                       {isJoining ? 'Leaving...' : 'Leave'}
                     </Button>
@@ -875,7 +875,7 @@ Organized via sweatbuddies
                       />
                     </div>
                   </div>
-                  <p className="text-xs text-center text-[#71717A]">
+                  <p className="text-xs text-center text-[#666666]">
                     We&apos;ll notify you immediately when a spot opens up
                   </p>
                 </div>
@@ -905,7 +905,7 @@ Organized via sweatbuddies
                       size="lg"
                       onClick={handleJoin}
                       disabled={isJoining}
-                      className="flex-1 h-12 sm:h-11 text-sm sm:text-base touch-manipulation bg-gradient-to-r from-[#10B981] to-[#059669] hover:from-[#10B981]/90 hover:to-[#059669]/90 text-white border-0 shadow-md"
+                      className="flex-1 h-12 sm:h-11 text-sm sm:text-base touch-manipulation bg-white hover:bg-white/90 text-black font-bold uppercase tracking-wider border-0 rounded-full"
                     >
                       {isJoining ? 'Processing...' : (
                         <>
@@ -925,7 +925,7 @@ Organized via sweatbuddies
 
         {/* Action bar for non-logged-in users */}
         {!user && userLoaded && (
-          <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-4 bg-[#18181B]/95 backdrop-blur-lg border-t border-white/[0.08] md:border md:rounded-2xl p-3 sm:p-4 shadow-lg md:shadow-sm z-40 pb-[env(safe-area-inset-bottom,16px)]">
+          <div className="fixed bottom-0 left-0 right-0 md:relative md:mt-4 bg-[#1A1A1A]/95 backdrop-blur-lg border-t border-white/10 md:border md:rounded-2xl p-3 sm:p-4 shadow-lg md:shadow-sm z-40 pb-[env(safe-area-inset-bottom,16px)]">
             <div className="max-w-2xl mx-auto">
               <div className="flex gap-2 sm:gap-3 items-center">
                 <ShareButton
@@ -954,7 +954,7 @@ Organized via sweatbuddies
                     })
                     window.location.href = signInUrl
                   }}
-                  className="flex-1 h-11 text-sm sm:text-base bg-gradient-to-r from-[#10B981] to-[#059669] hover:from-[#10B981]/90 hover:to-[#059669]/90 text-white border-0 shadow-md"
+                  className="flex-1 h-11 text-sm sm:text-base bg-white hover:bg-white/90 text-black font-bold uppercase tracking-wider border-0 rounded-full"
                 >
                   {activity.price > 0
                     ? `Sign in \u00b7 ${formatPrice(activity.price, activity.currency)}`

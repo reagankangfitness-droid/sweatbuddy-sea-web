@@ -101,7 +101,7 @@ function AppNavInner() {
           initial={false}
           animate={{ opacity: isHovered ? 0 : 1 }}
           transition={{ duration: 0.15 }}
-          className="absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center py-6 bg-[#09090B]/80 backdrop-blur-sm border-r border-white/[0.06]"
+          className="absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center py-6 bg-[#0D0D0D]/80 backdrop-blur-sm border-r border-white/[0.06]"
         >
           <div className="mb-6">
             <Logo size={24} />
@@ -114,7 +114,7 @@ function AppNavInner() {
                 <div
                   key={item.id}
                   className={`relative w-8 h-8 rounded-lg flex items-center justify-center ${
-                    active ? 'bg-[#10B981] text-[#09090B]' : 'text-[#71717A]'
+                    active ? 'bg-white text-black' : 'text-[#71717A]'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -130,7 +130,7 @@ function AppNavInner() {
           <div className="mt-auto">
             <button
               onClick={() => setCreateOpen(true)}
-              className="w-8 h-8 rounded-full bg-[#10B981] flex items-center justify-center text-[#09090B] hover:opacity-90 transition-opacity"
+              className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-black hover:opacity-90 transition-opacity"
               aria-label="Create session"
             >
               <Plus className="w-4 h-4" />
@@ -148,7 +148,7 @@ function AppNavInner() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -80, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-              className="absolute left-0 top-0 bottom-0 w-20 flex flex-col items-center py-6 bg-[#09090B]/95 backdrop-blur-xl border-r border-white/[0.06] shadow-xl"
+              className="absolute left-0 top-0 bottom-0 w-20 flex flex-col items-center py-6 bg-[#0D0D0D]/95 backdrop-blur-xl border-r border-white/[0.06] shadow-xl"
             >
               <Link href="/" className="mb-8" title="Home">
                 <Logo size={32} />
@@ -168,15 +168,15 @@ function AppNavInner() {
                         relative flex flex-col items-center justify-center
                         w-14 h-14 rounded-xl transition-all duration-200
                         ${active
-                          ? 'text-[#10B981] bg-[#10B981]/10'
-                          : 'text-[#71717A] hover:text-[#A1A1AA] hover:bg-white/[0.04]'
+                          ? 'text-white bg-white/10'
+                          : 'text-[#71717A] hover:text-[#999999] hover:bg-white/[0.04]'
                         }
                       `}
                     >
                       {active && (
                         <motion.div
                           layoutId="desktopSidebarIndicator"
-                          className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#10B981] rounded-r-full"
+                          className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full"
                           transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                         />
                       )}
@@ -196,7 +196,7 @@ function AppNavInner() {
               <div className="mb-4">
                 <button
                   onClick={() => setCreateOpen(true)}
-                  className="w-11 h-11 rounded-full bg-[#10B981] flex items-center justify-center text-[#09090B] hover:opacity-90 transition-opacity shadow-lg"
+                  className="w-11 h-11 rounded-full bg-white flex items-center justify-center text-black hover:opacity-90 transition-opacity shadow-lg"
                   aria-label="Create session"
                 >
                   <Plus className="w-5 h-5 stroke-[2.5px]" />
@@ -219,7 +219,7 @@ function AppNavInner() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-[#18181B] flex items-center justify-center">
+                      <div className="w-full h-full bg-[#1A1A1A] flex items-center justify-center">
                         <User className="w-5 h-5 text-[#71717A]" />
                       </div>
                     )}
@@ -227,7 +227,7 @@ function AppNavInner() {
                 ) : (
                   <Link
                     href="/sign-in"
-                    className="flex items-center justify-center w-10 h-10 rounded-full bg-[#10B981] text-[#09090B] hover:opacity-90 transition-opacity"
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-white text-black hover:opacity-90 transition-opacity"
                     title="Sign In"
                   >
                     <User className="w-5 h-5" />
@@ -246,7 +246,7 @@ function AppNavInner() {
           aria-label="Main navigation"
           className="fixed bottom-0 left-0 right-0 z-30"
         >
-          <div className="absolute inset-0 bg-[#09090B]/95 backdrop-blur-xl border-t border-white/[0.06]" />
+          <div className="absolute inset-0 bg-[#0D0D0D]/95 backdrop-blur-xl border-t border-white/[0.06]" />
           <div className="relative flex items-center justify-around px-2 pt-2 pb-[env(safe-area-inset-bottom,8px)]">
             {navItems.map((item) => {
               const active = isActive(item)
@@ -259,10 +259,10 @@ function AppNavInner() {
                     key={item.id}
                     onClick={() => setCreateOpen(true)}
                     aria-label="Create session"
-                    className="flex flex-col items-center justify-center w-14 h-14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981] focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090B] rounded-lg"
+                    className="flex flex-col items-center justify-center w-14 h-14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0D0D0D] rounded-lg"
                   >
-                    <span className="flex items-center justify-center w-11 h-11 rounded-full bg-[#10B981]">
-                      <Plus className="w-6 h-6 text-[#09090B] stroke-[2.5px]" />
+                    <span className="flex items-center justify-center w-11 h-11 rounded-full bg-white">
+                      <Plus className="w-6 h-6 text-black stroke-[2.5px]" />
                     </span>
                   </button>
                 )
@@ -277,8 +277,8 @@ function AppNavInner() {
                   className={`
                     flex flex-col items-center justify-center w-14 h-14
                     transition-all duration-200 relative
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10B981] focus-visible:ring-offset-2 focus-visible:ring-offset-[#09090B] rounded-lg
-                    ${active ? 'text-[#10B981]' : 'text-[#71717A] active:scale-95'}
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0D0D0D] rounded-lg
+                    ${active ? 'text-white' : 'text-[#71717A] active:scale-95'}
                   `}
                 >
                   <span className="relative">
@@ -293,7 +293,7 @@ function AppNavInner() {
                   {active && (
                     <motion.div
                       layoutId="mobileActiveIndicator"
-                      className="absolute bottom-1 w-4 h-1 bg-[#10B981] rounded-full"
+                      className="absolute bottom-1 w-4 h-1 bg-white rounded-full"
                       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                     />
                   )}

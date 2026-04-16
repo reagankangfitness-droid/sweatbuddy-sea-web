@@ -112,10 +112,10 @@ function getRelativeTime(startTime: string): string {
 function getUrgencyStyle(startTime: string): string {
   const diffMs = new Date(startTime).getTime() - Date.now()
   const diffHrs = diffMs / (1000 * 60 * 60)
-  if (diffHrs < 0) return 'bg-[#FF6B35] text-white animate-pulse'
-  if (diffHrs < 2) return 'bg-[#FF6B35] text-white'
-  if (diffHrs < 6) return 'bg-[#FFB347] text-white'
-  return 'bg-[#1A1A1A]/70 text-white'
+  if (diffHrs < 0) return 'bg-[#10B981] text-[#09090B] animate-pulse'
+  if (diffHrs < 2) return 'bg-[#10B981] text-[#09090B]'
+  if (diffHrs < 6) return 'bg-[#FFB347] text-[#09090B]'
+  return 'bg-[#27272A] text-[#A1A1AA]'
 }
 
 function bucketSessions(sessions: Session[]): TimeBucket[] {
@@ -430,7 +430,7 @@ function BuddyPageInner() {
 
 
   return (
-    <div className="flex flex-col bg-[#FFFBF8]" style={{ height: '100dvh', overflow: 'hidden' }}>
+    <div className="flex flex-col bg-[#09090B]" style={{ height: '100dvh', overflow: 'hidden' }}>
       {/* Create Session Sheet */}
       <CreateSessionSheet open={showCreateSheet} onClose={() => setShowCreateSheet(false)} onSuccess={() => fetchSessions()} />
 
@@ -498,7 +498,7 @@ function BuddyPageInner() {
 
       {/* ── Filters — sticky top bar ── */}
       <div className="sticky top-0 z-20 pt-[env(safe-area-inset-top,4px)]">
-        <div className="bg-[#FFFBF8] px-3 pt-1 pb-2 space-y-1.5 border-b border-black/[0.04]">
+        <div className="bg-[#09090B] px-3 pt-1 pb-2 space-y-1.5 border-b border-white/[0.06]">
           {/* Row 1: Date strip */}
           <div className="flex items-center gap-1.5">
             <div className="flex gap-1 overflow-x-auto no-scrollbar flex-1">
@@ -517,8 +517,8 @@ function BuddyPageInner() {
                       onClick={() => setDateFilter(dateFilter === dateStr ? '' : dateStr)}
                       className={`flex-shrink-0 flex flex-col items-center px-2.5 py-1.5 rounded-xl text-center transition-all min-w-[44px] ${
                         dateFilter === dateStr
-                          ? 'bg-[#1A1A1A] text-white shadow-md'
-                          : 'bg-white/90 text-[#4A4A5A] shadow-sm'
+                          ? 'bg-[#10B981] text-[#09090B] shadow-md'
+                          : 'bg-[#18181B] text-[#A1A1AA] shadow-none'
                       }`}
                     >
                       <span className="text-[10px] font-medium leading-tight">{dayLabel}</span>
@@ -531,7 +531,7 @@ function BuddyPageInner() {
             </div>
             <button
               onClick={() => setShowCreateSheet(true)}
-              className="w-10 h-10 rounded-full bg-[#FF6B35] shadow-lg shadow-[#FF6B35]/20 flex items-center justify-center hover:bg-[#E8612F] transition-colors active:scale-95 flex-shrink-0"
+              className="w-10 h-10 rounded-full bg-[#10B981] shadow-lg shadow-[#10B981]/20 flex items-center justify-center hover:bg-[#0D9668] transition-colors active:scale-95 flex-shrink-0"
               aria-label="Create a session"
             >
               <Plus className="w-4 h-4 text-white" />
@@ -546,8 +546,8 @@ function BuddyPageInner() {
                 onClick={() => setTypeFilter(typeFilter === f.value ? '' : f.value)}
                 className={`w-9 h-9 rounded-full flex items-center justify-center text-sm transition-all flex-shrink-0 ${
                   typeFilter === f.value
-                    ? 'bg-[#1A1A1A] shadow-md scale-110'
-                    : 'bg-white/80 shadow-sm'
+                    ? 'bg-[#10B981] shadow-md scale-110'
+                    : 'bg-[#18181B]/80 shadow-none'
                 }`}
                 title={f.label}
               >
@@ -572,23 +572,23 @@ function BuddyPageInner() {
             {loading ? (
               <div className="space-y-2 pt-3">
                 {[0, 1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-white shadow-sm">
-                    <div className="w-8 h-8 rounded-full bg-neutral-50 flex-shrink-0 shimmer" />
+                  <div key={i} className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#18181B] shadow-none">
+                    <div className="w-8 h-8 rounded-full bg-[#27272A] flex-shrink-0 shimmer" />
                     <div className="flex-1 space-y-2">
-                      <div className="h-3.5 w-2/3 bg-neutral-50 rounded shimmer" />
-                      <div className="h-3 w-1/2 bg-neutral-50 rounded shimmer" />
+                      <div className="h-3.5 w-2/3 bg-[#27272A] rounded shimmer" />
+                      <div className="h-3 w-1/2 bg-[#27272A] rounded shimmer" />
                       <div className="flex gap-1">
-                        <div className="w-5 h-5 rounded-full bg-neutral-50 shimmer" />
-                        <div className="w-5 h-5 rounded-full bg-neutral-50 shimmer" />
-                        <div className="h-3 w-12 bg-neutral-50 rounded shimmer" />
+                        <div className="w-5 h-5 rounded-full bg-[#27272A] shimmer" />
+                        <div className="w-5 h-5 rounded-full bg-[#27272A] shimmer" />
+                        <div className="h-3 w-12 bg-[#27272A] rounded shimmer" />
                       </div>
                     </div>
-                    <div className="h-6 w-10 bg-neutral-50 rounded-full shimmer" />
+                    <div className="h-6 w-10 bg-[#27272A] rounded-full shimmer" />
                   </div>
                 ))}
                 <style>{`
                   .shimmer {
-                    background: linear-gradient(90deg, #f5f5f5 25%, #ebebeb 50%, #f5f5f5 75%);
+                    background: linear-gradient(90deg, #18181B 25%, #27272A 50%, #18181B 75%);
                     background-size: 200% 100%;
                     animation: shimmer 1.5s infinite;
                   }
@@ -601,11 +601,11 @@ function BuddyPageInner() {
             ) : sessions.length === 0 ? (
               <div className="text-center py-16">
                 <div className="text-4xl mb-3">🏋️</div>
-                <p className="text-sm font-medium text-[#4A4A5A]">Nothing happening nearby — yet.</p>
-                <p className="text-xs text-[#9A9AAA] mt-1">Be the first — start something.</p>
+                <p className="text-sm font-medium text-[#A1A1AA]">Nothing happening nearby — yet.</p>
+                <p className="text-xs text-[#71717A] mt-1">Be the first — start something.</p>
                 <button
                   onClick={() => setShowCreateSheet(true)}
-                  className="inline-flex items-center gap-1.5 mt-4 rounded-full bg-[#1A1A1A] px-4 py-2.5 text-xs font-semibold text-white hover:bg-black"
+                  className="inline-flex items-center gap-1.5 mt-4 rounded-full bg-[#10B981] px-4 py-2.5 text-xs font-semibold text-[#09090B] hover:bg-[#0D9668]"
                 >
                   <Zap className="w-3.5 h-3.5" />
                   Post a session
@@ -615,7 +615,7 @@ function BuddyPageInner() {
               <div className="space-y-6 pt-1">
                 {bucketSessions(sessions).map((bucket) => (
                   <div key={bucket.key}>
-                    <p className="text-[11px] font-medium text-[#9A9AAA] uppercase tracking-widest px-3 mb-1">
+                    <p className="text-[11px] font-medium text-[#71717A] uppercase tracking-widest px-3 mb-1">
                       {bucket.label}
                     </p>
                     <div className="space-y-2">
@@ -638,26 +638,26 @@ function BuddyPageInner() {
                   <button
                     onClick={() => fetchSessions(nextCursor)}
                     disabled={loadingMore}
-                    className="w-full py-3 text-sm text-[#71717A] hover:text-[#4A4A5A] flex items-center justify-center gap-2"
+                    className="w-full py-3 text-sm text-[#71717A] hover:text-[#A1A1AA] flex items-center justify-center gap-2"
                   >
                     {loadingMore ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Load more'}
                   </button>
                 )}
 
                 {sessions.length > 0 && sessions.length < 6 && !nextCursor && (
-                  <div className="text-center py-6 border-t border-black/[0.04]">
-                    <p className="text-xs text-[#9A9AAA] mb-3">That&apos;s everything nearby.</p>
+                  <div className="text-center py-6 border-t border-white/[0.06]">
+                    <p className="text-xs text-[#71717A] mb-3">That&apos;s everything nearby.</p>
                     <div className="flex gap-2 justify-center">
                       <button
                         onClick={() => setShowCreateSheet(true)}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-[#1A1A1A] px-3.5 py-2 text-xs font-semibold text-white"
+                        className="inline-flex items-center gap-1.5 rounded-full bg-[#10B981] px-3.5 py-2 text-xs font-semibold text-[#09090B]"
                       >
                         <Zap className="w-3 h-3" />
                         Post a session
                       </button>
                       <Link
                         href="/communities"
-                        className="inline-flex items-center gap-1 rounded-full border border-black/[0.06] bg-white px-3.5 py-2 text-xs font-semibold text-[#4A4A5A]"
+                        className="inline-flex items-center gap-1 rounded-full border border-white/[0.08] bg-[#18181B] px-3.5 py-2 text-xs font-semibold text-[#A1A1AA]"
                       >
                         Browse crews
                       </Link>
@@ -720,8 +720,8 @@ function BuddyPageInner() {
                         </div>
                       ) : null}
                       {s.attendeeCount > 0 && (
-                        <div className="absolute -top-1 -left-1 min-w-[16px] h-[16px] rounded-full bg-[#1A1A1A] shadow-md flex items-center justify-center px-0.5">
-                          <span className="text-[9px] font-bold text-white leading-none">{s.attendeeCount}</span>
+                        <div className="absolute -top-1 -left-1 min-w-[16px] h-[16px] rounded-full bg-[#10B981] shadow-md flex items-center justify-center px-0.5">
+                          <span className="text-[9px] font-bold text-[#09090B] leading-none">{s.attendeeCount}</span>
                         </div>
                       )}
                     </div>
@@ -735,7 +735,7 @@ function BuddyPageInner() {
                 )}
               </GoogleMap>
             ) : (
-              <div className="w-full h-full bg-neutral-100 flex items-center justify-center">
+              <div className="w-full h-full bg-[#27272A] flex items-center justify-center">
                 <Loader2 className="w-6 h-6 animate-spin text-[#71717A]" />
               </div>
             )}
@@ -760,7 +760,7 @@ function BuddyPageInner() {
       {/* ── Floating Map/List toggle — above bottom nav ── */}
       <button
         onClick={() => { setViewMode(viewMode === 'list' ? 'map' : 'list'); setSelectedPin(null) }}
-        className="fixed z-30 left-1/2 -translate-x-1/2 flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1A1A1A] text-white text-sm font-semibold shadow-xl shadow-black/20 hover:bg-black active:scale-95 transition-all"
+        className="fixed z-30 left-1/2 -translate-x-1/2 flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#10B981] text-[#09090B] text-sm font-semibold shadow-xl shadow-black/20 hover:bg-[#0D9668] active:scale-95 transition-all"
         style={{ bottom: 'calc(72px + env(safe-area-inset-bottom, 0px) + 12px)' }}
       >
         {viewMode === 'list' ? (
@@ -818,7 +818,7 @@ function SessionCard({
     >
       <Link
         href={`/activities/${session.id}`}
-        className="group flex rounded-2xl bg-white shadow-sm hover:shadow-md active:shadow-sm transition-all duration-200 overflow-hidden"
+        className="group flex rounded-2xl bg-[#18181B] shadow-none hover:bg-[#27272A] active:bg-[#18181B] transition-all duration-200 overflow-hidden"
       >
         {/* Left: Square thumbnail */}
         <div className="relative w-24 sm:w-28 h-24 sm:h-28 flex-shrink-0 overflow-hidden">
@@ -833,7 +833,7 @@ function SessionCard({
             </div>
           )}
           {/* Price badge */}
-          <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold backdrop-blur-sm ${isPaid ? 'bg-white/90 text-[#1A1A1A]' : 'bg-emerald-500/90 text-white'}`}>
+          <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-bold backdrop-blur-sm ${isPaid ? 'bg-[#27272A] text-[#FAFAFA]' : 'bg-[#10B981]/20 text-[#10B981]'}`}>
             {priceDisplay}
           </span>
           {isJoined && !isHosting && (
@@ -845,7 +845,7 @@ function SessionCard({
         <div className="flex-1 min-w-0 p-3 flex flex-col justify-between">
           <div>
             {/* Title */}
-            <h3 className="text-[14px] font-bold text-[#1A1A1A] leading-snug line-clamp-2">
+            <h3 className="text-[14px] font-bold text-[#FAFAFA] leading-snug line-clamp-2">
               {session.title}
             </h3>
             {/* Time + Location */}
@@ -863,9 +863,9 @@ function SessionCard({
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={avatarSrc} alt="" className="w-4 h-4 rounded-full object-cover flex-shrink-0" />
               ) : (
-                <div className="w-4 h-4 rounded-full bg-neutral-100 flex items-center justify-center text-[9px] flex-shrink-0">{emoji}</div>
+                <div className="w-4 h-4 rounded-full bg-[#27272A] flex items-center justify-center text-[9px] flex-shrink-0">{emoji}</div>
               )}
-              <span className="text-[11px] text-[#9A9AAA] truncate">{displayName}</span>
+              <span className="text-[11px] text-[#71717A] truncate">{displayName}</span>
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
               {session.attendees.length > 0 && (
@@ -873,16 +873,16 @@ function SessionCard({
                   {session.attendees.slice(0, 3).map((a) =>
                     a.imageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img key={a.id} src={a.imageUrl} alt="" className="w-4 h-4 rounded-full ring-1 ring-white object-cover" />
+                      <img key={a.id} src={a.imageUrl} alt="" className="w-4 h-4 rounded-full ring-1 ring-[#18181B] object-cover" />
                     ) : (
-                      <div key={a.id} className="w-4 h-4 rounded-full ring-1 ring-white bg-neutral-100 flex items-center justify-center text-[7px] font-bold text-[#9A9AAA]">
+                      <div key={a.id} className="w-4 h-4 rounded-full ring-1 ring-[#18181B] bg-[#27272A] flex items-center justify-center text-[7px] font-bold text-[#71717A]">
                         {(a.name ?? '?')[0]}
                       </div>
                     )
                   )}
                 </div>
               )}
-              <span className="text-[10px] text-[#9A9AAA]">
+              <span className="text-[10px] text-[#71717A]">
                 {session.attendeeCount > 0 ? `${session.attendeeCount} going` : 'Be first'}
               </span>
             </div>

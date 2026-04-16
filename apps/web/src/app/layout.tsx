@@ -79,8 +79,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#FFFBF8',
-  colorScheme: 'light',
+  themeColor: '#09090B',
+  colorScheme: 'dark',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -99,7 +99,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
         {/* Prefetch activities API for faster data loading */}
         <link rel="prefetch" href="/api/activities" as="fetch" crossOrigin="anonymous" />
       </head>
-      <body className={`${plusJakarta.variable} ${outfit.variable} ${dmSans.variable} font-sans antialiased bg-[#FFFBF8] text-[#4A4A5A]`}>
+      <body className={`${plusJakarta.variable} ${outfit.variable} ${dmSans.variable} font-sans antialiased bg-[#09090B] text-[#FAFAFA]`}>
         <Providers>
           {children}
           <Toaster />

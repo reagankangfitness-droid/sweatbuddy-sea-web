@@ -818,52 +818,41 @@ function SessionCard({
     >
       <Link
         href={`/activities/${session.id}`}
-        className="group rounded-2xl bg-[#18181B] hover:bg-[#1e1e21] active:bg-[#18181B] transition-all duration-200 overflow-hidden block"
+        className="group flex gap-3 p-3 rounded-2xl bg-[#18181B] hover:bg-[#1e1e21] active:bg-[#18181B] transition-all duration-200 overflow-hidden"
       >
-        {/* Hero image */}
-        <div className="relative h-40 overflow-hidden">
+        {/* Left: Image with natural aspect ratio */}
+        <div className="relative w-[120px] flex-shrink-0 rounded-xl overflow-hidden self-stretch min-h-[120px]">
           {session.imageUrl ? (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={session.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#18181B] via-transparent to-transparent" />
-            </>
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={session.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
           ) : (
             <div className={`w-full h-full flex items-center justify-center ${pinColor(session.categorySlug ?? 'other')}`}>
-              <span className="text-5xl">{emoji}</span>
-              <div className="absolute inset-0 bg-gradient-to-t from-[#18181B] via-transparent to-transparent" />
+              <span className="text-3xl">{emoji}</span>
             </div>
           )}
-
-          {/* Top badges */}
-          <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-            <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur-md ${isPaid ? 'bg-[#27272A]/80 text-[#FAFAFA]' : 'bg-[#10B981]/20 text-[#10B981]'}`}>
-              {priceDisplay}
-            </span>
-            {isJoined && !isHosting && (
-              <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#10B981]/90 text-[#09090B] backdrop-blur-md">Going</span>
-            )}
-          </div>
-
-          {/* Title overlaid on gradient */}
-          <div className="absolute bottom-0 left-0 right-0 px-3.5 pb-3">
-            <h3 className="text-[15px] font-bold text-[#FAFAFA] leading-snug line-clamp-2 drop-shadow-lg">
-              {session.title}
-            </h3>
-          </div>
+          {isJoined && !isHosting && (
+            <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#10B981]/90 text-[#09090B] backdrop-blur-md">Going</span>
+          )}
         </div>
 
-        {/* Card body */}
-        <div className="px-3.5 py-2.5 space-y-2">
-          {/* Time + Location */}
-          <p className="text-[12px] text-[#A1A1AA] truncate">
-            {session.startTime ? getRelativeTime(session.startTime) : ''}
-            {session.startTime && (session.address || session.city) ? ' · ' : ''}
-            {formatAddress(session.address ?? session.city ?? '')}
-          </p>
+        {/* Right: Details */}
+        <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+          <div>
+            {/* Title */}
+            <h3 className="text-[15px] font-semibold text-[#FAFAFA] leading-snug line-clamp-2">
+              {session.title}
+            </h3>
+            {/* Time + Location */}
+            <p className="text-[12px] text-[#A1A1AA] mt-1.5 truncate">
+              {session.startTime ? getRelativeTime(session.startTime) : ''}
+            </p>
+            <p className="text-[12px] text-[#71717A] mt-0.5 truncate">
+              {formatAddress(session.address ?? session.city ?? '')}
+            </p>
+          </div>
 
-          {/* Host + social proof */}
-          <div className="flex items-center justify-between">
+          {/* Bottom row: host + price + social proof */}
+          <div className="flex items-center justify-between mt-2.5">
             <div className="flex items-center gap-1.5 min-w-0">
               {avatarSrc ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -873,7 +862,10 @@ function SessionCard({
               )}
               <span className="text-[12px] text-[#71717A] truncate">{displayName}</span>
             </div>
-            <div className="flex items-center gap-1.5 flex-shrink-0">
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className={`text-[11px] font-semibold ${isPaid ? 'text-[#FAFAFA]' : 'text-[#10B981]'}`}>
+                {priceDisplay}
+              </span>
               {session.attendees.length > 0 && (
                 <div className="flex -space-x-1.5">
                   {session.attendees.slice(0, 3).map((a) =>
@@ -889,7 +881,7 @@ function SessionCard({
                 </div>
               )}
               <span className="text-[11px] text-[#71717A]">
-                {session.attendeeCount > 0 ? `${session.attendeeCount} going` : 'Be first'}
+                {session.attendeeCount > 0 ? `${session.attendeeCount}` : ''}
               </span>
             </div>
           </div>

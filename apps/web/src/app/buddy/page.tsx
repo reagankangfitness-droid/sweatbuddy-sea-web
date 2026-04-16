@@ -629,8 +629,8 @@ function BuddyPageInner() {
                         {bucket.sessions.length} session{bucket.sessions.length !== 1 ? 's' : ''}
                       </span>
                     </div>
-                    {/* Horizontal scroll */}
-                    <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1">
+                    {/* Horizontal scroll on mobile, grid on desktop */}
+                    <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1 sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:overflow-visible">
                       {bucket.sessions.map((session, i) => (
                         <SessionCard
                           key={session.id}
@@ -824,7 +824,7 @@ function SessionCard({
     >
       <Link
         href={`/activities/${session.id}`}
-        className="group block w-[180px] sm:w-[220px] flex-shrink-0 snap-start"
+        className="group block w-[180px] sm:w-auto flex-shrink-0 sm:flex-shrink snap-start"
       >
         {/* Poster image — portrait 3:4 */}
         <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-[#1A1A1A]">

@@ -7,7 +7,6 @@ import { format } from 'date-fns'
 import { Plus, Loader2, Zap, Map, List } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
 import { PaymentModal } from '@/components/PaymentModal'
 import { DARK_MAP_STYLES } from '@/lib/wave/map-styles'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
@@ -73,6 +72,97 @@ interface Session {
 
 const SINGAPORE_CENTER = { lat: 1.3521, lng: 103.8198 }
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
+
+// ─── Vanilla Google Maps loader (no wrapper library) ─────────────────────────
+
+function loadGoogleMapsScript(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (typeof window !== 'undefined' && window.google?.maps) { resolve(); return }
+    const existing = document.querySelector('script[src*="maps.googleapis.com"]')
+    if (existing) { existing.addEventListener('load', () => resolve()); return }
+    const script = document.createElement('script')
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&v=weekly`
+    script.async = true
+    script.defer = true
+    script.onload = () => resolve()
+    script.onerror = () => reject(new Error('Google Maps script failed to load'))
+    document.head.appendChild(script)
+  })
+}
+
+function VanillaMap({ center, sessions, selectedPin, onPinClick, onMapClick }: {
+  center: { lat: number; lng: number }
+  sessions: Session[]
+  selectedPin: Session | null
+  onPinClick: (s: Session | null) => void
+  onMapClick: () => void
+}) {
+  const mapRef = useRef<HTMLDivElement>(null)
+  const mapInstanceRef = useRef<google.maps.Map | null>(null)
+  const markersRef = useRef<google.maps.Marker[]>([])
+  const [loaded, setLoaded] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // Load script + init map
+  useEffect(() => {
+    if (!GOOGLE_MAPS_API_KEY) { setError('No API key'); return }
+    loadGoogleMapsScript()
+      .then(() => {
+        if (!mapRef.current) return
+        mapInstanceRef.current = new google.maps.Map(mapRef.current, {
+          center,
+          zoom: 12,
+          disableDefaultUI: true,
+          zoomControl: false,
+          clickableIcons: false,
+          gestureHandling: 'greedy',
+          styles: DARK_MAP_STYLES,
+        })
+        mapInstanceRef.current.addListener('click', onMapClick)
+        setLoaded(true)
+      })
+      .catch((err) => setError(err.message))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Update markers when sessions change
+  useEffect(() => {
+    if (!loaded || !mapInstanceRef.current) return
+    // Clear old markers
+    markersRef.current.forEach((m) => m.setMap(null))
+    markersRef.current = []
+    // Add new markers
+    sessions.filter((s) => s.latitude && s.longitude).forEach((s) => {
+      const marker = new google.maps.Marker({
+        position: { lat: s.latitude!, lng: s.longitude! },
+        map: mapInstanceRef.current!,
+        label: { text: pinEmoji(s.categorySlug ?? 'other'), fontSize: '16px' },
+        title: s.title,
+      })
+      marker.addListener('click', () => onPinClick(selectedPin?.id === s.id ? null : s))
+      markersRef.current.push(marker)
+    })
+  }, [loaded, sessions, selectedPin, onPinClick])
+
+  if (error) return (
+    <div className="w-full h-full bg-[#1A1A1A] flex flex-col items-center justify-center gap-2">
+      <p className="text-sm text-[#999999]">Map failed to load</p>
+      <p className="text-xs text-[#666666]">{error}</p>
+    </div>
+  )
+
+  return (
+    <>
+      <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
+      {!loaded && (
+        <div className="absolute inset-0 bg-[#1A1A1A] flex flex-col items-center justify-center gap-2">
+          <Loader2 className="w-6 h-6 animate-spin text-[#999999]" />
+          <p className="text-xs text-[#666666]">Loading map...</p>
+        </div>
+      )}
+    </>
+  )
+}
 
 // ─── Time helpers ─────────────────────────────────────────────────────────────
 
@@ -699,30 +789,13 @@ function BuddyPageInner() {
         <>
           {/* ── Map view ── */}
           <div className="relative w-full" style={{ height: 'calc(100dvh - 140px)' }}>
-            <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
-              <GoogleMap
-                mapContainerStyle={{ width: '100%', height: '100%' }}
-                center={userLocation ?? SINGAPORE_CENTER}
-                zoom={12}
-                onClick={() => setSelectedPin(null)}
-                options={{
-                  disableDefaultUI: true,
-                  zoomControl: false,
-                  styles: DARK_MAP_STYLES,
-                  clickableIcons: false,
-                  gestureHandling: 'greedy',
-                }}
-              >
-                {sessions.filter((s) => s.latitude && s.longitude).map((s) => (
-                  <Marker
-                    key={s.id}
-                    position={{ lat: s.latitude!, lng: s.longitude! }}
-                    onClick={() => setSelectedPin(selectedPin?.id === s.id ? null : s)}
-                    label={{ text: pinEmoji(s.categorySlug ?? 'other'), fontSize: '18px' }}
-                  />
-                ))}
-              </GoogleMap>
-            </LoadScript>
+            <VanillaMap
+              center={userLocation ?? SINGAPORE_CENTER}
+              sessions={sessions}
+              selectedPin={selectedPin}
+              onPinClick={setSelectedPin}
+              onMapClick={() => setSelectedPin(null)}
+            />
 
             {/* Selected pin card overlay */}
             {selectedPin && (

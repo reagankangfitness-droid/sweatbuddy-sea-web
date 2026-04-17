@@ -138,12 +138,12 @@ export function ShareSessionSheet({
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="text-base font-bold text-[#1A1A1A] tracking-tight">
-                    {context === 'created' ? 'Get your crew in' : 'Bring someone?'}
+                    {context === 'created' ? 'Spread the word' : 'Know someone who\u2019d be in?'}
                   </h3>
                   <p className="text-xs text-[#71717A] mt-0.5">
                     {context === 'created'
-                      ? 'Share your session to fill those spots'
-                      : 'Everything is better with a friend'}
+                      ? 'More people, better session'
+                      : 'Tag them before spots fill up'}
                   </p>
                 </div>
                 <button onClick={onClose} className="w-8 h-8 rounded-full bg-[#FFFBF8] flex items-center justify-center">
@@ -202,7 +202,7 @@ export function ShareSessionSheet({
                 onClick={onClose}
                 className="w-full text-center text-xs text-[#9A9AAA] hover:text-[#71717A] py-2 transition-colors"
               >
-                Skip for now
+                Maybe later
               </button>
             </div>
           </motion.div>

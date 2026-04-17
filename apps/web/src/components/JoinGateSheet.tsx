@@ -110,7 +110,7 @@ export function JoinGateSheet({ open, onClose, onComplete }: JoinGateSheetProps)
                   Quick setup before you join
                 </h3>
                 <p className="text-xs text-[#666666] mt-1">
-                  Takes 10 seconds — pick your interests
+                  Takes 10 seconds
                 </p>
               </div>
 
@@ -172,13 +172,13 @@ export function JoinGateSheet({ open, onClose, onComplete }: JoinGateSheetProps)
                     <Loader2 className="w-4 h-4 animate-spin" /> Saving...
                   </>
                 ) : (
-                  'Join session \u2192'
+                  'I\u2019m in \u2192'
                 )}
               </button>
 
               {selected.length === 0 && (
                 <p className="text-center text-[11px] text-[#666666] mt-2 mb-1">
-                  Tap 1 or more to continue
+                  Pick at least one
                 </p>
               )}
             </div>

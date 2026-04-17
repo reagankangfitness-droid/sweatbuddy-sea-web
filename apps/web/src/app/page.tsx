@@ -132,20 +132,19 @@ export default async function HomePage() {
 
         <div className="relative max-w-2xl mx-auto text-center">
           <h1 className="text-4xl sm:text-6xl font-bold leading-[1.05] tracking-tight mb-5">
-            Stop juggling 5 apps to{' '}
+            Every session starts{' '}
             <span className="bg-gradient-to-r from-white to-[#999999] bg-clip-text text-transparent">
-              run your crew.
+              here.
             </span>
           </h1>
           <p className="text-base text-[#999999] max-w-md mx-auto mb-8 leading-relaxed">
-            WhatsApp. Instagram. PayNow. Google Sheets. Linktree.
-            <span className="block mt-1 font-medium text-[#FAFAFA]">One tool replaces all of them.</span>
+            Find your next run, class, or workout — or host your own.
           </p>
           <Link
             href="/communities"
             className="inline-block px-8 py-4 bg-white text-black text-base font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-all"
           >
-            Set up your crew — free →
+            Get started — free →
           </Link>
           <div className="flex items-center justify-center gap-2 mt-8">
             <span className="relative flex h-2 w-2">
@@ -179,8 +178,8 @@ export default async function HomePage() {
       <section className="px-5 pb-16">
         <div className="max-w-lg mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
-            { emoji: '📱', pain: 'WhatsApp groups don\u2019t track who shows up' },
-            { emoji: '📊', pain: 'Spreadsheets can\u2019t send reminders' },
+            { emoji: '📱', pain: 'WhatsApp groups lose track' },
+            { emoji: '📊', pain: 'Spreadsheets don\u2019t send reminders' },
             { emoji: '🔗', pain: 'Linktree can\u2019t take RSVPs' },
           ].map((p) => (
             <div key={p.emoji} className="bg-[#1A1A1A] rounded-xl shadow-sm p-4 text-center">
@@ -199,16 +198,16 @@ export default async function HomePage() {
             FOR HOSTS
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight tracking-tight mb-4">
-            Build your crew.
+            Run your crew.
           </h2>
           <p className="text-sm text-white/60 mb-6 leading-relaxed max-w-sm">
-            Post sessions in 30 seconds. See who&apos;s coming. Notify your crew. Track attendance. Grow organically. Free.
+            Host sessions in 30 seconds. See who&apos;s coming. Send reminders. Track attendance. Grow organically.
           </p>
           <Link
             href="/communities"
             className="inline-block px-6 py-3 bg-white text-black text-sm font-bold uppercase tracking-wide rounded-full w-fit hover:bg-neutral-200 transition-all"
           >
-            Set up your crew →
+            Start hosting →
           </Link>
         </div>
 
@@ -222,16 +221,16 @@ export default async function HomePage() {
               For Members
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight tracking-tight mb-4">
-              Find your crew.
+              Find your session.
             </h2>
             <p className="text-sm text-white/70 mb-6 leading-relaxed max-w-sm">
-              Discover sessions happening near you. Running, yoga, HIIT, cold plunge — whatever moves you. Join in 2 taps.
+              Running, yoga, HIIT, cold plunge — whatever moves you. Browse sessions and join in 2 taps.
             </p>
             <Link
               href="/buddy"
               className="inline-block px-6 py-3 border border-white/20 text-white text-sm font-bold uppercase tracking-wide rounded-full w-fit hover:bg-white/10 transition-all"
             >
-              See what&apos;s happening →
+              Browse sessions →
             </Link>
           </div>
         </div>
@@ -245,9 +244,9 @@ export default async function HomePage() {
           </h2>
           <div className="space-y-6">
             {[
-              { icon: '⚡', title: 'Post sessions in 30 seconds', body: 'Pick an activity, set a time, done. Your crew sees it instantly.' },
+              { icon: '⚡', title: 'Host sessions in 30 seconds', body: 'Pick an activity, set a time, done. Your crew sees it instantly.' },
               { icon: '👥', title: 'See who\u2019s coming', body: 'Names, not numbers. Know who\u2019s new and who\u2019s a regular.' },
-              { icon: '📣', title: 'Your community page', body: 'A home for your crew. Members, sessions, schedule — all in one link.' },
+              { icon: '📣', title: 'Your crew page', body: 'A home for your crew. Members, sessions, schedule — all in one link.' },
               { icon: '📍', title: 'Show up on the map', body: 'People nearby discover your sessions. Organic growth, no ads.' },
             ].map((f) => (
               <div key={f.title} className="flex gap-4">
@@ -297,7 +296,7 @@ export default async function HomePage() {
                         {s.address ? ` · ${s.address.split(',')[0]}` : s.city ? ` · ${s.city}` : ''}
                       </p>
                     </div>
-                    <span className="text-xs text-[#666666] flex-shrink-0">{going > 0 ? `${going} going` : 'Be first'}</span>
+                    <span className="text-xs text-[#666666] flex-shrink-0">{going > 0 ? `${going} going` : 'Be the first'}</span>
                   </Link>
                 )
               })}
@@ -310,14 +309,14 @@ export default async function HomePage() {
       <section className="px-5 py-20 border-t border-white/[0.06]">
         <div className="max-w-lg mx-auto text-center">
           <h2 className="text-xl sm:text-2xl font-bold mb-3 tracking-tight">
-            Ready to stop duct-taping your community?
+            Your crew is waiting.
           </h2>
-          <p className="text-xs text-[#666666] mb-6">15 seconds to set up. Free forever for free events.</p>
+          <p className="text-xs text-[#666666] mb-6">Set up in 15 seconds. Free.</p>
           <Link
             href="/communities"
             className="inline-block px-8 py-4 bg-white text-black text-base font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-all"
           >
-            Set up your crew →
+            Get started →
           </Link>
         </div>
       </section>

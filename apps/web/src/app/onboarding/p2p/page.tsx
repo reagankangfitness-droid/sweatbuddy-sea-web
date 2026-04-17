@@ -184,7 +184,7 @@ export default function P2POnboardingPage() {
           transition={{ delay: 0.3 }}
           className="mt-6 text-xl font-semibold text-white"
         >
-          You&apos;re all set!
+          You&apos;re in.
         </motion.p>
       </div>
     )
@@ -221,11 +221,8 @@ export default function P2POnboardingPage() {
               >
                 <div className="text-center pt-8">
                   <h1 className="text-3xl font-bold text-white">
-                    Welcome to SweatBuddies
+                    What moves you?
                   </h1>
-                  <p className="mt-3 text-[#999999]">
-                    Let&apos;s personalize your experience
-                  </p>
                 </div>
 
                 <div className="flex flex-col items-center gap-4">
@@ -281,10 +278,10 @@ export default function P2POnboardingPage() {
               >
                 <div className="text-center pt-4">
                   <h1 className="text-2xl font-bold text-white">
-                    What are you into?
+                    Pick your thing.
                   </h1>
                   <p className="mt-2 text-sm text-[#999999]">
-                    Pick the activities you love (select as many as you want)
+                    Select as many as you want
                   </p>
                 </div>
 
@@ -343,10 +340,10 @@ export default function P2POnboardingPage() {
               >
                 <div className="text-center pt-4">
                   <h1 className="text-2xl font-bold text-white">
-                    What&apos;s your fitness level?
+                    Where are you at?
                   </h1>
                   <p className="mt-2 text-sm text-[#999999]">
-                    No judgment — this helps us match you with the right sessions
+                    Helps us find the right sessions for you
                   </p>
                 </div>
 
@@ -393,7 +390,7 @@ export default function P2POnboardingPage() {
                       Setting up...
                     </>
                   ) : (
-                    "Let's go!"
+                    "I'm in"
                   )}
                 </button>
               </motion.div>

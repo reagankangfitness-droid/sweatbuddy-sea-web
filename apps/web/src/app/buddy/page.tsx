@@ -588,7 +588,7 @@ function BuddyPageInner() {
             {/* Session count header */}
             {!loading && sessions.length > 0 && (
               <p className="text-xs font-medium text-[#666666] py-3 uppercase tracking-wider">
-                {sessions.length} session{sessions.length !== 1 ? 's' : ''} near you
+                {sessions.length} session{sessions.length !== 1 ? 's' : ''} happening
               </p>
             )}
 
@@ -629,14 +629,14 @@ function BuddyPageInner() {
             ) : sessions.length === 0 ? (
               <div className="text-center py-16">
                 <div className="text-4xl mb-3">🏋️</div>
-                <p className="text-sm font-medium text-[#999999]">Nothing happening nearby — yet.</p>
-                <p className="text-xs text-[#666666] mt-1">Be the first — start something.</p>
+                <p className="text-sm font-medium text-[#999999]">Nothing nearby yet.</p>
+                <p className="text-xs text-[#666666] mt-1">Be the one to start it.</p>
                 <button
                   onClick={() => setShowCreateSheet(true)}
                   className="inline-flex items-center gap-1.5 mt-4 rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-black uppercase tracking-wider"
                 >
                   <Zap className="w-3.5 h-3.5" />
-                  Post a session
+                  Host a session
                 </button>
               </div>
             ) : (
@@ -688,7 +688,7 @@ function BuddyPageInner() {
                         className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-xs font-semibold text-black uppercase tracking-wider"
                       >
                         <Zap className="w-3 h-3" />
-                        Post a session
+                        Host a session
                       </button>
                       <Link
                         href="/communities"
@@ -890,15 +890,15 @@ function SessionCard({
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={avatarSrc} alt="" className="w-4 h-4 rounded-full object-cover" />
               ) : null}
-              <span className="text-[11px] text-[#666666] truncate uppercase tracking-wider">{displayName}</span>
+              <span className="text-[11px] text-[#666666] truncate">{displayName}</span>
             </div>
           )}
           {/* Title */}
-          <h3 className="text-[13px] font-bold text-white leading-snug line-clamp-2 uppercase tracking-wide">
+          <h3 className="text-[13px] font-bold text-white leading-snug line-clamp-2">
             {session.title}
           </h3>
           {/* Price · Time */}
-          <p className="text-[11px] text-[#666666] truncate uppercase tracking-wider">
+          <p className="text-[11px] text-[#666666] truncate">
             {priceDisplay} · {session.startTime ? getRelativeTime(session.startTime) : ''}
           </p>
         </div>

@@ -316,7 +316,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
           >
             {/* Header */}
             <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-[#333333]">
-              <h2 className="text-lg font-bold text-white">Create Session</h2>
+              <h2 className="text-lg font-bold text-white">New Session</h2>
               <button onClick={onClose} className="w-10 h-10 rounded-full bg-[#2A2A2A] flex items-center justify-center hover:bg-[#333333] transition-colors">
                 <X className="w-4 h-4 text-[#999999]" />
               </button>
@@ -372,7 +372,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                       <>
                         <ImagePlus className="w-6 h-6 text-[#666666]" />
                         <span className="text-xs font-medium text-[#666666]">Add cover image</span>
-                        <span className="text-[10px] text-[#555555]">Makes your session stand out</span>
+                        <span className="text-[10px] text-[#555555]">Helps your session stand out</span>
                       </>
                     )}
                   </button>
@@ -390,7 +390,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                   className="w-full text-xl font-bold text-white placeholder:text-[#555555] focus:outline-none border-none bg-transparent"
                 />
                 <p className="text-[11px] text-[#666666] mt-1">
-                  {catLabel ? `Auto: ${generateTitle(categorySlug, selectedTime ?? new Date())}` : 'Give it a name or we\u2019ll generate one'}
+                  {catLabel ? `Auto: ${generateTitle(categorySlug, selectedTime ?? new Date())}` : 'Or we\u2019ll name it for you'}
                 </p>
               </div>
 
@@ -700,9 +700,9 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                 className="w-full py-4 rounded-full bg-white text-black text-sm font-bold uppercase tracking-wider hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
               >
                 {posting ? (
-                  <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</>
+                  <><Loader2 className="w-4 h-4 animate-spin" /> Posting...</>
                 ) : (
-                  <><Zap className="w-4 h-4" /> Publish Session</>
+                  <><Zap className="w-4 h-4" /> Post Session</>
                 )}
               </button>
             </div>

@@ -252,7 +252,7 @@ Organized via sweatbuddies
               <button onClick={() => router.back()} aria-label="Go back" className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0D0D0D] border border-white/10">
                 <ArrowLeft className="w-5 h-5 text-[#666666]" />
               </button>
-              <span className="text-sm font-medium text-[#666666]">Activity Details</span>
+              <span className="text-sm font-medium text-[#666666]">Session Details</span>
             </div>
           </div>
         </header>
@@ -491,7 +491,7 @@ Organized via sweatbuddies
               )}
             </button>
           ) : (
-            <p className="text-[13px] text-[#666666] mt-2">Be the first to join!</p>
+            <p className="text-[13px] text-[#666666] mt-2">Be the first to join</p>
           )}
         </div>
 

@@ -12,7 +12,7 @@ import { CreateSessionSheet } from '@/components/CreateSessionSheet'
 
 const navItems = [
   { id: 'discover', label: 'Discover', icon: Compass, href: '/buddy', mobileOnly: false },
-  { id: 'communities', label: 'Explore', icon: Users2, href: '/communities', mobileOnly: false },
+  { id: 'communities', label: 'Crews', icon: Users2, href: '/communities', mobileOnly: false },
   { id: 'create', label: 'Create', icon: Plus, href: '#', mobileOnly: true, isCreate: true },
   { id: 'hub', label: 'Hub', icon: LayoutDashboard, href: '/hub', mobileOnly: false },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile', mobileOnly: false },

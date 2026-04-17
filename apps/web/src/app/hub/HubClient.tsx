@@ -273,7 +273,6 @@ export default function HubClient({
       <div className="px-5 pt-[env(safe-area-inset-top,16px)] pb-2">
         <div className="pt-4 flex items-center justify-between">
           <div>
-            <p className="text-xs text-[#9A9AAA]">Welcome back</p>
             <h1 className="text-xl font-bold text-[#1A1A1A] tracking-tight">{hostName ?? 'Host'}</h1>
           </div>
           <button
@@ -404,13 +403,13 @@ export default function HubClient({
           <div className="bg-white rounded-2xl shadow-sm p-6 text-center">
             <div className="text-3xl mb-2">🎉</div>
             <p className="text-[14px] font-semibold text-[#1A1A1A] mb-1">Your community is set up!</p>
-            <p className="text-[12px] text-[#666666] mb-4">Post your first session — it takes 30 seconds.</p>
+            <p className="text-[12px] text-[#666666] mb-4">Host your first session — takes 30 seconds.</p>
             <button
               onClick={() => setShowCreate(true)}
               className="inline-flex items-center gap-1.5 px-5 py-3 rounded-full bg-[#1A1A1A] text-white text-[14px] font-semibold"
             >
               <Zap className="w-4 h-4" />
-              Post a session
+              Host a session
             </button>
           </div>
         )}

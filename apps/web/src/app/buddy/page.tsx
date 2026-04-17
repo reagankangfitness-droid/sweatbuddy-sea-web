@@ -229,7 +229,7 @@ function BuddyPageInner() {
   const router = useRouter()
   const mapRef = useRef<google.maps.Map | null>(null)
   const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral | null>(null)
-  const { isLoaded: mapsLoaded } = useLoadScript({ googleMapsApiKey: GOOGLE_MAPS_API_KEY })
+  const { isLoaded: mapsLoaded, loadError: mapsError } = useLoadScript({ googleMapsApiKey: GOOGLE_MAPS_API_KEY })
   const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
   const [nextCursor, setNextCursor] = useState<string | null>(null)
@@ -707,7 +707,12 @@ function BuddyPageInner() {
         <>
           {/* ── Map view ── */}
           <div className="relative w-full" style={{ height: 'calc(100dvh - 140px)' }}>
-            {mapsLoaded && GOOGLE_MAPS_API_KEY ? (
+            {mapsError ? (
+              <div className="w-full h-full bg-[#1A1A1A] flex flex-col items-center justify-center gap-2">
+                <p className="text-sm text-[#999999]">Map failed to load</p>
+                <p className="text-xs text-[#666666]">{mapsError.message}</p>
+              </div>
+            ) : mapsLoaded && GOOGLE_MAPS_API_KEY ? (
               <GoogleMap
                 mapContainerStyle={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
                 center={userLocation ?? SINGAPORE_CENTER}
@@ -770,8 +775,9 @@ function BuddyPageInner() {
                 )}
               </GoogleMap>
             ) : (
-              <div className="w-full h-full bg-[#2A2A2A] flex items-center justify-center">
-                <Loader2 className="w-6 h-6 animate-spin text-[#666666]" />
+              <div className="absolute inset-0 bg-[#1A1A1A] flex flex-col items-center justify-center gap-2">
+                <Loader2 className="w-6 h-6 animate-spin text-[#999999]" />
+                <p className="text-xs text-[#666666]">Loading map...</p>
               </div>
             )}
 

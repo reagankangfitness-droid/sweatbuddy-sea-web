@@ -706,7 +706,7 @@ function BuddyPageInner() {
       ) : (
         <>
           {/* ── Map view ── */}
-          <div className="flex-1 relative">
+          <div className="flex-1 relative min-h-0" style={{ height: 'calc(100dvh - 120px)' }}>
             {mapsLoaded && GOOGLE_MAPS_API_KEY ? (
               <GoogleMap
                 mapContainerStyle={{ width: '100%', height: '100%' }}

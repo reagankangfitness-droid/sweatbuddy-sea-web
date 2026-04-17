@@ -849,11 +849,11 @@ function SessionCard({
         href={`/activities/${session.id}`}
         className="group block w-[180px] sm:w-auto flex-shrink-0 sm:flex-shrink snap-start"
       >
-        {/* Poster image — portrait 3:4 */}
-        <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-[#1A1A1A]">
+        {/* Session image — contains full image without cropping */}
+        <div className="relative aspect-[4/5] rounded-xl overflow-hidden bg-[#111111]">
           {session.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={session.imageUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <img src={session.imageUrl} alt="" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" />
           ) : (
             /* Rich poster fallback — gradient bg + emoji + title + time */
             <div

@@ -62,7 +62,7 @@ export function ShareSessionSheet({
 
   const joinMessage = [
     `I'm going to ${sessionTitle}${timeStr ? ` ${timeStr}` : ''}${locationStr ? ` at ${locationStr}` : ''}.`,
-    goingCount > 1 ? `${goingCount} people going.` : '',
+    goingCount > 1 ? `${goingCount} people showing up.` : '',
     'Come with me?',
     sessionUrl,
   ].filter(Boolean).join(' ')

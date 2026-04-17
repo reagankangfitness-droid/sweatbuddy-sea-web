@@ -132,19 +132,19 @@ export default async function HomePage() {
 
         <div className="relative max-w-2xl mx-auto text-center">
           <h1 className="text-4xl sm:text-6xl font-bold leading-[1.05] tracking-tight mb-5">
-            Every session starts{' '}
+            Your next crew is{' '}
             <span className="bg-gradient-to-r from-white to-[#999999] bg-clip-text text-transparent">
-              here.
+              one session away.
             </span>
           </h1>
           <p className="text-base text-[#999999] max-w-md mx-auto mb-8 leading-relaxed">
-            Find your next run, class, or workout — or host your own.
+            Browse sessions happening near you. Running, yoga, HIIT, cold plunge — pick one, show up, meet your people.
           </p>
           <Link
-            href="/communities"
+            href="/buddy"
             className="inline-block px-8 py-4 bg-white text-black text-base font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-all"
           >
-            Get started — free →
+            Show me what&apos;s happening →
           </Link>
           <div className="flex items-center justify-center gap-2 mt-8">
             <span className="relative flex h-2 w-2">
@@ -152,9 +152,9 @@ export default async function HomePage() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
             </span>
             <p className="text-sm text-[#666666]">
-              <span className="font-semibold text-[#FAFAFA]">{communityCount}</span> crews
-              {sessionsThisWeek > 0 && <> · <span className="font-semibold text-[#FAFAFA]">{sessionsThisWeek}</span> sessions this week</>}
-              {cities.length > 0 && <> · {cities.length} cities</>}
+              <span className="font-semibold text-[#FAFAFA]">{communityCount}</span> crews strong
+              {sessionsThisWeek > 0 && <> · <span className="font-semibold text-[#FAFAFA]">{sessionsThisWeek}</span> showed up this week</>}
+              {cities.length > 0 && <> · across {cities.length} cities</>}
             </p>
           </div>
         </div>
@@ -178,12 +178,13 @@ export default async function HomePage() {
       <section className="px-5 pb-16">
         <div className="max-w-lg mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
-            { emoji: '📱', pain: 'WhatsApp groups lose track' },
-            { emoji: '📊', pain: 'Spreadsheets don\u2019t send reminders' },
-            { emoji: '🔗', pain: 'Linktree can\u2019t take RSVPs' },
+            { emoji: '🏃', title: 'Show up once', pain: 'No commitments. No pressure. Just try one session and see.' },
+            { emoji: '👥', title: 'Meet your people', pain: 'Real conversations happen when you\u2019re catching your breath together.' },
+            { emoji: '🔄', title: 'Keep coming back', pain: 'The regulars will find you. That\u2019s how crews are built.' },
           ].map((p) => (
             <div key={p.emoji} className="bg-[#1A1A1A] rounded-xl shadow-sm p-4 text-center">
               <span className="text-2xl block mb-2">{p.emoji}</span>
+              <h3 className="text-sm font-semibold text-[#FAFAFA] mb-1">{p.title}</h3>
               <p className="text-xs text-[#999999] leading-relaxed">{p.pain}</p>
             </div>
           ))}
@@ -198,10 +199,10 @@ export default async function HomePage() {
             FOR HOSTS
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight tracking-tight mb-4">
-            Run your crew.
+            Build something people keep coming back to.
           </h2>
           <p className="text-sm text-white/60 mb-6 leading-relaxed max-w-sm">
-            Host sessions in 30 seconds. See who&apos;s coming. Send reminders. Track attendance. Grow organically.
+            Host sessions, grow your crew, track who shows up. The regulars will find you.
           </p>
           <Link
             href="/communities"
@@ -218,13 +219,13 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-black/40" />
           <div className="relative px-8 py-16 flex flex-col justify-center h-full">
             <span className="inline-block px-3 py-1 rounded-full border border-white/30 text-[11px] text-white/80 font-medium uppercase tracking-widest mb-6 w-fit">
-              For Members
+              For You
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight tracking-tight mb-4">
-              Find your session.
+              Find sessions worth showing up to.
             </h2>
             <p className="text-sm text-white/70 mb-6 leading-relaxed max-w-sm">
-              Running, yoga, HIIT, cold plunge — whatever moves you. Browse sessions and join in 2 taps.
+              Real people. Real workouts. No commitments, no awkwardness — just show up once and see.
             </p>
             <Link
               href="/buddy"
@@ -245,7 +246,7 @@ export default async function HomePage() {
           <div className="space-y-6">
             {[
               { icon: '⚡', title: 'Host sessions in 30 seconds', body: 'Pick an activity, set a time, done. Your crew sees it instantly.' },
-              { icon: '👥', title: 'See who\u2019s coming', body: 'Names, not numbers. Know who\u2019s new and who\u2019s a regular.' },
+              { icon: '👥', title: 'See who\u2019s showing up', body: 'Names, not numbers. Know who\u2019s new and who\u2019s a regular.' },
               { icon: '📣', title: 'Your crew page', body: 'A home for your crew. Members, sessions, schedule — all in one link.' },
               { icon: '📍', title: 'Show up on the map', body: 'People nearby discover your sessions. Organic growth, no ads.' },
             ].map((f) => (
@@ -258,7 +259,7 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-          <p className="text-center text-xs text-[#666666] mt-8">Free. No lock-in. No fees on free events.</p>
+          <p className="text-center text-xs text-[#666666] mt-8">Free. No lock-in. No fees on free sessions.</p>
         </div>
       </section>
 
@@ -309,14 +310,14 @@ export default async function HomePage() {
       <section className="px-5 py-20 border-t border-white/[0.06]">
         <div className="max-w-lg mx-auto text-center">
           <h2 className="text-xl sm:text-2xl font-bold mb-3 tracking-tight">
-            Your crew is waiting.
+            The hardest part is the first one.
           </h2>
-          <p className="text-xs text-[#666666] mb-6">Set up in 15 seconds. Free.</p>
+          <p className="text-xs text-[#666666] mb-6">After that, you&apos;ll wonder why you waited.</p>
           <Link
-            href="/communities"
+            href="/buddy"
             className="inline-block px-8 py-4 bg-white text-black text-base font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-all"
           >
-            Get started →
+            Find a session near me →
           </Link>
         </div>
       </section>

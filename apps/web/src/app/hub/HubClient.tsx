@@ -317,7 +317,7 @@ export default function HubClient({
               </div>
               <div className="text-right flex-shrink-0">
                 <p className="text-lg font-bold text-[#1A1A1A]">{nextSession.goingCount}</p>
-                <p className="text-[10px] text-[#9A9AAA]">{nextSession.maxPeople ? `/ ${nextSession.maxPeople}` : 'going'}</p>
+                <p className="text-[10px] text-[#9A9AAA]">{nextSession.maxPeople ? `/ ${nextSession.maxPeople}` : 'showing up'}</p>
               </div>
             </div>
 
@@ -403,13 +403,13 @@ export default function HubClient({
           <div className="bg-white rounded-2xl shadow-sm p-6 text-center">
             <div className="text-3xl mb-2">🎉</div>
             <p className="text-[14px] font-semibold text-[#1A1A1A] mb-1">Your community is set up!</p>
-            <p className="text-[12px] text-[#666666] mb-4">Host your first session — takes 30 seconds.</p>
+            <p className="text-[12px] text-[#666666] mb-4">Start something worth showing up to.</p>
             <button
               onClick={() => setShowCreate(true)}
               className="inline-flex items-center gap-1.5 px-5 py-3 rounded-full bg-[#1A1A1A] text-white text-[14px] font-semibold"
             >
               <Zap className="w-4 h-4" />
-              Host a session
+              Start something
             </button>
           </div>
         )}

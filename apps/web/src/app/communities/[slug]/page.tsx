@@ -575,7 +575,7 @@ export default async function CommunityPage({ params }: Props) {
                   {event.attendeeCount !== undefined && (
                     <div className="flex items-center gap-1.5 mt-2 text-xs text-[#666666]">
                       <Users className="w-3.5 h-3.5" />
-                      {event.attendeeCount} going
+                      {event.attendeeCount} showing up
                     </div>
                   )}
                 </div>

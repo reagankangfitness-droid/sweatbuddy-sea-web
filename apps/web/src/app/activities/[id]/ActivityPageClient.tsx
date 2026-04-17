@@ -434,7 +434,7 @@ Organized via sweatbuddies
                 {activity.maxPeople
                   ? `${joinedCount}/${activity.maxPeople} spots filled`
                   : joinedCount > 0
-                    ? `${joinedCount} going`
+                    ? `${joinedCount} showing up`
                     : 'Open'
                 }
               </span>
@@ -491,7 +491,7 @@ Organized via sweatbuddies
               )}
             </button>
           ) : (
-            <p className="text-[13px] text-[#666666] mt-2">Be the first to join</p>
+            <p className="text-[13px] text-[#666666] mt-2">Be the first to show up</p>
           )}
         </div>
 

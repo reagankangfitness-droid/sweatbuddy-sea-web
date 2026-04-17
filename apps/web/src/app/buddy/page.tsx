@@ -422,7 +422,7 @@ function BuddyPageInner() {
         toast.error(data.error || 'Failed to join')
         return
       }
-      toast.success("You're in! 🎉")
+      toast.success("You're in. See you there.")
       const joinedSession = sessions.find((s) => s.id === sessionId)
       fetchSessions()
       // Show share sheet after brief delay
@@ -630,13 +630,13 @@ function BuddyPageInner() {
               <div className="text-center py-16">
                 <div className="text-4xl mb-3">🏋️</div>
                 <p className="text-sm font-medium text-[#999999]">Nothing nearby yet.</p>
-                <p className="text-xs text-[#666666] mt-1">Be the one to start it.</p>
+                <p className="text-xs text-[#666666] mt-1">Be the reason someone shows up.</p>
                 <button
                   onClick={() => setShowCreateSheet(true)}
                   className="inline-flex items-center gap-1.5 mt-4 rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-black uppercase tracking-wider"
                 >
                   <Zap className="w-3.5 h-3.5" />
-                  Host a session
+                  Start something
                 </button>
               </div>
             ) : (
@@ -688,7 +688,7 @@ function BuddyPageInner() {
                         className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-xs font-semibold text-black uppercase tracking-wider"
                       >
                         <Zap className="w-3 h-3" />
-                        Host a session
+                        Start something
                       </button>
                       <Link
                         href="/communities"

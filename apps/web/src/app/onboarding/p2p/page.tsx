@@ -184,7 +184,7 @@ export default function P2POnboardingPage() {
           transition={{ delay: 0.3 }}
           className="mt-6 text-xl font-semibold text-white"
         >
-          You&apos;re in.
+          You&apos;re in. Now show up.
         </motion.p>
       </div>
     )

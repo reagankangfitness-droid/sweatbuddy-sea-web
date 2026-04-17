@@ -126,7 +126,7 @@ export function useActivityJoin(
           toast.error(data.error || 'Failed to join session')
           return
         }
-        toast.success("You're in!")
+        toast.success("You're in. See you there.")
         setHasJoined(true)
         onShowGoingSoloPrompt?.()
         const activityResponse = await fetch(`/api/activities/${activityId}`)
@@ -166,7 +166,7 @@ export function useActivityJoin(
 
       // Handle free activities (no Stripe redirect)
       if (data.isFree) {
-        toast.success('Successfully joined the activity!')
+        toast.success("You're in. See you there.")
         setHasJoined(true)
         onShowGoingSoloPrompt?.()
 

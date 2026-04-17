@@ -7,7 +7,7 @@ import { format } from 'date-fns'
 import { Plus, Loader2, Zap, Map, List } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
-import { APIProvider, Map as GoogleMapNew, AdvancedMarker } from '@vis.gl/react-google-maps'
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'
 import { PaymentModal } from '@/components/PaymentModal'
 import { DARK_MAP_STYLES } from '@/lib/wave/map-styles'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
@@ -699,57 +699,30 @@ function BuddyPageInner() {
         <>
           {/* ── Map view ── */}
           <div className="relative w-full" style={{ height: 'calc(100dvh - 140px)' }}>
-            <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
-              <GoogleMapNew
-                defaultCenter={userLocation ?? SINGAPORE_CENTER}
-                defaultZoom={12}
-                gestureHandling="greedy"
-                disableDefaultUI
+            <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
+              <GoogleMap
+                mapContainerStyle={{ width: '100%', height: '100%' }}
+                center={userLocation ?? SINGAPORE_CENTER}
+                zoom={12}
                 onClick={() => setSelectedPin(null)}
-                style={{ width: '100%', height: '100%' }}
-                colorScheme="DARK"
+                options={{
+                  disableDefaultUI: true,
+                  zoomControl: false,
+                  styles: DARK_MAP_STYLES,
+                  clickableIcons: false,
+                  gestureHandling: 'greedy',
+                }}
               >
                 {sessions.filter((s) => s.latitude && s.longitude).map((s) => (
-                  <AdvancedMarker
+                  <Marker
                     key={s.id}
                     position={{ lat: s.latitude!, lng: s.longitude! }}
                     onClick={() => setSelectedPin(selectedPin?.id === s.id ? null : s)}
-                  >
-                    <div className="cursor-pointer select-none relative">
-                      <div className={`flex items-center justify-center rounded-full shadow-lg border-2 transition-all duration-150 ${
-                        selectedPin?.id === s.id
-                          ? 'w-12 h-12 text-2xl border-white scale-110 ring-2 ring-white/40'
-                          : 'w-9 h-9 text-lg border-white/80 hover:scale-110'
-                      } ${pinColor(s.categorySlug ?? 'other')}`}>
-                        {pinEmoji(s.categorySlug ?? 'other')}
-                      </div>
-                      {s.host?.imageUrl ? (
-                        <div className="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full overflow-hidden border-2 border-white shadow-md">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={s.host.imageUrl} alt="" className="w-full h-full object-cover" />
-                        </div>
-                      ) : s.community?.logoImage ? (
-                        <div className="absolute -bottom-1.5 -right-1.5 w-5 h-5 rounded-full overflow-hidden border-2 border-white shadow-md">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={s.community.logoImage} alt="" className="w-full h-full object-cover" />
-                        </div>
-                      ) : null}
-                      {s.attendeeCount > 0 && (
-                        <div className="absolute -top-1 -left-1 min-w-[16px] h-[16px] rounded-full bg-white shadow-md flex items-center justify-center px-0.5">
-                          <span className="text-[9px] font-bold text-black leading-none">{s.attendeeCount}</span>
-                        </div>
-                      )}
-                    </div>
-                  </AdvancedMarker>
+                    label={{ text: pinEmoji(s.categorySlug ?? 'other'), fontSize: '18px' }}
+                  />
                 ))}
-
-                {userLocation && (
-                  <AdvancedMarker position={userLocation}>
-                    <div className="w-4 h-4 rounded-full bg-blue-500 border-2 border-white shadow-lg" />
-                  </AdvancedMarker>
-                )}
-              </GoogleMapNew>
-            </APIProvider>
+              </GoogleMap>
+            </LoadScript>
 
             {/* Selected pin card overlay */}
             {selectedPin && (

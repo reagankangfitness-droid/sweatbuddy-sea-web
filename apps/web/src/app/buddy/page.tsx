@@ -7,7 +7,7 @@ import { format } from 'date-fns'
 import { Plus, Loader2, Zap, Map, List } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
-import { GoogleMap, useJsApiLoader, OverlayView } from '@react-google-maps/api'
+import { APIProvider, Map as GoogleMapNew, AdvancedMarker } from '@vis.gl/react-google-maps'
 import { PaymentModal } from '@/components/PaymentModal'
 import { DARK_MAP_STYLES } from '@/lib/wave/map-styles'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
@@ -227,9 +227,7 @@ export default function BuddyPage() {
 
 function BuddyPageInner() {
   const router = useRouter()
-  const mapRef = useRef<google.maps.Map | null>(null)
-  const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral | null>(null)
-  const { isLoaded: mapsLoaded, loadError: mapsError } = useJsApiLoader({ id: 'google-map-script', googleMapsApiKey: GOOGLE_MAPS_API_KEY })
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
   const [nextCursor, setNextCursor] = useState<string | null>(null)
@@ -366,12 +364,6 @@ function BuddyPageInner() {
       .catch(() => {})
   }, [currentUserId])
 
-  // Pan map to user location when it becomes available
-  useEffect(() => {
-    if (userLocation && mapRef.current) {
-      mapRef.current.panTo(userLocation)
-    }
-  }, [userLocation])
 
   // Refetch when filters change
   useEffect(() => {
@@ -707,40 +699,23 @@ function BuddyPageInner() {
         <>
           {/* ── Map view ── */}
           <div className="relative w-full" style={{ height: 'calc(100dvh - 140px)' }}>
-            {mapsError ? (
-              <div className="w-full h-full bg-[#1A1A1A] flex flex-col items-center justify-center gap-2">
-                <p className="text-sm text-[#999999]">Map failed to load</p>
-                <p className="text-xs text-[#666666]">{mapsError.message}</p>
-              </div>
-            ) : mapsLoaded && GOOGLE_MAPS_API_KEY ? (
-              <GoogleMap
-                mapContainerStyle={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-                center={userLocation ?? SINGAPORE_CENTER}
-                zoom={12}
-                onLoad={(map) => { mapRef.current = map; if (userLocation) map.panTo(userLocation) }}
+            <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+              <GoogleMapNew
+                defaultCenter={userLocation ?? SINGAPORE_CENTER}
+                defaultZoom={12}
+                gestureHandling="greedy"
+                disableDefaultUI
                 onClick={() => setSelectedPin(null)}
-                options={{
-                  disableDefaultUI: true,
-                  zoomControl: false,
-                  styles: DARK_MAP_STYLES,
-                  clickableIcons: false,
-                  gestureHandling: 'greedy',
-                }}
+                style={{ width: '100%', height: '100%' }}
+                colorScheme="DARK"
               >
                 {sessions.filter((s) => s.latitude && s.longitude).map((s) => (
-                  <OverlayView
+                  <AdvancedMarker
                     key={s.id}
                     position={{ lat: s.latitude!, lng: s.longitude! }}
-                    mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                    onClick={() => setSelectedPin(selectedPin?.id === s.id ? null : s)}
                   >
-                    <div
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setSelectedPin(selectedPin?.id === s.id ? null : s)
-                      }}
-                      className="cursor-pointer select-none relative"
-                      style={{ transform: 'translate(-50%, -50%)' }}
-                    >
+                    <div className="cursor-pointer select-none relative">
                       <div className={`flex items-center justify-center rounded-full shadow-lg border-2 transition-all duration-150 ${
                         selectedPin?.id === s.id
                           ? 'w-12 h-12 text-2xl border-white scale-110 ring-2 ring-white/40'
@@ -765,21 +740,16 @@ function BuddyPageInner() {
                         </div>
                       )}
                     </div>
-                  </OverlayView>
+                  </AdvancedMarker>
                 ))}
 
                 {userLocation && (
-                  <OverlayView position={userLocation} mapPaneName={OverlayView.OVERLAY_LAYER}>
-                    <div className="w-4 h-4 rounded-full bg-blue-500 border-2 border-white shadow-lg" style={{ transform: 'translate(-50%, -50%)' }} />
-                  </OverlayView>
+                  <AdvancedMarker position={userLocation}>
+                    <div className="w-4 h-4 rounded-full bg-blue-500 border-2 border-white shadow-lg" />
+                  </AdvancedMarker>
                 )}
-              </GoogleMap>
-            ) : (
-              <div className="absolute inset-0 bg-[#1A1A1A] flex flex-col items-center justify-center gap-2">
-                <Loader2 className="w-6 h-6 animate-spin text-[#999999]" />
-                <p className="text-xs text-[#666666]">Loading map...</p>
-              </div>
-            )}
+              </GoogleMapNew>
+            </APIProvider>
 
             {/* Selected pin card overlay */}
             {selectedPin && (

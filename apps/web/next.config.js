@@ -114,7 +114,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://utfs.io https://img.clerk.com https://images.clerk.dev https://*.googleapis.com; font-src 'self'; connect-src 'self' https://*.clerk.com https://*.clerk.dev https://api.uploadthing.com https://*.googleapis.com https://nominatim.openstreetmap.org; frame-src 'self' https://accounts.clerk.com",
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://clerk.sweatbuddies.co; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://utfs.io https://img.clerk.com https://images.clerk.dev https://*.googleapis.com https://*.gstatic.com https://maps.gstatic.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.clerk.com https://*.clerk.dev https://api.uploadthing.com https://*.googleapis.com https://nominatim.openstreetmap.org https://maps.googleapis.com; frame-src 'self' https://accounts.clerk.com",
           },
         ],
       },

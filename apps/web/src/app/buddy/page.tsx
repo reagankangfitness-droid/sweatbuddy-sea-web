@@ -7,7 +7,7 @@ import { format } from 'date-fns'
 import { Plus, Loader2, Zap, Map, List } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
-import { GoogleMap, useLoadScript, OverlayView } from '@react-google-maps/api'
+import { GoogleMap, useJsApiLoader, OverlayView } from '@react-google-maps/api'
 import { PaymentModal } from '@/components/PaymentModal'
 import { DARK_MAP_STYLES } from '@/lib/wave/map-styles'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
@@ -229,7 +229,7 @@ function BuddyPageInner() {
   const router = useRouter()
   const mapRef = useRef<google.maps.Map | null>(null)
   const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral | null>(null)
-  const { isLoaded: mapsLoaded, loadError: mapsError } = useLoadScript({ googleMapsApiKey: GOOGLE_MAPS_API_KEY })
+  const { isLoaded: mapsLoaded, loadError: mapsError } = useJsApiLoader({ id: 'google-map-script', googleMapsApiKey: GOOGLE_MAPS_API_KEY })
   const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
   const [nextCursor, setNextCursor] = useState<string | null>(null)

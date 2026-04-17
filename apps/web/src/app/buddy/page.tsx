@@ -706,10 +706,10 @@ function BuddyPageInner() {
       ) : (
         <>
           {/* ── Map view ── */}
-          <div className="flex-1 relative min-h-0" style={{ height: 'calc(100dvh - 120px)' }}>
+          <div className="relative w-full" style={{ height: 'calc(100dvh - 140px)' }}>
             {mapsLoaded && GOOGLE_MAPS_API_KEY ? (
               <GoogleMap
-                mapContainerStyle={{ width: '100%', height: '100%' }}
+                mapContainerStyle={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
                 center={userLocation ?? SINGAPORE_CENTER}
                 zoom={12}
                 onLoad={(map) => { mapRef.current = map; if (userLocation) map.panTo(userLocation) }}

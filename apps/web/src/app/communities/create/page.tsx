@@ -147,19 +147,19 @@ export default function CreateCommunityPage() {
   const selectedType = ACTIVITY_TYPES.find((t) => t.slug === form.category)
 
   return (
-    <div className="min-h-screen bg-[#FFFBF8]">
+    <div className="min-h-screen bg-[#0D0D0D]">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-black/[0.06]">
+      <div className="sticky top-0 z-10 bg-[#0D0D0D]/95 backdrop-blur-xl border-b border-[#333333]">
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center gap-3">
           <button
             onClick={prevStep}
             aria-label="Go back"
-            className="p-1 -ml-1 rounded-lg hover:bg-[#FFFBF8]"
+            className="p-1 -ml-1 rounded-lg hover:bg-[#0D0D0D]"
           >
-            <ArrowLeft className="w-5 h-5 text-[#71717A]" />
+            <ArrowLeft className="w-5 h-5 text-[#666666]" />
           </button>
           <div className="flex-1">
-            <h1 className="text-base font-semibold text-[#1A1A1A]">Create a Community</h1>
+            <h1 className="text-base font-semibold text-white">Create a Community</h1>
             <div
               className="flex gap-1 mt-1"
               role="progressbar"
@@ -171,7 +171,7 @@ export default function CreateCommunityPage() {
                 <div
                   key={s}
                   className={`h-1 flex-1 rounded-full transition-colors ${
-                    i <= stepIdx ? 'bg-[#1A1A1A]' : 'bg-black/[0.06]'
+                    i <= stepIdx ? 'bg-white' : 'bg-white/10'
                   }`}
                 />
               ))}
@@ -185,15 +185,15 @@ export default function CreateCommunityPage() {
         {step === 'basics' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-bold text-[#1A1A1A]">The basics</h2>
-              <p className="text-sm text-[#71717A] mt-1">
+              <h2 className="text-xl font-bold text-white">The basics</h2>
+              <p className="text-sm text-[#666666] mt-1">
                 Tell us about your community
               </p>
             </div>
 
             {/* Community name */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+              <label className="block text-sm font-medium text-[#999999] mb-2">
                 Community name <span className="text-red-500">*</span>
               </label>
               <input
@@ -203,16 +203,16 @@ export default function CreateCommunityPage() {
                 placeholder="e.g. Marina Bay Run Club"
                 maxLength={60}
                 aria-required="true"
-                className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
               />
-              <p className="mt-1 text-xs text-right text-[#71717A]">
+              <p className="mt-1 text-xs text-right text-[#666666]">
                 {form.name.length}/60
               </p>
             </div>
 
             {/* Category */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-3">
+              <label className="block text-sm font-medium text-[#999999] mb-3">
                 Category <span className="text-red-500">*</span>
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -223,8 +223,8 @@ export default function CreateCommunityPage() {
                     onClick={() => update('category', type.slug)}
                     className={`flex flex-col items-center gap-1 rounded-xl border p-3 text-xs font-medium transition-all ${
                       form.category === type.slug
-                        ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
-                        : 'border-black/[0.06] bg-white text-[#71717A] hover:border-black/[0.12]'
+                        ? 'border-[#1A1A1A] bg-white text-black'
+                        : 'border-[#333333] bg-[#1A1A1A] text-[#666666] hover:border-white/20'
                     }`}
                   >
                     <span className="text-xl">{type.emoji}</span>
@@ -236,9 +236,9 @@ export default function CreateCommunityPage() {
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+              <label className="block text-sm font-medium text-[#999999] mb-2">
                 Description{' '}
-                <span className="text-[#71717A] font-normal">(optional)</span>
+                <span className="text-[#666666] font-normal">(optional)</span>
               </label>
               <textarea
                 value={form.description}
@@ -246,16 +246,16 @@ export default function CreateCommunityPage() {
                 placeholder="What's the vibe? Who's this for?"
                 maxLength={500}
                 rows={4}
-                className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] resize-none"
+                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
               />
-              <p className="mt-1 text-xs text-right text-[#71717A]">
+              <p className="mt-1 text-xs text-right text-[#666666]">
                 {form.description.length}/500
               </p>
             </div>
 
             {/* City */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+              <label className="block text-sm font-medium text-[#999999] mb-2">
                 City
               </label>
               <input
@@ -263,7 +263,7 @@ export default function CreateCommunityPage() {
                 value={form.city}
                 onChange={(e) => update('city', e.target.value)}
                 placeholder="Singapore"
-                className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
               />
             </div>
 
@@ -271,7 +271,7 @@ export default function CreateCommunityPage() {
             <button
               type="button"
               onClick={nextStep}
-              className="w-full rounded-full bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white hover:bg-black transition-colors"
+              className="w-full rounded-full bg-white px-4 py-4 text-sm font-bold text-black uppercase tracking-wider hover:bg-neutral-200 transition-colors"
             >
               Continue
             </button>
@@ -282,17 +282,17 @@ export default function CreateCommunityPage() {
         {step === 'identity' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-bold text-[#1A1A1A]">Identity & links</h2>
-              <p className="text-sm text-[#71717A] mt-1">
+              <h2 className="text-xl font-bold text-white">Identity & links</h2>
+              <p className="text-sm text-[#666666] mt-1">
                 Brand your community and add social links
               </p>
             </div>
 
             {/* Logo upload */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+              <label className="block text-sm font-medium text-[#999999] mb-2">
                 Logo{' '}
-                <span className="text-[#71717A] font-normal">(optional)</span>
+                <span className="text-[#666666] font-normal">(optional)</span>
               </label>
               <div className="flex items-center gap-4">
                 {form.logoImage ? (
@@ -301,7 +301,7 @@ export default function CreateCommunityPage() {
                     <img
                       src={form.logoImage}
                       alt="Logo preview"
-                      className="w-24 h-24 rounded-full object-cover border border-black/[0.06]"
+                      className="w-24 h-24 rounded-full object-cover border border-[#333333]"
                     />
                     <button
                       type="button"
@@ -317,7 +317,7 @@ export default function CreateCommunityPage() {
                     type="button"
                     disabled={logoUploading}
                     onClick={() => logoInputRef.current?.click()}
-                    className="w-24 h-24 rounded-full border-2 border-dashed border-black/[0.12] bg-white flex flex-col items-center justify-center gap-1 text-[#71717A] hover:border-black/[0.2] transition-colors"
+                    className="w-24 h-24 rounded-full border-2 border-dashed border-white/20 bg-[#1A1A1A] flex flex-col items-center justify-center gap-1 text-[#666666] hover:border-white/30 transition-colors"
                   >
                     {logoUploading ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -361,9 +361,9 @@ export default function CreateCommunityPage() {
 
             {/* Cover image upload */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+              <label className="block text-sm font-medium text-[#999999] mb-2">
                 Cover photo{' '}
-                <span className="text-[#71717A] font-normal">(optional)</span>
+                <span className="text-[#666666] font-normal">(optional)</span>
               </label>
               {form.coverImage ? (
                 <div className="relative">
@@ -371,7 +371,7 @@ export default function CreateCommunityPage() {
                   <img
                     src={form.coverImage}
                     alt="Cover preview"
-                    className="w-full h-40 object-cover rounded-xl border border-black/[0.06]"
+                    className="w-full h-40 object-cover rounded-xl border border-[#333333]"
                   />
                   <button
                     type="button"
@@ -387,7 +387,7 @@ export default function CreateCommunityPage() {
                   type="button"
                   disabled={coverUploading}
                   onClick={() => coverInputRef.current?.click()}
-                  className="w-full h-40 rounded-xl border-2 border-dashed border-black/[0.12] bg-white flex flex-col items-center justify-center gap-2 text-[#71717A] hover:border-black/[0.2] transition-colors"
+                  className="w-full h-40 rounded-xl border-2 border-dashed border-white/20 bg-[#1A1A1A] flex flex-col items-center justify-center gap-2 text-[#666666] hover:border-white/30 transition-colors"
                 >
                   {coverUploading ? (
                     <>
@@ -398,7 +398,7 @@ export default function CreateCommunityPage() {
                     <>
                       <ImagePlus className="w-6 h-6" />
                       <span className="text-sm font-medium">Upload cover photo</span>
-                      <span className="text-xs text-[#71717A]">JPG, PNG up to 8MB</span>
+                      <span className="text-xs text-[#666666]">JPG, PNG up to 8MB</span>
                     </>
                   )}
                 </button>
@@ -434,46 +434,46 @@ export default function CreateCommunityPage() {
 
             {/* Instagram */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+              <label className="block text-sm font-medium text-[#999999] mb-2">
                 Instagram{' '}
-                <span className="text-[#71717A] font-normal">(optional)</span>
+                <span className="text-[#666666] font-normal">(optional)</span>
               </label>
               <input
                 type="text"
                 value={form.instagramHandle}
                 onChange={(e) => update('instagramHandle', e.target.value)}
                 placeholder="@yourcommunity"
-                className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
               />
             </div>
 
             {/* Website */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+              <label className="block text-sm font-medium text-[#999999] mb-2">
                 Website{' '}
-                <span className="text-[#71717A] font-normal">(optional)</span>
+                <span className="text-[#666666] font-normal">(optional)</span>
               </label>
               <input
                 type="url"
                 value={form.websiteUrl}
                 onChange={(e) => update('websiteUrl', e.target.value)}
                 placeholder="https://..."
-                className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
               />
             </div>
 
             {/* WhatsApp / Telegram */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+              <label className="block text-sm font-medium text-[#999999] mb-2">
                 WhatsApp / Telegram link{' '}
-                <span className="text-[#71717A] font-normal">(optional)</span>
+                <span className="text-[#666666] font-normal">(optional)</span>
               </label>
               <input
                 type="url"
                 value={form.communityLink}
                 onChange={(e) => update('communityLink', e.target.value)}
                 placeholder="https://chat.whatsapp.com/..."
-                className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
               />
             </div>
 
@@ -482,14 +482,14 @@ export default function CreateCommunityPage() {
               <button
                 type="button"
                 onClick={prevStep}
-                className="flex-1 rounded-full border border-black/[0.08] bg-white px-4 py-4 text-sm font-semibold text-[#1A1A1A] hover:bg-[#FFFBF8] transition-colors"
+                className="flex-1 rounded-full border border-[#333333] bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white hover:bg-[#0D0D0D] transition-colors"
               >
                 Back
               </button>
               <button
                 type="button"
                 onClick={nextStep}
-                className="flex-1 rounded-full bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white hover:bg-black transition-colors"
+                className="flex-1 rounded-full bg-white px-4 py-4 text-sm font-bold text-black uppercase tracking-wider hover:bg-neutral-200 transition-colors"
               >
                 Continue
               </button>
@@ -501,14 +501,14 @@ export default function CreateCommunityPage() {
         {step === 'preview' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-bold text-[#1A1A1A]">Preview</h2>
-              <p className="text-sm text-[#71717A] mt-1">
+              <h2 className="text-xl font-bold text-white">Preview</h2>
+              <p className="text-sm text-[#666666] mt-1">
                 Here&apos;s how your community will look
               </p>
             </div>
 
             {/* Preview card */}
-            <div className="bg-white border border-black/[0.06] shadow-sm rounded-2xl overflow-hidden">
+            <div className="bg-[#1A1A1A] border border-[#333333] shadow-sm rounded-2xl overflow-hidden">
               {/* Cover */}
               {form.coverImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -518,7 +518,7 @@ export default function CreateCommunityPage() {
                   className="w-full h-36 object-cover"
                 />
               ) : (
-                <div className="w-full h-36 bg-gradient-to-br from-[#FFFBF8] to-white flex items-center justify-center text-4xl">
+                <div className="w-full h-36 bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] flex items-center justify-center text-4xl">
                   {selectedType?.emoji ?? '\u{1F3C5}'}
                 </div>
               )}
@@ -534,28 +534,28 @@ export default function CreateCommunityPage() {
                       className="w-12 h-12 rounded-full object-cover border-2 border-white -mt-8 shadow-sm"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-[#FFFBF8] border-2 border-white flex items-center justify-center -mt-8 text-lg shadow-sm">
+                    <div className="w-12 h-12 rounded-full bg-[#2A2A2A] border-2 border-[#1A1A1A] flex items-center justify-center -mt-8 text-lg shadow-sm">
                       {selectedType?.emoji ?? '\u{1F3C5}'}
                     </div>
                   )}
                   <div className="flex-1 min-w-0 pt-1">
-                    <h3 className="text-base font-semibold text-[#1A1A1A] truncate">
+                    <h3 className="text-base font-semibold text-white truncate">
                       {form.name || 'Community Name'}
                     </h3>
-                    <p className="text-xs text-[#71717A] capitalize">
+                    <p className="text-xs text-[#666666] capitalize">
                       {selectedType?.label ?? form.category}
                     </p>
                   </div>
                 </div>
 
                 {form.description && (
-                  <p className="mt-3 text-sm text-[#4A4A5A] line-clamp-3">
+                  <p className="mt-3 text-sm text-[#999999] line-clamp-3">
                     {form.description}
                   </p>
                 )}
 
                 {form.city && (
-                  <div className="mt-3 flex items-center gap-1 text-sm text-[#71717A]">
+                  <div className="mt-3 flex items-center gap-1 text-sm text-[#666666]">
                     <MapPin className="w-3.5 h-3.5" />
                     {form.city}
                   </div>
@@ -568,7 +568,7 @@ export default function CreateCommunityPage() {
               <button
                 type="button"
                 onClick={prevStep}
-                className="flex-1 rounded-full border border-black/[0.08] bg-white px-4 py-4 text-sm font-semibold text-[#1A1A1A] hover:bg-[#FFFBF8] transition-colors"
+                className="flex-1 rounded-full border border-[#333333] bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white hover:bg-[#0D0D0D] transition-colors"
               >
                 Back
               </button>
@@ -576,7 +576,7 @@ export default function CreateCommunityPage() {
                 type="button"
                 disabled={saving}
                 onClick={handleCreate}
-                className="flex-1 rounded-full bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 rounded-full bg-white px-4 py-4 text-sm font-bold text-black uppercase tracking-wider hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? (
                   <span className="flex items-center justify-center gap-2">

@@ -127,7 +127,7 @@ export function ShareSessionSheet({
             dragConstraints={{ top: 0 }}
             dragElastic={0.15}
             onDragEnd={(_, info) => { if (info.offset.y > 80) onClose() }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl shadow-2xl"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-[#1A1A1A] rounded-t-2xl"
           >
             <div className="flex justify-center pt-3 pb-1">
               <div className="w-10 h-1.5 rounded-full bg-black/[0.08]" />
@@ -137,24 +137,24 @@ export function ShareSessionSheet({
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-base font-bold text-[#1A1A1A] tracking-tight">
+                  <h3 className="text-base font-bold text-white tracking-tight">
                     {context === 'created' ? 'Spread the word' : 'Know someone who\u2019d be in?'}
                   </h3>
-                  <p className="text-xs text-[#71717A] mt-0.5">
+                  <p className="text-xs text-[#666666] mt-0.5">
                     {context === 'created'
                       ? 'More people, better session'
                       : 'Tag them before spots fill up'}
                   </p>
                 </div>
-                <button onClick={onClose} className="w-8 h-8 rounded-full bg-[#FFFBF8] flex items-center justify-center">
-                  <X className="w-4 h-4 text-[#71717A]" />
+                <button onClick={onClose} className="w-8 h-8 rounded-full bg-[#0D0D0D] flex items-center justify-center">
+                  <X className="w-4 h-4 text-[#666666]" />
                 </button>
               </div>
 
               {/* Session preview */}
-              <div className="bg-[#FFFBF8] rounded-xl p-3 mb-5 border border-black/[0.04]">
-                <p className="text-sm font-semibold text-[#1A1A1A]">{sessionTitle}</p>
-                <p className="text-xs text-[#71717A] mt-0.5">
+              <div className="bg-[#0D0D0D] rounded-xl p-3 mb-5 border border-[#333333]">
+                <p className="text-sm font-semibold text-white">{sessionTitle}</p>
+                <p className="text-xs text-[#666666] mt-0.5">
                   {[timeStr, locationStr].filter(Boolean).join(' · ')}
                   {spotsLeft ? ` · ${spotsLeft} spots left` : ''}
                 </p>
@@ -190,7 +190,7 @@ export function ShareSessionSheet({
 
                 <button
                   onClick={copyLink}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border border-black/[0.06] bg-white text-[#4A4A5A] font-semibold text-sm hover:bg-[#FFFBF8] transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border border-[#333333] bg-[#1A1A1A] text-[#999999] font-semibold text-sm hover:bg-[#2A2A2A] transition-colors"
                 >
                   {copied ? <Check className="w-5 h-5 text-emerald-500" /> : <Link2 className="w-5 h-5" />}
                   {copied ? 'Copied!' : 'Copy link'}
@@ -200,7 +200,7 @@ export function ShareSessionSheet({
               {/* Skip */}
               <button
                 onClick={onClose}
-                className="w-full text-center text-xs text-[#9A9AAA] hover:text-[#71717A] py-2 transition-colors"
+                className="w-full text-center text-xs text-[#9A9AAA] hover:text-[#666666] py-2 transition-colors"
               >
                 Maybe later
               </button>

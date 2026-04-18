@@ -168,10 +168,10 @@ export default function MyBookingsPage() {
 
   if (!isLoaded || loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-[#71717A] mx-auto mb-4" />
-          <p className="text-[#71717A]">Loading your bookings...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-[#666666] mx-auto mb-4" />
+          <p className="text-[#666666]">Loading your bookings...</p>
         </div>
       </div>
     )
@@ -179,7 +179,7 @@ export default function MyBookingsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#0D0D0D]">
         <Header />
         <main className="max-w-2xl mx-auto px-4 py-12 text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
@@ -187,11 +187,11 @@ export default function MyBookingsPage() {
           <div className="flex flex-col gap-3 items-center">
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-white text-neutral-900 rounded-lg text-sm font-medium hover:bg-neutral-200 transition-colors"
+              className="px-4 py-2 bg-[#1A1A1A] text-white rounded-lg text-sm font-medium hover:bg-[#2A2A2A] transition-colors"
             >
               Try again
             </button>
-            <Link href="/support" className="text-[#71717A] hover:text-[#4A4A5A] text-sm">
+            <Link href="/support" className="text-[#666666] hover:text-[#999999] text-sm">
               Need help? Contact Support
             </Link>
           </div>
@@ -215,29 +215,29 @@ export default function MyBookingsPage() {
   )
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#0D0D0D]">
       <Header />
 
       <main className="max-w-2xl mx-auto px-4 py-8 pb-24 md:pb-8">
-        <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">
+        <h1 className="text-2xl font-bold text-white mb-2">
           My Bookings
         </h1>
-        <p className="text-[#71717A] mb-8">
+        <p className="text-[#666666] mb-8">
           Manage your upcoming and past event bookings
         </p>
 
         {bookings.length === 0 ? (
-          <div className="bg-[#FFFBF8] rounded-2xl border border-black/[0.06] p-12 text-center">
-            <Calendar className="w-12 h-12 text-[#4A4A5A] mx-auto mb-4" />
-            <h2 className="font-semibold text-[#1A1A1A] mb-2">
+          <div className="bg-[#0D0D0D] rounded-2xl border border-[#333333] p-12 text-center">
+            <Calendar className="w-12 h-12 text-[#999999] mx-auto mb-4" />
+            <h2 className="font-semibold text-white mb-2">
               No bookings yet
             </h2>
-            <p className="text-[#71717A] mb-6">
+            <p className="text-[#666666] mb-6">
               Find your next workout and book an event!
             </p>
             <Link
               href="/"
-              className="inline-flex items-center justify-center px-6 py-3 bg-white text-neutral-900 font-semibold rounded-full hover:bg-neutral-200 transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3 bg-[#1A1A1A] text-white font-semibold rounded-full hover:bg-[#2A2A2A] transition-colors"
             >
               Browse Events
             </Link>
@@ -247,7 +247,7 @@ export default function MyBookingsPage() {
             {/* Upcoming Bookings */}
             {upcomingBookings.length > 0 && (
               <section>
-                <h2 className="text-lg font-semibold text-[#1A1A1A] mb-4 flex items-center gap-2">
+                <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-500"></span>
                   Upcoming ({upcomingBookings.length})
                 </h2>
@@ -266,7 +266,7 @@ export default function MyBookingsPage() {
             {/* Past/Cancelled Bookings */}
             {pastBookings.length > 0 && (
               <section>
-                <h2 className="text-lg font-semibold text-[#71717A] mb-4">
+                <h2 className="text-lg font-semibold text-[#666666] mb-4">
                   Past & Cancelled ({pastBookings.length})
                 </h2>
                 <div className="space-y-4 opacity-70">
@@ -283,7 +283,7 @@ export default function MyBookingsPage() {
         <div className="mt-12 text-center">
           <Link
             href="/support"
-            className="text-[#71717A] hover:text-[#4A4A5A] text-sm"
+            className="text-[#666666] hover:text-[#999999] text-sm"
           >
             Need help? Visit our support page
           </Link>
@@ -293,16 +293,16 @@ export default function MyBookingsPage() {
       {/* Cancel Modal */}
       {cancelModalOpen && selectedBooking && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-[#FFFBF8] rounded-2xl max-w-md w-full p-6">
+          <div className="bg-[#0D0D0D] rounded-2xl max-w-md w-full p-6">
             {cancelSuccess ? (
               <div className="text-center py-6">
                 <div className="w-16 h-16 bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="w-8 h-8 text-green-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-[#1A1A1A] mb-2">
+                <h3 className="text-xl font-semibold text-white mb-2">
                   Booking Cancelled
                 </h3>
-                <p className="text-[#71717A]">
+                <p className="text-[#666666]">
                   {refundPreview && refundPreview.amount > 0
                     ? `Your refund of ${refundPreview.currency} ${refundPreview.amount.toFixed(2)} will be processed within 5-10 business days.`
                     : 'Your booking has been cancelled.'}
@@ -311,31 +311,31 @@ export default function MyBookingsPage() {
             ) : (
               <>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-[#1A1A1A]">
+                  <h3 className="text-lg font-semibold text-white">
                     Cancel Booking
                   </h3>
                   <button
                     onClick={() => setCancelModalOpen(false)}
-                    className="p-1 text-[#71717A] hover:text-[#71717A]"
+                    className="p-1 text-[#666666] hover:text-[#666666]"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
                 <div className="mb-6">
-                  <p className="text-[#71717A] mb-4">
+                  <p className="text-[#666666] mb-4">
                     Are you sure you want to cancel your booking for{' '}
                     <strong>{selectedBooking.activity.title}</strong>?
                   </p>
 
                   {/* Refund Policy - only show for paid bookings */}
                   {selectedBooking.amountPaid && selectedBooking.amountPaid > 0 && (
-                    <div className="bg-white rounded-xl p-4 mb-4">
-                      <h4 className="font-medium text-[#1A1A1A] mb-2 flex items-center gap-2">
+                    <div className="bg-[#1A1A1A] rounded-xl p-4 mb-4">
+                      <h4 className="font-medium text-white mb-2 flex items-center gap-2">
                         <AlertTriangle className="w-4 h-4 text-amber-500" />
                         Refund Policy
                       </h4>
-                      <ul className="text-sm text-[#71717A] space-y-1">
+                      <ul className="text-sm text-[#666666] space-y-1">
                         <li>• More than 24 hours before: <span className="text-green-400">Full refund</span></li>
                         <li>• 2-24 hours before: <span className="text-amber-400">50% refund</span></li>
                         <li>• Less than 2 hours: <span className="text-red-400">No refund</span></li>
@@ -409,7 +409,7 @@ export default function MyBookingsPage() {
                   <button
                     onClick={() => setCancelModalOpen(false)}
                     disabled={cancelling}
-                    className="flex-1 px-4 py-3 border border-black/[0.06] text-[#4A4A5A] font-medium rounded-full hover:bg-white transition-colors"
+                    className="flex-1 px-4 py-3 border border-[#333333] text-[#999999] font-medium rounded-full hover:bg-[#2A2A2A] transition-colors"
                   >
                     Keep Booking
                   </button>
@@ -439,16 +439,16 @@ export default function MyBookingsPage() {
 
 function Header() {
   return (
-    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-lg border-b border-black/[0.06]">
+    <header className="sticky top-0 z-40 bg-[#0D0D0D]/95 backdrop-blur-lg border-b border-[#333333]">
       <div className="pt-[env(safe-area-inset-top,0px)]">
         <div className="max-w-2xl mx-auto flex items-center gap-4 px-4 py-3">
           <Link
             href="/profile"
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-[#FFFBF8] border border-black/[0.06]"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0D0D0D] border border-[#333333]"
           >
-            <ArrowLeft className="w-5 h-5 text-[#4A4A5A]" />
+            <ArrowLeft className="w-5 h-5 text-[#999999]" />
           </Link>
-          <h1 className="text-lg font-semibold text-[#1A1A1A]">
+          <h1 className="text-lg font-semibold text-white">
             My Bookings
           </h1>
         </div>
@@ -488,7 +488,7 @@ function BookingCard({
   }
 
   return (
-    <div className="bg-[#FFFBF8] rounded-2xl border border-black/[0.06] overflow-hidden">
+    <div className="bg-[#0D0D0D] rounded-2xl border border-[#333333] overflow-hidden">
       <div className="flex">
         {/* Image */}
         <div className="relative w-24 sm:w-32 flex-shrink-0">
@@ -502,7 +502,7 @@ function BookingCard({
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-neutral-100 to-neutral-50 flex items-center justify-center min-h-[120px]">
-              <Calendar className="w-8 h-8 text-[#71717A]" />
+              <Calendar className="w-8 h-8 text-[#666666]" />
             </div>
           )}
           {isCancelled && (
@@ -517,36 +517,36 @@ function BookingCard({
         {/* Content */}
         <div className="flex-1 p-4">
           <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className="font-semibold text-[#1A1A1A] line-clamp-2">
+            <h3 className="font-semibold text-white line-clamp-2">
               {activity.title}
             </h3>
-            <span className="flex-shrink-0 px-2 py-0.5 bg-neutral-100 text-[#71717A] text-xs font-medium rounded-full">
+            <span className="flex-shrink-0 px-2 py-0.5 bg-[#2A2A2A] text-[#666666] text-xs font-medium rounded-full">
               {activity.type}
             </span>
           </div>
 
-          <div className="space-y-1.5 text-sm text-[#71717A]">
+          <div className="space-y-1.5 text-sm text-[#666666]">
             {activity.startTime && (
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[#71717A]" />
+                <Calendar className="w-4 h-4 text-[#666666]" />
                 <span>{formatDate(activity.startTime)}</span>
               </div>
             )}
             {activity.startTime && (
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-[#71717A]" />
+                <Clock className="w-4 h-4 text-[#666666]" />
                 <span>{formatTime(activity.startTime)}</span>
               </div>
             )}
             <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-[#71717A]" />
+              <MapPin className="w-4 h-4 text-[#666666]" />
               <span className="line-clamp-1">{activity.city}</span>
             </div>
           </div>
 
           {/* Payment Info */}
           {booking.amountPaid && booking.amountPaid > 0 && (
-            <div className="mt-2 pt-2 border-t border-black/[0.06]">
+            <div className="mt-2 pt-2 border-t border-[#333333]">
               <span className="text-sm text-green-400 font-medium">
                 Paid: {booking.currency || 'SGD'} {booking.amountPaid.toFixed(2)}
               </span>
@@ -557,17 +557,17 @@ function BookingCard({
 
       {/* Actions */}
       {!isPast && !isCancelled && (
-        <div className="border-t border-black/[0.06] px-4 py-3 flex gap-2">
+        <div className="border-t border-[#333333] px-4 py-3 flex gap-2">
           <Link
             href={`/e/${activity.slug || activity.id}`}
-            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-[#4A4A5A] bg-neutral-100 rounded-lg hover:bg-neutral-50 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-[#999999] bg-[#2A2A2A] rounded-lg hover:bg-[#2A2A2A] transition-colors"
           >
             <ExternalLink className="w-4 h-4" />
             View Event
           </Link>
           <Link
             href={`/booking/ticket?id=${booking.id}`}
-            className="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-[#4A4A5A] bg-neutral-100 rounded-lg hover:bg-neutral-50 transition-colors"
+            className="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium text-[#999999] bg-[#2A2A2A] rounded-lg hover:bg-[#2A2A2A] transition-colors"
           >
             <Download className="w-4 h-4" />
             Ticket

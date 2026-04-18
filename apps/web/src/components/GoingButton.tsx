@@ -297,7 +297,7 @@ export function GoingButton({
               ? 'bg-green-500 text-white'
               : isPaidEvent
               ? 'bg-neutral-800 text-white hover:bg-neutral-700'
-              : 'bg-white text-neutral-900 hover:bg-neutral-200'
+              : 'bg-[#1A1A1A] text-white hover:bg-[#2A2A2A]'
           } ${isAnimating ? 'scale-[1.02]' : 'scale-100'}`}
         >
           {isGoing ? (
@@ -365,7 +365,7 @@ export function GoingButton({
               ? 'bg-green-500 text-white'
               : isPaidEvent
               ? 'bg-neutral-800 text-white hover:bg-neutral-700'
-              : 'bg-white text-neutral-900 hover:bg-neutral-200'
+              : 'bg-[#1A1A1A] text-white hover:bg-[#2A2A2A]'
           } ${isAnimating ? 'scale-105' : 'scale-100'}`}
         >
           {isGoing && <Check className="w-3 h-3" />}
@@ -415,7 +415,7 @@ export function GoingButton({
             ? 'bg-green-500 text-white'
             : isPaidEvent
             ? 'bg-neutral-800 text-white hover:bg-neutral-700'
-            : 'bg-white text-neutral-900 hover:bg-neutral-200'
+            : 'bg-[#1A1A1A] text-white hover:bg-[#2A2A2A]'
         } ${isAnimating ? 'scale-105' : 'scale-100'}`}
       >
         {isGoing && <Check className="w-4 h-4" />}

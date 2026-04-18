@@ -191,7 +191,7 @@ export default function HubClient({
   const attendanceSession = pastSessions.find((s) => s.id === attendanceSessionId)
 
   return (
-    <div className="min-h-screen bg-[#FFFBF8] pb-24">
+    <div className="min-h-screen bg-[#0D0D0D] pb-24">
       <CreateSessionSheet open={showCreate} onClose={() => setShowCreate(false)} onSuccess={() => window.location.reload()} />
 
       <ShareSessionSheet
@@ -210,21 +210,21 @@ export default function HubClient({
       {attendanceSessionId && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
           <div className="absolute inset-0 bg-black/40" onClick={() => setAttendanceSessionId(null)} />
-          <div className="relative bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[80vh] overflow-hidden pb-[env(safe-area-inset-bottom,0px)]">
-            <div className="px-5 py-4 border-b border-black/[0.06] flex items-center justify-between">
+          <div className="relative bg-[#1A1A1A] rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[80vh] overflow-hidden pb-[env(safe-area-inset-bottom,0px)]">
+            <div className="px-5 py-4 border-b border-[#333333] flex items-center justify-between">
               <div>
-                <p className="text-[14px] font-semibold text-[#1A1A1A]">Mark Attendance</p>
-                <p className="text-[11px] text-[#9A9AAA]">{attendanceSession?.title}</p>
+                <p className="text-[14px] font-semibold text-white">Mark Attendance</p>
+                <p className="text-[11px] text-[#666666]">{attendanceSession?.title}</p>
               </div>
-              <button onClick={() => setAttendanceSessionId(null)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-neutral-100">
-                <X className="w-4 h-4 text-[#9A9AAA]" />
+              <button onClick={() => setAttendanceSessionId(null)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[#2A2A2A]">
+                <X className="w-4 h-4 text-[#666666]" />
               </button>
             </div>
             <div className="px-5 py-3 overflow-y-auto max-h-[60vh]">
               {attendanceLoading ? (
-                <p className="text-[12px] text-[#9A9AAA] text-center py-8">Loading...</p>
+                <p className="text-[12px] text-[#666666] text-center py-8">Loading...</p>
               ) : attendanceList.length === 0 ? (
-                <p className="text-[12px] text-[#9A9AAA] text-center py-8">No attendees</p>
+                <p className="text-[12px] text-[#666666] text-center py-8">No attendees</p>
               ) : (
                 <div className="space-y-1">
                   {attendanceList.map((a) => (
@@ -233,20 +233,20 @@ export default function HubClient({
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={a.imageUrl} alt="" className="w-8 h-8 rounded-full object-cover" />
                       ) : (
-                        <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-[11px] font-bold text-[#9A9AAA]">
+                        <div className="w-8 h-8 rounded-full bg-[#2A2A2A] flex items-center justify-center text-[11px] font-bold text-[#666666]">
                           {(a.name ?? '?')[0]}
                         </div>
                       )}
-                      <span className="text-[13px] text-[#1A1A1A] flex-1">{a.name ?? 'Anonymous'}</span>
+                      <span className="text-[13px] text-white flex-1">{a.name ?? 'Anonymous'}</span>
                       <button
                         onClick={() => toggleAttendance(attendanceSessionId, a.id, a.actuallyAttended)}
                         disabled={togglingAttendee === a.id}
                         className={`w-11 h-11 rounded-full flex items-center justify-center transition-all disabled:opacity-50 ${
                           a.actuallyAttended === true
-                            ? 'bg-neutral-900 text-white'
+                            ? 'bg-white text-black'
                             : a.actuallyAttended === false
-                              ? 'bg-red-100 text-red-500'
-                              : 'bg-neutral-100 text-[#9A9AAA]'
+                              ? 'bg-red-500/20 text-red-400'
+                              : 'bg-[#2A2A2A] text-[#666666]'
                         }`}
                       >
                         {a.actuallyAttended === true ? (
@@ -262,8 +262,8 @@ export default function HubClient({
                 </div>
               )}
             </div>
-            <div className="px-5 py-3 border-t border-black/[0.06]">
-              <p className="text-[10px] text-[#9A9AAA] text-center">Tap to cycle: unmarked → attended → no-show</p>
+            <div className="px-5 py-3 border-t border-[#333333]">
+              <p className="text-[10px] text-[#666666] text-center">Tap to cycle: unmarked → attended → no-show</p>
             </div>
           </div>
         </div>
@@ -273,13 +273,13 @@ export default function HubClient({
       <div className="px-5 pt-[env(safe-area-inset-top,16px)] pb-2">
         <div className="pt-4 flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-[#1A1A1A] tracking-tight">{hostName ?? 'Host'}</h1>
+            <h1 className="text-xl font-bold text-white tracking-tight">{hostName ?? 'Host'}</h1>
           </div>
           <button
             onClick={() => setShowCreate(true)}
-            className="w-10 h-10 rounded-full bg-[#FF6B35] shadow-lg shadow-[#FF6B35]/20 flex items-center justify-center hover:bg-[#E8612F] transition-colors active:scale-95"
+            className="w-10 h-10 rounded-full bg-white flex items-center justify-center hover:bg-neutral-200 transition-colors active:scale-95"
           >
-            <Plus className="w-5 h-5 text-white" />
+            <Plus className="w-5 h-5 text-black" />
           </button>
         </div>
       </div>
@@ -292,11 +292,11 @@ export default function HubClient({
             {dayGroups.map((g) => (
               <div
                 key={g.day}
-                className="flex-shrink-0 bg-white rounded-xl shadow-sm px-3.5 py-2.5 min-w-[80px] text-center"
+                className="flex-shrink-0 bg-[#1A1A1A] rounded-xl px-3.5 py-2.5 min-w-[80px] text-center"
               >
-                <p className="text-[11px] text-[#9A9AAA] font-medium uppercase">{g.day}</p>
-                <p className="text-lg font-bold text-[#1A1A1A]">{g.sessions.length}</p>
-                <p className="text-[10px] text-[#9A9AAA]">session{g.sessions.length !== 1 ? 's' : ''}</p>
+                <p className="text-[11px] text-[#666666] font-medium uppercase">{g.day}</p>
+                <p className="text-lg font-bold text-white">{g.sessions.length}</p>
+                <p className="text-[10px] text-[#666666]">session{g.sessions.length !== 1 ? 's' : ''}</p>
               </div>
             ))}
           </div>
@@ -304,20 +304,20 @@ export default function HubClient({
 
         {/* ── Next session highlight ── */}
         {nextSession ? (
-          <div className="bg-white rounded-2xl shadow-sm p-4">
-            <p className="text-[11px] text-[#9A9AAA] uppercase tracking-widest mb-2">Next session</p>
+          <div className="bg-[#1A1A1A] rounded-2xl p-4">
+            <p className="text-[11px] text-[#666666] uppercase tracking-widest mb-2">Next session</p>
             <div className="flex items-center gap-3">
               <span className="text-2xl">{EMOJI_MAP[nextSession.categorySlug ?? ''] ?? '🏅'}</span>
               <div className="flex-1 min-w-0">
-                <p className="text-[14px] font-semibold text-[#1A1A1A] truncate">{nextSession.title}</p>
+                <p className="text-[14px] font-semibold text-white truncate">{nextSession.title}</p>
                 <p className="text-[12px] text-[#666666]">
                   {nextSession.startTime ? formatTime(nextSession.startTime) : 'No date'}
                   {nextSession.address ? ` · ${nextSession.address.split(',')[0]}` : ''}
                 </p>
               </div>
               <div className="text-right flex-shrink-0">
-                <p className="text-lg font-bold text-[#1A1A1A]">{nextSession.goingCount}</p>
-                <p className="text-[10px] text-[#9A9AAA]">{nextSession.maxPeople ? `/ ${nextSession.maxPeople}` : 'showing up'}</p>
+                <p className="text-lg font-bold text-white">{nextSession.goingCount}</p>
+                <p className="text-[10px] text-[#666666]">{nextSession.maxPeople ? `/ ${nextSession.maxPeople}` : 'showing up'}</p>
               </div>
             </div>
 
@@ -325,9 +325,9 @@ export default function HubClient({
             <div className="flex gap-2 mt-3">
               <button
                 onClick={() => copyLink(nextSession.id)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#FFFBF8] text-xs font-medium text-[#4A4A5A] hover:bg-neutral-100 transition-all"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#2A2A2A] text-xs font-medium text-[#999999] hover:bg-[#333333] transition-all"
               >
-                {copiedId === nextSession.id ? <Check className="w-3.5 h-3.5 text-black" /> : <Copy className="w-3.5 h-3.5" />}
+                {copiedId === nextSession.id ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
                 {copiedId === nextSession.id ? 'Copied' : 'Copy link'}
               </button>
               <button
@@ -339,7 +339,7 @@ export default function HubClient({
               </button>
               <Link
                 href={`/activities/${nextSession.id}/edit`}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#FFFBF8] text-xs font-medium text-[#4A4A5A] hover:bg-neutral-100 transition-all"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#2A2A2A] text-xs font-medium text-[#999999] hover:bg-[#333333] transition-all"
               >
                 <Pencil className="w-3.5 h-3.5" />
                 Edit
@@ -348,7 +348,7 @@ export default function HubClient({
                 <button
                   onClick={() => notifyAttendees(nextSession)}
                   disabled={notifying === nextSession.id}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#FF6B35]/10 text-xs font-medium text-[#FF6B35] hover:bg-[#FF6B35]/20 disabled:opacity-50 transition-all"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-white/10 text-xs font-medium text-white hover:bg-white/20 disabled:opacity-50 transition-all"
                 >
                   <Bell className="w-3.5 h-3.5" />
                   {notifying === nextSession.id ? 'Sending...' : 'Notify'}
@@ -359,13 +359,13 @@ export default function HubClient({
             {/* ── #2: Attendee preview ── */}
             <button
               onClick={() => setExpandedId(expandedId === nextSession.id ? null : nextSession.id)}
-              className="w-full mt-3 pt-3 border-t border-black/[0.04] text-left"
+              className="w-full mt-3 pt-3 border-t border-[#333333] text-left"
             >
               <div className="flex items-center justify-between">
-                <span className="text-[11px] text-[#9A9AAA] uppercase tracking-widest">
+                <span className="text-[11px] text-[#666666] uppercase tracking-widest">
                   Who&apos;s coming ({nextSession.goingCount})
                 </span>
-                <ChevronRight className={`w-3.5 h-3.5 text-[#9A9AAA] transition-transform ${expandedId === nextSession.id ? 'rotate-90' : ''}`} />
+                <ChevronRight className={`w-3.5 h-3.5 text-[#666666] transition-transform ${expandedId === nextSession.id ? 'rotate-90' : ''}`} />
               </div>
             </button>
 
@@ -377,22 +377,22 @@ export default function HubClient({
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={a.imageUrl} alt="" className="w-6 h-6 rounded-full object-cover" />
                     ) : (
-                      <div className="w-6 h-6 rounded-full bg-neutral-100 flex items-center justify-center text-[9px] font-bold text-[#9A9AAA]">
+                      <div className="w-6 h-6 rounded-full bg-[#2A2A2A] flex items-center justify-center text-[9px] font-bold text-[#666666]">
                         {(a.name ?? '?')[0]}
                       </div>
                     )}
-                    <span className="text-[12px] text-[#4A4A5A] flex-1">{a.name ?? 'Anonymous'}</span>
+                    <span className="text-[12px] text-[#999999] flex-1">{a.name ?? 'Anonymous'}</span>
                     {a.isNew && (
-                      <span className="text-[10px] text-[#FF6B35] font-medium">New!</span>
+                      <span className="text-[10px] text-white font-medium">New!</span>
                     )}
                   </div>
                 ))}
                 {nextSession.goingCount > (nextSession.attendees?.length ?? 0) && (
-                  <p className="text-[11px] text-[#9A9AAA]">+ {nextSession.goingCount - (nextSession.attendees?.length ?? 0)} more</p>
+                  <p className="text-[11px] text-[#666666]">+ {nextSession.goingCount - (nextSession.attendees?.length ?? 0)} more</p>
                 )}
                 <Link
                   href={`/activities/${nextSession.id}`}
-                  className="block text-[11px] text-[#FF6B35] font-medium mt-1"
+                  className="block text-[11px] text-white font-medium mt-1"
                 >
                   View full list →
                 </Link>
@@ -400,13 +400,13 @@ export default function HubClient({
             )}
           </div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-sm p-6 text-center">
+          <div className="bg-[#1A1A1A] rounded-2xl p-6 text-center">
             <div className="text-3xl mb-2">🎉</div>
-            <p className="text-[14px] font-semibold text-[#1A1A1A] mb-1">Your community is set up!</p>
+            <p className="text-[14px] font-semibold text-white mb-1">Your community is set up!</p>
             <p className="text-[12px] text-[#666666] mb-4">Start something worth showing up to.</p>
             <button
               onClick={() => setShowCreate(true)}
-              className="inline-flex items-center gap-1.5 px-5 py-3 rounded-full bg-[#1A1A1A] text-white text-[14px] font-semibold"
+              className="inline-flex items-center gap-1.5 px-5 py-3 rounded-full bg-white text-black text-[14px] font-bold uppercase tracking-wider"
             >
               <Zap className="w-4 h-4" />
               Start something
@@ -417,25 +417,25 @@ export default function HubClient({
         {/* ── This week sessions ── */}
         {upcomingSessions.length > 1 && (
           <div>
-            <p className="text-[11px] text-[#9A9AAA] uppercase tracking-widest mb-3">Sessions</p>
+            <p className="text-[11px] text-[#666666] uppercase tracking-widest mb-3">Sessions</p>
             <div className="space-y-2">
               {upcomingSessions.slice(1).map((s) => (
-                <div key={s.id} className="bg-white rounded-xl shadow-sm p-3">
+                <div key={s.id} className="bg-[#1A1A1A] rounded-xl p-3">
                   <div className="flex items-center gap-3">
                     <span className="text-lg">{EMOJI_MAP[s.categorySlug ?? ''] ?? '🏅'}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-medium text-[#1A1A1A] truncate">{s.title}</p>
-                      <p className="text-[11px] text-[#9A9AAA]">{s.startTime ? formatTime(s.startTime) : ''}</p>
+                      <p className="text-[13px] font-medium text-white truncate">{s.title}</p>
+                      <p className="text-[11px] text-[#666666]">{s.startTime ? formatTime(s.startTime) : ''}</p>
                     </div>
-                    <span className="text-[12px] font-semibold text-[#4A4A5A]">{s.goingCount}</span>
+                    <span className="text-[12px] font-semibold text-[#999999]">{s.goingCount}</span>
                   </div>
                   {/* Quick actions */}
                   <div className="flex gap-1.5 mt-2">
                     <button
                       onClick={() => copyLink(s.id)}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#FFFBF8] text-[10px] font-medium text-[#666666] hover:bg-neutral-100"
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#2A2A2A] text-[10px] font-medium text-[#999999] hover:bg-[#333333]"
                     >
-                      {copiedId === s.id ? <Check className="w-3 h-3 text-black" /> : <Copy className="w-3 h-3" />}
+                      {copiedId === s.id ? <Check className="w-3 h-3 text-white" /> : <Copy className="w-3 h-3" />}
                       {copiedId === s.id ? 'Copied' : 'Link'}
                     </button>
                     <button
@@ -447,14 +447,14 @@ export default function HubClient({
                     </button>
                     <Link
                       href={`/activities/${s.id}/edit`}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-neutral-50 text-[10px] font-medium text-[#666666]"
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#2A2A2A] text-[10px] font-medium text-[#999999]"
                     >
                       <Pencil className="w-3 h-3" />
                       Edit
                     </Link>
                     <Link
                       href={`/activities/${s.id}`}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-neutral-50 text-[10px] font-medium text-[#666666]"
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#2A2A2A] text-[10px] font-medium text-[#999999]"
                     >
                       <UserCheck className="w-3 h-3" />
                       Attendees
@@ -469,27 +469,27 @@ export default function HubClient({
         {/* Past sessions — attendance marking */}
         {pastSessions.length > 0 && (
           <div>
-            <p className="text-[11px] text-[#9A9AAA] uppercase tracking-widest mb-3">Past sessions</p>
+            <p className="text-[11px] text-[#666666] uppercase tracking-widest mb-3">Past sessions</p>
             <div className="space-y-2">
               {pastSessions.map((s) => {
                 const allMarked = s.attendees && s.attendees.length > 0 && s.attendees.every((a) => a.actuallyAttended !== undefined)
                 return (
-                  <div key={s.id} className="bg-white rounded-xl shadow-sm p-3">
+                  <div key={s.id} className="bg-[#1A1A1A] rounded-xl p-3">
                     <div className="flex items-center gap-3">
                       <span className="text-lg">{EMOJI_MAP[s.categorySlug ?? ''] ?? '🏅'}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-medium text-[#1A1A1A] truncate">{s.title}</p>
-                        <p className="text-[11px] text-[#9A9AAA]">{s.startTime ? formatTime(s.startTime) : ''}</p>
+                        <p className="text-[13px] font-medium text-white truncate">{s.title}</p>
+                        <p className="text-[11px] text-[#666666]">{s.startTime ? formatTime(s.startTime) : ''}</p>
                       </div>
-                      <span className="text-[12px] font-semibold text-[#4A4A5A]">{s.goingCount}</span>
+                      <span className="text-[12px] font-semibold text-[#999999]">{s.goingCount}</span>
                     </div>
                     <div className="flex gap-1.5 mt-2">
                       <button
                         onClick={() => openAttendance(s.id)}
                         className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[10px] font-medium ${
                           allMarked
-                            ? 'bg-neutral-100 text-neutral-900'
-                            : 'bg-[#FF6B35]/10 text-[#FF6B35]'
+                            ? 'bg-[#2A2A2A] text-neutral-200'
+                            : 'bg-white/10 text-white'
                         }`}
                       >
                         <ClipboardCheck className="w-3 h-3" />
@@ -497,7 +497,7 @@ export default function HubClient({
                       </button>
                       <Link
                         href={`/activities/${s.id}`}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-neutral-50 text-[10px] font-medium text-[#666666]"
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#2A2A2A] text-[10px] font-medium text-[#999999]"
                       >
                         <UserCheck className="w-3 h-3" />
                         View
@@ -512,35 +512,35 @@ export default function HubClient({
 
         {/* Crew stats */}
         <div>
-          <p className="text-[11px] text-[#9A9AAA] uppercase tracking-widest mb-3">Your crew</p>
+          <p className="text-[11px] text-[#666666] uppercase tracking-widest mb-3">Your crew</p>
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white rounded-xl shadow-sm p-4">
-              <p className="text-2xl font-bold text-[#1A1A1A]">{totalMembers}</p>
-              <p className="text-[11px] text-[#9A9AAA]">Total members</p>
+            <div className="bg-[#1A1A1A] rounded-xl p-4">
+              <p className="text-2xl font-bold text-white">{totalMembers}</p>
+              <p className="text-[11px] text-[#666666]">Total members</p>
             </div>
-            <div className="bg-white rounded-xl shadow-sm p-4">
-              <p className="text-2xl font-bold text-[#1A1A1A]">{activeThisMonth}</p>
-              <p className="text-[11px] text-[#9A9AAA]">Active this month</p>
+            <div className="bg-[#1A1A1A] rounded-xl p-4">
+              <p className="text-2xl font-bold text-white">{activeThisMonth}</p>
+              <p className="text-[11px] text-[#666666]">Active this month</p>
             </div>
           </div>
         </div>
 
         {/* Communities */}
         <div>
-          <p className="text-[11px] text-[#9A9AAA] uppercase tracking-widest mb-3">Communities</p>
+          <p className="text-[11px] text-[#666666] uppercase tracking-widest mb-3">Communities</p>
           <div className="space-y-2">
             {communities.map((c) => (
               <Link
                 key={c.id}
                 href={`/communities/${c.slug}`}
-                className="flex items-center gap-3 p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all"
+                className="flex items-center gap-3 p-3 bg-[#1A1A1A] rounded-xl hover:bg-[#222222] transition-all"
               >
                 <span className="text-lg">{EMOJI_MAP[c.category] ?? '🏅'}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-medium text-[#1A1A1A] truncate">{c.name}</p>
-                  <p className="text-[11px] text-[#9A9AAA]">{c.memberCount} members</p>
+                  <p className="text-[13px] font-medium text-white truncate">{c.name}</p>
+                  <p className="text-[11px] text-[#666666]">{c.memberCount} members</p>
                 </div>
-                <ChevronRight className="w-4 h-4 text-[#9A9AAA]" />
+                <ChevronRight className="w-4 h-4 text-[#666666]" />
               </Link>
             ))}
           </div>
@@ -548,13 +548,13 @@ export default function HubClient({
 
         {/* Quick links */}
         <div className="flex gap-2">
-          <Link href="/host/analytics" className="flex-1 py-3 rounded-xl bg-white shadow-sm text-[11px] font-medium text-[#4A4A5A] text-center hover:shadow-md transition-all">
+          <Link href="/host/analytics" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
             Analytics
           </Link>
-          <Link href="/host/templates" className="flex-1 py-3 rounded-xl bg-white shadow-sm text-[11px] font-medium text-[#4A4A5A] text-center hover:shadow-md transition-all">
+          <Link href="/host/templates" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
             Recurring
           </Link>
-          <Link href="/host/content" className="flex-1 py-3 rounded-xl bg-white shadow-sm text-[11px] font-medium text-[#4A4A5A] text-center hover:shadow-md transition-all">
+          <Link href="/host/content" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
             Content
           </Link>
         </div>

@@ -209,20 +209,20 @@ export default function CoachOnboardingPage() {
   // Success screen
   if (submitted) {
     return (
-      <div className="min-h-screen bg-white dark:bg-[#FFFBF8] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
         <div className="max-w-md mx-auto px-4 text-center">
-          <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto mb-6">
-            <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
+          <div className="w-16 h-16 rounded-full bg-green-900/30 flex items-center justify-center mx-auto mb-6">
+            <Check className="w-8 h-8 text-green-400" />
           </div>
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-[#1A1A1A] mb-3">
+          <h1 className="text-2xl font-bold text-white mb-3">
             Application submitted!
           </h1>
-          <p className="text-neutral-500 dark:text-[#71717A] text-sm mb-8">
+          <p className="text-[#666666] text-sm mb-8">
             We&apos;ll review your application within 48 hours. You&apos;ll receive an email once your coach profile is approved.
           </p>
           <button
             onClick={() => router.push('/buddy')}
-            className="rounded-xl bg-black dark:bg-[#1A1A1A] px-6 py-3 text-sm font-semibold text-white dark:text-white hover:bg-neutral-800 dark:hover:bg-neutral-50 transition-colors"
+            className="rounded-xl bg-[#1A1A1A] px-6 py-3 text-sm font-semibold text-white hover:bg-[#2A2A2A] transition-colors"
           >
             Go to homepage
           </button>
@@ -232,7 +232,7 @@ export default function CoachOnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFBF8]">
+    <div className="min-h-screen bg-[#0D0D0D]">
       <div className="max-w-lg mx-auto px-4 pt-12 pb-32">
         {/* Progress bar */}
         <div className="flex items-center gap-2 mb-8">
@@ -241,7 +241,7 @@ export default function CoachOnboardingPage() {
               key={i}
               className={`h-1.5 flex-1 rounded-full transition-colors ${
                 i < step
-                  ? 'bg-black dark:bg-[#1A1A1A]'
+                  ? 'bg-[#1A1A1A]'
                   : 'bg-neutral-200 dark:bg-neutral-200'
               }`}
             />
@@ -251,10 +251,10 @@ export default function CoachOnboardingPage() {
         {/* Step 1: About you */}
         {step === 1 && (
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-[#1A1A1A] mb-1">
+            <h1 className="text-2xl font-bold text-white mb-1">
               About you
             </h1>
-            <p className="text-sm text-neutral-500 dark:text-[#71717A] mb-8">
+            <p className="text-sm text-[#666666] mb-8">
               Tell us about your coaching background.
             </p>
 
@@ -296,7 +296,7 @@ export default function CoachOnboardingPage() {
                   value={form.displayName}
                   onChange={(e) => updateField('displayName', e.target.value)}
                   placeholder="Your name"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-neutral-900 dark:text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
                 />
               </div>
 
@@ -311,7 +311,7 @@ export default function CoachOnboardingPage() {
                   placeholder="e.g. Certified personal trainer with 5 years of experience. Specializing in strength and conditioning."
                   maxLength={500}
                   rows={4}
-                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-neutral-900 dark:text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20 resize-none"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20 resize-none"
                 />
                 <p className="mt-1 text-xs text-neutral-400 text-right">{form.bio.length}/500</p>
               </div>
@@ -328,7 +328,7 @@ export default function CoachOnboardingPage() {
                   value={form.yearsExperience}
                   onChange={(e) => updateField('yearsExperience', e.target.value)}
                   placeholder="e.g. 5"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-neutral-900 dark:text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
                 />
               </div>
 
@@ -364,10 +364,10 @@ export default function CoachOnboardingPage() {
         {/* Step 2: What you offer */}
         {step === 2 && (
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-[#1A1A1A] mb-1">
+            <h1 className="text-2xl font-bold text-white mb-1">
               What you offer
             </h1>
-            <p className="text-sm text-neutral-500 dark:text-[#71717A] mb-8">
+            <p className="text-sm text-[#666666] mb-8">
               Help students find the right coach.
             </p>
 
@@ -457,10 +457,10 @@ export default function CoachOnboardingPage() {
         {/* Step 3: Pricing & location */}
         {step === 3 && (
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-[#1A1A1A] mb-1">
+            <h1 className="text-2xl font-bold text-white mb-1">
               Pricing &amp; location
             </h1>
-            <p className="text-sm text-neutral-500 dark:text-[#71717A] mb-8">
+            <p className="text-sm text-[#666666] mb-8">
               Set your rates and where you coach.
             </p>
 
@@ -477,7 +477,7 @@ export default function CoachOnboardingPage() {
                   value={form.sessionPrice}
                   onChange={(e) => updateField('sessionPrice', e.target.value)}
                   placeholder="e.g. 25"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-neutral-900 dark:text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
                 />
               </div>
 
@@ -493,7 +493,7 @@ export default function CoachOnboardingPage() {
                   value={form.privateSessionPrice}
                   onChange={(e) => updateField('privateSessionPrice', e.target.value)}
                   placeholder="e.g. 80"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-neutral-900 dark:text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
                 />
               </div>
 
@@ -507,7 +507,7 @@ export default function CoachOnboardingPage() {
                   onClick={() => updateField('freeTrialOffered', !form.freeTrialOffered)}
                   className={`relative w-12 h-7 rounded-full transition-colors ${
                     form.freeTrialOffered
-                      ? 'bg-black dark:bg-[#1A1A1A]'
+                      ? 'bg-[#1A1A1A]'
                       : 'bg-neutral-200 dark:bg-neutral-200'
                   }`}
                 >
@@ -529,7 +529,7 @@ export default function CoachOnboardingPage() {
                   value={form.city}
                   onChange={(e) => updateField('city', e.target.value)}
                   placeholder="Singapore"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-neutral-900 dark:text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
                 />
               </div>
 
@@ -543,7 +543,7 @@ export default function CoachOnboardingPage() {
                   value={form.venues}
                   onChange={(e) => updateField('venues', e.target.value)}
                   placeholder="e.g. ActiveSG Gym, East Coast Park, Online"
-                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-neutral-900 dark:text-[#1A1A1A] placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
+                  className="w-full rounded-xl border border-neutral-200 dark:border-black/[0.06] bg-white dark:bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-black/20"
                 />
                 <p className="mt-1 text-xs text-neutral-400">Comma separated</p>
               </div>
@@ -580,10 +580,10 @@ export default function CoachOnboardingPage() {
         {/* Step 4: Review & submit */}
         {step === 4 && (
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-[#1A1A1A] mb-1">
+            <h1 className="text-2xl font-bold text-white mb-1">
               Review &amp; submit
             </h1>
-            <p className="text-sm text-neutral-500 dark:text-[#71717A] mb-8">
+            <p className="text-sm text-[#666666] mb-8">
               Make sure everything looks good.
             </p>
 
@@ -653,7 +653,7 @@ export default function CoachOnboardingPage() {
             <button
               type="button"
               onClick={nextStep}
-              className="flex items-center gap-1 rounded-xl bg-black dark:bg-[#1A1A1A] px-6 py-3 text-sm font-semibold text-white dark:text-white hover:bg-neutral-800 dark:hover:bg-neutral-50 transition-colors"
+              className="flex items-center gap-1 rounded-xl bg-[#1A1A1A] px-6 py-3 text-sm font-semibold text-white hover:bg-[#2A2A2A] transition-colors"
             >
               Next
               <ChevronRight className="w-4 h-4" />
@@ -663,7 +663,7 @@ export default function CoachOnboardingPage() {
               type="button"
               onClick={handleSubmit}
               disabled={submitting}
-              className="flex items-center gap-2 rounded-xl bg-black dark:bg-[#1A1A1A] px-6 py-3 text-sm font-semibold text-white dark:text-white hover:bg-neutral-800 dark:hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 rounded-xl bg-[#1A1A1A] px-6 py-3 text-sm font-semibold text-white hover:bg-[#2A2A2A] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {submitting ? (
                 <>
@@ -697,8 +697,8 @@ function SummarySection({ title, children }: { title: string; children: React.Re
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start gap-3 text-sm">
-      <span className="text-neutral-500 dark:text-[#71717A] flex-shrink-0 w-28">{label}</span>
-      <span className="text-neutral-900 dark:text-[#1A1A1A]">{value || '-'}</span>
+      <span className="text-[#666666] flex-shrink-0 w-28">{label}</span>
+      <span className="text-white">{value || '-'}</span>
     </div>
   )
 }

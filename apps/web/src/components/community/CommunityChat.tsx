@@ -114,27 +114,27 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
   // Non-member teaser
   if (!isMember) {
     return (
-      <div className="bg-white border border-black/[0.06] rounded-2xl overflow-hidden">
+      <div className="bg-[#1A1A1A] border border-[#333333] rounded-2xl overflow-hidden">
         <div className="relative">
           {/* Blurred preview */}
           <div className="max-h-[200px] overflow-hidden p-4 blur-sm select-none pointer-events-none">
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="flex gap-2">
-                  <div className="w-7 h-7 rounded-full bg-[#FFFBF8] flex-shrink-0" />
+                  <div className="w-7 h-7 rounded-full bg-[#0D0D0D] flex-shrink-0" />
                   <div className="flex-1">
-                    <div className="h-3 w-16 bg-[#FFFBF8] rounded mb-1" />
-                    <div className="h-3 w-40 bg-[#FFFBF8] rounded" />
+                    <div className="h-3 w-16 bg-[#0D0D0D] rounded mb-1" />
+                    <div className="h-3 w-40 bg-[#0D0D0D] rounded" />
                   </div>
                 </div>
               ))}
             </div>
           </div>
           {/* Overlay */}
-          <div className="absolute inset-0 flex items-center justify-center bg-white/60">
+          <div className="absolute inset-0 flex items-center justify-center bg-[#1A1A1A]/80">
             <div className="text-center">
-              <MessageCircle className="w-8 h-8 text-[#71717A] mx-auto mb-2" />
-              <p className="text-sm font-medium text-[#4A4A5A]">Join to chat with the crew</p>
+              <MessageCircle className="w-8 h-8 text-[#666666] mx-auto mb-2" />
+              <p className="text-sm font-medium text-[#999999]">Join to chat with the crew</p>
             </div>
           </div>
         </div>
@@ -143,13 +143,13 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
   }
 
   return (
-    <div className="bg-white border border-black/[0.06] rounded-2xl overflow-hidden">
+    <div className="bg-[#1A1A1A] border border-[#333333] rounded-2xl overflow-hidden">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-black/[0.06] flex items-center gap-2">
-        <MessageCircle className="w-5 h-5 text-[#71717A]" />
-        <h3 className="text-base font-semibold text-[#1A1A1A]">Crew Chat</h3>
+      <div className="px-4 py-3 border-b border-[#333333] flex items-center gap-2">
+        <MessageCircle className="w-5 h-5 text-[#666666]" />
+        <h3 className="text-base font-semibold text-white">Crew Chat</h3>
         {!loading && (
-          <span className="text-xs text-[#71717A]">
+          <span className="text-xs text-[#666666]">
             {messages.length} message{messages.length !== 1 ? 's' : ''}
           </span>
         )}
@@ -162,12 +162,12 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
       >
         {loading ? (
           <div className="flex justify-center py-8">
-            <Loader2 className="w-5 h-5 animate-spin text-[#71717A]" />
+            <Loader2 className="w-5 h-5 animate-spin text-[#666666]" />
           </div>
         ) : messages.length === 0 ? (
           <div className="text-center py-8">
-            <MessageCircle className="w-8 h-8 text-[#71717A] mx-auto mb-2" />
-            <p className="text-sm text-[#71717A]">No messages yet. Start the conversation!</p>
+            <MessageCircle className="w-8 h-8 text-[#666666] mx-auto mb-2" />
+            <p className="text-sm text-[#666666]">No messages yet. Start the conversation!</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -176,7 +176,7 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
               return (
                 <div
                   key={msg.id}
-                  className={`flex gap-2 rounded-lg px-2 py-1.5 ${isOwn ? 'bg-[#FFFBF8]' : ''}`}
+                  className={`flex gap-2 rounded-lg px-2 py-1.5 ${isOwn ? 'bg-[#0D0D0D]' : ''}`}
                 >
                   <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0">
                     {msg.sender.imageUrl ? (
@@ -188,21 +188,21 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
                         className="object-cover w-full h-full"
                       />
                     ) : (
-                      <div className="w-full h-full bg-[#FFFBF8] flex items-center justify-center">
-                        <Users className="w-3.5 h-3.5 text-[#71717A]" />
+                      <div className="w-full h-full bg-[#0D0D0D] flex items-center justify-center">
+                        <Users className="w-3.5 h-3.5 text-[#666666]" />
                       </div>
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-xs font-semibold text-[#1A1A1A]">
+                      <span className="text-xs font-semibold text-white">
                         {msg.sender.name || 'Member'}
                       </span>
-                      <span className="text-[10px] text-[#71717A]">
+                      <span className="text-[10px] text-[#666666]">
                         {formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true })}
                       </span>
                     </div>
-                    <p className="text-sm text-[#4A4A5A] whitespace-pre-line break-words">
+                    <p className="text-sm text-[#999999] whitespace-pre-line break-words">
                       {msg.content}
                     </p>
                   </div>
@@ -219,7 +219,7 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
         <div className="px-4 pb-2">
           <button
             onClick={() => setExpanded((v) => !v)}
-            className="text-xs font-medium text-[#71717A] hover:text-[#4A4A5A] transition-colors"
+            className="text-xs font-medium text-[#666666] hover:text-[#999999] transition-colors"
           >
             {expanded ? 'Show less' : `See all ${messages.length} messages`}
           </button>
@@ -240,7 +240,7 @@ export function CommunityChat({ communitySlug, isMember }: CommunityChatProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Say something..."
-            className="flex-1 text-sm text-[#1A1A1A] placeholder:text-[#71717A] bg-transparent outline-none"
+            className="flex-1 text-sm text-white placeholder:text-[#666666] bg-transparent outline-none"
             maxLength={5000}
           />
           <button

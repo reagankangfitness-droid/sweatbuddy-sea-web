@@ -27,8 +27,8 @@ export function FilterPills({ pills, selected, onSelect, className }: FilterPill
             className={cn(
               'flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-150 border',
               active
-                ? 'bg-white text-neutral-900 border-white'
-                : 'bg-white text-[#71717A] border-black/[0.06] hover:border-black/[0.12] hover:text-[#1A1A1A]'
+                ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
+                : 'bg-[#1A1A1A] text-[#666666] border-[#333333] hover:border-[#666666] hover:text-white'
             )}
           >
             {pill.emoji && <span className="text-[13px]">{pill.emoji}</span>}

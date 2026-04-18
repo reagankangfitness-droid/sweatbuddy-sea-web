@@ -314,13 +314,13 @@ export default function EditActivityPage({ params }: { params: Promise<{ id: str
   if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === 'YOUR_GOOGLE_MAPS_API_KEY') {
     return (
       <>
-        <header className="sticky top-0 z-40 bg-[#FFFBF8]/85 backdrop-blur-xl border-b border-black/[0.06]">
+        <header className="sticky top-0 z-40 bg-[#0D0D0D]/95 backdrop-blur-xl border-b border-[#333333]">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-black/[0.06]">
-                <ArrowLeft className="w-5 h-5 text-[#71717A]" />
+              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-[#1A1A1A] border border-[#333333]">
+                <ArrowLeft className="w-5 h-5 text-[#666666]" />
               </button>
-              <span className="text-sm font-medium text-[#71717A]">Edit Activity</span>
+              <span className="text-sm font-medium text-[#666666]">Edit Activity</span>
             </div>
           </div>
         </header>
@@ -344,13 +344,13 @@ export default function EditActivityPage({ params }: { params: Promise<{ id: str
   if (isLoading || !mapLoaded) {
     return (
       <>
-        <header className="sticky top-0 z-40 bg-[#FFFBF8]/85 backdrop-blur-xl border-b border-black/[0.06]">
+        <header className="sticky top-0 z-40 bg-[#0D0D0D]/95 backdrop-blur-xl border-b border-[#333333]">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-black/[0.06]">
-                <ArrowLeft className="w-5 h-5 text-[#71717A]" />
+              <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-[#1A1A1A] border border-[#333333]">
+                <ArrowLeft className="w-5 h-5 text-[#666666]" />
               </button>
-              <span className="text-sm font-medium text-[#71717A]">Edit Activity</span>
+              <span className="text-sm font-medium text-[#666666]">Edit Activity</span>
             </div>
           </div>
         </header>
@@ -365,13 +365,13 @@ export default function EditActivityPage({ params }: { params: Promise<{ id: str
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#FFFBF8]/85 backdrop-blur-xl border-b border-black/[0.06]">
+      <header className="sticky top-0 z-40 bg-[#0D0D0D]/95 backdrop-blur-xl border-b border-[#333333]">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-black/[0.06]">
-              <ArrowLeft className="w-5 h-5 text-[#71717A]" />
+            <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full bg-[#1A1A1A] border border-[#333333]">
+              <ArrowLeft className="w-5 h-5 text-[#666666]" />
             </button>
-            <span className="text-sm font-medium text-[#71717A]">Edit Activity</span>
+            <span className="text-sm font-medium text-[#666666]">Edit Activity</span>
           </div>
         </div>
       </header>
@@ -660,7 +660,7 @@ export default function EditActivityPage({ params }: { params: Promise<{ id: str
                 </GoogleMap>
               </div>
 
-              <div className="sticky bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-black/[0.06] -mx-4 px-4 py-4 mt-6 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+              <div className="sticky bottom-0 left-0 right-0 bg-[#0D0D0D]/95 backdrop-blur-lg border-t border-[#333333] -mx-4 px-4 py-4 mt-6 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
                 <div className="flex gap-3 justify-between">
                   <Button
                     type="button"

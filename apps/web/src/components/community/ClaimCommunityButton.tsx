@@ -100,7 +100,7 @@ export function ClaimCommunityButton({
               placeholder="@your_instagram"
               value={instagramHandle}
               onChange={(e) => setInstagramHandle(e.target.value)}
-              className="flex-1 px-3.5 py-2.5 bg-[#FFFBF8] border border-black/[0.04] rounded-xl text-sm text-[#1A1A1A] placeholder:text-[#9A9AAA] focus:outline-none focus:border-black/[0.12]"
+              className="flex-1 px-3.5 py-2.5 bg-[#0D0D0D] border border-[#333333] rounded-xl text-sm text-white placeholder:text-[#666666] focus:outline-none focus:border-[#666666]"
               onKeyDown={(e) => { if (e.key === 'Enter') handleClaim() }}
               autoFocus
             />

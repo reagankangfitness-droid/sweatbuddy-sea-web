@@ -64,17 +64,17 @@ export function BioPromptSheet({ open, onClose }: BioPromptSheetProps) {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 400, damping: 36 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl shadow-2xl"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-[#1A1A1A] rounded-t-2xl"
           >
             <div className="flex justify-center pt-3 pb-1">
               <div className="w-8 h-1 rounded-full bg-black/[0.1]" />
             </div>
             <div className="px-5 pb-[env(safe-area-inset-bottom,20px)]">
               <div className="text-center mb-4 pt-2">
-                <h3 className="text-base font-bold text-[#1A1A1A] tracking-tight">
+                <h3 className="text-base font-bold text-white tracking-tight">
                   People want to know who they&apos;re sweating with
                 </h3>
-                <p className="text-xs text-[#9A9AAA] mt-1">Add a one-liner about yourself</p>
+                <p className="text-xs text-[#666666] mt-1">Add a one-liner about yourself</p>
               </div>
 
               <input
@@ -83,7 +83,7 @@ export function BioPromptSheet({ open, onClose }: BioPromptSheetProps) {
                 onChange={(e) => setBio(e.target.value)}
                 maxLength={100}
                 placeholder="e.g. Morning runner, evening lifter"
-                className="w-full px-4 py-3 bg-[#FFFBF8] rounded-xl border border-black/[0.04] text-sm text-[#1A1A1A] placeholder:text-[#9A9AAA] focus:outline-none focus:border-black/[0.12] transition-all mb-3"
+                className="w-full px-4 py-3 bg-[#0D0D0D] rounded-xl border border-[#333333] text-sm text-white placeholder:text-[#666666] focus:outline-none focus:border-[#666666] transition-all mb-3"
                 autoFocus
               />
 
@@ -96,7 +96,7 @@ export function BioPromptSheet({ open, onClose }: BioPromptSheetProps) {
                     className={`px-3 py-1.5 rounded-full text-[11px] transition-all ${
                       bio === s
                         ? 'bg-[#1A1A1A] text-white'
-                        : 'bg-[#FFFBF8] text-[#71717A] border border-black/[0.04] hover:border-black/[0.1]'
+                        : 'bg-[#0D0D0D] text-[#666666] border border-[#333333] hover:border-[#666666]'
                     }`}
                   >
                     {s}
@@ -113,7 +113,7 @@ export function BioPromptSheet({ open, onClose }: BioPromptSheetProps) {
                 Save
               </button>
 
-              <button onClick={skip} className="w-full text-center text-xs text-[#9A9AAA] py-2">
+              <button onClick={skip} className="w-full text-center text-xs text-[#666666] py-2">
                 Skip for now
               </button>
             </div>

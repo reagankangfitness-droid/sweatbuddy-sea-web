@@ -101,7 +101,7 @@ export default function ProfilePage() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-[#FFFBF8] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
         <div className="animate-pulse">
           <div className="w-20 h-20 bg-black/[0.06] rounded-full mb-4" />
           <div className="h-4 bg-black/[0.06] rounded-lg w-32 mx-auto" />
@@ -112,28 +112,28 @@ export default function ProfilePage() {
 
   if (!isSignedIn) {
     return (
-      <div className="min-h-screen bg-[#FFFBF8]">
-        <header className="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-lg border-b border-black/[0.06]">
+      <div className="min-h-screen bg-[#0D0D0D]">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-[#0D0D0D]/95 backdrop-blur-lg border-b border-[#333333]">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="flex items-center gap-4 px-4 py-3">
               <Link
                 href="/"
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-[#FFFBF8] border border-black/[0.06]"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0D0D0D] border border-[#333333]"
               >
-                <ArrowLeft className="w-5 h-5 text-[#4A4A5A]" />
+                <ArrowLeft className="w-5 h-5 text-[#999999]" />
               </Link>
-              <h1 className="text-lg font-semibold text-[#1A1A1A]">Profile</h1>
+              <h1 className="text-lg font-semibold text-white">Profile</h1>
             </div>
           </div>
         </header>
 
         <main className="pt-24 pb-24 px-4">
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-full border border-black/[0.06] shadow-sm mb-6">
-              <User className="w-12 h-12 text-[#71717A]" />
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-[#1A1A1A] rounded-full border border-[#333333]  mb-6">
+              <User className="w-12 h-12 text-[#666666]" />
             </div>
-            <h2 className="text-2xl font-bold text-[#1A1A1A] mb-2">Join SweatBuddies</h2>
-            <p className="text-[#71717A] mb-8 max-w-xs mx-auto">
+            <h2 className="text-2xl font-bold text-white mb-2">Join SweatBuddies</h2>
+            <p className="text-[#666666] mb-8 max-w-xs mx-auto">
               Find your crew, show up, and never work out alone again.
             </p>
 
@@ -152,14 +152,14 @@ export default function ProfilePage() {
 
   const isHost = profile?.isHost
   return (
-    <div className="min-h-screen bg-[#FFFBF8]">
+    <div className="min-h-screen bg-[#0D0D0D]">
       {/* Content */}
       <main className="pt-6 pb-24 px-4 max-w-lg mx-auto" style={{ paddingTop: 'max(1.5rem, env(safe-area-inset-top))' }}>
         {/* Profile Card */}
-        <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm p-4 mb-8">
+        <div className="bg-[#1A1A1A] rounded-2xl border border-[#333333]  p-4 mb-8">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-black/[0.06] bg-[#FFFBF8] flex-shrink-0">
+              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#333333] bg-[#0D0D0D] flex-shrink-0">
                 {user?.imageUrl ? (
                   <Image
                     src={user.imageUrl}
@@ -170,7 +170,7 @@ export default function ProfilePage() {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <User className="w-8 h-8 text-[#71717A]" />
+                    <User className="w-8 h-8 text-[#666666]" />
                   </div>
                 )}
               </div>
@@ -182,7 +182,7 @@ export default function ProfilePage() {
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-semibold text-[#1A1A1A] truncate">
+                <h2 className="text-lg font-semibold text-white truncate">
                   {user?.fullName || user?.firstName || 'SweatBuddy'}
                 </h2>
                 {isHost && (
@@ -191,11 +191,11 @@ export default function ProfilePage() {
                   </span>
                 )}
               </div>
-              <p className="text-sm text-[#71717A] truncate">
+              <p className="text-sm text-[#666666] truncate">
                 {user?.primaryEmailAddress?.emailAddress}
               </p>
               {profile?.fitnessLevel && (
-                <p className="text-xs text-[#71717A] mt-0.5 capitalize">
+                <p className="text-xs text-[#666666] mt-0.5 capitalize">
                   {profile.fitnessLevel.toLowerCase().replace('_', ' ')}
                 </p>
               )}
@@ -204,7 +204,7 @@ export default function ProfilePage() {
 
           {/* Bio */}
           {profile?.bio && (
-            <p className="mt-4 text-sm text-[#4A4A5A] leading-relaxed border-t border-black/[0.06] pt-4">
+            <p className="mt-4 text-sm text-[#999999] leading-relaxed border-t border-[#333333] pt-4">
               {profile.bio}
             </p>
           )}
@@ -215,7 +215,7 @@ export default function ProfilePage() {
               {profile.fitnessInterests.map((interest) => (
                 <span
                   key={interest}
-                  className="px-2.5 py-1 bg-[#FFFBF8] text-[#4A4A5A] text-xs rounded-full capitalize"
+                  className="px-2.5 py-1 bg-[#0D0D0D] text-[#999999] text-xs rounded-full capitalize"
                 >
                   {interest}
                 </span>
@@ -227,111 +227,111 @@ export default function ProfilePage() {
         {/* Stats */}
         {profile && (
           <div className="grid grid-cols-2 gap-3 mb-8">
-            <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm p-4 text-center">
-              <p className="text-2xl font-bold text-[#1A1A1A]">{profile.sessionsAttendedCount}</p>
-              <p className="text-xs text-[#71717A] mt-0.5">Sessions Attended</p>
+            <div className="bg-[#1A1A1A] rounded-2xl border border-[#333333]  p-4 text-center">
+              <p className="text-2xl font-bold text-white">{profile.sessionsAttendedCount}</p>
+              <p className="text-xs text-[#666666] mt-0.5">Sessions Attended</p>
             </div>
-            <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm p-4 text-center">
-              <p className="text-2xl font-bold text-[#1A1A1A]">{profile.sessionsHostedCount}</p>
-              <p className="text-xs text-[#71717A] mt-0.5">Sessions Hosted</p>
+            <div className="bg-[#1A1A1A] rounded-2xl border border-[#333333]  p-4 text-center">
+              <p className="text-2xl font-bold text-white">{profile.sessionsHostedCount}</p>
+              <p className="text-xs text-[#666666] mt-0.5">Sessions Hosted</p>
             </div>
           </div>
         )}
 
         {/* My Activity Section */}
         <div className="mb-8">
-          <h3 className="text-xs font-semibold text-[#71717A] uppercase tracking-wider px-1 mb-2">
+          <h3 className="text-xs font-semibold text-[#666666] uppercase tracking-wider px-1 mb-2">
             My Activity
           </h3>
-          <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm overflow-hidden">
+          <div className="bg-[#1A1A1A] rounded-2xl border border-[#333333]  overflow-hidden">
             <Link
               href="/hub"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-black/[0.06] hover:bg-[#FFFBF8] transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-[#333333] hover:bg-[#2A2A2A] transition-colors"
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 bg-amber-50 rounded-lg flex items-center justify-center">
                   <LayoutDashboard className="w-4 h-4 text-amber-500" />
                 </div>
                 <div>
-                  <span className="text-[#1A1A1A] text-sm font-medium">Host Dashboard</span>
-                  <p className="text-xs text-[#71717A]">Manage sessions & attendees</p>
+                  <span className="text-white text-sm font-medium">Host Dashboard</span>
+                  <p className="text-xs text-[#666666]">Manage sessions & attendees</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#71717A]" />
+              <ChevronRight className="w-5 h-5 text-[#666666]" />
             </Link>
 
             <Link
               href="/communities"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-black/[0.06] hover:bg-[#FFFBF8] transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-[#333333] hover:bg-[#2A2A2A] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">
-                  <Users className="w-4 h-4 text-[#71717A]" />
+                <div className="w-9 h-9 bg-[#0D0D0D] rounded-lg flex items-center justify-center">
+                  <Users className="w-4 h-4 text-[#666666]" />
                 </div>
                 <div>
-                  <span className="text-[#1A1A1A] text-sm font-medium">My Crews</span>
-                  <p className="text-xs text-[#71717A]">Your people</p>
+                  <span className="text-white text-sm font-medium">My Crews</span>
+                  <p className="text-xs text-[#666666]">Your people</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#71717A]" />
+              <ChevronRight className="w-5 h-5 text-[#666666]" />
             </Link>
 
             <Link
               href="/my-bookings"
-              className="flex items-center justify-between px-4 py-3.5 hover:bg-[#FFFBF8] transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 hover:bg-[#2A2A2A] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">
-                  <CalendarDays className="w-4 h-4 text-[#71717A]" />
+                <div className="w-9 h-9 bg-[#0D0D0D] rounded-lg flex items-center justify-center">
+                  <CalendarDays className="w-4 h-4 text-[#666666]" />
                 </div>
                 <div>
-                  <span className="text-[#1A1A1A] text-sm font-medium">My Sessions</span>
-                  <p className="text-xs text-[#71717A]">Sessions you&apos;re hosting or attending</p>
+                  <span className="text-white text-sm font-medium">My Sessions</span>
+                  <p className="text-xs text-[#666666]">Sessions you&apos;re hosting or attending</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#71717A]" />
+              <ChevronRight className="w-5 h-5 text-[#666666]" />
             </Link>
           </div>
         </div>
 
         {/* Account Section */}
         <div className="mb-8">
-          <h3 className="text-xs font-semibold text-[#71717A] uppercase tracking-wider px-1 mb-2">
+          <h3 className="text-xs font-semibold text-[#666666] uppercase tracking-wider px-1 mb-2">
             Account
           </h3>
-          <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm overflow-hidden">
+          <div className="bg-[#1A1A1A] rounded-2xl border border-[#333333]  overflow-hidden">
             <Link
               href="/settings/profile"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-black/[0.06] hover:bg-[#FFFBF8] transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-[#333333] hover:bg-[#2A2A2A] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">
-                  <Settings className="w-4 h-4 text-[#71717A]" />
+                <div className="w-9 h-9 bg-[#0D0D0D] rounded-lg flex items-center justify-center">
+                  <Settings className="w-4 h-4 text-[#666666]" />
                 </div>
-                <span className="text-[#1A1A1A] text-sm font-medium">Settings</span>
+                <span className="text-white text-sm font-medium">Settings</span>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#71717A]" />
+              <ChevronRight className="w-5 h-5 text-[#666666]" />
             </Link>
 
             <Link
               href="/support"
-              className="flex items-center justify-between px-4 py-3.5 border-b border-black/[0.06] hover:bg-[#FFFBF8] transition-colors"
+              className="flex items-center justify-between px-4 py-3.5 border-b border-[#333333] hover:bg-[#2A2A2A] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">
-                  <HelpCircle className="w-4 h-4 text-[#71717A]" />
+                <div className="w-9 h-9 bg-[#0D0D0D] rounded-lg flex items-center justify-center">
+                  <HelpCircle className="w-4 h-4 text-[#666666]" />
                 </div>
-                <span className="text-[#1A1A1A] text-sm font-medium">Help & Support</span>
+                <span className="text-white text-sm font-medium">Help & Support</span>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#71717A]" />
+              <ChevronRight className="w-5 h-5 text-[#666666]" />
             </Link>
 
             <button
               onClick={() => signOut(() => router.push('/'))}
-              className="w-full flex items-center px-4 py-3.5 text-[#71717A] hover:bg-[#FFFBF8] transition-colors"
+              className="w-full flex items-center px-4 py-3.5 text-[#666666] hover:bg-[#2A2A2A] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-[#FFFBF8] rounded-lg flex items-center justify-center">
+                <div className="w-9 h-9 bg-[#0D0D0D] rounded-lg flex items-center justify-center">
                   <LogOut className="w-4 h-4" />
                 </div>
                 <span className="text-sm font-medium">Sign Out</span>

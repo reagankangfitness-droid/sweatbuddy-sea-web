@@ -145,7 +145,7 @@ function NextEventCard({ booking }: { booking: BookedEvent }) {
   const [showCalendarMenu, setShowCalendarMenu] = useState(false)
 
   return (
-    <div className="bg-gradient-to-br from-white to-neutral-50 border border-black/[0.06] rounded-2xl p-4 mb-8 text-[#1A1A1A] relative overflow-hidden">
+    <div className="bg-gradient-to-br from-white to-neutral-50 border border-[#333333] rounded-2xl p-4 mb-8 text-white relative overflow-hidden">
       {/* Background pattern */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-black/[0.03] rounded-full -translate-y-1/2 translate-x-1/2" />
 
@@ -154,14 +154,14 @@ function NextEventCard({ booking }: { booking: BookedEvent }) {
           <span className="text-xs font-medium bg-black/[0.06] px-2 py-1 rounded-full">
             Next Up
           </span>
-          <span className="text-xs text-[#71717A]">
+          <span className="text-xs text-[#666666]">
             {booking.activity.startTime && getTimeUntil(booking.activity.startTime)}
           </span>
         </div>
 
         <div className="flex gap-4">
           {/* Image */}
-          <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-neutral-100">
+          <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-[#2A2A2A]">
             {booking.activity.imageUrl ? (
               <Image
                 src={booking.activity.imageUrl}
@@ -172,27 +172,27 @@ function NextEventCard({ booking }: { booking: BookedEvent }) {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <CalendarDays className="w-8 h-8 text-[#71717A]" />
+                <CalendarDays className="w-8 h-8 text-[#666666]" />
               </div>
             )}
           </div>
 
           {/* Details */}
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-[#71717A] uppercase tracking-wide mb-1">
+            <p className="text-xs text-[#666666] uppercase tracking-wide mb-1">
               {booking.activity.type}
             </p>
-            <h3 className="font-semibold text-lg line-clamp-1 mb-1 text-[#1A1A1A]">
+            <h3 className="font-semibold text-lg line-clamp-1 mb-1 text-white">
               {booking.activity.title}
             </h3>
             {booking.activity.startTime && (
-              <p className="text-sm text-[#4A4A5A] flex items-center gap-1">
+              <p className="text-sm text-[#999999] flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5" />
                 {formatDateLabel(booking.activity.startTime)} at {formatTime(booking.activity.startTime)}
               </p>
             )}
             {booking.activity.host && (
-              <p className="text-xs text-[#71717A] mt-1 flex items-center gap-1">
+              <p className="text-xs text-[#666666] mt-1 flex items-center gap-1">
                 <User className="w-3 h-3" />
                 {booking.activity.host.name}
               </p>
@@ -204,7 +204,7 @@ function NextEventCard({ booking }: { booking: BookedEvent }) {
         <div className="flex gap-2 mt-4">
           <button
             onClick={() => openDirections(booking.activity.latitude, booking.activity.longitude, booking.activity.city)}
-            className="flex-1 flex items-center justify-center gap-2 bg-neutral-100 hover:bg-neutral-200 py-2.5 px-4 rounded-xl text-sm font-medium transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 bg-[#2A2A2A] hover:bg-[#2A2A2A] py-2.5 px-4 rounded-xl text-sm font-medium transition-colors"
           >
             <Navigation className="w-4 h-4" />
             Directions
@@ -212,7 +212,7 @@ function NextEventCard({ booking }: { booking: BookedEvent }) {
           <div className="relative flex-1">
             <button
               onClick={() => setShowCalendarMenu(!showCalendarMenu)}
-              className="w-full flex items-center justify-center gap-2 bg-[#FFFBF8] hover:bg-[#FFFBF8]/90 text-[#1A1A1A] py-2.5 px-4 rounded-xl text-sm font-medium transition-colors"
+              className="w-full flex items-center justify-center gap-2 bg-[#0D0D0D] hover:bg-[#0D0D0D]/90 text-white py-2.5 px-4 rounded-xl text-sm font-medium transition-colors"
             >
               <CalendarPlus className="w-4 h-4" />
               Add to Calendar
@@ -225,12 +225,12 @@ function NextEventCard({ booking }: { booking: BookedEvent }) {
                   className="fixed inset-0 z-40"
                   onClick={() => setShowCalendarMenu(false)}
                 />
-                <div className="absolute bottom-full left-0 right-0 mb-2 bg-[#FFFBF8] rounded-xl shadow-lg border border-black/[0.06] overflow-hidden z-50">
+                <div className="absolute bottom-full left-0 right-0 mb-2 bg-[#0D0D0D] rounded-xl  border border-[#333333] overflow-hidden z-50">
                   <a
                     href={generateCalendarUrl(booking, 'google')}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-100 text-[#1A1A1A] text-sm"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-[#2A2A2A] text-white text-sm"
                     onClick={() => setShowCalendarMenu(false)}
                   >
                     <span className="text-lg">📅</span>
@@ -239,7 +239,7 @@ function NextEventCard({ booking }: { booking: BookedEvent }) {
                   <a
                     href={generateCalendarUrl(booking, 'apple')}
                     download={`${booking.activity.title.replace(/\s+/g, '-')}.ics`}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-100 text-[#1A1A1A] text-sm border-t border-black/[0.06]"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-[#2A2A2A] text-white text-sm border-t border-[#333333]"
                     onClick={() => setShowCalendarMenu(false)}
                   >
                     <span className="text-lg">🍎</span>
@@ -273,24 +273,24 @@ function StatsCard({ pastEvents, upcomingEvents }: { pastEvents: BookedEvent[]; 
 
   return (
     <div className="grid grid-cols-2 gap-3 mb-8">
-      <div className="bg-[#FFFBF8] rounded-xl border border-black/[0.06] p-4">
+      <div className="bg-[#0D0D0D] rounded-xl border border-[#333333] p-4">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
             <Flame className="w-4 h-4 text-orange-500" />
           </div>
         </div>
-        <p className="text-2xl font-bold text-[#1A1A1A]">{eventsThisMonth}</p>
-        <p className="text-xs text-[#71717A]">Events this month</p>
+        <p className="text-2xl font-bold text-white">{eventsThisMonth}</p>
+        <p className="text-xs text-[#666666]">Events this month</p>
       </div>
 
-      <div className="bg-[#FFFBF8] rounded-xl border border-black/[0.06] p-4">
+      <div className="bg-[#0D0D0D] rounded-xl border border-[#333333] p-4">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-8 h-8 bg-amber-900 rounded-lg flex items-center justify-center">
             <Trophy className="w-4 h-4 text-amber-500" />
           </div>
         </div>
-        <p className="text-2xl font-bold text-[#1A1A1A]">{pastEvents.length}</p>
-        <p className="text-xs text-[#71717A]">Total attended</p>
+        <p className="text-2xl font-bold text-white">{pastEvents.length}</p>
+        <p className="text-xs text-[#666666]">Total attended</p>
       </div>
     </div>
   )
@@ -301,13 +301,13 @@ function EventCard({ booking, isPast = false }: { booking: BookedEvent; isPast?:
   const [showActions, setShowActions] = useState(false)
 
   return (
-    <div className={`bg-[#FFFBF8] rounded-2xl border border-black/[0.06] overflow-hidden ${isPast ? 'opacity-70' : ''}`}>
+    <div className={`bg-[#0D0D0D] rounded-2xl border border-[#333333] overflow-hidden ${isPast ? 'opacity-70' : ''}`}>
       <Link
         href={`/e/${booking.activity.slug || booking.activity.id}`}
         className="flex"
       >
         {/* Image */}
-        <div className="w-20 h-20 flex-shrink-0 bg-neutral-100 relative">
+        <div className="w-20 h-20 flex-shrink-0 bg-[#2A2A2A] relative">
           {booking.activity.imageUrl ? (
             <Image
               src={booking.activity.imageUrl}
@@ -317,7 +317,7 @@ function EventCard({ booking, isPast = false }: { booking: BookedEvent; isPast?:
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-[#71717A]" />
+              <Calendar className="w-6 h-6 text-[#666666]" />
             </div>
           )}
         </div>
@@ -325,19 +325,19 @@ function EventCard({ booking, isPast = false }: { booking: BookedEvent; isPast?:
         {/* Details */}
         <div className="flex-1 p-3 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-medium text-[#71717A] uppercase">
+            <span className="text-xs font-medium text-[#666666] uppercase">
               {booking.activity.type}
             </span>
             {isPast && (
-              <span className="text-[10px] px-1.5 py-0.5 bg-neutral-100 text-[#71717A] rounded">
+              <span className="text-[10px] px-1.5 py-0.5 bg-[#2A2A2A] text-[#666666] rounded">
                 Completed
               </span>
             )}
           </div>
-          <h4 className="font-medium text-[#1A1A1A] line-clamp-1 text-sm">
+          <h4 className="font-medium text-white line-clamp-1 text-sm">
             {booking.activity.title}
           </h4>
-          <div className="flex items-center gap-3 mt-1 text-xs text-[#71717A]">
+          <div className="flex items-center gap-3 mt-1 text-xs text-[#666666]">
             {booking.activity.startTime && (
               <span className="flex items-center gap-1">
                 <Clock className="w-3 h-3" />
@@ -347,7 +347,7 @@ function EventCard({ booking, isPast = false }: { booking: BookedEvent; isPast?:
           </div>
           {/* Host info */}
           {booking.activity.host && (
-            <div className="flex items-center gap-1 text-xs text-[#71717A] mt-1">
+            <div className="flex items-center gap-1 text-xs text-[#666666] mt-1">
               <User className="w-3 h-3" />
               <span className="line-clamp-1">{booking.activity.host.name}</span>
             </div>
@@ -355,26 +355,26 @@ function EventCard({ booking, isPast = false }: { booking: BookedEvent; isPast?:
         </div>
 
         <div className="flex items-center pr-3">
-          <ChevronRight className="w-4 h-4 text-[#4A4A5A]" />
+          <ChevronRight className="w-4 h-4 text-[#999999]" />
         </div>
       </Link>
 
       {/* Quick Actions for upcoming events */}
       {!isPast && (
-        <div className="flex border-t border-black/[0.06]">
+        <div className="flex border-t border-[#333333]">
           <button
             onClick={() => openDirections(booking.activity.latitude, booking.activity.longitude, booking.activity.city)}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-[#71717A] hover:bg-neutral-50 transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-[#666666] hover:bg-[#2A2A2A] transition-colors"
           >
             <Navigation className="w-3.5 h-3.5" />
             Directions
           </button>
-          <div className="w-px bg-neutral-100" />
+          <div className="w-px bg-[#2A2A2A]" />
           <a
             href={generateCalendarUrl(booking, 'google')}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-[#71717A] hover:bg-neutral-50 transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium text-[#666666] hover:bg-[#2A2A2A] transition-colors"
           >
             <CalendarPlus className="w-3.5 h-3.5" />
             Add to Cal
@@ -434,8 +434,8 @@ export default function SchedulePage() {
   // Show loading while checking auth
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#71717A]" />
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#666666]" />
       </div>
     )
   }
@@ -443,18 +443,18 @@ export default function SchedulePage() {
   // Not signed in - show sign in prompt
   if (!isSignedIn) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#0D0D0D]">
         {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-lg border-b border-black/[0.06]">
+        <header className="fixed top-0 left-0 right-0 z-40 bg-[#0D0D0D]/95 backdrop-blur-lg border-b border-[#333333]">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="flex items-center gap-4 px-4 py-3">
               <Link
                 href="/"
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-[#FFFBF8] border border-black/[0.06]"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0D0D0D] border border-[#333333]"
               >
-                <ArrowLeft className="w-5 h-5 text-[#4A4A5A]" />
+                <ArrowLeft className="w-5 h-5 text-[#999999]" />
               </Link>
-              <h1 className="text-lg font-semibold text-[#1A1A1A]">My Schedule</h1>
+              <h1 className="text-lg font-semibold text-white">My Schedule</h1>
             </div>
           </div>
         </header>
@@ -462,22 +462,22 @@ export default function SchedulePage() {
         {/* Sign in prompt */}
         <main className="pt-24 pb-24 px-4">
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-[#FFFBF8] rounded-2xl border border-black/[0.06] shadow-sm mb-6">
-              <CalendarDays className="w-12 h-12 text-[#4A4A5A]" />
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-[#0D0D0D] rounded-2xl border border-[#333333] shadow-sm mb-6">
+              <CalendarDays className="w-12 h-12 text-[#999999]" />
             </div>
-            <h2 className="text-xl font-bold text-[#1A1A1A] mb-2">See your schedule</h2>
-            <p className="text-[#71717A] mb-8 max-w-xs mx-auto">
+            <h2 className="text-xl font-bold text-white mb-2">See your schedule</h2>
+            <p className="text-[#666666] mb-8 max-w-xs mx-auto">
               Sign in to view your booked experiences and track your fitness journey.
             </p>
             <Link
               href="/sign-in?redirect_url=/saved"
-              className="inline-flex items-center gap-2 bg-white px-6 py-3 text-base font-semibold rounded-full shadow-md hover:bg-neutral-50 transition-colors text-white"
+              className="inline-flex items-center gap-2 bg-[#1A1A1A] px-6 py-3 text-base font-semibold rounded-full  hover:bg-[#2A2A2A] transition-colors text-white"
             >
               Sign in to continue
             </Link>
-            <p className="text-sm text-[#71717A] mt-4">
+            <p className="text-sm text-[#666666] mt-4">
               Don&apos;t have an account?{' '}
-              <Link href="/sign-up?redirect_url=/saved" className="text-[#1A1A1A] font-medium hover:underline">
+              <Link href="/sign-up?redirect_url=/saved" className="text-white font-medium hover:underline">
                 Sign up
               </Link>
             </p>
@@ -488,20 +488,20 @@ export default function SchedulePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#0D0D0D]">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-lg border-b border-black/[0.06]">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-[#0D0D0D]/95 backdrop-blur-lg border-b border-[#333333]">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center gap-4 px-4 py-3">
             <Link
               href="/"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-[#FFFBF8] border border-black/[0.06]"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0D0D0D] border border-[#333333]"
             >
-              <ArrowLeft className="w-5 h-5 text-[#4A4A5A]" />
+              <ArrowLeft className="w-5 h-5 text-[#999999]" />
             </Link>
             <div>
-              <h1 className="text-lg font-semibold text-[#1A1A1A]">My Schedule</h1>
-              <p className="text-xs text-[#71717A]">
+              <h1 className="text-lg font-semibold text-white">My Schedule</h1>
+              <p className="text-xs text-[#666666]">
                 {upcomingEvents.length} upcoming • {pastEvents.length} past
               </p>
             </div>
@@ -514,19 +514,19 @@ export default function SchedulePage() {
         {isLoading ? (
           <div className="space-y-4 mt-4">
             {/* Skeleton for next event */}
-            <div className="animate-pulse bg-neutral-200 rounded-2xl h-48" />
+            <div className="animate-pulse bg-[#2A2A2A] rounded-2xl h-48" />
             {/* Skeleton for stats */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="animate-pulse bg-[#FFFBF8] rounded-xl h-24 border border-black/[0.06]" />
-              <div className="animate-pulse bg-[#FFFBF8] rounded-xl h-24 border border-black/[0.06]" />
+              <div className="animate-pulse bg-[#0D0D0D] rounded-xl h-24 border border-[#333333]" />
+              <div className="animate-pulse bg-[#0D0D0D] rounded-xl h-24 border border-[#333333]" />
             </div>
             {/* Skeleton for events */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[1, 2].map((col) => (
                 <div key={col} className="space-y-3">
-                  <div className="h-6 bg-neutral-200 rounded w-32" />
+                  <div className="h-6 bg-[#2A2A2A] rounded w-32" />
                   {[1, 2].map((i) => (
-                    <div key={i} className="animate-pulse bg-[#FFFBF8] rounded-xl border border-black/[0.06] h-24" />
+                    <div key={i} className="animate-pulse bg-[#0D0D0D] rounded-xl border border-[#333333] h-24" />
                   ))}
                 </div>
               ))}
@@ -537,27 +537,27 @@ export default function SchedulePage() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-red-950 rounded-full mb-4">
               <X className="w-8 h-8 text-red-500" />
             </div>
-            <h2 className="text-lg font-semibold text-[#1A1A1A] mb-2">Failed to load schedule</h2>
-            <p className="text-[#71717A] mb-4">{error}</p>
+            <h2 className="text-lg font-semibold text-white mb-2">Failed to load schedule</h2>
+            <p className="text-[#666666] mb-4">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-white text-neutral-900 rounded-full text-sm font-medium"
+              className="px-4 py-2 bg-[#1A1A1A] text-white rounded-full text-sm font-medium"
             >
               Try again
             </button>
           </div>
         ) : upcomingEvents.length === 0 && pastEvents.length === 0 ? (
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-[#FFFBF8] rounded-2xl border border-black/[0.06] shadow-sm mb-6">
-              <CalendarDays className="w-10 h-10 text-[#4A4A5A]" />
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-[#0D0D0D] rounded-2xl border border-[#333333] shadow-sm mb-6">
+              <CalendarDays className="w-10 h-10 text-[#999999]" />
             </div>
-            <h2 className="text-lg font-semibold text-[#1A1A1A] mb-2">No events yet</h2>
-            <p className="text-[#71717A] mb-6">
+            <h2 className="text-lg font-semibold text-white mb-2">No events yet</h2>
+            <p className="text-[#666666] mb-6">
               Book an event to see it in your schedule.
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-white px-6 py-3 text-base font-semibold rounded-full shadow-md hover:bg-neutral-50 transition-colors text-white"
+              className="inline-flex items-center gap-2 bg-[#1A1A1A] px-6 py-3 text-base font-semibold rounded-full  hover:bg-[#2A2A2A] transition-colors text-white"
             >
               Browse Events
             </Link>
@@ -575,22 +575,22 @@ export default function SchedulePage() {
               {/* Upcoming Events Column */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-[#1A1A1A] rounded-lg flex items-center justify-center">
                     <CalendarDays className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-base font-semibold text-[#1A1A1A]">Upcoming</h2>
-                    <p className="text-xs text-[#71717A]">{upcomingEvents.length} experiences</p>
+                    <h2 className="text-base font-semibold text-white">Upcoming</h2>
+                    <p className="text-xs text-[#666666]">{upcomingEvents.length} experiences</p>
                   </div>
                 </div>
 
                 {upcomingEvents.length === 0 ? (
-                  <div className="bg-[#FFFBF8] rounded-xl border border-black/[0.06] p-6 text-center">
-                    <CalendarDays className="w-8 h-8 text-[#4A4A5A] mx-auto mb-3" />
-                    <p className="text-sm text-[#71717A] mb-3">No upcoming experiences</p>
+                  <div className="bg-[#0D0D0D] rounded-xl border border-[#333333] p-6 text-center">
+                    <CalendarDays className="w-8 h-8 text-[#999999] mx-auto mb-3" />
+                    <p className="text-sm text-[#666666] mb-3">No upcoming experiences</p>
                     <Link
                       href="/"
-                      className="text-sm font-medium text-[#1A1A1A] hover:underline"
+                      className="text-sm font-medium text-white hover:underline"
                     >
                       Browse experiences →
                     </Link>
@@ -602,13 +602,13 @@ export default function SchedulePage() {
                       <EventCard key={booking.id} booking={booking} />
                     ))}
                     {upcomingEvents.length === 1 && (
-                      <div className="bg-[#FFFBF8] rounded-xl border border-black/[0.06] p-4 text-center">
-                        <p className="text-sm text-[#71717A]">
+                      <div className="bg-[#0D0D0D] rounded-xl border border-[#333333] p-4 text-center">
+                        <p className="text-sm text-[#666666]">
                           Your next experience is shown above
                         </p>
                         <Link
                           href="/"
-                          className="text-sm font-medium text-[#1A1A1A] hover:underline mt-2 inline-block"
+                          className="text-sm font-medium text-white hover:underline mt-2 inline-block"
                         >
                           Book more experiences →
                         </Link>
@@ -621,20 +621,20 @@ export default function SchedulePage() {
               {/* Past Events Column */}
               <div>
                 <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 bg-neutral-200 rounded-lg flex items-center justify-center">
-                    <History className="w-4 h-4 text-[#71717A]" />
+                  <div className="w-8 h-8 bg-[#2A2A2A] rounded-lg flex items-center justify-center">
+                    <History className="w-4 h-4 text-[#666666]" />
                   </div>
                   <div>
-                    <h2 className="text-base font-semibold text-[#1A1A1A]">Past Events</h2>
-                    <p className="text-xs text-[#71717A]">{pastEvents.length} attended</p>
+                    <h2 className="text-base font-semibold text-white">Past Events</h2>
+                    <p className="text-xs text-[#666666]">{pastEvents.length} attended</p>
                   </div>
                 </div>
 
                 {pastEvents.length === 0 ? (
-                  <div className="bg-[#FFFBF8] rounded-xl border border-black/[0.06] p-6 text-center">
-                    <History className="w-8 h-8 text-[#4A4A5A] mx-auto mb-3" />
-                    <p className="text-sm text-[#71717A]">No past experiences yet</p>
-                    <p className="text-xs text-[#71717A] mt-1">
+                  <div className="bg-[#0D0D0D] rounded-xl border border-[#333333] p-6 text-center">
+                    <History className="w-8 h-8 text-[#999999] mx-auto mb-3" />
+                    <p className="text-sm text-[#666666]">No past experiences yet</p>
+                    <p className="text-xs text-[#666666] mt-1">
                       Your attended experiences will appear here
                     </p>
                   </div>
@@ -646,7 +646,7 @@ export default function SchedulePage() {
                     {pastEvents.length > 10 && (
                       <Link
                         href="/my-bookings"
-                        className="block text-center py-3 text-sm font-medium text-[#71717A] hover:text-[#1A1A1A] transition-colors"
+                        className="block text-center py-3 text-sm font-medium text-[#666666] hover:text-white transition-colors"
                       >
                         View all {pastEvents.length} past experiences →
                       </Link>

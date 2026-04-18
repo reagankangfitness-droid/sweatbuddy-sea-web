@@ -119,7 +119,7 @@ export function SessionFeedbackSheet({
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 400, damping: 36 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl shadow-2xl"
+            className="fixed bottom-0 left-0 right-0 z-50 bg-[#1A1A1A] rounded-t-2xl"
           >
             <div className="flex justify-center pt-3 pb-1">
               <div className="w-8 h-1 rounded-full bg-black/[0.1]" />
@@ -130,10 +130,10 @@ export function SessionFeedbackSheet({
               {step === 'feedback' && (
                 <div className="py-4">
                   <div className="text-center mb-5">
-                    <h3 className="text-base font-bold text-[#1A1A1A] tracking-tight">
+                    <h3 className="text-base font-bold text-white tracking-tight">
                       How was {sessionTitle}?
                     </h3>
-                    <p className="text-xs text-[#9A9AAA] mt-1">
+                    <p className="text-xs text-[#666666] mt-1">
                       Hosted by {hostName ?? 'the host'}
                     </p>
                   </div>
@@ -145,7 +145,7 @@ export function SessionFeedbackSheet({
                       className="flex flex-col items-center gap-2 px-8 py-4 rounded-2xl border border-black/[0.06] hover:bg-emerald-50 hover:border-emerald-200 transition-all active:scale-95 disabled:opacity-50"
                     >
                       <ThumbsUp className="w-7 h-7 text-emerald-600" />
-                      <span className="text-xs font-semibold text-[#4A4A5A]">Great</span>
+                      <span className="text-xs font-semibold text-[#999999]">Great</span>
                     </button>
 
                     <button
@@ -154,13 +154,13 @@ export function SessionFeedbackSheet({
                       className="flex flex-col items-center gap-2 px-8 py-4 rounded-2xl border border-black/[0.06] hover:bg-red-50 hover:border-red-200 transition-all active:scale-95 disabled:opacity-50"
                     >
                       <ThumbsDown className="w-7 h-7 text-red-500" />
-                      <span className="text-xs font-semibold text-[#4A4A5A]">Not great</span>
+                      <span className="text-xs font-semibold text-[#999999]">Not great</span>
                     </button>
                   </div>
 
                   <button
                     onClick={() => { onClose(); resetState() }}
-                    className="w-full text-center text-xs text-[#9A9AAA] py-2"
+                    className="w-full text-center text-xs text-[#666666] py-2"
                   >
                     Skip
                   </button>
@@ -172,11 +172,11 @@ export function SessionFeedbackSheet({
                 <div className="py-4">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="text-base font-bold text-[#1A1A1A] tracking-tight">What went wrong?</h3>
-                      <p className="text-xs text-[#9A9AAA] mt-0.5">Your report is confidential</p>
+                      <h3 className="text-base font-bold text-white tracking-tight">What went wrong?</h3>
+                      <p className="text-xs text-[#666666] mt-0.5">Your report is confidential</p>
                     </div>
-                    <button onClick={() => { onClose(); resetState() }} className="w-8 h-8 rounded-full bg-[#FFFBF8] flex items-center justify-center">
-                      <X className="w-4 h-4 text-[#71717A]" />
+                    <button onClick={() => { onClose(); resetState() }} className="w-8 h-8 rounded-full bg-[#0D0D0D] flex items-center justify-center">
+                      <X className="w-4 h-4 text-[#666666]" />
                     </button>
                   </div>
 
@@ -188,7 +188,7 @@ export function SessionFeedbackSheet({
                         className={`w-full text-left px-4 py-3 rounded-xl text-sm transition-all ${
                           reportReason === r.value
                             ? 'bg-[#1A1A1A] text-white font-semibold'
-                            : 'bg-[#FFFBF8] text-[#4A4A5A] border border-black/[0.04] hover:border-black/[0.1]'
+                            : 'bg-[#0D0D0D] text-[#999999] border border-[#333333] hover:border-[#666666]'
                         }`}
                       >
                         {r.value === 'NO_SHOW' && <Flag className="w-3.5 h-3.5 inline mr-2" />}
@@ -212,8 +212,8 @@ export function SessionFeedbackSheet({
               {step === 'done' && (
                 <div className="py-8 text-center">
                   <div className="text-3xl mb-2">✓</div>
-                  <p className="text-sm font-semibold text-[#1A1A1A]">Report submitted</p>
-                  <p className="text-xs text-[#9A9AAA] mt-1">We&apos;ll review it within 24 hours</p>
+                  <p className="text-sm font-semibold text-white">Report submitted</p>
+                  <p className="text-xs text-[#666666] mt-1">We&apos;ll review it within 24 hours</p>
                 </div>
               )}
             </div>

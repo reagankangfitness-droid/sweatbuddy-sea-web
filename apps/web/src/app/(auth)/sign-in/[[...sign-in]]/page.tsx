@@ -71,11 +71,11 @@ function SignInContent() {
   const content = getContextualContent()
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#FFFBF8] px-4 py-8 pb-24 md:pb-8">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#0D0D0D] px-4 py-8 pb-24 md:pb-8">
       <div className="w-full max-w-sm mx-auto">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm text-[#71717A] hover:text-[#4A4A5A] transition-colors mb-8"
+          className="inline-flex items-center gap-1.5 text-sm text-[#666666] hover:text-[#999999] transition-colors mb-8"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
@@ -86,11 +86,11 @@ function SignInContent() {
         </div>
 
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-[#1A1A1A] tracking-tight">{content.title}</h1>
-          <p className="text-[#71717A] text-sm mt-1">{content.subtitle}</p>
+          <h1 className="text-2xl font-bold text-white tracking-tight">{content.title}</h1>
+          <p className="text-[#666666] text-sm mt-1">{content.subtitle}</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-black/[0.06] shadow-sm overflow-hidden">
+        <div className="bg-[#1A1A1A] rounded-2xl border border-[#333333] overflow-hidden">
           <SignIn
             appearance={{
               layout: {
@@ -112,23 +112,23 @@ function SignInContent() {
                 formFieldRow: 'w-full',
                 formField: 'w-full gap-1',
                 socialButtons: 'w-full',
-                socialButtonsBlockButton: 'border border-black/[0.06] hover:bg-[#FFFBF8] rounded-xl w-full py-3',
-                socialButtonsBlockButtonText: 'font-medium text-[#4A4A5A]',
+                socialButtonsBlockButton: 'border border-[#333333] hover:bg-[#2A2A2A] rounded-xl w-full py-3',
+                socialButtonsBlockButtonText: 'font-medium text-[#999999]',
                 socialButtonsProviderIcon: 'w-5 h-5',
                 dividerRow: 'my-4',
-                dividerLine: 'bg-black/[0.06]',
-                dividerText: 'text-[#9A9AAA] text-sm px-3',
-                formFieldLabel: 'text-[#4A4A5A] font-medium text-sm',
-                formFieldInput: 'border-black/[0.06] bg-[#FFFBF8] text-[#1A1A1A] focus:border-[#1A1A1A] focus:ring-[#1A1A1A]/10 rounded-xl w-full py-3',
-                formButtonPrimary: 'bg-[#1A1A1A] hover:bg-black text-white rounded-xl w-full py-3 text-base font-semibold',
-                otpCodeFieldInput: 'border-black/[0.06] bg-[#FFFBF8] text-[#1A1A1A] text-lg',
+                dividerLine: 'bg-[#333333]',
+                dividerText: 'text-[#666666] text-sm px-3',
+                formFieldLabel: 'text-[#999999] font-medium text-sm',
+                formFieldInput: 'border-[#333333] bg-[#2A2A2A] text-white focus:border-white focus:ring-white/10 rounded-xl w-full py-3',
+                formButtonPrimary: 'bg-white hover:bg-neutral-200 text-black rounded-xl w-full py-3 text-base font-semibold',
+                otpCodeFieldInput: 'border-[#333333] bg-[#2A2A2A] text-white text-lg',
                 otpCodeFieldInputs: 'gap-2',
                 footerAction: 'pt-4 justify-center',
-                footerActionLink: 'text-[#1A1A1A] hover:text-[#4A4A5A] font-medium',
+                footerActionLink: 'text-white hover:text-[#999999] font-medium',
                 footer: 'hidden',
                 identityPreview: 'justify-center',
-                identityPreviewEditButton: 'text-[#71717A]',
-                formFieldInputShowPasswordButton: 'text-[#71717A]',
+                identityPreviewEditButton: 'text-[#666666]',
+                formFieldInputShowPasswordButton: 'text-[#666666]',
                 alert: 'rounded-xl',
                 alertText: 'text-sm',
               }
@@ -137,7 +137,7 @@ function SignInContent() {
           />
         </div>
 
-        <p className="text-center text-xs text-[#9A9AAA] mt-6">
+        <p className="text-center text-xs text-[#666666] mt-6">
           One account for everything — join and host sessions.
         </p>
       </div>
@@ -148,8 +148,8 @@ function SignInContent() {
 export default function SignInPage() {
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center bg-[#FFFBF8]">
-        <Loader2 className="w-6 h-6 animate-spin text-[#71717A]" />
+      <div className="flex min-h-screen items-center justify-center bg-[#0D0D0D]">
+        <Loader2 className="w-6 h-6 animate-spin text-[#666666]" />
       </div>
     }>
       <SignInContent />

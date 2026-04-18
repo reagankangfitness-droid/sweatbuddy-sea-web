@@ -9,16 +9,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-white text-neutral-900 shadow-md shadow-black/10 hover:bg-neutral-100 hover:shadow-lg active:scale-[0.98] active:shadow-sm",
+        default: "bg-[#1A1A1A] text-white hover:bg-[#2A2A2A] active:scale-[0.98]",
         destructive:
           "bg-red-600 text-white shadow-md shadow-red-600/20 hover:bg-red-700 hover:shadow-lg active:scale-[0.98]",
         outline:
-          "border-2 border-black/[0.06] bg-transparent text-[#1A1A1A] hover:bg-neutral-100 hover:border-black/[0.12] active:scale-[0.98] active:bg-neutral-50",
+          "border-2 border-[#333333] bg-transparent text-white hover:bg-[#2A2A2A] hover:border-[#666666] active:scale-[0.98] active:bg-[#1A1A1A]",
         secondary:
-          "bg-neutral-100 text-[#1A1A1A] hover:bg-neutral-50 active:scale-[0.98] active:bg-neutral-100",
-        ghost: "text-[#71717A] hover:bg-neutral-100 hover:text-[#1A1A1A] active:scale-[0.98] active:bg-neutral-50",
-        link: "text-[#1A1A1A] underline-offset-4 hover:underline focus-visible:underline",
-        gradient: "bg-gradient-to-r from-white to-neutral-200 text-neutral-900 shadow-lg shadow-white/10 hover:shadow-xl hover:from-neutral-100 hover:to-neutral-300 active:scale-[0.98]",
+          "bg-[#2A2A2A] text-white hover:bg-[#333333] active:scale-[0.98] active:bg-[#2A2A2A]",
+        ghost: "text-[#666666] hover:bg-[#2A2A2A] hover:text-white active:scale-[0.98] active:bg-[#1A1A1A]",
+        link: "text-white underline-offset-4 hover:underline focus-visible:underline",
+        gradient: "bg-gradient-to-r from-[#1A1A1A] to-[#2A2A2A] text-white hover:from-[#2A2A2A] hover:to-[#333333] active:scale-[0.98]",
       },
       size: {
         default: "h-12 px-6 py-3",

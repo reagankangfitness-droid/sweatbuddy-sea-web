@@ -194,18 +194,18 @@ export default function QuickPostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFBF8]">
+    <div className="min-h-screen bg-[#0D0D0D]">
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-lg border-b border-black/[0.06]">
+      <div className="sticky top-0 z-30 bg-[#0D0D0D]/95 backdrop-blur-lg border-b border-[#333333]">
         <div className="flex items-center gap-3 px-4 py-3">
-          <button onClick={() => router.back()} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-neutral-100 transition-colors">
-            <ArrowLeft className="w-5 h-5 text-[#4A4A5A]" />
+          <button onClick={() => router.back()} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-[#2A2A2A] transition-colors">
+            <ArrowLeft className="w-5 h-5 text-[#999999]" />
           </button>
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-amber-500" />
-            <h1 className="text-base font-bold text-[#1A1A1A]">Quick session</h1>
+            <h1 className="text-base font-bold text-white">Quick session</h1>
           </div>
-          <Link href="/buddy/host/new" className="ml-auto text-xs text-[#71717A] hover:text-[#4A4A5A]">
+          <Link href="/buddy/host/new" className="ml-auto text-xs text-[#666666] hover:text-[#999999]">
             Full editor →
           </Link>
         </div>
@@ -214,7 +214,7 @@ export default function QuickPostPage() {
       <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
         {/* Category */}
         <div>
-          <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wide mb-3 block">What are you doing?</label>
+          <label className="text-xs font-semibold text-[#666666] uppercase tracking-wide mb-3 block">What are you doing?</label>
           <div className="grid grid-cols-4 gap-2">
             {CATEGORIES.map((cat) => (
               <button
@@ -222,8 +222,8 @@ export default function QuickPostPage() {
                 onClick={() => setCategorySlug(categorySlug === cat.slug ? '' : cat.slug)}
                 className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border text-center transition-all ${
                   categorySlug === cat.slug
-                    ? 'bg-[#1A1A1A] text-white border-[#1A1A1A] shadow-md'
-                    : 'bg-white text-[#4A4A5A] border-black/[0.06] hover:border-black/[0.12]'
+                    ? 'bg-[#1A1A1A] text-white border-[#1A1A1A] '
+                    : 'bg-[#1A1A1A] text-[#999999] border-[#333333] hover:border-[#666666]'
                 }`}
               >
                 <span className="text-xl">{cat.emoji}</span>
@@ -235,7 +235,7 @@ export default function QuickPostPage() {
 
         {/* When */}
         <div>
-          <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wide mb-3 block">When?</label>
+          <label className="text-xs font-semibold text-[#666666] uppercase tracking-wide mb-3 block">When?</label>
           <div className="flex flex-wrap gap-2">
             {timePresets.map((preset) => (
               <button
@@ -246,8 +246,8 @@ export default function QuickPostPage() {
                 }}
                 className={`px-4 py-2.5 rounded-full text-sm font-medium border transition-all ${
                   timeLabel === preset.label
-                    ? 'bg-[#1A1A1A] text-white border-[#1A1A1A] shadow-md'
-                    : 'bg-white text-[#4A4A5A] border-black/[0.06] hover:border-black/[0.12]'
+                    ? 'bg-[#1A1A1A] text-white border-[#1A1A1A] '
+                    : 'bg-[#1A1A1A] text-[#999999] border-[#333333] hover:border-[#666666]'
                 }`}
               >
                 {preset.label}
@@ -258,16 +258,16 @@ export default function QuickPostPage() {
 
         {/* Where */}
         <div>
-          <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wide mb-3 block">Where?</label>
-          <div className="flex items-center gap-2 px-4 py-3 bg-white rounded-xl border border-black/[0.06]">
-            <MapPin className="w-4 h-4 text-[#71717A] flex-shrink-0" />
+          <label className="text-xs font-semibold text-[#666666] uppercase tracking-wide mb-3 block">Where?</label>
+          <div className="flex items-center gap-2 px-4 py-3 bg-[#1A1A1A] rounded-xl border border-[#333333]">
+            <MapPin className="w-4 h-4 text-[#666666] flex-shrink-0" />
             {locationLoading ? (
-              <div className="flex items-center gap-2 text-sm text-[#71717A]">
+              <div className="flex items-center gap-2 text-sm text-[#666666]">
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
                 Detecting location...
               </div>
             ) : (
-              <span className="text-sm text-[#4A4A5A] truncate">
+              <span className="text-sm text-[#999999] truncate">
                 {address || city || 'Location detected'}
               </span>
             )}
@@ -276,20 +276,20 @@ export default function QuickPostPage() {
 
         {/* Note */}
         <div>
-          <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wide mb-3 block">Say something <span className="text-[#9A9AAA] normal-case">(optional)</span></label>
+          <label className="text-xs font-semibold text-[#666666] uppercase tracking-wide mb-3 block">Say something <span className="text-[#666666] normal-case">(optional)</span></label>
           <input
             type="text"
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Easy pace, all welcome"
             maxLength={100}
-            className="w-full px-4 py-3 bg-white rounded-xl border border-black/[0.06] text-sm text-[#1A1A1A] placeholder:text-[#9A9AAA] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/10 focus:border-black/[0.12] transition-all"
+            className="w-full px-4 py-3 bg-[#1A1A1A] rounded-xl border border-[#333333] text-sm text-white placeholder:text-[#666666] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]/10 focus:border-[#666666] transition-all"
           />
         </div>
 
         {/* Spots */}
         <div>
-          <label className="text-xs font-semibold text-[#71717A] uppercase tracking-wide mb-3 block">Spots</label>
+          <label className="text-xs font-semibold text-[#666666] uppercase tracking-wide mb-3 block">Spots</label>
           <div className="flex gap-2">
             {['4', '6', '8', '12', '20', ''].map((val) => (
               <button
@@ -298,7 +298,7 @@ export default function QuickPostPage() {
                 className={`px-4 py-2.5 rounded-full text-sm font-medium border transition-all ${
                   spots === val
                     ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
-                    : 'bg-white text-[#4A4A5A] border-black/[0.06] hover:border-black/[0.12]'
+                    : 'bg-[#1A1A1A] text-[#999999] border-[#333333] hover:border-[#666666]'
                 }`}
               >
                 {val || 'No limit'}
@@ -321,7 +321,7 @@ export default function QuickPostPage() {
             )}
           </button>
           {!canPost && !posting && (
-            <p className="text-center text-xs text-[#71717A] mt-2">
+            <p className="text-center text-xs text-[#666666] mt-2">
               Pick an activity and time to post
             </p>
           )}

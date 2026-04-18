@@ -93,15 +93,15 @@ export default function HostTemplatesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFBF8]">
+    <div className="min-h-screen bg-[#0D0D0D]">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-black/[0.06]">
+      <div className="sticky top-0 z-10 bg-[#0D0D0D]/95 backdrop-blur border-b border-[#333333]">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button onClick={() => router.back()} aria-label="Go back" className="p-1 -ml-1 rounded-lg hover:bg-[#FFFBF8]">
-              <ArrowLeft className="w-5 h-5 text-[#4A4A5A]" />
+            <button onClick={() => router.back()} aria-label="Go back" className="p-1 -ml-1 rounded-lg hover:bg-[#2A2A2A]">
+              <ArrowLeft className="w-5 h-5 text-[#999999]" />
             </button>
-            <h1 className="text-base font-semibold text-[#1A1A1A]">Recurring Sessions</h1>
+            <h1 className="text-base font-semibold text-white">Recurring Sessions</h1>
           </div>
           <button
             onClick={() => router.push('/buddy/host/new')}
@@ -116,13 +116,13 @@ export default function HostTemplatesPage() {
       <div className="max-w-2xl mx-auto px-4 py-6 pb-32">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-6 h-6 animate-spin text-[#71717A]" />
+            <Loader2 className="w-6 h-6 animate-spin text-[#666666]" />
           </div>
         ) : templates.length === 0 ? (
           <div className="text-center py-20">
             <Calendar className="w-12 h-12 text-[#D4D4D4] mx-auto mb-4" />
-            <h2 className="text-lg font-semibold text-[#1A1A1A] mb-2">No recurring sessions yet</h2>
-            <p className="text-sm text-[#71717A] mb-6 max-w-xs mx-auto">
+            <h2 className="text-lg font-semibold text-white mb-2">No recurring sessions yet</h2>
+            <p className="text-sm text-[#666666] mb-6 max-w-xs mx-auto">
               Create a recurring session to automatically generate weekly sessions.
             </p>
             <button
@@ -140,29 +140,29 @@ export default function HostTemplatesPage() {
                 key={template.id}
                 className={`rounded-2xl border p-5 transition-all ${
                   template.isActive
-                    ? 'border-black/[0.06] bg-white'
-                    : 'border-black/[0.04] bg-neutral-50 opacity-70'
+                    ? 'border-[#333333] bg-[#1A1A1A]'
+                    : 'border-[#333333] bg-[#2A2A2A] opacity-70'
                 }`}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-base font-semibold text-[#1A1A1A] truncate">{template.title}</h3>
+                      <h3 className="text-base font-semibold text-white truncate">{template.title}</h3>
                       {!template.isActive && (
-                        <span className="shrink-0 text-xs font-medium text-[#71717A] bg-neutral-100 px-2 py-0.5 rounded-full">Paused</span>
+                        <span className="shrink-0 text-xs font-medium text-[#666666] bg-[#2A2A2A] px-2 py-0.5 rounded-full">Paused</span>
                       )}
                     </div>
                     {template.description && (
-                      <p className="text-sm text-[#71717A] line-clamp-1">{template.description}</p>
+                      <p className="text-sm text-[#666666] line-clamp-1">{template.description}</p>
                     )}
                   </div>
-                  <span className={`shrink-0 ml-3 text-sm font-semibold ${template.price ? 'text-[#1A1A1A]' : 'text-green-600'}`}>
+                  <span className={`shrink-0 ml-3 text-sm font-semibold ${template.price ? 'text-white' : 'text-green-600'}`}>
                     {formatPrice(template.price, template.currency)}
                   </span>
                 </div>
 
                 {/* Schedule */}
-                <div className="flex flex-wrap gap-3 text-xs text-[#71717A] mb-4">
+                <div className="flex flex-wrap gap-3 text-xs text-[#666666] mb-4">
                   <div className="flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5" />
                     <span>{template.daysOfWeek.map((d) => DAY_LABELS[d] || d).join(', ')}</span>
@@ -177,7 +177,7 @@ export default function HostTemplatesPage() {
                       <span>Max {template.maxParticipants}</span>
                     </div>
                   )}
-                  <div className="flex items-center gap-1 text-[#71717A]">
+                  <div className="flex items-center gap-1 text-[#666666]">
                     <span>{template._count.sessions} sessions generated</span>
                   </div>
                 </div>
@@ -187,7 +187,7 @@ export default function HostTemplatesPage() {
                   <button
                     onClick={() => toggleActive(template.id, template.isActive)}
                     disabled={actionLoading === template.id}
-                    className="flex items-center gap-1.5 rounded-lg border border-black/[0.06] px-3 py-2 text-xs font-medium text-[#4A4A5A] hover:bg-neutral-50 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-1.5 rounded-lg border border-[#333333] px-3 py-2 text-xs font-medium text-[#999999] hover:bg-[#2A2A2A] transition-colors disabled:opacity-50"
                   >
                     {actionLoading === template.id ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -201,7 +201,7 @@ export default function HostTemplatesPage() {
                   <button
                     onClick={() => deleteTemplate(template.id)}
                     disabled={actionLoading === template.id}
-                    className="flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-950 transition-colors disabled:opacity-50"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     Delete

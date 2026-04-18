@@ -3,15 +3,15 @@ import Link from 'next/link'
 export default function ActivityLoading() {
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-lg border-b border-black/[0.06]">
+      <header className="sticky top-0 z-40 bg-[#0D0D0D]/95 backdrop-blur-lg border-b border-[#333333]">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-4xl mx-auto flex items-center gap-4 px-4 py-3">
-            <Link href="/buddy" className="w-10 h-10 flex items-center justify-center rounded-full bg-[#FFFBF8] border border-black/[0.06]">
-              <svg className="w-5 h-5 text-[#4A4A5A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <Link href="/buddy" className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0D0D0D] border border-[#333333]">
+              <svg className="w-5 h-5 text-[#999999]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
               </svg>
             </Link>
-            <span className="text-sm font-medium text-[#71717A]">Activity Details</span>
+            <span className="text-sm font-medium text-[#666666]">Activity Details</span>
           </div>
         </div>
       </header>

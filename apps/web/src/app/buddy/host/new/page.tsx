@@ -363,12 +363,12 @@ export default function NewSessionPage() {
   // Success screen
   if (publishedId) {
     return (
-      <div className="min-h-screen bg-[#FFFBF8] flex flex-col items-center justify-center px-4 text-center">
+      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-4 text-center">
         <CheckCircle2 className="w-16 h-16 text-green-500 mb-6" />
-        <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2">
+        <h1 className="text-2xl font-bold text-white mb-2">
           {isRecurringSuccess ? 'Recurring session created!' : 'Session created!'}
         </h1>
-        <p className="text-[#71717A] mb-8 max-w-xs">
+        <p className="text-[#666666] mb-8 max-w-xs">
           {isRecurringSuccess
             ? 'Sessions will auto-generate for the next 4 weeks. You can manage your recurring sessions anytime.'
             : 'Your session is live. People can now find and join it.'}
@@ -391,7 +391,7 @@ export default function NewSessionPage() {
           )}
           <button
             onClick={() => router.push('/buddy')}
-            className="w-full rounded-xl border border-black/[0.06] px-4 py-3 text-sm font-medium text-[#4A4A5A]"
+            className="w-full rounded-xl border border-[#333333] px-4 py-3 text-sm font-medium text-[#999999]"
           >
             Back to Discover
           </button>
@@ -401,15 +401,15 @@ export default function NewSessionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFBF8]">
+    <div className="min-h-screen bg-[#0D0D0D]">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-black/[0.06]">
+      <div className="sticky top-0 z-10 bg-[#0D0D0D]/95 backdrop-blur border-b border-[#333333]">
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center gap-3">
-          <button onClick={prevStep} aria-label="Go back" className="p-1 -ml-1 rounded-lg hover:bg-[#FFFBF8]">
-            <ArrowLeft className="w-5 h-5 text-[#4A4A5A]" />
+          <button onClick={prevStep} aria-label="Go back" className="p-1 -ml-1 rounded-lg hover:bg-[#2A2A2A]">
+            <ArrowLeft className="w-5 h-5 text-[#999999]" />
           </button>
           <div className="flex-1">
-            <h1 className="text-base font-semibold text-[#1A1A1A]">Create a Session</h1>
+            <h1 className="text-base font-semibold text-white">Create a Session</h1>
             <div className="flex gap-1 mt-1" role="progressbar" aria-label={`Step ${stepIdx + 1} of ${STEPS.length}: ${step === 'basic' ? 'Basic Info' : step === 'details' ? 'Details' : step === 'pricing' ? 'Pricing' : 'Preview'}`} aria-valuenow={stepIdx + 1} aria-valuemin={1} aria-valuemax={STEPS.length}>
               {STEPS.map((s, i) => (
                 <div
@@ -429,13 +429,13 @@ export default function NewSessionPage() {
         {step === 'basic' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-bold text-[#1A1A1A]">What are you hosting?</h2>
-              <p className="text-sm text-[#71717A] mt-1">The basics about your session</p>
+              <h2 className="text-xl font-bold text-white">What are you hosting?</h2>
+              <p className="text-sm text-[#666666] mt-1">The basics about your session</p>
             </div>
 
             {/* Activity type */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-3">
+              <label className="block text-sm font-medium text-[#999999] mb-3">
                 Activity type <span className="text-red-500">*</span>
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -447,7 +447,7 @@ export default function NewSessionPage() {
                     className={`flex flex-col items-center gap-1 rounded-xl border p-3 text-xs font-medium transition-all ${
                       form.categorySlug === type.slug
                         ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
-                        : 'border-black/[0.06] bg-white text-[#4A4A5A] hover:border-black/[0.12]'
+                        : 'border-[#333333] bg-[#1A1A1A] text-[#999999] hover:border-[#666666]'
                     }`}
                   >
                     <span className="text-xl">{type.emoji}</span>
@@ -459,7 +459,7 @@ export default function NewSessionPage() {
 
             {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+              <label className="block text-sm font-medium text-[#999999] mb-2">
                 Session title <span className="text-red-500">*</span>
               </label>
               <input
@@ -473,15 +473,15 @@ export default function NewSessionPage() {
                 }
                 maxLength={100}
                 aria-required="true"
-                className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#666666] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
               />
-              <p className="mt-1 text-xs text-right text-[#71717A]">{form.title.length}/100</p>
+              <p className="mt-1 text-xs text-right text-[#666666]">{form.title.length}/100</p>
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
-                Description <span className="text-[#71717A] font-normal">(optional)</span>
+              <label className="block text-sm font-medium text-[#999999] mb-2">
+                Description <span className="text-[#666666] font-normal">(optional)</span>
               </label>
               <textarea
                 value={form.description}
@@ -489,15 +489,15 @@ export default function NewSessionPage() {
                 placeholder="What's the vibe? What should people expect?"
                 maxLength={500}
                 rows={4}
-                className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] resize-none"
+                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#666666] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] resize-none"
               />
-              <p className="mt-1 text-xs text-right text-[#71717A]">{form.description.length}/500</p>
+              <p className="mt-1 text-xs text-right text-[#666666]">{form.description.length}/500</p>
             </div>
 
             {/* Cover image upload */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
-                Cover image <span className="text-[#71717A] font-normal">(optional)</span>
+              <label className="block text-sm font-medium text-[#999999] mb-2">
+                Cover image <span className="text-[#666666] font-normal">(optional)</span>
               </label>
               {form.imageUrl ? (
                 <div className="relative">
@@ -505,7 +505,7 @@ export default function NewSessionPage() {
                   <img
                     src={form.imageUrl}
                     alt="Cover preview"
-                    className="w-full h-40 object-cover rounded-xl border border-black/[0.06]"
+                    className="w-full h-40 object-cover rounded-xl border border-[#333333]"
                   />
                   <button
                     type="button"
@@ -521,7 +521,7 @@ export default function NewSessionPage() {
                   type="button"
                   disabled={coverUploading}
                   onClick={() => coverInputRef.current?.click()}
-                  className="w-full h-32 rounded-xl border-2 border-dashed border-black/[0.12] bg-white flex flex-col items-center justify-center gap-2 text-[#71717A] hover:border-black/[0.12] transition-colors active:scale-[0.98]"
+                  className="w-full h-32 rounded-xl border-2 border-dashed border-[#666666] bg-[#1A1A1A] flex flex-col items-center justify-center gap-2 text-[#666666] hover:border-[#666666] transition-colors active:scale-[0.98]"
                 >
                   {coverUploading ? (
                     <>
@@ -532,7 +532,7 @@ export default function NewSessionPage() {
                     <>
                       <ImagePlus className="w-6 h-6" />
                       <span className="text-sm font-medium">Tap to upload photo</span>
-                      <span className="text-xs text-[#71717A]">JPG, PNG up to 8MB</span>
+                      <span className="text-xs text-[#666666]">JPG, PNG up to 8MB</span>
                     </>
                   )}
                 </button>
@@ -568,20 +568,20 @@ export default function NewSessionPage() {
 
             {/* Cancellation policy */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+              <label className="block text-sm font-medium text-[#999999] mb-2">
                 Cancellation policy
               </label>
               <div className="relative">
                 <select
                   value={form.cancellationPolicy}
                   onChange={(e) => update('cancellationPolicy', e.target.value)}
-                  className="w-full appearance-none rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                  className="w-full appearance-none rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
                 >
                   {CANCELLATION_POLICIES.map((p) => (
                     <option key={p.value} value={p.value}>{p.label}</option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#71717A] pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666] pointer-events-none" />
               </div>
             </div>
           </div>
@@ -591,13 +591,13 @@ export default function NewSessionPage() {
         {step === 'details' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-bold text-[#1A1A1A]">When &amp; where?</h2>
-              <p className="text-sm text-[#71717A] mt-1">Help people show up on time</p>
+              <h2 className="text-xl font-bold text-white">When &amp; where?</h2>
+              <p className="text-sm text-[#666666] mt-1">Help people show up on time</p>
             </div>
 
             {/* One-time / Recurring toggle */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-3">
+              <label className="block text-sm font-medium text-[#999999] mb-3">
                 Session type
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -612,11 +612,11 @@ export default function NewSessionPage() {
                     className={`flex flex-col items-center gap-1 rounded-xl border p-4 text-sm font-medium transition-all ${
                       form.isRecurring === opt.value
                         ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
-                        : 'border-black/[0.06] bg-white text-[#4A4A5A] hover:border-black/[0.12]'
+                        : 'border-[#333333] bg-[#1A1A1A] text-[#999999] hover:border-[#666666]'
                     }`}
                   >
                     <span className="font-semibold">{opt.label}</span>
-                    <span className={`text-xs ${form.isRecurring === opt.value ? 'opacity-70' : 'text-[#71717A]'}`}>{opt.sub}</span>
+                    <span className={`text-xs ${form.isRecurring === opt.value ? 'opacity-70' : 'text-[#666666]'}`}>{opt.sub}</span>
                   </button>
                 ))}
               </div>
@@ -625,7 +625,7 @@ export default function NewSessionPage() {
             {/* Recurring: Day-of-week selector */}
             {form.isRecurring && (
               <div>
-                <label className="block text-sm font-medium text-[#4A4A5A] mb-3">
+                <label className="block text-sm font-medium text-[#999999] mb-3">
                   Which days? <span className="text-red-500">*</span>
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -646,7 +646,7 @@ export default function NewSessionPage() {
                         className={`px-4 py-2.5 rounded-full text-sm font-medium transition-all ${
                           selected
                             ? 'bg-[#1A1A1A] text-white'
-                            : 'bg-white border border-black/[0.06] text-[#4A4A5A] hover:border-black/[0.12]'
+                            : 'bg-[#1A1A1A] border border-[#333333] text-[#999999] hover:border-[#666666]'
                         }`}
                       >
                         {day.label}
@@ -660,7 +660,7 @@ export default function NewSessionPage() {
             {/* One-time: Date picker */}
             {!form.isRecurring && (
               <div className="overflow-hidden">
-                <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+                <label className="block text-sm font-medium text-[#999999] mb-2">
                   Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -669,7 +669,7 @@ export default function NewSessionPage() {
                   onChange={(e) => update('startDate', e.target.value)}
                   min={new Date().toISOString().split('T')[0]}
                   aria-required="true"
-                  className="w-full min-w-0 rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] box-border"
+                  className="w-full min-w-0 rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] box-border"
                 />
               </div>
             )}
@@ -677,7 +677,7 @@ export default function NewSessionPage() {
             {/* Time */}
             <div className="grid grid-cols-2 gap-3">
               <div className="overflow-hidden">
-                <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+                <label className="block text-sm font-medium text-[#999999] mb-2">
                   Start time <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -685,18 +685,18 @@ export default function NewSessionPage() {
                   value={form.startTime}
                   onChange={(e) => update('startTime', e.target.value)}
                   aria-required="true"
-                  className="w-full min-w-0 rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] box-border"
+                  className="w-full min-w-0 rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] box-border"
                 />
               </div>
               <div className="overflow-hidden">
-                <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
-                  End time <span className="text-[#71717A] font-normal">(optional)</span>
+                <label className="block text-sm font-medium text-[#999999] mb-2">
+                  End time <span className="text-[#666666] font-normal">(optional)</span>
                 </label>
                 <input
                   type="time"
                   value={form.endTime}
                   onChange={(e) => update('endTime', e.target.value)}
-                  className="w-full min-w-0 rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] box-border"
+                  className="w-full min-w-0 rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] box-border"
                 />
               </div>
             </div>
@@ -704,22 +704,22 @@ export default function NewSessionPage() {
             {/* Recurring: End date (optional) */}
             {form.isRecurring && (
               <div className="overflow-hidden">
-                <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
-                  Runs until <span className="text-[#71717A] font-normal">(optional — leave blank for ongoing)</span>
+                <label className="block text-sm font-medium text-[#999999] mb-2">
+                  Runs until <span className="text-[#666666] font-normal">(optional — leave blank for ongoing)</span>
                 </label>
                 <input
                   type="date"
                   value={form.recurrenceEndDate}
                   onChange={(e) => update('recurrenceEndDate', e.target.value)}
                   min={new Date().toISOString().split('T')[0]}
-                  className="w-full min-w-0 rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] box-border"
+                  className="w-full min-w-0 rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#1A1A1A] box-border"
                 />
               </div>
             )}
 
             {/* Location */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+              <label className="block text-sm font-medium text-[#999999] mb-2">
                 Meeting point <span className="text-red-500">*</span>
               </label>
               <LocationAutocomplete
@@ -739,8 +739,8 @@ export default function NewSessionPage() {
 
             {/* Max people */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
-                Max attendees <span className="text-[#71717A] font-normal">(optional — leave blank for unlimited)</span>
+              <label className="block text-sm font-medium text-[#999999] mb-2">
+                Max attendees <span className="text-[#666666] font-normal">(optional — leave blank for unlimited)</span>
               </label>
               <input
                 type="number"
@@ -749,40 +749,40 @@ export default function NewSessionPage() {
                 placeholder="e.g. 10"
                 min={1}
                 max={500}
-                className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#666666] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
               />
             </div>
 
             {/* Fitness level */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+              <label className="block text-sm font-medium text-[#999999] mb-2">
                 Who should join?
               </label>
               <div className="relative">
                 <select
                   value={form.fitnessLevel}
                   onChange={(e) => update('fitnessLevel', e.target.value)}
-                  className="w-full appearance-none rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                  className="w-full appearance-none rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
                 >
                   {FITNESS_LEVELS.map((l) => (
                     <option key={l.value} value={l.value}>{l.label}</option>
                   ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#71717A] pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666] pointer-events-none" />
               </div>
             </div>
 
             {/* What to bring */}
             <div>
-              <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
-                What to bring <span className="text-[#71717A] font-normal">(optional)</span>
+              <label className="block text-sm font-medium text-[#999999] mb-2">
+                What to bring <span className="text-[#666666] font-normal">(optional)</span>
               </label>
               <input
                 type="text"
                 value={form.whatToBring}
                 onChange={(e) => update('whatToBring', e.target.value)}
                 placeholder="e.g. Running shoes, water bottle"
-                className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#666666] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
               />
             </div>
           </div>
@@ -792,8 +792,8 @@ export default function NewSessionPage() {
         {step === 'pricing' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-bold text-[#1A1A1A]">Free or paid?</h2>
-              <p className="text-sm text-[#71717A] mt-1">You can charge for your time and expertise</p>
+              <h2 className="text-xl font-bold text-white">Free or paid?</h2>
+              <p className="text-sm text-[#666666] mt-1">You can charge for your time and expertise</p>
             </div>
 
             {/* Free/Paid toggle */}
@@ -812,12 +812,12 @@ export default function NewSessionPage() {
                     className={`flex flex-col items-center gap-2 rounded-2xl border p-5 transition-all ${
                       selected
                         ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
-                        : 'border-black/[0.06] bg-white text-[#4A4A5A] hover:border-black/[0.12]'
+                        : 'border-[#333333] bg-[#1A1A1A] text-[#999999] hover:border-[#666666]'
                     }`}
                   >
                     <span className="text-2xl">{opt.emoji}</span>
                     <span className="font-semibold">{opt.label}</span>
-                    <span className={`text-xs ${selected ? 'opacity-70' : 'text-[#71717A]'}`}>{opt.sub}</span>
+                    <span className={`text-xs ${selected ? 'opacity-70' : 'text-[#666666]'}`}>{opt.sub}</span>
                   </button>
                 )
               })}
@@ -827,7 +827,7 @@ export default function NewSessionPage() {
             {form.price !== '0' && (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#4A4A5A] mb-2">
+                  <label className="block text-sm font-medium text-[#999999] mb-2">
                     Price per person
                   </label>
                   <div className="flex gap-2">
@@ -835,7 +835,7 @@ export default function NewSessionPage() {
                       value={form.currency}
                       onChange={(e) => update('currency', e.target.value)}
                       aria-label="Currency"
-                      className="rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-base text-[#1A1A1A] focus:outline-none min-w-[80px]"
+                      className="rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-base text-white focus:outline-none min-w-[80px]"
                     >
                       {['SGD', 'USD', 'MYR', 'AUD', 'GBP', 'EUR'].map((c) => (
                         <option key={c}>{c}</option>
@@ -848,7 +848,7 @@ export default function NewSessionPage() {
                       placeholder="15"
                       min={1}
                       step={1}
-                      className="flex-1 rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                      className="flex-1 rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#666666] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
                     />
                   </div>
                 </div>
@@ -857,12 +857,12 @@ export default function NewSessionPage() {
                 {Number(form.price) > 0 && (
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#4A4A5A] mb-3">
+                      <label className="block text-sm font-medium text-[#999999] mb-3">
                         How will people pay? <span className="text-red-500">*</span>
                       </label>
                       <div className="space-y-3">
                         {/* PayNow option */}
-                        <label className="flex items-start gap-3 rounded-xl border border-black/[0.06] p-4 cursor-pointer hover:border-black/[0.12] transition-colors">
+                        <label className="flex items-start gap-3 rounded-xl border border-[#333333] p-4 cursor-pointer hover:border-[#666666] transition-colors">
                           <input
                             type="checkbox"
                             checked={form.acceptPayNow}
@@ -870,13 +870,13 @@ export default function NewSessionPage() {
                             className="mt-0.5 rounded"
                           />
                           <div>
-                            <p className="text-sm font-medium text-[#1A1A1A]">PayNow (QR code)</p>
-                            <p className="text-xs text-[#71717A] mt-0.5">Attendees scan your QR and upload proof. You verify manually.</p>
+                            <p className="text-sm font-medium text-white">PayNow (QR code)</p>
+                            <p className="text-xs text-[#666666] mt-0.5">Attendees scan your QR and upload proof. You verify manually.</p>
                           </div>
                         </label>
 
                         {/* Stripe option */}
-                        <label className="flex items-start gap-3 rounded-xl border border-black/[0.06] p-4 cursor-pointer hover:border-black/[0.12] transition-colors">
+                        <label className="flex items-start gap-3 rounded-xl border border-[#333333] p-4 cursor-pointer hover:border-[#666666] transition-colors">
                           <input
                             type="checkbox"
                             checked={form.acceptStripe}
@@ -884,8 +884,8 @@ export default function NewSessionPage() {
                             className="mt-0.5 rounded"
                           />
                           <div>
-                            <p className="text-sm font-medium text-[#1A1A1A]">Stripe (card / online)</p>
-                            <p className="text-xs text-[#71717A] mt-0.5">Instant card payments. Requires Stripe account connected.</p>
+                            <p className="text-sm font-medium text-white">Stripe (card / online)</p>
+                            <p className="text-xs text-[#666666] mt-0.5">Instant card payments. Requires Stripe account connected.</p>
                           </div>
                         </label>
                       </div>
@@ -893,11 +893,11 @@ export default function NewSessionPage() {
 
                     {/* PayNow details — shown when PayNow selected */}
                     {form.acceptPayNow && (
-                      <div className="space-y-4 rounded-xl border border-black/[0.06] p-4">
-                        <p className="text-sm font-semibold text-[#1A1A1A]">PayNow details</p>
+                      <div className="space-y-4 rounded-xl border border-[#333333] p-4">
+                        <p className="text-sm font-semibold text-white">PayNow details</p>
 
                         <div>
-                          <label className="block text-xs font-medium text-[#4A4A5A] mb-2">
+                          <label className="block text-xs font-medium text-[#999999] mb-2">
                             Your name (shown to payers)
                           </label>
                           <input
@@ -905,12 +905,12 @@ export default function NewSessionPage() {
                             value={form.paynowName}
                             onChange={(e) => update('paynowName', e.target.value)}
                             placeholder="e.g. Reagan Kang"
-                            className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                            className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#666666] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-xs font-medium text-[#4A4A5A] mb-2">
+                          <label className="block text-xs font-medium text-[#999999] mb-2">
                             Phone number (optional)
                           </label>
                           <input
@@ -918,12 +918,12 @@ export default function NewSessionPage() {
                             value={form.paynowPhoneNumber}
                             onChange={(e) => update('paynowPhoneNumber', e.target.value)}
                             placeholder="e.g. +65 9123 4567"
-                            className="w-full rounded-xl border border-black/[0.06] bg-white px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#71717A] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
+                            className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#666666] focus:outline-none focus:ring-2 focus:ring-[#1A1A1A]"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-xs font-medium text-[#4A4A5A] mb-2">
+                          <label className="block text-xs font-medium text-[#999999] mb-2">
                             PayNow QR code <span className="text-red-500">*</span>
                           </label>
                           {qrPreviewUrl || form.paynowQrImageUrl ? (
@@ -932,7 +932,7 @@ export default function NewSessionPage() {
                               <img
                                 src={qrPreviewUrl || form.paynowQrImageUrl}
                                 alt="PayNow QR"
-                                className="w-32 h-32 object-contain rounded-xl border border-black/[0.06]"
+                                className="w-32 h-32 object-contain rounded-xl border border-[#333333]"
                               />
                               <button
                                 type="button"
@@ -952,7 +952,7 @@ export default function NewSessionPage() {
                             <button
                               type="button"
                               onClick={() => qrInputRef.current?.click()}
-                              className="flex items-center gap-2 rounded-xl border border-dashed border-black/[0.12] px-4 py-6 text-sm text-[#71717A] hover:border-neutral-500  transition-colors w-full justify-center"
+                              className="flex items-center gap-2 rounded-xl border border-dashed border-[#666666] px-4 py-6 text-sm text-[#666666] hover:border-neutral-500  transition-colors w-full justify-center"
                             >
                               <Upload className="w-4 h-4" />
                               Upload QR image
@@ -1008,28 +1008,28 @@ export default function NewSessionPage() {
         {step === 'preview' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-bold text-[#1A1A1A]">Looks good?</h2>
-              <p className="text-sm text-[#71717A] mt-1">Here&apos;s how your session will appear</p>
+              <h2 className="text-xl font-bold text-white">Looks good?</h2>
+              <p className="text-sm text-[#666666] mt-1">Here&apos;s how your session will appear</p>
             </div>
 
-            <div className="rounded-2xl border border-black/[0.06] p-5 space-y-4">
+            <div className="rounded-2xl border border-[#333333] p-5 space-y-4">
               <div className="flex items-start justify-between">
                 <div>
-                  <div className="text-xs text-[#71717A] mb-1">
+                  <div className="text-xs text-[#666666] mb-1">
                     {ACTIVITY_TYPES.find((t) => t.slug === form.categorySlug)?.emoji}{' '}
                     {ACTIVITY_TYPES.find((t) => t.slug === form.categorySlug)?.label}
                   </div>
-                  <h3 className="text-base font-bold text-[#1A1A1A]">{form.title}</h3>
+                  <h3 className="text-base font-bold text-white">{form.title}</h3>
                   {form.description && (
-                    <p className="text-sm text-[#71717A] mt-1">{form.description}</p>
+                    <p className="text-sm text-[#666666] mt-1">{form.description}</p>
                   )}
                 </div>
-                <span className={`text-sm font-semibold ${Number(form.price) > 0 ? 'text-[#1A1A1A]' : 'text-green-600'}`}>
+                <span className={`text-sm font-semibold ${Number(form.price) > 0 ? 'text-white' : 'text-green-600'}`}>
                   {Number(form.price) > 0 ? `${form.currency} ${form.price}` : 'Free'}
                 </span>
               </div>
 
-              <div className="space-y-2 text-sm text-[#71717A]">
+              <div className="space-y-2 text-sm text-[#666666]">
                 {form.isRecurring ? (
                   <div className="flex items-center gap-2">
                     <span>🔁</span>
@@ -1090,7 +1090,7 @@ export default function NewSessionPage() {
                 <button
                   key={link.target}
                   onClick={() => setStep(link.target)}
-                  className="w-full text-left text-sm text-[#71717A] hover:text-neutral-600 hover:text-[#4A4A5A] underline"
+                  className="w-full text-left text-sm text-[#666666] hover:text-neutral-600 hover:text-[#999999] underline"
                 >
                   {link.label}
                 </button>
@@ -1101,7 +1101,7 @@ export default function NewSessionPage() {
       </div>
 
       {/* Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur border-t border-black/[0.06] p-4 z-40 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+      <div className="fixed bottom-0 left-0 right-0 bg-[#0D0D0D]/95 backdrop-blur border-t border-[#333333] p-4 z-40 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
         <div className="max-w-lg mx-auto">
           {step === 'preview' ? (
             <button

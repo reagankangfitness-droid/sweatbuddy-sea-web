@@ -47,19 +47,19 @@ export default async function CitiesPage() {
   const comingSoonCities = cities.filter(c => !c.isLaunched)
 
   return (
-    <div className="min-h-screen bg-[#FFFBF8]">
+    <div className="min-h-screen bg-[#0D0D0D]">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-black/[0.06]">
+      <header className="sticky top-0 z-50 bg-[#0D0D0D]/95 backdrop-blur-md border-b border-[#333333]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link
               href="/"
-              className="flex items-center gap-2 text-[#71717A] hover:text-[#1A1A1A] transition-colors"
+              className="flex items-center gap-2 text-[#666666] hover:text-white transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span className="font-medium">Home</span>
             </Link>
-            <Link href="/" className="font-sans font-bold text-xl text-[#1A1A1A]">
+            <Link href="/" className="font-sans font-bold text-xl text-white">
               sweatbuddies
             </Link>
             <div className="w-20" />
@@ -70,10 +70,10 @@ export default async function CitiesPage() {
       {/* Hero */}
       <section className="py-16 sm:py-20 text-center">
         <div className="max-w-4xl mx-auto px-4">
-          <h1 className="font-sans font-bold text-4xl sm:text-5xl text-[#1A1A1A] mb-4">
+          <h1 className="font-sans font-bold text-4xl sm:text-5xl text-white mb-4">
             SweatBuddies Cities
           </h1>
-          <p className="text-lg text-[#71717A] max-w-2xl mx-auto">
+          <p className="text-lg text-[#666666] max-w-2xl mx-auto">
             Find fitness events and communities across Southeast Asia. Pick your city to explore.
           </p>
         </div>
@@ -82,7 +82,7 @@ export default async function CitiesPage() {
       {/* Launched Cities */}
       <section className="pb-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-sm font-medium text-[#71717A] uppercase tracking-wider mb-6">
+          <h2 className="text-sm font-medium text-[#666666] uppercase tracking-wider mb-6">
             Now Live
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -127,7 +127,7 @@ export default async function CitiesPage() {
                   </div>
 
                   {/* Arrow */}
-                  <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-[#1A1A1A]/20 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <ArrowRight className="w-5 h-5 text-white" />
                   </div>
                 </div>
@@ -141,18 +141,18 @@ export default async function CitiesPage() {
       {comingSoonCities.length > 0 && (
         <section className="pb-20">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-sm font-medium text-[#71717A] uppercase tracking-wider mb-6">
+            <h2 className="text-sm font-medium text-[#666666] uppercase tracking-wider mb-6">
               Coming Soon
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {comingSoonCities.map((city) => (
                 <div
                   key={city.slug}
-                  className="bg-white rounded-xl p-5 text-center"
+                  className="bg-[#1A1A1A] rounded-xl p-5 text-center"
                 >
                   <span className="text-3xl mb-2 block">{cityEmojis[city.slug] || '🌏'}</span>
-                  <h3 className="font-semibold text-[#1A1A1A]">{city.name}</h3>
-                  <p className="text-sm text-[#71717A] mt-1">{city.country}</p>
+                  <h3 className="font-semibold text-white">{city.name}</h3>
+                  <p className="text-sm text-[#666666] mt-1">{city.country}</p>
                 </div>
               ))}
             </div>
@@ -161,17 +161,17 @@ export default async function CitiesPage() {
       )}
 
       {/* CTA */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-[#1A1A1A]">
         <div className="max-w-2xl mx-auto px-4 text-center">
-          <h2 className="font-semibold text-2xl text-[#1A1A1A] mb-3">
+          <h2 className="font-semibold text-2xl text-white mb-3">
             Want SweatBuddies in your city?
           </h2>
-          <p className="text-[#71717A] mb-6">
+          <p className="text-[#666666] mb-6">
             We&apos;re expanding across Southeast Asia. Let us know where you&apos;d like us next!
           </p>
           <a
             href="mailto:hello@sweatbuddies.co?subject=Bring%20SweatBuddies%20to%20my%20city"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-neutral-900 rounded-full font-semibold hover:bg-neutral-200 transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-[#1A1A1A] text-white rounded-full font-semibold hover:bg-[#2A2A2A] transition-colors"
           >
             Request Your City
             <ArrowRight className="w-5 h-5" />

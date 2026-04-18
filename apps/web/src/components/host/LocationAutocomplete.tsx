@@ -82,11 +82,11 @@ export function LocationAutocomplete({
   const isDark = variant === 'dark'
   const wrapperCls = isDark
     ? `flex items-center gap-3 px-4 py-3 bg-neutral-900 border rounded-xl focus-within:border-neutral-500 transition-colors ${hasError ? 'border-red-500' : 'border-neutral-700'}`
-    : `flex items-center gap-3 px-3.5 py-2.5 bg-[#FFFBF8] border rounded-xl focus-within:border-black/[0.12] transition-colors ${hasError ? 'border-red-500' : 'border-black/[0.04]'}`
-  const iconCls = isDark ? 'w-5 h-5 text-neutral-500 shrink-0' : 'w-4 h-4 text-[#71717A] shrink-0'
+    : `flex items-center gap-3 px-3.5 py-2.5 bg-[#0D0D0D] border rounded-xl focus-within:border-[#666666] transition-colors ${hasError ? 'border-red-500' : 'border-[#333333]'}`
+  const iconCls = isDark ? 'w-5 h-5 text-neutral-500 shrink-0' : 'w-4 h-4 text-[#666666] shrink-0'
   const inputCls = isDark
     ? 'flex-1 bg-transparent text-white placeholder:text-neutral-500 focus:outline-none'
-    : 'flex-1 bg-transparent text-[#1A1A1A] text-sm placeholder:text-[#9A9AAA] focus:outline-none'
+    : 'flex-1 bg-transparent text-white text-sm placeholder:text-[#666666] focus:outline-none'
 
   // Show loading state
   if (!isLoaded) {

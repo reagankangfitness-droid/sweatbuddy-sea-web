@@ -127,32 +127,32 @@ export default function ProfileSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#71717A]" />
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#666666]" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#0D0D0D]">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-lg border-b border-black/[0.06]">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-[#0D0D0D]/95 backdrop-blur-lg border-b border-[#333333]">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => router.back()}
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-[#FFFBF8] border border-black/[0.06]"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0D0D0D] border border-[#333333]"
               >
-                <ArrowLeft className="w-5 h-5 text-[#4A4A5A]" />
+                <ArrowLeft className="w-5 h-5 text-[#999999]" />
               </button>
-              <h1 className="text-lg font-semibold text-[#1A1A1A]">Edit Profile</h1>
+              <h1 className="text-lg font-semibold text-white">Edit Profile</h1>
             </div>
             {profile?.slug && (
               <Link
                 href={`/user/${profile.slug}`}
                 target="_blank"
-                className="text-sm font-medium text-[#71717A] hover:text-[#1A1A1A] flex items-center gap-1"
+                className="text-sm font-medium text-[#666666] hover:text-white flex items-center gap-1"
               >
                 View <ExternalLink className="h-3.5 w-3.5" />
               </Link>
@@ -165,7 +165,7 @@ export default function ProfileSettingsPage() {
         <form onSubmit={handleSubmit} className="max-w-lg mx-auto space-y-6">
           {/* Photo */}
           <div className="flex flex-col items-center gap-3">
-            <div className="w-24 h-24 rounded-full overflow-hidden bg-neutral-200">
+            <div className="w-24 h-24 rounded-full overflow-hidden bg-[#2A2A2A]">
               {profile?.imageUrl ? (
                 <Image
                   src={profile.imageUrl}
@@ -176,7 +176,7 @@ export default function ProfileSettingsPage() {
                   unoptimized
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-[#71717A]">
+                <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-[#666666]">
                   {formData.firstName?.[0] || formData.name?.[0] || '?'}
                 </div>
               )}
@@ -205,7 +205,7 @@ export default function ProfileSettingsPage() {
               type="button"
               disabled={uploadingPhoto}
               onClick={() => fileInputRef.current?.click()}
-              className="text-sm font-medium text-[#71717A] flex items-center gap-1.5"
+              className="text-sm font-medium text-[#666666] flex items-center gap-1.5"
             >
               <Camera className="h-4 w-4" />
               {uploadingPhoto ? 'Uploading...' : 'Change Photo'}
@@ -213,23 +213,23 @@ export default function ProfileSettingsPage() {
           </div>
 
           {/* Fields */}
-          <div className="bg-[#FFFBF8] rounded-2xl border border-black/[0.06] divide-y divide-black/[0.06]">
+          <div className="bg-[#0D0D0D] rounded-2xl border border-[#333333] divide-y divide-[#333333]">
             {/* Display Name */}
             <div className="px-4 py-3">
-              <label className="text-xs font-medium text-[#71717A]">Display Name</label>
+              <label className="text-xs font-medium text-[#666666]">Display Name</label>
               <input
                 value={formData.name}
                 onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
                 placeholder="Your full name"
-                className="w-full mt-1 text-sm text-[#1A1A1A] bg-transparent outline-none placeholder-neutral-400"
+                className="w-full mt-1 text-sm text-white bg-transparent outline-none placeholder-neutral-400"
               />
             </div>
 
             {/* Username */}
             <div className="px-4 py-3">
-              <label className="text-xs font-medium text-[#71717A]">Username</label>
+              <label className="text-xs font-medium text-[#666666]">Username</label>
               <div className="flex items-center gap-1 mt-1">
-                <span className="text-sm text-[#71717A]">@</span>
+                <span className="text-sm text-[#666666]">@</span>
                 <input
                   value={formData.username}
                   onChange={(e) =>
@@ -239,16 +239,16 @@ export default function ProfileSettingsPage() {
                     }))
                   }
                   placeholder="username"
-                  className="flex-1 text-sm text-[#1A1A1A] bg-transparent outline-none placeholder-neutral-400"
+                  className="flex-1 text-sm text-white bg-transparent outline-none placeholder-neutral-400"
                 />
               </div>
             </div>
 
             {/* Instagram */}
             <div className="px-4 py-3">
-              <label className="text-xs font-medium text-[#71717A]">Instagram Handle</label>
+              <label className="text-xs font-medium text-[#666666]">Instagram Handle</label>
               <div className="flex items-center gap-1 mt-1">
-                <span className="text-sm text-[#71717A]">@</span>
+                <span className="text-sm text-[#666666]">@</span>
                 <input
                   value={formData.instagram}
                   onChange={(e) =>
@@ -258,31 +258,31 @@ export default function ProfileSettingsPage() {
                     }))
                   }
                   placeholder="instagram_handle"
-                  className="flex-1 text-sm text-[#1A1A1A] bg-transparent outline-none placeholder-neutral-400"
+                  className="flex-1 text-sm text-white bg-transparent outline-none placeholder-neutral-400"
                 />
               </div>
-              <p className="text-[10px] text-[#71717A] mt-1">Required to manage experiences you host</p>
+              <p className="text-[10px] text-[#666666] mt-1">Required to manage experiences you host</p>
             </div>
 
             {/* Bio */}
             <div className="px-4 py-3">
-              <label className="text-xs font-medium text-[#71717A]">Bio</label>
+              <label className="text-xs font-medium text-[#666666]">Bio</label>
               <textarea
                 value={formData.bio}
                 onChange={(e) => setFormData((p) => ({ ...p, bio: e.target.value }))}
                 placeholder="Tell people about yourself..."
                 rows={3}
                 maxLength={300}
-                className="w-full mt-1 text-sm text-[#1A1A1A] bg-transparent outline-none placeholder-neutral-400 resize-none"
+                className="w-full mt-1 text-sm text-white bg-transparent outline-none placeholder-neutral-400 resize-none"
               />
-              <p className="text-right text-[10px] text-[#71717A]">{formData.bio.length}/300</p>
+              <p className="text-right text-[10px] text-[#666666]">{formData.bio.length}/300</p>
             </div>
           </div>
 
           {/* Fitness Interests */}
-          <div className="bg-[#FFFBF8] rounded-2xl border border-black/[0.06] p-4">
-            <label className="text-xs font-medium text-[#71717A]">Fitness Interests</label>
-            <p className="text-[10px] text-[#71717A] mt-0.5 mb-3">Select activities you enjoy</p>
+          <div className="bg-[#0D0D0D] rounded-2xl border border-[#333333] p-4">
+            <label className="text-xs font-medium text-[#666666]">Fitness Interests</label>
+            <p className="text-[10px] text-[#666666] mt-0.5 mb-3">Select activities you enjoy</p>
             <div className="flex flex-wrap gap-2">
               {FEATURED_CATEGORIES.map(cat => {
                 const isSelected = formData.fitnessInterests.includes(cat.slug)
@@ -295,7 +295,7 @@ export default function ProfileSettingsPage() {
                     className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                       isSelected
                         ? 'border-current'
-                        : 'border-black/[0.06] text-[#71717A]'
+                        : 'border-[#333333] text-[#666666]'
                     }`}
                     style={isSelected ? {
                       borderColor: display.color + '80',
@@ -311,12 +311,12 @@ export default function ProfileSettingsPage() {
           </div>
 
           {/* Toggles */}
-          <div className="bg-[#FFFBF8] rounded-2xl border border-black/[0.06] divide-y divide-black/[0.06]">
+          <div className="bg-[#0D0D0D] rounded-2xl border border-[#333333] divide-y divide-[#333333]">
             {/* Going Solo */}
             <div className="px-4 py-4 flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm font-medium text-[#1A1A1A]">Going Solo</p>
-                <p className="text-[10px] text-[#71717A] mt-0.5">Show others you&apos;re open to meeting new people at events</p>
+                <p className="text-sm font-medium text-white">Going Solo</p>
+                <p className="text-[10px] text-[#666666] mt-0.5">Show others you&apos;re open to meeting new people at events</p>
               </div>
               <button
                 type="button"
@@ -324,11 +324,11 @@ export default function ProfileSettingsPage() {
                 aria-checked={formData.goingSolo}
                 onClick={() => setFormData(p => ({ ...p, goingSolo: !p.goingSolo }))}
                 className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full transition-colors ${
-                  formData.goingSolo ? 'bg-amber-500' : 'bg-neutral-200'
+                  formData.goingSolo ? 'bg-amber-500' : 'bg-[#2A2A2A]'
                 }`}
               >
                 <span
-                  className={`inline-block h-5 w-5 transform rounded-full bg-[#FFFBF8] shadow-sm transition-transform mt-0.5 ${
+                  className={`inline-block h-5 w-5 transform rounded-full bg-[#0D0D0D] shadow-sm transition-transform mt-0.5 ${
                     formData.goingSolo ? 'translate-x-[22px]' : 'translate-x-0.5'
                   }`}
                 />
@@ -338,8 +338,8 @@ export default function ProfileSettingsPage() {
             {/* Public Profile */}
             <div className="px-4 py-4 flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm font-medium text-[#1A1A1A]">Public Profile</p>
-                <p className="text-[10px] text-[#71717A] mt-0.5">Let others see your activity and communities</p>
+                <p className="text-sm font-medium text-white">Public Profile</p>
+                <p className="text-[10px] text-[#666666] mt-0.5">Let others see your activity and communities</p>
               </div>
               <button
                 type="button"
@@ -347,11 +347,11 @@ export default function ProfileSettingsPage() {
                 aria-checked={formData.isPublic}
                 onClick={() => setFormData(p => ({ ...p, isPublic: !p.isPublic }))}
                 className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full transition-colors ${
-                  formData.isPublic ? 'bg-white' : 'bg-neutral-200'
+                  formData.isPublic ? 'bg-amber-500' : 'bg-[#2A2A2A]'
                 }`}
               >
                 <span
-                  className={`inline-block h-5 w-5 transform rounded-full bg-[#FFFBF8] shadow-sm transition-transform mt-0.5 ${
+                  className={`inline-block h-5 w-5 transform rounded-full bg-[#0D0D0D] shadow-sm transition-transform mt-0.5 ${
                     formData.isPublic ? 'translate-x-[22px]' : 'translate-x-0.5'
                   }`}
                 />
@@ -363,7 +363,7 @@ export default function ProfileSettingsPage() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full py-3.5 rounded-xl bg-white text-neutral-900 font-semibold text-sm disabled:opacity-50"
+            className="w-full py-3.5 rounded-xl bg-[#1A1A1A] text-white font-semibold text-sm disabled:opacity-50"
           >
             {saving ? 'Saving...' : 'Save'}
           </button>
@@ -375,7 +375,7 @@ export default function ProfileSettingsPage() {
           type="button"
           disabled={saving}
           onClick={saveProfile}
-          className="w-full py-3.5 rounded-full bg-white text-neutral-900 font-semibold text-sm disabled:opacity-50"
+          className="w-full py-3.5 rounded-full bg-[#1A1A1A] text-white font-semibold text-sm disabled:opacity-50"
         >
           {saving ? 'Saving...' : 'Save Changes'}
         </button>

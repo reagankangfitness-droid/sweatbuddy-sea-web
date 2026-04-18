@@ -105,15 +105,15 @@ export function DatePickerDropdown({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className={`flex items-center gap-2 px-4 py-2.5 bg-white border rounded-full cursor-pointer hover:bg-neutral-100 transition-colors text-sm ${
-          hasError ? 'border-red-500' : 'border-black/[0.06]'
+        className={`flex items-center gap-2 px-4 py-2.5 bg-[#1A1A1A] border rounded-full cursor-pointer hover:bg-[#2A2A2A] transition-colors text-sm ${
+          hasError ? 'border-red-500' : 'border-[#333333]'
         }`}
       >
-        <Calendar className="w-4 h-4 text-[#71717A]" />
+        <Calendar className="w-4 h-4 text-[#666666]" />
         {displayText ? (
-          <span className="text-[#1A1A1A]">{displayText}</span>
+          <span className="text-white">{displayText}</span>
         ) : (
-          <span className="text-[#71717A]">{placeholder}</span>
+          <span className="text-[#666666]">{placeholder}</span>
         )}
       </button>
 
@@ -125,33 +125,33 @@ export function DatePickerDropdown({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.15 }}
-            className="absolute top-full left-0 mt-2 z-50 bg-white border border-black/[0.06] rounded-xl shadow-lg p-3 w-[280px]"
+            className="absolute top-full left-0 mt-2 z-50 bg-[#1A1A1A] border border-[#333333] rounded-xl p-3 w-[280px]"
           >
             {/* Header: month/year + nav */}
             <div className="flex items-center justify-between mb-2">
               <button
                 type="button"
                 onClick={() => setViewMonth(prev => subMonths(prev, 1))}
-                className="p-1.5 hover:bg-neutral-100 rounded-lg transition-colors"
+                className="p-1.5 hover:bg-[#2A2A2A] rounded-lg transition-colors"
               >
-                <ChevronLeft className="w-4 h-4 text-[#71717A]" />
+                <ChevronLeft className="w-4 h-4 text-[#666666]" />
               </button>
-              <span className="text-sm font-medium text-[#1A1A1A]">
+              <span className="text-sm font-medium text-white">
                 {format(viewMonth, 'MMMM yyyy')}
               </span>
               <button
                 type="button"
                 onClick={() => setViewMonth(prev => addMonths(prev, 1))}
-                className="p-1.5 hover:bg-neutral-100 rounded-lg transition-colors"
+                className="p-1.5 hover:bg-[#2A2A2A] rounded-lg transition-colors"
               >
-                <ChevronRight className="w-4 h-4 text-[#71717A]" />
+                <ChevronRight className="w-4 h-4 text-[#666666]" />
               </button>
             </div>
 
             {/* Day-of-week header */}
             <div className="grid grid-cols-7 mb-1">
               {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-                <div key={i} className="text-center text-xs text-[#71717A] py-1">
+                <div key={i} className="text-center text-xs text-[#666666] py-1">
                   {d}
                 </div>
               ))}
@@ -176,16 +176,16 @@ export function DatePickerDropdown({
                     }}
                     className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm transition-colors ${
                       isSelected
-                        ? 'bg-[#FFFBF8] text-[#1A1A1A] font-semibold'
+                        ? 'bg-[#0D0D0D] text-white font-semibold'
                         : isToday && inMonth
-                          ? 'ring-1 ring-black/[0.12] text-[#1A1A1A]'
+                          ? 'ring-1 ring-white/20 text-white'
                           : ''
                     } ${
                       disabled
-                        ? 'text-[#4A4A5A] cursor-default'
+                        ? 'text-[#999999] cursor-default'
                         : inMonth
-                          ? 'text-[#1A1A1A] hover:bg-neutral-100 cursor-pointer'
-                          : 'text-[#4A4A5A]'
+                          ? 'text-white hover:bg-[#2A2A2A] cursor-pointer'
+                          : 'text-[#999999]'
                     }`}
                   >
                     {day.getDate()}

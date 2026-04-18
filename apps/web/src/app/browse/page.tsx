@@ -85,9 +85,9 @@ export default async function BrowsePage({ searchParams }: PageProps) {
   }))
 
   return (
-    <div className="min-h-screen bg-[#FFFBF8] text-[#1A1A1A]">
+    <div className="min-h-screen bg-[#0D0D0D] text-white">
       {/* Nav */}
-      <header className="sticky top-0 z-30 bg-[#FFFBF8]/85 backdrop-blur-xl border-b border-black/[0.06]">
+      <header className="sticky top-0 z-30 bg-[#0D0D0D]/85 backdrop-blur-xl border-b border-[#333333]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center h-11">
             <Logo size={28} />
@@ -95,7 +95,7 @@ export default async function BrowsePage({ searchParams }: PageProps) {
           <div className="flex items-center gap-2">
             <Link
               href="/sign-in"
-              className="px-4 py-3 text-sm font-medium text-[#4A4A5A] hover:text-[#1A1A1A] transition-colors"
+              className="px-4 py-3 text-sm font-medium text-[#999999] hover:text-white transition-colors"
             >
               Log in
             </Link>
@@ -110,17 +110,17 @@ export default async function BrowsePage({ searchParams }: PageProps) {
       </header>
 
       {/* Hero strip */}
-      <div className="border-b border-black/[0.04] bg-white/50">
+      <div className="border-b border-[#333333] bg-[#1A1A1A]/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-[#1A1A1A]">Browse Sessions</h1>
-          <p className="text-[#71717A]">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-white">Browse Sessions</h1>
+          <p className="text-[#666666]">
             Browse sessions led by hosts near you — no login needed to browse.
           </p>
         </div>
       </div>
 
       {/* Type filters */}
-      <div className="border-b border-black/[0.06] sticky top-[65px] z-20 bg-[#FFFBF8]/85 backdrop-blur-xl">
+      <div className="border-b border-[#333333] sticky top-[65px] z-20 bg-[#0D0D0D]/85 backdrop-blur-xl">
         <div className="relative max-w-6xl mx-auto">
           <div className="px-4 sm:px-6 py-3 flex gap-2 overflow-x-auto scrollbar-hide">
             {TYPES.map((t) => {
@@ -132,7 +132,7 @@ export default async function BrowsePage({ searchParams }: PageProps) {
                   className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap border transition-all ${
                     active
                       ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
-                      : 'bg-white text-[#4A4A5A] border-black/[0.06] hover:border-black/[0.12] hover:text-[#1A1A1A]'
+                      : 'bg-[#1A1A1A] text-[#999999] border-[#333333] hover:border-[#666666] hover:text-white'
                   }`}
                 >
                   <span>{t.emoji}</span>
@@ -155,8 +155,8 @@ export default async function BrowsePage({ searchParams }: PageProps) {
         {mapped.length === 0 ? (
           <div className="flex flex-col items-center text-center py-20">
             <div className="text-5xl mb-4 opacity-40">🏋️</div>
-            <h3 className="text-lg font-semibold mb-2 text-[#1A1A1A]">No sessions found</h3>
-            <p className="text-sm text-[#71717A] mb-6">
+            <h3 className="text-lg font-semibold mb-2 text-white">No sessions found</h3>
+            <p className="text-sm text-[#666666] mb-6">
               Be the first to host a session in this category.
             </p>
             <Link
@@ -168,7 +168,7 @@ export default async function BrowsePage({ searchParams }: PageProps) {
           </div>
         ) : (
           <>
-            <p className="text-sm text-[#71717A] mb-6">
+            <p className="text-sm text-[#666666] mb-6">
               {mapped.length} upcoming session{mapped.length !== 1 ? 's' : ''}
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -185,10 +185,10 @@ export default async function BrowsePage({ searchParams }: PageProps) {
       </main>
 
       {/* Footer CTA */}
-      <div className="border-t border-black/[0.04] bg-white/50 mt-8">
+      <div className="border-t border-[#333333] bg-[#1A1A1A]/50 mt-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 text-center">
-          <h2 className="text-2xl font-bold mb-3 text-[#1A1A1A]">Want to host or join sessions?</h2>
-          <p className="text-[#71717A] mb-6">It&apos;s free. Takes 2 minutes.</p>
+          <h2 className="text-2xl font-bold mb-3 text-white">Want to host or join sessions?</h2>
+          <p className="text-[#666666] mb-6">It&apos;s free. Takes 2 minutes.</p>
           <Link
             href="/sign-up"
             className="inline-block px-8 py-3.5 bg-[#1A1A1A] text-white font-semibold rounded-full hover:bg-neutral-800 transition-colors"

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { Compass, User, Users2, Plus, LayoutDashboard } from 'lucide-react'
+import { Compass, User, Plus } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -12,9 +12,7 @@ import { CreateSessionSheet } from '@/components/CreateSessionSheet'
 
 const navItems = [
   { id: 'discover', label: 'Discover', icon: Compass, href: '/buddy', mobileOnly: false },
-  { id: 'communities', label: 'Crews', icon: Users2, href: '/communities', mobileOnly: false },
   { id: 'create', label: 'Create', icon: Plus, href: '#', mobileOnly: true, isCreate: true },
-  { id: 'hub', label: 'Hub', icon: LayoutDashboard, href: '/hub', mobileOnly: false },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile', mobileOnly: false },
 ]
 
@@ -70,16 +68,10 @@ function AppNavInner() {
 
   function isActive(item: (typeof navItems)[0]) {
     if (item.id === 'discover') {
-      return pathname.startsWith('/buddy') || pathname.startsWith('/discover')
-    }
-    if (item.id === 'communities') {
-      return pathname.startsWith('/communities')
-    }
-    if (item.id === 'hub') {
-      return pathname.startsWith('/hub')
+      return pathname.startsWith('/buddy') || pathname.startsWith('/discover') || pathname.startsWith('/communities')
     }
     if (item.id === 'profile') {
-      return pathname.startsWith('/profile')
+      return pathname.startsWith('/profile') || pathname.startsWith('/hub') || pathname.startsWith('/settings') || pathname.startsWith('/saved') || pathname.startsWith('/my-bookings')
     }
     return pathname.startsWith(item.href)
   }

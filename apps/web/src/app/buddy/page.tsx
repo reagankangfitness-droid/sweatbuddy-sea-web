@@ -384,7 +384,7 @@ function BuddyPageInner() {
 
   // Get user location on mount — resolve quickly with timeout fallback
   useEffect(() => {
-    if (!navigator.geolocation) { setLocationReady(true); return }
+    if (!navigator.geolocation) { setUserLocation(SINGAPORE_CENTER); setLocationReady(true); return }
 
     let settled = false
     const settle = () => { if (!settled) { settled = true; setLocationReady(true) } }
@@ -394,12 +394,19 @@ function BuddyPageInner() {
         setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
         settle()
       },
-      () => settle(), // GPS denied
+      () => {
+        // GPS denied — fall back to Singapore center
+        setUserLocation(SINGAPORE_CENTER)
+        settle()
+      },
       { timeout: 3000, maximumAge: 60000 }
     )
 
-    // Fallback: don't wait longer than 3s for GPS
-    const timer = setTimeout(settle, 3000)
+    // Fallback: don't wait longer than 3s for GPS — use Singapore
+    const timer = setTimeout(() => {
+      if (!settled) setUserLocation(SINGAPORE_CENTER)
+      settle()
+    }, 3000)
     return () => clearTimeout(timer)
   }, [])
 

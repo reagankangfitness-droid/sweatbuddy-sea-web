@@ -93,18 +93,17 @@ export async function GET(request: Request) {
     }
 
     // Location-based filtering — 25km radius bounding box
-    const lat = searchParams.get('lat')
-    const lng = searchParams.get('lng')
-    if (lat && lng) {
-      const userLat = parseFloat(lat)
-      const userLng = parseFloat(lng)
-      if (!isNaN(userLat) && !isNaN(userLng)) {
-        const radiusKm = 25
-        const latDelta = radiusKm / 111 // ~111km per degree latitude
-        const lngDelta = radiusKm / (111 * Math.cos(userLat * (Math.PI / 180)))
-        where.latitude = { gte: userLat - latDelta, lte: userLat + latDelta }
-        where.longitude = { gte: userLng - lngDelta, lte: userLng + lngDelta }
-      }
+    // Defaults to Singapore if no location provided (prevents showing worldwide sessions)
+    const lat = searchParams.get('lat') || '1.3521'
+    const lng = searchParams.get('lng') || '103.8198'
+    const userLat = parseFloat(lat)
+    const userLng = parseFloat(lng)
+    if (!isNaN(userLat) && !isNaN(userLng)) {
+      const radiusKm = 25
+      const latDelta = radiusKm / 111
+      const lngDelta = radiusKm / (111 * Math.cos(userLat * (Math.PI / 180)))
+      where.latitude = { gte: userLat - latDelta, lte: userLat + latDelta }
+      where.longitude = { gte: userLng - lngDelta, lte: userLng + lngDelta }
     }
 
     // Date filtering — show sessions on a specific date

@@ -47,6 +47,7 @@ function AppNavInner() {
     pathname.startsWith('/discover') ||
     pathname === '/profile' ||
     pathname.startsWith('/my-bookings') ||
+    pathname.startsWith('/my-sessions') ||
     pathname.startsWith('/communities') ||
     pathname.startsWith('/settings') ||
     pathname.startsWith('/user') ||
@@ -71,7 +72,7 @@ function AppNavInner() {
       return pathname.startsWith('/buddy') || pathname.startsWith('/discover') || pathname.startsWith('/communities')
     }
     if (item.id === 'profile') {
-      return pathname.startsWith('/profile') || pathname.startsWith('/hub') || pathname.startsWith('/settings') || pathname.startsWith('/saved') || pathname.startsWith('/my-bookings')
+      return pathname.startsWith('/profile') || pathname.startsWith('/hub') || pathname.startsWith('/settings') || pathname.startsWith('/saved') || pathname.startsWith('/my-bookings') || pathname.startsWith('/my-sessions')
     }
     return pathname.startsWith(item.href)
   }

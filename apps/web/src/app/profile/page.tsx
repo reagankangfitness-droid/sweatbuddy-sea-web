@@ -277,7 +277,7 @@ export default function ProfilePage() {
             </Link>
 
             <Link
-              href="/my-bookings"
+              href="/my-sessions"
               className="flex items-center justify-between px-4 py-3.5 hover:bg-[#2A2A2A] transition-colors"
             >
               <div className="flex items-center gap-3">

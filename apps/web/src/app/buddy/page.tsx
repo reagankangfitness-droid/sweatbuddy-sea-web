@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { Plus, Loader2, Zap, Map, List } from 'lucide-react'
+import { Plus, Loader2, Zap, Map, List, Search, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 import { PaymentModal } from '@/components/PaymentModal'
@@ -341,6 +341,11 @@ function BuddyPageInner() {
   // View mode: list-first (default) or map
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
 
+  // Search
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<Session[]>([])
+  const [searching, setSearching] = useState(false)
+
 
   const fetchSessions = useCallback(
     async (cursor?: string) => {
@@ -467,6 +472,22 @@ function BuddyPageInner() {
     setSessions([])
     fetchSessions()
   }, [typeFilter, pricingFilter, dateFilter, fetchSessions])
+
+  // Debounced search
+  useEffect(() => {
+    if (!searchQuery.trim()) { setSearchResults([]); return }
+    const timer = setTimeout(async () => {
+      setSearching(true)
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}&type=sessions`)
+        if (res.ok) {
+          const data = await res.json()
+          setSearchResults(data.sessions ?? [])
+        }
+      } catch { /* ignore */ } finally { setSearching(false) }
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
 
   async function joinSession(sessionId: string) {
     // If user hasn't completed onboarding, show the join gate first
@@ -611,6 +632,25 @@ function BuddyPageInner() {
       {/* ── Filters — sticky top bar ── */}
       <div className="sticky top-0 z-20 pt-[env(safe-area-inset-top,4px)]">
         <div className="bg-[#0D0D0D] px-3 pt-1 pb-2 space-y-1.5 border-b border-white/[0.06]">
+          {/* Search bar */}
+          <div className="relative mb-1.5">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
+            <input
+              type="text"
+              placeholder="Search sessions..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2.5 bg-[#1A1A1A] border border-[#333333] rounded-xl text-sm text-white placeholder:text-[#555555] focus:outline-none focus:border-white/20 transition-all"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2"
+              >
+                <X className="w-4 h-4 text-[#666666] hover:text-white transition-colors" />
+              </button>
+            )}
+          </div>
           {/* Row 1: Date strip */}
           <div className="flex items-center gap-1.5">
             <div className="flex gap-1 overflow-x-auto no-scrollbar flex-1">
@@ -674,6 +714,55 @@ function BuddyPageInner() {
         <>
           {/* ── List view — full-screen session cards ── */}
           <div className="flex-1 overflow-y-auto px-4 pb-24">
+            {/* Search results mode */}
+            {searchQuery.trim() ? (
+              <div className="pt-3">
+                {searching ? (
+                  <div className="flex items-center justify-center gap-2 py-16">
+                    <Loader2 className="w-4 h-4 animate-spin text-[#666666]" />
+                    <p className="text-sm text-[#666666]">Searching...</p>
+                  </div>
+                ) : searchResults.length === 0 ? (
+                  <div className="text-center py-16">
+                    <p className="text-sm text-[#999999]">No results for &apos;{searchQuery}&apos;</p>
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="mt-3 text-xs text-[#666666] hover:text-white underline transition-colors"
+                    >
+                      Clear search
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-xs font-medium text-[#666666] uppercase tracking-wider">
+                        {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
+                      </p>
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="text-xs text-[#666666] hover:text-white transition-colors"
+                      >
+                        Clear search
+                      </button>
+                    </div>
+                    <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1 sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:overflow-visible">
+                      {searchResults.map((session, i) => (
+                        <SessionCard
+                          key={session.id}
+                          session={session}
+                          currentUserId={currentUserId}
+                          onJoin={joinSession}
+                          onLeave={leaveSession}
+                          joiningId={joiningId}
+                          index={i}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+            <>
             {/* Session count header */}
             {!loading && sessions.length > 0 && (
               <p className="text-xs font-medium text-[#666666] py-3 uppercase tracking-wider">
@@ -789,6 +878,8 @@ function BuddyPageInner() {
                   </div>
                 )}
               </div>
+            )}
+            </>
             )}
           </div>
         </>

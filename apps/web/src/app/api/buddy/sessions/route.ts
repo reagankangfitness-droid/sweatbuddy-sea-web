@@ -99,7 +99,7 @@ export async function GET(request: Request) {
     const userLat = parseFloat(lat)
     const userLng = parseFloat(lng)
     if (!isNaN(userLat) && !isNaN(userLng)) {
-      const radiusKm = 25
+      const radiusKm = parseInt(searchParams.get('radius') || '25', 10)
       const latDelta = radiusKm / 111
       const lngDelta = radiusKm / (111 * Math.cos(userLat * (Math.PI / 180)))
       where.latitude = { gte: userLat - latDelta, lte: userLat + latDelta }

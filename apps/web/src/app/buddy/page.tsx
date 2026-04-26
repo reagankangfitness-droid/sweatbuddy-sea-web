@@ -309,6 +309,19 @@ const TYPE_FILTERS = [
   { value: 'pilates', label: 'Pilates', emoji: '🦢' },
 ]
 
+const NEIGHBORHOODS = [
+  { name: 'East Coast', lat: 1.3010, lng: 103.9120, radius: 3 },
+  { name: 'Tanjong Pagar', lat: 1.2764, lng: 103.8434, radius: 2 },
+  { name: 'Sentosa', lat: 1.2494, lng: 103.8303, radius: 2 },
+  { name: 'Marina Bay', lat: 1.2816, lng: 103.8636, radius: 2 },
+  { name: 'Tiong Bahru', lat: 1.2867, lng: 103.8273, radius: 2 },
+  { name: 'Bukit Timah', lat: 1.3294, lng: 103.7932, radius: 3 },
+  { name: 'Punggol', lat: 1.3984, lng: 103.9072, radius: 3 },
+  { name: 'Jurong', lat: 1.3329, lng: 103.7436, radius: 3 },
+  { name: 'Ang Mo Kio', lat: 1.3691, lng: 103.8454, radius: 2 },
+  { name: 'Bedok', lat: 1.3236, lng: 103.9273, radius: 3 },
+]
+
 export default function BuddyPage() {
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-[#666666]" /></div>}>
@@ -343,6 +356,9 @@ function BuddyPageInner() {
   // View mode: list-first (default) or map
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
 
+  // Neighborhood filter
+  const [neighborhoodFilter, setNeighborhoodFilter] = useState<typeof NEIGHBORHOODS[0] | null>(null)
+
   // Search
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<Session[]>([])
@@ -360,9 +376,15 @@ function BuddyPageInner() {
         if (pricingFilter) params.set('pricing', pricingFilter)
         if (dateFilter) params.set('date', dateFilter)
         if (cursor) params.set('cursor', cursor)
-        if (userLocation) {
-          params.set('lat', String(userLocation.lat))
-          params.set('lng', String(userLocation.lng))
+        const effectiveLocation = neighborhoodFilter
+          ? { lat: neighborhoodFilter.lat, lng: neighborhoodFilter.lng }
+          : userLocation
+        if (effectiveLocation) {
+          params.set('lat', String(effectiveLocation.lat))
+          params.set('lng', String(effectiveLocation.lng))
+        }
+        if (neighborhoodFilter) {
+          params.set('radius', String(neighborhoodFilter.radius))
         }
 
         const res = await fetch(`/api/buddy/sessions?${params}`)
@@ -384,7 +406,7 @@ function BuddyPageInner() {
         setLoadingMore(false)
       }
     },
-    [typeFilter, pricingFilter, dateFilter, userLocation, router]
+    [typeFilter, pricingFilter, dateFilter, userLocation, neighborhoodFilter, router]
   )
 
   const [locationReady, setLocationReady] = useState(false)
@@ -473,7 +495,7 @@ function BuddyPageInner() {
   useEffect(() => {
     setSessions([])
     fetchSessions()
-  }, [typeFilter, pricingFilter, dateFilter, fetchSessions])
+  }, [typeFilter, pricingFilter, dateFilter, neighborhoodFilter, fetchSessions])
 
   // Debounced search
   useEffect(() => {
@@ -709,6 +731,23 @@ function BuddyPageInner() {
               </button>
             ))}
           </div>
+
+          {/* Row 3: Neighborhoods */}
+          <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
+            {NEIGHBORHOODS.map((n) => (
+              <button
+                key={n.name}
+                onClick={() => setNeighborhoodFilter(neighborhoodFilter?.name === n.name ? null : n)}
+                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all ${
+                  neighborhoodFilter?.name === n.name
+                    ? 'bg-white text-black'
+                    : 'bg-[#1A1A1A] text-[#999999] hover:text-white'
+                }`}
+              >
+                {n.name}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -768,7 +807,7 @@ function BuddyPageInner() {
             {/* Session count header */}
             {!loading && sessions.length > 0 && (
               <p className="text-xs font-medium text-[#666666] py-3 uppercase tracking-wider">
-                {sessions.length} session{sessions.length !== 1 ? 's' : ''} happening
+                {sessions.length} session{sessions.length !== 1 ? 's' : ''}{neighborhoodFilter ? ` in ${neighborhoodFilter.name}` : ' happening'}
               </p>
             )}
 

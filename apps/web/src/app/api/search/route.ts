@@ -82,6 +82,9 @@ export async function GET(request: Request) {
               slug: true,
             },
           },
+          ratingSummary: {
+            select: { averageRating: true, totalReviews: true },
+          },
           host: {
             select: {
               id: true,
@@ -130,6 +133,8 @@ export async function GET(request: Request) {
         community: s.community,
         attendees: [],
         userStatus: (s.userActivities as { status: string }[])?.[0]?.status ?? null,
+        avgRating: s.ratingSummary ? Number(s.ratingSummary.averageRating) : null,
+        reviewCount: s.ratingSummary?.totalReviews ?? 0,
       }))
     }
 

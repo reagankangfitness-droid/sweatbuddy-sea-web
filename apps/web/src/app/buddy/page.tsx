@@ -61,6 +61,8 @@ interface Session {
   isFull: boolean
   userStatus: string | null
   isFeatured?: boolean
+  avgRating: number | null
+  reviewCount: number
   acceptPayNow?: boolean
   acceptStripe?: boolean
   paynowQrImageUrl?: string | null
@@ -1017,9 +1019,14 @@ function SessionCard({
           <h3 className="text-[13px] font-bold text-white leading-snug line-clamp-2">
             {session.title}
           </h3>
-          {/* Price · Time */}
+          {/* Price · Time · Rating */}
           <p className="text-[11px] text-[#666666] truncate">
             {priceDisplay} · {session.startTime ? getRelativeTime(session.startTime) : ''}
+            {session.avgRating && session.reviewCount > 0 && (
+              <span className="text-[11px] text-[#999999]">
+                {' '}· ★ {session.avgRating.toFixed(1)} ({session.reviewCount})
+              </span>
+            )}
           </p>
         </div>
       </Link>

@@ -145,6 +145,9 @@ export async function GET(request: Request) {
         community: {
           select: { id: true, name: true, logoImage: true, slug: true },
         },
+        ratingSummary: {
+          select: { averageRating: true, totalReviews: true },
+        },
       },
       orderBy: [
         { isFeatured: 'desc' },
@@ -202,5 +205,7 @@ function formatSession(activity: ReturnType<typeof Object.assign>, userStatus?: 
     isFull,
     isFeatured: activity.isFeatured ?? false,
     userStatus: userStatus ?? null,
+    avgRating: activity.ratingSummary ? Number(activity.ratingSummary.averageRating) : null,
+    reviewCount: activity.ratingSummary?.totalReviews ?? 0,
   }
 }

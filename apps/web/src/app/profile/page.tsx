@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import ProfileStats from '@/components/ProfileStats'
 
 interface ProfileData {
   slug: string | null
@@ -237,6 +238,9 @@ export default function ProfilePage() {
             </div>
           </div>
         )}
+
+        {/* Streaks & Badges */}
+        {isSignedIn && <ProfileStats />}
 
         {/* My Activity Section */}
         <div className="mb-8">

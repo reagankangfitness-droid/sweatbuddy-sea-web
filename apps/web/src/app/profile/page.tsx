@@ -18,6 +18,7 @@ import {
 import Link from 'next/link'
 import Image from 'next/image'
 import ProfileStats from '@/components/ProfileStats'
+import InviteSection from '@/components/InviteSection'
 
 interface ProfileData {
   slug: string | null
@@ -241,6 +242,9 @@ export default function ProfilePage() {
 
         {/* Streaks & Badges */}
         {isSignedIn && <ProfileStats />}
+
+        {/* Invite Section */}
+        <InviteSection />
 
         {/* My Activity Section */}
         <div className="mb-8">

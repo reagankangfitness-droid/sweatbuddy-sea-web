@@ -25,6 +25,7 @@ function SignUpContent() {
   const intent = searchParams.get('intent')
   const eventId = searchParams.get('eventId')
   const eventSlug = searchParams.get('eventSlug')
+  const ref = searchParams.get('ref')
   const rawRedirectUrl = searchParams.get('redirect_url')
   const redirectUrl = rawRedirectUrl && isValidRedirect(rawRedirectUrl) ? rawRedirectUrl : null
 
@@ -35,6 +36,29 @@ function SignUpContent() {
       }))
     }
   }, [intent, eventId, eventSlug])
+
+  // Store referral source so it persists through the Clerk sign-up flow
+  useEffect(() => {
+    if (ref) {
+      sessionStorage.setItem('sb_referrer', ref)
+    }
+  }, [ref])
+
+  // After sign-up, persist referral to Clerk user metadata so the webhook can read it
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      const storedRef = sessionStorage.getItem('sb_referrer')
+      if (storedRef) {
+        sessionStorage.removeItem('sb_referrer')
+        // Fire-and-forget: update Clerk user metadata with referral source
+        fetch('/api/user/set-referral', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ referredBy: storedRef }),
+        }).catch(() => {})
+      }
+    }
+  }, [isLoaded, isSignedIn])
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {

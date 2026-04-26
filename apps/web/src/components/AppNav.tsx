@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { Compass, User, Plus } from 'lucide-react'
+import { Compass, User, Plus, Bell } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -30,6 +30,7 @@ function AppNavInner() {
   const { user, isSignedIn } = useUser()
   const [isHovered, setIsHovered] = useState(false)
   const [pendingCount, setPendingCount] = useState(0)
+  const [unreadNotifications, setUnreadNotifications] = useState(0)
   const [createOpen, setCreateOpen] = useState(false)
 
   useEffect(() => {
@@ -37,6 +38,10 @@ function AppNavInner() {
     fetch('/api/p2p/payments/pending')
       .then((r) => (r.ok ? r.json() : { payments: [] }))
       .then((data) => setPendingCount(data.payments?.length ?? 0))
+      .catch(() => {})
+    fetch('/api/notifications?limit=1')
+      .then((r) => (r.ok ? r.json() : { unreadCount: 0 }))
+      .then((data) => setUnreadNotifications(data.unreadCount ?? 0))
       .catch(() => {})
   }, [isSignedIn])
 
@@ -52,7 +57,8 @@ function AppNavInner() {
     pathname.startsWith('/settings') ||
     pathname.startsWith('/user') ||
     pathname.startsWith('/saved') ||
-    pathname.startsWith('/hub')
+    pathname.startsWith('/hub') ||
+    pathname.startsWith('/notifications')
 
   // Hide on pages with their own fixed action bars (prevents overlap)
   const hasOwnActionBar =
@@ -72,7 +78,7 @@ function AppNavInner() {
       return pathname.startsWith('/buddy') || pathname.startsWith('/discover') || pathname.startsWith('/communities')
     }
     if (item.id === 'profile') {
-      return pathname.startsWith('/profile') || pathname.startsWith('/hub') || pathname.startsWith('/settings') || pathname.startsWith('/saved') || pathname.startsWith('/my-bookings') || pathname.startsWith('/my-sessions')
+      return pathname.startsWith('/profile') || pathname.startsWith('/hub') || pathname.startsWith('/settings') || pathname.startsWith('/saved') || pathname.startsWith('/my-bookings') || pathname.startsWith('/my-sessions') || pathname.startsWith('/notifications')
     }
     return pathname.startsWith(item.href)
   }
@@ -120,7 +126,19 @@ function AppNavInner() {
               )
             })}
           </div>
-          <div className="mt-auto">
+          <div className="mt-auto flex flex-col items-center gap-3">
+            <Link
+              href="/notifications"
+              className="relative w-8 h-8 rounded-lg flex items-center justify-center text-[#71717A] hover:text-white transition-colors"
+              aria-label="Notifications"
+            >
+              <Bell className="w-4 h-4" />
+              {unreadNotifications > 0 && (
+                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full text-[8px] text-white font-bold flex items-center justify-center leading-none">
+                  {unreadNotifications > 9 ? '9' : unreadNotifications}
+                </span>
+              )}
+            </Link>
             <button
               onClick={() => setCreateOpen(true)}
               className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-black hover:opacity-90 transition-opacity"
@@ -184,6 +202,28 @@ function AppNavInner() {
                   )
                 })}
               </div>
+
+              {/* Notifications bell */}
+              <Link
+                href="/notifications"
+                className={`
+                  relative flex flex-col items-center justify-center
+                  w-14 h-14 rounded-xl transition-all duration-200 mb-1
+                  ${pathname.startsWith('/notifications')
+                    ? 'text-white bg-white/10'
+                    : 'text-[#71717A] hover:text-[#999999] hover:bg-white/[0.04]'
+                  }
+                `}
+                aria-label="Notifications"
+              >
+                <Bell className={`w-5 h-5 ${pathname.startsWith('/notifications') ? 'stroke-[2.5px]' : ''}`} />
+                <span className="text-[10px] mt-1 font-medium">Alerts</span>
+                {unreadNotifications > 0 && (
+                  <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 rounded-full text-[9px] text-white font-bold flex items-center justify-center leading-none">
+                    {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                  </span>
+                )}
+              </Link>
 
               {/* Create button */}
               <div className="mb-4">

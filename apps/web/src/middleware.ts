@@ -86,6 +86,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/host-leads(.*)',
   '/api/search(.*)',
   '/my-sessions',
+  '/notifications',
 ])
 
 export default clerkMiddleware(async (auth, request) => {

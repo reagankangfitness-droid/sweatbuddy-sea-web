@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ThumbsUp, ThumbsDown, Flag, X, Loader2 } from 'lucide-react'
+import { ThumbsUp, ThumbsDown, Flag, X, Loader2, ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
+import Link from 'next/link'
 
 interface SessionFeedbackSheetProps {
   open: boolean
@@ -22,7 +23,7 @@ export function SessionFeedbackSheet({
   hostId,
   hostName,
 }: SessionFeedbackSheetProps) {
-  const [step, setStep] = useState<'feedback' | 'report' | 'done'>('feedback')
+  const [step, setStep] = useState<'feedback' | 'submitted' | 'report' | 'done'>('feedback')
   const [submitting, setSubmitting] = useState(false)
   const [reportReason, setReportReason] = useState('')
 
@@ -54,8 +55,7 @@ export function SessionFeedbackSheet({
       }
       if (positive) {
         toast.success('Thanks for the feedback!')
-        onClose()
-        resetState()
+        setStep('submitted')
       } else {
         setStep('report')
       }
@@ -164,6 +164,21 @@ export function SessionFeedbackSheet({
                   >
                     Skip
                   </button>
+                </div>
+              )}
+
+              {/* Step 1b: Positive feedback submitted — recap link */}
+              {step === 'submitted' && (
+                <div className="py-6 text-center">
+                  <div className="text-3xl mb-2">&#127881;</div>
+                  <p className="text-sm font-semibold text-white mb-1">Thanks for showing up!</p>
+                  <Link
+                    href={`/activities/${sessionId}/recap`}
+                    onClick={() => { onClose(); resetState() }}
+                    className="inline-flex items-center gap-1 text-sm text-amber-400 font-semibold mt-3 hover:text-amber-300 transition-colors"
+                  >
+                    See who showed up <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
               )}
 

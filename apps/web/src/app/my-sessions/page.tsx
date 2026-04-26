@@ -295,12 +295,20 @@ export default function MySessionsPage() {
                           {session.host.name ? ` \u00B7 ${session.host.name}` : ''}
                         </p>
                       </div>
-                      <Link
-                        href={`/activities/${session.id}`}
-                        className="text-[11px] text-[#999] hover:text-white transition-colors whitespace-nowrap"
-                      >
-                        Leave a review
-                      </Link>
+                      <div className="flex flex-col items-end gap-1">
+                        <Link
+                          href={`/activities/${session.id}/recap`}
+                          className="text-[11px] text-amber-400 hover:text-amber-300 transition-colors whitespace-nowrap font-medium"
+                        >
+                          View Recap
+                        </Link>
+                        <Link
+                          href={`/activities/${session.id}`}
+                          className="text-[11px] text-[#999] hover:text-white transition-colors whitespace-nowrap"
+                        >
+                          Leave a review
+                        </Link>
+                      </div>
                     </div>
                   ))}
                 </div>

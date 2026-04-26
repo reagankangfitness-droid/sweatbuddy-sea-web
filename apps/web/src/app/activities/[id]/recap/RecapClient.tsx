@@ -131,7 +131,7 @@ export default function RecapClient({ sessionId }: { sessionId: string }) {
     )
   }
 
-  const { session, attendees, attendeeCount, hasReviewed, sessionImages } = data
+  const { session, attendees = [], attendeeCount = 0, hasReviewed = false, sessionImages = [] } = data
   const othersCount = attendeeCount - 1
 
   return (

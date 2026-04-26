@@ -160,6 +160,10 @@ export async function GET() {
 
     let weeklyStreak = 0
     const checkWeek = new Date(currentWeekStart)
+    // If current week has no sessions yet, start from last week
+    if (!weekSet.has(checkWeek.toISOString())) {
+      checkWeek.setDate(checkWeek.getDate() - 7)
+    }
     while (weekSet.has(checkWeek.toISOString())) {
       weeklyStreak++
       checkWeek.setDate(checkWeek.getDate() - 7)

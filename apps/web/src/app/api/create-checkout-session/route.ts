@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth, clerkClient } from '@clerk/nextjs/server'
+import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { stripe, STRIPE_CONFIG } from '@/lib/stripe'
 import { calculateFees } from '@/lib/constants/fees'
 import { sendActivityBookingConfirmationEmail } from '@/lib/event-confirmation-email'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 export async function POST(request: NextRequest) {
   try {
-    // 1. Authenticate user
-    const { userId: clerkUserId } = await auth()
+    const dbUser = await getCurrentDbUser()
 
-    if (!clerkUserId) {
+    if (!dbUser) {
       return NextResponse.json(
         { error: 'Please sign in to book activities' },
         { status: 401 }
@@ -26,32 +26,6 @@ export async function POST(request: NextRequest) {
         { error: 'Activity ID is required' },
         { status: 400 }
       )
-    }
-
-    // 3. Get user from database (synced from Clerk)
-    const user = await prisma.user.findUnique({
-      where: { id: clerkUserId },
-    })
-
-    if (!user) {
-      // Try to sync user from Clerk
-      const client = await clerkClient()
-      const clerkUser = await client.users.getUser(clerkUserId)
-
-      await prisma.user.upsert({
-        where: { id: clerkUserId },
-        update: {
-          email: clerkUser.emailAddresses[0]?.emailAddress || '',
-          name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || null,
-          imageUrl: clerkUser.imageUrl || null,
-        },
-        create: {
-          id: clerkUserId,
-          email: clerkUser.emailAddresses[0]?.emailAddress || '',
-          name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || null,
-          imageUrl: clerkUser.imageUrl || null,
-        },
-      })
     }
 
     // 4. Get activity details with host info
@@ -107,7 +81,7 @@ export async function POST(request: NextRequest) {
 
     // 6. Check if user is the host
     const hostId = activity.hostId || activity.userId
-    if (clerkUserId === hostId) {
+    if (dbUser.id === hostId) {
       return NextResponse.json(
         { error: 'You cannot book your own activity' },
         { status: 400 }
@@ -118,7 +92,7 @@ export async function POST(request: NextRequest) {
     const existingBooking = await prisma.userActivity.findUnique({
       where: {
         userId_activityId: {
-          userId: clerkUserId,
+          userId: dbUser.id,
           activityId: activityId,
         },
       },
@@ -158,32 +132,75 @@ export async function POST(request: NextRequest) {
 
     // 9. Handle FREE activities (price is 0 or became 0 after discount)
     if (finalPrice === 0 || activity.price === 0) {
-      // Create or update booking directly without Stripe
-      const booking = await prisma.userActivity.upsert({
-        where: {
-          userId_activityId: {
-            userId: clerkUserId,
-            activityId: activityId,
+      const booking = await prisma.$transaction(async (tx) => {
+        const joinedCount = await tx.userActivity.count({
+          where: {
+            activityId,
+            deletedAt: null,
+            status: 'JOINED',
           },
-        },
-        update: {
-          status: 'JOINED',
-          paymentStatus: 'FREE',
-          amountPaid: 0,
-          currency: currency,
-          paidAt: new Date(),
-          deletedAt: null,
-        },
-        create: {
-          userId: clerkUserId,
-          activityId: activityId,
-          status: 'JOINED',
-          paymentStatus: 'FREE',
-          amountPaid: 0,
-          currency: currency,
-          paidAt: new Date(),
-        },
-      })
+        })
+        if (activity.maxPeople && joinedCount >= activity.maxPeople) {
+          throw new Error('ACTIVITY_FULL')
+        }
+
+        const booking = await tx.userActivity.upsert({
+          where: {
+            userId_activityId: {
+              userId: dbUser.id,
+              activityId: activityId,
+            },
+          },
+          update: {
+            status: 'JOINED',
+            paymentStatus: 'FREE',
+            amountPaid: 0,
+            currency: currency,
+            paidAt: new Date(),
+            deletedAt: null,
+          },
+          create: {
+            userId: dbUser.id,
+            activityId: activityId,
+            status: 'JOINED',
+            paymentStatus: 'FREE',
+            amountPaid: 0,
+            currency: currency,
+            paidAt: new Date(),
+          },
+        })
+
+        const activityGroup = await tx.group.findFirst({
+          where: { activityId: activityId },
+        })
+
+        if (activityGroup) {
+          await tx.userGroup.upsert({
+            where: {
+              userId_groupId: {
+                userId: dbUser.id,
+                groupId: activityGroup.id,
+              },
+            },
+            update: {
+              deletedAt: null,
+            },
+            create: {
+              userId: dbUser.id,
+              groupId: activityGroup.id,
+              role: 'MEMBER',
+            },
+          })
+        }
+
+        await tx.eventChat.upsert({
+          where: { activityId: activityId },
+          update: {},
+          create: { activityId: activityId, isActive: true },
+        })
+
+        return booking
+      }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
 
       // Handle referral conversion for free activities
       if (referralInvite) {
@@ -199,7 +216,7 @@ export async function POST(request: NextRequest) {
         await prisma.referralConversion.create({
           data: {
             inviteId: referralInvite.id,
-            friendUserId: clerkUserId,
+            friendUserId: dbUser.id,
             userActivityId: booking.id,
             discountType: 'FREE',
             discountValue: 100,
@@ -208,40 +225,9 @@ export async function POST(request: NextRequest) {
         })
       }
 
-      // Add user to activity group chat
-      const activityGroup = await prisma.group.findFirst({
-        where: { activityId: activityId },
-      })
-
-      if (activityGroup) {
-        await prisma.userGroup.upsert({
-          where: {
-            userId_groupId: {
-              userId: clerkUserId,
-              groupId: activityGroup.id,
-            },
-          },
-          update: {
-            deletedAt: null,
-          },
-          create: {
-            userId: clerkUserId,
-            groupId: activityGroup.id,
-            role: 'MEMBER',
-          },
-        })
-      }
-
-      // Ensure EventChat exists for this activity
-      await prisma.eventChat.upsert({
-        where: { activityId: activityId },
-        update: {},
-        create: { activityId: activityId, isActive: true },
-      })
-
       // Send booking confirmation email (async, don't block response)
       const userRecord = await prisma.user.findUnique({
-        where: { id: clerkUserId },
+        where: { id: dbUser.id },
         select: { email: true, name: true },
       })
 
@@ -286,11 +272,6 @@ export async function POST(request: NextRequest) {
         })
       : 'Date TBD'
 
-    // Get user email for Stripe customer
-    const client = await clerkClient()
-    const clerkUser = await client.users.getUser(clerkUserId)
-    const userEmail = clerkUser.emailAddresses[0]?.emailAddress
-
     // Calculate fees using new fee structure (3.7% + $1.79 per ticket)
     // calculateFees expects dollars; activity.price is now stored in cents
     const fees = calculateFees(finalPrice / 100, 1)
@@ -300,7 +281,7 @@ export async function POST(request: NextRequest) {
       mode: 'payment',
 
       // Customer info
-      customer_email: userEmail,
+      customer_email: dbUser.email,
 
       // Line items - ticket price + service fee
       line_items: [
@@ -337,7 +318,7 @@ export async function POST(request: NextRequest) {
       // Metadata for webhook processing
       metadata: {
         activity_id: activityId,
-        user_id: clerkUserId,
+        user_id: dbUser.id,
         host_id: hostId,
         original_price: activity.price.toString(), // cents
         discount_amount: discountAmount.toString(), // cents
@@ -362,31 +343,47 @@ export async function POST(request: NextRequest) {
     // 11. Create or update pending booking record
     // Note: amountPaid is the ticket price (what host receives)
     // Total paid by attendee = amountPaid + serviceFee
-    await prisma.userActivity.upsert({
-      where: {
-        userId_activityId: {
-          userId: clerkUserId,
-          activityId: activityId,
+    await prisma.$transaction(async (tx) => {
+      const reservedCount = await tx.userActivity.count({
+        where: {
+          activityId,
+          deletedAt: null,
+          OR: [
+            { status: 'JOINED' },
+            { status: 'INTERESTED', paymentStatus: 'PENDING' },
+          ],
         },
-      },
-      update: {
-        status: 'INTERESTED', // Will be updated to JOINED after payment
-        paymentStatus: 'PENDING',
-        stripeCheckoutSessionId: checkoutSession.id,
-        amountPaid: Math.round(fees.attendeePays * 100), // Total amount attendee pays (cents)
-        currency: currency,
-        deletedAt: null,
-      },
-      create: {
-        userId: clerkUserId,
-        activityId: activityId,
-        status: 'INTERESTED',
-        paymentStatus: 'PENDING',
-        stripeCheckoutSessionId: checkoutSession.id,
-        amountPaid: Math.round(fees.attendeePays * 100), // Total amount attendee pays (cents)
-        currency: currency,
-      },
-    })
+      })
+      if (activity.maxPeople && reservedCount >= activity.maxPeople) {
+        throw new Error('ACTIVITY_FULL')
+      }
+
+      await tx.userActivity.upsert({
+        where: {
+          userId_activityId: {
+            userId: dbUser.id,
+            activityId: activityId,
+          },
+        },
+        update: {
+          status: 'INTERESTED', // Will be updated to JOINED after payment
+          paymentStatus: 'PENDING',
+          stripeCheckoutSessionId: checkoutSession.id,
+          amountPaid: Math.round(fees.attendeePays * 100), // Total amount attendee pays (cents)
+          currency: currency,
+          deletedAt: null,
+        },
+        create: {
+          userId: dbUser.id,
+          activityId: activityId,
+          status: 'INTERESTED',
+          paymentStatus: 'PENDING',
+          stripeCheckoutSessionId: checkoutSession.id,
+          amountPaid: Math.round(fees.attendeePays * 100), // Total amount attendee pays (cents)
+          currency: currency,
+        },
+      })
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
 
     // 12. Return checkout URL
     return NextResponse.json({
@@ -396,6 +393,13 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Checkout session error:', error)
+
+    if (error instanceof Error && error.message === 'ACTIVITY_FULL') {
+      return NextResponse.json(
+        { error: 'This activity is fully booked' },
+        { status: 400 }
+      )
+    }
 
     // Handle Stripe-specific errors
     if (error instanceof Error && error.message.includes('Stripe')) {

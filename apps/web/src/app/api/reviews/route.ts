@@ -1,6 +1,6 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { submitReview, canReviewBooking } from '@/lib/reviews'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 /**
  * POST /api/reviews
@@ -8,9 +8,9 @@ import { submitReview, canReviewBooking } from '@/lib/reviews'
  */
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth()
+    const dbUser = await getCurrentDbUser()
 
-    if (!userId) {
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user can review
-    const eligibility = await canReviewBooking(userActivityId, userId)
+    const eligibility = await canReviewBooking(userActivityId, dbUser.id)
     if (!eligibility.canReview) {
       return NextResponse.json(
         { error: eligibility.reason || 'Cannot review this booking' },
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     const review = await submitReview({
       userActivityId,
-      reviewerId: userId,
+      reviewerId: dbUser.id,
       rating,
       title,
       content,

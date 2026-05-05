@@ -1,7 +1,6 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import { recordShare } from '@/lib/completion-cards'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 // POST /api/completion-cards/[cardId]/share - Record a share/download event
 export async function POST(
@@ -9,23 +8,13 @@ export async function POST(
   { params }: { params: Promise<{ cardId: string }> }
 ) {
   try {
-    const { userId: clerkUserId } = await auth()
+    const user = await getCurrentDbUser()
 
-    if (!clerkUserId) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { cardId } = await params
-
-    // Get internal user ID
-    const user = await prisma.user.findFirst({
-      where: { id: clerkUserId },
-      select: { id: true },
-    })
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    }
 
     const body = await request.json()
     const { platform } = body // 'instagram', 'whatsapp', 'twitter', 'download'

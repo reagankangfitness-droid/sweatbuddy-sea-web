@@ -70,7 +70,7 @@ export async function PUT(request: Request) {
     // Find user by email to get the database user ID
     const user = await prisma.user.findUnique({
       where: { email },
-      select: { id: true }
+      select: { id: true, isHost: true }
     })
 
     if (!user) {
@@ -110,7 +110,7 @@ export async function PUT(request: Request) {
         bio,
         location,
         website,
-        instagram,
+        instagram: user.isHost ? undefined : instagram,
         twitter,
         linkedin,
         tiktok,

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getHostSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { isHostEventOwner } from '@/lib/host-ownership'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,14 +31,14 @@ export async function GET(
     // Verify host owns event
     const event = await prisma.eventSubmission.findUnique({
       where: { id: eventId },
-      select: { organizerInstagram: true, maxTickets: true },
+      select: { organizerInstagram: true, submittedByUserId: true, maxTickets: true },
     })
 
     if (!event) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    if (event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!isHostEventOwner(session, event)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -149,10 +150,10 @@ export async function PATCH(
     // Verify host owns event
     const event = await prisma.eventSubmission.findUnique({
       where: { id: eventId },
-      select: { organizerInstagram: true },
+      select: { organizerInstagram: true, submittedByUserId: true },
     })
 
-    if (!event || event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!event || !isHostEventOwner(session, event)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -199,10 +200,10 @@ export async function POST(
     // Verify host owns event
     const event = await prisma.eventSubmission.findUnique({
       where: { id: eventId },
-      select: { organizerInstagram: true },
+      select: { organizerInstagram: true, submittedByUserId: true },
     })
 
-    if (!event || event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!event || !isHostEventOwner(session, event)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

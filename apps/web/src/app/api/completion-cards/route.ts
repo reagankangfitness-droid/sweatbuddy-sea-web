@@ -1,28 +1,17 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import {
   createCompletionCard,
   getUserCompletionCards,
 } from '@/lib/completion-cards'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 // GET /api/completion-cards - Get user's completion cards
 export async function GET(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth()
-
-    if (!clerkUserId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // Get internal user ID
-    const user = await prisma.user.findFirst({
-      where: { id: clerkUserId },
-      select: { id: true },
-    })
+    const user = await getCurrentDbUser()
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { searchParams } = new URL(request.url)
@@ -44,20 +33,10 @@ export async function GET(request: NextRequest) {
 // POST /api/completion-cards - Create a new completion card
 export async function POST(request: NextRequest) {
   try {
-    const { userId: clerkUserId } = await auth()
-
-    if (!clerkUserId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // Get internal user ID
-    const user = await prisma.user.findFirst({
-      where: { id: clerkUserId },
-      select: { id: true },
-    })
+    const user = await getCurrentDbUser()
 
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const body = await request.json()

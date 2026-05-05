@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getHostSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { isHostEventOwner } from '@/lib/host-ownership'
 
 export const dynamic = 'force-dynamic'
 
@@ -51,8 +52,7 @@ export async function POST(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    // Verify ownership - compare Instagram handles (case-insensitive)
-    if (originalEvent.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!isHostEventOwner(session, originalEvent)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -90,6 +90,7 @@ export async function POST(
         recurring: originalEvent.recurring,
         organizerName: originalEvent.organizerName,
         organizerInstagram: originalEvent.organizerInstagram,
+        submittedByUserId: session.userId,
         contactEmail: originalEvent.contactEmail,
         // Pricing fields
         isFree: originalEvent.isFree,

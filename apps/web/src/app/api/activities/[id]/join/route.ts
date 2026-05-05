@@ -1,10 +1,11 @@
-import { auth, clerkClient } from '@clerk/nextjs/server'
+import { Prisma } from '@prisma/client'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { onBookingConfirmed, onBookingCancelled } from '@/lib/stats/realtime'
 import { processWaitlistForSpot, convertWaitlistToBooking } from '@/lib/waitlist'
 import { scheduleRemindersForBooking, cancelRemindersForBooking } from '@/lib/reminders'
 import { createNotification } from '@/lib/notifications'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 export async function POST(
   request: Request,
@@ -12,33 +13,12 @@ export async function POST(
 ) {
   try {
     const { id } = await params
-    // Authenticate with Clerk
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const activityId = id
-
-    // Get user details from Clerk and sync to database
-    const client = await clerkClient()
-    const clerkUser = await client.users.getUser(userId)
-
-    // Ensure user exists in database (upsert)
-    await prisma.user.upsert({
-      where: { id: userId },
-      create: {
-        id: userId,
-        email: clerkUser.emailAddresses[0]?.emailAddress || '',
-        name: clerkUser.fullName || clerkUser.firstName || null,
-        imageUrl: clerkUser.imageUrl || null,
-      },
-      update: {
-        email: clerkUser.emailAddresses[0]?.emailAddress || '',
-        name: clerkUser.fullName || clerkUser.firstName || null,
-        imageUrl: clerkUser.imageUrl || null,
-      },
-    })
 
     // Check if activity exists (initial check before transaction)
     const activity = await prisma.activity.findUnique({
@@ -53,7 +33,7 @@ export async function POST(
     const existingRsvp = await prisma.userActivity.findUnique({
       where: {
         userId_activityId: {
-          userId,
+          userId: dbUser.id,
           activityId,
         },
       },
@@ -71,20 +51,20 @@ export async function POST(
       // Re-fetch activity with participants inside transaction for atomicity
       const freshActivity = await tx.activity.findUnique({
         where: { id: activityId, deletedAt: null },
-        include: {
-          userActivities: true,
-        },
       })
 
       if (!freshActivity) {
         throw new Error('ACTIVITY_NOT_FOUND')
       }
 
-      // Check capacity inside transaction to prevent race condition
       if (freshActivity.maxPeople) {
-        const currentParticipants = freshActivity.userActivities.filter(
-          (ua) => ua.status === 'JOINED'
-        ).length
+        const currentParticipants = await tx.userActivity.count({
+          where: {
+            activityId,
+            deletedAt: null,
+            status: 'JOINED',
+          },
+        })
         if (currentParticipants >= freshActivity.maxPeople) {
           throw new Error('ACTIVITY_FULL')
         }
@@ -92,7 +72,7 @@ export async function POST(
 
       const userActivity = await tx.userActivity.create({
         data: {
-          userId,
+          userId: dbUser.id,
           activityId,
           status: 'JOINED',
         },
@@ -110,7 +90,7 @@ export async function POST(
       if (group) {
         await tx.userGroup.create({
           data: {
-            userId,
+            userId: dbUser.id,
             groupId: group.id,
             role: 'MEMBER',
           },
@@ -118,7 +98,7 @@ export async function POST(
       }
 
       return userActivity
-    })
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
 
     if (!result) {
       return NextResponse.json({ error: 'Failed to join activity' }, { status: 500 })
@@ -133,11 +113,10 @@ export async function POST(
 
     // Convert waitlist entry if user was on waitlist (async, don't block)
     try {
-      const clerkUser = await (await clerkClient()).users.getUser(userId)
       await convertWaitlistToBooking(
         activityId,
-        userId,
-        clerkUser.emailAddresses[0]?.emailAddress,
+        dbUser.id,
+        dbUser.email,
         result.id
       )
     } catch (waitlistError) {
@@ -161,17 +140,17 @@ export async function POST(
         where: {
           activityId,
           status: 'JOINED',
-          userId: { not: userId },
+          userId: { not: dbUser.id },
           user: {
             // Users who follow the joining user (they're "friends")
-            following: { some: { followingId: userId } },
+            following: { some: { followingId: dbUser.id } },
           },
         },
         select: { userId: true },
       })
 
       if (friendsAtEvent.length > 0) {
-        const joinerName = clerkUser.firstName || clerkUser.fullName?.split(' ')[0] || 'A friend'
+        const joinerName = dbUser.name?.split(' ')[0] || 'A friend'
         for (const friend of friendsAtEvent) {
           void createNotification({
             userId: friend.userId,
@@ -179,7 +158,7 @@ export async function POST(
             title: `${joinerName} is going too!`,
             content: `${joinerName} just RSVP'd to "${activity.title}"`,
             link: `/activities/${activityId}`,
-            metadata: { activityId, friendUserId: userId },
+            metadata: { activityId, friendUserId: dbUser.id },
           })
         }
       }
@@ -216,9 +195,8 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
-    // Authenticate with Clerk
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -233,7 +211,7 @@ export async function DELETE(
     const existingRsvp = await prisma.userActivity.findUnique({
       where: {
         userId_activityId: {
-          userId,
+          userId: dbUser.id,
           activityId,
         },
       },
@@ -251,8 +229,8 @@ export async function DELETE(
       await tx.userActivity.delete({
         where: {
           userId_activityId: {
-            userId,
-            activityId,
+                userId: dbUser.id,
+                activityId,
           },
         },
       })
@@ -269,7 +247,7 @@ export async function DELETE(
       if (group) {
         await tx.userGroup.deleteMany({
           where: {
-            userId,
+            userId: dbUser.id,
             groupId: group.id,
           },
         })

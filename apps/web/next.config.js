@@ -2,10 +2,6 @@ const { withSentryConfig } = require('@sentry/nextjs')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: false,
-  },
-
   // Enable compression
   compress: true,
 

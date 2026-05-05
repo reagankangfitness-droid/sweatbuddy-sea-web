@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { sendEmail } from '@/lib/email'
 import { SUPPORT_EMAIL } from '@/config/constants'
+import { checkApiRateLimit } from '@/lib/rate-limit'
 
 function escapeHtml(str: string): string {
   return str
@@ -11,8 +13,11 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#039;')
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const rateLimited = await checkApiRateLimit(request, 'auth')
+    if (rateLimited) return rateLimited
+
     const body = await request.json()
     const { name: rawName, email: rawEmail, category, message: rawMessage } = body
     const name = rawName ? escapeHtml(String(rawName)) : ''

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getHostSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { isHostEventOwner } from '@/lib/host-ownership'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,6 +31,7 @@ export async function PUT(
       select: {
         id: true,
         organizerInstagram: true,
+        submittedByUserId: true,
       },
     })
 
@@ -37,7 +39,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    if (event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!isHostEventOwner(session, event)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -96,6 +98,7 @@ export async function PATCH(
       select: {
         id: true,
         organizerInstagram: true,
+        submittedByUserId: true,
       },
     })
 
@@ -103,7 +106,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    if (event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!isHostEventOwner(session, event)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

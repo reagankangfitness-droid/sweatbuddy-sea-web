@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 import { getHostSession } from '@/lib/auth'
+import { isHostEventOwner } from '@/lib/host-ownership'
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,10 +35,10 @@ export async function POST(request: NextRequest) {
     // Verify ownership
     const event = await prisma.eventSubmission.findUnique({
       where: { id: eventId },
-      select: { organizerInstagram: true },
+      select: { organizerInstagram: true, submittedByUserId: true },
     })
 
-    if (!event || event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!event || !isHostEventOwner(session, event)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

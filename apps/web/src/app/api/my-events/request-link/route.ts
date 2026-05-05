@@ -1,12 +1,17 @@
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendEmail } from '@/lib/email'
+import { checkApiRateLimit } from '@/lib/rate-limit'
 import crypto from 'crypto'
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://sweatbuddies.co'
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const rateLimited = await checkApiRateLimit(request, 'auth')
+    if (rateLimited) return rateLimited
+
     const { email } = await request.json()
 
     if (!email || !email.includes('@')) {

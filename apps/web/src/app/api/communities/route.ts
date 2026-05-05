@@ -1,14 +1,13 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { generateUniqueSlug, updateCommunityMemberCount } from '@/lib/community-system'
 import { trackEvent, EVENTS } from '@/lib/analytics'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 // GET /api/communities - List communities
 export async function GET(request: NextRequest) {
   try {
-    const { userId } = await auth()
     const { searchParams } = new URL(request.url)
     const city = searchParams.get('city')
     const category = searchParams.get('category')
@@ -19,14 +18,15 @@ export async function GET(request: NextRequest) {
     const offset = parseInt(searchParams.get('offset') || '0')
 
     // If owned or joined filter, require authentication
-    if ((owned || joined) && !userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const dbUser = owned || joined ? await getCurrentDbUser() : null
+    if ((owned || joined) && !dbUser) {
+       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+     }
 
     // Handle owned communities (communities user created)
-    if (owned && userId) {
+    if (owned && dbUser) {
       const communities = await prisma.community.findMany({
-        where: { createdById: userId },
+        where: { createdById: dbUser.id },
         include: {
           city: true,
           _count: {
@@ -49,9 +49,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Handle joined communities (communities user is a member of)
-    if (joined && userId) {
+    if (joined && dbUser) {
       const memberships = await prisma.communityMember.findMany({
-        where: { userId },
+        where: { userId: dbUser.id },
         include: {
           community: {
             include: {
@@ -144,13 +144,13 @@ export async function GET(request: NextRequest) {
 // POST /api/communities - Create a community
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Rate limit: max 5 community creations per user per hour
-    const rl = checkRateLimit(userId, 'communities/create', 5, 60 * 60 * 1000)
+    const rl = checkRateLimit(dbUser.id, 'communities/create', 5, 60 * 60 * 1000)
     if (!rl.allowed) {
       return NextResponse.json(
         { error: 'Too many communities created. Please try again later.' },
@@ -215,7 +215,7 @@ export async function POST(request: NextRequest) {
         instagramHandle,
         websiteUrl,
         communityLink,
-        createdById: userId,
+        createdById: dbUser.id,
         memberCount: 1,
       },
       include: {
@@ -227,7 +227,7 @@ export async function POST(request: NextRequest) {
     await prisma.communityMember.create({
       data: {
         communityId: community.id,
-        userId,
+        userId: dbUser.id,
         role: 'OWNER',
       },
     })
@@ -248,7 +248,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Track analytics event
-    await trackEvent(EVENTS.COMMUNITY_CREATED, userId, {
+    await trackEvent(EVENTS.COMMUNITY_CREATED, dbUser.id, {
       communityId: community.id,
       communitySlug: community.slug,
       communityName: community.name,

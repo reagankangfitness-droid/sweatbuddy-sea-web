@@ -47,7 +47,15 @@ export async function checkApiRateLimit(
   identifier?: string,
 ): Promise<NextResponse | null> {
   const limiter = rateLimiters[tier]
-  if (!limiter) return null // Rate limiting disabled if Redis not configured
+  if (!limiter) {
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json(
+        { error: 'Rate limiting is not configured.' },
+        { status: 503 },
+      )
+    }
+    return null // Rate limiting disabled in local/test environments if Redis is not configured
+  }
 
   const id = identifier || getClientIp(request)
   const { success, limit, reset, remaining } = await limiter.limit(id)

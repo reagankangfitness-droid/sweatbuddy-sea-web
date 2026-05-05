@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
-import { getOrganizerSession } from '@/lib/organizer-session'
+import { getHostSession } from '@/lib/auth'
+import { isHostEventOwner } from '@/lib/host-ownership'
 
 export async function POST(request: Request) {
   try {
-    const session = await getOrganizerSession()
+    const session = await getHostSession()
     if (!session) {
       return NextResponse.json(
         { error: { message: 'Unauthorized - organizer session required' } },
@@ -13,19 +14,24 @@ export async function POST(request: Request) {
       )
     }
 
-    const { email, eventSubmissionId } = await request.json()
-
-    if (!email) {
-      return NextResponse.json(
-        { error: { message: 'Email is required' } },
-        { status: 400 }
-      )
-    }
+    const { eventSubmissionId } = await request.json()
 
     if (!eventSubmissionId) {
       return NextResponse.json(
         { error: { message: 'Event submission ID is required' } },
         { status: 400 }
+      )
+    }
+
+    const eventSubmission = await prisma.eventSubmission.findUnique({
+      where: { id: eventSubmissionId },
+      select: { organizerInstagram: true, submittedByUserId: true },
+    })
+
+    if (!eventSubmission || !isHostEventOwner(session, eventSubmission)) {
+      return NextResponse.json(
+        { error: { message: 'Unauthorized - event does not belong to you' } },
+        { status: 403 }
       )
     }
 
@@ -47,7 +53,7 @@ export async function POST(request: Request) {
     const account = await stripe.accounts.create({
       type: 'express',
       country: 'SG',
-      email: email,
+      email: session.email,
       capabilities: {
         card_payments: { requested: true },
         transfers: { requested: true },
@@ -64,7 +70,7 @@ export async function POST(request: Request) {
       data: {
         eventSubmissionId,
         stripeConnectAccountId: account.id,
-        email: email,
+        email: session.email,
         country: 'SG',
         chargesEnabled: false,
         payoutsEnabled: false,

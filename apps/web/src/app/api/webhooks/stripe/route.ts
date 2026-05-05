@@ -104,6 +104,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   const metadata = session.metadata || {}
   const amountTotal = session.amount_total || 0
   const currency = session.currency?.toUpperCase() || 'SGD'
+  const isP2PSession = metadata.flow === 'p2p_session'
 
   // Check if this is an EventSubmission payment (public events)
   if (metadata.eventId) {
@@ -168,6 +169,14 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
           amountPaid: amountTotal, // already in cents from Stripe
           currency: currency,
           paidAt: new Date(),
+          ...(isP2PSession
+            ? {
+                p2pPaymentStatus: 'VERIFIED',
+                p2pPaymentMethod: 'STRIPE',
+                verifiedByHost: true,
+                verifiedAt: new Date(),
+              }
+            : {}),
         },
       })
 
@@ -247,6 +256,13 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
         update: {},
         create: { activityId: activityId, isActive: true },
       })
+
+      if (isP2PSession) {
+        await tx.user.update({
+          where: { id: userId },
+          data: { sessionsAttendedCount: { increment: 1 } },
+        })
+      }
     })
 
 

@@ -1,6 +1,6 @@
-import { cookies } from 'next/headers'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from './prisma'
+import { getOrganizerSession } from './organizer-session'
 
 export interface HostSession {
   id: string
@@ -41,7 +41,7 @@ export async function getHostSession(): Promise<HostSession | null> {
         },
       })
 
-      if (user && user.instagram) {
+      if (user && user.isHost && user.instagram) {
         return {
           id: user.id,
           email: user.email,
@@ -81,7 +81,7 @@ export async function getHostSession(): Promise<HostSession | null> {
           email: organizer.email,
           instagramHandle: organizer.instagramHandle,
           name: organizer.name,
-          source: 'clerk',
+          source: 'legacy',
           userId: userByEmail?.id || null, // Link to User if exists
         }
       }
@@ -91,21 +91,8 @@ export async function getHostSession(): Promise<HostSession | null> {
     }
 
     // Fall back to legacy cookie-based session (deprecated)
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get('organizer_session')
-
-    if (!sessionCookie) {
-      return null
-    }
-
-    let session
-    try {
-      session = JSON.parse(sessionCookie.value)
-    } catch {
-      return null
-    }
-
-    if (!session?.id) {
+    const session = await getOrganizerSession()
+    if (!session) {
       return null
     }
 

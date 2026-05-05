@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { getHostSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { isHostEventOwner } from '@/lib/host-ownership'
 
 export async function GET(
   request: Request,
@@ -43,10 +44,10 @@ export async function GET(
     // Get the event submission to verify ownership
     const eventSubmission = await prisma.eventSubmission.findUnique({
       where: { id: hostAccount.eventSubmissionId },
-      select: { organizerInstagram: true },
+      select: { organizerInstagram: true, submittedByUserId: true },
     })
 
-    if (!eventSubmission || eventSubmission.organizerInstagram?.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!eventSubmission || !isHostEventOwner(session, eventSubmission)) {
       return NextResponse.json(
         { error: { message: 'Unauthorized - account does not belong to you' } },
         { status: 403 }

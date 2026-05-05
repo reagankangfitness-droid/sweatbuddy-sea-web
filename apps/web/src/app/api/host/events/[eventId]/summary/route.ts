@@ -2,12 +2,16 @@ import { NextResponse } from 'next/server'
 import { getHostSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { anthropic, AGENT_MODEL } from '@/lib/ai'
+import { isHostEventOwner } from '@/lib/host-ownership'
 
 export const dynamic = 'force-dynamic'
 
 const GENERATION_COOLDOWN_MS = 60 * 60 * 1000 // 1 hour
 
-async function generateEventSummary(eventId: string, hostInstagram: string) {
+async function generateEventSummary(
+  eventId: string,
+  host: { userId: string | null; instagramHandle: string; source?: string }
+) {
   // Get event details
   const event = await prisma.eventSubmission.findUnique({
     where: { id: eventId },
@@ -23,6 +27,7 @@ async function generateEventSummary(eventId: string, hostInstagram: string) {
       isFree: true,
       maxTickets: true,
       organizerInstagram: true,
+      submittedByUserId: true,
     },
   })
 
@@ -58,7 +63,9 @@ async function generateEventSummary(eventId: string, hostInstagram: string) {
   // Get host's other events for comparison
   const otherEvents = await prisma.eventSubmission.findMany({
     where: {
-      organizerInstagram: hostInstagram,
+      OR: host.source === 'legacy'
+        ? [{ organizerInstagram: { equals: host.instagramHandle, mode: 'insensitive' } }]
+        : [{ submittedByUserId: host.userId }],
       status: { in: ['APPROVED', 'CANCELLED'] },
       id: { not: eventId },
     },
@@ -180,14 +187,14 @@ export async function GET(
     // Verify host owns event
     const event = await prisma.eventSubmission.findUnique({
       where: { id: eventId },
-      select: { organizerInstagram: true, eventName: true },
+      select: { organizerInstagram: true, submittedByUserId: true, eventName: true },
     })
 
     if (!event) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    if (event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!isHostEventOwner(session, event)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -201,7 +208,7 @@ export async function GET(
     }
 
     // Generate new summary
-    const generated = await generateEventSummary(eventId, session.instagramHandle)
+    const generated = await generateEventSummary(eventId, session)
 
     const saved = await prisma.eventSummary.create({
       data: {
@@ -236,10 +243,10 @@ export async function POST(
 
     const event = await prisma.eventSubmission.findUnique({
       where: { id: eventId },
-      select: { organizerInstagram: true },
+      select: { organizerInstagram: true, submittedByUserId: true },
     })
 
-    if (!event || event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!event || !isHostEventOwner(session, event)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -261,7 +268,7 @@ export async function POST(
       await prisma.eventSummary.delete({ where: { id: existing.id } })
     }
 
-    const generated = await generateEventSummary(eventId, session.instagramHandle)
+    const generated = await generateEventSummary(eventId, session)
 
     const saved = await prisma.eventSummary.create({
       data: {

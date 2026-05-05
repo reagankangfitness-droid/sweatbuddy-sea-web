@@ -1,12 +1,11 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 import {
   getCompletionCard,
   updateCompletionCard,
   getAvailableTemplates,
 } from '@/lib/completion-cards'
 import { CompletionCardTemplate } from '@prisma/client'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 // GET /api/completion-cards/[cardId] - Get a specific card
 export async function GET(
@@ -14,23 +13,13 @@ export async function GET(
   { params }: { params: Promise<{ cardId: string }> }
 ) {
   try {
-    const { userId: clerkUserId } = await auth()
+    const user = await getCurrentDbUser()
 
-    if (!clerkUserId) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { cardId } = await params
-
-    // Get internal user ID
-    const user = await prisma.user.findFirst({
-      where: { id: clerkUserId },
-      select: { id: true },
-    })
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    }
 
     const card = await getCompletionCard(user.id, cardId)
 
@@ -57,23 +46,13 @@ export async function PUT(
   { params }: { params: Promise<{ cardId: string }> }
 ) {
   try {
-    const { userId: clerkUserId } = await auth()
+    const user = await getCurrentDbUser()
 
-    if (!clerkUserId) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { cardId } = await params
-
-    // Get internal user ID
-    const user = await prisma.user.findFirst({
-      where: { id: clerkUserId },
-      select: { id: true },
-    })
-
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    }
 
     const body = await request.json()
     const { template, caption, showHost, showDate, showDuration, showStreak } = body

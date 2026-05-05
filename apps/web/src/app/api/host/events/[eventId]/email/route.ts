@@ -3,6 +3,7 @@ import { getHostSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { sendBatchEmails } from '@/lib/email'
 import { createNotification } from '@/lib/notifications'
+import { isHostEventOwner } from '@/lib/host-ownership'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,6 +34,7 @@ export async function POST(
         id: true,
         eventName: true,
         organizerInstagram: true,
+        submittedByUserId: true,
       },
     })
 
@@ -40,8 +42,7 @@ export async function POST(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    if (!event.organizerInstagram || !session.instagramHandle ||
-        event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!isHostEventOwner(session, event)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

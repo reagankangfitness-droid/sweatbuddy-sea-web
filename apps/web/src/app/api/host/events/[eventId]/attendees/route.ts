@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getHostSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { isHostEventOwner } from '@/lib/host-ownership'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,6 +23,7 @@ export async function GET(
       select: {
         id: true,
         organizerInstagram: true,
+        submittedByUserId: true,
         eventName: true,
         isFree: true,
         price: true,
@@ -32,14 +34,16 @@ export async function GET(
       return NextResponse.json({ error: 'Event not found' }, { status: 404 })
     }
 
-    if (event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!isHostEventOwner(session, event)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     // Get all events by this host to count repeat attendees
     const hostEvents = await prisma.eventSubmission.findMany({
       where: {
-        organizerInstagram: { equals: session.instagramHandle, mode: 'insensitive' },
+        ...(session.source === 'legacy'
+          ? { organizerInstagram: { equals: session.instagramHandle, mode: 'insensitive' as const } }
+          : { submittedByUserId: session.userId }),
         status: 'APPROVED',
       },
       select: { id: true },

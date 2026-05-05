@@ -10,7 +10,7 @@
     "build": "prisma generate && next build",
     "postinstall": "prisma generate",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint src --ext .ts,.tsx --no-error-on-unmatched-pattern",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ui": "vitest --ui",

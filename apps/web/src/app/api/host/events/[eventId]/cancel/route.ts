@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { stripe } from '@/lib/stripe'
 import { sendEventCancelledByHostEmail, sendRefundNotificationEmail } from '@/lib/event-confirmation-email'
 import { cancelRemindersForEvent } from '@/lib/event-reminders'
+import { isHostEventOwner } from '@/lib/host-ownership'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,6 +40,7 @@ export async function POST(
         time: true,
         location: true,
         organizerInstagram: true,
+        submittedByUserId: true,
         status: true,
         price: true,
         isFree: true,
@@ -53,7 +55,7 @@ export async function POST(
     }
 
     // Verify host owns this event
-    if (event.organizerInstagram.toLowerCase() !== session.instagramHandle.toLowerCase()) {
+    if (!isHostEventOwner(session, event)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

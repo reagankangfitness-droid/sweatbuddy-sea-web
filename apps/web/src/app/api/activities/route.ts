@@ -1,8 +1,8 @@
-import { auth, clerkClient } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { activitySchema } from '@/lib/validations/activity'
 import { mapCategoryToLegacyType, getCategoriesByGroup } from '@/lib/categories'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 /**
  * Converts a datetime-local string (e.g., "2024-12-15T14:00") to a proper UTC Date.
@@ -45,31 +45,10 @@ function parseLocalDateTime(dateTimeLocal: string, timezoneOffset?: number): Dat
 
 export async function POST(request: Request) {
   try {
-    // Authenticate with Clerk
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
-    // Get user details from Clerk and sync to database
-    const client = await clerkClient()
-    const clerkUser = await client.users.getUser(userId)
-
-    // Ensure user exists in database (upsert)
-    await prisma.user.upsert({
-      where: { id: userId },
-      create: {
-        id: userId,
-        email: clerkUser.emailAddresses[0]?.emailAddress || '',
-        name: clerkUser.fullName || clerkUser.firstName || null,
-        imageUrl: clerkUser.imageUrl || null,
-      },
-      update: {
-        email: clerkUser.emailAddresses[0]?.emailAddress || '',
-        name: clerkUser.fullName || clerkUser.firstName || null,
-        imageUrl: clerkUser.imageUrl || null,
-      },
-    })
 
     // Parse and validate request body
     const body = await request.json()
@@ -110,8 +89,8 @@ export async function POST(request: Request) {
           price: Math.round((validatedData.price ?? 0) * 100), // convert dollars to cents
           currency: validatedData.currency || 'USD',
           status: 'PENDING_APPROVAL', // All new activities require approval
-          userId,
-          hostId: userId, // Creator is the host by default
+          userId: dbUser.id,
+          hostId: dbUser.id, // Creator is the host by default
         },
       })
 
@@ -128,7 +107,7 @@ export async function POST(request: Request) {
       // Add host as first member with ADMIN role
       await tx.userGroup.create({
         data: {
-          userId,
+              userId: dbUser.id,
           groupId: group.id,
           role: 'ADMIN',
         },

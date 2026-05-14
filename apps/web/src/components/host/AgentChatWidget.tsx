@@ -141,6 +141,7 @@ export function AgentChatWidget() {
   const [showQuickQuestions, setShowQuickQuestions] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const hasLoadedInitialChatRef = useRef(false)
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -150,22 +151,7 @@ export function AgentChatWidget() {
     scrollToBottom()
   }, [messages, scrollToBottom])
 
-  // Load conversation and community type when widget opens
-  useEffect(() => {
-    if (isOpen && messages.length === 0 && !isLoading) {
-      loadConversation()
-      loadCommunityType()
-    }
-  }, [isOpen])
-
-  // Focus input when widget opens
-  useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 100)
-    }
-  }, [isOpen])
-
-  const loadCommunityType = async () => {
+  const loadCommunityType = useCallback(async () => {
     try {
       const res = await fetch('/api/host/onboarding')
       if (res.ok) {
@@ -175,9 +161,9 @@ export function AgentChatWidget() {
     } catch {
       // Silently fail - will use default questions
     }
-  }
+  }, [])
 
-  const loadConversation = async () => {
+  const loadConversation = useCallback(async () => {
     setIsLoading(true)
     setError(null)
     try {
@@ -198,7 +184,28 @@ export function AgentChatWidget() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [])
+
+  // Load conversation and community type when widget opens
+  useEffect(() => {
+    if (!isOpen) {
+      hasLoadedInitialChatRef.current = false
+      return
+    }
+
+    if (messages.length === 0 && !isLoading && !hasLoadedInitialChatRef.current) {
+      hasLoadedInitialChatRef.current = true
+      void loadConversation()
+      void loadCommunityType()
+    }
+  }, [isOpen, messages.length, isLoading, loadConversation, loadCommunityType])
+
+  // Focus input when widget opens
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 100)
+    }
+  }, [isOpen])
 
   const sendMessage = async (messageText?: string) => {
     const userMessage = (messageText || input).trim()

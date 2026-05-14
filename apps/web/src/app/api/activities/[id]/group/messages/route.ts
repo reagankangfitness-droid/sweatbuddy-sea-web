@@ -79,8 +79,15 @@ export async function GET(
       },
     })
 
+    type MentionPreview = {
+      id: string
+      messageId: string
+      mentionedUserId: string
+      mentionText: string
+    }
+
     // Try to fetch mentions separately (may not exist in DB yet)
-    let messagesWithMentions = messages.map(m => ({ ...m, mentions: [] as any[] }))
+    let messagesWithMentions = messages.map(m => ({ ...m, mentions: [] as MentionPreview[] }))
     try {
       const messageIds = messages.map(m => m.id)
       const mentions = await prisma.mention.findMany({

@@ -1,5 +1,16 @@
 import { vi } from 'vitest'
 
+interface MockGoogleMaps {
+  Map: ReturnType<typeof vi.fn>
+  Marker: ReturnType<typeof vi.fn>
+  places: {
+    Autocomplete: ReturnType<typeof vi.fn>
+    PlacesService: ReturnType<typeof vi.fn>
+  }
+  LatLng: ReturnType<typeof vi.fn>
+  LatLngBounds: ReturnType<typeof vi.fn>
+}
+
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
@@ -26,9 +37,9 @@ const mockGoogleMaps = {
   LatLngBounds: vi.fn(),
 }
 
-global.google = {
-  maps: mockGoogleMaps as any,
-}
+globalThis.google = {
+  maps: mockGoogleMaps,
+} as unknown as typeof google
 
 // Mock environment variables
 process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY = 'test-api-key'

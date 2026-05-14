@@ -76,11 +76,13 @@ export async function GET() {
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       select: {
+        id: true,
         p2pOnboardingCompleted: true,
         bio: true,
         fitnessInterests: true,
         fitnessLevel: true,
         imageUrl: true,
+        location: true,
       },
     })
 

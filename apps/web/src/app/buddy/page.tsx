@@ -15,6 +15,13 @@ import { ShareSessionSheet } from '@/components/ShareSessionSheet'
 import { SessionFeedbackSheet } from '@/components/SessionFeedbackSheet'
 import { BioPromptSheet } from '@/components/BioPromptSheet'
 import { JoinGateSheet } from '@/components/JoinGateSheet'
+import {
+  DEFAULT_CITY_LOCATION_CONFIG,
+  getCityLocationConfigFromText,
+  getNearestCityLocationConfig,
+  type CityLocationConfig,
+  type CityNeighborhood,
+} from '@/lib/location-config'
 
 interface Host {
   id: string
@@ -72,7 +79,6 @@ interface Session {
 
 // ─── Map constants ───────────────────────────────────────────────────────────
 
-const SINGAPORE_CENTER = { lat: 1.3521, lng: 103.8198 }
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 
 // ─── Vanilla Google Maps loader (no wrapper library) ─────────────────────────
@@ -309,19 +315,6 @@ const TYPE_FILTERS = [
   { value: 'pilates', label: 'Pilates', emoji: '🦢' },
 ]
 
-const NEIGHBORHOODS = [
-  { name: 'East Coast', lat: 1.3010, lng: 103.9120, radius: 3 },
-  { name: 'Tanjong Pagar', lat: 1.2764, lng: 103.8434, radius: 2 },
-  { name: 'Sentosa', lat: 1.2494, lng: 103.8303, radius: 2 },
-  { name: 'Marina Bay', lat: 1.2816, lng: 103.8636, radius: 2 },
-  { name: 'Tiong Bahru', lat: 1.2867, lng: 103.8273, radius: 2 },
-  { name: 'Bukit Timah', lat: 1.3294, lng: 103.7932, radius: 3 },
-  { name: 'Punggol', lat: 1.3984, lng: 103.9072, radius: 3 },
-  { name: 'Jurong', lat: 1.3329, lng: 103.7436, radius: 3 },
-  { name: 'Ang Mo Kio', lat: 1.3691, lng: 103.8454, radius: 2 },
-  { name: 'Bedok', lat: 1.3236, lng: 103.9273, radius: 3 },
-]
-
 export default function BuddyPage() {
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-[#666666]" /></div>}>
@@ -333,6 +326,7 @@ export default function BuddyPage() {
 function BuddyPageInner() {
   const router = useRouter()
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
+  const [cityConfig, setCityConfig] = useState<CityLocationConfig>(DEFAULT_CITY_LOCATION_CONFIG)
   const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
   const [nextCursor, setNextCursor] = useState<string | null>(null)
@@ -340,6 +334,7 @@ function BuddyPageInner() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [joiningId, setJoiningId] = useState<string | null>(null)
   const [paymentModalSession, setPaymentModalSession] = useState<Session | null>(null)
+  const profileCityLockedRef = useRef(false)
 
   const [typeFilter, setTypeFilter] = useState('')
   const [pricingFilter, setPricingFilter] = useState('')
@@ -352,12 +347,13 @@ function BuddyPageInner() {
   const [showJoinGate, setShowJoinGate] = useState(false)
   const [pendingJoinId, setPendingJoinId] = useState<string | null>(null)
   const [isOnboarded, setIsOnboarded] = useState(true) // assume true until checked
+  const [profileLocationReady, setProfileLocationReady] = useState(false)
 
   // View mode: list-first (default) or map
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
 
   // Neighborhood filter
-  const [neighborhoodFilter, setNeighborhoodFilter] = useState<typeof NEIGHBORHOODS[0] | null>(null)
+  const [neighborhoodFilter, setNeighborhoodFilter] = useState<CityNeighborhood | null>(null)
 
   // Search
   const [searchQuery, setSearchQuery] = useState('')
@@ -379,6 +375,13 @@ function BuddyPageInner() {
         const effectiveLocation = neighborhoodFilter
           ? { lat: neighborhoodFilter.lat, lng: neighborhoodFilter.lng }
           : userLocation
+        const activeCityConfig = profileCityLockedRef.current || neighborhoodFilter
+          ? cityConfig
+          : effectiveLocation
+            ? getNearestCityLocationConfig(effectiveLocation.lat, effectiveLocation.lng)
+            : cityConfig
+        params.set('city', activeCityConfig.slug)
+        params.set('timezone', activeCityConfig.timezone)
         if (effectiveLocation) {
           params.set('lat', String(effectiveLocation.lat))
           params.set('lng', String(effectiveLocation.lng))
@@ -406,59 +409,74 @@ function BuddyPageInner() {
         setLoadingMore(false)
       }
     },
-    [typeFilter, pricingFilter, dateFilter, userLocation, neighborhoodFilter, router]
+    [typeFilter, pricingFilter, dateFilter, userLocation, neighborhoodFilter, cityConfig]
   )
 
   const [locationReady, setLocationReady] = useState(false)
 
+  useEffect(() => {
+    if (!userLocation) return
+    if (profileCityLockedRef.current) return
+    const detectedCity = getNearestCityLocationConfig(userLocation.lat, userLocation.lng)
+    setCityConfig((current) => current.slug === detectedCity.slug ? current : detectedCity)
+  }, [userLocation])
+
+  useEffect(() => {
+    setNeighborhoodFilter(null)
+  }, [cityConfig.slug])
+
   // Get user location on mount — resolve quickly with timeout fallback
   useEffect(() => {
-    if (!navigator.geolocation) { setUserLocation(SINGAPORE_CENTER); setLocationReady(true); return }
+    if (!navigator.geolocation) { setUserLocation(DEFAULT_CITY_LOCATION_CONFIG.center); setLocationReady(true); return }
 
     let settled = false
     const settle = () => { if (!settled) { settled = true; setLocationReady(true) } }
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        if (profileCityLockedRef.current) return
         setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
         settle()
       },
       () => {
-        // GPS denied — fall back to Singapore center
-        setUserLocation(SINGAPORE_CENTER)
+        if (profileCityLockedRef.current) return
+        setUserLocation(DEFAULT_CITY_LOCATION_CONFIG.center)
         settle()
       },
       { timeout: 3000, maximumAge: 60000 }
     )
 
-    // Fallback: don't wait longer than 3s for GPS — use Singapore
+    // Fallback: don't wait longer than 3s for GPS.
     const timer = setTimeout(() => {
-      if (!settled) setUserLocation(SINGAPORE_CENTER)
+      if (profileCityLockedRef.current) return
+      if (!settled) setUserLocation(DEFAULT_CITY_LOCATION_CONFIG.center)
       settle()
     }, 3000)
     return () => clearTimeout(timer)
   }, [])
 
-  // Fetch sessions once location is resolved (or timed out)
+  // Load user context after browser location resolves. Profile location wins when GPS is unavailable or stale.
   useEffect(() => {
     if (!locationReady) return
 
     const loadInitialData = async () => {
-      const [onboardingRes] = await Promise.allSettled([
-        fetch('/api/user/p2p-onboarding').then((r) => r.ok ? r.json() : null),
-        fetchSessions(),
-      ])
+      try {
+        const res = await fetch('/api/user/p2p-onboarding')
+        const data = res.ok ? await res.json() : null
+        if (data?.user?.id) setCurrentUserId(data.user.id)
+        if (data) setIsOnboarded(!!data.completed)
 
-      if (onboardingRes.status === 'fulfilled' && onboardingRes.value) {
-        const data = onboardingRes.value
-        // No redirect — let users see the feed first
-        // Onboarding happens via join gate when they try to join a session
-        if (data.user?.id) setCurrentUserId(data.user.id)
-        setIsOnboarded(!!data.completed)
+        const profileCity = getCityLocationConfigFromText(data?.user?.location)
+        if (profileCity) {
+          profileCityLockedRef.current = true
+          setCityConfig(profileCity)
+          setUserLocation(profileCity.center)
+        }
+      } finally {
+        setProfileLocationReady(true)
       }
     }
     loadInitialData()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locationReady, router])
 
   // Check for pending feedback + bio prompt on past sessions
@@ -493,9 +511,10 @@ function BuddyPageInner() {
 
   // Refetch when filters change
   useEffect(() => {
+    if (!locationReady || !profileLocationReady) return
     setSessions([])
     fetchSessions()
-  }, [typeFilter, pricingFilter, dateFilter, neighborhoodFilter, fetchSessions])
+  }, [locationReady, profileLocationReady, typeFilter, pricingFilter, dateFilter, neighborhoodFilter, fetchSessions])
 
   // Debounced search
   useEffect(() => {
@@ -503,7 +522,20 @@ function BuddyPageInner() {
     const timer = setTimeout(async () => {
       setSearching(true)
       try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}&type=sessions`)
+        const params = new URLSearchParams({
+          q: searchQuery,
+          type: 'sessions',
+        })
+        const activeCityConfig = profileCityLockedRef.current
+          ? cityConfig
+          : userLocation
+            ? getNearestCityLocationConfig(userLocation.lat, userLocation.lng)
+            : cityConfig
+        const searchLocation = userLocation ?? activeCityConfig.center
+        params.set('city', activeCityConfig.slug)
+        params.set('lat', String(searchLocation.lat))
+        params.set('lng', String(searchLocation.lng))
+        const res = await fetch(`/api/search?${params}`)
         if (res.ok) {
           const data = await res.json()
           setSearchResults(data.sessions ?? [])
@@ -511,7 +543,7 @@ function BuddyPageInner() {
       } catch { /* ignore */ } finally { setSearching(false) }
     }, 300)
     return () => clearTimeout(timer)
-  }, [searchQuery])
+  }, [searchQuery, userLocation, cityConfig])
 
   async function joinSession(sessionId: string) {
     // If user hasn't completed onboarding, show the join gate first
@@ -550,7 +582,7 @@ function BuddyPageInner() {
           return
         }
         if (data.code === 'USE_CHECKOUT') {
-          router.push(`/e/${sessionId}`)
+          router.push(data.checkoutUrl || `/activities/${sessionId}`)
           return
         }
         toast.error(data.error || 'Failed to join')
@@ -684,9 +716,9 @@ function BuddyPageInner() {
                 for (let i = 0; i < 7; i++) {
                   const d = new Date(now)
                   d.setDate(d.getDate() + i)
-                  const dateStr = d.toLocaleDateString('en-CA', { timeZone: 'Asia/Singapore' })
-                  const dayLabel = i === 0 ? 'Today' : i === 1 ? 'Tmr' : d.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Asia/Singapore' })
-                  const dateNum = d.toLocaleDateString('en-US', { day: 'numeric', timeZone: 'Asia/Singapore' })
+                  const dateStr = d.toLocaleDateString('en-CA', { timeZone: cityConfig.timezone })
+                  const dayLabel = i === 0 ? 'Today' : i === 1 ? 'Tmr' : d.toLocaleDateString('en-US', { weekday: 'short', timeZone: cityConfig.timezone })
+                  const dateNum = d.toLocaleDateString('en-US', { day: 'numeric', timeZone: cityConfig.timezone })
                   days.push(
                     <button
                       key={dateStr}
@@ -734,7 +766,10 @@ function BuddyPageInner() {
 
           {/* Row 3: Neighborhoods */}
           <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
-            {NEIGHBORHOODS.map((n) => (
+            <span className="flex-shrink-0 px-2 py-1.5 text-[11px] font-semibold text-[#666666]">
+              {cityConfig.name}
+            </span>
+            {cityConfig.neighborhoods.map((n) => (
               <button
                 key={n.name}
                 onClick={() => setNeighborhoodFilter(neighborhoodFilter?.name === n.name ? null : n)}
@@ -929,7 +964,7 @@ function BuddyPageInner() {
           {/* ── Map view ── */}
           <div className="relative w-full" style={{ height: 'calc(100dvh - 140px)' }}>
             <VanillaMap
-              center={userLocation ?? SINGAPORE_CENTER}
+              center={userLocation ?? cityConfig.center}
               sessions={sessions}
               selectedPin={selectedPin}
               onPinClick={setSelectedPin}

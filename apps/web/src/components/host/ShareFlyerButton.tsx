@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { Image, Download, Loader2, X, Smartphone, Square } from 'lucide-react'
+import { ImageIcon, Download, Loader2, X, Smartphone, Square } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface ShareFlyerButtonProps {
@@ -104,7 +104,7 @@ export function ShareFlyerButton({ event, compact = false }: ShareFlyerButtonPro
           className="p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors"
           title="Share flyer"
         >
-          <Image className="w-4 h-4 text-neutral-400" />
+          <ImageIcon className="w-4 h-4 text-neutral-400" />
         </button>
 
         {showPicker && (
@@ -125,7 +125,7 @@ export function ShareFlyerButton({ event, compact = false }: ShareFlyerButtonPro
         onClick={() => setShowPicker(true)}
         className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
       >
-        <Image className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+        <ImageIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
         <span className="hidden sm:inline">Share Flyer</span>
         <span className="sm:hidden">Flyer</span>
       </button>

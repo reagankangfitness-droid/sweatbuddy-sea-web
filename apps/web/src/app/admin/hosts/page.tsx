@@ -17,10 +17,18 @@ import { Instagram } from '@/components/icons/InstagramIcon'
 
 type Tab = 'create-host' | 'create-event' | 'magic-link'
 
+type AdminActionResult = {
+  success: boolean
+  message: string
+  data?: {
+    eventUrl?: string
+  }
+}
+
 export default function AdminHostsPage() {
   const [activeTab, setActiveTab] = useState<Tab>('create-host')
   const [isLoading, setIsLoading] = useState(false)
-  const [result, setResult] = useState<{ success: boolean; message: string; data?: any } | null>(null)
+  const [result, setResult] = useState<AdminActionResult | null>(null)
 
   // Create Host Form State
   const [hostEmail, setHostEmail] = useState('')

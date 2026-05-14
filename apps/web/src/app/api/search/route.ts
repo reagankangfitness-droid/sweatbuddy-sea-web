@@ -1,6 +1,13 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
+import type { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
+import {
+  findCityLocationConfig,
+  getCityLocationConfig,
+  getNearestCityLocationConfig,
+  isPointInsideCityDetectionRadius,
+} from '@/lib/location-config'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,19 +41,44 @@ export async function GET(request: Request) {
 
     // ── Search Sessions ──────────────────────────────────────────────────────
     if (type === 'all' || type === 'sessions') {
+      const requestedCitySlug = searchParams.get('city')
+      const knownRequestedCity = findCityLocationConfig(requestedCitySlug)
+      const requestedCity = knownRequestedCity ?? getCityLocationConfig(requestedCitySlug)
+      const parsedLat = parseFloat(searchParams.get('lat') ?? '')
+      const parsedLng = parseFloat(searchParams.get('lng') ?? '')
+      const hasValidCoordinates = !isNaN(parsedLat) && !isNaN(parsedLng)
+      const providedPoint = { lat: parsedLat, lng: parsedLng }
+      const activeCity = knownRequestedCity
+        ? requestedCity
+        : hasValidCoordinates
+          ? getNearestCityLocationConfig(parsedLat, parsedLng)
+          : requestedCity
+      const scopedPoint = knownRequestedCity && hasValidCoordinates && isPointInsideCityDetectionRadius(knownRequestedCity, providedPoint)
+        ? providedPoint
+        : hasValidCoordinates && !knownRequestedCity
+          ? providedPoint
+          : activeCity.center
+      const radiusKm = parseInt(searchParams.get('radius') || String(activeCity.defaultRadius), 10)
+      const latDelta = radiusKm / 111
+      const lngDelta = radiusKm / (111 * Math.cos(scopedPoint.lat * (Math.PI / 180)))
+
+      const sessionWhere: Prisma.ActivityWhereInput = {
+        activityMode: { in: ['P2P_FREE', 'P2P_PAID'] },
+        status: 'PUBLISHED',
+        deletedAt: null,
+        startTime: { gt: now },
+        latitude: { gte: scopedPoint.lat - latDelta, lte: scopedPoint.lat + latDelta },
+        longitude: { gte: scopedPoint.lng - lngDelta, lte: scopedPoint.lng + lngDelta },
+        OR: [
+          { title: { contains: q, mode: 'insensitive' } },
+          { address: { contains: q, mode: 'insensitive' } },
+          { city: { contains: q, mode: 'insensitive' } },
+          { categorySlug: q.toLowerCase() },
+        ],
+      }
+
       const sessions = await prisma.activity.findMany({
-        where: {
-          activityMode: { in: ['P2P_FREE', 'P2P_PAID'] },
-          status: 'PUBLISHED',
-          deletedAt: null,
-          startTime: { gt: now },
-          OR: [
-            { title: { contains: q, mode: 'insensitive' } },
-            { address: { contains: q, mode: 'insensitive' } },
-            { city: { contains: q, mode: 'insensitive' } },
-            { categorySlug: q.toLowerCase() },
-          ],
-        },
+        where: sessionWhere,
         select: {
           id: true,
           title: true,

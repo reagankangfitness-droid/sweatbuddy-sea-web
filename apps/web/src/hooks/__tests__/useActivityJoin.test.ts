@@ -15,7 +15,7 @@ describe('useActivityJoin', () => {
       spotsRemaining: 5,
       spotsTaken: 5,
       percentFilled: 50,
-      urgencyLevel: 'none' as any,
+      urgencyLevel: 'none',
       showSpotsRemaining: true,
       urgencyThreshold: 3,
       waitlistEnabled: false,

@@ -1,6 +1,14 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import {
+  DEFAULT_CITY_LOCATION_CONFIG,
+  findCityLocationConfig,
+  getCityLocationConfig,
+  getNearestCityLocationConfig,
+  getUtcDateRangeForLocalDate,
+  isPointInsideCityDetectionRadius,
+} from '@/lib/location-config'
 
 export const dynamic = 'force-dynamic'
 
@@ -92,26 +100,41 @@ export async function GET(request: Request) {
       ...(blockedUserIds.length > 0 ? { userId: { notIn: blockedUserIds } } : {}),
     }
 
-    // Location-based filtering — 25km radius bounding box
-    // Defaults to Singapore if no location provided (prevents showing worldwide sessions)
-    const lat = searchParams.get('lat') || '1.3521'
-    const lng = searchParams.get('lng') || '103.8198'
-    const userLat = parseFloat(lat)
-    const userLng = parseFloat(lng)
-    if (!isNaN(userLat) && !isNaN(userLng)) {
-      const radiusKm = parseInt(searchParams.get('radius') || '25', 10)
-      const latDelta = radiusKm / 111
-      const lngDelta = radiusKm / (111 * Math.cos(userLat * (Math.PI / 180)))
-      where.latitude = { gte: userLat - latDelta, lte: userLat + latDelta }
-      where.longitude = { gte: userLng - lngDelta, lte: userLng + lngDelta }
-    }
+    // Location-based filtering — radius bounding box scoped to the active city.
+    const requestedCitySlug = searchParams.get('city')
+    const knownRequestedCity = findCityLocationConfig(requestedCitySlug)
+    const requestedCity = knownRequestedCity ?? getCityLocationConfig(requestedCitySlug)
+    const parsedLat = parseFloat(searchParams.get('lat') ?? '')
+    const parsedLng = parseFloat(searchParams.get('lng') ?? '')
+    const hasValidCoordinates = !isNaN(parsedLat) && !isNaN(parsedLng)
+    const providedPoint = { lat: parsedLat, lng: parsedLng }
+    const activeCity = knownRequestedCity
+      ? requestedCity
+      : hasValidCoordinates
+        ? getNearestCityLocationConfig(parsedLat, parsedLng)
+        : requestedCity
+    const scopedPoint = knownRequestedCity
+      ? hasValidCoordinates && isPointInsideCityDetectionRadius(knownRequestedCity, providedPoint)
+        ? providedPoint
+        : activeCity.center
+      : hasValidCoordinates
+        ? providedPoint
+        : activeCity.center
+    const timezone = searchParams.get('timezone') || activeCity.timezone || DEFAULT_CITY_LOCATION_CONFIG.timezone
+
+    const radiusKm = parseInt(searchParams.get('radius') || String(activeCity.defaultRadius), 10)
+    const latDelta = radiusKm / 111
+    const lngDelta = radiusKm / (111 * Math.cos(scopedPoint.lat * (Math.PI / 180)))
+    where.latitude = { gte: scopedPoint.lat - latDelta, lte: scopedPoint.lat + latDelta }
+    where.longitude = { gte: scopedPoint.lng - lngDelta, lte: scopedPoint.lng + lngDelta }
 
     // Date filtering — show sessions on a specific date
     const dateFilter = searchParams.get('date')
     if (dateFilter) {
-      const filterDate = new Date(dateFilter + 'T00:00:00+08:00') // Parse as SGT
-      const nextDay = new Date(filterDate.getTime() + 24 * 60 * 60 * 1000)
-      where.startTime = { gte: filterDate, lt: nextDay }
+      const dateRange = getUtcDateRangeForLocalDate(dateFilter, timezone)
+      if (dateRange) {
+        where.startTime = { gte: dateRange.start, lt: dateRange.end }
+      }
     }
 
     if (activityType) where.categorySlug = activityType
@@ -171,10 +194,40 @@ export async function GET(request: Request) {
   }
 }
 
-// biome-ignore lint: using any for flexible Prisma result mapping
-// eslint-disable-next-line
-function formatSession(activity: ReturnType<typeof Object.assign>, userStatus?: string) {
-  const attendees = (activity.userActivities as Record<string, unknown>[]) ?? []
+interface SessionActivity {
+  id: string
+  title: string
+  description: string | null
+  activityMode: string
+  categorySlug: string | null
+  city: string
+  address: string | null
+  latitude: number
+  longitude: number
+  startTime: Date | null
+  endTime: Date | null
+  maxPeople: number | null
+  price: number
+  currency: string
+  status: string
+  fitnessLevel: string | null
+  whatToBring: string | null
+  requiresApproval: boolean
+  imageUrl: string | null
+  isFeatured: boolean
+  user?: unknown
+  community?: unknown
+  ratingSummary?: {
+    averageRating: unknown
+    totalReviews: number
+  } | null
+  userActivities: Array<{
+    user: unknown
+  }>
+}
+
+function formatSession(activity: SessionActivity, userStatus?: string) {
+  const attendees = activity.userActivities ?? []
   const isFull =
     typeof activity.maxPeople === 'number' && attendees.length >= activity.maxPeople
 
@@ -198,9 +251,9 @@ function formatSession(activity: ReturnType<typeof Object.assign>, userStatus?: 
     whatToBring: activity.whatToBring,
     requiresApproval: activity.requiresApproval,
     imageUrl: activity.imageUrl,
-    host: activity.user,
+    host: activity.user ?? null,
     community: activity.community ?? null,
-    attendees: attendees.map((ua: Record<string, unknown>) => ua.user),
+    attendees: attendees.map((ua) => ua.user),
     attendeeCount: attendees.length,
     isFull,
     isFeatured: activity.isFeatured ?? false,

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { formatDistanceToNow } from 'date-fns'
 import { Loader2, Send, Trash2, MessageSquare } from 'lucide-react'
@@ -31,11 +31,7 @@ export function SessionComments({ activityId, currentUserId, hostUserId }: Sessi
   const [submitting, setSubmitting] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchComments()
-  }, [activityId])
-
-  async function fetchComments() {
+  const fetchComments = useCallback(async () => {
     try {
       const res = await fetch(`/api/buddy/sessions/${activityId}/comment`)
       if (res.ok) {
@@ -47,7 +43,11 @@ export function SessionComments({ activityId, currentUserId, hostUserId }: Sessi
     } finally {
       setLoading(false)
     }
-  }
+  }, [activityId])
+
+  useEffect(() => {
+    fetchComments()
+  }, [fetchComments])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()

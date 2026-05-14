@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     }
 
     // Log the referral event
-    console.log(`[referral] User ${userId} was referred by ${referredBy}`)
+    console.info(`[referral] User ${userId} was referred by ${referredBy}`)
     await trackEvent('referral_signup', userId, { referredBy })
 
     return NextResponse.json({ success: true })

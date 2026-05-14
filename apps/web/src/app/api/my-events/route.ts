@@ -6,6 +6,10 @@ import eventsData from '@/data/events.json'
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://sweatbuddies.co'
 
+type StaticEvent = {
+  communityLink?: string | null
+}
+
 export async function POST(request: Request) {
   try {
     const { email } = await request.json()
@@ -60,7 +64,7 @@ export async function POST(request: Request) {
             organizer: staticEvent.organizer,
             imageUrl: staticEvent.imageUrl || null,
             recurring: staticEvent.recurring,
-            communityLink: (staticEvent as any).communityLink || null,
+            communityLink: (staticEvent as StaticEvent).communityLink || null,
           },
         }
       }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import type { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import neighborhoodsData from '@/data/neighborhoods.json'
 import { getNextOccurrenceSG, combineDateTimeSG } from '@/lib/event-dates'
@@ -74,7 +75,7 @@ export async function GET(
     const now = new Date()
 
     // Build query filters for Activities
-    const activityWhereClause: any = {
+    const activityWhereClause: Prisma.ActivityWhereInput = {
       status: 'PUBLISHED',
       deletedAt: null,
       AND: [

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { Loader2, Plus, Pencil, X, Power, ImagePlus, CalendarPlus } from 'lucide-react'
 import { useUploadThing } from '@/lib/uploadthing'
 import { toast } from 'sonner'
+import Image from 'next/image'
 
 interface AdminCommunity {
   id: string
@@ -881,9 +882,11 @@ export default function AdminCommunitiesPage() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       {c.coverImage ? (
-                        <img
+                        <Image
                           src={c.coverImage}
                           alt={c.name}
+                          width={48}
+                          height={32}
                           className="w-12 h-8 rounded object-cover flex-shrink-0"
                         />
                       ) : (

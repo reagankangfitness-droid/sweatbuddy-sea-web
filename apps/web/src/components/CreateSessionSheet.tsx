@@ -193,7 +193,6 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
         setLocationLoading(false)
       }
     )
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

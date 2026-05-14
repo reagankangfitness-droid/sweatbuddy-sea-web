@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Users, Calendar, ChevronRight } from 'lucide-react'
+import Image from 'next/image'
 
 interface FollowedCommunity {
   id: string
@@ -90,9 +91,11 @@ function CommunityCard({ community }: { community: FollowedCommunity }) {
       <div className="flex items-center gap-3 mb-3">
         <div className="w-10 h-10 rounded-full bg-neutral-800 flex items-center justify-center overflow-hidden flex-shrink-0">
           {community.hostImageUrl ? (
-            <img
+            <Image
               src={community.hostImageUrl}
               alt={community.name}
+              width={40}
+              height={40}
               className="w-full h-full object-cover"
             />
           ) : (

@@ -38,19 +38,19 @@ interface UserActivity {
   }
 }
 
-interface UseActivityJoinOptions {
+interface UseActivityJoinOptions<TActivity> {
   activityMode?: string
   userActivities?: UserActivity[]
-  onActivityRefresh: (data: any) => void
+  onActivityRefresh: (data: TActivity) => void
   onShowGoingSoloPrompt?: () => void
   requiresDeposit?: boolean
   depositAmount?: number | null // in cents
 }
 
-export function useActivityJoin(
+export function useActivityJoin<TActivity = unknown>(
   activityId: string,
   userId: string | null,
-  options: UseActivityJoinOptions
+  options: UseActivityJoinOptions<TActivity>
 ) {
   const { activityMode, userActivities, onActivityRefresh, onShowGoingSoloPrompt, requiresDeposit, depositAmount: activityDepositAmount } = options
   const searchParams = useSearchParams()
@@ -64,7 +64,7 @@ export function useActivityJoin(
   useEffect(() => {
     if (userId && userActivities) {
       const userRsvp = userActivities.find(
-        (ua: any) => ua.userId === userId && ua.status === 'JOINED'
+        (ua) => ua.userId === userId && ua.status === 'JOINED'
       )
       setHasJoined(!!userRsvp)
       setUserBookingId(userRsvp?.id || null)

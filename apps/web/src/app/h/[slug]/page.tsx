@@ -170,7 +170,7 @@ export default function HostProfilePage() {
     } finally {
       setLoading(false)
     }
-  }, [slug, router, fetchReviews])
+  }, [slug, fetchReviews])
 
   const fetchActivities = useCallback(async (page = 1, append = false) => {
     if (page > 1) setLoadingMore(true)

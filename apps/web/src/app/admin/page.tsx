@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Users, Activity, Calendar, TrendingUp, Loader2, RefreshCw } from 'lucide-react'
+import Image from 'next/image'
 
 interface TopHost {
   name: string | null
@@ -183,7 +184,7 @@ export default function AdminStatsPage() {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       {host.imageUrl ? (
-                        <img src={host.imageUrl} alt={host.name ?? ''} className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+                        <Image src={host.imageUrl} alt={host.name ?? ''} width={32} height={32} className="w-8 h-8 rounded-full object-cover flex-shrink-0" />
                       ) : (
                         <div className="w-8 h-8 rounded-full bg-neutral-700 flex-shrink-0" />
                       )}

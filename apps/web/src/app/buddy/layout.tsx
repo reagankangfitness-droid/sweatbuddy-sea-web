@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 
 export default async function BuddyLayout({ children }: { children: React.ReactNode }) {
   const { userId } = await auth()
-  if (!userId) return <>{children}</> // middleware handles unauth redirect
+  if (!userId) return <>{children}</> // proxy handles unauth redirect
 
   const clerkUser = await currentUser()
   const email = clerkUser?.emailAddresses[0]?.emailAddress

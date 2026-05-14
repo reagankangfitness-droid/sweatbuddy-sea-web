@@ -1,9 +1,15 @@
+const path = require('path')
 const { withSentryConfig } = require('@sentry/nextjs')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable compression
   compress: true,
+
+  // Pin the monorepo root so Turbopack does not infer /Users/reagankang from a parent lockfile.
+  turbopack: {
+    root: path.join(__dirname, '../..'),
+  },
 
   // Experimental features for performance
   experimental: {
@@ -128,16 +134,6 @@ const nextConfig = {
           {
             key: 'Cache-Control',
             value: 'public, max-age=86400, stale-while-revalidate=604800',
-          },
-        ],
-      },
-      {
-        // Cache Next.js static files (1 year, immutable)
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
           },
         ],
       },

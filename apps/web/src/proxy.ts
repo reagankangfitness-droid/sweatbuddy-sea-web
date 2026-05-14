@@ -1,11 +1,11 @@
 /**
- * Middleware — Auth & Route Protection
+ * Proxy — Auth & Route Protection
  *
  * AUTH ARCHITECTURE (two separate systems):
  *
  * System A — Clerk (primary):
  *   Used by all user-facing routes: /app, /buddy, /activities, /discover, /onboarding, etc.
- *   JWT is validated by Clerk middleware automatically.
+ *   JWT is validated by Clerk proxy automatically.
  *   All new features (P2P) MUST use Clerk auth only.
  *
  * System B — OrganizerMagicLink (legacy):
@@ -70,7 +70,7 @@ const isPublicRoute = createRouteMatcher([
   '/organizer/(.*)',
   '/my-events',
   '/my-events/(.*)',
-  // /admin pages require Clerk auth at middleware level
+  // /admin pages require Clerk auth at proxy level
   '/banned',
   '/explore',
   '/communities(.*)',

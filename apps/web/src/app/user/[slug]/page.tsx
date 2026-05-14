@@ -425,7 +425,7 @@ export default function UserProfilePage() {
                 {communities.map(community => (
                   <Link
                     key={community.slug}
-                    href={`/community/${community.slug}`}
+                    href={`/communities/${community.slug}`}
                     className="flex-shrink-0 w-28 text-center group"
                   >
                     <div className="w-16 h-16 rounded-2xl overflow-hidden mx-auto bg-neutral-800 border border-neutral-800">
@@ -455,7 +455,7 @@ export default function UserProfilePage() {
                   return (
                     <Link
                       key={event.id}
-                      href={`/events/${event.id}`}
+                      href={`/activities/${event.id}`}
                       className="flex items-center gap-3 group"
                     >
                       <div className="w-14 h-14 rounded-xl overflow-hidden bg-neutral-800 flex-shrink-0">

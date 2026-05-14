@@ -7,6 +7,9 @@ import { sendActivityBookingConfirmationEmail } from '@/lib/event-confirmation-e
 import { getCurrentDbUser } from '@/lib/current-user'
 
 export async function POST(request: NextRequest) {
+  let reservedBookingId: string | null = null
+  let checkoutSessionIdForCleanup: string | null = null
+
   try {
     const dbUser = await getCurrentDbUser()
 
@@ -276,6 +279,48 @@ export async function POST(request: NextRequest) {
     // calculateFees expects dollars; activity.price is now stored in cents
     const fees = calculateFees(finalPrice / 100, 1)
 
+    const reservedBooking = await prisma.$transaction(async (tx) => {
+      const reservedCount = await tx.userActivity.count({
+        where: {
+          activityId,
+          deletedAt: null,
+          OR: [
+            { status: 'JOINED' },
+            { status: 'INTERESTED', paymentStatus: 'PENDING' },
+          ],
+        },
+      })
+      if (activity.maxPeople && reservedCount >= activity.maxPeople) {
+        throw new Error('ACTIVITY_FULL')
+      }
+
+      return tx.userActivity.upsert({
+        where: {
+          userId_activityId: {
+            userId: dbUser.id,
+            activityId: activityId,
+          },
+        },
+        update: {
+          status: 'INTERESTED', // Will be updated to JOINED after payment
+          paymentStatus: 'PENDING',
+          stripeCheckoutSessionId: null,
+          amountPaid: Math.round(fees.attendeePays * 100), // Total amount attendee pays (cents)
+          currency: currency,
+          deletedAt: null,
+        },
+        create: {
+          userId: dbUser.id,
+          activityId: activityId,
+          status: 'INTERESTED',
+          paymentStatus: 'PENDING',
+          amountPaid: Math.round(fees.attendeePays * 100), // Total amount attendee pays (cents)
+          currency: currency,
+        },
+      })
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
+    reservedBookingId = reservedBooking.id
+
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
@@ -339,51 +384,12 @@ export async function POST(request: NextRequest) {
       billing_address_collection: 'auto',
       expires_at: Math.floor(Date.now() / 1000) + STRIPE_CONFIG.SESSION_EXPIRES_IN_SECONDS,
     })
+    checkoutSessionIdForCleanup = checkoutSession.id
 
-    // 11. Create or update pending booking record
-    // Note: amountPaid is the ticket price (what host receives)
-    // Total paid by attendee = amountPaid + serviceFee
-    await prisma.$transaction(async (tx) => {
-      const reservedCount = await tx.userActivity.count({
-        where: {
-          activityId,
-          deletedAt: null,
-          OR: [
-            { status: 'JOINED' },
-            { status: 'INTERESTED', paymentStatus: 'PENDING' },
-          ],
-        },
-      })
-      if (activity.maxPeople && reservedCount >= activity.maxPeople) {
-        throw new Error('ACTIVITY_FULL')
-      }
-
-      await tx.userActivity.upsert({
-        where: {
-          userId_activityId: {
-            userId: dbUser.id,
-            activityId: activityId,
-          },
-        },
-        update: {
-          status: 'INTERESTED', // Will be updated to JOINED after payment
-          paymentStatus: 'PENDING',
-          stripeCheckoutSessionId: checkoutSession.id,
-          amountPaid: Math.round(fees.attendeePays * 100), // Total amount attendee pays (cents)
-          currency: currency,
-          deletedAt: null,
-        },
-        create: {
-          userId: dbUser.id,
-          activityId: activityId,
-          status: 'INTERESTED',
-          paymentStatus: 'PENDING',
-          stripeCheckoutSessionId: checkoutSession.id,
-          amountPaid: Math.round(fees.attendeePays * 100), // Total amount attendee pays (cents)
-          currency: currency,
-        },
-      })
-    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
+    await prisma.userActivity.update({
+      where: { id: reservedBooking.id },
+      data: { stripeCheckoutSessionId: checkoutSession.id },
+    })
 
     // 12. Return checkout URL
     return NextResponse.json({
@@ -393,6 +399,27 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Checkout session error:', error)
+
+    const cleanupTasks: Promise<unknown>[] = []
+    if (checkoutSessionIdForCleanup) {
+      cleanupTasks.push(stripe.checkout.sessions.expire(checkoutSessionIdForCleanup))
+    }
+    if (reservedBookingId) {
+      cleanupTasks.push(
+        prisma.userActivity.update({
+          where: { id: reservedBookingId },
+          data: {
+            status: 'CANCELLED',
+            paymentStatus: 'FAILED',
+            deletedAt: new Date(),
+            stripeCheckoutSessionId: checkoutSessionIdForCleanup,
+          },
+        })
+      )
+    }
+    if (cleanupTasks.length > 0) {
+      await Promise.allSettled(cleanupTasks)
+    }
 
     if (error instanceof Error && error.message === 'ACTIVITY_FULL') {
       return NextResponse.json(

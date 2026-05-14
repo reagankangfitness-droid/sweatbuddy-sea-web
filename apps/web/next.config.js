@@ -61,13 +61,10 @@ const nextConfig = {
   async redirects() {
     return [
       // Legacy route redirects
-      { source: '/host', destination: '/buddy/host/new', permanent: false },
-      { source: '/host/:path*', destination: '/browse', permanent: false },
       { source: '/organizer/:path*', destination: '/browse', permanent: false },
       { source: '/crews', destination: '/buddy', permanent: false },
 
       // SEO preservation
-      { source: '/events', destination: '/buddy', permanent: true },
       { source: '/discover', destination: '/buddy', permanent: true },
       { source: '/explore', destination: '/buddy', permanent: true },
       { source: '/app', destination: '/buddy', permanent: true },
@@ -110,7 +107,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: ; style-src 'self' 'unsafe-inline' https: ; img-src 'self' data: blob: https: ; font-src 'self' data: https: ; connect-src 'self' https: wss: ; frame-src 'self' https: ;",
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: ; style-src 'self' 'unsafe-inline' https: ; img-src 'self' data: blob: https: ; font-src 'self' data: https: ; connect-src 'self' https: wss: ; frame-src 'self' https: ; worker-src 'self' blob: ;",
           },
         ],
       },

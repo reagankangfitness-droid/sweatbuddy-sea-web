@@ -23,6 +23,9 @@ async function countReservedSpots(tx: Prisma.TransactionClient, activityId: stri
 }
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  let reservedUserActivityId: string | null = null
+  let checkoutSessionIdForCleanup: string | null = null
+
   try {
     const dbUser = await getCurrentDbUser()
     if (!dbUser) {
@@ -125,6 +128,39 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         const attendeePaysCents = Math.round(fees.attendeePays * 100)
         const hostReceivesCents = Math.round(fees.hostReceives * 100)
 
+        const userActivity = await prisma.$transaction(async (tx) => {
+          const reservedCount = await countReservedSpots(tx, activityId)
+          if (activity.maxPeople && reservedCount >= activity.maxPeople) {
+            throw new Error('SESSION_FULL')
+          }
+
+          return tx.userActivity.upsert({
+            where: { userId_activityId: { userId: dbUser.id, activityId } },
+            create: {
+              userId: dbUser.id,
+              activityId,
+              status: 'INTERESTED',
+              p2pPaymentStatus: 'PENDING',
+              p2pPaymentMethod: 'STRIPE',
+              amountPaid: attendeePaysCents,
+              currency,
+              paymentStatus: 'PENDING',
+            },
+            update: {
+              status: 'INTERESTED',
+              p2pPaymentStatus: 'PENDING',
+              p2pPaymentMethod: 'STRIPE',
+              stripeCheckoutSessionId: null,
+              amountPaid: attendeePaysCents,
+              currency,
+              paymentStatus: 'PENDING',
+              paidAt: null,
+              deletedAt: null,
+            },
+          })
+        }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
+        reservedUserActivityId = userActivity.id
+
         const checkoutSession = await stripe.checkout.sessions.create({
           payment_method_types: ['card'],
           mode: 'payment',
@@ -178,42 +214,15 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
           cancel_url: `${BASE_URL}/activities/${activityId}?payment=cancelled`,
           expires_at: Math.floor(Date.now() / 1000) + STRIPE_CONFIG.SESSION_EXPIRES_IN_SECONDS,
         })
+        checkoutSessionIdForCleanup = checkoutSession.id
 
-        const userActivity = await prisma.$transaction(async (tx) => {
-          const reservedCount = await countReservedSpots(tx, activityId)
-          if (activity.maxPeople && reservedCount >= activity.maxPeople) {
-            throw new Error('SESSION_FULL')
-          }
-
-          return tx.userActivity.upsert({
-            where: { userId_activityId: { userId: dbUser.id, activityId } },
-            create: {
-              userId: dbUser.id,
-              activityId,
-              status: 'INTERESTED',
-              p2pPaymentStatus: 'PENDING',
-              p2pPaymentMethod: 'STRIPE',
-              stripeCheckoutSessionId: checkoutSession.id,
-              amountPaid: attendeePaysCents,
-              currency,
-              paymentStatus: 'PENDING',
-            },
-            update: {
-              status: 'INTERESTED',
-              p2pPaymentStatus: 'PENDING',
-              p2pPaymentMethod: 'STRIPE',
-              stripeCheckoutSessionId: checkoutSession.id,
-              amountPaid: attendeePaysCents,
-              currency,
-              paymentStatus: 'PENDING',
-              paidAt: null,
-              deletedAt: null,
-            },
-          })
-        }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
+        const updatedUserActivity = await prisma.userActivity.update({
+          where: { id: userActivity.id },
+          data: { stripeCheckoutSessionId: checkoutSession.id },
+        })
 
         return NextResponse.json({
-          userActivity,
+          userActivity: updatedUserActivity,
           paymentStatus: 'PENDING',
           checkoutUrl: checkoutSession.url,
           sessionId: checkoutSession.id,
@@ -351,6 +360,28 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     return NextResponse.json({ userActivity })
   } catch (error) {
+    const cleanupTasks: Promise<unknown>[] = []
+    if (checkoutSessionIdForCleanup) {
+      cleanupTasks.push(stripe.checkout.sessions.expire(checkoutSessionIdForCleanup))
+    }
+    if (reservedUserActivityId) {
+      cleanupTasks.push(
+        prisma.userActivity.update({
+          where: { id: reservedUserActivityId },
+          data: {
+            status: 'CANCELLED',
+            paymentStatus: 'FAILED',
+            p2pPaymentStatus: 'REJECTED',
+            deletedAt: new Date(),
+            stripeCheckoutSessionId: checkoutSessionIdForCleanup,
+          },
+        })
+      )
+    }
+    if (cleanupTasks.length > 0) {
+      await Promise.allSettled(cleanupTasks)
+    }
+
     if (error instanceof Error && error.message === 'SESSION_FULL') {
       return NextResponse.json({ error: 'Session is full' }, { status: 400 })
     }

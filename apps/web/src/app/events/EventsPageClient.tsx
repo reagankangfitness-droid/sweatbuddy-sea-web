@@ -442,15 +442,15 @@ export default function EventsPage() {
             </div>
             <p className="text-neutral-100 font-semibold mb-1">
               {searchQuery
-                ? `No events found for '${searchQuery}'`
-                : categoryFilter ? 'No events in this category' : 'No events found'}
+                ? `No local fitness communities found for '${searchQuery}'`
+                : categoryFilter ? 'No crews in this category yet' : 'No upcoming sessions yet'}
             </p>
             <p className="text-neutral-500 text-sm max-w-xs mb-6">
               {searchQuery
-                ? 'Try a different search term.'
+                ? 'Try a different activity, crew, or neighborhood.'
                 : categoryFilter
-                  ? 'Try a different category or check back later.'
-                  : 'No upcoming events nearby. Start the movement!'}
+                  ? 'Try a different activity or check back as hosts add new sessions.'
+                  : 'The current listings are quiet. Start a session or check nearby communities while new events go live.'}
             </p>
             {!searchQuery && (
               <Link
@@ -458,7 +458,7 @@ export default function EventsPage() {
                 className="flex items-center gap-2 px-6 py-3 bg-white text-neutral-900 rounded-full font-semibold"
               >
                 <Plus className="w-4 h-4" />
-                Host an event
+                Start a community session
               </Link>
             )}
           </div>

@@ -693,7 +693,7 @@ function BuddyPageInner() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
             <input
               type="text"
-              placeholder="Search sessions..."
+              placeholder="Search crews, sessions, or neighborhoods..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2.5 bg-[#1A1A1A] border border-[#333333] rounded-xl text-sm text-white placeholder:text-[#555555] focus:outline-none focus:border-white/20 transition-all"
@@ -800,7 +800,7 @@ function BuddyPageInner() {
                   </div>
                 ) : searchResults.length === 0 ? (
                   <div className="text-center py-16">
-                    <p className="text-sm text-[#999999]">No results for &apos;{searchQuery}&apos;</p>
+                    <p className="text-sm text-[#999999]">No crews or sessions for &apos;{searchQuery}&apos;</p>
                     <button
                       onClick={() => setSearchQuery('')}
                       className="mt-3 text-xs text-[#666666] hover:text-white underline transition-colors"
@@ -842,7 +842,7 @@ function BuddyPageInner() {
             {/* Session count header */}
             {!loading && sessions.length > 0 && (
               <p className="text-xs font-medium text-[#666666] py-3 uppercase tracking-wider">
-                {sessions.length} session{sessions.length !== 1 ? 's' : ''}{neighborhoodFilter ? ` in ${neighborhoodFilter.name}` : ' happening'}
+                {sessions.length} way{sessions.length !== 1 ? 's' : ''} to meet people{neighborhoodFilter ? ` in ${neighborhoodFilter.name}` : ' nearby'}
               </p>
             )}
 
@@ -883,14 +883,14 @@ function BuddyPageInner() {
             ) : sessions.length === 0 ? (
               <div className="text-center py-16">
                 <div className="text-4xl mb-3">🏋️</div>
-                <p className="text-sm font-medium text-[#999999]">Nothing nearby yet.</p>
-                <p className="text-xs text-[#666666] mt-1">Be the reason someone shows up.</p>
+                <p className="text-sm font-medium text-[#999999]">No local sessions yet.</p>
+                <p className="text-xs text-[#666666] mt-1">Start the first plan and give people nearby a reason to show up.</p>
                 <button
                   onClick={() => setShowCreateSheet(true)}
                   className="inline-flex items-center gap-1.5 mt-4 rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-black uppercase tracking-wider"
                 >
                   <Zap className="w-3.5 h-3.5" />
-                  Start something
+                  Start a session
                 </button>
               </div>
             ) : (
@@ -935,14 +935,14 @@ function BuddyPageInner() {
 
                 {sessions.length > 0 && sessions.length < 6 && !nextCursor && (
                   <div className="text-center py-6 border-t border-white/[0.06]">
-                    <p className="text-xs text-[#666666] mb-3">That&apos;s everything nearby.</p>
+                    <p className="text-xs text-[#666666] mb-3">That&apos;s everything nearby for now. Follow a crew or start the next plan.</p>
                     <div className="flex gap-2 justify-center">
                       <button
                         onClick={() => setShowCreateSheet(true)}
                         className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-xs font-semibold text-black uppercase tracking-wider"
                       >
                         <Zap className="w-3 h-3" />
-                        Start something
+                        Start a session
                       </button>
                       <Link
                         href="/communities"

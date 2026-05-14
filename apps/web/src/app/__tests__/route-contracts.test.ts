@@ -14,6 +14,26 @@ function expectRoute(relativePath: string) {
 }
 
 describe('route contracts', () => {
+  it('keeps the public positioning centered on friends through local fitness communities', () => {
+    const homePage = readRepoFile('apps/web/src/app/page.tsx')
+    const eventsPage = readRepoFile('apps/web/src/app/events/EventsPageClient.tsx')
+    const buddyPage = readRepoFile('apps/web/src/app/buddy/page.tsx')
+
+    expect(homePage).toContain('Find your people through')
+    expect(homePage).toContain('local fitness.')
+    expect(homePage).toContain('Join run clubs, yoga groups, pickleball crews')
+    expect(homePage).toContain('Grow your fitness community without managing everything in DMs.')
+    expect(homePage).not.toContain('The OS for Fitness Community Leaders')
+    expect(homePage).not.toContain('Your next crew is')
+
+    expect(eventsPage).toContain('No upcoming sessions yet')
+    expect(eventsPage).toContain('Start a community session')
+
+    expect(buddyPage).toContain('Search crews, sessions, or neighborhoods')
+    expect(buddyPage).toContain('No local sessions yet.')
+    expect(buddyPage).toContain('No crews or sessions for')
+  })
+
   it('keeps public events wired to the active events API', () => {
     const eventsPage = readRepoFile('apps/web/src/app/events/EventsPageClient.tsx')
     const nextConfig = readRepoFile('apps/web/next.config.js')

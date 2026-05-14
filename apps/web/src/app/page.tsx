@@ -7,9 +7,9 @@ import { ACTIVITY_TYPES } from '@/lib/activity-types'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'SweatBuddies — The OS for Fitness Community Leaders',
+  title: 'SweatBuddies — Find Your People Through Local Fitness',
   description:
-    'Stop juggling WhatsApp, Instagram, PayNow and spreadsheets. One tool to post sessions, track who shows up, and grow your crew.',
+    'Join run clubs, yoga groups, pickleball crews, and local fitness communities near you across Southeast Asia.',
 }
 
 export default async function HomePage() {
@@ -102,13 +102,13 @@ export default async function HomePage() {
           <LogoWithText size={28} color="#FFFFFF" textColor="#FFFFFF" />
           <div className="flex items-center gap-3">
             <Link href="/buddy" className="text-sm text-[#999999] hover:text-white transition-colors hidden sm:inline">
-              Explore
+              Find a crew
             </Link>
             <Link
-              href="/communities"
+              href="/host"
               className="px-5 py-2.5 bg-white text-black text-sm font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-all"
             >
-              Start your crew
+              Start hosting
             </Link>
           </div>
         </div>
@@ -132,28 +132,36 @@ export default async function HomePage() {
 
         <div className="relative max-w-2xl mx-auto text-center">
           <h1 className="text-4xl sm:text-6xl font-bold leading-[1.05] tracking-tight mb-5">
-            Your next crew is{' '}
+            Find your people through{' '}
             <span className="bg-gradient-to-r from-white to-[#999999] bg-clip-text text-transparent">
-              one session away.
+              local fitness.
             </span>
           </h1>
           <p className="text-base text-[#999999] max-w-md mx-auto mb-8 leading-relaxed">
-            Browse sessions happening near you. Running, yoga, HIIT, cold plunge — pick one, show up, meet your people.
+            Join run clubs, yoga groups, pickleball crews, and active communities near you. Pick a session, show up, and meet people who move like you.
           </p>
-          <Link
-            href="/buddy"
-            className="inline-block px-8 py-4 bg-white text-black text-base font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-all"
-          >
-            Show me what&apos;s happening →
-          </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href="/buddy"
+              className="inline-block px-8 py-4 bg-white text-black text-base font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-all"
+            >
+              Find a crew near me →
+            </Link>
+            <Link
+              href="/host"
+              className="inline-block px-6 py-3 text-white text-sm font-bold uppercase tracking-wide rounded-full border border-white/[0.12] hover:bg-white/[0.06] transition-all"
+            >
+              Start hosting
+            </Link>
+          </div>
           <div className="flex items-center justify-center gap-2 mt-8">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
             </span>
             <p className="text-sm text-[#666666]">
-              <span className="font-semibold text-[#FAFAFA]">{communityCount}</span> crews strong
-              {sessionsThisWeek > 0 && <> · <span className="font-semibold text-[#FAFAFA]">{sessionsThisWeek}</span> showed up this week</>}
+              <span className="font-semibold text-[#FAFAFA]">{communityCount}</span> local crews
+              {sessionsThisWeek > 0 && <> · <span className="font-semibold text-[#FAFAFA]">{sessionsThisWeek}</span> sessions this week</>}
               {cities.length > 0 && <> · across {cities.length} cities</>}
             </p>
           </div>
@@ -178,9 +186,9 @@ export default async function HomePage() {
       <section className="px-5 pb-16">
         <div className="max-w-lg mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
-            { emoji: '🏃', title: 'Show up once', pain: 'No commitments. No pressure. Just try one session and see.' },
-            { emoji: '👥', title: 'Meet your people', pain: 'Real conversations happen when you\u2019re catching your breath together.' },
-            { emoji: '🔄', title: 'Keep coming back', pain: 'The regulars will find you. That\u2019s how crews are built.' },
+            { emoji: '🏃', title: 'Skip the awkward meetup', pain: 'Start with movement, not small talk. The connection has something to form around.' },
+            { emoji: '👥', title: 'Move with your people', pain: 'Find run clubs, yoga groups, pickleball crews, and more near you.' },
+            { emoji: '🔄', title: 'Come back as regulars', pain: 'One session can become a weekly rhythm with people you actually know.' },
           ].map((p) => (
             <div key={p.emoji} className="bg-[#1A1A1A] rounded-xl shadow-sm p-4 text-center">
               <span className="text-2xl block mb-2">{p.emoji}</span>
@@ -199,13 +207,13 @@ export default async function HomePage() {
             FOR HOSTS
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight tracking-tight mb-4">
-            Build something people keep coming back to.
+            Grow your fitness community without managing everything in DMs.
           </h2>
           <p className="text-sm text-white/60 mb-6 leading-relaxed max-w-sm">
-            Host sessions, grow your crew, track who shows up. The regulars will find you.
+            Get discovered, collect payments, track attendees, and bring people back for the next session.
           </p>
           <Link
-            href="/communities"
+            href="/host"
             className="inline-block px-6 py-3 bg-white text-black text-sm font-bold uppercase tracking-wide rounded-full w-fit hover:bg-neutral-200 transition-all"
           >
             Start hosting →
@@ -222,16 +230,16 @@ export default async function HomePage() {
               For You
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight tracking-tight mb-4">
-              Find sessions worth showing up to.
+              Find friends without making it awkward.
             </h2>
             <p className="text-sm text-white/70 mb-6 leading-relaxed max-w-sm">
-              Real people. Real workouts. No commitments, no awkwardness — just show up once and see.
+              Run, stretch, lift, play, or recover with local crews where everyone has a reason to show up.
             </p>
             <Link
               href="/buddy"
               className="inline-block px-6 py-3 border border-white/20 text-white text-sm font-bold uppercase tracking-wide rounded-full w-fit hover:bg-white/10 transition-all"
             >
-              Browse sessions →
+              Find your people →
             </Link>
           </div>
         </div>
@@ -241,14 +249,14 @@ export default async function HomePage() {
       <section className="px-5 py-16">
         <div className="max-w-lg mx-auto">
           <h2 className="text-xl sm:text-2xl font-bold text-center mb-8 tracking-tight">
-            Everything your crew needs.
+            Built for communities, not one-off workouts.
           </h2>
           <div className="space-y-6">
             {[
-              { icon: '⚡', title: 'Host sessions in 30 seconds', body: 'Pick an activity, set a time, done. Your crew sees it instantly.' },
-              { icon: '👥', title: 'See who\u2019s showing up', body: 'Names, not numbers. Know who\u2019s new and who\u2019s a regular.' },
-              { icon: '📣', title: 'Your crew page', body: 'A home for your crew. Members, sessions, schedule — all in one link.' },
-              { icon: '📍', title: 'Show up on the map', body: 'People nearby discover your sessions. Organic growth, no ads.' },
+              { icon: '⚡', title: 'Discover real crews', body: 'Browse active local communities by activity, schedule, and neighborhood.' },
+              { icon: '👥', title: 'Know who\u2019s showing up', body: 'See the people behind each session before you commit to joining.' },
+              { icon: '📣', title: 'Host paid or free sessions', body: 'Create a session, add capacity, collect payments, and keep the community moving.' },
+              { icon: '📍', title: 'Get discovered nearby', body: 'Hosts show up where people are already searching for a crew.' },
             ].map((f) => (
               <div key={f.title} className="flex gap-4">
                 <span className="text-xl flex-shrink-0 mt-0.5">{f.icon}</span>
@@ -310,14 +318,14 @@ export default async function HomePage() {
       <section className="px-5 py-20 border-t border-white/[0.06]">
         <div className="max-w-lg mx-auto text-center">
           <h2 className="text-xl sm:text-2xl font-bold mb-3 tracking-tight">
-            The hardest part is the first one.
+            Find your people this week.
           </h2>
-          <p className="text-xs text-[#666666] mb-6">After that, you&apos;ll wonder why you waited.</p>
+          <p className="text-xs text-[#666666] mb-6">Start with one local session. The routine and friendships can grow from there.</p>
           <Link
             href="/buddy"
             className="inline-block px-8 py-4 bg-white text-black text-base font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-all"
           >
-            Find a session near me →
+            Explore local fitness communities →
           </Link>
         </div>
       </section>
@@ -330,7 +338,7 @@ export default async function HomePage() {
             <span className="text-xs text-[#666666]">&copy; 2026</span>
           </div>
           <div className="flex gap-4 text-xs text-[#666666]">
-            <Link href="/buddy" className="hover:text-[#FAFAFA] transition-colors">Discover</Link>
+            <Link href="/buddy" className="hover:text-[#FAFAFA] transition-colors">Find a crew</Link>
             <Link href="/communities" className="hover:text-[#FAFAFA] transition-colors">Crews</Link>
             <Link href="/hub" className="hover:text-[#FAFAFA] transition-colors">Host Hub</Link>
             <Link href="/support" className="hover:text-[#FAFAFA] transition-colors">Help</Link>

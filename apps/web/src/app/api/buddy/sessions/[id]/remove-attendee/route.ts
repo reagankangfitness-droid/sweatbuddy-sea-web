@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { notify } from '@/lib/notifications/service'
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -27,7 +28,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
     const activity = await prisma.activity.findUnique({
       where: { id: activityId },
-      select: { id: true, userId: true, activityMode: true },
+      select: { id: true, title: true, userId: true, startTime: true, address: true, city: true },
     })
 
     if (!activity) {
@@ -38,7 +39,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     }
 
     const body = await request.json()
-    const { attendeeUserId } = body
+    const { attendeeUserId, reason } = body
 
     if (!attendeeUserId) {
       return NextResponse.json({ error: 'attendeeUserId is required' }, { status: 400 })
@@ -46,6 +47,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
     const userActivity = await prisma.userActivity.findUnique({
       where: { userId_activityId: { userId: attendeeUserId, activityId } },
+      select: { id: true, status: true },
     })
 
     if (!userActivity || userActivity.status === 'CANCELLED') {
@@ -57,7 +59,43 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       data: { status: 'CANCELLED' },
     })
 
-    // TODO: send removal email to attendee
+    const sessionTime = activity.startTime
+      ? ` on ${activity.startTime.toLocaleString('en-SG', {
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+          timeZone: 'Asia/Singapore',
+        })}`
+      : ''
+    const location = activity.address || activity.city
+    const locationCopy = location ? ` at ${location}` : ''
+    const reasonCopy = typeof reason === 'string' && reason.trim()
+      ? ` Reason from host: ${reason.trim()}`
+      : ''
+
+    const metadata: Record<string, string> = {
+      activityId,
+      userActivityId: userActivity.id,
+      removedByUserId: dbUser.id,
+    }
+    if (typeof reason === 'string' && reason.trim()) {
+      metadata.reason = reason.trim()
+    }
+
+    try {
+      await notify({
+        userId: attendeeUserId,
+        type: 'ACTIVITY_UPDATE',
+        title: `You've been removed from ${activity.title}`,
+        body: `The host removed you from ${activity.title}${sessionTime}${locationCopy}. You are no longer marked as attending.${reasonCopy}`,
+        linkUrl: `/activities/${activityId}`,
+        metadata,
+      })
+    } catch (notificationError) {
+      console.error('[buddy/sessions/remove-attendee] Notification failed:', notificationError)
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {

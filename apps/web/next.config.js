@@ -6,9 +6,9 @@ const nextConfig = {
   // Enable compression
   compress: true,
 
-  // Pin the monorepo root so Turbopack does not infer /Users/reagankang from a parent lockfile.
+  // Pin the monorepo root locally; Vercel sets its own project root for file tracing.
   turbopack: {
-    root: path.join(__dirname, '../..'),
+    root: process.env.VERCEL ? process.cwd() : path.join(__dirname, '../..'),
   },
 
   // Experimental features for performance

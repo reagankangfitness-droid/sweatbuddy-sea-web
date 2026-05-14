@@ -50,8 +50,12 @@ describe('route contracts', () => {
     expect(communitiesPage).toContain('Find local fitness communities near you')
     expect(browsePage).toContain('Find Local Fitness Sessions')
     expect(browsePage).toContain('Ready to find your people?')
+    expect(hostPage).toContain('Grow your crew beyond the group chat.')
+    expect(hostPage).toContain('Build a community people can actually find.')
+    expect(hostPage).toContain('Replace scattered tools with one community operating layer.')
     expect(hostPage).toContain('What community are you building?')
-    expect(hostPage).toContain('grow your regulars')
+    expect(hostPage).toContain('Turn attendees into regulars')
+    expect(hostPage).not.toContain('What do you love to teach?')
   })
 
   it('keeps public events wired to the active events API', () => {

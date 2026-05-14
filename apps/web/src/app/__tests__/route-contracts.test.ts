@@ -42,6 +42,8 @@ describe('route contracts', () => {
     expect(eventsPage).toContain('Start a community session')
 
     expect(buddyPage).toContain('Search crews, sessions, or neighborhoods')
+    expect(buddyPage).toContain('Real crews moving nearby')
+    expect(buddyPage).toContain('ways to meet')
     expect(buddyPage).toContain('No local sessions yet.')
     expect(buddyPage).toContain('No crews or sessions for')
 

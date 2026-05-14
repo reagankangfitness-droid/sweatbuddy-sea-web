@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
@@ -180,6 +180,20 @@ interface TimeBucket {
   sessions: Session[]
 }
 
+interface CrewSpotlight {
+  id: string
+  name: string
+  slug: string
+  logoImage: string | null
+  city: string
+  categorySlug: string | null
+  nextSessionTitle: string
+  nextSessionTime: string | null
+  sessionCount: number
+  peopleCount: number
+  attendees: Attendee[]
+}
+
 function getRelativeTime(startTime: string): string {
   const now = new Date()
   const start = new Date(startTime)
@@ -263,6 +277,140 @@ function formatAddress(raw: string): string {
   const skip = ['singapore', 'thailand', 'indonesia', 'malaysia', 'philippines', 'vietnam']
   const meaningful = parts.filter((p) => !skip.includes(p.toLowerCase()))
   return meaningful[0] ?? parts[0]
+}
+
+function CrewDiscoveryBand({
+  crews,
+  peopleCount,
+  sessionCount,
+  freeCount,
+  cityName,
+  activeTypeLabel,
+  onCreate,
+}: {
+  crews: CrewSpotlight[]
+  peopleCount: number
+  sessionCount: number
+  freeCount: number
+  cityName: string
+  activeTypeLabel: string
+  onCreate: () => void
+}) {
+  const hasCrews = crews.length > 0
+
+  return (
+    <section className="pt-4 pb-5 border-b border-white/[0.06]">
+      <div className="flex items-start justify-between gap-4 px-1">
+        <div className="min-w-0">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#666666]">
+            Crews near {cityName}
+          </p>
+          <h1 className="mt-1 text-xl font-bold leading-tight text-white">
+            Real crews moving nearby
+          </h1>
+          <p className="mt-1 text-xs leading-relaxed text-[#777777]">
+            {activeTypeLabel === 'All types'
+              ? 'Run, stretch, lift, play, or recover with people already showing up.'
+              : `${activeTypeLabel} plans with local people already showing up.`}
+          </p>
+        </div>
+        <button
+          onClick={onCreate}
+          className="flex-shrink-0 rounded-full border border-white/[0.08] bg-[#1A1A1A] px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider text-white hover:bg-[#222222] transition-colors"
+        >
+          Start one
+        </button>
+      </div>
+
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        {[
+          { value: sessionCount, label: 'ways to meet' },
+          { value: peopleCount, label: 'showing up' },
+          { value: freeCount, label: 'free plans' },
+        ].map((stat) => (
+          <div key={stat.label} className="min-h-[58px] rounded-xl border border-white/[0.06] bg-[#151515] px-3 py-2.5">
+            <p className="text-lg font-bold leading-none text-white">{stat.value}</p>
+            <p className="mt-1 text-[10px] uppercase tracking-wider text-[#666666]">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {hasCrews ? (
+        <div className="mt-4 flex gap-3 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory">
+          {crews.map((crew) => (
+            <CrewSpotlightCard key={crew.id} crew={crew} />
+          ))}
+        </div>
+      ) : (
+        <div className="mt-4 rounded-xl border border-dashed border-white/[0.08] px-4 py-5 text-center">
+          <p className="text-sm font-semibold text-white">Community pages are still forming here.</p>
+          <p className="mt-1 text-xs text-[#666666]">The sessions below are the first signs of local momentum.</p>
+        </div>
+      )}
+    </section>
+  )
+}
+
+function CrewSpotlightCard({ crew }: { crew: CrewSpotlight }) {
+  const href = `/communities/${crew.slug}`
+  const emoji = pinEmoji(crew.categorySlug ?? 'other')
+  const nextTime = crew.nextSessionTime ? getRelativeTime(crew.nextSessionTime) : null
+
+  return (
+    <Link
+      href={href}
+      className="group w-[230px] flex-shrink-0 snap-start rounded-xl border border-white/[0.08] bg-[#1A1A1A] p-3.5 hover:bg-[#222222] transition-colors"
+    >
+      <div className="flex items-start gap-3">
+        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#262626]">
+          {crew.logoImage ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={crew.logoImage} alt="" className="h-full w-full object-cover" />
+          ) : (
+            <span className="text-2xl">{emoji}</span>
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-bold text-white group-hover:text-neutral-200">{crew.name}</p>
+          <p className="mt-0.5 truncate text-[11px] text-[#666666]">{crew.city}</p>
+        </div>
+      </div>
+
+      <div className="mt-4 min-h-[56px]">
+        <p className="line-clamp-2 text-xs font-semibold leading-snug text-[#D4D4D4]">
+          {crew.nextSessionTitle}
+        </p>
+        <p className="mt-1 text-[11px] text-[#666666]">
+          {nextTime ? `${nextTime} · ` : ''}{crew.sessionCount} session{crew.sessionCount !== 1 ? 's' : ''}
+        </p>
+      </div>
+
+      <div className="mt-3 flex items-center justify-between border-t border-white/[0.06] pt-3">
+        <div className="flex -space-x-2">
+          {crew.attendees.length > 0 ? (
+            crew.attendees.map((attendee) => (
+              <span
+                key={attendee.id}
+                className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full border border-[#1A1A1A] bg-[#333333] text-[10px] font-bold text-white"
+              >
+                {attendee.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={attendee.imageUrl} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  attendee.name?.[0]?.toUpperCase() ?? '?'
+                )}
+              </span>
+            ))
+          ) : (
+            <span className="text-[11px] text-[#666666]">Be first in</span>
+          )}
+        </div>
+        <p className="text-[11px] font-medium text-[#999999]">
+          {crew.peopleCount > 0 ? `${crew.peopleCount} going` : 'Open plan'}
+        </p>
+      </div>
+    </Link>
+  )
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -360,6 +508,62 @@ function BuddyPageInner() {
   const [searchResults, setSearchResults] = useState<Session[]>([])
   const [searching, setSearching] = useState(false)
 
+  const featuredCrews = useMemo<CrewSpotlight[]>(() => {
+    const crews = new globalThis.Map<string, CrewSpotlight>()
+
+    for (const session of sessions) {
+      if (!session.community) continue
+
+      const existing = crews.get(session.community.id)
+      const nextTime = session.startTime
+      const candidate: CrewSpotlight = existing ?? {
+        id: session.community.id,
+        name: session.community.name,
+        slug: session.community.slug,
+        logoImage: session.community.logoImage,
+        city: session.city,
+        categorySlug: session.categorySlug,
+        nextSessionTitle: session.title,
+        nextSessionTime: nextTime,
+        sessionCount: 0,
+        peopleCount: 0,
+        attendees: [],
+      }
+
+      candidate.sessionCount += 1
+      candidate.peopleCount += session.attendeeCount
+      if (
+        nextTime &&
+        (!candidate.nextSessionTime || new Date(nextTime).getTime() < new Date(candidate.nextSessionTime).getTime())
+      ) {
+        candidate.nextSessionTitle = session.title
+        candidate.nextSessionTime = nextTime
+        candidate.categorySlug = session.categorySlug
+        candidate.city = session.city
+      }
+
+      for (const attendee of session.attendees) {
+        if (candidate.attendees.length >= 4) break
+        if (!candidate.attendees.some((a) => a.id === attendee.id)) {
+          candidate.attendees.push(attendee)
+        }
+      }
+
+      crews.set(session.community.id, candidate)
+    }
+
+    return Array.from(crews.values())
+      .sort((a, b) => (b.peopleCount + b.sessionCount * 2) - (a.peopleCount + a.sessionCount * 2))
+      .slice(0, 6)
+  }, [sessions])
+
+  const discoveryStats = useMemo(() => ({
+    peopleCount: sessions.reduce((sum, session) => sum + session.attendeeCount, 0),
+    sessionCount: sessions.length,
+    freeCount: sessions.filter((session) => session.price === 0).length,
+  }), [sessions])
+
+  const activeTypeLabel = TYPE_FILTERS.find((type) => type.value === typeFilter)?.label ?? 'fitness'
 
   const fetchSessions = useCallback(
     async (cursor?: string) => {
@@ -839,6 +1043,19 @@ function BuddyPageInner() {
               </div>
             ) : (
             <>
+            {/* Community-first discovery */}
+            {!loading && sessions.length > 0 && (
+              <CrewDiscoveryBand
+                crews={featuredCrews}
+                peopleCount={discoveryStats.peopleCount}
+                sessionCount={discoveryStats.sessionCount}
+                freeCount={discoveryStats.freeCount}
+                cityName={neighborhoodFilter?.name ?? cityConfig.name}
+                activeTypeLabel={activeTypeLabel}
+                onCreate={() => setShowCreateSheet(true)}
+              />
+            )}
+
             {/* Session count header */}
             {!loading && sessions.length > 0 && (
               <p className="text-xs font-medium text-[#666666] py-3 uppercase tracking-wider">

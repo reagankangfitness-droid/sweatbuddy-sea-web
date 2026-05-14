@@ -115,7 +115,7 @@ export async function sendEventSubmittedEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Host your fitness experiences at
+                Grow your fitness community at
               </p>
               <a href="${BASE_URL}" style="color: #f59e0b; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -268,7 +268,7 @@ export async function sendEventApprovedEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Host your fitness experiences at
+                Grow your fitness community at
               </p>
               <a href="${BASE_URL}" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -398,7 +398,7 @@ export async function sendEventRejectedEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Host your fitness experiences at
+                Grow your fitness community at
               </p>
               <a href="${BASE_URL}" style="color: #6b7280; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co

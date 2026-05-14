@@ -16,8 +16,13 @@ function expectRoute(relativePath: string) {
 describe('route contracts', () => {
   it('keeps the public positioning centered on friends through local fitness communities', () => {
     const homePage = readRepoFile('apps/web/src/app/page.tsx')
+    const rootLayout = readRepoFile('apps/web/src/app/layout.tsx')
+    const browsePage = readRepoFile('apps/web/src/app/browse/page.tsx')
+    const communitiesPage = readRepoFile('apps/web/src/app/communities/page.tsx')
     const eventsPage = readRepoFile('apps/web/src/app/events/EventsPageClient.tsx')
+    const eventsRoute = readRepoFile('apps/web/src/app/events/page.tsx')
     const buddyPage = readRepoFile('apps/web/src/app/buddy/page.tsx')
+    const hostPage = readRepoFile('apps/web/src/app/host/page.tsx')
 
     expect(homePage).toContain('Find your people through')
     expect(homePage).toContain('local fitness.')
@@ -26,12 +31,25 @@ describe('route contracts', () => {
     expect(homePage).not.toContain('The OS for Fitness Community Leaders')
     expect(homePage).not.toContain('Your next crew is')
 
+    expect(rootLayout).toContain('SweatBuddies | Find Friends Through Local Fitness')
+    expect(rootLayout).toContain('Find friends through local fitness communities')
+    expect(rootLayout).not.toContain('Discover Fitness & Wellness Experiences')
+    expect(rootLayout).not.toContain('fitness and wellness experiences')
+
+    expect(eventsRoute).toContain('Local Fitness Communities Near You')
+    expect(eventsRoute).not.toContain('Fitness Events Near You')
     expect(eventsPage).toContain('No upcoming sessions yet')
     expect(eventsPage).toContain('Start a community session')
 
     expect(buddyPage).toContain('Search crews, sessions, or neighborhoods')
     expect(buddyPage).toContain('No local sessions yet.')
     expect(buddyPage).toContain('No crews or sessions for')
+
+    expect(communitiesPage).toContain('Find local fitness communities near you')
+    expect(browsePage).toContain('Find Local Fitness Sessions')
+    expect(browsePage).toContain('Ready to find your people?')
+    expect(hostPage).toContain('What community are you building?')
+    expect(hostPage).toContain('grow your regulars')
   })
 
   it('keeps public events wired to the active events API', () => {

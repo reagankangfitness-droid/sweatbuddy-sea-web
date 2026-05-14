@@ -6,10 +6,10 @@ export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Communities | SweatBuddies',
-  description: 'Explore communities hosting fitness and wellness experiences.',
+  description: 'Find local fitness communities near you. Join run clubs, yoga groups, pickleball crews, and active social sessions across Southeast Asia.',
   openGraph: {
     title: 'Communities | SweatBuddies',
-    description: 'Explore communities hosting fitness and wellness experiences.',
+    description: 'Find local fitness communities near you. Join run clubs, yoga groups, pickleball crews, and active social sessions across Southeast Asia.',
     url: 'https://www.sweatbuddies.co/communities',
   },
 }

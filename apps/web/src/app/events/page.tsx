@@ -13,21 +13,21 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
   if (category) {
     return {
-      title: `${category.emoji} ${category.name} Events Near You | SweatBuddies`,
-      description: `Find ${category.name.toLowerCase()} events near you. ${category.description}. Browse upcoming sessions and join the community on SweatBuddies.`,
+      title: `${category.emoji} ${category.name} Communities Near You | SweatBuddies`,
+      description: `Find ${category.name.toLowerCase()} communities and sessions near you. Browse upcoming plans, show up, and meet people through movement on SweatBuddies.`,
       openGraph: {
-        title: `${category.name} Events | SweatBuddies`,
-        description: `Discover ${category.name.toLowerCase()} events near you. ${category.description}`,
+        title: `${category.name} Communities | SweatBuddies`,
+        description: `Find ${category.name.toLowerCase()} communities and sessions near you. Show up and meet people through movement.`,
       },
     }
   }
 
   return {
-    title: 'Fitness Events Near You | SweatBuddies',
-    description: 'Discover fitness events near you — run clubs, yoga sessions, HIIT workouts, and more. Browse upcoming sessions and join the community.',
+    title: 'Local Fitness Communities Near You | SweatBuddies',
+    description: 'Find friends through local fitness communities near you — run clubs, yoga groups, pickleball crews, HIIT sessions, and more.',
     openGraph: {
-      title: 'Fitness Events Near You | SweatBuddies',
-      description: 'Discover fitness events near you — run clubs, yoga sessions, HIIT workouts, and more. Browse upcoming sessions and join the community.',
+      title: 'Local Fitness Communities Near You | SweatBuddies',
+      description: 'Find friends through local fitness communities near you — run clubs, yoga groups, pickleball crews, HIIT sessions, and more.',
     },
   }
 }

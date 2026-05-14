@@ -7,8 +7,8 @@ import type { Metadata } from 'next'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
 
 export const metadata: Metadata = {
-  title: 'Browse Sessions — SweatBuddies',
-  description: 'Browse sessions led by hosts near you. Running, gym, yoga, hiking and more.',
+  title: 'Find Local Fitness Sessions — SweatBuddies',
+  description: 'Find local fitness sessions and crews near you. Join running, gym, yoga, hiking, pickleball, and more with people nearby.',
 }
 
 const TYPES = [
@@ -112,9 +112,9 @@ export default async function BrowsePage({ searchParams }: PageProps) {
       {/* Hero strip */}
       <div className="border-b border-[#333333] bg-[#1A1A1A]/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-white">Browse Sessions</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-white">Find Local Fitness Sessions</h1>
           <p className="text-[#666666]">
-            Browse sessions led by hosts near you — no login needed to browse.
+            Find crews and sessions near you. Start with one plan, then come back with people you know.
           </p>
         </div>
       </div>
@@ -155,15 +155,15 @@ export default async function BrowsePage({ searchParams }: PageProps) {
         {mapped.length === 0 ? (
           <div className="flex flex-col items-center text-center py-20">
             <div className="text-5xl mb-4 opacity-40">🏋️</div>
-            <h3 className="text-lg font-semibold mb-2 text-white">No sessions found</h3>
+            <h3 className="text-lg font-semibold mb-2 text-white">No local sessions found</h3>
             <p className="text-sm text-[#666666] mb-6">
-              Be the first to host a session in this category.
+              Start the first plan in this category and give people nearby a reason to show up.
             </p>
             <Link
-              href="/sign-up"
+              href="/host"
               className="px-6 py-2.5 bg-[#1A1A1A] text-white rounded-full text-sm font-semibold hover:bg-neutral-800 transition-colors"
             >
-              Sign up to host
+              Start a community session
             </Link>
           </div>
         ) : (
@@ -187,8 +187,8 @@ export default async function BrowsePage({ searchParams }: PageProps) {
       {/* Footer CTA */}
       <div className="border-t border-[#333333] bg-[#1A1A1A]/50 mt-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 text-center">
-          <h2 className="text-2xl font-bold mb-3 text-white">Want to host or join sessions?</h2>
-          <p className="text-[#666666] mb-6">It&apos;s free. Takes 2 minutes.</p>
+          <h2 className="text-2xl font-bold mb-3 text-white">Ready to find your people?</h2>
+          <p className="text-[#666666] mb-6">Join a local session or start one for your crew.</p>
           <Link
             href="/sign-up"
             className="inline-block px-8 py-3.5 bg-[#1A1A1A] text-white font-semibold rounded-full hover:bg-neutral-800 transition-colors"

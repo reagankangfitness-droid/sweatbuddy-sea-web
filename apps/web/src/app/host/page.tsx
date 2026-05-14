@@ -75,10 +75,10 @@ export default function BecomeAHostPage() {
               Apply to host
             </p>
             <h1 className="text-3xl lg:text-4xl font-bold text-white leading-tight mb-2">
-              What do you love to teach?
+              What community are you building?
             </h1>
             <p className="text-neutral-400 mb-8">
-              We&apos;re building SweatBuddies around real instructors and community leaders.
+              Get discovered by people nearby, grow your regulars, and turn movement into belonging.
             </p>
 
             <div className="grid grid-cols-3 gap-2 mb-8">
@@ -125,7 +125,7 @@ export default function BecomeAHostPage() {
               Where can we reach you?
             </h1>
             <p className="text-neutral-400 mb-8">
-              We&apos;ll be in touch when your city opens up.
+              We&apos;ll help you launch or grow your crew when your city opens up.
             </p>
 
             <div className="space-y-4 mb-6">
@@ -191,11 +191,11 @@ export default function BecomeAHostPage() {
             </div>
             <h1 className="text-3xl font-bold text-white mb-3">You&apos;re on the list.</h1>
             <p className="text-neutral-400 mb-8 max-w-sm mx-auto">
-              We&apos;ll reach out personally when we&apos;re ready to onboard hosts in your area.
-              Keep doing what you love.
+              We&apos;ll reach out personally when we&apos;re ready to help hosts grow communities in your area.
+              Keep bringing people together.
             </p>
             <Link
-              href="/discover"
+              href="/buddy"
               className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors"
             >
               Explore sessions near you →

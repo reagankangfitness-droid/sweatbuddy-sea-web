@@ -37,15 +37,18 @@ const barlowCondensed = Barlow_Condensed({
 })
 
 const BASE_URL = 'https://www.sweatbuddies.co'
+const SITE_TITLE = 'SweatBuddies | Find Friends Through Local Fitness'
+const SITE_DESCRIPTION =
+  'Find friends through local fitness communities. Join run clubs, yoga groups, pickleball crews, and social sessions near you across Southeast Asia.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'SweatBuddies | Discover Fitness & Wellness Experiences',
+    default: SITE_TITLE,
     template: '%s | SweatBuddies',
   },
-  description: 'Discover fitness and wellness experiences. Sunrise yoga, beach bootcamps, run clubs, cold plunge socials — whatever moves you.',
-  keywords: ['sweat is better shared', 'fitness crew', 'run club', 'yoga group', 'workout community', 'find your crew', 'fitness belonging', 'group fitness', 'discover experiences', 'fitness experiences', 'wellness experiences'],
+  description: SITE_DESCRIPTION,
+  keywords: ['find friends through fitness', 'local fitness communities', 'fitness crew', 'run club', 'yoga group', 'pickleball crew', 'workout community', 'find your crew', 'fitness belonging', 'group fitness', 'social fitness SEA'],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
   icons: {
@@ -58,21 +61,21 @@ export const metadata: Metadata = {
     locale: 'en',
     url: BASE_URL,
     siteName: 'SweatBuddies',
-    title: 'SweatBuddies | Discover Fitness & Wellness Experiences',
-    description: 'Discover fitness and wellness experiences. Sunrise yoga, beach bootcamps, run clubs, cold plunge socials — whatever moves you.',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     images: [
       {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SweatBuddies — Sweat is better shared.',
+        alt: 'SweatBuddies — find your people through local fitness.',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SweatBuddies | Discover Fitness & Wellness Experiences',
-    description: 'Discover fitness and wellness experiences. Sunrise yoga, beach bootcamps, run clubs, cold plunge socials — whatever moves you.',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     images: ['/images/og-image.jpg'],
   },
   robots: {

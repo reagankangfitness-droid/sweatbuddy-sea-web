@@ -169,7 +169,7 @@ export default function MySessionsPage() {
                     href="/buddy"
                     className="inline-block px-5 py-2.5 bg-white text-black font-semibold rounded-full text-sm"
                   >
-                    Browse Sessions
+                    Find a Session
                   </Link>
                 </div>
               ) : (

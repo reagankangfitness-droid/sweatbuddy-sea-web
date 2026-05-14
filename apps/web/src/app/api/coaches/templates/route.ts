@@ -1,6 +1,6 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 /**
  * GET /api/coaches/templates
@@ -8,14 +8,14 @@ import { prisma } from '@/lib/prisma'
  */
 export async function GET() {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Verify the user is a verified coach
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: dbUser.id },
       select: { isCoach: true, coachVerificationStatus: true },
     })
 
@@ -24,7 +24,7 @@ export async function GET() {
     }
 
     const templates = await prisma.sessionTemplate.findMany({
-      where: { hostId: userId, isActive: true },
+      where: { hostId: dbUser.id, isActive: true },
       orderBy: { createdAt: 'desc' },
     })
 
@@ -44,14 +44,14 @@ export async function GET() {
  */
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Verify the user is a verified coach
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: dbUser.id },
       select: { isCoach: true, coachVerificationStatus: true },
     })
 
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
 
     const template = await prisma.sessionTemplate.create({
       data: {
-        hostId: userId,
+        hostId: dbUser.id,
         title: title.trim(),
         description: description?.trim() || null,
         categorySlug: categorySlug || null,

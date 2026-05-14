@@ -1,6 +1,6 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 /**
  * POST /api/coaches/apply
@@ -8,9 +8,8 @@ import { prisma } from '@/lib/prisma'
  */
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth()
-
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -48,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     // Check if user is already a coach or has a pending application
     const existingUser = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: dbUser.id },
       select: {
         name: true,
         isCoach: true,
@@ -84,7 +83,7 @@ export async function POST(request: NextRequest) {
 
       const coachProfile = await tx.coachProfile.create({
         data: {
-          userId,
+          userId: dbUser.id,
           displayName: body.displayName || existingUser.name || 'Coach',
           bio: bio || null,
           specializations: specializations || [],
@@ -103,7 +102,7 @@ export async function POST(request: NextRequest) {
       })
 
       await tx.user.update({
-        where: { id: userId },
+        where: { id: dbUser.id },
         data: {
           isCoach: false, // Not yet verified
           coachVerificationStatus: 'PENDING',

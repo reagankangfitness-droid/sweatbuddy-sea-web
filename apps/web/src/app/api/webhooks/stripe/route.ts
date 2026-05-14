@@ -140,7 +140,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     },
   })
   if (existingBooking) {
-    console.log('Duplicate Activity booking detected, skipping:', { userId, activityId, sessionId })
+    console.info('Duplicate Activity booking detected, skipping:', { userId, activityId, sessionId })
     return
   }
 
@@ -348,7 +348,10 @@ async function handleCheckoutExpired(session: Stripe.Checkout.Session) {
         paymentStatus: 'PENDING',
       },
       data: {
+        status: 'CANCELLED',
         paymentStatus: 'EXPIRED',
+        p2pPaymentStatus: 'REJECTED',
+        deletedAt: new Date(),
       },
     })
 

@@ -10,17 +10,19 @@ import {
   containsBlockedContent,
 } from '@/lib/content-moderation'
 import { notifyFollowersOfNewEvent } from '@/lib/new-event-notification'
+import { getCityLocationConfigForPointOrText } from '@/lib/location-config'
 
 // Geocode a location string to get coordinates
-async function geocodeLocation(location: string): Promise<{ lat: number; lng: number } | null> {
+async function geocodeLocation(location: string, cityName: string): Promise<{ lat: number; lng: number } | null> {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
   if (!apiKey || !location) return null
 
   try {
-    // Add Singapore context for better geocoding results
-    const searchQuery = location.toLowerCase().includes('singapore')
+    const normalizedLocation = location.toLowerCase()
+    const normalizedCity = cityName.toLowerCase()
+    const searchQuery = normalizedLocation.includes(normalizedCity)
       ? location
-      : `${location}, Singapore`
+      : `${location}, ${cityName}`
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(searchQuery)}&key=${apiKey}`
     const response = await fetch(url)
     const data = await response.json()
@@ -117,6 +119,9 @@ interface EventSubmission {
   location: string
   latitude?: number
   longitude?: number
+  city?: string | null
+  timezone?: string | null
+  currency?: string | null
   placeId?: string
   description?: string
   imageUrl?: string
@@ -211,6 +216,7 @@ export async function POST(request: Request) {
         if (!user) {
           user = await prisma.user.create({
             data: {
+              clerkUserId,
               email,
               name: clerkUser.fullName || `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || null,
               imageUrl: clerkUser.imageUrl || null,
@@ -223,6 +229,7 @@ export async function POST(request: Request) {
           await prisma.user.update({
             where: { id: user.id },
             data: {
+              clerkUserId,
               isHost: true,
               instagram: cleanInstagram || undefined,
             },
@@ -289,12 +296,17 @@ export async function POST(request: Request) {
     // Geocode location if coordinates are missing
     let latitude = data.latitude || null
     let longitude = data.longitude || null
+    let cityConfig = getCityLocationConfigForPointOrText(
+      latitude && longitude ? { lat: latitude, lng: longitude } : null,
+      `${data.city || ''} ${data.location}`,
+    )
 
     if (!latitude || !longitude) {
-      const coords = await geocodeLocation(data.location)
+      const coords = await geocodeLocation(data.location, cityConfig.name)
       if (coords) {
         latitude = coords.lat
         longitude = coords.lng
+        cityConfig = getCityLocationConfigForPointOrText(coords, `${data.city || ''} ${data.location}`)
       }
     }
 
@@ -308,6 +320,8 @@ export async function POST(request: Request) {
         time: data.time,
         recurring: data.recurring ?? true,
         location: data.location,
+        city: data.city || cityConfig.slug,
+        timezone: data.timezone || cityConfig.timezone,
         latitude,
         longitude,
         placeId: data.placeId || null,
@@ -322,6 +336,7 @@ export async function POST(request: Request) {
         // Pricing fields
         isFree: data.isFree ?? true,
         price: data.price || null,
+        currency: data.currency || cityConfig.currency,
         paynowEnabled: data.paynowEnabled ?? false,
         paynowQrCode: data.paynowQrCode || null,
         paynowNumber: data.paynowNumber || null,

@@ -1,3 +1,9 @@
-import { NextResponse } from "next/server"
-const GONE = () => NextResponse.json({ error: "This feature has been sunset." }, { status: 410 })
-export const GET = GONE; export const POST = GONE; export const PUT = GONE; export const DELETE = GONE; export const PATCH = GONE
+import { createSunsetRoute } from '@/lib/sunset-route'
+
+const sunset = createSunsetRoute('This feature has been sunset.')
+
+export const GET = sunset
+export const POST = sunset
+export const PUT = sunset
+export const DELETE = sunset
+export const PATCH = sunset

@@ -3,17 +3,12 @@
  * EventSubmission data preserved for future migration.
  * DO NOT DELETE — may need to reactivate temporarily during migration.
  */
-import { NextResponse } from 'next/server'
+import { createSunsetRoute } from '@/lib/sunset-route'
 
-const GONE = () =>
-  NextResponse.json(
-    { error: 'Organizer portal has been sunset. Contact support@sweatbuddies.sg' },
-    { status: 410 }
-  )
+const sunset = createSunsetRoute('Organizer portal has been sunset. Contact support@sweatbuddies.sg')
 
-export const GET = GONE
-export const POST = GONE
-export const PUT = GONE
-export const DELETE = GONE
-export const PATCH = GONE
-
+export const GET = sunset
+export const POST = sunset
+export const PUT = sunset
+export const DELETE = sunset
+export const PATCH = sunset

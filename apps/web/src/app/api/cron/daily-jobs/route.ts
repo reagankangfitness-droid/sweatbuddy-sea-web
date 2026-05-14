@@ -7,6 +7,7 @@ import {
 } from '@/lib/reviews'
 import { processPostEventFollowUps } from '@/lib/post-event-followup'
 import { isValidCronSecret } from '@/lib/cron-auth'
+import { expireStalePendingReservations } from '@/lib/pending-reservations'
 
 // This route makes multiple sub-requests and DB queries — needs longer timeout
 export const maxDuration = 60
@@ -28,6 +29,13 @@ export async function POST(request: NextRequest) {
     const results: Record<string, unknown> = {}
 
     // 1. Schedule review prompts for recently ended activities
+    try {
+      results.pendingReservations = await expireStalePendingReservations()
+    } catch (e) {
+      results.pendingReservations = { error: String(e) }
+    }
+
+    // 2. Schedule review prompts for recently ended activities
     try {
       const now = new Date()
       const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
@@ -72,7 +80,7 @@ export async function POST(request: NextRequest) {
       results.schedulePrompts = { error: String(e) }
     }
 
-    // 2. Process due review prompts
+    // 3. Process due review prompts
     try {
       results.reviewPrompts = await processDueReviewPrompts()
     } catch (e) {

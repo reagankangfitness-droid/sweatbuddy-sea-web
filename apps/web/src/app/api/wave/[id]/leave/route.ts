@@ -2,14 +2,12 @@
  * @deprecated Wave feature has been sunset as of 2026-03-11.
  * P2P (/buddy) serves the same use case. DO NOT DELETE.
  */
-import { NextResponse } from 'next/server'
+import { createSunsetRoute } from '@/lib/sunset-route'
 
-const GONE = () =>
-  NextResponse.json({ error: 'Wave feature has been sunset. Use /buddy instead.' }, { status: 410 })
+const sunset = createSunsetRoute('Wave feature has been sunset. Use /buddy instead.')
 
-export const GET = GONE
-export const POST = GONE
-export const PUT = GONE
-export const DELETE = GONE
-export const PATCH = GONE
-
+export const GET = sunset
+export const POST = sunset
+export const PUT = sunset
+export const DELETE = sunset
+export const PATCH = sunset

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
+import type { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { isAdminRequest } from '@/lib/admin-auth'
 import { generateSlug } from '@/lib/events'
+import { getCityLocationConfigForPointOrText } from '@/lib/location-config'
 
 // POST: Create an event on behalf of a host
 export async function POST(request: NextRequest) {
@@ -30,6 +32,7 @@ export async function POST(request: NextRequest) {
       // Pricing
       isFree,
       price,
+      currency,
       // Settings
       autoApprove,
     } = body
@@ -72,6 +75,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const cityConfig = getCityLocationConfigForPointOrText(null, location)
+
     // Create the event submission
     const event = await prisma.eventSubmission.create({
       data: {
@@ -82,6 +87,8 @@ export async function POST(request: NextRequest) {
         eventDate: parsedEventDate,
         time,
         location,
+        city: cityConfig.slug,
+        timezone: cityConfig.timezone,
         description: description || null,
         imageUrl: imageUrl || null,
         communityLink: communityLink || null,
@@ -92,6 +99,7 @@ export async function POST(request: NextRequest) {
         status: autoApprove ? 'APPROVED' : 'PENDING',
         isFree: isFree ?? true,
         price: price ? Math.round(price * 100) : null, // Convert to cents
+        currency: currency || cityConfig.currency,
       },
     })
 
@@ -163,7 +171,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const whereClause: any = {}
+    const whereClause: Prisma.EventSubmissionWhereInput = {}
     if (email) {
       whereClause.contactEmail = { equals: email, mode: 'insensitive' }
     }

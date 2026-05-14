@@ -1,6 +1,6 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 /**
  * POST /api/coaches/verification
@@ -8,15 +8,14 @@ import { prisma } from '@/lib/prisma'
  */
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth()
-
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Check that user has a pending or verified coach status
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: dbUser.id },
       select: { coachVerificationStatus: true },
     })
 
@@ -59,7 +58,7 @@ export async function POST(request: NextRequest) {
 
     const verification = await prisma.coachVerification.create({
       data: {
-        userId,
+        userId: dbUser.id,
         type,
         status: 'PENDING',
         documentUrl,
@@ -86,14 +85,13 @@ export async function POST(request: NextRequest) {
  */
 export async function GET() {
   try {
-    const { userId } = await auth()
-
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const verifications = await prisma.coachVerification.findMany({
-      where: { userId },
+      where: { userId: dbUser.id },
       orderBy: { createdAt: 'desc' },
     })
 

@@ -8,6 +8,10 @@ import { Plus, MapPin, Users, Clock, Calendar, TrendingUp, Search } from 'lucide
 import { motion } from 'framer-motion'
 import { ACTIVITY_CATEGORIES } from '@/lib/categories'
 import { MyCommunities } from '@/components/community/MyCommunities'
+import {
+  getCityLocationConfig,
+  getUtcDateForLocalDateTime,
+} from '@/lib/location-config'
 
 interface HostedEvent {
   id: string
@@ -26,6 +30,8 @@ interface HostedEvent {
   totalSpots?: number | null
   price: number
   currency: string
+  city?: string
+  timezone?: string
   imageUrl?: string
   isHappeningToday: boolean
   isThisWeekend: boolean
@@ -34,6 +40,29 @@ interface HostedEvent {
   isEventSubmission?: boolean
   friendsGoing?: { id: string; name: string | null; firstName: string | null; imageUrl: string | null }[]
   familiarFaces?: { name: string | null; firstName: string | null; imageUrl: string | null; sharedEventCount: number }[]
+}
+
+interface EventApiItem {
+  id: string
+  slug: string | null
+  name: string
+  category: string
+  day: string
+  eventDate: string | null
+  time: string
+  location: string
+  organizer: string
+  imageUrl: string | null
+  recurring: boolean
+  isFull: boolean
+  goingCount: number
+  isFree: boolean
+  price: number | null
+  currency: string | null
+  city: string | null
+  timezone: string | null
+  latitude: number | null
+  longitude: number | null
 }
 
 function enrichEvent(raw: Record<string, unknown>): HostedEvent {
@@ -46,6 +75,89 @@ function enrichEvent(raw: Record<string, unknown>): HostedEvent {
   } as HostedEvent
 }
 
+function categoryToSlug(category: string): string {
+  const normalized = category.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')
+  const direct = ACTIVITY_CATEGORIES.find(c => c.slug === normalized)
+  if (direct) return direct.slug
+
+  const byName = ACTIVITY_CATEGORIES.find(c => c.name.toLowerCase() === category.toLowerCase().trim())
+  return byName?.slug || normalized
+}
+
+function parseTimeParts(time: string): { hour: number; minute: number } | null {
+  const match = time.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM|am|pm)?/)
+  if (!match) return null
+
+  let hour = parseInt(match[1], 10)
+  const minute = parseInt(match[2] || '00', 10)
+  const period = match[3]?.toUpperCase()
+
+  if (period === 'PM' && hour !== 12) hour += 12
+  if (period === 'AM' && hour === 12) hour = 0
+  if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null
+
+  return { hour, minute }
+}
+
+function parseEventStartTime(eventDate: string | null, time: string, timezone: string): string {
+  if (!eventDate) return ''
+
+  const parts = parseTimeParts(time) || { hour: 0, minute: 0 }
+  const date = getUtcDateForLocalDateTime(eventDate, parts.hour, parts.minute, timezone)
+
+  return date?.toISOString() || ''
+}
+
+function isTodayInTimezone(startTime: string, timezone: string): boolean {
+  if (!startTime) return false
+  const date = new Date(startTime)
+  if (isNaN(date.getTime())) return false
+
+  const today = new Date().toLocaleDateString('en-US', { timeZone: timezone })
+  const eventDay = date.toLocaleDateString('en-US', { timeZone: timezone })
+  return today === eventDay
+}
+
+function isWeekendInTimezone(startTime: string, timezone: string): boolean {
+  if (!startTime) return false
+  const day = new Date(startTime).toLocaleDateString('en-US', { weekday: 'long', timeZone: timezone })
+  return day === 'Saturday' || day === 'Sunday'
+}
+
+function mapApiEvent(event: EventApiItem): HostedEvent {
+  const categorySlug = categoryToSlug(event.category)
+  const cat = ACTIVITY_CATEGORIES.find(c => c.slug === categorySlug)
+  const city = getCityLocationConfig(event.city)
+  const timezone = event.timezone || city.timezone
+  const startTime = parseEventStartTime(event.eventDate, event.time, timezone)
+
+  return {
+    id: event.id,
+    title: event.name,
+    categorySlug,
+    type: event.category,
+    emoji: cat?.emoji || '',
+    hostName: event.organizer,
+    locationName: event.location,
+    address: event.location,
+    latitude: event.latitude ?? city.center.lat,
+    longitude: event.longitude ?? city.center.lng,
+    startTime,
+    spotsLeft: event.isFull ? 0 : null,
+    totalSpots: null,
+    price: event.isFree ? 0 : event.price || 0,
+    currency: event.currency || city.currency,
+    city: city.slug,
+    timezone,
+    imageUrl: event.imageUrl || undefined,
+    isHappeningToday: isTodayInTimezone(startTime, timezone),
+    isThisWeekend: isWeekendInTimezone(startTime, timezone),
+    recurring: event.recurring,
+    participantCount: event.goingCount,
+    isEventSubmission: true,
+  }
+}
+
 function getEventUrl(event: HostedEvent): string {
   if (event.isEventSubmission || event.id.startsWith('event_')) {
     return `/e/${event.id.replace('event_', '')}`
@@ -53,29 +165,33 @@ function getEventUrl(event: HostedEvent): string {
   return `/activities/${event.id}`
 }
 
-const SG_TZ = { timeZone: 'Asia/Singapore' } as const
+function eventTimezone(event: HostedEvent): string {
+  return event.timezone || getCityLocationConfig(event.city).timezone
+}
 
-function formatEventTime(iso: string): string {
+function formatEventTime(event: HostedEvent): string {
+  const iso = event.startTime
   if (!iso) return ''
   const date = new Date(iso)
   if (isNaN(date.getTime())) return ''
+  const timezone = eventTimezone(event)
   const now = new Date()
   const tomorrow = new Date(now)
   tomorrow.setDate(tomorrow.getDate() + 1)
 
-  const timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', ...SG_TZ })
-  const dateSG = date.toLocaleDateString('en-US', SG_TZ)
-  const nowSG = now.toLocaleDateString('en-US', SG_TZ)
-  const tomorrowSG = tomorrow.toLocaleDateString('en-US', SG_TZ)
+  const timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: timezone })
+  const eventDay = date.toLocaleDateString('en-US', { timeZone: timezone })
+  const today = now.toLocaleDateString('en-US', { timeZone: timezone })
+  const tomorrowDay = tomorrow.toLocaleDateString('en-US', { timeZone: timezone })
 
-  if (dateSG === nowSG) return `Today, ${timeStr}`
-  if (dateSG === tomorrowSG) return `Tomorrow, ${timeStr}`
-  return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', ...SG_TZ }) + `, ${timeStr}`
+  if (eventDay === today) return `Today, ${timeStr}`
+  if (eventDay === tomorrowDay) return `Tomorrow, ${timeStr}`
+  return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: timezone }) + `, ${timeStr}`
 }
 
-function formatHeroTime(iso: string): string {
-  const date = new Date(iso)
-  return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', ...SG_TZ })
+function formatHeroTime(event: HostedEvent): string {
+  const date = new Date(event.startTime)
+  return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: eventTimezone(event) })
 }
 
 type TimeGroup = 'today' | 'tomorrow' | 'this_weekend' | 'this_week' | 'coming_up'
@@ -87,11 +203,12 @@ function getTimeGroup(event: HostedEvent): TimeGroup {
   const eventDate = new Date(event.startTime)
   const tomorrow = new Date(now)
   tomorrow.setDate(tomorrow.getDate() + 1)
+  const timezone = eventTimezone(event)
 
-  const eventDateSG = eventDate.toLocaleDateString('en-US', SG_TZ)
-  const tomorrowSG = tomorrow.toLocaleDateString('en-US', SG_TZ)
+  const eventDay = eventDate.toLocaleDateString('en-US', { timeZone: timezone })
+  const tomorrowDay = tomorrow.toLocaleDateString('en-US', { timeZone: timezone })
 
-  if (eventDateSG === tomorrowSG) return 'tomorrow'
+  if (eventDay === tomorrowDay) return 'tomorrow'
   if (event.isThisWeekend) return 'this_weekend'
 
   const weekFromNow = new Date(now)
@@ -134,23 +251,22 @@ export default function EventsPage() {
 
   const fetchEvents = useCallback(async () => {
     try {
-      let url = '/api/wave?lat=1.3521&lng=103.8198'
-      if (searchQuery) {
-        url += `&q=${encodeURIComponent(searchQuery)}`
-      }
-      const waveRes = await fetch(url)
-      if (waveRes.ok) {
-        const data = await waveRes.json()
-        if (data.hostedActivities) {
-          setEvents(data.hostedActivities.map(enrichEvent))
-        }
+      const res = await fetch('/api/events')
+      if (res.ok) {
+        const data = await res.json()
+        const hostedEvents = Array.isArray(data.hostedActivities)
+          ? data.hostedActivities.map(enrichEvent)
+          : Array.isArray(data.events)
+            ? data.events.map(mapApiEvent)
+            : []
+        setEvents(hostedEvents)
       }
     } catch (error) {
       console.error('Error fetching events:', error)
     } finally {
       setLoading(false)
     }
-  }, [searchQuery])
+  }, [])
 
   useEffect(() => {
     setLoading(true)
@@ -172,11 +288,25 @@ export default function EventsPage() {
     return ACTIVITY_CATEGORIES.filter((c) => slugs.has(c.slug)).sort((a, b) => a.displayOrder - b.displayOrder)
   }, [activeEvents])
 
-  // Apply category filter
+  // Apply text search and category filter
+  const searchedEvents = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase()
+    if (!query) return activeEvents
+    return activeEvents.filter((event) => {
+      return [
+        event.title,
+        event.locationName,
+        event.address,
+        event.hostName,
+        event.type,
+      ].some((value) => value?.toLowerCase().includes(query))
+    })
+  }, [activeEvents, searchQuery])
+
   const filteredEvents = useMemo(() => {
-    if (!categoryFilter) return activeEvents
-    return activeEvents.filter((e) => e.categorySlug === categoryFilter)
-  }, [activeEvents, categoryFilter])
+    if (!categoryFilter) return searchedEvents
+    return searchedEvents.filter((e) => e.categorySlug === categoryFilter)
+  }, [searchedEvents, categoryFilter])
 
   // Group events by time
   const groupedEvents = useMemo(() => {
@@ -386,7 +516,7 @@ export default function EventsPage() {
                       <div className="flex items-center gap-3 text-white/80 text-sm">
                         <span className="flex items-center gap-1">
                           <Clock className="w-3.5 h-3.5" />
-                          {formatHeroTime(heroEvent.startTime)}
+                          {formatHeroTime(heroEvent)}
                         </span>
                         <span className="flex items-center gap-1">
                           <MapPin className="w-3.5 h-3.5" />
@@ -566,7 +696,7 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
 
           <div className="flex items-center gap-1 mt-1.5 text-sm text-neutral-500">
             <Clock className="w-3.5 h-3.5 flex-shrink-0" />
-            <span className="truncate">{formatEventTime(event.startTime)}</span>
+            <span className="truncate">{formatEventTime(event)}</span>
           </div>
 
           <div className="flex items-center gap-1 mt-0.5 text-sm text-neutral-500">
@@ -612,4 +742,3 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
     </motion.div>
   )
 }
-

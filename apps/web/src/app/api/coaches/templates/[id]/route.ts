@@ -1,6 +1,6 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 /**
  * GET /api/coaches/templates/[id]
@@ -11,8 +11,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -26,7 +26,7 @@ export async function GET(
       return NextResponse.json({ error: 'Template not found' }, { status: 404 })
     }
 
-    if (template.hostId !== userId) {
+    if (template.hostId !== dbUser.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -49,8 +49,8 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -64,7 +64,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Template not found' }, { status: 404 })
     }
 
-    if (existing.hostId !== userId) {
+    if (existing.hostId !== dbUser.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -140,8 +140,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -155,7 +155,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Template not found' }, { status: 404 })
     }
 
-    if (existing.hostId !== userId) {
+    if (existing.hostId !== dbUser.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

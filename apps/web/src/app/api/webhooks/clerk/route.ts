@@ -5,6 +5,17 @@ import { prisma } from '@/lib/prisma'
 import { sendEmail } from '@/lib/email'
 import { trackEvent, EVENTS } from '@/lib/analytics'
 
+type ClerkWebhookEvent = {
+  type: string
+  data: {
+    id: string
+    email_addresses: Array<{ email_address: string }>
+    first_name: string | null
+    last_name: string | null
+    image_url: string | null
+  }
+}
+
 // Welcome email template
 function getWelcomeEmailHtml(name: string | null): string {
   const greeting = name ? `Hey ${name}!` : 'Hey there!'
@@ -111,7 +122,7 @@ export async function POST(req: Request) {
   // Create a new Svix instance with your secret
   const wh = new Webhook(WEBHOOK_SECRET)
 
-  let evt: any
+  let evt: ClerkWebhookEvent
 
   // Verify the payload with the headers
   try {
@@ -119,7 +130,7 @@ export async function POST(req: Request) {
       'svix-id': svix_id,
       'svix-timestamp': svix_timestamp,
       'svix-signature': svix_signature,
-    }) as any
+    }) as ClerkWebhookEvent
   } catch (err) {
     console.error('Error verifying webhook:', err)
     return new Response('Error: Verification failed', {
@@ -145,27 +156,50 @@ export async function POST(req: Request) {
         slug = baseName
       }
 
-      // Upsert user into database with retry on slug conflict
+      // Link Clerk identity to an existing email user when present, otherwise create a new row.
       const MAX_SLUG_RETRIES = 3
       for (let attempt = 0; attempt <= MAX_SLUG_RETRIES; attempt++) {
         try {
-          await prisma.user.upsert({
-            where: { id },
-            create: {
-              id,
-              email,
-              name,
-              firstName: first_name || null,
-              imageUrl: image_url || null,
-              ...(slug ? { slug } : {}),
-            },
-            update: {
-              email,
-              name,
-              firstName: first_name || null,
-              imageUrl: image_url || null,
-            },
+          const existingByClerkId = await prisma.user.findUnique({
+            where: { clerkUserId: id },
+            select: { id: true },
           })
+          const existingByEmail = existingByClerkId
+            ? null
+            : await prisma.user.findUnique({
+                where: { email: email.toLowerCase() },
+                select: { id: true, clerkUserId: true },
+              })
+
+          if (existingByEmail?.clerkUserId && existingByEmail.clerkUserId !== id) {
+            throw new Error('Email is already linked to another Clerk user')
+          }
+
+          const existingUserId = existingByClerkId?.id ?? existingByEmail?.id
+          if (existingUserId) {
+            await prisma.user.update({
+              where: { id: existingUserId },
+              data: {
+                clerkUserId: id,
+                email,
+                name,
+                firstName: first_name || null,
+                imageUrl: image_url || null,
+              },
+            })
+          } else {
+            await prisma.user.create({
+              data: {
+                id,
+                clerkUserId: id,
+                email,
+                name,
+                firstName: first_name || null,
+                imageUrl: image_url || null,
+                ...(slug ? { slug } : {}),
+              },
+            })
+          }
           break // success
         } catch (upsertError: unknown) {
           const isUniqueConstraint =
@@ -181,14 +215,12 @@ export async function POST(req: Request) {
         }
       }
 
-
       // Track signup event
       if (eventType === 'user.created') {
         await trackEvent(EVENTS.SIGNUP, id, {
           email,
         })
       }
-
       // Send welcome email only for new users
       if (eventType === 'user.created' && email) {
         try {

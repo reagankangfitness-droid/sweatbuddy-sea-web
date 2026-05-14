@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { unstable_cache } from 'next/cache'
+import { getCityLocationConfigForPointOrText } from '@/lib/location-config'
 
-// Revalidate every 60 seconds - allows Vercel edge caching
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 interface AttendeePreview {
   id: string
@@ -20,6 +19,10 @@ interface Event {
   eventDate: string | null
   time: string
   location: string
+  city: string
+  timezone: string
+  latitude: number
+  longitude: number
   description: string | null
   organizer: string
   imageUrl: string | null
@@ -31,6 +34,7 @@ interface Event {
   // Pricing
   isFree: boolean
   price: number | null  // in cents
+  currency: string
   paynowEnabled: boolean
   paynowQrCode: string | null
   paynowNumber: string | null
@@ -62,9 +66,7 @@ function isUpcomingEvent(eventDate: Date | null, recurring: boolean): boolean {
   return eventDay >= yesterday
 }
 
-// Cached database query - revalidates every 60s
-const getCachedEvents = unstable_cache(
-  async () => {
+async function getEvents() {
     // Get yesterday's date at midnight UTC (timezone-safe for all regions)
     // This ensures we don't accidentally filter out events due to timezone differences
     const now = new Date()
@@ -105,6 +107,10 @@ const getCachedEvents = unstable_cache(
         eventDate: true,
         time: true,
         location: true,
+        city: true,
+        timezone: true,
+        latitude: true,
+        longitude: true,
         description: true,
         organizerInstagram: true,
         imageUrl: true,
@@ -114,6 +120,7 @@ const getCachedEvents = unstable_cache(
         // Pricing
         isFree: true,
         price: true,
+        currency: true,
         paynowEnabled: true,
         paynowQrCode: true,
         paynowNumber: true,
@@ -130,6 +137,7 @@ const getCachedEvents = unstable_cache(
 
     const attendanceCounts = await prisma.eventAttendance.groupBy({
       by: ['eventId'],
+      where: { eventId: { in: eventIds } },
       _count: { id: true },
     })
 
@@ -158,49 +166,58 @@ const getCachedEvents = unstable_cache(
       }
     }
 
-    return upcomingSubmissions.map(submission => ({
-      id: submission.id,
-      slug: submission.slug,
-      name: submission.eventName,
-      category: submission.category,
-      day: submission.day,
-      eventDate: submission.eventDate?.toISOString().split('T')[0] || null,
-      time: submission.time,
-      location: submission.location,
-      description: submission.description,
-      organizer: submission.organizerInstagram,
-      imageUrl: submission.imageUrl,
-      communityLink: submission.communityLink,
-      recurring: submission.recurring,
-      isFull: submission.isFull,
-      goingCount: countMap.get(submission.id) || 0,
-      attendeesPreview: (attendeesByEvent.get(submission.id) || []).map(a => {
-        const name = a.name?.trim() || 'Anonymous'
-        const parts = name.split(' ').filter(Boolean)
-        const displayName = parts.length >= 2
-          ? `${parts[0]} ${parts[1][0]}.`
-          : parts[0] || 'Anonymous'
-        return {
-          id: a.id,
-          name: displayName,
-          imageUrl: null, // Will be fetched by the detail view
-        }
-      }),
-      // Pricing
-      isFree: submission.isFree,
-      price: submission.price,
-      paynowEnabled: submission.paynowEnabled,
-      paynowQrCode: submission.paynowQrCode,
-      paynowNumber: submission.paynowNumber,
-    }))
-  },
-  ['events-list-v5'], // Updated cache key - timezone-agnostic, frontend handles timezone filtering
-  { revalidate: 60, tags: ['events'] }
-)
+    return upcomingSubmissions.map(submission => {
+      const point = typeof submission.latitude === 'number' && typeof submission.longitude === 'number'
+        ? { lat: submission.latitude, lng: submission.longitude }
+        : null
+      const cityConfig = getCityLocationConfigForPointOrText(point, `${submission.city || ''} ${submission.location}`)
+
+      return {
+        id: submission.id,
+        slug: submission.slug,
+        name: submission.eventName,
+        category: submission.category,
+        day: submission.day,
+        eventDate: submission.eventDate?.toISOString().split('T')[0] || null,
+        time: submission.time,
+        location: submission.location,
+        city: submission.city || cityConfig.slug,
+        timezone: submission.timezone || cityConfig.timezone,
+        latitude: submission.latitude ?? cityConfig.center.lat,
+        longitude: submission.longitude ?? cityConfig.center.lng,
+        description: submission.description,
+        organizer: submission.organizerInstagram,
+        imageUrl: submission.imageUrl,
+        communityLink: submission.communityLink,
+        recurring: submission.recurring,
+        isFull: submission.isFull,
+        goingCount: countMap.get(submission.id) || 0,
+        attendeesPreview: (attendeesByEvent.get(submission.id) || []).map(a => {
+          const name = a.name?.trim() || 'Anonymous'
+          const parts = name.split(' ').filter(Boolean)
+          const displayName = parts.length >= 2
+            ? `${parts[0]} ${parts[1][0]}.`
+            : parts[0] || 'Anonymous'
+          return {
+            id: a.id,
+            name: displayName,
+            imageUrl: null, // Will be fetched by the detail view
+          }
+        }),
+        // Pricing
+        isFree: submission.isFree,
+        price: submission.price,
+        currency: submission.currency || cityConfig.currency,
+        paynowEnabled: submission.paynowEnabled,
+        paynowQrCode: submission.paynowQrCode,
+        paynowNumber: submission.paynowNumber,
+      }
+    })
+}
 
 export async function GET() {
   try {
-    const events: Event[] = await getCachedEvents()
+    const events: Event[] = await getEvents()
 
     return NextResponse.json(
       { events },

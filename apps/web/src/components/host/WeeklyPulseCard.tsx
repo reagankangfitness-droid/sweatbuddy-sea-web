@@ -58,7 +58,7 @@ export function WeeklyPulseCard({ pulse, onRefresh, isRefreshing = false }: Week
   const rsvpChange = pulse.metrics.thisWeekRsvps - pulse.metrics.lastWeekRsvps
 
   return (
-    <div className="bg-gradient-to-br from-violet-50 to-indigo-50 rounded-xl border border-violet-800 overflow-hidden mb-6 sm:mb-8">
+    <div className="bg-neutral-900 rounded-xl border border-violet-800 overflow-hidden mb-6 sm:mb-8">
       {/* Header - Always visible */}
       <div className="p-4 sm:p-5">
         <div className="flex items-start justify-between gap-3 mb-3">
@@ -68,7 +68,7 @@ export function WeeklyPulseCard({ pulse, onRefresh, isRefreshing = false }: Week
             </div>
             <div>
               <h3 className="font-semibold text-neutral-100 text-sm sm:text-base">
-                Your Weekly Pulse
+                Community Pulse
               </h3>
               <p className="text-xs text-violet-400">{weekRange}</p>
             </div>
@@ -93,7 +93,7 @@ export function WeeklyPulseCard({ pulse, onRefresh, isRefreshing = false }: Week
           <div className="flex items-center gap-1">
             {getTrendIcon(pulse.metrics.thisWeekRsvps, pulse.metrics.lastWeekRsvps)}
             <span className="text-neutral-400">
-              {pulse.metrics.thisWeekRsvps} RSVPs this week
+              {pulse.metrics.thisWeekRsvps} joins this week
               {rsvpChange !== 0 && (
                 <span className={rsvpChange > 0 ? 'text-emerald-400' : 'text-orange-500'}>
                   {' '}({rsvpChange > 0 ? '+' : ''}{rsvpChange})
@@ -116,7 +116,7 @@ export function WeeklyPulseCard({ pulse, onRefresh, isRefreshing = false }: Week
           ) : (
             <>
               <ChevronDown className="w-3.5 h-3.5" />
-              See highlights & suggestions
+              See highlights and next moves
             </>
           )}
         </button>
@@ -124,7 +124,7 @@ export function WeeklyPulseCard({ pulse, onRefresh, isRefreshing = false }: Week
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div className="border-t border-violet-800 bg-white/50 p-4 sm:p-5 space-y-4">
+        <div className="border-t border-violet-800 bg-neutral-950 p-4 sm:p-5 space-y-4">
           {/* Highlights */}
           {pulse.highlights.length > 0 && (
             <div>

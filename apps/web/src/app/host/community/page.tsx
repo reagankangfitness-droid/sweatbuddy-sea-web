@@ -121,9 +121,9 @@ export default function CommunityPage() {
 
   const generateMessage = () => {
     if (!communityLink) {
-      return 'Hey! Join our community group for updates on upcoming experiences!'
+      return 'Hey! Join our SweatBuddies community page for upcoming sessions and crew updates.'
     }
-    return `Hey! Join our community group for updates on upcoming experiences: ${communityLink}`
+    return `Hey! Join our SweatBuddies community page for upcoming sessions and crew updates: ${communityLink}`
   }
 
   const copyMessage = () => {
@@ -161,8 +161,8 @@ export default function CommunityPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-neutral-100">Your Community</h1>
-            <p className="text-neutral-500">Members across all your experiences</p>
+            <h1 className="text-2xl font-bold text-neutral-100">Regulars & Community Health</h1>
+            <p className="text-neutral-500">See who is showing up, who is new, and who needs a reason to come back.</p>
           </div>
           <div className="flex items-center gap-3">
             {communitySlug && (
@@ -171,7 +171,7 @@ export default function CommunityPage() {
                 className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-500 text-neutral-900 text-sm font-semibold rounded-full hover:bg-amber-400 transition-colors"
               >
                 <Megaphone className="w-4 h-4" />
-                Send Announcement
+                Post Update
               </button>
             )}
             <button
@@ -179,7 +179,7 @@ export default function CommunityPage() {
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-neutral-900 text-sm font-semibold rounded-full hover:bg-neutral-200 transition-colors"
             >
               <MessageSquare className="w-4 h-4" />
-              Quick Message
+              Invite Regulars
             </button>
           </div>
         </div>
@@ -221,7 +221,7 @@ export default function CommunityPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-neutral-950 border border-neutral-800 rounded-2xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-neutral-100">Send Announcement</h2>
+              <h2 className="text-lg font-semibold text-neutral-100">Post Community Update</h2>
               <button
                 onClick={() => setShowAnnouncementModal(false)}
                 className="p-1 text-neutral-400 hover:text-neutral-100"
@@ -231,7 +231,7 @@ export default function CommunityPage() {
             </div>
 
             <p className="text-sm text-neutral-500 mb-4">
-              Post an announcement visible to all community members on your community page.
+              Share an update visible to members on your community page.
             </p>
 
             <div className="mb-4">
@@ -275,7 +275,7 @@ export default function CommunityPage() {
                 disabled={!announcementContent.trim() || sendingAnnouncement}
                 className="flex-1 px-4 py-2.5 bg-amber-500 text-neutral-900 text-sm font-medium rounded-lg hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {sendingAnnouncement ? 'Sending...' : 'Send'}
+                {sendingAnnouncement ? 'Posting...' : 'Post Update'}
               </button>
             </div>
           </div>
@@ -287,7 +287,7 @@ export default function CommunityPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-neutral-950 border border-neutral-800 rounded-2xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-neutral-100">Quick Message</h2>
+              <h2 className="text-lg font-semibold text-neutral-100">Invite Regulars</h2>
               <button
                 onClick={() => setShowMessageModal(false)}
                 className="p-1 text-neutral-400 hover:text-neutral-100"
@@ -297,7 +297,7 @@ export default function CommunityPage() {
             </div>
 
             <p className="text-sm text-neutral-500 mb-4">
-              Generate a message to share with your community. Copy and paste into WhatsApp, Telegram, or any messaging app.
+              Generate a message for WhatsApp, Telegram, Instagram DMs, or any place your crew already talks.
             </p>
 
             {/* Audience Selection */}
@@ -345,7 +345,7 @@ export default function CommunityPage() {
               </div>
               {!communityLink && (
                 <p className="text-xs text-amber-400 mt-2">
-                  Tip: Add a community link to your experiences for a better message!
+                  Tip: Add a community page link to your sessions for a better message.
                 </p>
               )}
             </div>

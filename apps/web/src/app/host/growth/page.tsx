@@ -84,8 +84,8 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 
 const CATEGORY_COLORS: Record<string, string> = {
   acquisition: 'bg-green-900 text-green-400',
-  retention: 'bg-blue-900 text-blue-700',
-  engagement: 'bg-purple-900 text-purple-700',
+  retention: 'bg-blue-900 text-blue-300',
+  engagement: 'bg-purple-900 text-purple-300',
   monetization: 'bg-amber-900 text-amber-400',
 }
 
@@ -163,10 +163,10 @@ export default function GrowthPage() {
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-neutral-100 mb-1 flex items-center gap-2">
               <TrendingUp className="w-6 h-6 text-green-500" />
-              Growth Insights
+              Community Growth
             </h1>
             <p className="text-sm text-neutral-500">
-              AI-powered recommendations to grow your community
+              Recommendations to grow repeat attendance, regulars, and free or paid sessions.
             </p>
           </div>
           <button
@@ -184,7 +184,7 @@ export default function GrowthPage() {
           <div className="bg-neutral-900 rounded-xl p-4 border border-neutral-800">
             <div className="flex items-center gap-2 text-neutral-500 mb-1">
               <Users className="w-4 h-4" />
-              <span className="text-xs">Total Members</span>
+              <span className="text-xs">Total Regulars</span>
             </div>
             <p className="text-2xl font-bold text-neutral-100">
               {metrics.totalMembers}
@@ -194,7 +194,7 @@ export default function GrowthPage() {
           <div className="bg-neutral-900 rounded-xl p-4 border border-neutral-800">
             <div className="flex items-center gap-2 text-neutral-500 mb-1">
               <Zap className="w-4 h-4" />
-              <span className="text-xs">Active (30d)</span>
+              <span className="text-xs">Active 30d</span>
             </div>
             <p className="text-2xl font-bold text-neutral-100">
               {metrics.activeMembers}
@@ -204,7 +204,7 @@ export default function GrowthPage() {
           <div className="bg-neutral-900 rounded-xl p-4 border border-neutral-800">
             <div className="flex items-center gap-2 text-green-400 mb-1">
               <UserPlus className="w-4 h-4" />
-              <span className="text-xs">New Members</span>
+              <span className="text-xs">New People</span>
             </div>
             <p className="text-2xl font-bold text-green-400">
               +{metrics.newMembersLast30Days}
@@ -231,13 +231,13 @@ export default function GrowthPage() {
         </div>
 
         {/* Summary */}
-        <div className="mb-8 p-4 bg-gradient-to-r from-violet-50 to-indigo-50 rounded-xl border border-violet-800">
+        <div className="mb-8 p-4 bg-neutral-900 rounded-xl border border-violet-800">
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 bg-violet-900 rounded-lg flex items-center justify-center flex-shrink-0">
               <Sparkles className="w-5 h-5 text-violet-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-neutral-100 mb-1">AI Summary</h3>
+              <h3 className="font-semibold text-neutral-100 mb-1">Growth Readout</h3>
               <p className="text-sm text-neutral-300">{summary}</p>
             </div>
           </div>
@@ -247,15 +247,15 @@ export default function GrowthPage() {
         <div className="grid grid-cols-3 gap-3 mb-8">
           <div className="bg-blue-950 rounded-xl p-3 text-center">
             <p className="text-2xl font-bold text-blue-700">{metrics.retentionRate}%</p>
-            <p className="text-xs text-blue-400">Retention Rate</p>
+            <p className="text-xs text-blue-400">Retention</p>
           </div>
-          <div className="bg-purple-50 rounded-xl p-3 text-center">
-            <p className="text-2xl font-bold text-purple-700">{metrics.avgAttendeesPerEvent}</p>
-            <p className="text-xs text-purple-600">Avg per Event</p>
+          <div className="bg-purple-950 rounded-xl p-3 text-center">
+            <p className="text-2xl font-bold text-purple-300">{metrics.avgAttendeesPerEvent}</p>
+            <p className="text-xs text-purple-300">Avg/session</p>
           </div>
           <div className="bg-amber-950 rounded-xl p-3 text-center">
             <p className="text-2xl font-bold text-amber-400">{metrics.totalEvents}</p>
-            <p className="text-xs text-amber-400">Total Events</p>
+            <p className="text-xs text-amber-400">Sessions</p>
           </div>
         </div>
 
@@ -263,7 +263,7 @@ export default function GrowthPage() {
         <div className="mb-8">
           <h2 className="text-lg font-semibold text-neutral-100 mb-4 flex items-center gap-2">
             <Target className="w-5 h-5 text-violet-400" />
-            Growth Recommendations
+            Growth Plays
           </h2>
 
           <div className="space-y-4">
@@ -312,7 +312,7 @@ export default function GrowthPage() {
           <div className="p-4 bg-neutral-900 rounded-xl border border-neutral-800">
             <h3 className="font-semibold text-neutral-100 mb-3 flex items-center gap-2">
               <Lightbulb className="w-5 h-5 text-amber-500" />
-              {communityType ? `Tips for ${communityType.toLowerCase()} communities` : 'General Tips'}
+              {communityType ? `Tips for ${communityType.toLowerCase()} crews` : 'General Tips'}
             </h3>
             <ul className="space-y-2">
               {categoryTips.slice(0, 4).map((tip, i) => (

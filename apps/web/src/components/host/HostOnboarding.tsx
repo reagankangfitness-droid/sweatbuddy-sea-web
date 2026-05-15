@@ -21,7 +21,7 @@ const COMMUNITY_TYPES = [
     id: 'RUN',
     label: 'Running',
     emoji: '🏃',
-    description: 'Run clubs, marathons, trail runs',
+    description: 'Run clubs, social jogs, trail crews',
     color: 'bg-orange-100 border-orange-300 hover:bg-orange-50',
     selectedColor: 'bg-orange-500 border-orange-500',
   },
@@ -29,7 +29,7 @@ const COMMUNITY_TYPES = [
     id: 'YOGA',
     label: 'Yoga',
     emoji: '🧘',
-    description: 'Yoga classes, retreats, workshops',
+    description: 'Yoga groups, flows, park sessions',
     color: 'bg-purple-900 border-purple-300 hover:bg-purple-50',
     selectedColor: 'bg-purple-500 border-purple-500',
   },
@@ -37,7 +37,7 @@ const COMMUNITY_TYPES = [
     id: 'HIIT',
     label: 'HIIT',
     emoji: '🔥',
-    description: 'High intensity, circuit training',
+    description: 'Circuits, bootcamps, sweat crews',
     color: 'bg-red-900 border-red-300 hover:bg-red-950',
     selectedColor: 'bg-red-500 border-red-500',
   },
@@ -45,7 +45,7 @@ const COMMUNITY_TYPES = [
     id: 'MEDITATION',
     label: 'Meditation',
     emoji: '🧠',
-    description: 'Mindfulness, breathwork, wellness',
+    description: 'Mindfulness, breathwork, recovery',
     color: 'bg-teal-100 border-teal-300 hover:bg-teal-50',
     selectedColor: 'bg-teal-500 border-teal-500',
   },
@@ -53,7 +53,7 @@ const COMMUNITY_TYPES = [
     id: 'BOOTCAMP',
     label: 'Bootcamp',
     emoji: '💪',
-    description: 'Outdoor fitness, group workouts',
+    description: 'Outdoor fitness, recurring crews',
     color: 'bg-green-900 border-green-300 hover:bg-green-950',
     selectedColor: 'bg-green-500 border-green-500',
   },
@@ -61,7 +61,7 @@ const COMMUNITY_TYPES = [
     id: 'STRENGTH',
     label: 'Strength',
     emoji: '🏋️',
-    description: 'Weight training, powerlifting',
+    description: 'Strength groups, gym crews',
     color: 'bg-blue-900 border-blue-300 hover:bg-blue-950',
     selectedColor: 'bg-blue-500 border-blue-500',
   },
@@ -69,7 +69,7 @@ const COMMUNITY_TYPES = [
     id: 'OTHER',
     label: 'Other',
     emoji: '✨',
-    description: 'Something else awesome',
+    description: 'Any movement people do together',
     color: 'bg-neutral-800 border-neutral-700 hover:bg-neutral-900',
     selectedColor: 'bg-neutral-700 border-neutral-700',
   },
@@ -86,25 +86,25 @@ const AI_FEATURES = [
   {
     icon: MessageSquare,
     title: 'AI Chat',
-    description: 'Ask anything about your community and get instant answers',
+    description: 'Ask what to do next for your sessions, members, and regulars',
     gradient: 'from-indigo-500 to-purple-600',
   },
   {
     icon: Sparkles,
     title: 'Content Generator',
-    description: 'Create Instagram captions, WhatsApp messages, and emails',
+    description: 'Create Instagram captions, WhatsApp invites, and recap notes',
     gradient: 'from-violet-500 to-pink-500',
   },
   {
     icon: TrendingUp,
     title: 'Growth Insights',
-    description: 'AI-powered recommendations to grow your community',
+    description: 'Find ways to turn first-timers into repeat members',
     gradient: 'from-emerald-500 to-teal-500',
   },
   {
     icon: Zap,
     title: 'Weekly Pulse',
-    description: 'Automated AI summaries of your community health',
+    description: 'Summaries of momentum, attendance, and reactivation signals',
     gradient: 'from-amber-500 to-orange-500',
   },
 ]
@@ -130,9 +130,9 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
   useEffect(() => {
     if (step === 'loading') {
       const messages = [
-        'Setting up your AI assistant...',
-        'Learning about your community type...',
-        'Preparing personalized insights...',
+        'Setting up your community workspace...',
+        'Learning what kind of crew you run...',
+        'Preparing repeat-attendance insights...',
         'Almost ready...',
       ]
       let index = 0
@@ -232,7 +232,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
               transition={{ delay: 0.4 }}
               className="text-neutral-400 mb-8 text-base sm:text-lg"
             >
-              I&apos;m your AI assistant. Let me learn about your community so I can give you personalized insights.
+              Let&apos;s set up the community layer for your sessions, regulars, and growth loop.
             </motion.p>
 
             <motion.div
@@ -245,7 +245,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
                 onClick={() => setStep('type')}
                 className="w-full py-3 px-6 bg-white text-neutral-900 rounded-xl font-semibold hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2"
               >
-                Let&apos;s get started
+                Set up community
                 <ArrowRight className="w-4 h-4" />
               </button>
               <button
@@ -271,10 +271,10 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
           >
             <div className="text-center mb-8">
               <h2 className="text-xl sm:text-2xl font-bold text-neutral-100 mb-2">
-                What type of community do you run?
+                What type of community are you building?
               </h2>
               <p className="text-neutral-500 text-sm">
-                This helps me give you relevant insights and suggestions
+                This shapes session ideas, member insights, and invite copy
               </p>
             </div>
 
@@ -340,10 +340,10 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
                 </span>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-neutral-100 mb-2">
-                Tell me more about your community
+                Tell me more about the crew
               </h2>
               <p className="text-neutral-500 text-sm">
-                All fields are optional - share what you&apos;re comfortable with
+                Optional, but useful for session planning and regulars insights
               </p>
             </div>
 
@@ -352,7 +352,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-neutral-300 mb-2">
                   <Users className="w-4 h-4" />
-                  Community Name
+                  Crew or Community Name
                 </label>
                 <input
                   type="text"
@@ -367,7 +367,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-neutral-300 mb-2">
                   <MapPin className="w-4 h-4" />
-                  Usual Location
+                  Usual Meetup Spot
                 </label>
                 <input
                   type="text"
@@ -382,7 +382,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-neutral-300 mb-2">
                   <Calendar className="w-4 h-4" />
-                  Typical Schedule
+                  Usual Rhythm
                 </label>
                 <input
                   type="text"
@@ -396,7 +396,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
               {/* Community Size */}
               <div>
                 <label className="text-sm font-medium text-neutral-300 mb-2 block">
-                  Community Size
+                  Current Size
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   {COMMUNITY_SIZES.map((size) => (
@@ -442,7 +442,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
                 ) : (
                   <>
                     <Check className="w-4 h-4" />
-                    Complete Setup
+                    Build Workspace
                   </>
                 )}
               </button>
@@ -528,7 +528,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
                 transition={{ delay: 0.2 }}
                 className="text-xl sm:text-2xl font-bold text-neutral-100 mb-2"
               >
-                You&apos;re all set! 🎉
+                Your community workspace is ready.
               </motion.h2>
               <motion.p
                 initial={{ opacity: 0 }}
@@ -536,7 +536,7 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
                 transition={{ delay: 0.3 }}
                 className="text-neutral-500"
               >
-                Here&apos;s what your AI assistant can do for you
+                Here&apos;s what you can use to keep people coming back
               </motion.p>
             </div>
 
@@ -569,11 +569,11 @@ export function HostOnboarding({ onComplete, userName }: HostOnboardingProps) {
                 onClick={onComplete}
                 className="w-full py-3 px-6 bg-white text-neutral-900 rounded-xl font-semibold hover:bg-neutral-200 transition-colors flex items-center justify-center gap-2"
               >
-                Go to Dashboard
+                Go to Host Dashboard
                 <ArrowRight className="w-4 h-4" />
               </button>
               <p className="text-center text-xs text-neutral-400 mt-3">
-                Look for the chat button in the bottom-right corner anytime
+                Start by planning one repeatable session or inviting your regulars.
               </p>
             </motion.div>
           </motion.div>

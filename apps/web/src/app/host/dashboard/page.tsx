@@ -295,12 +295,12 @@ export default function HostDashboard() {
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
         {/* Welcome */}
         <h1 className="text-xl sm:text-2xl font-bold text-neutral-100 mb-1 sm:mb-2">
-          Hey! Here&apos;s how things are going.
+          Run your community operating layer.
         </h1>
         <p className="text-sm sm:text-base text-neutral-500 mb-6 sm:mb-8">
           {data.stats.totalSignups > 0
-            ? 'Your experiences are bringing people together.'
-            : 'Ready to bring people together? Create your first experience.'}
+            ? 'Track sessions, regulars, payments, and momentum from one place.'
+            : 'Start with one recurring session so people know when to show up again.'}
         </p>
 
         {/* Pending Payments Alert Banner */}
@@ -317,7 +317,7 @@ export default function HostDashboard() {
                       {data.stats.pendingPayments} payment{data.stats.pendingPayments !== 1 ? 's' : ''} need{data.stats.pendingPayments === 1 ? 's' : ''} verification
                     </p>
                     <p className="text-xs sm:text-sm text-amber-400">
-                      Review PayNow payments to confirm attendees
+                      Review PayNow payments to confirm attendees and protect trust
                     </p>
                   </div>
                 </div>
@@ -364,7 +364,7 @@ export default function HostDashboard() {
         <div className="relative -mx-4 sm:mx-0 mb-4 sm:mb-8">
           <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none z-10 sm:hidden" />
           <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-4 pb-1 sm:px-0 sm:grid sm:grid-cols-4 sm:gap-4 sm:overflow-visible">
-            <StatCard value={data.stats.activeEvents || 0} label="Events Live" className="flex-shrink-0 min-w-[140px] snap-start sm:min-w-0" />
+            <StatCard value={data.stats.activeEvents || 0} label="Live Sessions" className="flex-shrink-0 min-w-[140px] snap-start sm:min-w-0" />
             <StatCard value={data.stats.totalSignups || 0} label="People Joined" className="flex-shrink-0 min-w-[140px] snap-start sm:min-w-0" />
             <StatCard value={data.stats.followerCount || 0} label="Followers" className="flex-shrink-0 min-w-[140px] snap-start sm:min-w-0" />
           </div>
@@ -377,7 +377,7 @@ export default function HostDashboard() {
             className="flex items-center gap-2 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 rounded-full text-sm font-medium text-neutral-300 transition-colors whitespace-nowrap"
           >
             <Users className="w-4 h-4" />
-            Community
+            Regulars
           </Link>
           <Link
             href="/host/analytics"
@@ -393,9 +393,19 @@ export default function HostDashboard() {
           <NudgeCardsSection />
         </div>
 
+        {isPulseLoading ? (
+          <WeeklyPulseCardSkeleton />
+        ) : pulse ? (
+          <WeeklyPulseCard
+            pulse={pulse}
+            onRefresh={handleRefreshPulse}
+            isRefreshing={isRefreshingPulse}
+          />
+        ) : null}
+
         {/* Main Content - stack on mobile, grid on desktop */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-          {/* Events Section */}
+          {/* Sessions Section */}
           <div className="lg:col-span-2 order-1">
             {/* Tabs - horizontally scrollable on mobile with fade indicator */}
             <div className="relative mb-4 sm:mb-6">
@@ -426,7 +436,7 @@ export default function HostDashboard() {
               <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none sm:hidden" />
             </div>
 
-            {/* Events List */}
+            {/* Sessions List */}
             <div className="border border-neutral-800 rounded-xl divide-y divide-neutral-800 bg-neutral-950">
               {getEventsForTab().length === 0 ? (
                 <div className="p-6 sm:p-8 text-center">
@@ -434,25 +444,25 @@ export default function HostDashboard() {
                   {activeTab === 'pending' && (
                     <div className="text-neutral-500">
                       <Clock className="w-8 h-8 mx-auto mb-2 text-neutral-300" />
-                      <p className="text-sm">No pending experiences</p>
+                      <p className="text-sm">No pending sessions</p>
                     </div>
                   )}
                   {activeTab === 'past' && (
                     <div className="text-neutral-500">
                       <AlertCircle className="w-8 h-8 mx-auto mb-2 text-neutral-300" />
-                      <p className="text-sm">No past experiences yet</p>
+                      <p className="text-sm">No past sessions yet</p>
                     </div>
                   )}
                   {activeTab === 'rejected' && (
                     <div className="text-neutral-500">
                       <XCircle className="w-8 h-8 mx-auto mb-2 text-neutral-300" />
-                      <p className="text-sm">No rejected experiences</p>
+                      <p className="text-sm">No rejected sessions</p>
                     </div>
                   )}
                   {activeTab === 'cancelled' && (
                     <div className="text-neutral-500">
                       <Ban className="w-8 h-8 mx-auto mb-2 text-neutral-300" />
-                      <p className="text-sm">No cancelled experiences</p>
+                      <p className="text-sm">No cancelled sessions</p>
                     </div>
                   )}
                 </div>
@@ -483,11 +493,11 @@ export default function HostDashboard() {
             <section>
               <h2 className="text-base sm:text-lg font-semibold text-neutral-100 mb-3 sm:mb-4 flex items-center gap-2">
                 <span>⚡</span>
-                Recent Activity
+                Recent Movement
               </h2>
               {data.recentActivity.length === 0 ? (
                 <div className="border border-neutral-800 rounded-xl p-4 sm:p-6 text-center text-neutral-500 bg-neutral-950">
-                  <p className="text-sm">No recent signups yet</p>
+                  <p className="text-sm">No recent joins yet</p>
                 </div>
               ) : (
                 <div className="border border-neutral-800 rounded-xl overflow-hidden bg-neutral-950">
@@ -552,7 +562,7 @@ export default function HostDashboard() {
                               {regular.name || regular.email.split('@')[0]}
                             </p>
                             <p className="text-xs text-neutral-500">
-                              {regular.attendanceCount} experiences attended
+                              {regular.attendanceCount} sessions attended
                             </p>
                           </div>
                         </div>
@@ -572,13 +582,13 @@ export default function HostDashboard() {
 
       {/* AI Chat Widget - hidden for now */}
 
-      {/* Plan Next Event Floating CTA */}
+      {/* Plan next session CTA */}
       <Link
         href="/host/plan"
         className="fixed bottom-6 right-6 bg-amber-500 hover:bg-amber-600 text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-2 transition-all z-50 text-sm font-medium"
       >
         <Sparkles className="w-4 h-4" />
-        Plan Next Event
+        Plan Next Session
       </Link>
 
       {/* Recap Creator Modal */}
@@ -681,4 +691,3 @@ function CancelledEventRow({ event }: { event: DashboardEvent }) {
     </div>
   )
 }
-

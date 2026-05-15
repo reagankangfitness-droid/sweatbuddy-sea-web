@@ -64,7 +64,7 @@ const QUICK_QUESTIONS: Record<string, QuickQuestion[]> = {
   DEFAULT: [
     { label: 'Grow community', question: 'How can I grow my fitness community?', icon: '📈' },
     { label: 'This week\'s tips', question: 'Based on my data, what should I focus on this week?', icon: '🎯' },
-    { label: 'Content ideas', question: 'Can you help me write an Instagram post for my next event?', icon: '📱' },
+    { label: 'Content ideas', question: 'Can you help me write an Instagram post for my next session?', icon: '📱' },
     { label: 'Re-engage members', question: 'How do I bring back members who haven\'t attended recently?', icon: '🔄' },
   ],
 }
@@ -406,7 +406,7 @@ export function AgentChatWidget() {
                   Hey! How can I help?
                 </p>
                 <p className="text-xs text-neutral-500 mb-4">
-                  Ask me about your events, community insights, or content ideas.
+                  Ask me about sessions, regulars, community insights, or content ideas.
                 </p>
 
                 {/* Quick questions */}

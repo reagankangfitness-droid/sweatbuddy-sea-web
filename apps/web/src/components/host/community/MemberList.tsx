@@ -122,7 +122,7 @@ export function MemberList({
           <Users className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
           <p className="font-medium text-neutral-100 mb-1">No members yet</p>
           <p className="text-sm text-neutral-500">
-            When people RSVP to your experiences, they&apos;ll show up here
+            When people join your sessions, they&apos;ll show up here.
           </p>
         </div>
       ) : (

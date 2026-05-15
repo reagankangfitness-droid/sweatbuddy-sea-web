@@ -9,10 +9,10 @@ interface Message {
 }
 
 const QUICK_ACTIONS = [
-  { label: 'Plan next event', icon: Sparkles, prompt: 'Help me plan my next event. Based on my past events, what type of event should I host next, and when?' },
-  { label: 'Optimize pricing', icon: DollarSign, prompt: 'Analyze my pricing history and suggest optimal pricing for my next event.' },
-  { label: 'Best time slot', icon: Clock, prompt: 'What day and time should I host my next event for maximum attendance?' },
-  { label: 'Grow attendance', icon: TrendingUp, prompt: 'How can I grow my event attendance? Give me specific strategies based on my data.' },
+  { label: 'Plan next session', icon: Sparkles, prompt: 'Help me plan my next community session. Based on my past sessions, what should I host next, and when?' },
+  { label: 'Price a session', icon: DollarSign, prompt: 'Analyze my pricing history and suggest whether my next session should be free, paid, or membership-oriented.' },
+  { label: 'Best time slot', icon: Clock, prompt: 'What day and time should I host my next session for repeat attendance?' },
+  { label: 'Grow regulars', icon: TrendingUp, prompt: 'How can I turn more attendees into regulars? Give me specific strategies based on my data.' },
 ]
 
 export function AIPlannerChat() {
@@ -93,9 +93,9 @@ export function AIPlannerChat() {
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
             <Sparkles className="w-10 h-10 text-amber-400 mb-3" />
-            <h3 className="text-lg font-semibold text-neutral-100 mb-1">AI Event Planner</h3>
+            <h3 className="text-lg font-semibold text-neutral-100 mb-1">Community Session Planner</h3>
             <p className="text-sm text-neutral-500 mb-6 max-w-sm">
-              Get data-driven suggestions for your next event based on your hosting history.
+              Get data-driven suggestions for the next session, invite, and repeat-attendance loop.
             </p>
             <div className="grid grid-cols-2 gap-2 w-full max-w-sm">
               {QUICK_ACTIONS.map(action => (
@@ -145,7 +145,7 @@ export function AIPlannerChat() {
             type="text"
             value={input}
             onChange={e => setInput(e.target.value)}
-            placeholder="Ask about your next event..."
+            placeholder="Ask about your next session..."
             disabled={isStreaming}
             className="flex-1 px-4 py-2.5 border rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
           />

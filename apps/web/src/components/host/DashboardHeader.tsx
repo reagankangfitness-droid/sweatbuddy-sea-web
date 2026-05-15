@@ -17,12 +17,12 @@ export function DashboardHeader() {
           </Link>
         </div>
 
-        {/* New Event Button */}
+        {/* New session planning */}
         <Link
-          href="/host"
+          href="/host/plan"
           className="inline-flex items-center justify-center px-4 py-2 bg-white text-neutral-900 text-sm font-semibold rounded-full hover:bg-neutral-200 transition-colors"
         >
-          <span className="hidden sm:inline">+ New Event</span>
+          <span className="hidden sm:inline">+ New Session</span>
           <span className="sm:hidden">+ New</span>
         </Link>
       </div>

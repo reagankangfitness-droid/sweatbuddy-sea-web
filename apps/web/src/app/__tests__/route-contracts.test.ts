@@ -75,6 +75,29 @@ describe('route contracts', () => {
     expectRoute('apps/web/src/app/api/host/growth/route.ts')
   })
 
+  it('keeps logged-in host surfaces aligned around community growth', () => {
+    const dashboardPage = readRepoFile('apps/web/src/app/host/dashboard/page.tsx')
+    const communityPage = readRepoFile('apps/web/src/app/host/community/page.tsx')
+    const growthPage = readRepoFile('apps/web/src/app/host/growth/page.tsx')
+    const planPage = readRepoFile('apps/web/src/app/host/plan/page.tsx')
+    const onboarding = readRepoFile('apps/web/src/components/host/HostOnboarding.tsx')
+    const emptyState = readRepoFile('apps/web/src/components/host/EmptyState.tsx')
+    const planner = readRepoFile('apps/web/src/components/host/AIPlannerChat.tsx')
+    const pulseCard = readRepoFile('apps/web/src/components/host/WeeklyPulseCard.tsx')
+
+    expect(dashboardPage).toContain('Run your community operating layer.')
+    expect(dashboardPage).toContain('Plan Next Session')
+    expect(dashboardPage).toContain('WeeklyPulseCard')
+    expect(communityPage).toContain('Regulars & Community Health')
+    expect(communityPage).toContain('Invite Regulars')
+    expect(growthPage).toContain('Community Growth')
+    expect(planPage).toContain('Plan Your Next Session')
+    expect(onboarding).toContain('What type of community are you building?')
+    expect(emptyState).toContain('No live sessions yet')
+    expect(planner).toContain('Community Session Planner')
+    expect(pulseCard).toContain('Community Pulse')
+  })
+
   it('keeps coach template action links backed by pages', () => {
     expectRoute('apps/web/src/app/coach/templates/new/page.tsx')
     expectRoute('apps/web/src/app/coach/templates/[id]/edit/page.tsx')

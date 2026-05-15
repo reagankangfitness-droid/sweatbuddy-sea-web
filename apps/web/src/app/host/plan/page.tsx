@@ -18,10 +18,10 @@ export default function PlanPage() {
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-1">
             <Sparkles className="w-6 h-6 text-amber-500" />
-            <h1 className="text-2xl font-bold text-neutral-100">Plan Your Next Event</h1>
+            <h1 className="text-2xl font-bold text-neutral-100">Plan Your Next Session</h1>
           </div>
           <p className="text-neutral-500 text-sm">
-            Get AI-powered suggestions based on your event history and community data.
+            Shape the next run, class, game, or meetup around what brings people back.
           </p>
         </div>
 

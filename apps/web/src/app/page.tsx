@@ -322,13 +322,32 @@ export default async function HomePage() {
 
           <div className="bg-[#F3F0E8] text-[#101010] px-5 py-14 sm:p-12 lg:p-16 flex items-center">
             <div className="w-full max-w-xl mx-auto">
-              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-black/45">For hosts</p>
-              <h2 className="mt-3 text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-neutral-600">For hosts</p>
+              <h2 className="mt-3 text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight text-[#101010]">
                 Grow beyond the group chat.
               </h2>
               <p className="mt-5 text-base leading-8 text-black/65">
                 Get discovered, fill sessions, collect payments, and bring regulars back without managing everything in DMs.
               </p>
+
+              <div className="mt-8 overflow-hidden rounded-lg border border-black/10 bg-black">
+                <div className="relative h-56 sm:h-64">
+                  <Image
+                    src="/images/hosts/run-club-group.jpg"
+                    alt="A local fitness crew smiling together after a session"
+                    fill
+                    sizes="(min-width: 1024px) 42vw, 100vw"
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/65">Host proof</p>
+                    <p className="mt-1 max-w-sm text-xl font-extrabold leading-tight text-white">
+                      Real communities, not empty listings.
+                    </p>
+                  </div>
+                </div>
+              </div>
 
               <div className="mt-8 rounded-lg border border-black/10 bg-white shadow-[0_18px_60px_rgba(0,0,0,0.16)] overflow-hidden">
                 <div className="flex items-center justify-between border-b border-black/10 px-5 py-4">

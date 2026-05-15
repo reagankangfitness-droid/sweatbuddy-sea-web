@@ -107,9 +107,10 @@ export default function BecomeAHostPage() {
 
       <section className="relative min-h-[86svh] overflow-hidden px-5 pt-28 pb-16 sm:min-h-[82svh] sm:pt-36">
         <Image
-          src="/banner/running.jpg"
-          alt="People running together"
+          src="/images/hosts/run-club-group.jpg"
+          alt="A local fitness crew smiling together after a session"
           fill
+          sizes="100vw"
           className="object-cover"
           priority
         />

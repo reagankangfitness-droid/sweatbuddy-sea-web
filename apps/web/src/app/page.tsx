@@ -14,6 +14,8 @@ import {
   UsersRound,
 } from 'lucide-react'
 import { LogoWithText } from '@/components/logo'
+import { TrackedLink } from '@/components/TrackedLink'
+import { EVENTS } from '@/lib/analytics'
 import { prisma } from '@/lib/prisma'
 
 export const revalidate = 60
@@ -155,15 +157,22 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
           <LogoWithText size={28} color="#FFFFFF" textColor="#FFFFFF" />
           <nav className="flex items-center gap-3">
-            <Link href="/buddy" className="hidden sm:inline text-sm font-medium text-white/65 hover:text-white transition-colors">
+            <TrackedLink
+              href="/buddy"
+              event={EVENTS.LANDING_CTA_CLICKED}
+              metadata={{ placement: 'nav_find_crew', destination: '/buddy' }}
+              className="hidden sm:inline text-sm font-medium text-white/65 hover:text-white transition-colors"
+            >
               Find a crew
-            </Link>
-            <Link
+            </TrackedLink>
+            <TrackedLink
               href="/host"
+              event={EVENTS.LANDING_CTA_CLICKED}
+              metadata={{ placement: 'nav_start_hosting', destination: '/host' }}
               className="px-4 py-2.5 bg-white text-black text-xs sm:text-sm font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-colors"
             >
               Start hosting
-            </Link>
+            </TrackedLink>
           </nav>
         </div>
       </header>
@@ -194,18 +203,22 @@ export default async function HomePage() {
                 Show up once. Come back as a regular.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                <Link
+                <TrackedLink
                   href="/buddy"
+                  event={EVENTS.LANDING_CTA_CLICKED}
+                  metadata={{ placement: 'hero_find_crew', destination: '/buddy' }}
                   className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-white text-black text-sm font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-colors"
                 >
                   Find a crew <ArrowRight size={17} strokeWidth={2.4} />
-                </Link>
-                <Link
+                </TrackedLink>
+                <TrackedLink
                   href="/host"
+                  event={EVENTS.LANDING_CTA_CLICKED}
+                  metadata={{ placement: 'hero_grow_community', destination: '/host' }}
                   className="inline-flex items-center justify-center gap-2 px-7 py-4 border border-white/25 text-white text-sm font-bold uppercase tracking-wide rounded-full hover:bg-white/10 transition-colors"
                 >
                   Grow a community
-                </Link>
+                </TrackedLink>
               </div>
             </div>
 
@@ -227,16 +240,23 @@ export default async function HomePage() {
                 <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">Real crews nearby</p>
                 <h2 className="mt-2 text-2xl sm:text-4xl font-bold tracking-tight">Communities you can actually join.</h2>
               </div>
-              <Link href="/communities" className="inline-flex items-center gap-2 text-sm font-semibold text-white/70 hover:text-white">
+              <TrackedLink
+                href="/communities"
+                event={EVENTS.LANDING_CTA_CLICKED}
+                metadata={{ placement: 'community_rail_browse', destination: '/communities' }}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-white/70 hover:text-white"
+              >
                 Browse crews <ArrowRight size={16} />
-              </Link>
+              </TrackedLink>
             </div>
 
             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
               {railPhotos.map((p, i) => (
-                <Link
+                <TrackedLink
                   key={`${p.href}-${i}`}
                   href={p.href}
+                  event={EVENTS.LANDING_CTA_CLICKED}
+                  metadata={{ placement: 'community_rail_card', destination: p.href, label: p.label, position: i + 1 }}
                   className="group relative flex-shrink-0 w-52 h-72 sm:w-64 sm:h-80 overflow-hidden rounded-lg bg-[#171717]"
                 >
                   <Image
@@ -248,7 +268,7 @@ export default async function HomePage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
                   <p className="absolute bottom-4 left-4 right-4 text-sm font-bold text-white truncate">{p.label}</p>
-                </Link>
+                </TrackedLink>
               ))}
             </div>
           </div>
@@ -332,12 +352,14 @@ export default async function HomePage() {
                 </div>
               </div>
 
-              <Link
+              <TrackedLink
                 href="/host"
+                event={EVENTS.LANDING_CTA_CLICKED}
+                metadata={{ placement: 'host_section_start_hosting', destination: '/host' }}
                 className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#101010] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-black transition-colors"
               >
                 Start hosting <ArrowRight size={17} />
-              </Link>
+              </TrackedLink>
             </div>
           </div>
         </section>
@@ -353,13 +375,15 @@ export default async function HomePage() {
               {cities.length > 0 && (
                 <div className="mt-7 flex flex-wrap gap-2">
                   {cities.map((c) => (
-                    <Link
+                    <TrackedLink
                       key={c.name}
                       href="/buddy"
+                      event={EVENTS.LANDING_CTA_CLICKED}
+                      metadata={{ placement: 'city_pill', destination: '/buddy', city: c.name, communityCount: c.communityCount }}
                       className="rounded-full border border-white/[0.08] bg-white/[0.035] px-4 py-2 text-sm text-white/68 hover:border-white/20 hover:text-white transition-colors"
                     >
                       {c.name} <span className="font-bold text-white">{c.communityCount}</span>
-                    </Link>
+                    </TrackedLink>
                   ))}
                 </div>
               )}
@@ -379,9 +403,11 @@ export default async function HomePage() {
                     const going = s._count.userActivities
                     const location = s.address ? s.address.split(',')[0] : s.city
                     return (
-                      <Link
+                      <TrackedLink
                         key={s.id}
                         href={`/activities/${s.id}`}
+                        event={EVENTS.LANDING_CTA_CLICKED}
+                        metadata={{ placement: 'happening_soon_session', destination: `/activities/${s.id}`, sessionId: s.id }}
                         className="group flex items-center gap-4 py-4"
                       >
                         <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-white text-black">
@@ -403,14 +429,19 @@ export default async function HomePage() {
                         <span className="flex-shrink-0 text-xs font-semibold text-white/45">
                           {going > 0 ? `${going} going` : 'New'}
                         </span>
-                      </Link>
+                      </TrackedLink>
                     )
                   })
                 ) : (
-                  <Link href="/buddy" className="flex items-center justify-between gap-4 py-5 text-sm text-white/65 hover:text-white">
+                  <TrackedLink
+                    href="/buddy"
+                    event={EVENTS.LANDING_CTA_CLICKED}
+                    metadata={{ placement: 'happening_soon_empty', destination: '/buddy' }}
+                    className="flex items-center justify-between gap-4 py-5 text-sm text-white/65 hover:text-white"
+                  >
                     Explore local crews
                     <ArrowRight size={16} />
-                  </Link>
+                  </TrackedLink>
                 )}
               </div>
             </div>
@@ -427,18 +458,22 @@ export default async function HomePage() {
               Discover local fitness communities, join the next session, and turn movement into belonging.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
-              <Link
+              <TrackedLink
                 href="/buddy"
+                event={EVENTS.LANDING_CTA_CLICKED}
+                metadata={{ placement: 'final_explore_crews', destination: '/buddy' }}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-bold uppercase tracking-wide text-black hover:bg-neutral-200 transition-colors"
               >
                 Explore crews <ArrowRight size={17} />
-              </Link>
-              <Link
+              </TrackedLink>
+              <TrackedLink
                 href="/host"
+                event={EVENTS.LANDING_CTA_CLICKED}
+                metadata={{ placement: 'final_host_session', destination: '/host' }}
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-8 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-white/[0.06] transition-colors"
               >
                 Host a session
-              </Link>
+              </TrackedLink>
             </div>
           </div>
         </section>

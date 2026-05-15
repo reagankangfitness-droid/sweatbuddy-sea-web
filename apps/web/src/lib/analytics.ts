@@ -19,6 +19,8 @@ export async function trackEvent(event: string, userId?: string | null, metadata
 // Event constants
 export const EVENTS = {
   PAGE_VIEW: 'page_view',
+  LANDING_CTA_CLICKED: 'landing_cta_clicked',
+  BUDDY_FILTER_USED: 'buddy_filter_used',
   COMMUNITY_VIEWED: 'community_viewed',
   COMMUNITY_JOINED: 'community_joined',
   COMMUNITY_CREATED: 'community_created',

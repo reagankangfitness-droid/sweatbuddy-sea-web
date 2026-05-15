@@ -310,23 +310,23 @@ function CrewDiscoveryBand({
           </h1>
           <p className="mt-1 text-xs leading-relaxed text-[#777777]">
             {activeTypeLabel === 'All types'
-              ? 'Run, stretch, lift, play, or recover with people already showing up.'
-              : `${activeTypeLabel} plans with local people already showing up.`}
+              ? 'Run, stretch, lift, play, or recover with local crews already showing up.'
+              : `${activeTypeLabel} crews with local people already showing up.`}
           </p>
         </div>
         <button
           onClick={onCreate}
           className="flex-shrink-0 rounded-full border border-white/[0.08] bg-[#1A1A1A] px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider text-white hover:bg-[#222222] transition-colors"
         >
-          Start one
+          Host one
         </button>
       </div>
 
       <div className="mt-4 grid grid-cols-3 gap-2">
         {[
-          { value: sessionCount, label: 'ways to meet' },
-          { value: peopleCount, label: 'showing up' },
-          { value: freeCount, label: 'free plans' },
+          { value: sessionCount, label: 'sessions' },
+          { value: peopleCount, label: 'people going' },
+          { value: freeCount, label: 'free to join' },
         ].map((stat) => (
           <div key={stat.label} className="min-h-[58px] rounded-xl border border-white/[0.06] bg-[#151515] px-3 py-2.5">
             <p className="text-lg font-bold leading-none text-white">{stat.value}</p>
@@ -452,15 +452,21 @@ function pinColor(slug: string) { return CATEGORY_COLORS[slug] ?? CATEGORY_COLOR
 // ─── Fitness / type filters ───────────────────────────────────────────────────
 
 const TYPE_FILTERS = [
-  { value: '', label: 'All types', emoji: '🏃' },
-  { value: 'running', label: 'Running', emoji: '🏃' },
-  { value: 'cycling', label: 'Cycling', emoji: '🚴' },
-  { value: 'yoga', label: 'Yoga', emoji: '🧘' },
-  { value: 'strength', label: 'Strength', emoji: '🏋️' },
-  { value: 'hiking', label: 'Hiking', emoji: '🥾' },
-  { value: 'bootcamp', label: 'Bootcamp', emoji: '🎖️' },
-  { value: 'hiit', label: 'HIIT', emoji: '⚡' },
-  { value: 'pilates', label: 'Pilates', emoji: '🦢' },
+  { value: '', label: 'All' },
+  { value: 'running', label: 'Running' },
+  { value: 'cycling', label: 'Cycling' },
+  { value: 'yoga', label: 'Yoga' },
+  { value: 'strength', label: 'Strength' },
+  { value: 'hiking', label: 'Hiking' },
+  { value: 'bootcamp', label: 'Bootcamp' },
+  { value: 'hiit', label: 'HIIT' },
+  { value: 'pilates', label: 'Pilates' },
+]
+
+const PRICING_FILTERS = [
+  { value: '', label: 'All prices' },
+  { value: 'free', label: 'Free' },
+  { value: 'paid', label: 'Paid' },
 ]
 
 export default function BuddyPage() {
@@ -564,6 +570,30 @@ function BuddyPageInner() {
   }), [sessions])
 
   const activeTypeLabel = TYPE_FILTERS.find((type) => type.value === typeFilter)?.label ?? 'fitness'
+
+  function updateTypeFilter(value: string) {
+    const next = typeFilter === value ? '' : value
+    setTypeFilter(next)
+    trackBrowserEvent('buddy_filter_used', { filter: 'type', value: next || 'all' })
+  }
+
+  function updatePricingFilter(value: string) {
+    const next = pricingFilter === value ? '' : value
+    setPricingFilter(next)
+    trackBrowserEvent('buddy_filter_used', { filter: 'pricing', value: next || 'all' })
+  }
+
+  function updateDateFilter(value: string) {
+    const next = dateFilter === value ? '' : value
+    setDateFilter(next)
+    trackBrowserEvent('buddy_filter_used', { filter: 'date', value: next || 'all' })
+  }
+
+  function updateNeighborhoodFilter(value: CityNeighborhood) {
+    const next = neighborhoodFilter?.name === value.name ? null : value
+    setNeighborhoodFilter(next)
+    trackBrowserEvent('buddy_filter_used', { filter: 'neighborhood', value: next?.name ?? 'all' })
+  }
 
   const fetchSessions = useCallback(
     async (cursor?: string) => {
@@ -897,7 +927,7 @@ function BuddyPageInner() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
             <input
               type="text"
-              placeholder="Search crews, sessions, or neighborhoods..."
+              placeholder="Search run clubs, yoga, pickleball, or neighborhoods..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2.5 bg-[#1A1A1A] border border-[#333333] rounded-xl text-sm text-white placeholder:text-[#555555] focus:outline-none focus:border-white/20 transition-all"
@@ -926,7 +956,7 @@ function BuddyPageInner() {
                   days.push(
                     <button
                       key={dateStr}
-                      onClick={() => setDateFilter(dateFilter === dateStr ? '' : dateStr)}
+                      onClick={() => updateDateFilter(dateStr)}
                       className={`flex-shrink-0 flex flex-col items-center px-2.5 py-1.5 rounded-xl text-center transition-all min-w-[44px] ${
                         dateFilter === dateStr
                           ? 'bg-white text-black shadow-md'
@@ -950,33 +980,46 @@ function BuddyPageInner() {
             </button>
           </div>
 
-          {/* Row 2: Category emojis */}
+          {/* Row 2: Activity types */}
           <div className="flex gap-1 overflow-x-auto no-scrollbar">
             {TYPE_FILTERS.map((f) => (
               <button
                 key={f.value}
-                onClick={() => setTypeFilter(typeFilter === f.value ? '' : f.value)}
-                className={`w-9 h-9 rounded-full flex items-center justify-center text-sm transition-all flex-shrink-0 ${
+                onClick={() => updateTypeFilter(f.value)}
+                className={`flex-shrink-0 rounded-full px-3 py-2 text-[11px] font-bold uppercase tracking-wide transition-all ${
                   typeFilter === f.value
-                    ? 'bg-white shadow-md scale-110'
-                    : 'bg-[#1A1A1A]/80 shadow-none'
+                    ? 'bg-white text-black shadow-md'
+                    : 'bg-[#1A1A1A]/80 text-[#999999] shadow-none hover:text-white'
                 }`}
                 title={f.label}
               >
-                {f.emoji}
+                {f.label}
               </button>
             ))}
           </div>
 
-          {/* Row 3: Neighborhoods */}
+          {/* Row 3: Price + neighborhoods */}
           <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
+            {PRICING_FILTERS.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => updatePricingFilter(f.value)}
+                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all ${
+                  pricingFilter === f.value
+                    ? 'bg-white text-black'
+                    : 'bg-[#1A1A1A] text-[#999999] hover:text-white'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
             <span className="flex-shrink-0 px-2 py-1.5 text-[11px] font-semibold text-[#666666]">
               {cityConfig.name}
             </span>
             {cityConfig.neighborhoods.map((n) => (
               <button
                 key={n.name}
-                onClick={() => setNeighborhoodFilter(neighborhoodFilter?.name === n.name ? null : n)}
+                onClick={() => updateNeighborhoodFilter(n)}
                 className={`flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all ${
                   neighborhoodFilter?.name === n.name
                     ? 'bg-white text-black'
@@ -1099,9 +1142,8 @@ function BuddyPageInner() {
               </div>
             ) : sessions.length === 0 ? (
               <div className="text-center py-16">
-                <div className="text-4xl mb-3">🏋️</div>
                 <p className="text-sm font-medium text-[#999999]">No local sessions yet.</p>
-                <p className="text-xs text-[#666666] mt-1">Start the first plan and give people nearby a reason to show up.</p>
+                <p className="text-xs text-[#666666] mt-1">Try another date, clear filters, or host the first session for people nearby.</p>
                 <button
                   onClick={() => setShowCreateSheet(true)}
                   className="inline-flex items-center gap-1.5 mt-4 rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-black uppercase tracking-wider"
@@ -1323,4 +1365,20 @@ function SessionCard({
       </Link>
     </motion.div>
   )
+}
+
+function trackBrowserEvent(event: string, metadata: Record<string, string | number | boolean | null>) {
+  const body = JSON.stringify({ event, metadata })
+
+  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+    navigator.sendBeacon('/api/analytics', new Blob([body], { type: 'application/json' }))
+    return
+  }
+
+  fetch('/api/analytics', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body,
+    keepalive: true,
+  }).catch(() => {})
 }

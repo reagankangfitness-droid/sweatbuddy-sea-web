@@ -220,26 +220,26 @@ export default function MyBookingsPage() {
 
       <main className="max-w-2xl mx-auto px-4 py-8 pb-24 md:pb-8">
         <h1 className="text-2xl font-bold text-white mb-2">
-          My Bookings
+          My Sessions
         </h1>
         <p className="text-[#666666] mb-8">
-          Manage your upcoming and past event bookings
+          Manage the sessions you are joining and the ones you have attended
         </p>
 
         {bookings.length === 0 ? (
           <div className="bg-[#0D0D0D] rounded-2xl border border-[#333333] p-12 text-center">
             <Calendar className="w-12 h-12 text-[#999999] mx-auto mb-4" />
             <h2 className="font-semibold text-white mb-2">
-              No bookings yet
+              No sessions yet
             </h2>
             <p className="text-[#666666] mb-6">
-              Find your next workout and book an event!
+              Find a local session where people expect newcomers.
             </p>
             <Link
               href="/"
               className="inline-flex items-center justify-center px-6 py-3 bg-[#1A1A1A] text-white font-semibold rounded-full hover:bg-[#2A2A2A] transition-colors"
             >
-              Browse Events
+              Browse sessions
             </Link>
           </div>
         ) : (

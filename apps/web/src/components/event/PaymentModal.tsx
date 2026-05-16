@@ -113,7 +113,7 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
             <X className="w-5 h-5 text-neutral-500" />
           </button>
           <div className="text-center py-8">
-            <p className="text-neutral-500">Payments not available for this event</p>
+            <p className="text-neutral-500">Payments not available for this session</p>
           </div>
         </div>
       </div>

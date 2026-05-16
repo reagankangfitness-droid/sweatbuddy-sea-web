@@ -90,7 +90,7 @@ export default function MyEventsViewPage() {
       <div className="min-h-screen bg-gradient-to-b from-[#f8fafc] to-white flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-[#3477f8] mx-auto mb-4" />
-          <p className="text-neutral-400">Loading your experiences...</p>
+          <p className="text-neutral-400">Loading your sessions...</p>
         </div>
       </div>
     )
@@ -178,16 +178,16 @@ export default function MyEventsViewPage() {
               📅
             </div>
             <h2 className="font-sans font-semibold text-lg text-neutral-100 mb-2">
-              No events yet
+              No sessions yet
             </h2>
             <p className="text-neutral-400 text-sm mb-6">
-              You haven&apos;t signed up for any events yet.
+              You haven&apos;t joined any sessions yet.
             </p>
             <Link
               href="/#events"
               className="inline-flex items-center justify-center h-10 px-5 rounded-full bg-[#3477f8] text-white font-semibold text-sm hover:bg-[#2563eb] transition-all"
             >
-              Browse Events
+              Browse sessions
             </Link>
           </div>
         ) : (
@@ -237,7 +237,7 @@ export default function MyEventsViewPage() {
             href="/#events"
             className="inline-flex items-center gap-2 text-[#3477f8] font-medium hover:underline"
           >
-            Browse more experiences
+            Browse more sessions
             <ExternalLink className="w-4 h-4" />
           </Link>
         </div>

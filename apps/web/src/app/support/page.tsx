@@ -14,23 +14,23 @@ const faqs: FAQItem[] = [
   // Booking
   {
     category: 'booking',
-    question: 'How do I book an experience?',
-    answer: 'Browse experiences on the homepage or Discover page. Click on any experience to see details, then tap "Going" for free experiences or complete checkout for paid experiences. You\'ll receive a confirmation email with all the details.'
+    question: 'How do I join a session?',
+    answer: 'Browse sessions on the homepage or Discover page. Click any session to see the host, time, location, price, and who is going, then tap "Going" for free sessions or complete checkout for paid sessions. You\'ll receive a confirmation email with the details.'
   },
   {
     category: 'booking',
     question: 'Can I book for multiple people?',
-    answer: 'Currently, each person needs to book individually with their own email address. This ensures everyone receives their own confirmation and event reminders.'
+    answer: 'Currently, each person needs to book individually with their own email address. This ensures everyone receives their own confirmation and session reminders.'
   },
   {
     category: 'booking',
-    question: 'What happens if an experience is full?',
+    question: 'What happens if a session is full?',
     answer: 'You can join the waitlist! When a spot opens up, you\'ll be notified via email and have 24 hours to claim your spot before it goes to the next person.'
   },
   {
     category: 'booking',
     question: 'How do I cancel my booking?',
-    answer: 'Go to "My Events" from your profile, find the booking you want to cancel, and click "Cancel Booking". The refund amount depends on how far in advance you cancel - check the event\'s refund policy for details.'
+    answer: 'Go to "My Sessions" from your profile, find the booking you want to cancel, and click "Cancel Booking". The refund amount depends on how far in advance you cancel - check the session refund policy for details.'
   },
   // Payment
   {
@@ -46,7 +46,7 @@ const faqs: FAQItem[] = [
   {
     category: 'payment',
     question: 'What are the service fees?',
-    answer: 'For paid experiences, there\'s a service fee of 3.7% + SGD $1.79 per ticket. This covers payment processing and platform costs. The fee is clearly shown before you complete your booking.'
+    answer: 'For paid sessions, there\'s a service fee of 3.7% + SGD $1.79 per ticket. This covers payment processing and platform costs. The fee is clearly shown before you complete your booking.'
   },
   {
     category: 'payment',
@@ -57,7 +57,7 @@ const faqs: FAQItem[] = [
   {
     category: 'refunds',
     question: 'What is the refund policy?',
-    answer: 'Refund policies vary by event. The standard policy is: Full refund if cancelled 24+ hours before, 50% refund if cancelled 2-24 hours before, and no refund within 2 hours of the event. Check each event\'s specific policy before booking.'
+    answer: 'Refund policies vary by session. The standard policy is: Full refund if cancelled 24+ hours before, 50% refund if cancelled 2-24 hours before, and no refund within 2 hours of the session. Check each session policy before booking.'
   },
   {
     category: 'refunds',
@@ -66,8 +66,8 @@ const faqs: FAQItem[] = [
   },
   {
     category: 'refunds',
-    question: 'What if the host cancels the experience?',
-    answer: 'If a host cancels an experience, all attendees are automatically notified via email. You\'ll receive a full refund for paid experiences, processed within 5-10 business days.'
+    question: 'What if the host cancels the session?',
+    answer: 'If a host cancels a session, all attendees are automatically notified via email. You\'ll receive a full refund for paid sessions, processed within 5-10 business days.'
   },
   {
     category: 'refunds',
@@ -385,7 +385,7 @@ export default function SupportPage() {
               <Users className="w-5 h-5 text-purple-600" />
               <div>
                 <p className="font-medium text-neutral-100">Host Dashboard</p>
-                <p className="text-sm text-neutral-500">Manage your experiences</p>
+                <p className="text-sm text-neutral-500">Manage your sessions</p>
               </div>
             </Link>
             <Link

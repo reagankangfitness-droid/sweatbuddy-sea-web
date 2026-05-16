@@ -72,7 +72,7 @@ export function StepLocation({ mode, userTimezone }: StepLocationProps) {
         >
           {isRecurring && <Check className="w-3 h-3 text-neutral-100" />}
         </button>
-        <span className="text-neutral-400 text-sm">Set this event to repeat</span>
+        <span className="text-neutral-400 text-sm">Set this session to repeat</span>
       </label>
 
       {/* Recurring Day Selection */}
@@ -157,7 +157,7 @@ export function StepLocation({ mode, userTimezone }: StepLocationProps) {
                       <span className="text-sm text-neutral-400">{userTimezone.abbr || userTimezone.offset}</span>
                     </div>
                   </div>
-                  <p className="text-xs text-neutral-500">Your event will go live at this time</p>
+              <p className="text-xs text-neutral-500">Your session will go live at this time</p>
                 </div>
               </motion.div>
             )}

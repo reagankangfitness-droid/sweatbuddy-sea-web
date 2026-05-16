@@ -3,13 +3,13 @@ import { ArrowRight } from 'lucide-react'
 import { ScrollAnimator } from './ScrollAnimator'
 
 const findSteps = [
-  { num: '1', title: 'Browse', desc: 'Find events by activity, date, or location.' },
+  { num: '1', title: 'Browse', desc: 'Find sessions by activity, date, or location.' },
   { num: '2', title: 'RSVP', desc: 'Reserve your spot in one tap — free or paid.' },
   { num: '3', title: 'Keep coming back', desc: 'Save favourites, follow hosts, build your routine.' },
 ]
 
 const hostSteps = [
-  { num: '1', title: 'Create', desc: 'Set up your event page in under 5 minutes.' },
+  { num: '1', title: 'Create', desc: 'Set up your session page in under 5 minutes.' },
   { num: '2', title: 'Grow', desc: 'Get AI-generated flyers, shareable links, and analytics.' },
   { num: '3', title: 'Get paid', desc: 'Collect payments through Stripe or PayNow.' },
 ]
@@ -36,7 +36,7 @@ export function HowItWorksSection() {
           <ScrollAnimator delay={100}>
             <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-5 sm:p-8 h-full flex flex-col">
               <span className="inline-block w-fit px-2.5 py-1 bg-neutral-800 rounded-md text-xs font-semibold text-neutral-400 uppercase tracking-wide mb-5">
-                Find Events
+                Find Sessions
               </span>
 
               <div className="space-y-5 flex-1">
@@ -57,7 +57,7 @@ export function HowItWorksSection() {
                 href="/buddy"
                 className="mt-7 inline-flex items-center justify-center gap-2 w-full py-3 bg-white text-neutral-900 text-sm font-semibold rounded-md hover:bg-neutral-200 transition-colors"
               >
-                Browse events
+                Browse sessions
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -67,7 +67,7 @@ export function HowItWorksSection() {
           <ScrollAnimator delay={200}>
             <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-5 sm:p-8 h-full flex flex-col">
               <span className="inline-block w-fit px-2.5 py-1 bg-neutral-800 rounded-md text-xs font-semibold text-neutral-400 uppercase tracking-wide mb-5">
-                Host Events
+                Host Sessions
               </span>
 
               <div className="space-y-5 flex-1">

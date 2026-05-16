@@ -69,7 +69,7 @@ export function LandingClient({ data }: { data: LandingData }) {
             href="/buddy"
             className="hidden sm:inline-flex text-white/70 font-medium text-sm hover:text-white transition-colors"
           >
-            Browse Events
+            Browse Sessions
           </Link>
         </div>
       </nav>
@@ -89,12 +89,12 @@ export function LandingClient({ data }: { data: LandingData }) {
 
         <div className="relative z-10 max-w-2xl mx-auto text-center py-28 sm:py-36">
           <h1 className="text-[2rem] sm:text-[3rem] font-extrabold leading-[1.1] tracking-[-0.03em] text-white mb-4 sm:mb-5">
-            Host fitness events.{' '}
-            <span className="text-white/60">Build your community. Get paid.</span>
+            Host sessions people can find.{' '}
+            <span className="text-white/60">Fill spots. Bring regulars back.</span>
           </h1>
 
           <p className="text-base sm:text-lg text-white/70 leading-relaxed max-w-lg mx-auto mb-8 sm:mb-10">
-            Create events, collect payments, and grow your fitness community — all in one place.
+            List sessions, collect payments, and turn first-timers into regulars.
           </p>
 
           {/* CTAs */}
@@ -109,14 +109,14 @@ export function LandingClient({ data }: { data: LandingData }) {
               href="/buddy"
               className="inline-flex items-center justify-center border border-white/30 text-white px-8 py-3.5 rounded-full font-semibold text-base hover:border-white/50 hover:bg-white/10 transition-colors"
             >
-              Browse Events
+              Browse Sessions
             </Link>
           </div>
 
           {/* Social proof line */}
           {showSocialProof && (
             <p className="mt-6 text-sm text-white/50">
-              Join {data.hostCount}+ hosts and {data.eventCount}+ events across Singapore
+              Join {data.hostCount}+ hosts and {data.eventCount}+ sessions across Singapore
             </p>
           )}
         </div>
@@ -134,7 +134,7 @@ export function LandingClient({ data }: { data: LandingData }) {
               <div className="text-3xl mb-3">
                 <span role="img" aria-label="Create">&#x1f4dd;</span>
               </div>
-              <h3 className="font-semibold text-neutral-100 mb-1.5">Create your event</h3>
+              <h3 className="font-semibold text-neutral-100 mb-1.5">Create your session</h3>
               <p className="text-sm text-neutral-500 leading-relaxed">
                 Set up in under 5 minutes. Add title, time, location, and price.
               </p>
@@ -191,7 +191,7 @@ export function LandingClient({ data }: { data: LandingData }) {
                 href="/buddy"
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
               >
-                See all events
+                See all sessions
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -205,7 +205,7 @@ export function LandingClient({ data }: { data: LandingData }) {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <Link href="/"><LogoWithText size={24} /></Link>
             <nav className="flex items-center gap-5 text-sm text-neutral-500">
-              <Link href="/buddy" className="hover:text-neutral-100 transition-colors">Events</Link>
+              <Link href="/buddy" className="hover:text-neutral-100 transition-colors">Sessions</Link>
               <Link href="/communities" className="hover:text-neutral-100 transition-colors">Community</Link>
               <Link href="/host" className="hover:text-neutral-100 transition-colors">Host</Link>
               <Link href="/support" className="hover:text-neutral-100 transition-colors">Support</Link>

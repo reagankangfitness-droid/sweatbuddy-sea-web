@@ -186,7 +186,7 @@ export default function AdminHostsPage() {
           Host Management
         </h1>
         <p className="text-sm text-neutral-500 mt-1">
-          Create host accounts, experiences, and generate sign-in links
+          Create host accounts, sessions, and generate sign-in links
         </p>
       </div>
 

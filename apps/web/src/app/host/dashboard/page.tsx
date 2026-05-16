@@ -295,7 +295,7 @@ export default function HostDashboard() {
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
         {/* Welcome */}
         <h1 className="text-xl sm:text-2xl font-bold text-neutral-100 mb-1 sm:mb-2">
-          Run your community operating layer.
+          Run the sessions people come back to.
         </h1>
         <p className="text-sm sm:text-base text-neutral-500 mb-6 sm:mb-8">
           {data.stats.totalSignups > 0

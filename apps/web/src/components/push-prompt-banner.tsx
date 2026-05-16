@@ -101,8 +101,8 @@ export function PushPromptBanner() {
               Stay in the loop
             </p>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Get notified when your buddies RSVP, events fill up, or new
-              activities drop nearby.
+              Get notified when people RSVP, sessions fill up, or new
+              crews show up nearby.
             </p>
             <div className="flex items-center gap-2 mt-3">
               <button

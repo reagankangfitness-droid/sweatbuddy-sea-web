@@ -170,11 +170,11 @@ export function HostStatsDashboard() {
       <div className="text-center py-8 sm:py-12 px-4">
         <BarChart3 className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 text-neutral-300" />
         <h3 className="text-base sm:text-lg font-semibold text-neutral-300 mb-2">
-          No Statistics Yet
+          No stats yet
         </h3>
         <p className="text-neutral-500 max-w-md mx-auto text-sm sm:text-base">
-          Start hosting activities to see your statistics here. Track your
-          events, attendees, and revenue all in one place.
+          Start hosting sessions to see what is working. Track attendees,
+          payments, and repeat turnout from one place.
         </p>
       </div>
     )
@@ -241,7 +241,7 @@ export function HostStatsDashboard() {
             <div className="text-lg sm:text-2xl font-bold text-neutral-100">
               {stats.eventsThisMonth}
             </div>
-            <div className="text-[10px] sm:text-sm text-neutral-400">Events</div>
+            <div className="text-[10px] sm:text-sm text-neutral-400">Sessions</div>
           </div>
           <div className="text-center">
             <div className="text-lg sm:text-2xl font-bold text-neutral-100">

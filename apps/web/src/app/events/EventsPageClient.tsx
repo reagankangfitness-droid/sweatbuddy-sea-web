@@ -353,7 +353,7 @@ export default function EventsPage() {
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="px-4 py-4">
             <div className="flex items-center justify-between mb-3">
-              <h1 className="text-2xl font-bold text-neutral-100">Events</h1>
+              <h1 className="text-2xl font-bold text-neutral-100">Sessions</h1>
               <Link
                 href="/host"
                 className="hidden md:flex items-center gap-1.5 px-4 py-2 bg-white text-neutral-900 rounded-full text-sm font-semibold"
@@ -370,7 +370,7 @@ export default function EventsPage() {
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Search events, locations, organizers..."
+                placeholder="Search sessions, crews, locations..."
                 className="w-full pl-10 pr-4 py-2.5 bg-neutral-800 border border-neutral-700 rounded-xl text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-neutral-500 transition-colors"
               />
             </div>
@@ -450,7 +450,7 @@ export default function EventsPage() {
                 ? 'Try a different activity, crew, or neighborhood.'
                 : categoryFilter
                   ? 'Try a different activity or check back as hosts add new sessions.'
-                  : 'The current listings are quiet. Start a session or check nearby communities while new events go live.'}
+                  : 'The current listings are quiet. Start a session or check nearby crews while new sessions go live.'}
             </p>
             {!searchQuery && (
               <Link
@@ -458,7 +458,7 @@ export default function EventsPage() {
                 className="flex items-center gap-2 px-6 py-3 bg-white text-neutral-900 rounded-full font-semibold"
               >
                 <Plus className="w-4 h-4" />
-                Start a community session
+                Start a session
               </Link>
             )}
           </div>

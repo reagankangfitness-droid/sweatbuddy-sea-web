@@ -86,9 +86,9 @@ function SignUpContent() {
 
   const getContextualContent = () => {
     switch (intent) {
-      case 'rsvp': return { title: 'Join the event!', subtitle: 'Create an account to RSVP' }
-      case 'host': return { title: 'Become a host', subtitle: 'Create an account to list your events' }
-      default: return { title: 'Join SweatBuddies', subtitle: 'Find your fitness community' }
+      case 'rsvp': return { title: 'Join the session', subtitle: 'Create an account to save your spot' }
+      case 'host': return { title: 'Become a host', subtitle: 'Create an account to list sessions and bring people back' }
+      default: return { title: 'Join SweatBuddies', subtitle: 'Find people through local fitness' }
     }
   }
 

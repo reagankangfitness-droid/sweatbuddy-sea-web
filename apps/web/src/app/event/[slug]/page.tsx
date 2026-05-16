@@ -136,7 +136,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const event = await getEvent(slug)
 
   if (!event) {
-    return { title: 'Event Not Found' }
+    return { title: 'Session Not Found' }
   }
 
   return {

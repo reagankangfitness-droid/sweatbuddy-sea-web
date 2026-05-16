@@ -23,11 +23,11 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   }
 
   return {
-    title: 'Local Fitness Communities Near You | SweatBuddies',
-    description: 'Find friends through local fitness communities near you — run clubs, yoga groups, pickleball crews, HIIT sessions, and more.',
+    title: 'Local Fitness Sessions Near You | SweatBuddies',
+    description: 'Find friends through local fitness sessions near you — run clubs, yoga groups, pickleball crews, HIIT sessions, and more.',
     openGraph: {
-      title: 'Local Fitness Communities Near You | SweatBuddies',
-      description: 'Find friends through local fitness communities near you — run clubs, yoga groups, pickleball crews, HIIT sessions, and more.',
+      title: 'Local Fitness Sessions Near You | SweatBuddies',
+      description: 'Find friends through local fitness sessions near you — run clubs, yoga groups, pickleball crews, HIIT sessions, and more.',
     },
   }
 }

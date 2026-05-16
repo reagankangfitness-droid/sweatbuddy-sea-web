@@ -43,7 +43,7 @@ export function HeroSection() {
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-neutral-950 border border-neutral-800 rounded-full mb-6">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
             <span className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
-              Live events this week in Singapore
+              Live sessions this week in Singapore
             </span>
           </div>
         </ScrollAnimator>
@@ -51,16 +51,16 @@ export function HeroSection() {
         {/* H1 */}
         <ScrollAnimator delay={100}>
           <h1 className="text-3xl sm:text-5xl font-extrabold leading-[1.1] tracking-tight text-neutral-100 mb-5">
-            Your city&apos;s fitness community,{' '}
-            <span className="text-neutral-500 italic">all in one place</span>
+            Find people who want to show up,{' '}
+            <span className="text-neutral-500 italic">not just work out</span>
           </h1>
         </ScrollAnimator>
 
         {/* Subtitle */}
         <ScrollAnimator delay={200}>
           <p className="text-base sm:text-lg text-neutral-500 leading-relaxed max-w-xl mx-auto mb-8">
-            Discover group runs, yoga sessions, and bootcamps happening near you.
-            Or start hosting your own.
+            Discover beginner-friendly runs, yoga sessions, bootcamps, and crews nearby.
+            Show up once, then come back to familiar faces.
           </p>
         </ScrollAnimator>
 
@@ -71,7 +71,7 @@ export function HeroSection() {
               href="/buddy"
               className="inline-flex items-center justify-center px-7 py-3.5 bg-white text-neutral-900 font-semibold text-sm rounded-md hover:bg-neutral-200 transition-colors"
             >
-              Find events near me
+              Find sessions near me
             </Link>
             <Link
               href="/host"

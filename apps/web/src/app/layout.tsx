@@ -39,7 +39,7 @@ const barlowCondensed = Barlow_Condensed({
 const BASE_URL = 'https://www.sweatbuddies.co'
 const SITE_TITLE = 'SweatBuddies | Find Friends Through Local Fitness'
 const SITE_DESCRIPTION =
-  'Find friends through local fitness communities. Join run clubs, yoga groups, pickleball crews, and social sessions near you across Southeast Asia.'
+  'Stop doing fitness alone. Find beginner-friendly run clubs, yoga groups, pickleball crews, and local fitness sessions across Southeast Asia.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     template: '%s | SweatBuddies',
   },
   description: SITE_DESCRIPTION,
-  keywords: ['find friends through fitness', 'local fitness communities', 'fitness crew', 'run club', 'yoga group', 'pickleball crew', 'workout community', 'find your crew', 'fitness belonging', 'group fitness', 'social fitness SEA'],
+  keywords: ['find friends through fitness', 'local fitness sessions', 'fitness crew', 'run club', 'yoga group', 'pickleball crew', 'workout community', 'find your crew', 'fitness belonging', 'group fitness', 'social fitness SEA'],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
   icons: {

@@ -59,10 +59,10 @@ export default function PendingEventsPage() {
       } else if (res.status === 401) {
         toast.error('Unauthorized - please sign in with an admin account')
       } else {
-        toast.error(`Failed to load pending experiences: ${res.status}`)
+        toast.error(`Failed to load pending sessions: ${res.status}`)
       }
     } catch {
-      toast.error('Failed to load pending experiences')
+      toast.error('Failed to load pending sessions')
     } finally {
       setLoading(false)
     }
@@ -161,7 +161,7 @@ export default function PendingEventsPage() {
         <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-12 text-center shadow-sm">
           <Inbox className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-neutral-100 mb-2">All caught up!</h3>
-          <p className="text-neutral-500">No pending experiences to review</p>
+          <p className="text-neutral-500">No pending sessions to review</p>
         </div>
       ) : (
         <div className="space-y-4">

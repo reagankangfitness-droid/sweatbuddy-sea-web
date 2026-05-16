@@ -304,7 +304,7 @@ export default function AdminEventsPage() {
         <div className="space-y-3 sm:space-y-4">
           {events.length === 0 ? (
             <div className="text-center py-12 bg-neutral-950 rounded-xl border border-neutral-800 shadow-sm">
-              <p className="text-neutral-500">No live experiences</p>
+              <p className="text-neutral-500">No live sessions</p>
             </div>
           ) : (
             events.map((event) => (

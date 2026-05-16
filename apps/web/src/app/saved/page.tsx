@@ -467,7 +467,7 @@ export default function SchedulePage() {
             </div>
             <h2 className="text-xl font-bold text-white mb-2">See your schedule</h2>
             <p className="text-[#666666] mb-8 max-w-xs mx-auto">
-              Sign in to view your booked experiences and track your fitness journey.
+              Sign in to view your saved sessions and keep your weekly rhythm visible.
             </p>
             <Link
               href="/sign-in?redirect_url=/saved"
@@ -551,15 +551,15 @@ export default function SchedulePage() {
             <div className="inline-flex items-center justify-center w-20 h-20 bg-[#0D0D0D] rounded-2xl border border-[#333333] shadow-sm mb-6">
               <CalendarDays className="w-10 h-10 text-[#999999]" />
             </div>
-            <h2 className="text-lg font-semibold text-white mb-2">No events yet</h2>
+            <h2 className="text-lg font-semibold text-white mb-2">No sessions yet</h2>
             <p className="text-[#666666] mb-6">
-              Book an event to see it in your schedule.
+              Join a session to see it in your schedule.
             </p>
             <Link
               href="/"
               className="inline-flex items-center gap-2 bg-[#1A1A1A] px-6 py-3 text-base font-semibold rounded-full  hover:bg-[#2A2A2A] transition-colors text-white"
             >
-              Browse Events
+              Browse sessions
             </Link>
           </div>
         ) : (
@@ -580,19 +580,19 @@ export default function SchedulePage() {
                   </div>
                   <div>
                     <h2 className="text-base font-semibold text-white">Upcoming</h2>
-                    <p className="text-xs text-[#666666]">{upcomingEvents.length} experiences</p>
+                    <p className="text-xs text-[#666666]">{upcomingEvents.length} sessions</p>
                   </div>
                 </div>
 
                 {upcomingEvents.length === 0 ? (
                   <div className="bg-[#0D0D0D] rounded-xl border border-[#333333] p-6 text-center">
                     <CalendarDays className="w-8 h-8 text-[#999999] mx-auto mb-3" />
-                    <p className="text-sm text-[#666666] mb-3">No upcoming experiences</p>
+                    <p className="text-sm text-[#666666] mb-3">No upcoming sessions</p>
                     <Link
                       href="/"
                       className="text-sm font-medium text-white hover:underline"
                     >
-                      Browse experiences →
+                      Browse sessions →
                     </Link>
                   </div>
                 ) : (
@@ -604,13 +604,13 @@ export default function SchedulePage() {
                     {upcomingEvents.length === 1 && (
                       <div className="bg-[#0D0D0D] rounded-xl border border-[#333333] p-4 text-center">
                         <p className="text-sm text-[#666666]">
-                          Your next experience is shown above
+                          Your next session is shown above
                         </p>
                         <Link
                           href="/"
                           className="text-sm font-medium text-white hover:underline mt-2 inline-block"
                         >
-                          Book more experiences →
+                          Join more sessions →
                         </Link>
                       </div>
                     )}
@@ -625,7 +625,7 @@ export default function SchedulePage() {
                     <History className="w-4 h-4 text-[#666666]" />
                   </div>
                   <div>
-                    <h2 className="text-base font-semibold text-white">Past Events</h2>
+                    <h2 className="text-base font-semibold text-white">Past sessions</h2>
                     <p className="text-xs text-[#666666]">{pastEvents.length} attended</p>
                   </div>
                 </div>
@@ -633,9 +633,9 @@ export default function SchedulePage() {
                 {pastEvents.length === 0 ? (
                   <div className="bg-[#0D0D0D] rounded-xl border border-[#333333] p-6 text-center">
                     <History className="w-8 h-8 text-[#999999] mx-auto mb-3" />
-                    <p className="text-sm text-[#666666]">No past experiences yet</p>
+                    <p className="text-sm text-[#666666]">No past sessions yet</p>
                     <p className="text-xs text-[#666666] mt-1">
-                      Your attended experiences will appear here
+                      Sessions you attended will appear here
                     </p>
                   </div>
                 ) : (
@@ -648,7 +648,7 @@ export default function SchedulePage() {
                         href="/my-bookings"
                         className="block text-center py-3 text-sm font-medium text-[#666666] hover:text-white transition-colors"
                       >
-                        View all {pastEvents.length} past experiences →
+                        View all {pastEvents.length} past sessions →
                       </Link>
                     )}
                   </div>

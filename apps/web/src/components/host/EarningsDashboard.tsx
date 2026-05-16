@@ -128,7 +128,7 @@ export function EarningsDashboard() {
       <div>
         <h1 className="text-2xl font-bold text-neutral-100">Earnings</h1>
         <p className="text-neutral-500 mt-1">
-          Track your revenue from paid events
+          Track revenue from paid sessions
         </p>
       </div>
 
@@ -179,7 +179,7 @@ export function EarningsDashboard() {
       {/* Revenue by Event Chart */}
       {eventEarnings.length > 0 && (
         <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-6">
-          <h2 className="text-lg font-semibold text-neutral-100 mb-4">Revenue by Event</h2>
+          <h2 className="text-lg font-semibold text-neutral-100 mb-4">Revenue by session</h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -234,7 +234,7 @@ export function EarningsDashboard() {
                   : 'text-neutral-500 hover:text-neutral-300'
               }`}
             >
-              {tab === 'overview' ? 'Recent Sales' : tab === 'events' ? 'By Event' : 'All Transactions'}
+              {tab === 'overview' ? 'Recent sales' : tab === 'events' ? 'By session' : 'All transactions'}
             </button>
           ))}
         </nav>
@@ -247,7 +247,7 @@ export function EarningsDashboard() {
             <div className="text-center py-12 text-neutral-500">
               <Receipt className="w-12 h-12 mx-auto mb-3 text-neutral-300" />
               <p>No sales yet</p>
-              <p className="text-sm mt-1">Sales from paid events will appear here</p>
+              <p className="text-sm mt-1">Sales from paid sessions will appear here</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -284,8 +284,8 @@ export function EarningsDashboard() {
           {eventEarnings.length === 0 ? (
             <div className="text-center py-12 text-neutral-500">
               <Calendar className="w-12 h-12 mx-auto mb-3 text-neutral-300" />
-              <p>No paid events yet</p>
-              <p className="text-sm mt-1">Create a paid event to start earning</p>
+              <p>No paid sessions yet</p>
+              <p className="text-sm mt-1">Create a paid session to start earning</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -350,7 +350,7 @@ export function EarningsDashboard() {
                 <thead>
                   <tr className="border-b border-neutral-800">
                     <th className="text-left py-3 font-medium text-neutral-500">Date</th>
-                    <th className="text-left py-3 font-medium text-neutral-500">Event</th>
+                    <th className="text-left py-3 font-medium text-neutral-500">Session</th>
                     <th className="text-right py-3 font-medium text-neutral-500">Amount</th>
                     <th className="text-left py-3 font-medium text-neutral-500">Status</th>
                   </tr>

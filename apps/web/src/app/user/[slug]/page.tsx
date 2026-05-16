@@ -291,7 +291,7 @@ export default function UserProfilePage() {
               {profile.attendedStats && (
                 <div className="text-center">
                   <div className="text-lg font-bold text-neutral-100">{profile.attendedStats.activitiesAttended}</div>
-                  <div className="text-xs text-neutral-500">events</div>
+                  <div className="text-xs text-neutral-500">sessions</div>
                 </div>
               )}
               <button onClick={() => openModal('followers')} className="text-center hover:opacity-70 transition-opacity">
@@ -448,7 +448,7 @@ export default function UserProfilePage() {
           {/* Upcoming Events Section */}
           {upcomingEvents.length > 0 && (
             <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-5">
-              <h2 className="text-base font-semibold text-neutral-100 mb-3">Upcoming Events</h2>
+              <h2 className="text-base font-semibold text-neutral-100 mb-3">Upcoming sessions</h2>
               <div className="space-y-3">
                 {upcomingEvents.map(event => {
                   const cat = event.categorySlug ? getCategoryDisplay(event.categorySlug) : null

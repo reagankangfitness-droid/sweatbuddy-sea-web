@@ -417,8 +417,8 @@ export default function HostForm() {
             </h2>
             <p className="text-neutral-400 mb-8">
               {scheduleEnabled && scheduleDate && scheduleTime
-                ? `Your event is scheduled to go live on ${new Date(`${scheduleDate}T${scheduleTime}`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at ${new Date(`${scheduleDate}T${scheduleTime}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}.`
-                : 'Your event is live. Share the link and start building your crew.'}
+                ? `Your session is scheduled to go live on ${new Date(`${scheduleDate}T${scheduleTime}`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at ${new Date(`${scheduleDate}T${scheduleTime}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}.`
+                : 'Your session is live. Share the link and start bringing people back.'}
             </p>
             <Link
               href="/"
@@ -480,7 +480,7 @@ export default function HostForm() {
                     className={`w-full text-3xl md:text-4xl font-bold bg-transparent border-none text-white placeholder:text-neutral-600 focus:outline-none focus:ring-0 ${fieldErrors.eventName ? 'placeholder:text-red-400' : ''}`}
                   />
                   {fieldErrors.eventName && (
-                    <p className="text-red-400 text-sm mt-1">Enter an experience name</p>
+                    <p className="text-red-400 text-sm mt-1">Enter a session name</p>
                   )}
                 </div>
 
@@ -540,7 +540,7 @@ export default function HostForm() {
                   >
                     {isRecurring && <Check className="w-3 h-3 text-neutral-100" />}
                   </button>
-                  <span className="text-neutral-400 text-sm">Set this event to repeat</span>
+                  <span className="text-neutral-400 text-sm">Set this session to repeat</span>
                 </label>
 
                 {/* Recurring Day Selection (shown when repeat is checked) */}
@@ -620,7 +620,7 @@ export default function HostForm() {
                             <span className="text-sm text-neutral-400">{userTimezone.abbr || userTimezone.offset}</span>
                           </div>
                         </div>
-                        <p className="text-xs text-neutral-500">Your event will go live at this time</p>
+                        <p className="text-xs text-neutral-500">Your session will go live at this time</p>
                       </div>
                     </motion.div>
                   )}
@@ -1101,7 +1101,7 @@ export default function HostForm() {
                         </div>
                       </div>
                       <div>
-                        <p className="text-neutral-300 text-sm font-medium">Show what makes your event special with photos</p>
+                        <p className="text-neutral-300 text-sm font-medium">Show what makes your session easy to join with photos</p>
                         <div className="mt-2">
                           <UploadButton
                             endpoint="eventImage"

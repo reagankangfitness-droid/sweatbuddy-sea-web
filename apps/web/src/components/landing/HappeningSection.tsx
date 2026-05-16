@@ -28,7 +28,7 @@ export function HappeningSection({ events }: HappeningSectionProps) {
               href="/buddy"
               className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
             >
-              See all events
+              See all sessions
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -49,7 +49,7 @@ export function HappeningSection({ events }: HappeningSectionProps) {
             href="/buddy"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
           >
-            See all events
+            See all sessions
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

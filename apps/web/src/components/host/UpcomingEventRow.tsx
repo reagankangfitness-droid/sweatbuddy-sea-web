@@ -183,7 +183,7 @@ export function UpcomingEventRow({ event, onCancelled }: UpcomingEventRowProps) 
       {showCancelConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-neutral-950 rounded-xl max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-neutral-100 mb-2">Cancel Event?</h3>
+            <h3 className="text-lg font-semibold text-neutral-100 mb-2">Cancel session?</h3>
             <p className="text-sm text-neutral-400 mb-4">
               This will cancel <strong>{event.name}</strong> and notify all {event.goingCount > 0 ? `${event.goingCount} ` : ''}attendee{event.goingCount !== 1 ? 's' : ''} via email.
             </p>

@@ -40,8 +40,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!event) {
     return {
-      title: 'Event Not Found | SweatBuddies',
-      description: 'This event could not be found on SweatBuddies.',
+      title: 'Session Not Found | SweatBuddies',
+      description: 'This session could not be found on SweatBuddies.',
     }
   }
 
@@ -197,7 +197,7 @@ export default async function EventDetailPage({ params }: Props) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 12H5M12 19l-7-7 7-7" />
               </svg>
             </Link>
-            <h1 className="text-sm font-medium text-neutral-500">Event Details</h1>
+            <h1 className="text-sm font-medium text-neutral-500">Session details</h1>
             <div className="w-10" />
           </div>
         </div>
@@ -322,7 +322,7 @@ export default async function EventDetailPage({ params }: Props) {
                     <p className="font-semibold text-neutral-100">
                       {event.organizer || 'Anonymous Host'}
                     </p>
-                    <p className="text-xs text-neutral-500">Event Organizer</p>
+                    <p className="text-xs text-neutral-500">Host</p>
                   </div>
                 </div>
               </div>

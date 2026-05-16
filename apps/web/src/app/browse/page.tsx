@@ -8,7 +8,7 @@ import { ACTIVITY_TYPES } from '@/lib/activity-types'
 
 export const metadata: Metadata = {
   title: 'Find Local Fitness Sessions — SweatBuddies',
-  description: 'Find local fitness sessions and crews near you. Join running, gym, yoga, hiking, pickleball, and more with people nearby.',
+  description: 'Find beginner-friendly local fitness sessions and crews near you. Show up with context and meet people through movement.',
 }
 
 const TYPES = [
@@ -112,9 +112,9 @@ export default async function BrowsePage({ searchParams }: PageProps) {
       {/* Hero strip */}
       <div className="border-b border-[#333333] bg-[#1A1A1A]/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-white">Find Local Fitness Sessions</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-white">Find local fitness sessions</h1>
           <p className="text-[#666666]">
-            Find crews and sessions near you. Start with one plan, then come back with people you know.
+            Find crews and sessions near you. Pick one session, then come back to people you recognize.
           </p>
         </div>
       </div>
@@ -163,7 +163,7 @@ export default async function BrowsePage({ searchParams }: PageProps) {
               href="/host"
               className="px-6 py-2.5 bg-[#1A1A1A] text-white rounded-full text-sm font-semibold hover:bg-neutral-800 transition-colors"
             >
-              Start a community session
+              Start a session
             </Link>
           </div>
         ) : (
@@ -187,8 +187,8 @@ export default async function BrowsePage({ searchParams }: PageProps) {
       {/* Footer CTA */}
       <div className="border-t border-[#333333] bg-[#1A1A1A]/50 mt-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 text-center">
-          <h2 className="text-2xl font-bold mb-3 text-white">Ready to find your people?</h2>
-          <p className="text-[#666666] mb-6">Join a local session or start one for your crew.</p>
+          <h2 className="text-2xl font-bold mb-3 text-white">Ready to stop showing up alone?</h2>
+          <p className="text-[#666666] mb-6">Join a local session or start one people can come back to.</p>
           <Link
             href="/sign-up"
             className="inline-block px-8 py-3.5 bg-[#1A1A1A] text-white font-semibold rounded-full hover:bg-neutral-800 transition-colors"

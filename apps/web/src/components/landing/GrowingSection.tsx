@@ -18,7 +18,7 @@ export function GrowingSection({ hostCount }: GrowingSectionProps) {
             </div>
             <div>
               <p className="text-2xl sm:text-4xl font-bold text-neutral-100 tracking-tight">100+</p>
-              <p className="text-xs sm:text-sm text-neutral-500 mt-1">Events listed</p>
+              <p className="text-xs sm:text-sm text-neutral-500 mt-1">Sessions listed</p>
             </div>
             <div>
               <p className="text-2xl sm:text-4xl font-bold text-neutral-100 tracking-tight">7</p>
@@ -29,7 +29,7 @@ export function GrowingSection({ hostCount }: GrowingSectionProps) {
 
         <ScrollAnimator delay={100}>
           <p className="text-neutral-400 text-sm max-w-md mx-auto">
-            Growing every week. New hosts, new events, new communities joining from across Singapore.
+            Growing every week. New hosts, new sessions, and more crews people can actually join.
           </p>
         </ScrollAnimator>
       </div>

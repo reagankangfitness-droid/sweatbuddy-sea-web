@@ -107,11 +107,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${city.name} Fitness Events & Communities | SweatBuddies`,
-    description: `Find fitness events and join communities in ${city.name}. ${city.communityCount} communities, ${city.eventCount} events.`,
+    title: `${city.name} Fitness Sessions & Crews | SweatBuddies`,
+    description: `Find local fitness sessions and crews in ${city.name}. ${city.communityCount} crews, ${city.eventCount} sessions.`,
     openGraph: {
       title: `${city.name} | SweatBuddies`,
-      description: `Find fitness events and communities in ${city.name}.`,
+      description: `Find local fitness sessions and crews in ${city.name}.`,
       url: `https://www.sweatbuddies.co/cities/${slug}`,
       images: cityImages[slug] ? [cityImages[slug]] : [],
     },
@@ -197,11 +197,11 @@ export default async function CityPage({ params }: Props) {
           <div className="flex items-center gap-6 text-white/70">
             <span className="flex items-center gap-1.5">
               <Users className="w-5 h-5" />
-              {city.communityCount} communities
+              {city.communityCount} crews
             </span>
             <span className="flex items-center gap-1.5">
               <Calendar className="w-5 h-5" />
-              {city.eventCount} experiences
+              {city.eventCount} sessions
             </span>
           </div>
         </div>
@@ -211,7 +211,7 @@ export default async function CityPage({ params }: Props) {
       <section className="py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-white">Upcoming Events</h2>
+            <h2 className="text-2xl font-bold text-white">Upcoming sessions</h2>
             <Link
               href={`/events?city=${slug}`}
               className="text-sm font-medium text-blue-400 hover:text-blue-700 flex items-center gap-1"
@@ -261,7 +261,7 @@ export default async function CityPage({ params }: Props) {
           ) : (
             <div className="text-center py-12 bg-[#1A1A1A] rounded-xl">
               <Calendar className="w-10 h-10 text-[#999999] mx-auto mb-3" />
-              <p className="text-[#666666]">No upcoming experiences in {city.name}</p>
+              <p className="text-[#666666]">No upcoming sessions in {city.name}</p>
             </div>
           )}
         </div>
@@ -271,7 +271,7 @@ export default async function CityPage({ params }: Props) {
       <section className="py-12 bg-[#1A1A1A]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-white">Communities</h2>
+            <h2 className="text-2xl font-bold text-white">Crews</h2>
             <Link
               href={`/communities?city=${slug}`}
               className="text-sm font-medium text-blue-400 hover:text-blue-700 flex items-center gap-1"
@@ -317,7 +317,7 @@ export default async function CityPage({ params }: Props) {
                     </span>
                     <span className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      {community._count.activities} experiences
+                      {community._count.activities} sessions
                     </span>
                   </div>
                 </Link>
@@ -326,7 +326,7 @@ export default async function CityPage({ params }: Props) {
           ) : (
             <div className="text-center py-12 bg-[#0D0D0D] rounded-xl">
               <Users className="w-10 h-10 text-[#999999] mx-auto mb-3" />
-              <p className="text-[#666666]">No communities in {city.name} yet</p>
+              <p className="text-[#666666]">No crews in {city.name} yet</p>
               <Link
                 href="/host/community"
                 className="inline-block mt-4 px-6 py-2 bg-[#1A1A1A] text-white rounded-full text-sm font-medium hover:bg-[#2A2A2A] transition-colors"
@@ -342,10 +342,10 @@ export default async function CityPage({ params }: Props) {
       <section className="py-16">
         <div className="max-w-2xl mx-auto px-4 text-center">
           <h2 className="font-semibold text-2xl text-white mb-3">
-            Start a community in {city.name}
+            Start a crew in {city.name}
           </h2>
           <p className="text-[#666666] mb-6">
-            Build your tribe and host experiences for the local fitness community.
+            Give people nearby a session they can show up to and come back for.
           </p>
           <Link
             href="/host/community"

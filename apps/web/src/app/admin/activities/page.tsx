@@ -231,11 +231,11 @@ export default function AdminActivitiesPage() {
       {activities.length === 0 ? (
         <div className="text-center py-12 bg-neutral-950 rounded-xl border border-neutral-800 shadow-sm">
           <Clock className="w-12 h-12 text-neutral-300 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-neutral-100 mb-2">No events to review</h2>
+          <h2 className="text-xl font-semibold text-neutral-100 mb-2">No sessions to review</h2>
           <p className="text-neutral-500">
             {filter === 'PENDING_APPROVAL'
-              ? 'All submitted events have been reviewed.'
-              : 'No published events yet.'}
+              ? 'All submitted sessions have been reviewed.'
+              : 'No published sessions yet.'}
           </p>
         </div>
       ) : (

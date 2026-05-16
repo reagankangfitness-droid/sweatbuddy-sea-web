@@ -272,7 +272,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
             ) : (
               <div className="flex flex-col items-center gap-3">
                 <ImageIcon className="w-8 h-8 text-neutral-400" />
-                <p className="text-sm text-neutral-500">Add a photo to make your event stand out</p>
+                <p className="text-sm text-neutral-500">Add a photo so people know what they are joining</p>
                 <UploadButton
                   endpoint="eventImage"
                   onUploadBegin={() => setIsUploading(true)}
@@ -314,7 +314,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
               onChange={() => setFormData(prev => ({ ...prev, isFree: true }))}
               className="w-4 h-4 text-neutral-100"
             />
-            <span className="text-neutral-300">Free event</span>
+            <span className="text-neutral-300">Free session</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input
@@ -324,7 +324,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
               onChange={() => setFormData(prev => ({ ...prev, isFree: false }))}
               className="w-4 h-4 text-neutral-100"
             />
-            <span className="text-neutral-300">Paid event</span>
+            <span className="text-neutral-300">Paid session</span>
           </label>
         </div>
 
@@ -439,7 +439,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
         <label htmlFor="recurring" className="text-sm text-neutral-300">
           This happens every week
         </label>
-        <span className="text-xs text-neutral-400">(Regular events build loyal attendees)</span>
+        <span className="text-xs text-neutral-400">(Regular sessions build loyal attendees)</span>
       </div>
 
       {/* Submit */}

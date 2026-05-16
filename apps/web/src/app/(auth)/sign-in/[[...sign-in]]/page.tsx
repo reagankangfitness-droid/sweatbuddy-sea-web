@@ -63,7 +63,7 @@ function SignInContent() {
   const getContextualContent = () => {
     switch (intent) {
       case 'rsvp': return { title: 'Almost there!', subtitle: 'Sign in to confirm your spot' }
-      case 'host': return { title: 'Start hosting', subtitle: 'Sign in to list your fitness events' }
+      case 'host': return { title: 'Start hosting', subtitle: 'Sign in to list sessions and manage your crew' }
       default: return { title: 'Welcome back', subtitle: 'Sign in to continue' }
     }
   }

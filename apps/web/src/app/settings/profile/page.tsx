@@ -261,7 +261,7 @@ export default function ProfileSettingsPage() {
                   className="flex-1 text-sm text-white bg-transparent outline-none placeholder-neutral-400"
                 />
               </div>
-              <p className="text-[10px] text-[#666666] mt-1">Required to manage experiences you host</p>
+              <p className="text-[10px] text-[#666666] mt-1">Required to manage sessions you host</p>
             </div>
 
             {/* Bio */}
@@ -316,7 +316,7 @@ export default function ProfileSettingsPage() {
             <div className="px-4 py-4 flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-medium text-white">Going Solo</p>
-                <p className="text-[10px] text-[#666666] mt-0.5">Show others you&apos;re open to meeting new people at events</p>
+                <p className="text-[10px] text-[#666666] mt-0.5">Show others you&apos;re open to meeting new people at sessions</p>
               </div>
               <button
                 type="button"

@@ -154,7 +154,7 @@ export function ActivityMessaging({
             </div>
             <h3 className="text-lg font-semibold mb-2">Sign in to message</h3>
             <p className="text-sm text-neutral-500 mb-6">
-              Create an account to connect with hosts and ask questions about events.
+              Create an account to message the host before you show up.
             </p>
             <Button
               onClick={() => {

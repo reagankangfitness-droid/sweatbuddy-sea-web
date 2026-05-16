@@ -6,10 +6,10 @@ import { prisma } from '@/lib/prisma'
 
 export const metadata: Metadata = {
   title: 'Cities | SweatBuddies',
-  description: 'Find fitness events and communities in Singapore, Bangkok, and across Southeast Asia.',
+  description: 'Find local fitness sessions and crews in Singapore, Bangkok, and across Southeast Asia.',
   openGraph: {
     title: 'Cities | SweatBuddies',
-    description: 'Find fitness events and communities across Southeast Asia.',
+    description: 'Find local fitness sessions and crews across Southeast Asia.',
     url: 'https://www.sweatbuddies.co/cities',
   },
 }
@@ -74,7 +74,7 @@ export default async function CitiesPage() {
             SweatBuddies Cities
           </h1>
           <p className="text-lg text-[#666666] max-w-2xl mx-auto">
-            Find fitness events and communities across Southeast Asia. Pick your city to explore.
+            Find local sessions and crews across Southeast Asia. Pick your city to see where people are showing up.
           </p>
         </div>
       </section>
@@ -118,11 +118,11 @@ export default async function CitiesPage() {
                   <div className="flex items-center gap-4 text-sm text-white/70">
                     <span className="flex items-center gap-1">
                       <Users className="w-4 h-4" />
-                      {city.communityCount} communities
+                      {city.communityCount} crews
                     </span>
                     <span className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      {city.eventCount} events
+                      {city.eventCount} sessions
                     </span>
                   </div>
 

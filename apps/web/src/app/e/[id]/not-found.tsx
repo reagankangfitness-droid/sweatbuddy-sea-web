@@ -8,17 +8,17 @@ export default function EventNotFound() {
           <span className="text-4xl">🏃</span>
         </div>
         <h1 className="text-2xl font-bold text-neutral-100 mb-2">
-          Event not found
+          Session not found
         </h1>
         <p className="text-neutral-500 mb-8">
-          This event may have ended, been cancelled, or the link might be incorrect.
+          This session may have ended, been cancelled, or the link might be incorrect.
         </p>
         <div className="space-y-3">
           <Link
             href="/buddy"
             className="block w-full px-6 py-3 bg-white text-neutral-900 rounded-full font-semibold hover:bg-neutral-200 transition-colors text-center"
           >
-            Browse upcoming events
+            Browse upcoming sessions
           </Link>
           <Link
             href="/"

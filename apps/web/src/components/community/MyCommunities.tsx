@@ -111,7 +111,7 @@ function CommunityCard({ community }: { community: FollowedCommunity }) {
       {/* Next Event */}
       {community.nextEvent ? (
         <div className="bg-neutral-900 rounded-lg p-3">
-          <p className="text-xs text-neutral-500 mb-1">Next event</p>
+          <p className="text-xs text-neutral-500 mb-1">Next session</p>
           <p className="text-sm font-medium text-neutral-200 truncate">
             {community.nextEvent.name}
           </p>
@@ -130,7 +130,7 @@ function CommunityCard({ community }: { community: FollowedCommunity }) {
         </div>
       ) : (
         <div className="bg-neutral-900 rounded-lg p-3">
-          <p className="text-xs text-neutral-500">No upcoming events</p>
+          <p className="text-xs text-neutral-500">No upcoming sessions</p>
         </div>
       )}
     </Link>

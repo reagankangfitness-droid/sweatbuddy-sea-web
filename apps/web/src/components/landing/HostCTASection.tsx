@@ -5,7 +5,7 @@ import { MiniDashboard } from './MiniDashboard'
 import { ScrollAnimator } from './ScrollAnimator'
 
 const features = [
-  'Event creation in minutes',
+  'Session creation in minutes',
   'RSVP tracking & attendee management',
   'Payments via Stripe & PayNow',
   'Analytics & insights',
@@ -41,12 +41,12 @@ export function HostCTASection() {
                   For Hosts
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-4">
-                  Got a community?{' '}
-                  <span className="text-neutral-400">Grow it here.</span>
+                  Stop running the crew from scattered DMs.{' '}
+                  <span className="text-neutral-400">Bring it here.</span>
                 </h2>
                 <p className="text-neutral-400 leading-relaxed mb-6 max-w-md">
-                  Everything you need to run fitness events — from creating your page
-                  to collecting payments and tracking growth.
+                  One place to list sessions, collect paid spots, track attendance,
+                  and bring first-timers back.
                 </p>
 
                 {/* Features */}

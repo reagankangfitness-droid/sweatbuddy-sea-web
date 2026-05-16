@@ -130,10 +130,10 @@ export function ShareButton({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Share2 className="w-5 h-5" />
-              Share Activity
+              Share session
             </DialogTitle>
             <DialogDescription>
-              Share this activity with friends and family!
+              Share this session with someone who might want to show up.
             </DialogDescription>
           </DialogHeader>
 

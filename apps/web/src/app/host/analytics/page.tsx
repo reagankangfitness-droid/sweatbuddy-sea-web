@@ -250,7 +250,7 @@ export default function AnalyticsPage() {
               No data yet
             </h2>
             <p className="text-neutral-500 max-w-md mx-auto">
-              Once people start RSVPing to your experiences, you&apos;ll see detailed analytics here.
+              Once people start RSVPing to your sessions, you&apos;ll see detailed analytics here.
             </p>
           </div>
         ) : (
@@ -308,12 +308,12 @@ export default function AnalyticsPage() {
                   <div>
                     <h3 className="font-semibold text-neutral-100 mb-1">Insights</h3>
                     <p className="text-sm text-neutral-400">
-                      Your experiences perform best on <span className="font-semibold">{data.insights.bestDay || 'weekends'}</span>
+                      Your sessions perform best on <span className="font-semibold">{data.insights.bestDay || 'weekends'}</span>
                       {data.insights.bestTime && (
                         <> at <span className="font-semibold">{data.insights.bestTime}</span></>
                       )}.
                       {data.insights.avgAttendeesPerEvent > 0 && (
-                        <> You average <span className="font-semibold">{data.insights.avgAttendeesPerEvent}</span> attendees per experience.</>
+                        <> You average <span className="font-semibold">{data.insights.avgAttendeesPerEvent}</span> attendees per session.</>
                       )}
                     </p>
                   </div>
@@ -371,7 +371,7 @@ export default function AnalyticsPage() {
                   {data.upcomingEventPredictions && data.upcomingEventPredictions.length > 0 && (
                     <div className="bg-neutral-950 rounded-xl border border-neutral-800 overflow-hidden">
                       <div className="px-4 py-3 border-b border-neutral-800">
-                        <h3 className="font-semibold text-neutral-100">Upcoming Events Forecast</h3>
+                        <h3 className="font-semibold text-neutral-100">Upcoming sessions forecast</h3>
                         <p className="text-xs text-neutral-500">Predicted attendance based on historical data</p>
                       </div>
                       <div className="divide-y divide-neutral-800">
@@ -552,7 +552,7 @@ export default function AnalyticsPage() {
             {/* Revenue Chart (if has revenue) */}
             {data.summary.totalRevenue > 0 && (
               <div className="mb-8">
-                <ChartCard title="Revenue Trends" subtitle="Monthly earnings from paid experiences">
+                <ChartCard title="Revenue Trends" subtitle="Monthly earnings from paid sessions">
                   <ResponsiveContainer width="100%" height={280}>
                     <AreaChart data={data.monthlyTrends}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
@@ -584,7 +584,7 @@ export default function AnalyticsPage() {
             {data.topEvents.length > 0 && (
               <div ref={topEventsRef} id="top-events" className="scroll-mt-28 bg-neutral-950 rounded-xl border border-neutral-800 overflow-hidden">
                 <div className="px-4 sm:px-6 py-4 border-b border-neutral-800">
-                  <h3 className="font-semibold text-neutral-100">Top Performing Events</h3>
+                  <h3 className="font-semibold text-neutral-100">Top performing sessions</h3>
                   <p className="text-sm text-neutral-500">Ranked by number of RSVPs</p>
                 </div>
                 <div className="overflow-x-auto">

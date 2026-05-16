@@ -341,8 +341,8 @@ export function EventWizard({ mode, initialData, eventId, currentAttendees }: Ev
             </h2>
             <p className="text-neutral-400 mb-8">
               {values.scheduleEnabled && values.scheduleDate && values.scheduleTime
-                ? `Your event is scheduled to go live on ${new Date(`${values.scheduleDate}T${values.scheduleTime}`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at ${new Date(`${values.scheduleDate}T${values.scheduleTime}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}.`
-                : 'Your event is live. Share the link and start building your crew.'}
+                ? `Your session is scheduled to go live on ${new Date(`${values.scheduleDate}T${values.scheduleTime}`).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at ${new Date(`${values.scheduleDate}T${values.scheduleTime}`).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}.`
+                : 'Your session is live. Share the link and start bringing people back.'}
             </p>
             <Link
               href="/"

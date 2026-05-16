@@ -11,8 +11,7 @@ export function FinalCTASection() {
             <span className="text-neutral-500 italic">crew</span>?
           </h2>
           <p className="text-neutral-500 leading-relaxed mb-8 max-w-lg mx-auto">
-            Whether you&apos;re looking for your next workout or ready to host your first event,
-            SweatBuddies is where it starts.
+            Pick a session where people expect newcomers, or host one that turns first-timers into regulars.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
@@ -20,7 +19,7 @@ export function FinalCTASection() {
               href="/buddy"
               className="inline-flex items-center justify-center px-7 py-3.5 bg-white text-neutral-900 font-semibold text-sm rounded-md hover:bg-neutral-200 transition-colors"
             >
-              Browse events
+              Browse sessions
             </Link>
             <Link
               href="/host"

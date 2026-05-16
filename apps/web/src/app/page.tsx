@@ -23,7 +23,7 @@ export const revalidate = 60
 export const metadata: Metadata = {
   title: 'SweatBuddies — Find Your People Through Local Fitness',
   description:
-    'Join run clubs, yoga groups, pickleball crews, and local fitness communities near you across Southeast Asia.',
+    'Stop doing fitness alone. Find run clubs, yoga groups, pickleball crews, and local fitness communities near you across Southeast Asia.',
 }
 
 export default async function HomePage() {
@@ -109,25 +109,25 @@ export default async function HomePage() {
   const memberSteps = [
     {
       icon: Search,
-      title: 'Find your scene',
-      body: 'Browse run clubs, yoga flows, pickleball crews, bootcamps, and recovery sessions by neighborhood.',
+      title: 'Stop starting from zero',
+      body: 'Find beginner-friendly run clubs, yoga groups, pickleball crews, bootcamps, and recovery sessions that already welcome new people.',
     },
     {
       icon: TicketCheck,
-      title: 'Join what feels easy',
-      body: 'See the host, timing, location, price, and who else is going before you commit.',
+      title: 'Arrive with context',
+      body: 'See the host, timing, location, price, and who else is going before you walk in.',
     },
     {
       icon: Repeat2,
-      title: 'Come back as a regular',
-      body: 'Start with movement, then build the weekly rhythm and friendships around it.',
+      title: 'Build repeat familiarity',
+      body: 'Go once, recognize people the next time, and let consistency turn strangers into regulars.',
     },
   ]
 
   const hostBenefits = [
-    { icon: Megaphone, title: 'Get discovered', body: 'Show up where social fitness seekers are already looking.' },
-    { icon: CreditCard, title: 'Collect payments', body: 'Run free sessions or paid memberships without chasing people in chat.' },
-    { icon: UserRoundCheck, title: 'Know the room', body: 'Track capacity, attendees, and repeat members before each session.' },
+    { icon: Megaphone, title: 'Stop relying on reach', body: 'Get discovered by people nearby who are actively looking for a group to join.' },
+    { icon: CreditCard, title: 'Stop chasing payments', body: 'Run free sessions or collect paid spots without messy chat follow-ups.' },
+    { icon: UserRoundCheck, title: 'Stop guessing turnout', body: 'Track capacity, attendees, and returning members before people arrive.' },
   ]
 
   return (
@@ -156,7 +156,7 @@ export default async function HomePage() {
         </div>
       </header>
 
-      <main>
+      <main className="overflow-x-hidden">
         <section className="relative min-h-[calc(100svh-132px)] sm:min-h-[640px] px-5 py-10 sm:py-16 flex items-end overflow-hidden">
           <Image
             src="/images/hero-bg.jpg"
@@ -178,8 +178,7 @@ export default async function HomePage() {
                 Find your people through local fitness.
               </h1>
               <p className="mt-6 max-w-xl text-base sm:text-lg leading-8 text-white/78">
-                Join run clubs, yoga flows, pickleball crews, bootcamps, and recovery circles near you.
-                Show up once. Come back as a regular.
+                Working out alone gets old. Find beginner-friendly run clubs, yoga groups, pickleball crews, bootcamps, and recovery sessions where people expect newcomers.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
                 <TrackedLink
@@ -258,11 +257,10 @@ export default async function HomePage() {
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">For members</p>
               <h2 className="mt-3 text-3xl sm:text-5xl font-bold tracking-tight leading-tight">
-                Make friends without forcing it.
+                Stop walking into fitness spaces cold.
               </h2>
               <p className="mt-5 text-base leading-8 text-white/62 max-w-md">
-                SweatBuddies replaces awkward first meetups with shared movement. Pick the session,
-                meet the group, and let the friendship start with something to do.
+                Choose a session where the activity, host, time, and group are clear before you arrive, so meeting people starts with something to do.
               </p>
             </div>
 
@@ -294,7 +292,7 @@ export default async function HomePage() {
             <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-white/65">Member promise</p>
               <h2 className="mt-3 max-w-md text-3xl sm:text-5xl font-bold tracking-tight leading-tight">
-                One session can become your weekly people.
+                No more showing up wondering where you fit.
               </h2>
             </div>
           </div>
@@ -303,10 +301,10 @@ export default async function HomePage() {
             <div className="w-full max-w-xl mx-auto">
               <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-neutral-600">For hosts</p>
               <h2 className="mt-3 text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight text-[#101010]">
-                Grow beyond the group chat.
+                Stop losing new members in the group chat.
               </h2>
               <p className="mt-5 text-base leading-8 text-black/65">
-                Get discovered, fill sessions, collect payments, and bring regulars back without managing everything in DMs.
+                Turn scattered DMs into visible sessions, clear RSVPs, paid spots, and repeat attendance.
               </p>
 
               <div className="mt-8 overflow-hidden rounded-lg border border-black/10 bg-black">
@@ -322,7 +320,7 @@ export default async function HomePage() {
                   <div className="absolute bottom-0 left-0 right-0 p-5">
                     <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/65">Host proof</p>
                     <p className="mt-1 max-w-sm text-xl font-extrabold leading-tight text-white">
-                      Real communities, not empty listings.
+                      Real crews. Real sessions. Real people showing up.
                     </p>
                   </div>
                 </div>
@@ -332,7 +330,7 @@ export default async function HomePage() {
                 <div className="flex items-center justify-between border-b border-black/10 px-5 py-4">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide text-black/45">Host hub</p>
-                    <p className="text-lg font-extrabold">Saturday crew launch</p>
+                    <p className="text-lg font-extrabold">Saturday crew session</p>
                   </div>
                   <span className="rounded-full bg-[#101010] px-3 py-1 text-xs font-bold text-white">12 going</span>
                 </div>
@@ -366,9 +364,9 @@ export default async function HomePage() {
           <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-16">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">Where it is growing</p>
-              <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">Built for SEA daylife.</h2>
+              <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">Replace lonely workouts with a reason to belong.</h2>
               <p className="mt-4 text-sm leading-7 text-white/55 max-w-lg">
-                The network is anchored in local crews, repeat sessions, and healthy social belonging beyond solo gyms or nightlife.
+                Built for people who want social plans that do not revolve around nightlife, and fitness plans that do not end at the treadmill.
               </p>
               {cities.length > 0 && (
                 <div className="mt-7 flex flex-wrap gap-2">
@@ -450,10 +448,10 @@ export default async function HomePage() {
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">Start with one session</p>
             <h2 className="mt-3 text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight">
-              Find your people this week.
+              Stop waiting for friends to make the plan.
             </h2>
             <p className="mt-5 text-base leading-8 text-white/58">
-              Discover local fitness communities, join the next session, and turn movement into belonging.
+              Pick a local session, meet people through the workout, and give yourself a reason to come back next week.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
               <TrackedLink

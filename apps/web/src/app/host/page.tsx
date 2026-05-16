@@ -25,31 +25,31 @@ const TOP_ACTIVITIES = ACTIVITY_TYPES.slice(0, 12)
 const HOST_OUTCOMES = [
   {
     icon: MapPin,
-    title: 'Get discovered nearby',
-    body: 'Show up where people are already looking for run clubs, yoga groups, pickleball crews, and social fitness plans.',
+    title: 'Stop depending on algorithm reach',
+    body: 'Show up where people nearby are actively looking for run clubs, yoga groups, pickleball crews, and fitness plans.',
   },
   {
     icon: Users,
-    title: 'Turn attendees into regulars',
-    body: 'Build a community page, show upcoming sessions, and give new people an easy reason to come back.',
+    title: 'Stop losing first-timers',
+    body: 'Give new people a clear page, upcoming sessions, and an easy reason to come back after the first visit.',
   },
   {
     icon: CreditCard,
-    title: 'Run free or paid sessions',
-    body: 'Launch open community plans, collect payments when needed, and keep the flow simple for members.',
+    title: 'Stop chasing payments in chat',
+    body: 'Run free sessions or collect paid spots without stitching together payment screenshots, reminders, and spreadsheets.',
   },
 ]
 
 const HOST_SYSTEM = [
-  { icon: CalendarPlus, title: 'Publish sessions', body: 'Create a plan, set capacity, add a location, and share one clean link.' },
-  { icon: BarChart3, title: 'Track momentum', body: 'See who is joining, who is new, and which sessions are building repeat attendance.' },
-  { icon: MessageCircle, title: 'Reduce admin', body: 'Spend less time stitching together Instagram, WhatsApp, PayNow, and spreadsheets.' },
+  { icon: CalendarPlus, title: 'Replace scattered announcements', body: 'Create the session once, set capacity, add the location, and share one clean link.' },
+  { icon: BarChart3, title: 'Know what is actually working', body: 'See who is joining, who is new, and which sessions bring people back.' },
+  { icon: MessageCircle, title: 'Reduce DM admin', body: 'Keep chat for community. Move discovery, sessions, payments, and attendance into one flow.' },
 ]
 
 const LAUNCH_STEPS = [
-  { label: '01', title: 'Tell us your community type', body: 'Run club, yoga, HIIT, pilates, pickleball, cold plunge, or anything people can show up to together.' },
-  { label: '02', title: 'We help shape the first offer', body: 'Position your crew, set the right first sessions, and make discovery simple for locals nearby.' },
-  { label: '03', title: 'Grow with regulars, not random clicks', body: 'Use sessions, community pages, and attendee history to build a repeatable rhythm.' },
+  { label: '01', title: 'Tell us what you host', body: 'Run club, yoga, HIIT, pilates, pickleball, cold plunge, or any group people can join without already knowing someone.' },
+  { label: '02', title: 'Make the first session easy to join', body: 'Clarify who it is for, what happens, where to go, and why a newcomer should feel comfortable showing up.' },
+  { label: '03', title: 'Turn attendance into repeat community', body: 'Use sessions, community pages, and attendee history to bring people back instead of restarting every week.' },
 ]
 
 export default function BecomeAHostPage() {
@@ -123,10 +123,10 @@ export default function BecomeAHostPage() {
               For fitness community hosts
             </p>
             <h1 className="text-4xl font-bold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
-              Grow your crew beyond the group chat.
+              Stop running your community out of scattered DMs.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/72 sm:text-lg">
-              SweatBuddies helps run clubs, yoga groups, pickleball crews, and local fitness hosts get discovered, fill sessions, collect payments, and bring people back.
+              When discovery lives in stories and attendance lives in chat, growth stalls. SweatBuddies gives hosts one place to be found, fill sessions, collect payments, and bring first-timers back.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -148,7 +148,7 @@ export default function BecomeAHostPage() {
             {[
               { value: 'Nearby', label: 'discovery' },
               { value: 'Free + paid', label: 'sessions' },
-              { value: 'Regulars', label: 'growth loop' },
+              { value: 'Regulars', label: 'repeat attendance' },
             ].map((stat) => (
               <div key={stat.label} className="min-h-[72px] border-t border-white/20 pt-3">
                 <p className="text-sm font-bold text-white sm:text-base">{stat.value}</p>
@@ -166,7 +166,7 @@ export default function BecomeAHostPage() {
               Why hosts use SweatBuddies
             </p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Build a community people can actually find.
+              Your best sessions should not vanish after one Instagram story.
             </h2>
           </div>
           <div className="mt-10 grid gap-3 md:grid-cols-3">
@@ -191,10 +191,10 @@ export default function BecomeAHostPage() {
               Less admin, more momentum
             </p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Replace scattered tools with one community operating layer.
+              Stop using five tools to fill one session.
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-neutral-500">
-              Keep WhatsApp and Instagram for conversation. Use SweatBuddies for discovery, sessions, payments, attendance, and repeat growth.
+              Keep WhatsApp and Instagram for conversation. Use SweatBuddies for the parts that break at scale: discovery, sessions, payments, attendance, and repeat turnout.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
@@ -239,10 +239,10 @@ export default function BecomeAHostPage() {
             <div className="relative flex h-full flex-col justify-end p-6 sm:p-8">
               <Sparkles className="mb-4 h-6 w-6 text-white" />
               <h2 className="max-w-md text-3xl font-bold leading-tight text-white">
-                Ready to grow your run club, yoga group, or fitness crew?
+                Ready to stop rebuilding attendance from scratch?
               </h2>
               <p className="mt-3 max-w-md text-sm leading-relaxed text-white/70">
-                Apply once. We will follow up with the right launch path for your city and community type.
+                Apply once. We will help you shape the right launch path for your city, activity, and community size.
               </p>
             </div>
           </div>
@@ -254,10 +254,10 @@ export default function BecomeAHostPage() {
                   Apply to host
                 </p>
                 <h2 className="text-2xl font-bold text-white leading-tight mb-2 sm:text-3xl">
-                  What community are you building?
+                  What do people show up for?
                 </h2>
                 <p className="text-sm leading-relaxed text-neutral-400 mb-8">
-                  Pick the closest activity so we can understand your audience and launch path.
+                  Pick the closest activity so we can understand the problem you solve for members and the sessions you want to fill.
                 </p>
 
                 <div className="grid grid-cols-3 gap-2 mb-8">
@@ -304,7 +304,7 @@ export default function BecomeAHostPage() {
                   Where can we reach you?
                 </h2>
                 <p className="text-sm leading-relaxed text-neutral-400 mb-8">
-                  We&apos;ll help you launch or grow your crew when your city opens up.
+                  We&apos;ll follow up with the next step for launching or growing your crew.
                 </p>
 
                 <div className="space-y-4 mb-6">

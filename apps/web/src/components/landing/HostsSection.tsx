@@ -2,11 +2,11 @@ import Image from 'next/image'
 import { ScrollAnimator } from './ScrollAnimator'
 
 const hosts = [
-  { name: 'Singapore Frontrunners', type: 'Running', stat: '200+ members', image: '/images/hosts/singapore-frontrunners.jpg' },
-  { name: 'run alone run club', type: 'Running', stat: 'Weekly runs', image: '/images/hosts/run-alone-run-club.jpg' },
-  { name: 'Caliversity', type: 'Calisthenics', stat: 'Outdoor sessions', image: '/images/hosts/caliversity.jpg' },
-  { name: 'Sunday Service', type: 'Social Runs', stat: 'Sunday mornings', image: '/images/hosts/sunday-service.jpg' },
-  { name: 'SlowFlo RC', type: 'Running', stat: 'All paces welcome', image: '/images/hosts/slowflo-rc.jpg' },
+  { name: 'Singapore Frontrunners', type: 'Running', stat: '200+ members', image: '/images/organizers-bg.jpg' },
+  { name: 'run alone run club', type: 'Running', stat: 'Weekly runs', image: '/images/hosts/run-club-group.jpg' },
+  { name: 'Caliversity', type: 'Calisthenics', stat: 'Outdoor sessions', image: '/banner/athletics.jpg' },
+  { name: 'Sunday Service', type: 'Social Runs', stat: 'Sunday mornings', image: '/banner/running.jpg' },
+  { name: 'SlowFlo RC', type: 'Running', stat: 'All paces welcome', image: '/images/hero-1.webp' },
 ]
 
 export function HostsSection() {

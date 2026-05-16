@@ -30,7 +30,7 @@ export default async function HomePage() {
   const now = new Date()
   const oneWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
 
-  const [communityCount, sessionsThisWeek, upcomingSessions, cities, communityImages, sessionImages] = await Promise.all([
+  const [communityCount, sessionsThisWeek, upcomingSessions, cities] = await Promise.all([
     prisma.community.count({ where: { isActive: true } }),
     prisma.activity.count({
       where: {
@@ -63,18 +63,6 @@ export default async function HomePage() {
       select: { name: true, communityCount: true },
       orderBy: { communityCount: 'desc' },
     }),
-    prisma.community.findMany({
-      where: { isActive: true, coverImage: { not: null } },
-      select: { name: true, coverImage: true, slug: true },
-      orderBy: { memberCount: 'desc' },
-      take: 8,
-    }),
-    prisma.activity.findMany({
-      where: { status: 'PUBLISHED', deletedAt: null, imageUrl: { not: null } },
-      select: { title: true, imageUrl: true, id: true },
-      orderBy: { startTime: 'desc' },
-      take: 8,
-    }),
   ])
 
   const curatedPhotos = [
@@ -86,15 +74,6 @@ export default async function HomePage() {
     { src: '/banner/athletics.jpg', label: 'Beach bootcamps', href: '/buddy' },
   ]
 
-  const livePhotos = [
-    ...communityImages
-      .filter((c) => c.coverImage)
-      .map((c) => ({ src: c.coverImage!, label: cleanText(c.name), href: `/communities/${c.slug}` })),
-    ...sessionImages
-      .filter((s) => s.imageUrl)
-      .map((s) => ({ src: s.imageUrl!, label: cleanText(s.title), href: `/activities/${s.id}` })),
-  ]
-
   const fallbackPhotos = [
     { src: '/banner/running.jpg', label: 'Run crews', href: '/buddy' },
     { src: '/images/hero-bg.jpg', label: 'Park yoga', href: '/buddy' },
@@ -103,7 +82,7 @@ export default async function HomePage() {
     { src: '/banner/ice-bath.webp', label: 'Recovery circles', href: '/buddy' },
   ]
 
-  const photos = uniquePhotos([...curatedPhotos, ...livePhotos]).slice(0, 8)
+  const photos = uniquePhotos(curatedPhotos).slice(0, 8)
   const railPhotos = photos.length >= 3 ? photos : fallbackPhotos
 
   function formatSessionTime(date: Date): string {
@@ -305,8 +284,8 @@ export default async function HomePage() {
         <section className="grid grid-cols-1 lg:grid-cols-2">
           <div className="relative min-h-[460px] overflow-hidden">
             <Image
-              src="/banner/running.jpg"
-              alt="A running crew sitting together after a session"
+              src="/images/organizers-bg.jpg"
+              alt="A fitness community smiling together after a session"
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover"

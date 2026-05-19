@@ -109,7 +109,7 @@ function buildMagicLinkEmail({ magicLink, email }: { magicLink: string; email: s
               </p>
 
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Click the button below to see all the experiences you've signed up for on SweatBuddies.
+                Click the button below to see all the sessions you've signed up for on SweatBuddies.
               </p>
 
               <!-- CTA Button -->

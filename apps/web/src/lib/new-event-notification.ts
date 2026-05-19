@@ -158,7 +158,7 @@ function buildNewEventEmail(params: {
 
     <!-- Footer -->
     <div style="padding:16px 24px;border-top:1px solid #f3f4f6;text-align:center;">
-      <p style="color:#9ca3af;font-size:12px;margin:0;">SweatBuddies — Find your tribe, get moving.</p>
+      <p style="color:#9ca3af;font-size:12px;margin:0;">SweatBuddies — Find your people through movement.</p>
     </div>
   </div>
 </body>

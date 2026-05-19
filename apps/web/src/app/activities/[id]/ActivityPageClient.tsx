@@ -192,7 +192,7 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
 \u{1F4B0} Price: ${activity.currency} ${(activity.price / 100).toFixed(2)}
 \u{1F465} Participants: ${joinedCount}${activity.maxPeople ? ` of ${activity.maxPeople}` : ''}
 
-Organized via sweatbuddies - Find local workouts and wellness activities
+Organized via SweatBuddies - Find local fitness sessions and crews
 `.trim()
 
     const calendarUrl = generateGoogleCalendarUrl({

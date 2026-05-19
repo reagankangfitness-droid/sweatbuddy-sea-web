@@ -117,9 +117,9 @@ export const COMMUNITY_TYPE_CONTEXT: Record<string, {
   },
   OTHER: {
     name: 'Fitness Community',
-    activities: ['group workouts', 'training sessions', 'community events'],
+    activities: ['group sessions', 'training sessions', 'community meetups'],
     commonChallenges: ['member retention', 'scheduling', 'growth'],
-    growthTips: ['engage regularly', 'celebrate milestones', 'create unique experiences'],
-    contentIdeas: ['event announcements', 'member highlights', 'tips and advice', 'community updates'],
+    growthTips: ['engage regularly', 'celebrate milestones', 'create memorable sessions'],
+    contentIdeas: ['session announcements', 'member highlights', 'tips and advice', 'community updates'],
   },
 }

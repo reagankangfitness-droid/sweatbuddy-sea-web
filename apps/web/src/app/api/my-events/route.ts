@@ -169,7 +169,7 @@ async function sendMagicLinkEmail(email: string) {
           <tr>
             <td style="padding: 32px; background-color: white; border-radius: 0 0 16px 16px;">
               <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Bookmark this link to quickly access your SweatBuddies experiences anytime:
+                Bookmark this link to quickly access your SweatBuddies sessions anytime:
               </p>
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>

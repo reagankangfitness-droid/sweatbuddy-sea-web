@@ -381,7 +381,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                       className="mt-1 w-4 h-4 text-[#2563EB] border-neutral-700 rounded focus:ring-[#2563EB]"
                     />
                     <span className="text-sm text-neutral-400">
-                      Send me the weekly drop — the best local events, every Wednesday.
+                      Send me the weekly drop — the best local sessions, every Wednesday.
                     </span>
                   </label>
 

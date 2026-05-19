@@ -1214,7 +1214,7 @@ function buildReviewPromptEmailHtml(params: {
           <tr>
             <td style="background: #F5F5F5; padding: 20px; text-align: center;">
               <p style="margin: 0; color: #737373; font-size: 12px;">
-                SweatBuddies - Find your sweat tribe
+                SweatBuddies - Find your people through movement
               </p>
             </td>
           </tr>

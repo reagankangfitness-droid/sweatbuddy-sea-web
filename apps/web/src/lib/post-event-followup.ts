@@ -286,7 +286,7 @@ export async function sendPostEventFollowUpEmail(
         <tr>
           <td style="padding: 0;">
             <h3 style="margin: 0 0 16px; color: #374151; font-size: 18px; font-weight: 600;">
-              More experiences you might like
+              More sessions you might like
             </h3>
           </td>
         </tr>
@@ -404,7 +404,7 @@ export async function sendPostEventFollowUpEmail(
                 <tr>
                   <td style="padding: 20px; text-align: center;">
                     <p style="margin: 0 0 12px; color: #374151; font-size: 15px;">
-                      Follow the organizer for updates on future experiences
+                      Follow the organizer for updates on future sessions
                     </p>
                     <a href="${instagramLink}" style="display: inline-block; padding: 10px 20px; background-color: #e1306c; color: white; text-decoration: none; font-size: 14px; font-weight: 600; border-radius: 8px;">
                       Follow @${organizerInstagram?.replace('@', '')}
@@ -440,7 +440,7 @@ export async function sendPostEventFollowUpEmail(
                 View Experience Details &rarr;
               </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more experiences at
+                Find more sessions at
               </p>
               <a href="${BASE_URL}" style="color: #8b5cf6; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co

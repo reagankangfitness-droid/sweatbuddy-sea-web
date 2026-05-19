@@ -442,7 +442,7 @@ export default function EventsPage() {
             </div>
             <p className="text-neutral-100 font-semibold mb-1">
               {searchQuery
-                ? `No local fitness communities found for '${searchQuery}'`
+                ? `No local crews or sessions found for '${searchQuery}'`
                 : categoryFilter ? 'No crews in this category yet' : 'No upcoming sessions yet'}
             </p>
             <p className="text-neutral-500 text-sm max-w-xs mb-6">

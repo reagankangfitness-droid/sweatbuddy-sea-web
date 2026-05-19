@@ -675,7 +675,7 @@ export async function sendPaidEventConfirmationEmail(
                 View Experience Details &rarr;
               </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more experiences at
+                Find more sessions at
               </p>
               <a href="${BASE_URL}" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -870,7 +870,7 @@ export async function sendHostBookingNotificationEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Manage your experiences at
+                Manage your sessions at
               </p>
               <a href="${BASE_URL}" style="color: #7c3aed; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -1039,7 +1039,7 @@ export async function sendHostNewAttendeeNotification(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Manage your experiences at
+                Manage your sessions at
               </p>
               <a href="${BASE_URL}/host/dashboard" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -1260,7 +1260,7 @@ export async function sendWaitlistSpotAvailableEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more experiences at
+                Find more sessions at
               </p>
               <a href="${BASE_URL}" style="color: #f59e0b; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -1476,7 +1476,7 @@ export async function sendPaymentVerifiedEmail(
                 View Experience Details &rarr;
               </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more experiences at
+                Find more sessions at
               </p>
               <a href="${BASE_URL}" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -1624,7 +1624,7 @@ export async function sendPaymentRejectedEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more experiences at
+                Find more sessions at
               </p>
               <a href="${BASE_URL}" style="color: #f59e0b; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -1821,7 +1821,7 @@ export async function sendEventCancelledByHostEmail(
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more experiences at
+                Find more sessions at
               </p>
               <a href="${BASE_URL}" style="color: #3477f8; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
@@ -1983,7 +1983,7 @@ function generateEventCalendarLink(params: {
   url.searchParams.set('action', 'TEMPLATE')
   url.searchParams.set('text', eventName)
   url.searchParams.set('dates', `${formatForCalendar(targetDate)}/${formatForCalendar(endDate)}`)
-  url.searchParams.set('details', `Join us at ${eventName}!\n\nFind more experiences at ${BASE_URL}`)
+  url.searchParams.set('details', `Join us at ${eventName}!\n\nFind more sessions at ${BASE_URL}`)
   url.searchParams.set('location', eventLocation)
 
   return url.toString()
@@ -2203,10 +2203,10 @@ function buildConfirmationEmailHtml(params: {
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
               <a href="${myEventsLink}" style="display: inline-block; margin-bottom: 16px; color: #3477f8; text-decoration: none; font-size: 14px; font-weight: 500;">
-                View all your upcoming experiences &rarr;
+                View all your upcoming sessions &rarr;
               </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more experiences at
+                Find more sessions at
               </p>
               <a href="${BASE_URL}" style="color: #3477f8; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co

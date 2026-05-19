@@ -637,7 +637,7 @@ export async function sendSocialReminderEmail(
                 View Experience Details &rarr;
               </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
-                Find more experiences at
+                Find more sessions at
               </p>
               <a href="${BASE_URL}" style="color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co

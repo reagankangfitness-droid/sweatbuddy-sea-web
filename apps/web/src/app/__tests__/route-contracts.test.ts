@@ -14,7 +14,7 @@ function expectRoute(relativePath: string) {
 }
 
 describe('route contracts', () => {
-  it('keeps the public positioning centered on friends through local fitness communities', () => {
+  it('keeps the public positioning centered on friends through local fitness sessions', () => {
     const homePage = readRepoFile('apps/web/src/app/page.tsx')
     const rootLayout = readRepoFile('apps/web/src/app/layout.tsx')
     const browsePage = readRepoFile('apps/web/src/app/browse/page.tsx')
@@ -24,37 +24,36 @@ describe('route contracts', () => {
     const buddyPage = readRepoFile('apps/web/src/app/buddy/page.tsx')
     const hostPage = readRepoFile('apps/web/src/app/host/page.tsx')
 
-    expect(homePage).toContain('Find your people through')
-    expect(homePage).toContain('local fitness.')
-    expect(homePage).toContain('Join run clubs, yoga groups, pickleball crews')
-    expect(homePage).toContain('Grow your fitness community without managing everything in DMs.')
+    expect(homePage).toContain('Find your people through local fitness.')
+    expect(homePage).toContain('Find beginner-friendly run clubs, yoga groups, pickleball crews')
+    expect(homePage).toContain('Stop losing new members in the group chat.')
     expect(homePage).not.toContain('The OS for Fitness Community Leaders')
     expect(homePage).not.toContain('Your next crew is')
 
     expect(rootLayout).toContain('SweatBuddies | Find Friends Through Local Fitness')
-    expect(rootLayout).toContain('Find friends through local fitness communities')
+    expect(rootLayout).toContain('Find beginner-friendly run clubs, yoga groups, pickleball crews')
     expect(rootLayout).not.toContain('Discover Fitness & Wellness Experiences')
     expect(rootLayout).not.toContain('fitness and wellness experiences')
 
-    expect(eventsRoute).toContain('Local Fitness Communities Near You')
+    expect(eventsRoute).toContain('Local Fitness Sessions Near You')
     expect(eventsRoute).not.toContain('Fitness Events Near You')
     expect(eventsPage).toContain('No upcoming sessions yet')
-    expect(eventsPage).toContain('Start a community session')
+    expect(eventsPage).toContain('Start a session')
 
-    expect(buddyPage).toContain('Search crews, sessions, or neighborhoods')
+    expect(buddyPage).toContain('Search run clubs, yoga, pickleball, or neighborhoods')
     expect(buddyPage).toContain('Real crews moving nearby')
-    expect(buddyPage).toContain('ways to meet')
+    expect(buddyPage).toContain('to meet people')
     expect(buddyPage).toContain('No local sessions yet.')
     expect(buddyPage).toContain('No crews or sessions for')
 
     expect(communitiesPage).toContain('Find local fitness communities near you')
     expect(browsePage).toContain('Find Local Fitness Sessions')
-    expect(browsePage).toContain('Ready to find your people?')
-    expect(hostPage).toContain('Grow your crew beyond the group chat.')
-    expect(hostPage).toContain('Build a community people can actually find.')
-    expect(hostPage).toContain('Replace scattered tools with one community operating layer.')
-    expect(hostPage).toContain('What community are you building?')
-    expect(hostPage).toContain('Turn attendees into regulars')
+    expect(browsePage).toContain('Ready to stop showing up alone?')
+    expect(hostPage).toContain('Stop running your community out of scattered DMs.')
+    expect(hostPage).toContain('Stop using five tools to fill one session.')
+    expect(hostPage).toContain('Ready to stop rebuilding attendance from scratch?')
+    expect(hostPage).toContain('What do people show up for?')
+    expect(hostPage).toContain('people nearby are actively looking')
     expect(hostPage).not.toContain('What do you love to teach?')
   })
 
@@ -85,7 +84,7 @@ describe('route contracts', () => {
     const planner = readRepoFile('apps/web/src/components/host/AIPlannerChat.tsx')
     const pulseCard = readRepoFile('apps/web/src/components/host/WeeklyPulseCard.tsx')
 
-    expect(dashboardPage).toContain('Run your community operating layer.')
+    expect(dashboardPage).toContain('Run the sessions people come back to.')
     expect(dashboardPage).toContain('Plan Next Session')
     expect(dashboardPage).toContain('WeeklyPulseCard')
     expect(communityPage).toContain('Regulars & Community Health')

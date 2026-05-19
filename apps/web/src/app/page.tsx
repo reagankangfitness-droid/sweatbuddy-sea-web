@@ -23,7 +23,7 @@ export const revalidate = 60
 export const metadata: Metadata = {
   title: 'SweatBuddies — Find Your People Through Local Fitness',
   description:
-    'Stop doing fitness alone. Find run clubs, yoga groups, pickleball crews, and local fitness communities near you across Southeast Asia.',
+    'Stop doing fitness alone. Find run clubs, yoga groups, pickleball crews, and local fitness sessions near you across Southeast Asia.',
 }
 
 export default async function HomePage() {

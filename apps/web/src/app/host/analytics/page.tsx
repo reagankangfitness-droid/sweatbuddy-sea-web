@@ -212,7 +212,7 @@ export default function AnalyticsPage() {
             Analytics
           </h1>
           <p className="text-neutral-500">
-            Track your experience performance and community growth
+            Track session performance and community growth
           </p>
         </div>
 

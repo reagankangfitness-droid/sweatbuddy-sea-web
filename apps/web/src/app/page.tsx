@@ -211,6 +211,51 @@ export default async function HomePage() {
           </div>
         </section>
 
+        <section className="px-5 py-14 sm:py-20 border-y border-white/[0.06] bg-[#F3F0E8] text-[#101010]">
+          <div className="max-w-6xl mx-auto grid lg:grid-cols-[0.95fr_1.05fr] gap-8 lg:gap-14 items-center">
+            <div>
+              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-neutral-600">Newcomer path</p>
+              <h2 className="mt-3 max-w-2xl text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+                New to Singapore? Find your first fitness crew.
+              </h2>
+              <p className="mt-5 max-w-xl text-base leading-8 text-black/62">
+                Skip the awkward friend hunt. Find beginner-friendly sessions where showing up alone is normal, the host is clear, and you can meet people without making nightlife your default plan.
+              </p>
+              <div className="mt-7 flex flex-col sm:flex-row gap-3">
+                <TrackedLink
+                  href="/new-to-singapore"
+                  event={EVENTS.LANDING_CTA_CLICKED}
+                  metadata={{ placement: 'homepage_newcomer_section', destination: '/new-to-singapore', experiment: 'newcomer_wedge' }}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#101010] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-black transition-colors"
+                >
+                  Start here <ArrowRight size={17} />
+                </TrackedLink>
+                <TrackedLink
+                  href="/buddy"
+                  event={EVENTS.LANDING_CTA_CLICKED}
+                  metadata={{ placement: 'homepage_newcomer_browse', destination: '/buddy', experiment: 'newcomer_wedge' }}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-black/15 px-7 py-4 text-sm font-bold uppercase tracking-wide text-[#101010] hover:bg-black/[0.04] transition-colors"
+                >
+                  Browse sessions
+                </TrackedLink>
+              </div>
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-3">
+              {[
+                { title: 'Arrive solo', body: 'Pick sessions where newcomers are expected and the plan is clear before you leave home.' },
+                { title: 'Meet through movement', body: 'Run, stretch, play, lift, or recover with people who already chose the same plan.' },
+                { title: 'Come back familiar', body: 'Turn one session into a weekly rhythm with people you can recognize next time.' },
+              ].map((item) => (
+                <div key={item.title} className="rounded-lg border border-black/10 bg-white p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)]">
+                  <h3 className="text-sm font-extrabold text-[#101010]">{item.title}</h3>
+                  <p className="mt-3 text-xs leading-5 text-black/58">{item.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="px-5 py-12 sm:py-16">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
@@ -483,6 +528,7 @@ export default async function HomePage() {
           </div>
           <div className="flex flex-wrap justify-center gap-4 text-xs text-[#777777]">
             <Link href="/buddy" className="hover:text-[#FAFAFA] transition-colors">Find a crew</Link>
+            <Link href="/new-to-singapore" className="hover:text-[#FAFAFA] transition-colors">New to Singapore</Link>
             <Link href="/communities" className="hover:text-[#FAFAFA] transition-colors">Crews</Link>
             <Link href="/hub" className="hover:text-[#FAFAFA] transition-colors">Host Hub</Link>
             <Link href="/support" className="hover:text-[#FAFAFA] transition-colors">Help</Link>

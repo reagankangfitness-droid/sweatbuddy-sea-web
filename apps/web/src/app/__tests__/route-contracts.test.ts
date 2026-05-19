@@ -23,10 +23,14 @@ describe('route contracts', () => {
     const eventsRoute = readRepoFile('apps/web/src/app/events/page.tsx')
     const buddyPage = readRepoFile('apps/web/src/app/buddy/page.tsx')
     const hostPage = readRepoFile('apps/web/src/app/host/page.tsx')
+    const newcomerPage = readRepoFile('apps/web/src/app/new-to-singapore/page.tsx')
+    const proxy = readRepoFile('apps/web/src/proxy.ts')
 
     expect(homePage).toContain('Find your people through local fitness.')
     expect(homePage).toContain('Find beginner-friendly run clubs, yoga groups, pickleball crews')
     expect(homePage).toContain('Stop losing new members in the group chat.')
+    expect(homePage).toContain('New to Singapore? Find your first fitness crew.')
+    expect(homePage).toContain('/new-to-singapore')
     expect(homePage).not.toContain('The OS for Fitness Community Leaders')
     expect(homePage).not.toContain('Your next crew is')
 
@@ -55,6 +59,12 @@ describe('route contracts', () => {
     expect(hostPage).toContain('What do people show up for?')
     expect(hostPage).toContain('people nearby are actively looking')
     expect(hostPage).not.toContain('What do you love to teach?')
+
+    expect(newcomerPage).toContain('New to Singapore? Find your first fitness crew.')
+    expect(newcomerPage).toContain('showing up alone is normal')
+    expect(newcomerPage).toContain('Be the crew newcomers find first.')
+    expect(newcomerPage).toContain("experiment: 'newcomer_wedge'")
+    expect(proxy).toContain('/new-to-singapore')
   })
 
   it('keeps public events wired to the active events API', () => {

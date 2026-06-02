@@ -21,9 +21,9 @@ import { prisma } from '@/lib/prisma'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'SweatBuddies — Find Your First Fitness Crew in Singapore or Bangkok',
+  title: 'SweatBuddies — The Gym Won’t Introduce You To Anyone',
   description:
-    'New to Singapore or Bangkok? Find run clubs, yoga groups, pickleball crews, and local fitness sessions where showing up alone is normal.',
+    'Find solo-friendly fitness crews in Singapore and Bangkok: run clubs, pickleball games, yoga groups, and social workouts where people actually expect to meet.',
 }
 
 export default async function HomePage() {
@@ -174,13 +174,13 @@ export default async function HomePage() {
           <div className="relative max-w-6xl mx-auto w-full">
             <div className="max-w-3xl">
               <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-white/70">
-                Social fitness for new-city life
+                Social fitness in Singapore and Bangkok
               </p>
               <h1 className="text-5xl sm:text-7xl font-extrabold leading-[0.98] tracking-tight text-white max-w-3xl">
-                New to Singapore or Bangkok? Find your first fitness crew.
+                The gym won&apos;t introduce you to anyone.
               </h1>
               <p className="mt-6 max-w-xl text-base sm:text-lg leading-8 text-white/78">
-                Moving cities should not mean rebuilding your social life from zero. Join beginner-friendly run clubs, yoga groups, pickleball crews, bootcamps, and recovery sessions where showing up alone is normal.
+                Find solo-friendly fitness crews in Singapore and Bangkok: run clubs, pickleball games, yoga groups, and social workouts where people actually expect to meet.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
                 <TrackedLink
@@ -216,12 +216,12 @@ export default async function HomePage() {
         <section className="px-5 py-14 sm:py-20 border-y border-white/[0.06] bg-[#F3F0E8] text-[#101010]">
           <div className="max-w-6xl mx-auto grid lg:grid-cols-[0.95fr_1.05fr] gap-8 lg:gap-14 items-center">
             <div>
-              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-neutral-600">Two-city newcomer path</p>
+              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-neutral-600">Moved here recently?</p>
               <h2 className="mt-3 max-w-2xl text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-                Find your people in the city before it starts feeling lonely.
+                Start with a crew, not another solo routine.
               </h2>
               <p className="mt-5 max-w-xl text-base leading-8 text-black/62">
-                Singapore and Bangkok both have active communities. The hard part is knowing which run, game, class, or recovery session is actually friendly to first-timers.
+                Singapore and Bangkok are full of people, but normal gyms still make everyone act like strangers. SweatBuddies points you toward sessions where coming alone is part of the plan.
               </p>
               <div className="mt-7 flex flex-col sm:flex-row gap-3">
                 <TrackedLink
@@ -245,9 +245,9 @@ export default async function HomePage() {
 
             <div className="grid sm:grid-cols-3 gap-3">
               {[
-                { title: 'New-city entry', body: 'For people who just landed, relocated, or feel socially stuck in the city they live in.' },
-                { title: 'Movement first', body: 'Meet through runs, games, yoga, strength sessions, and recovery plans instead of forced networking.' },
-                { title: 'Regulars matter', body: 'The goal is not one event. It is finding a crew you can return to next week.' },
+                { title: 'Show up solo', body: 'Pick sessions that make the first step obvious before you leave home.' },
+                { title: 'Meet through movement', body: 'Run, play, stretch, train, or recover with people who already chose the same plan.' },
+                { title: 'Return familiar', body: 'The goal is not one event. It is finding people you can recognize next week.' },
               ].map((item) => (
                 <div key={item.title} className="rounded-lg border border-black/10 bg-white p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)]">
                   <h3 className="text-sm font-extrabold text-[#101010]">{item.title}</h3>
@@ -411,9 +411,9 @@ export default async function HomePage() {
           <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-16">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">Where it is growing</p>
-              <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">Two launch cities. One sharper pain.</h2>
+              <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">Show up alone. Leave with familiar faces.</h2>
               <p className="mt-4 text-sm leading-7 text-white/55 max-w-lg">
-                Start with newcomers in Singapore and Bangkok, then expand around the same behavior: people using movement as the easiest way to enter a city socially.
+                The wedge is simple: people want healthier ways to meet, and fitness gives everyone a reason to be in the same place without making it weird.
               </p>
               <div className="mt-7 flex flex-wrap gap-2">
                 {[
@@ -511,10 +511,10 @@ export default async function HomePage() {
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">Start with one session</p>
             <h2 className="mt-3 text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight">
-              Stop waiting for friends to make the plan.
+              Stop waiting for the city to introduce itself.
             </h2>
             <p className="mt-5 text-base leading-8 text-white/58">
-              Choose Singapore or Bangkok, pick one local session, and give yourself a lower-pressure way to meet people this week.
+              Choose Singapore or Bangkok, pick one solo-friendly session, and give yourself a lower-pressure way to meet people this week.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
               <TrackedLink

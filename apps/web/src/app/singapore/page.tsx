@@ -3,13 +3,13 @@ import { CityLandingPage } from '@/components/landing/CityLandingPage'
 import { singaporeLanding } from '@/lib/city-landing'
 
 export const metadata: Metadata = {
-  title: 'New to Singapore? Find Your First Fitness Crew',
+  title: 'Show Up Alone. Leave With Familiar Faces in Singapore',
   description:
-    'New to Singapore? Find beginner-friendly run clubs, yoga groups, pickleball crews, and local fitness sessions where showing up alone is normal.',
+    'Find solo-friendly run clubs, pickleball games, yoga groups, and social workouts in Singapore where people actually expect to meet.',
   openGraph: {
-    title: 'New to Singapore? Find Your First Fitness Crew | SweatBuddies',
+    title: 'Show Up Alone. Leave With Familiar Faces in Singapore | SweatBuddies',
     description:
-      'Find local fitness sessions where newcomers are expected, hosts are clear, and meeting people starts with movement.',
+      'Find solo-friendly fitness crews in Singapore where first-timers are welcome and meeting people starts with movement.',
     images: ['/images/cities/singapore.jpg'],
   },
 }

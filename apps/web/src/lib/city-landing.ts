@@ -3,17 +3,17 @@ import type { CityLandingPageProps } from '@/components/landing/CityLandingPage'
 export const singaporeLanding: CityLandingPageProps = {
   city: 'Singapore',
   citySlug: 'singapore',
-  eyebrow: 'For newcomers in Singapore',
-  title: 'New to Singapore? Find your first fitness crew.',
+  eyebrow: 'Social fitness in Singapore',
+  title: 'Show up alone. Leave with familiar faces.',
   description:
-    'Meet people without forcing small talk. Join beginner-friendly run clubs, yoga groups, pickleball crews, and local sessions where showing up alone is normal.',
+    'Find solo-friendly run clubs, pickleball games, yoga groups, and social workouts in Singapore where people actually expect to meet.',
   heroImage: '/images/cities/singapore.jpg',
   heroAlt: 'Singapore skyline and local fitness communities',
   painIntro:
-    'Skip the endless search through Instagram stories, Telegram chats, and word of mouth. Find social fitness plans with enough context to show up alone.',
+    'Skip the endless search through Instagram stories, Telegram chats, and word of mouth. Find sessions with enough context to show up alone.',
   painTitle: 'Moving here should not mean rebuilding your social life from zero.',
   painBody:
-    'Singapore is efficient, polished, and busy. That does not make it easy to find your people. Fitness gives the first conversation a reason to exist.',
+    'Singapore is efficient, polished, and busy. That does not make normal gyms social. SweatBuddies helps you find the rooms where conversation is expected.',
   routes: [
     { label: 'Run clubs', image: '/banner/running.jpg', note: 'Most repeatable' },
     { label: 'Yoga groups', image: '/images/hero-bg.jpg', note: 'Low-pressure community' },
@@ -33,25 +33,25 @@ export const singaporeLanding: CityLandingPageProps = {
     { label: 'Reduce repeat DMs', body: 'Answer first-timer questions once with a clear session page.' },
     { label: 'Build regulars', body: 'Turn solo first-timers into people who recognize your crew.' },
   ],
-  finalTitle: 'Stop waiting for Singapore to feel smaller.',
+  finalTitle: 'Stop waiting for Singapore to introduce itself.',
   finalBody:
-    'Pick one session. Show up once. Give yourself a real chance to see the same people again.',
+    'Pick one solo-friendly session. Show up once. Give yourself a real chance to see the same people again.',
 }
 
 export const bangkokLanding: CityLandingPageProps = {
   city: 'Bangkok',
   citySlug: 'bangkok',
-  eyebrow: 'For newcomers in Bangkok',
-  title: 'New to Bangkok? Find your crew without chasing group chats.',
+  eyebrow: 'Social fitness in Bangkok',
+  title: 'Stop finding your social life through buried group chats.',
   description:
-    'Discover social runs, pickleball games, yoga sessions, and fitness crews that welcome first-timers before your week disappears into scattered plans.',
+    'Find solo-friendly social runs, pickleball games, yoga sessions, and fitness crews in Bangkok with clear hosts, times, locations, and first-timer context.',
   heroImage: '/images/cities/bangkok.jpg',
   heroAlt: 'Bangkok city energy and local social fitness communities',
   painIntro:
     'Bangkok has endless things happening, but discovery is fragmented across Instagram, LINE, WhatsApp, and friend-of-a-friend invites.',
   painTitle: 'Bangkok is full of people. That does not make it easy to find your people.',
   painBody:
-    'The hard part is not finding a workout. It is knowing which crews welcome newcomers, where to go, and whether it is normal to arrive alone.',
+    'The hard part is not finding something to do. It is knowing which crews welcome newcomers, where to go, and whether it is normal to arrive alone.',
   routes: [
     { label: 'Social runs', image: '/images/hero/run-club.jpg', note: 'Easy weekly rhythm' },
     { label: 'Pickleball games', image: '/images/community-bonds.jpg', note: 'Low-intimidation interaction' },
@@ -71,7 +71,7 @@ export const bangkokLanding: CityLandingPageProps = {
     { label: 'Set expectations once', body: 'Make level, location, price, and solo-friendly context obvious.' },
     { label: 'Convert visitors to regulars', body: 'Give first-timers a reason to return instead of disappearing after one session.' },
   ],
-  finalTitle: 'Stop letting Bangkok feel too big to enter.',
+  finalTitle: 'Make Bangkok easier to enter.',
   finalBody:
-    'Choose one crew, one session, and one reason to show up. Familiarity starts when you repeat.',
+    'Choose one crew, one session, and one reason to show up solo. Familiarity starts when you repeat.',
 }

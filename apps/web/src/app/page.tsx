@@ -21,9 +21,9 @@ import { prisma } from '@/lib/prisma'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'SweatBuddies — Find Your People Through Local Fitness',
+  title: 'SweatBuddies — Find Your First Fitness Crew in Singapore or Bangkok',
   description:
-    'Stop doing fitness alone. Find run clubs, yoga groups, pickleball crews, and local fitness sessions near you across Southeast Asia.',
+    'New to Singapore or Bangkok? Find run clubs, yoga groups, pickleball crews, and local fitness sessions where showing up alone is normal.',
 }
 
 export default async function HomePage() {
@@ -67,6 +67,8 @@ export default async function HomePage() {
 
   const curatedPhotos = [
     { src: '/images/community-bonds.jpg', label: 'Pickleball crews', href: '/buddy' },
+    { src: '/images/cities/bangkok.jpg', label: 'Bangkok social fitness', href: '/bangkok' },
+    { src: '/images/cities/singapore.jpg', label: 'Singapore newcomer crews', href: '/singapore' },
     { src: '/banner/running.jpg', label: 'Post-run circles', href: '/buddy' },
     { src: '/images/connect-people.webp', label: 'Outdoor strength', href: '/buddy' },
     { src: '/images/hero-bg.jpg', label: 'Park yoga', href: '/buddy' },
@@ -125,9 +127,9 @@ export default async function HomePage() {
   ]
 
   const hostBenefits = [
-    { icon: Megaphone, title: 'Stop relying on reach', body: 'Get discovered by people nearby who are actively looking for a group to join.' },
-    { icon: CreditCard, title: 'Stop chasing payments', body: 'Run free sessions or collect paid spots without messy chat follow-ups.' },
-    { icon: UserRoundCheck, title: 'Stop guessing turnout', body: 'Track capacity, attendees, and returning members before people arrive.' },
+    { icon: Megaphone, title: 'Reach first-timers', body: 'Get discovered by newcomers and long-stay visitors looking for a group to join this week.' },
+    { icon: CreditCard, title: 'Move past messy chats', body: 'Run free sessions or collect paid spots without chasing RSVPs across DMs.' },
+    { icon: UserRoundCheck, title: 'Build repeat members', body: 'Track capacity, attendees, and returning faces before people arrive.' },
   ]
 
   return (
@@ -172,30 +174,30 @@ export default async function HomePage() {
           <div className="relative max-w-6xl mx-auto w-full">
             <div className="max-w-3xl">
               <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-white/70">
-                Social fitness across Southeast Asia
+                Social fitness for new-city life
               </p>
               <h1 className="text-5xl sm:text-7xl font-extrabold leading-[0.98] tracking-tight text-white max-w-3xl">
-                Find your people through local fitness.
+                New to Singapore or Bangkok? Find your first fitness crew.
               </h1>
               <p className="mt-6 max-w-xl text-base sm:text-lg leading-8 text-white/78">
-                Working out alone gets old. Find beginner-friendly run clubs, yoga groups, pickleball crews, bootcamps, and recovery sessions where people expect newcomers.
+                Moving cities should not mean rebuilding your social life from zero. Join beginner-friendly run clubs, yoga groups, pickleball crews, bootcamps, and recovery sessions where showing up alone is normal.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
                 <TrackedLink
-                  href="/buddy"
+                  href="/singapore"
                   event={EVENTS.LANDING_CTA_CLICKED}
-                  metadata={{ placement: 'hero_find_crew', destination: '/buddy' }}
+                  metadata={{ placement: 'hero_singapore', destination: '/singapore', experiment: 'two_city_newcomer_wedge' }}
                   className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-white text-black text-sm font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-colors"
                 >
-                  Find a crew <ArrowRight size={17} strokeWidth={2.4} />
+                  Explore Singapore <ArrowRight size={17} strokeWidth={2.4} />
                 </TrackedLink>
                 <TrackedLink
-                  href="/host"
+                  href="/bangkok"
                   event={EVENTS.LANDING_CTA_CLICKED}
-                  metadata={{ placement: 'hero_grow_community', destination: '/host' }}
+                  metadata={{ placement: 'hero_bangkok', destination: '/bangkok', experiment: 'two_city_newcomer_wedge' }}
                   className="inline-flex items-center justify-center gap-2 px-7 py-4 border border-white/25 text-white text-sm font-bold uppercase tracking-wide rounded-full hover:bg-white/10 transition-colors"
                 >
-                  Grow a community
+                  Explore Bangkok
                 </TrackedLink>
               </div>
             </div>
@@ -214,38 +216,38 @@ export default async function HomePage() {
         <section className="px-5 py-14 sm:py-20 border-y border-white/[0.06] bg-[#F3F0E8] text-[#101010]">
           <div className="max-w-6xl mx-auto grid lg:grid-cols-[0.95fr_1.05fr] gap-8 lg:gap-14 items-center">
             <div>
-              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-neutral-600">Newcomer path</p>
+              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-neutral-600">Two-city newcomer path</p>
               <h2 className="mt-3 max-w-2xl text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-                New to Singapore? Find your first fitness crew.
+                Find your people in the city before it starts feeling lonely.
               </h2>
               <p className="mt-5 max-w-xl text-base leading-8 text-black/62">
-                Skip the awkward friend hunt. Find beginner-friendly sessions where showing up alone is normal, the host is clear, and you can meet people without making nightlife your default plan.
+                Singapore and Bangkok both have active communities. The hard part is knowing which run, game, class, or recovery session is actually friendly to first-timers.
               </p>
               <div className="mt-7 flex flex-col sm:flex-row gap-3">
                 <TrackedLink
-                  href="/new-to-singapore"
+                  href="/singapore"
                   event={EVENTS.LANDING_CTA_CLICKED}
-                  metadata={{ placement: 'homepage_newcomer_section', destination: '/new-to-singapore', experiment: 'newcomer_wedge' }}
+                  metadata={{ placement: 'homepage_city_section_singapore', destination: '/singapore', experiment: 'two_city_newcomer_wedge' }}
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-[#101010] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-black transition-colors"
                 >
-                  Start here <ArrowRight size={17} />
+                  Singapore <ArrowRight size={17} />
                 </TrackedLink>
                 <TrackedLink
-                  href="/buddy"
+                  href="/bangkok"
                   event={EVENTS.LANDING_CTA_CLICKED}
-                  metadata={{ placement: 'homepage_newcomer_browse', destination: '/buddy', experiment: 'newcomer_wedge' }}
+                  metadata={{ placement: 'homepage_city_section_bangkok', destination: '/bangkok', experiment: 'two_city_newcomer_wedge' }}
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-black/15 px-7 py-4 text-sm font-bold uppercase tracking-wide text-[#101010] hover:bg-black/[0.04] transition-colors"
                 >
-                  Browse sessions
+                  Bangkok
                 </TrackedLink>
               </div>
             </div>
 
             <div className="grid sm:grid-cols-3 gap-3">
               {[
-                { title: 'Arrive solo', body: 'Pick sessions where newcomers are expected and the plan is clear before you leave home.' },
-                { title: 'Meet through movement', body: 'Run, stretch, play, lift, or recover with people who already chose the same plan.' },
-                { title: 'Come back familiar', body: 'Turn one session into a weekly rhythm with people you can recognize next time.' },
+                { title: 'New-city entry', body: 'For people who just landed, relocated, or feel socially stuck in the city they live in.' },
+                { title: 'Movement first', body: 'Meet through runs, games, yoga, strength sessions, and recovery plans instead of forced networking.' },
+                { title: 'Regulars matter', body: 'The goal is not one event. It is finding a crew you can return to next week.' },
               ].map((item) => (
                 <div key={item.title} className="rounded-lg border border-black/10 bg-white p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)]">
                   <h3 className="text-sm font-extrabold text-[#101010]">{item.title}</h3>
@@ -346,10 +348,10 @@ export default async function HomePage() {
             <div className="w-full max-w-xl mx-auto">
               <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-neutral-600">For hosts</p>
               <h2 className="mt-3 text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight text-[#101010]">
-                Stop losing new members in the group chat.
+                Bring first-timers in before they know who to ask.
               </h2>
               <p className="mt-5 text-base leading-8 text-black/65">
-                Turn scattered DMs into visible sessions, clear RSVPs, paid spots, and repeat attendance.
+                Newcomers and long-stay visitors are actively looking for friendly crews in Singapore and Bangkok. Give them a clear session page instead of another buried story, LINE thread, or WhatsApp invite.
               </p>
 
               <div className="mt-8 overflow-hidden rounded-lg border border-black/10 bg-black">
@@ -365,7 +367,7 @@ export default async function HomePage() {
                   <div className="absolute bottom-0 left-0 right-0 p-5">
                     <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/65">Host proof</p>
                     <p className="mt-1 max-w-sm text-xl font-extrabold leading-tight text-white">
-                      Real crews. Real sessions. Real people showing up.
+                      Real crews. Clear sessions. First-timers who know how to show up.
                     </p>
                   </div>
                 </div>
@@ -409,10 +411,26 @@ export default async function HomePage() {
           <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-16">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">Where it is growing</p>
-              <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">Replace lonely workouts with a reason to belong.</h2>
+              <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">Two launch cities. One sharper pain.</h2>
               <p className="mt-4 text-sm leading-7 text-white/55 max-w-lg">
-                Built for people who want social plans that do not revolve around nightlife, and fitness plans that do not end at the treadmill.
+                Start with newcomers in Singapore and Bangkok, then expand around the same behavior: people using movement as the easiest way to enter a city socially.
               </p>
+              <div className="mt-7 flex flex-wrap gap-2">
+                {[
+                  { name: 'Singapore', href: '/singapore', count: 'Premium, trust-first crews' },
+                  { name: 'Bangkok', href: '/bangkok', count: 'Energetic, fragmented discovery' },
+                ].map((c) => (
+                  <TrackedLink
+                    key={c.name}
+                    href={c.href}
+                    event={EVENTS.LANDING_CTA_CLICKED}
+                    metadata={{ placement: 'launch_city_pill', destination: c.href, city: c.name, experiment: 'two_city_newcomer_wedge' }}
+                    className="rounded-full border border-white/[0.08] bg-white/[0.035] px-4 py-2 text-sm text-white/68 hover:border-white/20 hover:text-white transition-colors"
+                  >
+                    <span className="font-bold text-white">{c.name}</span> {c.count}
+                  </TrackedLink>
+                ))}
+              </div>
               {cities.length > 0 && (
                 <div className="mt-7 flex flex-wrap gap-2">
                   {cities.map((c) => (
@@ -496,24 +514,24 @@ export default async function HomePage() {
               Stop waiting for friends to make the plan.
             </h2>
             <p className="mt-5 text-base leading-8 text-white/58">
-              Pick a local session, meet people through the workout, and give yourself a reason to come back next week.
+              Choose Singapore or Bangkok, pick one local session, and give yourself a lower-pressure way to meet people this week.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
               <TrackedLink
-                href="/buddy"
+                href="/singapore"
                 event={EVENTS.LANDING_CTA_CLICKED}
-                metadata={{ placement: 'final_explore_crews', destination: '/buddy' }}
+                metadata={{ placement: 'final_singapore', destination: '/singapore', experiment: 'two_city_newcomer_wedge' }}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-bold uppercase tracking-wide text-black hover:bg-neutral-200 transition-colors"
               >
-                Explore crews <ArrowRight size={17} />
+                Singapore <ArrowRight size={17} />
               </TrackedLink>
               <TrackedLink
-                href="/host"
+                href="/bangkok"
                 event={EVENTS.LANDING_CTA_CLICKED}
-                metadata={{ placement: 'final_host_session', destination: '/host' }}
+                metadata={{ placement: 'final_bangkok', destination: '/bangkok', experiment: 'two_city_newcomer_wedge' }}
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-8 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-white/[0.06] transition-colors"
               >
-                Host a session
+                Bangkok
               </TrackedLink>
             </div>
           </div>
@@ -528,7 +546,8 @@ export default async function HomePage() {
           </div>
           <div className="flex flex-wrap justify-center gap-4 text-xs text-[#777777]">
             <Link href="/buddy" className="hover:text-[#FAFAFA] transition-colors">Find a crew</Link>
-            <Link href="/new-to-singapore" className="hover:text-[#FAFAFA] transition-colors">New to Singapore</Link>
+            <Link href="/singapore" className="hover:text-[#FAFAFA] transition-colors">Singapore</Link>
+            <Link href="/bangkok" className="hover:text-[#FAFAFA] transition-colors">Bangkok</Link>
             <Link href="/communities" className="hover:text-[#FAFAFA] transition-colors">Crews</Link>
             <Link href="/hub" className="hover:text-[#FAFAFA] transition-colors">Host Hub</Link>
             <Link href="/support" className="hover:text-[#FAFAFA] transition-colors">Help</Link>

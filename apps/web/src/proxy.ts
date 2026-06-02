@@ -35,6 +35,8 @@ import { NextResponse } from 'next/server'
 const isPublicRoute = createRouteMatcher([
   '/',
   '/browse(.*)',
+  '/singapore',
+  '/bangkok',
   '/new-to-singapore',
   '/sign-in(.*)',
   '/sign-up(.*)',

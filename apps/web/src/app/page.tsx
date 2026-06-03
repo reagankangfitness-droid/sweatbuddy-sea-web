@@ -67,13 +67,13 @@ export default async function HomePage() {
 
   const curatedPhotos = [
     { src: '/images/community-bonds.jpg', label: 'Pickleball crews', href: '/buddy' },
-    { src: '/images/cities/bangkok.jpg', label: 'Bangkok social fitness', href: '/bangkok' },
-    { src: '/images/cities/singapore.jpg', label: 'Singapore newcomer crews', href: '/singapore' },
+    { src: '/images/hosts/run-club-group.jpg', label: 'Run club regulars', href: '/buddy' },
+    { src: '/images/hero-2.jpg', label: 'Park wellness crews', href: '/singapore' },
     { src: '/banner/running.jpg', label: 'Post-run circles', href: '/buddy' },
     { src: '/images/connect-people.webp', label: 'Outdoor strength', href: '/buddy' },
-    { src: '/images/hero-bg.jpg', label: 'Park yoga', href: '/buddy' },
+    { src: '/banner/athletics.jpg', label: 'Beach training groups', href: '/buddy' },
     { src: '/images/hero-1.webp', label: 'City run clubs', href: '/buddy' },
-    { src: '/banner/athletics.jpg', label: 'Beach bootcamps', href: '/buddy' },
+    { src: '/images/hero-3.jpg', label: 'Recovery circles', href: '/host' },
   ]
 
   const fallbackPhotos = [
@@ -173,7 +173,7 @@ export default async function HomePage() {
 
           <div className="relative max-w-6xl mx-auto w-full">
             <div className="max-w-3xl">
-              <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-white/70">
+              <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-[#FF7A5C]">
                 Social fitness in Singapore and Bangkok
               </p>
               <h1 className="text-5xl sm:text-7xl font-extrabold leading-[0.98] tracking-tight text-white max-w-3xl">
@@ -187,7 +187,7 @@ export default async function HomePage() {
                   href="/singapore"
                   event={EVENTS.LANDING_CTA_CLICKED}
                   metadata={{ placement: 'hero_singapore', destination: '/singapore', experiment: 'two_city_newcomer_wedge' }}
-                  className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-white text-black text-sm font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-colors"
+                  className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-[#FF5A3D] text-white text-sm font-bold uppercase tracking-wide rounded-full hover:bg-[#E84C31] transition-colors"
                 >
                   Explore Singapore <ArrowRight size={17} strokeWidth={2.4} />
                 </TrackedLink>
@@ -216,8 +216,8 @@ export default async function HomePage() {
         <section className="px-5 py-14 sm:py-20 border-y border-white/[0.06] bg-[#F3F0E8] text-[#101010]">
           <div className="max-w-6xl mx-auto grid lg:grid-cols-[0.95fr_1.05fr] gap-8 lg:gap-14 items-center">
             <div>
-              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-neutral-600">Moved here recently?</p>
-              <h2 className="mt-3 max-w-2xl text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-[#D9432F]">Moved here recently?</p>
+              <h2 className="mt-3 max-w-2xl text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight text-[#101010]">
                 Start with a run, game, workout, or recovery session.
               </h2>
               <p className="mt-5 max-w-xl text-base leading-8 text-black/62">
@@ -228,7 +228,7 @@ export default async function HomePage() {
                   href="/singapore"
                   event={EVENTS.LANDING_CTA_CLICKED}
                   metadata={{ placement: 'homepage_city_section_singapore', destination: '/singapore', experiment: 'two_city_newcomer_wedge' }}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#101010] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-black transition-colors"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5A3D] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-[#E84C31] transition-colors"
                 >
                   Singapore <ArrowRight size={17} />
                 </TrackedLink>
@@ -262,7 +262,7 @@ export default async function HomePage() {
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">Real crews nearby</p>
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#FF7A5C]">Real crews nearby</p>
                 <h2 className="mt-2 text-2xl sm:text-4xl font-bold tracking-tight">Communities you can actually join.</h2>
               </div>
               <TrackedLink
@@ -346,7 +346,7 @@ export default async function HomePage() {
 
           <div className="bg-[#F3F0E8] text-[#101010] px-5 py-14 sm:p-12 lg:p-16 flex items-center">
             <div className="w-full max-w-xl mx-auto">
-              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-neutral-600">For hosts</p>
+              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-[#D9432F]">For hosts</p>
               <h2 className="mt-3 text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight text-[#101010]">
                 Bring first-timers in before they know who to ask.
               </h2>
@@ -373,22 +373,22 @@ export default async function HomePage() {
                 </div>
               </div>
 
-              <div className="mt-8 rounded-lg border border-black/10 bg-white shadow-[0_18px_60px_rgba(0,0,0,0.16)] overflow-hidden">
+              <div className="mt-8 rounded-lg border border-black/10 bg-white text-[#101010] shadow-[0_18px_60px_rgba(0,0,0,0.16)] overflow-hidden">
                 <div className="flex items-center justify-between border-b border-black/10 px-5 py-4">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-black/45">Host hub</p>
-                    <p className="text-lg font-extrabold">Saturday crew session</p>
+                    <p className="text-xs font-bold uppercase tracking-wide text-[#D9432F]">Host hub</p>
+                    <p className="text-lg font-extrabold text-[#101010]">Saturday crew session</p>
                   </div>
-                  <span className="rounded-full bg-[#101010] px-3 py-1 text-xs font-bold text-white">12 going</span>
+                  <span className="rounded-full bg-[#FF5A3D] px-3 py-1 text-xs font-bold text-white">12 going</span>
                 </div>
                 <div className="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-black/10">
                   {hostBenefits.map((benefit) => {
                     const Icon = benefit.icon
                     return (
-                      <div key={benefit.title} className="p-5">
-                        <Icon size={21} strokeWidth={2.2} />
-                        <h3 className="mt-4 text-sm font-extrabold">{benefit.title}</h3>
-                        <p className="mt-2 text-xs leading-5 text-black/58">{benefit.body}</p>
+                      <div key={benefit.title} className="p-5 text-[#101010]">
+                        <Icon size={21} strokeWidth={2.2} className="text-[#101010]" />
+                        <h3 className="mt-4 text-sm font-extrabold text-[#101010]">{benefit.title}</h3>
+                        <p className="mt-2 text-xs leading-5 text-black/62">{benefit.body}</p>
                       </div>
                     )
                   })}
@@ -399,7 +399,7 @@ export default async function HomePage() {
                 href="/host"
                 event={EVENTS.LANDING_CTA_CLICKED}
                 metadata={{ placement: 'host_section_start_hosting', destination: '/host' }}
-                className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#101010] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-black transition-colors"
+                className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5A3D] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-[#E84C31] transition-colors"
               >
                 Start hosting <ArrowRight size={17} />
               </TrackedLink>
@@ -410,7 +410,7 @@ export default async function HomePage() {
         <section className="px-5 py-14 sm:py-20">
           <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-16">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">Where it is growing</p>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#FF7A5C]">Where it is growing</p>
               <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">Movement gives people a reason to come back.</h2>
               <p className="mt-4 text-sm leading-7 text-white/55 max-w-lg">
                 The wedge is simple: people want healthier ways to meet, and fitness makes repeated social plans feel natural instead of forced.
@@ -509,7 +509,7 @@ export default async function HomePage() {
 
         <section className="px-5 py-16 sm:py-24 border-t border-white/[0.06]">
           <div className="max-w-3xl mx-auto text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">Start with one session</p>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#FF7A5C]">Start with one session</p>
             <h2 className="mt-3 text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight">
               Find the crew you can come back to.
             </h2>
@@ -521,7 +521,7 @@ export default async function HomePage() {
                 href="/singapore"
                 event={EVENTS.LANDING_CTA_CLICKED}
                 metadata={{ placement: 'final_singapore', destination: '/singapore', experiment: 'two_city_newcomer_wedge' }}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-bold uppercase tracking-wide text-black hover:bg-neutral-200 transition-colors"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5A3D] px-8 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-[#E84C31] transition-colors"
               >
                 Singapore <ArrowRight size={17} />
               </TrackedLink>

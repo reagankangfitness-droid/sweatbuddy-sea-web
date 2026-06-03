@@ -108,7 +108,7 @@ export function CityLandingPage({
 
           <div className="relative mx-auto flex min-h-[calc(100svh-174px)] max-w-6xl items-end sm:min-h-[590px]">
             <div className="max-w-3xl">
-              <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-white/68">
+              <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-[#FF7A5C]">
                 {eyebrow}
               </p>
               <h1 className="max-w-3xl text-5xl font-extrabold leading-[0.98] tracking-tight text-white sm:text-7xl">
@@ -122,7 +122,7 @@ export function CityLandingPage({
                   href="/buddy"
                   event={EVENTS.LANDING_CTA_CLICKED}
                   metadata={{ placement: 'city_hero_browse', destination: '/buddy', ...trackingBase }}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-bold uppercase tracking-wide text-black transition-colors hover:bg-neutral-200"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5A3D] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#E84C31]"
                 >
                   Find sessions near me <ArrowRight size={17} strokeWidth={2.4} />
                 </TrackedLink>
@@ -173,7 +173,7 @@ export function CityLandingPage({
         <section className="border-y border-white/[0.06] bg-[#0D0D0D] px-5 py-14 sm:py-20">
           <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">Why this matters</p>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#FF7A5C]">Why this matters</p>
               <h2 className="mt-3 max-w-lg text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
                 {painTitle}
               </h2>
@@ -196,7 +196,7 @@ export function CityLandingPage({
           <div className="mx-auto max-w-6xl">
             <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">Start with one plan</p>
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#FF7A5C]">Start with one plan</p>
                 <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                   Pick the room where meeting people feels natural.
                 </h2>
@@ -241,8 +241,8 @@ export function CityLandingPage({
         <section className="grid grid-cols-1 lg:grid-cols-2">
           <div className="bg-[#F3F0E8] px-5 py-14 text-[#101010] sm:p-12 lg:p-16">
             <div className="mx-auto max-w-xl">
-              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-neutral-600">For hosts</p>
-              <h2 className="mt-3 text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl">
+              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-[#D9432F]">For hosts</p>
+              <h2 className="mt-3 text-3xl font-extrabold leading-tight tracking-tight text-[#101010] sm:text-5xl">
                 {hostTitle}
               </h2>
               <p className="mt-5 text-base leading-8 text-black/65">
@@ -253,10 +253,10 @@ export function CityLandingPage({
                   const icons = [MapPin, MessageCircle, UsersRound]
                   const Icon = icons[index] ?? UsersRound
                   return (
-                    <div key={item.label} className="rounded-lg border border-black/10 bg-white p-4">
-                      <Icon size={19} strokeWidth={2.2} />
-                      <p className="mt-4 text-xs font-extrabold leading-5">{item.label}</p>
-                      <p className="mt-2 text-[11px] leading-5 text-black/54">{item.body}</p>
+                    <div key={item.label} className="rounded-lg border border-black/10 bg-white p-4 text-[#101010]">
+                      <Icon size={19} strokeWidth={2.2} className="text-[#101010]" />
+                      <p className="mt-4 text-xs font-extrabold leading-5 text-[#101010]">{item.label}</p>
+                      <p className="mt-2 text-[11px] leading-5 text-black/62">{item.body}</p>
                     </div>
                   )
                 })}
@@ -265,7 +265,7 @@ export function CityLandingPage({
                 href="/host"
                 event={EVENTS.LANDING_CTA_CLICKED}
                 metadata={{ placement: 'city_host_section', destination: '/host', ...trackingBase }}
-                className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#101010] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-black"
+                className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5A3D] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#E84C31]"
               >
                 List your crew <ArrowRight size={17} />
               </TrackedLink>
@@ -292,7 +292,7 @@ export function CityLandingPage({
 
         <section className="border-t border-white/[0.06] px-5 py-16 sm:py-24">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">Start this week</p>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#FF7A5C]">Start this week</p>
             <h2 className="mt-3 text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl">
               {finalTitle}
             </h2>
@@ -304,7 +304,7 @@ export function CityLandingPage({
                 href="/buddy"
                 event={EVENTS.LANDING_CTA_CLICKED}
                 metadata={{ placement: 'city_final_browse', destination: '/buddy', ...trackingBase }}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-bold uppercase tracking-wide text-black transition-colors hover:bg-neutral-200"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5A3D] px-8 py-4 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#E84C31]"
               >
                 Find a session <ArrowRight size={17} />
               </TrackedLink>

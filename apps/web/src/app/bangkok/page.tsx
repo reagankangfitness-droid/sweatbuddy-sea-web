@@ -3,13 +3,13 @@ import { CityLandingPage } from '@/components/landing/CityLandingPage'
 import { bangkokLanding } from '@/lib/city-landing'
 
 export const metadata: Metadata = {
-  title: 'Find Social Fitness Crews in Bangkok Without Buried Group Chats',
+  title: 'Find Friends Through Fitness in Bangkok',
   description:
-    'Find solo-friendly social runs, pickleball games, yoga sessions, and fitness crews in Bangkok with clear first-timer context.',
+    'Join social runs, pickleball games, yoga sessions, and fitness crews in Bangkok where movement gives everyone a reason to meet.',
   openGraph: {
-    title: 'Find Social Fitness Crews in Bangkok Without Buried Group Chats | SweatBuddies',
+    title: 'Find Friends Through Fitness in Bangkok | SweatBuddies',
     description:
-      'Find Bangkok fitness crews where showing up alone feels normal and first-timers know what to expect.',
+      'Find local fitness crews in Bangkok where first-timers are welcome and meeting people starts with movement.',
     images: ['/images/cities/bangkok.jpg'],
   },
 }

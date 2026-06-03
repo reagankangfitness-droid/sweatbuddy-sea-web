@@ -30,8 +30,8 @@ describe('route contracts', () => {
     const cityLandingComponent = readRepoFile('apps/web/src/components/landing/CityLandingPage.tsx')
     const proxy = readRepoFile('apps/web/src/proxy.ts')
 
-    expect(homePage).toContain('The gym won&apos;t introduce you to anyone.')
-    expect(homePage).toContain('Find solo-friendly fitness crews in Singapore and Bangkok')
+    expect(homePage).toContain('Find friends through fitness.')
+    expect(homePage).toContain('Join local crews across Singapore and Bangkok')
     expect(homePage).toContain('Bring first-timers in before they know who to ask.')
     expect(homePage).toContain('/singapore')
     expect(homePage).toContain('/bangkok')
@@ -39,8 +39,8 @@ describe('route contracts', () => {
     expect(homePage).not.toContain('The OS for Fitness Community Leaders')
     expect(homePage).not.toContain('Your next crew is')
 
-    expect(rootLayout).toContain('SweatBuddies | The Gym Won’t Introduce You To Anyone')
-    expect(rootLayout).toContain('Find solo-friendly fitness crews in Singapore and Bangkok')
+    expect(rootLayout).toContain('SweatBuddies | Find Friends Through Fitness')
+    expect(rootLayout).toContain('Join local fitness crews across Singapore and Bangkok')
     expect(rootLayout).not.toContain('Discover Fitness & Wellness Experiences')
     expect(rootLayout).not.toContain('fitness and wellness experiences')
 
@@ -66,11 +66,11 @@ describe('route contracts', () => {
     expect(hostPage).not.toContain('What do you love to teach?')
 
     expect(newcomerPage).toContain("from '@/app/singapore/page'")
-    expect(singaporePage).toContain('Show Up Alone. Leave With Familiar Faces in Singapore')
-    expect(bangkokPage).toContain('Find Social Fitness Crews in Bangkok Without Buried Group Chats')
-    expect(cityLanding).toContain('Show up alone. Leave with familiar faces.')
-    expect(cityLanding).toContain('Stop finding your social life through buried group chats.')
-    expect(cityLanding).toContain('Give yourself a real chance to see the same people again.')
+    expect(singaporePage).toContain('Find Friends Through Fitness in Singapore')
+    expect(bangkokPage).toContain('Find Friends Through Fitness in Bangkok')
+    expect(cityLanding).toContain('Find friends through fitness in Singapore.')
+    expect(cityLanding).toContain('Find friends through fitness in Bangkok.')
+    expect(cityLanding).toContain('where movement gives everyone a reason to show up, talk, and come back')
     expect(cityLanding).toContain('Grow beyond Instagram, LINE, and word of mouth.')
     expect(cityLandingComponent).toContain("experiment: 'two_city_newcomer_wedge'")
     expect(proxy).toContain('/singapore')

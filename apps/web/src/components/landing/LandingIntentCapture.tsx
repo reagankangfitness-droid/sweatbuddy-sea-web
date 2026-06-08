@@ -208,7 +208,7 @@ export function LandingIntentCapture({
           <div className="max-h-[calc(100svh-24px)] w-full max-w-lg overflow-y-auto rounded-2xl border border-white/10 bg-[#0B0B0B] text-white shadow-2xl shadow-black/40">
             <div className="flex items-start justify-between border-b border-white/10 px-5 py-5">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#FF7A5C]">
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#B7F000]">
                   {type === 'HOST' ? 'For organisers' : 'Intent capture'}
                 </p>
                 <h2 className="mt-2 text-2xl font-extrabold tracking-tight">{copy.title}</h2>
@@ -226,7 +226,7 @@ export function LandingIntentCapture({
 
             {submitted ? (
               <div className="px-5 py-8">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#FF5A3D] text-white">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#B7F000] text-[#111111]">
                   <Check size={22} strokeWidth={2.6} />
                 </div>
                 <h3 className="mt-5 text-2xl font-extrabold tracking-tight">{copy.success}</h3>
@@ -236,7 +236,7 @@ export function LandingIntentCapture({
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                   <Link
                     href={copy.href}
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5A3D] px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#E84C31]"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#B7F000] px-6 py-3.5 text-sm font-bold uppercase tracking-wide text-[#111111] transition-colors hover:bg-[#A6DE00]"
                   >
                     {copy.next} <ArrowRight size={16} />
                   </Link>
@@ -256,7 +256,7 @@ export function LandingIntentCapture({
                     <select
                       value={form.city}
                       onChange={(event) => updateForm('city', event.target.value)}
-                      className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none transition-colors focus:border-[#FF7A5C]"
+                      className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none transition-colors focus:border-[#B7F000]"
                     >
                       {cities.map((option) => (
                         <option key={option} value={option} className="bg-[#101010]">
@@ -270,7 +270,7 @@ export function LandingIntentCapture({
                     <select
                       value={form.activityType}
                       onChange={(event) => updateForm('activityType', event.target.value)}
-                      className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none transition-colors focus:border-[#FF7A5C]"
+                      className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none transition-colors focus:border-[#B7F000]"
                     >
                       {activities.map((option) => (
                         <option key={option} value={option} className="bg-[#101010]">
@@ -291,7 +291,7 @@ export function LandingIntentCapture({
                           onClick={() => updateForm('comfortLevel', level)}
                           className={`rounded-xl border px-3 py-3 text-left text-xs font-bold transition-colors ${
                             form.comfortLevel === level
-                              ? 'border-[#FF7A5C] bg-[#FF5A3D]/16 text-white'
+                              ? 'border-[#B7F000] bg-[#B7F000]/16 text-white'
                               : 'border-white/10 bg-white/[0.04] text-white/62 hover:bg-white/[0.08]'
                           }`}
                         >
@@ -309,7 +309,7 @@ export function LandingIntentCapture({
                         value={form.communityName}
                         onChange={(event) => updateForm('communityName', event.target.value)}
                         placeholder="Saturday Run Club"
-                        className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none placeholder:text-white/30 focus:border-[#FF7A5C]"
+                        className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none placeholder:text-white/30 focus:border-[#B7F000]"
                       />
                     </Field>
                     <Field label="Instagram or WhatsApp">
@@ -317,7 +317,7 @@ export function LandingIntentCapture({
                         value={form.contactLink}
                         onChange={(event) => updateForm('contactLink', event.target.value)}
                         placeholder="@crew or link"
-                        className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none placeholder:text-white/30 focus:border-[#FF7A5C]"
+                        className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none placeholder:text-white/30 focus:border-[#B7F000]"
                       />
                     </Field>
                   </div>
@@ -330,7 +330,7 @@ export function LandingIntentCapture({
                         value={form.name}
                         onChange={(event) => updateForm('name', event.target.value)}
                         placeholder="Your name"
-                        className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none placeholder:text-white/30 focus:border-[#FF7A5C]"
+                        className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none placeholder:text-white/30 focus:border-[#B7F000]"
                       />
                     </Field>
                   )}
@@ -360,7 +360,7 @@ export function LandingIntentCapture({
                         value={form.email}
                         onChange={(event) => updateForm('email', event.target.value)}
                         placeholder="you@email.com"
-                        className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none placeholder:text-white/30 focus:border-[#FF7A5C]"
+                        className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none placeholder:text-white/30 focus:border-[#B7F000]"
                       />
                     </Field>
                   )}
@@ -370,7 +370,7 @@ export function LandingIntentCapture({
                         value={form.phone}
                         onChange={(event) => updateForm('phone', event.target.value)}
                         placeholder="+65..."
-                        className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none placeholder:text-white/30 focus:border-[#FF7A5C]"
+                        className="w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none placeholder:text-white/30 focus:border-[#B7F000]"
                       />
                     </Field>
                   )}
@@ -385,7 +385,7 @@ export function LandingIntentCapture({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#FF5A3D] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#E84C31] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#B7F000] px-7 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] transition-colors hover:bg-[#A6DE00] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {loading ? <Loader2 size={17} className="animate-spin" /> : null}
                   {copy.submit}

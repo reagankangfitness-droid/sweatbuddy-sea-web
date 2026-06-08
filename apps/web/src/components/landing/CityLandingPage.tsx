@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { LogoWithText } from '@/components/logo'
 import { TrackedLink } from '@/components/TrackedLink'
+import { LandingIntentCapture } from '@/components/landing/LandingIntentCapture'
 import { EVENTS } from '@/lib/analytics'
 
 type RouteCard = {
@@ -73,22 +74,26 @@ export function CityLandingPage({
             <LogoWithText size={28} color="#FFFFFF" textColor="#FFFFFF" />
           </Link>
           <nav className="flex items-center gap-3">
-            <TrackedLink
-              href="/buddy"
-              event={EVENTS.LANDING_CTA_CLICKED}
-              metadata={{ placement: 'city_nav_browse', destination: '/buddy', ...trackingBase }}
+            <LandingIntentCapture
+              type="USER"
+              city={city}
+              sourcePlacement="city_nav_browse"
+              ctaLabel={`Find a crew in ${city}`}
+              successHref="/buddy"
               className="hidden text-sm font-medium text-white/65 transition-colors hover:text-white sm:inline"
             >
               Browse sessions
-            </TrackedLink>
-            <TrackedLink
-              href="/host"
-              event={EVENTS.LANDING_CTA_CLICKED}
-              metadata={{ placement: 'city_nav_host', destination: '/host', ...trackingBase }}
+            </LandingIntentCapture>
+            <LandingIntentCapture
+              type="HOST"
+              city={city}
+              sourcePlacement="city_nav_host"
+              ctaLabel={`List your crew in ${city}`}
+              successHref="/host"
               className="rounded-full bg-white px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-black transition-colors hover:bg-neutral-200 sm:text-sm"
             >
               List your crew
-            </TrackedLink>
+            </LandingIntentCapture>
           </nav>
         </div>
       </header>
@@ -118,22 +123,26 @@ export function CityLandingPage({
                 {description}
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <TrackedLink
-                  href="/buddy"
-                  event={EVENTS.LANDING_CTA_CLICKED}
-                  metadata={{ placement: 'city_hero_browse', destination: '/buddy', ...trackingBase }}
+                <LandingIntentCapture
+                  type="USER"
+                  city={city}
+                  sourcePlacement="city_hero_browse"
+                  ctaLabel={`Find my first crew in ${city}`}
+                  successHref="/buddy"
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5A3D] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#E84C31]"
                 >
-                  Find sessions near me <ArrowRight size={17} strokeWidth={2.4} />
-                </TrackedLink>
-                <TrackedLink
-                  href="/host"
-                  event={EVENTS.LANDING_CTA_CLICKED}
-                  metadata={{ placement: 'city_hero_host', destination: '/host', ...trackingBase }}
+                  Find my first crew <ArrowRight size={17} strokeWidth={2.4} />
+                </LandingIntentCapture>
+                <LandingIntentCapture
+                  type="HOST"
+                  city={city}
+                  sourcePlacement="city_hero_host"
+                  ctaLabel={`Bring first-timers in ${city}`}
+                  successHref="/host"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 px-7 py-4 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-white/10"
                 >
                   Bring first-timers in
-                </TrackedLink>
+                </LandingIntentCapture>
               </div>
             </div>
           </div>
@@ -261,14 +270,16 @@ export function CityLandingPage({
                   )
                 })}
               </div>
-              <TrackedLink
-                href="/host"
-                event={EVENTS.LANDING_CTA_CLICKED}
-                metadata={{ placement: 'city_host_section', destination: '/host', ...trackingBase }}
+              <LandingIntentCapture
+                type="HOST"
+                city={city}
+                sourcePlacement="city_host_section"
+                ctaLabel={`List your crew in ${city}`}
+                successHref="/host"
                 className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5A3D] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#E84C31]"
               >
                 List your crew <ArrowRight size={17} />
-              </TrackedLink>
+              </LandingIntentCapture>
             </div>
           </div>
 
@@ -300,14 +311,16 @@ export function CityLandingPage({
               {finalBody}
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <TrackedLink
-                href="/buddy"
-                event={EVENTS.LANDING_CTA_CLICKED}
-                metadata={{ placement: 'city_final_browse', destination: '/buddy', ...trackingBase }}
+              <LandingIntentCapture
+                type="USER"
+                city={city}
+                sourcePlacement="city_final_browse"
+                ctaLabel={`Find a session in ${city}`}
+                successHref="/buddy"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5A3D] px-8 py-4 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#E84C31]"
               >
                 Find a session <ArrowRight size={17} />
-              </TrackedLink>
+              </LandingIntentCapture>
               <TrackedLink
                 href="/"
                 event={EVENTS.LANDING_CTA_CLICKED}

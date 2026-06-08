@@ -20,6 +20,9 @@ export async function trackEvent(event: string, userId?: string | null, metadata
 export const EVENTS = {
   PAGE_VIEW: 'page_view',
   LANDING_CTA_CLICKED: 'landing_cta_clicked',
+  LANDING_INTENT_OPENED: 'landing_intent_opened',
+  LANDING_INTENT_SUBMITTED: 'landing_intent_submitted',
+  LANDING_INTENT_ABANDONED: 'landing_intent_abandoned',
   BUDDY_FILTER_USED: 'buddy_filter_used',
   COMMUNITY_VIEWED: 'community_viewed',
   COMMUNITY_JOINED: 'community_joined',

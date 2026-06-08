@@ -56,6 +56,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/attendance(.*)',
   '/api/event-waitlist(.*)',
   '/api/newsletter(.*)',
+  '/api/landing-leads(.*)',
   '/api/signup(.*)',
   '/api/admin(.*)', // Has own multi-method auth (Clerk + admin secret + cookie)
   '/api/submit-event(.*)',

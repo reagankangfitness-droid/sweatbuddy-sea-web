@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { LogoWithText } from '@/components/logo'
 import { TrackedLink } from '@/components/TrackedLink'
+import { LandingIntentCapture } from '@/components/landing/LandingIntentCapture'
 import { EVENTS } from '@/lib/analytics'
 import { prisma } from '@/lib/prisma'
 
@@ -138,22 +139,24 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
           <LogoWithText size={28} color="#FFFFFF" textColor="#FFFFFF" />
           <nav className="flex items-center gap-3">
-            <TrackedLink
-              href="/buddy"
-              event={EVENTS.LANDING_CTA_CLICKED}
-              metadata={{ placement: 'nav_find_crew', destination: '/buddy' }}
+            <LandingIntentCapture
+              type="USER"
+              sourcePlacement="nav_find_crew"
+              ctaLabel="Find a crew"
+              successHref="/buddy"
               className="hidden sm:inline text-sm font-medium text-white/65 hover:text-white transition-colors"
             >
               Find a crew
-            </TrackedLink>
-            <TrackedLink
-              href="/host"
-              event={EVENTS.LANDING_CTA_CLICKED}
-              metadata={{ placement: 'nav_start_hosting', destination: '/host' }}
+            </LandingIntentCapture>
+            <LandingIntentCapture
+              type="HOST"
+              sourcePlacement="nav_start_hosting"
+              ctaLabel="Start hosting"
+              successHref="/host"
               className="px-4 py-2.5 bg-white text-black text-xs sm:text-sm font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-colors"
             >
               Start hosting
-            </TrackedLink>
+            </LandingIntentCapture>
           </nav>
         </div>
       </header>
@@ -183,22 +186,26 @@ export default async function HomePage() {
                 Join local crews across Singapore and Bangkok where movement gives everyone a reason to show up, talk, and come back.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                <TrackedLink
-                  href="/singapore"
-                  event={EVENTS.LANDING_CTA_CLICKED}
-                  metadata={{ placement: 'hero_singapore', destination: '/singapore', experiment: 'two_city_newcomer_wedge' }}
+                <LandingIntentCapture
+                  type="USER"
+                  city="Singapore"
+                  sourcePlacement="hero_singapore"
+                  ctaLabel="Find my first crew in Singapore"
+                  successHref="/singapore"
                   className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-[#FF5A3D] text-white text-sm font-bold uppercase tracking-wide rounded-full hover:bg-[#E84C31] transition-colors"
                 >
-                  Explore Singapore <ArrowRight size={17} strokeWidth={2.4} />
-                </TrackedLink>
-                <TrackedLink
-                  href="/bangkok"
-                  event={EVENTS.LANDING_CTA_CLICKED}
-                  metadata={{ placement: 'hero_bangkok', destination: '/bangkok', experiment: 'two_city_newcomer_wedge' }}
+                  Find my first crew <ArrowRight size={17} strokeWidth={2.4} />
+                </LandingIntentCapture>
+                <LandingIntentCapture
+                  type="USER"
+                  city="Bangkok"
+                  sourcePlacement="hero_bangkok"
+                  ctaLabel="Find my first crew in Bangkok"
+                  successHref="/bangkok"
                   className="inline-flex items-center justify-center gap-2 px-7 py-4 border border-white/25 text-white text-sm font-bold uppercase tracking-wide rounded-full hover:bg-white/10 transition-colors"
                 >
-                  Explore Bangkok
-                </TrackedLink>
+                  Find Bangkok crews
+                </LandingIntentCapture>
               </div>
             </div>
 
@@ -224,22 +231,26 @@ export default async function HomePage() {
                 The easiest way into a city is a recurring plan with people who already chose the same thing. SweatBuddies points you toward crews where coming alone is normal.
               </p>
               <div className="mt-7 flex flex-col sm:flex-row gap-3">
-                <TrackedLink
-                  href="/singapore"
-                  event={EVENTS.LANDING_CTA_CLICKED}
-                  metadata={{ placement: 'homepage_city_section_singapore', destination: '/singapore', experiment: 'two_city_newcomer_wedge' }}
+                <LandingIntentCapture
+                  type="USER"
+                  city="Singapore"
+                  sourcePlacement="homepage_city_section_singapore"
+                  ctaLabel="Find a crew in Singapore"
+                  successHref="/singapore"
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5A3D] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-[#E84C31] transition-colors"
                 >
                   Singapore <ArrowRight size={17} />
-                </TrackedLink>
-                <TrackedLink
-                  href="/bangkok"
-                  event={EVENTS.LANDING_CTA_CLICKED}
-                  metadata={{ placement: 'homepage_city_section_bangkok', destination: '/bangkok', experiment: 'two_city_newcomer_wedge' }}
+                </LandingIntentCapture>
+                <LandingIntentCapture
+                  type="USER"
+                  city="Bangkok"
+                  sourcePlacement="homepage_city_section_bangkok"
+                  ctaLabel="Find a crew in Bangkok"
+                  successHref="/bangkok"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-black/15 px-7 py-4 text-sm font-bold uppercase tracking-wide text-[#101010] hover:bg-black/[0.04] transition-colors"
                 >
                   Bangkok
-                </TrackedLink>
+                </LandingIntentCapture>
               </div>
             </div>
 
@@ -395,14 +406,15 @@ export default async function HomePage() {
                 </div>
               </div>
 
-              <TrackedLink
-                href="/host"
-                event={EVENTS.LANDING_CTA_CLICKED}
-                metadata={{ placement: 'host_section_start_hosting', destination: '/host' }}
+              <LandingIntentCapture
+                type="HOST"
+                sourcePlacement="host_section_start_hosting"
+                ctaLabel="Start hosting"
+                successHref="/host"
                 className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5A3D] px-7 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-[#E84C31] transition-colors"
               >
                 Start hosting <ArrowRight size={17} />
-              </TrackedLink>
+              </LandingIntentCapture>
             </div>
           </div>
         </section>
@@ -517,22 +529,26 @@ export default async function HomePage() {
               Choose Singapore or Bangkok, pick one local session, and meet people through the movement instead of forcing the moment.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
-              <TrackedLink
-                href="/singapore"
-                event={EVENTS.LANDING_CTA_CLICKED}
-                metadata={{ placement: 'final_singapore', destination: '/singapore', experiment: 'two_city_newcomer_wedge' }}
+              <LandingIntentCapture
+                type="USER"
+                city="Singapore"
+                sourcePlacement="final_singapore"
+                ctaLabel="Find my first crew in Singapore"
+                successHref="/singapore"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF5A3D] px-8 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-[#E84C31] transition-colors"
               >
                 Singapore <ArrowRight size={17} />
-              </TrackedLink>
-              <TrackedLink
-                href="/bangkok"
-                event={EVENTS.LANDING_CTA_CLICKED}
-                metadata={{ placement: 'final_bangkok', destination: '/bangkok', experiment: 'two_city_newcomer_wedge' }}
+              </LandingIntentCapture>
+              <LandingIntentCapture
+                type="USER"
+                city="Bangkok"
+                sourcePlacement="final_bangkok"
+                ctaLabel="Find my first crew in Bangkok"
+                successHref="/bangkok"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-8 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-white/[0.06] transition-colors"
               >
                 Bangkok
-              </TrackedLink>
+              </LandingIntentCapture>
             </div>
           </div>
         </section>

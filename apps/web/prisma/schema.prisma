@@ -3043,6 +3043,35 @@ model HostLead {
   @@map("host_leads")
 }
 
+model CrewMatchLead {
+  id             String   @id @default(cuid())
+  type           String   @default("USER") @db.VarChar(30) // USER, HOST, WEEKLY_DROP
+  status         String   @default("NEW") @db.VarChar(30)
+  city           String?  @db.VarChar(80)
+  activityType   String?  @db.VarChar(80)
+  comfortLevel   String?  @db.VarChar(80)
+  contactMethod  String?  @db.VarChar(30)
+  email          String?  @db.VarChar(255)
+  phone          String?  @db.VarChar(80)
+  name           String?  @db.VarChar(200)
+  communityName  String?  @db.VarChar(200)
+  contactLink    String?  @db.VarChar(500)
+  sourcePage     String?  @db.VarChar(200)
+  sourcePlacement String? @db.VarChar(120)
+  utmSource      String?  @db.VarChar(120)
+  utmMedium      String?  @db.VarChar(120)
+  utmCampaign    String?  @db.VarChar(160)
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([type, createdAt])
+  @@index([city, activityType])
+  @@index([status])
+  @@index([email])
+  @@map("crew_match_leads")
+}
+
 // =====================================================
 // CREWS (Persistent Fitness Groups)
 // =====================================================

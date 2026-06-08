@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { prisma } from '@/lib/prisma'
-import { checkApiRateLimit } from '@/lib/rate-limit'
 import { POST } from './route'
 
 vi.mock('@/lib/prisma', () => ({
@@ -11,14 +10,10 @@ vi.mock('@/lib/prisma', () => ({
   },
 }))
 
-vi.mock('@/lib/rate-limit', () => ({
-  checkApiRateLimit: vi.fn(),
-}))
-
 function makeRequest(body: Record<string, unknown>) {
   return new Request('https://www.sweatbuddies.co/api/landing-leads', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'x-forwarded-for': crypto.randomUUID() },
     body: JSON.stringify(body),
   })
 }
@@ -26,7 +21,6 @@ function makeRequest(body: Record<string, unknown>) {
 describe('POST /api/landing-leads', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(checkApiRateLimit).mockResolvedValue(null)
     vi.mocked(prisma.crewMatchLead.create).mockResolvedValue({
       id: 'lead-1',
       type: 'USER',

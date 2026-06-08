@@ -2,10 +2,12 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import type { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
-import { checkApiRateLimit } from '@/lib/rate-limit'
 
 const LEAD_TYPES = new Set(['USER', 'HOST', 'WEEKLY_DROP'])
 const CONTACT_METHODS = new Set(['EMAIL', 'WHATSAPP'])
+const RATE_LIMIT_WINDOW_MS = 60_000
+const RATE_LIMIT_MAX_REQUESTS = 12
+const landingLeadRequests = new Map<string, number[]>()
 
 type LeadPayload = {
   type?: unknown
@@ -28,7 +30,7 @@ type LeadPayload = {
 
 export async function POST(request: NextRequest) {
   try {
-    const rateLimited = await checkApiRateLimit(request, 'api')
+    const rateLimited = checkLandingLeadRateLimit(request)
     if (rateLimited) return rateLimited
 
     const payload = await request.json().catch(() => ({})) as LeadPayload
@@ -72,6 +74,22 @@ export async function POST(request: NextRequest) {
     console.error('[landing-leads POST]', err)
     return NextResponse.json({ error: 'Failed to save lead' }, { status: 500 })
   }
+}
+
+function checkLandingLeadRateLimit(request: NextRequest): NextResponse | null {
+  const forwardedFor = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+  const key = forwardedFor || request.headers.get('x-real-ip') || 'unknown'
+  const now = Date.now()
+  const recent = (landingLeadRequests.get(key) ?? []).filter((timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS)
+
+  if (recent.length >= RATE_LIMIT_MAX_REQUESTS) {
+    landingLeadRequests.set(key, recent)
+    return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
+  }
+
+  recent.push(now)
+  landingLeadRequests.set(key, recent)
+  return null
 }
 
 function normalizeText(value: unknown, maxLength: number): string | null {

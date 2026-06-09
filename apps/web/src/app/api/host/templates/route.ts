@@ -1,35 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
-
-const DAY_MAP: Record<string, number> = {
-  SUNDAY: 0, MONDAY: 1, TUESDAY: 2, WEDNESDAY: 3,
-  THURSDAY: 4, FRIDAY: 5, SATURDAY: 6,
-}
-
-const SGT_OFFSET = 8
-
-function getNextDates(dayOfWeek: number, startTime: string, fromDate: Date, count: number): Date[] {
-  const dates: Date[] = []
-  const [hours, minutes] = startTime.split(':').map(Number)
-  const sgtNow = new Date(fromDate.getTime() + SGT_OFFSET * 60 * 60 * 1000)
-  const currentDayOfWeek = sgtNow.getUTCDay()
-
-  let daysUntil = dayOfWeek - currentDayOfWeek
-  if (daysUntil < 0) daysUntil += 7
-  if (daysUntil === 0) {
-    const todaySGT = new Date(Date.UTC(sgtNow.getUTCFullYear(), sgtNow.getUTCMonth(), sgtNow.getUTCDate(), hours - SGT_OFFSET, minutes))
-    if (todaySGT.getTime() <= fromDate.getTime()) daysUntil = 7
-  }
-
-  for (let i = 0; i < count; i++) {
-    const targetDaysFromNow = daysUntil + i * 7
-    const targetDateSGT = new Date(sgtNow.getUTCFullYear(), sgtNow.getUTCMonth(), sgtNow.getUTCDate() + targetDaysFromNow)
-    const utcDate = new Date(Date.UTC(targetDateSGT.getFullYear(), targetDateSGT.getMonth(), targetDateSGT.getDate(), hours - SGT_OFFSET, minutes))
-    dates.push(utcDate)
-  }
-  return dates
-}
+import { DAY_MAP, getNextDatesForTimezone, inferSessionTimezone } from '@/lib/recurring-sessions'
 
 // GET: list host's templates
 export async function GET() {
@@ -41,7 +13,10 @@ export async function GET() {
     const email = clerkUser?.primaryEmailAddress?.emailAddress
     if (!email) return NextResponse.json({ error: 'No email' }, { status: 400 })
 
-    const dbUser = await prisma.user.findUnique({ where: { email: email.toLowerCase() }, select: { id: true } })
+    const dbUser = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      select: { id: true },
+    })
     if (!dbUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
     const templates = await prisma.sessionTemplate.findMany({
@@ -73,18 +48,37 @@ export async function POST(request: Request) {
     })
     if (!dbUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
     if (!dbUser.p2pOnboardingCompleted) {
-      return NextResponse.json({ error: 'Complete onboarding first', code: 'ONBOARDING_REQUIRED' }, { status: 403 })
+      return NextResponse.json(
+        { error: 'Complete onboarding first', code: 'ONBOARDING_REQUIRED' },
+        { status: 403 },
+      )
     }
 
     const body = await request.json()
     const {
-      title, description, categorySlug, imageUrl,
-      city, address, latitude, longitude,
-      daysOfWeek, startTime, endTime, endDate,
-      maxPeople, fitnessLevel, whatToBring,
-      price, currency,
-      acceptPayNow, acceptStripe,
-      paynowQrImageUrl, paynowPhoneNumber, paynowName,
+      title,
+      description,
+      categorySlug,
+      imageUrl,
+      city,
+      address,
+      latitude,
+      longitude,
+      daysOfWeek,
+      startTime,
+      endTime,
+      endDate,
+      timezone,
+      maxPeople,
+      fitnessLevel,
+      whatToBring,
+      price,
+      currency,
+      acceptPayNow,
+      acceptStripe,
+      paynowQrImageUrl,
+      paynowPhoneNumber,
+      paynowName,
       cancellationPolicy,
       communityId,
     } = body
@@ -114,17 +108,35 @@ export async function POST(request: Request) {
     }
     if (priceNum > 0) {
       if (!acceptPayNow && !acceptStripe) {
-        return NextResponse.json({ error: 'Select at least one payment method', code: 'PAYMENT_METHOD_REQUIRED' }, { status: 400 })
+        return NextResponse.json(
+          { error: 'Select at least one payment method', code: 'PAYMENT_METHOD_REQUIRED' },
+          { status: 400 },
+        )
       }
       if (acceptStripe && !dbUser.p2pStripeConnectId) {
-        return NextResponse.json({ error: 'Connect Stripe first', code: 'STRIPE_REQUIRED' }, { status: 400 })
+        return NextResponse.json(
+          { error: 'Connect Stripe first', code: 'STRIPE_REQUIRED' },
+          { status: 400 },
+        )
       }
       if (acceptPayNow && !paynowQrImageUrl) {
-        return NextResponse.json({ error: 'PayNow QR code required', code: 'PAYNOW_QR_REQUIRED' }, { status: 400 })
+        return NextResponse.json(
+          { error: 'PayNow QR code required', code: 'PAYNOW_QR_REQUIRED' },
+          { status: 400 },
+        )
       }
     }
 
     const priceCents = Math.round(priceNum * 100)
+    const latitudeNum = latitude != null && latitude !== '' ? Number(latitude) : null
+    const longitudeNum = longitude != null && longitude !== '' ? Number(longitude) : null
+    const templateTimezone = inferSessionTimezone({
+      timezone: typeof timezone === 'string' ? timezone : null,
+      city,
+      address,
+      latitude: latitudeNum,
+      longitude: longitudeNum,
+    })
 
     // Create template
     const template = await prisma.sessionTemplate.create({
@@ -138,11 +150,12 @@ export async function POST(request: Request) {
         daysOfWeek,
         startTime,
         endTime: endTime || null,
+        timezone: templateTimezone,
         endDate: endDate ? new Date(endDate) : null,
         city: city.trim(),
         address: address?.trim() || null,
-        latitude: latitude ? Number(latitude) : null,
-        longitude: longitude ? Number(longitude) : null,
+        latitude: latitudeNum,
+        longitude: longitudeNum,
         maxParticipants: maxPeople ? Math.max(1, Math.min(Number(maxPeople), 1000)) : null,
         fitnessLevel: fitnessLevel || null,
         whatToBring: whatToBring?.trim() || null,
@@ -162,7 +175,11 @@ export async function POST(request: Request) {
     // Generate initial 4 weeks of sessions
     const now = new Date()
     const typeMap: Record<string, string> = {
-      running: 'RUN', gym: 'GYM', yoga: 'YOGA', hiking: 'HIKE', cycling: 'CYCLING',
+      running: 'RUN',
+      gym: 'GYM',
+      yoga: 'YOGA',
+      hiking: 'HIKE',
+      cycling: 'CYCLING',
     }
     const activityType = typeMap[categorySlug] ?? 'OTHER'
     const activityMode = priceCents > 0 ? 'P2P_PAID' : 'P2P_FREE'
@@ -172,7 +189,7 @@ export async function POST(request: Request) {
     for (const dayName of daysOfWeek) {
       const dayNum = DAY_MAP[dayName]
       if (dayNum === undefined) continue
-      const dates = getNextDates(dayNum, startTime, now, 4)
+      const dates = getNextDatesForTimezone(dayNum, startTime, now, 4, template.timezone)
 
       for (const startDate of dates) {
         if (template.endDate && startDate > template.endDate) continue
@@ -221,9 +238,7 @@ export async function POST(request: Request) {
 
     // Batch insert all sessions in a single transaction
     if (sessionData.length > 0) {
-      await prisma.$transaction(
-        sessionData.map((data) => prisma.activity.create({ data }))
-      )
+      await prisma.$transaction(sessionData.map((data) => prisma.activity.create({ data })))
     }
 
     return NextResponse.json({ template, sessionsGenerated: sessionData.length }, { status: 201 })

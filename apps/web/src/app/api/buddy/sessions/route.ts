@@ -12,6 +12,51 @@ import {
 
 export const dynamic = 'force-dynamic'
 
+interface SessionCursor {
+  isFeatured: boolean
+  startTime: string
+  id: string
+}
+
+function encodeSessionCursor(session: {
+  id: string
+  isFeatured: boolean
+  startTime: Date | null
+}): string | null {
+  if (!session.startTime) return null
+  return Buffer.from(
+    JSON.stringify({
+      isFeatured: session.isFeatured,
+      startTime: session.startTime.toISOString(),
+      id: session.id,
+    }),
+  ).toString('base64url')
+}
+
+function decodeSessionCursor(cursor: string): SessionCursor | null {
+  try {
+    const parsed = JSON.parse(
+      Buffer.from(cursor, 'base64url').toString('utf8'),
+    ) as Partial<SessionCursor>
+    if (
+      typeof parsed.id === 'string' &&
+      typeof parsed.startTime === 'string' &&
+      typeof parsed.isFeatured === 'boolean' &&
+      !Number.isNaN(new Date(parsed.startTime).getTime())
+    ) {
+      return {
+        id: parsed.id,
+        startTime: parsed.startTime,
+        isFeatured: parsed.isFeatured,
+      }
+    }
+  } catch {
+    return null
+  }
+
+  return null
+}
+
 export async function GET(request: Request) {
   try {
     // Auth is optional — unauthenticated users can browse sessions
@@ -72,10 +117,20 @@ export async function GET(request: Request) {
           include: {
             activity: {
               include: {
-                user: { select: { id: true, name: true, imageUrl: true, slug: true, sessionsHostedCount: true } },
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    imageUrl: true,
+                    slug: true,
+                    sessionsHostedCount: true,
+                  },
+                },
                 userActivities: {
                   where: { status: { in: ['JOINED', 'COMPLETED'] } },
-                  include: { user: { select: { id: true, name: true, imageUrl: true, slug: true } } },
+                  include: {
+                    user: { select: { id: true, name: true, imageUrl: true, slug: true } },
+                  },
                 },
               },
             },
@@ -120,7 +175,8 @@ export async function GET(request: Request) {
       : hasValidCoordinates
         ? providedPoint
         : activeCity.center
-    const timezone = searchParams.get('timezone') || activeCity.timezone || DEFAULT_CITY_LOCATION_CONFIG.timezone
+    const timezone =
+      searchParams.get('timezone') || activeCity.timezone || DEFAULT_CITY_LOCATION_CONFIG.timezone
 
     const radiusKm = parseInt(searchParams.get('radius') || String(activeCity.defaultRadius), 10)
     const latDelta = radiusKm / 111
@@ -144,7 +200,29 @@ export async function GET(request: Request) {
     if (verifiedFilter === 'true') {
       where.user = { isCoach: true, coachVerificationStatus: 'VERIFIED' }
     }
-    if (cursor) where.id = { lt: cursor }
+    if (cursor) {
+      const decodedCursor = decodeSessionCursor(cursor)
+      if (decodedCursor) {
+        const cursorStartTime = new Date(decodedCursor.startTime)
+        const sameFeaturedAfterCursor = {
+          isFeatured: decodedCursor.isFeatured,
+          OR: [
+            { startTime: { gt: cursorStartTime } },
+            { startTime: cursorStartTime, id: { gt: decodedCursor.id } },
+          ],
+        }
+
+        where.AND = [
+          {
+            OR: decodedCursor.isFeatured
+              ? [sameFeaturedAfterCursor, { isFeatured: false }]
+              : [sameFeaturedAfterCursor],
+          },
+        ]
+      } else {
+        where.id = { lt: cursor }
+      }
+    }
 
     const sessions = await prisma.activity.findMany({
       where,
@@ -172,16 +250,13 @@ export async function GET(request: Request) {
           select: { averageRating: true, totalReviews: true },
         },
       },
-      orderBy: [
-        { isFeatured: 'desc' },
-        { startTime: 'asc' },
-      ],
+      orderBy: [{ isFeatured: 'desc' }, { startTime: 'asc' }, { id: 'asc' }],
       take: PAGE_SIZE + 1,
     })
 
     const hasMore = sessions.length > PAGE_SIZE
     const items = hasMore ? sessions.slice(0, PAGE_SIZE) : sessions
-    const nextCursor = hasMore ? items[items.length - 1].id : null
+    const nextCursor = hasMore ? encodeSessionCursor(items[items.length - 1]) : null
 
     return NextResponse.json({
       sessions: items.map((a) => formatSession(a)),
@@ -228,8 +303,7 @@ interface SessionActivity {
 
 function formatSession(activity: SessionActivity, userStatus?: string) {
   const attendees = activity.userActivities ?? []
-  const isFull =
-    typeof activity.maxPeople === 'number' && attendees.length >= activity.maxPeople
+  const isFull = typeof activity.maxPeople === 'number' && attendees.length >= activity.maxPeople
 
   return {
     id: activity.id,

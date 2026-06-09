@@ -7,8 +7,8 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "clean": "turbo run clean && rm -rf node_modules",
-    "format": "prettier --write \"apps/web/src/**/*.{ts,tsx}\"",
-    "format:check": "prettier --check \"apps/web/src/**/*.{ts,tsx}\""
+    "format": "npm --prefix apps/web exec prettier -- --write \"apps/web/src/**/*.{ts,tsx}\"",
+    "format:check": "npm --prefix apps/web exec prettier -- --check \"apps/web/src/**/*.{ts,tsx}\""
   },
   "devDependencies": {
     "tsx": "^4.21.0",

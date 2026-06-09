@@ -9,6 +9,10 @@ function readRepoFile(relativePath: string) {
   return readFileSync(path.join(repoRoot, relativePath), 'utf8')
 }
 
+function readRepoJson<T>(relativePath: string): T {
+  return JSON.parse(readRepoFile(relativePath)) as T
+}
+
 function expectRoute(relativePath: string) {
   expect(existsSync(path.join(repoRoot, relativePath))).toBe(true)
 }
@@ -70,7 +74,9 @@ describe('route contracts', () => {
     expect(bangkokPage).toContain('Find Friends Through Fitness in Bangkok')
     expect(cityLanding).toContain('Find friends through fitness in Singapore.')
     expect(cityLanding).toContain('Find friends through fitness in Bangkok.')
-    expect(cityLanding).toContain('where movement gives everyone a reason to show up, talk, and come back')
+    expect(cityLanding).toContain(
+      'where movement gives everyone a reason to show up, talk, and come back',
+    )
     expect(cityLanding).toContain('Grow beyond Instagram, LINE, and word of mouth.')
     expect(cityLandingComponent).toContain("experiment: 'two_city_newcomer_wedge'")
     expect(proxy).toContain('/singapore')
@@ -148,14 +154,16 @@ describe('route contracts', () => {
   })
 
   it('reserves spots before creating Stripe checkout sessions', () => {
-    const marketplaceCheckout = readRepoFile('apps/web/src/app/api/create-checkout-session/route.ts')
+    const marketplaceCheckout = readRepoFile(
+      'apps/web/src/app/api/create-checkout-session/route.ts',
+    )
     const p2pCheckout = readRepoFile('apps/web/src/app/api/buddy/sessions/[id]/join/route.ts')
 
     expect(marketplaceCheckout.indexOf('reservedBooking = await prisma.$transaction')).toBeLessThan(
-      marketplaceCheckout.indexOf('stripe.checkout.sessions.create')
+      marketplaceCheckout.indexOf('stripe.checkout.sessions.create'),
     )
     expect(p2pCheckout.indexOf('userActivity = await prisma.$transaction')).toBeLessThan(
-      p2pCheckout.indexOf('stripe.checkout.sessions.create')
+      p2pCheckout.indexOf('stripe.checkout.sessions.create'),
     )
   })
 
@@ -176,5 +184,29 @@ describe('route contracts', () => {
 
     const dailyJobs = readRepoFile('apps/web/src/app/api/cron/daily-jobs/route.ts')
     expect(dailyJobs).toContain('expireStalePendingReservations')
+  })
+
+  it('keeps buddy session pagination aligned to the listing sort order', () => {
+    const sessionsRoute = readRepoFile('apps/web/src/app/api/buddy/sessions/route.ts')
+
+    expect(sessionsRoute).toContain('function encodeSessionCursor')
+    expect(sessionsRoute).toContain('isFeatured: session.isFeatured')
+    expect(sessionsRoute).toContain('startTime: session.startTime.toISOString()')
+    expect(sessionsRoute).toContain("{ isFeatured: 'desc' }")
+    expect(sessionsRoute).toContain("{ startTime: 'asc' }")
+    expect(sessionsRoute).toContain("{ id: 'asc' }")
+    expect(sessionsRoute).toContain('encodeSessionCursor(items[items.length - 1])')
+  })
+
+  it('keeps root and active Vercel cron schedules aligned', () => {
+    type VercelConfig = { crons?: { path: string; schedule: string }[] }
+    const rootConfig = readRepoJson<VercelConfig>('vercel.json')
+    const appConfig = readRepoJson<VercelConfig>('apps/web/vercel.json')
+
+    const normalize = (crons: { path: string; schedule: string }[] = []) =>
+      crons.map((cron) => `${cron.path} ${cron.schedule}`).sort()
+
+    expect(normalize(appConfig.crons)).toEqual(normalize(rootConfig.crons))
+    expect(normalize(appConfig.crons)).toContain('/api/cron/generate-recurring-sessions 0 2 * * *')
   })
 })

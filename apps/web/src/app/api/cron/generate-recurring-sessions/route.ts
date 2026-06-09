@@ -1,44 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isValidCronSecret } from '@/lib/cron-auth'
+import { DAY_MAP, getLocalDateString, getNextDatesForTimezone } from '@/lib/recurring-sessions'
 
 export const maxDuration = 60
 
 const CRON_SECRET = process.env.CRON_SECRET
-
-const DAY_MAP: Record<string, number> = {
-  SUNDAY: 0, MONDAY: 1, TUESDAY: 2, WEDNESDAY: 3,
-  THURSDAY: 4, FRIDAY: 5, SATURDAY: 6,
-}
-
-const SGT_OFFSET = 8
-
-function getNextDates(dayOfWeek: number, startTime: string, fromDate: Date, count: number): Date[] {
-  const dates: Date[] = []
-  const [hours, minutes] = startTime.split(':').map(Number)
-  const sgtNow = new Date(fromDate.getTime() + SGT_OFFSET * 60 * 60 * 1000)
-  const currentDayOfWeek = sgtNow.getUTCDay()
-
-  let daysUntil = dayOfWeek - currentDayOfWeek
-  if (daysUntil < 0) daysUntil += 7
-  if (daysUntil === 0) {
-    const todaySGT = new Date(Date.UTC(sgtNow.getUTCFullYear(), sgtNow.getUTCMonth(), sgtNow.getUTCDate(), hours - SGT_OFFSET, minutes))
-    if (todaySGT.getTime() <= fromDate.getTime()) daysUntil = 7
-  }
-
-  for (let i = 0; i < count; i++) {
-    const targetDaysFromNow = daysUntil + i * 7
-    const targetDateSGT = new Date(sgtNow.getUTCFullYear(), sgtNow.getUTCMonth(), sgtNow.getUTCDate() + targetDaysFromNow)
-    const utcDate = new Date(Date.UTC(targetDateSGT.getFullYear(), targetDateSGT.getMonth(), targetDateSGT.getDate(), hours - SGT_OFFSET, minutes))
-    dates.push(utcDate)
-  }
-  return dates
-}
-
-function toSGTDateString(utcDate: Date): string {
-  const sgt = new Date(utcDate.getTime() + SGT_OFFSET * 60 * 60 * 1000)
-  return sgt.toISOString().split('T')[0]
-}
 
 /**
  * GET /api/cron/generate-recurring-sessions
@@ -81,7 +48,13 @@ export async function GET(request: NextRequest) {
         for (const dayName of template.daysOfWeek) {
           const dayNum = DAY_MAP[dayName]
           if (dayNum === undefined) continue
-          const dates = getNextDates(dayNum, template.startTime, now, 4)
+          const dates = getNextDatesForTimezone(
+            dayNum,
+            template.startTime,
+            now,
+            4,
+            template.timezone,
+          )
           datesToGenerate.push(...dates)
         }
 
@@ -89,7 +62,7 @@ export async function GET(request: NextRequest) {
         const filteredDates = datesToGenerate.filter((d) => {
           if (template.endDate && d > template.endDate) return false
           // Filter out skipped dates
-          const dateStr = toSGTDateString(d)
+          const dateStr = getLocalDateString(d, template.timezone)
           if (template.skippedDates.includes(dateStr)) return false
           return true
         })
@@ -105,14 +78,18 @@ export async function GET(request: NextRequest) {
         })
 
         const existingTimes = new Set(
-          existingActivities.filter((a) => a.startTime !== null).map((a) => a.startTime!.getTime())
+          existingActivities.filter((a) => a.startTime !== null).map((a) => a.startTime!.getTime()),
         )
 
         const newDates = filteredDates.filter((d) => !existingTimes.has(d.getTime()))
 
         // Map category to legacy type
         const typeMap: Record<string, string> = {
-          running: 'RUN', gym: 'GYM', yoga: 'YOGA', hiking: 'HIKE', cycling: 'CYCLING',
+          running: 'RUN',
+          gym: 'GYM',
+          yoga: 'YOGA',
+          hiking: 'HIKE',
+          cycling: 'CYCLING',
         }
         const activityType = typeMap[template.categorySlug ?? ''] ?? 'OTHER'
         const activityMode = template.price && template.price > 0 ? 'P2P_PAID' : 'P2P_FREE'

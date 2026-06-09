@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getCurrentDbUser } from '@/lib/current-user'
+import { inferSessionTimezone } from '@/lib/recurring-sessions'
 
 /**
  * GET /api/coaches/templates
@@ -31,10 +32,7 @@ export async function GET() {
     return NextResponse.json({ templates })
   } catch (error) {
     console.error('List templates error:', error)
-    return NextResponse.json(
-      { error: 'Failed to list templates' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to list templates' }, { status: 500 })
   }
 }
 
@@ -75,8 +73,10 @@ export async function POST(request: NextRequest) {
       whatToBring,
       locationName,
       address,
+      city,
       latitude,
       longitude,
+      timezone,
     } = body
 
     // Validate required fields
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     if (!sessionType || !validSessionTypes.includes(sessionType)) {
       return NextResponse.json(
         { error: `sessionType must be one of: ${validSessionTypes.join(', ')}` },
-        { status: 400 }
+        { status: 400 },
       )
     }
 
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
       if (!validDays.includes(day)) {
         return NextResponse.json(
           { error: `Invalid day: ${day}. Must be one of: ${validDays.join(', ')}` },
-          { status: 400 }
+          { status: 400 },
         )
       }
     }
@@ -108,6 +108,17 @@ export async function POST(request: NextRequest) {
     if (!startTime || !/^\d{2}:\d{2}$/.test(startTime)) {
       return NextResponse.json({ error: 'startTime must be in HH:mm format' }, { status: 400 })
     }
+
+    const latitudeNum = latitude != null && latitude !== '' ? Number(latitude) : null
+    const longitudeNum = longitude != null && longitude !== '' ? Number(longitude) : null
+    const cityText = typeof city === 'string' ? city : null
+    const templateTimezone = inferSessionTimezone({
+      timezone: typeof timezone === 'string' ? timezone : null,
+      city: cityText,
+      address,
+      latitude: latitudeNum,
+      longitude: longitudeNum,
+    })
 
     const template = await prisma.sessionTemplate.create({
       data: {
@@ -119,24 +130,23 @@ export async function POST(request: NextRequest) {
         daysOfWeek,
         startTime,
         endTime: endTime || null,
+        timezone: templateTimezone,
         price: price != null ? Number(price) : null,
         currency: currency || 'SGD',
         maxParticipants: maxParticipants != null ? Number(maxParticipants) : null,
         fitnessLevel: fitnessLevel || null,
         whatToBring: whatToBring?.trim() || null,
         locationName: locationName?.trim() || null,
+        city: cityText?.trim() || null,
         address: address?.trim() || null,
-        latitude: latitude != null ? Number(latitude) : null,
-        longitude: longitude != null ? Number(longitude) : null,
+        latitude: latitudeNum,
+        longitude: longitudeNum,
       },
     })
 
     return NextResponse.json(template, { status: 201 })
   } catch (error) {
     console.error('Create template error:', error)
-    return NextResponse.json(
-      { error: 'Failed to create template' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to create template' }, { status: 500 })
   }
 }

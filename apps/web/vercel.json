@@ -12,6 +12,10 @@
       "schedule": "0 1 * * *"
     },
     {
+      "path": "/api/cron/generate-recurring-sessions",
+      "schedule": "0 2 * * *"
+    },
+    {
       "path": "/api/cron/weekly-pulse",
       "schedule": "0 0 * * 1"
     }

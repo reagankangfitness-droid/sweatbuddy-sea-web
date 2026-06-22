@@ -4,13 +4,11 @@ import { Metadata } from 'next'
 import {
   ArrowRight,
   CalendarDays,
-  CreditCard,
   MapPin,
-  Megaphone,
-  Repeat2,
   Search,
+  ShieldCheck,
+  Sparkles,
   TicketCheck,
-  UserRoundCheck,
   UsersRound,
 } from 'lucide-react'
 import { LogoWithText } from '@/components/logo'
@@ -22,16 +20,36 @@ import { prisma } from '@/lib/prisma'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'SweatBuddies — Find Friends Through Fitness',
+  title: 'SweatBuddies - Fitness Communities in Bangkok and Singapore',
   description:
-    'Join local fitness crews across Singapore and Bangkok where movement gives everyone a reason to show up, talk, and come back.',
+    'Discover local run clubs, yoga, pickleball, strength, and recovery sessions in Bangkok and Singapore.',
+}
+
+const activityFilters = [
+  { label: 'Running', href: '/buddy?cat=running' },
+  { label: 'Yoga', href: '/buddy?cat=yoga' },
+  { label: 'Pickleball', href: '/buddy?cat=pickleball' },
+  { label: 'Strength', href: '/buddy?cat=strength' },
+  { label: 'Recovery', href: '/buddy?cat=recovery' },
+  { label: 'Social', href: '/buddy?cat=social' },
+]
+
+const fallbackImages: Record<string, string> = {
+  running: '/banner/running.jpg',
+  run: '/banner/running.jpg',
+  yoga: '/images/hero-bg.jpg',
+  pickleball: '/images/community-bonds.jpg',
+  strength: '/banner/athletics.jpg',
+  hiit: '/images/connect-people.webp',
+  recovery: '/banner/ice-bath.webp',
+  social: '/images/hosts/run-club-group.jpg',
 }
 
 export default async function HomePage() {
   const now = new Date()
   const oneWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
 
-  const [communityCount, sessionsThisWeek, upcomingSessions, cities] = await Promise.all([
+  const [communityCount, sessionsThisWeek, upcomingSessions] = await Promise.all([
     prisma.community.count({ where: { isActive: true } }),
     prisma.activity.count({
       where: {
@@ -54,519 +72,310 @@ export default async function HomePage() {
         startTime: true,
         city: true,
         address: true,
-        _count: { select: { userActivities: { where: { status: { in: ['JOINED', 'COMPLETED'] } } } } },
+        categorySlug: true,
+        imageUrl: true,
+        price: true,
+        currency: true,
+        fitnessLevel: true,
+        maxPeople: true,
+        user: { select: { name: true } },
+        host: { select: { name: true } },
+        community: { select: { name: true, slug: true } },
+        _count: {
+          select: { userActivities: { where: { status: { in: ['JOINED', 'COMPLETED'] } } } },
+        },
       },
-      orderBy: { startTime: 'asc' },
-      take: 5,
-    }),
-    prisma.city.findMany({
-      where: { isLaunched: true, communityCount: { gt: 0 } },
-      select: { name: true, communityCount: true },
-      orderBy: { communityCount: 'desc' },
+      orderBy: [{ isFeatured: 'desc' }, { startTime: 'asc' }, { id: 'asc' }],
+      take: 8,
     }),
   ])
 
-  const curatedPhotos = [
-    { src: '/images/community-bonds.jpg', label: 'Pickleball crews', href: '/buddy' },
-    { src: '/images/hosts/run-club-group.jpg', label: 'Run club regulars', href: '/buddy' },
-    { src: '/images/hero-2.jpg', label: 'Park wellness crews', href: '/singapore' },
-    { src: '/banner/running.jpg', label: 'Post-run circles', href: '/buddy' },
-    { src: '/images/connect-people.webp', label: 'Outdoor strength', href: '/buddy' },
-    { src: '/banner/athletics.jpg', label: 'Beach training groups', href: '/buddy' },
-    { src: '/images/hero-1.webp', label: 'City run clubs', href: '/buddy' },
-    { src: '/images/hero-3.jpg', label: 'Recovery circles', href: '/host' },
-  ]
-
-  const fallbackPhotos = [
-    { src: '/banner/running.jpg', label: 'Run crews', href: '/buddy' },
-    { src: '/images/hero-bg.jpg', label: 'Park yoga', href: '/buddy' },
-    { src: '/banner/athletics.jpg', label: 'Strength clubs', href: '/buddy' },
-    { src: '/banner/run-club.jpg', label: 'Post-session people', href: '/buddy' },
-    { src: '/banner/ice-bath.webp', label: 'Recovery circles', href: '/buddy' },
-  ]
-
-  const photos = uniquePhotos(curatedPhotos).slice(0, 8)
-  const railPhotos = photos.length >= 3 ? photos : fallbackPhotos
-
-  function formatSessionTime(date: Date): string {
-    const TZ = 'Asia/Singapore'
-    const diff = date.getTime() - now.getTime()
-    const hours = diff / (1000 * 60 * 60)
-    const time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: TZ })
-    const todaySG = now.toLocaleDateString('en-CA', { timeZone: TZ })
-    const dateSG = date.toLocaleDateString('en-CA', { timeZone: TZ })
-    const tomorrowDate = new Date(now.getTime() + 24 * 60 * 60 * 1000)
-    const tomorrowSG = tomorrowDate.toLocaleDateString('en-CA', { timeZone: TZ })
-    if (hours < 2 && hours > 0) return `In ${Math.round(hours * 60)} min`
-    if (dateSG === todaySG) return `Today ${time}`
-    if (dateSG === tomorrowSG) return `Tomorrow ${time}`
-    return date.toLocaleDateString('en-US', { weekday: 'short', timeZone: TZ }) + ` ${time}`
-  }
-
+  const featuredSessions = upcomingSessions.slice(0, 6)
   const proofItems = [
-    { value: communityCount > 0 ? `${communityCount}` : 'Live', label: 'local crews' },
-    { value: sessionsThisWeek > 0 ? `${sessionsThisWeek}` : 'New', label: 'sessions this week' },
-    { value: cities.length > 0 ? `${cities.length}` : 'SEA', label: 'cities growing' },
-  ]
-
-  const memberSteps = [
     {
-      icon: Search,
-      title: 'Stop starting from zero',
-      body: 'Find beginner-friendly run clubs, yoga groups, pickleball crews, bootcamps, and recovery sessions that already welcome new people.',
+      value: sessionsThisWeek > 0 ? sessionsThisWeek.toString() : 'Live',
+      label: 'sessions this week',
     },
     {
-      icon: TicketCheck,
-      title: 'Arrive with context',
-      body: 'See the host, timing, location, price, and who else is going before you walk in.',
+      value: communityCount > 0 ? communityCount.toString() : 'Growing',
+      label: 'local communities',
     },
-    {
-      icon: Repeat2,
-      title: 'Build repeat familiarity',
-      body: 'Go once, recognize people the next time, and let consistency turn strangers into regulars.',
-    },
-  ]
-
-  const hostBenefits = [
-    { icon: Megaphone, title: 'Reach first-timers', body: 'Get discovered by newcomers and long-stay visitors looking for a group to join this week.' },
-    { icon: CreditCard, title: 'Move past messy chats', body: 'Run free sessions or collect paid spots without chasing RSVPs across DMs.' },
-    { icon: UserRoundCheck, title: 'Build repeat members', body: 'Track capacity, attendees, and returning faces before people arrive.' },
+    { value: '2', label: 'cities' },
   ]
 
   return (
-    <div className="min-h-screen bg-[#080808] text-[#FAFAFA]">
-      <header className="sticky top-0 z-30 bg-[#080808]/90 backdrop-blur-xl border-b border-white/[0.08]">
-        <div className="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
-          <LogoWithText size={28} color="#FFFFFF" textColor="#FFFFFF" />
-          <nav className="flex items-center gap-3">
-            <LandingIntentCapture
-              type="USER"
-              sourcePlacement="nav_find_crew"
-              ctaLabel="Find a crew"
-              successHref="/buddy"
-              className="hidden sm:inline text-sm font-medium text-white/65 hover:text-white transition-colors"
+    <div className="min-h-screen bg-[#F7F7F2] text-[#171717]">
+      <header className="sticky top-0 z-40 border-b border-black/[0.08] bg-[#F7F7F2]/92 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
+          <Link href="/" aria-label="SweatBuddies home">
+            <LogoWithText size={28} color="#111111" textColor="#111111" />
+          </Link>
+          <nav className="flex items-center gap-2 sm:gap-3">
+            <TrackedLink
+              href="/buddy"
+              event={EVENTS.LANDING_CTA_CLICKED}
+              metadata={{ placement: 'nav_explore', destination: '/buddy' }}
+              className="hidden rounded-full px-4 py-2 text-sm font-semibold text-black/62 transition-colors hover:bg-black/[0.04] hover:text-black sm:inline-flex"
             >
-              Find a crew
-            </LandingIntentCapture>
+              Explore
+            </TrackedLink>
             <LandingIntentCapture
               type="HOST"
-              sourcePlacement="nav_start_hosting"
-              ctaLabel="Start hosting"
+              sourcePlacement="nav_list_community"
+              ctaLabel="List your community"
               successHref="/host"
-              className="px-4 py-2.5 bg-white text-black text-xs sm:text-sm font-bold uppercase tracking-wide rounded-full hover:bg-neutral-200 transition-colors"
+              className="rounded-full bg-[#171717] px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:bg-black sm:px-5"
             >
-              Start hosting
+              List your community
             </LandingIntentCapture>
           </nav>
         </div>
       </header>
 
-      <main className="overflow-x-hidden">
-        <section className="relative min-h-[calc(100svh-132px)] sm:min-h-[640px] px-5 py-10 sm:py-16 flex items-end overflow-hidden">
-          <Image
-            src="/images/hero-bg.jpg"
-            alt="A local outdoor fitness community moving together"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,8,8,0.92)_0%,rgba(8,8,8,0.70)_42%,rgba(8,8,8,0.18)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#080808] to-transparent" />
+      <main>
+        <section className="px-5 pb-12 pt-8 sm:pb-16 sm:pt-12">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-start">
+              <div className="lg:sticky lg:top-28">
+                <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-black/45">
+                  Bangkok and Singapore
+                </p>
+                <h1 className="mt-4 max-w-2xl text-4xl font-extrabold leading-[0.98] tracking-tight text-[#111111] sm:text-6xl lg:text-7xl">
+                  Find fitness sessions near you.
+                </h1>
+                <p className="mt-5 max-w-xl text-base leading-7 text-black/62 sm:text-lg">
+                  Run clubs, yoga, pickleball, strength, and recovery sessions you can join this
+                  week.
+                </p>
 
-          <div className="relative max-w-6xl mx-auto w-full">
-            <div className="max-w-3xl">
-              <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-[#B7F000]">
-                Social fitness in Singapore and Bangkok
-              </p>
-              <h1 className="text-5xl sm:text-7xl font-extrabold leading-[0.98] tracking-tight text-white max-w-3xl">
-                Find friends through fitness.
-              </h1>
-              <p className="mt-6 max-w-xl text-base sm:text-lg leading-8 text-white/78">
-                Join local crews across Singapore and Bangkok where movement gives everyone a reason to show up, talk, and come back.
-              </p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                <LandingIntentCapture
-                  type="USER"
-                  city="Singapore"
-                  sourcePlacement="hero_singapore"
-                  ctaLabel="Find my first crew in Singapore"
-                  successHref="/singapore"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-4 bg-[#B7F000] text-[#111111] text-sm font-bold uppercase tracking-wide rounded-full hover:bg-[#A6DE00] transition-colors"
-                >
-                  Find my first crew <ArrowRight size={17} strokeWidth={2.4} />
-                </LandingIntentCapture>
-                <LandingIntentCapture
-                  type="USER"
-                  city="Bangkok"
-                  sourcePlacement="hero_bangkok"
-                  ctaLabel="Find my first crew in Bangkok"
-                  successHref="/bangkok"
-                  className="inline-flex items-center justify-center gap-2 px-7 py-4 border border-white/25 text-white text-sm font-bold uppercase tracking-wide rounded-full hover:bg-white/10 transition-colors"
-                >
-                  Find Bangkok crews
-                </LandingIntentCapture>
-              </div>
-            </div>
-
-            <div className="mt-10 grid grid-cols-3 max-w-xl border-y border-white/15 bg-black/20 backdrop-blur-sm">
-              {proofItems.map((item) => (
-                <div key={item.label} className="px-4 py-4 border-r border-white/10 last:border-r-0">
-                  <p className="text-2xl sm:text-3xl font-extrabold tracking-tight">{item.value}</p>
-                  <p className="mt-1 text-[11px] sm:text-xs uppercase tracking-wide text-white/58">{item.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="px-5 py-14 sm:py-20 border-y border-white/[0.06] bg-[#F7F7F2] text-[#111111]">
-          <div className="max-w-6xl mx-auto grid lg:grid-cols-[0.95fr_1.05fr] gap-8 lg:gap-14 items-center">
-            <div>
-              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-[#4F8F46]">Moved here recently?</p>
-              <h2 className="mt-3 max-w-2xl text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight text-[#111111]">
-                Start with a run, game, workout, or recovery session.
-              </h2>
-              <p className="mt-5 max-w-xl text-base leading-8 text-black/62">
-                The easiest way into a city is a recurring plan with people who already chose the same thing. SweatBuddies points you toward crews where coming alone is normal.
-              </p>
-              <div className="mt-7 flex flex-col sm:flex-row gap-3">
-                <LandingIntentCapture
-                  type="USER"
-                  city="Singapore"
-                  sourcePlacement="homepage_city_section_singapore"
-                  ctaLabel="Find a crew in Singapore"
-                  successHref="/singapore"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#B7F000] px-7 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] hover:bg-[#A6DE00] transition-colors"
-                >
-                  Singapore <ArrowRight size={17} />
-                </LandingIntentCapture>
-                <LandingIntentCapture
-                  type="USER"
-                  city="Bangkok"
-                  sourcePlacement="homepage_city_section_bangkok"
-                  ctaLabel="Find a crew in Bangkok"
-                  successHref="/bangkok"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-black/15 px-7 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] hover:bg-black/[0.04] transition-colors"
-                >
-                  Bangkok
-                </LandingIntentCapture>
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-3 gap-3">
-              {[
-                { title: 'Show up solo', body: 'Pick sessions that make the first step obvious before you leave home.' },
-                { title: 'Meet through movement', body: 'Run, play, stretch, train, or recover with people who already chose the same plan.' },
-                { title: 'Return familiar', body: 'The goal is not one event. It is finding people you can recognize next week.' },
-              ].map((item) => (
-                <div key={item.title} className="rounded-lg border border-black/10 bg-white p-5 shadow-[0_18px_50px_rgba(0,0,0,0.08)]">
-                  <h3 className="text-sm font-extrabold text-[#111111]">{item.title}</h3>
-                  <p className="mt-3 text-xs leading-5 text-black/58">{item.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="px-5 py-12 sm:py-16">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#B7F000]">Real crews nearby</p>
-                <h2 className="mt-2 text-2xl sm:text-4xl font-bold tracking-tight">Communities you can actually join.</h2>
-              </div>
-              <TrackedLink
-                href="/communities"
-                event={EVENTS.LANDING_CTA_CLICKED}
-                metadata={{ placement: 'community_rail_browse', destination: '/communities' }}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-white/70 hover:text-white"
-              >
-                Browse crews <ArrowRight size={16} />
-              </TrackedLink>
-            </div>
-
-            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-              {railPhotos.map((p, i) => (
-                <TrackedLink
-                  key={`${p.href}-${i}`}
-                  href={p.href}
-                  event={EVENTS.LANDING_CTA_CLICKED}
-                  metadata={{ placement: 'community_rail_card', destination: p.href, label: p.label, position: i + 1 }}
-                  className="group relative flex-shrink-0 w-52 h-72 sm:w-64 sm:h-80 overflow-hidden rounded-lg bg-[#171717]"
-                >
-                  <Image
-                    src={p.src}
-                    alt={p.label}
-                    fill
-                    sizes="(min-width: 640px) 256px, 208px"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
-                  <p className="absolute bottom-4 left-4 right-4 text-sm font-bold text-white truncate">{p.label}</p>
-                </TrackedLink>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="px-5 py-14 sm:py-20 border-y border-white/[0.06] bg-[#0D0D0D]">
-          <div className="max-w-6xl mx-auto grid lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-16 items-start">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">For members</p>
-              <h2 className="mt-3 text-3xl sm:text-5xl font-bold tracking-tight leading-tight">
-                Stop walking into fitness spaces cold.
-              </h2>
-              <p className="mt-5 text-base leading-8 text-white/62 max-w-md">
-                Choose a session where the activity, host, time, and group are clear before you arrive, so meeting people starts with something to do.
-              </p>
-            </div>
-
-            <div className="grid sm:grid-cols-3 gap-3">
-              {memberSteps.map((step) => {
-                const Icon = step.icon
-                return (
-                  <div key={step.title} className="rounded-lg border border-white/[0.08] bg-white/[0.035] p-5">
-                    <Icon className="text-white/82" size={22} strokeWidth={2.2} />
-                    <h3 className="mt-5 text-base font-bold">{step.title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-white/55">{step.body}</p>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </section>
-
-        <section className="grid grid-cols-1 lg:grid-cols-2">
-          <div className="relative min-h-[460px] overflow-hidden">
-            <Image
-              src="/images/organizers-bg.jpg"
-              alt="A fitness community smiling together after a session"
-              fill
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-white/65">Member promise</p>
-              <h2 className="mt-3 max-w-md text-3xl sm:text-5xl font-bold tracking-tight leading-tight">
-                No more showing up wondering where you fit.
-              </h2>
-            </div>
-          </div>
-
-          <div className="bg-[#F7F7F2] text-[#111111] px-5 py-14 sm:p-12 lg:p-16 flex items-center">
-            <div className="w-full max-w-xl mx-auto">
-              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-[#4F8F46]">For hosts</p>
-              <h2 className="mt-3 text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight text-[#111111]">
-                Bring first-timers in before they know who to ask.
-              </h2>
-              <p className="mt-5 text-base leading-8 text-black/65">
-                Newcomers and long-stay visitors are actively looking for friendly crews in Singapore and Bangkok. Give them a clear session page instead of another buried story, LINE thread, or WhatsApp invite.
-              </p>
-
-              <div className="mt-8 overflow-hidden rounded-lg border border-black/10 bg-black">
-                <div className="relative h-56 sm:h-64">
-                  <Image
-                    src="/images/hosts/run-club-group.jpg"
-                    alt="A local fitness crew smiling together after a session"
-                    fill
-                    sizes="(min-width: 1024px) 42vw, 100vw"
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
-                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/65">Host proof</p>
-                    <p className="mt-1 max-w-sm text-xl font-extrabold leading-tight text-white">
-                      Real crews. Clear sessions. First-timers who know how to show up.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-8 rounded-lg border border-black/10 bg-white text-[#111111] shadow-[0_18px_60px_rgba(0,0,0,0.16)] overflow-hidden">
-                <div className="flex items-center justify-between border-b border-black/10 px-5 py-4">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-[#4F8F46]">Host hub</p>
-                    <p className="text-lg font-extrabold text-[#111111]">Saturday crew session</p>
-                  </div>
-                  <span className="rounded-full bg-[#B7F000] px-3 py-1 text-xs font-bold text-[#111111]">12 going</span>
-                </div>
-                <div className="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-black/10">
-                  {hostBenefits.map((benefit) => {
-                    const Icon = benefit.icon
-                    return (
-                      <div key={benefit.title} className="p-5 text-[#111111]">
-                        <Icon size={21} strokeWidth={2.2} className="text-[#111111]" />
-                        <h3 className="mt-4 text-sm font-extrabold text-[#111111]">{benefit.title}</h3>
-                        <p className="mt-2 text-xs leading-5 text-black/62">{benefit.body}</p>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-
-              <LandingIntentCapture
-                type="HOST"
-                sourcePlacement="host_section_start_hosting"
-                ctaLabel="Start hosting"
-                successHref="/host"
-                className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#B7F000] px-7 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] hover:bg-[#A6DE00] transition-colors"
-              >
-                Start hosting <ArrowRight size={17} />
-              </LandingIntentCapture>
-            </div>
-          </div>
-        </section>
-
-        <section className="px-5 py-14 sm:py-20">
-          <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-16">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#B7F000]">Where it is growing</p>
-              <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">Movement gives people a reason to come back.</h2>
-              <p className="mt-4 text-sm leading-7 text-white/55 max-w-lg">
-                The wedge is simple: people want healthier ways to meet, and fitness makes repeated social plans feel natural instead of forced.
-              </p>
-              <div className="mt-7 flex flex-wrap gap-2">
-                {[
-                  { name: 'Singapore', href: '/singapore', count: 'Premium, trust-first crews' },
-                  { name: 'Bangkok', href: '/bangkok', count: 'Energetic, fragmented discovery' },
-                ].map((c) => (
-                  <TrackedLink
-                    key={c.name}
-                    href={c.href}
-                    event={EVENTS.LANDING_CTA_CLICKED}
-                    metadata={{ placement: 'launch_city_pill', destination: c.href, city: c.name, experiment: 'two_city_newcomer_wedge' }}
-                    className="rounded-full border border-white/[0.08] bg-white/[0.035] px-4 py-2 text-sm text-white/68 hover:border-white/20 hover:text-white transition-colors"
-                  >
-                    <span className="font-bold text-white">{c.name}</span> {c.count}
-                  </TrackedLink>
-                ))}
-              </div>
-              {cities.length > 0 && (
-                <div className="mt-7 flex flex-wrap gap-2">
-                  {cities.map((c) => (
+                <div className="mt-7 overflow-hidden rounded-[28px] border border-black/10 bg-white shadow-[0_18px_60px_rgba(0,0,0,0.08)]">
+                  <div className="grid divide-y divide-black/10 sm:grid-cols-4 sm:divide-x sm:divide-y-0">
+                    <SearchField label="Where" value="Bangkok or Singapore" href="/buddy" />
+                    <SearchField label="Activity" value="Run, yoga, pickleball" href="/buddy" />
+                    <SearchField label="When" value="This week" href="/buddy" />
                     <TrackedLink
-                      key={c.name}
                       href="/buddy"
                       event={EVENTS.LANDING_CTA_CLICKED}
-                      metadata={{ placement: 'city_pill', destination: '/buddy', city: c.name, communityCount: c.communityCount }}
-                      className="rounded-full border border-white/[0.08] bg-white/[0.035] px-4 py-2 text-sm text-white/68 hover:border-white/20 hover:text-white transition-colors"
+                      metadata={{ placement: 'hero_search_button', destination: '/buddy' }}
+                      className="flex items-center justify-center gap-2 bg-[#B7F000] px-5 py-4 text-sm font-extrabold text-[#111111] transition-colors hover:bg-[#A6DE00]"
                     >
-                      {c.name} <span className="font-bold text-white">{c.communityCount}</span>
+                      <Search size={18} strokeWidth={2.4} />
+                      Search
                     </TrackedLink>
+                  </div>
+                </div>
+
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <CityPill href="/singapore" label="Singapore" />
+                  <CityPill href="/bangkok" label="Bangkok" />
+                  <CityPill href="/buddy?solo=true" label="Come solo" />
+                </div>
+
+                <div className="mt-8 grid max-w-xl grid-cols-3 divide-x divide-black/10 border-y border-black/10">
+                  {proofItems.map((item) => (
+                    <div key={item.label} className="px-4 py-4 first:pl-0">
+                      <p className="text-2xl font-extrabold tracking-tight text-[#111111] sm:text-3xl">
+                        {item.value}
+                      </p>
+                      <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-black/45">
+                        {item.label}
+                      </p>
+                    </div>
                   ))}
                 </div>
-              )}
-            </div>
-
-            <div className="rounded-lg border border-white/[0.08] bg-white/[0.035] p-4 sm:p-5">
-              <div className="flex items-center justify-between gap-4 pb-4 border-b border-white/[0.08]">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/45">Happening soon</p>
-                  <h3 className="mt-1 text-xl font-bold">Join something this week</h3>
-                </div>
-                <CalendarDays className="text-white/55" size={22} />
               </div>
-              <div className="divide-y divide-white/[0.07]">
-                {upcomingSessions.length > 0 ? (
-                  upcomingSessions.map((s) => {
-                    const going = s._count.userActivities
-                    const location = s.address ? s.address.split(',')[0] : s.city
-                    return (
-                      <TrackedLink
-                        key={s.id}
-                        href={`/activities/${s.id}`}
-                        event={EVENTS.LANDING_CTA_CLICKED}
-                        metadata={{ placement: 'happening_soon_session', destination: `/activities/${s.id}`, sessionId: s.id }}
-                        className="group flex items-center gap-4 py-4"
-                      >
-                        <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-white text-black">
-                          <UsersRound size={18} strokeWidth={2.4} />
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-sm font-bold group-hover:text-white">{cleanText(s.title)}</span>
-                          <span className="mt-1 flex items-center gap-1 truncate text-xs text-white/45">
-                            {s.startTime ? formatSessionTime(s.startTime) : 'Time TBA'}
-                            {location && (
-                              <>
-                                <span>·</span>
-                                <MapPin size={12} />
-                                <span className="truncate">{cleanText(location)}</span>
-                              </>
-                            )}
-                          </span>
-                        </span>
-                        <span className="flex-shrink-0 text-xs font-semibold text-white/45">
-                          {going > 0 ? `${going} going` : 'New'}
-                        </span>
-                      </TrackedLink>
-                    )
-                  })
-                ) : (
+
+              <div>
+                <div className="mb-4 flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-black/42">
+                      Happening soon
+                    </p>
+                    <h2 className="mt-1 text-xl font-extrabold tracking-tight text-[#111111] sm:text-2xl">
+                      Join something this week
+                    </h2>
+                  </div>
                   <TrackedLink
                     href="/buddy"
                     event={EVENTS.LANDING_CTA_CLICKED}
-                    metadata={{ placement: 'happening_soon_empty', destination: '/buddy' }}
-                    className="flex items-center justify-between gap-4 py-5 text-sm text-white/65 hover:text-white"
+                    metadata={{ placement: 'hero_listing_view_all', destination: '/buddy' }}
+                    className="inline-flex items-center gap-1.5 text-sm font-bold text-black/58 transition-colors hover:text-black"
                   >
-                    Explore local crews
+                    View all
                     <ArrowRight size={16} />
                   </TrackedLink>
+                </div>
+
+                {featuredSessions.length > 0 ? (
+                  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                    {featuredSessions.map((session) => (
+                      <SessionCard key={session.id} session={session} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="rounded-[28px] border border-black/10 bg-white p-8 shadow-[0_18px_60px_rgba(0,0,0,0.08)]">
+                    <h2 className="text-2xl font-extrabold tracking-tight">
+                      New sessions are being added.
+                    </h2>
+                    <p className="mt-3 max-w-md text-sm leading-6 text-black/58">
+                      Browse crews now or list your own community to be part of the next drop.
+                    </p>
+                    <TrackedLink
+                      href="/buddy"
+                      event={EVENTS.LANDING_CTA_CLICKED}
+                      metadata={{ placement: 'hero_empty_explore', destination: '/buddy' }}
+                      className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#171717] px-5 py-3 text-sm font-bold text-white"
+                    >
+                      Explore sessions <ArrowRight size={16} />
+                    </TrackedLink>
+                  </div>
                 )}
               </div>
             </div>
           </div>
         </section>
 
-        <section className="px-5 py-16 sm:py-24 border-t border-white/[0.06]">
-          <div className="max-w-3xl mx-auto text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#B7F000]">Start with one session</p>
-            <h2 className="mt-3 text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight">
-              Find the crew you can come back to.
-            </h2>
-            <p className="mt-5 text-base leading-8 text-white/58">
-              Choose Singapore or Bangkok, pick one local session, and meet people through the movement instead of forcing the moment.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
+        <section className="border-y border-black/[0.08] bg-white px-5 py-8">
+          <div className="mx-auto flex max-w-7xl flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-black/42">
+                Browse by activity
+              </p>
+              <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#111111]">
+                Start with the kind of session you want.
+              </h2>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {activityFilters.map((filter) => (
+                <TrackedLink
+                  key={filter.label}
+                  href={filter.href}
+                  event={EVENTS.LANDING_CTA_CLICKED}
+                  metadata={{
+                    placement: 'activity_filter',
+                    destination: filter.href,
+                    activity: filter.label,
+                  }}
+                  className="rounded-full border border-black/10 bg-[#F7F7F2] px-4 py-2 text-sm font-bold text-black/68 transition-colors hover:border-black/25 hover:text-black"
+                >
+                  {filter.label}
+                </TrackedLink>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="px-5 py-12 sm:py-16">
+          <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
+            {[
+              {
+                icon: TicketCheck,
+                title: 'Know what you are joining',
+                body: 'See the host, time, location, price, and group context before you show up.',
+              },
+              {
+                icon: UsersRound,
+                title: 'Come solo without guessing',
+                body: 'Find sessions where meeting new people is normal, not an awkward side quest.',
+              },
+              {
+                icon: ShieldCheck,
+                title: 'Return to familiar faces',
+                body: 'Recurring communities make consistency easier than starting from zero every week.',
+              },
+            ].map((item) => {
+              const Icon = item.icon
+              return (
+                <div
+                  key={item.title}
+                  className="rounded-[24px] border border-black/10 bg-white p-6 shadow-[0_16px_50px_rgba(0,0,0,0.06)]"
+                >
+                  <Icon size={24} strokeWidth={2.2} className="text-black/76" />
+                  <h3 className="mt-5 text-lg font-extrabold tracking-tight text-[#111111]">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-black/58">{item.body}</p>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+
+        <section className="px-5 pb-14 sm:pb-20">
+          <div className="mx-auto grid max-w-7xl overflow-hidden rounded-[32px] bg-[#171717] text-white lg:grid-cols-[1.04fr_0.96fr]">
+            <div className="relative min-h-[320px]">
+              <Image
+                src="/images/hosts/run-club-group.jpg"
+                alt="A local run club gathered after a session"
+                fill
+                sizes="(min-width: 1024px) 52vw, 100vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+                <p className="inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-xs font-bold uppercase tracking-wide backdrop-blur">
+                  <Sparkles size={14} />
+                  For hosts
+                </p>
+              </div>
+            </div>
+            <div className="p-7 sm:p-10 lg:p-12">
+              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-white/42">
+                List your community
+              </p>
+              <h2 className="mt-3 max-w-xl text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl">
+                Fill sessions without sending people through messy chats.
+              </h2>
+              <p className="mt-5 max-w-lg text-sm leading-7 text-white/62 sm:text-base">
+                Give newcomers a clear page to discover your crew, book a spot, and come back next
+                week.
+              </p>
+              <div className="mt-7 grid gap-3 sm:grid-cols-3">
+                {['Recurring events', 'Paid spots', 'First-timer discovery'].map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 text-sm font-bold text-white/82"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
               <LandingIntentCapture
-                type="USER"
-                city="Singapore"
-                sourcePlacement="final_singapore"
-                ctaLabel="Find my first crew in Singapore"
-                successHref="/singapore"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#B7F000] px-8 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] hover:bg-[#A6DE00] transition-colors"
+                type="HOST"
+                sourcePlacement="host_section_list_community"
+                ctaLabel="List your community"
+                successHref="/host"
+                className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#B7F000] px-6 py-3.5 text-sm font-extrabold text-[#111111] transition-colors hover:bg-[#A6DE00]"
               >
-                Singapore <ArrowRight size={17} />
-              </LandingIntentCapture>
-              <LandingIntentCapture
-                type="USER"
-                city="Bangkok"
-                sourcePlacement="final_bangkok"
-                ctaLabel="Find my first crew in Bangkok"
-                successHref="/bangkok"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-8 py-4 text-sm font-bold uppercase tracking-wide text-white hover:bg-white/[0.06] transition-colors"
-              >
-                Bangkok
+                List your community <ArrowRight size={17} />
               </LandingIntentCapture>
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-white/[0.06] py-10 px-5">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="border-t border-black/[0.08] px-5 py-8">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row">
           <div className="flex items-center gap-2">
-            <LogoWithText size={16} color="#FFFFFF" textColor="#666666" />
-            <span className="text-xs text-[#666666]">&copy; 2026</span>
+            <LogoWithText size={16} color="#111111" textColor="#555555" />
+            <span className="text-xs text-black/45">&copy; 2026</span>
           </div>
-          <div className="flex flex-wrap justify-center gap-4 text-xs text-[#777777]">
-            <Link href="/buddy" className="hover:text-[#FAFAFA] transition-colors">Find a crew</Link>
-            <Link href="/singapore" className="hover:text-[#FAFAFA] transition-colors">Singapore</Link>
-            <Link href="/bangkok" className="hover:text-[#FAFAFA] transition-colors">Bangkok</Link>
-            <Link href="/communities" className="hover:text-[#FAFAFA] transition-colors">Crews</Link>
-            <Link href="/hub" className="hover:text-[#FAFAFA] transition-colors">Host Hub</Link>
-            <Link href="/support" className="hover:text-[#FAFAFA] transition-colors">Help</Link>
+          <div className="flex flex-wrap justify-center gap-4 text-xs font-semibold text-black/48">
+            <Link href="/buddy" className="transition-colors hover:text-black">
+              Explore
+            </Link>
+            <Link href="/singapore" className="transition-colors hover:text-black">
+              Singapore
+            </Link>
+            <Link href="/bangkok" className="transition-colors hover:text-black">
+              Bangkok
+            </Link>
+            <Link href="/host" className="transition-colors hover:text-black">
+              For hosts
+            </Link>
+            <Link href="/support" className="transition-colors hover:text-black">
+              Help
+            </Link>
           </div>
         </div>
       </footer>
@@ -574,15 +383,154 @@ export default async function HomePage() {
   )
 }
 
-function cleanText(value: string): string {
-  return value.replace(/\uFFFD+/g, ' ').replace(/\s+/g, ' ').trim()
+function SearchField({ label, value, href }: { label: string; value: string; href: string }) {
+  return (
+    <TrackedLink
+      href={href}
+      event={EVENTS.LANDING_CTA_CLICKED}
+      metadata={{ placement: `hero_search_${label.toLowerCase()}`, destination: href }}
+      className="block px-5 py-4 text-left transition-colors hover:bg-black/[0.03]"
+    >
+      <span className="block text-[11px] font-extrabold uppercase tracking-wide text-black/45">
+        {label}
+      </span>
+      <span className="mt-1 block truncate text-sm font-bold text-[#111111]">{value}</span>
+    </TrackedLink>
+  )
 }
 
-function uniquePhotos<T extends { src: string }>(photos: T[]): T[] {
-  const seen = new Set<string>()
-  return photos.filter((photo) => {
-    if (seen.has(photo.src)) return false
-    seen.add(photo.src)
-    return true
+function CityPill({ href, label }: { href: string; label: string }) {
+  return (
+    <TrackedLink
+      href={href}
+      event={EVENTS.LANDING_CTA_CLICKED}
+      metadata={{ placement: 'hero_quick_filter', destination: href, label }}
+      className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-bold text-black/62 transition-colors hover:border-black/25 hover:text-black"
+    >
+      {label}
+    </TrackedLink>
+  )
+}
+
+function SessionCard({
+  session,
+}: {
+  session: {
+    id: string
+    title: string
+    startTime: Date | null
+    city: string
+    address: string | null
+    categorySlug: string | null
+    imageUrl: string | null
+    price: number
+    currency: string
+    fitnessLevel: string | null
+    maxPeople: number | null
+    user: { name: string | null } | null
+    host: { name: string | null } | null
+    community: { name: string | null; slug: string | null } | null
+    _count: { userActivities: number }
+  }
+}) {
+  const category = cleanText(session.categorySlug || 'fitness')
+  const imageSrc =
+    session.imageUrl || fallbackImages[category.toLowerCase()] || '/images/hero-bg.jpg'
+  const location = cleanText(session.address?.split(',')[0] || session.city)
+  const hostName = cleanText(
+    session.community?.name || session.host?.name || session.user?.name || 'Local host',
+  )
+  const going = session._count.userActivities
+
+  return (
+    <TrackedLink
+      href={`/activities/${session.id}`}
+      event={EVENTS.LANDING_CTA_CLICKED}
+      metadata={{
+        placement: 'homepage_listing_card',
+        destination: `/activities/${session.id}`,
+        sessionId: session.id,
+      }}
+      className="group overflow-hidden rounded-[24px] border border-black/10 bg-white shadow-[0_18px_60px_rgba(0,0,0,0.08)] transition-all hover:-translate-y-0.5 hover:shadow-[0_22px_70px_rgba(0,0,0,0.12)]"
+    >
+      <div className="relative aspect-[4/3] overflow-hidden bg-black/5">
+        <Image
+          src={imageSrc}
+          alt={cleanText(session.title)}
+          fill
+          sizes="(min-width: 1280px) 260px, (min-width: 640px) 45vw, 100vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          unoptimized={Boolean(session.imageUrl)}
+        />
+        <div className="absolute left-3 top-3 rounded-full bg-white/92 px-3 py-1 text-xs font-extrabold capitalize text-[#111111] shadow-sm backdrop-blur">
+          {formatCategory(category)}
+        </div>
+        <div className="absolute right-3 top-3 rounded-full bg-[#171717]/90 px-3 py-1 text-xs font-extrabold text-white backdrop-blur">
+          {formatPrice(session.price, session.currency)}
+        </div>
+      </div>
+      <div className="p-4">
+        <h3 className="line-clamp-2 min-h-[2.5rem] text-base font-extrabold leading-tight tracking-tight text-[#111111]">
+          {cleanText(session.title)}
+        </h3>
+        <p className="mt-2 truncate text-sm font-semibold text-black/50">by {hostName}</p>
+        <div className="mt-4 space-y-2 text-sm text-black/58">
+          <p className="flex items-center gap-2 truncate">
+            <CalendarDays size={15} strokeWidth={2.2} className="shrink-0 text-black/42" />
+            <span className="truncate">{formatSessionTime(session.startTime, session.city)}</span>
+          </p>
+          <p className="flex items-center gap-2 truncate">
+            <MapPin size={15} strokeWidth={2.2} className="shrink-0 text-black/42" />
+            <span className="truncate">{location}</span>
+          </p>
+        </div>
+        <div className="mt-4 flex items-center justify-between gap-3 border-t border-black/10 pt-3 text-xs font-bold text-black/46">
+          <span>{going > 0 ? `${going} going` : 'New session'}</span>
+          <span>{formatLevel(session.fitnessLevel)}</span>
+        </div>
+      </div>
+    </TrackedLink>
+  )
+}
+
+function formatSessionTime(date: Date | null, city: string): string {
+  if (!date) return 'Time TBA'
+  const timezone = city.toLowerCase().includes('bangkok') ? 'Asia/Bangkok' : 'Asia/Singapore'
+  return date.toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: timezone,
   })
+}
+
+function formatPrice(price: number, currency: string): string {
+  if (!price) return 'Free'
+  try {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: 0,
+    }).format(price / 100)
+  } catch {
+    return `${currency} ${Math.round(price / 100)}`
+  }
+}
+
+function formatCategory(category: string): string {
+  return category.replace(/[-_]/g, ' ')
+}
+
+function formatLevel(level: string | null): string {
+  if (!level || level === 'ALL') return 'All levels'
+  return formatCategory(level).toLowerCase()
+}
+
+function cleanText(value: string): string {
+  return value
+    .replace(/\uFFFD+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
 }

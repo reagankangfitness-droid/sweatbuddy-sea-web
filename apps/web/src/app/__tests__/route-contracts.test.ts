@@ -18,7 +18,7 @@ function expectRoute(relativePath: string) {
 }
 
 describe('route contracts', () => {
-  it('keeps the public positioning centered on newcomer fitness crews in Singapore and Bangkok', () => {
+  it('keeps the public homepage centered on marketplace discovery in Singapore and Bangkok', () => {
     const homePage = readRepoFile('apps/web/src/app/page.tsx')
     const rootLayout = readRepoFile('apps/web/src/app/layout.tsx')
     const browsePage = readRepoFile('apps/web/src/app/browse/page.tsx')
@@ -34,12 +34,14 @@ describe('route contracts', () => {
     const cityLandingComponent = readRepoFile('apps/web/src/components/landing/CityLandingPage.tsx')
     const proxy = readRepoFile('apps/web/src/proxy.ts')
 
-    expect(homePage).toContain('Find friends through fitness.')
-    expect(homePage).toContain('Join local crews across Singapore and Bangkok')
-    expect(homePage).toContain('Bring first-timers in before they know who to ask.')
+    expect(homePage).toContain('Find fitness sessions near you.')
+    expect(homePage).toContain('Run clubs, yoga, pickleball, strength, and recovery sessions')
+    expect(homePage).toContain('Join something this week')
+    expect(homePage).toContain('Browse by activity')
+    expect(homePage).toContain('List your community')
     expect(homePage).toContain('/singapore')
     expect(homePage).toContain('/bangkok')
-    expect(homePage).toContain("experiment: 'two_city_newcomer_wedge'")
+    expect(homePage).toContain('/buddy?cat=running')
     expect(homePage).not.toContain('The OS for Fitness Community Leaders')
     expect(homePage).not.toContain('Your next crew is')
 

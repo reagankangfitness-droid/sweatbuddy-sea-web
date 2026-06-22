@@ -45,8 +45,8 @@ describe('route contracts', () => {
     expect(homePage).not.toContain('The OS for Fitness Community Leaders')
     expect(homePage).not.toContain('Your next crew is')
 
-    expect(rootLayout).toContain('SweatBuddies | Find Friends Through Fitness')
-    expect(rootLayout).toContain('Join local fitness crews across Singapore and Bangkok')
+    expect(rootLayout).toContain('SweatBuddies | Fitness Communities in Bangkok and Singapore')
+    expect(rootLayout).toContain('Discover local run clubs, yoga, pickleball')
     expect(rootLayout).not.toContain('Discover Fitness & Wellness Experiences')
     expect(rootLayout).not.toContain('fitness and wellness experiences')
 

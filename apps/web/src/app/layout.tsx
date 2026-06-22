@@ -37,9 +37,9 @@ const barlowCondensed = Barlow_Condensed({
 })
 
 const BASE_URL = 'https://www.sweatbuddies.co'
-const SITE_TITLE = 'SweatBuddies | Find Friends Through Fitness'
+const SITE_TITLE = 'SweatBuddies | Fitness Communities in Bangkok and Singapore'
 const SITE_DESCRIPTION =
-  'Join local fitness crews across Singapore and Bangkok where movement gives everyone a reason to show up, talk, and come back.'
+  'Discover local run clubs, yoga, pickleball, strength, and recovery sessions you can join this week.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -48,7 +48,18 @@ export const metadata: Metadata = {
     template: '%s | SweatBuddies',
   },
   description: SITE_DESCRIPTION,
-  keywords: ['new to Singapore', 'new to Bangkok', 'find friends through fitness', 'local fitness sessions', 'fitness crew', 'run club', 'yoga group', 'pickleball crew', 'workout community', 'find your crew', 'fitness belonging', 'group fitness', 'social fitness SEA'],
+  keywords: [
+    'Bangkok fitness sessions',
+    'Singapore fitness sessions',
+    'local fitness communities',
+    'run club',
+    'yoga group',
+    'pickleball crew',
+    'strength training',
+    'recovery sessions',
+    'fitness events',
+    'social fitness SEA',
+  ],
   authors: [{ name: 'SweatBuddies' }],
   creator: 'SweatBuddies',
   icons: {
@@ -68,7 +79,7 @@ export const metadata: Metadata = {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SweatBuddies — find your people through local fitness.',
+        alt: 'SweatBuddies local fitness communities in Bangkok and Singapore.',
       },
     ],
   },
@@ -109,7 +120,9 @@ export default function RootLayout({ children }: PropsWithChildren) {
         {/* Prefetch activities API for faster data loading */}
         <link rel="prefetch" href="/api/activities" as="fetch" crossOrigin="anonymous" />
       </head>
-      <body className={`${plusJakarta.variable} ${outfit.variable} ${dmSans.variable} ${barlowCondensed.variable} font-sans antialiased bg-[#0D0D0D] text-[#FAFAFA]`}>
+      <body
+        className={`${plusJakarta.variable} ${outfit.variable} ${dmSans.variable} ${barlowCondensed.variable} font-sans antialiased bg-[#0D0D0D] text-[#FAFAFA]`}
+      >
         <Providers>
           {children}
           <Toaster />

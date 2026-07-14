@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Loader2, X, ImagePlus, MapPin } from 'lucide-react'
 import { toast } from 'sonner'
+import { LogoWithText } from '@/components/logo'
 import { ACTIVITY_TYPES as ACTIVITY_TYPES_CONFIG } from '@/lib/activity-types'
 import { useUploadThing } from '@/lib/uploadthing'
 
@@ -182,19 +183,25 @@ export default function CreateCommunityPage() {
   const selectedType = ACTIVITY_TYPES.find((t) => t.slug === form.category)
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D]">
+    <div className="min-h-screen bg-[#0B0B0B] text-white">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-[#0D0D0D]/95 backdrop-blur-xl border-b border-[#333333]">
-        <div className="max-w-lg mx-auto px-4 py-4 flex items-center gap-3">
+      <div className="sticky top-0 z-10 border-b border-white/10 bg-[#0B0B0B]/95 backdrop-blur-xl">
+        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
           <button
             onClick={prevStep}
             aria-label="Go back"
-            className="p-1 -ml-1 rounded-lg hover:bg-[#0D0D0D]"
+            className="p-1 -ml-1 rounded-lg hover:bg-white/[0.06]"
           >
             <ArrowLeft className="w-5 h-5 text-[#666666]" />
           </button>
           <div className="flex-1">
-            <h1 className="text-base font-semibold text-white">Create a Community</h1>
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <LogoWithText size={24} color="#FFFFFF" textColor="#FFFFFF" />
+              <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+                Source setup
+              </p>
+            </div>
+            <h1 className="text-base font-semibold text-white">Submit a source page</h1>
             <div
               className="flex gap-1 mt-1"
               role="progressbar"
@@ -206,7 +213,7 @@ export default function CreateCommunityPage() {
                 <div
                   key={s}
                   className={`h-1 flex-1 rounded-full transition-colors ${
-                    i <= stepIdx ? 'bg-white' : 'bg-white/10'
+                    i <= stepIdx ? 'bg-[#63FF8F]' : 'bg-white/10'
                   }`}
                 />
               ))}
@@ -215,14 +222,17 @@ export default function CreateCommunityPage() {
         </div>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-8 pb-48 md:pb-32">
+      <div className="max-w-2xl mx-auto px-4 py-8 pb-48 md:pb-32">
         {/* Step 1: Basics */}
         {step === 'basics' && (
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-bold text-white">The basics</h2>
+              <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#63FF8F]">
+                Trust layer
+              </p>
+              <h2 className="mt-2 text-3xl font-bold tracking-tight text-white">Who hosts these plans?</h2>
               <p className="text-sm text-[#666666] mt-1">
-                Tell us about your community
+                Add the source people can trust before they join an event.
               </p>
             </div>
 
@@ -238,7 +248,7 @@ export default function CreateCommunityPage() {
                 placeholder="e.g. Marina Bay Run Club"
                 maxLength={60}
                 aria-required="true"
-                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
+                className="w-full rounded-lg border border-white/15 bg-[#111111] px-4 py-3 text-sm text-white placeholder-[#555555] focus:border-[#63FF8F] focus:outline-none"
               />
               <p className="mt-1 text-xs text-right text-[#666666]">
                 {form.name.length}/60
@@ -256,10 +266,10 @@ export default function CreateCommunityPage() {
                     key={type.slug}
                     type="button"
                     onClick={() => update('category', type.slug)}
-                    className={`flex flex-col items-center gap-1 rounded-xl border p-3 text-xs font-medium transition-all ${
+                    className={`flex flex-col items-center gap-1 rounded-lg border p-3 text-xs font-medium transition-all ${
                       form.category === type.slug
-                        ? 'border-[#1A1A1A] bg-white text-black'
-                        : 'border-[#333333] bg-[#1A1A1A] text-[#666666] hover:border-white/20'
+                        ? 'border-[#63FF8F] bg-[#63FF8F] text-black'
+                        : 'border-white/15 bg-[#151515] text-[#666666] hover:border-[#63FF8F]/50 hover:text-white'
                     }`}
                   >
                     <span className="text-xl">{type.emoji}</span>
@@ -281,7 +291,7 @@ export default function CreateCommunityPage() {
                 placeholder="What's the vibe? Who's this for?"
                 maxLength={500}
                 rows={4}
-                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
+                className="w-full resize-none rounded-lg border border-white/15 bg-[#111111] px-4 py-3 text-sm text-white placeholder-[#555555] focus:border-[#63FF8F] focus:outline-none"
               />
               <p className="mt-1 text-xs text-right text-[#666666]">
                 {form.description.length}/500
@@ -298,7 +308,7 @@ export default function CreateCommunityPage() {
                 value={form.city}
                 onChange={(e) => update('city', e.target.value)}
                 placeholder="Singapore"
-                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
+                className="w-full rounded-lg border border-white/15 bg-[#111111] px-4 py-3 text-sm text-white placeholder-[#555555] focus:border-[#63FF8F] focus:outline-none"
               />
             </div>
 
@@ -313,7 +323,7 @@ export default function CreateCommunityPage() {
                   onChange={(e) => update('usualArea', e.target.value)}
                   placeholder="East Coast, CBD, Tanjong Pagar..."
                   maxLength={160}
-                  className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
+                  className="w-full rounded-lg border border-white/15 bg-[#111111] px-4 py-3 text-sm text-white placeholder-[#555555] focus:border-[#63FF8F] focus:outline-none"
                 />
               </div>
 
@@ -327,7 +337,7 @@ export default function CreateCommunityPage() {
                   onChange={(e) => update('usualSchedule', e.target.value)}
                   placeholder="Wed evenings, weekend mornings..."
                   maxLength={220}
-                  className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
+                  className="w-full rounded-lg border border-white/15 bg-[#111111] px-4 py-3 text-sm text-white placeholder-[#555555] focus:border-[#63FF8F] focus:outline-none"
                 />
               </div>
             </div>
@@ -341,7 +351,7 @@ export default function CreateCommunityPage() {
                 value={form.vibeTags}
                 onChange={(e) => update('vibeTags', e.target.value)}
                 placeholder="social, beginner, women-only, competitive"
-                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
+                className="w-full rounded-lg border border-white/15 bg-[#111111] px-4 py-3 text-sm text-white placeholder-[#555555] focus:border-[#63FF8F] focus:outline-none"
               />
               <p className="mt-1 text-xs text-[#666666]">Separate tags with commas.</p>
             </div>
@@ -354,7 +364,7 @@ export default function CreateCommunityPage() {
                 <select
                   value={form.priceType}
                   onChange={(e) => update('priceType', e.target.value)}
-                  className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/20"
+                  className="w-full rounded-lg border border-white/15 bg-[#111111] px-4 py-3 text-sm text-white focus:border-[#63FF8F] focus:outline-none"
                 >
                   <option value="">Not sure</option>
                   <option value="FREE">Mostly free</option>
@@ -363,12 +373,12 @@ export default function CreateCommunityPage() {
                 </select>
               </div>
 
-              <label className="flex min-h-[48px] items-center gap-3 rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-[#999999]">
+              <label className="flex min-h-[48px] items-center gap-3 rounded-lg border border-white/15 bg-[#111111] px-4 py-3 text-sm text-[#999999]">
                 <input
                   type="checkbox"
                   checked={form.beginnerFriendly}
                   onChange={(e) => update('beginnerFriendly', e.target.checked)}
-                  className="h-4 w-4 accent-white"
+                  className="h-4 w-4 accent-[#63FF8F]"
                 />
                 Beginner-friendly
               </label>
@@ -378,7 +388,7 @@ export default function CreateCommunityPage() {
             <button
               type="button"
               onClick={nextStep}
-              className="w-full rounded-full bg-white px-4 py-4 text-sm font-bold text-black uppercase tracking-wider hover:bg-neutral-200 transition-colors"
+              className="w-full rounded-full bg-[#63FF8F] px-4 py-4 text-sm font-bold uppercase tracking-wider text-black transition-colors hover:bg-[#83FFA6]"
             >
               Continue
             </button>
@@ -550,7 +560,7 @@ export default function CreateCommunityPage() {
                 value={form.instagramHandle}
                 onChange={(e) => update('instagramHandle', e.target.value)}
                 placeholder="@yourcommunity"
-                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
+                className="w-full rounded-lg border border-white/15 bg-[#111111] px-4 py-3 text-sm text-white placeholder-[#555555] focus:border-[#63FF8F] focus:outline-none"
               />
             </div>
 
@@ -565,7 +575,7 @@ export default function CreateCommunityPage() {
                 value={form.websiteUrl}
                 onChange={(e) => update('websiteUrl', e.target.value)}
                 placeholder="https://..."
-                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
+                className="w-full rounded-lg border border-white/15 bg-[#111111] px-4 py-3 text-sm text-white placeholder-[#555555] focus:border-[#63FF8F] focus:outline-none"
               />
             </div>
 
@@ -580,7 +590,7 @@ export default function CreateCommunityPage() {
                 value={form.communityLink}
                 onChange={(e) => update('communityLink', e.target.value)}
                 placeholder="https://chat.whatsapp.com/..."
-                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
+                className="w-full rounded-lg border border-white/15 bg-[#111111] px-4 py-3 text-sm text-white placeholder-[#555555] focus:border-[#63FF8F] focus:outline-none"
               />
             </div>
 
@@ -592,7 +602,7 @@ export default function CreateCommunityPage() {
                 <select
                   value={form.joinPlatform}
                   onChange={(e) => update('joinPlatform', e.target.value)}
-                  className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/20"
+                  className="w-full rounded-lg border border-white/15 bg-[#111111] px-4 py-3 text-sm text-white focus:border-[#63FF8F] focus:outline-none"
                 >
                   <option value="">Auto / unknown</option>
                   <option value="TELEGRAM">Telegram</option>
@@ -613,7 +623,7 @@ export default function CreateCommunityPage() {
                   value={form.sourceUrl}
                   onChange={(e) => update('sourceUrl', e.target.value)}
                   placeholder="Where should we verify this?"
-                  className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
+                  className="w-full rounded-lg border border-white/15 bg-[#111111] px-4 py-3 text-sm text-white placeholder-[#555555] focus:border-[#63FF8F] focus:outline-none"
                 />
               </div>
             </div>
@@ -623,14 +633,14 @@ export default function CreateCommunityPage() {
               <button
                 type="button"
                 onClick={prevStep}
-                className="flex-1 rounded-full border border-[#333333] bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white hover:bg-[#0D0D0D] transition-colors"
+                className="flex-1 rounded-full border border-white/15 bg-[#151515] px-4 py-4 text-sm font-semibold text-white transition-colors hover:border-white/30 hover:bg-white/[0.04]"
               >
                 Back
               </button>
               <button
                 type="button"
                 onClick={nextStep}
-                className="flex-1 rounded-full bg-white px-4 py-4 text-sm font-bold text-black uppercase tracking-wider hover:bg-neutral-200 transition-colors"
+                className="flex-1 rounded-full bg-[#63FF8F] px-4 py-4 text-sm font-bold uppercase tracking-wider text-black transition-colors hover:bg-[#83FFA6]"
               >
                 Continue
               </button>
@@ -649,7 +659,7 @@ export default function CreateCommunityPage() {
             </div>
 
             {/* Preview card */}
-            <div className="bg-[#1A1A1A] border border-[#333333] shadow-sm rounded-2xl overflow-hidden">
+            <div className="overflow-hidden rounded-lg border border-white/10 bg-[#151515] shadow-sm">
               {/* Cover */}
               {form.coverImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -708,7 +718,7 @@ export default function CreateCommunityPage() {
                     form.beginnerFriendly ? 'beginner-friendly' : '',
                     ...parseTags(form.vibeTags),
                   ].filter(Boolean).slice(0, 6).map((tag) => (
-                    <span key={tag} className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-[#CCCCCC]">
+                    <span key={tag} className="rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1 text-[11px] font-semibold text-[#CCCCCC]">
                       {tag}
                     </span>
                   ))}
@@ -721,7 +731,7 @@ export default function CreateCommunityPage() {
               <button
                 type="button"
                 onClick={prevStep}
-                className="flex-1 rounded-full border border-[#333333] bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white hover:bg-[#0D0D0D] transition-colors"
+                className="flex-1 rounded-full border border-white/15 bg-[#151515] px-4 py-4 text-sm font-semibold text-white transition-colors hover:border-white/30 hover:bg-white/[0.04]"
               >
                 Back
               </button>
@@ -729,7 +739,7 @@ export default function CreateCommunityPage() {
                 type="button"
                 disabled={saving}
                 onClick={handleCreate}
-                className="flex-1 rounded-full bg-white px-4 py-4 text-sm font-bold text-black uppercase tracking-wider hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 rounded-full bg-[#63FF8F] px-4 py-4 text-sm font-bold uppercase tracking-wider text-black transition-colors hover:bg-[#83FFA6] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {saving ? (
                   <span className="flex items-center justify-center gap-2">
@@ -737,7 +747,7 @@ export default function CreateCommunityPage() {
                     Creating...
                   </span>
                 ) : (
-                  'Create Community'
+                  'Submit source'
                 )}
               </button>
             </div>

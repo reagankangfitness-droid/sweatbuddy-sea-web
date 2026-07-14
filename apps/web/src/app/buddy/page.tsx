@@ -8,6 +8,7 @@ import { format } from 'date-fns'
 import { Plus, Loader2, Zap, Map, List, Search, X, ArrowRight, ChevronDown, Check, Users, ShieldCheck, UserPlus } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
+import { LogoWithText } from '@/components/logo'
 import { ACTIVITY_TYPES, getActivityEmoji } from '@/lib/activity-types'
 import { CreateSessionSheet } from '@/components/CreateSessionSheet'
 import { CreateChoiceSheet } from '@/components/CreateChoiceSheet'
@@ -251,16 +252,16 @@ function EventDiscoveryBand({
   const hasCrews = crews.length > 0
 
   return (
-    <section className="pt-4 pb-5 border-b border-[#3A332B]">
+    <section className="border-b border-white/10 pb-5 pt-4">
       <div className="flex items-start justify-between gap-4 px-1">
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#A78B6D]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#63FF8F]">
             Events near {cityName}
           </p>
           <h1 className="mt-1 text-xl font-bold leading-tight text-white">
             Find a fitness plan with people already going
           </h1>
-          <p className="mt-1 text-xs leading-relaxed text-[#A9A19A]">
+          <p className="mt-1 text-xs leading-relaxed text-white/58">
             {activeTypeLabel === 'All types'
               ? 'Browse the next sessions first. See who is going, who is showing up solo, and which hosts are verified.'
               : `${activeTypeLabel} sessions with people signals before you decide where to show up.`}
@@ -268,7 +269,7 @@ function EventDiscoveryBand({
         </div>
         <button
           onClick={onCreate}
-          className="min-h-11 flex-shrink-0 rounded-full border border-[#4A4035] bg-[#1D1A17] px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider text-[#F7F0E8] transition-colors hover:bg-[#25211D]"
+          className="min-h-11 flex-shrink-0 rounded-full bg-[#63FF8F] px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider text-black transition-colors hover:bg-[#83FFA6]"
         >
           Create
         </button>
@@ -280,9 +281,9 @@ function EventDiscoveryBand({
           { value: peopleCount.toString(), label: 'people going' },
           { value: goingSoloCount > 0 ? goingSoloCount.toString() : beginnerCount.toString(), label: goingSoloCount > 0 ? 'going solo' : 'easy starts' },
         ].map((stat) => (
-          <div key={stat.label} className="min-h-[58px] rounded-xl border border-[#3A332B] bg-[#181512] px-3 py-2.5">
-            <p className="truncate text-sm font-bold leading-none text-[#F7F0E8]">{stat.value}</p>
-            <p className="mt-1 text-[10px] uppercase tracking-wider text-[#A78B6D]">{stat.label}</p>
+          <div key={stat.label} className="min-h-[58px] rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5">
+            <p className="truncate text-sm font-bold leading-none text-white">{stat.value}</p>
+            <p className="mt-1 text-[10px] uppercase tracking-wider text-white/45">{stat.label}</p>
           </div>
         ))}
       </div>
@@ -297,7 +298,7 @@ function EventDiscoveryBand({
 
       {hasCrews ? (
         <div className="mt-4 flex gap-3 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory">
-          <div className="flex w-[150px] shrink-0 snap-start flex-col justify-center rounded-xl border border-[#3A332B] bg-[#181512] p-3">
+          <div className="flex w-[150px] shrink-0 snap-start flex-col justify-center rounded-lg border border-white/10 bg-white/[0.04] p-3">
             <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#666666]">
               Hosted by
             </p>
@@ -310,7 +311,7 @@ function EventDiscoveryBand({
           ))}
         </div>
       ) : (
-        <div className="mt-4 rounded-xl border border-dashed border-[#4A4035] bg-[#181512]/50 px-4 py-5 text-center">
+        <div className="mt-4 rounded-lg border border-dashed border-white/15 bg-white/[0.035] px-4 py-5 text-center">
           <p className="text-sm font-semibold text-white">Start with a plan people can join.</p>
           <p className="mt-1 text-xs text-[#666666]">Host/source pages stay in the background as the trust layer.</p>
         </div>
@@ -331,26 +332,26 @@ function EventPulseCard({
   const soloCount = session.goingSoloCount ?? 0
 
   return (
-    <div className="group w-[255px] flex-shrink-0 snap-start rounded-xl border border-[#3A332B] bg-[#1D1A17] p-3.5 transition-colors hover:border-[#E66A4E]/45 hover:bg-[#24201C]">
+    <div className="group w-[255px] flex-shrink-0 snap-start rounded-lg border border-white/10 bg-[#151515] p-3.5 transition-colors hover:border-[#63FF8F]/45 hover:bg-[#1B1B1B]">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#F2C879]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#63FF8F]">
             {timeLabel}
           </p>
           <Link
             href={`/activities/${session.id}`}
-            className="mt-1 block line-clamp-2 text-sm font-bold leading-snug text-white transition-colors hover:text-[#F2C879]"
+            className="mt-1 block line-clamp-2 text-sm font-bold leading-snug text-white transition-colors hover:text-[#63FF8F]"
             onClick={() => trackSessionClick(session, 'event_pulse', 0)}
           >
             {session.title}
           </Link>
         </div>
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#2A241D] text-xl">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-white/[0.08] text-xl">
           {pinEmoji(session.categorySlug ?? 'other')}
         </span>
       </div>
 
-      <div className="mt-4 flex items-center justify-between gap-3 border-t border-[#3A332B] pt-3">
+      <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-3">
         <AttendeePreview attendees={session.attendees} attendeeCount={session.attendeeCount} onClick={() => onPreviewAttendees(session)} />
         <p className="shrink-0 text-right text-[11px] font-medium text-[#999999]">
           {session.attendeeCount > 0 ? `${session.attendeeCount} going` : 'Open invite'}
@@ -1229,7 +1230,7 @@ function BuddyPageInner() {
   }, [searchQuery, userLocation, cityConfig])
 
   return (
-    <div className="flex flex-col bg-[#11100E] md:pl-14" style={{ height: '100dvh', overflow: 'hidden' }}>
+    <div className="flex flex-col bg-[#0B0B0B] md:pl-14" style={{ height: '100dvh', overflow: 'hidden' }}>
       {/* Create Session Sheet */}
       <CreateSessionSheet open={showCreateSheet} onClose={() => setShowCreateSheet(false)} onSuccess={() => fetchSessions()} />
       <CreateChoiceSheet
@@ -1256,7 +1257,21 @@ function BuddyPageInner() {
 
       {/* ── Filters — sticky top bar ── */}
       <div className="sticky top-0 z-20 pt-[env(safe-area-inset-top,4px)]">
-        <div className="bg-[#11100E]/95 px-3 pt-1 pb-2 space-y-1.5 border-b border-[#3A332B] font-mono backdrop-blur">
+        <div className="space-y-2 border-b border-white/10 bg-[#0B0B0B]/95 px-3 pb-2 pt-2 font-mono backdrop-blur">
+          <div className="flex min-h-11 items-center justify-between gap-3">
+            <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-w-0 items-center">
+              <LogoWithText size={27} color="#FFFFFF" textColor="#FFFFFF" />
+            </Link>
+            <p className="hidden min-w-0 flex-1 truncate text-xs font-bold uppercase tracking-[0.16em] text-white/42 sm:block">
+              Social fitness events
+            </p>
+            <Link
+              href="/host"
+              className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-white/12 px-3 text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+            >
+              Host
+            </Link>
+          </div>
           {/* Search bar */}
           <div className="relative mb-1.5">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
@@ -1265,7 +1280,7 @@ function BuddyPageInner() {
               placeholder="Search run clubs, yoga, pickleball, or neighborhoods..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="min-h-11 w-full rounded-xl border border-[#333333] bg-[#1A1A1A] py-2.5 pl-9 pr-10 text-sm text-white transition-all placeholder:text-[#555555] focus:border-white/20 focus:outline-none"
+              className="min-h-11 w-full rounded-lg border border-white/15 bg-[#111111] py-2.5 pl-9 pr-10 text-sm text-white transition-all placeholder:text-[#555555] focus:border-[#63FF8F] focus:outline-none"
             />
             {searchQuery && (
               <button
@@ -1294,7 +1309,7 @@ function BuddyPageInner() {
                       className={`flex min-h-11 min-w-[44px] flex-shrink-0 flex-col items-center justify-center rounded-xl px-2.5 py-1.5 text-center transition-all ${
                         dateFilter === dateStr
                           ? 'bg-white text-black shadow-md'
-                          : 'bg-[#1A1A1A] text-[#999999] shadow-none'
+                          : 'bg-[#171717] text-[#999999] shadow-none'
                       }`}
                     >
                       <span className="text-[10px] font-medium leading-tight">{dayLabel}</span>
@@ -1309,7 +1324,7 @@ function BuddyPageInner() {
                 className={`flex min-h-11 min-w-[70px] flex-shrink-0 flex-col items-center justify-center rounded-xl px-2.5 py-1.5 text-center transition-all ${
                   !dateFilter
                     ? 'bg-white text-black shadow-md'
-                    : 'bg-[#1A1A1A] text-[#999999] shadow-none'
+                    : 'bg-[#171717] text-[#999999] shadow-none'
                   }`}
               >
                 <span className="text-[10px] font-medium leading-tight">All</span>
@@ -1318,7 +1333,7 @@ function BuddyPageInner() {
             </div>
             <button
               onClick={() => setShowCreateMenu(true)}
-              className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-white shadow-lg shadow-white/20 transition-colors hover:bg-neutral-200 active:scale-95"
+              className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#63FF8F] shadow-lg shadow-[#63FF8F]/20 transition-colors hover:bg-[#83FFA6] active:scale-95"
               aria-label="Add to the map"
             >
               <Plus className="w-4 h-4 text-black" />
@@ -1326,7 +1341,7 @@ function BuddyPageInner() {
             <button
               type="button"
               onClick={toggleViewMode}
-              className="flex h-11 flex-shrink-0 items-center gap-1.5 rounded-full border border-white/[0.10] bg-[#1A1A1A] px-3 text-[11px] font-black uppercase tracking-wide text-white transition-colors hover:border-white/30 active:scale-95 lg:hidden"
+              className="flex h-11 flex-shrink-0 items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#171717] px-3 text-[11px] font-black uppercase tracking-wide text-white transition-colors hover:border-[#63FF8F] active:scale-95 lg:hidden"
               aria-label={viewMode === 'list' ? 'Show map' : 'Show list'}
             >
               {viewMode === 'list' ? (
@@ -1339,7 +1354,7 @@ function BuddyPageInner() {
 
           {/* Mobile collapsed filters */}
           <details className="group sm:hidden">
-            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-xl border border-white/[0.10] bg-[#1A1A1A] px-3 text-[12px] font-black uppercase tracking-wide text-white transition-colors group-open:border-[#63FF8F] [&::-webkit-details-marker]:hidden">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-lg border border-white/[0.12] bg-[#171717] px-3 text-[12px] font-black uppercase tracking-wide text-white transition-colors group-open:border-[#63FF8F] [&::-webkit-details-marker]:hidden">
               <span>Filters</span>
               <span className="min-w-0 truncate text-right text-[10px] text-[#999999]">
                 {[neighborhoodFilter?.name ?? cityConfig.name, activeTypeLabel, activePriceLabel]
@@ -1688,7 +1703,7 @@ function BuddyPageInner() {
       ) : (
         <>
           {/* ── Map view ── */}
-          <div className="relative w-full" style={{ height: 'calc(100dvh - 140px)' }}>
+          <div className="relative w-full" style={{ height: 'calc(100dvh - 190px)' }}>
             <LazySessionVectorMap
               center={userLocation ?? cityConfig.center}
               pins={mapPins}

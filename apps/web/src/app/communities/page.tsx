@@ -135,7 +135,7 @@ function getCitiesFromCommunities(communities: CommunityData[]): CityData[] {
 }
 
 function getSubtitle(communityCount: number, cities: CityData[]): string {
-  const prefix = `${communityCount} listed communit${communityCount === 1 ? 'y' : 'ies'}`
+  const prefix = `${communityCount} source page${communityCount === 1 ? '' : 's'}`
   if (cities.length === 0) return prefix
   if (cities.length === 1) return `${prefix} in ${cities[0].name}`
   if (cities.length === 2) return `${prefix} in ${cities[0].name} & ${cities[1].name}`

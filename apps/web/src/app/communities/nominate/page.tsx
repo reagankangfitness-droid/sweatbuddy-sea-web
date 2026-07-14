@@ -120,17 +120,17 @@ export default function NominateCommunityPage() {
 
   if (submission) {
     return (
-      <main className="min-h-screen bg-[#0D0D0D] px-4 py-8 text-white">
+      <main className="min-h-screen bg-[#0B0B0B] px-4 py-8 text-white">
         <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col justify-center">
           <Link
             href="/communities"
             className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-[#999999] hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to directory
+            Back to source map
           </Link>
 
-          <div className="rounded-2xl border border-[#2A2A2A] bg-[#171717] p-6">
+          <div className="rounded-lg border border-white/10 bg-[#151515] p-6">
             <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#63FF8F]">
               {submission.requiresReview ? 'Submitted' : 'Listed'}
             </p>
@@ -144,29 +144,29 @@ export default function NominateCommunityPage() {
                 ? 'We will keep it out of public discovery until it passes a trust check or an approved manager claims it.'
                 : submission.limited
                   ? 'It needs source verification or a manager claim before broad public discovery.'
-                  : 'If it is already listed, people can find the existing community from the directory.'}
+                  : 'If it is already listed, people can find the existing source page from the event map.'}
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={() => setSubmission(null)}
-                className="rounded-xl bg-white px-4 py-3 text-sm font-bold text-black hover:bg-neutral-200"
+                className="rounded-full bg-[#63FF8F] px-4 py-3 text-sm font-bold text-black hover:bg-[#83FFA6]"
               >
                 List another
               </button>
               {submission.slug && (
                 <Link
                   href={`/communities/${submission.slug}`}
-                  className="rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-white hover:bg-white/5"
+                  className="rounded-full border border-white/15 px-4 py-3 text-sm font-bold text-white hover:bg-white/5"
                 >
                   View community
                 </Link>
               )}
               <Link
                 href="/communities"
-                className="rounded-xl border border-white/15 px-4 py-3 text-sm font-bold text-white hover:bg-white/5"
+                className="rounded-full border border-white/15 px-4 py-3 text-sm font-bold text-white hover:bg-white/5"
               >
-                Browse directory
+                Browse sources
               </Link>
             </div>
           </div>
@@ -176,29 +176,29 @@ export default function NominateCommunityPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0D0D0D] px-4 py-8 text-white">
+    <main className="min-h-screen bg-[#0B0B0B] px-4 py-8 text-white">
       <div className="mx-auto max-w-2xl">
         <Link
           href="/communities"
           className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-[#999999] hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to directory
+          Back to source map
         </Link>
 
         <div className="mb-8">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#63FF8F]">
-            Submit a community
+            Submit a source
           </p>
           <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-            Help us map the fitness scene in your city.
+            Help us verify the source behind local fitness events.
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-6 text-[#AAAAAA]">
             Send the official page or group link. New submissions stay queued until the source is verified or a manager claim is approved.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-[#2A2A2A] bg-[#171717] p-5 sm:p-6">
+        <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-white/10 bg-[#151515] p-5 sm:p-6">
           <div>
             <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#777777]">
               Community name
@@ -208,7 +208,7 @@ export default function NominateCommunityPage() {
               onChange={(event) => update('communityName', event.target.value)}
               placeholder="Example: Running Department"
               maxLength={160}
-              className="w-full rounded-xl border border-[#333333] bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-white/40"
+              className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
             />
           </div>
 
@@ -222,7 +222,7 @@ export default function NominateCommunityPage() {
                 onChange={(event) => update('city', event.target.value)}
                 placeholder="Singapore"
                 maxLength={100}
-                className="w-full rounded-xl border border-[#333333] bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-white/40"
+                className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
               />
             </div>
 
@@ -233,7 +233,7 @@ export default function NominateCommunityPage() {
               <select
                 value={form.category}
                 onChange={(event) => update('category', event.target.value)}
-                className="w-full rounded-xl border border-[#333333] bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-white/40"
+                className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
               >
                 <option value="">Not sure</option>
                 {ACTIVITY_TYPES.map((type) => (
@@ -254,7 +254,7 @@ export default function NominateCommunityPage() {
               onChange={(event) => update('sourceUrl', event.target.value)}
               placeholder="Instagram, website, Telegram, WhatsApp, Strava..."
               maxLength={500}
-              className="w-full rounded-xl border border-[#333333] bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-white/40"
+              className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
             />
           </div>
 
@@ -268,7 +268,7 @@ export default function NominateCommunityPage() {
               placeholder="Anything useful for verification: usual meet spot, who it is for, or why it belongs here."
               maxLength={1000}
               rows={4}
-              className="w-full resize-none rounded-xl border border-[#333333] bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-white/40"
+              className="w-full resize-none rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
             />
           </div>
 
@@ -282,7 +282,7 @@ export default function NominateCommunityPage() {
                 onChange={(event) => update('submitterName', event.target.value)}
                 placeholder="Optional"
                 maxLength={160}
-                className="w-full rounded-xl border border-[#333333] bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-white/40"
+                className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
               />
             </div>
 
@@ -296,7 +296,7 @@ export default function NominateCommunityPage() {
                 onChange={(event) => update('submitterEmail', event.target.value)}
                 placeholder="Optional"
                 maxLength={255}
-                className="w-full rounded-xl border border-[#333333] bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-white/40"
+                className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
               />
             </div>
           </div>
@@ -308,10 +308,10 @@ export default function NominateCommunityPage() {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[#63FF8F] px-5 text-sm font-bold text-black transition-colors hover:bg-[#83FFA6] disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-5 text-sm font-bold text-black transition-colors hover:bg-[#83FFA6] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              List community
+              Submit source
             </button>
           </div>
         </form>

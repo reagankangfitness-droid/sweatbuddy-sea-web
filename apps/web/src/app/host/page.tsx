@@ -97,7 +97,7 @@ export default function BecomeAHostPage() {
             </Link>
             <Link
               href="/buddy?create=session"
-              className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-black hover:bg-neutral-200"
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#63FF8F] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-black hover:bg-[#83FFA6]"
             >
               Host a session
             </Link>
@@ -131,7 +131,7 @@ export default function BecomeAHostPage() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/buddy?create=session"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-bold uppercase tracking-wider text-black hover:bg-neutral-200"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-7 py-4 text-sm font-bold uppercase tracking-wider text-black hover:bg-[#83FFA6]"
               >
                 Host your first session <ChevronRight className="h-4 w-4" />
               </Link>

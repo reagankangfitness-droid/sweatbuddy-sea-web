@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Search, Users, MapPin, Plus, CheckCircle2, ChevronDown, X, ExternalLink, ArrowRight } from 'lucide-react'
+import { LogoWithText } from '@/components/logo'
 import { getCategoryEmoji } from '@/lib/categories'
 import { ACTIVITY_CATEGORIES } from '@/lib/categories'
 
@@ -226,9 +227,53 @@ export default function CommunitiesPageClient({
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D]">
+    <div className="min-h-screen bg-[#0B0B0B] text-white md:pl-14">
+      <header className="border-b border-white/10 bg-[#0B0B0B]">
+        <div className="mx-auto max-w-6xl px-4 py-5">
+          <div className="flex min-h-11 items-center justify-between gap-3">
+            <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-w-0 items-center">
+              <LogoWithText size={28} color="#FFFFFF" textColor="#FFFFFF" />
+            </Link>
+            <Link
+              href="/buddy"
+              className="inline-flex min-h-10 shrink-0 items-center rounded-full border border-white/12 px-3 text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+            >
+              Explore events
+            </Link>
+          </div>
+
+          <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
+            <div>
+              <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[#63FF8F]">
+                Host and source layer
+              </p>
+              <h1 className="mt-3 max-w-3xl text-4xl font-bold leading-[1.03] tracking-tight sm:text-5xl">
+                Verified source pages behind social fitness events.
+              </h1>
+              <p className="mt-4 max-w-2xl text-sm leading-6 text-white/58 sm:text-base">
+                Communities help people trust who is hosting, where to join officially, and which plans have regulars. Events still lead discovery.
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-2 lg:grid-cols-1">
+              <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
+                <p className="font-mono text-lg font-black text-white">{communities.length}</p>
+                <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">Sources</p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
+                <p className="font-mono text-lg font-black text-white">{cities.length || 2}</p>
+                <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">Markets</p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
+                <p className="font-mono text-lg font-black text-[#63FF8F]">{filteredCommunities.length}</p>
+                <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">Visible</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
       {/* ── Compact top bar: search + filters + create ── */}
-      <div className="sticky top-0 z-40 bg-[#0D0D0D]/95 backdrop-blur-xl border-b border-[#333333]">
+      <div className="sticky top-0 z-40 border-b border-white/10 bg-[#0B0B0B]/95 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-4 py-3 space-y-2.5">
           {/* Row 1: Search + Create */}
           <div className="flex items-center gap-2">
@@ -239,13 +284,13 @@ export default function CommunitiesPageClient({
                 placeholder="Search communities, activities, or cities..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-[#1A1A1A] border border-[#333333] rounded-xl text-sm text-white placeholder:text-[#666666] focus:outline-none focus:border-white/20 transition-all"
+                className="w-full rounded-lg border border-white/15 bg-[#111111] py-2.5 pl-9 pr-4 text-sm text-white transition-all placeholder:text-[#666666] focus:border-[#63FF8F] focus:outline-none"
               />
             </div>
             <Link
               href="/communities/create"
-              className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-white transition-colors hover:bg-neutral-200"
-              aria-label="Submit a community"
+              className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#63FF8F] transition-colors hover:bg-[#83FFA6]"
+              aria-label="Submit a source"
             >
               <Plus className="w-4 h-4 text-black" />
             </Link>
@@ -302,7 +347,7 @@ export default function CommunitiesPageClient({
               <button
                 type="button"
                 onClick={clearFilters}
-                className="flex h-10 flex-shrink-0 items-center gap-1 rounded-xl border border-[#333333] bg-[#141414] px-3 text-[11px] font-semibold uppercase tracking-wide text-[#999999] transition-colors hover:border-white/30 hover:text-white"
+                className="flex h-10 flex-shrink-0 items-center gap-1 rounded-lg border border-white/15 bg-[#141414] px-3 text-[11px] font-semibold uppercase tracking-wide text-[#999999] transition-colors hover:border-[#63FF8F] hover:text-white"
               >
                 <X className="h-3.5 w-3.5" />
                 Clear
@@ -312,19 +357,19 @@ export default function CommunitiesPageClient({
         </div>
       </div>
 
-      {/* ── Directory count ── */}
+      {/* ── Source count ── */}
       <div className="max-w-6xl mx-auto px-4 pt-4 pb-2">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-[11px] text-[#666666] uppercase tracking-widest font-medium">
+          <p className="font-mono text-[11px] font-black uppercase tracking-[0.18em] text-white/42">
             {hasFilters
-              ? `${filteredCommunities.length} listed communit${filteredCommunities.length === 1 ? 'y' : 'ies'} found`
+              ? `${filteredCommunities.length} source page${filteredCommunities.length === 1 ? '' : 's'} found`
               : subtitle}
           </p>
           <Link
             href="/communities/nominate"
-            className="inline-flex min-h-11 flex-shrink-0 items-center rounded-full px-2 text-[11px] font-semibold uppercase tracking-wide text-[#9fe600] hover:text-white"
+            className="inline-flex min-h-11 flex-shrink-0 items-center rounded-full px-2 text-[11px] font-black uppercase tracking-wide text-[#63FF8F] hover:text-white"
           >
-            Submit a community
+            Submit a source
           </Link>
         </div>
       </div>
@@ -350,10 +395,10 @@ export default function CommunitiesPageClient({
             </p>
             <div className="mt-3 flex flex-wrap items-center justify-center gap-4">
               <Link href="/communities/nominate" className="text-xs text-[#9fe600] font-medium hover:underline">
-                Suggest a community
+                Suggest a source
               </Link>
               <Link href="/communities/create" className="text-xs text-white font-medium hover:underline">
-                Submit a community →
+                Submit a source →
               </Link>
             </div>
           </div>
@@ -379,11 +424,11 @@ function CrewCard({ community }: { community: CommunityData }) {
       transition={{ duration: 0.25 }}
       className="h-full"
     >
-      <article className="group flex h-full flex-col rounded-xl bg-[#1A1A1A] p-4 text-center transition-colors duration-200 hover:bg-[#222222]">
+      <article className="group flex h-full flex-col rounded-lg border border-white/10 bg-[#151515] p-4 text-center transition-colors duration-200 hover:border-[#63FF8F]/35 hover:bg-[#1B1B1B]">
         {/* Logo */}
         <Link
           href={`/communities/${community.slug}`}
-          className="mx-auto mb-3 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-[#2A2A2A]"
+          className="mx-auto mb-3 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-white/[0.08]"
           aria-label={`View ${community.name}`}
         >
           {community.logoImage ? (
@@ -418,7 +463,7 @@ function CrewCard({ community }: { community: CommunityData }) {
             </h3>
           </Link>
           {community.isVerified && (
-            <CheckCircle2 className="w-3.5 h-3.5 text-white flex-shrink-0" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#63FF8F] flex-shrink-0" />
           )}
         </div>
 
@@ -434,7 +479,7 @@ function CrewCard({ community }: { community: CommunityData }) {
         {chips.length > 0 && (
           <div className="mt-2 flex flex-wrap justify-center gap-1">
             {chips.map((chip) => (
-              <span key={chip} className="rounded-full bg-white/10 px-2 py-0.5 text-[9px] font-semibold text-[#CCCCCC]">
+              <span key={chip} className="rounded-full border border-white/10 bg-white/[0.06] px-2 py-0.5 text-[9px] font-semibold text-[#CCCCCC]">
                 {chip}
               </span>
             ))}
@@ -469,20 +514,20 @@ function CrewCard({ community }: { community: CommunityData }) {
               href={officialLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-lg bg-white px-2 text-[11px] font-bold text-black transition-colors hover:bg-neutral-200"
+              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full bg-[#63FF8F] px-2 text-[11px] font-bold text-black transition-colors hover:bg-[#83FFA6]"
               aria-label={`Join ${community.name} through their official link`}
             >
               Join
               <ExternalLink className="h-3 w-3" />
             </a>
           ) : (
-            <span className="inline-flex min-h-11 items-center justify-center rounded-lg bg-white/5 px-2 text-[10px] font-semibold text-[#777777]">
+            <span className="inline-flex min-h-11 items-center justify-center rounded-full bg-white/5 px-2 text-[10px] font-semibold text-[#777777]">
               Link pending
             </span>
           )}
           <Link
             href={`/communities/${community.slug}`}
-            className="inline-flex min-h-11 items-center justify-center gap-1 rounded-lg border border-white/12 px-2 text-[11px] font-bold text-white transition-colors hover:border-white/30 hover:bg-white/5"
+            className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full border border-white/12 px-2 text-[11px] font-bold text-white transition-colors hover:border-[#63FF8F]/60 hover:bg-white/5"
           >
             Details
             <ArrowRight className="h-3 w-3" />
@@ -505,14 +550,14 @@ function FilterSelect({
   onChange: (value: string | null) => void
 }) {
   return (
-    <label className="relative flex h-10 min-w-[132px] flex-shrink-0 items-center rounded-xl border border-[#333333] bg-[#141414] transition-colors focus-within:border-white/35 hover:border-white/25">
+    <label className="relative flex h-10 min-w-[132px] flex-shrink-0 items-center rounded-lg border border-white/15 bg-[#141414] transition-colors focus-within:border-[#63FF8F] hover:border-white/25">
       <span className="pointer-events-none absolute left-3 top-1.5 text-[8px] font-bold uppercase tracking-[0.16em] text-[#666666]">
         {label}
       </span>
       <select
         value={value ?? ''}
         onChange={(event) => onChange(event.target.value || null)}
-        className="h-full w-full appearance-none rounded-xl bg-transparent pb-1.5 pl-3 pr-8 pt-4 text-[12px] font-semibold text-white outline-none"
+        className="h-full w-full appearance-none rounded-lg bg-transparent pb-1.5 pl-3 pr-8 pt-4 text-[12px] font-semibold text-white outline-none"
         aria-label={label}
       >
         <option value="">{label}</option>

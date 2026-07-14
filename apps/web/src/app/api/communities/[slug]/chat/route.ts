@@ -1,9 +1,9 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isCommunityMember } from '@/lib/community-system'
 import { getBlockedUserIds } from '@/lib/blocks'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 // GET /api/communities/[slug]/chat - Get chat messages
 export async function GET(
@@ -11,8 +11,8 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -31,7 +31,7 @@ export async function GET(
     }
 
     // Must be a member to view chat
-    if (!(await isCommunityMember(community.id, userId))) {
+    if (!(await isCommunityMember(community.id, dbUser.id))) {
       return NextResponse.json({ error: 'Must be a member to view chat' }, { status: 403 })
     }
 
@@ -40,7 +40,7 @@ export async function GET(
     }
 
     // Get blocked user IDs to filter messages
-    const blockedUserIds = await getBlockedUserIds(userId)
+    const blockedUserIds = await getBlockedUserIds(dbUser.id)
 
     const where: Record<string, unknown> = {
       chatId: community.chat.id,
@@ -90,13 +90,13 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Rate limit: max 30 messages per user per minute
-    const rl = checkRateLimit(userId, 'community-chat', 30, 60 * 1000)
+    const rl = checkRateLimit(dbUser.id, 'community-chat', 30, 60 * 1000)
     if (!rl.allowed) {
       return NextResponse.json(
         { error: 'Too many messages. Please slow down.' },
@@ -126,7 +126,7 @@ export async function POST(
     }
 
     // Must be a member to send messages
-    if (!(await isCommunityMember(community.id, userId))) {
+    if (!(await isCommunityMember(community.id, dbUser.id))) {
       return NextResponse.json({ error: 'Must be a member to send messages' }, { status: 403 })
     }
 
@@ -143,7 +143,7 @@ export async function POST(
     const message = await prisma.communityMessage.create({
       data: {
         chatId,
-        senderId: userId,
+        senderId: dbUser.id,
         content: content.trim(),
       },
       include: {

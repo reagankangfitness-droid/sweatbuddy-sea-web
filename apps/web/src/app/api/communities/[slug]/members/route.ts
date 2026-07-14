@@ -1,7 +1,7 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { canManageCommunity, isCommunityMember, updateCommunityMemberCount } from '@/lib/community-system'
+import { canManageCommunity, updateCommunityMemberCount } from '@/lib/community-system'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 // GET /api/communities/[slug]/members - List members
 export async function GET(
@@ -9,8 +9,8 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -69,8 +69,8 @@ export async function PATCH(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -84,7 +84,7 @@ export async function PATCH(
     }
 
     // Check if user can manage
-    if (!(await canManageCommunity(community.id, userId))) {
+    if (!(await canManageCommunity(community.id, dbUser.id))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -119,7 +119,7 @@ export async function PATCH(
         where: {
           communityId_userId: {
             communityId: community.id,
-            userId,
+            userId: dbUser.id,
           },
         },
       })
@@ -160,8 +160,8 @@ export async function DELETE(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -182,7 +182,7 @@ export async function DELETE(
     }
 
     // Check if user can manage
-    if (!(await canManageCommunity(community.id, userId))) {
+    if (!(await canManageCommunity(community.id, dbUser.id))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -206,13 +206,13 @@ export async function DELETE(
 
     // Admins can only remove regular members, not other admins
     const currentUserMember = await prisma.communityMember.findUnique({
-      where: {
-        communityId_userId: {
-          communityId: community.id,
-          userId,
+        where: {
+          communityId_userId: {
+            communityId: community.id,
+            userId: dbUser.id,
+          },
         },
-      },
-    })
+      })
 
     if (currentUserMember?.role === 'ADMIN' && targetMember.role === 'ADMIN') {
       return NextResponse.json({ error: 'Admins cannot remove other admins' }, { status: 403 })

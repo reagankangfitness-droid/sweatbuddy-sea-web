@@ -1,23 +1,5 @@
-import { auth, currentUser } from '@clerk/nextjs/server'
-import { redirect } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
+export const dynamic = 'force-static'
 
-export default async function BuddyLayout({ children }: { children: React.ReactNode }) {
-  const { userId } = await auth()
-  if (!userId) return <>{children}</> // proxy handles unauth redirect
-
-  const clerkUser = await currentUser()
-  const email = clerkUser?.emailAddresses[0]?.emailAddress
-  if (!email) return <>{children}</>
-
-  const user = await prisma.user.findUnique({
-    where: { email },
-    select: { accountStatus: true },
-  })
-
-  if (user?.accountStatus === 'BANNED') {
-    redirect('/banned')
-  }
-
+export default function BuddyLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }

@@ -4,6 +4,7 @@ import { generateUniqueSlug, updateCommunityMemberCount } from '@/lib/community-
 import { trackEvent, EVENTS } from '@/lib/analytics'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getCurrentDbUser } from '@/lib/current-user'
+import { scoreCommunityListing } from '@/lib/listing-moderation'
 
 // GET /api/communities - List communities
 export async function GET(request: NextRequest) {
@@ -81,6 +82,7 @@ export async function GET(request: NextRequest) {
     // Default: list all public communities
     const where: Record<string, unknown> = {
       isActive: true,
+      moderationStatus: 'LIVE',
     }
 
     if (city) {
@@ -124,7 +126,10 @@ export async function GET(request: NextRequest) {
             },
           },
         },
-        orderBy: { memberCount: 'desc' },
+        orderBy: [
+          { isVerified: 'desc' },
+          { memberCount: 'desc' },
+        ],
         take: limit,
         skip: offset,
       }),
@@ -171,6 +176,13 @@ export async function POST(request: NextRequest) {
       instagramHandle,
       websiteUrl,
       communityLink,
+      usualArea,
+      usualSchedule,
+      joinPlatform,
+      vibeTags,
+      priceType,
+      beginnerFriendly,
+      sourceUrl,
     } = body
 
     if (!name || !category) {
@@ -200,8 +212,59 @@ export async function POST(request: NextRequest) {
 
     // Generate unique slug
     const slug = await generateUniqueSlug(name)
+    const sourceForRisk = sourceUrl || websiteUrl || communityLink || ''
+    const [duplicateCommunity, recentSubmissionCount] = await Promise.all([
+      prisma.community.findFirst({
+        where: {
+          OR: [
+            ...(sourceForRisk ? [{ sourceUrl: sourceForRisk }, { communityLink: sourceForRisk }, { websiteUrl: sourceForRisk }] : []),
+            { name: { equals: name, mode: 'insensitive' } },
+          ],
+        },
+        select: { id: true, name: true, slug: true },
+      }),
+      prisma.community.count({
+        where: {
+          createdById: dbUser.id,
+          createdAt: { gte: new Date(Date.now() - 60 * 60 * 1000) },
+        },
+      }),
+    ])
+    const decision = scoreCommunityListing({
+      communityName: name,
+      city: cityName || '',
+      category,
+      sourceUrl: sourceForRisk,
+      note: description || usualArea || usualSchedule || null,
+      submitterEmail: dbUser.email,
+      submitterUserId: dbUser.id,
+      duplicateCommunity: Boolean(duplicateCommunity),
+      recentSubmissionCount,
+    })
 
-    // Create community with owner as first member
+    if (decision.status === 'BLOCKED') {
+      return NextResponse.json(
+        { error: 'This community listing needs changes before it can be posted.', code: 'BLOCKED_CONTENT' },
+        { status: 400 },
+      )
+    }
+
+    if (duplicateCommunity) {
+      return NextResponse.json(
+        {
+          community: duplicateCommunity,
+          duplicate: true,
+          requiresReview: false,
+          limited: false,
+        },
+        { status: 200 },
+      )
+    }
+
+    const initialModerationStatus = 'UNDER_REVIEW' as const
+
+    // Create community with owner as first member, but keep it out of public discovery
+    // until an admin approves it.
     const community = await prisma.community.create({
       data: {
         name,
@@ -215,8 +278,22 @@ export async function POST(request: NextRequest) {
         instagramHandle,
         websiteUrl,
         communityLink,
+        usualArea: usualArea || null,
+        usualSchedule: usualSchedule || null,
+        joinPlatform: joinPlatform || null,
+        vibeTags: Array.isArray(vibeTags) ? vibeTags : [],
+        priceType: priceType || null,
+        beginnerFriendly: Boolean(beginnerFriendly),
+        sourceUrl: sourceUrl || websiteUrl || communityLink || null,
         createdById: dbUser.id,
         memberCount: 1,
+        isVerified: false,
+        verificationStatus: 'UNVERIFIED',
+        moderationStatus: initialModerationStatus,
+        riskScore: decision.riskScore,
+        riskFlags: decision.riskFlags,
+        moderationNotes: decision.moderationNotes,
+        isActive: false,
       },
       include: {
         city: true,
@@ -239,14 +316,6 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Update city community count
-    if (cityId) {
-      await prisma.city.update({
-        where: { id: cityId },
-        data: { communityCount: { increment: 1 } },
-      })
-    }
-
     // Track analytics event
     await trackEvent(EVENTS.COMMUNITY_CREATED, dbUser.id, {
       communityId: community.id,
@@ -255,7 +324,14 @@ export async function POST(request: NextRequest) {
       category: community.category,
     })
 
-    return NextResponse.json({ community }, { status: 201 })
+    return NextResponse.json(
+      {
+        community,
+        requiresReview: true,
+        limited: false,
+      },
+      { status: 202 },
+    )
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }

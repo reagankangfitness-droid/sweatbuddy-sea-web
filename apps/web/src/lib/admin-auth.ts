@@ -1,9 +1,12 @@
-import { auth } from '@clerk/nextjs/server'
 import crypto from 'crypto'
+import { auth } from '@clerk/nextjs/server'
 
 // Admin user IDs - these Clerk user IDs have admin access
 const getAdminUserIds = () => {
-  return (process.env.ADMIN_USER_IDS || '').split(',').map(s => s.trim()).filter(Boolean)
+  return (process.env.ADMIN_USER_IDS || process.env.NEXT_PUBLIC_ADMIN_USER_IDS || '')
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean)
 }
 
 // Check if a Clerk user ID has admin access
@@ -48,50 +51,8 @@ export function isValidAdminSecret(request: Request): boolean {
   return timingSafeEqual(authHeader, adminSecret)
 }
 
-// Verify admin session cookie token
-function verifyAdminCookie(request: Request): boolean {
-  const cookieHeader = request.headers.get('cookie')
-  if (!cookieHeader) return false
-
-  const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
-    const [key, value] = cookie.trim().split('=')
-    acc[key] = value
-    return acc
-  }, {} as Record<string, string>)
-
-  const token = cookies['admin_session']
-  if (!token) return false
-
-  try {
-    const decoded = Buffer.from(decodeURIComponent(token), 'base64').toString('utf-8')
-    const parts = decoded.split(':')
-    if (parts.length !== 3) return false
-
-    const [prefix, timestamp, signature] = parts
-    if (prefix !== 'admin') return false
-
-    // Check if token is expired (24 hours)
-    const tokenTime = parseInt(timestamp, 10)
-    if (Date.now() - tokenTime > 24 * 60 * 60 * 1000) return false
-
-    // Verify signature - SECURITY: Require ADMIN_SECRET env var
-    const SECRET_KEY = process.env.ADMIN_SECRET
-    if (!SECRET_KEY) return false
-    const data = `${prefix}:${timestamp}`
-    const hmac = crypto.createHmac('sha256', SECRET_KEY)
-    hmac.update(data)
-    const expectedSignature = hmac.digest('hex')
-
-    return crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expectedSignature)
-    )
-  } catch {
-    return false
-  }
-}
-
-// Check if the request is authenticated as admin (supports Clerk, admin secret, and cookie session)
+// Check if the request is authenticated as admin.
+// Browser admin access is Clerk-only. x-admin-secret is kept for server-to-server jobs.
 // This is for API routes only (server-side)
 export async function isAdminRequest(request: Request): Promise<boolean> {
   // First, always try Clerk session auth (works via cookies sent with browser requests)
@@ -104,11 +65,17 @@ export async function isAdminRequest(request: Request): Promise<boolean> {
     // Clerk auth failed, try other methods
   }
 
-  // Try admin session cookie
-  if (verifyAdminCookie(request)) {
-    return true
+  // Fall back to server-to-server admin secret check
+  return isValidAdminSecret(request)
+}
+
+export async function getAdminActorId(request: Request): Promise<string | null> {
+  try {
+    const { userId } = await auth()
+    if (userId && isAdminUser(userId)) return userId
+  } catch {
+    // Clerk auth failed, try server-to-server secret below.
   }
 
-  // Fall back to legacy admin secret check
-  return isValidAdminSecret(request)
+  return isValidAdminSecret(request) ? 'admin_secret' : null
 }

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { POST } from './route'
 
@@ -11,7 +12,7 @@ vi.mock('@/lib/prisma', () => ({
 }))
 
 function makeRequest(body: Record<string, unknown>) {
-  return new Request('https://www.sweatbuddies.co/api/landing-leads', {
+  return new NextRequest('https://www.sweatbuddies.co/api/landing-leads', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-forwarded-for': crypto.randomUUID() },
     body: JSON.stringify(body),
@@ -24,7 +25,7 @@ describe('POST /api/landing-leads', () => {
     vi.mocked(prisma.crewMatchLead.create).mockResolvedValue({
       id: 'lead-1',
       type: 'USER',
-    })
+    } as Awaited<ReturnType<typeof prisma.crewMatchLead.create>>)
   })
 
   it('stores a user crew match lead with normalized contact and metadata', async () => {

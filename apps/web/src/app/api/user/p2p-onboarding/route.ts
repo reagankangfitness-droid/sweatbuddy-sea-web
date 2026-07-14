@@ -50,6 +50,7 @@ export async function POST(request: Request) {
         fitnessInterests: true,
         fitnessLevel: true,
         p2pOnboardingCompleted: true,
+        accountStatus: true,
       },
     })
 
@@ -64,7 +65,7 @@ export async function GET() {
   try {
     const { userId } = await auth()
     if (!userId) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+      return NextResponse.json({ completed: false, user: null })
     }
 
     const clerkUser = await currentUser()
@@ -83,6 +84,7 @@ export async function GET() {
         fitnessLevel: true,
         imageUrl: true,
         location: true,
+        accountStatus: true,
       },
     })
 

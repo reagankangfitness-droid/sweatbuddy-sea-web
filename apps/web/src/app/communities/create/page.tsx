@@ -19,11 +19,18 @@ interface FormData {
   category: string
   description: string
   city: string
+  usualArea: string
+  usualSchedule: string
+  vibeTags: string
+  priceType: string
+  beginnerFriendly: boolean
   logoImage: string
   coverImage: string
   instagramHandle: string
   websiteUrl: string
   communityLink: string
+  joinPlatform: string
+  sourceUrl: string
 }
 
 const INITIAL_FORM: FormData = {
@@ -31,11 +38,18 @@ const INITIAL_FORM: FormData = {
   category: '',
   description: '',
   city: 'Singapore',
+  usualArea: '',
+  usualSchedule: '',
+  vibeTags: '',
+  priceType: '',
+  beginnerFriendly: false,
   logoImage: '',
   coverImage: '',
   instagramHandle: '',
   websiteUrl: '',
   communityLink: '',
+  joinPlatform: '',
+  sourceUrl: '',
 }
 
 const DRAFT_KEY = 'sb_community_draft'
@@ -71,8 +85,16 @@ export default function CreateCommunityPage() {
     } catch {}
   }, [form])
 
-  function update(field: keyof FormData, value: string) {
+  function update(field: keyof FormData, value: string | boolean) {
     setForm((prev) => ({ ...prev, [field]: value }))
+  }
+
+  function parseTags(value: string): string[] {
+    return value
+      .split(',')
+      .map((tag) => tag.trim())
+      .filter(Boolean)
+      .slice(0, 8)
   }
 
   const STEPS: Step[] = ['basics', 'identity', 'preview']
@@ -116,11 +138,18 @@ export default function CreateCommunityPage() {
           description: form.description.trim() || null,
           category: form.category,
           city: form.city.trim() || null,
+          usualArea: form.usualArea.trim() || null,
+          usualSchedule: form.usualSchedule.trim() || null,
+          vibeTags: parseTags(form.vibeTags),
+          priceType: form.priceType || null,
+          beginnerFriendly: form.beginnerFriendly,
           logoImage: form.logoImage || null,
           coverImage: form.coverImage || null,
           instagramHandle: form.instagramHandle.trim() || null,
           websiteUrl: form.websiteUrl.trim() || null,
           communityLink: form.communityLink.trim() || null,
+          joinPlatform: form.joinPlatform || null,
+          sourceUrl: form.sourceUrl.trim() || form.websiteUrl.trim() || form.communityLink.trim() || null,
         }),
       })
 
@@ -135,8 +164,14 @@ export default function CreateCommunityPage() {
       try {
         localStorage.removeItem(DRAFT_KEY)
       } catch {}
-      toast.success('Community created! Post your first session.')
-      router.push('/hub')
+      if (data.requiresReview) {
+        toast.success('Community saved for a quick trust check.')
+      } else if (data.limited) {
+        toast.success('Community listed with limited distribution until verified.')
+      } else {
+        toast.success('Community listed.')
+      }
+      router.push('/communities')
     } catch {
       toast.error('Something went wrong')
     } finally {
@@ -265,6 +300,78 @@ export default function CreateCommunityPage() {
                 placeholder="Singapore"
                 className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
               />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium text-[#999999] mb-2">
+                  Usual area
+                </label>
+                <input
+                  type="text"
+                  value={form.usualArea}
+                  onChange={(e) => update('usualArea', e.target.value)}
+                  placeholder="East Coast, CBD, Tanjong Pagar..."
+                  maxLength={160}
+                  className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#999999] mb-2">
+                  Usual schedule
+                </label>
+                <input
+                  type="text"
+                  value={form.usualSchedule}
+                  onChange={(e) => update('usualSchedule', e.target.value)}
+                  placeholder="Wed evenings, weekend mornings..."
+                  maxLength={220}
+                  className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#999999] mb-2">
+                Vibe tags
+              </label>
+              <input
+                type="text"
+                value={form.vibeTags}
+                onChange={(e) => update('vibeTags', e.target.value)}
+                placeholder="social, beginner, women-only, competitive"
+                className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
+              />
+              <p className="mt-1 text-xs text-[#666666]">Separate tags with commas.</p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium text-[#999999] mb-2">
+                  Price context
+                </label>
+                <select
+                  value={form.priceType}
+                  onChange={(e) => update('priceType', e.target.value)}
+                  className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/20"
+                >
+                  <option value="">Not sure</option>
+                  <option value="FREE">Mostly free</option>
+                  <option value="PAID">Mostly paid</option>
+                  <option value="MIXED">Free + paid</option>
+                </select>
+              </div>
+
+              <label className="flex min-h-[48px] items-center gap-3 rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-[#999999]">
+                <input
+                  type="checkbox"
+                  checked={form.beginnerFriendly}
+                  onChange={(e) => update('beginnerFriendly', e.target.checked)}
+                  className="h-4 w-4 accent-white"
+                />
+                Beginner-friendly
+              </label>
             </div>
 
             {/* Continue */}
@@ -477,6 +584,40 @@ export default function CreateCommunityPage() {
               />
             </div>
 
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium text-[#999999] mb-2">
+                  Join platform
+                </label>
+                <select
+                  value={form.joinPlatform}
+                  onChange={(e) => update('joinPlatform', e.target.value)}
+                  className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/20"
+                >
+                  <option value="">Auto / unknown</option>
+                  <option value="TELEGRAM">Telegram</option>
+                  <option value="WHATSAPP">WhatsApp</option>
+                  <option value="INSTAGRAM">Instagram</option>
+                  <option value="STRAVA">Strava</option>
+                  <option value="WEBSITE">Website</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[#999999] mb-2">
+                  Source URL
+                </label>
+                <input
+                  type="url"
+                  value={form.sourceUrl}
+                  onChange={(e) => update('sourceUrl', e.target.value)}
+                  placeholder="Where should we verify this?"
+                  className="w-full rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-white placeholder-[#555555] focus:outline-none focus:ring-2 focus:ring-white/20"
+                />
+              </div>
+            </div>
+
             {/* Navigation */}
             <div className="flex gap-3">
               <button
@@ -557,9 +698,21 @@ export default function CreateCommunityPage() {
                 {form.city && (
                   <div className="mt-3 flex items-center gap-1 text-sm text-[#666666]">
                     <MapPin className="w-3.5 h-3.5" />
-                    {form.city}
+                    {[form.usualArea, form.city].filter(Boolean).join(', ')}
                   </div>
                 )}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {[
+                    form.usualSchedule,
+                    form.priceType ? form.priceType.toLowerCase().replace('_', ' ') : '',
+                    form.beginnerFriendly ? 'beginner-friendly' : '',
+                    ...parseTags(form.vibeTags),
+                  ].filter(Boolean).slice(0, 6).map((tag) => (
+                    <span key={tag} className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-[#CCCCCC]">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
 

@@ -1033,7 +1033,7 @@ async function notifyHostOfNewReview(reviewId: string): Promise<void> {
 
   if (!review || !review.host.email) return
 
-  const reviewUrl = `${BASE_URL}/host/reviews`
+  const reviewUrl = `${BASE_URL}/hub`
 
   const html = `
 <!DOCTYPE html>

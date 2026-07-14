@@ -1,8 +1,8 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getCommunityMemberRole } from '@/lib/community-system'
 import { notifyMany, type NotifyParams } from '@/lib/notifications/service'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 // GET /api/communities/[slug]/announcements - Get announcements
 export async function GET(
@@ -10,8 +10,8 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -63,8 +63,8 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -80,7 +80,7 @@ export async function POST(
     }
 
     // Check user has ADMIN or OWNER role
-    const role = await getCommunityMemberRole(community.id, userId)
+    const role = await getCommunityMemberRole(community.id, dbUser.id)
     if (role !== 'ADMIN' && role !== 'OWNER') {
       return NextResponse.json({ error: 'Only admins can post announcements' }, { status: 403 })
     }
@@ -108,7 +108,7 @@ export async function POST(
     const announcement = await prisma.communityMessage.create({
       data: {
         chatId,
-        senderId: userId,
+        senderId: dbUser.id,
         content: content.trim(),
         isAnnouncement: true,
         isPinned: !!isPinned,
@@ -129,7 +129,7 @@ export async function POST(
       const members = await prisma.communityMember.findMany({
         where: {
           communityId: community.id,
-          userId: { not: userId },
+          userId: { not: dbUser.id },
           notificationsOn: true,
         },
         select: { userId: true },

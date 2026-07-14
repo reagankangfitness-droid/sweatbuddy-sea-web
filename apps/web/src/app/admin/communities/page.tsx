@@ -17,9 +17,23 @@ interface AdminCommunity {
   instagramHandle: string | null
   websiteUrl: string | null
   communityLink: string | null
+  usualArea: string | null
+  usualSchedule: string | null
+  joinPlatform: string | null
+  vibeTags: string[]
+  priceType: string | null
+  beginnerFriendly: boolean
+  sourceUrl: string | null
+  lastVerifiedAt: string | null
   memberCount: number
   eventCount: number
   isActive: boolean
+  isVerified: boolean
+  verificationStatus: 'UNVERIFIED' | 'VERIFIED' | 'NEEDS_VERIFICATION'
+  moderationStatus: 'LIVE' | 'LIMITED' | 'UNDER_REVIEW' | 'REJECTED' | 'BLOCKED'
+  riskScore: number
+  riskFlags: string[]
+  moderationNotes: string | null
   isSeeded: boolean
   claimableBy: string | null
   claimedAt: string | null
@@ -39,6 +53,14 @@ interface CommunityForm {
   instagramHandle: string
   websiteUrl: string
   communityLink: string
+  usualArea: string
+  usualSchedule: string
+  joinPlatform: string
+  vibeTags: string
+  priceType: string
+  beginnerFriendly: boolean
+  sourceUrl: string
+  lastVerifiedAt: string
 }
 
 const emptyForm: CommunityForm = {
@@ -51,6 +73,14 @@ const emptyForm: CommunityForm = {
   instagramHandle: '',
   websiteUrl: '',
   communityLink: '',
+  usualArea: '',
+  usualSchedule: '',
+  joinPlatform: '',
+  vibeTags: '',
+  priceType: '',
+  beginnerFriendly: false,
+  sourceUrl: '',
+  lastVerifiedAt: '',
 }
 
 const DAYS_OF_WEEK = [
@@ -245,6 +275,14 @@ export default function AdminCommunitiesPage() {
       instagramHandle: c.instagramHandle || '',
       websiteUrl: c.websiteUrl || '',
       communityLink: c.communityLink || '',
+      usualArea: c.usualArea || '',
+      usualSchedule: c.usualSchedule || '',
+      joinPlatform: c.joinPlatform || '',
+      vibeTags: c.vibeTags?.join(', ') || '',
+      priceType: c.priceType || '',
+      beginnerFriendly: c.beginnerFriendly,
+      sourceUrl: c.sourceUrl || '',
+      lastVerifiedAt: c.lastVerifiedAt ? c.lastVerifiedAt.slice(0, 10) : '',
     })
     setShowForm(true)
   }
@@ -258,19 +296,28 @@ export default function AdminCommunitiesPage() {
   const handleSave = async () => {
     if (!form.name || !form.category) return
     setSaving(true)
+    const payload = {
+      ...form,
+      vibeTags: form.vibeTags
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter(Boolean)
+        .slice(0, 8),
+      lastVerifiedAt: form.lastVerifiedAt || null,
+    }
     try {
       if (editingId) {
         const res = await fetch(`/api/admin/communities/${editingId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(form),
+          body: JSON.stringify(payload),
         })
         if (!res.ok) throw new Error('Failed to update community')
       } else {
         const res = await fetch('/api/admin/communities', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(form),
+          body: JSON.stringify(payload),
         })
         if (!res.ok) throw new Error('Failed to create community')
       }
@@ -291,6 +338,30 @@ export default function AdminCommunitiesPage() {
       await fetchCommunities()
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Deactivate failed')
+    }
+  }
+
+  const handleActivate = async (id: string) => {
+    try {
+      const res = await fetch(`/api/admin/communities/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          isActive: true,
+          isVerified: true,
+          verificationStatus: 'VERIFIED',
+          moderationStatus: 'LIVE',
+          riskScore: 0,
+          riskFlags: [],
+          moderationNotes: null,
+          lastVerifiedAt: new Date().toISOString(),
+        }),
+      })
+      if (!res.ok) throw new Error('Failed to activate')
+      toast.success('Community is live')
+      await fetchCommunities()
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Activate failed')
     }
   }
 
@@ -449,6 +520,67 @@ export default function AdminCommunitiesPage() {
                 />
               </div>
 
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Usual Area</label>
+                  <input
+                    type="text"
+                    value={form.usualArea}
+                    onChange={(e) => setForm({ ...form, usualArea: e.target.value })}
+                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                    placeholder="East Coast, CBD..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Usual Schedule</label>
+                  <input
+                    type="text"
+                    value={form.usualSchedule}
+                    onChange={(e) => setForm({ ...form, usualSchedule: e.target.value })}
+                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                    placeholder="Wed evenings, weekends..."
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Vibe Tags</label>
+                <input
+                  type="text"
+                  value={form.vibeTags}
+                  onChange={(e) => setForm({ ...form, vibeTags: e.target.value })}
+                  className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                  placeholder="social, beginner, women-only"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Price Type</label>
+                  <select
+                    value={form.priceType}
+                    onChange={(e) => setForm({ ...form, priceType: e.target.value })}
+                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                  >
+                    <option value="">Unknown</option>
+                    <option value="FREE">Mostly free</option>
+                    <option value="PAID">Mostly paid</option>
+                    <option value="MIXED">Free + paid</option>
+                  </select>
+                </div>
+
+                <label className="flex items-center gap-2 rounded-lg border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-300">
+                  <input
+                    type="checkbox"
+                    checked={form.beginnerFriendly}
+                    onChange={(e) => setForm({ ...form, beginnerFriendly: e.target.checked })}
+                    className="h-4 w-4 accent-white"
+                  />
+                  Beginner-friendly
+                </label>
+              </div>
+
               {/* Logo Image */}
               <div>
                 <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2">Logo Image</label>
@@ -526,6 +658,46 @@ export default function AdminCommunitiesPage() {
                   onChange={(e) => setForm({ ...form, communityLink: e.target.value })}
                   className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
                   placeholder="https://chat.whatsapp.com/..."
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Join Platform</label>
+                  <select
+                    value={form.joinPlatform}
+                    onChange={(e) => setForm({ ...form, joinPlatform: e.target.value })}
+                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                  >
+                    <option value="">Auto / unknown</option>
+                    <option value="TELEGRAM">Telegram</option>
+                    <option value="WHATSAPP">WhatsApp</option>
+                    <option value="INSTAGRAM">Instagram</option>
+                    <option value="STRAVA">Strava</option>
+                    <option value="WEBSITE">Website</option>
+                    <option value="OTHER">Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Last Verified</label>
+                  <input
+                    type="date"
+                    value={form.lastVerifiedAt}
+                    onChange={(e) => setForm({ ...form, lastVerifiedAt: e.target.value })}
+                    className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-1">Source URL</label>
+                <input
+                  type="text"
+                  value={form.sourceUrl}
+                  onChange={(e) => setForm({ ...form, sourceUrl: e.target.value })}
+                  className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 text-sm focus:outline-none focus:ring-2 focus:ring-white"
+                  placeholder="Source used to verify this listing"
                 />
               </div>
             </div>
@@ -922,6 +1094,21 @@ export default function AdminCommunitiesPage() {
                           claimed
                         </span>
                       )}
+                      {c.isVerified && (
+                        <span className="text-xs bg-emerald-900/50 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full">
+                          verified
+                        </span>
+                      )}
+                      {c.moderationStatus !== 'LIVE' && (
+                        <span className={`text-xs border px-2 py-0.5 rounded-full ${moderationBadgeClass(c.moderationStatus)}`}>
+                          {c.moderationStatus.replace('_', ' ').toLowerCase()}
+                        </span>
+                      )}
+                      {c.riskScore > 0 && (
+                        <span className="text-xs bg-yellow-900/40 text-yellow-300 border border-yellow-800 px-2 py-0.5 rounded-full">
+                          risk {c.riskScore}
+                        </span>
+                      )}
                       {c.isActive ? (
                         <span className="text-xs bg-neutral-800 text-neutral-400 border border-neutral-700 px-2 py-0.5 rounded-full">
                           active
@@ -965,6 +1152,15 @@ export default function AdminCommunitiesPage() {
                           <Power className="w-4 h-4" />
                         </button>
                       )}
+                      {!c.isActive && (
+                        <button
+                          onClick={() => handleActivate(c.id)}
+                          className="p-1.5 text-neutral-400 hover:text-emerald-400 hover:bg-emerald-950 rounded-lg transition-colors"
+                          title="Activate"
+                        >
+                          <Power className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -982,4 +1178,12 @@ export default function AdminCommunitiesPage() {
       </div>
     </div>
   )
+}
+
+function moderationBadgeClass(status: AdminCommunity['moderationStatus']): string {
+  if (status === 'LIMITED') return 'bg-sky-900/40 text-sky-300 border-sky-800'
+  if (status === 'UNDER_REVIEW') return 'bg-yellow-900/40 text-yellow-300 border-yellow-800'
+  if (status === 'BLOCKED') return 'bg-red-950 text-red-300 border-red-900'
+  if (status === 'REJECTED') return 'bg-red-900/50 text-red-400 border-red-800'
+  return 'bg-neutral-800 text-neutral-400 border-neutral-700'
 }

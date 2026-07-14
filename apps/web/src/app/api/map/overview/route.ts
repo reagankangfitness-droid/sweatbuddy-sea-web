@@ -62,6 +62,7 @@ export async function GET() {
     const activities = await prisma.activity.findMany({
       where: {
         status: 'PUBLISHED',
+        moderationStatus: 'LIVE',
         deletedAt: null,
         OR: [
           { startTime: null },

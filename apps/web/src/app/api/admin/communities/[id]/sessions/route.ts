@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { isAdminRequest } from '@/lib/admin-auth'
+import { getAdminActorId, isAdminRequest } from '@/lib/admin-auth'
+import { logAdminAction } from '@/lib/admin-audit'
 import { geocodeAddress } from '@/lib/geocode'
 
 // POST - Create a session (one-time or recurring template) for a community
@@ -14,6 +15,7 @@ export async function POST(
 
   try {
     const { id } = await params
+    const adminId = await getAdminActorId(request) ?? 'admin'
     const communityId = id
     const community = await prisma.community.findUnique({
       where: { id: communityId },
@@ -171,6 +173,20 @@ export async function POST(
         }
       }
 
+      await logAdminAction({
+        action: 'create_community_session_template',
+        targetType: 'community',
+        targetId: community.id,
+        adminId,
+        details: {
+          templateId: template.id,
+          communityName: community.name,
+          title: template.title,
+          daysOfWeek,
+          sessionsGenerated,
+        },
+      })
+
       return NextResponse.json({ template, sessionsGenerated }, { status: 201 })
     } else {
       // Create one-time session
@@ -207,6 +223,20 @@ export async function POST(
           communityId: community.id,
           activityMode,
           fitnessLevel: fitnessLevel || null,
+        },
+      })
+
+      await logAdminAction({
+        action: 'create_community_session',
+        targetType: 'activity',
+        targetId: activity.id,
+        adminId,
+        details: {
+          communityId: community.id,
+          communityName: community.name,
+          title: activity.title,
+          startTime: activity.startTime?.toISOString() ?? null,
+          city: activity.city,
         },
       })
 

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { Camera, X, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -43,57 +43,10 @@ export function ReviewForm({
   const [rating, setRating] = useState(existingReview?.rating || 0)
   const [title, setTitle] = useState(existingReview?.title || '')
   const [content, setContent] = useState(existingReview?.content || '')
-  const [photos, setPhotos] = useState<string[]>(existingReview?.photos || [])
+  const [photos] = useState<string[]>(existingReview?.photos || [])
   const [loading, setLoading] = useState(false)
-  const [uploadingPhoto, setUploadingPhoto] = useState(false)
 
   const isEditing = !!existingReview
-
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files || files.length === 0) return
-
-    if (photos.length + files.length > 5) {
-      toast.error('Maximum 5 photos allowed')
-      return
-    }
-
-    setUploadingPhoto(true)
-
-    try {
-      // For now, we'll use a placeholder - integrate with your upload service
-      // This should upload to UploadThing or similar
-      for (const file of Array.from(files)) {
-        // Validate file
-        if (!file.type.startsWith('image/')) {
-          toast.error('Only images are allowed')
-          continue
-        }
-        if (file.size > 5 * 1024 * 1024) {
-          toast.error('Images must be under 5MB')
-          continue
-        }
-
-        // Create a temporary URL for preview (in production, upload to cloud)
-        const url = URL.createObjectURL(file)
-        setPhotos((prev) => [...prev, url])
-      }
-    } catch (error) {
-      toast.error('Failed to upload photo')
-    } finally {
-      setUploadingPhoto(false)
-    }
-  }
-
-  const removePhoto = (index: number) => {
-    setPhotos((prev) => {
-      const removed = prev[index]
-      if (removed?.startsWith('blob:')) {
-        URL.revokeObjectURL(removed)
-      }
-      return prev.filter((_, i) => i !== index)
-    })
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

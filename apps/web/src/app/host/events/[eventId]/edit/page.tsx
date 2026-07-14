@@ -147,7 +147,7 @@ export default function EditEventPage() {
           <div className="text-center">
             <p className="text-neutral-400 mb-4">{error}</p>
             <Link
-              href="/host/dashboard"
+              href="/hub"
               className="px-4 py-2 bg-neutral-950 text-neutral-100 rounded-full text-sm font-medium hover:bg-neutral-800 transition-colors"
             >
               Back to Dashboard

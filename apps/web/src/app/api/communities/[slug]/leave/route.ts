@@ -1,7 +1,7 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { updateCommunityMemberCount } from '@/lib/community-system'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 // POST /api/communities/[slug]/leave - Leave a community
 export async function POST(
@@ -9,8 +9,8 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -28,7 +28,7 @@ export async function POST(
       where: {
         communityId_userId: {
           communityId: community.id,
-          userId,
+          userId: dbUser.id,
         },
       },
     })
@@ -50,7 +50,7 @@ export async function POST(
       where: {
         communityId_userId: {
           communityId: community.id,
-          userId,
+          userId: dbUser.id,
         },
       },
     })

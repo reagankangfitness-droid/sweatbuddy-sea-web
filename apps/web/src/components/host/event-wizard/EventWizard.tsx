@@ -292,7 +292,7 @@ export function EventWizard({ mode, initialData, eventId, currentAttendees }: Ev
           throw new Error(data.error || "Couldn't save your changes. Try again?")
         }
 
-        router.push('/host/dashboard')
+        router.push('/hub')
         router.refresh()
         return
       }
@@ -378,7 +378,7 @@ export function EventWizard({ mode, initialData, eventId, currentAttendees }: Ev
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center justify-between px-4 py-3 max-w-2xl mx-auto">
             <Link
-              href={mode === 'edit' ? '/host/dashboard' : '/'}
+              href={mode === 'edit' ? '/hub' : '/'}
               className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-800 hover:bg-neutral-700 transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-neutral-300" />

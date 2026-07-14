@@ -1,8 +1,10 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { isAdminUser } from '@/lib/admin-auth'
+import { getAdminActorId, isAdminRequest, isAdminUser } from '@/lib/admin-auth'
+import { logAdminAction } from '@/lib/admin-audit'
 import { notifyFollowersOfNewActivity } from '@/lib/follower-notifications'
+import { checkAndAwardBadges } from '@/lib/badges'
 
 // PATCH - Approve or reject an activity
 export async function PATCH(
@@ -10,14 +12,10 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    if (!await isAdminRequest(request)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
-    if (!isAdminUser(userId)) {
-      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 })
-    }
+    const adminId = await getAdminActorId(request) ?? 'admin'
 
     const { id } = await params
     const body = await request.json()
@@ -48,15 +46,41 @@ export async function PATCH(
       return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
     }
 
-    // Update the activity status
-    const newStatus = action === 'approve' ? 'PUBLISHED' : 'CANCELLED'
+    const wasAlreadyPublished = activity.status === 'PUBLISHED'
+    const updatedActivity = await prisma.$transaction(async (tx) => {
+      const updated = await tx.activity.update({
+        where: { id },
+        data: action === 'approve'
+          ? {
+              status: 'PUBLISHED',
+              requiresApproval: false,
+              moderationStatus: 'LIVE',
+              riskScore: 0,
+              riskFlags: [],
+              moderationNotes: null,
+            }
+          : {
+              status: 'CANCELLED',
+              requiresApproval: false,
+              moderationStatus: 'REJECTED',
+            },
+      })
 
-    const updatedActivity = await prisma.activity.update({
-      where: { id },
-      data: {
-        status: newStatus,
-      },
+      if (action === 'approve' && !wasAlreadyPublished) {
+        await tx.user.update({
+          where: { id: activity.hostId || activity.userId },
+          data: { sessionsHostedCount: { increment: 1 } },
+        })
+      }
+
+      return updated
     })
+
+    if (action === 'approve' && !wasAlreadyPublished) {
+      await checkAndAwardBadges(activity.hostId || activity.userId).catch((error) => {
+        console.error('Failed to award hosting badges:', error)
+      })
+    }
 
     // Create a notification for the user
     await prisma.notification.create({
@@ -69,7 +93,7 @@ export async function PATCH(
         content: action === 'approve'
           ? `Great news! Your event "${activity.title}" has been approved and is now live on SweatBuddies.`
           : `Unfortunately, your event "${activity.title}" was not approved. Please review our guidelines and try again.`,
-        link: action === 'approve' ? `/activities/${activity.id}` : '/host/dashboard',
+        link: action === 'approve' ? `/activities/${activity.id}` : '/hub',
       },
     })
 
@@ -86,6 +110,20 @@ export async function PATCH(
         }
       ).catch((err) => console.error('Failed to notify followers:', err))
     }
+
+    await logAdminAction({
+      action: action === 'approve' ? 'approve_activity' : 'reject_activity',
+      targetType: 'activity',
+      targetId: activity.id,
+      adminId,
+      details: {
+        title: activity.title,
+        previousStatus: activity.status,
+        nextStatus: updatedActivity.status,
+        previousModerationStatus: activity.moderationStatus,
+        nextModerationStatus: updatedActivity.moderationStatus,
+      },
+    })
 
     return NextResponse.json({
       success: true,
@@ -106,14 +144,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    if (!await isAdminRequest(request)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
-    if (!isAdminUser(userId)) {
-      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 })
-    }
+    const adminId = await getAdminActorId(request) ?? 'admin'
 
     const { id } = await params
 
@@ -126,6 +160,18 @@ export async function DELETE(
     await prisma.activity.update({
       where: { id },
       data: { deletedAt: new Date() },
+    })
+
+    await logAdminAction({
+      action: 'delete_activity',
+      targetType: 'activity',
+      targetId: activity.id,
+      adminId,
+      details: {
+        title: activity.title,
+        status: activity.status,
+        moderationStatus: activity.moderationStatus,
+      },
     })
 
     return NextResponse.json({ success: true, message: 'Session deleted' })

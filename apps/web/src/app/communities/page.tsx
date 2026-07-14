@@ -6,17 +6,27 @@ export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Communities | SweatBuddies',
-  description: 'Find local fitness communities near you. Join run clubs, yoga groups, pickleball crews, and active social sessions across Southeast Asia.',
+  description: 'Find local fitness communities near you. Browse run clubs, yoga groups, pickleball crews, strength clubs, and recovery communities across Southeast Asia.',
   openGraph: {
     title: 'Communities | SweatBuddies',
-    description: 'Find local fitness communities near you. Join run clubs, yoga groups, pickleball crews, and active social sessions across Southeast Asia.',
+    description: 'Find local fitness communities near you. Browse run clubs, yoga groups, pickleball crews, strength clubs, and recovery communities across Southeast Asia.',
     url: 'https://www.sweatbuddies.co/communities',
   },
 }
 
 async function getCommunities(): Promise<CommunityData[]> {
   const communities = await prisma.community.findMany({
-    where: { isActive: true },
+    where: {
+      isActive: true,
+      moderationStatus: 'LIVE',
+      usualArea: { not: null },
+      OR: [
+        { sourceUrl: { not: null } },
+        { communityLink: { not: null } },
+        { websiteUrl: { not: null } },
+        { instagramHandle: { not: null } },
+      ],
+    },
     include: {
       city: true,
       createdBy: {
@@ -43,6 +53,7 @@ async function getCommunities(): Promise<CommunityData[]> {
       activities: {
         where: {
           status: 'PUBLISHED',
+          moderationStatus: 'LIVE',
           deletedAt: null,
           startTime: { gte: new Date() },
         },
@@ -79,6 +90,15 @@ async function getCommunities(): Promise<CommunityData[]> {
     eventCount: c.eventCount,
     cityName: c.city?.name ?? null,
     citySlug: c.city?.slug ?? null,
+    usualArea: c.usualArea,
+    usualSchedule: c.usualSchedule,
+    joinPlatform: c.joinPlatform,
+    communityLink: c.communityLink,
+    sourceUrl: c.sourceUrl,
+    vibeTags: c.vibeTags,
+    priceType: c.priceType,
+    beginnerFriendly: c.beginnerFriendly,
+    lastVerifiedAt: c.lastVerifiedAt?.toISOString() ?? null,
     creatorName: c.createdBy?.name ?? null,
     creatorImageUrl: c.createdBy?.imageUrl ?? null,
     members: c.members.map((m) => ({
@@ -98,20 +118,24 @@ async function getCommunities(): Promise<CommunityData[]> {
   }))
 }
 
-async function getCities(): Promise<CityData[]> {
-  const cities = await prisma.city.findMany({
-    where: { isLaunched: true, communityCount: { gt: 0 } },
-    orderBy: { communityCount: 'desc' },
-  })
-  return cities.map((c) => ({
-    name: c.name,
-    slug: c.slug,
-    communityCount: c.communityCount,
-  }))
+function getCitiesFromCommunities(communities: CommunityData[]): CityData[] {
+  const counts = new Map<string, CityData>()
+
+  for (const community of communities) {
+    if (!community.cityName || !community.citySlug) continue
+    const existing = counts.get(community.citySlug)
+    counts.set(community.citySlug, {
+      name: community.cityName,
+      slug: community.citySlug,
+      communityCount: (existing?.communityCount ?? 0) + 1,
+    })
+  }
+
+  return [...counts.values()].sort((a, b) => b.communityCount - a.communityCount)
 }
 
 function getSubtitle(communityCount: number, cities: CityData[]): string {
-  const prefix = `${communityCount} active communit${communityCount === 1 ? 'y' : 'ies'}`
+  const prefix = `${communityCount} listed communit${communityCount === 1 ? 'y' : 'ies'}`
   if (cities.length === 0) return prefix
   if (cities.length === 1) return `${prefix} in ${cities[0].name}`
   if (cities.length === 2) return `${prefix} in ${cities[0].name} & ${cities[1].name}`
@@ -120,10 +144,8 @@ function getSubtitle(communityCount: number, cities: CityData[]): string {
 }
 
 export default async function CommunitiesPage() {
-  const [communities, cities] = await Promise.all([
-    getCommunities(),
-    getCities(),
-  ])
+  const communities = await getCommunities()
+  const cities = getCitiesFromCommunities(communities)
 
   const subtitle = getSubtitle(communities.length, cities)
 

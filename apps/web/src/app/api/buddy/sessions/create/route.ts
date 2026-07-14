@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { checkAndAwardBadges } from '@/lib/badges'
+import { scoreSessionListing } from '@/lib/listing-moderation'
 
 export async function POST(request: Request) {
   try {
@@ -18,11 +19,24 @@ export async function POST(request: Request) {
 
     const dbUser = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
-      select: { id: true, p2pOnboardingCompleted: true, p2pStripeConnectId: true, isCoach: true, coachVerificationStatus: true, hostTier: true },
+      select: {
+        id: true,
+        p2pOnboardingCompleted: true,
+        p2pStripeConnectId: true,
+        isCoach: true,
+        coachVerificationStatus: true,
+        hostTier: true,
+        sessionsHostedCount: true,
+        accountStatus: true,
+      },
     })
 
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    if (dbUser.accountStatus === 'BANNED' || dbUser.accountStatus === 'SUSPENDED') {
+      return NextResponse.json({ error: 'Account cannot create sessions', code: 'ACCOUNT_RESTRICTED' }, { status: 403 })
     }
 
     if (!dbUser.p2pOnboardingCompleted) {
@@ -41,7 +55,14 @@ export async function POST(request: Request) {
       })
       if (activeSessionCount >= 3) {
         return NextResponse.json(
-          { error: 'New hosts can have up to 3 active sessions. Complete a few sessions to unlock more.', code: 'SESSION_CAP' },
+          {
+            error: 'You have 3 upcoming sessions live. Finish or cancel one before adding another.',
+            code: 'SESSION_CAP',
+            sessionCap: 3,
+            activeSessionCount,
+            manageUrl: '/my-sessions',
+            guidance: 'New hosts unlock more listings after completing a few sessions.',
+          },
           { status: 403 }
         )
       }
@@ -106,6 +127,49 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'End time must be after start time' }, { status: 400 })
     }
 
+    if (!communityId || typeof communityId !== 'string') {
+      return NextResponse.json(
+        { error: 'Choose an approved community before posting a session', code: 'COMMUNITY_REQUIRED' },
+        { status: 400 },
+      )
+    }
+
+    const community = await prisma.community.findFirst({
+      where: {
+        id: communityId,
+        isActive: true,
+        moderationStatus: 'LIVE',
+      },
+      select: {
+        id: true,
+        members: {
+          where: { userId: dbUser.id },
+          select: { role: true, managerTrustLevel: true },
+          take: 1,
+        },
+      },
+    })
+
+    const membership = community?.members[0]
+    if (!community || (membership?.role !== 'OWNER' && membership?.role !== 'ADMIN')) {
+      return NextResponse.json(
+        { error: 'You can only post sessions for approved communities you manage', code: 'COMMUNITY_FORBIDDEN' },
+        { status: 403 },
+      )
+    }
+    if (
+      membership.managerTrustLevel !== 'VERIFIED_MANAGER' &&
+      membership.managerTrustLevel !== 'TRUSTED_MANAGER'
+    ) {
+      return NextResponse.json(
+        {
+          error: 'Verify your community manager access before posting sessions',
+          code: 'MANAGER_VERIFICATION_REQUIRED',
+        },
+        { status: 403 },
+      )
+    }
+
     const priceNum = Number(price ?? 0)
     if (isNaN(priceNum) || priceNum < 0) {
       return NextResponse.json({ error: 'Invalid price' }, { status: 400 })
@@ -136,6 +200,36 @@ export async function POST(request: Request) {
     }
 
     const activityMode = priceNum > 0 ? 'P2P_PAID' : 'P2P_FREE'
+    const duplicateUpcomingCount = await prisma.activity.count({
+      where: {
+        userId: dbUser.id,
+        title: { equals: title.trim(), mode: 'insensitive' },
+        startTime: { gt: new Date() },
+        deletedAt: null,
+      },
+    })
+    const moderationDecision = scoreSessionListing({
+      title: title.trim(),
+      description: description?.trim() ?? null,
+      categorySlug,
+      address: address ?? null,
+      price: priceNum,
+      acceptPayNow: acceptPayNow === true,
+      acceptStripe: acceptStripe === true,
+      imageUrl: imageUrl ?? null,
+      hostTier: dbUser.hostTier,
+      hostSessionCount: dbUser.sessionsHostedCount,
+      duplicateUpcomingCount,
+    })
+
+    if (moderationDecision.status === 'BLOCKED') {
+      return NextResponse.json(
+        { error: 'This session needs changes before it can be posted.', code: 'BLOCKED_CONTENT' },
+        { status: 400 },
+      )
+    }
+
+    const requiresReview = moderationDecision.status === 'UNDER_REVIEW'
 
     // Deposit defaults: if requiresDeposit is true but no amount specified, default to 500 ($5.00 SGD)
     const resolvedRequiresDeposit = requiresDeposit === true
@@ -174,8 +268,12 @@ export async function POST(request: Request) {
         activityMode,
         fitnessLevel: fitnessLevel ?? null,
         whatToBring: whatToBring ?? null,
-        requiresApproval: false,
-        status: 'PUBLISHED',
+        requiresApproval: requiresReview,
+        status: requiresReview ? 'PENDING_APPROVAL' : 'PUBLISHED',
+        moderationStatus: moderationDecision.status,
+        riskScore: moderationDecision.riskScore,
+        riskFlags: moderationDecision.riskFlags,
+        moderationNotes: moderationDecision.moderationNotes,
         userId: dbUser.id,
         hostId: dbUser.id,
         acceptPayNow: acceptPayNow === true,
@@ -184,7 +282,7 @@ export async function POST(request: Request) {
         paynowPhoneNumber: paynowPhoneNumber ?? null,
         paynowName: paynowName ?? null,
         sessionType: 'COMMUNITY',
-        communityId: communityId || null,
+        communityId: community.id,
         cancellationPolicy: cancellationPolicy ?? null,
         requiresDeposit: resolvedRequiresDeposit,
         depositAmount: resolvedDepositAmount,
@@ -199,30 +297,44 @@ export async function POST(request: Request) {
       },
     })
 
-    // Increment sessionsHostedCount
-    await prisma.user.update({
-      where: { id: dbUser.id },
-      data: { sessionsHostedCount: { increment: 1 } },
-    })
-
-    // Check and award any hosting badges
-    await checkAndAwardBadges(dbUser.id)
-
-    // Auto-upgrade host tier based on session count
-    if (dbUser.hostTier === 'NEW') {
-      const totalHosted = await prisma.user.findUnique({
+    if (!requiresReview) {
+      // Increment sessionsHostedCount after public creation only.
+      await prisma.user.update({
         where: { id: dbUser.id },
-        select: { sessionsHostedCount: true, reliabilityScore: true, noShowCount: true },
+        data: { sessionsHostedCount: { increment: 1 } },
       })
-      if (totalHosted && totalHosted.sessionsHostedCount >= 5 && totalHosted.reliabilityScore >= 90 && totalHosted.noShowCount === 0) {
-        await prisma.user.update({
+
+      // Check and award any hosting badges
+      await checkAndAwardBadges(dbUser.id)
+
+      // Auto-upgrade host tier based on session count
+      if (dbUser.hostTier === 'NEW') {
+        const totalHosted = await prisma.user.findUnique({
           where: { id: dbUser.id },
-          data: { hostTier: 'COMMUNITY', hostTierUpdatedAt: new Date() },
+          select: { sessionsHostedCount: true, reliabilityScore: true, noShowCount: true },
         })
+        if (totalHosted && totalHosted.sessionsHostedCount >= 5 && totalHosted.reliabilityScore >= 90 && totalHosted.noShowCount === 0) {
+          await prisma.user.update({
+            where: { id: dbUser.id },
+            data: { hostTier: 'COMMUNITY', hostTierUpdatedAt: new Date() },
+          })
+        }
       }
     }
 
-    return NextResponse.json({ activity }, { status: 201 })
+    return NextResponse.json(
+      {
+        activity,
+        requiresReview,
+        limited: moderationDecision.status === 'LIMITED',
+        moderation: {
+          status: moderationDecision.status,
+          riskScore: moderationDecision.riskScore,
+          riskFlags: moderationDecision.riskFlags,
+        },
+      },
+      { status: requiresReview ? 202 : 201 },
+    )
   } catch (error) {
     console.error('[buddy/sessions/create] Error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

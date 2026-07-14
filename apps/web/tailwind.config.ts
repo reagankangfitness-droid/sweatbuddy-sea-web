@@ -22,7 +22,8 @@ const config: Config = {
       // FONTS
       // ═══════════════════════════════════════════════════════
       fontFamily: {
-        sans: ['var(--font-plus-jakarta)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        sans: ['var(--font-geist-sans)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        mono: ['var(--font-geist-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
       },
 
       // ═══════════════════════════════════════════════════════

@@ -102,6 +102,49 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'City is required' }, { status: 400 })
     }
 
+    if (!communityId || typeof communityId !== 'string') {
+      return NextResponse.json(
+        { error: 'Choose an approved community before creating a template', code: 'COMMUNITY_REQUIRED' },
+        { status: 400 },
+      )
+    }
+
+    const community = await prisma.community.findFirst({
+      where: {
+        id: communityId,
+        isActive: true,
+        moderationStatus: 'LIVE',
+      },
+      select: {
+        id: true,
+        members: {
+          where: { userId: dbUser.id },
+          select: { role: true, managerTrustLevel: true },
+          take: 1,
+        },
+      },
+    })
+
+    const membership = community?.members[0]
+    if (!community || (membership?.role !== 'OWNER' && membership?.role !== 'ADMIN')) {
+      return NextResponse.json(
+        { error: 'You can only create templates for approved communities you manage', code: 'COMMUNITY_FORBIDDEN' },
+        { status: 403 },
+      )
+    }
+    if (
+      membership.managerTrustLevel !== 'VERIFIED_MANAGER' &&
+      membership.managerTrustLevel !== 'TRUSTED_MANAGER'
+    ) {
+      return NextResponse.json(
+        {
+          error: 'Verify your community manager access before creating templates',
+          code: 'MANAGER_VERIFICATION_REQUIRED',
+        },
+        { status: 403 },
+      )
+    }
+
     const priceNum = Number(price ?? 0)
     if (isNaN(priceNum) || priceNum < 0) {
       return NextResponse.json({ error: 'Invalid price' }, { status: 400 })
@@ -167,7 +210,7 @@ export async function POST(request: Request) {
         paynowPhoneNumber: paynowPhoneNumber?.trim() || null,
         paynowName: paynowName?.trim() || null,
         cancellationPolicy: cancellationPolicy || null,
-        communityId: communityId || null,
+        communityId: community.id,
         isActive: true,
       },
     })

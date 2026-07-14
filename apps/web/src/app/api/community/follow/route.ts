@@ -1,21 +1,15 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 /**
  * POST /api/community/follow — Follow a community
  * Body: { communityId } or { instagramHandle }
  */
 export async function POST(request: Request) {
-  const { userId } = await auth()
-  if (!userId) {
+  const dbUser = await getCurrentDbUser()
+  if (!dbUser) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  // Find the DB user
-  const user = await prisma.user.findFirst({ where: { id: userId } })
-  if (!user) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 })
   }
 
   const body = await request.json()
@@ -38,7 +32,7 @@ export async function POST(request: Request) {
 
   // Check if already a member
   const existing = await prisma.communityMember.findUnique({
-    where: { communityId_userId: { communityId: community.id, userId: user.id } },
+    where: { communityId_userId: { communityId: community.id, userId: dbUser.id } },
   })
 
   if (existing) {
@@ -49,7 +43,7 @@ export async function POST(request: Request) {
   await prisma.communityMember.create({
     data: {
       communityId: community.id,
-      userId: user.id,
+      userId: dbUser.id,
       role: 'MEMBER',
     },
   })
@@ -73,8 +67,8 @@ export async function POST(request: Request) {
  * Body: { communityId }
  */
 export async function DELETE(request: Request) {
-  const { userId } = await auth()
-  if (!userId) {
+  const dbUser = await getCurrentDbUser()
+  if (!dbUser) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -87,7 +81,7 @@ export async function DELETE(request: Request) {
 
   // Check membership exists and is not OWNER
   const member = await prisma.communityMember.findUnique({
-    where: { communityId_userId: { communityId, userId } },
+    where: { communityId_userId: { communityId, userId: dbUser.id } },
   })
 
   if (!member) {

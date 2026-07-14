@@ -1,5 +1,5 @@
-import { CoachTemplateForm } from '../CoachTemplateForm'
+import { redirect } from 'next/navigation'
 
 export default function NewCoachTemplatePage() {
-  return <CoachTemplateForm />
+  redirect('/host/templates')
 }

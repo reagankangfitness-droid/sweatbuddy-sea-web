@@ -2,11 +2,10 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, Users, Calendar, MapPin, Globe, MessageCircle, CheckCircle, Megaphone, Pin } from 'lucide-react'
+import { ArrowLeft, Users, Calendar, MapPin, Globe, MessageCircle, CheckCircle, Megaphone, Pin, ExternalLink } from 'lucide-react'
 import { Instagram } from '@/components/icons/InstagramIcon'
 import { getCategoryColor, getCategoryEmoji } from '@/lib/categories'
 import { prisma } from '@/lib/prisma'
-import { auth } from '@clerk/nextjs/server'
 import { JoinCommunityButton } from '@/components/community/JoinCommunityButton'
 import { CommunityShareButtons } from '@/components/community/CommunityShareButtons'
 import { ClaimCommunityButton } from '@/components/community/ClaimCommunityButton'
@@ -15,6 +14,7 @@ import { CommunityChat } from '@/components/community/CommunityChat'
 import { IntroduceYourself } from '@/components/community/IntroduceYourself'
 import { PostSessionPhotos } from '@/components/community/PostSessionPhotos'
 import { getUpcomingEventSubmissions } from '@/lib/community-system'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 export const revalidate = 60
 
@@ -53,6 +53,7 @@ async function getUpcomingEvents(communityId: string) {
     where: {
       communityId,
       status: 'PUBLISHED',
+      moderationStatus: 'LIVE',
       deletedAt: null,
       startTime: { gte: new Date() },
     },
@@ -142,6 +143,7 @@ async function getPastSessionPhotos(communityId: string) {
     where: {
       communityId,
       status: 'PUBLISHED',
+      moderationStatus: 'LIVE',
       deletedAt: null,
       imageUrl: { not: null },
       startTime: { lt: new Date() },
@@ -203,7 +205,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CommunityPage({ params }: Props) {
   const { slug } = await params
-  const { userId } = await auth()
+  const dbUser = await getCurrentDbUser().catch(() => null)
 
   const community = await getCommunity(slug)
 
@@ -217,7 +219,7 @@ export default async function CommunityPage({ params }: Props) {
       ? getUpcomingEventSubmissions(community.instagramHandle)
       : Promise.resolve([]),
     getMembers(community.id),
-    getMembership(community.id, userId),
+    getMembership(community.id, dbUser?.id ?? null),
     getAnnouncements(community.id),
     getPastSessionPhotos(community.id),
     getMemberAttendance(community.id),
@@ -269,6 +271,11 @@ export default async function CommunityPage({ params }: Props) {
   const isMember = !!membership
   const isOwner = membership?.role === 'OWNER'
   const isAdmin = membership?.role === 'ADMIN' || isOwner
+  const listingChips = [
+    community.beginnerFriendly ? 'Beginner-friendly' : '',
+    community.priceType ? formatPriceType(community.priceType) : '',
+    ...community.vibeTags,
+  ].filter(Boolean).slice(0, 8)
 
   return (
     <div className="min-h-screen bg-[#0D0D0D]">
@@ -361,13 +368,52 @@ export default async function CommunityPage({ params }: Props) {
                   </span>
                 )}
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 text-white font-semibold rounded-full text-sm">
-                  🔥 {community._count.members} members strong
+                  Listed community
                 </span>
                 <span className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  {Math.max(community._count.activities, community.eventCount)} sessions
+                  {Math.max(community._count.activities, community.eventCount)} known plans
                 </span>
+                {community.usualArea && (
+                  <span className="inline-flex items-center gap-1">
+                    <Pin className="w-4 h-4" />
+                    Usually around {community.usualArea}
+                  </span>
+                )}
               </div>
+
+              {(community.usualSchedule || listingChips.length > 0 || community.joinPlatform) && (
+                <div className="mt-4 grid gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 sm:grid-cols-3">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#666666]">Schedule</p>
+                    <p className="mt-1 text-sm font-semibold text-white">
+                      {community.usualSchedule || 'Varies by community'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#666666]">Join</p>
+                    <p className="mt-1 text-sm font-semibold text-white">
+                      {community.joinPlatform ? formatJoinPlatform(community.joinPlatform) : 'Official link'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#666666]">Fit</p>
+                    <p className="mt-1 text-sm font-semibold text-white">
+                      {listingChips.length > 0 ? listingChips.slice(0, 2).join(' / ') : 'Open community'}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {listingChips.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {listingChips.map((chip) => (
+                    <span key={chip} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-semibold text-[#CCCCCC]">
+                      {chip}
+                    </span>
+                  ))}
+                </div>
+              )}
 
               {/* Social Links */}
               <div className="flex items-center gap-1 mt-3">
@@ -404,8 +450,19 @@ export default async function CommunityPage({ params }: Props) {
               </div>
             </div>
 
-            {/* Join Button */}
-            <div className="sm:ml-auto">
+            {/* Join Buttons */}
+            <div className="grid gap-2 sm:ml-auto sm:min-w-[190px]">
+              {community.communityLink && (
+                <a
+                  href={community.communityLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-4 text-sm font-bold text-black transition-colors hover:bg-neutral-200"
+                >
+                  Join official group
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              )}
               <JoinCommunityButton
                 communitySlug={community.slug}
                 communityName={community.name}
@@ -427,7 +484,12 @@ export default async function CommunityPage({ params }: Props) {
             communityName={community.name}
             isSeeded={community.isSeeded}
             claimedAt={community.claimedAt?.toISOString() ?? null}
-            claimableBy={community.claimableBy}
+            defaultVerificationUrl={
+              community.sourceUrl
+                ?? community.websiteUrl
+                ?? community.communityLink
+                ?? (community.instagramHandle ? `https://instagram.com/${community.instagramHandle.replace(/^@/, '')}` : null)
+            }
           />
 
           {/* Description */}
@@ -679,4 +741,15 @@ export default async function CommunityPage({ params }: Props) {
       )}
     </div>
   )
+}
+
+function formatJoinPlatform(value: string): string {
+  return value.toLowerCase().replace(/^\w/, (char) => char.toUpperCase())
+}
+
+function formatPriceType(value: string): string {
+  if (value === 'FREE') return 'Mostly free'
+  if (value === 'PAID') return 'Mostly paid'
+  if (value === 'MIXED') return 'Free + paid'
+  return value.toLowerCase()
 }

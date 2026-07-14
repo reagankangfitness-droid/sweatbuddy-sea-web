@@ -294,7 +294,7 @@ export default function AttendeesPage() {
 
       <main className="max-w-2xl mx-auto px-6 py-12">
         <div className="flex items-center gap-2 mb-8">
-          <BackButton fallbackHref="/host/dashboard" />
+          <BackButton fallbackHref="/hub" />
           <span className="text-sm text-neutral-500">Back</span>
         </div>
 

@@ -1,19 +1,12 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { isAdminUser } from '@/lib/admin-auth'
+import { isAdminRequest } from '@/lib/admin-auth'
 
 // GET - List all activities pending approval
 export async function GET(request: Request) {
   try {
-    const { userId } = await auth()
-
-    if (!userId) {
+    if (!await isAdminRequest(request)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    if (!isAdminUser(userId)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const { searchParams } = new URL(request.url)

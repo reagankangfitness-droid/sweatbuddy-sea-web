@@ -1,18 +1,18 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 /**
  * GET /api/user/communities — Get communities the current user follows
  */
 export async function GET() {
-  const { userId } = await auth()
-  if (!userId) {
+  const dbUser = await getCurrentDbUser()
+  if (!dbUser) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   const memberships = await prisma.communityMember.findMany({
-    where: { userId },
+    where: { userId: dbUser.id },
     include: {
       community: {
         include: {

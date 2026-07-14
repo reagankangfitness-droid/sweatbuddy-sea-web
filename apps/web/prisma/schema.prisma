@@ -75,6 +75,52 @@ enum ActivityStatus {
   COMPLETED
 }
 
+enum DiscoverySourceType {
+  WEBSITE
+  EVENTBRITE
+  PEATIX
+  MEETUP
+  INSTAGRAM
+  LINKTREE
+  CALENDAR
+  OTHER
+}
+
+enum DiscoverySourceStatus {
+  ACTIVE
+  PAUSED
+  ERROR
+}
+
+enum DiscoveredSessionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  DUPLICATE
+  ARCHIVED
+}
+
+enum CommunityNominationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
+enum ListingModerationStatus {
+  LIVE
+  LIMITED
+  UNDER_REVIEW
+  REJECTED
+  BLOCKED
+}
+
+enum CommunityVerificationStatus {
+  UNVERIFIED
+  VERIFIED
+  NEEDS_VERIFICATION
+}
+
 enum UserActivityStatus {
   INTERESTED
   JOINED
@@ -115,14 +161,14 @@ enum NotificationType {
 
 // Models
 model User {
-  id        String    @id @default(cuid())
-  clerkUserId String? @unique
-  email     String    @unique
-  name      String?
-  imageUrl  String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  id          String    @id @default(cuid())
+  clerkUserId String?   @unique
+  email       String    @unique
+  name        String?
+  imageUrl    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 
   // Profile fields
   username  String? @unique
@@ -140,8 +186,8 @@ model User {
   tiktok    String? @db.VarChar(100)
 
   // Social / discovery
-  fitnessInterests String[]  @default([])
-  goingSolo        Boolean   @default(false)
+  fitnessInterests String[] @default([])
+  goingSolo        Boolean  @default(false)
 
   // Profile settings
   isHost                 Boolean @default(false)
@@ -154,7 +200,7 @@ model User {
   accountStatus  UserAccountStatus @default(ACTIVE)
   suspendedUntil DateTime?
   bannedAt       DateTime?
-  banReason      String?   @db.Text
+  banReason      String?           @db.Text
 
   // Host-specific fields
   hostSince      DateTime?
@@ -172,29 +218,29 @@ model User {
   betaJoinedAt         DateTime?
 
   // P2P fields
-  fitnessLevel             String?  // 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
-  sessionsHostedCount      Int      @default(0)
-  sessionsAttendedCount    Int      @default(0)
-  p2pOnboardingCompleted   Boolean  @default(false)
-  p2pStripeConnectId       String?  // Direct Stripe Connect account ID for P2P hosting
+  fitnessLevel           String? // 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
+  sessionsHostedCount    Int     @default(0)
+  sessionsAttendedCount  Int     @default(0)
+  p2pOnboardingCompleted Boolean @default(false)
+  p2pStripeConnectId     String? // Direct Stripe Connect account ID for P2P hosting
 
   // Host tier & reliability
-  hostTier               HostTier  @default(NEW)
-  hostTierUpdatedAt      DateTime?
-  reliabilityScore       Float     @default(100)
-  noShowCount            Int       @default(0)
-  lateCancellationCount  Int       @default(0)
+  hostTier              HostTier  @default(NEW)
+  hostTierUpdatedAt     DateTime?
+  reliabilityScore      Float     @default(100)
+  noShowCount           Int       @default(0)
+  lateCancellationCount Int       @default(0)
 
   // Coach marketplace fields
-  isCoach                  Boolean  @default(false)
-  coachType                String?  // 'PT' | 'SPORTS_COACH' | 'YOGA' | 'PHYSIO' | 'PILATES' | 'SWIMMING' | 'TENNIS' | 'OTHER'
-  coachVerificationStatus  String   @default("UNVERIFIED") // 'UNVERIFIED' | 'PENDING' | 'VERIFIED' | 'REJECTED' | 'SUSPENDED'
-  coachVerifiedAt          DateTime?
-  coachBio                 String?  @db.Text
-  experienceYears          Int?
-  languages                String[] @default([])
-  hourlyRate               Int?     // in cents
-  groupRate                Int?     // in cents (per person for group sessions)
+  isCoach                 Boolean   @default(false)
+  coachType               String? // 'PT' | 'SPORTS_COACH' | 'YOGA' | 'PHYSIO' | 'PILATES' | 'SWIMMING' | 'TENNIS' | 'OTHER'
+  coachVerificationStatus String    @default("UNVERIFIED") // 'UNVERIFIED' | 'PENDING' | 'VERIFIED' | 'REJECTED' | 'SUSPENDED'
+  coachVerifiedAt         DateTime?
+  coachBio                String?   @db.Text
+  experienceYears         Int?
+  languages               String[]  @default([])
+  hourlyRate              Int? // in cents
+  groupRate               Int? // in cents (per person for group sessions)
 
   activities              Activity[]              @relation("CreatedActivities")
   hostedActivities        Activity[]              @relation("HostedActivities")
@@ -260,20 +306,21 @@ model User {
   moderationActions ModerationLog[] @relation("ModerationActions")
 
   // Community relations
-  communitiesOwned        Community[]          @relation("CommunitiesOwned")
-  communityMemberships    CommunityMember[]    @relation("CommunityMemberships")
-  communityMessagesSent   CommunityMessage[]   @relation("CommunityMessagesSent")
+  communitiesOwned      Community[]        @relation("CommunitiesOwned")
+  communityMemberships  CommunityMember[]  @relation("CommunityMemberships")
+  communityMessagesSent CommunityMessage[] @relation("CommunityMessagesSent")
+  communityClaims       CommunityClaim[]   @relation("CommunityClaims")
 
   // Event chat relations
   eventChatMessages EventChatMessage[] @relation("EventChatMessagesSent")
 
   // P2P relations
-  sessionComments   SessionComment[]   @relation("SessionCommentAuthor")
-  p2pReportsMade    P2PReport[]        @relation("P2PReportsMade")
+  sessionComments SessionComment[] @relation("SessionCommentAuthor")
+  p2pReportsMade  P2PReport[]      @relation("P2PReportsMade")
 
   // Crew relations
-  crewsCreated    Crew[]         @relation("CrewsCreated")
-  crewMemberships CrewMember[]   @relation("CrewMemberships")
+  crewsCreated    Crew[]       @relation("CrewsCreated")
+  crewMemberships CrewMember[] @relation("CrewMemberships")
 
   // Badge relations
   earnedBadges EarnedBadge[] @relation("EarnedBadges")
@@ -324,14 +371,18 @@ model Activity {
   deletedAt      DateTime?
 
   // P2P fields
-  activityMode     String  @default("MARKETPLACE") // 'MARKETPLACE' | 'P2P_FREE' | 'P2P_PAID'
-  sessionType      String?  // 'COACH_LED' | 'COMMUNITY' — null for legacy
-  cancellationPolicy String? @db.Text
-  sessionTemplateId String? // optional link to SessionTemplate
-  fitnessLevel     String? // 'ALL' | 'INTERMEDIATE_PLUS' | 'ADVANCED'
-  whatToBring      String?
-  requiresApproval Boolean @default(false)
-  isFeatured       Boolean @default(false)
+  activityMode       String                  @default("MARKETPLACE") // 'MARKETPLACE' | 'P2P_FREE' | 'P2P_PAID'
+  sessionType        String? // 'COACH_LED' | 'COMMUNITY' — null for legacy
+  cancellationPolicy String?                 @db.Text
+  sessionTemplateId  String? // optional link to SessionTemplate
+  fitnessLevel       String? // 'ALL' | 'INTERMEDIATE_PLUS' | 'ADVANCED'
+  whatToBring        String?
+  requiresApproval   Boolean                 @default(false)
+  isFeatured         Boolean                 @default(false)
+  moderationStatus   ListingModerationStatus @default(LIVE)
+  riskScore          Int                     @default(0)
+  riskFlags          String[]                @default([])
+  moderationNotes    String?                 @db.Text
 
   // P2P Payment method fields
   acceptPayNow      Boolean @default(false)
@@ -341,10 +392,10 @@ model Activity {
   paynowName        String?
 
   // Deposit & recurring settings
-  requiresDeposit Boolean @default(false)
-  depositAmount   Int?    // in cents (e.g., 500 = $5.00 SGD)
-  isRecurring     Boolean @default(false)
-  recurrenceDay   String? // e.g., 'MONDAY', 'TUESDAY'
+  requiresDeposit   Boolean   @default(false)
+  depositAmount     Int? // in cents (e.g., 500 = $5.00 SGD)
+  isRecurring       Boolean   @default(false)
+  recurrenceDay     String? // e.g., 'MONDAY', 'TUESDAY'
   recurrenceEndDate DateTime?
 
   // Community link (optional - activity can belong to a community)
@@ -377,8 +428,9 @@ model Activity {
   eventChat EventChat?
 
   // P2P relations
-  sessionComments SessionComment[] @relation("ActivitySessionComments")
-  p2pReports      P2PReport[]      @relation("P2PActivityReports")
+  sessionComments   SessionComment[]   @relation("ActivitySessionComments")
+  p2pReports        P2PReport[]        @relation("P2PActivityReports")
+  discoveredSession DiscoveredSession? @relation("DiscoveredSessionActivity")
 
   // Coach marketplace relations
   sessionTemplate SessionTemplate? @relation("TemplateActivities", fields: [sessionTemplateId], references: [id], onDelete: SetNull)
@@ -398,7 +450,11 @@ model Activity {
   @@index([startTime, status])
   @@index([activityMode])
   @@index([activityMode, startTime, status])
+  @@index([activityMode, status, moderationStatus, startTime])
+  @@index([activityMode, status, moderationStatus, latitude, longitude, startTime])
   @@index([sessionTemplateId])
+  @@index([moderationStatus])
+  @@index([riskScore])
   @@map("activities")
 }
 
@@ -489,29 +545,29 @@ model UserActivity {
   goingSolo Boolean @default(false)
 
   // Deposit tracking
-  depositAmount         Int?           // in cents
-  depositStatus         DepositStatus?
-  depositRefundedAt     DateTime?
+  depositAmount     Int? // in cents
+  depositStatus     DepositStatus?
+  depositRefundedAt DateTime?
 
   // Attendance tracking
-  checkedIn             Boolean   @default(false)
-  checkedInAt           DateTime?
-  reconfirmationSentAt  DateTime?
-  reconfirmedAt         DateTime?
+  checkedIn            Boolean   @default(false)
+  checkedInAt          DateTime?
+  reconfirmationSentAt DateTime?
+  reconfirmedAt        DateTime?
 
   // Post-session attendance marking by host
-  actuallyAttended      Boolean?
-  markedAttendedAt      DateTime?
-  markedAttendedBy      String?
+  actuallyAttended Boolean?
+  markedAttendedAt DateTime?
+  markedAttendedBy String?
 
   // P2P payment tracking fields
-  p2pPaymentStatus           String?   // 'PENDING' | 'VERIFIED' | 'REJECTED'
-  p2pPaymentMethod           String?   // 'PAYNOW' | 'STRIPE'
-  paymentProofUrl            String?
-  paymentProofUploadedAt     DateTime?
-  verifiedByHost             Boolean   @default(false)
-  verifiedAt                 DateTime?
-  hostVerificationNotes      String?
+  p2pPaymentStatus       String? // 'PENDING' | 'VERIFIED' | 'REJECTED'
+  p2pPaymentMethod       String? // 'PAYNOW' | 'STRIPE'
+  paymentProofUrl        String?
+  paymentProofUploadedAt DateTime?
+  verifiedByHost         Boolean   @default(false)
+  verifiedAt             DateTime?
+  hostVerificationNotes  String?
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
@@ -782,8 +838,8 @@ model Mention {
 }
 
 model NotificationPreference {
-  id        String @id @default(cuid())
-  userId    String @unique
+  id     String @id @default(cuid())
+  userId String @unique
 
   // Global channel toggles
   emailEnabled Boolean @default(false)
@@ -1873,6 +1929,77 @@ model EventSubmission {
 }
 
 // =====================================================
+// PUBLIC COMMUNITY DISCOVERY PIPELINE
+// =====================================================
+
+model DiscoverySource {
+  id            String                @id @default(cuid())
+  name          String                @db.VarChar(200)
+  url           String                @unique @db.VarChar(700)
+  sourceType    DiscoverySourceType   @default(WEBSITE)
+  status        DiscoverySourceStatus @default(ACTIVE)
+  city          String                @default("Singapore") @db.VarChar(100)
+  category      String?               @db.VarChar(80)
+  notes         String?               @db.Text
+  lastCheckedAt DateTime?
+  lastSuccessAt DateTime?
+  lastError     String?               @db.Text
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+
+  discoveredSessions DiscoveredSession[]
+
+  @@index([status])
+  @@index([city])
+  @@index([category])
+  @@index([lastCheckedAt])
+  @@map("discovery_sources")
+}
+
+model DiscoveredSession {
+  id                String                  @id @default(cuid())
+  sourceId          String
+  title             String                  @db.VarChar(220)
+  description       String?                 @db.Text
+  category          String?                 @db.VarChar(80)
+  city              String                  @default("Singapore") @db.VarChar(100)
+  location          String?                 @db.VarChar(500)
+  latitude          Float?
+  longitude         Float?
+  startTime         DateTime?
+  endTime           DateTime?
+  timezone          String                  @default("Asia/Singapore") @db.VarChar(100)
+  price             Int?
+  currency          String                  @default("SGD") @db.VarChar(3)
+  signupUrl         String?                 @db.VarChar(700)
+  sourceUrl         String                  @db.VarChar(700)
+  imageUrl          String?                 @db.VarChar(700)
+  hostName          String?                 @db.VarChar(200)
+  communityName     String?                 @db.VarChar(200)
+  confidence        Int                     @default(50)
+  status            DiscoveredSessionStatus @default(PENDING)
+  reviewedAt        DateTime?
+  reviewedBy        String?
+  rejectionReason   String?                 @db.Text
+  rawData           Json?
+  createdActivityId String?                 @unique
+  discoveredAt      DateTime                @default(now())
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+
+  source          DiscoverySource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  createdActivity Activity?       @relation("DiscoveredSessionActivity", fields: [createdActivityId], references: [id], onDelete: SetNull)
+
+  @@unique([sourceId, sourceUrl])
+  @@index([status])
+  @@index([city])
+  @@index([category])
+  @@index([startTime])
+  @@index([confidence])
+  @@map("discovered_sessions")
+}
+
+// =====================================================
 // EVENT ATTENDANCE & NEWSLETTER SYSTEM
 // =====================================================
 
@@ -1915,7 +2042,7 @@ model EventAttendance {
   checkedInMethod String?   @db.VarChar(20) // 'qr' | 'manual'
 
   // Host notes & tags for guest management
-  hostNotes String? @db.Text
+  hostNotes String?  @db.Text
   taggedAs  String[] @default([])
 
   @@unique([email, eventId])
@@ -1930,10 +2057,10 @@ model EventAttendance {
 // Event reminders (24h and 2h before event)
 model EventReminder {
   id           String         @id @default(cuid())
-  attendanceId String         // References EventAttendance.id
-  eventId      String         // References EventSubmission.id
+  attendanceId String // References EventAttendance.id
+  eventId      String // References EventSubmission.id
   reminderType ReminderType   @default(ONE_DAY)
-  scheduledFor DateTime       // When to send
+  scheduledFor DateTime // When to send
   status       ReminderStatus @default(PENDING)
   sentAt       DateTime?
   errorMessage String?        @db.Text
@@ -2110,7 +2237,7 @@ model Organizer {
   communityName          String?        @db.VarChar(200) // e.g., "Dawn Runners SG"
   communityLocation      String?        @db.VarChar(300) // e.g., "East Coast Park, Singapore"
   communitySchedule      String?        @db.VarChar(500) // e.g., "Saturdays 6:30am, Tuesdays 7pm"
-  communitySize          String?        @db.VarChar(50)  // e.g., "10-30", "30-100", "100+"
+  communitySize          String?        @db.VarChar(50) // e.g., "10-30", "30-100", "100+"
   onboardingCompletedAt  DateTime?
 
   // Idempotency guard for weekly summary email — set to the Monday of the week
@@ -2590,6 +2717,31 @@ enum CommunityMemberRole {
   MEMBER // Regular member
 }
 
+enum CommunityManagerTrustLevel {
+  PENDING
+  VERIFIED_MANAGER
+  TRUSTED_MANAGER
+  RESTRICTED
+}
+
+enum CommunityClaimStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum VerificationChallengeType {
+  LINK_CODE
+}
+
+enum VerificationChallengeStatus {
+  PENDING
+  VERIFIED
+  FAILED
+  EXPIRED
+}
+
 model City {
   id          String  @id @default(cuid())
   name        String  @unique // "Singapore", "Bangkok"
@@ -2637,14 +2789,29 @@ model Community {
   address   String? @db.VarChar(500)
 
   // Settings
-  privacy    CommunityPrivacy @default(PUBLIC)
-  isVerified Boolean          @default(false)
-  isActive   Boolean          @default(true)
+  privacy            CommunityPrivacy            @default(PUBLIC)
+  isVerified         Boolean                     @default(false)
+  verificationStatus CommunityVerificationStatus @default(UNVERIFIED)
+  moderationStatus   ListingModerationStatus     @default(LIVE)
+  riskScore          Int                         @default(0)
+  riskFlags          String[]                    @default([])
+  moderationNotes    String?                     @db.Text
+  isActive           Boolean                     @default(true)
 
   // Social links
   instagramHandle String? @db.VarChar(100)
   websiteUrl      String? @db.VarChar(500)
   communityLink   String? @db.VarChar(500) // WhatsApp/Discord/Telegram
+
+  // Directory listing context
+  usualArea        String?   @db.VarChar(160)
+  usualSchedule    String?   @db.VarChar(220)
+  joinPlatform     String?   @db.VarChar(40)
+  vibeTags         String[]  @default([])
+  priceType        String?   @db.VarChar(40)
+  beginnerFriendly Boolean   @default(false)
+  sourceUrl        String?   @db.VarChar(500)
+  lastVerifiedAt   DateTime?
 
   // Stats (denormalized for performance)
   memberCount Int @default(0)
@@ -2654,37 +2821,45 @@ model Community {
   createdById String
 
   // Seeding & claiming
-  isSeeded      Boolean   @default(false)
-  claimableBy   String?   // Instagram handle that can claim (e.g., "@runclub")
-  claimedAt     DateTime?
-  claimedById   String?   // User ID who claimed this community
+  isSeeded    Boolean   @default(false)
+  claimableBy String? // Instagram handle that can claim (e.g., "@runclub")
+  claimedAt   DateTime?
+  claimedById String? // User ID who claimed this community
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
-  city       City?             @relation("CityCommunities", fields: [cityId], references: [id], onDelete: SetNull)
-  createdBy  User              @relation("CommunitiesOwned", fields: [createdById], references: [id], onDelete: Cascade)
-  members    CommunityMember[]
-  activities        Activity[]        @relation("CommunityActivities")
-  sessionTemplates  SessionTemplate[] @relation("CommunitySessionTemplates")
-  chat              CommunityChat?
-  invites           CommunityInvite[]
+  city             City?             @relation("CityCommunities", fields: [cityId], references: [id], onDelete: SetNull)
+  createdBy        User              @relation("CommunitiesOwned", fields: [createdById], references: [id], onDelete: Cascade)
+  members          CommunityMember[]
+  claims           CommunityClaim[]
+  activities       Activity[]        @relation("CommunityActivities")
+  sessionTemplates SessionTemplate[] @relation("CommunitySessionTemplates")
+  chat             CommunityChat?
+  invites          CommunityInvite[]
 
   @@index([cityId])
   @@index([category])
   @@index([slug])
   @@index([createdById])
   @@index([isActive])
+  @@index([moderationStatus])
+  @@index([verificationStatus])
+  @@index([riskScore])
   @@index([memberCount])
   @@map("communities")
 }
 
 model CommunityMember {
-  id          String              @id @default(cuid())
-  communityId String
-  userId      String
-  role        CommunityMemberRole @default(MEMBER)
+  id                       String                     @id @default(cuid())
+  communityId              String
+  userId                   String
+  role                     CommunityMemberRole        @default(MEMBER)
+  managerTrustLevel        CommunityManagerTrustLevel @default(PENDING)
+  managerVerifiedAt        DateTime?
+  managerRestrictedAt      DateTime?
+  managerRestrictionReason String?                    @db.Text
 
   // Preferences
   notificationsOn Boolean @default(true)
@@ -2697,7 +2872,57 @@ model CommunityMember {
   @@unique([communityId, userId])
   @@index([communityId])
   @@index([userId])
+  @@index([managerTrustLevel])
   @@map("community_members")
+}
+
+model CommunityClaim {
+  id               String               @id @default(cuid())
+  communityId      String
+  userId           String
+  status           CommunityClaimStatus @default(PENDING)
+  sourceUrl        String?              @db.VarChar(500)
+  verificationUrl  String               @db.VarChar(500)
+  verificationCode String               @db.VarChar(32)
+  verifiedAt       DateTime?
+  reviewedAt       DateTime?
+  reviewedBy       String?              @db.VarChar(191)
+  rejectionReason  String?              @db.Text
+  notes            String?              @db.Text
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  community  Community               @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  user       User                    @relation("CommunityClaims", fields: [userId], references: [id], onDelete: Cascade)
+  challenges VerificationChallenge[]
+
+  @@unique([communityId, userId])
+  @@index([communityId, status])
+  @@index([userId, status])
+  @@index([status, createdAt])
+  @@map("community_claims")
+}
+
+model VerificationChallenge {
+  id            String                      @id @default(cuid())
+  claimId       String
+  type          VerificationChallengeType   @default(LINK_CODE)
+  status        VerificationChallengeStatus @default(PENDING)
+  code          String                      @db.VarChar(32)
+  targetUrl     String                      @db.VarChar(500)
+  attempts      Int                         @default(0)
+  lastCheckedAt DateTime?
+  verifiedAt    DateTime?
+  expiresAt     DateTime
+  lastError     String?                     @db.Text
+  createdAt     DateTime                    @default(now())
+  updatedAt     DateTime                    @updatedAt
+
+  claim CommunityClaim @relation(fields: [claimId], references: [id], onDelete: Cascade)
+
+  @@index([claimId, status])
+  @@index([status, expiresAt])
+  @@map("verification_challenges")
 }
 
 model CommunityInvite {
@@ -2823,19 +3048,19 @@ model GeneratedContent {
   eventId     String? @db.VarChar(100) // Optional reference to EventSubmission
 
   // Content type and configuration
-  type     String @db.VarChar(50) // 'instagram_caption' | 'whatsapp_message' | 'event_description' | 'email'
-  tone     String @default("casual") @db.VarChar(20) // 'casual' | 'professional' | 'excited' | 'motivational'
-  length   String @default("medium") @db.VarChar(20) // 'short' | 'medium' | 'long'
+  type   String @db.VarChar(50) // 'instagram_caption' | 'whatsapp_message' | 'event_description' | 'email'
+  tone   String @default("casual") @db.VarChar(20) // 'casual' | 'professional' | 'excited' | 'motivational'
+  length String @default("medium") @db.VarChar(20) // 'short' | 'medium' | 'long'
 
   // The prompt used and content generated
   prompt   String @db.Text
   content  String @db.Text
-  metadata Json?  // Additional context like hashtags, subject lines, etc.
+  metadata Json? // Additional context like hashtags, subject lines, etc.
 
   // Usage tracking
-  copiedAt   DateTime?
-  usedAt     DateTime?
-  usedWhere  String?   @db.VarChar(100) // Where it was used (e.g., "instagram", "whatsapp")
+  copiedAt  DateTime?
+  usedAt    DateTime?
+  usedWhere String?   @db.VarChar(100) // Where it was used (e.g., "instagram", "whatsapp")
 
   createdAt DateTime @default(now())
 
@@ -2849,14 +3074,14 @@ model GeneratedContent {
 
 // Track retention actions taken by hosts
 model RetentionAction {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   organizerId String
-  memberEmail String   @db.VarChar(255)
-  memberName  String?  @db.VarChar(200)
+  memberEmail String  @db.VarChar(255)
+  memberName  String? @db.VarChar(200)
 
   // Action details
-  action     String @db.VarChar(50) // 'message_sent' | 'dismissed' | 'email_sent'
-  suggestion String @db.Text // The AI suggestion that was shown
+  action     String  @db.VarChar(50) // 'message_sent' | 'dismissed' | 'email_sent'
+  suggestion String  @db.Text // The AI suggestion that was shown
   message    String? @db.Text // The actual message sent (if applicable)
 
   // Outcome tracking
@@ -2918,14 +3143,14 @@ model EventRecap {
 // =====================================================
 
 model AdminSettings {
-  id                      Int      @id @default(1)
-  notifyOnNewEvent        Boolean  @default(true)
-  notifyOnNewAttendee     Boolean  @default(true)
-  autoApproveOrganizers   Boolean  @default(false)
-  requireEmailVerification Boolean @default(true)
-  maxAttendeesPerEvent    Int      @default(100)
-  adminEmail              String   @default("")
-  updatedAt               DateTime @updatedAt
+  id                       Int      @id @default(1)
+  notifyOnNewEvent         Boolean  @default(true)
+  notifyOnNewAttendee      Boolean  @default(true)
+  autoApproveOrganizers    Boolean  @default(false)
+  requireEmailVerification Boolean  @default(true)
+  maxAttendeesPerEvent     Int      @default(100)
+  adminEmail               String   @default("")
+  updatedAt                DateTime @updatedAt
 
   @@map("admin_settings")
 }
@@ -2952,9 +3177,9 @@ model ReengagementNudge {
 // =====================================================
 
 model PostEventDraft {
-  id            String   @id @default(cuid())
-  eventId       String   @unique // One draft per event
-  hostInstagram String   @db.VarChar(100)
+  id            String  @id @default(cuid())
+  eventId       String  @unique // One draft per event
+  hostInstagram String  @db.VarChar(100)
   hostUserId    String?
 
   // Draft content
@@ -2964,8 +3189,8 @@ model PostEventDraft {
   // Event context (snapshot for display)
   eventName     String
   eventDate     String?
-  attendeeCount Int    @default(0)
-  category      String @default("")
+  attendeeCount Int     @default(0)
+  category      String  @default("")
 
   // Status: DRAFT → SENT
   status    String    @default("DRAFT") @db.VarChar(20)
@@ -3008,17 +3233,17 @@ model SessionComment {
 model P2PReport {
   id           String   @id @default(cuid())
   reporterId   String
-  reportedType String   // 'USER' | 'ACTIVITY'
-  reportedId   String   // userId or activityId depending on reportedType
-  activityId   String?  // populated when reportedType = 'ACTIVITY'
+  reportedType String // 'USER' | 'ACTIVITY'
+  reportedId   String // userId or activityId depending on reportedType
+  activityId   String? // populated when reportedType = 'ACTIVITY'
   reason       String   @db.Text
   status       String   @default("PENDING") // 'PENDING' | 'REVIEWED' | 'RESOLVED'
   adminNotes   String?  @db.Text
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  reporter Activity? @relation("P2PActivityReports", fields: [activityId], references: [id], onDelete: SetNull)
-  reporterUser User  @relation("P2PReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
+  reporter     Activity? @relation("P2PActivityReports", fields: [activityId], references: [id], onDelete: SetNull)
+  reporterUser User      @relation("P2PReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
 
   @@index([reportedType, reportedId])
   @@index([reporterId])
@@ -3035,7 +3260,7 @@ model HostLead {
   id           String   @id @default(cuid())
   email        String   @unique
   name         String?
-  activityType String?  // e.g. "pilates", "running", "yoga"
+  activityType String? // e.g. "pilates", "running", "yoga"
   city         String?
   createdAt    DateTime @default(now())
 
@@ -3044,26 +3269,26 @@ model HostLead {
 }
 
 model CrewMatchLead {
-  id             String   @id @default(cuid())
-  type           String   @default("USER") @db.VarChar(30) // USER, HOST, WEEKLY_DROP
-  status         String   @default("NEW") @db.VarChar(30)
-  city           String?  @db.VarChar(80)
-  activityType   String?  @db.VarChar(80)
-  comfortLevel   String?  @db.VarChar(80)
-  contactMethod  String?  @db.VarChar(30)
-  email          String?  @db.VarChar(255)
-  phone          String?  @db.VarChar(80)
-  name           String?  @db.VarChar(200)
-  communityName  String?  @db.VarChar(200)
-  contactLink    String?  @db.VarChar(500)
-  sourcePage     String?  @db.VarChar(200)
-  sourcePlacement String? @db.VarChar(120)
-  utmSource      String?  @db.VarChar(120)
-  utmMedium      String?  @db.VarChar(120)
-  utmCampaign    String?  @db.VarChar(160)
-  metadata       Json?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id              String   @id @default(cuid())
+  type            String   @default("USER") @db.VarChar(30) // USER, HOST, WEEKLY_DROP
+  status          String   @default("NEW") @db.VarChar(30)
+  city            String?  @db.VarChar(80)
+  activityType    String?  @db.VarChar(80)
+  comfortLevel    String?  @db.VarChar(80)
+  contactMethod   String?  @db.VarChar(30)
+  email           String?  @db.VarChar(255)
+  phone           String?  @db.VarChar(80)
+  name            String?  @db.VarChar(200)
+  communityName   String?  @db.VarChar(200)
+  contactLink     String?  @db.VarChar(500)
+  sourcePage      String?  @db.VarChar(200)
+  sourcePlacement String?  @db.VarChar(120)
+  utmSource       String?  @db.VarChar(120)
+  utmMedium       String?  @db.VarChar(120)
+  utmCampaign     String?  @db.VarChar(160)
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@index([type, createdAt])
   @@index([city, activityType])
@@ -3072,24 +3297,55 @@ model CrewMatchLead {
   @@map("crew_match_leads")
 }
 
+model CommunityNomination {
+  id               String                    @id @default(cuid())
+  status           CommunityNominationStatus @default(PENDING)
+  communityName    String                    @db.VarChar(160)
+  city             String                    @db.VarChar(100)
+  category         String?                   @db.VarChar(80)
+  sourceUrl        String                    @unique @db.VarChar(500)
+  note             String?                   @db.Text
+  submitterName    String?                   @db.VarChar(160)
+  submitterEmail   String?                   @db.VarChar(255)
+  submitterUserId  String?                   @db.VarChar(191)
+  ipHash           String?                   @db.VarChar(120)
+  communityId      String?                   @db.VarChar(191)
+  moderationStatus ListingModerationStatus   @default(UNDER_REVIEW)
+  riskScore        Int                       @default(0)
+  riskFlags        String[]                  @default([])
+  moderationNotes  String?                   @db.Text
+  reviewedAt       DateTime?
+  reviewedBy       String?                   @db.VarChar(191)
+  adminNotes       String?                   @db.Text
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+
+  @@index([status, createdAt])
+  @@index([moderationStatus, createdAt])
+  @@index([riskScore])
+  @@index([city, category])
+  @@index([submitterEmail])
+  @@map("community_nominations")
+}
+
 // =====================================================
 // CREWS (Persistent Fitness Groups)
 // =====================================================
 
 model Crew {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  imageUrl    String?
+  id           String   @id @default(cuid())
+  name         String
+  description  String?
+  imageUrl     String?
   activityType String? // e.g., 'running', 'yoga', 'hiking'
-  maxMembers  Int      @default(8)
-  isActive    Boolean  @default(true)
-  createdById String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  maxMembers   Int      @default(8)
+  isActive     Boolean  @default(true)
+  createdById  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  createdBy   User         @relation("CrewsCreated", fields: [createdById], references: [id], onDelete: Cascade)
-  members     CrewMember[]
+  createdBy User         @relation("CrewsCreated", fields: [createdById], references: [id], onDelete: Cascade)
+  members   CrewMember[]
 
   @@index([createdById])
   @@index([activityType])
@@ -3098,13 +3354,13 @@ model Crew {
 }
 
 model CrewMember {
-  id        String   @id @default(cuid())
-  crewId    String
-  userId    String
-  role      String   @default("MEMBER") // 'LEADER' | 'MEMBER'
-  joinedAt  DateTime @default(now())
+  id       String   @id @default(cuid())
+  crewId   String
+  userId   String
+  role     String   @default("MEMBER") // 'LEADER' | 'MEMBER'
+  joinedAt DateTime @default(now())
 
-  crew User @relation("CrewMemberships", fields: [userId], references: [id], onDelete: Cascade)
+  crew    User @relation("CrewMemberships", fields: [userId], references: [id], onDelete: Cascade)
   crewRef Crew @relation(fields: [crewId], references: [id], onDelete: Cascade)
 
   @@unique([crewId, userId])
@@ -3118,13 +3374,13 @@ model CrewMember {
 // =====================================================
 
 model CoachProfile {
-  id              String   @id @default(cuid())
-  userId          String   @unique
-  displayName     String
-  tagline         String?  // "Certified PT | 8 years experience"
-  bio             String?  @db.Text
-  coverImageUrl   String?
-  galleryUrls     String[] @default([])
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  displayName   String
+  tagline       String? // "Certified PT | 8 years experience"
+  bio           String?  @db.Text
+  coverImageUrl String?
+  galleryUrls   String[] @default([])
 
   // Specializations
   specializations String[] @default([]) // e.g., ["weight-loss", "strength", "rehabilitation"]
@@ -3132,33 +3388,33 @@ model CoachProfile {
   goalsServed     String[] @default([]) // e.g., ["lose-weight", "build-muscle", "learn-to-swim"]
 
   // Location
-  serviceCity     String
-  serviceRadius   Int?     // km radius for mobile coaches
-  trainingVenues  String[] @default([]) // e.g., ["Bishan Tennis Centre", "East Coast Park"]
+  serviceCity    String
+  serviceRadius  Int? // km radius for mobile coaches
+  trainingVenues String[] @default([]) // e.g., ["Bishan Tennis Centre", "East Coast Park"]
 
   // Pricing
-  sessionPrice    Int?     // per session in cents
-  groupPrice      Int?     // per person per group session in cents
-  currency        String   @default("SGD")
-  offersTrial     Boolean  @default(false)
-  trialPrice      Int?     // trial session price in cents (0 = free trial)
+  sessionPrice Int? // per session in cents
+  groupPrice   Int? // per person per group session in cents
+  currency     String  @default("SGD")
+  offersTrial  Boolean @default(false)
+  trialPrice   Int? // trial session price in cents (0 = free trial)
 
   // Policies
-  cancellationHours Int    @default(24)
+  cancellationHours  Int     @default(24)
   cancellationPolicy String? @db.Text
 
   // Metrics (denormalized for search performance)
-  averageRating   Float    @default(0)
-  totalReviews    Int      @default(0)
-  totalSessions   Int      @default(0)
-  totalStudents   Int      @default(0)
-  responseTimeMin Int?     // average response time in minutes
+  averageRating   Float @default(0)
+  totalReviews    Int   @default(0)
+  totalSessions   Int   @default(0)
+  totalStudents   Int   @default(0)
+  responseTimeMin Int? // average response time in minutes
 
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([serviceCity])
   @@index([isActive])
@@ -3168,22 +3424,22 @@ model CoachProfile {
 }
 
 model CoachVerification {
-  id              String   @id @default(cuid())
-  userId          String
-  type            String   // 'IDENTITY' | 'CERTIFICATION' | 'INSURANCE' | 'BACKGROUND_CHECK'
-  status          String   @default("PENDING") // 'PENDING' | 'APPROVED' | 'REJECTED' | 'EXPIRED'
-  documentUrl     String?
-  documentName    String?
-  issuingBody     String?  // e.g., "NASM", "ACE", "SSI", "ITF"
+  id                String    @id @default(cuid())
+  userId            String
+  type              String // 'IDENTITY' | 'CERTIFICATION' | 'INSURANCE' | 'BACKGROUND_CHECK'
+  status            String    @default("PENDING") // 'PENDING' | 'APPROVED' | 'REJECTED' | 'EXPIRED'
+  documentUrl       String?
+  documentName      String?
+  issuingBody       String? // e.g., "NASM", "ACE", "SSI", "ITF"
   certificationName String? // e.g., "Certified Personal Trainer"
-  expiresAt       DateTime?
-  verifiedAt      DateTime?
+  expiresAt         DateTime?
+  verifiedAt        DateTime?
   verifiedByAdminId String?
-  rejectionReason String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  rejectionReason   String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
-  user            User     @relation("CoachVerifications", fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation("CoachVerifications", fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([type])
@@ -3192,39 +3448,39 @@ model CoachVerification {
 }
 
 model SessionTemplate {
-  id              String   @id @default(cuid())
-  hostId          String
-  title           String
-  description     String?  @db.Text
-  categorySlug    String?
-  sessionType     String   @default("GROUP") // 'GROUP' | 'ONE_ON_ONE' | 'WORKSHOP'
+  id           String  @id @default(cuid())
+  hostId       String
+  title        String
+  description  String? @db.Text
+  categorySlug String?
+  sessionType  String  @default("GROUP") // 'GROUP' | 'ONE_ON_ONE' | 'WORKSHOP'
 
   // Schedule
-  daysOfWeek      String[] @default([]) // e.g., ["MONDAY", "WEDNESDAY"]
-  startTime       String   // "06:00" (HH:mm local)
-  endTime         String?  // "07:00"
-  timezone        String   @default("Asia/Singapore")
-  endDate         DateTime? // optional end date for recurrence
-  skippedDates    String[] @default([]) // ISO date strings to skip e.g. ["2026-04-06"]
+  daysOfWeek   String[]  @default([]) // e.g., ["MONDAY", "WEDNESDAY"]
+  startTime    String // "06:00" (HH:mm local)
+  endTime      String? // "07:00"
+  timezone     String    @default("Asia/Singapore")
+  endDate      DateTime? // optional end date for recurrence
+  skippedDates String[]  @default([]) // ISO date strings to skip e.g. ["2026-04-06"]
 
   // Pricing
-  price           Int?     // in cents; null = free
-  currency        String   @default("SGD")
+  price    Int? // in cents; null = free
+  currency String @default("SGD")
 
   // Capacity
-  maxParticipants Int?     // null = unlimited
-  fitnessLevel    String?  // 'ALL' | 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
+  maxParticipants Int? // null = unlimited
+  fitnessLevel    String? // 'ALL' | 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
   whatToBring     String?
 
   // Location
-  locationName    String?
-  address         String?
-  city            String?
-  latitude        Float?
-  longitude       Float?
+  locationName String?
+  address      String?
+  city         String?
+  latitude     Float?
+  longitude    Float?
 
   // Image
-  imageUrl        String?
+  imageUrl String?
 
   // Payment
   acceptPayNow       Boolean @default(false)
@@ -3234,17 +3490,17 @@ model SessionTemplate {
   paynowName         String?
   cancellationPolicy String?
 
-  isActive        Boolean  @default(true)
-  deletedAt       DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  isActive  Boolean   @default(true)
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   // Community link (optional)
-  communityId     String?
+  communityId String?
 
-  host            User     @relation("HostSessionTemplates", fields: [hostId], references: [id], onDelete: Cascade)
-  community       Community? @relation("CommunitySessionTemplates", fields: [communityId], references: [id], onDelete: SetNull)
-  sessions        Activity[] @relation("TemplateActivities")
+  host      User       @relation("HostSessionTemplates", fields: [hostId], references: [id], onDelete: Cascade)
+  community Community? @relation("CommunitySessionTemplates", fields: [communityId], references: [id], onDelete: SetNull)
+  sessions  Activity[] @relation("TemplateActivities")
 
   @@index([hostId])
   @@index([hostId, deletedAt])
@@ -3262,12 +3518,12 @@ model SessionTemplate {
 model Badge {
   id          String   @id @default(cuid())
   slug        String   @unique // e.g., 'first-sweat', 'regular', 'anchor'
-  name        String   // e.g., 'First Sweat', 'Regular', 'Anchor'
+  name        String // e.g., 'First Sweat', 'Regular', 'Anchor'
   description String
-  emoji       String   // e.g., '🏃', '⭐', '🏆'
-  criteria    String   // Human-readable criteria
-  threshold   Int      // e.g., 1, 10, 25 sessions
-  category    String   // 'attendance', 'hosting', 'streak', 'social'
+  emoji       String // e.g., '🏃', '⭐', '🏆'
+  criteria    String // Human-readable criteria
+  threshold   Int // e.g., 1, 10, 25 sessions
+  category    String // 'attendance', 'hosting', 'streak', 'social'
   createdAt   DateTime @default(now())
 
   earnedBy EarnedBadge[]
@@ -3295,9 +3551,9 @@ model EarnedBadge {
 
 model AnalyticsEvent {
   id        String   @id @default(cuid())
-  event     String   // 'page_view', 'community_joined', 'community_created', 'signup', 'return_visit'
-  userId    String?  // null for anonymous
-  metadata  Json?    // { communityId, communitySlug, page, referrer, etc. }
+  event     String // 'page_view', 'community_joined', 'community_created', 'signup', 'return_visit'
+  userId    String? // null for anonymous
+  metadata  Json? // { communityId, communitySlug, page, referrer, etc. }
   createdAt DateTime @default(now())
 
   @@index([event])
@@ -3311,13 +3567,13 @@ model AnalyticsEvent {
 // =====================================================
 
 model AdminAuditLog {
-  id        String   @id @default(cuid())
-  action    String   // e.g. "BAN_USER", "DELETE_EVENT", "CREATE_HOST", "APPROVE_EVENT"
-  targetType String  // e.g. "User", "Activity", "EventSubmission", "Host"
-  targetId  String   // ID of the affected record
-  adminId   String   // Clerk user ID of the admin who performed the action
-  details   Json?    // Optional additional context
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  action     String // e.g. "BAN_USER", "DELETE_EVENT", "CREATE_HOST", "APPROVE_EVENT"
+  targetType String // e.g. "User", "Activity", "EventSubmission", "Host"
+  targetId   String // ID of the affected record
+  adminId    String // Clerk user ID of the admin who performed the action
+  details    Json? // Optional additional context
+  createdAt  DateTime @default(now())
 
   @@index([adminId])
   @@index([targetType, targetId])

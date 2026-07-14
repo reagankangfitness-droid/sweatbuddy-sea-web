@@ -1,8 +1,8 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { updateCommunityMemberCount } from '@/lib/community-system'
 import { trackEvent, EVENTS } from '@/lib/analytics'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 // POST /api/communities/[slug]/join - Join a community
 export async function POST(
@@ -10,8 +10,8 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -33,7 +33,7 @@ export async function POST(
       where: {
         communityId_userId: {
           communityId: community.id,
-          userId,
+          userId: dbUser.id,
         },
       },
     })
@@ -56,7 +56,7 @@ export async function POST(
     const member = await prisma.communityMember.create({
       data: {
         communityId: community.id,
-        userId,
+        userId: dbUser.id,
         role: 'MEMBER',
       },
     })
@@ -65,7 +65,7 @@ export async function POST(
     await updateCommunityMemberCount(community.id)
 
     // Track analytics event
-    await trackEvent(EVENTS.COMMUNITY_JOINED, userId, {
+    await trackEvent(EVENTS.COMMUNITY_JOINED, dbUser.id, {
       communityId: community.id,
       communitySlug: slug,
       communityName: community.name,

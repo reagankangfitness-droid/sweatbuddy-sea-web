@@ -1,7 +1,7 @@
 'use client'
 
 import { notFound, useRouter, useSearchParams } from 'next/navigation'
-import { ArrowLeft, MapPin, Clock, DollarSign, Users, ChevronDown, ChevronUp, Flag, Settings, MessageCircle, Calendar, BadgeCheck } from 'lucide-react'
+import { ArrowLeft, MapPin, Clock, Users, ChevronDown, ChevronUp, Flag, Settings, MessageCircle, Calendar, BadgeCheck } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useState, lazy, Suspense, useCallback } from 'react'
 import { useUser } from '@clerk/nextjs'
@@ -13,7 +13,7 @@ import { WhosGoing } from '@/components/whos-going'
 import { ShareButton } from '@/components/share-button'
 import { SpotsIndicator } from '@/components/spots-indicator'
 import { WaitlistButton } from '@/components/waitlist-button'
-import { generateGoogleCalendarUrl, downloadIcsFile } from '@/lib/calendar'
+import { generateGoogleCalendarUrl } from '@/lib/calendar'
 import { PostActivityPrompt } from '@/components/post-activity-prompt'
 import { GoingSoloPrompt } from '@/components/going-solo-prompt'
 import { getSignInUrl } from '@/lib/auth-utils'
@@ -21,6 +21,7 @@ import { ReportModal } from '@/components/p2p/ReportModal'
 import { BlockUserButton } from '@/components/p2p/BlockUserButton'
 import { ManageAttendeesModal } from '@/components/p2p/ManageAttendeesModal'
 import { SessionComments } from '@/components/p2p/SessionComments'
+import { SessionVectorMap, type SessionVectorMapPin } from '@/components/maps/SessionVectorMap'
 import { getActivityConfig } from '@/lib/activity-types'
 
 import { DESCRIPTION_CHAR_LIMIT } from '@/config/constants'
@@ -28,7 +29,6 @@ import { DESCRIPTION_CHAR_LIMIT } from '@/config/constants'
 // Lazy load heavy components
 const ActivityMessaging = lazy(() => import('@/components/activity-messaging').then(m => ({ default: m.ActivityMessaging })))
 const ActivityGroupChat = lazy(() => import('@/components/activity-group-chat').then(m => ({ default: m.ActivityGroupChat })))
-const GoogleMapLazy = lazy(() => import('@/components/google-map-lazy').then(m => ({ default: m.GoogleMapLazy })))
 
 interface Activity {
   id: string
@@ -127,7 +127,6 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
     handleLeave,
     handleWaitlistChange,
     checkJoinStatus,
-    setHasJoined,
     joinButtonText,
   } = useActivityJoin(params.id, user?.id ?? null, {
     activityMode: activity?.activityMode,
@@ -207,49 +206,13 @@ Organized via SweatBuddies - Find local fitness sessions and crews
     toast.success('Opening Google Calendar...')
   }
 
-  const handleDownloadIcs = () => {
-    if (!activity || !activity.startTime) {
-      toast.error('Activity details are incomplete')
-      return
-    }
-
-    const joinedCount = activity.userActivities.filter(ua => ua.status === 'JOINED').length
-    const location = activity.city
-    const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`
-
-    const description = `${activity.description || ''}
-
-Location: ${location}
-Maps: ${mapsLink}
-
-Host: ${activity.user.name || 'Anonymous'} (${activity.user.email})
-Price: ${activity.currency} ${(activity.price / 100).toFixed(2)}
-Participants: ${joinedCount}${activity.maxPeople ? ` of ${activity.maxPeople}` : ''}
-
-Organized via sweatbuddies
-`.trim()
-
-    downloadIcsFile(
-      {
-        title: activity.title,
-        description,
-        location,
-        startTime: new Date(activity.startTime),
-        endTime: activity.endTime ? new Date(activity.endTime) : new Date(new Date(activity.startTime).getTime() + 60 * 60 * 1000),
-      },
-      `${activity.title.replace(/[^a-z0-9]/gi, '-').toLowerCase()}.ics`
-    )
-
-    toast.success('Calendar event downloaded!')
-  }
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#0D0D0D]">
         <header className="sticky top-0 z-40 bg-[#1A1A1A]/90 backdrop-blur-lg border-b border-white/10">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="max-w-2xl mx-auto flex items-center gap-4 px-4 py-3">
-              <button onClick={() => router.back()} aria-label="Go back" className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0D0D0D] border border-white/10">
+              <button onClick={() => router.back()} aria-label="Go back" className="w-11 h-11 flex items-center justify-center rounded-full bg-[#0D0D0D] border border-white/10">
                 <ArrowLeft className="w-5 h-5 text-[#666666]" />
               </button>
               <span className="text-sm font-medium text-[#666666]">Session Details</span>
@@ -279,6 +242,27 @@ Organized via sweatbuddies
   const isVerifiedCoach = activity.user.isCoach && activity.user.coachVerificationStatus === 'VERIFIED'
   const locationDisplay = activity.address || activity.city
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationDisplay)}`
+  const hasCoordinates = Number.isFinite(activity.latitude) && Number.isFinite(activity.longitude)
+  const mapCenter = hasCoordinates
+    ? { lat: activity.latitude, lng: activity.longitude }
+    : activity.city.toLowerCase().includes('bangkok')
+      ? { lat: 13.7563, lng: 100.5018 }
+      : { lat: 1.3521, lng: 103.8198 }
+  const activityMapPins: SessionVectorMapPin[] = [
+    {
+      id: activity.id,
+      title: activity.title,
+      latitude: hasCoordinates ? activity.latitude : null,
+      longitude: hasCoordinates ? activity.longitude : null,
+      city: activity.city,
+      primaryLabel: activity.type,
+      priceLabel: activity.price === 0 ? 'Free' : formatPrice(activity.price, activity.currency),
+      activityLabel: emoji,
+      previewTitle: activity.title,
+      previewSubtitle: locationDisplay,
+      previewMeta: activity.price === 0 ? 'Free' : formatPrice(activity.price, activity.currency),
+    },
+  ]
 
   return (
     <div className="min-h-screen bg-[#0D0D0D]">
@@ -287,7 +271,7 @@ Organized via sweatbuddies
         {/* Back button overlay */}
         <div className="absolute top-0 left-0 right-0 z-40 pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-3">
-            <button onClick={() => router.back()} aria-label="Go back" className="w-10 h-10 flex items-center justify-center rounded-full bg-[#1A1A1A]/80 backdrop-blur-sm border border-white/10 shadow-sm">
+            <button onClick={() => router.back()} aria-label="Go back" className="w-11 h-11 flex items-center justify-center rounded-full bg-[#1A1A1A]/80 backdrop-blur-sm border border-white/10 shadow-sm">
               <ArrowLeft className="w-5 h-5 text-white" />
             </button>
             <ShareButton
@@ -296,7 +280,7 @@ Organized via sweatbuddies
               activityDescription={activity.description}
               variant="outline"
               size="icon"
-              className="w-10 h-10 rounded-full bg-[#1A1A1A]/80 backdrop-blur-sm border border-white/10 shadow-sm"
+              className="w-11 h-11 rounded-full bg-[#1A1A1A]/80 backdrop-blur-sm border border-white/10 shadow-sm"
               showLabel={false}
             />
           </div>
@@ -398,22 +382,22 @@ Organized via sweatbuddies
             )}
 
             {/* Location */}
-            <div className="flex items-start gap-3">
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex min-h-11 items-center gap-3 rounded-xl transition-colors hover:bg-white/[0.03]"
+            >
               <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
                 <MapPin className="w-4.5 h-4.5 text-white" />
               </div>
               <div>
-                <a
-                  href={mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[14px] font-semibold text-white hover:text-white transition-colors"
-                >
+                <p className="text-[14px] font-semibold text-white">
                   {locationDisplay}
-                </a>
-                <p className="text-[12px] text-white mt-0.5">Open in Google Maps</p>
+                </p>
+                <p className="text-[12px] text-white/60 mt-0.5">Open in Google Maps</p>
               </div>
-            </div>
+            </a>
 
             {/* Price + Spots row */}
             <div className="flex items-center gap-2 pt-0.5 flex-wrap">
@@ -533,10 +517,10 @@ Organized via sweatbuddies
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-[#666666] mb-3">
             {isVerifiedCoach ? 'Your coach' : 'Meet your host'}
           </h3>
-          <div className="flex items-start gap-3">
+          <div className="flex min-h-16 items-start gap-3">
             <div className="relative flex-shrink-0">
               {activity.user.slug ? (
-                <Link href={`/user/${activity.user.slug}`}>
+                <Link href={`/user/${activity.user.slug}`} className="flex min-h-12 min-w-12 items-center justify-center rounded-full">
                   {activity.user.imageUrl ? (
                     <Image
                       src={activity.user.imageUrl}
@@ -572,7 +556,7 @@ Organized via sweatbuddies
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 {activity.user.slug ? (
-                  <Link href={`/user/${activity.user.slug}`} className="font-semibold text-[15px] text-white hover:text-white transition-colors">
+                  <Link href={`/user/${activity.user.slug}`} className="inline-flex min-h-11 items-center font-semibold text-[15px] text-white hover:text-white transition-colors">
                     {activity.user.name || 'Anonymous'}
                   </Link>
                 ) : (
@@ -712,19 +696,17 @@ Organized via sweatbuddies
         {/* ─── MAP ─── */}
         <div className="bg-[#1A1A1A] rounded-2xl shadow-sm border border-[#333333] p-4 mb-4">
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-[#666666] mb-3">Location</h3>
-          <Suspense fallback={
-            <div className="w-full h-[200px] bg-[#2A2A2A] rounded-xl animate-pulse flex items-center justify-center">
-              <p className="text-[13px] text-[#666666]">Loading map...</p>
-            </div>
-          }>
-            <div className="rounded-xl overflow-hidden">
-              <GoogleMapLazy
-                latitude={activity.latitude}
-                longitude={activity.longitude}
-                title={activity.title}
-              />
-            </div>
-          </Suspense>
+          <div className="h-[220px] overflow-hidden rounded-xl sm:h-[260px]">
+            <SessionVectorMap
+              center={mapCenter}
+              pins={activityMapPins}
+              selectedPinId={activity.id}
+              initialZoom={13}
+              maxFitZoom={14}
+              fitPadding={56}
+              showControls={false}
+            />
+          </div>
         </div>
 
         {/* ─── FULL ATTENDEE LIST (WhosGoing component) ─── */}

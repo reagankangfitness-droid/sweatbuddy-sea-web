@@ -45,7 +45,9 @@ describe('POST /api/buddy/sessions/[id]/remove-attendee', () => {
     vi.mocked(currentUser).mockResolvedValue({
       primaryEmailAddress: { emailAddress: 'host@sweatbuddies.co' },
     } as Awaited<ReturnType<typeof currentUser>>)
-    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: 'host-1' })
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({
+      id: 'host-1',
+    } as Awaited<ReturnType<typeof prisma.user.findUnique>>)
     vi.mocked(prisma.activity.findUnique).mockResolvedValue({
       id: 'activity-1',
       title: 'Morning Run Club',
@@ -53,15 +55,15 @@ describe('POST /api/buddy/sessions/[id]/remove-attendee', () => {
       startTime: new Date('2026-05-20T23:00:00.000Z'),
       address: 'Marina Bay',
       city: 'Singapore',
-    })
+    } as Awaited<ReturnType<typeof prisma.activity.findUnique>>)
     vi.mocked(prisma.userActivity.findUnique).mockResolvedValue({
       id: 'user-activity-1',
       status: 'JOINED',
-    })
+    } as Awaited<ReturnType<typeof prisma.userActivity.findUnique>>)
     vi.mocked(prisma.userActivity.update).mockResolvedValue({
       id: 'user-activity-1',
       status: 'CANCELLED',
-    })
+    } as Awaited<ReturnType<typeof prisma.userActivity.update>>)
     vi.mocked(notify).mockResolvedValue(undefined)
   })
 

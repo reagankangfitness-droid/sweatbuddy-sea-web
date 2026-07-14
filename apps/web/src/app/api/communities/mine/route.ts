@@ -1,22 +1,12 @@
 import { NextResponse } from 'next/server'
-import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 // GET: list communities the user owns or is admin of
 export async function GET() {
   try {
-    const { userId } = await auth()
-    if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
-
-    const clerkUser = await currentUser()
-    const email = clerkUser?.primaryEmailAddress?.emailAddress
-    if (!email) return NextResponse.json({ error: 'No email' }, { status: 400 })
-
-    const dbUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
-      select: { id: true },
-    })
-    if (!dbUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
     // Communities user owns or is admin of
     const communities = await prisma.community.findMany({

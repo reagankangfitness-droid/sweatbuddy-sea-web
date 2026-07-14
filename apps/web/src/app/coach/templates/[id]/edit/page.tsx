@@ -1,6 +1,5 @@
-import { CoachTemplateForm } from '../../CoachTemplateForm'
+import { redirect } from 'next/navigation'
 
-export default async function EditCoachTemplatePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
-  return <CoachTemplateForm templateId={id} />
+export default function EditCoachTemplatePage() {
+  redirect('/host/templates')
 }

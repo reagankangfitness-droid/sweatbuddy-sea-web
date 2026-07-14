@@ -56,11 +56,11 @@ export async function POST(request: Request) {
     // Build return/refresh URLs with event context if provided
     const returnUrl = eventSubmissionId
       ? `${BASE_URL}/host/events/${eventSubmissionId}/edit?stripe_onboarding=complete`
-      : `${BASE_URL}/host/dashboard?stripe_onboarding=complete`
+      : `${BASE_URL}/hub?stripe_onboarding=complete`
 
     const refreshUrl = eventSubmissionId
       ? `${BASE_URL}/host/events/${eventSubmissionId}/edit?stripe_onboarding=refresh`
-      : `${BASE_URL}/host/dashboard?stripe_onboarding=refresh`
+      : `${BASE_URL}/hub?stripe_onboarding=refresh`
 
     // Create an account link for Express onboarding
     const accountLink = await stripe.accountLinks.create({

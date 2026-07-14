@@ -1,7 +1,7 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { canManageCommunity, getCommunityMemberRole } from '@/lib/community-system'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 // GET /api/communities/[slug] - Get community details
 export async function GET(
@@ -10,7 +10,7 @@ export async function GET(
 ) {
   try {
     const { slug } = await params
-    const { userId } = await auth()
+    const dbUser = await getCurrentDbUser().catch(() => null)
 
     const community = await prisma.community.findUnique({
       where: { slug },
@@ -41,12 +41,12 @@ export async function GET(
 
     // Check if current user is a member
     let membership = null
-    if (userId) {
+    if (dbUser) {
       const member = await prisma.communityMember.findUnique({
         where: {
           communityId_userId: {
             communityId: community.id,
-            userId,
+            userId: dbUser.id,
           },
         },
       })
@@ -64,6 +64,7 @@ export async function GET(
       where: {
         communityId: community.id,
         status: 'PUBLISHED',
+        moderationStatus: 'LIVE',
         deletedAt: null,
         startTime: { gte: new Date() },
       },
@@ -101,8 +102,8 @@ export async function PATCH(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -116,7 +117,7 @@ export async function PATCH(
     }
 
     // Check if user can manage this community
-    if (!(await canManageCommunity(community.id, userId))) {
+    if (!(await canManageCommunity(community.id, dbUser.id))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -131,6 +132,14 @@ export async function PATCH(
       instagramHandle,
       websiteUrl,
       communityLink,
+      usualArea,
+      usualSchedule,
+      joinPlatform,
+      vibeTags,
+      priceType,
+      beginnerFriendly,
+      sourceUrl,
+      lastVerifiedAt,
     } = body
 
     const updated = await prisma.community.update({
@@ -145,6 +154,16 @@ export async function PATCH(
         ...(instagramHandle !== undefined && { instagramHandle }),
         ...(websiteUrl !== undefined && { websiteUrl }),
         ...(communityLink !== undefined && { communityLink }),
+        ...(usualArea !== undefined && { usualArea }),
+        ...(usualSchedule !== undefined && { usualSchedule }),
+        ...(joinPlatform !== undefined && { joinPlatform }),
+        ...(Array.isArray(vibeTags) && { vibeTags }),
+        ...(priceType !== undefined && { priceType }),
+        ...(beginnerFriendly !== undefined && { beginnerFriendly: Boolean(beginnerFriendly) }),
+        ...(sourceUrl !== undefined && { sourceUrl }),
+        ...(lastVerifiedAt !== undefined && {
+          lastVerifiedAt: lastVerifiedAt ? new Date(lastVerifiedAt) : null,
+        }),
       },
       include: {
         city: true,
@@ -163,8 +182,8 @@ export async function DELETE(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -178,7 +197,7 @@ export async function DELETE(
     }
 
     // Only owner can delete
-    const role = await getCommunityMemberRole(community.id, userId)
+    const role = await getCommunityMemberRole(community.id, dbUser.id)
     if (role !== 'OWNER') {
       return NextResponse.json({ error: 'Only the owner can delete this community' }, { status: 403 })
     }

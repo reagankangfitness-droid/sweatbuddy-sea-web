@@ -9,6 +9,7 @@ import { Logo } from '@/components/logo'
 import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 import { CreateSessionSheet } from '@/components/CreateSessionSheet'
+import { CreateChoiceSheet } from '@/components/CreateChoiceSheet'
 
 const navItems = [
   { id: 'discover', label: 'Discover', icon: Compass, href: '/buddy', mobileOnly: false },
@@ -32,6 +33,7 @@ function AppNavInner() {
   const [pendingCount, setPendingCount] = useState(0)
   const [unreadNotifications, setUnreadNotifications] = useState(0)
   const [createOpen, setCreateOpen] = useState(false)
+  const [createMenuOpen, setCreateMenuOpen] = useState(false)
 
   useEffect(() => {
     if (!isSignedIn) return
@@ -100,7 +102,7 @@ function AppNavInner() {
           initial={false}
           animate={{ opacity: isHovered ? 0 : 1 }}
           transition={{ duration: 0.15 }}
-          className="absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center py-6 bg-[#0D0D0D]/80 backdrop-blur-sm border-r border-white/[0.06]"
+          className="absolute left-0 top-0 bottom-0 w-14 flex flex-col items-center py-6 bg-[#0D0D0D]/80 backdrop-blur-sm border-r border-white/[0.06]"
         >
           <div className="mb-6">
             <Logo size={24} />
@@ -112,7 +114,7 @@ function AppNavInner() {
               return (
                 <div
                   key={item.id}
-                  className={`relative w-8 h-8 rounded-lg flex items-center justify-center ${
+                  className={`relative w-11 h-11 rounded-xl flex items-center justify-center ${
                     active ? 'bg-white text-black' : 'text-[#71717A]'
                   }`}
                 >
@@ -129,7 +131,7 @@ function AppNavInner() {
           <div className="mt-auto flex flex-col items-center gap-3">
             <Link
               href="/notifications"
-              className="relative w-8 h-8 rounded-lg flex items-center justify-center text-[#71717A] hover:text-white transition-colors"
+              className="relative w-11 h-11 rounded-xl flex items-center justify-center text-[#71717A] hover:text-white transition-colors"
               aria-label="Notifications"
             >
               <Bell className="w-4 h-4" />
@@ -140,9 +142,9 @@ function AppNavInner() {
               )}
             </Link>
             <button
-              onClick={() => setCreateOpen(true)}
-              className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-black hover:opacity-90 transition-opacity"
-              aria-label="Create session"
+              onClick={() => setCreateMenuOpen(true)}
+              className="w-11 h-11 rounded-full bg-white flex items-center justify-center text-black hover:opacity-90 transition-opacity"
+              aria-label="Create"
             >
               <Plus className="w-4 h-4" />
             </button>
@@ -228,9 +230,9 @@ function AppNavInner() {
               {/* Create button */}
               <div className="mb-4">
                 <button
-                  onClick={() => setCreateOpen(true)}
+                  onClick={() => setCreateMenuOpen(true)}
                   className="w-11 h-11 rounded-full bg-white flex items-center justify-center text-black hover:opacity-90 transition-opacity shadow-lg"
-                  aria-label="Create session"
+                  aria-label="Create"
                 >
                   <Plus className="w-5 h-5 stroke-[2.5px]" />
                 </button>
@@ -290,8 +292,8 @@ function AppNavInner() {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => setCreateOpen(true)}
-                    aria-label="Create session"
+                    onClick={() => setCreateMenuOpen(true)}
+                    aria-label="Create"
                     className="flex flex-col items-center justify-center w-14 h-14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0D0D0D] rounded-lg"
                   >
                     <span className="flex items-center justify-center w-11 h-11 rounded-full bg-white">
@@ -338,6 +340,14 @@ function AppNavInner() {
       </div>
 
       {/* Create Session Sheet */}
+      <CreateChoiceSheet
+        open={createMenuOpen}
+        onClose={() => setCreateMenuOpen(false)}
+        onHostSession={() => {
+          setCreateMenuOpen(false)
+          setCreateOpen(true)
+        }}
+      />
       <CreateSessionSheet open={createOpen} onClose={() => setCreateOpen(false)} />
     </>
   )

@@ -9,10 +9,10 @@ export default function PlanPage() {
     <div className="min-h-screen bg-neutral-900">
       <div className="max-w-2xl mx-auto px-4 py-8">
         <Link
-          href="/host/dashboard"
+          href="/hub"
           className="inline-flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-300 mb-6"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Dashboard
+          <ArrowLeft className="w-4 h-4" /> Back to Hub
         </Link>
 
         <div className="mb-6">

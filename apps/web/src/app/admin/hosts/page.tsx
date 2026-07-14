@@ -599,7 +599,7 @@ export default function AdminHostsPage() {
                 <li>Click &quot;Generate Magic Link&quot;</li>
                 <li>Send the link to the host via email/message</li>
                 <li>Host clicks the link → signed in automatically</li>
-                <li>Host can access their dashboard at /host/dashboard</li>
+                <li>Host can access their hub at /hub</li>
               </ol>
             </div>
           </div>

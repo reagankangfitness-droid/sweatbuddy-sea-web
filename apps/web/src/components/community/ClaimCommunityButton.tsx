@@ -2,14 +2,25 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, Copy, Loader2, ShieldCheck } from 'lucide-react'
 
 interface ClaimCommunityButtonProps {
   communitySlug: string
   communityName: string
   isSeeded: boolean
   claimedAt: string | null
-  claimableBy: string | null
+  defaultVerificationUrl?: string | null
+}
+
+type ClaimStep = 'default' | 'start' | 'verify' | 'success' | 'error'
+
+type ClaimResponse = {
+  claim?: {
+    verificationCode?: string
+    verificationUrl?: string
+  }
+  instructions?: string
+  error?: string
 }
 
 export function ClaimCommunityButton({
@@ -17,105 +28,199 @@ export function ClaimCommunityButton({
   communityName,
   isSeeded,
   claimedAt,
+  defaultVerificationUrl,
 }: ClaimCommunityButtonProps) {
   const router = useRouter()
-  const [state, setState] = useState<'default' | 'claiming' | 'success' | 'error'>('default')
-  const [instagramHandle, setInstagramHandle] = useState('')
+  const [step, setStep] = useState<ClaimStep>('default')
+  const [verificationUrl, setVerificationUrl] = useState(defaultVerificationUrl ?? '')
+  const [verificationCode, setVerificationCode] = useState('')
+  const [message, setMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   if (!isSeeded || claimedAt) return null
 
-  async function handleClaim() {
-    if (!instagramHandle.trim()) return
+  async function startClaim() {
+    if (!verificationUrl.trim()) return
     setIsSubmitting(true)
     setErrorMessage('')
+    setMessage('')
 
     try {
       const res = await fetch(`/api/communities/${communitySlug}/claim`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ instagramHandle: instagramHandle.trim() }),
+        body: JSON.stringify({ verificationUrl: verificationUrl.trim() }),
       })
-      const data = await res.json()
+      const data = await res.json() as ClaimResponse
 
-      if (res.ok) {
-        setState('success')
-        // Redirect to Hub after a brief success message
-        setTimeout(() => router.push('/hub'), 1500)
-      } else {
-        setErrorMessage(data.error || 'Failed to claim community')
-        setState('error')
+      if (!res.ok) {
+        setErrorMessage(data.error || 'Failed to start claim')
+        setStep('error')
+        return
       }
+
+      setVerificationCode(data.claim?.verificationCode ?? '')
+      setVerificationUrl(data.claim?.verificationUrl ?? verificationUrl.trim())
+      setMessage(data.instructions ?? '')
+      setStep('verify')
     } catch {
       setErrorMessage('Something went wrong. Please try again.')
-      setState('error')
+      setStep('error')
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  if (state === 'success') {
+  async function verifyClaim() {
+    setIsSubmitting(true)
+    setErrorMessage('')
+    setMessage('')
+
+    try {
+      const res = await fetch(`/api/communities/${communitySlug}/claim/verify`, {
+        method: 'POST',
+      })
+      const data = await res.json()
+
+      if (res.ok && data.verified) {
+        setStep('success')
+        setTimeout(() => router.push('/hub'), 1200)
+        return
+      }
+
+      setErrorMessage(data.error || 'Verification code not found yet')
+      setStep('verify')
+    } catch {
+      setErrorMessage('Something went wrong. Please try again.')
+      setStep('verify')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  async function copyCode() {
+    if (!verificationCode) return
+    try {
+      await navigator.clipboard.writeText(verificationCode)
+      setMessage('Code copied.')
+    } catch {
+      setMessage(verificationCode)
+    }
+  }
+
+  if (step === 'success') {
     return (
-      <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-2xl p-5 text-center">
-        <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
+      <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-center">
+        <CheckCircle2 className="mx-auto mb-2 h-8 w-8 text-emerald-500" />
         <p className="text-sm font-semibold text-[#1A1A1A]">
-          You now own {communityName}!
+          You can now manage {communityName}.
         </p>
-        <p className="text-xs text-[#71717A] mt-1">Taking you to your dashboard...</p>
+        <p className="mt-1 text-xs text-[#71717A]">Taking you to your hub...</p>
       </div>
     )
   }
 
   return (
-    <div className="mt-4 bg-white border border-black/[0.06] rounded-2xl p-5">
-      {state === 'default' && (
+    <div className="mt-4 rounded-2xl border border-black/[0.06] bg-white p-5">
+      {step === 'default' && (
         <div className="text-center">
+          <ShieldCheck className="mx-auto mb-3 h-6 w-6 text-[#1A1A1A]" />
           <p className="text-sm font-semibold text-[#1A1A1A]">
-            Is this your community?
+            Manage this community
           </p>
-          <p className="text-xs text-[#71717A] mt-1 mb-4">
-            Claim it to manage sessions, see who&apos;s coming, and grow your crew.
+          <p className="mt-1 mb-4 text-xs text-[#71717A]">
+            Claim it by adding a short SweatBuddies code to the official page.
           </p>
           <button
-            onClick={() => setState('claiming')}
-            className="px-5 py-2.5 bg-[#1A1A1A] text-white text-sm font-semibold rounded-full hover:bg-black transition-colors"
+            type="button"
+            onClick={() => setStep('start')}
+            className="rounded-full bg-[#1A1A1A] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-black"
           >
-            Claim this community
+            Start claim
           </button>
         </div>
       )}
 
-      {(state === 'claiming' || state === 'error') && (
+      {(step === 'start' || step === 'error') && (
         <div>
-          <p className="text-sm font-semibold text-[#1A1A1A] mb-1">
-            Verify you&apos;re the owner
+          <p className="mb-1 text-sm font-semibold text-[#1A1A1A]">
+            Official page URL
           </p>
-          <p className="text-xs text-[#71717A] mb-3">
-            Enter the Instagram handle linked to this community.
+          <p className="mb-3 text-xs text-[#71717A]">
+            Use the Instagram, Linktree, website, or public group page you can edit.
           </p>
           <div className="flex gap-2">
             <input
-              type="text"
-              placeholder="@your_instagram"
-              value={instagramHandle}
-              onChange={(e) => setInstagramHandle(e.target.value)}
-              className="flex-1 px-3.5 py-2.5 bg-[#0D0D0D] border border-[#333333] rounded-xl text-sm text-white placeholder:text-[#666666] focus:outline-none focus:border-[#666666]"
-              onKeyDown={(e) => { if (e.key === 'Enter') handleClaim() }}
+              type="url"
+              placeholder="https://instagram.com/yourcrew"
+              value={verificationUrl}
+              onChange={(event) => setVerificationUrl(event.target.value)}
+              className="flex-1 rounded-xl border border-[#333333] bg-[#0D0D0D] px-3.5 py-2.5 text-sm text-white placeholder:text-[#666666] focus:border-[#666666] focus:outline-none"
+              onKeyDown={(event) => { if (event.key === 'Enter') void startClaim() }}
               autoFocus
             />
             <button
-              onClick={handleClaim}
-              disabled={isSubmitting || !instagramHandle.trim()}
-              className="px-4 py-2.5 bg-[#1A1A1A] text-white text-sm font-semibold rounded-xl hover:bg-black disabled:opacity-40 transition-colors flex items-center gap-1.5"
+              type="button"
+              onClick={startClaim}
+              disabled={isSubmitting || !verificationUrl.trim()}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#1A1A1A] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-black disabled:opacity-40"
             >
-              {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
-              {isSubmitting ? 'Verifying...' : 'Verify'}
+              {isSubmitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+              Continue
             </button>
           </div>
-          {state === 'error' && errorMessage && (
-            <p className="text-xs text-red-500 mt-2">
-              {errorMessage} — <a href="mailto:support@sweatbuddies.co" className="underline">contact support</a>
+          {errorMessage && (
+            <p className="mt-2 text-xs text-red-500">
+              {errorMessage}
+            </p>
+          )}
+        </div>
+      )}
+
+      {step === 'verify' && (
+        <div>
+          <p className="mb-1 text-sm font-semibold text-[#1A1A1A]">
+            Add this code to the page
+          </p>
+          <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-[#E4E4E7] bg-[#FAFAFA] px-4 py-3">
+            <span className="font-mono text-lg font-bold tracking-[0.18em] text-[#1A1A1A]">
+              {verificationCode}
+            </span>
+            <button
+              type="button"
+              onClick={copyCode}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 text-[#1A1A1A] hover:bg-black/5"
+              aria-label="Copy verification code"
+            >
+              <Copy className="h-4 w-4" />
+            </button>
+          </div>
+          <p className="mt-3 text-xs leading-5 text-[#71717A]">
+            {message || `Add ${verificationCode} to ${verificationUrl}, then check verification.`}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={verifyClaim}
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#1A1A1A] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-black disabled:opacity-40"
+            >
+              {isSubmitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+              Check verification
+            </button>
+            <button
+              type="button"
+              onClick={() => setStep('start')}
+              disabled={isSubmitting}
+              className="rounded-full border border-black/10 px-5 py-2.5 text-sm font-semibold text-[#1A1A1A] hover:bg-black/5 disabled:opacity-40"
+            >
+              Change URL
+            </button>
+          </div>
+          {errorMessage && (
+            <p className="mt-2 text-xs text-red-500">
+              {errorMessage}
             </p>
           )}
         </div>

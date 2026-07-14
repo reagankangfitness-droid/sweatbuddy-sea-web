@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
-import { auth, currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
+import { getCurrentDbUser } from '@/lib/current-user'
 import { prisma } from '@/lib/prisma'
 import HubClient from './HubClient'
 
@@ -10,18 +10,8 @@ export const metadata: Metadata = {
 }
 
 export default async function HubPage() {
-  const { userId } = await auth()
-  if (!userId) redirect('/sign-in?redirect_url=/hub')
-
-  const clerkUser = await currentUser()
-  const email = clerkUser?.primaryEmailAddress?.emailAddress
-  if (!email) redirect('/buddy')
-
-  const dbUser = await prisma.user.findUnique({
-    where: { email: email.toLowerCase() },
-    select: { id: true, name: true },
-  })
-  if (!dbUser) redirect('/buddy')
+  const dbUser = await getCurrentDbUser()
+  if (!dbUser) redirect('/sign-in?redirect_url=/hub')
 
   const now = new Date()
   const twoWeeks = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000)
@@ -29,7 +19,7 @@ export default async function HubPage() {
   // Get communities where user is owner/admin
   const memberships = await prisma.communityMember.findMany({
     where: {
-      userId,
+      userId: dbUser.id,
       role: { in: ['OWNER', 'ADMIN'] },
       community: { isActive: true },
     },
@@ -46,15 +36,11 @@ export default async function HubPage() {
     },
   })
 
-  // Also include communities created by this user (check both Clerk ID and DB ID)
+  // Also include communities created or claimed by this user.
   const owned = await prisma.community.findMany({
     where: {
       isActive: true,
-      OR: [
-        { createdById: userId },
-        { createdById: dbUser.id },
-        { claimedById: userId },
-      ],
+      OR: [{ createdById: dbUser.id }, { claimedById: dbUser.id }],
     },
     select: { id: true, name: true, slug: true, memberCount: true, category: true },
   })

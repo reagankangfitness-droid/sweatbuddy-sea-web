@@ -113,7 +113,7 @@ export function CityLandingPage({
 
           <div className="relative mx-auto flex min-h-[calc(100svh-174px)] max-w-6xl items-end sm:min-h-[590px]">
             <div className="max-w-3xl">
-              <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-[#B7F000]">
+              <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-[#63FF8F]">
                 {eyebrow}
               </p>
               <h1 className="max-w-3xl text-5xl font-extrabold leading-[0.98] tracking-tight text-white sm:text-7xl">
@@ -129,7 +129,7 @@ export function CityLandingPage({
                   sourcePlacement="city_hero_browse"
                   ctaLabel={`Find my first crew in ${city}`}
                   successHref="/buddy"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#B7F000] px-7 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] transition-colors hover:bg-[#A6DE00]"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-7 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] transition-colors hover:bg-[#33E66C]"
                 >
                   Find my first crew <ArrowRight size={17} strokeWidth={2.4} />
                 </LandingIntentCapture>
@@ -182,7 +182,7 @@ export function CityLandingPage({
         <section className="border-y border-white/[0.06] bg-[#0D0D0D] px-5 py-14 sm:py-20">
           <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#B7F000]">Why this matters</p>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#63FF8F]">Why this matters</p>
               <h2 className="mt-3 max-w-lg text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
                 {painTitle}
               </h2>
@@ -205,7 +205,7 @@ export function CityLandingPage({
           <div className="mx-auto max-w-6xl">
             <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#B7F000]">Start with one plan</p>
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#63FF8F]">Start with one plan</p>
                 <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                   Pick the room where meeting people feels natural.
                 </h2>
@@ -276,7 +276,7 @@ export function CityLandingPage({
                 sourcePlacement="city_host_section"
                 ctaLabel={`List your crew in ${city}`}
                 successHref="/host"
-                className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#B7F000] px-7 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] transition-colors hover:bg-[#A6DE00]"
+                className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-7 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] transition-colors hover:bg-[#33E66C]"
               >
                 List your crew <ArrowRight size={17} />
               </LandingIntentCapture>
@@ -303,7 +303,7 @@ export function CityLandingPage({
 
         <section className="border-t border-white/[0.06] px-5 py-16 sm:py-24">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#B7F000]">Start this week</p>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#63FF8F]">Start this week</p>
             <h2 className="mt-3 text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl">
               {finalTitle}
             </h2>
@@ -317,7 +317,7 @@ export function CityLandingPage({
                 sourcePlacement="city_final_browse"
                 ctaLabel={`Find a session in ${city}`}
                 successHref="/buddy"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#B7F000] px-8 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] transition-colors hover:bg-[#A6DE00]"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-8 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] transition-colors hover:bg-[#33E66C]"
               >
                 Find a session <ArrowRight size={17} />
               </LandingIntentCapture>

@@ -1,7 +1,7 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { canManageCommunity, generateInviteCode } from '@/lib/community-system'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 // GET /api/communities/[slug]/invites - List invites (admin only)
 export async function GET(
@@ -9,8 +9,8 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -23,7 +23,7 @@ export async function GET(
       return NextResponse.json({ error: 'Community not found' }, { status: 404 })
     }
 
-    if (!(await canManageCommunity(community.id, userId))) {
+    if (!(await canManageCommunity(community.id, dbUser.id))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -44,8 +44,8 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -61,7 +61,7 @@ export async function POST(
       return NextResponse.json({ error: 'Community not found' }, { status: 404 })
     }
 
-    if (!(await canManageCommunity(community.id, userId))) {
+    if (!(await canManageCommunity(community.id, dbUser.id))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -79,7 +79,7 @@ export async function POST(
       data: {
         communityId: community.id,
         code,
-        invitedById: userId,
+        invitedById: dbUser.id,
         maxUses: maxUses || null,
         expiresAt,
       },
@@ -100,8 +100,8 @@ export async function DELETE(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -121,7 +121,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Community not found' }, { status: 404 })
     }
 
-    if (!(await canManageCommunity(community.id, userId))) {
+    if (!(await canManageCommunity(community.id, dbUser.id))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

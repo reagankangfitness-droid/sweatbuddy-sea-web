@@ -10,7 +10,7 @@ export function DashboardHeader() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
         {/* Back button + Logo */}
         <div className="flex items-center gap-3">
-          <BackButton fallbackHref="/host/dashboard" />
+          <BackButton fallbackHref="/hub" />
           <Link href="/" className="flex items-center gap-2">
             <Logo size={24} />
             <span className="text-lg font-bold text-neutral-100 hidden sm:inline">sweatbuddies</span>

@@ -1,32 +1,23 @@
 import type { Metadata, Viewport } from 'next'
 import type { PropsWithChildren } from 'react'
-import { Plus_Jakarta_Sans, Outfit, DM_Sans, Barlow_Condensed } from 'next/font/google'
+import { Barlow_Condensed, Geist, Geist_Mono } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
-import { AppNav } from '@/components/AppNav'
-import { PushPromptBanner } from '@/components/push-prompt-banner'
 import './globals.css'
+import 'maplibre-gl/dist/maplibre-gl.css'
 
-// Plus Jakarta Sans - closest free alternative to Airbnb Cereal
-// Geometric, warm, modern, excellent legibility
-const plusJakarta = Plus_Jakarta_Sans({
+const geistSans = Geist({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
-  variable: '--font-plus-jakarta',
+  variable: '--font-geist-sans',
   display: 'swap',
   preload: true,
 })
 
-const outfit = Outfit({
+const geistMono = Geist_Mono({
   subsets: ['latin'],
-  variable: '--font-outfit',
+  variable: '--font-geist-mono',
   display: 'swap',
-})
-
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  variable: '--font-dm-sans',
-  display: 'swap',
+  preload: true,
 })
 
 const barlowCondensed = Barlow_Condensed({
@@ -37,9 +28,9 @@ const barlowCondensed = Barlow_Condensed({
 })
 
 const BASE_URL = 'https://www.sweatbuddies.co'
-const SITE_TITLE = 'SweatBuddies | Fitness Communities in Bangkok and Singapore'
+const SITE_TITLE = 'SweatBuddies | Social Fitness Events in Bangkok and Singapore'
 const SITE_DESCRIPTION =
-  'Discover local run clubs, yoga, pickleball, strength, and recovery sessions you can join this week.'
+  'Find your people through fitness. Discover social runs, yoga, pickleball, strength, recovery, and wellness events across Bangkok and Singapore.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -51,6 +42,7 @@ export const metadata: Metadata = {
   keywords: [
     'Bangkok fitness sessions',
     'Singapore fitness sessions',
+    'social fitness events',
     'local fitness communities',
     'run club',
     'yoga group',
@@ -79,7 +71,7 @@ export const metadata: Metadata = {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SweatBuddies local fitness communities in Bangkok and Singapore.',
+        alt: 'SweatBuddies social fitness events in Bangkok and Singapore.',
       },
     ],
   },
@@ -121,13 +113,11 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <link rel="prefetch" href="/api/activities" as="fetch" crossOrigin="anonymous" />
       </head>
       <body
-        className={`${plusJakarta.variable} ${outfit.variable} ${dmSans.variable} ${barlowCondensed.variable} font-sans antialiased bg-[#0D0D0D] text-[#FAFAFA]`}
+        className={`${geistSans.variable} ${geistMono.variable} ${barlowCondensed.variable} font-sans antialiased bg-[#0D0D0D] text-[#FAFAFA]`}
       >
         <Providers>
           {children}
           <Toaster />
-          <AppNav />
-          <PushPromptBanner />
         </Providers>
       </body>
     </html>

@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminRequest } from '@/lib/admin-auth'
 import { generateUniqueSlug } from '@/lib/community-system'
 import { trackEvent, EVENTS } from '@/lib/analytics'
 import { logAdminAction } from '@/lib/admin-audit'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 // GET - List all communities with full details
 export async function GET(request: Request) {
@@ -25,9 +25,23 @@ export async function GET(request: Request) {
         instagramHandle: true,
         websiteUrl: true,
         communityLink: true,
+        usualArea: true,
+        usualSchedule: true,
+        joinPlatform: true,
+        vibeTags: true,
+        priceType: true,
+        beginnerFriendly: true,
+        sourceUrl: true,
+        lastVerifiedAt: true,
         memberCount: true,
         eventCount: true,
         isActive: true,
+        isVerified: true,
+        verificationStatus: true,
+        moderationStatus: true,
+        riskScore: true,
+        riskFlags: true,
+        moderationNotes: true,
         isSeeded: true,
         claimableBy: true,
         claimedAt: true,
@@ -59,8 +73,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { userId } = await auth()
-  if (!userId) {
+  const dbUser = await getCurrentDbUser()
+  if (!dbUser) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -76,6 +90,14 @@ export async function POST(request: Request) {
       instagramHandle,
       websiteUrl,
       communityLink,
+      usualArea,
+      usualSchedule,
+      joinPlatform,
+      vibeTags,
+      priceType,
+      beginnerFriendly,
+      sourceUrl,
+      lastVerifiedAt,
     } = body
 
     if (!name || !category) {
@@ -115,9 +137,23 @@ export async function POST(request: Request) {
         instagramHandle: normalizedHandle,
         websiteUrl: websiteUrl || null,
         communityLink: communityLink || null,
+        usualArea: usualArea || null,
+        usualSchedule: usualSchedule || null,
+        joinPlatform: joinPlatform || null,
+        vibeTags: Array.isArray(vibeTags) ? vibeTags : [],
+        priceType: priceType || null,
+        beginnerFriendly: Boolean(beginnerFriendly),
+        sourceUrl: sourceUrl || websiteUrl || communityLink || null,
+        lastVerifiedAt: lastVerifiedAt ? new Date(lastVerifiedAt) : null,
         cityId: cityRecord?.id || null,
-        createdById: userId,
+        createdById: dbUser.id,
         isSeeded: true,
+        isVerified: true,
+        verificationStatus: 'VERIFIED',
+        moderationStatus: 'LIVE',
+        riskScore: 0,
+        riskFlags: [],
+        moderationNotes: null,
         claimableBy: normalizedHandle,
         memberCount: 0,
       },
@@ -129,7 +165,7 @@ export async function POST(request: Request) {
     })
 
     // Track analytics
-    await trackEvent(EVENTS.COMMUNITY_SEEDED, userId, {
+    await trackEvent(EVENTS.COMMUNITY_SEEDED, dbUser.id, {
       communityId: community.id,
       communityName: name,
       slug,
@@ -140,7 +176,7 @@ export async function POST(request: Request) {
       action: 'seed_community',
       targetType: 'community',
       targetId: community.id,
-      adminId: userId,
+      adminId: dbUser.id,
       details: { name, slug, category, instagramHandle: normalizedHandle },
     })
 

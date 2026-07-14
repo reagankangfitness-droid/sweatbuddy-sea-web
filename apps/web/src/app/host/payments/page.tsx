@@ -69,7 +69,7 @@ export default function PaymentsPage() {
       <div className="min-h-screen bg-neutral-950">
         <header className="border-b border-neutral-800">
           <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-3">
-            <BackButton fallbackHref="/host/dashboard" />
+            <BackButton fallbackHref="/hub" />
             <Link href="/" className="flex items-center gap-2">
               <Logo size={24} />
               <span className="text-lg font-bold text-neutral-100 hidden sm:inline">sweatbuddies</span>
@@ -96,7 +96,7 @@ export default function PaymentsPage() {
       {/* Header */}
       <header className="border-b border-neutral-800">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-3">
-          <BackButton fallbackHref="/host/dashboard" />
+          <BackButton fallbackHref="/hub" />
           <Link href="/" className="flex items-center gap-2">
             <Logo size={24} />
             <span className="text-lg font-bold text-neutral-100 hidden sm:inline">sweatbuddies</span>

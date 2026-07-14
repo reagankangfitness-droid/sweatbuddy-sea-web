@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { isAdminRequest } from '@/lib/admin-auth'
 import { generateUniqueSlug } from '@/lib/community-system'
 import { trackEvent, EVENTS } from '@/lib/analytics'
 import { logAdminAction } from '@/lib/admin-audit'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 interface SeedCommunityInput {
   name: string
@@ -112,8 +112,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { userId } = await auth()
-  if (!userId) {
+  const dbUser = await getCurrentDbUser()
+  if (!dbUser) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -125,7 +125,7 @@ export async function POST(request: Request) {
       const results = []
       for (const input of body.communities) {
         try {
-          const result = await seedOneCommunity(input, userId)
+          const result = await seedOneCommunity(input, dbUser.id)
           results.push(result)
         } catch (error) {
           results.push({
@@ -139,7 +139,7 @@ export async function POST(request: Request) {
     }
 
     // Single community
-    const result = await seedOneCommunity(body, userId)
+    const result = await seedOneCommunity(body, dbUser.id)
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 400 })
     }

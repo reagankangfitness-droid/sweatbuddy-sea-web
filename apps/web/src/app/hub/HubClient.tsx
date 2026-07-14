@@ -548,14 +548,14 @@ export default function HubClient({
 
         {/* Quick links */}
         <div className="flex gap-2">
-          <Link href="/host/analytics" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
-            Analytics
+          <Link href="/host/community" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
+            Regulars
           </Link>
           <Link href="/host/templates" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
             Recurring
           </Link>
-          <Link href="/host/content" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
-            Content
+          <Link href="/host/payments" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
+            Payments
           </Link>
         </div>
       </div>

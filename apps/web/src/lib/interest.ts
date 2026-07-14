@@ -50,7 +50,7 @@ export async function toggleInterest(
       type: 'SYSTEM',
       title: `${count} people want you to host!`,
       content: `You've reached ${count} interest signals. Your community is asking for more activities!`,
-      link: '/host/dashboard',
+      link: '/hub',
       metadata: {
         type: 'interest_milestone',
         milestone: count,

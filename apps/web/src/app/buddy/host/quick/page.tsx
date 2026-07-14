@@ -104,6 +104,28 @@ const CATEGORIES = ACTIVITY_TYPES.filter((t) => t.tier <= 2).map((t) => ({
   emoji: t.emoji,
 }))
 
+function showSessionCapToast(
+  data: {
+    error?: string
+    activeSessionCount?: number
+    sessionCap?: number
+    guidance?: string
+    manageUrl?: string
+  },
+  navigate: (path: string) => void
+) {
+  const active = data.activeSessionCount ?? data.sessionCap ?? 3
+  const cap = data.sessionCap ?? 3
+
+  toast.error(data.error || `You have ${active} upcoming sessions live.`, {
+    description: data.guidance || `New hosts can list ${cap} upcoming sessions at once. Finish or cancel one to add another.`,
+    action: {
+      label: 'Manage',
+      onClick: () => navigate(data.manageUrl || '/my-sessions'),
+    },
+  })
+}
+
 export default function QuickPostPage() {
   const router = useRouter()
 
@@ -178,6 +200,10 @@ export default function QuickPostPage() {
         if (data.code === 'ONBOARDING_REQUIRED') {
           toast.error('Join a session first to set up your profile, then you can host.')
           router.push('/buddy')
+          return
+        }
+        if (data.code === 'SESSION_CAP') {
+          showSessionCapToast(data, router.push)
           return
         }
         toast.error(data.error || 'Failed to post')

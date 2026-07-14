@@ -90,6 +90,27 @@ const CATEGORIES = ACTIVITY_TYPES.filter((t) => t.tier <= 2).map((t) => ({
   label: t.label,
 }))
 
+function showSessionCapToast(data: {
+  error?: string
+  activeSessionCount?: number
+  sessionCap?: number
+  guidance?: string
+  manageUrl?: string
+}) {
+  const active = data.activeSessionCount ?? data.sessionCap ?? 3
+  const cap = data.sessionCap ?? 3
+
+  toast.error(data.error || `You have ${active} upcoming sessions live.`, {
+    description: data.guidance || `New hosts can list ${cap} upcoming sessions at once. Finish or cancel one to add another.`,
+    action: {
+      label: 'Manage',
+      onClick: () => {
+        window.location.href = data.manageUrl || '/my-sessions'
+      },
+    },
+  })
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 interface CreateSessionSheetProps {
@@ -270,11 +291,23 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
           toast.error('Join a session first to set up your profile, then you can host.')
           return
         }
+        if (data.code === 'SESSION_CAP') {
+          onClose()
+          showSessionCapToast(data)
+          return
+        }
         toast.error(data.error || 'Failed to post')
         return
       }
 
-      toast.success('Posted! Your session is live.')
+      if (data.requiresReview) {
+        toast.success('Session saved for a quick trust check.')
+        onClose()
+        onSuccess?.()
+        return
+      }
+
+      toast.success(data.limited ? 'Posted with limited distribution until verified.' : 'Posted! Your session is live.')
       const postedTitle = note.trim() || generateTitle(categorySlug, selectedTime!)
       setCreatedSession({ id: data.activity.id, title: postedTitle })
       onClose()

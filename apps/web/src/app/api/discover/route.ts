@@ -8,6 +8,7 @@ export async function GET() {
     const newCommunities = await prisma.community.findMany({
       where: {
         isActive: true,
+        moderationStatus: 'LIVE',
         createdAt: { gte: thirtyDaysAgo },
       },
       select: {

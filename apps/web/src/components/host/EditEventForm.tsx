@@ -96,7 +96,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
         throw new Error(data.error || 'Couldn\'t save your changes. Try again?')
       }
 
-      router.push('/host/dashboard')
+      router.push('/hub')
       router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
@@ -446,7 +446,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
       <div className="flex gap-4 pt-4">
         <button
           type="button"
-          onClick={() => router.push('/host/dashboard')}
+          onClick={() => router.push('/hub')}
           className="flex-1 px-6 py-3.5 border border-neutral-800 rounded-full font-semibold text-neutral-300 hover:border-neutral-600 transition-colors"
         >
           Cancel

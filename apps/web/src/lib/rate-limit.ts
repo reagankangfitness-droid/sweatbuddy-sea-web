@@ -33,6 +33,59 @@ export const rateLimiters = {
 
 export type RateLimitTier = keyof typeof rateLimiters
 
+const FALLBACK_LIMITS: Record<RateLimitTier, { maxRequests: number; windowMs: number }> = {
+  auth: { maxRequests: 5, windowMs: 60_000 },
+  api: { maxRequests: 30, windowMs: 60_000 },
+  payment: { maxRequests: 10, windowMs: 60_000 },
+}
+
+const fallbackApiStore = new Map<string, { timestamps: number[] }>()
+let fallbackLastCleanup = Date.now()
+
+function checkFallbackApiRateLimit(
+  key: string,
+  tier: RateLimitTier,
+): { allowed: boolean; limit: number; remaining: number; reset: number } {
+  const config = FALLBACK_LIMITS[tier]
+  const now = Date.now()
+  const cutoff = now - config.windowMs
+
+  if (now - fallbackLastCleanup > 5 * 60_000) {
+    fallbackLastCleanup = now
+    for (const [entryKey, entry] of fallbackApiStore) {
+      entry.timestamps = entry.timestamps.filter((timestamp) => timestamp > cutoff)
+      if (entry.timestamps.length === 0) fallbackApiStore.delete(entryKey)
+    }
+  }
+
+  const entry = fallbackApiStore.get(key) ?? { timestamps: [] }
+  entry.timestamps = entry.timestamps.filter((timestamp) => timestamp > cutoff)
+
+  const reset = entry.timestamps[0]
+    ? entry.timestamps[0] + config.windowMs
+    : now + config.windowMs
+
+  if (entry.timestamps.length >= config.maxRequests) {
+    fallbackApiStore.set(key, entry)
+    return {
+      allowed: false,
+      limit: config.maxRequests,
+      remaining: 0,
+      reset,
+    }
+  }
+
+  entry.timestamps.push(now)
+  fallbackApiStore.set(key, entry)
+
+  return {
+    allowed: true,
+    limit: config.maxRequests,
+    remaining: Math.max(0, config.maxRequests - entry.timestamps.length),
+    reset,
+  }
+}
+
 export function getClientIp(request: NextRequest): string {
   return (
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
@@ -48,13 +101,24 @@ export async function checkApiRateLimit(
 ): Promise<NextResponse | null> {
   const limiter = rateLimiters[tier]
   if (!limiter) {
-    if (process.env.NODE_ENV === 'production') {
+    const id = identifier || getClientIp(request)
+    const result = checkFallbackApiRateLimit(`${tier}:${id}`, tier)
+
+    if (!result.allowed) {
       return NextResponse.json(
-        { error: 'Rate limiting is not configured.' },
-        { status: 503 },
+        { error: 'Too many requests. Please try again later.' },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': result.limit.toString(),
+            'X-RateLimit-Remaining': result.remaining.toString(),
+            'X-RateLimit-Reset': result.reset.toString(),
+          },
+        },
       )
     }
-    return null // Rate limiting disabled in local/test environments if Redis is not configured
+
+    return null
   }
 
   const id = identifier || getClientIp(request)

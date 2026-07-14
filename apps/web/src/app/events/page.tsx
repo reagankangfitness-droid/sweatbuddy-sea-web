@@ -1,41 +1,15 @@
-import { Metadata } from 'next'
-import { Suspense } from 'react'
-import { ACTIVITY_CATEGORIES } from '@/lib/categories'
-import EventsPageClient from './EventsPageClient'
+import { redirect } from 'next/navigation'
 
-interface Props {
-  searchParams: Promise<{ cat?: string }>
+interface PageProps {
+  searchParams: Promise<{ cat?: string; city?: string }>
 }
 
-export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const { cat } = await searchParams
-  const category = cat ? ACTIVITY_CATEGORIES.find((c) => c.slug === cat) : null
+export default async function EventsPage({ searchParams }: PageProps) {
+  const { cat, city } = await searchParams
+  const params = new URLSearchParams({ view: 'map' })
 
-  if (category) {
-    return {
-      title: `${category.emoji} ${category.name} Communities Near You | SweatBuddies`,
-      description: `Find ${category.name.toLowerCase()} communities and sessions near you. Browse upcoming plans, show up, and meet people through movement on SweatBuddies.`,
-      openGraph: {
-        title: `${category.name} Communities | SweatBuddies`,
-        description: `Find ${category.name.toLowerCase()} communities and sessions near you. Show up and meet people through movement.`,
-      },
-    }
-  }
+  if (cat) params.set('type', cat)
+  if (city) params.set('city', city)
 
-  return {
-    title: 'Local Fitness Sessions Near You | SweatBuddies',
-    description: 'Find friends through local fitness sessions near you — run clubs, yoga groups, pickleball crews, HIIT sessions, and more.',
-    openGraph: {
-      title: 'Local Fitness Sessions Near You | SweatBuddies',
-      description: 'Find friends through local fitness sessions near you — run clubs, yoga groups, pickleball crews, HIIT sessions, and more.',
-    },
-  }
-}
-
-export default function EventsPage() {
-  return (
-    <Suspense>
-      <EventsPageClient />
-    </Suspense>
-  )
+  redirect(`/buddy?${params.toString()}`)
 }

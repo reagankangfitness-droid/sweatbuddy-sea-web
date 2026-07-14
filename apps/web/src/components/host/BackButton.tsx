@@ -8,7 +8,7 @@ interface BackButtonProps {
   className?: string
 }
 
-export function BackButton({ fallbackHref = '/host/dashboard', className }: BackButtonProps) {
+export function BackButton({ fallbackHref = '/hub', className }: BackButtonProps) {
   const router = useRouter()
 
   const handleBack = () => {

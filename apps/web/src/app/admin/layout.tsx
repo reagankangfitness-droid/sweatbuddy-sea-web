@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useClerk, useUser } from '@clerk/nextjs'
 import {
   LayoutDashboard,
   Calendar,
@@ -19,7 +20,9 @@ import {
   UserPlus,
   Flag,
   Activity,
-  Building2
+  Building2,
+  Search,
+  Inbox
 } from 'lucide-react'
 import { Logo } from '@/components/logo'
 
@@ -30,6 +33,8 @@ const navigation = [
   { name: 'Activities', href: '/admin/activities', icon: Clock },
   { name: 'Reports', href: '/admin/reports', icon: Flag },
   { name: 'Communities', href: '/admin/communities', icon: Building2 },
+  { name: 'Nominations', href: '/admin/nominations', icon: Inbox },
+  { name: 'Discovery', href: '/admin/discovery', icon: Search },
   { name: 'Events', href: '/admin/events', icon: Calendar },
   { name: 'Hosts', href: '/admin/hosts', icon: UserPlus },
   { name: 'Newsletter', href: '/admin/newsletter', icon: Mail },
@@ -44,9 +49,9 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isAuthed, setIsAuthed] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
   const pathname = usePathname()
+  const { signOut } = useClerk()
+  const { isSignedIn, user } = useUser()
 
   // Check if already authenticated via API
   useEffect(() => {
@@ -68,28 +73,6 @@ export default function AdminLayout({
     checkAuth()
   }, [])
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-
-    try {
-      const res = await fetch('/api/admin/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      })
-
-      if (res.ok) {
-        setIsAuthed(true)
-        setPassword('')
-      } else {
-        setError('Incorrect password')
-      }
-    } catch {
-      setError('Login failed. Please try again.')
-    }
-  }
-
   const handleLogout = async () => {
     try {
       await fetch('/api/admin/auth', { method: 'DELETE' })
@@ -97,6 +80,17 @@ export default function AdminLayout({
       // Ignore errors
     }
     setIsAuthed(false)
+    await signOut({ redirectUrl: '/' })
+  }
+
+  const handleSwitchAccount = async () => {
+    try {
+      await fetch('/api/admin/auth', { method: 'DELETE' })
+    } catch {
+      // Ignore errors
+    }
+    setIsAuthed(false)
+    await signOut({ redirectUrl: `/sign-in?redirect_url=${encodeURIComponent('/admin')}` })
   }
 
   // Show loading state
@@ -108,7 +102,7 @@ export default function AdminLayout({
     )
   }
 
-  // If not authed, show login form
+  // If the Clerk user is not an admin, show an access-restricted state.
   if (!isAuthed) {
     return (
       <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
@@ -117,36 +111,50 @@ export default function AdminLayout({
             <div className="inline-flex items-center justify-center w-16 h-16 bg-neutral-800 rounded-full mb-4">
               <Lock className="w-8 h-8 text-neutral-400" />
             </div>
-            <h1 className="font-semibold text-xl text-neutral-100">Admin Login</h1>
-            <p className="text-neutral-500 text-sm mt-2">Enter the admin password to continue</p>
+            <h1 className="font-semibold text-xl text-neutral-100">
+              {isSignedIn ? 'Account is not an admin' : 'Admin access required'}
+            </h1>
+            <p className="text-neutral-500 text-sm mt-2">
+              {isSignedIn
+                ? 'This signed-in account is not in the admin allowlist.'
+                : 'Sign in with a Clerk account listed in ADMIN_USER_IDS.'}
+            </p>
           </div>
 
-          <form onSubmit={handleLogin}>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter password"
-              className="w-full px-4 py-3 border border-neutral-800 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-white"
-              autoFocus
-            />
-            {error && (
-              <p className="text-red-500 text-sm mb-3">{error}</p>
-            )}
-            <button
-              type="submit"
-              className="w-full bg-white text-neutral-900 py-3 rounded-lg font-semibold hover:bg-neutral-200 transition-all"
-            >
-              Login
-            </button>
-          </form>
+          {isSignedIn && (
+            <div className="mb-4 rounded-lg border border-neutral-800 bg-neutral-900 p-3 text-xs text-neutral-400">
+              <p className="truncate">Email: {user?.primaryEmailAddress?.emailAddress ?? 'unknown'}</p>
+              <p className="mt-1 break-all">Clerk ID: {user?.id ?? 'unknown'}</p>
+            </div>
+          )}
 
+          {isSignedIn ? (
+            <button
+              onClick={handleSwitchAccount}
+              className="block w-full rounded-lg bg-white py-3 text-center text-sm font-semibold text-neutral-900 transition-all hover:bg-neutral-200"
+            >
+              Switch account
+            </button>
+          ) : (
+            <Link
+              href={`/sign-in?redirect_url=${encodeURIComponent(pathname || '/admin')}`}
+              className="block rounded-lg bg-white py-3 text-center text-sm font-semibold text-neutral-900 transition-all hover:bg-neutral-200"
+            >
+              Sign in to admin
+            </Link>
+          )}
           <Link
             href="/"
-            className="block text-center text-neutral-500 text-sm mt-4 hover:text-neutral-300"
+            className="mt-3 block rounded-lg border border-neutral-800 py-3 text-center text-sm font-semibold text-neutral-400 transition-colors hover:border-neutral-600 hover:text-neutral-100"
           >
-            ← Back to site
+            Back to site
           </Link>
+          <button
+            onClick={handleLogout}
+            className="mt-3 w-full rounded-lg border border-neutral-800 py-3 text-sm font-semibold text-neutral-400 transition-colors hover:border-neutral-600 hover:text-neutral-100"
+          >
+            Sign out
+          </button>
         </div>
       </div>
     )

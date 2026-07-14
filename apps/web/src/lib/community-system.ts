@@ -139,6 +139,7 @@ export async function getCommunitiesByCity(
     where: {
       cityId: city.id,
       isActive: true,
+      moderationStatus: 'LIVE',
       ...(category && { category }),
     },
     include: {

@@ -88,18 +88,18 @@ export default function BecomeAHostPage() {
     <div className="min-h-screen bg-[#0D0D0D] text-white">
       <header className="absolute left-0 right-0 top-0 z-30">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
-          <Link href="/" aria-label="SweatBuddies home">
+          <Link href="/" aria-label="SweatBuddies home" className="flex min-h-11 min-w-11 items-center justify-center rounded-full">
             <Logo size={32} />
           </Link>
           <div className="flex items-center gap-3">
-            <Link href="/buddy" className="hidden text-sm font-medium text-white/70 hover:text-white sm:inline">
+            <Link href="/buddy" className="hidden min-h-11 items-center text-sm font-medium text-white/70 hover:text-white sm:inline-flex">
               Find a crew
             </Link>
             <Link
-              href="#apply"
-              className="rounded-full bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-black hover:bg-neutral-200"
+              href="/buddy?create=session"
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-black hover:bg-neutral-200"
             >
-              Apply
+              Host a session
             </Link>
           </div>
         </div>
@@ -130,16 +130,16 @@ export default function BecomeAHostPage() {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
-                href="#apply"
+                href="/buddy?create=session"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-4 text-sm font-bold uppercase tracking-wider text-black hover:bg-neutral-200"
               >
-                Start hosting <ChevronRight className="h-4 w-4" />
+                Host your first session <ChevronRight className="h-4 w-4" />
               </Link>
               <Link
-                href="/communities"
+                href="#launch-help"
                 className="inline-flex items-center justify-center rounded-full border border-white/20 px-7 py-4 text-sm font-bold uppercase tracking-wider text-white hover:bg-white/10"
               >
-                See communities
+                Need launch help?
               </Link>
             </div>
           </div>
@@ -226,7 +226,7 @@ export default function BecomeAHostPage() {
         </div>
       </section>
 
-      <section id="apply" className="px-5 pb-20 sm:pb-28">
+      <section id="launch-help" className="px-5 pb-20 sm:pb-28">
         <div className="mx-auto grid max-w-6xl overflow-hidden rounded-2xl border border-white/[0.08] bg-[#151515] lg:grid-cols-[0.95fr_1.05fr]">
           <div className="relative min-h-[360px] overflow-hidden">
             <Image
@@ -239,10 +239,10 @@ export default function BecomeAHostPage() {
             <div className="relative flex h-full flex-col justify-end p-6 sm:p-8">
               <Sparkles className="mb-4 h-6 w-6 text-white" />
               <h2 className="max-w-md text-3xl font-bold leading-tight text-white">
-                Ready to stop rebuilding attendance from scratch?
+                Need help launching a crew?
               </h2>
               <p className="mt-3 max-w-md text-sm leading-relaxed text-white/70">
-                Apply once. We will help you shape the right launch path for your city, activity, and community size.
+                If you are not ready to post a session yet, tell us what you are building and we will point you in the right direction.
               </p>
             </div>
           </div>
@@ -251,7 +251,7 @@ export default function BecomeAHostPage() {
             {step === 'activity' && (
               <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
                 <p className="text-xs font-semibold tracking-widest text-neutral-500 uppercase mb-3">
-                  Apply to host
+                  Launch help
                 </p>
                 <h2 className="text-2xl font-bold text-white leading-tight mb-2 sm:text-3xl">
                   What do people show up for?
@@ -304,7 +304,7 @@ export default function BecomeAHostPage() {
                   Where can we reach you?
                 </h2>
                 <p className="text-sm leading-relaxed text-neutral-400 mb-8">
-                  We&apos;ll follow up with the next step for launching or growing your crew.
+                  We&apos;ll follow up only if we can help with your launch path.
                 </p>
 
                 <div className="space-y-4 mb-6">
@@ -354,7 +354,7 @@ export default function BecomeAHostPage() {
                   disabled={submitting || !email}
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-white py-4 text-sm font-bold text-neutral-900 transition-colors hover:bg-neutral-100 disabled:opacity-30"
                 >
-                  {submitting ? 'Sending...' : "I'm interested"}
+                  {submitting ? 'Sending...' : 'Get launch help'}
                 </button>
 
                 <p className="mt-4 text-center text-[11px] text-neutral-600">
@@ -370,13 +370,13 @@ export default function BecomeAHostPage() {
                 </div>
                 <h2 className="text-3xl font-bold text-white mb-3">You&apos;re on the list.</h2>
                 <p className="mx-auto mb-8 max-w-sm text-neutral-400">
-                  We&apos;ll reach out personally when we&apos;re ready to help hosts grow communities in your area. Keep bringing people together.
+                  We&apos;ll reach out if we can help shape the launch path. You can still post a session anytime.
                 </p>
                 <Link
-                  href="/buddy"
+                  href="/buddy?create=session"
                   className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-white"
                 >
-                  Explore sessions near you
+                  Host a session
                 </Link>
               </div>
             )}

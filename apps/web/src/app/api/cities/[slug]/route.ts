@@ -23,6 +23,7 @@ export async function GET(
     const communityWhere: Record<string, unknown> = {
       cityId: city.id,
       isActive: true,
+      moderationStatus: 'LIVE',
     }
     if (category) {
       communityWhere.category = category
@@ -57,8 +58,10 @@ export async function GET(
         community: {
           cityId: city.id,
           isActive: true,
+          moderationStatus: 'LIVE',
         },
         status: 'PUBLISHED',
+        moderationStatus: 'LIVE',
         deletedAt: null,
         startTime: { gte: new Date() },
       },
@@ -93,6 +96,7 @@ export async function GET(
       where: {
         cityId: city.id,
         isActive: true,
+        moderationStatus: 'LIVE',
       },
       _count: {
         category: true,

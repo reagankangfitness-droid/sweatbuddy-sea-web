@@ -133,7 +133,7 @@ function SignInContent() {
                 alertText: 'text-sm',
               }
             }}
-            redirectUrl={redirectUrl || '/buddy'}
+            fallbackRedirectUrl={redirectUrl || '/buddy'}
           />
         </div>
 

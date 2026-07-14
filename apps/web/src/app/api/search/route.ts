@@ -65,6 +65,7 @@ export async function GET(request: Request) {
       const sessionWhere: Prisma.ActivityWhereInput = {
         activityMode: { in: ['P2P_FREE', 'P2P_PAID'] },
         status: 'PUBLISHED',
+        moderationStatus: 'LIVE',
         deletedAt: null,
         startTime: { gt: now },
         latitude: { gte: scopedPoint.lat - latDelta, lte: scopedPoint.lat + latDelta },
@@ -175,6 +176,7 @@ export async function GET(request: Request) {
       const crews = await prisma.community.findMany({
         where: {
           isActive: true,
+          moderationStatus: 'LIVE',
           OR: [
             { name: { contains: q, mode: 'insensitive' } },
             { description: { contains: q, mode: 'insensitive' } },

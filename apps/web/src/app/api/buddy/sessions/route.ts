@@ -61,16 +61,20 @@ export async function GET(request: Request) {
   try {
     // Auth is optional — unauthenticated users can browse sessions
     let dbUser: { id: string; blocksMade: { blockedUserId: string }[] } | null = null
+    const cookieHeader = request.headers.get('cookie') ?? ''
+    const mightHaveSession = /(?:^|;\s*)(?:__session|__client_uat|__clerk)/.test(cookieHeader)
 
-    const { userId } = await auth()
-    if (userId) {
-      const clerkUser = await currentUser()
-      const email = clerkUser?.primaryEmailAddress?.emailAddress
-      if (email) {
-        dbUser = await prisma.user.findUnique({
-          where: { email: email.toLowerCase() },
-          select: { id: true, blocksMade: { select: { blockedUserId: true } } },
-        })
+    if (mightHaveSession) {
+      const { userId } = await auth()
+      if (userId) {
+        const clerkUser = await currentUser()
+        const email = clerkUser?.primaryEmailAddress?.emailAddress
+        if (email) {
+          dbUser = await prisma.user.findUnique({
+            where: { email: email.toLowerCase() },
+            select: { id: true, blocksMade: { select: { blockedUserId: true } } },
+          })
+        }
       }
     }
 
@@ -150,6 +154,7 @@ export async function GET(request: Request) {
     const where: Record<string, unknown> = {
       activityMode: { in: ['P2P_FREE', 'P2P_PAID'] },
       status: 'PUBLISHED',
+      moderationStatus: 'LIVE',
       startTime: { gt: new Date() },
       deletedAt: null,
       ...(blockedUserIds.length > 0 ? { userId: { notIn: blockedUserIds } } : {}),
@@ -226,7 +231,27 @@ export async function GET(request: Request) {
 
     const sessions = await prisma.activity.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        activityMode: true,
+        categorySlug: true,
+        city: true,
+        address: true,
+        latitude: true,
+        longitude: true,
+        startTime: true,
+        endTime: true,
+        maxPeople: true,
+        price: true,
+        currency: true,
+        status: true,
+        fitnessLevel: true,
+        whatToBring: true,
+        requiresApproval: true,
+        imageUrl: true,
+        isFeatured: true,
         user: {
           select: {
             id: true,
@@ -241,13 +266,31 @@ export async function GET(request: Request) {
         },
         userActivities: {
           where: { status: { in: ['JOINED', 'COMPLETED'] } },
-          include: { user: { select: { id: true, name: true, imageUrl: true, slug: true } } },
+          orderBy: { createdAt: 'asc' },
+          take: 8,
+          select: {
+            goingSolo: true,
+            user: { select: { id: true, name: true, imageUrl: true, slug: true } },
+          },
         },
         community: {
-          select: { id: true, name: true, logoImage: true, slug: true },
+          select: {
+            id: true,
+            name: true,
+            logoImage: true,
+            slug: true,
+            communityLink: true,
+            websiteUrl: true,
+            sourceUrl: true,
+            joinPlatform: true,
+            lastVerifiedAt: true,
+          },
         },
         ratingSummary: {
           select: { averageRating: true, totalReviews: true },
+        },
+        _count: {
+          select: { userActivities: { where: { status: { in: ['JOINED', 'COMPLETED'] } } } },
         },
       },
       orderBy: [{ isFeatured: 'desc' }, { startTime: 'asc' }, { id: 'asc' }],
@@ -262,6 +305,14 @@ export async function GET(request: Request) {
       sessions: items.map((a) => formatSession(a)),
       nextCursor,
       currentUserId: dbUser?.id ?? null,
+    }, {
+      headers: dbUser
+        ? { 'Cache-Control': 'private, no-store' }
+        : {
+            'Cache-Control': 'public, max-age=0, s-maxage=45, stale-while-revalidate=300',
+            'CDN-Cache-Control': 'public, s-maxage=45, stale-while-revalidate=300',
+            'Vercel-CDN-Cache-Control': 'public, s-maxage=45, stale-while-revalidate=300',
+          },
     })
   } catch (error) {
     console.error('[buddy/sessions] Error:', error)
@@ -296,14 +347,20 @@ interface SessionActivity {
     averageRating: unknown
     totalReviews: number
   } | null
+  _count?: {
+    userActivities: number
+  }
   userActivities: Array<{
+    goingSolo?: boolean
     user: unknown
   }>
 }
 
 function formatSession(activity: SessionActivity, userStatus?: string) {
   const attendees = activity.userActivities ?? []
-  const isFull = typeof activity.maxPeople === 'number' && attendees.length >= activity.maxPeople
+  const attendeeCount = activity._count?.userActivities ?? attendees.length
+  const isFull = typeof activity.maxPeople === 'number' && attendeeCount >= activity.maxPeople
+  const community = normalizeCommunity(activity.community)
 
   return {
     id: activity.id,
@@ -326,13 +383,51 @@ function formatSession(activity: SessionActivity, userStatus?: string) {
     requiresApproval: activity.requiresApproval,
     imageUrl: activity.imageUrl,
     host: activity.user ?? null,
-    community: activity.community ?? null,
-    attendees: attendees.map((ua) => ua.user),
-    attendeeCount: attendees.length,
+    community,
+    officialJoinUrl: community?.communityLink ?? community?.websiteUrl ?? community?.sourceUrl ?? null,
+    officialJoinPlatform: community?.joinPlatform ?? null,
+    lastVerifiedAt: community?.lastVerifiedAt ?? null,
+    attendees: attendees.map((ua) => ({
+      ...(typeof ua.user === 'object' && ua.user ? ua.user : {}),
+      goingSolo: ua.goingSolo === true,
+    })),
+    goingSoloCount: attendees.filter((ua) => ua.goingSolo === true).length,
+    attendeeCount,
     isFull,
     isFeatured: activity.isFeatured ?? false,
     userStatus: userStatus ?? null,
     avgRating: activity.ratingSummary ? Number(activity.ratingSummary.averageRating) : null,
     reviewCount: activity.ratingSummary?.totalReviews ?? 0,
+  }
+}
+
+function normalizeCommunity(community: unknown) {
+  if (!community || typeof community !== 'object') return null
+  const value = community as {
+    id?: unknown
+    name?: unknown
+    logoImage?: unknown
+    slug?: unknown
+    communityLink?: unknown
+    websiteUrl?: unknown
+    sourceUrl?: unknown
+    joinPlatform?: unknown
+    lastVerifiedAt?: unknown
+  }
+
+  if (typeof value.id !== 'string' || typeof value.name !== 'string' || typeof value.slug !== 'string') {
+    return null
+  }
+
+  return {
+    id: value.id,
+    name: value.name,
+    logoImage: typeof value.logoImage === 'string' ? value.logoImage : null,
+    slug: value.slug,
+    communityLink: typeof value.communityLink === 'string' ? value.communityLink : null,
+    websiteUrl: typeof value.websiteUrl === 'string' ? value.websiteUrl : null,
+    sourceUrl: typeof value.sourceUrl === 'string' ? value.sourceUrl : null,
+    joinPlatform: typeof value.joinPlatform === 'string' ? value.joinPlatform : null,
+    lastVerifiedAt: value.lastVerifiedAt instanceof Date ? value.lastVerifiedAt : null,
   }
 }

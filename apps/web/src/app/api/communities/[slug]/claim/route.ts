@@ -1,114 +1,167 @@
+import { randomBytes } from 'crypto'
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
-import { trackEvent, EVENTS } from '@/lib/analytics'
+import { getCurrentDbUser } from '@/lib/current-user'
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ slug: string }> }
-) {
-  const { userId } = await auth()
-  if (!userId) {
+type RouteContext = {
+  params: Promise<{ slug: string }>
+}
+
+type ClaimPayload = {
+  verificationUrl?: unknown
+  sourceUrl?: unknown
+  notes?: unknown
+}
+
+const CLAIM_CODE_BYTES = 3
+const CLAIM_EXPIRES_MS = 7 * 24 * 60 * 60 * 1000
+
+export async function POST(request: Request, context: RouteContext) {
+  const dbUser = await getCurrentDbUser()
+  if (!dbUser) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
-    const { slug } = await params
-    const { instagramHandle } = await request.json()
+    const { slug } = await context.params
+    const payload = await request.json().catch(() => ({})) as ClaimPayload
+    const verificationUrl = normalizeUrl(payload.verificationUrl)
+    const sourceUrl = normalizeUrl(payload.sourceUrl)
+    const notes = normalizeText(payload.notes, 1000)
 
-    if (!instagramHandle) {
+    if (!verificationUrl) {
       return NextResponse.json(
-        { error: 'Instagram handle is required' },
-        { status: 400 }
+        { error: 'Add the public page where you will place your verification code' },
+        { status: 400 },
       )
     }
 
-    // Find community by slug
     const community = await prisma.community.findUnique({
       where: { slug },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        claimedAt: true,
+        claimedById: true,
+        sourceUrl: true,
+        websiteUrl: true,
+        communityLink: true,
+      },
     })
 
     if (!community) {
-      return NextResponse.json(
-        { error: 'Community not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Community not found' }, { status: 404 })
     }
 
-    // Must be seeded
-    if (!community.isSeeded) {
-      return NextResponse.json(
-        { error: 'This community is not claimable' },
-        { status: 400 }
-      )
+    if (community.claimedAt && community.claimedById !== dbUser.id) {
+      return NextResponse.json({ error: 'This community has already been claimed' }, { status: 409 })
     }
 
-    // Must not already be claimed
-    if (community.claimedAt) {
-      return NextResponse.json(
-        { error: 'This community has already been claimed' },
-        { status: 400 }
-      )
-    }
-
-    // Normalize handles for comparison
-    const normalizeHandle = (h: string) =>
-      h.replace(/^@/, '').toLowerCase().trim()
-
-    const userHandle = normalizeHandle(instagramHandle)
-    const communityHandle = community.claimableBy
-      ? normalizeHandle(community.claimableBy)
-      : null
-
-    if (!communityHandle || userHandle !== communityHandle) {
-      return NextResponse.json(
-        {
-          error:
-            "Instagram handle doesn't match. Contact support@sweatbuddies.co",
-        },
-        { status: 403 }
-      )
-    }
-
-    // Claim the community
-    await prisma.community.update({
-      where: { id: community.id },
-      data: {
-        claimedById: userId,
-        claimedAt: new Date(),
-        createdById: userId,
-      },
-    })
-
-    // Create owner membership
-    await prisma.communityMember.upsert({
+    const existingApprovedClaim = await prisma.communityClaim.findUnique({
       where: {
         communityId_userId: {
           communityId: community.id,
-          userId,
+          userId: dbUser.id,
         },
       },
-      update: { role: 'OWNER' },
-      create: {
-        communityId: community.id,
-        userId,
-        role: 'OWNER',
+      select: { id: true, status: true, verificationCode: true, verificationUrl: true },
+    })
+
+    if (existingApprovedClaim?.status === 'APPROVED') {
+      return NextResponse.json({
+        success: true,
+        verified: true,
+        claim: existingApprovedClaim,
+      })
+    }
+
+    const verificationCode = generateClaimCode()
+    const expiresAt = new Date(Date.now() + CLAIM_EXPIRES_MS)
+    const resolvedSourceUrl = sourceUrl ?? community.sourceUrl ?? community.websiteUrl ?? community.communityLink
+
+    const claim = await prisma.$transaction(async (tx) => {
+      const nextClaim = await tx.communityClaim.upsert({
+        where: {
+          communityId_userId: {
+            communityId: community.id,
+            userId: dbUser.id,
+          },
+        },
+        update: {
+          status: 'PENDING',
+          sourceUrl: resolvedSourceUrl,
+          verificationUrl,
+          verificationCode,
+          verifiedAt: null,
+          reviewedAt: null,
+          reviewedBy: null,
+          rejectionReason: null,
+          notes,
+        },
+        create: {
+          communityId: community.id,
+          userId: dbUser.id,
+          status: 'PENDING',
+          sourceUrl: resolvedSourceUrl,
+          verificationUrl,
+          verificationCode,
+          notes,
+        },
+        select: {
+          id: true,
+          status: true,
+          verificationCode: true,
+          verificationUrl: true,
+        },
+      })
+
+      await tx.verificationChallenge.create({
+        data: {
+          claimId: nextClaim.id,
+          code: verificationCode,
+          targetUrl: verificationUrl,
+          expiresAt,
+        },
+      })
+
+      return nextClaim
+    })
+
+    return NextResponse.json({
+      success: true,
+      claim: {
+        ...claim,
+        expiresAt,
       },
-    })
-
-    // Track analytics
-    await trackEvent(EVENTS.COMMUNITY_CLAIMED, userId, {
-      communityId: community.id,
-      communityName: community.name,
-      slug: community.slug,
-    })
-
-    return NextResponse.json({ success: true })
+      instructions: `Add ${verificationCode} to the public page, bio, or link-in-bio at ${verificationUrl}, then verify the claim.`,
+    }, { status: 201 })
   } catch (error) {
-    console.error('Error claiming community:', error)
-    return NextResponse.json(
-      { error: 'Failed to claim community' },
-      { status: 500 }
-    )
+    console.error('[community claim start]', error)
+    return NextResponse.json({ error: 'Failed to start community claim' }, { status: 500 })
+  }
+}
+
+function generateClaimCode() {
+  return `SB-${randomBytes(CLAIM_CODE_BYTES).toString('hex').toUpperCase()}`
+}
+
+function normalizeText(value: unknown, maxLength: number): string | null {
+  if (typeof value !== 'string') return null
+  const trimmed = value.trim()
+  if (!trimmed) return null
+  return trimmed.slice(0, maxLength)
+}
+
+function normalizeUrl(value: unknown): string | null {
+  const text = normalizeText(value, 500)
+  if (!text) return null
+
+  try {
+    const url = new URL(/^[a-z][a-z0-9+.-]*:/i.test(text) ? text : `https://${text}`)
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return null
+    return url.toString().slice(0, 500)
+  } catch {
+    return null
   }
 }

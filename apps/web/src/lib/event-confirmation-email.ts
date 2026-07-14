@@ -30,7 +30,7 @@ export async function sendEventSubmittedEmail(
   const { to, hostName, eventName, eventId } = params
   const displayName = escapeHtml(hostName || 'there')
   const safeEventName = escapeHtml(eventName)
-  const dashboardUrl = `${BASE_URL}/host/dashboard`
+  const dashboardUrl = `${BASE_URL}/hub`
 
   const html = `
 <!DOCTYPE html>
@@ -159,7 +159,7 @@ export async function sendEventApprovedEmail(
   const displayName = escapeHtml(hostName || 'there')
   const safeEventName = escapeHtml(eventName)
   const eventUrl = eventSlug ? `${BASE_URL}/e/${eventSlug}` : `${BASE_URL}/e/${eventId}`
-  const dashboardUrl = `${BASE_URL}/host/dashboard`
+  const dashboardUrl = `${BASE_URL}/hub`
 
   const html = `
 <!DOCTYPE html>
@@ -742,7 +742,7 @@ export async function sendHostBookingNotificationEmail(
   const safeEventName = escapeHtml(eventName)
   const safeAttendeeName = escapeHtml(attendeeName)
   const safeAttendeeEmail = escapeHtml(attendeeEmail)
-  const dashboardUrl = `${BASE_URL}/host/dashboard`
+  const dashboardUrl = `${BASE_URL}/hub`
 
   // Format amounts
   const formattedAmount = new Intl.NumberFormat('en-SG', {
@@ -1041,7 +1041,7 @@ export async function sendHostNewAttendeeNotification(
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
                 Manage your sessions at
               </p>
-              <a href="${BASE_URL}/host/dashboard" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 600;">
+              <a href="${BASE_URL}/hub" style="color: #10b981; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
               </a>
               <p style="margin: 16px 0 0; color: #94a3b8; font-size: 12px;">

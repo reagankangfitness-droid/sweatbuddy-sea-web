@@ -37,6 +37,28 @@ const DAYS_OF_WEEK = [
   { value: 'SUNDAY', label: 'Sun' },
 ]
 
+function showSessionCapToast(
+  data: {
+    error?: string
+    activeSessionCount?: number
+    sessionCap?: number
+    guidance?: string
+    manageUrl?: string
+  },
+  navigate: (path: string) => void
+) {
+  const active = data.activeSessionCount ?? data.sessionCap ?? 3
+  const cap = data.sessionCap ?? 3
+
+  toast.error(data.error || `You have ${active} upcoming sessions live.`, {
+    description: data.guidance || `New hosts can list ${cap} upcoming sessions at once. Finish or cancel one to add another.`,
+    action: {
+      label: 'Manage',
+      onClick: () => navigate(data.manageUrl || '/my-sessions'),
+    },
+  })
+}
+
 interface FormData {
   title: string
   description: string
@@ -105,6 +127,7 @@ export default function NewSessionPage() {
   const [stripeConnected, setStripeConnected] = useState<boolean | null>(null)
   const [publishedId, setPublishedId] = useState<string | null>(null)
   const [isRecurringSuccess, setIsRecurringSuccess] = useState(false)
+  const [requiresReviewSuccess, setRequiresReviewSuccess] = useState(false)
   const [qrPreviewUrl, setQrPreviewUrl] = useState<string | null>(null)
   const [qrFile, setQrFile] = useState<File | null>(null)
   const qrInputRef = useRef<HTMLInputElement>(null)
@@ -295,6 +318,7 @@ export default function NewSessionPage() {
         if (!res.ok) {
           if (data.code === 'ONBOARDING_REQUIRED') { toast.error('Join a session first to set up your profile, then you can host.'); router.push('/buddy'); return }
           if (data.code === 'STRIPE_REQUIRED') { toast.error('Connect Stripe first to charge for sessions'); return }
+          if (data.code === 'SESSION_CAP') { showSessionCapToast(data, router.push); return }
           toast.error(data.error || 'Failed to create recurring session')
           return
         }
@@ -340,12 +364,14 @@ export default function NewSessionPage() {
         if (!res.ok) {
           if (data.code === 'ONBOARDING_REQUIRED') { toast.error('Join a session first to set up your profile, then you can host.'); router.push('/buddy'); return }
           if (data.code === 'STRIPE_REQUIRED') { toast.error('Connect Stripe first to charge for sessions'); return }
+          if (data.code === 'SESSION_CAP') { showSessionCapToast(data, router.push); return }
           toast.error(data.error || 'Failed to create session')
           return
         }
 
         try { localStorage.removeItem(WIZARD_DRAFT_KEY) } catch {}
         setPublishedId(data.activity.id)
+        setRequiresReviewSuccess(Boolean(data.requiresReview))
       }
     } catch {
       toast.error('Something went wrong')
@@ -366,15 +392,24 @@ export default function NewSessionPage() {
       <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-4 text-center">
         <CheckCircle2 className="w-16 h-16 text-green-500 mb-6" />
         <h1 className="text-2xl font-bold text-white mb-2">
-          {isRecurringSuccess ? 'Recurring session created!' : 'Session created!'}
+          {requiresReviewSuccess ? 'Session submitted!' : isRecurringSuccess ? 'Recurring session created!' : 'Session created!'}
         </h1>
         <p className="text-[#666666] mb-8 max-w-xs">
-          {isRecurringSuccess
+          {requiresReviewSuccess
+            ? 'This session needs a quick trust check before it appears publicly.'
+            : isRecurringSuccess
             ? 'Sessions will auto-generate for the next 4 weeks. You can manage your recurring sessions anytime.'
             : 'Your session is live. People can now find and join it.'}
         </p>
         <div className="flex flex-col gap-3 w-full max-w-xs">
-          {isRecurringSuccess ? (
+          {requiresReviewSuccess ? (
+            <button
+              onClick={() => router.push('/buddy')}
+              className="w-full rounded-xl bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white"
+            >
+              Back to Discover →
+            </button>
+          ) : isRecurringSuccess ? (
             <button
               onClick={() => router.push('/host/templates')}
               className="w-full rounded-xl bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white"
@@ -389,12 +424,14 @@ export default function NewSessionPage() {
               View my session →
             </button>
           )}
-          <button
-            onClick={() => router.push('/buddy')}
-            className="w-full rounded-xl border border-[#333333] px-4 py-3 text-sm font-medium text-[#999999]"
-          >
-            Back to Discover
-          </button>
+          {!requiresReviewSuccess && (
+            <button
+              onClick={() => router.push('/buddy')}
+              className="w-full rounded-xl border border-[#333333] px-4 py-3 text-sm font-medium text-[#999999]"
+            >
+              Back to Discover
+            </button>
+          )}
         </div>
       </div>
     )

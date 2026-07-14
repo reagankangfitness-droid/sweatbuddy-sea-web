@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { generateSlug } from '@/lib/events'
-import { isAdminRequest } from '@/lib/admin-auth'
+import { getAdminActorId, isAdminRequest } from '@/lib/admin-auth'
+import { logAdminAction } from '@/lib/admin-audit'
 
 // UPDATE event (database only)
 export async function PUT(
@@ -16,11 +17,12 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
+    const adminId = await getAdminActorId(request) ?? 'admin'
 
     // Get existing event to check if name changed
     const existing = await prisma.eventSubmission.findUnique({
       where: { id },
-      select: { eventName: true, slug: true },
+      select: { eventName: true, slug: true, status: true, eventDate: true, location: true },
     })
 
     if (!existing) {
@@ -68,6 +70,23 @@ export async function PUT(
       data: updateData,
     })
 
+    await logAdminAction({
+      action: 'update_event_submission',
+      targetType: 'event_submission',
+      targetId: id,
+      adminId,
+      details: {
+        previous: existing,
+        next: {
+          eventName: updated.eventName,
+          slug: updated.slug,
+          status: updated.status,
+          eventDate: updated.eventDate?.toISOString() ?? null,
+          location: updated.location,
+        },
+      },
+    })
+
     // Revalidate the homepage and event pages to show updated data
     revalidatePath('/')
     revalidatePath('/e/[id]', 'page')
@@ -95,11 +114,24 @@ export async function DELETE(
 
   try {
     const { id } = await params
+    const adminId = await getAdminActorId(request) ?? 'admin'
+    const existing = await prisma.eventSubmission.findUnique({
+      where: { id },
+      select: { eventName: true, slug: true, status: true, eventDate: true, location: true },
+    })
 
     // Set to rejected in database
     await prisma.eventSubmission.update({
       where: { id },
       data: { status: 'REJECTED' },
+    })
+
+    await logAdminAction({
+      action: 'remove_event_submission',
+      targetType: 'event_submission',
+      targetId: id,
+      adminId,
+      details: { previous: existing },
     })
 
     // Revalidate the homepage to remove the event

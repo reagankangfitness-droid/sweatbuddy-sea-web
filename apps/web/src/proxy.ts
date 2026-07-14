@@ -69,7 +69,6 @@ const isPublicRoute = createRouteMatcher([
   '/api/newsletter(.*)',
   '/api/landing-leads(.*)',
   '/api/community-nominations(.*)',
-  '/api/communities(.*)',
   '/api/signup(.*)',
   '/api/admin(.*)', // Has own multi-method auth (Clerk + admin secret)
   '/api/submit-event(.*)',
@@ -94,14 +93,9 @@ const isPublicRoute = createRouteMatcher([
   '/buddy',
   '/hub',
   '/hub/(.*)',
-  '/api/buddy(.*)',
-  '/api/host(.*)',
-  '/api/user(.*)',
-  '/api/map(.*)',
   '/api/test(.*)',
   '/api/cron(.*)',
   '/api/host-leads(.*)',
-  '/api/search(.*)',
   '/my-sessions',
   '/notifications',
   '/admin(.*)', // Admin shell handles Clerk/admin checks and admin APIs remain protected.
@@ -123,9 +117,10 @@ export default clerkMiddleware(async (auth, request) => {
   }
 
   const isAdminShellRoute = request.nextUrl.pathname === '/admin' || request.nextUrl.pathname.startsWith('/admin/')
+  const isPublicApi = isPublicApiRequest(request)
 
   // If it's not a public route, require authentication
-  if (!isPublicRoute(request) && !isAdminShellRoute) {
+  if (!isPublicRoute(request) && !isAdminShellRoute && !isPublicApi) {
     const signInUrl = new URL('/sign-in', request.url)
     signInUrl.searchParams.set(
       'redirect_url',
@@ -138,6 +133,39 @@ export default clerkMiddleware(async (auth, request) => {
   }
   return NextResponse.next()
 })
+
+function isPublicApiRequest(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  const method = request.method.toUpperCase()
+
+  if (!pathname.startsWith('/api/')) return false
+  if (method === 'OPTIONS') return true
+
+  const isReadMethod = method === 'GET' || method === 'HEAD'
+
+  if (isReadMethod) {
+    if (pathname === '/api/buddy/sessions') return true
+
+    return [
+      '/api/communities',
+      '/api/map',
+      '/api/search',
+    ].some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+  }
+
+  if (method === 'POST') {
+    return [
+      '/api/community-nominations',
+      '/api/host-leads',
+      '/api/landing-leads',
+      '/api/newsletter',
+      '/api/uploadthing',
+      '/api/webhooks',
+    ].some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))
+  }
+
+  return false
+}
 
 function getLegacyRouteRedirect(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl

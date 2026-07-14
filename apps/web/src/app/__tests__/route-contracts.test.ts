@@ -88,8 +88,9 @@ describe('route contracts', () => {
     expect(buddyPage).toContain('No events or hosts for')
 
     expect(communitiesPage).toContain('Find local fitness communities near you')
-    expect(hostPage).toContain('Stop running your community out of scattered DMs.')
-    expect(hostPage).toContain('Stop using five tools to fill one session.')
+    expect(hostPage).toContain('List events people can find, trust, and come back to.')
+    expect(hostPage).toContain('Run the event. Let the page carry the proof.')
+    expect(hostPage).toContain('verify the source behind the event')
     expect(hostPage).toContain('Host your first session')
     expect(hostPage).toContain('/buddy?create=session')
     expect(hostPage).toContain('Need help launching a crew?')
@@ -147,6 +148,10 @@ describe('route contracts', () => {
     expect(proxy).toContain("pathname.startsWith('/cities/')")
     expect(sitemap).not.toContain('/browse')
     expect(sitemap).not.toContain('/cities')
+    expect(sitemap).not.toContain('/events')
+    expect(sitemap).not.toContain('/community')
+    expect(sitemap).not.toContain('/discover')
+    expect(sitemap).not.toContain('/explore')
   })
 
   it('keeps host routes reachable without redirecting the full host tree', () => {
@@ -376,6 +381,19 @@ describe('route contracts', () => {
   })
 
   it('keeps public-proxy mutating routes explicitly authenticated at the route layer', () => {
+    const proxy = readRepoFile('apps/web/src/proxy.ts')
+
+    expect(proxy).toContain('function isPublicApiRequest')
+    expect(proxy).toContain('request.method.toUpperCase()')
+    expect(proxy).toContain('const isPublicApi = isPublicApiRequest(request)')
+    expect(proxy).toContain("pathname === '/api/buddy/sessions'")
+    expect(proxy).not.toContain("'/api/buddy(.*)'")
+    expect(proxy).not.toContain("'/api/host(.*)'")
+    expect(proxy).not.toContain("'/api/user(.*)'")
+    expect(proxy).not.toContain("'/api/communities(.*)'")
+    expect(proxy).not.toContain("'/api/search(.*)'")
+    expect(proxy).not.toContain("'/api/map(.*)'")
+
     const clerkUserRoutes = [
       'apps/web/src/app/api/buddy/block/route.ts',
       'apps/web/src/app/api/buddy/report/route.ts',
@@ -444,6 +462,8 @@ describe('route contracts', () => {
   it('keeps admin auth Clerk-only and avoids legacy logout/session success endpoints', () => {
     const adminAuthRoute = readRepoFile('apps/web/src/app/api/admin/auth/route.ts')
     const adminLayout = readRepoFile('apps/web/src/app/admin/layout.tsx')
+    const adminRouteHelper = readRepoFile('apps/web/src/lib/admin-route.ts')
+    const seededCommunitiesRoute = readRepoFile('apps/web/src/app/api/admin/seeded-communities/route.ts')
 
     expect(adminAuthRoute).toContain('isAdminRequest')
     expect(adminAuthRoute).toContain('Password admin login has been removed')
@@ -451,6 +471,18 @@ describe('route contracts', () => {
     expect(adminAuthRoute).not.toContain('return NextResponse.json({ success: true })')
     expect(adminLayout).toContain('signOut')
     expect(adminLayout).toContain('/api/admin/auth')
+    expect(adminRouteHelper).toContain('requireAdminRequest')
+    expect(adminRouteHelper).toContain('isAdminRequest')
+    expect(seededCommunitiesRoute).toContain('requireAdminRequest')
+  })
+
+  it('keeps production CSP from allowing unsafe eval', () => {
+    const nextConfig = readRepoFile('apps/web/next.config.js')
+
+    expect(nextConfig).toContain("const isProduction = process.env.NODE_ENV === 'production'")
+    expect(nextConfig).toContain("const contentSecurityPolicy")
+    expect(nextConfig).toContain("'unsafe-eval' https:")
+    expect(nextConfig).toContain("? \"'self' 'unsafe-inline' https:\"")
   })
 
   it('keeps limited listings out of broad public discovery', () => {

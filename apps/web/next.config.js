@@ -1,6 +1,21 @@
 const path = require('path')
 const { withSentryConfig } = require('@sentry/nextjs')
 
+const isProduction = process.env.NODE_ENV === 'production'
+const scriptSrc = isProduction
+  ? "'self' 'unsafe-inline' https:"
+  : "'self' 'unsafe-inline' 'unsafe-eval' https:"
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  `script-src ${scriptSrc}`,
+  "style-src 'self' 'unsafe-inline' https:",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data: https:",
+  "connect-src 'self' https: wss:",
+  "frame-src 'self' https:",
+  "worker-src 'self' blob:",
+].join('; ')
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable compression
@@ -134,7 +149,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: ; style-src 'self' 'unsafe-inline' https: ; img-src 'self' data: blob: https: ; font-src 'self' data: https: ; connect-src 'self' https: wss: ; frame-src 'self' https: ; worker-src 'self' blob: ;",
+            value: contentSecurityPolicy,
           },
         ],
       },

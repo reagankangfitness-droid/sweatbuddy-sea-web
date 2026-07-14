@@ -63,7 +63,9 @@ Route-level requirements:
 - Cron routes must require `CRON_SECRET`.
 - Admin browser access is Clerk allowlist only; legacy password/session admin login is removed.
 
-The proxy currently leaves several API namespaces public so public reads can work. Because of that, mutating route auth is protected by route-contract tests and must not be removed.
+The proxy must not expose whole user-facing API namespaces just because some reads are public. Public API access should be method-aware: open specific GET/HEAD discovery reads and explicit public POST endpoints such as leads, nominations, upload, and webhooks. Mutating user routes remain protected by middleware and route-contract tests.
+
+Admin APIs intentionally remain callable at the proxy layer because they support Clerk admin users and server-to-server admin-secret requests. Admin routes should use `isAdminRequest` directly or the shared `requireAdminRequest` helper.
 
 ## Deployment Contract
 

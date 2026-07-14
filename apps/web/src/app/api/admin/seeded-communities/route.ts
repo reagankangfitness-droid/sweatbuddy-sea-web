@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { isAdminRequest } from '@/lib/admin-auth'
+import { requireAdminRequest } from '@/lib/admin-route'
 
 export async function GET(request: Request) {
-  if (!(await isAdminRequest(request))) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const unauthorized = await requireAdminRequest(request)
+  if (unauthorized) return unauthorized
 
   try {
     const communities = await prisma.community.findMany({

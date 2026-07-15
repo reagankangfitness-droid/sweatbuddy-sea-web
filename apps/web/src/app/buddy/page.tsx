@@ -3,9 +3,24 @@
 import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useAuth } from '@clerk/nextjs'
 import { format } from 'date-fns'
-import { Plus, Loader2, Zap, Map, List, Search, X, ArrowRight, ChevronDown, Check, Users, ShieldCheck, UserPlus } from 'lucide-react'
+import {
+  Plus,
+  Loader2,
+  Zap,
+  Map,
+  List,
+  Search,
+  X,
+  ArrowRight,
+  ChevronDown,
+  Check,
+  Users,
+  ShieldCheck,
+  UserPlus,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 import { LogoWithText } from '@/components/logo'
@@ -14,7 +29,10 @@ import { CreateSessionSheet } from '@/components/CreateSessionSheet'
 import { CreateChoiceSheet } from '@/components/CreateChoiceSheet'
 import { SessionFeedbackSheet } from '@/components/SessionFeedbackSheet'
 import { BioPromptSheet } from '@/components/BioPromptSheet'
-import { LazySessionVectorMap, type SessionVectorMapPin } from '@/components/maps/LazySessionVectorMap'
+import {
+  LazySessionVectorMap,
+  type SessionVectorMapPin,
+} from '@/components/maps/LazySessionVectorMap'
 import {
   CITY_LOCATION_CONFIGS,
   DEFAULT_CITY_LOCATION_CONFIG,
@@ -176,7 +194,10 @@ function bucketSessions(sessions: Session[]): TimeBucket[] {
   const later: Session[] = []
 
   for (const s of sessions) {
-    if (!s.startTime) { later.push(s); continue }
+    if (!s.startTime) {
+      later.push(s)
+      continue
+    }
     const start = new Date(s.startTime)
     const diffMs = start.getTime() - now.getTime()
     const diffHrs = diffMs / (1000 * 60 * 60)
@@ -189,11 +210,28 @@ function bucketSessions(sessions: Session[]): TimeBucket[] {
   }
 
   const buckets: TimeBucket[] = []
-  if (happeningNow.length) buckets.push({ key: 'now', label: 'Now', sessions: sortSessionsBySocialMomentum(happeningNow) })
-  if (nextFewHours.length) buckets.push({ key: 'soon', label: 'Soon', sessions: sortSessionsBySocialMomentum(nextFewHours) })
-  if (today.length) buckets.push({ key: 'today', label: 'Today', sessions: sortSessionsBySocialMomentum(today) })
-  if (tomorrow.length) buckets.push({ key: 'tomorrow', label: 'Tomorrow', sessions: sortSessionsBySocialMomentum(tomorrow) })
-  if (later.length) buckets.push({ key: 'later', label: 'This week', sessions: sortSessionsBySocialMomentum(later) })
+  if (happeningNow.length)
+    buckets.push({ key: 'now', label: 'Now', sessions: sortSessionsBySocialMomentum(happeningNow) })
+  if (nextFewHours.length)
+    buckets.push({
+      key: 'soon',
+      label: 'Soon',
+      sessions: sortSessionsBySocialMomentum(nextFewHours),
+    })
+  if (today.length)
+    buckets.push({ key: 'today', label: 'Today', sessions: sortSessionsBySocialMomentum(today) })
+  if (tomorrow.length)
+    buckets.push({
+      key: 'tomorrow',
+      label: 'Tomorrow',
+      sessions: sortSessionsBySocialMomentum(tomorrow),
+    })
+  if (later.length)
+    buckets.push({
+      key: 'later',
+      label: 'This week',
+      sessions: sortSessionsBySocialMomentum(later),
+    })
   return buckets
 }
 
@@ -243,8 +281,10 @@ function EventDiscoveryBand({
   const topSessions = sessions
     .slice()
     .sort((a, b) => {
-      const aScore = a.attendeeCount * 4 + (a.goingSoloCount ?? 0) * 2 + (a.fitnessLevel === 'ALL' ? 2 : 0)
-      const bScore = b.attendeeCount * 4 + (b.goingSoloCount ?? 0) * 2 + (b.fitnessLevel === 'ALL' ? 2 : 0)
+      const aScore =
+        a.attendeeCount * 4 + (a.goingSoloCount ?? 0) * 2 + (a.fitnessLevel === 'ALL' ? 2 : 0)
+      const bScore =
+        b.attendeeCount * 4 + (b.goingSoloCount ?? 0) * 2 + (b.fitnessLevel === 'ALL' ? 2 : 0)
       if (bScore !== aScore) return bScore - aScore
       return new Date(a.startTime ?? 0).getTime() - new Date(b.startTime ?? 0).getTime()
     })
@@ -279,9 +319,15 @@ function EventDiscoveryBand({
         {[
           { value: sessionCount.toString(), label: 'events live' },
           { value: peopleCount.toString(), label: 'people going' },
-          { value: goingSoloCount > 0 ? goingSoloCount.toString() : beginnerCount.toString(), label: goingSoloCount > 0 ? 'going solo' : 'easy starts' },
+          {
+            value: goingSoloCount > 0 ? goingSoloCount.toString() : beginnerCount.toString(),
+            label: goingSoloCount > 0 ? 'going solo' : 'easy starts',
+          },
         ].map((stat) => (
-          <div key={stat.label} className="min-h-[58px] rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5">
+          <div
+            key={stat.label}
+            className="min-h-[58px] rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5"
+          >
             <p className="truncate text-sm font-bold leading-none text-white">{stat.value}</p>
             <p className="mt-1 text-[10px] uppercase tracking-wider text-white/45">{stat.label}</p>
           </div>
@@ -291,7 +337,11 @@ function EventDiscoveryBand({
       {topSessions.length > 0 && (
         <div className="mt-4 flex gap-3 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory">
           {topSessions.map((session) => (
-            <EventPulseCard key={session.id} session={session} onPreviewAttendees={onPreviewAttendees} />
+            <EventPulseCard
+              key={session.id}
+              session={session}
+              onPreviewAttendees={onPreviewAttendees}
+            />
           ))}
         </div>
       )}
@@ -313,7 +363,9 @@ function EventDiscoveryBand({
       ) : (
         <div className="mt-4 rounded-lg border border-dashed border-white/15 bg-white/[0.035] px-4 py-5 text-center">
           <p className="text-sm font-semibold text-white">Start with a plan people can join.</p>
-          <p className="mt-1 text-xs text-[#666666]">Host/source pages stay in the background as the trust layer.</p>
+          <p className="mt-1 text-xs text-[#666666]">
+            Host/source pages stay in the background as the trust layer.
+          </p>
         </div>
       )}
     </section>
@@ -330,37 +382,64 @@ function EventPulseCard({
   const timeLabel = session.startTime ? getRelativeTime(session.startTime) : 'Time TBA'
   const hostLabel = session.community?.name ?? session.host?.name ?? 'Local host'
   const soloCount = session.goingSoloCount ?? 0
+  const imageSrc = getSessionListingImage(session)
+  const activityLabel = (session.categorySlug ?? 'fitness').replace(/[-_]/g, ' ')
+  const priceLabel = formatBuddyMapPrice(session.price, session.currency)
 
   return (
-    <div className="group w-[255px] flex-shrink-0 snap-start rounded-lg border border-white/10 bg-[#151515] p-3.5 transition-colors hover:border-[#63FF8F]/45 hover:bg-[#1B1B1B]">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#63FF8F]">
-            {timeLabel}
-          </p>
+    <div className="group w-[286px] flex-shrink-0 snap-start overflow-hidden rounded-xl border border-white/10 bg-[#151515] transition-colors hover:border-[#63FF8F]/45 hover:bg-[#1B1B1B]">
+      <Link
+        href={`/activities/${session.id}`}
+        className="relative block aspect-[16/10] overflow-hidden bg-[#222222]"
+        onClick={() => trackSessionClick(session, 'event_pulse', 0)}
+      >
+        <Image
+          src={imageSrc}
+          alt={session.title}
+          fill
+          sizes="286px"
+          className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
+          unoptimized={Boolean(session.imageUrl)}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/10" />
+        <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
+          {activityLabel}
+        </span>
+        <span className="absolute right-3 top-3 rounded-md bg-[#63FF8F] px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#050505] shadow-md">
+          {priceLabel}
+        </span>
+        <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-white backdrop-blur">
+          {timeLabel}
+        </span>
+      </Link>
+
+      <div className="p-3.5">
+        <div className="flex items-start justify-between gap-3">
           <Link
             href={`/activities/${session.id}`}
-            className="mt-1 flex min-h-10 items-start text-sm font-bold leading-snug text-white transition-colors hover:text-[#63FF8F]"
+            className="flex min-h-10 min-w-0 items-start text-sm font-bold leading-snug text-white transition-colors hover:text-[#63FF8F]"
             onClick={() => trackSessionClick(session, 'event_pulse', 0)}
           >
             <span className="line-clamp-2">{session.title}</span>
           </Link>
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-white/[0.08] text-xl">
+            {pinEmoji(session.categorySlug ?? 'other')}
+          </span>
         </div>
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-white/[0.08] text-xl">
-          {pinEmoji(session.categorySlug ?? 'other')}
-        </span>
-      </div>
 
-      <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-3">
-        <AttendeePreview attendees={session.attendees} attendeeCount={session.attendeeCount} onClick={() => onPreviewAttendees(session)} />
-        <p className="shrink-0 text-right text-[11px] font-medium text-[#999999]">
-          {session.attendeeCount > 0 ? `${session.attendeeCount} going` : 'Open invite'}
-          {soloCount > 0 ? <span className="block text-[#B6FF00]">{soloCount} solo</span> : null}
-        </p>
+        <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-3">
+          <AttendeePreview
+            attendees={session.attendees}
+            attendeeCount={session.attendeeCount}
+            onClick={() => onPreviewAttendees(session)}
+          />
+          <p className="shrink-0 text-right text-[11px] font-medium text-[#999999]">
+            {session.attendeeCount > 0 ? `${session.attendeeCount} going` : 'Open invite'}
+            {soloCount > 0 ? <span className="block text-[#B6FF00]">{soloCount} solo</span> : null}
+          </p>
+        </div>
+        <p className="mt-3 truncate text-[11px] text-[#666666]">Hosted by {hostLabel}</p>
       </div>
-      <p className="mt-3 truncate text-[11px] text-[#666666]">
-        Hosted by {hostLabel}
-      </p>
     </div>
   )
 }
@@ -385,7 +464,9 @@ function CrewSpotlightCard({ crew }: { crew: CrewSpotlight }) {
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-bold text-white group-hover:text-neutral-200">{crew.name}</p>
+          <p className="truncate text-sm font-bold text-white group-hover:text-neutral-200">
+            {crew.name}
+          </p>
           <p className="mt-0.5 truncate text-[11px] text-[#666666]">{crew.city}</p>
         </div>
       </div>
@@ -395,7 +476,8 @@ function CrewSpotlightCard({ crew }: { crew: CrewSpotlight }) {
           {crew.nextSessionTitle}
         </p>
         <p className="mt-1 text-[11px] text-[#666666]">
-          {nextTime ? `${nextTime} · ` : ''}{crew.sessionCount} known plan{crew.sessionCount !== 1 ? 's' : ''}
+          {nextTime ? `${nextTime} · ` : ''}
+          {crew.sessionCount} known plan{crew.sessionCount !== 1 ? 's' : ''}
         </p>
       </div>
 
@@ -411,7 +493,7 @@ function CrewSpotlightCard({ crew }: { crew: CrewSpotlight }) {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={attendee.imageUrl} alt="" className="h-full w-full object-cover" />
                 ) : (
-                  attendee.name?.[0]?.toUpperCase() ?? '?'
+                  (attendee.name?.[0]?.toUpperCase() ?? '?')
                 )}
               </span>
             ))
@@ -450,7 +532,39 @@ const CATEGORY_GRADIENTS: Record<string, [string, string]> = {
   other: ['#525252', '#262626'],
 }
 
-function pinEmoji(slug: string | null | undefined) { return getActivityEmoji(slug, '🏅') }
+const SESSION_LISTING_IMAGES: Record<string, string> = {
+  running: '/banner/running.jpg',
+  run: '/banner/running.jpg',
+  yoga: '/images/hero-bg.jpg',
+  hiit: '/images/connect-people.webp',
+  bootcamp: '/banner/athletics.jpg',
+  cycling: '/images/community-bonds.jpg',
+  swimming: '/images/hero/ice-bath.webp',
+  volleyball: '/images/community-bonds.jpg',
+  basketball: '/banner/athletics.jpg',
+  pilates: '/images/hero/meditation.png',
+  hiking: '/images/cities/singapore.jpg',
+  strength: '/banner/athletics.jpg',
+  gym: '/banner/athletics.jpg',
+  cold_plunge: '/banner/ice-bath.webp',
+  recovery: '/banner/ice-bath.webp',
+  dance_fitness: '/images/connect-people.webp',
+  badminton: '/images/community-bonds.jpg',
+  padel: '/images/community-bonds.jpg',
+  combat_fitness: '/banner/athletics.jpg',
+  pickleball: '/images/community-bonds.jpg',
+  social: '/images/hosts/run-club-group.jpg',
+  other: '/images/hero/run-club.jpg',
+}
+
+function getSessionListingImage(session: Pick<Session, 'imageUrl' | 'categorySlug'>): string {
+  const category = (session.categorySlug ?? 'other').toLowerCase()
+  return session.imageUrl || SESSION_LISTING_IMAGES[category] || SESSION_LISTING_IMAGES.other
+}
+
+function pinEmoji(slug: string | null | undefined) {
+  return getActivityEmoji(slug, '🏅')
+}
 
 // ─── Fitness / type filters ───────────────────────────────────────────────────
 
@@ -491,7 +605,13 @@ const STARTER_SESSION_IDEAS = [
 
 export default function BuddyPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-[#666666]" /></div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="w-6 h-6 animate-spin text-[#666666]" />
+        </div>
+      }
+    >
       <BuddyPageInner />
     </Suspense>
   )
@@ -514,7 +634,9 @@ function BuddyPageInner() {
   const initialViewMode = searchParams.get('view') === 'map' ? 'map' : 'list'
   const initialCreateMode = searchParams.get('create')
 
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(initialCityConfig.center)
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(
+    initialCityConfig.center,
+  )
   const [cityConfig, setCityConfig] = useState<CityLocationConfig>(initialCityConfig)
   const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
@@ -532,9 +654,7 @@ function BuddyPageInner() {
       : '',
   )
   const [levelFilter, setLevelFilter] = useState(() =>
-    LEVEL_FILTERS.some((filter) => filter.value === initialLevelFilter)
-      ? initialLevelFilter
-      : '',
+    LEVEL_FILTERS.some((filter) => filter.value === initialLevelFilter) ? initialLevelFilter : '',
   )
   const [dateFilter, setDateFilter] = useState(() => {
     if (/^\d{4}-\d{2}-\d{2}$/.test(initialDateFilter)) return initialDateFilter
@@ -543,7 +663,12 @@ function BuddyPageInner() {
   const [showCreateSheet, setShowCreateSheet] = useState(false)
   const [showCreateMenu, setShowCreateMenu] = useState(false)
   const [selectedPin, setSelectedPin] = useState<Session | null>(null)
-  const [feedbackSession, setFeedbackSession] = useState<{ id: string; title: string; hostId: string; hostName: string | null } | null>(null)
+  const [feedbackSession, setFeedbackSession] = useState<{
+    id: string
+    title: string
+    hostId: string
+    hostName: string | null
+  } | null>(null)
   const [showBioPrompt, setShowBioPrompt] = useState(false)
   const [profileLocationReady, setProfileLocationReady] = useState(false)
   const [rsvpLoadingId, setRsvpLoadingId] = useState<string | null>(null)
@@ -605,7 +730,8 @@ function BuddyPageInner() {
       candidate.peopleCount += session.attendeeCount
       if (
         nextTime &&
-        (!candidate.nextSessionTime || new Date(nextTime).getTime() < new Date(candidate.nextSessionTime).getTime())
+        (!candidate.nextSessionTime ||
+          new Date(nextTime).getTime() < new Date(candidate.nextSessionTime).getTime())
       ) {
         candidate.nextSessionTitle = session.title
         candidate.nextSessionTime = nextTime
@@ -624,16 +750,19 @@ function BuddyPageInner() {
     }
 
     return Array.from(crews.values())
-      .sort((a, b) => (b.peopleCount + b.sessionCount * 2) - (a.peopleCount + a.sessionCount * 2))
+      .sort((a, b) => b.peopleCount + b.sessionCount * 2 - (a.peopleCount + a.sessionCount * 2))
       .slice(0, 6)
   }, [sessions])
 
-  const discoveryStats = useMemo(() => ({
-    sessionCount: sessions.length,
-    peopleCount: sessions.reduce((sum, session) => sum + session.attendeeCount, 0),
-    goingSoloCount: sessions.reduce((sum, session) => sum + (session.goingSoloCount ?? 0), 0),
-    beginnerCount: sessions.filter((session) => session.fitnessLevel === 'ALL').length,
-  }), [sessions])
+  const discoveryStats = useMemo(
+    () => ({
+      sessionCount: sessions.length,
+      peopleCount: sessions.reduce((sum, session) => sum + session.attendeeCount, 0),
+      goingSoloCount: sessions.reduce((sum, session) => sum + (session.goingSoloCount ?? 0), 0),
+      beginnerCount: sessions.filter((session) => session.fitnessLevel === 'ALL').length,
+    }),
+    [sessions],
+  )
 
   const todayDateString = useMemo(
     () => getLocalDateString(cityConfig.timezone),
@@ -663,10 +792,15 @@ function BuddyPageInner() {
   const mapPins = useMemo<SessionVectorMapPin[]>(
     () =>
       sessions.map((session) => {
-        const activityLabel = session.categorySlug ? session.categorySlug.replace(/[-_]/g, ' ') : 'session'
+        const activityLabel = session.categorySlug
+          ? session.categorySlug.replace(/[-_]/g, ' ')
+          : 'session'
         const hostIsReal =
-          session.host?.name && session.host.name !== 'sweatbuddies' && session.host.name !== 'SweatBuddies'
-        const displayName = session.community?.name ?? (hostIsReal ? session.host.name : null) ?? session.title
+          session.host?.name &&
+          session.host.name !== 'sweatbuddies' &&
+          session.host.name !== 'SweatBuddies'
+        const displayName =
+          session.community?.name ?? (hostIsReal ? session.host.name : null) ?? session.title
         const location = session.address?.split(',')[0] || session.city
 
         return {
@@ -681,15 +815,20 @@ function BuddyPageInner() {
           previewTitle: displayName,
           previewSubtitle: session.community ? `Known plan: ${session.title}` : session.title,
           previewMeta: `${session.startTime ? getRelativeTime(session.startTime) : 'Time TBA'} · ${location}`,
-          previewImage: session.imageUrl || session.community?.logoImage || (hostIsReal ? session.host.imageUrl : null),
+          previewImage:
+            session.imageUrl ||
+            session.community?.logoImage ||
+            (hostIsReal ? session.host.imageUrl : null),
         }
       }),
     [sessions],
   )
 
   const activeTypeLabel = TYPE_FILTERS.find((type) => type.value === typeFilter)?.label ?? 'fitness'
-  const activePriceLabel = PRICING_FILTERS.find((price) => price.value === pricingFilter)?.label ?? 'All prices'
-  const activeLevelLabel = LEVEL_FILTERS.find((level) => level.value === levelFilter)?.label ?? 'All levels'
+  const activePriceLabel =
+    PRICING_FILTERS.find((price) => price.value === pricingFilter)?.label ?? 'All prices'
+  const activeLevelLabel =
+    LEVEL_FILTERS.find((level) => level.value === levelFilter)?.label ?? 'All levels'
 
   function updateTypeFilter(value: string) {
     const next = typeFilter === value ? '' : value
@@ -787,28 +926,31 @@ function BuddyPageInner() {
 
   const handleVectorMapPinClick = useCallback(
     (pin: SessionVectorMapPin | null) => {
-      handleMapPinClick(pin ? sessionById.get(pin.id) ?? null : null)
+      handleMapPinClick(pin ? (sessionById.get(pin.id) ?? null) : null)
     },
     [handleMapPinClick, sessionById],
   )
 
   function updateSessionAfterRsvp(sessionId: string, updates: Partial<Session>) {
-    setSessions((prev) => prev.map((session) => (
-      session.id === sessionId ? { ...session, ...updates } : session
-    )))
-    setSearchResults((prev) => prev.map((session) => (
-      session.id === sessionId ? { ...session, ...updates } : session
-    )))
-    setSelectedPin((current) => current?.id === sessionId ? { ...current, ...updates } : current)
+    setSessions((prev) =>
+      prev.map((session) => (session.id === sessionId ? { ...session, ...updates } : session)),
+    )
+    setSearchResults((prev) =>
+      prev.map((session) => (session.id === sessionId ? { ...session, ...updates } : session)),
+    )
+    setSelectedPin((current) => (current?.id === sessionId ? { ...current, ...updates } : current))
   }
 
   function redirectToSignIn(session: Session) {
     if (typeof window !== 'undefined') {
-      sessionStorage.setItem('auth_intent', JSON.stringify({
-        intent: 'buddy_rsvp',
-        sessionId: session.id,
-        timestamp: Date.now(),
-      }))
+      sessionStorage.setItem(
+        'auth_intent',
+        JSON.stringify({
+          intent: 'buddy_rsvp',
+          sessionId: session.id,
+          timestamp: Date.now(),
+        }),
+      )
     }
 
     const redirectUrl = `/buddy?city=${cityConfig.slug}`
@@ -848,12 +990,14 @@ function BuddyPageInner() {
 
       updateSessionAfterRsvp(session.id, {
         userStatus: 'JOINED',
-        attendeeCount: session.userStatus === 'JOINED' || session.userStatus === 'COMPLETED'
-          ? session.attendeeCount
-          : session.attendeeCount + 1,
-        isFull: typeof session.maxPeople === 'number'
-          ? session.attendeeCount + 1 >= session.maxPeople
-          : session.isFull,
+        attendeeCount:
+          session.userStatus === 'JOINED' || session.userStatus === 'COMPLETED'
+            ? session.attendeeCount
+            : session.attendeeCount + 1,
+        isFull:
+          typeof session.maxPeople === 'number'
+            ? session.attendeeCount + 1 >= session.maxPeople
+            : session.isFull,
       })
       toast.success("You're going")
       trackBrowserEvent('buddy_quick_rsvp_joined', {
@@ -956,7 +1100,10 @@ function BuddyPageInner() {
   }
 
   function revealPendingFollowPrompt() {
-    if (pendingFollowSession?.community && !followedCommunityIds.has(pendingFollowSession.community.id)) {
+    if (
+      pendingFollowSession?.community &&
+      !followedCommunityIds.has(pendingFollowSession.community.id)
+    ) {
       setFollowPromptSession(pendingFollowSession)
     }
     setPendingFollowSession(null)
@@ -1055,11 +1202,12 @@ function BuddyPageInner() {
         const effectiveLocation = neighborhoodFilter
           ? { lat: neighborhoodFilter.lat, lng: neighborhoodFilter.lng }
           : userLocation
-        const activeCityConfig = profileCityLockedRef.current || neighborhoodFilter
-          ? cityConfig
-          : effectiveLocation
-            ? getNearestCityLocationConfig(effectiveLocation.lat, effectiveLocation.lng)
-            : cityConfig
+        const activeCityConfig =
+          profileCityLockedRef.current || neighborhoodFilter
+            ? cityConfig
+            : effectiveLocation
+              ? getNearestCityLocationConfig(effectiveLocation.lat, effectiveLocation.lng)
+              : cityConfig
         params.set('city', activeCityConfig.slug)
         params.set('timezone', activeCityConfig.timezone)
         if (effectiveLocation) {
@@ -1089,7 +1237,15 @@ function BuddyPageInner() {
         setLoadingMore(false)
       }
     },
-    [typeFilter, pricingFilter, levelFilter, dateFilter, userLocation, neighborhoodFilter, cityConfig]
+    [
+      typeFilter,
+      pricingFilter,
+      levelFilter,
+      dateFilter,
+      userLocation,
+      neighborhoodFilter,
+      cityConfig,
+    ],
   )
 
   const [locationReady, setLocationReady] = useState(true)
@@ -1098,7 +1254,7 @@ function BuddyPageInner() {
     if (!userLocation) return
     if (profileCityLockedRef.current) return
     const detectedCity = getNearestCityLocationConfig(userLocation.lat, userLocation.lng)
-    setCityConfig((current) => current.slug === detectedCity.slug ? current : detectedCity)
+    setCityConfig((current) => (current.slug === detectedCity.slug ? current : detectedCity))
   }, [userLocation])
 
   useEffect(() => {
@@ -1113,10 +1269,19 @@ function BuddyPageInner() {
       return
     }
 
-    if (!navigator.geolocation) { setUserLocation(DEFAULT_CITY_LOCATION_CONFIG.center); setLocationReady(true); return }
+    if (!navigator.geolocation) {
+      setUserLocation(DEFAULT_CITY_LOCATION_CONFIG.center)
+      setLocationReady(true)
+      return
+    }
 
     let settled = false
-    const settle = () => { if (!settled) { settled = true; setLocationReady(true) } }
+    const settle = () => {
+      if (!settled) {
+        settled = true
+        setLocationReady(true)
+      }
+    }
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -1129,7 +1294,7 @@ function BuddyPageInner() {
         setUserLocation(DEFAULT_CITY_LOCATION_CONFIG.center)
         settle()
       },
-      { timeout: 3000, maximumAge: 60000 }
+      { timeout: 3000, maximumAge: 60000 },
     )
 
     // Fallback: don't wait longer than 3s for GPS.
@@ -1181,7 +1346,7 @@ function BuddyPageInner() {
 
     // Check pending feedback
     fetch('/api/buddy/sessions/pending-feedback')
-      .then((r) => r.ok ? r.json() : { sessions: [] })
+      .then((r) => (r.ok ? r.json() : { sessions: [] }))
       .then((data) => {
         if (data.sessions?.length > 0) {
           setTimeout(() => setFeedbackSession(data.sessions[0]), 2000)
@@ -1192,9 +1357,11 @@ function BuddyPageInner() {
     // Check if bio prompt should show (3+ sessions, no bio, not dismissed)
     try {
       if (localStorage.getItem('sb_bio_prompted')) return
-    } catch { return }
+    } catch {
+      return
+    }
     fetch('/api/user/profile')
-      .then((r) => r.ok ? r.json() : null)
+      .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (data?.profile && !data.profile.bio && data.profile.sessionsAttendedCount >= 3) {
           // Show after feedback dismisses (or 5s if no feedback)
@@ -1204,17 +1371,28 @@ function BuddyPageInner() {
       .catch(() => {})
   }, [currentUserId])
 
-
   // Refetch when filters change
   useEffect(() => {
     if (!locationReady) return
     setSessions([])
     fetchSessions()
-  }, [locationReady, profileLocationReady, typeFilter, pricingFilter, levelFilter, dateFilter, neighborhoodFilter, fetchSessions])
+  }, [
+    locationReady,
+    profileLocationReady,
+    typeFilter,
+    pricingFilter,
+    levelFilter,
+    dateFilter,
+    neighborhoodFilter,
+    fetchSessions,
+  ])
 
   // Debounced search
   useEffect(() => {
-    if (!searchQuery.trim()) { setSearchResults([]); return }
+    if (!searchQuery.trim()) {
+      setSearchResults([])
+      return
+    }
     const timer = setTimeout(async () => {
       setSearching(true)
       try {
@@ -1236,7 +1414,11 @@ function BuddyPageInner() {
           const data = await res.json()
           setSearchResults(data.sessions ?? [])
         }
-      } catch { /* ignore */ } finally { setSearching(false) }
+      } catch {
+        /* ignore */
+      } finally {
+        setSearching(false)
+      }
     }, 300)
     return () => clearTimeout(timer)
   }, [searchQuery, userLocation, cityConfig])
@@ -1250,9 +1432,16 @@ function BuddyPageInner() {
   }
 
   return (
-    <div className="flex flex-col bg-[#0B0B0B] md:pl-14" style={{ height: '100dvh', overflow: 'hidden' }}>
+    <div
+      className="flex flex-col bg-[#0B0B0B] md:pl-14"
+      style={{ height: '100dvh', overflow: 'hidden' }}
+    >
       {/* Create Session Sheet */}
-      <CreateSessionSheet open={showCreateSheet} onClose={() => setShowCreateSheet(false)} onSuccess={() => fetchSessions()} />
+      <CreateSessionSheet
+        open={showCreateSheet}
+        onClose={() => setShowCreateSheet(false)}
+        onSuccess={() => fetchSessions()}
+      />
       <CreateChoiceSheet
         open={showCreateMenu}
         onClose={() => setShowCreateMenu(false)}
@@ -1263,7 +1452,10 @@ function BuddyPageInner() {
       />
 
       {/* Bio Prompt */}
-      <BioPromptSheet open={showBioPrompt && !feedbackSession} onClose={() => setShowBioPrompt(false)} />
+      <BioPromptSheet
+        open={showBioPrompt && !feedbackSession}
+        onClose={() => setShowBioPrompt(false)}
+      />
 
       {/* Post-Session Feedback */}
       <SessionFeedbackSheet
@@ -1279,7 +1471,11 @@ function BuddyPageInner() {
       <div className="sticky top-0 z-20 pt-[env(safe-area-inset-top,4px)]">
         <div className="space-y-2 border-b border-white/10 bg-[#0B0B0B]/95 px-3 pb-2 pt-2 font-mono backdrop-blur">
           <div className="flex min-h-11 items-center justify-between gap-3">
-            <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-h-11 min-w-11 items-center">
+            <Link
+              href="/"
+              aria-label="SweatBuddies home"
+              className="inline-flex min-h-11 min-w-11 items-center"
+            >
               <LogoWithText
                 size={27}
                 color="#FFFFFF"
@@ -1325,8 +1521,19 @@ function BuddyPageInner() {
                 for (let i = 0; i < 7; i++) {
                   const dateStr = getLocalDateString(cityConfig.timezone, i)
                   const d = new Date(`${dateStr}T00:00:00`)
-                  const dayLabel = i === 0 ? 'Today' : i === 1 ? 'Tmr' : d.toLocaleDateString('en-US', { weekday: 'short', timeZone: cityConfig.timezone })
-                  const dateNum = d.toLocaleDateString('en-US', { day: 'numeric', timeZone: cityConfig.timezone })
+                  const dayLabel =
+                    i === 0
+                      ? 'Today'
+                      : i === 1
+                        ? 'Tmr'
+                        : d.toLocaleDateString('en-US', {
+                            weekday: 'short',
+                            timeZone: cityConfig.timezone,
+                          })
+                  const dateNum = d.toLocaleDateString('en-US', {
+                    day: 'numeric',
+                    timeZone: cityConfig.timezone,
+                  })
                   days.push(
                     <button
                       key={dateStr}
@@ -1339,7 +1546,7 @@ function BuddyPageInner() {
                     >
                       <span className="text-[10px] font-medium leading-tight">{dayLabel}</span>
                       <span className="text-[13px] font-bold leading-tight">{dateNum}</span>
-                    </button>
+                    </button>,
                   )
                 }
                 return days
@@ -1350,7 +1557,7 @@ function BuddyPageInner() {
                   !dateFilter
                     ? 'bg-white text-black shadow-md'
                     : 'bg-[#171717] text-[#999999] shadow-none'
-                  }`}
+                }`}
               >
                 <span className="text-[10px] font-medium leading-tight">All</span>
                 <span className="text-[13px] font-bold leading-tight">Upcoming</span>
@@ -1370,9 +1577,13 @@ function BuddyPageInner() {
               aria-label={viewMode === 'list' ? 'Show map' : 'Show list'}
             >
               {viewMode === 'list' ? (
-                <><Map className="w-3.5 h-3.5" /> Map</>
+                <>
+                  <Map className="w-3.5 h-3.5" /> Map
+                </>
               ) : (
-                <><List className="w-3.5 h-3.5" /> List</>
+                <>
+                  <List className="w-3.5 h-3.5" /> List
+                </>
               )}
             </button>
           </div>
@@ -1473,8 +1684,16 @@ function BuddyPageInner() {
           </div>
 
           <div className="hidden min-h-7 items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5 text-[10px] font-bold uppercase tracking-wide text-[#777777] sm:flex">
-            {[neighborhoodFilter?.name ?? cityConfig.name, activeTypeLabel, activePriceLabel, activeLevelLabel].map((value) => (
-              <span key={value} className="shrink-0 rounded-full border border-white/[0.08] bg-[#111111] px-2.5 py-1">
+            {[
+              neighborhoodFilter?.name ?? cityConfig.name,
+              activeTypeLabel,
+              activePriceLabel,
+              activeLevelLabel,
+            ].map((value) => (
+              <span
+                key={value}
+                className="shrink-0 rounded-full border border-white/[0.08] bg-[#111111] px-2.5 py-1"
+              >
                 {value}
               </span>
             ))}
@@ -1497,9 +1716,9 @@ function BuddyPageInner() {
       </div>
 
       {viewMode === 'list' ? (
-        <div className="flex-1 min-h-0 lg:grid lg:grid-cols-[minmax(390px,42vw)_1fr]">
+        <div className="flex-1 min-h-0 overflow-hidden lg:grid lg:grid-cols-[minmax(390px,42vw)_1fr]">
           {/* List view — community-first cards backed by known sessions */}
-          <div className="min-h-0 overflow-y-auto border-white/[0.08] px-4 pb-24 lg:border-r">
+          <div className="h-full min-h-0 overflow-y-auto border-white/[0.08] px-4 pb-24 lg:border-r">
             {/* Search results mode */}
             {searchQuery.trim() ? (
               <div className="pt-3">
@@ -1510,7 +1729,9 @@ function BuddyPageInner() {
                   </div>
                 ) : searchResults.length === 0 ? (
                   <div className="text-center py-16">
-                    <p className="text-sm text-[#999999]">No events or hosts for &apos;{searchQuery}&apos;</p>
+                    <p className="text-sm text-[#999999]">
+                      No events or hosts for &apos;{searchQuery}&apos;
+                    </p>
                     <button
                       onClick={() => setSearchQuery('')}
                       className="mt-3 inline-flex min-h-10 items-center text-xs text-[#666666] underline transition-colors hover:text-white"
@@ -1531,7 +1752,7 @@ function BuddyPageInner() {
                         Clear search
                       </button>
                     </div>
-                    <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1 sm:grid sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 sm:overflow-visible">
+                    <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible">
                       {searchResults.map((session, i) => (
                         <SessionCard
                           key={session.id}
@@ -1549,47 +1770,52 @@ function BuddyPageInner() {
                 )}
               </div>
             ) : (
-            <>
-            {/* Event-first discovery */}
-            {!loading && sessions.length > 0 && (
-              <EventDiscoveryBand
-                sessions={sessions}
-                crews={featuredCrews}
-                sessionCount={discoveryStats.sessionCount}
-                peopleCount={discoveryStats.peopleCount}
-                goingSoloCount={discoveryStats.goingSoloCount}
-                beginnerCount={discoveryStats.beginnerCount}
-                cityName={neighborhoodFilter?.name ?? cityConfig.name}
-                activeTypeLabel={activeTypeLabel}
-                onCreate={() => setShowCreateMenu(true)}
-                onPreviewAttendees={setAttendeeSheetSession}
-              />
-            )}
+              <>
+                {/* Event-first discovery */}
+                {!loading && sessions.length > 0 && (
+                  <EventDiscoveryBand
+                    sessions={sessions}
+                    crews={featuredCrews}
+                    sessionCount={discoveryStats.sessionCount}
+                    peopleCount={discoveryStats.peopleCount}
+                    goingSoloCount={discoveryStats.goingSoloCount}
+                    beginnerCount={discoveryStats.beginnerCount}
+                    cityName={neighborhoodFilter?.name ?? cityConfig.name}
+                    activeTypeLabel={activeTypeLabel}
+                    onCreate={() => setShowCreateMenu(true)}
+                    onPreviewAttendees={setAttendeeSheetSession}
+                  />
+                )}
 
-            {/* Directory count header */}
-            {!loading && sessions.length > 0 && (
-              <p className="text-xs font-medium text-[#666666] py-3 uppercase tracking-wider">
-                {sessions.length} social fitness event{sessions.length !== 1 ? 's' : ''} with live people signals{neighborhoodFilter ? ` in ${neighborhoodFilter.name}` : ' nearby'}
-              </p>
-            )}
+                {/* Directory count header */}
+                {!loading && sessions.length > 0 && (
+                  <p className="text-xs font-medium text-[#666666] py-3 uppercase tracking-wider">
+                    {sessions.length} social fitness event{sessions.length !== 1 ? 's' : ''} with
+                    live people signals
+                    {neighborhoodFilter ? ` in ${neighborhoodFilter.name}` : ' nearby'}
+                  </p>
+                )}
 
-            {loading ? (
-              <div className="pt-3 space-y-8">
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <div key={i} className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 rounded-xl border border-white/[0.06] bg-[#111111] p-3">
-                    <div className="h-20 rounded-lg bg-[#1A1A1A] shimmer" />
-                    <div className="min-w-0 py-1">
-                      <div className="h-3 w-20 rounded bg-[#1A1A1A] shimmer" />
-                      <div className="mt-3 h-4 w-4/5 rounded bg-[#1A1A1A] shimmer" />
-                      <div className="mt-2 h-3 w-3/5 rounded bg-[#1A1A1A] shimmer" />
-                      <div className="mt-4 flex gap-2">
-                        <div className="h-6 w-16 rounded-full bg-[#1A1A1A] shimmer" />
-                        <div className="h-6 w-20 rounded-full bg-[#1A1A1A] shimmer" />
+                {loading ? (
+                  <div className="pt-3 space-y-8">
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <div
+                        key={i}
+                        className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 rounded-xl border border-white/[0.06] bg-[#111111] p-3"
+                      >
+                        <div className="h-20 rounded-lg bg-[#1A1A1A] shimmer" />
+                        <div className="min-w-0 py-1">
+                          <div className="h-3 w-20 rounded bg-[#1A1A1A] shimmer" />
+                          <div className="mt-3 h-4 w-4/5 rounded bg-[#1A1A1A] shimmer" />
+                          <div className="mt-2 h-3 w-3/5 rounded bg-[#1A1A1A] shimmer" />
+                          <div className="mt-4 flex gap-2">
+                            <div className="h-6 w-16 rounded-full bg-[#1A1A1A] shimmer" />
+                            <div className="h-6 w-20 rounded-full bg-[#1A1A1A] shimmer" />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                ))}
-                <style>{`
+                    ))}
+                    <style>{`
                   .shimmer {
                     background: linear-gradient(90deg, #1A1A1A 25%, #2A2A2A 50%, #1A1A1A 75%);
                     background-size: 200% 100%;
@@ -1600,89 +1826,98 @@ function BuddyPageInner() {
                     100% { background-position: -200% 0; }
                   }
                 `}</style>
-              </div>
-            ) : sessions.length === 0 ? (
-              <CityEmptyState
-                cityName={neighborhoodFilter?.name ?? cityConfig.name}
-                citySlug={cityConfig.slug}
-                hasFilters={Boolean(typeFilter || pricingFilter || levelFilter || dateFilter || neighborhoodFilter)}
-                onClearFilters={() => {
-                  setTypeFilter('')
-                  setPricingFilter('')
-                  setLevelFilter('')
-                  setDateFilter('')
-                  setNeighborhoodFilter(null)
-                }}
-                onCreate={() => setShowCreateMenu(true)}
-                onStarterSelect={(type) => {
-                  setTypeFilter(type)
-                  setShowCreateSheet(true)
-                }}
-              />
-            ) : (
-              <div className="space-y-8 pt-1">
-                {bucketSessions(sessions).map((bucket) => (
-                  <div key={bucket.key}>
-                    {/* Section header — NTC style */}
-                    <div className="flex items-center justify-between px-1 mb-3">
-                      <h2 className="text-sm font-bold text-white uppercase tracking-[0.15em]">
-                        {bucket.label}
-                      </h2>
-                      <span className="text-[11px] text-[#666666] uppercase tracking-wider">
-                        {bucket.sessions.length} event{bucket.sessions.length !== 1 ? 's' : ''}
-                      </span>
-                    </div>
-                    {/* Horizontal scroll on mobile, grid on desktop */}
-                    <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1 sm:grid sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 sm:overflow-visible">
-                      {bucket.sessions.map((session, i) => (
-                        <SessionCard
-                          key={session.id}
-                          session={session}
-                          index={i}
-                          source={`bucket_${bucket.key}`}
-                          rsvpLoading={rsvpLoadingId === session.id}
-                          onJoin={handleJoinSession}
-                          onLeave={handleLeaveSession}
-                          onPreviewAttendees={setAttendeeSheetSession}
-                        />
-                      ))}
-                    </div>
                   </div>
-                ))}
+                ) : sessions.length === 0 ? (
+                  <CityEmptyState
+                    cityName={neighborhoodFilter?.name ?? cityConfig.name}
+                    citySlug={cityConfig.slug}
+                    hasFilters={Boolean(
+                      typeFilter ||
+                      pricingFilter ||
+                      levelFilter ||
+                      dateFilter ||
+                      neighborhoodFilter,
+                    )}
+                    onClearFilters={() => {
+                      setTypeFilter('')
+                      setPricingFilter('')
+                      setLevelFilter('')
+                      setDateFilter('')
+                      setNeighborhoodFilter(null)
+                    }}
+                    onCreate={() => setShowCreateMenu(true)}
+                    onStarterSelect={(type) => {
+                      setTypeFilter(type)
+                      setShowCreateSheet(true)
+                    }}
+                  />
+                ) : (
+                  <div className="space-y-8 pt-1">
+                    {bucketSessions(sessions).map((bucket) => (
+                      <div key={bucket.key}>
+                        {/* Section header — NTC style */}
+                        <div className="flex items-center justify-between px-1 mb-3">
+                          <h2 className="text-sm font-bold text-white uppercase tracking-[0.15em]">
+                            {bucket.label}
+                          </h2>
+                          <span className="text-[11px] text-[#666666] uppercase tracking-wider">
+                            {bucket.sessions.length} event{bucket.sessions.length !== 1 ? 's' : ''}
+                          </span>
+                        </div>
+                        {/* Horizontal scroll on mobile, grid on desktop */}
+                        <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible">
+                          {bucket.sessions.map((session, i) => (
+                            <SessionCard
+                              key={session.id}
+                              session={session}
+                              index={i}
+                              source={`bucket_${bucket.key}`}
+                              rsvpLoading={rsvpLoadingId === session.id}
+                              onJoin={handleJoinSession}
+                              onLeave={handleLeaveSession}
+                              onPreviewAttendees={setAttendeeSheetSession}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
 
-                {nextCursor && (
-                  <button
-                    onClick={() => fetchSessions(nextCursor)}
-                    disabled={loadingMore}
-                    className="w-full py-3 text-sm text-[#666666] hover:text-[#999999] flex items-center justify-center gap-2"
-                  >
-                    {loadingMore ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Load more'}
-                  </button>
-                )}
-
-                {sessions.length > 0 && sessions.length < 6 && !nextCursor && (
-                  <div className="text-center py-6 border-t border-white/[0.06]">
-                    <p className="text-xs text-[#666666] mb-3">That&apos;s everything nearby for now. RSVP to an event or list one we should map.</p>
-                    <div className="flex gap-2 justify-center">
+                    {nextCursor && (
                       <button
-                        onClick={() => setShowCreateSheet(true)}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-xs font-semibold text-black uppercase tracking-wider"
+                        onClick={() => fetchSessions(nextCursor)}
+                        disabled={loadingMore}
+                        className="w-full py-3 text-sm text-[#666666] hover:text-[#999999] flex items-center justify-center gap-2"
                       >
-                        <Zap className="w-3 h-3" />
-                        Host a session
+                        {loadingMore ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Load more'}
                       </button>
-                      <Link
-                        href="/communities"
-                        className="inline-flex items-center gap-1 rounded-full border border-white/[0.08] bg-[#1A1A1A] px-3.5 py-2 text-xs font-semibold text-[#999999]"
-                      >
-                        Browse crews
-                      </Link>
-                    </div>
+                    )}
+
+                    {sessions.length > 0 && sessions.length < 6 && !nextCursor && (
+                      <div className="text-center py-6 border-t border-white/[0.06]">
+                        <p className="text-xs text-[#666666] mb-3">
+                          That&apos;s everything nearby for now. RSVP to an event or list one we
+                          should map.
+                        </p>
+                        <div className="flex gap-2 justify-center">
+                          <button
+                            onClick={() => setShowCreateSheet(true)}
+                            className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-xs font-semibold text-black uppercase tracking-wider"
+                          >
+                            <Zap className="w-3 h-3" />
+                            Host a session
+                          </button>
+                          <Link
+                            href="/communities"
+                            className="inline-flex items-center gap-1 rounded-full border border-white/[0.08] bg-[#1A1A1A] px-3.5 py-2 text-xs font-semibold text-[#999999]"
+                          >
+                            Browse crews
+                          </Link>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
-            )}
-            </>
+              </>
             )}
           </div>
           <div className="relative hidden min-h-0 bg-[#151515] lg:block">
@@ -1696,7 +1931,9 @@ function BuddyPageInner() {
               maxFitZoom={13}
             />
             <div className="absolute left-4 top-4 z-10 rounded-lg border border-white/[0.10] bg-black/55 px-3 py-2 font-mono text-[11px] font-black uppercase tracking-[0.16em] text-white/70 backdrop-blur">
-              {activeDateLabel} · {sessions.filter((session) => session.latitude && session.longitude).length} mapped listings
+              {activeDateLabel} ·{' '}
+              {sessions.filter((session) => session.latitude && session.longitude).length} mapped
+              listings
             </div>
             {selectedPin && (
               <div className="absolute bottom-5 left-5 z-20 w-[260px] max-w-[calc(100%-40px)]">
@@ -1717,12 +1954,15 @@ function BuddyPageInner() {
                 onCreate={() => setShowCreateMenu(true)}
               />
             )}
-            {!loading && dateFilter === todayDateString && sessions.length > 0 && sessions.length < 3 && (
-              <MapQuietTodayBanner
-                sessionCount={sessions.length}
-                onViewUpcoming={() => updateDateFilter('')}
-              />
-            )}
+            {!loading &&
+              dateFilter === todayDateString &&
+              sessions.length > 0 &&
+              sessions.length < 3 && (
+                <MapQuietTodayBanner
+                  sessionCount={sessions.length}
+                  onViewUpcoming={() => updateDateFilter('')}
+                />
+              )}
           </div>
         </div>
       ) : (
@@ -1759,12 +1999,15 @@ function BuddyPageInner() {
                 onCreate={() => setShowCreateMenu(true)}
               />
             )}
-            {!loading && dateFilter === todayDateString && sessions.length > 0 && sessions.length < 3 && (
-              <MapQuietTodayBanner
-                sessionCount={sessions.length}
-                onViewUpcoming={() => updateDateFilter('')}
-              />
-            )}
+            {!loading &&
+              dateFilter === todayDateString &&
+              sessions.length > 0 &&
+              sessions.length < 3 && (
+                <MapQuietTodayBanner
+                  sessionCount={sessions.length}
+                  onViewUpcoming={() => updateDateFilter('')}
+                />
+              )}
           </div>
         </>
       )}
@@ -1795,7 +2038,6 @@ function BuddyPageInner() {
           onJoin={handleJoinSession}
         />
       ) : null}
-
     </div>
   )
 }
@@ -1850,17 +2092,23 @@ function AttendeePreviewSheet({
       <div className="mt-4 grid grid-cols-3 gap-2">
         <div className="rounded-xl border border-[#3A332B] bg-[#16130F] px-3 py-2">
           <p className="text-lg font-black text-[#F7F0E8]">{session.attendeeCount}</p>
-          <p className="font-mono text-[9px] font-black uppercase tracking-wide text-[#A9A19A]">Going</p>
+          <p className="font-mono text-[9px] font-black uppercase tracking-wide text-[#A9A19A]">
+            Going
+          </p>
         </div>
         <div className="rounded-xl border border-[#3A332B] bg-[#16130F] px-3 py-2">
           <p className="text-lg font-black text-[#66D9C2]">{soloCount}</p>
-          <p className="font-mono text-[9px] font-black uppercase tracking-wide text-[#A9A19A]">Solo</p>
+          <p className="font-mono text-[9px] font-black uppercase tracking-wide text-[#A9A19A]">
+            Solo
+          </p>
         </div>
         <div className="rounded-xl border border-[#3A332B] bg-[#16130F] px-3 py-2">
           <p className="text-lg font-black text-[#F2C879]">
             {session.maxPeople ? Math.max(session.maxPeople - session.attendeeCount, 0) : 'Open'}
           </p>
-          <p className="font-mono text-[9px] font-black uppercase tracking-wide text-[#A9A19A]">Spots</p>
+          <p className="font-mono text-[9px] font-black uppercase tracking-wide text-[#A9A19A]">
+            Spots
+          </p>
         </div>
       </div>
 
@@ -1877,7 +2125,7 @@ function AttendeePreviewSheet({
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={attendee.imageUrl} alt="" className="h-full w-full object-cover" />
                   ) : (
-                    attendee.name?.[0]?.toUpperCase() ?? '?'
+                    (attendee.name?.[0]?.toUpperCase() ?? '?')
                   )}
                 </span>
                 <span className="truncate text-sm font-bold text-[#F7F0E8]">
@@ -1907,7 +2155,11 @@ function AttendeePreviewSheet({
             onClick={() => onJoin(session, 'attendee_preview_sheet')}
             className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#F7F0E8] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-[#11100E] transition-colors hover:bg-white disabled:cursor-wait disabled:bg-[#2A241D] disabled:text-[#71675D]"
           >
-            {rsvpLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Users className="h-3.5 w-3.5" />}
+            {rsvpLoading ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Users className="h-3.5 w-3.5" />
+            )}
             I&apos;m going
           </button>
         ) : null}
@@ -1946,9 +2198,7 @@ function GoingSoloAfterRsvpPrompt({
           <Users className="h-5 w-5 text-[#B6FF00]" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-bold text-white">
-            Going solo?
-          </p>
+          <p className="text-sm font-bold text-white">Going solo?</p>
           <p className="mt-0.5 line-clamp-2 text-xs leading-5 text-[#999999]">
             Let others know you are open to meeting people at {session.title}.
           </p>
@@ -1959,7 +2209,11 @@ function GoingSoloAfterRsvpPrompt({
               disabled={loading}
               className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#B6FF00] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#CAFF33] disabled:cursor-wait disabled:bg-neutral-300"
             >
-              {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Users className="h-3.5 w-3.5" />}
+              {loading ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Users className="h-3.5 w-3.5" />
+              )}
               Yes, open
             </button>
             <button
@@ -2028,7 +2282,11 @@ function FollowAfterRsvpPrompt({
               disabled={loading}
               className="inline-flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-full bg-white px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-neutral-200 disabled:cursor-wait disabled:bg-neutral-300"
             >
-              {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <UserPlus className="h-3.5 w-3.5" />}
+              {loading ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <UserPlus className="h-3.5 w-3.5" />
+              )}
               Follow host
             </button>
             <button
@@ -2167,9 +2425,10 @@ function CityEmptyState({
   onCreate: () => void
   onStarterSelect: (type: string) => void
 }) {
-  const otherCity = citySlug === 'bangkok'
-    ? { name: 'Singapore', href: '/buddy?city=singapore' }
-    : { name: 'Bangkok', href: '/buddy?city=bangkok' }
+  const otherCity =
+    citySlug === 'bangkok'
+      ? { name: 'Singapore', href: '/buddy?city=singapore' }
+      : { name: 'Bangkok', href: '/buddy?city=bangkok' }
 
   return (
     <div className="grid gap-4 py-5 sm:py-6">
@@ -2181,15 +2440,16 @@ function CityEmptyState({
           No events listed here yet.
         </h2>
         <p className="mt-2 max-w-xl text-sm leading-6 text-[#999999]">
-          SweatBuddies shows upcoming sessions first, backed by reviewed host and community pages in the selected city.
-          Add a host source for review, publish a session if you run one, or clear filters if you narrowed the search too far.
+          SweatBuddies shows upcoming sessions first, backed by reviewed host and community pages in
+          the selected city. Add a host source for review, publish a session if you run one, or
+          clear filters if you narrowed the search too far.
         </p>
 
         <div className="mt-4 flex flex-wrap gap-2">
-            <Link
-              href="/communities/create"
-              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-xs font-black uppercase tracking-wide text-black hover:bg-neutral-200"
-            >
+          <Link
+            href="/communities/create"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-xs font-black uppercase tracking-wide text-black hover:bg-neutral-200"
+          >
             Suggest community
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
@@ -2260,21 +2520,13 @@ function CityEmptyState({
   )
 }
 
-function MapEmptyOverlay({
-  cityName,
-  onCreate,
-}: {
-  cityName: string
-  onCreate: () => void
-}) {
+function MapEmptyOverlay({ cityName, onCreate }: { cityName: string; onCreate: () => void }) {
   return (
     <div className="absolute inset-x-4 top-4 z-20 max-w-sm rounded-2xl border border-white/[0.10] bg-black/70 p-4 shadow-2xl shadow-black/40 backdrop-blur">
       <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
         No mapped listings
       </p>
-      <h3 className="mt-2 text-lg font-bold leading-tight text-white">
-        Be first in {cityName}.
-      </h3>
+      <h3 className="mt-2 text-lg font-bold leading-tight text-white">Be first in {cityName}.</h3>
       <p className="mt-2 text-xs leading-5 text-[#999999]">
         The map shows reviewed community pages and hosted sessions that pass guardrails.
       </p>
@@ -2345,17 +2597,16 @@ function SessionCard({
   const canQuickRsvp = !isPaid && !session.requiresApproval
   const showQuickRsvp = !isHosting && (canQuickRsvp || isJoined)
   const rsvpDisabled = rsvpLoading || (session.isFull && !isJoined)
-  const rsvpLabel = isJoined
-    ? "You're going"
-    : session.isFull
-      ? 'Full'
-      : "I'm going"
+  const rsvpLabel = isJoined ? "You're going" : session.isFull ? 'Full' : "I'm going"
 
   const displayName = session.title
   const hostLabel = session.community?.name ?? session.host?.name ?? 'Local host'
   const communityLogo = session.community?.logoImage
   const hostAvatar = session.host?.imageUrl
-  const hostIsReal = session.host?.name && session.host.name !== 'sweatbuddies' && session.host.name !== 'SweatBuddies'
+  const hostIsReal =
+    session.host?.name &&
+    session.host.name !== 'sweatbuddies' &&
+    session.host.name !== 'SweatBuddies'
   const avatarSrc = communityLogo || (hostIsReal ? hostAvatar : null)
 
   const emoji = pinEmoji(session.categorySlug ?? 'other')
@@ -2367,12 +2618,19 @@ function SessionCard({
   const soloCount = session.goingSoloCount ?? 0
   const isFirstTimerFriendly = session.fitnessLevel === 'ALL' || soloCount > 0
   const levelLabel = session.fitnessLevel
-    ? LEVEL_FILTERS.find((filter) => filter.value === session.fitnessLevel)?.label ??
-      session.fitnessLevel.toLowerCase().replace(/[_-]/g, ' ')
+    ? (LEVEL_FILTERS.find((filter) => filter.value === session.fitnessLevel)?.label ??
+      session.fitnessLevel.toLowerCase().replace(/[_-]/g, ' '))
     : null
-  const timeLabel = session.startTime ? format(new Date(session.startTime), 'EEE, MMM d · h:mm a') : 'Time TBA'
+  const timeLabel = session.startTime
+    ? format(new Date(session.startTime), 'EEE, MMM d · h:mm a')
+    : 'Time TBA'
   const areaLabel = session.address?.split(',')[0] ?? session.city
-  const trustLabel = session.community ? 'Verified host page' : hostIsReal ? 'Host profile' : 'Local listing'
+  const trustLabel = session.community
+    ? 'Verified host page'
+    : hostIsReal
+      ? 'Host profile'
+      : 'Local listing'
+  const imageSrc = getSessionListingImage(session)
 
   return (
     <motion.div
@@ -2381,152 +2639,185 @@ function SessionCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
     >
-      <div className="group flex w-[286px] min-h-[252px] flex-shrink-0 snap-start flex-col rounded-2xl border border-[#3A332B] bg-[#1B1814] p-3.5 shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition-colors hover:border-[#E66A4E]/45 hover:bg-[#211D18] sm:w-auto sm:flex-shrink">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="truncate font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#F2C879]">
-              {timeLabel}
-            </p>
-            <p className="mt-1 truncate text-[11px] font-semibold capitalize text-[#A9A19A]">
-              {areaLabel} · {activityLabel}
-            </p>
-          </div>
-          <div className="flex shrink-0 items-center gap-1.5">
-            {isJoined && !isHosting ? (
-              <span className="rounded-full bg-[#66D9C2] px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-[#11100E]">
-                Going
-              </span>
-            ) : null}
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#3A332B] bg-[#2A241D] text-xl">
-              {emoji}
-            </span>
-          </div>
-        </div>
-
+      <div className="group flex w-[286px] min-h-[420px] flex-shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-[#3A332B] bg-[#1B1814] shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition-colors hover:border-[#E66A4E]/45 hover:bg-[#211D18] sm:w-auto sm:flex-shrink">
         <Link
           href={`/activities/${session.id}`}
           onClick={() => trackSessionClick(session, source, index)}
-          className="mt-3 block"
+          className="relative block aspect-[16/10] overflow-hidden bg-[#221D17]"
         >
-          <h3 className="line-clamp-2 min-h-[40px] text-[15px] font-black leading-tight text-[#F7F0E8] transition-colors group-hover:text-[#F2C879]">
-            {displayName}
-          </h3>
+          <Image
+            src={imageSrc}
+            alt={displayName}
+            fill
+            sizes="(min-width: 1024px) 360px, 286px"
+            className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
+            unoptimized={Boolean(session.imageUrl)}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#11100E]/90 via-[#11100E]/20 to-black/10" />
+          <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
+            {activityLabel}
+          </span>
+          <span className="absolute right-3 top-3 rounded-md bg-[#F2C879] px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#11100E] shadow-md">
+            {priceDisplay}
+          </span>
+          <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-white backdrop-blur">
+            {timeLabel}
+          </span>
+          {isJoined && !isHosting ? (
+            <span className="absolute bottom-3 right-3 rounded-md bg-[#66D9C2] px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#11100E]">
+              Going
+            </span>
+          ) : null}
         </Link>
 
-        <div className="mt-2 flex min-w-0 items-center gap-2">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#3A332B] bg-[#2A241D] text-[11px] font-black text-[#F7F0E8]">
-            {avatarSrc ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={avatarSrc} alt="" className="h-full w-full object-cover" />
-            ) : (
-              hostLabel[0]?.toUpperCase() ?? 'S'
-            )}
-          </span>
-          <div className="min-w-0">
-            <p className="truncate text-[11px] font-bold text-[#F7F0E8]">
-              Hosted by {hostLabel}
-            </p>
-            <p className="truncate text-[10px] font-semibold text-[#A78B6D]">
-              {trustLabel}
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-3 rounded-xl border border-[#3A332B] bg-[#16130F] px-3 py-2">
-          <div className="flex min-w-0 items-center justify-between gap-2">
-            <AttendeePreview
-              attendees={session.attendees}
-              attendeeCount={session.attendeeCount}
-              onClick={onPreviewAttendees ? () => onPreviewAttendees(session) : undefined}
-            />
-            <span className="shrink-0 rounded-full bg-[#2A241D] px-2 py-1 text-right text-[10px] font-black uppercase tracking-wide text-[#F2C879]">
-              {socialProofLabel}
-            </span>
-          </div>
-        </div>
-
-        <div className="mt-3 flex flex-1 flex-col justify-between gap-3">
-          {(session.community || officialJoinUrl || freshnessLabel || levelLabel || soloCount > 0 || isFirstTimerFriendly) && (
-            <div className="flex flex-wrap gap-1.5">
-              {soloCount > 0 ? (
-                <span className="rounded-full border border-[#66D9C2]/25 bg-[#66D9C2]/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#66D9C2]">
-                  {soloCount} going solo
-                </span>
-              ) : null}
-              {isFirstTimerFriendly ? (
-                <span className="rounded-full border border-[#3A332B] bg-[#241F19] px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#D7CEC4]">
-                  First-timers welcome
-                </span>
-              ) : null}
-              {session.community ? (
-                <span className="inline-flex items-center gap-1 rounded-full border border-[#3A332B] bg-[#241F19] px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#D7CEC4]">
-                  <ShieldCheck className="h-3 w-3" />
-                  Verified host
-                </span>
-              ) : null}
-              {officialJoinUrl ? (
-                <span className="rounded-full border border-[#E66A4E]/30 bg-[#E66A4E]/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#FF9A83]">
-                  Official link
-                </span>
-              ) : null}
-              {freshnessLabel ? (
-                <span className="rounded-full border border-[#3A332B] bg-[#241F19] px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#D7CEC4]">
-                  {freshnessLabel}
-                </span>
-              ) : null}
-              {levelLabel ? (
-                <span className="rounded-full border border-[#F2C879]/25 bg-[#F2C879]/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#F2C879]">
-                  {levelLabel}
-                </span>
-              ) : null}
+        <div className="flex flex-1 flex-col p-3.5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="truncate font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#F2C879]">
+                {timeLabel}
+              </p>
+              <p className="mt-1 truncate text-[11px] font-semibold capitalize text-[#A9A19A]">
+                {areaLabel} · {activityLabel}
+              </p>
             </div>
-          )}
+            <div className="flex shrink-0 items-center gap-1.5">
+              {isJoined && !isHosting ? (
+                <span className="rounded-full bg-[#66D9C2] px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-[#11100E]">
+                  Going
+                </span>
+              ) : null}
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#3A332B] bg-[#2A241D] text-xl">
+                {emoji}
+              </span>
+            </div>
+          </div>
 
-          <div className="grid min-w-0 grid-cols-2 gap-2">
-            {showQuickRsvp ? (
-              <button
-                type="button"
-                disabled={rsvpDisabled}
-                onClick={() => {
-                  if (isJoined) {
-                    onLeave?.(session, source)
-                  } else {
-                    onJoin?.(session, source)
-                  }
-                }}
-                className={`inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full px-3 font-mono text-[10px] font-black uppercase tracking-wide transition-colors ${
-                  isJoined
-                    ? 'border border-[#66D9C2]/30 bg-[#66D9C2]/10 text-[#66D9C2] hover:bg-[#66D9C2]/15'
-                    : 'bg-[#F7F0E8] text-[#11100E] hover:bg-white'
-                } disabled:cursor-not-allowed disabled:bg-[#2A241D] disabled:text-[#71675D]`}
+          <Link
+            href={`/activities/${session.id}`}
+            onClick={() => trackSessionClick(session, source, index)}
+            className="mt-3 block"
+          >
+            <h3 className="line-clamp-2 min-h-[40px] text-[15px] font-black leading-tight text-[#F7F0E8] transition-colors group-hover:text-[#F2C879]">
+              {displayName}
+            </h3>
+          </Link>
+
+          <div className="mt-2 flex min-w-0 items-center gap-2">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#3A332B] bg-[#2A241D] text-[11px] font-black text-[#F7F0E8]">
+              {avatarSrc ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={avatarSrc} alt="" className="h-full w-full object-cover" />
+              ) : (
+                (hostLabel[0]?.toUpperCase() ?? 'S')
+              )}
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-[11px] font-bold text-[#F7F0E8]">Hosted by {hostLabel}</p>
+              <p className="truncate text-[10px] font-semibold text-[#A78B6D]">{trustLabel}</p>
+            </div>
+          </div>
+
+          <div className="mt-3 rounded-xl border border-[#3A332B] bg-[#16130F] px-3 py-2">
+            <div className="flex min-w-0 items-center justify-between gap-2">
+              <AttendeePreview
+                attendees={session.attendees}
+                attendeeCount={session.attendeeCount}
+                onClick={onPreviewAttendees ? () => onPreviewAttendees(session) : undefined}
+              />
+              <span className="shrink-0 rounded-full bg-[#2A241D] px-2 py-1 text-right text-[10px] font-black uppercase tracking-wide text-[#F2C879]">
+                {socialProofLabel}
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-3 flex flex-1 flex-col justify-between gap-3">
+            {(session.community ||
+              officialJoinUrl ||
+              freshnessLabel ||
+              levelLabel ||
+              soloCount > 0 ||
+              isFirstTimerFriendly) && (
+              <div className="flex flex-wrap gap-1.5">
+                {soloCount > 0 ? (
+                  <span className="rounded-full border border-[#66D9C2]/25 bg-[#66D9C2]/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#66D9C2]">
+                    {soloCount} going solo
+                  </span>
+                ) : null}
+                {isFirstTimerFriendly ? (
+                  <span className="rounded-full border border-[#3A332B] bg-[#241F19] px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#D7CEC4]">
+                    First-timers welcome
+                  </span>
+                ) : null}
+                {session.community ? (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-[#3A332B] bg-[#241F19] px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#D7CEC4]">
+                    <ShieldCheck className="h-3 w-3" />
+                    Verified host
+                  </span>
+                ) : null}
+                {officialJoinUrl ? (
+                  <span className="rounded-full border border-[#E66A4E]/30 bg-[#E66A4E]/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#FF9A83]">
+                    Official link
+                  </span>
+                ) : null}
+                {freshnessLabel ? (
+                  <span className="rounded-full border border-[#3A332B] bg-[#241F19] px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#D7CEC4]">
+                    {freshnessLabel}
+                  </span>
+                ) : null}
+                {levelLabel ? (
+                  <span className="rounded-full border border-[#F2C879]/25 bg-[#F2C879]/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#F2C879]">
+                    {levelLabel}
+                  </span>
+                ) : null}
+              </div>
+            )}
+
+            <div className="grid min-w-0 grid-cols-2 gap-2">
+              {showQuickRsvp ? (
+                <button
+                  type="button"
+                  disabled={rsvpDisabled}
+                  onClick={() => {
+                    if (isJoined) {
+                      onLeave?.(session, source)
+                    } else {
+                      onJoin?.(session, source)
+                    }
+                  }}
+                  className={`inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full px-3 font-mono text-[10px] font-black uppercase tracking-wide transition-colors ${
+                    isJoined
+                      ? 'border border-[#66D9C2]/30 bg-[#66D9C2]/10 text-[#66D9C2] hover:bg-[#66D9C2]/15'
+                      : 'bg-[#F7F0E8] text-[#11100E] hover:bg-white'
+                  } disabled:cursor-not-allowed disabled:bg-[#2A241D] disabled:text-[#71675D]`}
+                >
+                  {rsvpLoading ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : isJoined ? (
+                    <Check className="h-3.5 w-3.5" />
+                  ) : (
+                    <Users className="h-3.5 w-3.5" />
+                  )}
+                  {rsvpLabel}
+                </button>
+              ) : officialJoinUrl ? (
+                <a
+                  href={officialJoinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackOfficialJoinClick(session, source)}
+                  className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#E66A4E] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white transition-colors hover:bg-[#F07D64]"
+                >
+                  {officialJoinLabel}
+                </a>
+              ) : null}
+              <Link
+                href={`/activities/${session.id}`}
+                onClick={() => trackSessionClick(session, source, index)}
+                className={`inline-flex min-h-10 items-center justify-center rounded-full border border-[#4A4035] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-[#D7CEC4] transition-colors hover:border-[#F2C879]/55 hover:text-[#F7F0E8] ${showQuickRsvp || officialJoinUrl ? '' : 'col-span-2'}`}
               >
-                {rsvpLoading ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : isJoined ? (
-                  <Check className="h-3.5 w-3.5" />
-                ) : (
-                  <Users className="h-3.5 w-3.5" />
-                )}
-                {rsvpLabel}
-              </button>
-            ) : officialJoinUrl ? (
-              <a
-                href={officialJoinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackOfficialJoinClick(session, source)}
-                className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#E66A4E] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white transition-colors hover:bg-[#F07D64]"
-              >
-                {officialJoinLabel}
-              </a>
-            ) : null}
-            <Link
-              href={`/activities/${session.id}`}
-              onClick={() => trackSessionClick(session, source, index)}
-              className={`inline-flex min-h-10 items-center justify-center rounded-full border border-[#4A4035] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-[#D7CEC4] transition-colors hover:border-[#F2C879]/55 hover:text-[#F7F0E8] ${showQuickRsvp || officialJoinUrl ? '' : 'col-span-2'}`}
-            >
-              Details
-            </Link>
+                Details
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -2567,7 +2858,7 @@ function AttendeePreview({
               // eslint-disable-next-line @next/next/no-img-element
               <img src={attendee.imageUrl} alt="" className="h-full w-full object-cover" />
             ) : (
-              attendee.name?.[0]?.toUpperCase() ?? '?'
+              (attendee.name?.[0]?.toUpperCase() ?? '?')
             )}
           </span>
         ))}
@@ -2591,11 +2882,7 @@ function AttendeePreview({
     )
   }
 
-  return (
-    <div className="flex min-w-0 items-center gap-2">
-      {content}
-    </div>
-  )
+  return <div className="flex min-w-0 items-center gap-2">{content}</div>
 }
 
 function MapSelectedSessionCard({
@@ -2620,11 +2907,15 @@ function MapSelectedSessionCard({
   const displayName = session.community?.name ?? session.host?.name ?? 'Someone'
   const communityLogo = session.community?.logoImage
   const hostAvatar = session.host?.imageUrl
-  const hostIsReal = session.host?.name && session.host.name !== 'sweatbuddies' && session.host.name !== 'SweatBuddies'
+  const hostIsReal =
+    session.host?.name &&
+    session.host.name !== 'sweatbuddies' &&
+    session.host.name !== 'SweatBuddies'
   const avatarSrc = communityLogo || (hostIsReal ? hostAvatar : null)
   const emoji = pinEmoji(session.categorySlug ?? 'other')
   const activityLabel = (session.categorySlug ?? 'fitness').replace(/[-_]/g, ' ')
-  const attendeeLabel = session.attendeeCount > 0 ? `${session.attendeeCount} going` : 'Be first to join'
+  const attendeeLabel =
+    session.attendeeCount > 0 ? `${session.attendeeCount} going` : 'Be first to join'
   const spotsRemaining =
     typeof session.maxPeople === 'number' && session.maxPeople > 0
       ? Math.max(session.maxPeople - session.attendeeCount, 0)
@@ -2636,21 +2927,21 @@ function MapSelectedSessionCard({
       : null
   const isJoined = session.userStatus === 'JOINED' || session.userStatus === 'COMPLETED'
   const officialJoinUrl = session.officialJoinUrl ?? null
-  const ctaLabel = officialJoinUrl ? getOfficialJoinLabel(session) : isJoined || session.isFull ? 'View details' : 'Join'
+  const ctaLabel = officialJoinUrl
+    ? getOfficialJoinLabel(session)
+    : isJoined || session.isFull
+      ? 'View details'
+      : 'Join'
   const freshnessLabel = getFreshnessLabel(session)
   const canQuickRsvp = !isPaid && !session.requiresApproval
   const showQuickRsvp = canQuickRsvp || isJoined
   const rsvpDisabled = rsvpLoading || (session.isFull && !isJoined)
-  const rsvpLabel = isJoined
-    ? "You're going"
-    : session.isFull
-      ? 'Full'
-      : "I'm going"
+  const rsvpLabel = isJoined ? "You're going" : session.isFull ? 'Full' : "I'm going"
   const soloCount = session.goingSoloCount ?? 0
   const isFirstTimerFriendly = session.fitnessLevel === 'ALL' || soloCount > 0
   const levelLabel = session.fitnessLevel
-    ? LEVEL_FILTERS.find((filter) => filter.value === session.fitnessLevel)?.label ??
-      session.fitnessLevel.toLowerCase().replace(/[_-]/g, ' ')
+    ? (LEVEL_FILTERS.find((filter) => filter.value === session.fitnessLevel)?.label ??
+      session.fitnessLevel.toLowerCase().replace(/[_-]/g, ' '))
     : null
 
   return (
@@ -2682,7 +2973,9 @@ function MapSelectedSessionCard({
           ) : (
             <div
               className="flex h-full w-full items-center justify-center"
-              style={{ background: `linear-gradient(145deg, ${(CATEGORY_GRADIENTS[session.categorySlug ?? 'other'] ?? CATEGORY_GRADIENTS.other)[0]}, ${(CATEGORY_GRADIENTS[session.categorySlug ?? 'other'] ?? CATEGORY_GRADIENTS.other)[1]})` }}
+              style={{
+                background: `linear-gradient(145deg, ${(CATEGORY_GRADIENTS[session.categorySlug ?? 'other'] ?? CATEGORY_GRADIENTS.other)[0]}, ${(CATEGORY_GRADIENTS[session.categorySlug ?? 'other'] ?? CATEGORY_GRADIENTS.other)[1]})`,
+              }}
             >
               <span className="text-4xl drop-shadow-lg">{emoji}</span>
             </div>
@@ -2858,7 +3151,10 @@ function trackOfficialJoinClick(session: Session, source: string) {
   })
 }
 
-function trackBrowserEvent(event: string, metadata: Record<string, string | number | boolean | null>) {
+function trackBrowserEvent(
+  event: string,
+  metadata: Record<string, string | number | boolean | null>,
+) {
   const body = JSON.stringify({ event, metadata })
 
   if (typeof navigator !== 'undefined' && navigator.sendBeacon) {

@@ -148,9 +148,14 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#0B0B0B] font-sans text-white">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0B0B0B]/95 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[1920px] items-center justify-between gap-4 px-4 py-3">
-          <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-h-11 items-center">
-            <LogoWithText size={30} color="#FFFFFF" textColor="#FFFFFF" />
+        <div className="mx-auto flex max-w-[1920px] items-center justify-between gap-3 px-4 py-3">
+          <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-h-11 min-w-11 items-center">
+            <LogoWithText
+              size={30}
+              color="#FFFFFF"
+              textColor="#FFFFFF"
+              wordmarkClassName="max-[360px]:hidden"
+            />
           </Link>
           <p className="hidden min-w-0 flex-1 truncate text-sm font-semibold text-white/64 lg:block">
             Find your people through fitness and wellness events
@@ -187,10 +192,13 @@ export default async function HomePage() {
               className={`${compactButtonBase} flex gap-3 rounded-xl border border-white/15 bg-[#111111] px-3 text-left text-xs font-semibold text-white/56 hover:border-white/35 hover:text-white`}
             >
               <Search size={17} strokeWidth={2.4} className="shrink-0" />
-              <span className="min-w-0 truncate">Search events, activities, or neighborhoods...</span>
+              <span className="min-w-0 truncate">
+                <span className="min-[380px]:hidden">Search events or areas...</span>
+                <span className="hidden min-[380px]:inline">Search events, activities, or neighborhoods...</span>
+              </span>
             </TrackedLink>
 
-            <div className="flex items-center justify-between gap-2">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
               <div className="min-w-0">
                 <p className="font-mono text-[10px] font-bold uppercase text-white/42">
                   Social fitness map
@@ -370,7 +378,8 @@ function MobileFilterDropdown() {
       <summary
         className={`${compactButtonBase} inline-flex cursor-pointer list-none rounded-full border border-white/12 px-3 py-2 text-[11px] font-bold uppercase text-white/72 hover:border-[#63FF8F] hover:text-[#63FF8F] group-open:border-[#63FF8F] group-open:text-[#63FF8F] [&::-webkit-details-marker]:hidden`}
       >
-        Filters
+        <span className="min-[380px]:hidden">More</span>
+        <span className="hidden min-[380px]:inline">Filters</span>
       </summary>
       <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-[min(330px,calc(100vw-24px))] rounded-xl border border-white/12 bg-[#111111] p-3 shadow-2xl shadow-black/50">
         <div className="grid gap-3">

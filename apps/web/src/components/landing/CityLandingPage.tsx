@@ -69,9 +69,14 @@ export function CityLandingPage({
   return (
     <div className="min-h-screen bg-[#080808] text-white">
       <header className="sticky top-0 z-30 border-b border-white/[0.08] bg-[#080808]/90 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-          <Link href="/" aria-label="SweatBuddies home">
-            <LogoWithText size={28} color="#FFFFFF" textColor="#FFFFFF" />
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-4">
+          <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-h-11 min-w-11 items-center">
+            <LogoWithText
+              size={28}
+              color="#FFFFFF"
+              textColor="#FFFFFF"
+              wordmarkClassName="max-[360px]:hidden"
+            />
           </Link>
           <nav className="flex items-center gap-3">
             <LandingIntentCapture
@@ -80,7 +85,7 @@ export function CityLandingPage({
               sourcePlacement="city_nav_browse"
               ctaLabel={`Find a crew in ${city}`}
               successHref="/buddy"
-              className="hidden text-sm font-medium text-white/65 transition-colors hover:text-white sm:inline"
+              className="hidden min-h-11 items-center text-sm font-medium text-white/65 transition-colors hover:text-white sm:inline-flex"
             >
               Browse sessions
             </LandingIntentCapture>
@@ -90,9 +95,10 @@ export function CityLandingPage({
               sourcePlacement="city_nav_host"
               ctaLabel={`List your crew in ${city}`}
               successHref="/host"
-              className="rounded-full bg-white px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-black transition-colors hover:bg-neutral-200 sm:text-sm"
+              className="min-h-11 rounded-full bg-white px-3 py-2.5 text-xs font-bold uppercase tracking-wide text-black transition-colors hover:bg-neutral-200 min-[380px]:px-4 sm:text-sm"
             >
-              List your crew
+              <span className="min-[380px]:hidden">List</span>
+              <span className="hidden min-[380px]:inline">List your crew</span>
             </LandingIntentCapture>
           </nav>
         </div>

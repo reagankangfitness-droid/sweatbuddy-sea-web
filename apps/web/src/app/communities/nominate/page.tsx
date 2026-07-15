@@ -120,11 +120,11 @@ export default function NominateCommunityPage() {
 
   if (submission) {
     return (
-      <main className="min-h-screen bg-[#0B0B0B] px-4 py-8 text-white">
+      <main className="min-h-screen bg-[#0B0B0B] px-4 py-8 pb-28 text-white md:pb-8">
         <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col justify-center">
           <Link
             href="/communities"
-            className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-[#999999] hover:text-white"
+            className="mb-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#999999] hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to source map
@@ -176,11 +176,11 @@ export default function NominateCommunityPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0B0B0B] px-4 py-8 text-white">
+    <main className="min-h-screen bg-[#0B0B0B] px-4 py-8 pb-28 text-white md:pb-8">
       <div className="mx-auto max-w-2xl">
         <Link
           href="/communities"
-          className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-[#999999] hover:text-white"
+          className="mb-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#999999] hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to source map

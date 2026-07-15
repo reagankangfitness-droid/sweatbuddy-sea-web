@@ -186,18 +186,25 @@ export default function CreateCommunityPage() {
     <div className="min-h-screen bg-[#0B0B0B] text-white">
       {/* Header */}
       <div className="sticky top-0 z-10 border-b border-white/10 bg-[#0B0B0B]/95 backdrop-blur-xl">
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
+        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-2">
           <button
             onClick={prevStep}
             aria-label="Go back"
-            className="p-1 -ml-1 rounded-lg hover:bg-white/[0.06]"
+            className="-ml-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-lg hover:bg-white/[0.06]"
           >
             <ArrowLeft className="w-5 h-5 text-[#666666]" />
           </button>
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             <div className="mb-2 flex items-center justify-between gap-3">
-              <LogoWithText size={24} color="#FFFFFF" textColor="#FFFFFF" />
-              <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+              <span className="inline-flex min-h-11 min-w-11 items-center">
+                <LogoWithText
+                  size={24}
+                  color="#FFFFFF"
+                  textColor="#FFFFFF"
+                  wordmarkClassName="max-[360px]:hidden"
+                />
+              </span>
+              <p className="shrink-0 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
                 Source setup
               </p>
             </div>

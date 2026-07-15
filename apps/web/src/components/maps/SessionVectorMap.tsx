@@ -250,16 +250,22 @@ function StaticPinMapFallback({
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_86%_12%,rgba(36,48,52,0.9),transparent_24%),radial-gradient(circle_at_78%_78%,rgba(34,43,47,0.82),transparent_28%),linear-gradient(135deg,rgba(25,31,29,0.96),rgba(28,36,32,0.96))]" />
       <div className="absolute inset-0 opacity-42 [background-image:linear-gradient(24deg,transparent_0_42%,rgba(239,246,236,0.10)_42.3%,transparent_43.2%),linear-gradient(112deg,transparent_0_45%,rgba(239,246,236,0.075)_45.3%,transparent_46.1%),linear-gradient(154deg,transparent_0_50%,rgba(239,246,236,0.055)_50.2%,transparent_50.9%),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:360px_240px,430px_280px,520px_320px,96px_96px,96px_96px]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_64%,rgba(54,67,56,0.78),transparent_22%),radial-gradient(circle_at_58%_34%,rgba(45,57,48,0.56),transparent_18%),radial-gradient(circle_at_44%_88%,rgba(33,42,45,0.78),transparent_20%)]" />
-      <div className="pointer-events-none absolute left-4 top-4 z-30 rounded-md border border-white/10 bg-black/45 px-3 py-2 font-mono text-[11px] font-black uppercase tracking-[0.16em] text-white/72 backdrop-blur">
-        {pins.length > 0 ? `${pins.length} mapped listings` : 'Map preview'}
+      <div className="absolute inset-x-3 top-3 z-30 flex items-start justify-between gap-2">
+        <div className="pointer-events-none min-w-0 rounded-md border border-white/10 bg-black/45 px-2.5 py-2 font-mono text-[10px] font-black uppercase tracking-[0.14em] text-white/72 backdrop-blur min-[380px]:px-3 min-[380px]:text-[11px]">
+          <span className="block truncate">
+            {pins.length > 0 ? `${pins.length} mapped` : 'Map'}
+            <span className="hidden min-[380px]:inline">{pins.length > 0 ? ' listings' : ' preview'}</span>
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={onRetry}
+          className="min-h-11 shrink-0 rounded-full border border-white/15 bg-black/45 px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white/72 backdrop-blur transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F] min-[380px]:px-4 min-[380px]:text-[11px]"
+        >
+          <span className="min-[380px]:hidden">Retry</span>
+          <span className="hidden min-[380px]:inline">Retry map</span>
+        </button>
       </div>
-      <button
-        type="button"
-        onClick={onRetry}
-        className="absolute right-4 top-4 z-30 min-h-11 rounded-full border border-white/15 bg-black/40 px-4 font-mono text-[11px] font-black uppercase tracking-wide text-white/72 backdrop-blur transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
-      >
-        Retry map
-      </button>
       <div className="pointer-events-none absolute inset-0 z-10">
         <span className="absolute left-[13%] top-[28%] font-mono text-[10px] font-black uppercase tracking-widest text-white/24">
           North

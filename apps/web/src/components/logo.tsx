@@ -87,6 +87,7 @@ interface LogoWithTextProps {
   textColor?: string
   variant?: 'default' | 'white'
   className?: string
+  wordmarkClassName?: string
 }
 
 export function LogoWithText({
@@ -95,6 +96,7 @@ export function LogoWithText({
   textColor = '#0025CC',
   variant = 'default',
   className,
+  wordmarkClassName,
 }: LogoWithTextProps) {
   const logoColor = variant === 'white' ? '#FFFFFF' : color
   const wordmarkColor = variant === 'white' ? '#FFFFFF' : textColor
@@ -103,7 +105,7 @@ export function LogoWithText({
     <div className={cn('inline-flex items-center gap-2.5', className)}>
       <Logo size={size} color={logoColor} variant={variant} />
       <span
-        className="font-bold tracking-tight"
+        className={cn('font-bold tracking-tight', wordmarkClassName)}
         style={{
           color: wordmarkColor,
           fontSize: `${size * 0.7}px`,

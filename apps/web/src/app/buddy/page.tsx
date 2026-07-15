@@ -340,10 +340,10 @@ function EventPulseCard({
           </p>
           <Link
             href={`/activities/${session.id}`}
-            className="mt-1 block line-clamp-2 text-sm font-bold leading-snug text-white transition-colors hover:text-[#63FF8F]"
+            className="mt-1 flex min-h-10 items-start text-sm font-bold leading-snug text-white transition-colors hover:text-[#63FF8F]"
             onClick={() => trackSessionClick(session, 'event_pulse', 0)}
           >
-            {session.title}
+            <span className="line-clamp-2">{session.title}</span>
           </Link>
         </div>
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-white/[0.08] text-xl">
@@ -501,6 +501,7 @@ function BuddyPageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { isLoaded: authLoaded, isSignedIn } = useAuth()
+  const [hasMounted, setHasMounted] = useState(false)
   const requestedCitySlug = searchParams.get('city')
   const initialCityConfig = useMemo(
     () => getCityLocationConfig(requestedCitySlug),
@@ -565,6 +566,10 @@ function BuddyPageInner() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<Session[]>([])
   const [searching, setSearching] = useState(false)
+
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
 
   useEffect(() => {
     if (initialCreateMode === 'session') {
@@ -1139,11 +1144,18 @@ function BuddyPageInner() {
   // Load user context after browser location resolves. Profile location wins when GPS is unavailable or stale.
   useEffect(() => {
     if (!locationReady) return
+    if (!authLoaded) return
+    if (!isSignedIn) {
+      setCurrentUserId(null)
+      setProfileLocationReady(true)
+      return
+    }
 
     const loadInitialData = async () => {
       try {
         const res = await fetch('/api/user/p2p-onboarding')
-        const data = res.ok ? await res.json() : null
+        const contentType = res.headers.get('content-type') ?? ''
+        const data = res.ok && contentType.includes('application/json') ? await res.json() : null
         if (data?.user?.accountStatus === 'BANNED' || data?.user?.accountStatus === 'SUSPENDED') {
           router.replace('/banned')
           return
@@ -1161,7 +1173,7 @@ function BuddyPageInner() {
       }
     }
     loadInitialData()
-  }, [locationReady, router])
+  }, [authLoaded, isSignedIn, locationReady, router])
 
   // Check for pending feedback + bio prompt on past sessions
   useEffect(() => {
@@ -1229,6 +1241,14 @@ function BuddyPageInner() {
     return () => clearTimeout(timer)
   }, [searchQuery, userLocation, cityConfig])
 
+  if (!hasMounted) {
+    return (
+      <div className="flex h-dvh items-center justify-center bg-[#0B0B0B] text-white">
+        <Loader2 className="h-6 w-6 animate-spin text-white/50" />
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col bg-[#0B0B0B] md:pl-14" style={{ height: '100dvh', overflow: 'hidden' }}>
       {/* Create Session Sheet */}
@@ -1259,8 +1279,13 @@ function BuddyPageInner() {
       <div className="sticky top-0 z-20 pt-[env(safe-area-inset-top,4px)]">
         <div className="space-y-2 border-b border-white/10 bg-[#0B0B0B]/95 px-3 pb-2 pt-2 font-mono backdrop-blur">
           <div className="flex min-h-11 items-center justify-between gap-3">
-            <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-w-0 items-center">
-              <LogoWithText size={27} color="#FFFFFF" textColor="#FFFFFF" />
+            <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-h-11 min-w-11 items-center">
+              <LogoWithText
+                size={27}
+                color="#FFFFFF"
+                textColor="#FFFFFF"
+                wordmarkClassName="max-[360px]:hidden"
+              />
             </Link>
             <p className="hidden min-w-0 flex-1 truncate text-xs font-bold uppercase tracking-[0.16em] text-white/42 sm:block">
               Social fitness events
@@ -1293,8 +1318,8 @@ function BuddyPageInner() {
             )}
           </div>
           {/* Row 1: Date strip */}
-          <div className="flex items-center gap-1.5">
-            <div className="flex gap-1 overflow-x-auto no-scrollbar flex-1">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1.5 max-[360px]:grid-cols-[minmax(0,1fr)_auto]">
+            <div className="flex min-w-0 gap-1 overflow-x-auto no-scrollbar">
               {(() => {
                 const days = []
                 for (let i = 0; i < 7; i++) {
@@ -1341,7 +1366,7 @@ function BuddyPageInner() {
             <button
               type="button"
               onClick={toggleViewMode}
-              className="flex h-11 flex-shrink-0 items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#171717] px-3 text-[11px] font-black uppercase tracking-wide text-white transition-colors hover:border-[#63FF8F] active:scale-95 lg:hidden"
+              className="flex h-11 flex-shrink-0 items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#171717] px-3 text-[11px] font-black uppercase tracking-wide text-white transition-colors hover:border-[#63FF8F] active:scale-95 max-[360px]:hidden lg:hidden"
               aria-label={viewMode === 'list' ? 'Show map' : 'Show list'}
             >
               {viewMode === 'list' ? (
@@ -1462,7 +1487,7 @@ function BuddyPageInner() {
                   setDateFilter('')
                   setNeighborhoodFilter(null)
                 }}
-                className="shrink-0 rounded-full border border-white/[0.10] px-2.5 py-1 text-[#999999] hover:border-white/30 hover:text-white"
+                className="min-h-10 shrink-0 rounded-full border border-white/[0.10] px-3 py-1 text-[#999999] hover:border-white/30 hover:text-white"
               >
                 Clear
               </button>
@@ -1488,7 +1513,7 @@ function BuddyPageInner() {
                     <p className="text-sm text-[#999999]">No events or hosts for &apos;{searchQuery}&apos;</p>
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="mt-3 text-xs text-[#666666] hover:text-white underline transition-colors"
+                      className="mt-3 inline-flex min-h-10 items-center text-xs text-[#666666] underline transition-colors hover:text-white"
                     >
                       Clear search
                     </button>
@@ -2272,8 +2297,8 @@ function MapQuietTodayBanner({
   onViewUpcoming: () => void
 }) {
   return (
-    <div className="absolute left-3 right-3 top-3 z-20 rounded-2xl border border-white/[0.10] bg-black/70 p-3 shadow-2xl shadow-black/30 backdrop-blur md:left-4 md:right-auto md:top-[4.75rem] md:w-[320px]">
-      <div className="flex items-center justify-between gap-3">
+    <div className="absolute left-3 right-3 top-[4.75rem] z-20 rounded-2xl border border-white/[0.10] bg-black/70 p-3 shadow-2xl shadow-black/30 backdrop-blur md:left-4 md:right-auto md:w-[320px]">
+      <div className="flex items-center justify-between gap-2">
         <div className="min-w-0">
           <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#B6FF00]">
             Quiet today
@@ -2285,9 +2310,10 @@ function MapQuietTodayBanner({
         <button
           type="button"
           onClick={onViewUpcoming}
-          className="min-h-9 shrink-0 rounded-full bg-white px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-neutral-200"
+          className="min-h-11 shrink-0 rounded-full bg-white px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-neutral-200"
         >
-          View upcoming
+          <span className="min-[380px]:hidden">Upcoming</span>
+          <span className="hidden min-[380px]:inline">View upcoming</span>
         </button>
       </div>
     </div>

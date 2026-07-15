@@ -230,15 +230,21 @@ export default function CommunitiesPageClient({
     <div className="min-h-screen bg-[#0B0B0B] text-white md:pl-14">
       <header className="border-b border-white/10 bg-[#0B0B0B]">
         <div className="mx-auto max-w-6xl px-4 py-5">
-          <div className="flex min-h-11 items-center justify-between gap-3">
-            <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-w-0 items-center">
-              <LogoWithText size={28} color="#FFFFFF" textColor="#FFFFFF" />
+          <div className="flex min-h-11 items-center justify-between gap-2">
+            <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-h-11 min-w-11 items-center">
+              <LogoWithText
+                size={28}
+                color="#FFFFFF"
+                textColor="#FFFFFF"
+                wordmarkClassName="max-[360px]:hidden"
+              />
             </Link>
             <Link
               href="/buddy"
-              className="inline-flex min-h-10 shrink-0 items-center rounded-full border border-white/12 px-3 text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+              className="inline-flex min-h-10 shrink-0 items-center rounded-full border border-white/12 px-2.5 text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F] min-[380px]:px-3"
             >
-              Explore events
+              <span className="min-[380px]:hidden">Events</span>
+              <span className="hidden min-[380px]:inline">Explore events</span>
             </Link>
           </div>
 
@@ -281,10 +287,10 @@ export default function CommunitiesPageClient({
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
               <input
                 type="text"
-                placeholder="Search communities, activities, or cities..."
+                placeholder="Search sources, activities, or cities..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-lg border border-white/15 bg-[#111111] py-2.5 pl-9 pr-4 text-sm text-white transition-all placeholder:text-[#666666] focus:border-[#63FF8F] focus:outline-none"
+                className="min-h-11 w-full rounded-lg border border-white/15 bg-[#111111] py-2.5 pl-9 pr-4 text-sm text-white transition-all placeholder:text-[#666666] focus:border-[#63FF8F] focus:outline-none max-[360px]:placeholder:text-[12px]"
               />
             </div>
             <Link
@@ -347,7 +353,7 @@ export default function CommunitiesPageClient({
               <button
                 type="button"
                 onClick={clearFilters}
-                className="flex h-10 flex-shrink-0 items-center gap-1 rounded-lg border border-white/15 bg-[#141414] px-3 text-[11px] font-semibold uppercase tracking-wide text-[#999999] transition-colors hover:border-[#63FF8F] hover:text-white"
+                className="flex min-h-11 flex-shrink-0 items-center gap-1 rounded-lg border border-white/15 bg-[#141414] px-3 text-[11px] font-semibold uppercase tracking-wide text-[#999999] transition-colors hover:border-[#63FF8F] hover:text-white"
               >
                 <X className="h-3.5 w-3.5" />
                 Clear
@@ -550,7 +556,7 @@ function FilterSelect({
   onChange: (value: string | null) => void
 }) {
   return (
-    <label className="relative flex h-10 min-w-[132px] flex-shrink-0 items-center rounded-lg border border-white/15 bg-[#141414] transition-colors focus-within:border-[#63FF8F] hover:border-white/25">
+    <label className="relative flex min-h-11 min-w-[132px] flex-shrink-0 items-center rounded-lg border border-white/15 bg-[#141414] transition-colors focus-within:border-[#63FF8F] hover:border-white/25">
       <span className="pointer-events-none absolute left-3 top-1.5 text-[8px] font-bold uppercase tracking-[0.16em] text-[#666666]">
         {label}
       </span>

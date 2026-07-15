@@ -210,7 +210,7 @@
     text-transform: uppercase;
   }
 
-  @media (max-width: 767px) {
+	  @media (max-width: 767px) {
     .sb-map-marker {
       min-height: 50px;
       min-width: 50px;
@@ -250,10 +250,16 @@
       transform: scale(1.16);
     }
 
-    .sb-map-marker-preview {
-      display: none;
-    }
-  }
+	    .sb-map-marker-preview {
+	      display: none;
+	    }
+	  }
+
+	  @media (min-width: 768px) and (max-width: 1023px) {
+	    .sb-map-marker-preview {
+	      display: none;
+	    }
+	  }
 
   .maplibregl-ctrl-group {
     overflow: hidden;

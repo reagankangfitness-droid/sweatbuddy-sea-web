@@ -5,6 +5,7 @@ import { useUser } from '@clerk/nextjs'
 import { Bell, ArrowLeft, Check, CheckCheck, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { LogoWithText } from '@/components/logo'
 
 interface Notification {
   id: string
@@ -76,6 +77,7 @@ function getNotificationIcon(type: string): string {
 
 export default function NotificationsPage() {
   const { isSignedIn, isLoaded } = useUser()
+  const [authTimedOut, setAuthTimedOut] = useState(false)
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -101,6 +103,16 @@ export default function NotificationsPage() {
       // silent
     }
   }, [])
+
+  useEffect(() => {
+    if (isLoaded) {
+      setAuthTimedOut(false)
+      return
+    }
+
+    const timer = window.setTimeout(() => setAuthTimedOut(true), 2200)
+    return () => window.clearTimeout(timer)
+  }, [isLoaded])
 
   useEffect(() => {
     if (!isLoaded) return
@@ -134,9 +146,7 @@ export default function NotificationsPage() {
     try {
       const res = await fetch(`/api/notifications/${id}`, { method: 'PATCH' })
       if (res.ok) {
-        setNotifications((prev) =>
-          prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
-        )
+        setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)))
         setUnreadCount((c) => Math.max(0, c - 1))
       }
     } catch {
@@ -152,19 +162,57 @@ export default function NotificationsPage() {
   }
 
   // Auth gate
-  if (isLoaded && !isSignedIn) {
+  const showSignedOut = (isLoaded && !isSignedIn) || (!isLoaded && authTimedOut)
+
+  if (showSignedOut) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
-        <div className="text-center">
-          <Bell className="w-12 h-12 text-[#71717A] mx-auto mb-4" />
-          <p className="text-white text-lg font-medium mb-2">Sign in to view notifications</p>
+      <div className="min-h-screen bg-[#0D0D0D] px-4 text-white">
+        <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center py-10">
           <Link
-            href="/sign-in"
-            className="inline-block mt-4 px-6 py-2.5 bg-white text-black rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
+            href="/"
+            aria-label="SweatBuddies home"
+            className="mb-10 inline-flex min-h-11 items-center"
           >
-            Sign In
+            <LogoWithText size={28} color="#FFFFFF" textColor="#FFFFFF" />
           </Link>
+          <div className="rounded-2xl border border-white/10 bg-[#151515] p-6 text-left shadow-2xl shadow-black/30">
+            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.06]">
+              <Bell className="h-5 w-5 text-[#63FF8F]" />
+            </span>
+            <p className="mt-5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+              Live updates
+            </p>
+            <h1 className="mt-3 text-3xl font-black leading-tight text-white">
+              Know when plans need your attention.
+            </h1>
+            <p className="mt-3 text-sm leading-6 text-white/58">
+              Sign in to get RSVP updates, reminders, host announcements, recap prompts, and buddy
+              signals from the sessions you care about.
+            </p>
+            <div className="mt-6 grid gap-2 sm:grid-cols-2">
+              <Link
+                href="/sign-in"
+                className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 text-sm font-bold text-black transition-colors hover:bg-neutral-200"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/buddy"
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 px-5 text-sm font-bold text-white transition-colors hover:border-[#63FF8F]/60"
+              >
+                Explore events
+              </Link>
+            </div>
+          </div>
         </div>
+      </div>
+    )
+  }
+
+  if (!isLoaded && !authTimedOut) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
+        <Loader2 className="w-6 h-6 text-[#71717A] animate-spin" />
       </div>
     )
   }
@@ -222,7 +270,8 @@ export default function NotificationsPage() {
             </div>
             <p className="text-white text-base font-medium mb-1">No notifications yet</p>
             <p className="text-[#71717A] text-sm max-w-xs">
-              When someone joins your session, follows you, or sends you a message, it will show up here.
+              When someone joins your session, follows you, or sends you a message, it will show up
+              here.
             </p>
           </div>
         ) : (
@@ -232,9 +281,7 @@ export default function NotificationsPage() {
                 const inner = (
                   <div
                     className={`flex items-start gap-3 px-4 py-3.5 transition-colors ${
-                      n.isRead
-                        ? 'bg-transparent'
-                        : 'bg-white/[0.02]'
+                      n.isRead ? 'bg-transparent' : 'bg-white/[0.02]'
                     } hover:bg-white/[0.04]`}
                   >
                     {/* Icon */}
@@ -254,17 +301,11 @@ export default function NotificationsPage() {
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-white text-sm leading-snug">
-                        {n.title}
-                      </p>
+                      <p className="text-white text-sm leading-snug">{n.title}</p>
                       {n.content && n.content !== n.title && (
-                        <p className="text-[#71717A] text-xs mt-0.5 line-clamp-2">
-                          {n.content}
-                        </p>
+                        <p className="text-[#71717A] text-xs mt-0.5 line-clamp-2">{n.content}</p>
                       )}
-                      <p className="text-[#525252] text-[11px] mt-1">
-                        {getTimeAgo(n.createdAt)}
-                      </p>
+                      <p className="text-[#525252] text-[11px] mt-1">{getTimeAgo(n.createdAt)}</p>
                     </div>
 
                     {/* Unread dot + mark read */}
@@ -307,11 +348,7 @@ export default function NotificationsPage() {
                   disabled={loadingMore}
                   className="px-5 py-2 text-sm text-[#71717A] hover:text-white border border-white/[0.08] rounded-full transition-colors disabled:opacity-50"
                 >
-                  {loadingMore ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    'Load more'
-                  )}
+                  {loadingMore ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Load more'}
                 </button>
               </div>
             )}

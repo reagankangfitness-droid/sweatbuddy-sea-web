@@ -35,11 +35,13 @@ describe('route contracts', () => {
     const cityLandingComponent = readRepoFile('apps/web/src/components/landing/CityLandingPage.tsx')
     const proxy = readRepoFile('apps/web/src/proxy.ts')
 
-    expect(homePage).toContain('Find your people through fitness.')
-    expect(homePage).toContain('Discover run clubs, yoga, pickleball, strength, recovery, and wellness events.')
-    expect(homePage).toContain('See who is going, find solo-friendly sessions, and show up with confidence.')
+    expect(homePage).toContain('Find a fitness plan with people already going.')
+    expect(homePage).toContain(
+      'Discover run clubs, yoga, pickleball, strength, recovery, and wellness events.',
+    )
+    expect(homePage).toContain('the host, the plan, and the people signals before you show up.')
     expect(homePage).toContain('Social plans people are joining')
-    expect(homePage).toContain('Start with events that feel alive')
+    expect(homePage).toContain('Start with a plan people can join')
     expect(homePage).toContain('Map preview')
     expect(homePage).toContain('Open map')
     expect(homePage).toContain('Browse by activity')
@@ -59,12 +61,12 @@ describe('route contracts', () => {
     expect(rootLayout).not.toContain('Discover Fitness & Wellness Experiences')
     expect(rootLayout).not.toContain('fitness and wellness experiences')
 
-    expect(eventsRoute).toContain("redirect(`/buddy?")
-    expect(browsePage).toContain("redirect(`/buddy?")
+    expect(eventsRoute).toContain('redirect(`/buddy?')
+    expect(browsePage).toContain('redirect(`/buddy?')
 
     expect(buddyPage).toContain('Search run clubs, yoga, pickleball, or neighborhoods')
     expect(buddyPage).toContain("searchParams.get('type') ?? searchParams.get('cat')")
-    expect(buddyPage).toContain("getCityLocationConfig(requestedCitySlug)")
+    expect(buddyPage).toContain('getCityLocationConfig(requestedCitySlug)')
     expect(buddyPage).toContain('Find a fitness plan with people already going')
     expect(buddyPage).toContain('people going')
     expect(buddyPage).toContain('Event-first discovery')
@@ -126,14 +128,14 @@ describe('route contracts', () => {
     const sitemap = readRepoFile('apps/web/src/app/sitemap.ts')
     const proxy = readRepoFile('apps/web/src/proxy.ts')
 
-    expect(browsePage).toContain("redirect(`/buddy?")
-    expect(eventsPage).toContain("redirect(`/buddy?")
+    expect(browsePage).toContain('redirect(`/buddy?')
+    expect(eventsPage).toContain('redirect(`/buddy?')
     expect(communityPage).toContain("redirect('/communities')")
     expect(savedPage).toContain("redirect('/my-sessions')")
     expect(citiesPage).toContain("redirect('/buddy?view=map')")
     expect(cityPage).toContain("redirect('/singapore')")
     expect(cityPage).toContain("redirect('/bangkok')")
-    expect(cityPage).toContain("redirect(`/buddy?view=map&city=")
+    expect(cityPage).toContain('redirect(`/buddy?view=map&city=')
     expect(nextConfig).toContain("source: '/community'")
     expect(nextConfig).toContain("source: '/saved'")
     expect(nextConfig).toContain("source: '/cities/:slug'")
@@ -328,7 +330,9 @@ describe('route contracts', () => {
   it('keeps community claims challenge-based instead of instant ownership', () => {
     const schema = readRepoFile('apps/web/prisma/schema.prisma')
     const claimRoute = readRepoFile('apps/web/src/app/api/communities/[slug]/claim/route.ts')
-    const verifyRoute = readRepoFile('apps/web/src/app/api/communities/[slug]/claim/verify/route.ts')
+    const verifyRoute = readRepoFile(
+      'apps/web/src/app/api/communities/[slug]/claim/verify/route.ts',
+    )
     const claimButton = readRepoFile('apps/web/src/components/community/ClaimCommunityButton.tsx')
     const adminClaimsRoute = readRepoFile('apps/web/src/app/api/admin/community-claims/route.ts')
     const adminNominationsPage = readRepoFile('apps/web/src/app/admin/nominations/page.tsx')
@@ -463,7 +467,9 @@ describe('route contracts', () => {
     const adminAuthRoute = readRepoFile('apps/web/src/app/api/admin/auth/route.ts')
     const adminLayout = readRepoFile('apps/web/src/app/admin/layout.tsx')
     const adminRouteHelper = readRepoFile('apps/web/src/lib/admin-route.ts')
-    const seededCommunitiesRoute = readRepoFile('apps/web/src/app/api/admin/seeded-communities/route.ts')
+    const seededCommunitiesRoute = readRepoFile(
+      'apps/web/src/app/api/admin/seeded-communities/route.ts',
+    )
 
     expect(adminAuthRoute).toContain('isAdminRequest')
     expect(adminAuthRoute).toContain('Password admin login has been removed')
@@ -480,7 +486,7 @@ describe('route contracts', () => {
     const nextConfig = readRepoFile('apps/web/next.config.js')
 
     expect(nextConfig).toContain("const isProduction = process.env.NODE_ENV === 'production'")
-    expect(nextConfig).toContain("const contentSecurityPolicy")
+    expect(nextConfig).toContain('const contentSecurityPolicy')
     expect(nextConfig).toContain("'unsafe-eval' https:")
     expect(nextConfig).toContain("? \"'self' 'unsafe-inline' https:\"")
   })
@@ -551,7 +557,9 @@ describe('route contracts', () => {
     expect(source).toContain("'mark_needs_verification'")
     expect(source).toContain("'update_official_link'")
     expect(source).toContain("'update_images'")
-    expect(source).toContain("OFFICIAL_LINK_FIELDS = new Set(['communityLink', 'websiteUrl', 'sourceUrl'])")
+    expect(source).toContain(
+      "OFFICIAL_LINK_FIELDS = new Set(['communityLink', 'websiteUrl', 'sourceUrl'])",
+    )
     expect(source).not.toContain('deleteMany')
     expect(source).not.toContain('updateMany')
   })

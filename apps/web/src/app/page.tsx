@@ -1,17 +1,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Metadata } from 'next'
-import {
-  ArrowRight,
-  CalendarDays,
-  Map as MapIcon,
-  MapPin,
-  Search,
-} from 'lucide-react'
+import { ArrowRight, CalendarDays, Map as MapIcon, MapPin, Search } from 'lucide-react'
 import { LogoWithText } from '@/components/logo'
 import { TrackedLink } from '@/components/TrackedLink'
 import { LandingTopFilterDropdown } from '@/components/landing/LandingTopFilterDropdown'
-import { LazySessionVectorMap, type SessionVectorMapPin } from '@/components/maps/LazySessionVectorMap'
+import {
+  LazySessionVectorMap,
+  type SessionVectorMapPin,
+} from '@/components/maps/LazySessionVectorMap'
 import { EVENTS } from '@/lib/analytics'
 import { getActivityEmoji } from '@/lib/activity-types'
 import { prisma } from '@/lib/prisma'
@@ -139,17 +136,28 @@ export default async function HomePage() {
   })
 
   const featuredSessions = upcomingSessions.slice(0, 6)
+  const peopleGoingCount = featuredSessions.reduce(
+    (sum, session) => sum + session._count.userActivities,
+    0,
+  )
   const availabilityItems = [
-    { label: 'Singapore + Bangkok', shortLabel: 'SG + BKK' },
-    { label: 'People already going', shortLabel: 'Live people' },
-    { label: 'Solo-friendly starts', shortLabel: 'Solo-friendly' },
+    {
+      label: `${featuredSessions.length || 'Live'} events`,
+      shortLabel: `${featuredSessions.length || 'Live'} events`,
+    },
+    { label: `${peopleGoingCount} people going`, shortLabel: `${peopleGoingCount} going` },
+    { label: 'Easy solo starts', shortLabel: 'Solo-friendly' },
   ]
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#0B0B0B] font-sans text-white">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0B0B0B]/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1920px] items-center justify-between gap-3 px-4 py-3">
-          <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-h-11 min-w-11 items-center">
+          <Link
+            href="/"
+            aria-label="SweatBuddies home"
+            className="inline-flex min-h-11 min-w-11 items-center"
+          >
             <LogoWithText
               size={30}
               color="#FFFFFF"
@@ -157,8 +165,8 @@ export default async function HomePage() {
               wordmarkClassName="max-[360px]:hidden"
             />
           </Link>
-          <p className="hidden min-w-0 flex-1 truncate text-sm font-semibold text-white/64 lg:block">
-            Find your people through fitness and wellness events
+          <p className="hidden min-w-0 flex-1 truncate text-sm font-semibold uppercase tracking-[0.18em] text-white/44 lg:block">
+            Social fitness events
           </p>
           <nav className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
             <TrackedLink
@@ -194,7 +202,9 @@ export default async function HomePage() {
               <Search size={17} strokeWidth={2.4} className="shrink-0" />
               <span className="min-w-0 truncate">
                 <span className="min-[380px]:hidden">Search events or areas...</span>
-                <span className="hidden min-[380px]:inline">Search events, activities, or neighborhoods...</span>
+                <span className="hidden min-[380px]:inline">
+                  Search events, activities, or neighborhoods...
+                </span>
               </span>
             </TrackedLink>
 
@@ -227,22 +237,28 @@ export default async function HomePage() {
         <MobileMapListSwitch sessionCount={featuredSessions.length} />
 
         <section className="min-h-[calc(100vh-126px)] lg:grid lg:h-[calc(100vh-145px)] lg:min-h-0 lg:grid-cols-[minmax(390px,40vw)_1fr] lg:overflow-hidden">
-          <aside id="session-list" className="order-2 scroll-mt-32 min-w-0 border-r border-white/10 bg-[#0B0B0B] lg:order-1 lg:h-full lg:overflow-y-auto lg:overscroll-contain">
+          <aside
+            id="session-list"
+            className="order-2 scroll-mt-32 min-w-0 border-r border-white/10 bg-[#0B0B0B] lg:order-1 lg:h-full lg:overflow-y-auto lg:overscroll-contain"
+          >
             <div className="border-b border-white/10 p-4 sm:p-4">
               <p className="font-mono text-xs font-bold uppercase text-white/42">
-                Mapped in Bangkok and Singapore
+                Events near Singapore and Bangkok
               </p>
               <h1 className="mt-1 max-w-2xl text-2xl font-semibold leading-tight text-white sm:mt-2 sm:text-4xl">
-                Find your people through fitness.
+                Find a fitness plan with people already going.
               </h1>
               <p className="mt-2 hidden max-w-2xl text-sm leading-6 text-white/60 sm:mt-3 sm:block">
-                Discover run clubs, yoga, pickleball, strength, recovery, and wellness events.
-                See who is going, find solo-friendly sessions, and show up with confidence.
+                Discover run clubs, yoga, pickleball, strength, recovery, and wellness events. See
+                the host, the plan, and the people signals before you show up.
               </p>
 
               <div className="mt-3 grid grid-cols-3 gap-2 sm:mt-4">
                 {availabilityItems.map((item) => (
-                  <div key={item.label} className="rounded-lg border border-white/10 bg-white/[0.04] p-2.5 sm:p-3">
+                  <div
+                    key={item.label}
+                    className="rounded-lg border border-white/10 bg-white/[0.04] p-2.5 sm:p-3"
+                  >
                     <p className="truncate font-mono text-[10px] font-bold uppercase text-white/70 sm:text-[11px]">
                       <span className="min-[380px]:hidden">{item.shortLabel}</span>
                       <span className="hidden min-[380px]:inline">{item.label}</span>
@@ -284,7 +300,7 @@ export default async function HomePage() {
                     Social plans people are joining
                   </p>
                   <h2 className="mt-1 text-base font-semibold text-white sm:text-lg">
-                    Start with events that feel alive
+                    Start with a plan people can join
                   </h2>
                 </div>
                 <TrackedLink
@@ -460,9 +476,7 @@ function CompactConversionRail() {
   return (
     <div className="border-t border-white/10 p-4 pb-10">
       <div className="border-b border-white/10 pb-5">
-        <p className="font-mono text-xs font-bold uppercase text-white/42">
-          Browse by activity
-        </p>
+        <p className="font-mono text-xs font-bold uppercase text-white/42">Browse by activity</p>
         <h2 className="mt-1 text-xl font-semibold leading-tight text-white">
           Find the right plan. Tell us what to map next.
         </h2>
@@ -487,14 +501,21 @@ function CompactConversionRail() {
 
       <div className="grid gap-6 py-5">
         <div>
-          <p className="font-mono text-[11px] font-bold uppercase text-white/42">
-            Why people join
-          </p>
+          <p className="font-mono text-[11px] font-bold uppercase text-white/42">Why people join</p>
           <div className="mt-3 grid gap-0 border-y border-white/10">
             {[
-              ['Know what you are joining', 'Activity, area, price, people signals, and source links are visible upfront.'],
-              ['Start without guessing', 'Find sessions where newcomers and solo arrivals are expected.'],
-              ['Return to familiar faces', 'Recurring hosts make consistency easier than starting from zero every week.'],
+              [
+                'Know what you are joining',
+                'Activity, area, price, people signals, and source links are visible upfront.',
+              ],
+              [
+                'Start without guessing',
+                'Find sessions where newcomers and solo arrivals are expected.',
+              ],
+              [
+                'Return to familiar faces',
+                'Recurring hosts make consistency easier than starting from zero every week.',
+              ],
             ].map(([title, body]) => (
               <div key={title} className="border-b border-white/10 py-3 last:border-b-0">
                 <h3 className="text-sm font-semibold text-white">{title}</h3>
@@ -512,7 +533,8 @@ function CompactConversionRail() {
             Know a host or event we should list?
           </h2>
           <p className="mt-3 text-sm leading-6 text-white/60">
-            Submit the official page, social link, area, and activity. We review it before it appears on the map.
+            Submit the official page, social link, area, and activity. We review it before it
+            appears on the map.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {['Official link', 'Fresh schedule', 'First-timer context'].map((item) => (
@@ -577,7 +599,10 @@ function DiscoveryMapPreview({
   }))
 
   return (
-    <div id="map-preview" className="relative order-1 hidden min-h-[520px] scroll-mt-32 min-w-0 overflow-hidden bg-[#191919] text-white target:ring-2 target:ring-[#63FF8F] lg:order-2 lg:block lg:h-full lg:min-h-0 lg:self-stretch">
+    <div
+      id="map-preview"
+      className="relative order-1 hidden min-h-[520px] scroll-mt-32 min-w-0 overflow-hidden bg-[#191919] text-white target:ring-2 target:ring-[#63FF8F] lg:order-2 lg:block lg:h-full lg:min-h-0 lg:self-stretch"
+    >
       <LazySessionVectorMap
         center={{ lat: 7.54, lng: 102.16 }}
         pins={mapPins}
@@ -607,20 +632,22 @@ function DiscoveryMapPreview({
 
       {spotlight && (
         <div className="absolute left-5 right-5 top-16 z-10 max-w-sm rounded-xl border border-white/10 bg-black/55 p-4 shadow-2xl shadow-black/30 backdrop-blur md:top-auto md:bottom-20 md:right-auto">
-          <p className="font-mono text-[10px] font-bold uppercase text-[#63FF8F]">
-            Featured pin
-          </p>
+          <p className="font-mono text-[10px] font-bold uppercase text-[#63FF8F]">Featured pin</p>
           <h3 className="mt-2 line-clamp-2 text-lg font-semibold leading-tight text-white">
             {cleanText(spotlight.title)}
           </h3>
           <div className="mt-3 grid gap-2 text-xs font-bold text-white/62">
             <p className="flex items-center gap-2 truncate">
               <CalendarDays size={14} strokeWidth={2.2} className="shrink-0 text-[#63FF8F]" />
-              <span className="truncate">{formatSessionTime(spotlight.startTime, spotlight.city)}</span>
+              <span className="truncate">
+                {formatSessionTime(spotlight.startTime, spotlight.city)}
+              </span>
             </p>
             <p className="flex items-center gap-2 truncate">
               <MapPin size={14} strokeWidth={2.2} className="shrink-0 text-[#63FF8F]" />
-              <span className="truncate">{cleanText(spotlight.address?.split(',')[0] || spotlight.city)}</span>
+              <span className="truncate">
+                {cleanText(spotlight.address?.split(',')[0] || spotlight.city)}
+              </span>
             </p>
           </div>
           <div className="mt-4 flex items-center gap-2">
@@ -720,32 +747,78 @@ function SessionCard({
           : 'group scroll-mt-24 overflow-hidden rounded-xl border border-white/10 bg-[#151515] transition-all target:border-[#63FF8F] target:ring-2 target:ring-[#63FF8F] hover:-translate-y-0.5 hover:border-[#63FF8F]'
       }
     >
-      <div className={compact ? 'relative aspect-square self-start overflow-hidden bg-[#222222] sm:aspect-[4/3]' : 'relative aspect-[4/3] overflow-hidden bg-[#222222]'}>
+      <div
+        className={
+          compact
+            ? 'relative aspect-square self-start overflow-hidden bg-[#222222] sm:aspect-[4/3]'
+            : 'relative aspect-[4/3] overflow-hidden bg-[#222222]'
+        }
+      >
         <Image
           src={imageSrc}
           alt={cleanText(session.title)}
           fill
-          sizes={compact ? '(min-width: 640px) 45vw, 118px' : '(min-width: 1280px) 260px, (min-width: 640px) 45vw, 100vw'}
+          sizes={
+            compact
+              ? '(min-width: 640px) 45vw, 118px'
+              : '(min-width: 1280px) 260px, (min-width: 640px) 45vw, 100vw'
+          }
           className="object-cover opacity-86 transition-transform duration-500 group-hover:scale-105"
           unoptimized={Boolean(session.imageUrl)}
           priority={priority}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
-        <div className={compact ? 'absolute left-3 top-3 rounded-md bg-black/52 px-2 py-1 font-mono text-[10px] font-bold uppercase text-white/86 backdrop-blur sm:left-4 sm:top-4 sm:px-2.5 sm:text-xs' : 'absolute left-4 top-4 rounded-md bg-black/52 px-2.5 py-1 font-mono text-xs font-bold uppercase text-white/86 backdrop-blur'}>
+        <div
+          className={
+            compact
+              ? 'absolute left-3 top-3 rounded-md bg-black/52 px-2 py-1 font-mono text-[10px] font-bold uppercase text-white/86 backdrop-blur sm:left-4 sm:top-4 sm:px-2.5 sm:text-xs'
+              : 'absolute left-4 top-4 rounded-md bg-black/52 px-2.5 py-1 font-mono text-xs font-bold uppercase text-white/86 backdrop-blur'
+          }
+        >
           {activityLabel}
         </div>
-        <div className={compact ? 'absolute right-3 top-3 rounded-md bg-[#63FF8F] px-2 py-1 font-mono text-[10px] font-bold uppercase text-black shadow-md sm:right-4 sm:top-4 sm:rounded-lg sm:px-2.5 sm:py-1.5 sm:text-xs' : 'absolute right-4 top-4 rounded-lg bg-[#63FF8F] px-2.5 py-1.5 font-mono text-xs font-bold uppercase text-black shadow-md'}>
+        <div
+          className={
+            compact
+              ? 'absolute right-3 top-3 rounded-md bg-[#63FF8F] px-2 py-1 font-mono text-[10px] font-bold uppercase text-black shadow-md sm:right-4 sm:top-4 sm:rounded-lg sm:px-2.5 sm:py-1.5 sm:text-xs'
+              : 'absolute right-4 top-4 rounded-lg bg-[#63FF8F] px-2.5 py-1.5 font-mono text-xs font-bold uppercase text-black shadow-md'
+          }
+        >
           {priceLabel}
         </div>
-        <div className={compact ? 'hidden rounded-md bg-black/48 px-2 py-1 font-mono text-[10px] font-bold uppercase text-white/86 backdrop-blur sm:absolute sm:bottom-4 sm:left-4 sm:block sm:px-2.5 sm:text-xs' : 'absolute bottom-4 left-4 rounded-md bg-black/48 px-2.5 py-1 font-mono text-xs font-bold uppercase text-white/86 backdrop-blur'}>
+        <div
+          className={
+            compact
+              ? 'hidden rounded-md bg-black/48 px-2 py-1 font-mono text-[10px] font-bold uppercase text-white/86 backdrop-blur sm:absolute sm:bottom-4 sm:left-4 sm:block sm:px-2.5 sm:text-xs'
+              : 'absolute bottom-4 left-4 rounded-md bg-black/48 px-2.5 py-1 font-mono text-xs font-bold uppercase text-white/86 backdrop-blur'
+          }
+        >
           {listingStatus}
         </div>
-        <div className={compact ? 'hidden font-mono text-[10px] font-bold uppercase text-white drop-shadow-md sm:absolute sm:bottom-4 sm:right-4 sm:block sm:text-xs' : 'absolute bottom-4 right-4 font-mono text-xs font-bold uppercase text-white drop-shadow-md'}>
+        <div
+          className={
+            compact
+              ? 'hidden font-mono text-[10px] font-bold uppercase text-white drop-shadow-md sm:absolute sm:bottom-4 sm:right-4 sm:block sm:text-xs'
+              : 'absolute bottom-4 right-4 font-mono text-xs font-bold uppercase text-white drop-shadow-md'
+          }
+        >
           View details
         </div>
       </div>
-      <div className={compact ? 'grid min-w-0 content-between gap-1.5 p-3 text-xs font-bold text-white/58 sm:gap-2' : 'grid gap-2 p-3 text-xs font-bold text-white/58'}>
-        <h3 className={compact ? 'line-clamp-2 text-sm font-semibold leading-tight text-white' : 'line-clamp-2 text-base font-semibold leading-tight text-white'}>
+      <div
+        className={
+          compact
+            ? 'grid min-w-0 content-between gap-1.5 p-3 text-xs font-bold text-white/58 sm:gap-2'
+            : 'grid gap-2 p-3 text-xs font-bold text-white/58'
+        }
+      >
+        <h3
+          className={
+            compact
+              ? 'line-clamp-2 text-sm font-semibold leading-tight text-white'
+              : 'line-clamp-2 text-base font-semibold leading-tight text-white'
+          }
+        >
           {cleanText(session.title)}
         </h3>
         <p className="line-clamp-2 text-white/68">Hosted by {communityName}</p>
@@ -795,7 +868,6 @@ function formatPrice(price: number, currency: string): string {
 function formatCategory(category: string): string {
   return category.replace(/[-_]/g, ' ')
 }
-
 
 function formatLevel(level: string | null): string {
   if (!level || level === 'ALL') return 'All levels'

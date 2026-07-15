@@ -4,7 +4,17 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Search, Users, MapPin, Plus, CheckCircle2, ChevronDown, X, ExternalLink, ArrowRight } from 'lucide-react'
+import {
+  Search,
+  Users,
+  MapPin,
+  Plus,
+  CheckCircle2,
+  ChevronDown,
+  X,
+  ExternalLink,
+  ArrowRight,
+} from 'lucide-react'
 import { LogoWithText } from '@/components/logo'
 import { getCategoryEmoji } from '@/lib/categories'
 import { ACTIVITY_CATEGORIES } from '@/lib/categories'
@@ -78,8 +88,7 @@ function formatEventDate(iso: string): string {
 
   if (diffDays === 0) return 'Today'
   if (diffDays === 1) return 'Tomorrow'
-  if (diffDays < 7)
-    return d.toLocaleDateString('en-US', { weekday: 'short' })
+  if (diffDays < 7) return d.toLocaleDateString('en-US', { weekday: 'short' })
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
@@ -92,9 +101,7 @@ function formatVerifiedDate(iso: string | null): string | null {
 }
 
 function humanizeSlug(value: string): string {
-  return value
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (char) => char.toUpperCase())
+  return value.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
 }
 
 function categoryLabel(slug: string): string {
@@ -132,7 +139,7 @@ export default function CommunitiesPageClient({
 
   const areaOptions = useMemo(
     () => uniqueOptions(communities.map((c) => c.usualArea)),
-    [communities]
+    [communities],
   )
 
   const priceOptions = useMemo(
@@ -140,7 +147,7 @@ export default function CommunitiesPageClient({
       [...new Set(communities.map((c) => c.priceType).filter(Boolean) as string[])]
         .sort((a, b) => formatPriceType(a).localeCompare(formatPriceType(b)))
         .map((value) => ({ value, label: formatPriceType(value) })),
-    [communities]
+    [communities],
   )
 
   const platformOptions = useMemo(
@@ -148,7 +155,7 @@ export default function CommunitiesPageClient({
       [...new Set(communities.map((c) => c.joinPlatform).filter(Boolean) as string[])]
         .sort((a, b) => formatJoinPlatform(a).localeCompare(formatJoinPlatform(b)))
         .map((value) => ({ value, label: formatJoinPlatform(value) })),
-    [communities]
+    [communities],
   )
 
   const vibeOptions = useMemo(() => {
@@ -166,7 +173,7 @@ export default function CommunitiesPageClient({
 
   const cityOptions = useMemo(
     () => cities.map((city) => ({ value: city.slug, label: city.name })),
-    [cities]
+    [cities],
   )
 
   const filteredCommunities = useMemo(() => {
@@ -180,7 +187,7 @@ export default function CommunitiesPageClient({
           c.category.toLowerCase().includes(q) ||
           c.cityName?.toLowerCase().includes(q) ||
           c.usualArea?.toLowerCase().includes(q) ||
-          c.vibeTags.some((tag) => tag.toLowerCase().includes(q))
+          c.vibeTags.some((tag) => tag.toLowerCase().includes(q)),
       )
     }
     if (categoryFilter) result = result.filter((c) => c.category === categoryFilter)
@@ -231,7 +238,11 @@ export default function CommunitiesPageClient({
       <header className="border-b border-white/10 bg-[#0B0B0B]">
         <div className="mx-auto max-w-6xl px-4 py-5">
           <div className="flex min-h-11 items-center justify-between gap-2">
-            <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-h-11 min-w-11 items-center">
+            <Link
+              href="/"
+              aria-label="SweatBuddies home"
+              className="inline-flex min-h-11 min-w-11 items-center"
+            >
               <LogoWithText
                 size={28}
                 color="#FFFFFF"
@@ -254,24 +265,33 @@ export default function CommunitiesPageClient({
                 Host and source layer
               </p>
               <h1 className="mt-3 max-w-3xl text-4xl font-bold leading-[1.03] tracking-tight sm:text-5xl">
-                Verified source pages behind social fitness events.
+                Verified hosts behind plans people can join.
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-6 text-white/58 sm:text-base">
-                Communities help people trust who is hosting, where to join officially, and which plans have regulars. Events still lead discovery.
+                Source pages help people trust who is hosting, where to join officially, and which
+                plans already have regulars. Events still lead discovery.
               </p>
             </div>
             <div className="grid grid-cols-3 gap-2 lg:grid-cols-1">
               <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
                 <p className="font-mono text-lg font-black text-white">{communities.length}</p>
-                <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">Sources</p>
+                <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
+                  Sources
+                </p>
               </div>
               <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
                 <p className="font-mono text-lg font-black text-white">{cities.length || 2}</p>
-                <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">Markets</p>
+                <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
+                  Markets
+                </p>
               </div>
               <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
-                <p className="font-mono text-lg font-black text-[#63FF8F]">{filteredCommunities.length}</p>
-                <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">Visible</p>
+                <p className="font-mono text-lg font-black text-[#63FF8F]">
+                  {filteredCommunities.length}
+                </p>
+                <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
+                  Visible
+                </p>
               </div>
             </div>
           </div>
@@ -369,7 +389,7 @@ export default function CommunitiesPageClient({
           <p className="font-mono text-[11px] font-black uppercase tracking-[0.18em] text-white/42">
             {hasFilters
               ? `${filteredCommunities.length} source page${filteredCommunities.length === 1 ? '' : 's'} found`
-              : subtitle}
+              : `${subtitle} · source pages behind joinable events`}
           </p>
           <Link
             href="/communities/nominate"
@@ -400,10 +420,16 @@ export default function CommunitiesPageClient({
               {hasFilters ? 'No communities match your search.' : 'No communities listed yet.'}
             </p>
             <div className="mt-3 flex flex-wrap items-center justify-center gap-4">
-              <Link href="/communities/nominate" className="text-xs text-[#9fe600] font-medium hover:underline">
+              <Link
+                href="/communities/nominate"
+                className="text-xs text-[#9fe600] font-medium hover:underline"
+              >
                 Suggest a source
               </Link>
-              <Link href="/communities/create" className="text-xs text-white font-medium hover:underline">
+              <Link
+                href="/communities/create"
+                className="text-xs text-white font-medium hover:underline"
+              >
                 Submit a source →
               </Link>
             </div>
@@ -420,9 +446,12 @@ function CrewCard({ community }: { community: CommunityData }) {
     community.beginnerFriendly ? 'Beginner-friendly' : '',
     community.priceType ? formatPriceType(community.priceType) : '',
     ...community.vibeTags,
-  ].filter(Boolean).slice(0, 3)
+  ]
+    .filter(Boolean)
+    .slice(0, 3)
   const officialLink = community.communityLink || community.sourceUrl
   const verifiedDate = formatVerifiedDate(community.lastVerifiedAt)
+  const cardImage = community.coverImage || community.logoImage || community.creatorImageUrl
 
   return (
     <motion.div
@@ -430,114 +459,133 @@ function CrewCard({ community }: { community: CommunityData }) {
       transition={{ duration: 0.25 }}
       className="h-full"
     >
-      <article className="group flex h-full flex-col rounded-lg border border-white/10 bg-[#151515] p-4 text-center transition-colors duration-200 hover:border-[#63FF8F]/35 hover:bg-[#1B1B1B]">
-        {/* Logo */}
-        <Link
-          href={`/communities/${community.slug}`}
-          className="mx-auto mb-3 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-white/[0.08]"
-          aria-label={`View ${community.name}`}
-        >
-          {community.logoImage ? (
-            <Image
-              src={community.logoImage}
-              alt={community.name}
-              width={64}
-              height={64}
-              className="object-cover w-full h-full"
-            />
-          ) : community.creatorImageUrl ? (
-            <Image
-              src={community.creatorImageUrl}
-              alt={community.name}
-              width={64}
-              height={64}
-              className="object-cover w-full h-full"
-            />
-          ) : (
-            <span className="text-2xl">{getCategoryEmoji(community.category)}</span>
-          )}
-        </Link>
-
-        {/* Name + verified */}
-        <div className="flex items-center justify-center gap-1 mb-1">
+      <article className="group flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-[#151515] text-center transition-colors duration-200 hover:border-[#63FF8F]/35 hover:bg-[#1B1B1B]">
+        {cardImage ? (
           <Link
             href={`/communities/${community.slug}`}
-            className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-white transition-colors hover:text-neutral-300"
+            className="relative block aspect-[16/10] overflow-hidden bg-[#222222]"
+            aria-label={`View ${community.name}`}
           >
-            <h3 className="truncate">
-              {community.name}
-            </h3>
-          </Link>
-          {community.isVerified && (
-            <CheckCircle2 className="w-3.5 h-3.5 text-[#63FF8F] flex-shrink-0" />
-          )}
-        </div>
-
-        <p className="text-[11px] text-[#666666] mb-2 capitalize">
-          {getCategoryEmoji(community.category)} {community.category.charAt(0).toUpperCase() + community.category.slice(1).replace(/_/g, ' ')}
-        </p>
-
-        <div className="space-y-1 text-[11px] text-[#999999]">
-          <p className="truncate">{community.usualArea || community.cityName || 'Area TBA'}</p>
-          <p className="truncate">{community.usualSchedule || 'Schedule varies'}</p>
-        </div>
-
-        {chips.length > 0 && (
-          <div className="mt-2 flex flex-wrap justify-center gap-1">
-            {chips.map((chip) => (
-              <span key={chip} className="rounded-full border border-white/10 bg-white/[0.06] px-2 py-0.5 text-[9px] font-semibold text-[#CCCCCC]">
-                {chip}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* Known plan */}
-        {community.nextEvent && (
-          <p className="text-[10px] text-[#666666] mt-1.5 uppercase tracking-wider">
-            Known plan: {formatEventDate(community.nextEvent.startTime)}
-          </p>
-        )}
-
-        {(community.joinPlatform || community.lastVerifiedAt) && (
-          <p className="mt-1 text-[10px] uppercase tracking-wider text-[#555555]">
-            {community.joinPlatform ? `Official ${formatJoinPlatform(community.joinPlatform)}` : 'Official link'}
-            {verifiedDate ? ` · checked ${verifiedDate}` : ''}
-          </p>
-        )}
-
-        {/* City */}
-        {community.cityName && (
-          <p className="text-[10px] text-[#555555] mt-1 flex items-center justify-center gap-0.5">
-            <MapPin className="w-2.5 h-2.5" />
-            {community.cityName}
-          </p>
-        )}
-
-        <div className="mt-auto grid grid-cols-2 gap-2 pt-3">
-          {officialLink ? (
-            <a
-              href={officialLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full bg-[#63FF8F] px-2 text-[11px] font-bold text-black transition-colors hover:bg-[#83FFA6]"
-              aria-label={`Join ${community.name} through their official link`}
-            >
-              Join
-              <ExternalLink className="h-3 w-3" />
-            </a>
-          ) : (
-            <span className="inline-flex min-h-11 items-center justify-center rounded-full bg-white/5 px-2 text-[10px] font-semibold text-[#777777]">
-              Link pending
+            <Image
+              src={cardImage}
+              alt={community.name}
+              fill
+              sizes="(min-width: 1024px) 260px, (min-width: 640px) 33vw, 100vw"
+              className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
+              unoptimized={!cardImage.startsWith('/')}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/12 to-black/10" />
+            <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
+              {getCategoryEmoji(community.category)} {categoryLabel(community.category)}
             </span>
-          )}
+            <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#63FF8F] backdrop-blur">
+              {community.nextEvent
+                ? `Next ${formatEventDate(community.nextEvent.startTime)}`
+                : 'Source page'}
+            </span>
+          </Link>
+        ) : (
           <Link
             href={`/communities/${community.slug}`}
-            className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full border border-white/12 px-2 text-[11px] font-bold text-white transition-colors hover:border-[#63FF8F]/60 hover:bg-white/5"
+            className="mx-auto mt-4 mb-3 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-white/[0.08]"
+            aria-label={`View ${community.name}`}
           >
-            Details
-            <ArrowRight className="h-3 w-3" />
+            <span className="text-2xl">{getCategoryEmoji(community.category)}</span>
           </Link>
+        )}
+
+        <div className="flex flex-1 flex-col p-4">
+          {/* Name + verified */}
+          <div className="flex items-center justify-center gap-1 mb-1">
+            <Link
+              href={`/communities/${community.slug}`}
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-white transition-colors hover:text-neutral-300"
+            >
+              <h3 className="truncate">{community.name}</h3>
+            </Link>
+            {community.isVerified && (
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#63FF8F] flex-shrink-0" />
+            )}
+          </div>
+
+          <p className="text-[11px] text-[#666666] mb-2 capitalize">
+            {getCategoryEmoji(community.category)}{' '}
+            {community.category.charAt(0).toUpperCase() +
+              community.category.slice(1).replace(/_/g, ' ')}
+          </p>
+
+          <div className="space-y-1 text-[11px] text-[#999999]">
+            <p className="truncate">{community.usualArea || community.cityName || 'Area TBA'}</p>
+            <p className="truncate">{community.usualSchedule || 'Schedule varies'}</p>
+          </div>
+
+          {chips.length > 0 && (
+            <div className="mt-2 flex flex-wrap justify-center gap-1">
+              {chips.map((chip) => (
+                <span
+                  key={chip}
+                  className="rounded-full border border-white/10 bg-white/[0.06] px-2 py-0.5 text-[9px] font-semibold text-[#CCCCCC]"
+                >
+                  {chip}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Known plan */}
+          <div className="mt-2 rounded-lg border border-white/10 bg-[#101010] px-3 py-2 text-left">
+            <p className="font-mono text-[9px] font-black uppercase tracking-[0.16em] text-[#63FF8F]">
+              {community.nextEvent ? 'Next known plan' : 'Trust layer'}
+            </p>
+            <p className="mt-1 truncate text-xs font-bold text-white/82">
+              {community.nextEvent
+                ? `${community.nextEvent.title} · ${formatEventDate(community.nextEvent.startTime)}`
+                : 'Official source checked before people join'}
+            </p>
+          </div>
+
+          {(community.joinPlatform || community.lastVerifiedAt) && (
+            <p className="mt-1 text-[10px] uppercase tracking-wider text-[#555555]">
+              {community.joinPlatform
+                ? `Official ${formatJoinPlatform(community.joinPlatform)}`
+                : 'Official link'}
+              {verifiedDate ? ` · checked ${verifiedDate}` : ''}
+            </p>
+          )}
+
+          {/* City */}
+          {community.cityName && (
+            <p className="text-[10px] text-[#555555] mt-1 flex items-center justify-center gap-0.5">
+              <MapPin className="w-2.5 h-2.5" />
+              {community.cityName}
+            </p>
+          )}
+
+          <div className="mt-auto grid grid-cols-2 gap-2 pt-3">
+            {officialLink ? (
+              <a
+                href={officialLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full bg-[#63FF8F] px-2 text-[11px] font-bold text-black transition-colors hover:bg-[#83FFA6]"
+                aria-label={`Join ${community.name} through their official link`}
+              >
+                Join
+                <ExternalLink className="h-3 w-3" />
+              </a>
+            ) : (
+              <span className="inline-flex min-h-11 items-center justify-center rounded-full bg-white/5 px-2 text-[10px] font-semibold text-[#777777]">
+                Link pending
+              </span>
+            )}
+            <Link
+              href={`/communities/${community.slug}`}
+              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full border border-white/12 px-2 text-[11px] font-bold text-white transition-colors hover:border-[#63FF8F]/60 hover:bg-white/5"
+            >
+              Details
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
         </div>
       </article>
     </motion.div>

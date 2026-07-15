@@ -150,7 +150,8 @@ export default function CreateCommunityPage() {
           websiteUrl: form.websiteUrl.trim() || null,
           communityLink: form.communityLink.trim() || null,
           joinPlatform: form.joinPlatform || null,
-          sourceUrl: form.sourceUrl.trim() || form.websiteUrl.trim() || form.communityLink.trim() || null,
+          sourceUrl:
+            form.sourceUrl.trim() || form.websiteUrl.trim() || form.communityLink.trim() || null,
         }),
       })
 
@@ -237,10 +238,24 @@ export default function CreateCommunityPage() {
               <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#63FF8F]">
                 Trust layer
               </p>
-              <h2 className="mt-2 text-3xl font-bold tracking-tight text-white">Who hosts these plans?</h2>
+              <h2 className="mt-2 text-3xl font-bold tracking-tight text-white">
+                Who hosts these plans?
+              </h2>
               <p className="text-sm text-[#666666] mt-1">
                 Add the source people can trust before they join an event.
               </p>
+              <div className="mt-4 grid grid-cols-3 gap-2">
+                {['Source page', 'Join link', 'Event trust'].map((label) => (
+                  <div
+                    key={label}
+                    className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2"
+                  >
+                    <p className="truncate font-mono text-[10px] font-black uppercase tracking-wide text-white/58">
+                      {label}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Community name */}
@@ -257,9 +272,7 @@ export default function CreateCommunityPage() {
                 aria-required="true"
                 className="w-full rounded-lg border border-white/15 bg-[#111111] px-4 py-3 text-sm text-white placeholder-[#555555] focus:border-[#63FF8F] focus:outline-none"
               />
-              <p className="mt-1 text-xs text-right text-[#666666]">
-                {form.name.length}/60
-              </p>
+              <p className="mt-1 text-xs text-right text-[#666666]">{form.name.length}/60</p>
             </div>
 
             {/* Category */}
@@ -289,8 +302,7 @@ export default function CreateCommunityPage() {
             {/* Description */}
             <div>
               <label className="block text-sm font-medium text-[#999999] mb-2">
-                Description{' '}
-                <span className="text-[#666666] font-normal">(optional)</span>
+                Description <span className="text-[#666666] font-normal">(optional)</span>
               </label>
               <textarea
                 value={form.description}
@@ -307,9 +319,7 @@ export default function CreateCommunityPage() {
 
             {/* City */}
             <div>
-              <label className="block text-sm font-medium text-[#999999] mb-2">
-                City
-              </label>
+              <label className="block text-sm font-medium text-[#999999] mb-2">City</label>
               <input
                 type="text"
                 value={form.city}
@@ -321,9 +331,7 @@ export default function CreateCommunityPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-[#999999] mb-2">
-                  Usual area
-                </label>
+                <label className="block text-sm font-medium text-[#999999] mb-2">Usual area</label>
                 <input
                   type="text"
                   value={form.usualArea}
@@ -350,9 +358,7 @@ export default function CreateCommunityPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#999999] mb-2">
-                Vibe tags
-              </label>
+              <label className="block text-sm font-medium text-[#999999] mb-2">Vibe tags</label>
               <input
                 type="text"
                 value={form.vibeTags}
@@ -415,8 +421,7 @@ export default function CreateCommunityPage() {
             {/* Logo upload */}
             <div>
               <label className="block text-sm font-medium text-[#999999] mb-2">
-                Logo{' '}
-                <span className="text-[#666666] font-normal">(optional)</span>
+                Logo <span className="text-[#666666] font-normal">(optional)</span>
               </label>
               <div className="flex items-center gap-4">
                 {form.logoImage ? (
@@ -486,8 +491,7 @@ export default function CreateCommunityPage() {
             {/* Cover image upload */}
             <div>
               <label className="block text-sm font-medium text-[#999999] mb-2">
-                Cover photo{' '}
-                <span className="text-[#666666] font-normal">(optional)</span>
+                Cover photo <span className="text-[#666666] font-normal">(optional)</span>
               </label>
               {form.coverImage ? (
                 <div className="relative">
@@ -559,8 +563,7 @@ export default function CreateCommunityPage() {
             {/* Instagram */}
             <div>
               <label className="block text-sm font-medium text-[#999999] mb-2">
-                Instagram{' '}
-                <span className="text-[#666666] font-normal">(optional)</span>
+                Instagram <span className="text-[#666666] font-normal">(optional)</span>
               </label>
               <input
                 type="text"
@@ -574,8 +577,7 @@ export default function CreateCommunityPage() {
             {/* Website */}
             <div>
               <label className="block text-sm font-medium text-[#999999] mb-2">
-                Website{' '}
-                <span className="text-[#666666] font-normal">(optional)</span>
+                Website <span className="text-[#666666] font-normal">(optional)</span>
               </label>
               <input
                 type="url"
@@ -622,9 +624,7 @@ export default function CreateCommunityPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[#999999] mb-2">
-                  Source URL
-                </label>
+                <label className="block text-sm font-medium text-[#999999] mb-2">Source URL</label>
                 <input
                   type="url"
                   value={form.sourceUrl}
@@ -670,11 +670,7 @@ export default function CreateCommunityPage() {
               {/* Cover */}
               {form.coverImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={form.coverImage}
-                  alt="Cover"
-                  className="w-full h-36 object-cover"
-                />
+                <img src={form.coverImage} alt="Cover" className="w-full h-36 object-cover" />
               ) : (
                 <div className="w-full h-36 bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] flex items-center justify-center text-4xl">
                   {selectedType?.emoji ?? '\u{1F3C5}'}
@@ -707,9 +703,7 @@ export default function CreateCommunityPage() {
                 </div>
 
                 {form.description && (
-                  <p className="mt-3 text-sm text-[#999999] line-clamp-3">
-                    {form.description}
-                  </p>
+                  <p className="mt-3 text-sm text-[#999999] line-clamp-3">{form.description}</p>
                 )}
 
                 {form.city && (
@@ -724,11 +718,17 @@ export default function CreateCommunityPage() {
                     form.priceType ? form.priceType.toLowerCase().replace('_', ' ') : '',
                     form.beginnerFriendly ? 'beginner-friendly' : '',
                     ...parseTags(form.vibeTags),
-                  ].filter(Boolean).slice(0, 6).map((tag) => (
-                    <span key={tag} className="rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1 text-[11px] font-semibold text-[#CCCCCC]">
-                      {tag}
-                    </span>
-                  ))}
+                  ]
+                    .filter(Boolean)
+                    .slice(0, 6)
+                    .map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1 text-[11px] font-semibold text-[#CCCCCC]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
                 </div>
               </div>
             </div>

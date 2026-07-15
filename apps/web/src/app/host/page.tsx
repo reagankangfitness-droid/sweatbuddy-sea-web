@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Logo } from '@/components/logo'
+import { LogoWithText } from '@/components/logo'
 import {
   BarChart3,
   CalendarPlus,
@@ -18,7 +18,7 @@ import {
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
 
 const STEPS = ['activity', 'details', 'done'] as const
-type Step = typeof STEPS[number]
+type Step = (typeof STEPS)[number]
 
 const TOP_ACTIVITIES = ACTIVITY_TYPES.slice(0, 12)
 
@@ -41,15 +41,39 @@ const HOST_OUTCOMES = [
 ]
 
 const HOST_SYSTEM = [
-  { icon: CalendarPlus, title: 'Publish one joinable event', body: 'Create the session once, set capacity, add the location, and share one clean link.' },
-  { icon: BarChart3, title: 'See what brings people back', body: 'Track who is joining, who is new, and which sessions build repeat attendance.' },
-  { icon: MessageCircle, title: 'Keep chat for connection', body: 'Move discovery, sessions, payments, and attendance out of scattered DMs.' },
+  {
+    icon: CalendarPlus,
+    title: 'Publish one joinable event',
+    body: 'Create the session once, set capacity, add the location, and share one clean link.',
+  },
+  {
+    icon: BarChart3,
+    title: 'See what brings people back',
+    body: 'Track who is joining, who is new, and which sessions build repeat attendance.',
+  },
+  {
+    icon: MessageCircle,
+    title: 'Keep chat for connection',
+    body: 'Move discovery, sessions, payments, and attendance out of scattered DMs.',
+  },
 ]
 
 const LAUNCH_STEPS = [
-  { label: '01', title: 'Tell us what you host', body: 'Run club, yoga, HIIT, pilates, pickleball, cold plunge, or any group people can join without already knowing someone.' },
-  { label: '02', title: 'Make the first session easy to join', body: 'Clarify who it is for, what happens, where to go, and why a newcomer should feel comfortable showing up.' },
-  { label: '03', title: 'Turn attendance into repeat community', body: 'Use sessions, community pages, and attendee history to bring people back instead of restarting every week.' },
+  {
+    label: '01',
+    title: 'Tell us what you host',
+    body: 'Run club, yoga, HIIT, pilates, pickleball, cold plunge, or any group people can join without already knowing someone.',
+  },
+  {
+    label: '02',
+    title: 'Make the first session easy to join',
+    body: 'Clarify who it is for, what happens, where to go, and why a newcomer should feel comfortable showing up.',
+  },
+  {
+    label: '03',
+    title: 'Turn attendance into repeat community',
+    body: 'Use sessions, community pages, and attendee history to bring people back instead of restarting every week.',
+  },
 ]
 
 export default function BecomeAHostPage() {
@@ -69,7 +93,12 @@ export default function BecomeAHostPage() {
       const res = await fetch('/api/host-leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), name: name.trim(), activityType, city: city.trim() }),
+        body: JSON.stringify({
+          email: email.trim(),
+          name: name.trim(),
+          activityType,
+          city: city.trim(),
+        }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -88,12 +117,24 @@ export default function BecomeAHostPage() {
     <div className="min-h-screen bg-[#0D0D0D] text-white">
       <header className="absolute left-0 right-0 top-0 z-30">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
-          <Link href="/" aria-label="SweatBuddies home" className="flex min-h-11 min-w-11 items-center justify-center rounded-full">
-            <Logo size={32} />
+          <Link
+            href="/"
+            aria-label="SweatBuddies home"
+            className="flex min-h-11 min-w-11 items-center"
+          >
+            <LogoWithText
+              size={28}
+              color="#FFFFFF"
+              textColor="#FFFFFF"
+              wordmarkClassName="max-[360px]:hidden"
+            />
           </Link>
           <div className="flex items-center gap-3">
-            <Link href="/buddy" className="hidden min-h-11 items-center text-sm font-medium text-white/70 hover:text-white sm:inline-flex">
-              Find a crew
+            <Link
+              href="/buddy"
+              className="hidden min-h-11 items-center text-sm font-medium text-white/70 hover:text-white sm:inline-flex"
+            >
+              Explore events
             </Link>
             <Link
               href="/buddy?create=session"
@@ -117,16 +158,17 @@ export default function BecomeAHostPage() {
         <div className="absolute inset-0 bg-black/65" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/20 to-transparent" />
 
-        <div className="relative mx-auto flex max-w-6xl flex-col justify-end">
+        <div className="relative mx-auto grid max-w-6xl gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
           <div className="max-w-3xl">
-            <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-white/60">
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-[#63FF8F]">
               For fitness community hosts
             </p>
             <h1 className="text-4xl font-bold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
               List events people can find, trust, and come back to.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/72 sm:text-lg">
-              SweatBuddies helps fitness hosts publish joinable sessions, show the people already going, verify the source behind the event, and turn first-timers into regulars.
+              SweatBuddies helps fitness hosts publish joinable sessions, show the people already
+              going, verify the source behind the event, and turn first-timers into regulars.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -144,7 +186,34 @@ export default function BecomeAHostPage() {
             </div>
           </div>
 
-          <div className="mt-12 grid max-w-3xl grid-cols-3 gap-2">
+          <div className="hidden rounded-xl border border-white/12 bg-[#111111]/85 p-4 shadow-2xl shadow-black/40 backdrop-blur lg:block">
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+              What people see
+            </p>
+            <div className="mt-4 space-y-3">
+              {[
+                { label: 'Upcoming session', value: 'Date, place, price, level' },
+                { label: 'People signals', value: 'Going, solo-friendly, regulars' },
+                { label: 'Verified source', value: 'Official page behind the event' },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-3"
+                >
+                  <p className="text-sm font-black text-white">{item.label}</p>
+                  <p className="mt-1 text-xs leading-5 text-white/55">{item.value}</p>
+                </div>
+              ))}
+            </div>
+            <Link
+              href="/buddy"
+              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-white/15 text-xs font-black uppercase tracking-wide text-white transition-colors hover:border-[#63FF8F]/60"
+            >
+              View discovery
+            </Link>
+          </div>
+
+          <div className="mt-12 grid max-w-3xl grid-cols-3 gap-2 lg:col-span-2">
             {[
               { value: 'Nearby', label: 'discovery' },
               { value: 'Free + paid', label: 'sessions' },
@@ -152,7 +221,9 @@ export default function BecomeAHostPage() {
             ].map((stat) => (
               <div key={stat.label} className="min-h-[72px] border-t border-white/20 pt-3">
                 <p className="text-sm font-bold text-white sm:text-base">{stat.value}</p>
-                <p className="mt-1 text-[10px] uppercase tracking-wider text-white/45">{stat.label}</p>
+                <p className="mt-1 text-[10px] uppercase tracking-wider text-white/45">
+                  {stat.label}
+                </p>
               </div>
             ))}
           </div>
@@ -173,7 +244,10 @@ export default function BecomeAHostPage() {
             {HOST_OUTCOMES.map((item) => {
               const Icon = item.icon
               return (
-                <div key={item.title} className="rounded-xl border border-white/[0.08] bg-[#151515] p-5">
+                <div
+                  key={item.title}
+                  className="rounded-xl border border-white/[0.08] bg-[#151515] p-5"
+                >
                   <Icon className="h-5 w-5 text-white" />
                   <h3 className="mt-5 text-base font-bold text-white">{item.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-neutral-500">{item.body}</p>
@@ -194,7 +268,8 @@ export default function BecomeAHostPage() {
               Run the event. Let the page carry the proof.
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-neutral-500">
-              Keep WhatsApp, LINE, and Instagram for conversation. Use SweatBuddies for the parts that need structure: discovery, sessions, payments, attendance, and repeat turnout.
+              Keep WhatsApp, LINE, and Instagram for conversation. Use SweatBuddies for the parts
+              that need structure: discovery, sessions, payments, attendance, and repeat turnout.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
@@ -242,7 +317,8 @@ export default function BecomeAHostPage() {
                 Need help launching a crew?
               </h2>
               <p className="mt-3 max-w-md text-sm leading-relaxed text-white/70">
-                If you are not ready to post a session yet, tell us what you are building and we will point you in the right direction.
+                If you are not ready to post a session yet, tell us what you are building and we
+                will point you in the right direction.
               </p>
             </div>
           </div>
@@ -257,7 +333,8 @@ export default function BecomeAHostPage() {
                   What do people show up for?
                 </h2>
                 <p className="text-sm leading-relaxed text-neutral-400 mb-8">
-                  Pick the closest activity so we can understand the problem you solve for members and the sessions you want to fill.
+                  Pick the closest activity so we can understand the problem you solve for members
+                  and the sessions you want to fill.
                 </p>
 
                 <div className="grid grid-cols-3 gap-2 mb-8">
@@ -288,7 +365,10 @@ export default function BecomeAHostPage() {
             )}
 
             {step === 'details' && (
-              <form onSubmit={handleSubmit} className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+              <form
+                onSubmit={handleSubmit}
+                className="animate-in fade-in slide-in-from-bottom-4 duration-300"
+              >
                 <button
                   type="button"
                   onClick={() => setStep('activity')}
@@ -309,7 +389,9 @@ export default function BecomeAHostPage() {
 
                 <div className="space-y-4 mb-6">
                   <div>
-                    <label className="block text-xs font-medium text-neutral-400 mb-1.5">Your name</label>
+                    <label className="block text-xs font-medium text-neutral-400 mb-1.5">
+                      Your name
+                    </label>
                     <input
                       type="text"
                       value={name}
@@ -334,7 +416,9 @@ export default function BecomeAHostPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-neutral-400 mb-1.5">City</label>
+                    <label className="block text-xs font-medium text-neutral-400 mb-1.5">
+                      City
+                    </label>
                     <input
                       type="text"
                       value={city}
@@ -345,9 +429,7 @@ export default function BecomeAHostPage() {
                   </div>
                 </div>
 
-                {error && (
-                  <p className="text-red-400 text-xs mb-4">{error}</p>
-                )}
+                {error && <p className="text-red-400 text-xs mb-4">{error}</p>}
 
                 <button
                   type="submit"
@@ -370,7 +452,8 @@ export default function BecomeAHostPage() {
                 </div>
                 <h2 className="text-3xl font-bold text-white mb-3">You&apos;re on the list.</h2>
                 <p className="mx-auto mb-8 max-w-sm text-neutral-400">
-                  We&apos;ll reach out if we can help shape the launch path. You can still post a session anytime.
+                  We&apos;ll reach out if we can help shape the launch path. You can still post a
+                  session anytime.
                 </p>
                 <Link
                   href="/buddy?create=session"

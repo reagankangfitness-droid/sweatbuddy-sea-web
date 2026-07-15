@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { ArrowLeft, CalendarPlus, MapPin, Loader2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
+import { LogoWithText } from '@/components/logo'
 
 const EMOJI_MAP = Object.fromEntries(ACTIVITY_TYPES.map((t) => [t.key, t.emoji]))
 
@@ -69,7 +70,10 @@ function getCountdown(startTime: string): string {
 function buildCalendarUrl(session: SessionData): string {
   const formatGCal = (dateStr: string) => {
     const d = new Date(dateStr)
-    return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
+    return d
+      .toISOString()
+      .replace(/[-:]/g, '')
+      .replace(/\.\d{3}/, '')
   }
 
   const start = session.startTime ? formatGCal(session.startTime) : ''
@@ -90,9 +94,20 @@ function buildCalendarUrl(session: SessionData): string {
 
 export default function MySessionsPage() {
   const { isSignedIn, isLoaded } = useUser()
+  const [authTimedOut, setAuthTimedOut] = useState(false)
   const [upcoming, setUpcoming] = useState<SessionData[]>([])
   const [past, setPast] = useState<SessionData[]>([])
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (isLoaded) {
+      setAuthTimedOut(false)
+      return
+    }
+
+    const timer = window.setTimeout(() => setAuthTimedOut(true), 2200)
+    return () => window.clearTimeout(timer)
+  }, [isLoaded])
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return
@@ -113,7 +128,9 @@ export default function MySessionsPage() {
       .finally(() => setLoading(false))
   }, [isLoaded, isSignedIn])
 
-  if (!isLoaded) {
+  const showSignedOut = (isLoaded && !isSignedIn) || (!isLoaded && authTimedOut)
+
+  if (!isLoaded && !authTimedOut) {
     return (
       <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
         <Loader2 className="w-6 h-6 text-[#666] animate-spin" />
@@ -121,13 +138,56 @@ export default function MySessionsPage() {
     )
   }
 
-  if (!isSignedIn) {
+  if (showSignedOut) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-4">
-        <p className="text-[#999] mb-4">Sign in to see your sessions.</p>
-        <Link href="/sign-in" className="px-6 py-3 bg-white text-black font-semibold rounded-full text-sm">
-          Sign In
-        </Link>
+      <div className="min-h-screen bg-[#0D0D0D] px-4 text-white">
+        <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center py-10">
+          <Link
+            href="/"
+            aria-label="SweatBuddies home"
+            className="mb-10 inline-flex min-h-11 items-center"
+          >
+            <LogoWithText size={28} color="#FFFFFF" textColor="#FFFFFF" />
+          </Link>
+          <div className="rounded-2xl border border-white/10 bg-[#151515] p-6 shadow-2xl shadow-black/30">
+            <p className="font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+              Your plans
+            </p>
+            <h1 className="mt-3 text-3xl font-black leading-tight text-white">
+              Save the sessions you are joining.
+            </h1>
+            <p className="mt-3 text-sm leading-6 text-white/58">
+              Sign in to see upcoming plans, calendar links, host details, and the people signals
+              that make showing up easier.
+            </p>
+            <div className="mt-5 grid grid-cols-3 gap-2">
+              {['Upcoming', 'Hosted', 'Past'].map((label) => (
+                <div
+                  key={label}
+                  className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2"
+                >
+                  <p className="truncate font-mono text-[10px] font-black uppercase tracking-wide text-white/60">
+                    {label}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 grid gap-2 sm:grid-cols-2">
+              <Link
+                href="/sign-in"
+                className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 text-sm font-bold text-black transition-colors hover:bg-neutral-200"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/buddy"
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 px-5 text-sm font-bold text-white transition-colors hover:border-[#63FF8F]/60"
+              >
+                Explore events
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
@@ -144,7 +204,9 @@ export default function MySessionsPage() {
             >
               <ArrowLeft className="w-5 h-5 text-[#999999]" />
             </Link>
-            <h1 className="text-sm font-semibold text-white uppercase tracking-wider">My Sessions</h1>
+            <h1 className="text-sm font-semibold text-white uppercase tracking-wider">
+              My Sessions
+            </h1>
           </div>
         </div>
       </header>
@@ -164,7 +226,9 @@ export default function MySessionsPage() {
 
               {upcoming.length === 0 ? (
                 <div className="bg-[#1A1A1A] rounded-2xl border border-[#333333] p-6 text-center">
-                  <p className="text-[#999] text-sm mb-4">No upcoming sessions. Find one to show up to.</p>
+                  <p className="text-[#999] text-sm mb-4">
+                    No upcoming sessions. Find one to show up to.
+                  </p>
                   <Link
                     href="/buddy"
                     className="inline-block px-5 py-2.5 bg-white text-black font-semibold rounded-full text-sm"
@@ -176,10 +240,15 @@ export default function MySessionsPage() {
                 <div className="space-y-3">
                   {upcoming.map((session) => {
                     const emoji = EMOJI_MAP[session.categorySlug ?? 'other'] ?? '🏃'
-                    const grad = CATEGORY_GRADIENTS[session.categorySlug ?? 'other'] ?? CATEGORY_GRADIENTS.other
+                    const grad =
+                      CATEGORY_GRADIENTS[session.categorySlug ?? 'other'] ??
+                      CATEGORY_GRADIENTS.other
 
                     return (
-                      <div key={session.id} className="bg-[#1A1A1A] rounded-2xl border border-[#333333] overflow-hidden">
+                      <div
+                        key={session.id}
+                        className="bg-[#1A1A1A] rounded-2xl border border-[#333333] overflow-hidden"
+                      >
                         {/* Image / Gradient fallback */}
                         <Link href={`/activities/${session.id}`}>
                           {session.imageUrl ? (
@@ -199,7 +268,9 @@ export default function MySessionsPage() {
                           ) : (
                             <div
                               className="h-36 w-full flex flex-col items-center justify-center relative"
-                              style={{ background: `linear-gradient(145deg, ${grad[0]}, ${grad[1]})` }}
+                              style={{
+                                background: `linear-gradient(145deg, ${grad[0]}, ${grad[1]})`,
+                              }}
                             >
                               <span className="text-4xl drop-shadow-lg mb-1">{emoji}</span>
                               <p className="text-xs font-bold text-white/80 uppercase tracking-wider line-clamp-1 px-4">
@@ -216,7 +287,9 @@ export default function MySessionsPage() {
 
                         <div className="p-4">
                           <Link href={`/activities/${session.id}`}>
-                            <h3 className="text-white font-semibold text-sm mb-1 line-clamp-1">{session.title}</h3>
+                            <h3 className="text-white font-semibold text-sm mb-1 line-clamp-1">
+                              {session.title}
+                            </h3>
                           </Link>
 
                           {/* Countdown */}
@@ -237,7 +310,9 @@ export default function MySessionsPage() {
                           {(session.address || session.city) && (
                             <p className="text-xs text-[#666] flex items-center gap-1 mb-3">
                               <MapPin className="w-3 h-3 flex-shrink-0" />
-                              <span className="line-clamp-1">{session.address || session.city}</span>
+                              <span className="line-clamp-1">
+                                {session.address || session.city}
+                              </span>
                             </p>
                           )}
 
@@ -286,7 +361,9 @@ export default function MySessionsPage() {
                     <div key={session.id} className="px-4 py-3.5 flex items-center justify-between">
                       <div className="flex-1 min-w-0 mr-3">
                         <Link href={`/activities/${session.id}`}>
-                          <h3 className="text-white text-sm font-medium line-clamp-1">{session.title}</h3>
+                          <h3 className="text-white text-sm font-medium line-clamp-1">
+                            {session.title}
+                          </h3>
                         </Link>
                         <p className="text-xs text-[#666] mt-0.5">
                           {session.startTime

@@ -20,9 +20,9 @@ export function CreateChoiceSheet({ open, onClose, onHostSession }: CreateChoice
             <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
               Add to the map
             </p>
-            <h2 className="mt-1 text-xl font-bold leading-tight">What do you want to add?</h2>
+            <h2 className="mt-1 text-xl font-bold leading-tight">What can people show up to?</h2>
             <p className="mt-1 text-xs leading-5 text-[#888888]">
-              Publish a specific plan people can join, or send us a host/source page to review.
+              Start a specific plan people can join, or send us a crew/source page to review.
             </p>
           </div>
           <button
@@ -45,7 +45,7 @@ export function CreateChoiceSheet({ open, onClose, onHostSession }: CreateChoice
               <CalendarPlus className="h-5 w-5" />
             </span>
             <span className="min-w-0 pr-4">
-              <span className="block text-sm font-black uppercase tracking-wide">Host an event</span>
+              <span className="block text-sm font-black uppercase tracking-wide">Start a plan</span>
               <span className="mt-1 block text-xs font-semibold leading-5 text-black/58">
                 Publish a run, class, game, or wellness plan people can join.
               </span>
@@ -61,7 +61,7 @@ export function CreateChoiceSheet({ open, onClose, onHostSession }: CreateChoice
               <Users className="h-5 w-5" />
             </span>
             <span className="min-w-0 pr-4">
-              <span className="block text-sm font-black uppercase tracking-wide text-white">Submit a source</span>
+              <span className="block text-sm font-black uppercase tracking-wide text-white">Suggest a crew</span>
               <span className="mt-1 block text-xs font-semibold leading-5 text-[#888888]">
                 Send us the official link so we can review and map it.
               </span>

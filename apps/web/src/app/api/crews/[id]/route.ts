@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import type { Prisma } from '@prisma/client'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 
@@ -98,8 +99,7 @@ export async function PATCH(
     const body = await req.json()
     const { name, description, imageUrl, maxMembers } = body
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: any = {}
+    const data: Prisma.CrewUpdateInput = {}
     if (name !== undefined) {
       if (typeof name !== 'string' || name.trim().length === 0) {
         return NextResponse.json({ error: 'Name cannot be empty' }, { status: 400 })

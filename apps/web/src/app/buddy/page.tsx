@@ -20,10 +20,13 @@ import {
   Users,
   ShieldCheck,
   UserPlus,
+  ExternalLink,
+  Star,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 import { LogoWithText } from '@/components/logo'
+import { CityGuideTabs } from '@/components/city-guide/CityGuideTabs'
 import { ACTIVITY_TYPES, getActivityEmoji } from '@/lib/activity-types'
 import { CreateSessionSheet } from '@/components/CreateSessionSheet'
 import { CreateChoiceSheet } from '@/components/CreateChoiceSheet'
@@ -36,12 +39,14 @@ import {
 import {
   CITY_LOCATION_CONFIGS,
   DEFAULT_CITY_LOCATION_CONFIG,
+  findCityLocationConfig,
   getCityLocationConfig,
   getCityLocationConfigFromText,
   getNearestCityLocationConfig,
   type CityLocationConfig,
   type CityNeighborhood,
 } from '@/lib/location-config'
+import { compareByShowUpConfidence, getShowUpConfidence } from '@/lib/show-up-confidence'
 
 interface Host {
   id: string
@@ -82,11 +87,19 @@ interface Session {
   whatToBring: string | null
   requiresApproval: boolean
   imageUrl: string | null
+  resolvedImageUrl?: string | null
+  imageSourceType?: string | null
+  imageSourceLabel?: string | null
+  imageAttributionName?: string | null
+  imageAttributionUrl?: string | null
+  imageSourceUrl?: string | null
+  matchedFitnessPlaceId?: string | null
   host: Host
   community?: {
     id: string
     name: string
     logoImage: string | null
+    coverImage?: string | null
     slug: string
     communityLink?: string | null
     websiteUrl?: string | null
@@ -110,6 +123,37 @@ interface Session {
   paynowQrImageUrl?: string | null
   paynowName?: string | null
   paynowPhoneNumber?: string | null
+}
+
+interface MapPlace {
+  id: string
+  slug: string
+  name: string
+  description: string | null
+  placeType: string
+  area: string | null
+  address: string | null
+  latitude: number | null
+  longitude: number | null
+  imageUrl: string | null
+  photos: string[]
+  activities: string[]
+  vibeTags: string[]
+  communityTypes: string[]
+  bestFor: string | null
+  beginnerFriendly: boolean
+  socialScore: number
+  googleRating: number | null
+  googleReviewCount: number
+  googleMapsUrl: string | null
+  trustScore: number
+  photoQualityScore: number
+  reviewSentimentScore: number
+  isFeatured: boolean
+  lastVerifiedAt: string | null
+  city: { name: string; slug: string } | null
+  communityLinkCount: number
+  reviewCount: number
 }
 
 // ─── Time helpers ─────────────────────────────────────────────────────────────
@@ -162,20 +206,35 @@ function getRelativeTime(startTime: string): string {
 }
 
 function getSocialDiscoveryScore(session: Session): number {
-  const hasVerifiedSource = session.community ? 6 : 0
-  const attendeeScore = Math.min(session.attendeeCount, 12) * 5
-  const soloScore = Math.min(session.goingSoloCount ?? 0, 6) * 4
-  const beginnerScore = session.fitnessLevel === 'ALL' ? 4 : 0
-  const officialLinkScore = session.officialJoinUrl ? 2 : 0
-
-  return hasVerifiedSource + attendeeScore + soloScore + beginnerScore + officialLinkScore
+  return getShowUpConfidence(session).score
 }
 
 function sortSessionsBySocialMomentum(sessions: Session[]): Session[] {
   return sessions.slice().sort((a, b) => {
     const scoreDelta = getSocialDiscoveryScore(b) - getSocialDiscoveryScore(a)
     if (scoreDelta !== 0) return scoreDelta
-    return new Date(a.startTime ?? 0).getTime() - new Date(b.startTime ?? 0).getTime()
+    return compareByShowUpConfidence(a, b)
+  })
+}
+
+function getMapPlaceSupportScore(place: MapPlace): number {
+  return (
+    place.trustScore +
+    place.socialScore +
+    place.communityLinkCount * 12 +
+    place.reviewCount * 3 +
+    Math.min(place.googleReviewCount, 200) / 10 +
+    (place.beginnerFriendly ? 10 : 0) +
+    (place.isFeatured ? 18 : 0) +
+    (place.photoQualityScore >= 70 ? 6 : 0)
+  )
+}
+
+function sortMapPlacesBySupport(places: MapPlace[]): MapPlace[] {
+  return places.slice().sort((a, b) => {
+    const scoreDelta = getMapPlaceSupportScore(b) - getMapPlaceSupportScore(a)
+    if (scoreDelta !== 0) return scoreDelta
+    return a.name.localeCompare(b.name)
   })
 }
 
@@ -280,14 +339,7 @@ function EventDiscoveryBand({
 }) {
   const topSessions = sessions
     .slice()
-    .sort((a, b) => {
-      const aScore =
-        a.attendeeCount * 4 + (a.goingSoloCount ?? 0) * 2 + (a.fitnessLevel === 'ALL' ? 2 : 0)
-      const bScore =
-        b.attendeeCount * 4 + (b.goingSoloCount ?? 0) * 2 + (b.fitnessLevel === 'ALL' ? 2 : 0)
-      if (bScore !== aScore) return bScore - aScore
-      return new Date(a.startTime ?? 0).getTime() - new Date(b.startTime ?? 0).getTime()
-    })
+    .sort(compareByShowUpConfidence)
     .slice(0, 4)
   const hasCrews = crews.length > 0
 
@@ -299,25 +351,25 @@ function EventDiscoveryBand({
             Events near {cityName}
           </p>
           <h1 className="mt-1 text-xl font-bold leading-tight text-white">
-            Find a fitness plan with people already going
+            Find a plan you can show up to solo
           </h1>
           <p className="mt-1 text-xs leading-relaxed text-white/58">
             {activeTypeLabel === 'All types'
-              ? 'Browse the next sessions first. See who is going, who is showing up solo, and which hosts are verified.'
-              : `${activeTypeLabel} sessions with people signals before you decide where to show up.`}
+              ? 'Browse sessions ranked by show-up confidence: clear plan, easy join path, solo-friendly signals, and verified hosts.'
+              : `${activeTypeLabel} sessions ranked by show-up confidence before you decide where to go.`}
           </p>
         </div>
         <button
           onClick={onCreate}
           className="min-h-11 flex-shrink-0 rounded-full bg-[#63FF8F] px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider text-black transition-colors hover:bg-[#83FFA6]"
         >
-          Create
+          Start plan
         </button>
       </div>
 
       <div className="mt-4 hidden grid-cols-3 gap-2 sm:grid">
         {[
-          { value: sessionCount.toString(), label: 'events live' },
+          { value: sessionCount.toString(), label: 'plans live' },
           { value: peopleCount.toString(), label: 'people going' },
           {
             value: goingSoloCount > 0 ? goingSoloCount.toString() : beginnerCount.toString(),
@@ -399,7 +451,7 @@ function EventPulseCard({
           fill
           sizes="286px"
           className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
-          unoptimized={Boolean(session.imageUrl)}
+          unoptimized={imageSrc.startsWith('/api/') || imageSrc.startsWith('http')}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/10" />
         <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
@@ -411,6 +463,11 @@ function EventPulseCard({
         <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-white backdrop-blur">
           {timeLabel}
         </span>
+        {session.imageSourceLabel ? (
+          <span className="absolute bottom-3 right-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/80 backdrop-blur">
+            {session.imageSourceLabel}
+          </span>
+        ) : null}
       </Link>
 
       <div className="p-3.5">
@@ -557,13 +614,50 @@ const SESSION_LISTING_IMAGES: Record<string, string> = {
   other: '/images/hero/run-club.jpg',
 }
 
-function getSessionListingImage(session: Pick<Session, 'imageUrl' | 'categorySlug'>): string {
+function getSessionListingImage(
+  session: Pick<Session, 'imageUrl' | 'resolvedImageUrl' | 'categorySlug'>,
+): string {
   const category = (session.categorySlug ?? 'other').toLowerCase()
-  return session.imageUrl || SESSION_LISTING_IMAGES[category] || SESSION_LISTING_IMAGES.other
+  return (
+    session.resolvedImageUrl ||
+    session.imageUrl ||
+    SESSION_LISTING_IMAGES[category] ||
+    SESSION_LISTING_IMAGES.other
+  )
 }
 
 function pinEmoji(slug: string | null | undefined) {
   return getActivityEmoji(slug, '🏅')
+}
+
+function formatMapPlaceType(value: string | null | undefined) {
+  if (!value) return 'Place'
+  const label = value.toLowerCase().replace(/_/g, ' ')
+  return label.charAt(0).toUpperCase() + label.slice(1)
+}
+
+function getPlaceMarkerIcon(place: Pick<MapPlace, 'placeType' | 'activities'>) {
+  const activities = place.activities.map((activity) => activity.toLowerCase())
+  if (activities.some((activity) => activity.includes('run'))) return '🏃'
+  if (activities.some((activity) => activity.includes('yoga') || activity.includes('pilates'))) return '🧘'
+  if (activities.some((activity) => activity.includes('pickleball') || activity.includes('tennis'))) return '🎾'
+  if (activities.some((activity) => activity.includes('climb'))) return '🧗'
+  if (activities.some((activity) => activity.includes('cycle'))) return '🚴'
+
+  switch (place.placeType) {
+    case 'GYM':
+      return '💪'
+    case 'STUDIO':
+      return '🧘'
+    case 'OUTDOOR_FITNESS':
+      return '🏃'
+    case 'SPORTS_FACILITY':
+      return '🏟️'
+    case 'WELLNESS':
+      return '♨️'
+    default:
+      return '✦'
+  }
 }
 
 // ─── Fitness / type filters ───────────────────────────────────────────────────
@@ -603,6 +697,56 @@ const STARTER_SESSION_IDEAS = [
   { label: 'Pickleball hit', type: 'pickleball', note: 'Find a court and fill spots' },
 ]
 
+type DiscoveryMode = 'nearby' | 'city'
+type LocationStatus = 'detecting' | 'granted' | 'stored' | 'denied' | 'unsupported' | 'city'
+
+const NEARBY_FILTER_VALUE = 'nearby'
+const LAST_LOCATION_STORAGE_KEY = 'sb_last_discovery_location'
+
+function getBrowserTimezone() {
+  if (typeof Intl === 'undefined') return DEFAULT_CITY_LOCATION_CONFIG.timezone
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || DEFAULT_CITY_LOCATION_CONFIG.timezone
+}
+
+function readStoredDiscoveryLocation(): { lat: number; lng: number } | null {
+  if (typeof window === 'undefined') return null
+
+  try {
+    const raw = window.localStorage.getItem(LAST_LOCATION_STORAGE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as Partial<{ lat: number; lng: number; savedAt: number }>
+    const savedAt = typeof parsed.savedAt === 'number' ? parsed.savedAt : 0
+    const isFresh = Date.now() - savedAt < 1000 * 60 * 60 * 24 * 14
+
+    if (
+      isFresh &&
+      typeof parsed.lat === 'number' &&
+      typeof parsed.lng === 'number' &&
+      Number.isFinite(parsed.lat) &&
+      Number.isFinite(parsed.lng)
+    ) {
+      return { lat: parsed.lat, lng: parsed.lng }
+    }
+  } catch {
+    return null
+  }
+
+  return null
+}
+
+function storeDiscoveryLocation(location: { lat: number; lng: number }) {
+  if (typeof window === 'undefined') return
+
+  try {
+    window.localStorage.setItem(
+      LAST_LOCATION_STORAGE_KEY,
+      JSON.stringify({ ...location, savedAt: Date.now() }),
+    )
+  } catch {
+    /* ignore storage failures */
+  }
+}
+
 export default function BuddyPage() {
   return (
     <Suspense
@@ -623,10 +767,17 @@ function BuddyPageInner() {
   const { isLoaded: authLoaded, isSignedIn } = useAuth()
   const [hasMounted, setHasMounted] = useState(false)
   const requestedCitySlug = searchParams.get('city')
+  const explicitCityConfig = useMemo(
+    () => findCityLocationConfig(requestedCitySlug),
+    [requestedCitySlug],
+  )
   const initialCityConfig = useMemo(
     () => getCityLocationConfig(requestedCitySlug),
     [requestedCitySlug],
   )
+  const initialStoredLocation = useMemo(() => readStoredDiscoveryLocation(), [])
+  const shouldStartInCityMode =
+    Boolean(explicitCityConfig) && searchParams.get('location') !== NEARBY_FILTER_VALUE
   const initialTypeFilter = searchParams.get('type') ?? searchParams.get('cat') ?? ''
   const initialPricingFilter = searchParams.get('pricing') ?? ''
   const initialLevelFilter = searchParams.get('fitnessLevel') ?? searchParams.get('level') ?? ''
@@ -635,15 +786,27 @@ function BuddyPageInner() {
   const initialCreateMode = searchParams.get('create')
 
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(
-    initialCityConfig.center,
+    shouldStartInCityMode ? initialCityConfig.center : initialStoredLocation,
   )
   const [cityConfig, setCityConfig] = useState<CityLocationConfig>(initialCityConfig)
+  const [discoveryMode, setDiscoveryMode] = useState<DiscoveryMode>(
+    shouldStartInCityMode ? 'city' : 'nearby',
+  )
+  const [locationStatus, setLocationStatus] = useState<LocationStatus>(
+    shouldStartInCityMode ? 'city' : initialStoredLocation ? 'stored' : 'detecting',
+  )
+  const [locationReady, setLocationReady] = useState(
+    shouldStartInCityMode || Boolean(initialStoredLocation),
+  )
+  const [userTimezone] = useState(getBrowserTimezone)
   const [sessions, setSessions] = useState<Session[]>([])
+  const [places, setPlaces] = useState<MapPlace[]>([])
   const [loading, setLoading] = useState(true)
+  const [placesLoading, setPlacesLoading] = useState(true)
   const [nextCursor, setNextCursor] = useState<string | null>(null)
   const [loadingMore, setLoadingMore] = useState(false)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
-  const profileCityLockedRef = useRef(Boolean(requestedCitySlug))
+  const profileCityLockedRef = useRef(shouldStartInCityMode)
 
   const [typeFilter, setTypeFilter] = useState(() =>
     TYPE_FILTERS.some((filter) => filter.value === initialTypeFilter) ? initialTypeFilter : '',
@@ -658,11 +821,15 @@ function BuddyPageInner() {
   )
   const [dateFilter, setDateFilter] = useState(() => {
     if (/^\d{4}-\d{2}-\d{2}$/.test(initialDateFilter)) return initialDateFilter
-    return initialViewMode === 'map' ? getLocalDateString(initialCityConfig.timezone) : ''
+    return initialViewMode === 'map'
+      ? getLocalDateString(shouldStartInCityMode ? initialCityConfig.timezone : getBrowserTimezone())
+      : ''
   })
   const [showCreateSheet, setShowCreateSheet] = useState(false)
   const [showCreateMenu, setShowCreateMenu] = useState(false)
   const [selectedPin, setSelectedPin] = useState<Session | null>(null)
+  const [selectedPlace, setSelectedPlace] = useState<MapPlace | null>(null)
+  const [selectedMapPinId, setSelectedMapPinId] = useState<string | null>(null)
   const [feedbackSession, setFeedbackSession] = useState<{
     id: string
     title: string
@@ -764,10 +931,25 @@ function BuddyPageInner() {
     [sessions],
   )
 
-  const todayDateString = useMemo(
-    () => getLocalDateString(cityConfig.timezone),
-    [cityConfig.timezone],
-  )
+  const activeTimezone = discoveryMode === 'nearby' ? userTimezone : cityConfig.timezone
+  const activeLocationLabel =
+    discoveryMode === 'nearby'
+      ? locationStatus === 'detecting'
+        ? 'Finding location'
+        : locationStatus === 'stored'
+        ? 'Near last location'
+        : 'Near me'
+      : cityConfig.name
+  const locationFilterValue = discoveryMode === 'nearby' ? NEARBY_FILTER_VALUE : cityConfig.slug
+  const locationFilterOptions = [
+    { value: NEARBY_FILTER_VALUE, label: 'Near me' },
+    ...CITY_LOCATION_CONFIGS.map((city) => ({
+      value: city.slug,
+      label: city.name,
+    })),
+  ]
+
+  const todayDateString = useMemo(() => getLocalDateString(activeTimezone), [activeTimezone])
 
   const activeDateLabel = dateFilter
     ? dateFilter === todayDateString
@@ -779,7 +961,7 @@ function BuddyPageInner() {
             weekday: 'short',
             month: 'short',
             day: 'numeric',
-            timeZone: cityConfig.timezone,
+            timeZone: activeTimezone,
           })
         })()
     : 'Upcoming'
@@ -789,9 +971,43 @@ function BuddyPageInner() {
     [sessions],
   )
 
+  const placeById = useMemo(
+    () => new globalThis.Map(places.map((place) => [place.id, place])),
+    [places],
+  )
+
+  const supportPlaces = useMemo(
+    () => sortMapPlacesBySupport(places).slice(0, sessions.length > 0 ? 18 : 36),
+    [places, sessions.length],
+  )
+
   const mapPins = useMemo<SessionVectorMapPin[]>(
-    () =>
-      sessions.map((session) => {
+    () => {
+      const placePins = supportPlaces.map((place) => {
+        const typeLabel = formatMapPlaceType(place.placeType)
+        const ratingLabel = place.googleRating
+          ? `${place.googleRating.toFixed(1)} · ${place.googleReviewCount} reviews`
+          : `Trust ${place.trustScore}`
+
+        return {
+          id: `place:${place.id}`,
+          kind: 'place' as const,
+          markerVariant: place.isFeatured ? ('featured-place' as const) : ('place' as const),
+          title: place.name,
+          latitude: place.latitude,
+          longitude: place.longitude,
+          city: place.city?.name ?? activeLocationLabel,
+          primaryLabel: typeLabel,
+          activityLabel: getPlaceMarkerIcon(place),
+          previewTitle: place.name,
+          previewSubtitle: place.bestFor || place.description || `${typeLabel} in ${place.area || activeLocationLabel}`,
+          previewMeta: `${ratingLabel} · ${place.area || activeLocationLabel}`,
+          previewImage: place.imageUrl,
+          previewCtaLabel: 'Open place',
+        }
+      })
+
+      const sessionPins = sessions.map((session) => {
         const activityLabel = session.categorySlug
           ? session.categorySlug.replace(/[-_]/g, ' ')
           : 'session'
@@ -804,7 +1020,9 @@ function BuddyPageInner() {
         const location = session.address?.split(',')[0] || session.city
 
         return {
-          id: session.id,
+          id: `session:${session.id}`,
+          kind: 'session' as const,
+          markerVariant: 'session' as const,
           title: session.title,
           latitude: session.latitude,
           longitude: session.longitude,
@@ -816,12 +1034,17 @@ function BuddyPageInner() {
           previewSubtitle: session.community ? `Known plan: ${session.title}` : session.title,
           previewMeta: `${session.startTime ? getRelativeTime(session.startTime) : 'Time TBA'} · ${location}`,
           previewImage:
+            session.resolvedImageUrl ||
             session.imageUrl ||
+            session.community?.coverImage ||
             session.community?.logoImage ||
             (hostIsReal ? session.host.imageUrl : null),
         }
-      }),
-    [sessions],
+      })
+
+      return [...placePins, ...sessionPins]
+    },
+    [activeLocationLabel, sessions, supportPlaces],
   )
 
   const activeTypeLabel = TYPE_FILTERS.find((type) => type.value === typeFilter)?.label ?? 'fitness'
@@ -880,13 +1103,88 @@ function BuddyPageInner() {
     })
   }
 
+  const requestCurrentLocation = useCallback(() => {
+    profileCityLockedRef.current = false
+    setDiscoveryMode('nearby')
+    setLocationStatus('detecting')
+    setLocationReady(false)
+    setNeighborhoodFilter(null)
+    setSelectedPin(null)
+    setSelectedPlace(null)
+    setSelectedMapPinId(null)
+
+    if (!navigator.geolocation) {
+      setDiscoveryMode('city')
+      setLocationStatus('unsupported')
+      setCityConfig(DEFAULT_CITY_LOCATION_CONFIG)
+      setUserLocation(null)
+      setLocationReady(true)
+      return
+    }
+
+    let settled = false
+    const settle = () => {
+      if (!settled) {
+        settled = true
+        setLocationReady(true)
+      }
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        if (profileCityLockedRef.current) return
+        const nextLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude }
+        setUserLocation(nextLocation)
+        storeDiscoveryLocation(nextLocation)
+        setLocationStatus('granted')
+        settle()
+      },
+      () => {
+        setDiscoveryMode('city')
+        setLocationStatus('denied')
+        setCityConfig(DEFAULT_CITY_LOCATION_CONFIG)
+        setUserLocation(null)
+        settle()
+      },
+      { timeout: 3000, maximumAge: 60000 },
+    )
+
+    const timer = setTimeout(() => {
+      if (profileCityLockedRef.current) return
+      if (!settled) {
+        setDiscoveryMode('city')
+        setLocationStatus('denied')
+        setCityConfig(DEFAULT_CITY_LOCATION_CONFIG)
+        setUserLocation(null)
+      }
+      settle()
+    }, 3000)
+
+    return () => clearTimeout(timer)
+  }, [])
+
   function updateCityFilter(value: string) {
+    if (value === NEARBY_FILTER_VALUE) {
+      requestCurrentLocation()
+      trackBrowserEvent('buddy_filter_used', {
+        filter: 'city',
+        value: NEARBY_FILTER_VALUE,
+        city: NEARBY_FILTER_VALUE,
+      })
+      return
+    }
+
     const nextCity = getCityLocationConfig(value)
     profileCityLockedRef.current = true
+    setDiscoveryMode('city')
+    setLocationStatus('city')
+    setLocationReady(true)
     setCityConfig(nextCity)
     setUserLocation(nextCity.center)
     setNeighborhoodFilter(null)
     setSelectedPin(null)
+    setSelectedPlace(null)
+    setSelectedMapPinId(null)
     trackBrowserEvent('buddy_filter_used', {
       filter: 'city',
       value: nextCity.slug,
@@ -910,8 +1208,10 @@ function BuddyPageInner() {
   }
 
   const handleMapPinClick = useCallback(
-    (session: Session | null) => {
+    (session: Session | null, pinId?: string | null) => {
       setSelectedPin(session)
+      setSelectedPlace(null)
+      setSelectedMapPinId(session ? pinId ?? `session:${session.id}` : null)
       if (!session) return
 
       trackBrowserEvent('buddy_map_pin_clicked', {
@@ -926,9 +1226,35 @@ function BuddyPageInner() {
 
   const handleVectorMapPinClick = useCallback(
     (pin: SessionVectorMapPin | null) => {
-      handleMapPinClick(pin ? (sessionById.get(pin.id) ?? null) : null)
+      if (!pin) {
+        handleMapPinClick(null)
+        setSelectedPlace(null)
+        setSelectedMapPinId(null)
+        return
+      }
+
+      if (pin.kind === 'place' || pin.id.startsWith('place:')) {
+        const placeId = pin.id.replace(/^place:/, '')
+        const place = placeById.get(placeId) ?? null
+        setSelectedPin(null)
+        setSelectedPlace(place)
+        setSelectedMapPinId(place ? pin.id : null)
+        if (place) {
+          trackBrowserEvent('buddy_map_pin_clicked', {
+            placeId: place.id,
+            placeSlug: place.slug,
+            category: place.placeType,
+            city: cityConfig.slug,
+            viewMode,
+          })
+        }
+        return
+      }
+
+      const sessionId = pin.id.replace(/^session:/, '')
+      handleMapPinClick(sessionById.get(sessionId) ?? null, pin.id)
     },
-    [handleMapPinClick, sessionById],
+    [cityConfig.slug, handleMapPinClick, placeById, sessionById, viewMode],
   )
 
   function updateSessionAfterRsvp(sessionId: string, updates: Partial<Session>) {
@@ -953,7 +1279,8 @@ function BuddyPageInner() {
       )
     }
 
-    const redirectUrl = `/buddy?city=${cityConfig.slug}`
+    const redirectUrl =
+      discoveryMode === 'nearby' ? '/buddy?location=nearby' : `/buddy?city=${cityConfig.slug}`
     router.push(`/sign-in?intent=rsvp&redirect_url=${encodeURIComponent(redirectUrl)}`)
   }
 
@@ -1167,6 +1494,8 @@ function BuddyPageInner() {
     setViewMode(next)
     if (nextDateFilter !== dateFilter) setDateFilter(nextDateFilter)
     setSelectedPin(null)
+    setSelectedPlace(null)
+    setSelectedMapPinId(null)
 
     const params = new URLSearchParams(searchParams.toString())
     if (next === 'map') {
@@ -1202,14 +1531,14 @@ function BuddyPageInner() {
         const effectiveLocation = neighborhoodFilter
           ? { lat: neighborhoodFilter.lat, lng: neighborhoodFilter.lng }
           : userLocation
+        const isCityScoped = discoveryMode === 'city' || Boolean(neighborhoodFilter)
         const activeCityConfig =
-          profileCityLockedRef.current || neighborhoodFilter
+          isCityScoped || !effectiveLocation
             ? cityConfig
-            : effectiveLocation
-              ? getNearestCityLocationConfig(effectiveLocation.lat, effectiveLocation.lng)
-              : cityConfig
-        params.set('city', activeCityConfig.slug)
-        params.set('timezone', activeCityConfig.timezone)
+            : getNearestCityLocationConfig(effectiveLocation.lat, effectiveLocation.lng)
+        if (isCityScoped) params.set('city', activeCityConfig.slug)
+        else params.set('location', NEARBY_FILTER_VALUE)
+        params.set('timezone', isCityScoped ? activeCityConfig.timezone : activeTimezone)
         if (effectiveLocation) {
           params.set('lat', String(effectiveLocation.lat))
           params.set('lng', String(effectiveLocation.lng))
@@ -1245,10 +1574,45 @@ function BuddyPageInner() {
       userLocation,
       neighborhoodFilter,
       cityConfig,
+      discoveryMode,
+      activeTimezone,
     ],
   )
 
-  const [locationReady, setLocationReady] = useState(true)
+  const fetchPlaces = useCallback(async () => {
+    setPlacesLoading(true)
+
+    try {
+      const params = new URLSearchParams()
+      if (typeFilter) params.set('type', typeFilter)
+      const effectiveLocation = neighborhoodFilter
+        ? { lat: neighborhoodFilter.lat, lng: neighborhoodFilter.lng }
+        : userLocation
+      const isCityScoped = discoveryMode === 'city' || Boolean(neighborhoodFilter)
+      const activeCityConfig =
+        isCityScoped || !effectiveLocation
+          ? cityConfig
+          : getNearestCityLocationConfig(effectiveLocation.lat, effectiveLocation.lng)
+      if (isCityScoped) params.set('city', activeCityConfig.slug)
+      else params.set('location', NEARBY_FILTER_VALUE)
+      if (effectiveLocation) {
+        params.set('lat', String(effectiveLocation.lat))
+        params.set('lng', String(effectiveLocation.lng))
+      }
+      if (neighborhoodFilter) {
+        params.set('radius', String(neighborhoodFilter.radius))
+      }
+
+      const res = await fetch(`/api/map/places?${params.toString()}`)
+      if (!res.ok) throw new Error('Failed to fetch places')
+      const data = await res.json()
+      setPlaces(data.data?.places ?? [])
+    } catch {
+      setPlaces([])
+    } finally {
+      setPlacesLoading(false)
+    }
+  }, [cityConfig, discoveryMode, neighborhoodFilter, typeFilter, userLocation])
 
   useEffect(() => {
     if (!userLocation) return
@@ -1261,7 +1625,7 @@ function BuddyPageInner() {
     setNeighborhoodFilter(null)
   }, [cityConfig.slug])
 
-  // Get user location on mount — resolve quickly with timeout fallback
+  // Get user location on mount. Explicit city URLs keep their city-scoped behavior.
   useEffect(() => {
     if (profileCityLockedRef.current) {
       setUserLocation(initialCityConfig.center)
@@ -1269,44 +1633,10 @@ function BuddyPageInner() {
       return
     }
 
-    if (!navigator.geolocation) {
-      setUserLocation(DEFAULT_CITY_LOCATION_CONFIG.center)
-      setLocationReady(true)
-      return
-    }
+    return requestCurrentLocation()
+  }, [initialCityConfig.center, requestCurrentLocation])
 
-    let settled = false
-    const settle = () => {
-      if (!settled) {
-        settled = true
-        setLocationReady(true)
-      }
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        if (profileCityLockedRef.current) return
-        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
-        settle()
-      },
-      () => {
-        if (profileCityLockedRef.current) return
-        setUserLocation(DEFAULT_CITY_LOCATION_CONFIG.center)
-        settle()
-      },
-      { timeout: 3000, maximumAge: 60000 },
-    )
-
-    // Fallback: don't wait longer than 3s for GPS.
-    const timer = setTimeout(() => {
-      if (profileCityLockedRef.current) return
-      if (!settled) setUserLocation(DEFAULT_CITY_LOCATION_CONFIG.center)
-      settle()
-    }, 3000)
-    return () => clearTimeout(timer)
-  }, [initialCityConfig.center])
-
-  // Load user context after browser location resolves. Profile location wins when GPS is unavailable or stale.
+  // Load user context after browser location resolves. Profile location is only a fallback.
   useEffect(() => {
     if (!locationReady) return
     if (!authLoaded) return
@@ -1328,8 +1658,18 @@ function BuddyPageInner() {
         if (data?.user?.id) setCurrentUserId(data.user.id)
 
         const profileCity = getCityLocationConfigFromText(data?.user?.location)
-        if (profileCity && !profileCityLockedRef.current) {
+        if (
+          profileCity &&
+          !profileCityLockedRef.current &&
+          (discoveryMode === 'nearby' ||
+            locationStatus === 'denied' ||
+            locationStatus === 'unsupported') &&
+          locationStatus !== 'granted' &&
+          !userLocation
+        ) {
           profileCityLockedRef.current = true
+          setDiscoveryMode('city')
+          setLocationStatus('city')
           setCityConfig(profileCity)
           setUserLocation(profileCity.center)
         }
@@ -1338,7 +1678,7 @@ function BuddyPageInner() {
       }
     }
     loadInitialData()
-  }, [authLoaded, isSignedIn, locationReady, router])
+  }, [authLoaded, discoveryMode, isSignedIn, locationReady, locationStatus, router, userLocation])
 
   // Check for pending feedback + bio prompt on past sessions
   useEffect(() => {
@@ -1374,7 +1714,11 @@ function BuddyPageInner() {
   // Refetch when filters change
   useEffect(() => {
     if (!locationReady) return
+    if (!profileLocationReady) return
     setSessions([])
+    setSelectedPin(null)
+    setSelectedPlace(null)
+    setSelectedMapPinId(null)
     fetchSessions()
   }, [
     locationReady,
@@ -1386,6 +1730,13 @@ function BuddyPageInner() {
     neighborhoodFilter,
     fetchSessions,
   ])
+
+  useEffect(() => {
+    if (!locationReady) return
+    if (!profileLocationReady) return
+    setPlaces([])
+    fetchPlaces()
+  }, [fetchPlaces, locationReady, profileLocationReady, neighborhoodFilter, typeFilter])
 
   // Debounced search
   useEffect(() => {
@@ -1519,7 +1870,7 @@ function BuddyPageInner() {
               {(() => {
                 const days = []
                 for (let i = 0; i < 7; i++) {
-                  const dateStr = getLocalDateString(cityConfig.timezone, i)
+                  const dateStr = getLocalDateString(activeTimezone, i)
                   const d = new Date(`${dateStr}T00:00:00`)
                   const dayLabel =
                     i === 0
@@ -1528,11 +1879,11 @@ function BuddyPageInner() {
                         ? 'Tmr'
                         : d.toLocaleDateString('en-US', {
                             weekday: 'short',
-                            timeZone: cityConfig.timezone,
+                            timeZone: activeTimezone,
                           })
                   const dateNum = d.toLocaleDateString('en-US', {
                     day: 'numeric',
-                    timeZone: cityConfig.timezone,
+                    timeZone: activeTimezone,
                   })
                   days.push(
                     <button
@@ -1593,20 +1944,17 @@ function BuddyPageInner() {
             <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-lg border border-white/[0.12] bg-[#171717] px-3 text-[12px] font-black uppercase tracking-wide text-white transition-colors group-open:border-[#63FF8F] [&::-webkit-details-marker]:hidden">
               <span>Filters</span>
               <span className="min-w-0 truncate text-right text-[10px] text-[#999999]">
-                {[neighborhoodFilter?.name ?? cityConfig.name, activeTypeLabel, activePriceLabel]
+                {[neighborhoodFilter?.name ?? activeLocationLabel, activeTypeLabel, activePriceLabel]
                   .filter(Boolean)
                   .join(' / ')}
               </span>
             </summary>
             <div className="mt-2 grid gap-3 rounded-xl border border-white/[0.08] bg-black/25 p-3">
               <FilterOptionGroup
-                label="City"
-                value={cityConfig.slug}
+                label="Location"
+                value={locationFilterValue}
                 onChange={updateCityFilter}
-                options={CITY_LOCATION_CONFIGS.map((city) => ({
-                  value: city.slug,
-                  label: city.name,
-                }))}
+                options={locationFilterOptions}
               />
               <FilterOptionGroup
                 label="Area"
@@ -1641,14 +1989,11 @@ function BuddyPageInner() {
           {/* Tablet and desktop dropdown filters */}
           <div className="hidden grid-cols-5 gap-1.5 sm:grid">
             <FilterMenu
-              label="City"
-              displayValue={cityConfig.name}
-              value={cityConfig.slug}
+              label="Location"
+              displayValue={activeLocationLabel}
+              value={locationFilterValue}
               onChange={updateCityFilter}
-              options={CITY_LOCATION_CONFIGS.map((city) => ({
-                value: city.slug,
-                label: city.name,
-              }))}
+              options={locationFilterOptions}
             />
             <FilterMenu
               label="Area"
@@ -1685,7 +2030,7 @@ function BuddyPageInner() {
 
           <div className="hidden min-h-7 items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5 text-[10px] font-bold uppercase tracking-wide text-[#777777] sm:flex">
             {[
-              neighborhoodFilter?.name ?? cityConfig.name,
+              neighborhoodFilter?.name ?? activeLocationLabel,
               activeTypeLabel,
               activePriceLabel,
               activeLevelLabel,
@@ -1714,12 +2059,13 @@ function BuddyPageInner() {
           </div>
         </div>
       </div>
+      <CityGuideTabs active={viewMode === 'map' ? 'map' : 'events'} />
 
       {viewMode === 'list' ? (
         <div className="flex-1 min-h-0 overflow-hidden lg:grid lg:grid-cols-[minmax(390px,42vw)_1fr]">
           {/* List view — community-first cards backed by known sessions */}
           <div className="h-full min-h-0 overflow-y-auto border-white/[0.08] px-4 pb-24 lg:border-r">
-            {/* Search results mode */}
+            {/* Search results */}
             {searchQuery.trim() ? (
               <div className="pt-3">
                 {searching ? (
@@ -1730,7 +2076,7 @@ function BuddyPageInner() {
                 ) : searchResults.length === 0 ? (
                   <div className="text-center py-16">
                     <p className="text-sm text-[#999999]">
-                      No events or hosts for &apos;{searchQuery}&apos;
+                      No solo-friendly plans or crews for &apos;{searchQuery}&apos;
                     </p>
                     <button
                       onClick={() => setSearchQuery('')}
@@ -1771,7 +2117,7 @@ function BuddyPageInner() {
               </div>
             ) : (
               <>
-                {/* Event-first discovery */}
+                {/* Show-up confidence discovery */}
                 {!loading && sessions.length > 0 && (
                   <EventDiscoveryBand
                     sessions={sessions}
@@ -1780,7 +2126,7 @@ function BuddyPageInner() {
                     peopleCount={discoveryStats.peopleCount}
                     goingSoloCount={discoveryStats.goingSoloCount}
                     beginnerCount={discoveryStats.beginnerCount}
-                    cityName={neighborhoodFilter?.name ?? cityConfig.name}
+                    cityName={neighborhoodFilter?.name ?? activeLocationLabel}
                     activeTypeLabel={activeTypeLabel}
                     onCreate={() => setShowCreateMenu(true)}
                     onPreviewAttendees={setAttendeeSheetSession}
@@ -1829,7 +2175,7 @@ function BuddyPageInner() {
                   </div>
                 ) : sessions.length === 0 ? (
                   <CityEmptyState
-                    cityName={neighborhoodFilter?.name ?? cityConfig.name}
+                    cityName={neighborhoodFilter?.name ?? activeLocationLabel}
                     citySlug={cityConfig.slug}
                     hasFilters={Boolean(
                       typeFilter ||
@@ -1924,16 +2270,19 @@ function BuddyPageInner() {
             <LazySessionVectorMap
               center={userLocation ?? cityConfig.center}
               pins={mapPins}
-              selectedPinId={selectedPin?.id ?? null}
+              selectedPinId={selectedMapPinId}
               onPinClick={handleVectorMapPinClick}
-              onMapClick={() => setSelectedPin(null)}
+              onMapClick={() => {
+                setSelectedPin(null)
+                setSelectedPlace(null)
+                setSelectedMapPinId(null)
+              }}
               initialZoom={12}
               maxFitZoom={13}
             />
             <div className="absolute left-4 top-4 z-10 rounded-lg border border-white/[0.10] bg-black/55 px-3 py-2 font-mono text-[11px] font-black uppercase tracking-[0.16em] text-white/70 backdrop-blur">
-              {activeDateLabel} ·{' '}
-              {sessions.filter((session) => session.latitude && session.longitude).length} mapped
-              listings
+              {activeLocationLabel} · {supportPlaces.length} support places ·{' '}
+              {sessions.filter((session) => session.latitude && session.longitude).length} plans
             </div>
             {selectedPin && (
               <div className="absolute bottom-5 left-5 z-20 w-[260px] max-w-[calc(100%-40px)]">
@@ -1948,18 +2297,27 @@ function BuddyPageInner() {
                 />
               </div>
             )}
-            {!loading && sessions.length === 0 && (
+            {selectedPlace && (
+              <div className="absolute bottom-5 left-5 z-20 w-[280px] max-w-[calc(100%-40px)]">
+                <MapSelectedPlaceCard place={selectedPlace} onClose={() => {
+                  setSelectedPlace(null)
+                  setSelectedMapPinId(null)
+                }} />
+              </div>
+            )}
+            {!loading && !placesLoading && sessions.length === 0 && places.length === 0 && (
               <MapEmptyOverlay
-                cityName={neighborhoodFilter?.name ?? cityConfig.name}
+                cityName={neighborhoodFilter?.name ?? activeLocationLabel}
                 onCreate={() => setShowCreateMenu(true)}
               />
             )}
             {!loading &&
               dateFilter === todayDateString &&
-              sessions.length > 0 &&
+              supportPlaces.length > 0 &&
               sessions.length < 3 && (
                 <MapQuietTodayBanner
                   sessionCount={sessions.length}
+                  placeCount={supportPlaces.length}
                   onViewUpcoming={() => updateDateFilter('')}
                 />
               )}
@@ -1968,13 +2326,17 @@ function BuddyPageInner() {
       ) : (
         <>
           {/* ── Map view ── */}
-          <div className="relative w-full" style={{ height: 'calc(100dvh - 190px)' }}>
+          <div className="relative w-full" style={{ height: 'calc(100dvh - 244px)' }}>
             <LazySessionVectorMap
               center={userLocation ?? cityConfig.center}
               pins={mapPins}
-              selectedPinId={selectedPin?.id ?? null}
+              selectedPinId={selectedMapPinId}
               onPinClick={handleVectorMapPinClick}
-              onMapClick={() => setSelectedPin(null)}
+              onMapClick={() => {
+                setSelectedPin(null)
+                setSelectedPlace(null)
+                setSelectedMapPinId(null)
+              }}
               initialZoom={12}
               maxFitZoom={13}
             />
@@ -1993,18 +2355,27 @@ function BuddyPageInner() {
                 />
               </div>
             )}
-            {!loading && sessions.length === 0 && (
+            {selectedPlace && (
+              <div className="absolute bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] left-3 right-3 z-30 lg:bottom-5 lg:left-5 lg:right-auto lg:w-[340px]">
+                <MapSelectedPlaceCard place={selectedPlace} onClose={() => {
+                  setSelectedPlace(null)
+                  setSelectedMapPinId(null)
+                }} />
+              </div>
+            )}
+            {!loading && !placesLoading && sessions.length === 0 && places.length === 0 && (
               <MapEmptyOverlay
-                cityName={neighborhoodFilter?.name ?? cityConfig.name}
+                cityName={neighborhoodFilter?.name ?? activeLocationLabel}
                 onCreate={() => setShowCreateMenu(true)}
               />
             )}
             {!loading &&
               dateFilter === todayDateString &&
-              sessions.length > 0 &&
+              supportPlaces.length > 0 &&
               sessions.length < 3 && (
                 <MapQuietTodayBanner
                   sessionCount={sessions.length}
+                  placeCount={supportPlaces.length}
                   onViewUpcoming={() => updateDateFilter('')}
                 />
               )}
@@ -2434,15 +2805,15 @@ function CityEmptyState({
     <div className="grid gap-4 py-5 sm:py-6">
       <section className="rounded-2xl border border-white/[0.08] bg-[#141414] p-4 sm:p-5">
         <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
-          {cityName} is open
+          No solo-friendly plans yet
         </p>
         <h2 className="mt-2 text-2xl font-bold leading-tight text-white">
-          No events listed here yet.
+          Help map an easy plan to show up to.
         </h2>
         <p className="mt-2 max-w-xl text-sm leading-6 text-[#999999]">
-          SweatBuddies shows upcoming sessions first, backed by reviewed host and community pages in
-          the selected city. Add a host source for review, publish a session if you run one, or
-          clear filters if you narrowed the search too far.
+          SweatBuddies should make the first step obvious: what is happening, where to go, and how
+          to join. Suggest a crew/source for review, start a specific plan if you run one, or clear
+          filters if this search is too narrow.
         </p>
 
         <div className="mt-4 flex flex-wrap gap-2">
@@ -2450,7 +2821,7 @@ function CityEmptyState({
             href="/communities/create"
             className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-xs font-black uppercase tracking-wide text-black hover:bg-neutral-200"
           >
-            Suggest community
+            Suggest a crew
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
           <button
@@ -2458,7 +2829,7 @@ function CityEmptyState({
             className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/[0.12] bg-[#1A1A1A] px-4 text-xs font-black uppercase tracking-wide text-white hover:border-[#63FF8F] hover:text-[#63FF8F]"
           >
             <Zap className="h-3.5 w-3.5" />
-            Host session
+            Start a plan
           </button>
           {hasFilters && (
             <button
@@ -2475,7 +2846,7 @@ function CityEmptyState({
         <div className="flex items-end justify-between gap-4">
           <div>
             <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#666666]">
-              Good first community listings
+              Good first plans
             </p>
             <h3 className="mt-1 text-base font-bold text-white">
               Low-pressure plans people understand
@@ -2524,28 +2895,125 @@ function MapEmptyOverlay({ cityName, onCreate }: { cityName: string; onCreate: (
   return (
     <div className="absolute inset-x-4 top-4 z-20 max-w-sm rounded-2xl border border-white/[0.10] bg-black/70 p-4 shadow-2xl shadow-black/40 backdrop-blur">
       <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
-        No mapped listings
+        No solo-friendly pins
       </p>
-      <h3 className="mt-2 text-lg font-bold leading-tight text-white">Be first in {cityName}.</h3>
+      <h3 className="mt-2 text-lg font-bold leading-tight text-white">
+        Start the first easy plan in {cityName}.
+      </h3>
       <p className="mt-2 text-xs leading-5 text-[#999999]">
-        The map shows reviewed community pages and hosted sessions that pass guardrails.
+        The map prioritizes plans people can confidently join, with reviewed crews and places as
+        the trust layer.
       </p>
       <button
         onClick={onCreate}
         className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-xs font-black uppercase tracking-wide text-black hover:bg-neutral-200"
       >
         <Zap className="h-3.5 w-3.5" />
-        Create
+        Start a plan
       </button>
+    </div>
+  )
+}
+
+function MapSelectedPlaceCard({ place, onClose }: { place: MapPlace; onClose: () => void }) {
+  const imageUrl = place.imageUrl || '/images/cities/singapore.jpg'
+  const ratingLabel = place.googleRating
+    ? `${place.googleRating.toFixed(1)} Google`
+    : `Trust ${place.trustScore}`
+  const meta = [
+    formatMapPlaceType(place.placeType),
+    place.area,
+    place.beginnerFriendly ? 'Beginner-friendly' : null,
+  ].filter(Boolean).join(' · ')
+
+  return (
+    <article className="overflow-hidden rounded-2xl border border-white/[0.12] bg-[#111111] shadow-2xl shadow-black/50">
+      <div className="relative aspect-[16/9] bg-[#1A1A1A]">
+        <Image
+          src={imageUrl}
+          alt=""
+          fill
+          sizes="340px"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur transition-colors hover:bg-black"
+          aria-label="Close place card"
+        >
+          <X className="h-4 w-4" />
+        </button>
+        <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#63FF8F]">
+              Reviewed place
+            </p>
+            <h3 className="mt-1 line-clamp-2 text-lg font-black leading-tight text-white">{place.name}</h3>
+          </div>
+          <span className="shrink-0 rounded-lg bg-white px-2.5 py-1.5 font-mono text-[11px] font-black uppercase text-black">
+            {ratingLabel}
+          </span>
+        </div>
+      </div>
+      <div className="space-y-3 p-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-[#999999]">{meta}</p>
+        <p className="line-clamp-2 text-sm leading-5 text-[#D6D6D6]">
+          {place.bestFor || place.description || place.address || 'Listed in the SweatBuddies city guide.'}
+        </p>
+        <div className="grid grid-cols-3 gap-2">
+          <PlaceSignal label="Trust" value={place.trustScore} />
+          <PlaceSignal label="Photos" value={place.photoQualityScore} />
+          <PlaceSignal label="Social" value={place.socialScore} />
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href={`/places/${place.slug}`}
+            className="inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-full bg-white px-3 font-mono text-[11px] font-black uppercase tracking-wide text-black hover:bg-neutral-200"
+          >
+            Details
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+          {place.googleMapsUrl && (
+            <a
+              href={place.googleMapsUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-white/[0.14] px-3 font-mono text-[11px] font-black uppercase tracking-wide text-white/75 hover:border-[#63FF8F] hover:text-[#63FF8F]"
+            >
+              Map
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          )}
+        </div>
+        {place.googleRating && (
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#999999]">
+            <Star className="h-3.5 w-3.5 text-[#B6FF00]" />
+            {place.googleRating.toFixed(1)} rating from {place.googleReviewCount} public reviews
+          </div>
+        )}
+      </div>
+    </article>
+  )
+}
+
+function PlaceSignal({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-xl border border-white/[0.08] bg-black/25 p-2">
+      <div className="font-mono text-[10px] font-black uppercase tracking-wide text-[#777777]">{label}</div>
+      <div className="mt-1 text-sm font-black text-white">{value}</div>
     </div>
   )
 }
 
 function MapQuietTodayBanner({
   sessionCount,
+  placeCount,
   onViewUpcoming,
 }: {
   sessionCount: number
+  placeCount: number
   onViewUpcoming: () => void
 }) {
   return (
@@ -2556,7 +3024,7 @@ function MapQuietTodayBanner({
             Quiet today
           </p>
           <p className="mt-1 truncate text-xs font-semibold text-white/80">
-            {sessionCount} mapped plan{sessionCount !== 1 ? 's' : ''} today.
+            {sessionCount} plan{sessionCount !== 1 ? 's' : ''} today · {placeCount} places still mapped.
           </p>
         </div>
         <button
@@ -2614,7 +3082,9 @@ function SessionCard({
   const officialJoinUrl = session.officialJoinUrl ?? null
   const officialJoinLabel = getOfficialJoinLabel(session)
   const freshnessLabel = getFreshnessLabel(session)
-  const socialProofLabel = getSocialProofLabel(session)
+  const showUpConfidence = getShowUpConfidence(session)
+  const confidenceBadges = showUpConfidence.badges.slice(0, 3)
+  const confidenceLabel = `${showUpConfidence.level} confidence`
   const soloCount = session.goingSoloCount ?? 0
   const isFirstTimerFriendly = session.fitnessLevel === 'ALL' || soloCount > 0
   const levelLabel = session.fitnessLevel
@@ -2651,7 +3121,7 @@ function SessionCard({
             fill
             sizes="(min-width: 1024px) 360px, 286px"
             className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
-            unoptimized={Boolean(session.imageUrl)}
+            unoptimized={imageSrc.startsWith('/api/') || imageSrc.startsWith('http')}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#11100E]/90 via-[#11100E]/20 to-black/10" />
           <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
@@ -2666,6 +3136,10 @@ function SessionCard({
           {isJoined && !isHosting ? (
             <span className="absolute bottom-3 right-3 rounded-md bg-[#66D9C2] px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#11100E]">
               Going
+            </span>
+          ) : session.imageSourceLabel ? (
+            <span className="absolute bottom-3 right-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/80 backdrop-blur">
+              {session.imageSourceLabel}
             </span>
           ) : null}
         </Link>
@@ -2725,9 +3199,12 @@ function SessionCard({
                 onClick={onPreviewAttendees ? () => onPreviewAttendees(session) : undefined}
               />
               <span className="shrink-0 rounded-full bg-[#2A241D] px-2 py-1 text-right text-[10px] font-black uppercase tracking-wide text-[#F2C879]">
-                {socialProofLabel}
+                {confidenceLabel}
               </span>
             </div>
+            <p className="mt-2 line-clamp-2 text-[11px] leading-5 text-[#A9A19A]">
+              {showUpConfidence.reason}
+            </p>
           </div>
 
           <div className="mt-3 flex flex-1 flex-col justify-between gap-3">
@@ -2736,8 +3213,17 @@ function SessionCard({
               freshnessLabel ||
               levelLabel ||
               soloCount > 0 ||
+              confidenceBadges.length > 0 ||
               isFirstTimerFriendly) && (
               <div className="flex flex-wrap gap-1.5">
+                {confidenceBadges.map((badge) => (
+                  <span
+                    key={badge}
+                    className="rounded-full border border-[#F2C879]/25 bg-[#F2C879]/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#F2C879]"
+                  >
+                    {badge}
+                  </span>
+                ))}
                 {soloCount > 0 ? (
                   <span className="rounded-full border border-[#66D9C2]/25 bg-[#66D9C2]/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#66D9C2]">
                     {soloCount} going solo
@@ -2939,6 +3425,8 @@ function MapSelectedSessionCard({
   const rsvpLabel = isJoined ? "You're going" : session.isFull ? 'Full' : "I'm going"
   const soloCount = session.goingSoloCount ?? 0
   const isFirstTimerFriendly = session.fitnessLevel === 'ALL' || soloCount > 0
+  const showUpConfidence = getShowUpConfidence(session)
+  const confidenceBadges = showUpConfidence.badges.slice(0, 3)
   const levelLabel = session.fitnessLevel
     ? (LEVEL_FILTERS.find((filter) => filter.value === session.fitnessLevel)?.label ??
       session.fitnessLevel.toLowerCase().replace(/[_-]/g, ' '))
@@ -2967,22 +3455,16 @@ function MapSelectedSessionCard({
           onClick={() => trackSessionClick(session, source, 0)}
           className="relative min-h-[118px] overflow-hidden rounded-xl bg-[#16130F]"
         >
-          {session.imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={session.imageUrl} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <div
-              className="flex h-full w-full items-center justify-center"
-              style={{
-                background: `linear-gradient(145deg, ${(CATEGORY_GRADIENTS[session.categorySlug ?? 'other'] ?? CATEGORY_GRADIENTS.other)[0]}, ${(CATEGORY_GRADIENTS[session.categorySlug ?? 'other'] ?? CATEGORY_GRADIENTS.other)[1]})`,
-              }}
-            >
-              <span className="text-4xl drop-shadow-lg">{emoji}</span>
-            </div>
-          )}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={getSessionListingImage(session)} alt="" className="h-full w-full object-cover" />
           <span className="absolute left-2 top-2 rounded-md bg-[#F2C879] px-2 py-1 font-mono text-[10px] font-black uppercase text-[#11100E]">
             {priceDisplay}
           </span>
+          {session.imageSourceLabel ? (
+            <span className="absolute bottom-2 left-2 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase text-white/80 backdrop-blur">
+              {session.imageSourceLabel}
+            </span>
+          ) : null}
         </Link>
 
         <div className="flex min-w-0 flex-col justify-center gap-1.5">
@@ -2999,7 +3481,7 @@ function MapSelectedSessionCard({
             {displayName}
           </h3>
           <p className="line-clamp-2 text-xs leading-snug text-[#A9A19A]">
-            Known plan: {session.title}
+            {showUpConfidence.reason}
           </p>
           <p className="truncate text-[11px] font-semibold text-[#A78B6D]">
             {session.startTime ? getRelativeTime(session.startTime) : 'Time TBA'}
@@ -3011,6 +3493,17 @@ function MapSelectedSessionCard({
             onClick={onPreviewAttendees ? () => onPreviewAttendees(session) : undefined}
           />
           <div className="flex min-w-0 flex-wrap gap-1.5">
+            <span className="rounded-full border border-[#B6FF00]/25 bg-[#B6FF00]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#B6FF00]">
+              {showUpConfidence.level} confidence
+            </span>
+            {confidenceBadges.map((badge) => (
+              <span
+                key={badge}
+                className="rounded-full border border-white/10 bg-white/[0.06] px-2 py-1 font-mono text-[10px] font-black uppercase text-white/75"
+              >
+                {badge}
+              </span>
+            ))}
             {soloCount > 0 ? (
               <span className="rounded-full border border-[#B6FF00]/25 bg-[#B6FF00]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#B6FF00]">
                 {soloCount} solo
@@ -3113,17 +3606,6 @@ function getFreshnessLabel(session: Session) {
   const daysAgo = Math.floor((Date.now() - verifiedAt.getTime()) / (1000 * 60 * 60 * 24))
   if (daysAgo <= 30) return 'Verified recently'
   return null
-}
-
-function getSocialProofLabel(session: Session) {
-  const soloCount = session.goingSoloCount ?? 0
-  if (soloCount > 0) {
-    return `${soloCount} solo`
-  }
-  if (session.attendeeCount > 0) {
-    return `${session.attendeeCount} joined`
-  }
-  return 'Open invite'
 }
 
 function trackSessionClick(session: Session, source: string, position: number) {

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { resolveSessionMediaMap, type ResolvedSessionMedia } from '@/lib/session-media'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,6 +36,7 @@ export async function GET() {
       id: true,
       title: true,
       imageUrl: true,
+      placeId: true,
       categorySlug: true,
       startTime: true,
       endTime: true,
@@ -47,7 +49,7 @@ export async function GET() {
         select: { id: true, name: true, imageUrl: true },
       },
       community: {
-        select: { id: true, name: true, slug: true, logoImage: true },
+        select: { id: true, name: true, slug: true, logoImage: true, coverImage: true },
       },
       userActivities: {
         where: { status: { in: statusFilter } },
@@ -116,7 +118,20 @@ export async function GET() {
       }),
     ])
 
-    const formatSession = (activity: typeof upcomingHosting[number], userStatus: 'JOINED' | 'HOSTING') => ({
+    const allActivities = [
+      ...upcomingHosting,
+      ...upcomingAttending.map((ua) => ua.activity),
+      ...pastHosting,
+      ...pastAttending.map((ua) => ua.activity),
+    ]
+    const mediaBySessionId = await resolveSessionMediaMap(allActivities)
+
+    const formatSession = (
+      activity: typeof upcomingHosting[number],
+      userStatus: 'JOINED' | 'HOSTING',
+      resolvedMedia?: ResolvedSessionMedia,
+    ) => ({
+      ...resolvedMedia,
       id: activity.id,
       title: activity.title,
       imageUrl: activity.imageUrl,
@@ -129,20 +144,29 @@ export async function GET() {
       longitude: activity.longitude,
       host: { name: activity.user.name, imageUrl: activity.user.imageUrl },
       community: activity.community
-        ? { name: activity.community.name, slug: activity.community.slug, logoImage: activity.community.logoImage }
+        ? {
+            name: activity.community.name,
+            slug: activity.community.slug,
+            logoImage: activity.community.logoImage,
+            coverImage: activity.community.coverImage,
+          }
         : null,
       attendeeCount: activity.userActivities.length,
       userStatus,
     })
 
     const upcoming = [
-      ...upcomingHosting.map((a) => formatSession(a, 'HOSTING')),
-      ...upcomingAttending.map((ua) => formatSession(ua.activity, 'JOINED')),
+      ...upcomingHosting.map((a) => formatSession(a, 'HOSTING', mediaBySessionId.get(a.id))),
+      ...upcomingAttending.map((ua) =>
+        formatSession(ua.activity, 'JOINED', mediaBySessionId.get(ua.activity.id)),
+      ),
     ].sort((a, b) => new Date(a.startTime!).getTime() - new Date(b.startTime!).getTime())
 
     const past = [
-      ...pastHosting.map((a) => formatSession(a, 'HOSTING')),
-      ...pastAttending.map((ua) => formatSession(ua.activity, 'JOINED')),
+      ...pastHosting.map((a) => formatSession(a, 'HOSTING', mediaBySessionId.get(a.id))),
+      ...pastAttending.map((ua) =>
+        formatSession(ua.activity, 'JOINED', mediaBySessionId.get(ua.activity.id)),
+      ),
     ]
       .sort((a, b) => new Date(b.startTime!).getTime() - new Date(a.startTime!).getTime())
       .slice(0, 10)

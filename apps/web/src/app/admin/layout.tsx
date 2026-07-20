@@ -21,6 +21,7 @@ import {
   Flag,
   Activity,
   Building2,
+  MapPin,
   Search,
   Inbox
 } from 'lucide-react'
@@ -33,6 +34,7 @@ const navigation = [
   { name: 'Activities', href: '/admin/activities', icon: Clock },
   { name: 'Reports', href: '/admin/reports', icon: Flag },
   { name: 'Communities', href: '/admin/communities', icon: Building2 },
+  { name: 'Place Review', href: '/admin/places', icon: MapPin },
   { name: 'Nominations', href: '/admin/nominations', icon: Inbox },
   { name: 'Discovery', href: '/admin/discovery', icon: Search },
   { name: 'Events', href: '/admin/events', icon: Calendar },

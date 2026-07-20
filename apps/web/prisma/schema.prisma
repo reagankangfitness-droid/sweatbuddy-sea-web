@@ -115,10 +115,69 @@ enum ListingModerationStatus {
   BLOCKED
 }
 
+enum MediaAssetEntityType {
+  ACTIVITY
+  FITNESS_PLACE
+  COMMUNITY
+  USER
+}
+
+enum MediaAssetSourceType {
+  UPLOAD
+  GOOGLE_PLACE
+  WIKIMEDIA
+  PARTNER
+  REVIEW
+  WEBSITE
+  COMMUNITY
+  ACTIVITY
+}
+
+enum MediaAssetStatus {
+  LIVE
+  NEEDS_REVIEW
+  REJECTED
+  EXPIRED
+}
+
 enum CommunityVerificationStatus {
   UNVERIFIED
   VERIFIED
   NEEDS_VERIFICATION
+}
+
+enum FitnessPlaceType {
+  GYM
+  STUDIO
+  OUTDOOR_FITNESS
+  SPORTS_FACILITY
+  WELLNESS
+  COMMUNITY_SPACE
+}
+
+enum FitnessPlaceSourceType {
+  OSM
+  GOOGLE_PLACES
+  WEBSITE
+  COMMUNITY
+  EVENT
+  USER_SUBMISSION
+  MANUAL
+}
+
+enum FitnessPlaceImportStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum DiscoveredFitnessPlaceStatus {
+  DISCOVERED
+  AUTO_PUBLISHED
+  NEEDS_REVIEW
+  MERGED
+  REJECTED
+  ERROR
 }
 
 enum UserActivityStatus {
@@ -326,9 +385,10 @@ model User {
   earnedBadges EarnedBadge[] @relation("EarnedBadges")
 
   // Coach relations
-  coachProfile       CoachProfile?
-  coachVerifications CoachVerification[] @relation("CoachVerifications")
-  sessionTemplates   SessionTemplate[]   @relation("HostSessionTemplates")
+  coachProfile        CoachProfile?
+  coachVerifications  CoachVerification[]  @relation("CoachVerifications")
+  sessionTemplates    SessionTemplate[]    @relation("HostSessionTemplates")
+  fitnessPlaceReviews FitnessPlaceReview[] @relation("FitnessPlaceReviews")
 
   // Reminder preferences
   reminderPreferences ReminderPreferences?
@@ -2766,7 +2826,8 @@ model City {
   updatedAt DateTime @updatedAt
 
   // Relations
-  communities Community[] @relation("CityCommunities")
+  communities   Community[]    @relation("CityCommunities")
+  fitnessPlaces FitnessPlace[] @relation("CityFitnessPlaces")
 
   @@index([slug])
   @@index([isLaunched])
@@ -2830,14 +2891,15 @@ model Community {
   updatedAt DateTime @updatedAt
 
   // Relations
-  city             City?             @relation("CityCommunities", fields: [cityId], references: [id], onDelete: SetNull)
-  createdBy        User              @relation("CommunitiesOwned", fields: [createdById], references: [id], onDelete: Cascade)
+  city             City?                   @relation("CityCommunities", fields: [cityId], references: [id], onDelete: SetNull)
+  createdBy        User                    @relation("CommunitiesOwned", fields: [createdById], references: [id], onDelete: Cascade)
   members          CommunityMember[]
   claims           CommunityClaim[]
-  activities       Activity[]        @relation("CommunityActivities")
-  sessionTemplates SessionTemplate[] @relation("CommunitySessionTemplates")
+  activities       Activity[]              @relation("CommunityActivities")
+  sessionTemplates SessionTemplate[]       @relation("CommunitySessionTemplates")
   chat             CommunityChat?
   invites          CommunityInvite[]
+  placeLinks       FitnessPlaceCommunity[]
 
   @@index([cityId])
   @@index([category])
@@ -2849,6 +2911,262 @@ model Community {
   @@index([riskScore])
   @@index([memberCount])
   @@map("communities")
+}
+
+model FitnessPlace {
+  id          String           @id @default(cuid())
+  name        String
+  slug        String           @unique
+  description String?          @db.Text
+  placeType   FitnessPlaceType
+
+  // Location
+  cityId    String?
+  area      String? @db.VarChar(160)
+  address   String? @db.VarChar(500)
+  latitude  Float?
+  longitude Float?
+
+  // Media and discovery metadata
+  coverImage     String?
+  photos         String[] @default([])
+  activities     String[] @default([])
+  amenities      String[] @default([])
+  vibeTags       String[] @default([])
+  communityTypes String[] @default([])
+
+  // Decision-making context
+  priceSummary     String? @db.VarChar(180)
+  trialSummary     String? @db.VarChar(180)
+  bestFor          String? @db.VarChar(240)
+  bestTimes        String? @db.VarChar(180)
+  dropInFriendly   Boolean @default(false)
+  beginnerFriendly Boolean @default(false)
+  socialScore      Int     @default(0)
+
+  // External links
+  googlePlaceId    String? @unique
+  osmElementId     String? @unique
+  sourceProvider   String? @db.VarChar(40)
+  sourceExternalId String? @db.VarChar(160)
+  websiteUrl       String? @db.VarChar(500)
+  instagramHandle  String? @db.VarChar(100)
+  bookingUrl       String? @db.VarChar(500)
+  sourceUrl        String? @db.VarChar(500)
+
+  // Aggregates
+  averageRating Decimal @default(0) @db.Decimal(3, 2)
+  reviewCount   Int     @default(0)
+
+  // Place intelligence
+  googleRating          Decimal? @db.Decimal(3, 2)
+  googleReviewCount     Int      @default(0)
+  googleMapsUrl         String?  @db.VarChar(500)
+  openingHours          String[] @default([])
+  placeTypes            String[] @default([])
+  trustScore            Int      @default(0)
+  photoQualityScore     Int      @default(0)
+  reviewSentimentScore  Int      @default(0)
+  aiSummary             String?  @db.Text
+  aiPros                String[] @default([])
+  aiCons                String[] @default([])
+  intelligenceStatus    String?  @db.VarChar(40)
+  rawGoogleData         Json?
+  lastEnrichedAt        DateTime?
+
+  // Status
+  moderationStatus ListingModerationStatus @default(LIVE)
+  moderationNotes  String?                 @db.Text
+  isActive         Boolean                 @default(true)
+  isFeatured       Boolean                 @default(false)
+  isSeeded         Boolean                 @default(false)
+  lastVerifiedAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  city                City?                    @relation("CityFitnessPlaces", fields: [cityId], references: [id], onDelete: SetNull)
+  communityLinks      FitnessPlaceCommunity[]
+  reviews             FitnessPlaceReview[]
+  publishedCandidates DiscoveredFitnessPlace[] @relation("PublishedFitnessPlace")
+  matchedCandidates   DiscoveredFitnessPlace[] @relation("MatchedFitnessPlace")
+
+  @@index([cityId])
+  @@index([slug])
+  @@index([placeType])
+  @@index([area])
+  @@index([isActive, moderationStatus])
+  @@index([isFeatured])
+  @@index([socialScore])
+  @@index([trustScore])
+  @@index([lastEnrichedAt])
+  @@index([sourceProvider, sourceExternalId])
+  @@map("fitness_places")
+}
+
+model FitnessPlaceCommunity {
+  id          String @id @default(cuid())
+  placeId     String
+  communityId String
+
+  relationshipSummary String?  @db.VarChar(240)
+  createdAt           DateTime @default(now())
+
+  place     FitnessPlace @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  community Community    @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@unique([placeId, communityId])
+  @@index([communityId])
+  @@map("fitness_place_communities")
+}
+
+model FitnessPlaceReview {
+  id String @id @default(cuid())
+
+  placeId    String
+  reviewerId String?
+
+  rating   Int
+  title    String?  @db.VarChar(200)
+  content  String?  @db.Text
+  photos   String[] @default([])
+  vibeTags String[] @default([])
+
+  status       ReviewStatus @default(PUBLISHED)
+  isVerified   Boolean      @default(false)
+  helpfulCount Int          @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  place    FitnessPlace @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  reviewer User?        @relation("FitnessPlaceReviews", fields: [reviewerId], references: [id], onDelete: SetNull)
+
+  @@index([placeId, status, createdAt])
+  @@index([reviewerId])
+  @@index([rating])
+  @@index([status, helpfulCount])
+  @@map("fitness_place_reviews")
+}
+
+model FitnessPlaceImportRun {
+  id         String                   @id @default(cuid())
+  sourceType FitnessPlaceSourceType
+  city       String                   @db.VarChar(120)
+  query      String?                  @db.Text
+  status     FitnessPlaceImportStatus @default(RUNNING)
+
+  candidatesFound   Int     @default(0)
+  candidatesCreated Int     @default(0)
+  candidatesUpdated Int     @default(0)
+  publishedCount    Int     @default(0)
+  skippedCount      Int     @default(0)
+  errorCount        Int     @default(0)
+  errorMessage      String? @db.Text
+
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  candidates DiscoveredFitnessPlace[]
+
+  @@index([sourceType, city, startedAt])
+  @@index([status])
+  @@map("fitness_place_import_runs")
+}
+
+model MediaAsset {
+  id String @id @default(cuid())
+
+  entityType MediaAssetEntityType
+  entityId   String              @db.VarChar(120)
+  sourceType MediaAssetSourceType
+
+  imageUrl     String  @db.VarChar(1000)
+  thumbnailUrl String? @db.VarChar(1000)
+  sourceUrl    String? @db.VarChar(1000)
+  externalId   String? @db.VarChar(300)
+
+  attributionName String? @db.VarChar(200)
+  attributionUrl  String? @db.VarChar(1000)
+  license         String? @db.VarChar(120)
+
+  width         Int?
+  height        Int?
+  dominantColor String? @db.VarChar(20)
+  priority      Int     @default(0)
+
+  status        MediaAssetStatus @default(NEEDS_REVIEW)
+  capturedAt    DateTime?
+  lastFetchedAt DateTime?
+  expiresAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([entityType, entityId, status])
+  @@index([sourceType, externalId])
+  @@index([status, priority])
+  @@index([expiresAt])
+  @@map("media_assets")
+}
+
+model DiscoveredFitnessPlace {
+  id          String                 @id @default(cuid())
+  importRunId String?
+  sourceType  FitnessPlaceSourceType
+  sourceId    String                 @db.VarChar(180)
+  sourceUrl   String?                @db.VarChar(500)
+
+  name           String
+  normalizedName String           @db.VarChar(220)
+  placeType      FitnessPlaceType
+  city           String           @db.VarChar(120)
+  area           String?          @db.VarChar(160)
+  address        String?          @db.VarChar(500)
+  latitude       Float?
+  longitude      Float?
+
+  websiteUrl       String?  @db.VarChar(500)
+  phone            String?  @db.VarChar(80)
+  activities       String[] @default([])
+  amenities        String[] @default([])
+  vibeTags         String[] @default([])
+  communityTypes   String[] @default([])
+  bestFor          String?  @db.VarChar(240)
+  priceSummary     String?  @db.VarChar(180)
+  trialSummary     String?  @db.VarChar(180)
+  dropInFriendly   Boolean  @default(false)
+  beginnerFriendly Boolean  @default(false)
+  socialScore      Int      @default(0)
+  confidenceScore  Int      @default(0)
+
+  status           DiscoveredFitnessPlaceStatus @default(DISCOVERED)
+  matchedPlaceId   String?
+  publishedPlaceId String?
+  rawData          Json?
+  sourceTags       Json?
+  errorMessage     String?                      @db.Text
+
+  discoveredAt DateTime  @default(now())
+  lastSeenAt   DateTime  @default(now())
+  publishedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  importRun      FitnessPlaceImportRun? @relation(fields: [importRunId], references: [id], onDelete: SetNull)
+  matchedPlace   FitnessPlace?          @relation("MatchedFitnessPlace", fields: [matchedPlaceId], references: [id], onDelete: SetNull)
+  publishedPlace FitnessPlace?          @relation("PublishedFitnessPlace", fields: [publishedPlaceId], references: [id], onDelete: SetNull)
+
+  @@unique([sourceType, sourceId])
+  @@index([importRunId])
+  @@index([status])
+  @@index([city, placeType])
+  @@index([confidenceScore])
+  @@index([matchedPlaceId])
+  @@index([publishedPlaceId])
+  @@map("discovered_fitness_places")
 }
 
 model CommunityMember {

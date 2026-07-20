@@ -8,6 +8,7 @@ import {
   getNearestCityLocationConfig,
   isPointInsideCityDetectionRadius,
 } from '@/lib/location-config'
+import { resolveSessionMediaMap } from '@/lib/session-media'
 
 export const dynamic = 'force-dynamic'
 
@@ -84,6 +85,7 @@ export async function GET(request: Request) {
           id: true,
           title: true,
           imageUrl: true,
+          placeId: true,
           categorySlug: true,
           startTime: true,
           address: true,
@@ -112,6 +114,7 @@ export async function GET(request: Request) {
               id: true,
               name: true,
               logoImage: true,
+              coverImage: true,
               slug: true,
             },
           },
@@ -139,8 +142,10 @@ export async function GET(request: Request) {
         orderBy: { startTime: 'asc' },
         take: 20,
       })
+      const mediaBySessionId = await resolveSessionMediaMap(sessions)
 
       results.sessions = sessions.map((s) => ({
+        ...mediaBySessionId.get(s.id),
         id: s.id,
         title: s.title,
         imageUrl: s.imageUrl,

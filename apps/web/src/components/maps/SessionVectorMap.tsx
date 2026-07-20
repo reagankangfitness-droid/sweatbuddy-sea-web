@@ -16,6 +16,8 @@ const CITY_FALLBACKS = {
 export interface SessionVectorMapPin {
   id: string
   title: string
+  kind?: 'session' | 'place'
+  markerVariant?: 'session' | 'place' | 'featured-place'
   latitude?: number | null
   longitude?: number | null
   city?: string | null
@@ -145,7 +147,7 @@ export function SessionVectorMap({
 
     for (const { pin, position } of resolvedPins) {
       const element = document.createElement(pin.href ? 'a' : 'button')
-      element.className = `sb-map-marker${selectedPinId === pin.id ? ' is-selected' : ''}`
+      element.className = getMarkerClassName(pin, selectedPinId === pin.id)
       element.setAttribute('aria-label', pin.title)
       element.innerHTML = markerHtml(pin)
 
@@ -293,7 +295,7 @@ function StaticPinMapFallback({
           const point = projectStaticPoint(position, bounds)
           const content = (
             <span
-              className={`sb-map-marker${selectedPinId === pin.id ? ' is-selected' : ''}`}
+              className={getMarkerClassName(pin, selectedPinId === pin.id)}
               dangerouslySetInnerHTML={{ __html: markerHtml(pin) }}
             />
           )
@@ -496,6 +498,15 @@ function markerHtml(pin: SessionVectorMapPin) {
     <span class="sb-map-marker__price">${price}</span>
     ${preview}
   `
+}
+
+function getMarkerClassName(pin: SessionVectorMapPin, selected: boolean) {
+  const variant = pin.markerVariant || pin.kind || 'session'
+  return [
+    'sb-map-marker',
+    `sb-map-marker--${variant}`,
+    selected ? 'is-selected' : '',
+  ].filter(Boolean).join(' ')
 }
 
 const EMOJI_PATTERN = /\p{Extended_Pictographic}/u

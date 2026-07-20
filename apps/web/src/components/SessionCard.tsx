@@ -22,6 +22,8 @@ export interface SessionCardSession {
   fitnessLevel: string | null
   requiresApproval: boolean
   imageUrl: string | null
+  resolvedImageUrl?: string | null
+  imageSourceLabel?: string | null
   host: {
     id: string
     name: string | null
@@ -86,15 +88,20 @@ export function SessionCard({
       )}
     >
       {/* Session image (if any) */}
-      {session.imageUrl && (
+      {(session.resolvedImageUrl || session.imageUrl) && (
         <Link href={`/activities/${session.id}`} className="block">
           <div className="relative h-40 overflow-hidden bg-neutral-800">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={session.imageUrl}
+              src={session.resolvedImageUrl || session.imageUrl || ''}
               alt={session.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
+            {session.imageSourceLabel && (
+              <span className="absolute bottom-3 right-3 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white/80 backdrop-blur">
+                {session.imageSourceLabel}
+              </span>
+            )}
           </div>
         </Link>
       )}

@@ -9,6 +9,11 @@ import {
   getUtcDateRangeForLocalDate,
   isPointInsideCityDetectionRadius,
 } from '@/lib/location-config'
+import {
+  getCategoryFallbackImage,
+  resolveSessionMediaMap,
+  type ResolvedSessionMedia,
+} from '@/lib/session-media'
 
 export const dynamic = 'force-dynamic'
 
@@ -100,6 +105,29 @@ export async function GET(request: Request) {
             deletedAt: null,
           },
           include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                imageUrl: true,
+                slug: true,
+                sessionsHostedCount: true,
+              },
+            },
+            community: {
+              select: {
+                id: true,
+                name: true,
+                logoImage: true,
+                coverImage: true,
+                slug: true,
+                communityLink: true,
+                websiteUrl: true,
+                sourceUrl: true,
+                joinPlatform: true,
+                lastVerifiedAt: true,
+              },
+            },
             userActivities: {
               where: { status: { in: ['JOINED', 'COMPLETED'] } },
               include: { user: { select: { id: true, name: true, imageUrl: true, slug: true } } },
@@ -136,6 +164,20 @@ export async function GET(request: Request) {
                     user: { select: { id: true, name: true, imageUrl: true, slug: true } },
                   },
                 },
+                community: {
+                  select: {
+                    id: true,
+                    name: true,
+                    logoImage: true,
+                    coverImage: true,
+                    slug: true,
+                    communityLink: true,
+                    websiteUrl: true,
+                    sourceUrl: true,
+                    joinPlatform: true,
+                    lastVerifiedAt: true,
+                  },
+                },
               },
             },
           },
@@ -144,9 +186,15 @@ export async function GET(request: Request) {
         }),
       ])
 
+      const hostingMedia = await resolveSessionMediaMap(hosting)
+      const attendingActivities = attending.map((ua) => ua.activity)
+      const attendingMedia = await resolveSessionMediaMap(attendingActivities)
+
       return NextResponse.json({
-        hosting: hosting.map((a) => formatSession(a)),
-        attending: attending.map((ua) => formatSession(ua.activity, ua.status as string)),
+        hosting: hosting.map((a) => formatSession(a, undefined, hostingMedia.get(a.id))),
+        attending: attending.map((ua) =>
+          formatSession(ua.activity, ua.status as string, attendingMedia.get(ua.activity.id)),
+        ),
       })
     }
 
@@ -163,18 +211,20 @@ export async function GET(request: Request) {
     // Location-based filtering — radius bounding box scoped to the active city.
     const requestedCitySlug = searchParams.get('city')
     const knownRequestedCity = findCityLocationConfig(requestedCitySlug)
+    const isNearbyRequest = searchParams.get('location') === 'nearby'
+    const isExplicitCityRequest = Boolean(knownRequestedCity && !isNearbyRequest)
     const requestedCity = knownRequestedCity ?? getCityLocationConfig(requestedCitySlug)
     const parsedLat = parseFloat(searchParams.get('lat') ?? '')
     const parsedLng = parseFloat(searchParams.get('lng') ?? '')
     const hasValidCoordinates = !isNaN(parsedLat) && !isNaN(parsedLng)
     const providedPoint = { lat: parsedLat, lng: parsedLng }
-    const activeCity = knownRequestedCity
+    const activeCity = isExplicitCityRequest
       ? requestedCity
       : hasValidCoordinates
         ? getNearestCityLocationConfig(parsedLat, parsedLng)
         : requestedCity
-    const scopedPoint = knownRequestedCity
-      ? hasValidCoordinates && isPointInsideCityDetectionRadius(knownRequestedCity, providedPoint)
+    const scopedPoint = isExplicitCityRequest
+      ? hasValidCoordinates && isPointInsideCityDetectionRadius(activeCity, providedPoint)
         ? providedPoint
         : activeCity.center
       : hasValidCoordinates
@@ -183,7 +233,7 @@ export async function GET(request: Request) {
     const timezone =
       searchParams.get('timezone') || activeCity.timezone || DEFAULT_CITY_LOCATION_CONFIG.timezone
 
-    const radiusKm = parseInt(searchParams.get('radius') || String(activeCity.defaultRadius), 10)
+    const radiusKm = parseDiscoveryRadiusKm(searchParams.get('radius'), activeCity.defaultRadius)
     const latDelta = radiusKm / 111
     const lngDelta = radiusKm / (111 * Math.cos(scopedPoint.lat * (Math.PI / 180)))
     where.latitude = { gte: scopedPoint.lat - latDelta, lte: scopedPoint.lat + latDelta }
@@ -251,6 +301,7 @@ export async function GET(request: Request) {
         whatToBring: true,
         requiresApproval: true,
         imageUrl: true,
+        placeId: true,
         isFeatured: true,
         user: {
           select: {
@@ -278,6 +329,7 @@ export async function GET(request: Request) {
             id: true,
             name: true,
             logoImage: true,
+            coverImage: true,
             slug: true,
             communityLink: true,
             websiteUrl: true,
@@ -300,9 +352,10 @@ export async function GET(request: Request) {
     const hasMore = sessions.length > PAGE_SIZE
     const items = hasMore ? sessions.slice(0, PAGE_SIZE) : sessions
     const nextCursor = hasMore ? encodeSessionCursor(items[items.length - 1]) : null
+    const mediaBySessionId = await resolveSessionMediaMap(items)
 
     return NextResponse.json({
-      sessions: items.map((a) => formatSession(a)),
+      sessions: items.map((a) => formatSession(a, undefined, mediaBySessionId.get(a.id))),
       nextCursor,
       currentUserId: dbUser?.id ?? null,
     }, {
@@ -315,9 +368,32 @@ export async function GET(request: Request) {
           },
     })
   } catch (error) {
+    if (isRecoverableDiscoveryDbError(error)) {
+      return NextResponse.json({
+        sessions: [],
+        nextCursor: null,
+        currentUserId: null,
+      })
+    }
+
     console.error('[buddy/sessions] Error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
+}
+
+function isRecoverableDiscoveryDbError(error: unknown) {
+  return error instanceof Error && (
+    error.name === 'PrismaClientInitializationError' ||
+    error.message.includes('exceeded the data transfer quota')
+  )
+}
+
+function parseDiscoveryRadiusKm(value: string | null, fallback: number) {
+  const parsed = Number.parseInt(value ?? '', 10)
+  const safeFallback = Number.isFinite(fallback) ? fallback : DEFAULT_CITY_LOCATION_CONFIG.defaultRadius
+  const radius = Number.isFinite(parsed) ? parsed : safeFallback
+
+  return Math.min(80, Math.max(2, radius))
 }
 
 interface SessionActivity {
@@ -340,6 +416,7 @@ interface SessionActivity {
   whatToBring: string | null
   requiresApproval: boolean
   imageUrl: string | null
+  placeId?: string | null
   isFeatured: boolean
   user?: unknown
   community?: unknown
@@ -356,11 +433,24 @@ interface SessionActivity {
   }>
 }
 
-function formatSession(activity: SessionActivity, userStatus?: string) {
+function formatSession(
+  activity: SessionActivity,
+  userStatus?: string,
+  resolvedMedia?: ResolvedSessionMedia,
+) {
   const attendees = activity.userActivities ?? []
   const attendeeCount = activity._count?.userActivities ?? attendees.length
   const isFull = typeof activity.maxPeople === 'number' && attendeeCount >= activity.maxPeople
   const community = normalizeCommunity(activity.community)
+  const media = resolvedMedia ?? {
+    resolvedImageUrl: activity.imageUrl || getCategoryFallbackImage(activity.categorySlug),
+    imageSourceType: activity.imageUrl ? 'SESSION_UPLOAD' : 'CATEGORY_FALLBACK',
+    imageSourceLabel: activity.imageUrl ? 'Session photo' : 'Activity image',
+    imageAttributionName: null,
+    imageAttributionUrl: null,
+    imageSourceUrl: null,
+    matchedFitnessPlaceId: null,
+  }
 
   return {
     id: activity.id,
@@ -382,6 +472,13 @@ function formatSession(activity: SessionActivity, userStatus?: string) {
     whatToBring: activity.whatToBring,
     requiresApproval: activity.requiresApproval,
     imageUrl: activity.imageUrl,
+    resolvedImageUrl: media.resolvedImageUrl,
+    imageSourceType: media.imageSourceType,
+    imageSourceLabel: media.imageSourceLabel,
+    imageAttributionName: media.imageAttributionName,
+    imageAttributionUrl: media.imageAttributionUrl,
+    imageSourceUrl: media.imageSourceUrl,
+    matchedFitnessPlaceId: media.matchedFitnessPlaceId,
     host: activity.user ?? null,
     community,
     officialJoinUrl: community?.communityLink ?? community?.websiteUrl ?? community?.sourceUrl ?? null,
@@ -407,6 +504,7 @@ function normalizeCommunity(community: unknown) {
     id?: unknown
     name?: unknown
     logoImage?: unknown
+    coverImage?: unknown
     slug?: unknown
     communityLink?: unknown
     websiteUrl?: unknown
@@ -423,6 +521,7 @@ function normalizeCommunity(community: unknown) {
     id: value.id,
     name: value.name,
     logoImage: typeof value.logoImage === 'string' ? value.logoImage : null,
+    coverImage: typeof value.coverImage === 'string' ? value.coverImage : null,
     slug: value.slug,
     communityLink: typeof value.communityLink === 'string' ? value.communityLink : null,
     websiteUrl: typeof value.websiteUrl === 'string' ? value.websiteUrl : null,

@@ -18,6 +18,14 @@ interface UnifiedEvent {
   source: 'activity' | 'event_submission'
 }
 
+interface UnifiedPlace {
+  id: string
+  title: string
+  latitude: number | null
+  longitude: number | null
+  trustScore: number
+}
+
 // Check if a point is within a neighborhood's bounds
 function isPointInNeighborhood(
   lat: number,
@@ -149,6 +157,33 @@ export async function GET() {
       })),
     ]
 
+    const places = await prisma.fitnessPlace.findMany({
+      where: {
+        isActive: true,
+        moderationStatus: 'LIVE',
+        latitude: { not: null },
+        longitude: { not: null },
+        city: { slug: 'singapore' },
+      },
+      select: {
+        id: true,
+        name: true,
+        latitude: true,
+        longitude: true,
+        trustScore: true,
+      },
+      orderBy: [{ trustScore: 'desc' }, { name: 'asc' }],
+      take: 500,
+    })
+
+    const unifiedPlaces: UnifiedPlace[] = places.map((place) => ({
+      id: place.id,
+      title: place.name,
+      latitude: place.latitude,
+      longitude: place.longitude,
+      trustScore: place.trustScore,
+    }))
+
     // Sort by startTime
     unifiedEvents.sort((a, b) => {
       if (!a.startTime) return 1
@@ -161,6 +196,7 @@ export async function GET() {
       string,
       {
         events: UnifiedEvent[]
+        places: UnifiedPlace[]
         attendeeCount: number
       }
     > = {}
@@ -174,16 +210,30 @@ export async function GET() {
       nId = nId || 'unknown'
 
       if (!neighborhoodStats[nId]) {
-        neighborhoodStats[nId] = { events: [], attendeeCount: 0 }
+        neighborhoodStats[nId] = { events: [], places: [], attendeeCount: 0 }
       }
       neighborhoodStats[nId].events.push(event)
       neighborhoodStats[nId].attendeeCount += event.attendeeCount
     })
 
-    // Build neighborhood overview with event counts
+    unifiedPlaces.forEach((place) => {
+      let nId: string | null = null
+      if (place.latitude && place.longitude) {
+        nId = findNeighborhoodForCoordinates(place.latitude, place.longitude)
+      }
+      nId = nId || 'unknown'
+
+      if (!neighborhoodStats[nId]) {
+        neighborhoodStats[nId] = { events: [], places: [], attendeeCount: 0 }
+      }
+      neighborhoodStats[nId].places.push(place)
+    })
+
+    // Build neighborhood overview with place + event density.
     const neighborhoodOverviews = neighborhoodsData.neighborhoods.map((neighborhood) => {
-      const stats = neighborhoodStats[neighborhood.id] || { events: [], attendeeCount: 0 }
+      const stats = neighborhoodStats[neighborhood.id] || { events: [], places: [], attendeeCount: 0 }
       const nextEvent = stats.events[0]
+      const heatScore = stats.events.length * 2 + stats.places.length
 
       return {
         id: neighborhood.id,
@@ -193,8 +243,11 @@ export async function GET() {
         vibe: neighborhood.vibe,
         description: neighborhood.description,
         eventCount: stats.events.length,
+        placeCount: stats.places.length,
+        listingCount: stats.events.length + stats.places.length,
+        heatScore,
         attendeeCount: stats.attendeeCount,
-        isHot: stats.events.length >= HOT_THRESHOLD,
+        isHot: heatScore >= HOT_THRESHOLD,
         nextEvent: nextEvent
           ? {
               title: nextEvent.title,
@@ -204,14 +257,15 @@ export async function GET() {
       }
     })
 
-    // Find hot spot (neighborhood with most events)
+    // Find hot spot (neighborhood with most overall fitness density)
     const sortedByEvents = [...neighborhoodOverviews].sort(
-      (a, b) => b.eventCount - a.eventCount
+      (a, b) => b.heatScore - a.heatScore
     )
-    const hotSpot = sortedByEvents[0]?.eventCount > 0 ? sortedByEvents[0] : null
+    const hotSpot = sortedByEvents[0]?.heatScore > 0 ? sortedByEvents[0] : null
 
     // Calculate totals
     const totalEvents = unifiedEvents.length
+    const totalPlaces = unifiedPlaces.length
     const totalAttendees = Object.values(neighborhoodStats).reduce(
       (sum, stats) => sum + stats.attendeeCount,
       0
@@ -223,6 +277,8 @@ export async function GET() {
         neighborhoods: neighborhoodOverviews,
         summary: {
           totalEvents,
+          totalPlaces,
+          totalListings: totalEvents + totalPlaces,
           totalAttendees,
           hotSpot: hotSpot
             ? {

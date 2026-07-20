@@ -34,6 +34,17 @@ const nextConfig = {
 
   // Optimized image settings
   images: {
+    localPatterns: [
+      {
+        pathname: '/images/**',
+      },
+      {
+        pathname: '/banner/**',
+      },
+      {
+        pathname: '/api/place-photo',
+      },
+    ],
     remotePatterns: [
       {
         protocol: "https",
@@ -82,14 +93,14 @@ const nextConfig = {
   async redirects() {
     return [
       // Legacy route redirects
-      { source: '/organizer/:path*', destination: '/buddy?view=map', permanent: false },
+      { source: '/organizer/:path*', destination: '/singapore?tab=map', permanent: false },
       { source: '/crews', destination: '/buddy', permanent: false },
-      { source: '/community', destination: '/communities', permanent: true },
+      { source: '/community', destination: '/singapore?tab=communities', permanent: true },
       { source: '/saved', destination: '/my-sessions', permanent: true },
-      { source: '/cities', destination: '/buddy?view=map', permanent: true },
+      { source: '/cities', destination: '/singapore?tab=map', permanent: true },
       { source: '/cities/singapore', destination: '/singapore', permanent: true },
       { source: '/cities/bangkok', destination: '/bangkok', permanent: true },
-      { source: '/cities/:slug', destination: '/buddy?view=map&city=:slug', permanent: true },
+      { source: '/cities/:slug', destination: '/singapore?tab=map&city=:slug', permanent: true },
       { source: '/coach/templates', destination: '/host/templates', permanent: true },
       { source: '/coach/templates/new', destination: '/host/templates', permanent: true },
       { source: '/coach/templates/:path*', destination: '/host/templates', permanent: true },
@@ -105,10 +116,10 @@ const nextConfig = {
       { source: '/host/waves', destination: '/buddy/host/new', permanent: true },
 
       // SEO preservation
-      { source: '/discover', destination: '/buddy', permanent: true },
-      { source: '/explore', destination: '/buddy', permanent: true },
-      { source: '/events', destination: '/buddy?view=map', permanent: true },
-      { source: '/events/:path*', destination: '/buddy?view=map', permanent: true },
+      { source: '/discover', destination: '/singapore', permanent: true },
+      { source: '/explore', destination: '/singapore', permanent: true },
+      { source: '/events', destination: '/singapore?tab=events', permanent: true },
+      { source: '/events/:path*', destination: '/singapore?tab=events', permanent: true },
       { source: '/app', destination: '/buddy', permanent: true },
       { source: '/activities/create', destination: '/buddy/host/new', permanent: true },
       { source: '/my-events', destination: '/my-bookings', permanent: false },

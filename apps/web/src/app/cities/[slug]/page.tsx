@@ -10,5 +10,5 @@ export default async function CityPage({ params }: PageProps) {
   if (slug === 'singapore') redirect('/singapore')
   if (slug === 'bangkok') redirect('/bangkok')
 
-  redirect(`/buddy?view=map&city=${encodeURIComponent(slug)}`)
+  redirect(`/singapore?tab=map&city=${encodeURIComponent(slug)}`)
 }

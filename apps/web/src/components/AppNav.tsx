@@ -12,7 +12,7 @@ import { CreateSessionSheet } from '@/components/CreateSessionSheet'
 import { CreateChoiceSheet } from '@/components/CreateChoiceSheet'
 
 const navItems = [
-  { id: 'discover', label: 'Discover', icon: Compass, href: '/buddy', mobileOnly: false },
+  { id: 'discover', label: 'Discover', icon: Compass, href: '/singapore', mobileOnly: false },
   { id: 'create', label: 'Create', icon: Plus, href: '#', mobileOnly: true, isCreate: true },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile', mobileOnly: false },
 ]
@@ -50,6 +50,7 @@ function AppNavInner() {
   // Only show on main browsing pages — NOT on detail/edit/form pages with their own action bars
   const isAppPage =
     pathname === '/buddy' ||
+    pathname.startsWith('/singapore') ||
     pathname.startsWith('/buddy?') ||
     pathname.startsWith('/discover') ||
     pathname === '/profile' ||
@@ -77,7 +78,12 @@ function AppNavInner() {
 
   function isActive(item: (typeof navItems)[0]) {
     if (item.id === 'discover') {
-      return pathname.startsWith('/buddy') || pathname.startsWith('/discover') || pathname.startsWith('/communities')
+      return (
+        pathname.startsWith('/buddy') ||
+        pathname.startsWith('/discover') ||
+        pathname.startsWith('/communities') ||
+        pathname.startsWith('/singapore')
+      )
     }
     if (item.id === 'profile') {
       return pathname.startsWith('/profile') || pathname.startsWith('/hub') || pathname.startsWith('/settings') || pathname.startsWith('/saved') || pathname.startsWith('/my-bookings') || pathname.startsWith('/my-sessions') || pathname.startsWith('/notifications')

@@ -1,5 +1,8 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
+import { fitnessDirectoryCategories, singaporeFitnessPlaces } from '@/lib/fitness-directory'
+
+export const dynamic = 'force-dynamic'
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.sweatbuddies.co'
 
@@ -15,12 +18,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/support`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
   ]
 
+  const directoryPages: MetadataRoute.Sitemap = fitnessDirectoryCategories
+    .filter((category) => category.slug !== 'fitness')
+    .map((category) => ({
+      url: `${BASE_URL}${category.href}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.82,
+    }))
+
+  const placePages: MetadataRoute.Sitemap = singaporeFitnessPlaces.map((place) => ({
+    url: `${BASE_URL}/places/${place.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.72,
+  }))
+
   // Approved events
-  const events = await prisma.eventSubmission.findMany({
-    where: { status: 'APPROVED' },
-    select: { slug: true, id: true, updatedAt: true },
-    orderBy: { updatedAt: 'desc' },
-  })
+  const events = await prisma.eventSubmission
+    .findMany({
+      where: { status: 'APPROVED' },
+      select: { slug: true, id: true, updatedAt: true },
+      orderBy: { updatedAt: 'desc' },
+    })
+    .catch((error) => {
+      console.error('Failed to load event sitemap entries:', error)
+      return []
+    })
 
   const eventPages: MetadataRoute.Sitemap = events.map((event) => ({
     url: `${BASE_URL}/e/${event.slug || event.id}`,
@@ -29,5 +53,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
-  return [...staticPages, ...eventPages]
+  return [...staticPages, ...directoryPages, ...placePages, ...eventPages]
 }

@@ -108,9 +108,6 @@ export default function RootLayout({ children }: PropsWithChildren) {
         {/* Preconnect to image CDN for faster image loading */}
         <link rel="preconnect" href="https://utfs.io" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://utfs.io" />
-
-        {/* Prefetch activities API for faster data loading */}
-        <link rel="prefetch" href="/api/activities" as="fetch" crossOrigin="anonymous" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${barlowCondensed.variable} font-sans antialiased bg-[#0D0D0D] text-[#FAFAFA]`}

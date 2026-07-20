@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
 import CommunitiesPageClient, { CommunityData, CityData } from './CommunitiesPageClient'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Communities | SweatBuddies',
@@ -15,67 +15,74 @@ export const metadata: Metadata = {
 }
 
 async function getCommunities(): Promise<CommunityData[]> {
-  const communities = await prisma.community.findMany({
-    where: {
-      isActive: true,
-      moderationStatus: 'LIVE',
-      usualArea: { not: null },
-      OR: [
-        { sourceUrl: { not: null } },
-        { communityLink: { not: null } },
-        { websiteUrl: { not: null } },
-        { instagramHandle: { not: null } },
-      ],
-    },
-    include: {
-      city: true,
-      createdBy: {
-        select: {
-          id: true,
-          name: true,
-          imageUrl: true,
-          isVerified: true,
-        },
+  const communities = await prisma.community
+    .findMany({
+      where: {
+        isActive: true,
+        moderationStatus: 'LIVE',
+        usualArea: { not: null },
+        OR: [
+          { sourceUrl: { not: null } },
+          { communityLink: { not: null } },
+          { websiteUrl: { not: null } },
+          { instagramHandle: { not: null } },
+        ],
       },
-      members: {
-        select: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              imageUrl: true,
-            },
+      include: {
+        city: true,
+        createdBy: {
+          select: {
+            id: true,
+            name: true,
+            imageUrl: true,
+            isVerified: true,
           },
         },
-        take: 5,
-        orderBy: { joinedAt: 'asc' },
-      },
-      activities: {
-        where: {
-          status: 'PUBLISHED',
-          moderationStatus: 'LIVE',
-          deletedAt: null,
-          startTime: { gte: new Date() },
+        members: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                imageUrl: true,
+              },
+            },
+          },
+          take: 5,
+          orderBy: { joinedAt: 'asc' },
         },
-        select: {
-          id: true,
-          title: true,
-          startTime: true,
-          categorySlug: true,
+        activities: {
+          where: {
+            status: 'PUBLISHED',
+            moderationStatus: 'LIVE',
+            deletedAt: null,
+            startTime: { gte: new Date() },
+          },
+          select: {
+            id: true,
+            title: true,
+            startTime: true,
+            categorySlug: true,
+          },
+          orderBy: { startTime: 'asc' },
+          take: 1,
         },
-        orderBy: { startTime: 'asc' },
-        take: 1,
-      },
-      _count: {
-        select: {
-          members: true,
-          activities: true,
+        _count: {
+          select: {
+            members: true,
+            activities: true,
+          },
         },
       },
-    },
-    orderBy: { memberCount: 'desc' },
-    take: 100,
-  })
+      orderBy: { memberCount: 'desc' },
+      take: 100,
+    })
+    .catch((error) => {
+      if (process.env.NODE_ENV === 'production') {
+        console.error('Failed to load communities:', error)
+      }
+      return []
+    })
 
   return communities.map((c) => ({
     id: c.id,
@@ -143,9 +150,14 @@ function getSubtitle(communityCount: number, cities: CityData[]): string {
   return `${prefix} in ${allButLast} & ${cities[cities.length - 1].name}`
 }
 
-export default async function CommunitiesPage() {
+interface CommunitiesPageProps {
+  searchParams: Promise<{ city?: string }>
+}
+
+export default async function CommunitiesPage({ searchParams }: CommunitiesPageProps) {
   const communities = await getCommunities()
   const cities = getCitiesFromCommunities(communities)
+  const { city } = await searchParams
 
   const subtitle = getSubtitle(communities.length, cities)
 
@@ -154,6 +166,7 @@ export default async function CommunitiesPage() {
       communities={communities}
       cities={cities}
       subtitle={subtitle}
+      initialCitySlug={city ?? null}
     />
   )
 }

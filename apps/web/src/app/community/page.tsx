@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
 
 export default function CommunityPage() {
-  redirect('/communities')
+  redirect('/singapore?tab=communities')
 }

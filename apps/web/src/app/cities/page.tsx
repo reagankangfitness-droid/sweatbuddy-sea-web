@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
 
 export default function CitiesPage() {
-  redirect('/buddy?view=map')
+  redirect('/singapore?tab=map')
 }

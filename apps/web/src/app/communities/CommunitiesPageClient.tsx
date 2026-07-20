@@ -16,6 +16,7 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import { LogoWithText } from '@/components/logo'
+import { CityGuideTabs } from '@/components/city-guide/CityGuideTabs'
 import { getCategoryEmoji } from '@/lib/categories'
 import { ACTIVITY_CATEGORIES } from '@/lib/categories'
 
@@ -72,6 +73,7 @@ interface CommunitiesPageClientProps {
   communities: CommunityData[]
   cities: CityData[]
   subtitle: string
+  initialCitySlug?: string | null
 }
 
 interface FilterOption {
@@ -120,10 +122,11 @@ export default function CommunitiesPageClient({
   communities,
   cities,
   subtitle,
+  initialCitySlug = null,
 }: CommunitiesPageClientProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null)
-  const [cityFilter, setCityFilter] = useState<string | null>(null)
+  const [cityFilter, setCityFilter] = useState<string | null>(initialCitySlug)
   const [areaFilter, setAreaFilter] = useState<string | null>(null)
   const [priceFilter, setPriceFilter] = useState<string | null>(null)
   const [platformFilter, setPlatformFilter] = useState<string | null>(null)
@@ -297,6 +300,7 @@ export default function CommunitiesPageClient({
           </div>
         </div>
       </header>
+      <CityGuideTabs active="communities" />
 
       {/* ── Compact top bar: search + filters + create ── */}
       <div className="sticky top-0 z-40 border-b border-white/10 bg-[#0B0B0B]/95 backdrop-blur-xl">
@@ -323,7 +327,7 @@ export default function CommunitiesPageClient({
           </div>
 
           {/* Row 2: Directory command filters */}
-          <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+          <div className="grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap">
             <FilterSelect
               label="City"
               value={cityFilter}
@@ -422,13 +426,13 @@ export default function CommunitiesPageClient({
             <div className="mt-3 flex flex-wrap items-center justify-center gap-4">
               <Link
                 href="/communities/nominate"
-                className="text-xs text-[#9fe600] font-medium hover:underline"
+                className="inline-flex min-h-11 items-center rounded-full px-2 text-xs font-medium text-[#9fe600] hover:underline"
               >
                 Suggest a source
               </Link>
               <Link
                 href="/communities/create"
-                className="text-xs text-white font-medium hover:underline"
+                className="inline-flex min-h-11 items-center rounded-full px-2 text-xs font-medium text-white hover:underline"
               >
                 Submit a source →
               </Link>
@@ -611,7 +615,7 @@ function FilterSelect({
       <select
         value={value ?? ''}
         onChange={(event) => onChange(event.target.value || null)}
-        className="h-full w-full appearance-none rounded-lg bg-transparent pb-1.5 pl-3 pr-8 pt-4 text-[12px] font-semibold text-white outline-none"
+        className="min-h-11 w-full appearance-none rounded-lg bg-transparent pb-1.5 pl-3 pr-8 pt-4 text-[12px] font-semibold text-white outline-none"
         aria-label={label}
       >
         <option value="">{label}</option>

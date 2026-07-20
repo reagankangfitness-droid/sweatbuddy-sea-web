@@ -6,10 +6,11 @@ interface PageProps {
 
 export default async function BrowsePage({ searchParams }: PageProps) {
   const { type, cat } = await searchParams
-  const params = new URLSearchParams({ view: 'map' })
+  const params = new URLSearchParams()
   const activity = type ?? cat
 
-  if (activity) params.set('type', activity)
+  if (activity) params.set('q', activity)
 
-  redirect(`/buddy?${params.toString()}`)
+  const query = params.toString()
+  redirect(query ? `/singapore?${query}` : '/singapore')
 }

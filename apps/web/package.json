@@ -16,9 +16,14 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
     "backfill:community-directory": "node scripts/backfill-community-directory.js",
+    "import:osm-fitness-places": "node scripts/import-osm-fitness-places.js",
+    "enrich:google-places": "node scripts/enrich-fitness-places-google.js",
+    "sync:media-assets": "node scripts/sync-media-assets.js",
     "clean": "rm -rf .next .turbo node_modules",
-    "deploy": "vercel link --yes --scope reagankangfitness-droids-projects --project web && git push && vercel --prod",
-    "deploy:prod": "vercel link --yes --scope reagankangfitness-droids-projects --project web && vercel --prod"
+    "db:migrate:deploy": "prisma migrate deploy",
+    "deploy": "vercel link --yes --scope reagankangfitness-droids-projects --project web && git push && npm run db:migrate:deploy && vercel --prod",
+    "deploy:prod": "vercel link --yes --scope reagankangfitness-droids-projects --project web && npm run db:migrate:deploy && vercel --prod",
+    "deploy:alias:prod": "vercel alias set \"$VERCEL_DEPLOYMENT_URL\" www.sweatbuddies.co && vercel alias set \"$VERCEL_DEPLOYMENT_URL\" sweatbuddies.co && vercel alias set \"$VERCEL_DEPLOYMENT_URL\" sweatbuddy.vercel.app"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",

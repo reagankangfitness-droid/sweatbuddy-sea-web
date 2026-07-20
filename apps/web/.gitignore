@@ -2,7 +2,12 @@
 # clerk configuration (can include secrets)
 /.clerk/
 .vercel
+.env
+.env.*
+!.env.example
+!.env.local.example
 .env.vercel
 .env.production.local
 .env*.local
 *.env.production
+tsconfig.tsbuildinfo

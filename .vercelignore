@@ -4,4 +4,8 @@
 **/.turbo
 node_modules
 **/node_modules
+.env
+.env.*
+!.env.example
+!.env.local.example
 .env*.local

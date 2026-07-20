@@ -1,3 +1,4 @@
+import type { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
 /**
@@ -75,8 +76,7 @@ export async function getCoachSearchResults(filters: CoachSearchFilters) {
   const skip = (page - 1) * limit
 
   // Build where clause dynamically
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const where: any = {
+  const where: Prisma.CoachProfileWhereInput = {
     isActive: true,
     user: {
       isCoach: true,

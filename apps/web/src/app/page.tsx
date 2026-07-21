@@ -33,11 +33,11 @@ export const metadata: Metadata = {
 }
 
 const activityFilters = [
-  { label: 'Run / Walk', href: '/singapore/run-clubs' },
-  { label: 'Soft Entry', href: '/singapore/studios' },
-  { label: 'Pickleball', href: '/singapore/sports?q=pickleball' },
-  { label: 'Strength', href: '/singapore/gyms?q=strength' },
-  { label: 'Outdoor', href: '/singapore/outdoor-fitness' },
+  { label: 'Run / Walk', href: '/buddy?location=nearby&type=running' },
+  { label: 'Soft Entry', href: '/buddy?location=nearby&type=yoga' },
+  { label: 'Pickleball', href: '/buddy?location=nearby&type=pickleball' },
+  { label: 'Strength', href: '/buddy?location=nearby&type=strength' },
+  { label: 'Outdoor', href: '/buddy?location=nearby&type=hiking' },
   { label: 'Crews', href: '/communities' },
 ]
 
@@ -149,41 +149,41 @@ export default async function HomePage() {
           </p>
           <nav className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
             <TrackedLink
-              href="/singapore"
+              href="/buddy?location=nearby"
               event={EVENTS.LANDING_CTA_CLICKED}
-              metadata={{ placement: 'nav_explore', destination: '/singapore' }}
+              metadata={{ placement: 'nav_find_plans', destination: '/buddy?location=nearby' }}
               className={`${compactButtonBase} hidden rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase text-white/62 hover:border-white/30 hover:text-white sm:inline-flex`}
             >
-              Explore guide
+              Find plans
             </TrackedLink>
             <TrackedLink
-              href="/buddy?create=session"
+              href="/host"
               event={EVENTS.LANDING_CTA_CLICKED}
-              metadata={{ placement: 'nav_start_plan', destination: '/buddy?create=session' }}
+              metadata={{ placement: 'nav_host', destination: '/host' }}
               className={`${compactButtonBase} rounded-full bg-[#63FF8F] px-3 py-2.5 text-[11px] font-bold uppercase text-black hover:bg-[#83FFA6] min-[420px]:px-4 sm:px-5 sm:text-xs`}
             >
-              <span className="sm:hidden">Start</span>
-              <span className="hidden sm:inline">Start a plan</span>
+              <span className="sm:hidden">Host</span>
+              <span className="hidden sm:inline">Host a session</span>
             </TrackedLink>
           </nav>
         </div>
       </header>
 
       <main>
-        <CityGuideTabs active="places" />
+        <CityGuideTabs active="events" />
 
         <section className="border-b border-white/10">
           <div className="mx-auto grid max-w-[1920px] gap-0 lg:min-h-[calc(100vh-126px)] lg:grid-cols-[minmax(420px,42vw)_1fr]">
             <div className="min-w-0 border-r border-white/10 bg-[#0B0B0B]">
               <div className="border-b border-white/10 p-4 sm:p-6">
                 <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[#63FF8F]">
-                  SweatBuddies city guide
+                  SweatBuddies discovery
                 </p>
                 <h1 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight text-white sm:text-5xl">
-                  Fitness in Singapore.
+                  Plans you can show up to near you.
                 </h1>
                 <p className="mt-4 max-w-2xl text-sm leading-6 text-white/62 sm:text-base">
-                  Find where to show up, who it suits, and the easiest path to join.
+                  Start with joinable plans nearby. Use places and crews when you need confidence before going.
                 </p>
 
                 <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -199,12 +199,12 @@ export default async function HomePage() {
 
                 <div className="mt-5 flex flex-col gap-2 sm:flex-row">
                   <TrackedLink
-                    href="/singapore"
+                    href="/buddy?location=nearby"
                     event={EVENTS.LANDING_CTA_CLICKED}
-                    metadata={{ placement: 'homepage_primary_explore_directory', destination: '/singapore' }}
+                    metadata={{ placement: 'homepage_primary_find_plans', destination: '/buddy?location=nearby' }}
                     className={`${touchButtonBase} inline-flex flex-1 gap-2 rounded-full bg-[#63FF8F] px-5 py-3 text-sm font-bold text-black hover:bg-[#83FFA6]`}
                   >
-                    Explore Singapore guide <ArrowRight size={17} className="shrink-0" />
+                    Find plans <ArrowRight size={17} className="shrink-0" />
                   </TrackedLink>
                   <TrackedLink
                     href="/buddy?view=map&location=nearby"
@@ -219,14 +219,14 @@ export default async function HomePage() {
 
               <div className="border-b border-white/10 p-4 sm:p-6">
                 <TrackedLink
-                  href="/singapore"
+                  href="/buddy?location=nearby"
                   event={EVENTS.LANDING_CTA_CLICKED}
-                  metadata={{ placement: 'homepage_directory_search', destination: '/singapore' }}
+                  metadata={{ placement: 'homepage_plan_search', destination: '/buddy?location=nearby' }}
                   className={`${touchButtonBase} flex gap-3 rounded-xl border border-white/15 bg-[#111111] px-4 text-left text-sm font-semibold text-white/52 hover:border-white/35 hover:text-white`}
                 >
                   <Search size={18} strokeWidth={2.4} className="shrink-0" />
                   <span className="min-w-0 truncate">
-                    Search by activity, area, crew, or first-timer fit...
+                    Search plans, crews, activity, or neighborhood...
                   </span>
                 </TrackedLink>
 
@@ -266,10 +266,10 @@ export default async function HomePage() {
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="font-mono text-xs font-bold uppercase tracking-wide text-white/42">
-                  Curated show-up guide
+                  Confidence layer
                 </p>
                 <h2 className="mt-1 text-2xl font-semibold leading-tight text-white sm:text-3xl">
-                  Places where joining makes sense
+                  Places that make joining easier
                 </h2>
               </div>
               <TrackedLink
@@ -294,19 +294,19 @@ export default async function HomePage() {
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="font-mono text-xs font-bold uppercase tracking-wide text-white/42">
-                  Live social layer
+                  Plans layer
                 </p>
                 <h2 className="mt-1 text-2xl font-semibold leading-tight text-white sm:text-3xl">
-                  Upcoming plans at and around these places
+                  Upcoming plans people can join
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-white/58">
                   {peopleGoingCount} people are currently marked as joining featured sessions.
                 </p>
               </div>
               <TrackedLink
-                href="/buddy"
+                href="/buddy?location=nearby"
                 event={EVENTS.LANDING_CTA_CLICKED}
-                metadata={{ placement: 'homepage_events_view_all', destination: '/buddy' }}
+                metadata={{ placement: 'homepage_events_view_all', destination: '/buddy?location=nearby' }}
                 className={`${compactButtonBase} inline-flex w-fit gap-1.5 rounded-full border border-white/10 px-3 py-2 font-mono text-xs font-bold uppercase text-white/60 hover:border-[#63FF8F] hover:text-[#63FF8F]`}
               >
                 View events <ArrowRight size={14} className="shrink-0" />

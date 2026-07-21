@@ -29,16 +29,16 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   const { category } = await params
 
   if (!isDirectoryCategorySlug(category) || category === 'fitness') {
-    return { title: 'Singapore Fitness Guide | SweatBuddies' }
+    return { title: 'Singapore Fitness Guide' }
   }
 
   const directoryCategory = getDirectoryCategory(category)
 
   return {
-    title: `${directoryCategory.title} | SweatBuddies`,
+    title: directoryCategory.title,
     description: directoryCategory.description,
     openGraph: {
-      title: `${directoryCategory.title} | SweatBuddies`,
+      title: directoryCategory.title,
       description: directoryCategory.searchIntent,
       images: ['/images/cities/singapore.jpg'],
     },

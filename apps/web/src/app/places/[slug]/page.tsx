@@ -15,7 +15,6 @@ import {
 } from 'lucide-react'
 import { LogoWithText } from '@/components/logo'
 import {
-  formatPlaceType,
   getFitnessPlacePositioning,
   humanizeDirectoryTag,
 } from '@/lib/fitness-directory'
@@ -31,13 +30,13 @@ export async function generateMetadata({ params }: PlacePageProps): Promise<Meta
   const { slug } = await params
   const place = await getFitnessDirectoryPlaceBySlug(slug)
 
-  if (!place) return { title: 'Place Not Found | SweatBuddies' }
+  if (!place) return { title: 'Place Not Found' }
 
   return {
-    title: `${place.name} | SweatBuddies`,
+    title: place.name,
     description: `${place.description} See reviews, photos, vibe, amenities, and related fitness communities.`,
     openGraph: {
-      title: `${place.name} | SweatBuddies`,
+      title: place.name,
       description: place.bestFor,
       images: [place.coverImage],
     },
@@ -60,9 +59,11 @@ export default async function PlacePage({ params }: PlacePageProps) {
           ? '/singapore/run-clubs'
           : '/singapore/outdoor-fitness'
   const positioning = getFitnessPlacePositioning(place)
+  const sourceConfidenceScore = place.trustScore || place.socialScore
+  const relatedPlansHref = `/buddy?location=nearby&type=${encodeURIComponent(place.activities[0] || place.placeType)}`
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] text-white md:pl-14">
+    <div className="min-h-screen bg-[#0B0B0B] text-white">
       <header className="border-b border-white/10 bg-[#0B0B0B]">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4">
           <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-h-11 min-w-11 items-center">
@@ -96,7 +97,7 @@ export default async function PlacePage({ params }: PlacePageProps) {
               className="inline-flex min-h-10 items-center gap-2 rounded-full border border-white/16 bg-black/28 px-3 text-xs font-black uppercase tracking-wide text-white/72 backdrop-blur transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
             >
               <ArrowLeft size={15} />
-              Back to {formatPlaceType(place.placeType)}
+              Back to guide
             </Link>
 
             <div className="mt-14 max-w-4xl sm:mt-24 lg:mt-36">
@@ -117,10 +118,52 @@ export default async function PlacePage({ params }: PlacePageProps) {
                 {positioning.reason}
               </p>
 
+              <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+                {place.websiteUrl ? (
+                  <a
+                    href={place.websiteUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-5 text-sm font-black text-black transition-colors hover:bg-[#83FFA6]"
+                  >
+                    Open official link
+                    <ExternalLink size={16} />
+                  </a>
+                ) : (
+                  <Link
+                    href={relatedPlansHref}
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-5 text-sm font-black text-black transition-colors hover:bg-[#83FFA6]"
+                  >
+                    Find related plans
+                    <ArrowRight size={16} />
+                  </Link>
+                )}
+                {place.googleMapsUrl ? (
+                  <a
+                    href={place.googleMapsUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/18 bg-black/28 px-5 text-sm font-black text-white/78 backdrop-blur transition-colors hover:border-white/34 hover:text-white"
+                  >
+                    Get directions
+                    <ExternalLink size={16} />
+                  </a>
+                ) : null}
+                {!place.websiteUrl ? (
+                  <Link
+                    href="/communities/nominate"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/18 bg-black/28 px-5 text-sm font-black text-white/78 backdrop-blur transition-colors hover:border-white/34 hover:text-white"
+                  >
+                    Suggest source
+                    <ArrowRight size={16} />
+                  </Link>
+                ) : null}
+              </div>
+
               <div className="mt-6 grid gap-2 sm:grid-cols-3">
                 <HeroMetric label="Show-up score" value={positioning.score} detail={positioning.publicPriority} />
                 <HeroMetric label="Social signal" value={positioning.socialSignal} detail={positioning.intent.replace(/_/g, ' ')} />
-                <HeroMetric label="Trust score" value={place.trustScore || place.socialScore} detail="Source confidence" />
+                <HeroMetric label="Trust score" value={sourceConfidenceScore} detail="Source confidence" />
               </div>
             </div>
           </div>
@@ -208,7 +251,7 @@ export default async function PlacePage({ params }: PlacePageProps) {
               </h2>
               <div className="mt-4 space-y-3 text-sm">
                 <TrustRow label="Listing source" value={sourceLabel(place)} />
-                <TrustRow label="Trust score" value={`${place.trustScore || 0}/100`} />
+                <TrustRow label="Trust score" value={`${sourceConfidenceScore}/100`} />
                 <TrustRow label="Public reviews" value={reviewSourceValue(place)} />
                 <TrustRow label="Photo signal" value={`${place.photoQualityScore || 0}/100`} />
                 <TrustRow label="Official link" value={place.websiteUrl ? 'Available' : 'Not added yet'} />
@@ -319,7 +362,7 @@ export default async function PlacePage({ params }: PlacePageProps) {
                 We are connecting listings to live sessions as hosts and communities claim them.
               </p>
               <Link
-                href={`/buddy?city=singapore&activity=${encodeURIComponent(place.activities[0] || place.placeType)}`}
+                href={relatedPlansHref}
                 className="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-white/12 px-4 text-xs font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
               >
                 See related events

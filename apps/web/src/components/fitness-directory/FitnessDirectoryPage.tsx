@@ -177,7 +177,7 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
   )
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] text-white md:pl-14">
+    <div className="min-h-screen bg-[#0B0B0B] text-white">
       <header className="border-b border-white/10 bg-[#0B0B0B]">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4">
           <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-h-11 min-w-11 items-center">
@@ -193,18 +193,18 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
               href="/communities"
               className="hidden min-h-10 items-center rounded-full border border-white/12 px-3 text-xs font-black uppercase tracking-wide text-white/62 transition-colors hover:border-white/28 hover:text-white sm:inline-flex"
             >
-              Communities
+              Crews
             </Link>
             <Link
               href="/communities/nominate"
               className="inline-flex min-h-10 items-center rounded-full bg-[#63FF8F] px-3 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
             >
-              Submit a place
+              Suggest a crew
             </Link>
           </nav>
         </div>
       </header>
-      <CityGuideTabs active="places" />
+      <CityGuideTabs active="places" citySlug="singapore" />
 
       <main>
         <section className="border-b border-white/10">
@@ -274,86 +274,54 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
 
         <section className="mx-auto grid max-w-7xl gap-6 px-4 py-6 lg:grid-cols-[260px_minmax(0,1fr)]">
           <aside className="h-fit lg:sticky lg:top-[154px]">
-            <div className="flex items-center gap-2 border-b border-white/10 pb-3">
-              <SlidersHorizontal size={17} className="text-[#63FF8F]" />
-              <p className="font-mono text-xs font-black uppercase tracking-wide text-white/62">
-                Filters
-              </p>
-              {hasFilters ? (
-                <Link
-                  href={pathname}
-                  className="ml-auto text-xs font-bold text-white/46 underline decoration-white/20 underline-offset-4 hover:text-white"
-                >
-                  Clear
-                </Link>
-              ) : null}
+            <details className="group lg:hidden">
+              <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 rounded-lg border border-white/12 bg-[#111111] px-3 font-mono text-xs font-black uppercase tracking-wide text-white/72 group-open:border-[#63FF8F] [&::-webkit-details-marker]:hidden">
+                <span className="inline-flex items-center gap-2">
+                  <SlidersHorizontal size={16} className="text-[#63FF8F]" />
+                  Filters
+                </span>
+                <span className="truncate text-right text-[10px] text-white/42">
+                  {[
+                    searchParams?.area,
+                    searchParams?.vibe ? humanizeDirectoryTag(searchParams.vibe) : null,
+                    searchParams?.beginner === '1' ? 'Beginner' : null,
+                    searchParams?.trust,
+                  ].filter(Boolean).join(' / ') || 'All'}
+                </span>
+              </summary>
+              <div className="mt-3 rounded-xl border border-white/10 bg-[#111111] p-3">
+                <DirectoryFilters
+                  pathname={pathname}
+                  searchParams={searchParams}
+                  areas={areas}
+                  vibes={vibes}
+                />
+              </div>
+            </details>
+
+            <div className="hidden lg:block">
+              <div className="flex items-center gap-2 border-b border-white/10 pb-3">
+                <SlidersHorizontal size={17} className="text-[#63FF8F]" />
+                <p className="font-mono text-xs font-black uppercase tracking-wide text-white/62">
+                  Filters
+                </p>
+                {hasFilters ? (
+                  <Link
+                    href={pathname}
+                    className="ml-auto text-xs font-bold text-white/46 underline decoration-white/20 underline-offset-4 hover:text-white"
+                  >
+                    Clear
+                  </Link>
+                ) : null}
+              </div>
+
+              <DirectoryFilters
+                pathname={pathname}
+                searchParams={searchParams}
+                areas={areas}
+                vibes={vibes}
+              />
             </div>
-
-            <FilterGroup title="Area">
-              {areas.map((area) => (
-                <FilterLink
-                  key={area}
-                  href={buildFilterHref(pathname, searchParams, {
-                    area: searchParams?.area === area ? null : area,
-                  })}
-                  active={searchParams?.area === area}
-                >
-                  {area}
-                </FilterLink>
-              ))}
-            </FilterGroup>
-
-            <FilterGroup title="Vibe">
-              {vibes.map((vibe) => (
-                <FilterLink
-                  key={vibe}
-                  href={buildFilterHref(pathname, searchParams, {
-                    vibe: searchParams?.vibe === vibe ? null : vibe,
-                  })}
-                  active={searchParams?.vibe === vibe}
-                >
-                  {humanizeDirectoryTag(vibe)}
-                </FilterLink>
-              ))}
-            </FilterGroup>
-
-            <FilterGroup title="Fit">
-              <FilterLink
-                href={buildFilterHref(pathname, searchParams, {
-                  beginner: searchParams?.beginner === '1' ? null : '1',
-                })}
-                active={searchParams?.beginner === '1'}
-              >
-                Beginner-friendly
-              </FilterLink>
-            </FilterGroup>
-
-            <FilterGroup title="Trust">
-              <FilterLink
-                href={buildFilterHref(pathname, searchParams, {
-                  trust: searchParams?.trust === 'official' ? null : 'official',
-                })}
-                active={searchParams?.trust === 'official'}
-              >
-                Official website
-              </FilterLink>
-              <FilterLink
-                href={buildFilterHref(pathname, searchParams, {
-                  trust: searchParams?.trust === 'reviews' ? null : 'reviews',
-                })}
-                active={searchParams?.trust === 'reviews'}
-              >
-                Has reviews
-              </FilterLink>
-              <FilterLink
-                href={buildFilterHref(pathname, searchParams, {
-                  trust: searchParams?.trust === 'community' ? null : 'community',
-                })}
-                active={searchParams?.trust === 'community'}
-              >
-                Community signal
-              </FilterLink>
-            </FilterGroup>
           </aside>
 
           <div>
@@ -405,6 +373,88 @@ function StatBlock({ label, value }: { label: string; value: number }) {
         {label}
       </p>
     </div>
+  )
+}
+
+function DirectoryFilters({
+  pathname,
+  searchParams,
+  areas,
+  vibes,
+}: {
+  pathname: string
+  searchParams: FitnessDirectoryPageProps['searchParams']
+  areas: string[]
+  vibes: string[]
+}) {
+  return (
+    <>
+      <FilterGroup title="Area">
+        {areas.map((area) => (
+          <FilterLink
+            key={area}
+            href={buildFilterHref(pathname, searchParams, {
+              area: searchParams?.area === area ? null : area,
+            })}
+            active={searchParams?.area === area}
+          >
+            {area}
+          </FilterLink>
+        ))}
+      </FilterGroup>
+
+      <FilterGroup title="Vibe">
+        {vibes.map((vibe) => (
+          <FilterLink
+            key={vibe}
+            href={buildFilterHref(pathname, searchParams, {
+              vibe: searchParams?.vibe === vibe ? null : vibe,
+            })}
+            active={searchParams?.vibe === vibe}
+          >
+            {humanizeDirectoryTag(vibe)}
+          </FilterLink>
+        ))}
+      </FilterGroup>
+
+      <FilterGroup title="Fit">
+        <FilterLink
+          href={buildFilterHref(pathname, searchParams, {
+            beginner: searchParams?.beginner === '1' ? null : '1',
+          })}
+          active={searchParams?.beginner === '1'}
+        >
+          Beginner-friendly
+        </FilterLink>
+      </FilterGroup>
+
+      <FilterGroup title="Trust">
+        <FilterLink
+          href={buildFilterHref(pathname, searchParams, {
+            trust: searchParams?.trust === 'official' ? null : 'official',
+          })}
+          active={searchParams?.trust === 'official'}
+        >
+          Official website
+        </FilterLink>
+        <FilterLink
+          href={buildFilterHref(pathname, searchParams, {
+            trust: searchParams?.trust === 'reviews' ? null : 'reviews',
+          })}
+          active={searchParams?.trust === 'reviews'}
+        >
+          Has reviews
+        </FilterLink>
+        <FilterLink
+          href={buildFilterHref(pathname, searchParams, {
+            trust: searchParams?.trust === 'community' ? null : 'community',
+          })}
+          active={searchParams?.trust === 'community'}
+        >
+          Community signal
+        </FilterLink>
+      </FilterGroup>
+    </>
   )
 }
 

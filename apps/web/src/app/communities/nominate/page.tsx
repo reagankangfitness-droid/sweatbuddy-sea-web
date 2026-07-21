@@ -127,7 +127,7 @@ export default function NominateCommunityPage() {
             className="mb-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#999999] hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to source map
+            Back to crews
           </Link>
 
           <div className="rounded-lg border border-white/10 bg-[#151515] p-6">
@@ -143,8 +143,8 @@ export default function NominateCommunityPage() {
               {submission.requiresReview
                 ? 'We will keep it out of public discovery until it passes a trust check or an approved manager claims it.'
                 : submission.limited
-                  ? 'It needs source verification or a manager claim before broad public discovery.'
-                  : 'If it is already listed, people can find the existing source page from the event map.'}
+                  ? 'It needs crew verification or a manager claim before broad public discovery.'
+                  : 'If it is already listed, people can find the existing crew page from the event map.'}
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <button
@@ -166,7 +166,7 @@ export default function NominateCommunityPage() {
                 href="/communities"
                 className="rounded-full border border-white/15 px-4 py-3 text-sm font-bold text-white hover:bg-white/5"
               >
-                Browse sources
+                Browse crews
               </Link>
             </div>
           </div>
@@ -183,18 +183,18 @@ export default function NominateCommunityPage() {
           className="mb-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#999999] hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to source map
+          Back to crews
         </Link>
 
         <div className="mb-8">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#63FF8F]">
-            Submit a source
+            Suggest a crew
           </p>
           <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-            Help us verify the source behind local fitness events.
+            Help us verify the crew behind local fitness events.
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-6 text-[#AAAAAA]">
-            Send the official page or group link. New submissions stay queued until the source is verified or a manager claim is approved.
+            Send the official page or group link. New suggestions stay queued until the crew is verified or a manager claim is approved.
           </p>
         </div>
 
@@ -311,7 +311,7 @@ export default function NominateCommunityPage() {
               className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-5 text-sm font-bold text-black transition-colors hover:bg-[#83FFA6] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              Submit source
+              Suggest crew
             </button>
           </div>
         </form>

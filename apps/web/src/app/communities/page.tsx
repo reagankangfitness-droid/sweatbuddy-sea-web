@@ -5,11 +5,11 @@ import CommunitiesPageClient, { CommunityData, CityData } from './CommunitiesPag
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Communities | SweatBuddies',
-  description: 'Find local fitness communities near you. Browse run clubs, yoga groups, pickleball crews, strength clubs, and recovery communities across Southeast Asia.',
+  title: 'Crews',
+  description: 'Find local fitness crews near you. Browse run clubs, yoga groups, pickleball crews, strength clubs, and recovery crews across Southeast Asia.',
   openGraph: {
-    title: 'Communities | SweatBuddies',
-    description: 'Find local fitness communities near you. Browse run clubs, yoga groups, pickleball crews, strength clubs, and recovery communities across Southeast Asia.',
+    title: 'Crews',
+    description: 'Find local fitness crews near you. Browse run clubs, yoga groups, pickleball crews, strength clubs, and recovery crews across Southeast Asia.',
     url: 'https://www.sweatbuddies.co/communities',
   },
 }

@@ -13,16 +13,24 @@ export function CreateChoiceSheet({ open, onClose, onHostSession }: CreateChoice
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 px-3 py-3 backdrop-blur-sm sm:items-center">
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 px-3 py-3 backdrop-blur-sm sm:items-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="create-choice-title"
+      aria-describedby="create-choice-description"
+    >
       <div className="w-full max-w-md rounded-2xl border border-white/[0.10] bg-[#101010] p-4 text-white shadow-2xl shadow-black/50">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
               Add to the map
             </p>
-            <h2 className="mt-1 text-xl font-bold leading-tight">What can people show up to?</h2>
-            <p className="mt-1 text-xs leading-5 text-[#888888]">
-              Start a specific plan people can join, or send us a crew/source page to review.
+            <h2 id="create-choice-title" className="mt-1 text-xl font-bold leading-tight">
+              What can people show up to?
+            </h2>
+            <p id="create-choice-description" className="mt-1 text-xs leading-5 text-[#888888]">
+              Host a specific session people can join, or send us a crew/source page to review.
             </p>
           </div>
           <button
@@ -45,7 +53,7 @@ export function CreateChoiceSheet({ open, onClose, onHostSession }: CreateChoice
               <CalendarPlus className="h-5 w-5" />
             </span>
             <span className="min-w-0 pr-4">
-              <span className="block text-sm font-black uppercase tracking-wide">Start a plan</span>
+              <span className="block text-sm font-black uppercase tracking-wide">Host a session</span>
               <span className="mt-1 block text-xs font-semibold leading-5 text-black/58">
                 Publish a run, class, game, or wellness plan people can join.
               </span>
@@ -53,7 +61,7 @@ export function CreateChoiceSheet({ open, onClose, onHostSession }: CreateChoice
           </button>
 
           <Link
-            href="/communities/create"
+            href="/communities/nominate"
             onClick={onClose}
             className="flex min-h-[76px] items-center gap-3 rounded-xl border border-white/[0.10] bg-[#181818] text-left transition-colors hover:border-[#63FF8F]"
           >

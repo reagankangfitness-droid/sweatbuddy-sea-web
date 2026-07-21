@@ -42,6 +42,7 @@ interface SessionVectorMapProps {
   maxFitZoom?: number
   fitPadding?: number
   showControls?: boolean
+  showEmptyState?: boolean
   className?: string
 }
 
@@ -55,6 +56,7 @@ export function SessionVectorMap({
   maxFitZoom = 13,
   fitPadding = 72,
   showControls = true,
+  showEmptyState = true,
   className,
 }: SessionVectorMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -214,6 +216,7 @@ export function SessionVectorMap({
         selectedPinId={selectedPinId}
         onPinClick={onPinClick}
         onRetry={retryMapLoad}
+        showEmptyState={showEmptyState}
       />
     )
   }
@@ -238,12 +241,14 @@ function StaticPinMapFallback({
   selectedPinId,
   onPinClick,
   onRetry,
+  showEmptyState,
 }: {
   className?: string
   pins: Array<{ pin: SessionVectorMapPin; position: { lat: number; lng: number } }>
   selectedPinId?: string | null
   onPinClick?: (pin: SessionVectorMapPin | null) => void
   onRetry: () => void
+  showEmptyState: boolean
 }) {
   const bounds = getStaticBounds(pins.map((entry) => entry.position))
 
@@ -283,7 +288,7 @@ function StaticPinMapFallback({
         </span>
       </div>
 
-      {pins.length === 0 ? (
+      {pins.length === 0 && showEmptyState ? (
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
           <div>
             <p className="text-sm font-black uppercase tracking-wide text-white">No mapped sessions</p>

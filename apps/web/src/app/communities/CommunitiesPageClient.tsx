@@ -224,6 +224,8 @@ export default function CommunitiesPageClient({
     fitFilter ||
     vibeFilter
   )
+  const hasSources = communities.length > 0
+  const plansHref = cityFilter ? `/buddy?city=${encodeURIComponent(cityFilter)}` : '/buddy?location=nearby'
 
   const clearFilters = () => {
     setSearchQuery('')
@@ -237,7 +239,7 @@ export default function CommunitiesPageClient({
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] text-white md:pl-14">
+    <div className="min-h-screen bg-[#0B0B0B] text-white">
       <header className="border-b border-white/10 bg-[#0B0B0B]">
         <div className="mx-auto max-w-6xl px-4 py-5">
           <div className="flex min-h-11 items-center justify-between gap-2">
@@ -254,192 +256,236 @@ export default function CommunitiesPageClient({
               />
             </Link>
             <Link
-              href="/buddy"
+              href={plansHref}
               className="inline-flex min-h-10 shrink-0 items-center rounded-full border border-white/12 px-2.5 text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F] min-[380px]:px-3"
             >
-              <span className="min-[380px]:hidden">Events</span>
-              <span className="hidden min-[380px]:inline">Explore events</span>
+              <span className="min-[380px]:hidden">Plans</span>
+              <span className="hidden min-[380px]:inline">Explore plans</span>
             </Link>
           </div>
 
           <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
             <div>
               <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[#63FF8F]">
-                Host and source layer
+                Crew layer
               </p>
               <h1 className="mt-3 max-w-3xl text-4xl font-bold leading-[1.03] tracking-tight sm:text-5xl">
-                Verified hosts behind plans people can join.
+                {hasSources
+                  ? 'Crews behind plans people can join.'
+                  : 'Help map the crews behind easy plans.'}
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-6 text-white/58 sm:text-base">
-                Source pages help people trust who is hosting, where to join officially, and which
-                plans already have regulars. Events still lead discovery.
+                {hasSources
+                  ? 'Crew pages help people trust who is hosting, where to join officially, and which plans already have regulars. Plans still lead discovery.'
+                  : 'SweatBuddies reviews official crew and host pages before they become public trust signals. Plans still lead discovery.'}
               </p>
             </div>
-            <div className="grid grid-cols-3 gap-2 lg:grid-cols-1">
-              <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
-                <p className="font-mono text-lg font-black text-white">{communities.length}</p>
-                <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
-                  Sources
+            {hasSources ? (
+              <div className="grid grid-cols-3 gap-2 lg:grid-cols-1">
+                <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
+                  <p className="font-mono text-lg font-black text-white">{communities.length}</p>
+                  <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
+                    Crews
+                  </p>
+                </div>
+                <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
+                  <p className="font-mono text-lg font-black text-white">{cities.length || 2}</p>
+                  <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
+                    Markets
+                  </p>
+                </div>
+                <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
+                  <p className="font-mono text-lg font-black text-[#63FF8F]">
+                    {filteredCommunities.length}
+                  </p>
+                  <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
+                    Visible
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-lg border border-dashed border-white/15 bg-white/[0.035] p-4">
+                <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-white/42">
+                  No public crews yet
+                </p>
+                <p className="mt-2 text-sm leading-6 text-white/64">
+                  Suggest a crew or official host page and we will review it before it appears here.
                 </p>
               </div>
-              <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
-                <p className="font-mono text-lg font-black text-white">{cities.length || 2}</p>
-                <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
-                  Markets
-                </p>
-              </div>
-              <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
-                <p className="font-mono text-lg font-black text-[#63FF8F]">
-                  {filteredCommunities.length}
-                </p>
-                <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
-                  Visible
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-      <CityGuideTabs active="communities" />
-
-      {/* ── Compact top bar: search + filters + create ── */}
-      <div className="sticky top-0 z-40 border-b border-white/10 bg-[#0B0B0B]/95 backdrop-blur-xl">
-        <div className="max-w-6xl mx-auto px-4 py-3 space-y-2.5">
-          {/* Row 1: Search + Create */}
-          <div className="flex items-center gap-2">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
-              <input
-                type="text"
-                placeholder="Search sources, activities, or cities..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="min-h-11 w-full rounded-lg border border-white/15 bg-[#111111] py-2.5 pl-9 pr-4 text-sm text-white transition-all placeholder:text-[#666666] focus:border-[#63FF8F] focus:outline-none max-[360px]:placeholder:text-[12px]"
-              />
-            </div>
-            <Link
-              href="/communities/create"
-              className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#63FF8F] transition-colors hover:bg-[#83FFA6]"
-              aria-label="Submit a source"
-            >
-              <Plus className="w-4 h-4 text-black" />
-            </Link>
-          </div>
-
-          {/* Row 2: Directory command filters */}
-          <div className="grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap">
-            <FilterSelect
-              label="City"
-              value={cityFilter}
-              options={cityOptions}
-              onChange={setCityFilter}
-            />
-            <FilterSelect
-              label="Activity"
-              value={categoryFilter}
-              options={availableCategories}
-              onChange={setCategoryFilter}
-            />
-            <FilterSelect
-              label="Area"
-              value={areaFilter}
-              options={areaOptions}
-              onChange={setAreaFilter}
-            />
-            <FilterSelect
-              label="Price"
-              value={priceFilter}
-              options={priceOptions}
-              onChange={setPriceFilter}
-            />
-            <FilterSelect
-              label="Fit"
-              value={fitFilter}
-              options={[
-                { value: 'beginner', label: 'Beginner-friendly' },
-                { value: 'experienced', label: 'Experienced' },
-              ]}
-              onChange={setFitFilter}
-            />
-            <FilterSelect
-              label="Join"
-              value={platformFilter}
-              options={platformOptions}
-              onChange={setPlatformFilter}
-            />
-            <FilterSelect
-              label="Vibe"
-              value={vibeFilter}
-              options={vibeOptions}
-              onChange={setVibeFilter}
-            />
-            {hasFilters && (
-              <button
-                type="button"
-                onClick={clearFilters}
-                className="flex min-h-11 flex-shrink-0 items-center gap-1 rounded-lg border border-white/15 bg-[#141414] px-3 text-[11px] font-semibold uppercase tracking-wide text-[#999999] transition-colors hover:border-[#63FF8F] hover:text-white"
-              >
-                <X className="h-3.5 w-3.5" />
-                Clear
-              </button>
             )}
           </div>
         </div>
-      </div>
+      </header>
+      <CityGuideTabs active="communities" citySlug={cityFilter ?? undefined} />
 
-      {/* ── Source count ── */}
-      <div className="max-w-6xl mx-auto px-4 pt-4 pb-2">
-        <div className="flex items-center justify-between gap-3">
-          <p className="font-mono text-[11px] font-black uppercase tracking-[0.18em] text-white/42">
-            {hasFilters
-              ? `${filteredCommunities.length} source page${filteredCommunities.length === 1 ? '' : 's'} found`
-              : `${subtitle} · source pages behind joinable events`}
-          </p>
-          <Link
-            href="/communities/nominate"
-            className="inline-flex min-h-11 flex-shrink-0 items-center rounded-full px-2 text-[11px] font-black uppercase tracking-wide text-[#63FF8F] hover:text-white"
-          >
-            Submit a source
-          </Link>
-        </div>
-      </div>
+      {hasSources ? (
+        <>
+          {/* ── Compact top bar: search + filters + create ── */}
+          <div className="sticky top-0 z-40 border-b border-white/10 bg-[#0B0B0B]/95 backdrop-blur-xl">
+            <div className="max-w-6xl mx-auto px-4 py-3 space-y-2.5">
+              {/* Row 1: Search + Create */}
+              <div className="flex items-center gap-2">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
+                  <input
+                    type="text"
+                    placeholder="Search crews, activities, or cities..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="min-h-11 w-full rounded-lg border border-white/15 bg-[#111111] py-2.5 pl-9 pr-4 text-sm text-white transition-all placeholder:text-[#666666] focus:border-[#63FF8F] focus:outline-none max-[360px]:placeholder:text-[12px]"
+                  />
+                </div>
+                <Link
+                  href="/communities/nominate"
+                  className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#63FF8F] transition-colors hover:bg-[#83FFA6]"
+                  aria-label="Suggest a crew"
+                >
+                  <Plus className="w-4 h-4 text-black" />
+                </Link>
+              </div>
 
-      {/* ── Grid ── */}
-      <div className="max-w-6xl mx-auto px-4 pb-24">
-        {filteredCommunities.length > 0 ? (
-          <motion.div
-            className="grid grid-cols-1 gap-3 min-[430px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
-            initial="hidden"
-            animate="visible"
-            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.03 } } }}
-          >
-            {filteredCommunities.map((community) => (
-              <CrewCard key={community.id} community={community} />
-            ))}
-          </motion.div>
-        ) : (
-          <div className="text-center py-20">
-            <Users className="w-8 h-8 text-[#666666] mx-auto mb-3" />
-            <p className="text-sm text-[#999999] mb-1">
-              {hasFilters ? 'No communities match your search.' : 'No communities listed yet.'}
-            </p>
-            <div className="mt-3 flex flex-wrap items-center justify-center gap-4">
+              {/* Row 2: Directory command filters */}
+              <div className="grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap">
+                <FilterSelect
+                  label="City"
+                  value={cityFilter}
+                  options={cityOptions}
+                  onChange={setCityFilter}
+                />
+                <FilterSelect
+                  label="Activity"
+                  value={categoryFilter}
+                  options={availableCategories}
+                  onChange={setCategoryFilter}
+                />
+                <FilterSelect
+                  label="Area"
+                  value={areaFilter}
+                  options={areaOptions}
+                  onChange={setAreaFilter}
+                />
+                <FilterSelect
+                  label="Price"
+                  value={priceFilter}
+                  options={priceOptions}
+                  onChange={setPriceFilter}
+                />
+                <FilterSelect
+                  label="Fit"
+                  value={fitFilter}
+                  options={[
+                    { value: 'beginner', label: 'Beginner-friendly' },
+                    { value: 'experienced', label: 'Experienced' },
+                  ]}
+                  onChange={setFitFilter}
+                />
+                <FilterSelect
+                  label="Join"
+                  value={platformFilter}
+                  options={platformOptions}
+                  onChange={setPlatformFilter}
+                />
+                <FilterSelect
+                  label="Vibe"
+                  value={vibeFilter}
+                  options={vibeOptions}
+                  onChange={setVibeFilter}
+                />
+                {hasFilters && (
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="flex min-h-11 flex-shrink-0 items-center gap-1 rounded-lg border border-white/15 bg-[#141414] px-3 text-[11px] font-semibold uppercase tracking-wide text-[#999999] transition-colors hover:border-[#63FF8F] hover:text-white"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Crew count ── */}
+          <div className="max-w-6xl mx-auto px-4 pt-4 pb-2">
+            <div className="flex items-center justify-between gap-3">
+              <p className="font-mono text-[11px] font-black uppercase tracking-[0.18em] text-white/42">
+                {hasFilters
+                  ? `${filteredCommunities.length} crew${filteredCommunities.length === 1 ? '' : 's'} found`
+                  : `${subtitle} · crews behind joinable plans`}
+              </p>
               <Link
                 href="/communities/nominate"
-                className="inline-flex min-h-11 items-center rounded-full px-2 text-xs font-medium text-[#9fe600] hover:underline"
+                className="inline-flex min-h-11 flex-shrink-0 items-center rounded-full px-2 text-[11px] font-black uppercase tracking-wide text-[#63FF8F] hover:text-white"
               >
-                Suggest a source
-              </Link>
-              <Link
-                href="/communities/create"
-                className="inline-flex min-h-11 items-center rounded-full px-2 text-xs font-medium text-white hover:underline"
-              >
-                Submit a source →
+                Suggest a crew
               </Link>
             </div>
           </div>
-        )}
-      </div>
+
+          {/* ── Grid ── */}
+          <div className="max-w-6xl mx-auto px-4 pb-24">
+            {filteredCommunities.length > 0 ? (
+              <motion.div
+                className="grid grid-cols-1 gap-3 min-[430px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
+                initial="hidden"
+                animate="visible"
+                variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.03 } } }}
+              >
+                {filteredCommunities.map((community) => (
+                  <CrewCard key={community.id} community={community} />
+                ))}
+              </motion.div>
+            ) : (
+              <div className="text-center py-20">
+                <Users className="w-8 h-8 text-[#666666] mx-auto mb-3" />
+                <p className="text-sm text-[#999999] mb-1">No crews match your search.</p>
+                <div className="mt-3 flex flex-wrap items-center justify-center gap-4">
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="inline-flex min-h-11 items-center rounded-full px-2 text-xs font-medium text-white hover:underline"
+                  >
+                    Clear filters
+                  </button>
+                  <Link
+                    href="/communities/nominate"
+                    className="inline-flex min-h-11 items-center rounded-full px-2 text-xs font-medium text-[#9fe600] hover:underline"
+                  >
+                    Suggest a crew
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <div className="mx-auto grid max-w-6xl gap-4 px-4 py-10 pb-28 md:grid-cols-2">
+          <Link
+            href={plansHref}
+            className="rounded-lg border border-[#63FF8F]/30 bg-[#63FF8F]/10 p-5 transition-colors hover:border-[#63FF8F]/60"
+          >
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+              Ready now
+            </p>
+            <h2 className="mt-3 text-2xl font-bold text-white">Explore plans</h2>
+            <p className="mt-2 text-sm leading-6 text-white/62">
+              Plans are the fastest way to decide where to show up while crew pages are being reviewed.
+            </p>
+          </Link>
+          <Link
+            href="/communities/nominate"
+            className="rounded-lg border border-white/10 bg-[#111111] p-5 transition-colors hover:border-white/24"
+          >
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-white/42">
+              Help map a crew
+            </p>
+            <h2 className="mt-3 text-2xl font-bold text-white">Suggest a crew</h2>
+            <p className="mt-2 text-sm leading-6 text-white/62">
+              Send the official page or group link. We will review it before it appears publicly.
+            </p>
+          </Link>
+        </div>
+      )}
     </div>
   )
 }

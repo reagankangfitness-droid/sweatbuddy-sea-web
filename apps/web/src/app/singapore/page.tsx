@@ -3,11 +3,11 @@ import { redirect } from 'next/navigation'
 import { FitnessDirectoryPage } from '@/components/fitness-directory/FitnessDirectoryPage'
 
 export const metadata: Metadata = {
-  title: 'Singapore Fitness Guide | SweatBuddies',
+  title: 'Singapore Fitness Guide',
   description:
     'Discover gyms, studios, run clubs, outdoor fitness, sports facilities, reviews, photos, and communities in Singapore.',
   openGraph: {
-    title: 'Singapore Fitness Guide | SweatBuddies',
+    title: 'Singapore Fitness Guide',
     description:
       'Find where to train, play, and meet active people in Singapore.',
     images: ['/images/cities/singapore.jpg'],

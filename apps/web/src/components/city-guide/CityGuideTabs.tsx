@@ -3,22 +3,40 @@ import { CalendarDays, Map, MapPin, Users } from 'lucide-react'
 
 type CityGuideTab = 'places' | 'events' | 'communities' | 'map'
 
-const tabs: Array<{
+function getTabs(citySlug?: string): Array<{
   id: CityGuideTab
   label: string
   href: string
   icon: typeof MapPin
-}> = [
-  { id: 'places', label: 'Places', href: '/singapore', icon: MapPin },
-  { id: 'events', label: 'Events', href: '/buddy?city=singapore', icon: CalendarDays },
-  { id: 'communities', label: 'Communities', href: '/communities?city=singapore', icon: Users },
-  { id: 'map', label: 'Map', href: '/buddy?view=map&city=singapore', icon: Map },
-]
+}> {
+  const cityQuery = citySlug ? `city=${encodeURIComponent(citySlug)}` : 'location=nearby'
+  const guideHref = citySlug ? `/${citySlug}` : '/singapore'
 
-export function CityGuideTabs({ active }: { active: CityGuideTab }) {
+  return [
+    { id: 'events', label: 'Plans', href: `/buddy?${cityQuery}`, icon: CalendarDays },
+    { id: 'map', label: 'Map', href: `/buddy?view=map&${cityQuery}`, icon: Map },
+    {
+      id: 'communities',
+      label: 'Crews',
+      href: citySlug ? `/communities?city=${encodeURIComponent(citySlug)}` : '/communities',
+      icon: Users,
+    },
+    { id: 'places', label: 'Guide', href: guideHref, icon: MapPin },
+  ]
+}
+
+export function CityGuideTabs({
+  active,
+  citySlug,
+}: {
+  active: CityGuideTab
+  citySlug?: string
+}) {
+  const tabs = getTabs(citySlug)
+
   return (
     <nav
-      aria-label="Singapore guide sections"
+      aria-label="Discovery sections"
       className="border-b border-white/10 bg-[#0B0B0B]/96 backdrop-blur-xl"
     >
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-2 px-4 py-3 sm:flex sm:overflow-x-auto">

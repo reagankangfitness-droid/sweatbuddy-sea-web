@@ -354,7 +354,7 @@ function EventDiscoveryBand({
             Find a plan you can show up to solo
           </h1>
           <p className="mt-1 text-xs leading-relaxed text-white/58">
-            {activeTypeLabel === 'All types'
+            {activeTypeLabel === 'All'
               ? 'Browse sessions ranked by show-up confidence: clear plan, easy join path, solo-friendly signals, and verified hosts.'
               : `${activeTypeLabel} sessions ranked by show-up confidence before you decide where to go.`}
           </p>
@@ -363,7 +363,7 @@ function EventDiscoveryBand({
           onClick={onCreate}
           className="min-h-11 flex-shrink-0 rounded-full bg-[#63FF8F] px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider text-black transition-colors hover:bg-[#83FFA6]"
         >
-          Start plan
+          Host
         </button>
       </div>
 
@@ -767,6 +767,8 @@ function BuddyPageInner() {
   const { isLoaded: authLoaded, isSignedIn } = useAuth()
   const [hasMounted, setHasMounted] = useState(false)
   const requestedCitySlug = searchParams.get('city')
+  const requestedLocation = searchParams.get('location')
+  const explicitNearbyLocation = requestedLocation === NEARBY_FILTER_VALUE
   const explicitCityConfig = useMemo(
     () => findCityLocationConfig(requestedCitySlug),
     [requestedCitySlug],
@@ -776,8 +778,7 @@ function BuddyPageInner() {
     [requestedCitySlug],
   )
   const initialStoredLocation = useMemo(() => readStoredDiscoveryLocation(), [])
-  const shouldStartInCityMode =
-    Boolean(explicitCityConfig) && searchParams.get('location') !== NEARBY_FILTER_VALUE
+  const shouldStartInCityMode = Boolean(explicitCityConfig) && !explicitNearbyLocation
   const initialTypeFilter = searchParams.get('type') ?? searchParams.get('cat') ?? ''
   const initialPricingFilter = searchParams.get('pricing') ?? ''
   const initialLevelFilter = searchParams.get('fitnessLevel') ?? searchParams.get('level') ?? ''
@@ -1047,7 +1048,7 @@ function BuddyPageInner() {
     [activeLocationLabel, sessions, supportPlaces],
   )
 
-  const activeTypeLabel = TYPE_FILTERS.find((type) => type.value === typeFilter)?.label ?? 'fitness'
+  const activeTypeLabel = TYPE_FILTERS.find((type) => type.value === typeFilter)?.label ?? 'All'
   const activePriceLabel =
     PRICING_FILTERS.find((price) => price.value === pricingFilter)?.label ?? 'All prices'
   const activeLevelLabel =
@@ -1114,7 +1115,7 @@ function BuddyPageInner() {
     setSelectedMapPinId(null)
 
     if (!navigator.geolocation) {
-      setDiscoveryMode('city')
+      setDiscoveryMode(explicitNearbyLocation ? 'nearby' : 'city')
       setLocationStatus('unsupported')
       setCityConfig(DEFAULT_CITY_LOCATION_CONFIG)
       setUserLocation(null)
@@ -1140,7 +1141,7 @@ function BuddyPageInner() {
         settle()
       },
       () => {
-        setDiscoveryMode('city')
+        setDiscoveryMode(explicitNearbyLocation ? 'nearby' : 'city')
         setLocationStatus('denied')
         setCityConfig(DEFAULT_CITY_LOCATION_CONFIG)
         setUserLocation(null)
@@ -1152,7 +1153,7 @@ function BuddyPageInner() {
     const timer = setTimeout(() => {
       if (profileCityLockedRef.current) return
       if (!settled) {
-        setDiscoveryMode('city')
+        setDiscoveryMode(explicitNearbyLocation ? 'nearby' : 'city')
         setLocationStatus('denied')
         setCityConfig(DEFAULT_CITY_LOCATION_CONFIG)
         setUserLocation(null)
@@ -1161,7 +1162,7 @@ function BuddyPageInner() {
     }, 3000)
 
     return () => clearTimeout(timer)
-  }, [])
+  }, [explicitNearbyLocation])
 
   function updateCityFilter(value: string) {
     if (value === NEARBY_FILTER_VALUE) {
@@ -1660,6 +1661,7 @@ function BuddyPageInner() {
         const profileCity = getCityLocationConfigFromText(data?.user?.location)
         if (
           profileCity &&
+          !explicitNearbyLocation &&
           !profileCityLockedRef.current &&
           (discoveryMode === 'nearby' ||
             locationStatus === 'denied' ||
@@ -1678,7 +1680,16 @@ function BuddyPageInner() {
       }
     }
     loadInitialData()
-  }, [authLoaded, discoveryMode, isSignedIn, locationReady, locationStatus, router, userLocation])
+  }, [
+    authLoaded,
+    discoveryMode,
+    explicitNearbyLocation,
+    isSignedIn,
+    locationReady,
+    locationStatus,
+    router,
+    userLocation,
+  ])
 
   // Check for pending feedback + bio prompt on past sessions
   useEffect(() => {
@@ -1784,7 +1795,7 @@ function BuddyPageInner() {
 
   return (
     <div
-      className="flex flex-col bg-[#0B0B0B] md:pl-14"
+      className="flex flex-col bg-[#0B0B0B]"
       style={{ height: '100dvh', overflow: 'hidden' }}
     >
       {/* Create Session Sheet */}
@@ -2059,7 +2070,25 @@ function BuddyPageInner() {
           </div>
         </div>
       </div>
-      <CityGuideTabs active={viewMode === 'map' ? 'map' : 'events'} />
+      <CityGuideTabs
+        active={viewMode === 'map' ? 'map' : 'events'}
+        citySlug={discoveryMode === 'city' ? cityConfig.slug : undefined}
+      />
+
+      <section className="border-b border-white/10 bg-[#0B0B0B] px-4 py-3">
+        <div className="mx-auto max-w-6xl">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+            Plans first
+          </p>
+          <h1 className="mt-1 text-lg font-black leading-tight text-white sm:text-2xl">
+            Plans you can show up to {activeDateLabel === 'Upcoming' ? 'soon' : activeDateLabel.toLowerCase()}
+          </h1>
+          <p className="mt-1 text-xs leading-5 text-white/52 sm:text-sm">
+            Sorted by show-up confidence in {neighborhoodFilter?.name ?? activeLocationLabel}: time,
+            crew signal, solo-friendly fit, and people going.
+          </p>
+        </div>
+      </section>
 
       {viewMode === 'list' ? (
         <div className="flex-1 min-h-0 overflow-hidden lg:grid lg:grid-cols-[minmax(390px,42vw)_1fr]">
@@ -2279,6 +2308,7 @@ function BuddyPageInner() {
               }}
               initialZoom={12}
               maxFitZoom={13}
+              showEmptyState={false}
             />
             <div className="absolute left-4 top-4 z-10 rounded-lg border border-white/[0.10] bg-black/55 px-3 py-2 font-mono text-[11px] font-black uppercase tracking-[0.16em] text-white/70 backdrop-blur">
               {activeLocationLabel} · {supportPlaces.length} support places ·{' '}
@@ -2339,6 +2369,7 @@ function BuddyPageInner() {
               }}
               initialZoom={12}
               maxFitZoom={13}
+              showEmptyState={false}
             />
 
             {/* Selected pin card overlay */}
@@ -2798,7 +2829,7 @@ function CityEmptyState({
 }) {
   const otherCity =
     citySlug === 'bangkok'
-      ? { name: 'Singapore', href: '/buddy?city=singapore' }
+              ? { name: 'Singapore', href: '/buddy?city=singapore' }
       : { name: 'Bangkok', href: '/buddy?city=bangkok' }
 
   return (
@@ -2812,13 +2843,13 @@ function CityEmptyState({
         </h2>
         <p className="mt-2 max-w-xl text-sm leading-6 text-[#999999]">
           SweatBuddies should make the first step obvious: what is happening, where to go, and how
-          to join. Suggest a crew/source for review, start a specific plan if you run one, or clear
-          filters if this search is too narrow.
+          to join. Suggest a crew/source for review, host a specific session if you run one, or
+          clear filters if this search is too narrow.
         </p>
 
         <div className="mt-4 flex flex-wrap gap-2">
           <Link
-            href="/communities/create"
+            href="/communities/nominate"
             className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-xs font-black uppercase tracking-wide text-black hover:bg-neutral-200"
           >
             Suggest a crew
@@ -2829,7 +2860,7 @@ function CityEmptyState({
             className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/[0.12] bg-[#1A1A1A] px-4 text-xs font-black uppercase tracking-wide text-white hover:border-[#63FF8F] hover:text-[#63FF8F]"
           >
             <Zap className="h-3.5 w-3.5" />
-            Start a plan
+            Host a session
           </button>
           {hasFilters && (
             <button
@@ -2909,7 +2940,7 @@ function MapEmptyOverlay({ cityName, onCreate }: { cityName: string; onCreate: (
         className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-xs font-black uppercase tracking-wide text-black hover:bg-neutral-200"
       >
         <Zap className="h-3.5 w-3.5" />
-        Start a plan
+	        Host a session
       </button>
     </div>
   )

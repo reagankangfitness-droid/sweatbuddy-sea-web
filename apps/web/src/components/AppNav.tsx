@@ -47,16 +47,21 @@ function AppNavInner() {
       .catch(() => {})
   }, [isSignedIn])
 
-  // Only show on main browsing pages — NOT on detail/edit/form pages with their own action bars
-  const isAppPage =
+  const isPublicDiscoveryRoute =
     pathname === '/buddy' ||
     pathname.startsWith('/singapore') ||
-    pathname.startsWith('/buddy?') ||
+    pathname.startsWith('/communities') ||
+    pathname.startsWith('/places') ||
+    pathname === '/bangkok' ||
+    pathname.startsWith('/cities')
+
+  // Only show on account/workspace pages. Public discovery pages use their own
+  // Plans / Map / Crews / Guide navigation so users do not see two app models.
+  const isAppPage =
     pathname.startsWith('/discover') ||
     pathname === '/profile' ||
     pathname.startsWith('/my-bookings') ||
     pathname.startsWith('/my-sessions') ||
-    pathname.startsWith('/communities') ||
     pathname.startsWith('/settings') ||
     pathname.startsWith('/user') ||
     pathname.startsWith('/saved') ||
@@ -74,7 +79,7 @@ function AppNavInner() {
     pathname.match(/^\/e\/[^/]+$/) || // event detail
     pathname.match(/^\/event\/[^/]+$/) // event detail
 
-  if (!isAppPage || hasOwnActionBar) return null
+  if (isPublicDiscoveryRoute || !isAppPage || hasOwnActionBar) return null
 
   function isActive(item: (typeof navItems)[0]) {
     if (item.id === 'discover') {

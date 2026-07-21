@@ -11,6 +11,7 @@ import {
   Loader2,
   Zap,
   Map,
+  MapPin,
   List,
   Search,
   X,
@@ -312,6 +313,67 @@ function getLocalDateString(timezone: string, offsetDays = 0): string {
   const date = new Date()
   date.setDate(date.getDate() + offsetDays)
   return date.toLocaleDateString('en-CA', { timeZone: timezone })
+}
+
+function LocationPermissionPanel({
+  status,
+  cityOptions,
+  onUseLocation,
+  onChooseCity,
+}: {
+  status: LocationStatus
+  cityOptions: CityLocationConfig[]
+  onUseLocation: () => void
+  onChooseCity: (citySlug: string) => void
+}) {
+  if (status === 'granted' || status === 'stored' || status === 'city') return null
+
+  const isDetecting = status === 'detecting'
+  const title = isDetecting ? 'Finding plans near you' : 'Choose how to start'
+  const body = isDetecting
+    ? 'SweatBuddies uses your browser location to load nearby plans and map pins first.'
+    : status === 'unsupported'
+      ? 'This browser cannot share location. Pick a city and we will keep discovery scoped there.'
+      : 'Location was not shared. You can try again or choose a city manually.'
+
+  return (
+    <section className="border-b border-white/10 bg-[#101010] px-4 py-3">
+      <div className="mx-auto flex max-w-6xl flex-col gap-3 rounded-lg border border-white/10 bg-white/[0.035] p-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+            Location setup
+          </p>
+          <h2 className="mt-1 text-sm font-black text-white">{title}</h2>
+          <p className="mt-1 text-xs leading-5 text-white/58">{body}</p>
+        </div>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={onUseLocation}
+            disabled={isDetecting}
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6] disabled:cursor-wait disabled:bg-[#2F4735] disabled:text-white/55"
+          >
+            {isDetecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <MapPinIcon />}
+            Use my location
+          </button>
+          {cityOptions.map((city) => (
+            <button
+              key={city.slug}
+              type="button"
+              onClick={() => onChooseCity(city.slug)}
+              className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/12 px-3 text-xs font-black uppercase tracking-wide text-white/72 transition-colors hover:border-white/30 hover:text-white"
+            >
+              {city.name}
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function MapPinIcon() {
+  return <MapPin className="h-3.5 w-3.5" />
 }
 
 function EventDiscoveryBand({
@@ -2074,6 +2136,12 @@ function BuddyPageInner() {
         active={viewMode === 'map' ? 'map' : 'events'}
         citySlug={discoveryMode === 'city' ? cityConfig.slug : undefined}
       />
+      <LocationPermissionPanel
+        status={locationStatus}
+        cityOptions={CITY_LOCATION_CONFIGS}
+        onUseLocation={requestCurrentLocation}
+        onChooseCity={updateCityFilter}
+      />
 
       <section className="border-b border-white/10 bg-[#0B0B0B] px-4 py-3">
         <div className="mx-auto max-w-6xl">
@@ -3132,6 +3200,63 @@ function SessionCard({
       ? 'Host profile'
       : 'Local listing'
   const imageSrc = getSessionListingImage(session)
+  const decisionSignals: Array<{
+    key: string
+    label: string
+    tone: 'gold' | 'teal' | 'neutral' | 'hot'
+    icon?: 'shield'
+  }> = [
+    ...confidenceBadges.slice(0, 2).map((badge) => ({
+      key: `confidence-${badge}`,
+      label: badge,
+      tone: 'gold' as const,
+    })),
+  ]
+
+  if (soloCount > 0) {
+    decisionSignals.push({
+      key: 'solo',
+      label: `${soloCount} solo`,
+      tone: 'teal',
+    })
+  }
+  if (isFirstTimerFriendly) {
+    decisionSignals.push({
+      key: 'first-timers',
+      label: 'First-timers',
+      tone: 'neutral',
+    })
+  }
+  if (session.community) {
+    decisionSignals.push({
+      key: 'verified-host',
+      label: 'Verified host',
+      tone: 'neutral',
+      icon: 'shield',
+    })
+  }
+  if (officialJoinUrl) {
+    decisionSignals.push({
+      key: 'official-link',
+      label: 'Official link',
+      tone: 'hot',
+    })
+  }
+  if (freshnessLabel) {
+    decisionSignals.push({
+      key: 'freshness',
+      label: freshnessLabel,
+      tone: 'neutral',
+    })
+  }
+  if (levelLabel) {
+    decisionSignals.push({
+      key: 'level',
+      label: levelLabel,
+      tone: 'gold',
+    })
+  }
+  const visibleDecisionSignals = decisionSignals.slice(0, 3)
 
   return (
     <motion.div
@@ -3239,53 +3364,25 @@ function SessionCard({
           </div>
 
           <div className="mt-3 flex flex-1 flex-col justify-between gap-3">
-            {(session.community ||
-              officialJoinUrl ||
-              freshnessLabel ||
-              levelLabel ||
-              soloCount > 0 ||
-              confidenceBadges.length > 0 ||
-              isFirstTimerFriendly) && (
+            {visibleDecisionSignals.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
-                {confidenceBadges.map((badge) => (
+                {visibleDecisionSignals.map((signal) => (
                   <span
-                    key={badge}
-                    className="rounded-full border border-[#F2C879]/25 bg-[#F2C879]/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#F2C879]"
+                    key={signal.key}
+                    className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide ${
+                      signal.tone === 'teal'
+                        ? 'border-[#66D9C2]/25 bg-[#66D9C2]/10 text-[#66D9C2]'
+                        : signal.tone === 'hot'
+                          ? 'border-[#E66A4E]/30 bg-[#E66A4E]/10 text-[#FF9A83]'
+                          : signal.tone === 'gold'
+                            ? 'border-[#F2C879]/25 bg-[#F2C879]/10 text-[#F2C879]'
+                            : 'border-[#3A332B] bg-[#241F19] text-[#D7CEC4]'
+                    }`}
                   >
-                    {badge}
+                    {signal.icon === 'shield' ? <ShieldCheck className="h-3 w-3" /> : null}
+                    {signal.label}
                   </span>
                 ))}
-                {soloCount > 0 ? (
-                  <span className="rounded-full border border-[#66D9C2]/25 bg-[#66D9C2]/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#66D9C2]">
-                    {soloCount} going solo
-                  </span>
-                ) : null}
-                {isFirstTimerFriendly ? (
-                  <span className="rounded-full border border-[#3A332B] bg-[#241F19] px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#D7CEC4]">
-                    First-timers welcome
-                  </span>
-                ) : null}
-                {session.community ? (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-[#3A332B] bg-[#241F19] px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#D7CEC4]">
-                    <ShieldCheck className="h-3 w-3" />
-                    Verified host
-                  </span>
-                ) : null}
-                {officialJoinUrl ? (
-                  <span className="rounded-full border border-[#E66A4E]/30 bg-[#E66A4E]/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#FF9A83]">
-                    Official link
-                  </span>
-                ) : null}
-                {freshnessLabel ? (
-                  <span className="rounded-full border border-[#3A332B] bg-[#241F19] px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#D7CEC4]">
-                    {freshnessLabel}
-                  </span>
-                ) : null}
-                {levelLabel ? (
-                  <span className="rounded-full border border-[#F2C879]/25 bg-[#F2C879]/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-[#F2C879]">
-                    {levelLabel}
-                  </span>
-                ) : null}
               </div>
             )}
 

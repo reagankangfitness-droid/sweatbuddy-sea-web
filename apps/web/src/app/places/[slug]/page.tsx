@@ -154,7 +154,7 @@ export default async function PlacePage({ params }: PlacePageProps) {
                     href="/communities/nominate"
                     className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/18 bg-black/28 px-5 text-sm font-black text-white/78 backdrop-blur transition-colors hover:border-white/34 hover:text-white"
                   >
-                    Suggest source
+                    Suggest official page
                     <ArrowRight size={16} />
                   </Link>
                 ) : null}
@@ -356,16 +356,16 @@ export default async function PlacePage({ params }: PlacePageProps) {
 
             <div className="rounded-lg border border-white/10 bg-[#111111] p-4">
               <h2 className="font-mono text-xs font-black uppercase tracking-wide text-white/42">
-                Events here
+                Plans here
               </h2>
               <p className="mt-3 text-sm leading-6 text-white/56">
-                We are connecting listings to live sessions as hosts and communities claim them.
+                We are connecting places to joinable plans as hosts and crews verify them.
               </p>
               <Link
                 href={relatedPlansHref}
                 className="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg border border-white/12 px-4 text-xs font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
               >
-                See related events
+                Find related plans
                 <ArrowRight size={15} />
               </Link>
             </div>

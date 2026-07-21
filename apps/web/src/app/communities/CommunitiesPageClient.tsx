@@ -272,12 +272,12 @@ export default function CommunitiesPageClient({
               <h1 className="mt-3 max-w-3xl text-4xl font-bold leading-[1.03] tracking-tight sm:text-5xl">
                 {hasSources
                   ? 'Crews behind plans people can join.'
-                  : 'Help map the crews behind easy plans.'}
+                  : 'Help map crews that make solo plans easier.'}
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-6 text-white/58 sm:text-base">
                 {hasSources
                   ? 'Crew pages help people trust who is hosting, where to join officially, and which plans already have regulars. Plans still lead discovery.'
-                  : 'SweatBuddies reviews official crew and host pages before they become public trust signals. Plans still lead discovery.'}
+                  : 'SweatBuddies reviews official crew and host pages so people know who they are joining before they show up.'}
               </p>
             </div>
             {hasSources ? (

@@ -134,7 +134,7 @@ export default function BecomeAHostPage() {
               href="/buddy"
               className="hidden min-h-11 items-center text-sm font-medium text-white/70 hover:text-white sm:inline-flex"
             >
-              Explore events
+              Find plans
             </Link>
             <Link
               href="/buddy?create=session"
@@ -164,11 +164,11 @@ export default function BecomeAHostPage() {
               For fitness community hosts
             </p>
             <h1 className="text-4xl font-bold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
-              List events people can find, trust, and come back to.
+              Make it easier for new people to walk in.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/72 sm:text-lg">
-              SweatBuddies helps fitness hosts publish joinable sessions, show the people already
-              going, verify the source behind the event, and turn first-timers into regulars.
+              SweatBuddies helps fitness hosts show first-timers what happens, who it is for,
+              who is going, and why showing up solo is okay.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -194,7 +194,7 @@ export default function BecomeAHostPage() {
               {[
                 { label: 'Upcoming session', value: 'Date, place, price, level' },
                 { label: 'People signals', value: 'Going, solo-friendly, regulars' },
-                { label: 'Verified source', value: 'Official page behind the event' },
+                { label: 'Verified details', value: 'Official page behind the plan' },
               ].map((item) => (
                 <div
                   key={item.label}

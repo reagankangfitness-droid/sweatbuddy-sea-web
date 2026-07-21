@@ -180,10 +180,11 @@ export default async function HomePage() {
                   SweatBuddies discovery
                 </p>
                 <h1 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight text-white sm:text-5xl">
-                  Plans you can show up to near you.
+                  Fitness plans where showing up solo feels normal.
                 </h1>
                 <p className="mt-4 max-w-2xl text-sm leading-6 text-white/62 sm:text-base">
-                  Start with joinable plans nearby. Use places and crews when you need confidence before going.
+                  Find nearby runs, classes, games, and recovery sessions with people going,
+                  clear expectations, and crews you can come back to.
                 </p>
 
                 <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -309,7 +310,7 @@ export default async function HomePage() {
                 metadata={{ placement: 'homepage_events_view_all', destination: '/buddy?location=nearby' }}
                 className={`${compactButtonBase} inline-flex w-fit gap-1.5 rounded-full border border-white/10 px-3 py-2 font-mono text-xs font-bold uppercase text-white/60 hover:border-[#63FF8F] hover:text-[#63FF8F]`}
               >
-                View events <ArrowRight size={14} className="shrink-0" />
+                Find plans <ArrowRight size={14} className="shrink-0" />
               </TrackedLink>
             </div>
 

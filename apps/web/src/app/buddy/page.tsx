@@ -467,7 +467,7 @@ function EventDiscoveryBand({
               Hosted by
             </p>
             <p className="mt-1 text-xs leading-snug text-[#999999]">
-              Verified source pages behind these events.
+              Official crew pages behind these plans.
             </p>
           </div>
           {crews.map((crew) => (
@@ -478,7 +478,7 @@ function EventDiscoveryBand({
         <div className="mt-4 rounded-lg border border-dashed border-white/15 bg-white/[0.035] px-4 py-5 text-center">
           <p className="text-sm font-semibold text-white">Start with a plan people can join.</p>
           <p className="mt-1 text-xs text-[#666666]">
-            Host/source pages stay in the background as the trust layer.
+            Host and crew pages stay in the background as the trust layer.
           </p>
         </div>
       )}
@@ -1908,7 +1908,7 @@ function BuddyPageInner() {
               />
             </Link>
             <p className="hidden min-w-0 flex-1 truncate text-xs font-bold uppercase tracking-[0.16em] text-white/42 sm:block">
-              Social fitness events
+              Solo-friendly fitness plans
             </p>
             <Link
               href="/host"
@@ -2149,11 +2149,11 @@ function BuddyPageInner() {
             Plans first
           </p>
           <h1 className="mt-1 text-lg font-black leading-tight text-white sm:text-2xl">
-            Plans you can show up to {activeDateLabel === 'Upcoming' ? 'soon' : activeDateLabel.toLowerCase()}
+            Find a plan where showing up solo feels normal.
           </h1>
           <p className="mt-1 text-xs leading-5 text-white/52 sm:text-sm">
-            Sorted by show-up confidence in {neighborhoodFilter?.name ?? activeLocationLabel}: time,
-            crew signal, solo-friendly fit, and people going.
+            Sorted by what makes saying yes easier in {neighborhoodFilter?.name ?? activeLocationLabel}: time,
+            distance, first-timer context, people going, and crew trust.
           </p>
         </div>
       </section>

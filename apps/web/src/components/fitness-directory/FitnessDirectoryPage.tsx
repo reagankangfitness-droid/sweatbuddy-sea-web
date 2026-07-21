@@ -331,7 +331,7 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
                   {places.length} result{places.length === 1 ? '' : 's'}
                 </p>
                 <h2 className="mt-1 text-2xl font-black tracking-tight text-white">
-                  Listings ranked by show-up value
+                  Places ranked by how easy they are to join
                 </h2>
               </div>
               <Link
@@ -339,7 +339,7 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
                 className="inline-flex min-h-10 w-fit items-center gap-2 rounded-full border border-white/12 px-3 text-xs font-black uppercase tracking-wide text-white/66 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
               >
                 <Users size={15} />
-                Browse communities
+                Browse crews
               </Link>
             </div>
 

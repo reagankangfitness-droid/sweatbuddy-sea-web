@@ -1,6 +1,8 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import Link from 'next/link'
+import { useUser } from '@clerk/nextjs'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MapPin, Loader2, Zap, Minus, Plus, X, ImagePlus } from 'lucide-react'
 import { toast } from 'sonner'
@@ -8,6 +10,11 @@ import { ACTIVITY_TYPES } from '@/lib/activity-types'
 import { LocationAutocomplete } from '@/components/host/LocationAutocomplete'
 import { ShareSessionSheet } from '@/components/ShareSessionSheet'
 import { useUploadThing } from '@/lib/uploadthing'
+import {
+  DEFAULT_HOST_LOCATION,
+  inferCityFromLocation,
+  isPublishableManagedCommunity,
+} from '@/lib/host-session-rules'
 
 // ─── Smart defaults ──────────────────────────────────────────────────────────
 
@@ -117,9 +124,29 @@ interface CreateSessionSheetProps {
   open: boolean
   onClose: () => void
   onSuccess?: () => void
+  initialCategorySlug?: string
+  initialTitle?: string
 }
 
-export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSheetProps) {
+interface ManagedCommunity {
+  id: string
+  name: string
+  slug: string
+  role: string
+  isActive?: boolean
+  moderationStatus?: string
+  managerTrustLevel?: string
+  upcomingSessionCount?: number
+}
+
+export function CreateSessionSheet({
+  open,
+  onClose,
+  onSuccess,
+  initialCategorySlug,
+  initialTitle,
+}: CreateSessionSheetProps) {
+  const { isLoaded, isSignedIn } = useUser()
   const { startUpload } = useUploadThing('activityImage')
   const { startUpload: startQrUpload } = useUploadThing('paynowQrImage')
   const [imageUrl, setImageUrl] = useState('')
@@ -127,8 +154,9 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Community selector
-  const [communities, setCommunities] = useState<{ id: string; name: string; slug: string }[]>([])
+  const [communities, setCommunities] = useState<ManagedCommunity[]>([])
   const [selectedCommunity, setSelectedCommunity] = useState<string | null>(null)
+  const [communityLoading, setCommunityLoading] = useState(false)
 
   // Core fields
   const [categorySlug, setCategorySlug] = useState('')
@@ -165,8 +193,12 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
       const smart = getSmartTime()
       setSelectedTime(smart.value)
       setTimeLabel(smart.label)
-      setCategorySlug('')
-      setNote('')
+      setCategorySlug(
+        initialCategorySlug && CATEGORIES.some((category) => category.slug === initialCategorySlug)
+          ? initialCategorySlug
+          : '',
+      )
+      setNote(initialTitle?.slice(0, 100) ?? '')
       setSpots(0)
       setShowLocationPicker(false)
       setSelectedCommunity(null)
@@ -179,22 +211,48 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
       setPaynowName('')
       setPaynowQrUrl('')
 
-      // Fetch user's communities (filter for OWNER/ADMIN roles)
+      if (!isSignedIn) {
+        setCommunities([])
+        return
+      }
+
+      setCommunityLoading(true)
       fetch('/api/user/communities')
         .then((r) => r.ok ? r.json() : { communities: [] })
         .then((d) => {
-          const owned = (d.communities ?? [])
-            .filter((c: { role: string }) => c.role === 'OWNER' || c.role === 'ADMIN')
+          const owned = (d.communities ?? []).filter((c: ManagedCommunity) => (
+            c.role === 'OWNER' || c.role === 'ADMIN'
+          ))
           setCommunities(owned)
         })
         .catch(() => {})
+        .finally(() => setCommunityLoading(false))
     }
-  }, [open])
+  }, [open, isSignedIn, initialCategorySlug, initialTitle])
+
+  const publishableCommunities = useMemo(
+    () => communities.filter(isPublishableManagedCommunity),
+    [communities],
+  )
+
+  useEffect(() => {
+    if (!open) return
+    if (selectedCommunity && !publishableCommunities.some((c) => c.id === selectedCommunity)) {
+      setSelectedCommunity(null)
+    }
+  }, [open, publishableCommunities, selectedCommunity])
 
   // Auto-detect location on open
   useEffect(() => {
     if (!open) return
-    if (!navigator.geolocation) { setLocationLoading(false); setCity('Singapore'); return }
+    if (!navigator.geolocation) {
+      setLatitude(DEFAULT_HOST_LOCATION.latitude)
+      setLongitude(DEFAULT_HOST_LOCATION.longitude)
+      setCity(DEFAULT_HOST_LOCATION.city)
+      setAddress(DEFAULT_HOST_LOCATION.address)
+      setLocationLoading(false)
+      return
+    }
 
     setLocationLoading(true)
     navigator.geolocation.getCurrentPosition(
@@ -208,9 +266,10 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
         setLocationLoading(false)
       },
       () => {
-        setLatitude(1.3521)
-        setLongitude(103.8198)
-        setCity('Singapore')
+        setLatitude(DEFAULT_HOST_LOCATION.latitude)
+        setLongitude(DEFAULT_HOST_LOCATION.longitude)
+        setCity(DEFAULT_HOST_LOCATION.city)
+        setAddress(DEFAULT_HOST_LOCATION.address)
         setLocationLoading(false)
       }
     )
@@ -250,13 +309,58 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
     }
   }
 
-  const canPost = categorySlug && selectedTime && latitude !== 0
+  const selectedCommunityRecord = publishableCommunities.find((c) => c.id === selectedCommunity)
+  const isSelfHosted = !selectedCommunityRecord
+  const paidPrice = isPaid ? Number(price) : 0
+  const paidValidationError = isPaid
+    ? !selectedCommunity
+      ? 'Paid sessions need a verified crew.'
+      : Number.isNaN(paidPrice) || paidPrice <= 0
+      ? 'Enter a paid price.'
+      : !acceptPayNow
+      ? 'Select PayNow for paid sessions.'
+      : !paynowQrUrl
+      ? 'Upload your PayNow QR code.'
+      : null
+    : null
+  const canShowForm = isLoaded && isSignedIn
+  const canPost = Boolean(
+    canShowForm &&
+    categorySlug &&
+    selectedTime &&
+    latitude !== 0 &&
+    !paidValidationError,
+  )
+  const disabledReason = !isLoaded
+    ? 'Checking host access...'
+    : !isSignedIn
+    ? 'Sign in to post a session.'
+    : !categorySlug
+    ? 'Pick an activity.'
+    : !selectedTime
+    ? 'Pick a time.'
+    : latitude === 0
+    ? 'Add a meeting point.'
+    : paidValidationError
+    ? paidValidationError
+    : null
+
+  function selectCommunityForPost(communityId: string | null) {
+    setSelectedCommunity(communityId)
+    if (!communityId) {
+      setIsPaid(false)
+      setPrice('')
+      setAcceptPayNow(false)
+      setPaynowQrUrl('')
+    }
+  }
 
   const handlePost = useCallback(async () => {
     if (!canPost || posting) return
     setPosting(true)
 
     const title = note.trim() || generateTitle(categorySlug, selectedTime!)
+    const priceToPost = isPaid && selectedCommunity ? paidPrice : 0
 
     try {
       const res = await fetch('/api/buddy/sessions/create', {
@@ -274,12 +378,12 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
           maxPeople: spots > 0 ? spots : null,
           communityId: selectedCommunity || undefined,
           imageUrl: imageUrl || undefined,
-          price: isPaid && price ? parseFloat(price) : 0,
+          price: priceToPost,
           currency: 'SGD',
-          acceptPayNow: isPaid && acceptPayNow,
-          paynowPhoneNumber: isPaid && acceptPayNow && paynowPhone ? paynowPhone : undefined,
-          paynowName: isPaid && acceptPayNow && paynowName ? paynowName : undefined,
-          paynowQrImageUrl: isPaid && acceptPayNow && paynowQrUrl ? paynowQrUrl : undefined,
+          acceptPayNow: priceToPost > 0 && acceptPayNow,
+          paynowPhoneNumber: priceToPost > 0 && acceptPayNow && paynowPhone ? paynowPhone : undefined,
+          paynowName: priceToPost > 0 && acceptPayNow && paynowName ? paynowName : undefined,
+          paynowQrImageUrl: priceToPost > 0 && acceptPayNow && paynowQrUrl ? paynowQrUrl : undefined,
         }),
       })
 
@@ -288,12 +392,32 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
       if (!res.ok) {
         if (data.code === 'ONBOARDING_REQUIRED') {
           onClose()
-          toast.error('Join a session first to set up your profile, then you can host.')
+          toast.error('Complete quick setup in discovery before posting a session.')
           return
         }
         if (data.code === 'SESSION_CAP') {
           onClose()
           showSessionCapToast(data)
+          return
+        }
+        if (data.code === 'COMMUNITY_REQUIRED' || data.code === 'COMMUNITY_FORBIDDEN') {
+          toast.error('Choose a verified crew before posting a session.')
+          return
+        }
+        if (data.code === 'MANAGER_VERIFICATION_REQUIRED') {
+          toast.error('Verify your crew manager access before posting sessions.')
+          return
+        }
+        if (data.code === 'PAYMENT_METHOD_REQUIRED') {
+          toast.error('Select a payment method for paid sessions.')
+          return
+        }
+        if (data.code === 'PAYNOW_QR_REQUIRED') {
+          toast.error('Upload your PayNow QR code before posting a paid session.')
+          return
+        }
+        if (data.code === 'SELF_HOSTED_PAID_REQUIRES_COMMUNITY') {
+          toast.error('Paid sessions need a verified crew.')
           return
         }
         toast.error(data.error || 'Failed to post')
@@ -319,7 +443,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
     } finally {
       setPosting(false)
     }
-  }, [canPost, posting, categorySlug, selectedTime, city, address, latitude, longitude, spots, note, imageUrl, isPaid, price, acceptPayNow, paynowPhone, paynowName, paynowQrUrl, selectedCommunity, onClose, onSuccess])
+  }, [canPost, posting, categorySlug, selectedTime, city, address, latitude, longitude, spots, note, imageUrl, isPaid, selectedCommunity, paidPrice, acceptPayNow, paynowPhone, paynowName, paynowQrUrl, onClose, onSuccess])
 
   const catLabel = CATEGORIES.find((c) => c.slug === categorySlug)?.label ?? ''
 
@@ -356,6 +480,93 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
 
             {/* Scrollable form body */}
             <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
+              {!canShowForm ? (
+                <div className="flex min-h-[360px] flex-col justify-center">
+                  <div className="rounded-2xl border border-white/10 bg-[#202020] p-5 text-center">
+                    {!isLoaded || communityLoading ? (
+                      <>
+                        <Loader2 className="mx-auto mb-4 h-6 w-6 animate-spin text-white" />
+                        <h3 className="text-lg font-bold text-white">Checking host access...</h3>
+                      </>
+                    ) : !isSignedIn ? (
+                      <>
+                        <h3 className="text-lg font-bold text-white">Sign in to host sessions.</h3>
+                        <p className="mt-2 text-sm leading-6 text-[#888888]">
+                          Hosts need an account so attendees know who is behind the plan.
+                        </p>
+                        <Link
+                          href="/sign-in?redirect_url=%2Fbuddy%3Fcreate%3Dsession"
+                          onClick={onClose}
+                          className="mt-5 inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 text-sm font-bold text-black"
+                        >
+                          Sign in
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <h3 className="text-lg font-bold text-white">Getting your host tools ready.</h3>
+                        <p className="mt-2 text-sm leading-6 text-[#888888]">
+                          You can post a free session as yourself, or use a verified crew for paid and recurring sessions.
+                        </p>
+                        <div className="mt-5 grid gap-2 sm:grid-cols-2">
+                          <Link
+                            href="/communities/nominate"
+                            onClick={onClose}
+                            className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 text-sm font-bold text-black"
+                          >
+                            List or claim community
+                          </Link>
+                          <Link
+                            href="/communities"
+                            onClick={onClose}
+                            className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 px-5 text-sm font-bold text-white"
+                          >
+                            Explore communities
+                          </Link>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <>
+
+              {/* Posting identity */}
+              <div>
+                <label className="text-xs font-semibold text-[#666666] uppercase tracking-wider mb-2 block">Posting as</label>
+                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                  <button
+                    type="button"
+                    onClick={() => selectCommunityForPost(null)}
+                    className={`flex-shrink-0 rounded-full border px-4 py-2.5 text-xs font-semibold transition-all ${
+                      isSelfHosted
+                        ? 'bg-white text-black border-white'
+                        : 'bg-[#2A2A2A] text-[#999999] border-[#333333]'
+                    }`}
+                  >
+                    Myself
+                  </button>
+                  {publishableCommunities.map((community) => (
+                    <button
+                      key={community.id}
+                      type="button"
+                      onClick={() => selectCommunityForPost(community.id)}
+                      className={`flex-shrink-0 rounded-full border px-4 py-2.5 text-xs font-semibold transition-all ${
+                        selectedCommunity === community.id
+                          ? 'bg-white text-black border-white'
+                          : 'bg-[#2A2A2A] text-[#999999] border-[#333333]'
+                      }`}
+                    >
+                      {community.name}
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-2 text-[11px] leading-5 text-[#666666]">
+                  {isSelfHosted
+                    ? 'Free self-hosted sessions go through review before appearing publicly. Paid or recurring sessions need a verified crew.'
+                    : 'Verified crew sessions can publish with stronger trust signals and paid options.'}
+                </p>
+              </div>
 
               {/* Cover image upload */}
               <div>
@@ -517,11 +728,15 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                       setAddress(data.location)
                       setLatitude(data.latitude)
                       setLongitude(data.longitude)
-                      const parts = data.location.split(',')
-                      setCity(parts[parts.length - 2]?.trim() || parts[parts.length - 1]?.trim() || 'Singapore')
+                      setCity(inferCityFromLocation(data.location))
                       setShowLocationPicker(false)
                     }}
-                    onManualChange={(val) => setAddress(val)}
+                    onManualChange={(val) => {
+                      setAddress(val)
+                      setLatitude((current) => current || DEFAULT_HOST_LOCATION.latitude)
+                      setLongitude((current) => current || DEFAULT_HOST_LOCATION.longitude)
+                      setCity((current) => current || DEFAULT_HOST_LOCATION.city)
+                    }}
                     placeholder="Search for a place..."
                   />
                 ) : (
@@ -579,8 +794,15 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                     Free
                   </button>
                   <button
-                    onClick={() => setIsPaid(true)}
-                    className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                    onClick={() => {
+                      if (!selectedCommunity) {
+                        toast.error('Choose a verified crew to charge for a session.')
+                        return
+                      }
+                      setIsPaid(true)
+                    }}
+                    disabled={!selectedCommunity}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-40 ${
                       isPaid
                         ? 'bg-white text-black shadow-md'
                         : 'bg-[#2A2A2A] text-[#666666] border border-[#333333]'
@@ -681,7 +903,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                             {isUploadingQr ? (
                               <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading...</>
                             ) : (
-                              'Upload PayNow QR code (optional)'
+                              'Upload PayNow QR code (required)'
                             )}
                           </button>
                         )}
@@ -691,36 +913,7 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                 )}
               </div>
 
-              {/* Community selector */}
-              {communities.length > 0 && (
-                <div>
-                  <label className="text-xs font-semibold text-[#666666] uppercase tracking-wider mb-2 block">Posting as</label>
-                  <div className="flex gap-2 flex-wrap">
-                    <button
-                      onClick={() => setSelectedCommunity(null)}
-                      className={`px-4 py-2.5 rounded-full text-xs font-medium transition-all ${
-                        !selectedCommunity
-                          ? 'bg-white text-black'
-                          : 'bg-[#2A2A2A] text-[#666666] border border-[#333333]'
-                      }`}
-                    >
-                      Myself
-                    </button>
-                    {communities.map((c) => (
-                      <button
-                        key={c.id}
-                        onClick={() => setSelectedCommunity(c.id)}
-                        className={`px-4 py-2.5 rounded-full text-xs font-medium transition-all ${
-                          selectedCommunity === c.id
-                            ? 'bg-white text-black'
-                            : 'bg-[#2A2A2A] text-[#666666] border border-[#333333]'
-                        }`}
-                      >
-                        {c.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                </>
               )}
             </div>
 
@@ -737,6 +930,9 @@ export function CreateSessionSheet({ open, onClose, onSuccess }: CreateSessionSh
                   <><Zap className="w-4 h-4" /> Post Session</>
                 )}
               </button>
+              {disabledReason && !posting && (
+                <p className="mt-2 text-center text-xs text-[#666666]">{disabledReason}</p>
+              )}
             </div>
           </motion.div>
         </>

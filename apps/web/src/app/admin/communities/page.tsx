@@ -149,6 +149,11 @@ interface CommunityTemplate {
   _count: { sessions: number }
 }
 
+type CommunityQualityIssue = {
+  label: string
+  severity: 'high' | 'medium' | 'low'
+}
+
 const activityCategories = [
   { slug: 'running', label: 'Running' },
   { slug: 'cycling', label: 'Cycling' },
@@ -419,6 +424,24 @@ export default function AdminCommunitiesPage() {
   const total = communities.length
   const seeded = communities.filter((c) => c.isSeeded).length
   const claimed = communities.filter((c) => c.claimedAt).length
+  const qualityRows = communities
+    .map((community) => ({
+      community,
+      issues: getCommunityQualityIssues(community),
+    }))
+    .filter((row) => row.issues.length > 0)
+    .sort((a, b) => {
+      const severityDiff = getSeverityWeight(b.issues[0]?.severity) - getSeverityWeight(a.issues[0]?.severity)
+      if (severityDiff !== 0) return severityDiff
+      return b.issues.length - a.issues.length
+    })
+  const missingJoinPathCount = qualityRows.filter((row) =>
+    row.issues.some((issue) => issue.label.includes('join path') || issue.label.includes('official source')),
+  ).length
+  const staleCheckCount = qualityRows.filter((row) =>
+    row.issues.some((issue) => issue.label.includes('source check')),
+  ).length
+  const launchReadyCount = communities.filter((community) => getCommunityQualityIssues(community).length <= 1).length
 
   if (loading) {
     return (
@@ -454,6 +477,59 @@ export default function AdminCommunitiesPage() {
           Add Community
         </button>
       </div>
+
+      <section className="mb-6 grid gap-3 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+          <QualityStat label="Supply goal" value={total} detail="Target: 50 Singapore listings" />
+          <QualityStat label="Launch ready" value={launchReadyCount} detail="0-1 open issues" />
+          <QualityStat label="Weak join path" value={missingJoinPathCount} detail="Needs official source or CTA" tone="warning" />
+          <QualityStat label="Stale checks" value={staleCheckCount} detail="Older than 45 days or missing" tone="warning" />
+        </div>
+
+        <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-lime-400">Quality queue</p>
+              <h2 className="mt-1 text-lg font-semibold text-neutral-100">Listings to improve next</h2>
+            </div>
+            <span className="rounded-full border border-neutral-800 px-3 py-1 text-xs font-semibold text-neutral-400">
+              {qualityRows.length} open
+            </span>
+          </div>
+
+          {qualityRows.length > 0 ? (
+            <div className="space-y-2">
+              {qualityRows.slice(0, 8).map((row) => (
+                <div
+                  key={row.community.id}
+                  className="flex flex-col gap-3 rounded-lg border border-neutral-800 bg-neutral-900/60 p-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-neutral-100">{row.community.name}</p>
+                    <p className="mt-1 text-xs text-neutral-500">
+                      {row.community.usualArea || row.community.city?.name || 'Area missing'} · {row.community.category}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 sm:justify-end">
+                    {row.issues.slice(0, 3).map((issue) => (
+                      <span
+                        key={`${row.community.id}-${issue.label}`}
+                        className={`rounded-full border px-2 py-1 text-[10px] font-semibold uppercase tracking-wide ${qualityIssueClass(issue.severity)}`}
+                      >
+                        {issue.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-4 text-sm text-neutral-400">
+              No open quality issues in the current community set.
+            </p>
+          )}
+        </div>
+      </section>
 
       {/* Modal / Form */}
       {showForm && (
@@ -1186,4 +1262,93 @@ function moderationBadgeClass(status: AdminCommunity['moderationStatus']): strin
   if (status === 'BLOCKED') return 'bg-red-950 text-red-300 border-red-900'
   if (status === 'REJECTED') return 'bg-red-900/50 text-red-400 border-red-800'
   return 'bg-neutral-800 text-neutral-400 border-neutral-700'
+}
+
+function QualityStat({
+  label,
+  value,
+  detail,
+  tone = 'default',
+}: {
+  label: string
+  value: number
+  detail: string
+  tone?: 'default' | 'warning'
+}) {
+  return (
+    <div className={`rounded-xl border p-4 ${
+      tone === 'warning'
+        ? 'border-amber-900/60 bg-amber-950/20'
+        : 'border-neutral-800 bg-neutral-950'
+    }`}>
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">{label}</p>
+      <p className={`mt-2 text-3xl font-bold ${tone === 'warning' ? 'text-amber-300' : 'text-neutral-100'}`}>
+        {value}
+      </p>
+      <p className="mt-1 text-xs text-neutral-500">{detail}</p>
+    </div>
+  )
+}
+
+function getCommunityQualityIssues(community: AdminCommunity): CommunityQualityIssue[] {
+  const issues: CommunityQualityIssue[] = []
+  const hasOfficialSource = Boolean(
+    community.sourceUrl ||
+    community.communityLink ||
+    community.websiteUrl ||
+    community.instagramHandle,
+  )
+  const hasJoinPath = Boolean(community.communityLink || community.websiteUrl || community.instagramHandle)
+
+  if (!hasOfficialSource) {
+    issues.push({ label: 'Missing official source', severity: 'high' })
+  }
+  if (!hasJoinPath) {
+    issues.push({ label: 'Weak join path', severity: 'high' })
+  }
+  if (!community.usualArea) {
+    issues.push({ label: 'Missing area', severity: 'medium' })
+  }
+  if (!community.usualSchedule) {
+    issues.push({ label: 'Missing schedule', severity: 'medium' })
+  }
+  if (!community.priceType) {
+    issues.push({ label: 'Cost unclear', severity: 'medium' })
+  }
+  if (!community.coverImage && !community.logoImage) {
+    issues.push({ label: 'Needs photo', severity: 'medium' })
+  }
+  if (isSourceCheckStale(community.lastVerifiedAt)) {
+    issues.push({ label: 'Needs source check', severity: 'medium' })
+  }
+  if (!community.beginnerFriendly && !community.vibeTags.some((tag) => tag.toLowerCase().includes('beginner'))) {
+    issues.push({ label: 'Beginner fit unclear', severity: 'low' })
+  }
+
+  return issues
+}
+
+function isSourceCheckStale(lastVerifiedAt: string | null) {
+  if (!lastVerifiedAt) return true
+  const checkedAt = new Date(lastVerifiedAt).getTime()
+  if (Number.isNaN(checkedAt)) return true
+  return Date.now() - checkedAt > 45 * 24 * 60 * 60 * 1000
+}
+
+function getSeverityWeight(severity?: CommunityQualityIssue['severity']) {
+  if (severity === 'high') return 3
+  if (severity === 'medium') return 2
+  if (severity === 'low') return 1
+  return 0
+}
+
+function qualityIssueClass(severity: CommunityQualityIssue['severity']) {
+  switch (severity) {
+    case 'high':
+      return 'border-red-800 bg-red-950/40 text-red-300'
+    case 'medium':
+      return 'border-amber-800 bg-amber-950/30 text-amber-300'
+    case 'low':
+      return 'border-neutral-700 bg-neutral-800 text-neutral-300'
+  }
 }

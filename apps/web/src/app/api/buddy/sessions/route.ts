@@ -14,6 +14,7 @@ import {
   resolveSessionMediaMap,
   type ResolvedSessionMedia,
 } from '@/lib/session-media'
+import { isRecoverableDiscoveryDbError } from '@/lib/recoverable-db-error'
 
 export const dynamic = 'force-dynamic'
 
@@ -379,13 +380,6 @@ export async function GET(request: Request) {
     console.error('[buddy/sessions] Error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
-}
-
-function isRecoverableDiscoveryDbError(error: unknown) {
-  return error instanceof Error && (
-    error.name === 'PrismaClientInitializationError' ||
-    error.message.includes('exceeded the data transfer quota')
-  )
 }
 
 function parseDiscoveryRadiusKm(value: string | null, fallback: number) {

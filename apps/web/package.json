@@ -15,14 +15,16 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
+    "smoke:mobile-buddy": "node scripts/smoke-mobile-buddy.js",
     "backfill:community-directory": "node scripts/backfill-community-directory.js",
     "import:osm-fitness-places": "node scripts/import-osm-fitness-places.js",
     "enrich:google-places": "node scripts/enrich-fitness-places-google.js",
     "sync:media-assets": "node scripts/sync-media-assets.js",
     "clean": "rm -rf .next .turbo node_modules",
     "db:migrate:deploy": "prisma migrate deploy",
-    "deploy": "vercel link --yes --scope reagankangfitness-droids-projects --project web && git push && npm run db:migrate:deploy && vercel --prod",
-    "deploy:prod": "vercel link --yes --scope reagankangfitness-droids-projects --project web && npm run db:migrate:deploy && vercel --prod",
+    "ensure:clean": "node -e \"const cp=require('node:child_process'); const status=cp.execSync('git status --porcelain',{encoding:'utf8'}); if (status.trim()) { console.error('Refusing to deploy: git working tree has uncommitted changes. Commit or stash first.'); process.exit(1); }\"",
+    "deploy": "npm run ensure:clean && vercel link --yes --scope reagankangfitness-droids-projects --project web && git push && npm run db:migrate:deploy && vercel --prod",
+    "deploy:prod": "npm run ensure:clean && vercel link --yes --scope reagankangfitness-droids-projects --project web && npm run db:migrate:deploy && vercel --prod",
     "deploy:alias:prod": "vercel alias set \"$VERCEL_DEPLOYMENT_URL\" www.sweatbuddies.co && vercel alias set \"$VERCEL_DEPLOYMENT_URL\" sweatbuddies.co && vercel alias set \"$VERCEL_DEPLOYMENT_URL\" sweatbuddy.vercel.app"
   },
   "dependencies": {

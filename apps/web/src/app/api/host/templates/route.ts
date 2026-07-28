@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { DAY_MAP, getNextDatesForTimezone, inferSessionTimezone } from '@/lib/recurring-sessions'
+import { isRecoverableDiscoveryDbError } from '@/lib/recoverable-db-error'
 
 // GET: list host's templates
 export async function GET() {
@@ -287,6 +288,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ template, sessionsGenerated: sessionData.length }, { status: 201 })
   } catch (error) {
     console.error('[host/templates] POST error:', error)
+    if (isRecoverableDiscoveryDbError(error)) {
+      return NextResponse.json(
+        {
+          error: 'Recurring sessions are temporarily unavailable while we restore database capacity. Please try again shortly.',
+          code: 'DATABASE_UNAVAILABLE',
+        },
+        { status: 503 },
+      )
+    }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

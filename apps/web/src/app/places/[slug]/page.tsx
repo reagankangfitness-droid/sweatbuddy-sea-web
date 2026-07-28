@@ -60,7 +60,7 @@ export default async function PlacePage({ params }: PlacePageProps) {
           : '/singapore/outdoor-fitness'
   const positioning = getFitnessPlacePositioning(place)
   const sourceConfidenceScore = place.trustScore || place.socialScore
-  const relatedPlansHref = `/buddy?location=nearby&type=${encodeURIComponent(place.activities[0] || place.placeType)}`
+  const relatedPlansHref = `/buddy?view=list&location=nearby&type=${encodeURIComponent(place.activities[0] || place.placeType)}`
 
   return (
     <div className="min-h-screen bg-[#0B0B0B] text-white">

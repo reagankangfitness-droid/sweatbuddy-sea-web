@@ -109,7 +109,7 @@ export function HeroSection() {
             {categories.map((cat) => (
               <Link
                 key={cat.param}
-                href={`/buddy?cat=${cat.param}`}
+                href={`/buddy?view=list&cat=${cat.param}`}
                 className="px-3.5 py-1.5 bg-neutral-950 border border-neutral-800 rounded-full text-xs font-medium text-neutral-400 hover:border-neutral-600 hover:text-neutral-100 transition-colors"
               >
                 {cat.label}

@@ -3,7 +3,7 @@
 import { notFound, useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, MapPin, Clock, Users, ChevronDown, ChevronUp, Flag, Settings, MessageCircle, Calendar, BadgeCheck } from 'lucide-react'
 import Image from 'next/image'
-import { useEffect, useState, lazy, Suspense, useCallback } from 'react'
+import { useEffect, useState, lazy, Suspense, useCallback, useRef } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
@@ -23,6 +23,7 @@ import { ManageAttendeesModal } from '@/components/p2p/ManageAttendeesModal'
 import { SessionComments } from '@/components/p2p/SessionComments'
 import { SessionVectorMap, type SessionVectorMapPin } from '@/components/maps/SessionVectorMap'
 import { getActivityConfig } from '@/lib/activity-types'
+import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
 
 import { DESCRIPTION_CHAR_LIMIT } from '@/config/constants'
 
@@ -101,6 +102,135 @@ function formatPrice(price: number, currency: string): string {
   return `${currency} ${(price / 100).toFixed(2)}`
 }
 
+function formatFitnessLevel(level: string | null | undefined): string {
+  if (!level || level === 'ALL') return 'All levels welcome'
+  if (level === 'INTERMEDIATE_PLUS') return 'Intermediate and above'
+  if (level === 'ADVANCED') return 'Advanced only'
+  return level.toLowerCase().replace(/[_-]/g, ' ')
+}
+
+function trackActivityBrowserEvent(
+  event: string,
+  metadata: Record<string, string | number | boolean | null>,
+) {
+  const body = JSON.stringify({ event, metadata })
+
+  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+    navigator.sendBeacon('/api/analytics', new Blob([body], { type: 'application/json' }))
+    return
+  }
+
+  fetch('/api/analytics', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body,
+    keepalive: true,
+  }).catch(() => {})
+}
+
+function ActivityDecisionPanel({
+  joinStateLabel,
+  priceLabel,
+  spotsLabel,
+  hostTrustLabel,
+  fitnessLevelLabel,
+  joinedCount,
+}: {
+  joinStateLabel: string
+  priceLabel: string
+  spotsLabel: string
+  hostTrustLabel: string
+  fitnessLevelLabel: string
+  joinedCount: number
+}) {
+  return (
+    <section className="mb-4 rounded-2xl border border-[#333333] bg-[#1A1A1A] p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[#666666]">
+            Can I join?
+          </p>
+          <h2 className="mt-1 text-xl font-black leading-tight text-white">{joinStateLabel}</h2>
+        </div>
+        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-white px-3 py-1.5 text-xs font-black text-black">
+          <BadgeCheck className="h-3.5 w-3.5" />
+          {hostTrustLabel}
+        </span>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <div className="rounded-xl border border-white/10 bg-[#111111] p-3">
+          <p className="text-lg font-black text-white">{priceLabel}</p>
+          <p className="mt-1 text-[11px] font-semibold text-[#666666]">Price</p>
+        </div>
+        <div className="rounded-xl border border-white/10 bg-[#111111] p-3">
+          <p className="text-lg font-black text-white">{spotsLabel}</p>
+          <p className="mt-1 text-[11px] font-semibold text-[#666666]">Availability</p>
+        </div>
+        <div className="rounded-xl border border-white/10 bg-[#111111] p-3">
+          <p className="line-clamp-1 text-sm font-black text-white">{fitnessLevelLabel}</p>
+          <p className="mt-1 text-[11px] font-semibold text-[#666666]">Level</p>
+        </div>
+        <div className="rounded-xl border border-white/10 bg-[#111111] p-3">
+          <p className="text-lg font-black text-white">{joinedCount}</p>
+          <p className="mt-1 text-[11px] font-semibold text-[#666666]">Going</p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function WhatToExpectPanel({
+  timeLabel,
+  locationDisplay,
+  whatToBringLabel,
+  fitnessLevelLabel,
+}: {
+  timeLabel: string | null
+  locationDisplay: string
+  whatToBringLabel: string
+  fitnessLevelLabel: string
+}) {
+  return (
+    <section className="mb-4 rounded-2xl border border-[#333333] bg-[#1A1A1A] p-4">
+      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-[#666666]">
+        What to expect
+      </h3>
+      <div className="mt-3 space-y-3">
+        {timeLabel ? (
+          <div className="flex gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10">
+              <Clock className="h-4 w-4 text-white" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">{timeLabel}</p>
+              <p className="mt-0.5 text-xs text-[#666666]">Arrive a few minutes early.</p>
+            </div>
+          </div>
+        ) : null}
+        <div className="flex gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10">
+            <MapPin className="h-4 w-4 text-white" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-white">{locationDisplay}</p>
+            <p className="mt-0.5 text-xs text-[#666666]">Exact meeting point may be in the session notes.</p>
+          </div>
+        </div>
+        <div className="flex gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10">
+            <Users className="h-4 w-4 text-white" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-white">{fitnessLevelLabel}</p>
+            <p className="mt-0.5 text-xs text-[#666666]">{whatToBringLabel}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function ActivityPageClient({ params }: { params: { id: string } }) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -115,6 +245,8 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
   const [showReportModal, setShowReportModal] = useState(false)
   const [showManageAttendees, setShowManageAttendees] = useState(false)
   const [showAllAttendees, setShowAllAttendees] = useState(false)
+  const viewedActivityRef = useRef<string | null>(null)
+  const waitlistTrackedRef = useRef<string | null>(null)
 
   const onShowGoingSoloPrompt = useCallback(() => setShowGoingSoloPrompt(true), [])
 
@@ -171,6 +303,33 @@ export default function ActivityPageClient({ params }: { params: { id: string } 
     }
     fetchActivity()
   }, [params.id])
+
+  useEffect(() => {
+    if (!activity || viewedActivityRef.current === activity.id) return
+    viewedActivityRef.current = activity.id
+    trackActivityBrowserEvent('activity_detail_viewed', {
+      activityId: activity.id,
+      city: activity.city,
+      category: activity.categorySlug ?? activity.type,
+      price: activity.price,
+      isPaid: activity.price > 0,
+      attendeeCount: activity.userActivities.filter((ua) => ua.status === 'JOINED').length,
+      hasImage: Boolean(activity.imageUrl),
+      activityMode: activity.activityMode ?? null,
+    })
+  }, [activity])
+
+  useEffect(() => {
+    if (!activity || !spotsInfo?.isFull || !spotsInfo.waitlistEnabled) return
+    if (waitlistTrackedRef.current === activity.id) return
+    waitlistTrackedRef.current = activity.id
+    trackActivityBrowserEvent('activity_waitlist_cta_viewed', {
+      activityId: activity.id,
+      city: activity.city,
+      category: activity.categorySlug ?? activity.type,
+      waitlistCount: spotsInfo.waitlistCount,
+    })
+  }, [activity, spotsInfo])
 
   const handleAddToGoogleCalendar = () => {
     if (!activity || !activity.startTime) {
@@ -238,9 +397,32 @@ Organized via SweatBuddies - Find local fitness sessions and crews
   const joinedCount = joinedAttendees.length
   const activityConfig = activity.categorySlug ? getActivityConfig(activity.categorySlug) : null
   const emoji = activityConfig?.emoji || '\u{1F3CB}\u{FE0F}'
+  const heroImage = activity.imageUrl || getCategoryFallbackImage(activity.categorySlug)
+  const heroImageLabel = activity.imageUrl ? 'Session photo' : 'Activity image'
   const isHost = user && (user.id === activity.hostId || user.id === activity.user.id)
   const isVerifiedCoach = activity.user.isCoach && activity.user.coachVerificationStatus === 'VERIFIED'
   const locationDisplay = activity.address || activity.city
+  const priceLabel = activity.price === 0 ? 'Free' : formatPrice(activity.price, activity.currency)
+  const hostTrustLabel = isVerifiedCoach
+    ? 'Verified host'
+    : (activity.user.sessionsHostedCount ?? 0) > 0
+      ? `${activity.user.sessionsHostedCount} hosted`
+      : 'Community host'
+  const spotsLabel = spotsInfo?.isFull
+    ? 'Waitlist open'
+    : activity.maxPeople
+      ? `${Math.max(activity.maxPeople - joinedCount, 0)} ${Math.max(activity.maxPeople - joinedCount, 0) === 1 ? 'spot' : 'spots'} left`
+      : 'Open spots'
+  const joinStateLabel = hasJoined
+    ? "You're in"
+    : spotsInfo?.isFull
+      ? 'Join waitlist'
+      : activity.requiresApproval
+        ? 'Approval needed'
+        : 'Open to join'
+  const fitnessLevelLabel = formatFitnessLevel(activity.fitnessLevel)
+  const whatToBringLabel = activity.whatToBring?.trim() || 'Bring water and anything you need to feel comfortable.'
+  const activityTimeLabel = activity.startTime ? formatEventDate(new Date(activity.startTime)) : null
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationDisplay)}`
   const hasCoordinates = Number.isFinite(activity.latitude) && Number.isFinite(activity.longitude)
   const mapCenter = hasCoordinates
@@ -263,6 +445,36 @@ Organized via SweatBuddies - Find local fitness sessions and crews
       previewMeta: activity.price === 0 ? 'Free' : formatPrice(activity.price, activity.currency),
     },
   ]
+  const handlePrimaryJoin = () => {
+    trackActivityBrowserEvent('activity_join_cta_clicked', {
+      activityId: activity.id,
+      city: activity.city,
+      category: activity.categorySlug ?? activity.type,
+      price: activity.price,
+      isPaid: activity.price > 0,
+      isFull: Boolean(spotsInfo?.isFull),
+      requiresApproval: Boolean(activity.requiresApproval),
+      hasJoined,
+    })
+    handleJoin()
+  }
+  const handleSignInToJoin = () => {
+    trackActivityBrowserEvent('activity_join_cta_clicked', {
+      activityId: activity.id,
+      city: activity.city,
+      category: activity.categorySlug ?? activity.type,
+      price: activity.price,
+      isPaid: activity.price > 0,
+      isFull: Boolean(spotsInfo?.isFull),
+      requiresApproval: Boolean(activity.requiresApproval),
+      hasJoined: false,
+    })
+    const signInUrl = getSignInUrl({
+      intent: 'rsvp',
+      eventId: params.id,
+    })
+    window.location.href = signInUrl
+  }
 
   return (
     <div className="min-h-screen bg-[#0D0D0D]">
@@ -286,42 +498,29 @@ Organized via SweatBuddies - Find local fitness sessions and crews
           </div>
         </div>
 
-        {activity.imageUrl ? (
-          <div className="relative h-56 md:h-72 w-full">
-            <Image
-              src={activity.imageUrl}
-              alt={activity.title}
-              className="w-full h-full object-cover"
-              fill
-              priority
-              unoptimized
-            />
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-            {/* Title overlay */}
+        <div className="relative h-56 md:h-72 w-full">
+          <Image
+            src={heroImage}
+            alt={activity.title}
+            className="w-full h-full object-cover"
+            fill
+            priority
+            unoptimized={heroImage.startsWith('http') || heroImage.startsWith('/api/')}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-black/20 to-black/10" />
+          <div className="absolute left-5 top-20 rounded-full bg-black/55 px-3 py-1.5 text-sm font-bold text-white backdrop-blur md:left-[calc(50%-320px)]">
+            <span className="mr-1.5">{emoji}</span>
+            {heroImageLabel}
+          </div>
             <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
               <div className="max-w-2xl mx-auto">
                 <h1 className="text-xl md:text-2xl font-bold text-white leading-tight mb-1 line-clamp-2">{activity.title}</h1>
                 {activity.startTime && (
-                  <p className="text-sm text-white/80 font-medium">{formatEventDate(new Date(activity.startTime))}</p>
+                <p className="text-sm text-white/80 font-medium">{formatEventDate(new Date(activity.startTime))}</p>
                 )}
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="relative h-56 md:h-72 w-full bg-gradient-to-br from-white/10 via-white/5 to-[#0D0D0D] flex items-center justify-center">
-            <span className="text-7xl md:text-8xl">{emoji}</span>
-            {/* Title overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
-              <div className="max-w-2xl mx-auto">
-                <h1 className="text-xl md:text-2xl font-bold text-white leading-tight mb-1 line-clamp-2">{activity.title}</h1>
-                {activity.startTime && (
-                  <p className="text-sm text-[#999999] font-medium">{formatEventDate(new Date(activity.startTime))}</p>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
 
       <main className="max-w-2xl mx-auto px-4 pt-5 pb-32 sm:pb-8">
@@ -358,6 +557,22 @@ Organized via SweatBuddies - Find local fitness sessions and crews
             />
           </div>
         )}
+
+        <ActivityDecisionPanel
+          joinStateLabel={joinStateLabel}
+          priceLabel={priceLabel}
+          spotsLabel={spotsLabel}
+          hostTrustLabel={hostTrustLabel}
+          fitnessLevelLabel={fitnessLevelLabel}
+          joinedCount={joinedCount}
+        />
+
+        <WhatToExpectPanel
+          timeLabel={activityTimeLabel}
+          locationDisplay={locationDisplay}
+          whatToBringLabel={whatToBringLabel}
+          fitnessLevelLabel={fitnessLevelLabel}
+        />
 
         {/* ─── STRUCTURED INFO CARD ─── */}
         <div className="bg-[#1A1A1A] rounded-2xl shadow-sm border border-[#333333] p-4 mb-4">
@@ -885,7 +1100,7 @@ Organized via SweatBuddies - Find local fitness sessions and crews
                     />
                     <Button
                       size="lg"
-                      onClick={handleJoin}
+                      onClick={handlePrimaryJoin}
                       disabled={isJoining}
                       className="flex-1 h-12 sm:h-11 text-sm sm:text-base touch-manipulation bg-white hover:bg-white/90 text-black font-bold uppercase tracking-wider border-0 rounded-full"
                     >
@@ -929,13 +1144,7 @@ Organized via SweatBuddies - Find local fitness sessions and crews
                 />
                 <Button
                   size="lg"
-                  onClick={() => {
-                    const signInUrl = getSignInUrl({
-                      intent: 'rsvp',
-                      eventId: params.id,
-                    })
-                    window.location.href = signInUrl
-                  }}
+                  onClick={handleSignInToJoin}
                   className="flex-1 h-11 text-sm sm:text-base bg-white hover:bg-white/90 text-black font-bold uppercase tracking-wider border-0 rounded-full"
                 >
                   {activity.price > 0

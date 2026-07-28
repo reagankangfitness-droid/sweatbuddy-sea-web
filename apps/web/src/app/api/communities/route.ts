@@ -5,6 +5,8 @@ import { trackEvent, EVENTS } from '@/lib/analytics'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getCurrentDbUser } from '@/lib/current-user'
 import { scoreCommunityListing } from '@/lib/listing-moderation'
+import { getCommunityDirectory } from '@/lib/community-directory'
+import type { CommunityData } from '@/app/communities/CommunitiesPageClient'
 
 // GET /api/communities - List communities
 export async function GET(request: NextRequest) {
@@ -15,8 +17,8 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search')
     const owned = searchParams.get('owned') === 'true'
     const joined = searchParams.get('joined') === 'true'
-    const limit = parseInt(searchParams.get('limit') || '20')
-    const offset = parseInt(searchParams.get('offset') || '0')
+    const limit = parseIntegerParam(searchParams.get('limit'), 20, 1, 100)
+    const offset = parseIntegerParam(searchParams.get('offset'), 0, 0, Number.MAX_SAFE_INTEGER)
 
     // If owned or joined filter, require authentication
     const dbUser = owned || joined ? await getCurrentDbUser() : null
@@ -79,62 +81,19 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // Default: list all public communities
-    const where: Record<string, unknown> = {
-      isActive: true,
+    // Default: source-backed public directory. This shares the same DB+seed fallback
+    // used by /communities so public API consumers do not hard-fail on DB quota.
+    const directory = await getCommunityDirectory()
+    const filteredCommunities = filterPublicDirectoryCommunities(directory, {
+      city,
+      category,
+      search,
       moderationStatus: 'LIVE',
-    }
-
-    if (city) {
-      const cityRecord = await prisma.city.findUnique({
-        where: { slug: city },
-      })
-      if (cityRecord) {
-        where.cityId = cityRecord.id
-      }
-    }
-
-    if (category) {
-      where.category = category
-    }
-
-    if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-      ]
-    }
-
-    const [communities, total] = await Promise.all([
-      prisma.community.findMany({
-        where,
-        include: {
-          city: true,
-          createdBy: {
-            select: {
-              id: true,
-              name: true,
-              username: true,
-              imageUrl: true,
-              isVerified: true,
-            },
-          },
-          _count: {
-            select: {
-              members: true,
-              activities: true,
-            },
-          },
-        },
-        orderBy: [
-          { isVerified: 'desc' },
-          { memberCount: 'desc' },
-        ],
-        take: limit,
-        skip: offset,
-      }),
-      prisma.community.count({ where }),
-    ])
+    })
+    const communities = filteredCommunities
+      .slice(offset, offset + limit)
+      .map(formatDirectoryCommunityForApi)
+    const total = filteredCommunities.length
 
     return NextResponse.json({
       communities,
@@ -143,6 +102,92 @@ export async function GET(request: NextRequest) {
     })
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
+function parseIntegerParam(
+  value: string | null,
+  fallback: number,
+  min: number,
+  max: number,
+) {
+  const parsed = Number.parseInt(value ?? '', 10)
+  if (Number.isNaN(parsed)) return fallback
+  return Math.min(max, Math.max(min, parsed))
+}
+
+function filterPublicDirectoryCommunities(
+  communities: CommunityData[],
+  filters: {
+    city: string | null
+    category: string | null
+    search: string | null
+    moderationStatus: 'LIVE'
+  },
+) {
+  if (filters.moderationStatus !== 'LIVE') return []
+
+  const query = filters.search?.trim().toLowerCase()
+
+  return communities.filter((community) => {
+    if (filters.city && community.citySlug !== filters.city) return false
+    if (filters.category && community.category !== filters.category) return false
+
+    if (query) {
+      const haystack = [
+        community.name,
+        community.description,
+        community.usualArea,
+        community.usualSchedule,
+        community.bestFor,
+        community.category,
+        ...community.vibeTags,
+      ].filter(Boolean).join(' ').toLowerCase()
+
+      if (!haystack.includes(query)) return false
+    }
+
+    return true
+  })
+}
+
+function formatDirectoryCommunityForApi(community: CommunityData) {
+  return {
+    id: community.id,
+    name: community.name,
+    slug: community.slug,
+    description: community.description,
+    coverImage: community.coverImage,
+    logoImage: community.logoImage,
+    category: community.category,
+    isVerified: community.isVerified,
+    memberCount: community.memberCount,
+    eventCount: community.eventCount,
+    city: community.cityName && community.citySlug
+      ? { name: community.cityName, slug: community.citySlug }
+      : null,
+    latitude: community.latitude,
+    longitude: community.longitude,
+    usualArea: community.usualArea,
+    usualSchedule: community.usualSchedule,
+    joinPlatform: community.joinPlatform,
+    communityLink: community.communityLink,
+    websiteUrl: community.websiteUrl,
+    sourceUrl: community.sourceUrl,
+    sourceLabel: community.sourceLabel,
+    bestFor: community.bestFor,
+    soloFriendly: community.soloFriendly,
+    confidenceScore: community.confidenceScore,
+    confidenceTier: community.confidenceTier,
+    vibeTags: community.vibeTags,
+    priceType: community.priceType,
+    beginnerFriendly: community.beginnerFriendly,
+    lastVerifiedAt: community.lastVerifiedAt,
+    creatorName: community.creatorName,
+    creatorImageUrl: community.creatorImageUrl,
+    members: community.members,
+    nextEvent: community.nextEvent,
+    _count: community._count,
   }
 }
 

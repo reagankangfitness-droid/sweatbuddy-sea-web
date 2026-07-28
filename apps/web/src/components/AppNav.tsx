@@ -12,7 +12,7 @@ import { CreateSessionSheet } from '@/components/CreateSessionSheet'
 import { CreateChoiceSheet } from '@/components/CreateChoiceSheet'
 
 const navItems = [
-  { id: 'discover', label: 'Discover', icon: Compass, href: '/singapore', mobileOnly: false },
+  { id: 'discover', label: 'Communities', icon: Compass, href: '/communities', mobileOnly: false },
   { id: 'create', label: 'Create', icon: Plus, href: '#', mobileOnly: true, isCreate: true },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile', mobileOnly: false },
 ]
@@ -86,8 +86,7 @@ function AppNavInner() {
       return (
         pathname.startsWith('/buddy') ||
         pathname.startsWith('/discover') ||
-        pathname.startsWith('/communities') ||
-        pathname.startsWith('/singapore')
+        pathname.startsWith('/communities')
       )
     }
     if (item.id === 'profile') {

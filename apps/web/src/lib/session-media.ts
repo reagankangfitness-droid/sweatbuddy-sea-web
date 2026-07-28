@@ -1,32 +1,7 @@
 import type { MediaAsset, Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
-
-export const SESSION_LISTING_IMAGES: Record<string, string> = {
-  running: '/banner/running.jpg',
-  run: '/banner/running.jpg',
-  yoga: '/images/hero-bg.jpg',
-  hiit: '/images/connect-people.webp',
-  bootcamp: '/banner/athletics.jpg',
-  cycling: '/images/community-bonds.jpg',
-  swimming: '/images/hero/ice-bath.webp',
-  volleyball: '/images/community-bonds.jpg',
-  basketball: '/banner/athletics.jpg',
-  pilates: '/images/hero/meditation.png',
-  hiking: '/images/cities/singapore.jpg',
-  strength: '/banner/athletics.jpg',
-  gym: '/banner/athletics.jpg',
-  cold_plunge: '/banner/ice-bath.webp',
-  recovery: '/banner/ice-bath.webp',
-  dance_fitness: '/images/connect-people.webp',
-  badminton: '/images/community-bonds.jpg',
-  padel: '/images/community-bonds.jpg',
-  combat_fitness: '/banner/athletics.jpg',
-  boxing: '/banner/athletics.jpg',
-  muay_thai: '/banner/athletics.jpg',
-  pickleball: '/images/community-bonds.jpg',
-  social: '/images/hosts/run-club-group.jpg',
-  other: '/images/hero/run-club.jpg',
-}
+import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
+export { SESSION_LISTING_IMAGES, getCategoryFallbackImage } from '@/lib/visual-fallbacks'
 
 export interface SessionMediaInput {
   id: string
@@ -77,11 +52,6 @@ type FitnessPlaceMedia = Prisma.FitnessPlaceGetPayload<{
 }>
 
 let hasMediaAssetsTable: boolean | null = null
-
-export function getCategoryFallbackImage(categorySlug: string | null | undefined) {
-  const category = (categorySlug ?? 'other').toLowerCase()
-  return SESSION_LISTING_IMAGES[category] || SESSION_LISTING_IMAGES.other
-}
 
 export async function resolveSessionMediaMap<T extends SessionMediaInput>(
   sessions: T[],

@@ -3,11 +3,18 @@
 import { Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { APP_URL } from '@/config/constants'
+import { trackCommunityDirectoryEvent } from '@/components/community/CommunityDirectoryActions'
 
 export function CommunityShareButtons({ communityName, communitySlug }: { communityName: string; communitySlug: string }) {
   const url = `${APP_URL}/communities/${communitySlug}`
 
   async function handleShare() {
+    trackCommunityDirectoryEvent('community_share_clicked', {
+      communitySlug,
+      communityName,
+      source: 'detail_share_button',
+    })
+
     if (navigator.share) {
       try {
         await navigator.share({ title: communityName, text: `Check out ${communityName} on SweatBuddies`, url })
@@ -33,6 +40,11 @@ export function CommunityShareButtons({ communityName, communitySlug }: { commun
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => trackCommunityDirectoryEvent('community_share_clicked', {
+          communitySlug,
+          communityName,
+          source: 'detail_whatsapp_share',
+        })}
         className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 text-sm font-medium text-[#25D366] hover:bg-[#25D366]/20 transition-colors"
       >
         WhatsApp

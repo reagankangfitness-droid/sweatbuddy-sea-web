@@ -1,0 +1,41 @@
+const assert = require('node:assert/strict')
+const path = require('node:path')
+const { chromium, devices } = require('playwright')
+
+async function main() {
+  const baseUrl = process.env.SMOKE_BASE_URL || 'http://localhost:3000'
+  const targetUrl = new URL('/buddy', baseUrl).toString()
+  const screenshotPath =
+    process.env.SMOKE_SCREENSHOT_PATH ||
+    path.join('/private/tmp', 'sweatbuddies-mobile-buddy-smoke.png')
+
+  const browser = await chromium.launch({ headless: true })
+  const context = await browser.newContext({
+    ...devices['iPhone 14'],
+    locale: 'en-US',
+    timezoneId: 'Asia/Singapore',
+    geolocation: { latitude: 1.29027, longitude: 103.851959 },
+    permissions: ['geolocation'],
+  })
+
+  try {
+    const page = await context.newPage()
+    await page.goto(targetUrl, { waitUntil: 'networkidle', timeout: 90000 })
+
+    await page.getByText('Community activity', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+    assert.equal(await page.locator('text=Filters').filter({ visible: true }).count(), 0)
+    assert.equal(await page.locator('button:has-text("Today")').filter({ visible: true }).count(), 0)
+    assert.equal(await page.getByText('Activity map', { exact: true }).filter({ visible: true }).count(), 0)
+
+    await page.screenshot({ path: screenshotPath, fullPage: false })
+    console.log(`Mobile buddy smoke passed: ${targetUrl}`)
+    console.log(`Screenshot: ${screenshotPath}`)
+  } finally {
+    await browser.close()
+  }
+}
+
+main().catch((error) => {
+  console.error(error)
+  process.exit(1)
+})

@@ -78,7 +78,7 @@ const faqs: FAQItem[] = [
   {
     category: 'hosting',
     question: 'How do I start hosting?',
-    answer: 'Sign in to SweatBuddies, go to your Profile, and click "Host Dashboard". You can create your first session right away. Once published, your session will be live on the platform.'
+    answer: 'Sign in to SweatBuddies, go to your Profile, and click "Post a Session". Free self-hosted plans go through a quick review before they appear publicly.'
   },
   {
     category: 'hosting',
@@ -379,13 +379,13 @@ export default function SupportPage() {
               </div>
             </Link>
             <Link
-              href="/hub"
+              href="/my-sessions"
               className="flex items-center gap-3 p-4 bg-neutral-950 rounded-xl border border-neutral-800 hover:border-neutral-600 transition-colors"
             >
               <Users className="w-5 h-5 text-purple-600" />
               <div>
-                <p className="font-medium text-neutral-100">Host Dashboard</p>
-                <p className="text-sm text-neutral-500">Manage your sessions</p>
+                <p className="font-medium text-neutral-100">My Sessions</p>
+                <p className="text-sm text-neutral-500">Manage your plans</p>
               </div>
             </Link>
             <Link

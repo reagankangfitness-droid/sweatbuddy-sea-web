@@ -16,7 +16,7 @@ export function LandingNav() {
             href="/buddy"
             className="hidden sm:inline text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
           >
-            Sessions
+            Explore
           </Link>
           <Link
             href="#host"

@@ -113,9 +113,30 @@ export async function PATCH(
       return NextResponse.json({ error: 'No valid community fields provided' }, { status: 400 })
     }
 
-    const updated = await prisma.community.update({
-      where: { id },
-      data: updateData,
+    const shouldTrustManagers = grantsCommunityManagerTrust(before, updateData)
+    const { community: updated, trustedManagerCount } = await prisma.$transaction(async (tx) => {
+      const community = await tx.community.update({
+        where: { id },
+        data: updateData,
+      })
+
+      if (!shouldTrustManagers) {
+        return { community, trustedManagerCount: 0 }
+      }
+
+      const trustedManagers = await tx.communityMember.updateMany({
+        where: {
+          communityId: id,
+          role: { in: ['OWNER', 'ADMIN'] },
+          managerTrustLevel: 'PENDING',
+        },
+        data: {
+          managerTrustLevel: 'TRUSTED_MANAGER',
+          managerVerifiedAt: new Date(),
+        },
+      })
+
+      return { community, trustedManagerCount: trustedManagers.count }
     })
 
     await logAdminAction({
@@ -136,6 +157,7 @@ export async function PATCH(
           riskScore: updated.riskScore,
           riskFlags: updated.riskFlags,
         },
+        trustedManagerCount,
       },
     })
 
@@ -151,6 +173,27 @@ export async function PATCH(
       { status: 500 }
     )
   }
+}
+
+function grantsCommunityManagerTrust(
+  before: {
+    isActive: boolean
+    isVerified: boolean
+    moderationStatus: string
+  } | null,
+  updateData: Record<string, unknown>,
+) {
+  const willBeActive = typeof updateData.isActive === 'boolean'
+    ? updateData.isActive
+    : before?.isActive === true
+  const willBeVerified = typeof updateData.isVerified === 'boolean'
+    ? updateData.isVerified
+    : before?.isVerified === true
+  const willBeLive = typeof updateData.moderationStatus === 'string'
+    ? updateData.moderationStatus === 'LIVE'
+    : before?.moderationStatus === 'LIVE'
+
+  return willBeActive && willBeVerified && willBeLive
 }
 
 function normalizeEnum(value: unknown, field: string, allowed: Set<string>): string {

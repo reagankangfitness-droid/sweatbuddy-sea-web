@@ -1,6 +1,6 @@
-import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getCurrentDbUser } from '@/lib/current-user'
 
 /**
  * Converts a datetime-local string (e.g., "2024-12-15T14:00") to a proper UTC Date.
@@ -117,10 +117,10 @@ export async function GET(
 
     // Social proof: friends going
     let friendsGoing: { id: string; name: string | null; firstName: string | null; imageUrl: string | null }[] = []
-    const { userId } = await auth()
-    if (userId) {
+    const dbUser = await getCurrentDbUser()
+    if (dbUser) {
       const followRows = await prisma.userFollower.findMany({
-        where: { followerId: userId },
+        where: { followerId: dbUser.id },
         select: { followingId: true },
       })
       const followingIds = followRows.map((f) => f.followingId)
@@ -151,9 +151,8 @@ export async function PUT(
 ) {
   try {
     const { id } = await params
-    // Authenticate with Clerk
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -173,7 +172,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
     }
 
-    if (existingActivity.userId !== userId && existingActivity.hostId !== userId) {
+    if (existingActivity.userId !== dbUser.id && existingActivity.hostId !== dbUser.id) {
       return NextResponse.json({ error: 'Forbidden: You can only edit your own activities' }, { status: 403 })
     }
 
@@ -216,9 +215,8 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
-    // Authenticate with Clerk
-    const { userId } = await auth()
-    if (!userId) {
+    const dbUser = await getCurrentDbUser()
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -238,7 +236,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
     }
 
-    if (activity.userId !== userId && activity.hostId !== userId) {
+    if (activity.userId !== dbUser.id && activity.hostId !== dbUser.id) {
       return NextResponse.json({ error: 'Forbidden: You can only delete your own activities' }, { status: 403 })
     }
 

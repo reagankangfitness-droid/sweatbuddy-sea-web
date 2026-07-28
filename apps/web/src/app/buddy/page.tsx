@@ -27,8 +27,7 @@ import {
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 import { LogoWithText } from '@/components/logo'
-import { CityGuideTabs } from '@/components/city-guide/CityGuideTabs'
-import { ACTIVITY_TYPES, getActivityEmoji } from '@/lib/activity-types'
+import { getActivityEmoji } from '@/lib/activity-types'
 import { CreateSessionSheet } from '@/components/CreateSessionSheet'
 import { CreateChoiceSheet } from '@/components/CreateChoiceSheet'
 import { SessionFeedbackSheet } from '@/components/SessionFeedbackSheet'
@@ -48,6 +47,7 @@ import {
   type CityNeighborhood,
 } from '@/lib/location-config'
 import { compareByShowUpConfidence, getShowUpConfidence } from '@/lib/show-up-confidence'
+import { getCategoryFallbackImage, getCityFallbackImage } from '@/lib/visual-fallbacks'
 
 interface Host {
   id: string
@@ -126,6 +126,15 @@ interface Session {
   paynowPhoneNumber?: string | null
 }
 
+interface MySessionSummary {
+  id: string
+  title: string
+  startTime: string | null
+  address: string | null
+  city: string | null
+  userStatus: 'JOINED' | 'HOSTING'
+}
+
 interface MapPlace {
   id: string
   slug: string
@@ -157,26 +166,43 @@ interface MapPlace {
   reviewCount: number
 }
 
+interface DirectoryCommunityPreview {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  coverImage: string | null
+  logoImage: string | null
+  category: string
+  isVerified: boolean
+  memberCount: number
+  eventCount: number
+  city: { name: string; slug: string } | null
+  latitude?: number | null
+  longitude?: number | null
+  usualArea: string | null
+  usualSchedule: string | null
+  joinPlatform: string | null
+  communityLink: string | null
+  websiteUrl?: string | null
+  sourceUrl: string | null
+  sourceLabel?: string | null
+  bestFor?: string | null
+  soloFriendly?: boolean
+  confidenceScore?: number | null
+  confidenceTier?: string | null
+  vibeTags: string[]
+  priceType: string | null
+  beginnerFriendly: boolean
+  lastVerifiedAt: string | null
+}
+
 // ─── Time helpers ─────────────────────────────────────────────────────────────
 
 interface TimeBucket {
   key: string
   label: string
   sessions: Session[]
-}
-
-interface CrewSpotlight {
-  id: string
-  name: string
-  slug: string
-  logoImage: string | null
-  city: string
-  categorySlug: string | null
-  nextSessionTitle: string
-  nextSessionTime: string | null
-  sessionCount: number
-  peopleCount: number
-  attendees: Attendee[]
 }
 
 function getRelativeTime(startTime: string): string {
@@ -376,315 +402,557 @@ function MapPinIcon() {
   return <MapPin className="h-3.5 w-3.5" />
 }
 
-function EventDiscoveryBand({
+function LocalPulsePanel({
+  activeLocationLabel,
+  activeDateLabel,
   sessions,
-  crews,
-  sessionCount,
-  peopleCount,
-  goingSoloCount,
-  beginnerCount,
-  cityName,
-  activeTypeLabel,
-  onCreate,
-  onPreviewAttendees,
+  places,
+  communityCount,
+  myNextSession,
+  loading,
+  signedIn,
+  locationStatus,
+  communityHref,
+  onOpenMap,
+  onUseLocation,
 }: {
+  activeLocationLabel: string
+  activeDateLabel: string
   sessions: Session[]
-  crews: CrewSpotlight[]
-  sessionCount: number
-  peopleCount: number
-  goingSoloCount: number
-  beginnerCount: number
-  cityName: string
-  activeTypeLabel: string
-  onCreate: () => void
-  onPreviewAttendees: (session: Session) => void
+  places: MapPlace[]
+  communityCount: number | null
+  myNextSession: MySessionSummary | null
+  loading: boolean
+  signedIn: boolean
+  locationStatus: LocationStatus
+  communityHref: string
+  onOpenMap: () => void
+  onUseLocation: () => void
 }) {
-  const topSessions = sessions
-    .slice()
-    .sort(compareByShowUpConfidence)
-    .slice(0, 4)
-  const hasCrews = crews.length > 0
+  const planCount = sessions.length
+  const placeCount = places.length
+  const listedCommunityCount = communityCount ?? 0
+  const isBootstrapping = loading && planCount === 0 && placeCount === 0 && communityCount === null
+  const hasLocalSupply = planCount > 0 || placeCount > 0 || listedCommunityCount > 0
+  const locationNeedsChoice = locationStatus === 'denied' || locationStatus === 'unsupported'
+  const myPlanTime = myNextSession?.startTime ? getRelativeTime(myNextSession.startTime) : null
+  const topSession = sessions[0] ?? null
+  const topPlace = places[0] ?? null
+
+  const title = myNextSession
+    ? `Your next plan is ${myPlanTime ? myPlanTime.toLowerCase() : 'coming up'}.`
+    : isBootstrapping
+      ? `Checking what is active in ${activeLocationLabel}.`
+      : planCount > 0
+        ? `${planCount} joinable plan${planCount === 1 ? '' : 's'} around ${activeLocationLabel}.`
+        : hasLocalSupply
+          ? `Quiet for plans, active for communities.`
+          : locationNeedsChoice
+            ? 'Choose an area to see what is active.'
+            : `Nothing mapped in ${activeLocationLabel} yet.`
+
+  const body = myNextSession
+    ? `${myNextSession.title}${myNextSession.address ? ` · ${myNextSession.address.split(',')[0]}` : ''}`
+    : planCount > 0
+      ? `Best first option: ${topSession?.title ?? 'open plans'}${topSession?.startTime ? ` · ${getRelativeTime(topSession.startTime)}` : ''}.`
+      : hasLocalSupply
+        ? `${listedCommunityCount} communities are mapped nearby. Places stay in the background as meetup context.`
+        : locationNeedsChoice
+          ? 'Location was not shared. Pick a city, use your location, or browse communities while the map catches up.'
+          : 'Suggest a community or post a simple session so people know where to show up.'
 
   return (
-    <section className="border-b border-white/10 pb-5 pt-4">
-      <div className="flex items-start justify-between gap-4 px-1">
+    <section className="rounded-lg border border-white/10 bg-[#111111] p-3">
+      <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(220px,300px)] sm:items-start">
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#63FF8F]">
-            Events near {cityName}
-          </p>
-          <h1 className="mt-1 text-xl font-bold leading-tight text-white">
-            Find a plan you can show up to solo
-          </h1>
-          <p className="mt-1 text-xs leading-relaxed text-white/58">
-            {activeTypeLabel === 'All'
-              ? 'Browse sessions ranked by show-up confidence: clear plan, easy join path, solo-friendly signals, and verified hosts.'
-              : `${activeTypeLabel} sessions ranked by show-up confidence before you decide where to go.`}
-          </p>
-        </div>
-        <button
-          onClick={onCreate}
-          className="min-h-11 flex-shrink-0 rounded-full bg-[#63FF8F] px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider text-black transition-colors hover:bg-[#83FFA6]"
-        >
-          Host
-        </button>
-      </div>
-
-      <div className="mt-4 hidden grid-cols-3 gap-2 sm:grid">
-        {[
-          { value: sessionCount.toString(), label: 'plans live' },
-          { value: peopleCount.toString(), label: 'people going' },
-          {
-            value: goingSoloCount > 0 ? goingSoloCount.toString() : beginnerCount.toString(),
-            label: goingSoloCount > 0 ? 'going solo' : 'easy starts',
-          },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="min-h-[58px] rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5"
-          >
-            <p className="truncate text-sm font-bold leading-none text-white">{stat.value}</p>
-            <p className="mt-1 text-[10px] uppercase tracking-wider text-white/45">{stat.label}</p>
-          </div>
-        ))}
-      </div>
-
-      {topSessions.length > 0 && (
-        <div className="mt-4 flex gap-3 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory">
-          {topSessions.map((session) => (
-            <EventPulseCard
-              key={session.id}
-              session={session}
-              onPreviewAttendees={onPreviewAttendees}
-            />
-          ))}
-        </div>
-      )}
-
-      {hasCrews ? (
-        <div className="mt-4 flex gap-3 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory">
-          <div className="flex w-[150px] shrink-0 snap-start flex-col justify-center rounded-lg border border-white/10 bg-white/[0.04] p-3">
-            <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#666666]">
-              Hosted by
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+              Local pulse
             </p>
-            <p className="mt-1 text-xs leading-snug text-[#999999]">
-              Official crew pages behind these plans.
-            </p>
+            <span className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-white/45">
+              {activeLocationLabel}
+            </span>
+            <span className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-white/45">
+              {activeDateLabel}
+            </span>
           </div>
-          {crews.map((crew) => (
-            <CrewSpotlightCard key={crew.id} crew={crew} />
-          ))}
-        </div>
-      ) : (
-        <div className="mt-4 rounded-lg border border-dashed border-white/15 bg-white/[0.035] px-4 py-5 text-center">
-          <p className="text-sm font-semibold text-white">Start with a plan people can join.</p>
-          <p className="mt-1 text-xs text-[#666666]">
-            Host and crew pages stay in the background as the trust layer.
+          <h2 className="mt-2 text-lg font-black leading-tight text-white sm:text-xl">
+            {title}
+          </h2>
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-white/58 sm:text-sm">
+            {body}
           </p>
         </div>
-      )}
+
+        <div className="grid grid-cols-3 gap-1.5">
+          <PulseStat
+            label="Plans"
+            value={isBootstrapping ? '...' : String(planCount)}
+            active={planCount > 0}
+          />
+          <PulseStat
+            label="Communities"
+            value={communityCount === null && loading ? '...' : String(listedCommunityCount)}
+            active={listedCommunityCount > 0}
+          />
+          <PulseStat
+            label="Meetup spots"
+            value={isBootstrapping ? '...' : String(placeCount)}
+            active={false}
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-2 sm:col-span-2">
+          {myNextSession ? (
+            <Link
+              href={`/activities/${myNextSession.id}`}
+              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#63FF8F] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+            >
+              Open my plan
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          ) : planCount > 0 ? (
+            <button
+              type="button"
+              onClick={onOpenMap}
+              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#63FF8F] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+            >
+              Open map
+              <Map className="h-3.5 w-3.5" />
+            </button>
+          ) : listedCommunityCount > 0 ? (
+            <Link
+              href={communityHref}
+              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#63FF8F] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+            >
+              Browse communities
+              <Users className="h-3.5 w-3.5" />
+            </Link>
+          ) : placeCount > 0 && topPlace ? (
+            <Link
+              href={`/places/${topPlace.slug}`}
+              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#63FF8F] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+            >
+              Start with {topPlace.area ?? 'places'}
+              <MapPin className="h-3.5 w-3.5" />
+            </Link>
+          ) : null}
+
+          {!signedIn && (
+            <Link
+              href="/sign-in?redirect_url=/buddy"
+              className="inline-flex min-h-10 items-center rounded-full border border-white/12 px-4 text-xs font-black uppercase tracking-wide text-white/70 transition-colors hover:border-white/30 hover:text-white"
+            >
+              Sign in
+            </Link>
+          )}
+
+          {locationNeedsChoice && locationStatus !== 'unsupported' && (
+            <button
+              type="button"
+              onClick={onUseLocation}
+              className="inline-flex min-h-10 items-center rounded-full border border-white/12 px-4 text-xs font-black uppercase tracking-wide text-white/70 transition-colors hover:border-white/30 hover:text-white"
+            >
+              Use location
+            </button>
+          )}
+        </div>
+      </div>
     </section>
   )
 }
 
-function EventPulseCard({
-  session,
-  onPreviewAttendees,
+function PulseStat({
+  label,
+  value,
+  active,
 }: {
-  session: Session
-  onPreviewAttendees: (session: Session) => void
+  label: string
+  value: string
+  active: boolean
 }) {
-  const timeLabel = session.startTime ? getRelativeTime(session.startTime) : 'Time TBA'
-  const hostLabel = session.community?.name ?? session.host?.name ?? 'Local host'
-  const soloCount = session.goingSoloCount ?? 0
-  const imageSrc = getSessionListingImage(session)
-  const activityLabel = (session.categorySlug ?? 'fitness').replace(/[-_]/g, ' ')
-  const priceLabel = formatBuddyMapPrice(session.price, session.currency)
-
   return (
-    <div className="group w-[286px] flex-shrink-0 snap-start overflow-hidden rounded-xl border border-white/10 bg-[#151515] transition-colors hover:border-[#63FF8F]/45 hover:bg-[#1B1B1B]">
-      <Link
-        href={`/activities/${session.id}`}
-        className="relative block aspect-[16/10] overflow-hidden bg-[#222222]"
-        onClick={() => trackSessionClick(session, 'event_pulse', 0)}
+    <div className={`rounded-lg border px-3 py-2 ${active ? 'border-[#63FF8F]/24 bg-[#63FF8F]/8' : 'border-white/10 bg-white/[0.035]'}`}>
+      <p className={`font-mono text-base font-black leading-none ${active ? 'text-[#63FF8F]' : 'text-white'}`}>
+        {value}
+      </p>
+      <p className="mt-1 truncate font-mono text-[9px] font-black uppercase tracking-wide text-white/42">
+        {label}
+      </p>
+    </div>
+  )
+}
+
+function DiscoveryWorkspaceNav({
+  viewMode,
+  communityHref,
+  onToggleView,
+}: {
+  viewMode: 'list' | 'map'
+  communityHref: string
+  onToggleView: () => void
+}) {
+  return (
+    <nav className="mt-2 grid grid-cols-2 gap-1.5 font-mono text-[10px] font-black uppercase tracking-wide">
+      <button
+        type="button"
+        onClick={onToggleView}
+        className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border border-white/12 bg-[#171717] text-white/72 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
       >
-        <Image
-          src={imageSrc}
-          alt={session.title}
-          fill
-          sizes="286px"
-          className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
-          unoptimized={imageSrc.startsWith('/api/') || imageSrc.startsWith('http')}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/10" />
-        <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
-          {activityLabel}
-        </span>
-        <span className="absolute right-3 top-3 rounded-md bg-[#63FF8F] px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#050505] shadow-md">
-          {priceLabel}
-        </span>
-        <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-white backdrop-blur">
-          {timeLabel}
-        </span>
-        {session.imageSourceLabel ? (
-          <span className="absolute bottom-3 right-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/80 backdrop-blur">
-            {session.imageSourceLabel}
-          </span>
-        ) : null}
+        {viewMode === 'list' ? <Map className="h-3.5 w-3.5" /> : <List className="h-3.5 w-3.5" />}
+        {viewMode === 'list' ? 'Map' : 'List'}
+      </button>
+      <Link
+        href={communityHref}
+        className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border border-white/12 bg-[#171717] text-white/72 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+      >
+        <Users className="h-3.5 w-3.5" />
+        Communities
       </Link>
+    </nav>
+  )
+}
 
-      <div className="p-3.5">
-        <div className="flex items-start justify-between gap-3">
-          <Link
-            href={`/activities/${session.id}`}
-            className="flex min-h-10 min-w-0 items-start text-sm font-bold leading-snug text-white transition-colors hover:text-[#63FF8F]"
-            onClick={() => trackSessionClick(session, 'event_pulse', 0)}
-          >
-            <span className="line-clamp-2">{session.title}</span>
-          </Link>
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-white/[0.08] text-xl">
-            {pinEmoji(session.categorySlug ?? 'other')}
-          </span>
-        </div>
-
-        <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/10 pt-3">
-          <AttendeePreview
-            attendees={session.attendees}
-            attendeeCount={session.attendeeCount}
-            onClick={() => onPreviewAttendees(session)}
-          />
-          <p className="shrink-0 text-right text-[11px] font-medium text-[#999999]">
-            {session.attendeeCount > 0 ? `${session.attendeeCount} going` : 'Open invite'}
-            {soloCount > 0 ? <span className="block text-[#B6FF00]">{soloCount} solo</span> : null}
+function ResultsCommandHeader({
+  sessionCount,
+  peopleCount,
+  goingSoloCount,
+  communityCount,
+  placeCount,
+  activeLocationLabel,
+  activeDateLabel,
+}: {
+  sessionCount: number
+  peopleCount: number
+  goingSoloCount: number
+  communityCount: number | null
+  placeCount: number
+  activeLocationLabel: string
+  activeDateLabel: string
+}) {
+  return (
+    <div className="border-b border-white/[0.08] py-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+            Ranked results
+          </p>
+          <h1 className="mt-1 truncate text-lg font-black text-white">
+            {sessionCount} plan{sessionCount !== 1 ? 's' : ''} in {activeLocationLabel}
+          </h1>
+          <p className="mt-1 text-xs leading-5 text-white/50">
+            {activeDateLabel} sorted by confidence, join path, people going, and local trust.
           </p>
         </div>
-        <p className="mt-3 truncate text-[11px] text-[#666666]">Hosted by {hostLabel}</p>
+        <div className="grid w-[142px] shrink-0 grid-cols-2 gap-1.5 max-[380px]:hidden">
+          <MiniSignal label="Going" value={peopleCount} active={peopleCount > 0} />
+          <MiniSignal label="Solo" value={goingSoloCount} active={goingSoloCount > 0} />
+        </div>
+      </div>
+      <div className="mt-3 grid grid-cols-3 gap-1.5">
+        <MiniSignal label="Plans" value={sessionCount} active={sessionCount > 0} />
+        <MiniSignal label="Communities" value={communityCount ?? 0} active={(communityCount ?? 0) > 0} />
+        <MiniSignal label="Meetup spots" value={placeCount} active={false} />
       </div>
     </div>
   )
 }
 
-function CrewSpotlightCard({ crew }: { crew: CrewSpotlight }) {
-  const href = `/communities/${crew.slug}`
-  const emoji = pinEmoji(crew.categorySlug ?? 'other')
-  const nextTime = crew.nextSessionTime ? getRelativeTime(crew.nextSessionTime) : null
-
+function MiniSignal({
+  label,
+  value,
+  active,
+}: {
+  label: string
+  value: number
+  active: boolean
+}) {
   return (
-    <Link
-      href={href}
-      className="group w-[230px] flex-shrink-0 snap-start rounded-xl border border-white/[0.08] bg-[#1A1A1A] p-3.5 hover:bg-[#222222] transition-colors"
-    >
-      <div className="flex items-start gap-3">
-        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#262626]">
-          {crew.logoImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={crew.logoImage} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <span className="text-2xl">{emoji}</span>
-          )}
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-bold text-white group-hover:text-neutral-200">
-            {crew.name}
-          </p>
-          <p className="mt-0.5 truncate text-[11px] text-[#666666]">{crew.city}</p>
-        </div>
-      </div>
-
-      <div className="mt-4 min-h-[56px]">
-        <p className="line-clamp-2 text-xs font-semibold leading-snug text-[#D4D4D4]">
-          {crew.nextSessionTitle}
-        </p>
-        <p className="mt-1 text-[11px] text-[#666666]">
-          {nextTime ? `${nextTime} · ` : ''}
-          {crew.sessionCount} known plan{crew.sessionCount !== 1 ? 's' : ''}
-        </p>
-      </div>
-
-      <div className="mt-3 flex items-center justify-between border-t border-white/[0.06] pt-3">
-        <div className="flex -space-x-2">
-          {crew.attendees.length > 0 ? (
-            crew.attendees.map((attendee) => (
-              <span
-                key={attendee.id}
-                className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full border border-[#1A1A1A] bg-[#333333] text-[10px] font-bold text-white"
-              >
-                {attendee.imageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={attendee.imageUrl} alt="" className="h-full w-full object-cover" />
-                ) : (
-                  (attendee.name?.[0]?.toUpperCase() ?? '?')
-                )}
-              </span>
-            ))
-          ) : (
-            <span className="text-[11px] text-[#666666]">Be first in</span>
-          )}
-        </div>
-        <p className="text-[11px] font-medium text-[#999999]">
-          {crew.peopleCount > 0 ? 'Active crew' : 'Open listing'}
-        </p>
-      </div>
-    </Link>
+    <div className={`rounded-md border px-2 py-1.5 ${active ? 'border-[#63FF8F]/24 bg-[#63FF8F]/8' : 'border-white/10 bg-white/[0.03]'}`}>
+      <p className={`font-mono text-sm font-black leading-none ${active ? 'text-[#63FF8F]' : 'text-white/72'}`}>
+        {value}
+      </p>
+      <p className="mt-1 truncate font-mono text-[8px] font-black uppercase tracking-wide text-white/36">
+        {label}
+      </p>
+    </div>
   )
 }
 
-// Gradient pairs for poster-style fallback cards (from → to)
-const CATEGORY_GRADIENTS: Record<string, [string, string]> = {
-  running: ['#EA580C', '#9A3412'],
-  yoga: ['#9333EA', '#581C87'],
-  hiit: ['#DC2626', '#991B1B'],
-  bootcamp: ['#DC2626', '#7F1D1D'],
-  cycling: ['#CA8A04', '#854D0E'],
-  swimming: ['#0891B2', '#155E75'],
-  volleyball: ['#D97706', '#92400E'],
-  basketball: ['#EA580C', '#7C2D12'],
-  pilates: ['#DB2777', '#831843'],
-  hiking: ['#65A30D', '#3F6212'],
-  strength: ['#4F46E5', '#312E81'],
-  gym: ['#2563EB', '#1E3A5F'],
-  cold_plunge: ['#0284C7', '#0C4A6E'],
-  dance_fitness: ['#C026D3', '#701A75'],
-  badminton: ['#059669', '#064E3B'],
-  padel: ['#0D9488', '#134E4A'],
-  combat_fitness: ['#E11D48', '#881337'],
-  pickleball: ['#16A34A', '#14532D'],
-  other: ['#525252', '#262626'],
+function LocalDirectoryFallback({
+  cityName,
+  communityCount,
+  communities,
+  places,
+  loading,
+  hasFilters,
+  communityHref,
+  onClearFilters,
+  onCreate,
+  onOpenMap,
+}: {
+  cityName: string
+  communityCount: number | null
+  communities: DirectoryCommunityPreview[]
+  places: MapPlace[]
+  loading: boolean
+  hasFilters: boolean
+  communityHref: string
+  onClearFilters: () => void
+  onCreate: () => void
+  onOpenMap: () => void
+}) {
+  const visiblePlaces = places.slice(0, 4)
+  const listedCommunityCount = communityCount ?? communities.length
+
+  return (
+    <div className="grid gap-4 py-4">
+      <section className="rounded-lg border border-white/[0.10] bg-[#111111] p-4">
+        <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+          Active communities
+        </p>
+        <h2 className="mt-2 text-xl font-black leading-tight text-white">
+          Start with communities in {cityName}.
+        </h2>
+        <p className="mt-2 max-w-xl text-sm leading-6 text-white/58">
+          No live session matches this moment. The directory still gives you official links,
+          usual areas, schedules, and newcomer signals so the next move is clear.
+        </p>
+        <div className="mt-4 grid grid-cols-3 gap-1.5">
+          <MiniSignal label="Plans" value={0} active={false} />
+          <MiniSignal label="Communities" value={listedCommunityCount} active={listedCommunityCount > 0} />
+          <MiniSignal label="Meetup spots" value={visiblePlaces.length} active={false} />
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link
+            href={communityHref}
+            className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#63FF8F] px-4 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+          >
+            Browse communities
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+          <button
+            type="button"
+            onClick={onOpenMap}
+            className="inline-flex min-h-10 items-center gap-2 rounded-full border border-white/12 px-4 font-mono text-[10px] font-black uppercase tracking-wide text-white/72 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+          >
+            Open map
+            <Map className="h-3.5 w-3.5" />
+          </button>
+          {hasFilters ? (
+            <button
+              type="button"
+              onClick={onClearFilters}
+              className="inline-flex min-h-10 items-center rounded-full border border-white/12 px-4 font-mono text-[10px] font-black uppercase tracking-wide text-white/58 transition-colors hover:border-white/30 hover:text-white"
+            >
+              Clear filters
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onCreate}
+              className="inline-flex min-h-10 items-center gap-2 rounded-full border border-white/12 px-4 font-mono text-[10px] font-black uppercase tracking-wide text-white/58 transition-colors hover:border-white/30 hover:text-white"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Add listing
+            </button>
+          )}
+        </div>
+      </section>
+
+      {loading ? (
+        <div className="grid gap-2">
+          {[0, 1, 2].map((item) => (
+            <div key={item} className="h-28 rounded-lg border border-white/[0.06] bg-[#111111] shimmer" />
+          ))}
+        </div>
+      ) : null}
+
+      {!loading && communities.length > 0 ? (
+        <section>
+          <div className="mb-2 flex items-center justify-between gap-3 px-1">
+            <h3 className="font-mono text-xs font-black uppercase tracking-[0.16em] text-white">
+              Source-checked communities
+            </h3>
+            <Link
+              href={communityHref}
+              className="font-mono text-[10px] font-black uppercase tracking-wide text-white/46 transition-colors hover:text-[#63FF8F]"
+            >
+              View all
+            </Link>
+          </div>
+          <div className="grid gap-2">
+            {communities.slice(0, 4).map((community) => (
+              <CommunityDecisionCard key={community.id} community={community} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {!loading && visiblePlaces.length > 0 ? (
+        <section>
+          <div className="mb-2 flex items-center justify-between gap-3 px-1">
+            <h3 className="font-mono text-xs font-black uppercase tracking-[0.16em] text-white">
+              Meetup spots
+            </h3>
+            <button
+              type="button"
+              onClick={onOpenMap}
+              className="font-mono text-[10px] font-black uppercase tracking-wide text-white/46 transition-colors hover:text-[#63FF8F]"
+            >
+              Open map
+            </button>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+            {visiblePlaces.map((place) => (
+              <PlaceDecisionCard key={place.id} place={place} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+    </div>
+  )
 }
 
-const SESSION_LISTING_IMAGES: Record<string, string> = {
-  running: '/banner/running.jpg',
-  run: '/banner/running.jpg',
-  yoga: '/images/hero-bg.jpg',
-  hiit: '/images/connect-people.webp',
-  bootcamp: '/banner/athletics.jpg',
-  cycling: '/images/community-bonds.jpg',
-  swimming: '/images/hero/ice-bath.webp',
-  volleyball: '/images/community-bonds.jpg',
-  basketball: '/banner/athletics.jpg',
-  pilates: '/images/hero/meditation.png',
-  hiking: '/images/cities/singapore.jpg',
-  strength: '/banner/athletics.jpg',
-  gym: '/banner/athletics.jpg',
-  cold_plunge: '/banner/ice-bath.webp',
-  recovery: '/banner/ice-bath.webp',
-  dance_fitness: '/images/connect-people.webp',
-  badminton: '/images/community-bonds.jpg',
-  padel: '/images/community-bonds.jpg',
-  combat_fitness: '/banner/athletics.jpg',
-  pickleball: '/images/community-bonds.jpg',
-  social: '/images/hosts/run-club-group.jpg',
-  other: '/images/hero/run-club.jpg',
+function CommunityDecisionCard({ community }: { community: DirectoryCommunityPreview }) {
+  const imageUrl = getCommunityImage(community)
+  const joinHref = getCommunityJoinHref(community)
+  const score = community.confidenceScore ?? (community.isVerified ? 90 : 70)
+  const signals = [
+    community.usualSchedule,
+    community.beginnerFriendly ? 'Beginner-friendly' : null,
+    community.soloFriendly ? 'Solo-friendly' : null,
+    community.priceType ? formatCommunityPrice(community.priceType) : null,
+  ].filter((signal): signal is string => Boolean(signal)).slice(0, 3)
+
+  return (
+    <article className="grid min-h-[132px] grid-cols-[116px_minmax(0,1fr)] overflow-hidden rounded-lg border border-white/[0.08] bg-[#151515] transition-colors hover:border-[#63FF8F]/35">
+      <Link href={`/communities/${community.slug}`} className="relative block bg-[#222222]">
+        <Image
+          src={imageUrl}
+          alt=""
+          fill
+          sizes="116px"
+          className="object-cover"
+          unoptimized={!imageUrl.startsWith('/')}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+        <span className="absolute bottom-2 left-2 rounded-md bg-black/60 px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-[#63FF8F] backdrop-blur">
+          {score}
+        </span>
+      </Link>
+      <div className="flex min-w-0 flex-col p-3">
+        <div className="flex min-w-0 items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className="truncate font-mono text-[9px] font-black uppercase tracking-[0.15em] text-white/42">
+              {formatCommunityCategory(community.category)}
+            </p>
+            <Link href={`/communities/${community.slug}`} className="mt-1 block">
+              <h4 className="line-clamp-1 text-sm font-black text-white transition-colors hover:text-[#63FF8F]">
+                {community.name}
+              </h4>
+            </Link>
+          </div>
+          {community.isVerified ? (
+            <ShieldCheck className="h-4 w-4 shrink-0 text-[#63FF8F]" />
+          ) : null}
+        </div>
+        <p className="mt-1 line-clamp-1 text-xs font-semibold text-white/54">
+          {community.usualArea || community.city?.name || 'Area listed soon'}
+        </p>
+        <p className="mt-1 line-clamp-2 text-xs leading-4 text-white/42">
+          {community.bestFor || community.description || 'Source-checked community with an official join path.'}
+        </p>
+        {signals.length > 0 ? (
+          <div className="mt-2 flex gap-1 overflow-hidden">
+            {signals.map((signal) => (
+              <span
+                key={signal}
+                className="shrink-0 rounded-full border border-white/10 px-2 py-0.5 font-mono text-[8px] font-black uppercase tracking-wide text-white/54"
+              >
+                {signal}
+              </span>
+            ))}
+          </div>
+        ) : null}
+        <div className="mt-auto grid grid-cols-2 gap-2 pt-3">
+          <Link
+            href={`/communities/${community.slug}`}
+            className="inline-flex min-h-9 items-center justify-center rounded-full border border-white/12 px-3 font-mono text-[9px] font-black uppercase tracking-wide text-white/66 transition-colors hover:border-white/28 hover:text-white"
+          >
+            Details
+          </Link>
+          {joinHref ? (
+            <a
+              href={joinHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-9 items-center justify-center gap-1 rounded-full bg-[#63FF8F] px-3 font-mono text-[9px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+            >
+              {formatJoinPlatformLabel(community.joinPlatform)}
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          ) : (
+            <Link
+              href={`/communities/${community.slug}`}
+              className="inline-flex min-h-9 items-center justify-center rounded-full bg-[#63FF8F] px-3 font-mono text-[9px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+            >
+              Join path
+            </Link>
+          )}
+        </div>
+      </div>
+    </article>
+  )
+}
+
+function PlaceDecisionCard({ place }: { place: MapPlace }) {
+  const imageUrl = place.imageUrl || getCityFallbackImage(place.city?.slug ?? 'singapore')
+  const score = Math.max(place.trustScore, place.socialScore, place.photoQualityScore)
+  const meta = [
+    formatMapPlaceType(place.placeType),
+    place.area,
+    place.beginnerFriendly ? 'Beginner-friendly' : null,
+  ].filter(Boolean).join(' · ')
+
+  return (
+    <article className="overflow-hidden rounded-lg border border-white/[0.08] bg-[#151515] transition-colors hover:border-white/20">
+      <Link href={`/places/${place.slug}`} className="relative block aspect-[16/9] bg-[#222222]">
+        <Image
+          src={imageUrl}
+          alt=""
+          fill
+          sizes="(min-width: 1024px) 220px, 50vw"
+          className="object-cover"
+          unoptimized={!imageUrl.startsWith('/')}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/74 via-black/10 to-transparent" />
+        <span className="absolute bottom-2 left-2 rounded-md bg-black/60 px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-white backdrop-blur">
+          Trust {score}
+        </span>
+      </Link>
+      <div className="p-3">
+        <Link href={`/places/${place.slug}`}>
+          <h4 className="line-clamp-1 text-sm font-black text-white transition-colors hover:text-[#63FF8F]">
+            {place.name}
+          </h4>
+        </Link>
+        <p className="mt-1 line-clamp-1 text-xs font-semibold text-white/46">{meta}</p>
+        <p className="mt-1 line-clamp-2 min-h-8 text-xs leading-4 text-white/42">
+          {place.bestFor || place.description || 'Mapped place people can use to decide where to show up.'}
+        </p>
+      </div>
+    </article>
+  )
 }
 
 function getSessionListingImage(
   session: Pick<Session, 'imageUrl' | 'resolvedImageUrl' | 'categorySlug'>,
 ): string {
-  const category = (session.categorySlug ?? 'other').toLowerCase()
   return (
     session.resolvedImageUrl ||
     session.imageUrl ||
-    SESSION_LISTING_IMAGES[category] ||
-    SESSION_LISTING_IMAGES.other
+    getCategoryFallbackImage(session.categorySlug)
   )
 }
 
@@ -696,6 +964,39 @@ function formatMapPlaceType(value: string | null | undefined) {
   if (!value) return 'Place'
   const label = value.toLowerCase().replace(/_/g, ' ')
   return label.charAt(0).toUpperCase() + label.slice(1)
+}
+
+function formatCommunityCategory(value: string | null | undefined) {
+  if (!value) return 'Fitness'
+  return value
+    .toLowerCase()
+    .replace(/[_-]/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase())
+}
+
+function formatCommunityPrice(value: string | null | undefined) {
+  if (!value) return 'Cost unknown'
+  const normalized = value.toLowerCase()
+  if (normalized === 'free') return 'Free'
+  if (normalized === 'paid') return 'Paid'
+  if (normalized === 'mixed' || normalized === 'free_paid') return 'Free + paid'
+  if (normalized === 'membership') return 'Membership'
+  if (normalized === 'charity') return 'Charity'
+  if (normalized === 'pay_what_you_can') return 'Pay what you can'
+  return formatCommunityCategory(normalized)
+}
+
+function formatJoinPlatformLabel(value: string | null | undefined) {
+  if (!value) return 'Official link'
+  return formatCommunityCategory(value)
+}
+
+function getCommunityImage(community: DirectoryCommunityPreview) {
+  return community.coverImage || community.logoImage || getCategoryFallbackImage(community.category)
+}
+
+function getCommunityJoinHref(community: DirectoryCommunityPreview) {
+  return community.communityLink || community.websiteUrl || community.sourceUrl || null
 }
 
 function getPlaceMarkerIcon(place: Pick<MapPlace, 'placeType' | 'activities'>) {
@@ -753,11 +1054,37 @@ const LEVEL_FILTERS = [
 ]
 
 const STARTER_SESSION_IDEAS = [
-  { label: 'Morning run', type: 'running', note: 'Easy pace, open invite' },
-  { label: 'Beginner gym', type: 'strength', note: 'Train with one or two people' },
-  { label: 'Weekend yoga', type: 'yoga', note: 'Park, studio, or rooftop' },
-  { label: 'Pickleball hit', type: 'pickleball', note: 'Find a court and fill spots' },
+  {
+    label: 'Find a run',
+    type: 'running',
+    categorySlug: 'running',
+    seedTitle: 'Easy social run',
+    note: 'Easy pace, open invite',
+  },
+  {
+    label: 'Lift with someone',
+    type: 'strength',
+    categorySlug: 'gym',
+    seedTitle: 'Beginner-friendly gym session',
+    note: 'Train with one or two people',
+  },
+  {
+    label: 'Do yoga',
+    type: 'yoga',
+    categorySlug: 'yoga',
+    seedTitle: 'Casual yoga flow',
+    note: 'Park, studio, or rooftop',
+  },
+  {
+    label: 'Play pickleball',
+    type: 'pickleball',
+    categorySlug: 'pickleball',
+    seedTitle: 'Pickleball hit',
+    note: 'Find a court and fill spots',
+  },
 ]
+
+type StarterSessionIdea = (typeof STARTER_SESSION_IDEAS)[number]
 
 type DiscoveryMode = 'nearby' | 'city'
 type LocationStatus = 'detecting' | 'granted' | 'stored' | 'denied' | 'unsupported' | 'city'
@@ -845,7 +1172,7 @@ function BuddyPageInner() {
   const initialPricingFilter = searchParams.get('pricing') ?? ''
   const initialLevelFilter = searchParams.get('fitnessLevel') ?? searchParams.get('level') ?? ''
   const initialDateFilter = searchParams.get('date') ?? ''
-  const initialViewMode = searchParams.get('view') === 'map' ? 'map' : 'list'
+  const initialViewMode = searchParams.get('view') === 'list' ? 'list' : 'map'
   const initialCreateMode = searchParams.get('create')
 
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(
@@ -869,6 +1196,11 @@ function BuddyPageInner() {
   const [nextCursor, setNextCursor] = useState<string | null>(null)
   const [loadingMore, setLoadingMore] = useState(false)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [myUpcomingSessions, setMyUpcomingSessions] = useState<MySessionSummary[]>([])
+  const [myPlansLoading, setMyPlansLoading] = useState(false)
+  const [communityCount, setCommunityCount] = useState<number | null>(null)
+  const [communityPreviews, setCommunityPreviews] = useState<DirectoryCommunityPreview[]>([])
+  const [communityCountLoading, setCommunityCountLoading] = useState(false)
   const profileCityLockedRef = useRef(shouldStartInCityMode)
 
   const [typeFilter, setTypeFilter] = useState(() =>
@@ -890,6 +1222,7 @@ function BuddyPageInner() {
   })
   const [showCreateSheet, setShowCreateSheet] = useState(false)
   const [showCreateMenu, setShowCreateMenu] = useState(false)
+  const [createSeed, setCreateSeed] = useState<{ categorySlug: string; title: string } | null>(null)
   const [selectedPin, setSelectedPin] = useState<Session | null>(null)
   const [selectedPlace, setSelectedPlace] = useState<MapPlace | null>(null)
   const [selectedMapPinId, setSelectedMapPinId] = useState<string | null>(null)
@@ -911,8 +1244,9 @@ function BuddyPageInner() {
   const [followLoadingId, setFollowLoadingId] = useState<string | null>(null)
   const [followedCommunityIds, setFollowedCommunityIds] = useState<Set<string>>(new Set())
 
-  // View mode: list-first (default) or map
+  // View mode: map-first by default, with list available as a secondary scan mode.
   const [viewMode, setViewMode] = useState<'list' | 'map'>(initialViewMode)
+  const mapDrawerTrackedRef = useRef<string | null>(null)
 
   // Neighborhood filter
   const [neighborhoodFilter, setNeighborhoodFilter] = useState<CityNeighborhood | null>(null)
@@ -934,62 +1268,11 @@ function BuddyPageInner() {
     }
   }, [initialCreateMode])
 
-  const featuredCrews = useMemo<CrewSpotlight[]>(() => {
-    const crews = new globalThis.Map<string, CrewSpotlight>()
-
-    for (const session of sessions) {
-      if (!session.community) continue
-
-      const existing = crews.get(session.community.id)
-      const nextTime = session.startTime
-      const candidate: CrewSpotlight = existing ?? {
-        id: session.community.id,
-        name: session.community.name,
-        slug: session.community.slug,
-        logoImage: session.community.logoImage,
-        city: session.city,
-        categorySlug: session.categorySlug,
-        nextSessionTitle: session.title,
-        nextSessionTime: nextTime,
-        sessionCount: 0,
-        peopleCount: 0,
-        attendees: [],
-      }
-
-      candidate.sessionCount += 1
-      candidate.peopleCount += session.attendeeCount
-      if (
-        nextTime &&
-        (!candidate.nextSessionTime ||
-          new Date(nextTime).getTime() < new Date(candidate.nextSessionTime).getTime())
-      ) {
-        candidate.nextSessionTitle = session.title
-        candidate.nextSessionTime = nextTime
-        candidate.categorySlug = session.categorySlug
-        candidate.city = session.city
-      }
-
-      for (const attendee of session.attendees) {
-        if (candidate.attendees.length >= 4) break
-        if (!candidate.attendees.some((a) => a.id === attendee.id)) {
-          candidate.attendees.push(attendee)
-        }
-      }
-
-      crews.set(session.community.id, candidate)
-    }
-
-    return Array.from(crews.values())
-      .sort((a, b) => b.peopleCount + b.sessionCount * 2 - (a.peopleCount + a.sessionCount * 2))
-      .slice(0, 6)
-  }, [sessions])
-
   const discoveryStats = useMemo(
     () => ({
       sessionCount: sessions.length,
       peopleCount: sessions.reduce((sum, session) => sum + session.attendeeCount, 0),
       goingSoloCount: sessions.reduce((sum, session) => sum + (session.goingSoloCount ?? 0), 0),
-      beginnerCount: sessions.filter((session) => session.fitnessLevel === 'ALL').length,
     }),
     [sessions],
   )
@@ -1001,11 +1284,19 @@ function BuddyPageInner() {
         ? 'Finding location'
         : locationStatus === 'stored'
         ? 'Near last location'
+        : locationStatus === 'denied' || locationStatus === 'unsupported'
+        ? 'Choose area'
         : 'Near me'
       : cityConfig.name
   const locationFilterValue = discoveryMode === 'nearby' ? NEARBY_FILTER_VALUE : cityConfig.slug
   const locationFilterOptions = [
-    { value: NEARBY_FILTER_VALUE, label: 'Near me' },
+    {
+      value: NEARBY_FILTER_VALUE,
+      label:
+        locationStatus === 'denied' || locationStatus === 'unsupported'
+          ? 'Choose area'
+          : 'Near me',
+    },
     ...CITY_LOCATION_CONFIGS.map((city) => ({
       value: city.slug,
       label: city.name,
@@ -1046,6 +1337,32 @@ function BuddyPageInner() {
 
   const mapPins = useMemo<SessionVectorMapPin[]>(
     () => {
+      const communityPins = communityPreviews.map((community) => {
+        const cityLabel = community.city?.name ?? activeLocationLabel
+        const scheduleLabel = community.usualSchedule || community.bestFor || 'Community activity'
+
+        return {
+          id: `community:${community.id}`,
+          kind: 'community' as const,
+          markerVariant: 'community' as const,
+          title: community.name,
+          latitude: community.latitude,
+          longitude: community.longitude,
+          city: cityLabel,
+          primaryLabel: 'Community',
+          activityLabel: getActivityEmoji(community.category),
+          previewTitle: community.name,
+          previewSubtitle: scheduleLabel,
+          previewMeta: `${community.usualArea || cityLabel} · ${community.beginnerFriendly ? 'Beginner-friendly' : 'Source-checked'}`,
+          previewImage:
+            community.logoImage ||
+            community.coverImage ||
+            getCategoryFallbackImage(community.category),
+          previewCtaLabel: 'View community',
+          href: `/communities/${community.slug}`,
+        }
+      })
+
       const placePins = supportPlaces.map((place) => {
         const typeLabel = formatMapPlaceType(place.placeType)
         const ratingLabel = place.googleRating
@@ -1105,10 +1422,45 @@ function BuddyPageInner() {
         }
       })
 
-      return [...placePins, ...sessionPins]
+      return [...communityPins, ...sessionPins, ...placePins]
     },
-    [activeLocationLabel, sessions, supportPlaces],
+    [activeLocationLabel, communityPreviews, sessions, supportPlaces],
   )
+
+  useEffect(() => {
+    if (viewMode !== 'map') return
+    const key = [
+      cityConfig.slug,
+      activeDateLabel,
+      typeFilter || 'all',
+      pricingFilter || 'all',
+      levelFilter || 'all',
+      sessions.length,
+      supportPlaces.length,
+    ].join(':')
+    if (mapDrawerTrackedRef.current === key) return
+    mapDrawerTrackedRef.current = key
+    trackBrowserEvent('buddy_map_drawer_opened', {
+      city: cityConfig.slug,
+      activeDateLabel,
+      type: typeFilter || 'all',
+      pricing: pricingFilter || 'all',
+      fitnessLevel: levelFilter || 'all',
+      sessionCount: sessions.length,
+      placeCount: supportPlaces.length,
+      communityCount: communityCount ?? 0,
+    })
+  }, [
+    activeDateLabel,
+    cityConfig.slug,
+    communityCount,
+    levelFilter,
+    pricingFilter,
+    sessions.length,
+    supportPlaces.length,
+    typeFilter,
+    viewMode,
+  ])
 
   const activeTypeLabel = TYPE_FILTERS.find((type) => type.value === typeFilter)?.label ?? 'All'
   const activePriceLabel =
@@ -1123,6 +1475,23 @@ function BuddyPageInner() {
       filter: 'type',
       value: next || 'all',
       city: cityConfig.slug,
+    })
+  }
+
+  function openSeededCreate(idea: StarterSessionIdea, source: string) {
+    setTypeFilter(idea.type)
+    setCreateSeed({
+      categorySlug: idea.categorySlug,
+      title: idea.seedTitle,
+    })
+    setShowCreateSheet(true)
+    trackBrowserEvent('buddy_quick_intent_selected', {
+      label: idea.label,
+      type: idea.type,
+      categorySlug: idea.categorySlug,
+      source,
+      city: cityConfig.slug,
+      viewMode,
     })
   }
 
@@ -1343,7 +1712,9 @@ function BuddyPageInner() {
     }
 
     const redirectUrl =
-      discoveryMode === 'nearby' ? '/buddy?location=nearby' : `/buddy?city=${cityConfig.slug}`
+      discoveryMode === 'nearby'
+        ? `/buddy?view=${viewMode}&location=nearby`
+        : `/buddy?view=${viewMode}&city=${cityConfig.slug}`
     router.push(`/sign-in?intent=rsvp&redirect_url=${encodeURIComponent(redirectUrl)}`)
   }
 
@@ -1753,6 +2124,78 @@ function BuddyPageInner() {
     userLocation,
   ])
 
+  useEffect(() => {
+    if (!locationReady || authLoaded || profileLocationReady) return
+
+    const timer = window.setTimeout(() => {
+      setProfileLocationReady(true)
+    }, 1200)
+
+    return () => window.clearTimeout(timer)
+  }, [authLoaded, locationReady, profileLocationReady])
+
+  useEffect(() => {
+    if (!authLoaded || !isSignedIn) {
+      setMyUpcomingSessions([])
+      setMyPlansLoading(false)
+      return
+    }
+
+    let cancelled = false
+    setMyPlansLoading(true)
+
+    fetch('/api/buddy/sessions/mine')
+      .then((res) => (res.ok ? res.json() : { upcoming: [] }))
+      .then((data) => {
+        if (cancelled) return
+        setMyUpcomingSessions((data.upcoming ?? []).slice(0, 3))
+      })
+      .catch(() => {
+        if (!cancelled) setMyUpcomingSessions([])
+      })
+      .finally(() => {
+        if (!cancelled) setMyPlansLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [authLoaded, isSignedIn])
+
+  useEffect(() => {
+    if (!locationReady || !profileLocationReady) return
+
+    let cancelled = false
+    setCommunityCountLoading(true)
+
+    const params = new URLSearchParams({
+      city: cityConfig.slug,
+      limit: '6',
+    })
+    if (typeFilter) params.set('category', typeFilter)
+
+    fetch(`/api/communities?${params.toString()}`)
+      .then((res) => (res.ok ? res.json() : { total: null }))
+      .then((data) => {
+        if (cancelled) return
+        setCommunityCount(typeof data.total === 'number' ? data.total : null)
+        setCommunityPreviews(Array.isArray(data.communities) ? data.communities.slice(0, 6) : [])
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setCommunityCount(null)
+          setCommunityPreviews([])
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setCommunityCountLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [cityConfig.slug, locationReady, profileLocationReady, typeFilter])
+
   // Check for pending feedback + bio prompt on past sessions
   useEffect(() => {
     if (!currentUserId) return
@@ -1863,14 +2306,23 @@ function BuddyPageInner() {
       {/* Create Session Sheet */}
       <CreateSessionSheet
         open={showCreateSheet}
-        onClose={() => setShowCreateSheet(false)}
-        onSuccess={() => fetchSessions()}
+        initialCategorySlug={createSeed?.categorySlug}
+        initialTitle={createSeed?.title}
+        onClose={() => {
+          setShowCreateSheet(false)
+          setCreateSeed(null)
+        }}
+        onSuccess={() => {
+          setCreateSeed(null)
+          fetchSessions()
+        }}
       />
       <CreateChoiceSheet
         open={showCreateMenu}
         onClose={() => setShowCreateMenu(false)}
         onHostSession={() => {
           setShowCreateMenu(false)
+          setCreateSeed(null)
           setShowCreateSheet(true)
         }}
       />
@@ -1922,7 +2374,7 @@ function BuddyPageInner() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
             <input
               type="text"
-              placeholder="Search run clubs, yoga, pickleball, or neighborhoods..."
+              placeholder="Search communities or activities"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="min-h-11 w-full rounded-lg border border-white/15 bg-[#111111] py-2.5 pl-9 pr-10 text-sm text-white transition-all placeholder:text-[#555555] focus:border-[#63FF8F] focus:outline-none"
@@ -1938,7 +2390,9 @@ function BuddyPageInner() {
             )}
           </div>
           {/* Row 1: Date strip */}
-          <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1.5 max-[360px]:grid-cols-[minmax(0,1fr)_auto]">
+          <div
+            className={`${viewMode === 'map' ? 'hidden sm:grid' : 'grid'} grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1.5 max-[360px]:grid-cols-[minmax(0,1fr)_auto]`}
+          >
             <div className="flex min-w-0 gap-1 overflow-x-auto no-scrollbar">
               {(() => {
                 const days = []
@@ -2013,7 +2467,7 @@ function BuddyPageInner() {
           </div>
 
           {/* Mobile collapsed filters */}
-          <details className="group sm:hidden">
+          <details className={viewMode === 'map' ? 'hidden' : 'group sm:hidden'}>
             <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-lg border border-white/[0.12] bg-[#171717] px-3 text-[12px] font-black uppercase tracking-wide text-white transition-colors group-open:border-[#63FF8F] [&::-webkit-details-marker]:hidden">
               <span>Filters</span>
               <span className="min-w-0 truncate text-right text-[10px] text-[#999999]">
@@ -2132,10 +2586,6 @@ function BuddyPageInner() {
           </div>
         </div>
       </div>
-      <CityGuideTabs
-        active={viewMode === 'map' ? 'map' : 'events'}
-        citySlug={discoveryMode === 'city' ? cityConfig.slug : undefined}
-      />
       <LocationPermissionPanel
         status={locationStatus}
         cityOptions={CITY_LOCATION_CONFIGS}
@@ -2143,25 +2593,38 @@ function BuddyPageInner() {
         onChooseCity={updateCityFilter}
       />
 
-      <section className="border-b border-white/10 bg-[#0B0B0B] px-4 py-3">
-        <div className="mx-auto max-w-6xl">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
-            Plans first
-          </p>
-          <h1 className="mt-1 text-lg font-black leading-tight text-white sm:text-2xl">
-            Find a plan where showing up solo feels normal.
-          </h1>
-          <p className="mt-1 text-xs leading-5 text-white/52 sm:text-sm">
-            Sorted by what makes saying yes easier in {neighborhoodFilter?.name ?? activeLocationLabel}: time,
-            distance, first-timer context, people going, and crew trust.
-          </p>
-        </div>
-      </section>
-
       {viewMode === 'list' ? (
         <div className="flex-1 min-h-0 overflow-hidden lg:grid lg:grid-cols-[minmax(390px,42vw)_1fr]">
           {/* List view — community-first cards backed by known sessions */}
           <div className="h-full min-h-0 overflow-y-auto border-white/[0.08] px-4 pb-24 lg:border-r">
+            <div className="sticky top-0 z-10 -mx-4 border-b border-white/[0.08] bg-[#0B0B0B]/96 px-4 py-3 backdrop-blur-xl">
+              <LocalPulsePanel
+                activeLocationLabel={neighborhoodFilter?.name ?? activeLocationLabel}
+                activeDateLabel={activeDateLabel}
+                sessions={sessions}
+                places={supportPlaces}
+                communityCount={communityCount}
+                myNextSession={myUpcomingSessions[0] ?? null}
+                loading={loading || placesLoading || communityCountLoading || myPlansLoading}
+                signedIn={Boolean(isSignedIn)}
+                locationStatus={locationStatus}
+                communityHref={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
+                onOpenMap={toggleViewMode}
+                onUseLocation={requestCurrentLocation}
+              />
+              <DiscoveryWorkspaceNav
+                viewMode={viewMode}
+                communityHref={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
+                onToggleView={toggleViewMode}
+              />
+            </div>
+            {!searchQuery.trim() ? (
+              <QuickIntentRail
+                ideas={STARTER_SESSION_IDEAS}
+                activeType={typeFilter}
+                onSelect={(idea) => openSeededCreate(idea, 'list_intent_rail')}
+              />
+            ) : null}
             {/* Search results */}
             {searchQuery.trim() ? (
               <div className="pt-3">
@@ -2173,7 +2636,7 @@ function BuddyPageInner() {
                 ) : searchResults.length === 0 ? (
                   <div className="text-center py-16">
                     <p className="text-sm text-[#999999]">
-                      No solo-friendly plans or crews for &apos;{searchQuery}&apos;
+                      No solo-friendly plans or communities for &apos;{searchQuery}&apos;
                     </p>
                     <button
                       onClick={() => setSearchQuery('')}
@@ -2214,29 +2677,16 @@ function BuddyPageInner() {
               </div>
             ) : (
               <>
-                {/* Show-up confidence discovery */}
                 {!loading && sessions.length > 0 && (
-                  <EventDiscoveryBand
-                    sessions={sessions}
-                    crews={featuredCrews}
+                  <ResultsCommandHeader
                     sessionCount={discoveryStats.sessionCount}
                     peopleCount={discoveryStats.peopleCount}
                     goingSoloCount={discoveryStats.goingSoloCount}
-                    beginnerCount={discoveryStats.beginnerCount}
-                    cityName={neighborhoodFilter?.name ?? activeLocationLabel}
-                    activeTypeLabel={activeTypeLabel}
-                    onCreate={() => setShowCreateMenu(true)}
-                    onPreviewAttendees={setAttendeeSheetSession}
+                    communityCount={communityCount}
+                    placeCount={supportPlaces.length}
+                    activeLocationLabel={neighborhoodFilter?.name ?? activeLocationLabel}
+                    activeDateLabel={activeDateLabel}
                   />
-                )}
-
-                {/* Directory count header */}
-                {!loading && sessions.length > 0 && (
-                  <p className="text-xs font-medium text-[#666666] py-3 uppercase tracking-wider">
-                    {sessions.length} social fitness event{sessions.length !== 1 ? 's' : ''} with
-                    live people signals
-                    {neighborhoodFilter ? ` in ${neighborhoodFilter.name}` : ' nearby'}
-                  </p>
                 )}
 
                 {loading ? (
@@ -2271,29 +2721,63 @@ function BuddyPageInner() {
                 `}</style>
                   </div>
                 ) : sessions.length === 0 ? (
-                  <CityEmptyState
-                    cityName={neighborhoodFilter?.name ?? activeLocationLabel}
-                    citySlug={cityConfig.slug}
-                    hasFilters={Boolean(
-                      typeFilter ||
-                      pricingFilter ||
-                      levelFilter ||
-                      dateFilter ||
-                      neighborhoodFilter,
-                    )}
-                    onClearFilters={() => {
-                      setTypeFilter('')
-                      setPricingFilter('')
-                      setLevelFilter('')
-                      setDateFilter('')
-                      setNeighborhoodFilter(null)
-                    }}
-                    onCreate={() => setShowCreateMenu(true)}
-                    onStarterSelect={(type) => {
-                      setTypeFilter(type)
-                      setShowCreateSheet(true)
-                    }}
-                  />
+                  communityCountLoading ||
+                  placesLoading ||
+                  communityPreviews.length > 0 ||
+                  supportPlaces.length > 0 ? (
+                    <LocalDirectoryFallback
+                      cityName={neighborhoodFilter?.name ?? activeLocationLabel}
+                      communityCount={communityCount}
+                      communities={communityPreviews}
+                      places={supportPlaces}
+                      loading={communityCountLoading || placesLoading}
+                      hasFilters={Boolean(
+                        typeFilter ||
+                        pricingFilter ||
+                        levelFilter ||
+                        dateFilter ||
+                        neighborhoodFilter,
+                      )}
+                      communityHref={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
+                      onClearFilters={() => {
+                        setTypeFilter('')
+                        setPricingFilter('')
+                        setLevelFilter('')
+                        setDateFilter('')
+                        setNeighborhoodFilter(null)
+                      }}
+                      onCreate={() => setShowCreateMenu(true)}
+                      onOpenMap={toggleViewMode}
+                    />
+                  ) : (
+                    <CityEmptyState
+                      cityName={neighborhoodFilter?.name ?? activeLocationLabel}
+                      citySlug={cityConfig.slug}
+                      hasFilters={Boolean(
+                        typeFilter ||
+                        pricingFilter ||
+                        levelFilter ||
+                        dateFilter ||
+                        neighborhoodFilter,
+                      )}
+                      onClearFilters={() => {
+                        setTypeFilter('')
+                        setPricingFilter('')
+                        setLevelFilter('')
+                        setDateFilter('')
+                        setNeighborhoodFilter(null)
+                      }}
+                      onCreate={() => setShowCreateMenu(true)}
+                      onStarterSelect={(type) => {
+                        const idea =
+                          STARTER_SESSION_IDEAS.find((starter) => starter.type === type) ??
+                          STARTER_SESSION_IDEAS[0]
+                        openSeededCreate(idea, 'empty_state')
+                      }}
+                      showMarketSwitch={discoveryMode === 'city'}
+                      onOpenMap={toggleViewMode}
+                    />
+                  )
                 ) : (
                   <div className="space-y-8 pt-1">
                     {bucketSessions(sessions).map((bucket) => (
@@ -2347,13 +2831,13 @@ function BuddyPageInner() {
                             className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-xs font-semibold text-black uppercase tracking-wider"
                           >
                             <Zap className="w-3 h-3" />
-                            Host a session
+                            Post a session
                           </button>
                           <Link
                             href="/communities"
                             className="inline-flex items-center gap-1 rounded-full border border-white/[0.08] bg-[#1A1A1A] px-3.5 py-2 text-xs font-semibold text-[#999999]"
                           >
-                            Browse crews
+                            Browse communities
                           </Link>
                         </div>
                       </div>
@@ -2379,7 +2863,7 @@ function BuddyPageInner() {
               showEmptyState={false}
             />
             <div className="absolute left-4 top-4 z-10 rounded-lg border border-white/[0.10] bg-black/55 px-3 py-2 font-mono text-[11px] font-black uppercase tracking-[0.16em] text-white/70 backdrop-blur">
-              {activeLocationLabel} · {supportPlaces.length} support places ·{' '}
+              {activeLocationLabel} · community activity ·{' '}
               {sessions.filter((session) => session.latitude && session.longitude).length} plans
             </div>
             {selectedPin && (
@@ -2415,7 +2899,6 @@ function BuddyPageInner() {
               sessions.length < 3 && (
                 <MapQuietTodayBanner
                   sessionCount={sessions.length}
-                  placeCount={supportPlaces.length}
                   onViewUpcoming={() => updateDateFilter('')}
                 />
               )}
@@ -2424,7 +2907,7 @@ function BuddyPageInner() {
       ) : (
         <>
           {/* ── Map view ── */}
-          <div className="relative w-full" style={{ height: 'calc(100dvh - 244px)' }}>
+          <div className="relative min-h-0 w-full flex-1">
             <LazySessionVectorMap
               center={userLocation ?? cityConfig.center}
               pins={mapPins}
@@ -2439,6 +2922,31 @@ function BuddyPageInner() {
               maxFitZoom={13}
               showEmptyState={false}
             />
+            <MapCommandOverlay
+              activeLocationLabel={neighborhoodFilter?.name ?? activeLocationLabel}
+              activeDateLabel={activeDateLabel}
+              sessionCount={sessions.length}
+              communityCount={communityCount}
+              communityHref={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
+              onShowList={toggleViewMode}
+            />
+
+            {!selectedPin && !selectedPlace ? (
+              <MapActivityDrawer
+                activeLocationLabel={neighborhoodFilter?.name ?? activeLocationLabel}
+                activeDateLabel={activeDateLabel}
+                sessions={sessions}
+                communities={communityPreviews}
+                places={supportPlaces}
+                loading={loading || placesLoading || communityCountLoading}
+                communityHref={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
+                onShowList={toggleViewMode}
+                onCreate={() => {
+                  setCreateSeed(null)
+                  setShowCreateSheet(true)
+                }}
+              />
+            ) : null}
 
             {/* Selected pin card overlay */}
             {selectedPin && (
@@ -2474,7 +2982,6 @@ function BuddyPageInner() {
               sessions.length < 3 && (
                 <MapQuietTodayBanner
                   sessionCount={sessions.length}
-                  placeCount={supportPlaces.length}
                   onViewUpcoming={() => updateDateFilter('')}
                 />
               )}
@@ -2880,6 +3387,61 @@ function FilterOptionGroup({
   )
 }
 
+function QuickIntentRail({
+  ideas,
+  activeType,
+  onSelect,
+}: {
+  ideas: readonly StarterSessionIdea[]
+  activeType: string
+  onSelect: (idea: StarterSessionIdea) => void
+}) {
+  return (
+    <section className="border-b border-white/[0.08] py-3">
+      <div className="mb-2 flex items-end justify-between gap-3">
+        <div>
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+            I want to...
+          </p>
+          <p className="mt-1 text-xs font-semibold text-white/48">
+            Start from intent, then join or post the missing plan.
+          </p>
+        </div>
+      </div>
+      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+        {ideas.map((idea) => {
+          const active = activeType === idea.type
+
+          return (
+            <button
+              key={idea.label}
+              type="button"
+              onClick={() => onSelect(idea)}
+              className={`grid min-h-[86px] w-[168px] shrink-0 content-between rounded-lg border p-3 text-left transition-colors ${
+                active
+                  ? 'border-[#63FF8F]/45 bg-[#63FF8F]/10'
+                  : 'border-white/[0.10] bg-[#121212] hover:border-white/25'
+              }`}
+            >
+              <span>
+                <span className="block text-sm font-black text-white">{idea.label}</span>
+                <span className="mt-1 line-clamp-2 block text-xs leading-4 text-white/48">
+                  {idea.note}
+                </span>
+              </span>
+              <span className={`mt-2 inline-flex h-7 w-7 items-center justify-center rounded-full ${
+                active ? 'bg-[#63FF8F] text-black' : 'bg-white text-black'
+              }`}>
+                <Plus className="h-3.5 w-3.5" />
+              </span>
+            </button>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
 function CityEmptyState({
   cityName,
   citySlug,
@@ -2887,6 +3449,8 @@ function CityEmptyState({
   onClearFilters,
   onCreate,
   onStarterSelect,
+  showMarketSwitch,
+  onOpenMap,
 }: {
   cityName: string
   citySlug: string
@@ -2894,50 +3458,65 @@ function CityEmptyState({
   onClearFilters: () => void
   onCreate: () => void
   onStarterSelect: (type: string) => void
+  showMarketSwitch: boolean
+  onOpenMap: () => void
 }) {
   const otherCity =
     citySlug === 'bangkok'
-              ? { name: 'Singapore', href: '/buddy?city=singapore' }
-      : { name: 'Bangkok', href: '/buddy?city=bangkok' }
+      ? { name: 'Singapore', href: '/buddy?view=list&city=singapore' }
+      : { name: 'Bangkok', href: '/buddy?view=list&city=bangkok' }
+  const cityImage = getCityFallbackImage(citySlug || cityName)
 
   return (
     <div className="grid gap-4 py-5 sm:py-6">
-      <section className="rounded-2xl border border-white/[0.08] bg-[#141414] p-4 sm:p-5">
-        <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
-          No solo-friendly plans yet
-        </p>
-        <h2 className="mt-2 text-2xl font-bold leading-tight text-white">
-          Help map an easy plan to show up to.
-        </h2>
-        <p className="mt-2 max-w-xl text-sm leading-6 text-[#999999]">
-          SweatBuddies should make the first step obvious: what is happening, where to go, and how
-          to join. Suggest a crew/source for review, host a specific session if you run one, or
-          clear filters if this search is too narrow.
-        </p>
+      <section className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#141414] sm:grid sm:grid-cols-[0.95fr_1.05fr]">
+        <div className="relative min-h-[190px] bg-[#222222] sm:min-h-full">
+          <Image
+            src={cityImage}
+            alt={`${cityName} fitness discovery`}
+            fill
+            sizes="(min-width: 640px) 45vw, 100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-black/10 to-transparent sm:bg-gradient-to-r" />
+        </div>
+        <div className="p-4 sm:p-5">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+            No solo-friendly plans yet
+          </p>
+          <h2 className="mt-2 text-2xl font-bold leading-tight text-white">
+            Help map an easy plan to show up to.
+          </h2>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-[#999999]">
+            SweatBuddies should make the first step obvious: what is happening, where to go, and how
+            to join. Suggest a community/source for review, post a specific session if you run one, or
+            clear filters if this search is too narrow.
+          </p>
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Link
-            href="/communities/nominate"
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-xs font-black uppercase tracking-wide text-black hover:bg-neutral-200"
-          >
-            Suggest a crew
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-          <button
-            onClick={onCreate}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/[0.12] bg-[#1A1A1A] px-4 text-xs font-black uppercase tracking-wide text-white hover:border-[#63FF8F] hover:text-[#63FF8F]"
-          >
-            <Zap className="h-3.5 w-3.5" />
-            Host a session
-          </button>
-          {hasFilters && (
-            <button
-              onClick={onClearFilters}
-              className="inline-flex min-h-11 items-center rounded-full border border-white/[0.12] px-4 text-xs font-black uppercase tracking-wide text-[#999999] hover:border-white/30 hover:text-white"
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link
+              href="/communities/nominate"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-xs font-black uppercase tracking-wide text-black hover:bg-neutral-200"
             >
-              Clear filters
+              Suggest a community
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+            <button
+              onClick={onCreate}
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/[0.12] bg-[#1A1A1A] px-4 text-xs font-black uppercase tracking-wide text-white hover:border-[#63FF8F] hover:text-[#63FF8F]"
+            >
+              <Zap className="h-3.5 w-3.5" />
+              Post a session
             </button>
-          )}
+            {hasFilters && (
+              <button
+                onClick={onClearFilters}
+                className="inline-flex min-h-11 items-center rounded-full border border-white/[0.12] px-4 text-xs font-black uppercase tracking-wide text-[#999999] hover:border-white/30 hover:text-white"
+              >
+                Clear filters
+              </button>
+            )}
+          </div>
         </div>
       </section>
 
@@ -2971,20 +3550,33 @@ function CityEmptyState({
           href="/communities"
           className="rounded-xl border border-white/[0.08] bg-[#111111] p-4 hover:border-white/18"
         >
-          <p className="text-sm font-bold text-white">Browse crews</p>
+          <p className="text-sm font-bold text-white">Browse communities</p>
           <p className="mt-1 text-xs leading-5 text-[#777777]">
             Find communities already listed, even before their next session is live.
           </p>
         </Link>
-        <Link
-          href={otherCity.href}
-          className="rounded-xl border border-white/[0.08] bg-[#111111] p-4 hover:border-white/18"
-        >
-          <p className="text-sm font-bold text-white">Browse {otherCity.name}</p>
-          <p className="mt-1 text-xs leading-5 text-[#777777]">
-            Switch markets intentionally. Your current city remains {cityName}.
-          </p>
-        </Link>
+        {showMarketSwitch ? (
+          <Link
+            href={otherCity.href}
+            className="rounded-xl border border-white/[0.08] bg-[#111111] p-4 hover:border-white/18"
+          >
+            <p className="text-sm font-bold text-white">Browse {otherCity.name}</p>
+            <p className="mt-1 text-xs leading-5 text-[#777777]">
+              Switch markets intentionally. Your current city remains {cityName}.
+            </p>
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={onOpenMap}
+            className="rounded-xl border border-white/[0.08] bg-[#111111] p-4 text-left hover:border-white/18"
+          >
+            <p className="text-sm font-bold text-white">Open mapped places</p>
+            <p className="mt-1 text-xs leading-5 text-[#777777]">
+              See nearby gyms, parks, studios, and community spaces while plans are quiet.
+            </p>
+          </button>
+        )}
       </section>
     </div>
   )
@@ -3000,7 +3592,7 @@ function MapEmptyOverlay({ cityName, onCreate }: { cityName: string; onCreate: (
         Start the first easy plan in {cityName}.
       </h3>
       <p className="mt-2 text-xs leading-5 text-[#999999]">
-        The map prioritizes plans people can confidently join, with reviewed crews and places as
+        The map prioritizes plans people can confidently join, with reviewed communities and places as
         the trust layer.
       </p>
       <button
@@ -3008,7 +3600,7 @@ function MapEmptyOverlay({ cityName, onCreate }: { cityName: string; onCreate: (
         className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-xs font-black uppercase tracking-wide text-black hover:bg-neutral-200"
       >
         <Zap className="h-3.5 w-3.5" />
-	        Host a session
+        Post a session
       </button>
     </div>
   )
@@ -3097,6 +3689,279 @@ function MapSelectedPlaceCard({ place, onClose }: { place: MapPlace; onClose: ()
   )
 }
 
+function MapActivityDrawer({
+  activeLocationLabel,
+  activeDateLabel,
+  sessions,
+  communities,
+  places,
+  loading,
+  communityHref,
+  onShowList,
+  onCreate,
+}: {
+  activeLocationLabel: string
+  activeDateLabel: string
+  sessions: Session[]
+  communities: DirectoryCommunityPreview[]
+  places: MapPlace[]
+  loading: boolean
+  communityHref: string
+  onShowList: () => void
+  onCreate: () => void
+}) {
+  const visibleSessions = sessions.slice(0, 3)
+  const visibleCommunities = communities.slice(0, visibleSessions.length >= 2 ? 1 : 2)
+  const visiblePlaces = visibleSessions.length === 0 && visibleCommunities.length === 0 ? places.slice(0, 2) : []
+  const hasRows =
+    visibleSessions.length > 0 || visibleCommunities.length > 0 || visiblePlaces.length > 0
+  const activityCount = communities.length + sessions.length
+  const heading = loading
+    ? 'Finding community activity...'
+    : communities.length > 0
+      ? `${communities.length} communit${communities.length === 1 ? 'y' : 'ies'} nearby`
+      : sessions.length > 0
+        ? `${sessions.length} plan${sessions.length === 1 ? '' : 's'} nearby`
+        : places.length > 0
+          ? 'Meetup spots nearby'
+          : 'Nothing live here yet'
+
+  return (
+    <section className="absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+1rem)] z-20 rounded-t-[24px] border border-white/[0.12] bg-[#F8F8F4]/96 p-4 text-black shadow-[0_22px_70px_rgba(0,0,0,0.45)] backdrop-blur-xl md:left-auto md:right-4 md:w-[390px] md:rounded-2xl">
+      <div className="mx-auto mb-3 h-1 w-12 rounded-full bg-black/12 md:hidden" />
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-black/45">
+            Community activity
+          </p>
+          <h2 className="mt-1 text-xl font-black leading-tight">
+            {heading}
+          </h2>
+          {!loading && activityCount > 0 ? (
+            <p className="mt-1 text-xs font-semibold text-black/50">
+              {activeLocationLabel} · {activeDateLabel} · {sessions.length} plan{sessions.length !== 1 ? 's' : ''}
+            </p>
+          ) : null}
+        </div>
+        <button
+          type="button"
+          onClick={onShowList}
+          className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full bg-black px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white transition-colors hover:bg-[#222222]"
+        >
+          <List className="h-3.5 w-3.5" />
+          List
+        </button>
+      </div>
+
+      <div className="mt-3 max-h-[29dvh] space-y-2 overflow-y-auto pr-1">
+        {loading ? (
+          [0, 1, 2].map((item) => (
+            <div key={item} className="grid grid-cols-[44px_minmax(0,1fr)] gap-3 rounded-xl bg-black/[0.04] p-2">
+              <div className="h-11 w-11 rounded-full bg-black/10" />
+              <div className="py-1">
+                <div className="h-3 w-24 rounded bg-black/10" />
+                <div className="mt-2 h-3 w-40 rounded bg-black/10" />
+              </div>
+            </div>
+          ))
+        ) : hasRows ? (
+          <>
+            {visibleSessions.map((session, index) => (
+              <MapDrawerSessionRow
+                key={session.id}
+                session={session}
+                position={index}
+              />
+            ))}
+            {visibleCommunities.map((community, index) => (
+              <MapDrawerCommunityRow
+                key={community.id}
+                community={community}
+                position={visibleSessions.length + index}
+              />
+            ))}
+            {visiblePlaces.map((place, index) => (
+              <MapDrawerPlaceRow
+                key={place.id}
+                place={place}
+                position={visibleSessions.length + visibleCommunities.length + index}
+              />
+            ))}
+          </>
+        ) : (
+          <div className="rounded-xl border border-dashed border-black/15 bg-black/[0.03] p-4 text-center">
+            <p className="text-sm font-black">Nothing live here yet.</p>
+            <p className="mt-1 text-xs leading-5 text-black/50">
+              Post the first low-pressure plan or browse known communities nearby.
+            </p>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        <button
+          type="button"
+          onClick={onCreate}
+          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-[#63FF8F] px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          Post
+        </button>
+        <Link
+          href={communityHref}
+          onClick={() =>
+            trackBrowserEvent('buddy_map_list_item_clicked', {
+              kind: 'communities_link',
+              source: 'map_activity_drawer',
+              city: activeLocationLabel,
+              position: 0,
+            })
+          }
+          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-black/12 px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-black/[0.04]"
+        >
+          <Users className="h-3.5 w-3.5" />
+          Communities
+        </Link>
+        <button
+          type="button"
+          onClick={onShowList}
+          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-black/12 px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-black/[0.04]"
+        >
+          <ArrowRight className="h-3.5 w-3.5" />
+          Plans
+        </button>
+      </div>
+    </section>
+  )
+}
+
+function MapDrawerSessionRow({
+  session,
+  position,
+}: {
+  session: Session
+  position: number
+}) {
+  const hostLabel = session.community?.name ?? session.host?.name ?? 'Local host'
+  const priceLabel = session.price === 0 ? 'Free' : formatBuddyMapPrice(session.price, session.currency)
+  const timeLabel = session.startTime ? getRelativeTime(session.startTime) : 'Time TBA'
+
+  return (
+    <Link
+      href={`/activities/${session.id}`}
+      onClick={() => {
+        trackSessionClick(session, 'map_activity_drawer', position)
+        trackBrowserEvent('buddy_map_list_item_clicked', {
+          kind: 'session',
+          sessionId: session.id,
+          source: 'map_activity_drawer',
+          position,
+          city: session.city,
+        })
+      }}
+      className="grid min-h-[64px] grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-3 rounded-xl bg-black/[0.04] p-2 transition-colors hover:bg-black/[0.08]"
+    >
+      <span className="relative h-12 w-12 overflow-hidden rounded-full bg-black/10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={getSessionListingImage(session)} alt="" className="h-full w-full object-cover" />
+      </span>
+      <span className="min-w-0">
+        <span className="line-clamp-1 text-sm font-black">{session.title}</span>
+        <span className="mt-0.5 block truncate text-xs font-semibold text-black/50">
+          {timeLabel} · {hostLabel}
+        </span>
+      </span>
+      <span className="rounded-full bg-black px-2 py-1 font-mono text-[10px] font-black uppercase text-white">
+        {priceLabel}
+      </span>
+    </Link>
+  )
+}
+
+function MapDrawerCommunityRow({
+  community,
+  position,
+}: {
+  community: DirectoryCommunityPreview
+  position: number
+}) {
+  const imageUrl = community.logoImage || community.coverImage || getCategoryFallbackImage(community.category)
+  const cityLabel = community.city?.name ?? community.usualArea ?? 'Local'
+
+  return (
+    <Link
+      href={`/communities/${community.slug}`}
+      onClick={() =>
+        trackBrowserEvent('buddy_map_list_item_clicked', {
+          kind: 'community',
+          communityId: community.id,
+          communitySlug: community.slug,
+          source: 'map_activity_drawer',
+          position,
+          city: cityLabel,
+        })
+      }
+      className="grid min-h-[64px] grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-3 rounded-xl bg-black/[0.04] p-2 transition-colors hover:bg-black/[0.08]"
+    >
+      <span className="relative h-12 w-12 overflow-hidden rounded-full bg-black/10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={imageUrl} alt="" className="h-full w-full object-cover" />
+      </span>
+      <span className="min-w-0">
+        <span className="line-clamp-1 text-sm font-black">{community.name}</span>
+        <span className="mt-0.5 block truncate text-xs font-semibold text-black/50">
+          {getActivityEmoji(community.category)} {community.usualSchedule || cityLabel}
+        </span>
+      </span>
+      <span className="rounded-full border border-black/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-black/62">
+        Community
+      </span>
+    </Link>
+  )
+}
+
+function MapDrawerPlaceRow({
+  place,
+  position,
+}: {
+  place: MapPlace
+  position: number
+}) {
+  const imageUrl = place.imageUrl || '/images/cities/singapore.jpg'
+  const meta = place.area || place.city?.name || formatMapPlaceType(place.placeType)
+
+  return (
+    <Link
+      href={`/places/${place.slug}`}
+      onClick={() =>
+        trackBrowserEvent('buddy_map_list_item_clicked', {
+          kind: 'place',
+          placeId: place.id,
+          placeSlug: place.slug,
+          source: 'map_activity_drawer',
+          position,
+          city: place.city?.slug ?? meta,
+        })
+      }
+      className="grid min-h-[64px] grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-3 rounded-xl bg-black/[0.04] p-2 transition-colors hover:bg-black/[0.08]"
+    >
+      <span className="relative h-12 w-12 overflow-hidden rounded-full bg-black/10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={imageUrl} alt="" className="h-full w-full object-cover" />
+      </span>
+      <span className="min-w-0">
+        <span className="line-clamp-1 text-sm font-black">{place.name}</span>
+        <span className="mt-0.5 block truncate text-xs font-semibold text-black/50">
+          {formatMapPlaceType(place.placeType)} · {meta}
+        </span>
+      </span>
+      <span className="rounded-full border border-black/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-black/62">
+        Spot
+      </span>
+    </Link>
+  )
+}
+
 function PlaceSignal({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-xl border border-white/[0.08] bg-black/25 p-2">
@@ -3108,22 +3973,20 @@ function PlaceSignal({ label, value }: { label: string; value: number }) {
 
 function MapQuietTodayBanner({
   sessionCount,
-  placeCount,
   onViewUpcoming,
 }: {
   sessionCount: number
-  placeCount: number
   onViewUpcoming: () => void
 }) {
   return (
-    <div className="absolute left-3 right-3 top-[4.75rem] z-20 rounded-2xl border border-white/[0.10] bg-black/70 p-3 shadow-2xl shadow-black/30 backdrop-blur md:left-4 md:right-auto md:w-[320px]">
+    <div className="absolute left-3 right-3 top-[13rem] z-20 hidden rounded-2xl border border-white/[0.10] bg-black/70 p-3 shadow-2xl shadow-black/30 backdrop-blur md:left-4 md:right-auto md:block md:w-[320px]">
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0">
           <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#B6FF00]">
-            Quiet today
+            Communities active
           </p>
           <p className="mt-1 truncate text-xs font-semibold text-white/80">
-            {sessionCount} plan{sessionCount !== 1 ? 's' : ''} today · {placeCount} places still mapped.
+            {sessionCount} plan{sessionCount !== 1 ? 's' : ''} today. Browse active communities nearby.
           </p>
         </div>
         <button
@@ -3135,6 +3998,63 @@ function MapQuietTodayBanner({
           <span className="hidden min-[380px]:inline">View upcoming</span>
         </button>
       </div>
+    </div>
+  )
+}
+
+function MapCommandOverlay({
+  activeLocationLabel,
+  activeDateLabel,
+  sessionCount,
+  communityCount,
+  communityHref,
+  onShowList,
+}: {
+  activeLocationLabel: string
+  activeDateLabel: string
+  sessionCount: number
+  communityCount: number | null
+  communityHref: string
+  onShowList: () => void
+}) {
+  const listedCommunityCount = communityCount ?? 0
+
+  return (
+    <div className="absolute left-3 top-3 z-20 hidden w-[min(350px,calc(100%-24px))] rounded-lg border border-white/[0.12] bg-black/68 p-3 shadow-2xl shadow-black/40 backdrop-blur-xl md:block">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+            Activity map
+          </p>
+          <h2 className="mt-1 truncate text-sm font-black text-white">
+            {listedCommunityCount > 0
+              ? `${listedCommunityCount} communities nearby`
+              : 'Community activity nearby'}
+          </h2>
+          <p className="mt-0.5 truncate text-xs font-semibold text-white/48">
+            {activeDateLabel} · {sessionCount} plan{sessionCount !== 1 ? 's' : ''} · community heat
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onShowList}
+          className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full bg-white px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-neutral-200"
+        >
+          <List className="h-3.5 w-3.5" />
+          List
+        </button>
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-1.5">
+        <MiniSignal label="Communities" value={listedCommunityCount} active={listedCommunityCount > 0} />
+        <MiniSignal label="Plans" value={sessionCount} active={sessionCount > 0} />
+      </div>
+      <Link
+        href={communityHref}
+        className="mt-2 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-full border border-white/12 font-mono text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+      >
+        Browse communities
+        <Users className="h-3.5 w-3.5" />
+      </Link>
     </div>
   )
 }

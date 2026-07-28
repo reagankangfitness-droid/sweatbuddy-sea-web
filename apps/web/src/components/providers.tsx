@@ -9,6 +9,7 @@ import { StripeConnectProvider } from '@/contexts/StripeConnectContext'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 
 const localPublicRoutes = ['/', '/browse', '/singapore', '/bangkok', '/new-to-singapore']
+const localPublicRoutePrefixes = ['/communities']
 
 export function Providers({ children }: PropsWithChildren) {
   const pathname = usePathname()
@@ -16,7 +17,8 @@ export function Providers({ children }: PropsWithChildren) {
   const shouldBypassLocalLiveClerk =
     process.env.NODE_ENV === 'development' &&
     usingLiveClerkKey &&
-    localPublicRoutes.includes(pathname)
+    (localPublicRoutes.includes(pathname) ||
+      localPublicRoutePrefixes.some((route) => pathname.startsWith(route)))
 
   if (pathname === '/' || shouldBypassLocalLiveClerk) {
     return <ThemeProvider>{children}</ThemeProvider>

@@ -69,7 +69,7 @@ export function LandingClient({ data }: { data: LandingData }) {
             href="/buddy"
             className="hidden sm:inline-flex text-white/70 font-medium text-sm hover:text-white transition-colors"
           >
-            Browse Sessions
+            Explore
           </Link>
         </div>
       </nav>
@@ -109,7 +109,7 @@ export function LandingClient({ data }: { data: LandingData }) {
               href="/buddy"
               className="inline-flex items-center justify-center border border-white/30 text-white px-8 py-3.5 rounded-full font-semibold text-base hover:border-white/50 hover:bg-white/10 transition-colors"
             >
-              Browse Sessions
+              Explore Communities
             </Link>
           </div>
 
@@ -205,8 +205,8 @@ export function LandingClient({ data }: { data: LandingData }) {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <Link href="/"><LogoWithText size={24} /></Link>
             <nav className="flex items-center gap-5 text-sm text-neutral-500">
-              <Link href="/buddy" className="hover:text-neutral-100 transition-colors">Sessions</Link>
-              <Link href="/communities" className="hover:text-neutral-100 transition-colors">Community</Link>
+              <Link href="/buddy" className="hover:text-neutral-100 transition-colors">Explore</Link>
+              <Link href="/communities" className="hover:text-neutral-100 transition-colors">Communities</Link>
               <Link href="/host" className="hover:text-neutral-100 transition-colors">Host</Link>
               <Link href="/support" className="hover:text-neutral-100 transition-colors">Support</Link>
             </nav>

@@ -12,6 +12,10 @@ export const metadata: Metadata = {
       'Find local fitness crews in Bangkok where first-timers are welcome and meeting people starts with movement.',
     images: ['/images/cities/bangkok.jpg'],
   },
+  robots: {
+    index: false,
+    follow: false,
+  },
 }
 
 export default function BangkokPage() {

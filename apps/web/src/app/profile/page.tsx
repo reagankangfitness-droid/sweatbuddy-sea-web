@@ -253,7 +253,7 @@ export default function ProfilePage() {
           </h3>
           <div className="bg-[#1A1A1A] rounded-2xl border border-[#333333]  overflow-hidden">
             <Link
-              href="/hub"
+              href="/buddy?create=session"
               className="flex items-center justify-between px-4 py-3.5 border-b border-[#333333] hover:bg-[#2A2A2A] transition-colors"
             >
               <div className="flex items-center gap-3">
@@ -261,8 +261,8 @@ export default function ProfilePage() {
                   <LayoutDashboard className="w-4 h-4 text-amber-500" />
                 </div>
                 <div>
-                  <span className="text-white text-sm font-medium">Host Dashboard</span>
-                  <p className="text-xs text-[#666666]">Manage sessions & attendees</p>
+                  <span className="text-white text-sm font-medium">My Sessions</span>
+                  <p className="text-xs text-[#666666]">Plans you are hosting or attending</p>
                 </div>
               </div>
               <ChevronRight className="w-5 h-5 text-[#666666]" />
@@ -277,8 +277,8 @@ export default function ProfilePage() {
                   <Users className="w-4 h-4 text-[#666666]" />
                 </div>
                 <div>
-                  <span className="text-white text-sm font-medium">My Crews</span>
-                  <p className="text-xs text-[#666666]">Your people</p>
+                  <span className="text-white text-sm font-medium">Communities</span>
+                  <p className="text-xs text-[#666666]">Find or list local groups</p>
                 </div>
               </div>
               <ChevronRight className="w-5 h-5 text-[#666666]" />
@@ -293,8 +293,8 @@ export default function ProfilePage() {
                   <CalendarDays className="w-4 h-4 text-[#666666]" />
                 </div>
                 <div>
-                  <span className="text-white text-sm font-medium">My Sessions</span>
-                  <p className="text-xs text-[#666666]">Sessions you&apos;re hosting or attending</p>
+                  <span className="text-white text-sm font-medium">Post a Session</span>
+                  <p className="text-xs text-[#666666]">Create a simple plan people can join</p>
                 </div>
               </div>
               <ChevronRight className="w-5 h-5 text-[#666666]" />

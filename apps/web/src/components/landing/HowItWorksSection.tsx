@@ -36,7 +36,7 @@ export function HowItWorksSection() {
           <ScrollAnimator delay={100}>
             <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-5 sm:p-8 h-full flex flex-col">
               <span className="inline-block w-fit px-2.5 py-1 bg-neutral-800 rounded-md text-xs font-semibold text-neutral-400 uppercase tracking-wide mb-5">
-                Find Sessions
+                Find Plans
               </span>
 
               <div className="space-y-5 flex-1">
@@ -57,7 +57,7 @@ export function HowItWorksSection() {
                 href="/buddy"
                 className="mt-7 inline-flex items-center justify-center gap-2 w-full py-3 bg-white text-neutral-900 text-sm font-semibold rounded-md hover:bg-neutral-200 transition-colors"
               >
-                Browse sessions
+                Browse plans
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -67,7 +67,7 @@ export function HowItWorksSection() {
           <ScrollAnimator delay={200}>
             <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-5 sm:p-8 h-full flex flex-col">
               <span className="inline-block w-fit px-2.5 py-1 bg-neutral-800 rounded-md text-xs font-semibold text-neutral-400 uppercase tracking-wide mb-5">
-                Host Sessions
+                Host Plans
               </span>
 
               <div className="space-y-5 flex-1">

@@ -3,6 +3,8 @@ import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { checkAndAwardBadges } from '@/lib/badges'
 import { scoreSessionListing } from '@/lib/listing-moderation'
+import { isTrustedCommunityManager } from '@/lib/host-session-rules'
+import { isRecoverableDiscoveryDbError } from '@/lib/recoverable-db-error'
 
 export async function POST(request: Request) {
   try {
@@ -127,52 +129,63 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'End time must be after start time' }, { status: 400 })
     }
 
-    if (!communityId || typeof communityId !== 'string') {
-      return NextResponse.json(
-        { error: 'Choose an approved community before posting a session', code: 'COMMUNITY_REQUIRED' },
-        { status: 400 },
-      )
-    }
-
-    const community = await prisma.community.findFirst({
-      where: {
-        id: communityId,
-        isActive: true,
-        moderationStatus: 'LIVE',
-      },
-      select: {
-        id: true,
-        members: {
-          where: { userId: dbUser.id },
-          select: { role: true, managerTrustLevel: true },
-          take: 1,
-        },
-      },
-    })
-
-    const membership = community?.members[0]
-    if (!community || (membership?.role !== 'OWNER' && membership?.role !== 'ADMIN')) {
-      return NextResponse.json(
-        { error: 'You can only post sessions for approved communities you manage', code: 'COMMUNITY_FORBIDDEN' },
-        { status: 403 },
-      )
-    }
-    if (
-      membership.managerTrustLevel !== 'VERIFIED_MANAGER' &&
-      membership.managerTrustLevel !== 'TRUSTED_MANAGER'
-    ) {
-      return NextResponse.json(
-        {
-          error: 'Verify your community manager access before posting sessions',
-          code: 'MANAGER_VERIFICATION_REQUIRED',
-        },
-        { status: 403 },
-      )
-    }
-
     const priceNum = Number(price ?? 0)
     if (isNaN(priceNum) || priceNum < 0) {
       return NextResponse.json({ error: 'Invalid price' }, { status: 400 })
+    }
+
+    const requestedCommunityId = typeof communityId === 'string' && communityId.trim()
+      ? communityId.trim()
+      : null
+    let community: { id: string } | null = null
+
+    if (requestedCommunityId) {
+      const communityWithMembership = await prisma.community.findFirst({
+        where: {
+          id: requestedCommunityId,
+          isActive: true,
+          moderationStatus: 'LIVE',
+        },
+        select: {
+          id: true,
+          members: {
+            where: { userId: dbUser.id },
+            select: { role: true, managerTrustLevel: true },
+            take: 1,
+          },
+        },
+      })
+
+      const membership = communityWithMembership?.members[0]
+      if (!communityWithMembership || (membership?.role !== 'OWNER' && membership?.role !== 'ADMIN')) {
+        return NextResponse.json(
+          { error: 'You can only post sessions for approved communities you manage', code: 'COMMUNITY_FORBIDDEN' },
+          { status: 403 },
+        )
+      }
+      if (!isTrustedCommunityManager(membership.managerTrustLevel)) {
+        return NextResponse.json(
+          {
+            error: 'Verify your community manager access before posting sessions',
+            code: 'MANAGER_VERIFICATION_REQUIRED',
+          },
+          { status: 403 },
+        )
+      }
+
+      community = { id: communityWithMembership.id }
+    }
+
+    const isSelfHostedSession = !community
+
+    if (isSelfHostedSession && priceNum > 0) {
+      return NextResponse.json(
+        {
+          error: 'Paid sessions need a verified community profile',
+          code: 'SELF_HOSTED_PAID_REQUIRES_COMMUNITY',
+        },
+        { status: 400 },
+      )
     }
 
     // If paid, must have at least one payment method
@@ -229,7 +242,20 @@ export async function POST(request: Request) {
       )
     }
 
-    const requiresReview = moderationDecision.status === 'UNDER_REVIEW'
+    const requiresReview = isSelfHostedSession || moderationDecision.status === 'UNDER_REVIEW'
+    const resolvedModerationStatus = isSelfHostedSession
+      ? 'UNDER_REVIEW'
+      : moderationDecision.status
+
+    const maxPeopleNum = maxPeople !== undefined && maxPeople !== null && maxPeople !== ''
+      ? Number(maxPeople)
+      : null
+    if (maxPeopleNum !== null && (!Number.isInteger(maxPeopleNum) || maxPeopleNum < 1)) {
+      return NextResponse.json({ error: 'Max people must be a positive whole number' }, { status: 400 })
+    }
+    const resolvedMaxPeople = maxPeopleNum !== null
+      ? Math.max(1, Math.min(maxPeopleNum, isSelfHostedSession || dbUser.hostTier === 'NEW' ? 8 : 1000))
+      : (isSelfHostedSession || dbUser.hostTier === 'NEW' ? 8 : null)
 
     // Deposit defaults: if requiresDeposit is true but no amount specified, default to 500 ($5.00 SGD)
     const resolvedRequiresDeposit = requiresDeposit === true
@@ -259,9 +285,7 @@ export async function POST(request: Request) {
         longitude: Number(longitude),
         startTime: new Date(startTime),
         endTime: endTime ? new Date(endTime) : null,
-        maxPeople: maxPeople
-          ? Math.max(1, Math.min(Number(maxPeople), dbUser.hostTier === 'NEW' ? 8 : 1000))
-          : (dbUser.hostTier === 'NEW' ? 8 : null),
+        maxPeople: resolvedMaxPeople,
         price: Math.round(priceNum * 100), // store in cents
         currency: currency ?? 'SGD',
         imageUrl: imageUrl ?? null,
@@ -270,7 +294,7 @@ export async function POST(request: Request) {
         whatToBring: whatToBring ?? null,
         requiresApproval: requiresReview,
         status: requiresReview ? 'PENDING_APPROVAL' : 'PUBLISHED',
-        moderationStatus: moderationDecision.status,
+        moderationStatus: resolvedModerationStatus,
         riskScore: moderationDecision.riskScore,
         riskFlags: moderationDecision.riskFlags,
         moderationNotes: moderationDecision.moderationNotes,
@@ -281,8 +305,8 @@ export async function POST(request: Request) {
         paynowQrImageUrl: paynowQrImageUrl ?? null,
         paynowPhoneNumber: paynowPhoneNumber ?? null,
         paynowName: paynowName ?? null,
-        sessionType: 'COMMUNITY',
-        communityId: community.id,
+        sessionType: community ? 'COMMUNITY' : 'SELF_HOSTED',
+        communityId: community?.id ?? null,
         cancellationPolicy: cancellationPolicy ?? null,
         requiresDeposit: resolvedRequiresDeposit,
         depositAmount: resolvedDepositAmount,
@@ -337,6 +361,15 @@ export async function POST(request: Request) {
     )
   } catch (error) {
     console.error('[buddy/sessions/create] Error:', error)
+    if (isRecoverableDiscoveryDbError(error)) {
+      return NextResponse.json(
+        {
+          error: 'Session posting is temporarily unavailable while we restore database capacity. Please try again shortly.',
+          code: 'DATABASE_UNAVAILABLE',
+        },
+        { status: 503 },
+      )
+    }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

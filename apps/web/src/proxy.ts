@@ -81,7 +81,6 @@ const isPublicRoute = createRouteMatcher([
   '/booking/success',
   '/join/(.*)',
   '/host',
-  '/host/(.*)',
   '/user/(.*)',
   '/activities/(.*)',
   '/organizer',
@@ -182,6 +181,7 @@ function getLegacyRouteRedirect(request: NextRequest) {
       const activity = searchParams.get('type') ?? searchParams.get('cat')
       const date = searchParams.get('date')
 
+      target.searchParams.set('view', 'list')
       target.searchParams.set('city', city)
       if (activity) target.searchParams.set('type', activity)
       if (date) target.searchParams.set('date', date)
@@ -228,7 +228,7 @@ function getLegacyRouteRedirect(request: NextRequest) {
   }
 
   if (pathname === '/community') {
-    return NextResponse.redirect(new URL('/singapore?tab=communities', request.url))
+    return NextResponse.redirect(new URL('/communities', request.url))
   }
 
   if (pathname === '/saved') {
@@ -247,7 +247,7 @@ function getLegacyRouteRedirect(request: NextRequest) {
   }
 
   if (pathname === '/coach/templates' || pathname.startsWith('/coach/templates/')) {
-    return NextResponse.redirect(new URL('/host/templates', request.url))
+    return NextResponse.redirect(new URL('/hub', request.url))
   }
 
   if (pathname === '/onboarding/coach') {

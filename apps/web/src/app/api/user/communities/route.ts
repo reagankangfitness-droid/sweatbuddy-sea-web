@@ -16,6 +16,17 @@ export async function GET() {
     include: {
       community: {
         include: {
+          _count: {
+            select: {
+              activities: {
+                where: {
+                  status: 'PUBLISHED',
+                  deletedAt: null,
+                  startTime: { gte: new Date() },
+                },
+              },
+            },
+          },
           createdBy: {
             select: {
               id: true,
@@ -97,11 +108,15 @@ export async function GET() {
         name: m.community.name,
         slug: m.community.slug,
         category: m.community.category,
+        isActive: m.community.isActive,
+        moderationStatus: m.community.moderationStatus,
         logoImage: m.community.logoImage,
         hostName: m.community.createdBy?.name || m.community.name,
         hostImageUrl: m.community.createdBy?.imageUrl || null,
         instagramHandle: m.community.instagramHandle,
         role: m.role,
+        managerTrustLevel: m.managerTrustLevel,
+        upcomingSessionCount: m.community._count.activities,
         nextEvent,
       }
     })

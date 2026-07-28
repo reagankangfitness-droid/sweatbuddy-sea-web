@@ -52,9 +52,30 @@ export async function POST(
     }
 
     const updateData = buildUpdateData(action, body)
-    const community = await prisma.community.update({
-      where: { id },
-      data: updateData,
+    const shouldTrustManagers = grantsCommunityManagerTrust(action)
+    const { community, trustedManagerCount } = await prisma.$transaction(async (tx) => {
+      const updatedCommunity = await tx.community.update({
+        where: { id },
+        data: updateData,
+      })
+
+      if (!shouldTrustManagers) {
+        return { community: updatedCommunity, trustedManagerCount: 0 }
+      }
+
+      const trustedManagers = await tx.communityMember.updateMany({
+        where: {
+          communityId: id,
+          role: { in: ['OWNER', 'ADMIN'] },
+          managerTrustLevel: 'PENDING',
+        },
+        data: {
+          managerTrustLevel: 'TRUSTED_MANAGER',
+          managerVerifiedAt: new Date(),
+        },
+      })
+
+      return { community: updatedCommunity, trustedManagerCount: trustedManagers.count }
     })
 
     await logAdminAction({
@@ -78,6 +99,7 @@ export async function POST(
           logoImage: community.logoImage,
           lastVerifiedAt: community.lastVerifiedAt,
         },
+        trustedManagerCount,
       },
     })
 
@@ -90,6 +112,10 @@ export async function POST(
     console.error('Community curation action failed:', error)
     return NextResponse.json({ error: 'Failed to apply curation action' }, { status: 500 })
   }
+}
+
+function grantsCommunityManagerTrust(action: CurationAction) {
+  return action === 'mark_verified' || action === 'update_official_link'
 }
 
 function normalizeAction(value: unknown): CurationAction {

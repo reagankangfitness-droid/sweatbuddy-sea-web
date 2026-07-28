@@ -34,7 +34,7 @@ export default async function SingaporePage({ searchParams }: SingaporePageProps
   const city = params.city || 'singapore'
 
   if (params.tab === 'events') {
-    const next = new URLSearchParams({ city })
+    const next = new URLSearchParams({ view: 'list', city })
     if (params.type) next.set('type', params.type)
     if (params.date) next.set('date', params.date)
     redirect(`/buddy?${next.toString()}`)

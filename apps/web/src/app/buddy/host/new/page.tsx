@@ -1,12 +1,18 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, MapPin, ChevronDown, CheckCircle2, Upload, X, ImagePlus } from 'lucide-react'
+import { useUser } from '@clerk/nextjs'
+import { ArrowLeft, Loader2, ChevronDown, CheckCircle2, Upload, X, ImagePlus } from 'lucide-react'
 import { toast } from 'sonner'
 import { ACTIVITY_TYPES as ACTIVITY_TYPES_CONFIG } from '@/lib/activity-types'
 import { LocationAutocomplete } from '@/components/host/LocationAutocomplete'
 import { useUploadThing } from '@/lib/uploadthing'
+import {
+  DEFAULT_HOST_LOCATION,
+  inferCityFromLocation,
+  isPublishableManagedCommunity,
+} from '@/lib/host-session-rules'
 
 const ACTIVITY_TYPES = [
   ...ACTIVITY_TYPES_CONFIG.map((t) => ({ slug: t.key, label: t.label, emoji: t.emoji })),
@@ -88,6 +94,16 @@ interface FormData {
   cancellationPolicy: string
 }
 
+interface ManagedCommunity {
+  id: string
+  name: string
+  slug: string
+  role: string
+  isActive?: boolean
+  moderationStatus?: string
+  managerTrustLevel?: string
+}
+
 const INITIAL_FORM: FormData = {
   title: '',
   description: '',
@@ -121,6 +137,7 @@ const WIZARD_DRAFT_KEY = 'sb_session_draft'
 
 export default function NewSessionPage() {
   const router = useRouter()
+  const { isLoaded, isSignedIn } = useUser()
   const [step, setStep] = useState<Step>('basic')
   const [form, setForm] = useState<FormData>(INITIAL_FORM)
   const [saving, setSaving] = useState(false)
@@ -133,6 +150,8 @@ export default function NewSessionPage() {
   const qrInputRef = useRef<HTMLInputElement>(null)
   const [coverUploading, setCoverUploading] = useState(false)
   const coverInputRef = useRef<HTMLInputElement>(null)
+  const [communities, setCommunities] = useState<ManagedCommunity[]>([])
+  const [communityLoading, setCommunityLoading] = useState(true)
 
   const { startUpload } = useUploadThing('activityImage')
 
@@ -153,6 +172,57 @@ export default function NewSessionPage() {
       localStorage.setItem(WIZARD_DRAFT_KEY, JSON.stringify(form))
     } catch {}
   }, [form])
+
+  useEffect(() => {
+    if (!isLoaded) return
+    if (!isSignedIn) {
+      setCommunities([])
+      setCommunityLoading(false)
+      return
+    }
+
+    setCommunityLoading(true)
+    fetch('/api/user/communities')
+      .then((r) => (r.ok ? r.json() : { communities: [] }))
+      .then((data) => {
+        setCommunities(
+          (data.communities ?? []).filter((c: ManagedCommunity) => (
+            c.role === 'OWNER' || c.role === 'ADMIN'
+          )),
+        )
+      })
+      .catch(() => setCommunities([]))
+      .finally(() => setCommunityLoading(false))
+  }, [isLoaded, isSignedIn])
+
+  const publishableCommunities = useMemo(
+    () => communities.filter(isPublishableManagedCommunity),
+    [communities],
+  )
+
+  useEffect(() => {
+    if (form.communityId && !publishableCommunities.some((c) => c.id === form.communityId)) {
+      setForm((prev) => ({ ...prev, communityId: '' }))
+    }
+  }, [publishableCommunities, form.communityId])
+
+  function setPostingCommunity(communityId: string) {
+    setForm((prev) => ({
+      ...prev,
+      communityId,
+      isRecurring: communityId ? prev.isRecurring : false,
+      price: communityId ? prev.price : '0',
+      acceptPayNow: communityId ? prev.acceptPayNow : false,
+      acceptStripe: communityId ? prev.acceptStripe : false,
+      paynowQrImageUrl: communityId ? prev.paynowQrImageUrl : '',
+      paynowPhoneNumber: communityId ? prev.paynowPhoneNumber : '',
+      paynowName: communityId ? prev.paynowName : '',
+    }))
+    if (!communityId) {
+      setQrFile(null)
+      setQrPreviewUrl(null)
+    }
+  }
 
   function update(field: keyof FormData, value: string | boolean) {
     setForm((prev) => {
@@ -190,6 +260,8 @@ export default function NewSessionPage() {
 
   function validateStep(s: Step): string | null {
     if (s === 'basic') {
+      if (!isLoaded) return 'Checking account'
+      if (!isSignedIn) return 'Sign in to post sessions'
       if (!form.title.trim()) return 'Title is required'
       if (form.title.length > 100) return 'Title must be 100 chars or less'
       if (!form.categorySlug) return 'Activity type is required'
@@ -198,6 +270,7 @@ export default function NewSessionPage() {
       if (!form.city.trim()) return 'City is required'
       if (!form.startTime) return 'Start time is required'
       if (form.isRecurring) {
+        if (!form.communityId) return 'Recurring sessions need a verified crew'
         if (form.daysOfWeek.length === 0) return 'Select at least one day'
       } else {
         if (!form.startDate) return 'Date is required'
@@ -209,6 +282,9 @@ export default function NewSessionPage() {
       const price = Number(form.price)
       if (isNaN(price) || price < 0) return 'Invalid price'
       if (price > 0) {
+        if (!form.communityId) {
+          return 'Paid sessions need a verified crew'
+        }
         if (!form.acceptPayNow && !form.acceptStripe) {
           return 'Select at least one payment method for paid sessions'
         }
@@ -316,9 +392,14 @@ export default function NewSessionPage() {
 
         const data = await res.json()
         if (!res.ok) {
-          if (data.code === 'ONBOARDING_REQUIRED') { toast.error('Join a session first to set up your profile, then you can host.'); router.push('/buddy'); return }
+          if (data.code === 'ONBOARDING_REQUIRED') { toast.error('Complete quick setup in discovery before posting a session.'); router.push('/buddy'); return }
           if (data.code === 'STRIPE_REQUIRED') { toast.error('Connect Stripe first to charge for sessions'); return }
           if (data.code === 'SESSION_CAP') { showSessionCapToast(data, router.push); return }
+          if (data.code === 'COMMUNITY_REQUIRED' || data.code === 'COMMUNITY_FORBIDDEN') { toast.error('Choose a verified crew before posting a session'); return }
+          if (data.code === 'MANAGER_VERIFICATION_REQUIRED') { toast.error('Verify your crew manager access before posting sessions'); return }
+          if (data.code === 'PAYMENT_METHOD_REQUIRED') { toast.error('Select a payment method for paid sessions'); return }
+          if (data.code === 'PAYNOW_QR_REQUIRED') { toast.error('Upload your PayNow QR code before posting a paid session'); return }
+          if (data.code === 'SELF_HOSTED_PAID_REQUIRES_COMMUNITY') { toast.error('Paid sessions need a verified crew'); return }
           toast.error(data.error || 'Failed to create recurring session')
           return
         }
@@ -362,9 +443,14 @@ export default function NewSessionPage() {
 
         const data = await res.json()
         if (!res.ok) {
-          if (data.code === 'ONBOARDING_REQUIRED') { toast.error('Join a session first to set up your profile, then you can host.'); router.push('/buddy'); return }
+          if (data.code === 'ONBOARDING_REQUIRED') { toast.error('Complete quick setup in discovery before posting a session.'); router.push('/buddy'); return }
           if (data.code === 'STRIPE_REQUIRED') { toast.error('Connect Stripe first to charge for sessions'); return }
           if (data.code === 'SESSION_CAP') { showSessionCapToast(data, router.push); return }
+          if (data.code === 'COMMUNITY_REQUIRED' || data.code === 'COMMUNITY_FORBIDDEN') { toast.error('Choose a verified crew before posting a session'); return }
+          if (data.code === 'MANAGER_VERIFICATION_REQUIRED') { toast.error('Verify your crew manager access before posting sessions'); return }
+          if (data.code === 'PAYMENT_METHOD_REQUIRED') { toast.error('Select a payment method for paid sessions'); return }
+          if (data.code === 'PAYNOW_QR_REQUIRED') { toast.error('Upload your PayNow QR code before posting a paid session'); return }
+          if (data.code === 'SELF_HOSTED_PAID_REQUIRES_COMMUNITY') { toast.error('Paid sessions need a verified crew'); return }
           toast.error(data.error || 'Failed to create session')
           return
         }
@@ -411,10 +497,10 @@ export default function NewSessionPage() {
             </button>
           ) : isRecurringSuccess ? (
             <button
-              onClick={() => router.push('/host/templates')}
+              onClick={() => router.push('/hub')}
               className="w-full rounded-xl bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white"
             >
-              Manage recurring sessions →
+              Back to hub →
             </button>
           ) : (
             <button
@@ -468,6 +554,89 @@ export default function NewSessionPage() {
             <div>
               <h2 className="text-xl font-bold text-white">What are you hosting?</h2>
               <p className="text-sm text-[#666666] mt-1">The basics about your session</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#999999] mb-3">
+                Posting as
+              </label>
+              {!isLoaded || communityLoading ? (
+                <div className="rounded-xl border border-[#333333] bg-[#1A1A1A] px-4 py-3 text-sm text-[#666666]">
+                  Checking host access...
+                </div>
+              ) : !isSignedIn ? (
+                <div className="rounded-xl border border-[#333333] bg-[#1A1A1A] p-4">
+                  <p className="text-sm font-semibold text-white">Sign in to post sessions.</p>
+                  <p className="mt-1 text-xs leading-5 text-[#666666]">
+                    Hosts need an account so attendees know who is behind the plan.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => router.push('/sign-in?redirect_url=%2Fbuddy%2Fhost%2Fnew')}
+                    className="mt-4 rounded-full bg-white px-4 py-2 text-xs font-bold text-black"
+                  >
+                    Sign in
+                  </button>
+                </div>
+              ) : (
+                <div className="grid gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPostingCommunity('')}
+                    className={`rounded-xl border px-4 py-3 text-left text-sm transition-all ${
+                      !form.communityId
+                        ? 'border-white bg-white text-black'
+                        : 'border-[#333333] bg-[#1A1A1A] text-[#999999]'
+                    }`}
+                  >
+                    <span className="block font-semibold">Myself</span>
+                    <span className={!form.communityId ? 'text-black/55' : 'text-[#666666]'}>
+                      Free self-hosted session, reviewed before it appears publicly
+                    </span>
+                  </button>
+                  {publishableCommunities.map((community) => (
+                    <button
+                      key={community.id}
+                      type="button"
+                      onClick={() => setPostingCommunity(community.id)}
+                      className={`rounded-xl border px-4 py-3 text-left text-sm transition-all ${
+                        form.communityId === community.id
+                          ? 'border-white bg-white text-black'
+                          : 'border-[#333333] bg-[#1A1A1A] text-[#999999]'
+                      }`}
+                    >
+                      <span className="block font-semibold">{community.name}</span>
+                      <span className={form.communityId === community.id ? 'text-black/55' : 'text-[#666666]'}>
+                        Verified crew profile
+                      </span>
+                    </button>
+                  ))}
+                  {publishableCommunities.length === 0 && (
+                    <div className="rounded-xl border border-[#333333] bg-[#1A1A1A] p-4">
+                      <p className="text-xs leading-5 text-[#666666]">
+                        Paid and recurring sessions need a verified community profile. List or claim
+                        one when you are ready to host under a crew.
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => router.push('/communities/nominate')}
+                          className="rounded-full bg-white px-4 py-2 text-xs font-bold text-black"
+                        >
+                          List or claim a community
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => router.push('/communities')}
+                          className="rounded-full border border-[#333333] px-4 py-2 text-xs font-bold text-white"
+                        >
+                          Explore communities
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Activity type */}
@@ -641,21 +810,27 @@ export default function NewSessionPage() {
                 {[
                   { value: false, label: 'One-time', sub: 'Single session' },
                   { value: true, label: 'Recurring', sub: 'Repeats weekly' },
-                ].map((opt) => (
-                  <button
-                    key={opt.label}
-                    type="button"
-                    onClick={() => setForm((prev) => ({ ...prev, isRecurring: opt.value }))}
-                    className={`flex flex-col items-center gap-1 rounded-xl border p-4 text-sm font-medium transition-all ${
-                      form.isRecurring === opt.value
-                        ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
-                        : 'border-[#333333] bg-[#1A1A1A] text-[#999999] hover:border-[#666666]'
-                    }`}
-                  >
-                    <span className="font-semibold">{opt.label}</span>
-                    <span className={`text-xs ${form.isRecurring === opt.value ? 'opacity-70' : 'text-[#666666]'}`}>{opt.sub}</span>
-                  </button>
-                ))}
+                ].map((opt) => {
+                  const disabled = opt.value === true && !form.communityId
+                  return (
+                    <button
+                      key={opt.label}
+                      type="button"
+                      disabled={disabled}
+                      onClick={() => setForm((prev) => ({ ...prev, isRecurring: opt.value }))}
+                      className={`flex flex-col items-center gap-1 rounded-xl border p-4 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-45 ${
+                        form.isRecurring === opt.value
+                          ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
+                          : 'border-[#333333] bg-[#1A1A1A] text-[#999999] hover:border-[#666666]'
+                      }`}
+                    >
+                      <span className="font-semibold">{opt.label}</span>
+                      <span className={`text-xs ${form.isRecurring === opt.value ? 'opacity-70' : 'text-[#666666]'}`}>
+                        {disabled ? 'Needs verified crew' : opt.sub}
+                      </span>
+                    </button>
+                  )
+                })}
               </div>
             </div>
 
@@ -765,11 +940,17 @@ export default function NewSessionPage() {
                   update('address', data.location)
                   update('latitude', String(data.latitude))
                   update('longitude', String(data.longitude))
-                  // Extract city from the place name
-                  const cityMatch = data.location.match(/Singapore|Bangkok|Kuala Lumpur|Jakarta|Manila|Ho Chi Minh/i)
-                  update('city', cityMatch ? cityMatch[0] : 'Singapore')
+                  update('city', inferCityFromLocation(data.location))
                 }}
-                onManualChange={(val) => update('address', val)}
+                onManualChange={(val) => {
+                  setForm((prev) => ({
+                    ...prev,
+                    address: val,
+                    city: prev.city || DEFAULT_HOST_LOCATION.city,
+                    latitude: prev.latitude || String(DEFAULT_HOST_LOCATION.latitude),
+                    longitude: prev.longitude || String(DEFAULT_HOST_LOCATION.longitude),
+                  }))
+                }}
                 placeholder="Search for a gym, park, or address"
               />
             </div>
@@ -841,12 +1022,20 @@ export default function NewSessionPage() {
               ].map((opt) => {
                 const isFree = form.price === '0' || Number(form.price) === 0
                 const selected = opt.value === '0' ? isFree : !isFree
+                const disabled = opt.value !== '0' && !form.communityId
                 return (
                   <button
                     key={opt.label}
                     type="button"
-                    onClick={() => update('price', opt.value === '0' ? '0' : '')}
-                    className={`flex flex-col items-center gap-2 rounded-2xl border p-5 transition-all ${
+                    disabled={disabled}
+                    onClick={() => {
+                      if (disabled) {
+                        toast.error('Choose a verified crew to charge for a session.')
+                        return
+                      }
+                      update('price', opt.value === '0' ? '0' : '')
+                    }}
+                    className={`flex flex-col items-center gap-2 rounded-2xl border p-5 transition-all disabled:cursor-not-allowed disabled:opacity-45 ${
                       selected
                         ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white'
                         : 'border-[#333333] bg-[#1A1A1A] text-[#999999] hover:border-[#666666]'
@@ -854,7 +1043,9 @@ export default function NewSessionPage() {
                   >
                     <span className="text-2xl">{opt.emoji}</span>
                     <span className="font-semibold">{opt.label}</span>
-                    <span className={`text-xs ${selected ? 'opacity-70' : 'text-[#666666]'}`}>{opt.sub}</span>
+                    <span className={`text-xs ${selected ? 'opacity-70' : 'text-[#666666]'}`}>
+                      {disabled ? 'Needs verified crew' : opt.sub}
+                    </span>
                   </button>
                 )
               })}

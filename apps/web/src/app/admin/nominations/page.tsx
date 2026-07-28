@@ -281,6 +281,7 @@ export default function AdminNominationsPage() {
             const draft = drafts[nomination.id] ?? createDraft(nomination)
             const isPending = nomination.status === 'PENDING'
             const isReviewing = reviewingId === nomination.id
+            const requestType = getNominationRequestType(nomination.note)
 
             return (
               <article key={nomination.id} className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4 sm:p-5">
@@ -298,6 +299,9 @@ export default function AdminNominationsPage() {
                           Risk {nomination.riskScore}
                         </span>
                       )}
+                      <span className="rounded-full bg-sky-400/15 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-sky-300">
+                        {requestType}
+                      </span>
                       <span className="text-xs text-neutral-500">{formatDate(nomination.createdAt)}</span>
                     </div>
                     <h2 className="text-xl font-bold text-neutral-100">{nomination.communityName}</h2>
@@ -543,7 +547,7 @@ function createDraft(nomination: CommunityNomination): ReviewDraft {
     communityLink: nomination.sourceUrl,
     websiteUrl: isWebsite ? nomination.sourceUrl : '',
     instagramHandle: isInstagram ? inferInstagramHandle(nomination.sourceUrl) : '',
-    description: nomination.note ?? '',
+    description: getPublicNominationNote(nomination.note) ?? '',
     adminNotes: nomination.adminNotes ?? '',
   }
 }
@@ -570,6 +574,16 @@ function inferInstagramHandle(url: string): string {
   } catch {
     return ''
   }
+}
+
+function getNominationRequestType(note: string | null): string {
+  const match = note?.match(/^Request:\s*([^\n]+)/)
+  return match?.[1]?.trim() || 'Submit community'
+}
+
+function getPublicNominationNote(note: string | null): string | null {
+  if (!note) return null
+  return note.replace(/^Request:\s*[^\n]+(\n+)?/, '').trim() || null
 }
 
 function statusClass(status: string): string {

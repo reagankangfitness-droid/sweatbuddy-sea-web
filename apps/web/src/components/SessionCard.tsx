@@ -7,6 +7,7 @@ import { ActivityBadge } from '@/components/ui/ActivityBadge'
 import { Button } from '@/components/ui/button'
 import { formatDateTime } from '@/lib/utils'
 import { cn } from '@/lib/utils'
+import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
 
 export interface SessionCardSession {
   id: string
@@ -75,6 +76,8 @@ export function SessionCard({
   const isAlmostFull = spotsLeft !== null && spotsLeft <= 3 && !session.isFull
 
   const activityType = session.categorySlug ?? 'other'
+  const cardImage = session.resolvedImageUrl || session.imageUrl || getCategoryFallbackImage(activityType)
+  const imageLabel = session.imageSourceLabel || (session.imageUrl ? 'Session photo' : 'Activity image')
   const locationStr = session.address
     ? `${session.address}${session.city ? `, ${session.city}` : ''}`
     : session.city
@@ -87,24 +90,20 @@ export function SessionCard({
         className
       )}
     >
-      {/* Session image (if any) */}
-      {(session.resolvedImageUrl || session.imageUrl) && (
-        <Link href={`/activities/${session.id}`} className="block">
-          <div className="relative h-40 overflow-hidden bg-neutral-800">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={session.resolvedImageUrl || session.imageUrl || ''}
-              alt={session.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-            {session.imageSourceLabel && (
-              <span className="absolute bottom-3 right-3 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white/80 backdrop-blur">
-                {session.imageSourceLabel}
-              </span>
-            )}
-          </div>
-        </Link>
-      )}
+      <Link href={`/activities/${session.id}`} className="block">
+        <div className="relative h-40 overflow-hidden bg-neutral-800">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={cardImage}
+            alt={session.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
+          <span className="absolute bottom-3 right-3 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white/80 backdrop-blur">
+            {imageLabel}
+          </span>
+        </div>
+      </Link>
 
       <div className="flex flex-col flex-1 p-4 gap-3">
         {/* Top row: badge + price */}

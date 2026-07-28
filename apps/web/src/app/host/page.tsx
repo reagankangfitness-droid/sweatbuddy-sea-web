@@ -25,16 +25,22 @@ const TOP_ACTIVITIES = ACTIVITY_TYPES.slice(0, 12)
 const HOST_OUTCOMES = [
   {
     icon: MapPin,
+    image: '/images/hosts/run-club-group.jpg',
+    imageAlt: 'Fitness community gathering after a group session',
     title: 'Be visible where people choose plans',
     body: 'Show up where people nearby are actively looking for run clubs, yoga groups, pickleball crews, and wellness events.',
   },
   {
     icon: Users,
+    image: '/images/community-bonds.jpg',
+    imageAlt: 'People connecting through a local wellness community',
     title: 'Turn first-timers into regulars',
     body: 'Give new people a clear page, upcoming sessions, and an easy reason to come back after the first visit.',
   },
   {
     icon: CreditCard,
+    image: '/images/attendees-dashboard.png',
+    imageAlt: 'Host dashboard showing attendee management',
     title: 'Stop chasing payments in chat',
     body: 'Run free sessions or collect paid spots without stitching together payment screenshots, reminders, and spreadsheets.',
   },
@@ -140,7 +146,7 @@ export default function BecomeAHostPage() {
               href="/buddy?create=session"
               className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#63FF8F] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-black hover:bg-[#83FFA6]"
             >
-              Host a session
+              Post a session
             </Link>
           </div>
         </div>
@@ -170,12 +176,15 @@ export default function BecomeAHostPage() {
               SweatBuddies helps fitness hosts show first-timers what happens, who it is for,
               who is going, and why showing up solo is okay.
             </p>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-white/58 sm:text-base">
+              The easier it feels to arrive alone, the more first-timers actually show up.
+            </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/buddy?create=session"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-7 py-4 text-sm font-bold uppercase tracking-wider text-black hover:bg-[#83FFA6]"
               >
-                Host your first session <ChevronRight className="h-4 w-4" />
+                Post your first session <ChevronRight className="h-4 w-4" />
               </Link>
               <Link
                 href="#launch-help"
@@ -246,11 +255,25 @@ export default function BecomeAHostPage() {
               return (
                 <div
                   key={item.title}
-                  className="rounded-xl border border-white/[0.08] bg-[#151515] p-5"
+                  className="overflow-hidden rounded-xl border border-white/[0.08] bg-[#151515]"
                 >
-                  <Icon className="h-5 w-5 text-white" />
-                  <h3 className="mt-5 text-base font-bold text-white">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-neutral-500">{item.body}</p>
+                  <div className="relative aspect-[16/10] bg-[#222222]">
+                    <Image
+                      src={item.image}
+                      alt={item.imageAlt}
+                      fill
+                      sizes="(min-width: 768px) 33vw, 100vw"
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
+                    <div className="absolute bottom-3 left-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 backdrop-blur">
+                      <Icon className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <h3 className="text-base font-bold text-white">{item.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-neutral-500">{item.body}</p>
+                  </div>
                 </div>
               )
             })}
@@ -459,7 +482,7 @@ export default function BecomeAHostPage() {
                   href="/buddy?create=session"
                   className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-white"
                 >
-                  Host a session
+                  Post a session
                 </Link>
               </div>
             )}

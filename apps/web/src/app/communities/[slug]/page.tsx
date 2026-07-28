@@ -13,8 +13,26 @@ import { ShareButton } from '@/components/community/ShareButton'
 import { CommunityChat } from '@/components/community/CommunityChat'
 import { IntroduceYourself } from '@/components/community/IntroduceYourself'
 import { PostSessionPhotos } from '@/components/community/PostSessionPhotos'
+import {
+  CommunityWeeklyPicksForm,
+  CommunityViewTracker,
+  DirectoryClaimIntentLink,
+  JoinedCommunityButton,
+  MobileCommunityStickyActions,
+  OfficialJoinIcon,
+  ReportOutdatedButton,
+  SaveCommunityButton,
+  TrackedExternalLink,
+} from '@/components/community/CommunityDirectoryActions'
 import { getUpcomingEventSubmissions } from '@/lib/community-system'
 import { getCurrentDbUser } from '@/lib/current-user'
+import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
+import {
+  getCommunitySeedBySlug,
+  getCommunitySeedConfidenceScore,
+  getPublicCommunitySeeds,
+  type CommunityDirectorySeed,
+} from '@/lib/community-directory-seed'
 
 export const revalidate = 60
 
@@ -45,6 +63,13 @@ async function getCommunity(slug: string) {
       },
     },
   })
+    .catch((error) => {
+      if (process.env.NODE_ENV === 'production') {
+        console.error('Failed to load community:', error)
+      }
+      return null
+    })
+
   return community
 }
 
@@ -188,11 +213,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const community = await getCommunity(slug)
 
   if (!community) {
-    return { title: 'Community Not Found | SweatBuddies' }
+    const seed = getCommunitySeedBySlug(slug)
+    if (seed) {
+      return {
+        title: seed.name,
+        description: seed.description,
+        openGraph: {
+          title: `${seed.name} | SweatBuddies`,
+          description: seed.description,
+          url: `https://www.sweatbuddies.co/communities/${slug}`,
+          images: seed.coverImage ? [seed.coverImage] : [],
+        },
+      }
+    }
+
+    return { title: 'Community Not Found' }
   }
 
   return {
-    title: `${community.name} | SweatBuddies`,
+    title: community.name,
     description: community.description || `Join ${community.name} on SweatBuddies. ${community._count.members} members, ${community._count.activities} sessions.`,
     openGraph: {
       title: `${community.name} | SweatBuddies`,
@@ -210,6 +249,8 @@ export default async function CommunityPage({ params }: Props) {
   const community = await getCommunity(slug)
 
   if (!community || !community.isActive) {
+    const seed = getCommunitySeedBySlug(slug)
+    if (seed) return <SeedCommunityPage community={seed} />
     notFound()
   }
 
@@ -276,9 +317,15 @@ export default async function CommunityPage({ params }: Props) {
     community.priceType ? formatPriceType(community.priceType) : '',
     ...community.vibeTags,
   ].filter(Boolean).slice(0, 8)
+  const communityHeroImage = community.coverImage || community.logoImage || getCategoryFallbackImage(community.category)
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D]">
+    <div className="min-h-screen bg-[#0D0D0D] pb-28 md:pb-0">
+      <CommunityViewTracker
+        communitySlug={community.slug}
+        communityName={community.name}
+        source="detail"
+      />
       {/* Header */}
       <header className="sticky top-0 z-50 bg-[#1A1A1A]/80 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -301,6 +348,28 @@ export default async function CommunityPage({ params }: Props) {
       {/* Community Info */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <div className="bg-[#1A1A1A] rounded-2xl border border-white/10 shadow-sm p-6">
+          <div className="-mx-6 -mt-6 mb-6 overflow-hidden rounded-t-2xl">
+            <div className="relative aspect-[16/7] min-h-[190px] bg-[#222222]">
+              <Image
+                src={communityHeroImage}
+                alt={`${community.name} community`}
+                fill
+                sizes="(min-width: 1024px) 896px, 100vw"
+                className="object-cover"
+                unoptimized={!communityHeroImage.startsWith('/')}
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-black/18 to-black/8" />
+              <div className="absolute bottom-4 left-4 flex flex-wrap items-center gap-2">
+                <span className="rounded-md bg-black/55 px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
+                  {getCategoryEmoji(community.category)} {community.category.replace(/_/g, ' ')}
+                </span>
+                <span className="rounded-md bg-black/55 px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#63FF8F] backdrop-blur">
+                  {Math.max(community._count.activities, community.eventCount)} known plans
+                </span>
+              </div>
+            </div>
+          </div>
           <div className="flex flex-col sm:flex-row sm:items-start gap-4">
             {/* Profile Circle */}
             <div
@@ -453,15 +522,29 @@ export default async function CommunityPage({ params }: Props) {
             {/* Join Buttons */}
             <div className="grid gap-2 sm:ml-auto sm:min-w-[190px]">
               {community.communityLink && (
-                <a
+                <TrackedExternalLink
                   href={community.communityLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  event="official_join_clicked"
+                  metadata={{
+                    communitySlug: community.slug,
+                    communityName: community.name,
+                    source: 'community_detail',
+                    joinPlatform: community.joinPlatform,
+                  }}
                   className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-4 text-sm font-bold text-black transition-colors hover:bg-neutral-200"
+                  ariaLabel={`Join ${community.name} through their official group`}
                 >
                   Join official group
                   <ExternalLink className="h-4 w-4" />
-                </a>
+                </TrackedExternalLink>
+              )}
+              {community.communityLink && (
+                <JoinedCommunityButton
+                  communitySlug={community.slug}
+                  communityName={community.name}
+                  source="detail"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/12 px-4 text-sm font-bold text-white/72 transition-colors hover:border-[#63FF8F]/60 hover:bg-white/5 disabled:border-[#63FF8F]/30 disabled:text-[#63FF8F]"
+                />
               )}
               <JoinCommunityButton
                 communitySlug={community.slug}
@@ -492,6 +575,17 @@ export default async function CommunityPage({ params }: Props) {
             }
           />
 
+          <div className="mt-4">
+            <CommunityWeeklyPicksForm
+              source="detail"
+              city={community.city?.name ?? 'Singapore'}
+              activityType={community.category}
+              communityName={community.name}
+              title="Want similar communities?"
+              body="Get a short weekly list of active groups with clear join paths."
+            />
+          </div>
+
           {/* Description */}
           {community.description && (
             <p className="mt-6 text-[#999999] whitespace-pre-line">
@@ -518,7 +612,7 @@ export default async function CommunityPage({ params }: Props) {
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
           <div className="flex items-center gap-2 mb-4">
             <Megaphone className="w-5 h-5 text-amber-400" />
-            <h2 className="text-xl font-semibold text-white uppercase tracking-wider">From the crew</h2>
+            <h2 className="text-xl font-semibold text-white uppercase tracking-wider">From the community</h2>
           </div>
 
           {announcements.length > 0 ? (
@@ -655,7 +749,7 @@ export default async function CommunityPage({ params }: Props) {
       {/* Members */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-white uppercase tracking-wider">The crew</h2>
+          <h2 className="text-xl font-semibold text-white uppercase tracking-wider">The community</h2>
           <span className="text-sm text-[#666666]">
             {community._count.members} total
           </span>
@@ -739,17 +833,244 @@ export default async function CommunityPage({ params }: Props) {
           </div>
         </section>
       )}
+      {community.communityLink && (
+        <MobileCommunityStickyActions
+          href={community.communityLink}
+          communitySlug={community.slug}
+          communityName={community.name}
+          joinPlatform={community.joinPlatform}
+        />
+      )}
     </div>
   )
 }
 
+function SeedCommunityPage({ community }: { community: CommunityDirectorySeed }) {
+  const heroImage = community.coverImage || getCategoryFallbackImage(community.category)
+  const confidenceScore = getCommunitySeedConfidenceScore(community)
+  const confidenceLabel = confidenceScore >= 85 ? 'High confidence' : 'Source checked'
+  const similarCommunities = getPublicCommunitySeeds()
+    .filter((item) => item.slug !== community.slug && item.category === community.category)
+    .slice(0, 4)
+
+  return (
+    <div className="min-h-screen bg-[#0D0D0D] text-white">
+      <CommunityViewTracker
+        communitySlug={community.slug}
+        communityName={community.name}
+        source="detail"
+      />
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#1A1A1A]/85 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <Link
+            href="/communities"
+            className="flex min-h-11 items-center gap-2 text-sm font-semibold text-[#888888] transition-colors hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Communities
+          </Link>
+          <Link href="/" className="font-sans text-xl font-bold text-white">
+            sweatbuddies
+          </Link>
+          <ShareButton />
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-5xl px-4 pb-32 pt-8 sm:px-6 lg:px-8 md:pb-24">
+        <section className="overflow-hidden rounded-lg border border-white/10 bg-[#171717]">
+          <div className="relative min-h-[240px] overflow-hidden sm:min-h-[340px]">
+            <Image
+              src={heroImage}
+              alt={`${community.name} community`}
+              fill
+              sizes="(min-width: 1024px) 1024px, 100vw"
+              className="object-cover"
+              unoptimized={!heroImage.startsWith('/')}
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#171717] via-black/32 to-black/10" />
+            <div className="absolute bottom-5 left-5 right-5">
+              <div className="mb-3 flex flex-wrap gap-2">
+                <span className="rounded-md bg-black/55 px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
+                  {getCategoryEmoji(community.category)} {community.category.replace(/_/g, ' ')}
+                </span>
+                <span className="rounded-md bg-black/55 px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#63FF8F] backdrop-blur">
+                  {confidenceLabel}
+                </span>
+              </div>
+              <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
+                {community.name}
+              </h1>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-white/72 sm:text-base">
+                {community.description}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-6 p-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:p-6">
+            <div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <DirectoryFact label="Usually around" value={community.usualArea} />
+                <DirectoryFact label="Schedule signal" value={community.usualSchedule} />
+                <DirectoryFact label="Join path" value={formatJoinPlatform(community.joinPlatform)} />
+              </div>
+
+              <div className="mt-5 rounded-lg border border-white/10 bg-white/[0.035] p-4">
+                <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+                  Best for
+                </p>
+                <p className="mt-2 text-sm leading-6 text-white/78">
+                  {community.bestFor}
+                </p>
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                {community.beginnerFriendly && <DecisionChip label="Beginner-friendly" />}
+                {community.soloFriendly && <DecisionChip label="Solo-friendly" />}
+                <DecisionChip label={formatPriceType(community.priceType)} />
+                {community.vibeTags.slice(0, 5).map((tag) => (
+                  <DecisionChip key={tag} label={tag.replace(/_/g, ' ')} />
+                ))}
+              </div>
+
+              <div className="mt-6 border-t border-white/10 pt-5">
+                <p className="text-sm leading-6 text-white/58">
+                  Source checked from {community.sourceLabel.toLowerCase()} on{' '}
+                  {new Date(community.lastVerifiedAt).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
+                  . Official links can change, so report anything stale before you show up.
+                </p>
+              </div>
+            </div>
+
+            <aside className="space-y-3">
+              <TrackedExternalLink
+                href={community.communityLink}
+                event="official_join_clicked"
+                metadata={{
+                  communitySlug: community.slug,
+                  communityName: community.name,
+                  source: 'community_detail',
+                  joinPlatform: community.joinPlatform,
+                }}
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-4 text-sm font-black text-black transition-colors hover:bg-[#83FFA6]"
+                ariaLabel={`Join ${community.name} through the official link`}
+              >
+                Join through official link
+                <OfficialJoinIcon />
+              </TrackedExternalLink>
+
+              <JoinedCommunityButton
+                communitySlug={community.slug}
+                communityName={community.name}
+                source="detail"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-[#63FF8F]/24 px-4 text-sm font-bold text-[#63FF8F] transition-colors hover:border-[#63FF8F]/60 hover:bg-[#63FF8F]/8 disabled:border-[#63FF8F]/20 disabled:bg-[#63FF8F]/8"
+              />
+
+              <SaveCommunityButton
+                communitySlug={community.slug}
+                communityName={community.name}
+                source="detail"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-white/12 px-4 text-sm font-bold text-white transition-colors hover:border-[#63FF8F]/60 hover:bg-white/5"
+              />
+
+              <ReportOutdatedButton
+                communitySlug={community.slug}
+                communityName={community.name}
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-white/12 px-4 text-sm font-bold text-white/76 transition-colors hover:border-white/28 hover:bg-white/5"
+              />
+
+              <DirectoryClaimIntentLink
+                href="/communities/nominate"
+                communitySlug={community.slug}
+                communityName={community.name}
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-white/12 px-4 text-sm font-bold text-white/76 transition-colors hover:border-white/28 hover:bg-white/5"
+              />
+
+              <CommunityWeeklyPicksForm
+                source="detail"
+                city={community.cityName}
+                activityType={community.category}
+                communityName={community.name}
+                title="Get similar picks"
+                body="A weekly shortlist of communities with official join paths."
+              />
+            </aside>
+          </div>
+        </section>
+
+        {similarCommunities.length > 0 && (
+          <section className="mt-8">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="text-lg font-bold uppercase tracking-wide text-white">
+                Similar communities
+              </h2>
+              <Link
+                href={`/communities?city=${community.citySlug}`}
+                className="text-xs font-bold uppercase tracking-wide text-[#63FF8F] hover:text-white"
+              >
+                View directory
+              </Link>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {similarCommunities.map((item) => (
+                <Link
+                  key={item.slug}
+                  href={`/communities/${item.slug}`}
+                  className="rounded-lg border border-white/10 bg-[#171717] p-4 transition-colors hover:border-[#63FF8F]/50"
+                >
+                  <p className="text-sm font-bold text-white">{item.name}</p>
+                  <p className="mt-1 text-xs leading-5 text-white/58">{item.usualArea}</p>
+                  <p className="mt-3 line-clamp-2 text-xs leading-5 text-white/64">{item.bestFor}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+      </main>
+      <MobileCommunityStickyActions
+        href={community.communityLink}
+        communitySlug={community.slug}
+        communityName={community.name}
+        joinPlatform={community.joinPlatform}
+      />
+    </div>
+  )
+}
+
+function DirectoryFact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
+      <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-white/42">
+        {label}
+      </p>
+      <p className="mt-2 text-sm font-bold leading-5 text-white">{value}</p>
+    </div>
+  )
+}
+
+function DecisionChip({ label }: { label: string }) {
+  return (
+    <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-semibold capitalize text-white/76">
+      {label}
+    </span>
+  )
+}
+
 function formatJoinPlatform(value: string): string {
-  return value.toLowerCase().replace(/^\w/, (char) => char.toUpperCase())
+  return value.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
 }
 
 function formatPriceType(value: string): string {
-  if (value === 'FREE') return 'Mostly free'
-  if (value === 'PAID') return 'Mostly paid'
-  if (value === 'MIXED') return 'Free + paid'
-  return value.toLowerCase()
+  const normalized = value.toLowerCase()
+  if (normalized === 'free') return 'Mostly free'
+  if (normalized === 'paid') return 'Mostly paid'
+  if (normalized === 'mixed' || normalized === 'free_paid') return 'Free + paid'
+  if (normalized === 'membership') return 'Membership'
+  if (normalized === 'charity') return 'Charity'
+  if (normalized === 'pay_what_you_can') return 'Pay what you can'
+  return normalized.replace(/_/g, ' ')
 }

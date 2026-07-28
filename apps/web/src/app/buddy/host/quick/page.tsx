@@ -1,10 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
+import { useUser } from '@clerk/nextjs'
 import { ArrowLeft, MapPin, Loader2, Zap } from 'lucide-react'
 import { toast } from 'sonner'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
+import {
+  DEFAULT_HOST_LOCATION,
+  isPublishableManagedCommunity,
+} from '@/lib/host-session-rules'
 import Link from 'next/link'
 
 // ─── Time presets ────────────────────────────────────────────────────────────
@@ -104,6 +109,16 @@ const CATEGORIES = ACTIVITY_TYPES.filter((t) => t.tier <= 2).map((t) => ({
   emoji: t.emoji,
 }))
 
+interface ManagedCommunity {
+  id: string
+  name: string
+  slug: string
+  role: string
+  isActive?: boolean
+  moderationStatus?: string
+  managerTrustLevel?: string
+}
+
 function showSessionCapToast(
   data: {
     error?: string
@@ -128,6 +143,7 @@ function showSessionCapToast(
 
 export default function QuickPostPage() {
   const router = useRouter()
+  const { isLoaded, isSignedIn } = useUser()
 
   const [categorySlug, setCategorySlug] = useState('')
   const [selectedTime, setSelectedTime] = useState<Date | null>(null)
@@ -140,14 +156,20 @@ export default function QuickPostPage() {
   const [address, setAddress] = useState('')
   const [locationLoading, setLocationLoading] = useState(true)
   const [posting, setPosting] = useState(false)
+  const [communities, setCommunities] = useState<ManagedCommunity[]>([])
+  const [selectedCommunity, setSelectedCommunity] = useState('')
+  const [communityLoading, setCommunityLoading] = useState(true)
 
   const timePresets = getTimePresets()
 
   // Auto-detect location on mount
   useEffect(() => {
     if (!navigator.geolocation) {
+      setLatitude(DEFAULT_HOST_LOCATION.latitude)
+      setLongitude(DEFAULT_HOST_LOCATION.longitude)
+      setAddress(DEFAULT_HOST_LOCATION.address)
       setLocationLoading(false)
-      setCity('Singapore')
+      setCity(DEFAULT_HOST_LOCATION.city)
       return
     }
     navigator.geolocation.getCurrentPosition(
@@ -161,16 +183,54 @@ export default function QuickPostPage() {
         setLocationLoading(false)
       },
       () => {
-        // Default to Singapore center
-        setLatitude(1.3521)
-        setLongitude(103.8198)
-        setCity('Singapore')
+        setLatitude(DEFAULT_HOST_LOCATION.latitude)
+        setLongitude(DEFAULT_HOST_LOCATION.longitude)
+        setCity(DEFAULT_HOST_LOCATION.city)
+        setAddress(DEFAULT_HOST_LOCATION.address)
         setLocationLoading(false)
       }
     )
   }, [])
 
-  const canPost = categorySlug && selectedTime && latitude !== 0
+  useEffect(() => {
+    if (!isLoaded) return
+    if (!isSignedIn) {
+      setCommunities([])
+      setCommunityLoading(false)
+      return
+    }
+
+    setCommunityLoading(true)
+    fetch('/api/user/communities')
+      .then((r) => (r.ok ? r.json() : { communities: [] }))
+      .then((data) => {
+        setCommunities(
+          (data.communities ?? []).filter((c: ManagedCommunity) => (
+            c.role === 'OWNER' || c.role === 'ADMIN'
+          )),
+        )
+      })
+      .catch(() => setCommunities([]))
+      .finally(() => setCommunityLoading(false))
+  }, [isLoaded, isSignedIn])
+
+  const publishableCommunities = useMemo(
+    () => communities.filter(isPublishableManagedCommunity),
+    [communities],
+  )
+
+  const canPost = Boolean(isLoaded && isSignedIn && categorySlug && selectedTime && latitude !== 0)
+  const disabledReason = !isLoaded
+    ? 'Checking account...'
+    : !isSignedIn
+    ? 'Sign in to post a session.'
+    : !categorySlug
+    ? 'Pick an activity.'
+    : !selectedTime
+    ? 'Pick a time.'
+    : latitude === 0
+    ? 'Add a meeting point.'
+    : null
 
   async function handlePost() {
     if (!canPost || posting) return
@@ -191,6 +251,7 @@ export default function QuickPostPage() {
           longitude,
           startTime: selectedTime!.toISOString(),
           maxPeople: spots ? Number(spots) : null,
+          communityId: selectedCommunity,
         }),
       })
 
@@ -198,7 +259,7 @@ export default function QuickPostPage() {
 
       if (!res.ok) {
         if (data.code === 'ONBOARDING_REQUIRED') {
-          toast.error('Join a session first to set up your profile, then you can host.')
+          toast.error('Complete quick setup in discovery before posting a session.')
           router.push('/buddy')
           return
         }
@@ -206,7 +267,25 @@ export default function QuickPostPage() {
           showSessionCapToast(data, router.push)
           return
         }
+        if (data.code === 'COMMUNITY_REQUIRED' || data.code === 'COMMUNITY_FORBIDDEN') {
+          toast.error('Choose a verified crew before posting a session')
+          return
+        }
+        if (data.code === 'MANAGER_VERIFICATION_REQUIRED') {
+          toast.error('Verify your crew manager access before posting sessions')
+          return
+        }
+        if (data.code === 'SELF_HOSTED_PAID_REQUIRES_COMMUNITY') {
+          toast.error('Paid sessions need a verified crew')
+          return
+        }
         toast.error(data.error || 'Failed to post')
+        return
+      }
+
+      if (data.requiresReview) {
+        toast.success('Session submitted for review.')
+        router.push('/buddy')
         return
       }
 
@@ -238,6 +317,78 @@ export default function QuickPostPage() {
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
+        {/* Crew */}
+        <div>
+          <label className="text-xs font-semibold text-[#666666] uppercase tracking-wide mb-3 block">Posting as</label>
+          {!isLoaded || communityLoading ? (
+            <div className="px-4 py-3 bg-[#1A1A1A] rounded-xl border border-[#333333] text-sm text-[#666666]">
+              Checking host access...
+            </div>
+          ) : !isSignedIn ? (
+            <div className="rounded-xl border border-[#333333] bg-[#1A1A1A] p-4">
+              <p className="text-sm font-semibold text-white">Sign in to post sessions.</p>
+              <p className="mt-1 text-xs leading-5 text-[#666666]">
+                Hosts need an account so attendees know who is behind the plan.
+              </p>
+              <button
+                type="button"
+                onClick={() => router.push('/sign-in?redirect_url=%2Fbuddy%2Fhost%2Fquick')}
+                className="mt-4 rounded-full bg-white px-4 py-2 text-xs font-bold text-black"
+              >
+                Sign in
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                <button
+                  type="button"
+                  onClick={() => setSelectedCommunity('')}
+                  className={`flex-shrink-0 rounded-full border px-4 py-2.5 text-sm font-medium transition-all ${
+                    !selectedCommunity
+                      ? 'bg-white text-black border-white'
+                      : 'bg-[#1A1A1A] text-[#999999] border-[#333333]'
+                  }`}
+                >
+                  Myself
+                </button>
+                {publishableCommunities.map((community) => (
+                  <button
+                    key={community.id}
+                    type="button"
+                    onClick={() => setSelectedCommunity(community.id)}
+                    className={`flex-shrink-0 rounded-full border px-4 py-2.5 text-sm font-medium transition-all ${
+                      selectedCommunity === community.id
+                        ? 'bg-white text-black border-white'
+                        : 'bg-[#1A1A1A] text-[#999999] border-[#333333]'
+                    }`}
+                  >
+                    {community.name}
+                  </button>
+                ))}
+              </div>
+              {!selectedCommunity ? (
+                <div className="rounded-xl border border-[#333333] bg-[#1A1A1A] p-3">
+                  <p className="text-xs font-semibold text-white">Free self-hosted session</p>
+                  <p className="mt-1 text-xs leading-5 text-[#666666]">
+                    We review self-hosted sessions before they appear publicly. Paid or recurring
+                    sessions need a verified crew.
+                  </p>
+                  {publishableCommunities.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={() => router.push('/communities/nominate')}
+                      className="mt-3 rounded-full border border-[#333333] px-3 py-2 text-[11px] font-bold text-white"
+                    >
+                      List or claim a community
+                    </button>
+                  )}
+                </div>
+              ) : null}
+            </div>
+          )}
+        </div>
+
         {/* Category */}
         <div>
           <label className="text-xs font-semibold text-[#666666] uppercase tracking-wide mb-3 block">What are you doing?</label>
@@ -348,7 +499,7 @@ export default function QuickPostPage() {
           </button>
           {!canPost && !posting && (
             <p className="text-center text-xs text-[#666666] mt-2">
-              Pick an activity and time to post
+              {disabledReason ?? 'Pick an activity and time to post'}
             </p>
           )}
         </div>

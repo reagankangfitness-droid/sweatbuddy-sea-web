@@ -1,56 +1,63 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Metadata } from 'next'
-import { ArrowRight, CalendarDays, MapPin, Search, Star, Users } from 'lucide-react'
+import { ArrowRight, CalendarDays, MapPin, Search, Users } from 'lucide-react'
 import { LogoWithText } from '@/components/logo'
 import { TrackedLink } from '@/components/TrackedLink'
 import { CityGuideTabs } from '@/components/city-guide/CityGuideTabs'
-import { PlaceCoverImage } from '@/components/fitness-directory/PlaceCoverImage'
-import {
-  LazySessionVectorMap,
-  type SessionVectorMapPin,
-} from '@/components/maps/LazySessionVectorMap'
 import { EVENTS } from '@/lib/analytics'
-import { getActivityEmoji } from '@/lib/activity-types'
-import {
-  fitnessDirectoryCategories,
-  formatPlaceType,
-  getDirectoryStats,
-  getFitnessPlacePositioning,
-  getFitnessPlacesForCategory,
-  type FitnessPlace,
-} from '@/lib/fitness-directory'
-import { getFitnessDirectoryPlaces } from '@/lib/fitness-place-store'
+import { getPublicCommunitySeeds } from '@/lib/community-directory-seed'
 import { resolveSessionMediaMap, type ResolvedSessionMedia } from '@/lib/session-media'
+import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
 import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'SweatBuddies - Fitness City Guides and Social Fitness Events',
+  title: 'SweatBuddies - Fitness Communities You Can Actually Join',
   description:
-    'Find where to show up, who it suits, and the easiest path to join social fitness in Singapore.',
+    'Find active fitness communities near you by area, vibe, schedule, and beginner-friendliness.',
 }
 
 const activityFilters = [
-  { label: 'Run / Walk', href: '/buddy?location=nearby&type=running' },
-  { label: 'Soft Entry', href: '/buddy?location=nearby&type=yoga' },
-  { label: 'Pickleball', href: '/buddy?location=nearby&type=pickleball' },
-  { label: 'Strength', href: '/buddy?location=nearby&type=strength' },
-  { label: 'Outdoor', href: '/buddy?location=nearby&type=hiking' },
-  { label: 'Crews', href: '/communities' },
+  { label: 'Run clubs', href: '/communities' },
+  { label: 'Yoga / Pilates', href: '/communities' },
+  { label: 'Pickleball', href: '/communities' },
+  { label: 'Strength', href: '/communities' },
+  { label: 'Recovery', href: '/communities' },
+  { label: 'Communities', href: '/communities' },
 ]
 
-const fallbackImages: Record<string, string> = {
-  running: '/banner/running.jpg',
-  run: '/banner/running.jpg',
-  yoga: '/images/hero-bg.jpg',
-  pickleball: '/images/community-bonds.jpg',
-  strength: '/banner/athletics.jpg',
-  hiit: '/images/connect-people.webp',
-  recovery: '/banner/ice-bath.webp',
-  social: '/images/hosts/run-club-group.jpg',
-}
+const decisionFilters = [
+  { label: 'Run clubs', href: '/communities' },
+  { label: 'Beginner-friendly', href: '/communities' },
+  { label: 'Solo-friendly', href: '/communities' },
+  { label: 'Free', href: '/communities' },
+]
+
+const fallbackPlanCards = [
+  {
+    title: 'Morning run clubs',
+    href: '/communities',
+    image: '/banner/running.jpg',
+    meta: 'Easy pace · first-timer friendly',
+    signal: 'Community',
+  },
+  {
+    title: 'Beginner-friendly movement',
+    href: '/communities',
+    image: '/images/hero/meditation.png',
+    meta: 'Yoga, mobility, recovery',
+    signal: 'Beginner',
+  },
+  {
+    title: 'Social games and groups',
+    href: '/communities',
+    image: '/images/community-bonds.jpg',
+    meta: 'Pickleball, padel, casual sports',
+    signal: 'Social',
+  },
+]
 
 const buttonBase =
   'min-w-0 touch-manipulation select-none items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#63FF8F] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0B0B]'
@@ -60,20 +67,9 @@ const touchButtonBase = `${buttonBase} min-h-12`
 
 export default async function HomePage() {
   const now = new Date()
-  const directoryPlaces = await getFitnessDirectoryPlaces()
-  const directoryStats = getDirectoryStats(directoryPlaces)
-  const categorySummaries = fitnessDirectoryCategories.map((category) => ({
-    ...category,
-    count: getFitnessPlacesForCategory(category.slug, {}, directoryPlaces).length,
-  }))
-  const trustedImportedPlaces = directoryPlaces
-    .filter((place) => place.sourceProvider || place.websiteUrl)
-    .sort((a, b) => getFitnessPlacePositioning(b).score - getFitnessPlacePositioning(a).score || a.name.localeCompare(b.name))
-  const seededHighlights = directoryPlaces
-    .filter((place) => !place.sourceProvider && !place.websiteUrl)
-    .sort((a, b) => b.socialScore - a.socialScore || b.reviewCount - a.reviewCount || a.name.localeCompare(b.name))
-  const featuredPlaces = [...trustedImportedPlaces.slice(0, 6), ...seededHighlights.slice(0, 2)]
-  const mapPlaces = featuredPlaces.filter((place) => place.latitude && place.longitude).slice(0, 24)
+  const publicCommunitySeeds = getPublicCommunitySeeds()
+  const beginnerCommunityCount = publicCommunitySeeds.filter((community) => community.beginnerFriendly).length
+  const soloCommunityCount = publicCommunitySeeds.filter((community) => community.soloFriendly).length
   const upcomingSessions = await prisma.activity
     .findMany({
       where: {
@@ -121,13 +117,6 @@ export default async function HomePage() {
     (sum, session) => sum + session._count.userActivities,
     0,
   )
-  const inventoryItems = [
-    { label: `${directoryStats.places} places`, value: directoryStats.places, shortLabel: 'Places' },
-    { label: `${directoryStats.activities} activities`, value: directoryStats.activities, shortLabel: 'Activities' },
-    { label: `${directoryStats.areas} areas`, value: directoryStats.areas, shortLabel: 'Areas' },
-    { label: `${directoryStats.socialPlaces} social picks`, value: directoryStats.socialPlaces, shortLabel: 'Social picks' },
-  ]
-
   return (
     <div className="min-h-screen overflow-x-hidden bg-[#0B0B0B] font-sans text-white">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0B0B0B]/95 backdrop-blur-xl">
@@ -145,147 +134,158 @@ export default async function HomePage() {
             />
           </Link>
           <p className="hidden min-w-0 flex-1 truncate text-sm font-semibold uppercase tracking-[0.18em] text-white/44 lg:block">
-            Fitness city guides
+            Fitness community directory
           </p>
           <nav className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
             <TrackedLink
-              href="/buddy?location=nearby"
+              href="/communities"
               event={EVENTS.LANDING_CTA_CLICKED}
-              metadata={{ placement: 'nav_find_plans', destination: '/buddy?location=nearby' }}
+              metadata={{ placement: 'nav_find_communities', destination: '/communities' }}
               className={`${compactButtonBase} hidden rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase text-white/62 hover:border-white/30 hover:text-white sm:inline-flex`}
             >
-              Find plans
+              Find communities
             </TrackedLink>
             <TrackedLink
-              href="/host"
+              href="/communities/nominate"
               event={EVENTS.LANDING_CTA_CLICKED}
-              metadata={{ placement: 'nav_host', destination: '/host' }}
+              metadata={{ placement: 'nav_list_community', destination: '/communities/nominate' }}
+              aria-label="List your community"
               className={`${compactButtonBase} rounded-full bg-[#63FF8F] px-3 py-2.5 text-[11px] font-bold uppercase text-black hover:bg-[#83FFA6] min-[420px]:px-4 sm:px-5 sm:text-xs`}
             >
-              <span className="sm:hidden">Host</span>
-              <span className="hidden sm:inline">Host a session</span>
+              <span aria-hidden="true" className="sm:hidden">List</span>
+              <span aria-hidden="true" className="hidden sm:inline">List community</span>
             </TrackedLink>
           </nav>
         </div>
       </header>
 
       <main>
-        <CityGuideTabs active="events" />
+        <CityGuideTabs active="communities" />
 
         <section className="border-b border-white/10">
-          <div className="mx-auto grid max-w-[1920px] gap-0 lg:min-h-[calc(100vh-126px)] lg:grid-cols-[minmax(420px,42vw)_1fr]">
-            <div className="min-w-0 border-r border-white/10 bg-[#0B0B0B]">
+          <div className="mx-auto max-w-7xl">
+            <div className="min-w-0 bg-[#0B0B0B]">
               <div className="border-b border-white/10 p-4 sm:p-6">
                 <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[#63FF8F]">
-                  SweatBuddies discovery
+                  Find communities near you
                 </p>
                 <h1 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight text-white sm:text-5xl">
-                  Fitness plans where showing up solo feels normal.
+                  Find fitness communities you can actually join.
                 </h1>
                 <p className="mt-4 max-w-2xl text-sm leading-6 text-white/62 sm:text-base">
-                  Find nearby runs, classes, games, and recovery sessions with people going,
-                  clear expectations, and crews you can come back to.
+                  Browse run clubs, yoga groups, games, and wellness communities by area, vibe,
+                  schedule, and beginner-friendliness.
                 </p>
-
-                <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  {inventoryItems.map((item) => (
-                    <div key={item.label} className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
-                      <p className="text-2xl font-semibold leading-none text-white">{item.value}</p>
-                      <p className="mt-2 truncate font-mono text-[10px] font-bold uppercase text-white/52 sm:text-[11px]">
-                        {item.shortLabel}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                <p className="mt-3 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-white/42">
+                  Global submissions open · {publicCommunitySeeds.length} Singapore seed communities · {beginnerCommunityCount} beginner-friendly · {soloCommunityCount} solo-friendly
+                </p>
 
                 <div className="mt-5 flex flex-col gap-2 sm:flex-row">
                   <TrackedLink
-                    href="/buddy?location=nearby"
+                    href="/communities"
                     event={EVENTS.LANDING_CTA_CLICKED}
-                    metadata={{ placement: 'homepage_primary_find_plans', destination: '/buddy?location=nearby' }}
+                    metadata={{ placement: 'homepage_primary_find_communities', destination: '/communities' }}
                     className={`${touchButtonBase} inline-flex flex-1 gap-2 rounded-full bg-[#63FF8F] px-5 py-3 text-sm font-bold text-black hover:bg-[#83FFA6]`}
                   >
-                    Find plans <ArrowRight size={17} className="shrink-0" />
+                    Find communities near me <ArrowRight size={17} className="shrink-0" />
                   </TrackedLink>
                   <TrackedLink
-                    href="/buddy?view=map&location=nearby"
+                    href="/communities/nominate"
                     event={EVENTS.LANDING_CTA_CLICKED}
-                    metadata={{ placement: 'homepage_primary_open_map', destination: '/buddy?view=map&location=nearby' }}
+                    metadata={{ placement: 'homepage_primary_list_community', destination: '/communities/nominate' }}
                     className={`${touchButtonBase} inline-flex gap-2 rounded-full border border-white/12 px-5 py-3 text-sm font-bold text-white/72 hover:border-[#63FF8F] hover:text-[#63FF8F]`}
                   >
-                    Open map
+                    List your community
                   </TrackedLink>
                 </div>
               </div>
 
               <div className="border-b border-white/10 p-4 sm:p-6">
                 <TrackedLink
-                  href="/buddy?location=nearby"
+                  href="/communities"
                   event={EVENTS.LANDING_CTA_CLICKED}
-                  metadata={{ placement: 'homepage_plan_search', destination: '/buddy?location=nearby' }}
+                  metadata={{ placement: 'homepage_community_search', destination: '/communities' }}
                   className={`${touchButtonBase} flex gap-3 rounded-xl border border-white/15 bg-[#111111] px-4 text-left text-sm font-semibold text-white/52 hover:border-white/35 hover:text-white`}
                 >
                   <Search size={18} strokeWidth={2.4} className="shrink-0" />
                   <span className="min-w-0 truncate">
-                    Search plans, crews, activity, or neighborhood...
+                    Search communities, activities, or areas...
                   </span>
                 </TrackedLink>
 
                 <div className="mt-3 flex flex-wrap gap-2">
+                  {decisionFilters.map((filter) => (
+                    <DiscoveryPill
+                      key={`${filter.label}-${filter.href}`}
+                      href={filter.href}
+                      label={filter.label}
+                      placement="homepage_decision_filter"
+                    />
+                  ))}
+                </div>
+
+                <div className="mt-5">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <div>
+                      <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#63FF8F]">
+                        Good first clicks
+                      </p>
+                      <h2 className="mt-1 text-lg font-semibold leading-tight text-white">
+                        Communities with the least guesswork
+                      </h2>
+                    </div>
+                    <TrackedLink
+                      href="/communities"
+                      event={EVENTS.LANDING_CTA_CLICKED}
+                      metadata={{ placement: 'homepage_hero_view_all_communities', destination: '/communities' }}
+                      className="hidden min-h-10 shrink-0 items-center rounded-full px-2 font-mono text-[11px] font-bold uppercase text-white/48 hover:text-[#63FF8F] sm:inline-flex"
+                    >
+                      See all
+                    </TrackedLink>
+                  </div>
+
+                  <div className="grid gap-3">
+                    {fallbackPlanCards.map((card) => (
+                      <FallbackPlanCard key={card.title} card={card} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4 sm:p-6">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div>
+                    <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/42">
+                      Browse by intent
+                    </p>
+                    <h2 className="mt-1 text-lg font-semibold text-white">Start with a lane</h2>
+                  </div>
+                </div>
+                <div className="mb-4 flex flex-wrap gap-2">
                   {activityFilters.slice(0, 5).map((filter) => (
                     <DiscoveryPill
                       key={`${filter.label}-${filter.href}`}
                       href={filter.href}
                       label={filter.label}
-                      placement="homepage_place_quick_filter"
+                      placement="homepage_community_quick_filter"
                     />
                   ))}
                 </div>
-              </div>
-
-              <div className="p-4 sm:p-6">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {categorySummaries.slice(1).map((category) => (
-                    <CategoryCard
-                      key={category.slug}
-                      href={category.href}
-                      title={category.shortTitle}
-                      description={category.description}
-                      count={category.count}
-                    />
-                  ))}
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <SignalBlock
+                    title="Communities first"
+                    description="Start with active crews, hosts, schedules, and joining signals."
+                  />
+                  <SignalBlock
+                    title="Any city"
+                    description="Nominate a crew wherever you train; Singapore is the first dense supply base."
+                  />
+                  <SignalBlock
+                    title="Plans next"
+                    description="When a community has joinable plans, they surface as the next best click."
+                  />
                 </div>
               </div>
-            </div>
-
-            <DirectoryMapPreview places={mapPlaces} />
-          </div>
-        </section>
-
-        <section className="border-b border-white/10">
-          <div className="mx-auto max-w-7xl px-4 py-8 sm:py-10">
-            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="font-mono text-xs font-bold uppercase tracking-wide text-white/42">
-                  Confidence layer
-                </p>
-                <h2 className="mt-1 text-2xl font-semibold leading-tight text-white sm:text-3xl">
-                  Places that make joining easier
-                </h2>
-              </div>
-              <TrackedLink
-                href="/singapore"
-                event={EVENTS.LANDING_CTA_CLICKED}
-                metadata={{ placement: 'homepage_places_view_all', destination: '/singapore' }}
-                className={`${compactButtonBase} inline-flex w-fit gap-1.5 rounded-full border border-white/10 px-3 py-2 font-mono text-xs font-bold uppercase text-white/60 hover:border-[#63FF8F] hover:text-[#63FF8F]`}
-              >
-                View all <ArrowRight size={14} className="shrink-0" />
-              </TrackedLink>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              {featuredPlaces.slice(0, 8).map((place) => (
-                <HomePlaceCard key={place.slug} place={place} />
-              ))}
             </div>
           </div>
         </section>
@@ -301,13 +301,15 @@ export default async function HomePage() {
                   Upcoming plans people can join
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-white/58">
-                  {peopleGoingCount} people are currently marked as joining featured sessions.
+                  {peopleGoingCount > 0
+                    ? `${peopleGoingCount} people are marked as joining featured plans.`
+                    : 'New plans are being verified now. Start with the directory or suggest a community.'}
                 </p>
               </div>
               <TrackedLink
-                href="/buddy?location=nearby"
+                href="/buddy?view=list&location=nearby"
                 event={EVENTS.LANDING_CTA_CLICKED}
-                metadata={{ placement: 'homepage_events_view_all', destination: '/buddy?location=nearby' }}
+                metadata={{ placement: 'homepage_events_view_all', destination: '/buddy?view=list&location=nearby' }}
                 className={`${compactButtonBase} inline-flex w-fit gap-1.5 rounded-full border border-white/10 px-3 py-2 font-mono text-xs font-bold uppercase text-white/60 hover:border-[#63FF8F] hover:text-[#63FF8F]`}
               >
                 Find plans <ArrowRight size={14} className="shrink-0" />
@@ -328,9 +330,9 @@ export default async function HomePage() {
               </div>
             ) : (
               <div className="rounded-xl border border-white/10 bg-[#111111] p-8">
-                <h2 className="text-2xl font-semibold text-white">New events are being mapped.</h2>
+                <h2 className="text-2xl font-semibold text-white">New plans are being verified now.</h2>
                 <p className="mt-3 max-w-md text-sm leading-6 text-white/58">
-                  Browse the city guide now or submit a host page for review.
+                  Browse the community directory now or suggest a community we should review.
                 </p>
               </div>
             )}
@@ -345,17 +347,14 @@ export default async function HomePage() {
             <span className="text-xs text-white/45">&copy; 2026</span>
           </div>
           <div className="flex flex-wrap justify-center gap-4 text-xs font-semibold text-white/48">
-            <Link href="/singapore" className="transition-colors hover:text-white">
-              Guide
+            <Link href="/communities" className="transition-colors hover:text-white">
+              Communities
             </Link>
-            <Link href="/singapore" className="transition-colors hover:text-white">
-              Singapore
+            <Link href="/buddy?view=list&location=nearby" className="transition-colors hover:text-white">
+              Plans
             </Link>
-            <Link href="/bangkok" className="transition-colors hover:text-white">
-              Bangkok
-            </Link>
-            <Link href="/host" className="transition-colors hover:text-white">
-              For hosts
+            <Link href="/communities/nominate" className="transition-colors hover:text-white">
+              List community
             </Link>
             <Link href="/support" className="transition-colors hover:text-white">
               Help
@@ -367,152 +366,66 @@ export default async function HomePage() {
   )
 }
 
-function CategoryCard({
-  href,
+function SignalBlock({
   title,
   description,
-  count,
 }: {
-  href: string
   title: string
   description: string
-  count: number
+}) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-[#111111] p-4">
+      <h2 className="text-lg font-semibold text-white">{title}</h2>
+      <p className="mt-2 text-sm leading-6 text-white/56">{description}</p>
+    </div>
+  )
+}
+
+function FallbackPlanCard({
+  card,
+}: {
+  card: {
+    title: string
+    href: string
+    image: string
+    meta: string
+    signal: string
+  }
 }) {
   return (
     <TrackedLink
-      href={href}
+      href={card.href}
       event={EVENTS.LANDING_CTA_CLICKED}
-      metadata={{ placement: 'homepage_category_card', destination: href, category: title }}
-      className="group rounded-xl border border-white/10 bg-[#111111] p-4 transition-colors hover:border-[#63FF8F]"
+      metadata={{ placement: 'homepage_fallback_plan_card', destination: card.href, title: card.title }}
+      className="group grid grid-cols-[118px_minmax(0,1fr)] overflow-hidden rounded-xl border border-white/10 bg-[#151515] transition-colors hover:border-[#63FF8F]"
     >
-      <div className="flex items-start justify-between gap-3">
-        <h2 className="text-lg font-semibold text-white">{title}</h2>
-        <span className="rounded-full bg-white px-2 py-1 font-mono text-[11px] font-bold uppercase text-black">
-          {count}
-        </span>
-      </div>
-      <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/56">{description}</p>
-      <p className="mt-4 inline-flex items-center gap-1 font-mono text-xs font-bold uppercase text-[#63FF8F]">
-        Browse <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-      </p>
-    </TrackedLink>
-  )
-}
-
-function HomePlaceCard({ place }: { place: FitnessPlace }) {
-  const positioning = getFitnessPlacePositioning(place)
-
-  return (
-    <TrackedLink
-      href={`/places/${place.slug}`}
-      event={EVENTS.LANDING_CTA_CLICKED}
-      metadata={{ placement: 'homepage_place_card', destination: `/places/${place.slug}`, place: place.slug }}
-      className="group overflow-hidden rounded-xl border border-white/10 bg-[#111111] transition-all hover:-translate-y-0.5 hover:border-[#63FF8F]"
-    >
-      <div className="relative aspect-[4/3] overflow-hidden bg-[#222222]">
-        <PlaceCoverImage
-          src={place.coverImage}
-          alt=""
-          sizes="(min-width: 1280px) 25vw, (min-width: 768px) 50vw, 100vw"
-          className="object-cover opacity-86 transition-transform duration-500 group-hover:scale-105"
+      <div className="relative aspect-square overflow-hidden bg-[#222222]">
+        <Image
+          src={card.image}
+          alt={card.title}
+          fill
+          sizes="118px"
+          className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/20 to-transparent" />
-        <div className="absolute left-3 top-3 rounded-md bg-black/52 px-2 py-1 font-mono text-[10px] font-bold uppercase text-white/86 backdrop-blur">
-          {positioning.joinPath}
-        </div>
-        <div className="absolute bottom-3 left-3 right-3">
-          <p className="font-mono text-[10px] font-bold uppercase text-[#63FF8F]">{place.area}</p>
-          <h3 className="mt-1 line-clamp-2 text-lg font-semibold leading-tight text-white">
-            {place.name}
-          </h3>
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/8 to-transparent" />
       </div>
-      <div className="grid gap-3 p-4">
-        <p className="line-clamp-2 text-sm leading-6 text-white/62">{positioning.reason}</p>
-        <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-3 text-xs font-bold text-white/48">
-          <span className="inline-flex min-w-0 items-center gap-1 truncate">
-            <Star size={13} fill="currentColor" className="shrink-0 text-[#63FF8F]" />
-            {positioning.score}
+      <div className="grid min-w-0 content-between gap-2 p-3">
+        <div>
+          <span className="rounded-md bg-[#63FF8F] px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-black">
+            {card.signal}
           </span>
-          <span className="truncate">{positioning.socialSignal} signal</span>
+          <h3 className="mt-2 line-clamp-2 text-sm font-semibold leading-tight text-white">
+            {card.title}
+          </h3>
+          <p className="mt-1 line-clamp-2 text-xs font-semibold leading-5 text-white/58">
+            {card.meta}
+          </p>
         </div>
+        <p className="inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-wide text-[#63FF8F]">
+          View communities <ArrowRight size={12} />
+        </p>
       </div>
     </TrackedLink>
-  )
-}
-
-function DirectoryMapPreview({ places }: { places: FitnessPlace[] }) {
-  const pins: SessionVectorMapPin[] = places.map((place) => ({
-    id: place.slug,
-    title: cleanText(place.name),
-    latitude: place.latitude,
-    longitude: place.longitude,
-    city: place.city,
-    primaryLabel: formatPlaceType(place.placeType),
-    priceLabel: place.dropInFriendly ? 'Drop-in' : undefined,
-    activityLabel: place.activities[0] ? getActivityEmoji(place.activities[0], '📍') : '📍',
-    previewTitle: cleanText(place.name),
-    previewSubtitle: place.bestFor,
-    previewMeta: place.area,
-    previewImage: place.coverImage,
-    previewCtaLabel: 'Open place',
-    href: `/places/${place.slug}`,
-  }))
-  const spotlight = places[0]
-
-  return (
-    <div className="relative hidden min-h-[560px] overflow-hidden bg-[#191919] lg:block">
-      <LazySessionVectorMap
-        center={{ lat: 1.3521, lng: 103.8198 }}
-        pins={pins}
-        initialZoom={10.6}
-        maxFitZoom={12.5}
-        fitPadding={92}
-      />
-      <div className="absolute left-5 top-5 z-10 rounded-md border border-white/10 bg-black/35 px-3 py-2 font-mono text-xs font-bold uppercase text-white/72 backdrop-blur">
-        {pins.length} featured place pins
-      </div>
-      <div className="absolute bottom-5 left-5 z-10 rounded-md border border-white/10 bg-black/35 px-3 py-2 font-mono text-xs font-bold text-white/58 backdrop-blur">
-        Singapore · gyms, studios, sports, community spaces
-      </div>
-      <div className="absolute bottom-5 right-5 z-10">
-        <TrackedLink
-          href="/singapore"
-          event={EVENTS.LANDING_CTA_CLICKED}
-          metadata={{ placement: 'homepage_place_map_open_directory', destination: '/singapore' }}
-          className={`${touchButtonBase} inline-flex gap-1.5 rounded-full bg-[#63FF8F] px-4 py-3 font-mono text-xs font-bold uppercase text-black shadow-[0_12px_34px_rgba(0,0,0,0.32)] hover:bg-[#83FFA6]`}
-        >
-          Open guide <ArrowRight size={14} className="shrink-0" />
-        </TrackedLink>
-      </div>
-
-      {spotlight ? (
-        <div className="absolute left-5 right-5 top-16 z-10 max-w-sm rounded-xl border border-white/10 bg-black/55 p-4 shadow-2xl shadow-black/30 backdrop-blur md:top-auto md:bottom-20 md:right-auto">
-          <p className="font-mono text-[10px] font-bold uppercase text-[#63FF8F]">Featured place</p>
-          <h3 className="mt-2 line-clamp-2 text-lg font-semibold leading-tight text-white">
-            {spotlight.name}
-          </h3>
-          <div className="mt-3 grid gap-2 text-xs font-bold text-white/62">
-            <p className="flex items-center gap-2 truncate">
-              <MapPin size={14} strokeWidth={2.2} className="shrink-0 text-[#63FF8F]" />
-              <span className="truncate">{spotlight.address || spotlight.area}</span>
-            </p>
-            <p className="flex items-center gap-2 truncate">
-              <Users size={14} strokeWidth={2.2} className="shrink-0 text-[#63FF8F]" />
-              <span className="truncate">{spotlight.bestFor}</span>
-            </p>
-          </div>
-          <TrackedLink
-            href={`/places/${spotlight.slug}`}
-            event={EVENTS.LANDING_CTA_CLICKED}
-            metadata={{ placement: 'homepage_map_featured_place', destination: `/places/${spotlight.slug}` }}
-            className={`${compactButtonBase} mt-4 inline-flex gap-1.5 rounded-full bg-white px-3 py-2 font-mono text-[11px] font-bold uppercase text-black hover:bg-[#63FF8F]`}
-          >
-            Details <ArrowRight size={13} className="shrink-0" />
-          </TrackedLink>
-        </div>
-      ) : null}
-    </div>
   )
 }
 
@@ -578,8 +491,7 @@ function SessionCard({
     resolvedMedia?.resolvedImageUrl ||
     session.resolvedImageUrl ||
     session.imageUrl ||
-    fallbackImages[category.toLowerCase()] ||
-    '/images/hero-bg.jpg'
+    getCategoryFallbackImage(category)
   const imageSourceLabel =
     resolvedMedia?.imageSourceLabel || session.imageSourceLabel || (session.imageUrl ? 'Session photo' : null)
   const location = cleanText(session.address?.split(',')[0] || session.city)
@@ -589,6 +501,12 @@ function SessionCard({
   const listingStatus = session.community?.name ? 'Verified host' : 'Host listing'
   const priceLabel = formatPrice(session.price, session.currency)
   const activityLabel = formatCategory(category)
+  const attendanceLabel =
+    session._count.userActivities > 0
+      ? `${session._count.userActivities} going`
+      : session.maxPeople
+        ? `${session.maxPeople} spots`
+        : 'Open spots'
 
   return (
     <TrackedLink
@@ -702,8 +620,11 @@ function SessionCard({
           <span className="truncate">{location}</span>
         </p>
         <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-2">
-          <span>{cleanText(session.city)}</span>
-          <span>{formatLevel(session.fitnessLevel)}</span>
+          <span className="inline-flex min-w-0 items-center gap-1 truncate">
+            <Users size={13} strokeWidth={2.4} className="shrink-0 text-[#63FF8F]" />
+            {attendanceLabel}
+          </span>
+          <span className="truncate">{formatLevel(session.fitnessLevel)}</span>
         </div>
       </div>
     </TrackedLink>

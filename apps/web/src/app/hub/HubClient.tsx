@@ -391,7 +391,7 @@ export default function HubClient({
                   <p className="text-[11px] text-[#666666]">+ {nextSession.goingCount - (nextSession.attendees?.length ?? 0)} more</p>
                 )}
                 <Link
-                  href={`/activities/${nextSession.id}`}
+                  href={`/host/sessions/${nextSession.id}/attendees`}
                   className="block text-[11px] text-white font-medium mt-1"
                 >
                   View full list →
@@ -453,7 +453,7 @@ export default function HubClient({
                       Edit
                     </Link>
                     <Link
-                      href={`/activities/${s.id}`}
+                      href={`/host/sessions/${s.id}/attendees`}
                       className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#2A2A2A] text-[10px] font-medium text-[#999999]"
                     >
                       <UserCheck className="w-3 h-3" />
@@ -548,14 +548,14 @@ export default function HubClient({
 
         {/* Quick links */}
         <div className="flex gap-2">
-          <Link href="/host/community" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
-            Regulars
+          <Link href="/buddy?create=session" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
+            Post session
           </Link>
-          <Link href="/host/templates" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
-            Recurring
+          <Link href="/communities/nominate" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
+            List community
           </Link>
-          <Link href="/host/payments" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
-            Payments
+          <Link href="/my-sessions" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
+            My sessions
           </Link>
         </div>
       </div>

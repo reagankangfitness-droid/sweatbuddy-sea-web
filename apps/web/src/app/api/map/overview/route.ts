@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getPublicCommunitySeeds } from '@/lib/community-directory-seed'
+import { singaporeFitnessPlaces } from '@/lib/fitness-directory'
+import { isRecoverableDiscoveryDbError } from '@/lib/recoverable-db-error'
 import neighborhoodsData from '@/data/neighborhoods.json'
 
 export const dynamic = 'force-dynamic'
@@ -290,10 +293,89 @@ export async function GET() {
         timeRange: 'all',
       },
     })
-  } catch {
+  } catch (error) {
+    if (isRecoverableDiscoveryDbError(error)) {
+      return NextResponse.json(buildFallbackOverview())
+    }
+
+    console.error('[map/overview] Error:', error)
     return NextResponse.json(
       { success: false, error: 'Failed to fetch map overview' },
       { status: 500 }
     )
   }
+}
+
+function buildFallbackOverview() {
+  const publicCommunities = getPublicCommunitySeeds().filter((community) => community.citySlug === 'singapore')
+  const placesByNeighborhood = new Map<string, number>()
+  const communitiesByNeighborhood = new Map<string, number>()
+
+  for (const place of singaporeFitnessPlaces) {
+    const neighborhoodId = findNeighborhoodForCoordinates(place.latitude, place.longitude) ?? 'unknown'
+    placesByNeighborhood.set(neighborhoodId, (placesByNeighborhood.get(neighborhoodId) ?? 0) + 1)
+  }
+
+  for (const community of publicCommunities) {
+    const neighborhoodId = findNeighborhoodForArea(community.usualArea) ?? 'unknown'
+    communitiesByNeighborhood.set(neighborhoodId, (communitiesByNeighborhood.get(neighborhoodId) ?? 0) + 1)
+  }
+
+  const neighborhoodOverviews = neighborhoodsData.neighborhoods.map((neighborhood) => {
+    const placeCount = placesByNeighborhood.get(neighborhood.id) ?? 0
+    const communityCount = communitiesByNeighborhood.get(neighborhood.id) ?? 0
+    const heatScore = placeCount + communityCount
+
+    return {
+      id: neighborhood.id,
+      name: neighborhood.name,
+      shortName: neighborhood.shortName,
+      mapPosition: neighborhood.mapPosition,
+      vibe: neighborhood.vibe,
+      description: neighborhood.description,
+      eventCount: 0,
+      placeCount,
+      communityCount,
+      listingCount: heatScore,
+      heatScore,
+      attendeeCount: 0,
+      isHot: heatScore >= HOT_THRESHOLD,
+      nextEvent: undefined,
+    }
+  })
+
+  const sortedByDensity = [...neighborhoodOverviews].sort((a, b) => b.heatScore - a.heatScore)
+  const hotSpot = sortedByDensity[0]?.heatScore > 0 ? sortedByDensity[0] : null
+
+  return {
+    success: true,
+    degraded: true,
+    data: {
+      neighborhoods: neighborhoodOverviews,
+      summary: {
+        totalEvents: 0,
+        totalPlaces: singaporeFitnessPlaces.length,
+        totalCommunities: publicCommunities.length,
+        totalListings: singaporeFitnessPlaces.length + publicCommunities.length,
+        totalAttendees: 0,
+        hotSpot: hotSpot
+          ? {
+              id: hotSpot.id,
+              name: hotSpot.name,
+            }
+          : null,
+      },
+      timeRange: 'fallback',
+    },
+  }
+}
+
+function findNeighborhoodForArea(area: string | null | undefined): string | null {
+  if (!area) return null
+  const normalizedArea = area.toLowerCase()
+
+  return neighborhoodsData.neighborhoods.find((neighborhood) =>
+    normalizedArea.includes(neighborhood.name.toLowerCase()) ||
+    normalizedArea.includes(neighborhood.shortName.toLowerCase())
+  )?.id ?? null
 }

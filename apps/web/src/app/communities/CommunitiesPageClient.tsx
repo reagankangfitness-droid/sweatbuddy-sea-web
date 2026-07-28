@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
+  ArrowRight,
   Search,
   Users,
   MapPin,
@@ -12,13 +13,33 @@ import {
   CheckCircle2,
   ChevronDown,
   X,
-  ExternalLink,
-  ArrowRight,
 } from 'lucide-react'
 import { LogoWithText } from '@/components/logo'
 import { CityGuideTabs } from '@/components/city-guide/CityGuideTabs'
 import { getCategoryEmoji } from '@/lib/categories'
 import { ACTIVITY_CATEGORIES } from '@/lib/categories'
+import { COMMUNITY_SEO_GUIDES } from '@/lib/community-seo-guides'
+import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
+import {
+  CommunityWeeklyPicksForm,
+  SaveCommunityButton,
+  trackCommunityDirectoryEvent,
+} from '@/components/community/CommunityDirectoryActions'
+
+const CREW_PROOF_IMAGES = [
+  { src: '/images/hosts/run-club-group.jpg', label: 'Run groups' },
+  { src: '/images/community-bonds.jpg', label: 'Social proof' },
+  { src: '/images/organizers-bg.jpg', label: 'Hosts' },
+]
+
+const QUICK_FILTERS = [
+  { label: 'Run clubs', category: 'running' },
+  { label: 'Yoga', category: 'yoga' },
+  { label: 'Pickleball', category: 'pickleball' },
+  { label: 'Beginner', fit: 'beginner' },
+  { label: 'Solo-friendly', fit: 'solo' },
+  { label: 'Free', price: 'free' },
+]
 
 // ─── Types ───────────────────────────────────────────────────────
 export interface CommunityMemberData {
@@ -47,11 +68,19 @@ export interface CommunityData {
   eventCount: number
   cityName: string | null
   citySlug: string | null
+  latitude?: number | null
+  longitude?: number | null
   usualArea: string | null
   usualSchedule: string | null
   joinPlatform: string | null
   communityLink: string | null
+  websiteUrl?: string | null
   sourceUrl: string | null
+  sourceLabel?: string | null
+  bestFor?: string | null
+  soloFriendly?: boolean
+  confidenceScore?: number | null
+  confidenceTier?: string | null
   vibeTags: string[]
   priceType: string | null
   beginnerFriendly: boolean
@@ -190,6 +219,8 @@ export default function CommunitiesPageClient({
           c.category.toLowerCase().includes(q) ||
           c.cityName?.toLowerCase().includes(q) ||
           c.usualArea?.toLowerCase().includes(q) ||
+          c.bestFor?.toLowerCase().includes(q) ||
+          c.sourceLabel?.toLowerCase().includes(q) ||
           c.vibeTags.some((tag) => tag.toLowerCase().includes(q)),
       )
     }
@@ -199,6 +230,7 @@ export default function CommunitiesPageClient({
     if (priceFilter) result = result.filter((c) => c.priceType === priceFilter)
     if (platformFilter) result = result.filter((c) => c.joinPlatform === platformFilter)
     if (fitFilter === 'beginner') result = result.filter((c) => c.beginnerFriendly)
+    if (fitFilter === 'solo') result = result.filter((c) => c.soloFriendly)
     if (fitFilter === 'experienced') result = result.filter((c) => !c.beginnerFriendly)
     if (vibeFilter) result = result.filter((c) => c.vibeTags.includes(vibeFilter))
     return result
@@ -225,7 +257,10 @@ export default function CommunitiesPageClient({
     vibeFilter
   )
   const hasSources = communities.length > 0
-  const plansHref = cityFilter ? `/buddy?city=${encodeURIComponent(cityFilter)}` : '/buddy?location=nearby'
+  const plansHref = cityFilter
+    ? `/buddy?view=list&city=${encodeURIComponent(cityFilter)}`
+    : '/buddy?view=list&location=nearby'
+  const showCityFilter = cityOptions.length > 1
 
   const clearFilters = () => {
     setSearchQuery('')
@@ -236,6 +271,51 @@ export default function CommunitiesPageClient({
     setPlatformFilter(null)
     setFitFilter(null)
     setVibeFilter(null)
+  }
+
+  const applyQuickFilter = (filter: typeof QUICK_FILTERS[number]) => {
+    if (filter.category) {
+      const nextValue = categoryFilter === filter.category ? null : filter.category
+      setCategoryFilter(nextValue)
+      trackFilter('quick_activity', nextValue)
+      return
+    }
+
+    if (filter.fit) {
+      const nextValue = fitFilter === filter.fit ? null : filter.fit
+      setFitFilter(nextValue)
+      trackFilter('quick_fit', nextValue)
+      return
+    }
+
+    if (filter.price) {
+      const nextValue = priceFilter === filter.price ? null : filter.price
+      setPriceFilter(nextValue)
+      trackFilter('quick_price', nextValue)
+    }
+  }
+
+  const isQuickFilterActive = (filter: typeof QUICK_FILTERS[number]) => (
+    (filter.category && categoryFilter === filter.category) ||
+    (filter.fit && fitFilter === filter.fit) ||
+    (filter.price && priceFilter === filter.price)
+  )
+
+  const trackFilter = (filter: string, value: string | null) => {
+    trackCommunityDirectoryEvent('community_directory_filter_used', {
+      filter,
+      value,
+      resultCount: filteredCommunities.length,
+    })
+  }
+
+  const trackSearch = () => {
+    const query = searchQuery.trim()
+    if (!query) return
+    trackCommunityDirectoryEvent('community_directory_search_used', {
+      query,
+      resultCount: filteredCommunities.length,
+    })
   }
 
   return (
@@ -257,27 +337,28 @@ export default function CommunitiesPageClient({
             </Link>
             <Link
               href={plansHref}
+              aria-label="Explore plans"
               className="inline-flex min-h-10 shrink-0 items-center rounded-full border border-white/12 px-2.5 text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F] min-[380px]:px-3"
             >
-              <span className="min-[380px]:hidden">Plans</span>
-              <span className="hidden min-[380px]:inline">Explore plans</span>
+              <span aria-hidden="true" className="min-[380px]:hidden">Plans</span>
+              <span aria-hidden="true" className="hidden min-[380px]:inline">Explore plans</span>
             </Link>
           </div>
 
           <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
             <div>
               <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[#63FF8F]">
-                Crew layer
+                Community directory
               </p>
               <h1 className="mt-3 max-w-3xl text-4xl font-bold leading-[1.03] tracking-tight sm:text-5xl">
                 {hasSources
-                  ? 'Crews behind plans people can join.'
-                  : 'Help map crews that make solo plans easier.'}
+                  ? 'Find active fitness communities you can confidently join.'
+                  : 'Help map communities people can safely show up to.'}
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-6 text-white/58 sm:text-base">
                 {hasSources
-                  ? 'Crew pages help people trust who is hosting, where to join officially, and which plans already have regulars. Plans still lead discovery.'
-                  : 'SweatBuddies reviews official crew and host pages so people know who they are joining before they show up.'}
+                  ? 'Start with official links, usual areas, schedule signals, and solo-friendly cues so you know where to join before you show up.'
+                  : 'SweatBuddies reviews official community pages so solo joiners can find groups that are real, active, and easy to understand.'}
               </p>
             </div>
             {hasSources ? (
@@ -285,38 +366,53 @@ export default function CommunitiesPageClient({
                 <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
                   <p className="font-mono text-lg font-black text-white">{communities.length}</p>
                   <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
-                    Crews
+                    Communities
                   </p>
                 </div>
                 <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
-                  <p className="font-mono text-lg font-black text-white">{cities.length || 2}</p>
+                  <p className="font-mono text-lg font-black text-white">
+                    {communities.filter((community) => community.beginnerFriendly).length}
+                  </p>
                   <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
-                    Markets
+                    Beginner
                   </p>
                 </div>
                 <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
                   <p className="font-mono text-lg font-black text-[#63FF8F]">
-                    {filteredCommunities.length}
+                    {communities.filter((community) => community.soloFriendly).length}
                   </p>
                   <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
-                    Visible
+                    Solo-friendly
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="rounded-lg border border-dashed border-white/15 bg-white/[0.035] p-4">
-                <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-white/42">
-                  No public crews yet
-                </p>
-                <p className="mt-2 text-sm leading-6 text-white/64">
-                  Suggest a crew or official host page and we will review it before it appears here.
-                </p>
+              <div className="overflow-hidden rounded-lg border border-white/10 bg-white/[0.035]">
+                <div className="relative h-28 bg-[#222222]">
+                  <Image
+                    src="/images/hosts/run-club-group.jpg"
+                    alt="Fitness community after a group session"
+                    fill
+                    sizes="(min-width: 1024px) 320px, 100vw"
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/72 via-black/10 to-transparent" />
+                </div>
+                <div className="p-4">
+                  <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-white/42">
+                    No public communities yet
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-white/64">
+                    Suggest a community or official host page and we will review it before it appears here.
+                  </p>
+                </div>
               </div>
             )}
           </div>
         </div>
       </header>
       <CityGuideTabs active="communities" citySlug={cityFilter ?? undefined} />
+      <CrewProofStrip />
 
       {hasSources ? (
         <>
@@ -329,68 +425,111 @@ export default function CommunitiesPageClient({
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
                   <input
                     type="text"
-                    placeholder="Search crews, activities, or cities..."
+                    placeholder="Search communities, activities, or areas..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    onBlur={trackSearch}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') trackSearch()
+                    }}
                     className="min-h-11 w-full rounded-lg border border-white/15 bg-[#111111] py-2.5 pl-9 pr-4 text-sm text-white transition-all placeholder:text-[#666666] focus:border-[#63FF8F] focus:outline-none max-[360px]:placeholder:text-[12px]"
                   />
                 </div>
                 <Link
                   href="/communities/nominate"
                   className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#63FF8F] transition-colors hover:bg-[#83FFA6]"
-                  aria-label="Suggest a crew"
+                  aria-label="Suggest a community"
                 >
                   <Plus className="w-4 h-4 text-black" />
                 </Link>
               </div>
 
+              <div className="flex gap-1.5 overflow-x-auto pb-0.5 sm:hidden">
+                {QUICK_FILTERS.map((filter) => (
+                  <QuickFilterButton
+                    key={filter.label}
+                    label={filter.label}
+                    active={Boolean(isQuickFilterActive(filter))}
+                    onClick={() => applyQuickFilter(filter)}
+                  />
+                ))}
+              </div>
+
               {/* Row 2: Directory command filters */}
               <div className="grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap">
-                <FilterSelect
-                  label="City"
-                  value={cityFilter}
-                  options={cityOptions}
-                  onChange={setCityFilter}
-                />
+                {showCityFilter && (
+                  <FilterSelect
+                    label="City"
+                    value={cityFilter}
+                    options={cityOptions}
+                    onChange={(value) => {
+                      setCityFilter(value)
+                      trackFilter('city', value)
+                    }}
+                  />
+                )}
                 <FilterSelect
                   label="Activity"
                   value={categoryFilter}
                   options={availableCategories}
-                  onChange={setCategoryFilter}
+                  onChange={(value) => {
+                    setCategoryFilter(value)
+                    trackFilter('activity', value)
+                  }}
                 />
                 <FilterSelect
                   label="Area"
                   value={areaFilter}
                   options={areaOptions}
-                  onChange={setAreaFilter}
+                  onChange={(value) => {
+                    setAreaFilter(value)
+                    trackFilter('area', value)
+                  }}
                 />
                 <FilterSelect
                   label="Price"
                   value={priceFilter}
                   options={priceOptions}
-                  onChange={setPriceFilter}
+                  onChange={(value) => {
+                    setPriceFilter(value)
+                    trackFilter('price', value)
+                  }}
                 />
                 <FilterSelect
                   label="Fit"
                   value={fitFilter}
                   options={[
                     { value: 'beginner', label: 'Beginner-friendly' },
+                    { value: 'solo', label: 'Solo-friendly' },
                     { value: 'experienced', label: 'Experienced' },
                   ]}
-                  onChange={setFitFilter}
+                  onChange={(value) => {
+                    setFitFilter(value)
+                    trackFilter('fit', value)
+                  }}
                 />
-                <FilterSelect
-                  label="Join"
-                  value={platformFilter}
-                  options={platformOptions}
-                  onChange={setPlatformFilter}
-                />
-                <FilterSelect
-                  label="Vibe"
-                  value={vibeFilter}
-                  options={vibeOptions}
-                  onChange={setVibeFilter}
-                />
+                <div className="hidden sm:block">
+                  <FilterSelect
+                    label="Join"
+                    value={platformFilter}
+                    options={platformOptions}
+                    onChange={(value) => {
+                      setPlatformFilter(value)
+                      trackFilter('join', value)
+                    }}
+                  />
+                </div>
+                <div className="hidden sm:block">
+                  <FilterSelect
+                    label="Vibe"
+                    value={vibeFilter}
+                    options={vibeOptions}
+                    onChange={(value) => {
+                      setVibeFilter(value)
+                      trackFilter('vibe', value)
+                    }}
+                  />
+                </div>
                 {hasFilters && (
                   <button
                     type="button"
@@ -402,23 +541,38 @@ export default function CommunitiesPageClient({
                   </button>
                 )}
               </div>
+
             </div>
           </div>
 
-          {/* ── Crew count ── */}
+          {/* ── Directory count ── */}
           <div className="max-w-6xl mx-auto px-4 pt-4 pb-2">
             <div className="flex items-center justify-between gap-3">
               <p className="font-mono text-[11px] font-black uppercase tracking-[0.18em] text-white/42">
                 {hasFilters
-                  ? `${filteredCommunities.length} crew${filteredCommunities.length === 1 ? '' : 's'} found`
-                  : `${subtitle} · crews behind joinable plans`}
+                  ? `${filteredCommunities.length} communit${filteredCommunities.length === 1 ? 'y' : 'ies'} found`
+                  : `${subtitle} · official join paths checked`}
               </p>
               <Link
                 href="/communities/nominate"
                 className="inline-flex min-h-11 flex-shrink-0 items-center rounded-full px-2 text-[11px] font-black uppercase tracking-wide text-[#63FF8F] hover:text-white"
               >
-                Suggest a crew
+                Suggest a community
               </Link>
+            </div>
+            <div className="mt-4">
+              <CommunityWeeklyPicksForm source="directory" city={cityFilter ? cityOptions.find((city) => city.value === cityFilter)?.label : 'your city'} />
+            </div>
+            <div className="mt-4 flex gap-1.5 overflow-x-auto pb-0.5">
+              {COMMUNITY_SEO_GUIDES.map((guide) => (
+                <Link
+                  key={guide.slug}
+                  href={`/communities/singapore/${guide.slug}`}
+                  className="inline-flex min-h-10 flex-shrink-0 items-center rounded-full border border-white/12 px-3 text-[10px] font-black uppercase tracking-wide text-white/52 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+                >
+                  {guide.filterLabel}
+                </Link>
+              ))}
             </div>
           </div>
 
@@ -438,7 +592,7 @@ export default function CommunitiesPageClient({
             ) : (
               <div className="text-center py-20">
                 <Users className="w-8 h-8 text-[#666666] mx-auto mb-3" />
-                <p className="text-sm text-[#999999] mb-1">No crews match your search.</p>
+                <p className="text-sm text-[#999999] mb-1">No communities match your search.</p>
                 <div className="mt-3 flex flex-wrap items-center justify-center gap-4">
                   <button
                     type="button"
@@ -451,7 +605,7 @@ export default function CommunitiesPageClient({
                     href="/communities/nominate"
                     className="inline-flex min-h-11 items-center rounded-full px-2 text-xs font-medium text-[#9fe600] hover:underline"
                   >
-                    Suggest a crew
+                    Suggest a community
                   </Link>
                 </div>
               </div>
@@ -469,7 +623,7 @@ export default function CommunitiesPageClient({
             </p>
             <h2 className="mt-3 text-2xl font-bold text-white">Explore plans</h2>
             <p className="mt-2 text-sm leading-6 text-white/62">
-              Plans are the fastest way to decide where to show up while crew pages are being reviewed.
+              Plans are the fastest way to decide where to show up while community pages are being reviewed.
             </p>
           </Link>
           <Link
@@ -477,9 +631,9 @@ export default function CommunitiesPageClient({
             className="rounded-lg border border-white/10 bg-[#111111] p-5 transition-colors hover:border-white/24"
           >
             <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-white/42">
-              Help map a crew
+              Help map a community
             </p>
-            <h2 className="mt-3 text-2xl font-bold text-white">Suggest a crew</h2>
+            <h2 className="mt-3 text-2xl font-bold text-white">Suggest a community</h2>
             <p className="mt-2 text-sm leading-6 text-white/62">
               Send the official page or group link. We will review it before it appears publicly.
             </p>
@@ -490,18 +644,56 @@ export default function CommunitiesPageClient({
   )
 }
 
+function CrewProofStrip() {
+  return (
+    <section className="border-b border-white/10 bg-[#0B0B0B] px-4 py-3">
+      <div className="mx-auto grid max-w-6xl grid-cols-3 gap-2">
+        {CREW_PROOF_IMAGES.map((item) => (
+          <div
+            key={item.src}
+            className="relative h-20 overflow-hidden rounded-xl border border-white/[0.08] bg-[#181818] sm:h-28"
+          >
+            <Image
+              src={item.src}
+              alt={`${item.label} on SweatBuddies`}
+              fill
+              sizes="(min-width: 640px) 33vw, 33vw"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-black/12 to-transparent" />
+            <span className="absolute bottom-2 left-2 rounded-md bg-black/45 px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-white/86 backdrop-blur">
+              {item.label}
+            </span>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 // ─── Compact Crew Card ──────────────────────────────────────────
 function CrewCard({ community }: { community: CommunityData }) {
   const chips = [
     community.beginnerFriendly ? 'Beginner-friendly' : '',
+    community.soloFriendly ? 'Solo-friendly' : '',
     community.priceType ? formatPriceType(community.priceType) : '',
     ...community.vibeTags,
   ]
     .filter(Boolean)
     .slice(0, 3)
-  const officialLink = community.communityLink || community.sourceUrl
+  const hasOfficialLink = Boolean(community.communityLink || community.websiteUrl || community.sourceUrl)
   const verifiedDate = formatVerifiedDate(community.lastVerifiedAt)
-  const cardImage = community.coverImage || community.logoImage || community.creatorImageUrl
+  const cardImage = community.coverImage || community.logoImage || community.creatorImageUrl || getCategoryFallbackImage(community.category)
+  const activitySignal = community.eventCount > 0
+    ? `${community.eventCount} known plan${community.eventCount === 1 ? '' : 's'}`
+    : hasOfficialLink
+      ? 'Official join path'
+      : 'Source pending'
+  const confidenceLabel = community.confidenceScore
+    ? `Confidence ${community.confidenceScore}`
+    : community.confidenceTier
+      ? `${community.confidenceTier} confidence`
+      : null
 
   return (
     <motion.div
@@ -510,39 +702,29 @@ function CrewCard({ community }: { community: CommunityData }) {
       className="h-full"
     >
       <article className="group flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-[#151515] text-center transition-colors duration-200 hover:border-[#63FF8F]/35 hover:bg-[#1B1B1B]">
-        {cardImage ? (
-          <Link
-            href={`/communities/${community.slug}`}
-            className="relative block aspect-[16/10] overflow-hidden bg-[#222222]"
-            aria-label={`View ${community.name}`}
-          >
-            <Image
-              src={cardImage}
-              alt={community.name}
-              fill
-              sizes="(min-width: 1024px) 260px, (min-width: 640px) 33vw, 100vw"
-              className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
-              unoptimized={!cardImage.startsWith('/')}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/12 to-black/10" />
-            <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
-              {getCategoryEmoji(community.category)} {categoryLabel(community.category)}
-            </span>
-            <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#63FF8F] backdrop-blur">
-              {community.nextEvent
-                ? `Next ${formatEventDate(community.nextEvent.startTime)}`
-                : 'Source page'}
-            </span>
-          </Link>
-        ) : (
-          <Link
-            href={`/communities/${community.slug}`}
-            className="mx-auto mt-4 mb-3 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-white/[0.08]"
-            aria-label={`View ${community.name}`}
-          >
-            <span className="text-2xl">{getCategoryEmoji(community.category)}</span>
-          </Link>
-        )}
+        <Link
+          href={`/communities/${community.slug}`}
+          className="relative block aspect-[16/10] overflow-hidden bg-[#222222]"
+          aria-label={`View ${community.name}`}
+        >
+          <Image
+            src={cardImage}
+            alt={community.name}
+            fill
+            sizes="(min-width: 1024px) 260px, (min-width: 640px) 33vw, 100vw"
+            className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
+            unoptimized={!cardImage.startsWith('/')}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/12 to-black/10" />
+          <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
+            {getCategoryEmoji(community.category)} {categoryLabel(community.category)}
+          </span>
+          <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#63FF8F] backdrop-blur">
+            {community.nextEvent
+              ? `Next ${formatEventDate(community.nextEvent.startTime)}`
+              : 'Source page'}
+          </span>
+        </Link>
 
         <div className="flex flex-1 flex-col p-4">
           {/* Name + verified */}
@@ -569,6 +751,29 @@ function CrewCard({ community }: { community: CommunityData }) {
             <p className="truncate">{community.usualSchedule || 'Schedule varies'}</p>
           </div>
 
+          <div className="mt-2 grid grid-cols-2 gap-1.5">
+            <div className="rounded-lg border border-[#63FF8F]/18 bg-[#63FF8F]/8 px-2 py-1.5 text-left">
+              <p className="truncate font-mono text-[9px] font-black uppercase tracking-wide text-[#63FF8F]">
+                Activity
+              </p>
+              <p className="mt-0.5 truncate text-[11px] font-bold text-white/82">{activitySignal}</p>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-white/[0.04] px-2 py-1.5 text-left">
+              <p className="truncate font-mono text-[9px] font-black uppercase tracking-wide text-[#777777]">
+                Join path
+              </p>
+              <p className="mt-0.5 truncate text-[11px] font-bold text-white/82">
+                {confidenceLabel || (hasOfficialLink ? 'Link found' : 'Needs review')}
+              </p>
+            </div>
+          </div>
+
+          {community.bestFor && (
+            <p className="mt-2 line-clamp-2 min-h-[32px] text-xs leading-4 text-white/66">
+              {community.bestFor}
+            </p>
+          )}
+
           {chips.length > 0 && (
             <div className="mt-2 flex flex-wrap justify-center gap-1">
               {chips.map((chip) => (
@@ -585,20 +790,22 @@ function CrewCard({ community }: { community: CommunityData }) {
           {/* Known plan */}
           <div className="mt-2 rounded-lg border border-white/10 bg-[#101010] px-3 py-2 text-left">
             <p className="font-mono text-[9px] font-black uppercase tracking-[0.16em] text-[#63FF8F]">
-              {community.nextEvent ? 'Next known plan' : 'Trust layer'}
+              {community.nextEvent ? 'Next known plan' : 'Source check'}
             </p>
             <p className="mt-1 truncate text-xs font-bold text-white/82">
               {community.nextEvent
                 ? `${community.nextEvent.title} · ${formatEventDate(community.nextEvent.startTime)}`
-                : 'Official source checked before people join'}
+                : hasOfficialLink
+                  ? 'Official join path found'
+                  : 'Join path pending'}
             </p>
           </div>
 
           {(community.joinPlatform || community.lastVerifiedAt) && (
             <p className="mt-1 text-[10px] uppercase tracking-wider text-[#555555]">
-              {community.joinPlatform
+              {community.sourceLabel || (community.joinPlatform
                 ? `Official ${formatJoinPlatform(community.joinPlatform)}`
-                : 'Official link'}
+                : 'Official link')}
               {verifiedDate ? ` · checked ${verifiedDate}` : ''}
             </p>
           )}
@@ -612,33 +819,49 @@ function CrewCard({ community }: { community: CommunityData }) {
           )}
 
           <div className="mt-auto grid grid-cols-2 gap-2 pt-3">
-            {officialLink ? (
-              <a
-                href={officialLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full bg-[#63FF8F] px-2 text-[11px] font-bold text-black transition-colors hover:bg-[#83FFA6]"
-                aria-label={`Join ${community.name} through their official link`}
-              >
-                Join
-                <ExternalLink className="h-3 w-3" />
-              </a>
-            ) : (
-              <span className="inline-flex min-h-11 items-center justify-center rounded-full bg-white/5 px-2 text-[10px] font-semibold text-[#777777]">
-                Link pending
-              </span>
-            )}
+            <SaveCommunityButton
+              communitySlug={community.slug}
+              communityName={community.name}
+              source="card"
+              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full border border-white/12 px-2 text-[11px] font-bold text-white transition-colors hover:border-[#63FF8F]/60 hover:bg-white/5"
+            />
             <Link
               href={`/communities/${community.slug}`}
-              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full border border-white/12 px-2 text-[11px] font-bold text-white transition-colors hover:border-[#63FF8F]/60 hover:bg-white/5"
+              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full bg-[#63FF8F] px-2 text-[11px] font-bold text-black transition-colors hover:bg-[#83FFA6]"
+              aria-label={`View ${community.name} details`}
             >
-              Details
-              <ArrowRight className="h-3 w-3" />
+              View details
+              <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         </div>
       </article>
     </motion.div>
+  )
+}
+
+function QuickFilterButton({
+  label,
+  active,
+  onClick,
+}: {
+  label: string
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={`min-h-10 shrink-0 rounded-full border px-3 text-[11px] font-black uppercase tracking-wide transition-colors ${
+        active
+          ? 'border-[#63FF8F] bg-[#63FF8F] text-black'
+          : 'border-white/12 bg-[#151515] text-white/66 hover:border-[#63FF8F]/60 hover:text-white'
+      }`}
+    >
+      {label}
+    </button>
   )
 }
 

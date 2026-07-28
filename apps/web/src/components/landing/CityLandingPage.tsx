@@ -66,7 +66,7 @@ export function CityLandingPage({
   finalBody,
 }: CityLandingPageProps) {
   const trackingBase = { city, citySlug, experiment: 'two_city_newcomer_wedge' }
-  const cityPlansHref = `/buddy?city=${citySlug}`
+  const cityPlansHref = `/buddy?view=list&city=${citySlug}`
 
   return (
     <div className="min-h-screen bg-[#0B0B0B] text-white">
@@ -103,10 +103,11 @@ export function CityLandingPage({
               sourcePlacement="city_nav_host"
               ctaLabel={`Host a session in ${city}`}
               successHref="/host"
+              aria-label="Host a session"
               className="min-h-11 rounded-full bg-[#63FF8F] px-3 py-2.5 text-xs font-bold uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6] min-[380px]:px-4 sm:text-sm"
             >
-              <span className="min-[380px]:hidden">Host</span>
-              <span className="hidden min-[380px]:inline">Host a session</span>
+              <span aria-hidden="true" className="min-[380px]:hidden">Host</span>
+              <span aria-hidden="true" className="hidden min-[380px]:inline">Host a session</span>
             </LandingIntentCapture>
           </nav>
         </div>

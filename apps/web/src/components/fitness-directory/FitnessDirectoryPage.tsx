@@ -193,13 +193,13 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
               href="/communities"
               className="hidden min-h-10 items-center rounded-full border border-white/12 px-3 text-xs font-black uppercase tracking-wide text-white/62 transition-colors hover:border-white/28 hover:text-white sm:inline-flex"
             >
-              Crews
+              Communities
             </Link>
             <Link
               href="/communities/nominate"
               className="inline-flex min-h-10 items-center rounded-full bg-[#63FF8F] px-3 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
             >
-              Suggest a crew
+              Suggest a community
             </Link>
           </nav>
         </div>
@@ -339,7 +339,7 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
                 className="inline-flex min-h-10 w-fit items-center gap-2 rounded-full border border-white/12 px-3 text-xs font-black uppercase tracking-wide text-white/66 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
               >
                 <Users size={15} />
-                Browse crews
+                Browse communities
               </Link>
             </div>
 

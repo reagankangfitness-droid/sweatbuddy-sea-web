@@ -170,7 +170,18 @@ async function approveNomination(id: string, payload: ReviewPayload, reviewedBy:
           adminNotes: normalizeText(payload.adminNotes, 2000),
         },
       })
-      return { community, nomination: updatedNomination }
+      const trustedManagers = await tx.communityMember.updateMany({
+        where: {
+          communityId: community.id,
+          role: { in: ['OWNER', 'ADMIN'] },
+          managerTrustLevel: 'PENDING',
+        },
+        data: {
+          managerTrustLevel: 'TRUSTED_MANAGER',
+          managerVerifiedAt: new Date(),
+        },
+      })
+      return { community, nomination: updatedNomination, trustedManagerCount: trustedManagers.count }
     })
 
     await logAdminAction({
@@ -184,6 +195,7 @@ async function approveNomination(id: string, payload: ReviewPayload, reviewedBy:
         slug: result.community.slug,
         category,
         sourceUrl,
+        trustedManagerCount: result.trustedManagerCount,
       },
     }).catch((error) => console.error('[community-nominations audit]', error))
 

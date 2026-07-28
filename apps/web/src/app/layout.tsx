@@ -28,9 +28,9 @@ const barlowCondensed = Barlow_Condensed({
 })
 
 const BASE_URL = 'https://www.sweatbuddies.co'
-const SITE_TITLE = 'SweatBuddies | Social Fitness Events in Bangkok and Singapore'
+const SITE_TITLE = 'SweatBuddies | Fitness Communities You Can Actually Join'
 const SITE_DESCRIPTION =
-  'Find your people through fitness. Discover social runs, yoga, pickleball, strength, recovery, and wellness events across Bangkok and Singapore.'
+  'Find your people through fitness. Discover active run clubs, yoga groups, games, recovery crews, and community-led plans near you.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -40,10 +40,10 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   keywords: [
-    'Bangkok fitness sessions',
-    'Singapore fitness sessions',
-    'social fitness events',
+    'fitness communities',
+    'community-led fitness',
     'local fitness communities',
+    'social fitness events',
     'run club',
     'yoga group',
     'pickleball crew',
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
         url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SweatBuddies social fitness events in Bangkok and Singapore.',
+        alt: 'SweatBuddies fitness communities and social fitness plans.',
       },
     ],
   },

@@ -30,7 +30,7 @@ export function CreateChoiceSheet({ open, onClose, onHostSession }: CreateChoice
               What can people show up to?
             </h2>
             <p id="create-choice-description" className="mt-1 text-xs leading-5 text-[#888888]">
-              Host a specific session people can join, or send us a crew/source page to review.
+              Post a free session for review, or send us a community page to verify.
             </p>
           </div>
           <button
@@ -53,9 +53,9 @@ export function CreateChoiceSheet({ open, onClose, onHostSession }: CreateChoice
               <CalendarPlus className="h-5 w-5" />
             </span>
             <span className="min-w-0 pr-4">
-              <span className="block text-sm font-black uppercase tracking-wide">Host a session</span>
+              <span className="block text-sm font-black uppercase tracking-wide">Post a session</span>
               <span className="mt-1 block text-xs font-semibold leading-5 text-black/58">
-                Publish a run, class, game, or wellness plan people can join.
+                Share a run, class, game, or wellness plan people can join.
               </span>
             </span>
           </button>
@@ -69,9 +69,9 @@ export function CreateChoiceSheet({ open, onClose, onHostSession }: CreateChoice
               <Users className="h-5 w-5" />
             </span>
             <span className="min-w-0 pr-4">
-              <span className="block text-sm font-black uppercase tracking-wide text-white">Suggest a crew</span>
+              <span className="block text-sm font-black uppercase tracking-wide text-white">List or claim a community</span>
               <span className="mt-1 block text-xs font-semibold leading-5 text-[#888888]">
-                Send us the official link so we can review and map it.
+                Verify the official link so you can post trusted, paid, or recurring sessions.
               </span>
             </span>
           </Link>

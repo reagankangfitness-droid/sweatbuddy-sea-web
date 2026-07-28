@@ -15,7 +15,33 @@ const ACTIVITY_TYPES = [
   { slug: 'other', label: 'Other', emoji: '\u{1F3C5}' },
 ]
 
+const REQUEST_INTENTS = [
+  {
+    value: 'submit',
+    label: 'Submit community',
+    description: 'Add a public community people can discover.',
+  },
+  {
+    value: 'claim',
+    label: 'Claim listing',
+    description: 'I manage this community and want to keep it accurate.',
+  },
+  {
+    value: 'update',
+    label: 'Update info',
+    description: 'Fix a schedule, area, category, or official link.',
+  },
+  {
+    value: 'remove',
+    label: 'Request removal',
+    description: 'Ask us to take down or hide a listing.',
+  },
+] as const
+
+type RequestIntent = typeof REQUEST_INTENTS[number]['value']
+
 interface NominationForm {
+  intent: RequestIntent
   communityName: string
   city: string
   category: string
@@ -34,6 +60,7 @@ type SubmissionResult = {
 }
 
 const INITIAL_FORM: NominationForm = {
+  intent: 'submit',
   communityName: '',
   city: 'Singapore',
   category: '',
@@ -52,9 +79,13 @@ export default function NominateCommunityPage() {
     () => ACTIVITY_TYPES.find((type) => type.slug === form.category),
     [form.category]
   )
+  const selectedIntent = useMemo(
+    () => REQUEST_INTENTS.find((intent) => intent.value === form.intent) ?? REQUEST_INTENTS[0],
+    [form.intent],
+  )
 
   function update(field: keyof NominationForm, value: string) {
-    setForm((prev) => ({ ...prev, [field]: value }))
+    setForm((prev) => ({ ...prev, [field]: value as NominationForm[typeof field] }))
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -76,6 +107,11 @@ export default function NominateCommunityPage() {
 
     setSaving(true)
     try {
+      const noteWithIntent = [
+        `Request: ${selectedIntent.label}`,
+        form.note.trim(),
+      ].filter(Boolean).join('\n\n')
+
       const res = await fetch('/api/community-nominations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -84,7 +120,7 @@ export default function NominateCommunityPage() {
           city: form.city.trim(),
           category: form.category || null,
           sourceUrl: form.sourceUrl.trim(),
-          note: form.note.trim() || null,
+          note: noteWithIntent,
           submitterName: form.submitterName.trim() || null,
           submitterEmail: form.submitterEmail.trim() || null,
         }),
@@ -105,11 +141,11 @@ export default function NominateCommunityPage() {
       })
       setForm(INITIAL_FORM)
       if (data.requiresReview) {
-        toast.success('Submitted for a quick review')
+        toast.success('Request submitted for a quick review')
       } else if (data.duplicate) {
         toast.success('This community is already listed')
       } else {
-        toast.success('Submitted for review')
+        toast.success('Request submitted for review')
       }
     } catch {
       toast.error('Failed to submit nomination')
@@ -127,7 +163,7 @@ export default function NominateCommunityPage() {
             className="mb-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#999999] hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to crews
+            Back to communities
           </Link>
 
           <div className="rounded-lg border border-white/10 bg-[#151515] p-6">
@@ -143,8 +179,8 @@ export default function NominateCommunityPage() {
               {submission.requiresReview
                 ? 'We will keep it out of public discovery until it passes a trust check or an approved manager claims it.'
                 : submission.limited
-                  ? 'It needs crew verification or a manager claim before broad public discovery.'
-                  : 'If it is already listed, people can find the existing crew page from the event map.'}
+                  ? 'It needs community verification or a manager claim before broad public discovery.'
+                  : 'If it is already listed, people can find the existing community page from the directory.'}
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <button
@@ -166,7 +202,7 @@ export default function NominateCommunityPage() {
                 href="/communities"
                 className="rounded-full border border-white/15 px-4 py-3 text-sm font-bold text-white hover:bg-white/5"
               >
-                Browse crews
+                Browse communities
               </Link>
             </div>
           </div>
@@ -183,22 +219,54 @@ export default function NominateCommunityPage() {
           className="mb-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#999999] hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" />
-          Back to crews
+          Back to communities
         </Link>
 
         <div className="mb-8">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#63FF8F]">
-            Suggest a crew
+            Community requests
           </p>
           <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-            Help us verify the crew behind local fitness events.
+            Submit, claim, update, or remove a community listing.
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-6 text-[#AAAAAA]">
-            Send the official page or group link. New suggestions stay queued until the crew is verified or a manager claim is approved.
+            Send the official page or group link. New suggestions stay queued until the community is verified or a manager claim is approved.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-white/10 bg-[#151515] p-5 sm:p-6">
+          <div>
+            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#777777]">
+              What do you need?
+            </label>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {REQUEST_INTENTS.map((intent) => {
+                const active = form.intent === intent.value
+
+                return (
+                  <button
+                    key={intent.value}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => update('intent', intent.value)}
+                    className={`min-h-[76px] rounded-lg border p-3 text-left transition-colors ${
+                      active
+                        ? 'border-[#63FF8F] bg-[#63FF8F]/10'
+                        : 'border-white/12 bg-[#101010] hover:border-white/28'
+                    }`}
+                  >
+                    <span className={`block text-sm font-bold ${active ? 'text-[#63FF8F]' : 'text-white'}`}>
+                      {intent.label}
+                    </span>
+                    <span className="mt-1 block text-xs leading-5 text-[#888888]">
+                      {intent.description}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
           <div>
             <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#777777]">
               Community name
@@ -247,12 +315,12 @@ export default function NominateCommunityPage() {
 
           <div>
             <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#777777]">
-              Official link
+              Official or listing link
             </label>
             <input
               value={form.sourceUrl}
               onChange={(event) => update('sourceUrl', event.target.value)}
-              placeholder="Instagram, website, Telegram, WhatsApp, Strava..."
+              placeholder="Instagram, website, Telegram, WhatsApp, Strava, or listing URL..."
               maxLength={500}
               className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
             />
@@ -265,7 +333,7 @@ export default function NominateCommunityPage() {
             <textarea
               value={form.note}
               onChange={(event) => update('note', event.target.value)}
-              placeholder="Anything useful for verification: usual meet spot, who it is for, or why it belongs here."
+              placeholder="Anything useful: usual meet spot, what changed, owner proof, or why the listing should be removed."
               maxLength={1000}
               rows={4}
               className="w-full resize-none rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
@@ -311,7 +379,7 @@ export default function NominateCommunityPage() {
               className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-5 text-sm font-bold text-black transition-colors hover:bg-[#83FFA6] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              Suggest crew
+              {selectedIntent.label}
             </button>
           </div>
         </form>

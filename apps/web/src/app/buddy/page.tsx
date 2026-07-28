@@ -3727,18 +3727,18 @@ function MapActivityDrawer({
           : 'Nothing live here yet'
 
   return (
-    <section className="absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+1rem)] z-20 rounded-t-[24px] border border-white/[0.12] bg-[#F8F8F4]/96 p-4 text-black shadow-[0_22px_70px_rgba(0,0,0,0.45)] backdrop-blur-xl md:left-auto md:right-4 md:w-[390px] md:rounded-2xl">
-      <div className="mx-auto mb-3 h-1 w-12 rounded-full bg-black/12 md:hidden" />
+    <section className="absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-20 rounded-2xl border border-white/[0.14] bg-[#F8F8F4]/92 p-3 text-black shadow-[0_18px_54px_rgba(0,0,0,0.42)] backdrop-blur-xl md:left-auto md:right-4 md:w-[390px] md:p-4">
+      <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-black/12 md:hidden" />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-black/45">
             Community activity
           </p>
-          <h2 className="mt-1 text-xl font-black leading-tight">
+          <h2 className="mt-1 truncate text-lg font-black leading-tight md:text-xl">
             {heading}
           </h2>
           {!loading && activityCount > 0 ? (
-            <p className="mt-1 text-xs font-semibold text-black/50">
+            <p className="mt-1 truncate text-xs font-semibold text-black/50">
               {activeLocationLabel} · {activeDateLabel} · {sessions.length} plan{sessions.length !== 1 ? 's' : ''}
             </p>
           ) : null}
@@ -3753,7 +3753,41 @@ function MapActivityDrawer({
         </button>
       </div>
 
-      <div className="mt-3 max-h-[29dvh] space-y-2 overflow-y-auto pr-1">
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        <button
+          type="button"
+          onClick={onCreate}
+          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-[#63FF8F] px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          Post
+        </button>
+        <Link
+          href={communityHref}
+          onClick={() =>
+            trackBrowserEvent('buddy_map_list_item_clicked', {
+              kind: 'communities_link',
+              source: 'map_activity_drawer',
+              city: activeLocationLabel,
+              position: 0,
+            })
+          }
+          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-black/12 px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-black/[0.04]"
+        >
+          <Users className="h-3.5 w-3.5" />
+          Communities
+        </Link>
+        <button
+          type="button"
+          onClick={onShowList}
+          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-black/12 px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-black/[0.04]"
+        >
+          <ArrowRight className="h-3.5 w-3.5" />
+          Plans
+        </button>
+      </div>
+
+      <div className="mt-3 hidden max-h-[29dvh] space-y-2 overflow-y-auto pr-1 md:block">
         {loading ? (
           [0, 1, 2].map((item) => (
             <div key={item} className="grid grid-cols-[44px_minmax(0,1fr)] gap-3 rounded-xl bg-black/[0.04] p-2">
@@ -3796,40 +3830,6 @@ function MapActivityDrawer({
             </p>
           </div>
         )}
-      </div>
-
-      <div className="mt-3 grid grid-cols-3 gap-2">
-        <button
-          type="button"
-          onClick={onCreate}
-          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-[#63FF8F] px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Post
-        </button>
-        <Link
-          href={communityHref}
-          onClick={() =>
-            trackBrowserEvent('buddy_map_list_item_clicked', {
-              kind: 'communities_link',
-              source: 'map_activity_drawer',
-              city: activeLocationLabel,
-              position: 0,
-            })
-          }
-          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-black/12 px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-black/[0.04]"
-        >
-          <Users className="h-3.5 w-3.5" />
-          Communities
-        </Link>
-        <button
-          type="button"
-          onClick={onShowList}
-          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-black/12 px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-black/[0.04]"
-        >
-          <ArrowRight className="h-3.5 w-3.5" />
-          Plans
-        </button>
       </div>
     </section>
   )
@@ -4032,7 +4032,7 @@ function MapCommandOverlay({
               : 'Community activity nearby'}
           </h2>
           <p className="mt-0.5 truncate text-xs font-semibold text-white/48">
-            {activeDateLabel} · {sessionCount} plan{sessionCount !== 1 ? 's' : ''} · community heat
+            {activeDateLabel} · {sessionCount} plan{sessionCount !== 1 ? 's' : ''} · source-checked
           </p>
         </div>
         <button

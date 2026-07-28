@@ -261,8 +261,12 @@
 
 	  @media (max-width: 767px) {
     .sb-map-marker {
-      min-height: 50px;
-      min-width: 50px;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      min-height: 52px;
+      min-width: 52px;
       padding: 3px;
       border-color: rgba(0, 0, 0, 0.34);
       border-radius: 999px;
@@ -274,10 +278,7 @@
     .sb-map-marker__primary,
     .sb-map-marker__price,
     .sb-map-marker__single {
-      min-height: 0;
-      min-width: 0;
-      padding: 0;
-      font-size: 0;
+      display: none;
     }
 
     .sb-map-marker__emoji {
@@ -295,8 +296,10 @@
     }
 
     .sb-map-marker--community {
-      min-height: 50px;
-      min-width: 50px;
+      width: 54px;
+      height: 54px;
+      min-height: 54px;
+      min-width: 54px;
       background: #111111;
       box-shadow: 0 10px 26px rgba(0, 0, 0, 0.46), 0 0 0 3px rgba(99, 255, 143, 0.22);
     }
@@ -307,6 +310,8 @@
     }
 
     .sb-map-marker--place {
+      width: 44px;
+      height: 44px;
       min-height: 42px;
       min-width: 42px;
       background: #F4F4F0;
@@ -322,6 +327,8 @@
     }
 
     .sb-map-marker--featured-place {
+      width: 48px;
+      height: 48px;
       min-height: 46px;
       min-width: 46px;
       background: #B6FF00;
@@ -347,6 +354,30 @@
 	      display: none;
 	    }
 	  }
+
+  @media (max-width: 767px) {
+    .maplibregl-ctrl-top-right {
+      top: 12px !important;
+      right: 12px !important;
+    }
+
+    .maplibregl-ctrl-bottom-right {
+      right: 8px !important;
+      bottom: calc(env(safe-area-inset-bottom) + 0.5rem) !important;
+    }
+
+    .maplibregl-ctrl-attrib {
+      max-width: 44px;
+      overflow: hidden;
+      border-radius: 999px !important;
+      white-space: nowrap;
+    }
+
+    .maplibregl-ctrl-attrib.maplibregl-compact-show {
+      max-width: calc(100vw - 32px);
+      border-radius: 6px !important;
+    }
+  }
 
   .maplibregl-ctrl-group {
     overflow: hidden;

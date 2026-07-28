@@ -224,7 +224,6 @@ export function SessionVectorMap({
   return (
     <div className={`relative h-full w-full overflow-hidden bg-[#161A18] ${className ?? ''}`}>
       <div ref={containerRef} className="h-full w-full" />
-      <ActivityHeatLayer pins={resolvedPins} />
       {!ready && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[#161A18]">
           <Loader2 className="h-6 w-6 animate-spin text-white/50" />
@@ -252,19 +251,17 @@ function StaticPinMapFallback({
   showEmptyState: boolean
 }) {
   const bounds = getStaticBounds(pins.map((entry) => entry.position))
-  const activitySignalCount = pins.filter((entry) => entry.pin.kind !== 'place').length
+  const activityPinCount = pins.filter((entry) => entry.pin.kind !== 'place').length
 
   return (
     <div className={`relative h-full w-full overflow-hidden bg-[#1C211F] ${className ?? ''}`}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_86%_12%,rgba(36,48,52,0.9),transparent_24%),radial-gradient(circle_at_78%_78%,rgba(34,43,47,0.82),transparent_28%),linear-gradient(135deg,rgba(25,31,29,0.96),rgba(28,36,32,0.96))]" />
       <div className="absolute inset-0 opacity-42 [background-image:linear-gradient(24deg,transparent_0_42%,rgba(239,246,236,0.10)_42.3%,transparent_43.2%),linear-gradient(112deg,transparent_0_45%,rgba(239,246,236,0.075)_45.3%,transparent_46.1%),linear-gradient(154deg,transparent_0_50%,rgba(239,246,236,0.055)_50.2%,transparent_50.9%),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:360px_240px,430px_280px,520px_320px,96px_96px,96px_96px]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_64%,rgba(54,67,56,0.78),transparent_22%),radial-gradient(circle_at_58%_34%,rgba(45,57,48,0.56),transparent_18%),radial-gradient(circle_at_44%_88%,rgba(33,42,45,0.78),transparent_20%)]" />
-      <ActivityHeatLayer pins={pins} />
       <div className="absolute inset-x-3 top-3 z-[4] flex items-start justify-between gap-2">
         <div className="pointer-events-none min-w-0 rounded-md border border-white/10 bg-black/45 px-2.5 py-2 font-mono text-[10px] font-black uppercase tracking-[0.14em] text-white/72 backdrop-blur min-[380px]:px-3 min-[380px]:text-[11px]">
           <span className="block truncate">
-            {activitySignalCount > 0 ? `${activitySignalCount} activity` : 'Activity map'}
-            <span className="hidden min-[380px]:inline">{activitySignalCount > 0 ? ' signals' : ''}</span>
+            {activityPinCount > 0 ? `${activityPinCount} mapped` : 'Activity map'}
           </span>
         </div>
         <button
@@ -339,36 +336,6 @@ function StaticPinMapFallback({
         })
       )}
     </div>
-  )
-}
-
-function ActivityHeatLayer({
-  pins,
-}: {
-  pins: Array<{ pin: SessionVectorMapPin; position: { lat: number; lng: number } }>
-}) {
-  const activityPins = pins.filter((entry) => entry.pin.kind !== 'place')
-  if (activityPins.length === 0) return null
-
-  const bounds = getStaticBounds(activityPins.map((entry) => entry.position))
-  const gradients = activityPins.slice(0, 12).map(({ pin, position }, index) => {
-    const point = projectStaticPoint(position, bounds)
-    const opacity = pin.kind === 'session' ? 0.36 : 0.28
-    const radius = pin.kind === 'session' ? 19 : 18
-    const color = pin.kind === 'session' ? `rgba(182,255,0,${opacity})` : `rgba(99,255,143,${opacity})`
-    const secondary = pin.kind === 'session' ? 'rgba(99,255,143,0.12)' : 'rgba(182,255,0,0.10)'
-    const x = Math.max(8, Math.min(92, point.x + ((index % 3) - 1) * 2.5))
-    const y = Math.max(8, Math.min(92, point.y + ((index % 2) ? 2 : -2)))
-
-    return `radial-gradient(circle at ${x}% ${y}%, ${color} 0, ${secondary} 18%, transparent ${radius}%)`
-  })
-
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-[1] opacity-90 blur-[2px] mix-blend-screen"
-      style={{ backgroundImage: gradients.join(',') }}
-    />
   )
 }
 

@@ -2811,24 +2811,24 @@ function AttendeePreviewSheet({
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 18 }}
-      className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+12px)] z-40 mx-auto max-w-md rounded-2xl border border-[#3A332B] bg-[#1B1814]/97 p-4 shadow-[0_18px_60px_rgba(0,0,0,0.55)] backdrop-blur md:left-auto md:right-5 md:mx-0"
+      className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+12px)] z-40 mx-auto max-w-md rounded-2xl border border-white/[0.10] bg-[#111412]/97 p-4 shadow-[0_18px_60px_rgba(0,0,0,0.55)] backdrop-blur md:left-auto md:right-5 md:mx-0"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#F2C879]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#C6E76A]">
             Going to this
           </p>
-          <h3 className="mt-1 line-clamp-2 text-base font-black leading-tight text-[#F7F0E8]">
+          <h3 className="mt-1 line-clamp-2 text-base font-black leading-tight text-white">
             {session.title}
           </h3>
-          <p className="mt-1 truncate text-xs font-semibold text-[#A9A19A]">
+          <p className="mt-1 truncate text-xs font-semibold text-white/56">
             Hosted by {hostLabel}
           </p>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[#A9A19A] transition-colors hover:bg-white/[0.06] hover:text-white"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white/56 transition-colors hover:bg-white/[0.06] hover:text-white"
           aria-label="Close attendees"
         >
           <X className="h-4 w-4" />
@@ -2836,23 +2836,23 @@ function AttendeePreviewSheet({
       </div>
 
       <div className="mt-4 grid grid-cols-3 gap-2">
-        <div className="rounded-xl border border-[#3A332B] bg-[#16130F] px-3 py-2">
-          <p className="text-lg font-black text-[#F7F0E8]">{session.attendeeCount}</p>
-          <p className="font-mono text-[9px] font-black uppercase tracking-wide text-[#A9A19A]">
+        <div className="rounded-xl border border-white/[0.10] bg-[#151816] px-3 py-2">
+          <p className="text-lg font-black text-white">{session.attendeeCount}</p>
+          <p className="font-mono text-[9px] font-black uppercase tracking-wide text-white/56">
             Going
           </p>
         </div>
-        <div className="rounded-xl border border-[#3A332B] bg-[#16130F] px-3 py-2">
-          <p className="text-lg font-black text-[#66D9C2]">{soloCount}</p>
-          <p className="font-mono text-[9px] font-black uppercase tracking-wide text-[#A9A19A]">
+        <div className="rounded-xl border border-white/[0.10] bg-[#151816] px-3 py-2">
+          <p className="text-lg font-black text-[#C6E76A]">{soloCount}</p>
+          <p className="font-mono text-[9px] font-black uppercase tracking-wide text-white/56">
             Solo
           </p>
         </div>
-        <div className="rounded-xl border border-[#3A332B] bg-[#16130F] px-3 py-2">
-          <p className="text-lg font-black text-[#F2C879]">
+        <div className="rounded-xl border border-white/[0.10] bg-[#151816] px-3 py-2">
+          <p className="text-lg font-black text-[#C6E76A]">
             {session.maxPeople ? Math.max(session.maxPeople - session.attendeeCount, 0) : 'Open'}
           </p>
-          <p className="font-mono text-[9px] font-black uppercase tracking-wide text-[#A9A19A]">
+          <p className="font-mono text-[9px] font-black uppercase tracking-wide text-white/56">
             Spots
           </p>
         </div>
@@ -2863,10 +2863,10 @@ function AttendeePreviewSheet({
           visibleAttendees.map((attendee) => (
             <div
               key={attendee.id}
-              className="flex min-h-11 items-center justify-between gap-3 rounded-xl border border-[#3A332B] bg-[#16130F] px-3"
+              className="flex min-h-11 items-center justify-between gap-3 rounded-xl border border-white/[0.10] bg-[#151816] px-3"
             >
               <div className="flex min-w-0 items-center gap-2">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#332B23] text-xs font-black text-[#F7F0E8]">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#1B1F1C] text-xs font-black text-white">
                   {attendee.imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={attendee.imageUrl} alt="" className="h-full w-full object-cover" />
@@ -2874,21 +2874,21 @@ function AttendeePreviewSheet({
                     (attendee.name?.[0]?.toUpperCase() ?? '?')
                   )}
                 </span>
-                <span className="truncate text-sm font-bold text-[#F7F0E8]">
+                <span className="truncate text-sm font-bold text-white">
                   {attendee.name?.split(' ')[0] ?? 'Someone'}
                 </span>
               </div>
               {attendee.goingSolo ? (
-                <span className="shrink-0 rounded-full border border-[#66D9C2]/25 bg-[#66D9C2]/10 px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-[#66D9C2]">
+                <span className="shrink-0 rounded-full border border-[#C6E76A]/25 bg-[#C6E76A]/10 px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-[#C6E76A]">
                   Solo
                 </span>
               ) : null}
             </div>
           ))
         ) : (
-          <div className="rounded-xl border border-dashed border-[#4A4035] bg-[#16130F] px-4 py-5 text-center">
-            <p className="text-sm font-bold text-[#F7F0E8]">No one has joined yet.</p>
-            <p className="mt-1 text-xs text-[#A9A19A]">Be first in.</p>
+          <div className="rounded-xl border border-dashed border-white/[0.14] bg-[#151816] px-4 py-5 text-center">
+            <p className="text-sm font-bold text-white">No one has joined yet.</p>
+            <p className="mt-1 text-xs text-white/56">Be first in.</p>
           </div>
         )}
       </div>
@@ -2899,7 +2899,7 @@ function AttendeePreviewSheet({
             type="button"
             disabled={rsvpLoading}
             onClick={() => onJoin(session, 'attendee_preview_sheet')}
-            className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#F7F0E8] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-[#11100E] transition-colors hover:bg-white disabled:cursor-wait disabled:bg-[#2A241D] disabled:text-[#71675D]"
+            className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-white px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-neutral-200 disabled:cursor-wait disabled:bg-[#1B1F1C] disabled:text-white/40"
           >
             {rsvpLoading ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -2912,7 +2912,7 @@ function AttendeePreviewSheet({
         <Link
           href={`/activities/${session.id}`}
           onClick={() => trackSessionClick(session, 'attendee_preview_sheet', 0)}
-          className={`inline-flex min-h-10 items-center justify-center rounded-full border border-[#4A4035] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-[#D7CEC4] transition-colors hover:border-[#F2C879]/55 hover:text-[#F7F0E8] ${canQuickRsvp && !isJoined ? '' : 'col-span-2'}`}
+          className={`inline-flex min-h-10 items-center justify-center rounded-full border border-white/[0.14] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#C6E76A]/55 hover:text-white ${canQuickRsvp && !isJoined ? '' : 'col-span-2'}`}
         >
           Details
         </Link>
@@ -3810,11 +3810,11 @@ function SessionCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
     >
-      <div className="group flex w-[286px] min-h-[420px] flex-shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-[#3A332B] bg-[#1B1814] shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition-colors hover:border-[#E66A4E]/45 hover:bg-[#211D18] sm:w-auto sm:flex-shrink">
+      <div className="group flex w-[286px] min-h-[420px] flex-shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-white/[0.10] bg-[#111412] shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition-colors hover:border-[#C6E76A]/35 hover:bg-[#151816] sm:w-auto sm:flex-shrink">
         <Link
           href={`/activities/${session.id}`}
           onClick={() => trackSessionClick(session, source, index)}
-          className="relative block aspect-[16/10] overflow-hidden bg-[#221D17]"
+          className="relative block aspect-[16/10] overflow-hidden bg-[#151816]"
         >
           <Image
             src={imageSrc}
@@ -3824,18 +3824,18 @@ function SessionCard({
             className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
             unoptimized={imageSrc.startsWith('/api/') || imageSrc.startsWith('http')}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#11100E]/90 via-[#11100E]/20 to-black/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D0C]/90 via-[#0B0D0C]/20 to-black/10" />
           <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
             {activityLabel}
           </span>
-          <span className="absolute right-3 top-3 rounded-md bg-[#F2C879] px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#11100E] shadow-md">
+          <span className="absolute right-3 top-3 rounded-md bg-[#C6E76A] px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-black shadow-md">
             {priceDisplay}
           </span>
           <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-white backdrop-blur">
             {timeLabel}
           </span>
           {isJoined && !isHosting ? (
-            <span className="absolute bottom-3 right-3 rounded-md bg-[#66D9C2] px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#11100E]">
+            <span className="absolute bottom-3 right-3 rounded-md bg-[#C6E76A] px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-black">
               Going
             </span>
           ) : session.imageSourceLabel ? (
@@ -3848,20 +3848,20 @@ function SessionCard({
         <div className="flex flex-1 flex-col p-3.5">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="truncate font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#F2C879]">
+              <p className="truncate font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#C6E76A]">
                 {timeLabel}
               </p>
-              <p className="mt-1 truncate text-[11px] font-semibold capitalize text-[#A9A19A]">
+              <p className="mt-1 truncate text-[11px] font-semibold capitalize text-white/56">
                 {areaLabel} · {activityLabel}
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-1.5">
               {isJoined && !isHosting ? (
-                <span className="rounded-full bg-[#66D9C2] px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-[#11100E]">
+                <span className="rounded-full bg-[#C6E76A] px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-black">
                   Going
                 </span>
               ) : null}
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#3A332B] bg-[#2A241D] text-xl">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.10] bg-[#1B1F1C] text-xl">
                 {emoji}
               </span>
             </div>
@@ -3872,13 +3872,13 @@ function SessionCard({
             onClick={() => trackSessionClick(session, source, index)}
             className="mt-3 block"
           >
-            <h3 className="line-clamp-2 min-h-[40px] text-[15px] font-black leading-tight text-[#F7F0E8] transition-colors group-hover:text-[#F2C879]">
+            <h3 className="line-clamp-2 min-h-[40px] text-[15px] font-black leading-tight text-white transition-colors group-hover:text-[#C6E76A]">
               {displayName}
             </h3>
           </Link>
 
           <div className="mt-2 flex min-w-0 items-center gap-2">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#3A332B] bg-[#2A241D] text-[11px] font-black text-[#F7F0E8]">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/[0.10] bg-[#1B1F1C] text-[11px] font-black text-white">
               {avatarSrc ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={avatarSrc} alt="" className="h-full w-full object-cover" />
@@ -3887,23 +3887,23 @@ function SessionCard({
               )}
             </span>
             <div className="min-w-0">
-              <p className="truncate text-[11px] font-bold text-[#F7F0E8]">Hosted by {hostLabel}</p>
-              <p className="truncate text-[10px] font-semibold text-[#A78B6D]">{trustLabel}</p>
+              <p className="truncate text-[11px] font-bold text-white">Hosted by {hostLabel}</p>
+              <p className="truncate text-[10px] font-semibold text-white/50">{trustLabel}</p>
             </div>
           </div>
 
-          <div className="mt-3 rounded-xl border border-[#3A332B] bg-[#16130F] px-3 py-2">
+          <div className="mt-3 rounded-xl border border-white/[0.10] bg-[#151816] px-3 py-2">
             <div className="flex min-w-0 items-center justify-between gap-2">
               <AttendeePreview
                 attendees={session.attendees}
                 attendeeCount={session.attendeeCount}
                 onClick={onPreviewAttendees ? () => onPreviewAttendees(session) : undefined}
               />
-              <span className="shrink-0 rounded-full bg-[#2A241D] px-2 py-1 text-right text-[10px] font-black uppercase tracking-wide text-[#F2C879]">
+              <span className="shrink-0 rounded-full bg-[#C6E76A]/10 px-2 py-1 text-right text-[10px] font-black uppercase tracking-wide text-[#C6E76A]">
                 {confidenceLabel}
               </span>
             </div>
-            <p className="mt-2 line-clamp-2 text-[11px] leading-5 text-[#A9A19A]">
+            <p className="mt-2 line-clamp-2 text-[11px] leading-5 text-white/56">
               {showUpConfidence.reason}
             </p>
           </div>
@@ -3916,12 +3916,12 @@ function SessionCard({
                     key={signal.key}
                     className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide ${
                       signal.tone === 'teal'
-                        ? 'border-[#66D9C2]/25 bg-[#66D9C2]/10 text-[#66D9C2]'
+                        ? 'border-[#C6E76A]/25 bg-[#C6E76A]/10 text-[#C6E76A]'
                         : signal.tone === 'hot'
-                          ? 'border-[#E66A4E]/30 bg-[#E66A4E]/10 text-[#FF9A83]'
+                          ? 'border-[#C6E76A]/25 bg-[#C6E76A]/10 text-[#C6E76A]'
                           : signal.tone === 'gold'
-                            ? 'border-[#F2C879]/25 bg-[#F2C879]/10 text-[#F2C879]'
-                            : 'border-[#3A332B] bg-[#241F19] text-[#D7CEC4]'
+                            ? 'border-[#C6E76A]/25 bg-[#C6E76A]/10 text-[#C6E76A]'
+                            : 'border-white/[0.10] bg-white/[0.06] text-white/70'
                     }`}
                   >
                     {signal.icon === 'shield' ? <ShieldCheck className="h-3 w-3" /> : null}
@@ -3945,9 +3945,9 @@ function SessionCard({
                   }}
                   className={`inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full px-3 font-mono text-[10px] font-black uppercase tracking-wide transition-colors ${
                     isJoined
-                      ? 'border border-[#66D9C2]/30 bg-[#66D9C2]/10 text-[#66D9C2] hover:bg-[#66D9C2]/15'
-                      : 'bg-[#F7F0E8] text-[#11100E] hover:bg-white'
-                  } disabled:cursor-not-allowed disabled:bg-[#2A241D] disabled:text-[#71675D]`}
+                      ? 'border border-[#C6E76A]/30 bg-[#C6E76A]/10 text-[#C6E76A] hover:bg-[#C6E76A]/15'
+                      : 'bg-white text-black hover:bg-neutral-200'
+                  } disabled:cursor-not-allowed disabled:bg-[#1B1F1C] disabled:text-white/40`}
                 >
                   {rsvpLoading ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -3964,7 +3964,7 @@ function SessionCard({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => trackOfficialJoinClick(session, source)}
-                  className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#E66A4E] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white transition-colors hover:bg-[#F07D64]"
+                  className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#C6E76A] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
                 >
                   {officialJoinLabel}
                 </a>
@@ -3972,7 +3972,7 @@ function SessionCard({
               <Link
                 href={`/activities/${session.id}`}
                 onClick={() => trackSessionClick(session, source, index)}
-                className={`inline-flex min-h-10 items-center justify-center rounded-full border border-[#4A4035] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-[#D7CEC4] transition-colors hover:border-[#F2C879]/55 hover:text-[#F7F0E8] ${showQuickRsvp || officialJoinUrl ? '' : 'col-span-2'}`}
+                className={`inline-flex min-h-10 items-center justify-center rounded-full border border-white/[0.14] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#C6E76A]/55 hover:text-white ${showQuickRsvp || officialJoinUrl ? '' : 'col-span-2'}`}
               >
                 Details
               </Link>
@@ -4010,7 +4010,7 @@ function AttendeePreview({
         {attendees.slice(0, 4).map((attendee) => (
           <span
             key={attendee.id}
-            className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full border border-[#1B1814] bg-[#332B23] text-[10px] font-bold text-[#F7F0E8]"
+            className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full border border-[#111412] bg-[#1B1F1C] text-[10px] font-bold text-white"
             title={attendee.name ?? 'Attendee'}
           >
             {attendee.imageUrl ? (
@@ -4022,8 +4022,8 @@ function AttendeePreview({
           </span>
         ))}
       </div>
-      <span className="inline-flex min-w-0 items-center gap-1 truncate text-[11px] font-semibold text-[#D7CEC4]">
-        <Users className="h-3 w-3 shrink-0 text-[#66D9C2]" />
+      <span className="inline-flex min-w-0 items-center gap-1 truncate text-[11px] font-semibold text-white/70">
+        <Users className="h-3 w-3 shrink-0 text-[#C6E76A]" />
         {attendeeCount} going
       </span>
     </>
@@ -4110,7 +4110,7 @@ function MapSelectedSessionCard({
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.18 }}
-      className="relative max-h-[42dvh] overflow-hidden rounded-2xl border border-[#3A332B] bg-[#1B1814]/96 shadow-[0_22px_60px_rgba(0,0,0,0.55)] backdrop-blur"
+      className="relative max-h-[42dvh] overflow-hidden rounded-2xl border border-white/[0.10] bg-[#111412]/96 shadow-[0_22px_60px_rgba(0,0,0,0.55)] backdrop-blur"
       data-selected-pin-card
     >
       <button
@@ -4126,11 +4126,11 @@ function MapSelectedSessionCard({
         <Link
           href={`/activities/${session.id}`}
           onClick={() => trackSessionClick(session, source, 0)}
-          className="relative min-h-[118px] overflow-hidden rounded-xl bg-[#16130F]"
+          className="relative min-h-[118px] overflow-hidden rounded-xl bg-[#151816]"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={getSessionListingImage(session)} alt="" className="h-full w-full object-cover" />
-          <span className="absolute left-2 top-2 rounded-md bg-[#F2C879] px-2 py-1 font-mono text-[10px] font-black uppercase text-[#11100E]">
+          <span className="absolute left-2 top-2 rounded-md bg-[#C6E76A] px-2 py-1 font-mono text-[10px] font-black uppercase text-black">
             {priceDisplay}
           </span>
           {session.imageSourceLabel ? (
@@ -4146,17 +4146,17 @@ function MapSelectedSessionCard({
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatarSrc} alt="" className="h-4 w-4 shrink-0 rounded-full object-cover" />
             ) : null}
-            <span className="truncate text-[11px] capitalize text-[#A9A19A]">
+            <span className="truncate text-[11px] capitalize text-white/56">
               {activityLabel} · {session.city}
             </span>
           </div>
-          <h3 className="line-clamp-2 text-sm font-black leading-tight text-[#F7F0E8]">
+          <h3 className="line-clamp-2 text-sm font-black leading-tight text-white">
             {displayName}
           </h3>
-          <p className="line-clamp-2 text-xs leading-snug text-[#A9A19A]">
+          <p className="line-clamp-2 text-xs leading-snug text-white/56">
             {showUpConfidence.reason}
           </p>
-          <p className="truncate text-[11px] font-semibold text-[#A78B6D]">
+          <p className="truncate text-[11px] font-semibold text-[#C6E76A]">
             {session.startTime ? getRelativeTime(session.startTime) : 'Time TBA'}
             {session.address ? ` · ${session.address.split(',')[0]}` : ''}
           </p>

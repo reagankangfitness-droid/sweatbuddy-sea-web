@@ -23,7 +23,7 @@ export function CreateChoiceSheet({ open, onClose, onHostSession }: CreateChoice
       <div className="w-full max-w-md rounded-2xl border border-white/[0.10] bg-[#101010] p-4 text-white shadow-2xl shadow-black/50">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
               Add to the map
             </p>
             <h2 id="create-choice-title" className="mt-1 text-xl font-bold leading-tight">
@@ -63,7 +63,7 @@ export function CreateChoiceSheet({ open, onClose, onHostSession }: CreateChoice
           <Link
             href="/communities/nominate"
             onClick={onClose}
-            className="flex min-h-[76px] items-center gap-3 rounded-xl border border-white/[0.10] bg-[#181818] text-left transition-colors hover:border-[#63FF8F]"
+            className="flex min-h-[76px] items-center gap-3 rounded-xl border border-white/[0.10] bg-[#1A1E1B] text-left transition-colors hover:border-[#C6E76A]"
           >
             <span className="ml-4 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/[0.10] bg-black text-white">
               <Users className="h-5 w-5" />

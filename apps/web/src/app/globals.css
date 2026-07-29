@@ -5,14 +5,14 @@
 @layer components {
   .sb-page {
     min-height: 100dvh;
-    background: #0B0B0B;
+    background: #0B0D0C;
     color: #FAFAFA;
   }
 
   .sb-surface {
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
-    background: #141414;
+    background: #151816;
   }
 
   .sb-control {
@@ -27,7 +27,7 @@
 
   .sb-control:hover,
   .sb-control:focus-visible {
-    border-color: rgba(99, 255, 143, 0.60);
+    border-color: rgba(198, 231, 106, 0.60);
     color: #FFFFFF;
   }
 
@@ -38,7 +38,7 @@
     justify-content: center;
     gap: 8px;
     border-radius: 999px;
-    background: #63FF8F;
+    background: #C6E76A;
     color: #000000;
     font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-size: 12px;
@@ -49,7 +49,7 @@
   }
 
   .sb-button-primary:hover {
-    background: #83FFA6;
+    background: #D8F18A;
   }
 
   .sb-button-primary:active {
@@ -75,9 +75,9 @@
   }
 
   .sb-button-secondary:hover {
-    border-color: rgba(99, 255, 143, 0.60);
+    border-color: rgba(198, 231, 106, 0.60);
     background: rgba(255, 255, 255, 0.07);
-    color: #63FF8F;
+    color: #C6E76A;
   }
 
   .sb-button-secondary:active {
@@ -90,7 +90,7 @@
     font-weight: 800;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #63FF8F;
+    color: #C6E76A;
   }
 
   .sb-text-muted {
@@ -108,7 +108,7 @@
     overflow: visible;
     border: 1px solid rgba(0, 0, 0, 0.36);
     border-radius: 8px;
-    background: #63FF8F;
+    background: #C6E76A;
     color: #000000;
     font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-size: 12px;
@@ -139,33 +139,33 @@
 
   .sb-map-marker:hover {
     transform: scale(1.06);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(99, 255, 143, 0.18), inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(198, 231, 106, 0.18), inset 0 -1px 0 rgba(0, 0, 0, 0.18);
   }
 
   .sb-map-marker--community {
-    border-color: rgba(182, 255, 0, 0.52);
-    background: #111111;
+    border-color: rgba(198, 231, 106, 0.52);
+    background: #111412;
     color: #ffffff;
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42), 0 0 0 3px rgba(99, 255, 143, 0.16), inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42), 0 0 0 3px rgba(198, 231, 106, 0.16), inset 0 -1px 0 rgba(255, 255, 255, 0.12);
   }
 
   .sb-map-marker--community .sb-map-marker__emoji {
-    background: #63FF8F;
+    background: #C6E76A;
     color: #000000;
   }
 
   .sb-map-marker--place {
     min-height: 38px;
     background: #F4F4F0;
-    color: #111111;
+    color: #111412;
     box-shadow: 0 10px 26px rgba(0, 0, 0, 0.34), inset 0 -1px 0 rgba(0, 0, 0, 0.12);
   }
 
   .sb-map-marker--place .sb-map-marker__emoji {
     min-height: 38px;
     min-width: 36px;
-    background: #151515;
-    color: #63FF8F;
+    background: #151816;
+    color: #C6E76A;
     font-size: 16px;
   }
 
@@ -178,10 +178,10 @@
 
   .sb-map-marker--featured-place {
     min-height: 42px;
-    border-color: rgba(99, 255, 143, 0.72);
-    background: #B6FF00;
+    border-color: rgba(198, 231, 106, 0.72);
+    background: #C6E76A;
     color: #000000;
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42), 0 0 0 3px rgba(182, 255, 0, 0.14), inset 0 -1px 0 rgba(0, 0, 0, 0.16);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42), 0 0 0 3px rgba(198, 231, 106, 0.14), inset 0 -1px 0 rgba(0, 0, 0, 0.16);
   }
 
   .sb-map-marker--featured-place .sb-map-marker__emoji {
@@ -194,11 +194,11 @@
   .sb-map-marker.is-selected {
     border-color: rgba(255, 255, 255, 0.82);
     background: #FFFFFF;
-    box-shadow: 0 0 0 3px rgba(99, 255, 143, 0.34), 0 18px 42px rgba(0, 0, 0, 0.52);
+    box-shadow: 0 0 0 3px rgba(198, 231, 106, 0.34), 0 18px 42px rgba(0, 0, 0, 0.52);
   }
 
   .sb-map-marker.is-selected .sb-map-marker__emoji {
-    background: #63FF8F;
+    background: #C6E76A;
   }
 
   .sb-map-marker__primary,
@@ -305,7 +305,7 @@
     min-height: 18px;
     align-items: center;
     border-radius: 4px;
-    background: #63FF8F;
+    background: #C6E76A;
     color: #000000;
     padding: 0 5px;
   }
@@ -369,8 +369,8 @@
       border-color: rgba(0, 0, 0, 0.34);
       border-radius: 999px;
       font-size: 0;
-      background: #63FF8F;
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.46), 0 0 0 3px rgba(99, 255, 143, 0.18), inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+      background: #C6E76A;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.46), 0 0 0 3px rgba(198, 231, 106, 0.18), inset 0 -1px 0 rgba(0, 0, 0, 0.18);
     }
 
     .sb-map-marker__primary,
@@ -398,12 +398,12 @@
       height: 54px;
       min-height: 54px;
       min-width: 54px;
-      background: #111111;
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.46), 0 0 0 3px rgba(99, 255, 143, 0.22);
+      background: #111412;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.46), 0 0 0 3px rgba(198, 231, 106, 0.22);
     }
 
     .sb-map-marker--community .sb-map-marker__emoji {
-      background: #63FF8F;
+      background: #C6E76A;
       color: #000000;
     }
 
@@ -419,8 +419,8 @@
     .sb-map-marker--place .sb-map-marker__emoji {
       min-height: 34px;
       min-width: 34px;
-      background: #151515;
-      color: #63FF8F;
+      background: #151816;
+      color: #C6E76A;
       font-size: 16px;
     }
 
@@ -429,7 +429,7 @@
       height: 48px;
       min-height: 46px;
       min-width: 46px;
-      background: #B6FF00;
+      background: #C6E76A;
     }
 
     .sb-map-marker--featured-place .sb-map-marker__emoji {
@@ -438,7 +438,7 @@
     }
 
     .sb-map-marker.is-selected {
-      background: #63FF8F;
+      background: #C6E76A;
       transform: scale(1.16);
     }
 
@@ -549,7 +549,7 @@
 
     /* Backgrounds */
     --background-secondary: #2A2A2A;
-    --surface: #1A1A1A;
+    --surface: #1B1F1C;
 
     /* Primary */
     --primary-hover: #000000;
@@ -570,14 +570,14 @@
     --gray-600: #525252;
     --gray-700: #404040;
     --gray-800: #262626;
-    --gray-900: #171717;
+    --gray-900: #171A18;
 
     /* Legacy accent colors - all now neutral */
-    --coral: #171717;
+    --coral: #171A18;
     --coral-light: #404040;
     --coral-dark: #0A0A0A;
-    --teal: #171717;
-    --ocean: #171717;
+    --teal: #171A18;
+    --ocean: #171A18;
     --amber: #737373;
     --forest-50: #FAFAFA;
     --forest-100: #F5F5F5;
@@ -588,14 +588,14 @@
     --forest-600: #525252;
     --forest-700: #404040;
     --forest-800: #262626;
-    --forest-900: #171717;
+    --forest-900: #171A18;
     --forest-950: #0A0A0A;
     --sand: #FAFAFA;
     --cream: #FFFFFF;
     --mist: #F5F5F5;
 
     /* shadcn/ui compatibility — dark theme */
-    --background: #0D0D0D;
+    --background: #0B0D0C;
     --foreground: #FAFAFA;
     --card: #18181B;
     --card-foreground: #FAFAFA;

@@ -132,7 +132,7 @@ export default function MySessionsPage() {
 
   if (!isLoaded && !authTimedOut) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0B0D0C] flex items-center justify-center">
         <Loader2 className="w-6 h-6 text-[#666] animate-spin" />
       </div>
     )
@@ -193,14 +193,14 @@ export default function MySessionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D]">
+    <div className="min-h-screen bg-[#0B0D0C]">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-[#0D0D0D]/95 backdrop-blur-lg border-b border-[#333333]">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-[#0B0D0C]/95 backdrop-blur-lg border-b border-[#333333]">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center gap-4 px-4 py-3">
             <Link
               href="/profile"
-            className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-[#333333] bg-[#0D0D0D]"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-[#333333] bg-[#0B0D0C]"
             >
               <ArrowLeft className="w-5 h-5 text-[#999999]" />
             </Link>
@@ -225,7 +225,7 @@ export default function MySessionsPage() {
               </h2>
 
               {upcoming.length === 0 ? (
-                <div className="rounded-lg border border-[#333333] bg-[#1A1A1A] p-5 text-center">
+                <div className="rounded-lg border border-[#333333] bg-[#1B1F1C] p-5 text-center">
                   <p className="text-[#999] text-sm mb-4">
                     No upcoming plans. Find one to show up to.
                   </p>
@@ -247,7 +247,7 @@ export default function MySessionsPage() {
                     return (
                       <div
                         key={session.id}
-                        className="overflow-hidden rounded-lg border border-[#333333] bg-[#1A1A1A]"
+                        className="overflow-hidden rounded-lg border border-[#333333] bg-[#1B1F1C]"
                       >
                         {/* Image / Gradient fallback */}
                         <Link href={`/activities/${session.id}`}>
@@ -352,11 +352,11 @@ export default function MySessionsPage() {
               </h2>
 
               {past.length === 0 ? (
-                <div className="rounded-lg border border-[#333333] bg-[#1A1A1A] p-5 text-center">
+                <div className="rounded-lg border border-[#333333] bg-[#1B1F1C] p-5 text-center">
                   <p className="text-[#999] text-sm">No plans yet. Your first one is waiting.</p>
                 </div>
               ) : (
-                <div className="overflow-hidden rounded-lg border border-[#333333] bg-[#1A1A1A] divide-y divide-[#333333]">
+                <div className="overflow-hidden rounded-lg border border-[#333333] bg-[#1B1F1C] divide-y divide-[#333333]">
                   {past.map((session) => (
                     <div key={session.id} className="px-4 py-3.5 flex items-center justify-between">
                       <div className="flex-1 min-w-0 mr-3">

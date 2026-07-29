@@ -177,7 +177,7 @@ export default function NotificationsPage() {
           </Link>
           <div className="sb-surface p-5 text-left">
             <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.06]">
-              <Bell className="h-5 w-5 text-[#63FF8F]" />
+              <Bell className="h-5 w-5 text-[#C6E76A]" />
             </span>
             <p className="sb-eyebrow mt-5">
               Live updates
@@ -211,16 +211,16 @@ export default function NotificationsPage() {
 
   if (!isLoaded && !authTimedOut) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0B0D0C] flex items-center justify-center">
         <Loader2 className="w-6 h-6 text-[#71717A] animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D]">
+    <div className="min-h-screen bg-[#0B0D0C]">
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-[#0D0D0D]/95 backdrop-blur-xl border-b border-white/[0.06]">
+      <div className="sticky top-0 z-20 bg-[#0B0D0C]/95 backdrop-blur-xl border-b border-white/[0.06]">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
@@ -265,7 +265,7 @@ export default function NotificationsPage() {
           </div>
         ) : notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-            <div className="w-16 h-16 rounded-full bg-[#1A1A1A] flex items-center justify-center mb-4">
+            <div className="w-16 h-16 rounded-full bg-[#1B1F1C] flex items-center justify-center mb-4">
               <Bell className="w-7 h-7 text-[#71717A]" />
             </div>
             <p className="text-white text-base font-medium mb-1">No notifications yet</p>
@@ -285,7 +285,7 @@ export default function NotificationsPage() {
                     } hover:bg-white/[0.04]`}
                   >
                     {/* Icon */}
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#1A1A1A] flex items-center justify-center text-lg">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#1B1F1C] flex items-center justify-center text-lg">
                       {n.imageUrl ? (
                         <Image
                           src={n.imageUrl}

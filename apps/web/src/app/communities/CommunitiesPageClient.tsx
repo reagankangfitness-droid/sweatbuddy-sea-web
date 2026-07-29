@@ -320,7 +320,7 @@ export default function CommunitiesPageClient({
 
   return (
     <div className="sb-page">
-      <header className="border-b border-white/[0.07] bg-[#0B0B0B]">
+      <header className="border-b border-white/[0.07] bg-[#0B0D0C]">
         <div className="mx-auto max-w-6xl px-4 py-3 sm:py-4">
           <div className="flex min-h-10 items-center justify-between gap-2">
             <Link
@@ -378,7 +378,7 @@ export default function CommunitiesPageClient({
                   </p>
                 </div>
                 <div className="sb-surface p-3">
-                  <p className="font-mono text-lg font-black text-[#63FF8F]">
+                  <p className="font-mono text-lg font-black text-[#C6E76A]">
                     {communities.filter((community) => community.soloFriendly).length}
                   </p>
                   <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/62">
@@ -408,7 +408,7 @@ export default function CommunitiesPageClient({
       {hasSources ? (
         <>
           {/* ── Compact top bar: search + filters + create ── */}
-          <div className="sticky top-0 z-40 border-b border-white/10 bg-[#0B0B0B]/95 backdrop-blur-xl">
+          <div className="sticky top-0 z-40 border-b border-white/10 bg-[#0B0D0C]/95 backdrop-blur-xl">
             <div className="max-w-6xl mx-auto px-4 py-3 space-y-2.5">
               {/* Row 1: Search + Create */}
               <div className="flex items-center gap-2">
@@ -423,7 +423,7 @@ export default function CommunitiesPageClient({
                     onKeyDown={(event) => {
                       if (event.key === 'Enter') trackSearch()
                     }}
-                    className="min-h-11 w-full rounded-lg border border-white/15 bg-[#111111] py-2.5 pl-9 pr-4 text-sm text-white transition-all placeholder:text-white/50 focus:border-[#63FF8F] focus:outline-none max-[360px]:placeholder:text-[12px]"
+                    className="min-h-11 w-full rounded-lg border border-white/15 bg-[#111412] py-2.5 pl-9 pr-4 text-sm text-white transition-all placeholder:text-white/50 focus:border-[#C6E76A] focus:outline-none max-[360px]:placeholder:text-[12px]"
                   />
                 </div>
                 <Link
@@ -546,7 +546,7 @@ export default function CommunitiesPageClient({
               </p>
               <Link
                 href="/communities/nominate"
-                className="inline-flex min-h-11 flex-shrink-0 items-center rounded-full px-2 text-[11px] font-black uppercase tracking-wide text-[#63FF8F] hover:text-white"
+                className="inline-flex min-h-11 flex-shrink-0 items-center rounded-full px-2 text-[11px] font-black uppercase tracking-wide text-[#C6E76A] hover:text-white"
               >
                 Suggest a community
               </Link>
@@ -559,7 +559,7 @@ export default function CommunitiesPageClient({
                 <Link
                   key={guide.slug}
                   href={`/communities/singapore/${guide.slug}`}
-                  className="inline-flex min-h-10 flex-shrink-0 items-center rounded-full border border-white/12 px-3 text-[10px] font-black uppercase tracking-wide text-white/52 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+                  className="inline-flex min-h-10 flex-shrink-0 items-center rounded-full border border-white/12 px-3 text-[10px] font-black uppercase tracking-wide text-white/52 transition-colors hover:border-[#C6E76A] hover:text-[#C6E76A]"
                 >
                   {guide.filterLabel}
                 </Link>
@@ -607,9 +607,9 @@ export default function CommunitiesPageClient({
         <div className="mx-auto grid max-w-4xl gap-3 px-4 py-8 pb-28 md:grid-cols-2">
           <Link
             href="/communities/nominate"
-            className="rounded-lg border border-[#63FF8F]/22 bg-[#63FF8F]/8 p-4 transition-colors hover:border-[#63FF8F]/42"
+            className="rounded-lg border border-[#C6E76A]/22 bg-[#C6E76A]/8 p-4 transition-colors hover:border-[#C6E76A]/42"
           >
-            <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#63FF8F]/82">
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#C6E76A]/82">
               Help map a community
             </p>
             <h2 className="mt-2 text-xl font-semibold text-white">Suggest a community</h2>
@@ -637,12 +637,12 @@ export default function CommunitiesPageClient({
 
 function CrewProofStrip() {
   return (
-    <section className="hidden border-b border-white/10 bg-[#0B0B0B] px-4 py-3 sm:block">
+    <section className="hidden border-b border-white/10 bg-[#0B0D0C] px-4 py-3 sm:block">
       <div className="mx-auto grid max-w-6xl grid-cols-3 gap-2">
         {CREW_PROOF_IMAGES.map((item) => (
           <div
             key={item.src}
-            className="relative h-20 overflow-hidden rounded-xl border border-white/[0.08] bg-[#181818] sm:h-28"
+            className="relative h-20 overflow-hidden rounded-xl border border-white/[0.08] bg-[#1A1E1B] sm:h-28"
           >
             <Image
               src={item.src}
@@ -692,7 +692,7 @@ function CrewCard({ community }: { community: CommunityData }) {
       transition={{ duration: 0.25 }}
       className="h-full"
     >
-      <article className="group flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-[#151515] text-center transition-colors duration-200 hover:border-[#63FF8F]/35 hover:bg-[#1B1B1B]">
+      <article className="group flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-[#151816] text-center transition-colors duration-200 hover:border-[#C6E76A]/35 hover:bg-[#1B1B1B]">
         <Link
           href={`/communities/${community.slug}`}
           className="relative block aspect-[16/10] overflow-hidden bg-[#222222]"
@@ -710,7 +710,7 @@ function CrewCard({ community }: { community: CommunityData }) {
           <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
             {getCategoryEmoji(community.category)} {categoryLabel(community.category)}
           </span>
-          <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#63FF8F] backdrop-blur">
+          <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#C6E76A] backdrop-blur">
             {community.nextEvent
               ? `Next ${formatEventDate(community.nextEvent.startTime)}`
               : 'Source page'}
@@ -727,7 +727,7 @@ function CrewCard({ community }: { community: CommunityData }) {
               <h3 className="truncate">{community.name}</h3>
             </Link>
             {community.isVerified && (
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#63FF8F] flex-shrink-0" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#C6E76A] flex-shrink-0" />
             )}
           </div>
 
@@ -743,8 +743,8 @@ function CrewCard({ community }: { community: CommunityData }) {
           </div>
 
           <div className="mt-2 grid grid-cols-2 gap-1.5">
-            <div className="rounded-lg border border-[#63FF8F]/18 bg-[#63FF8F]/8 px-2 py-1.5 text-left">
-              <p className="truncate font-mono text-[9px] font-black uppercase tracking-wide text-[#63FF8F]">
+            <div className="rounded-lg border border-[#C6E76A]/18 bg-[#C6E76A]/8 px-2 py-1.5 text-left">
+              <p className="truncate font-mono text-[9px] font-black uppercase tracking-wide text-[#C6E76A]">
                 Activity
               </p>
               <p className="mt-0.5 truncate text-[11px] font-bold text-white/82">{activitySignal}</p>
@@ -780,7 +780,7 @@ function CrewCard({ community }: { community: CommunityData }) {
 
           {/* Known plan */}
           <div className="mt-2 rounded-lg border border-white/10 bg-[#101010] px-3 py-2 text-left">
-            <p className="font-mono text-[9px] font-black uppercase tracking-[0.16em] text-[#63FF8F]">
+            <p className="font-mono text-[9px] font-black uppercase tracking-[0.16em] text-[#C6E76A]">
               {community.nextEvent ? 'Next known plan' : 'Source check'}
             </p>
             <p className="mt-1 truncate text-xs font-bold text-white/82">
@@ -814,11 +814,11 @@ function CrewCard({ community }: { community: CommunityData }) {
               communitySlug={community.slug}
               communityName={community.name}
               source="card"
-              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full border border-white/12 px-2 text-[11px] font-bold text-white transition-colors hover:border-[#63FF8F]/60 hover:bg-white/5"
+              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full border border-white/12 px-2 text-[11px] font-bold text-white transition-colors hover:border-[#C6E76A]/60 hover:bg-white/5"
             />
             <Link
               href={`/communities/${community.slug}`}
-              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full bg-[#63FF8F] px-2 text-[11px] font-bold text-black transition-colors hover:bg-[#83FFA6]"
+              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full bg-[#C6E76A] px-2 text-[11px] font-bold text-black transition-colors hover:bg-[#D8F18A]"
               aria-label={`View ${community.name} details`}
             >
               View details
@@ -847,8 +847,8 @@ function QuickFilterButton({
       onClick={onClick}
       className={`min-h-10 shrink-0 rounded-full border px-3 text-[11px] font-black uppercase tracking-wide transition-colors ${
         active
-          ? 'border-[#63FF8F] bg-[#63FF8F] text-black'
-          : 'border-white/12 bg-[#151515] text-white/66 hover:border-[#63FF8F]/60 hover:text-white'
+          ? 'border-[#C6E76A] bg-[#C6E76A] text-black'
+          : 'border-white/12 bg-[#151816] text-white/66 hover:border-[#C6E76A]/60 hover:text-white'
       }`}
     >
       {label}
@@ -868,7 +868,7 @@ function FilterSelect({
   onChange: (value: string | null) => void
 }) {
   return (
-    <label className="relative flex min-h-11 min-w-[132px] flex-shrink-0 items-center rounded-lg border border-white/15 bg-[#141414] transition-colors focus-within:border-[#63FF8F] hover:border-white/25">
+    <label className="relative flex min-h-11 min-w-[132px] flex-shrink-0 items-center rounded-lg border border-white/15 bg-[#151816] transition-colors focus-within:border-[#C6E76A] hover:border-white/25">
       <span className="pointer-events-none absolute left-3 top-1.5 text-[8px] font-bold uppercase tracking-[0.16em] text-[#666666]">
         {label}
       </span>

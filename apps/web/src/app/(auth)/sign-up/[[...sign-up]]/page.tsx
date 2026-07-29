@@ -143,12 +143,12 @@ function SignUpContent() {
                 dividerLine: 'bg-white/12',
                 dividerText: 'text-white/60 text-sm px-3',
                 formFieldLabel: 'text-white/76 font-medium text-sm',
-                formFieldInput: 'min-h-11 border-white/15 bg-[#101010] text-white focus:border-[#63FF8F] focus:ring-[#63FF8F]/10 rounded-xl w-full py-3',
-                formButtonPrimary: 'min-h-11 bg-[#63FF8F] hover:bg-[#83FFA6] text-black rounded-xl w-full py-3 text-base font-bold',
+                formFieldInput: 'min-h-11 border-white/15 bg-[#101010] text-white focus:border-[#C6E76A] focus:ring-[#C6E76A]/10 rounded-xl w-full py-3',
+                formButtonPrimary: 'min-h-11 bg-[#C6E76A] hover:bg-[#D8F18A] text-black rounded-xl w-full py-3 text-base font-bold',
                 otpCodeFieldInput: 'border-white/15 bg-[#101010] text-white text-lg',
                 otpCodeFieldInputs: 'gap-2',
                 footerAction: 'pt-4 justify-center',
-                footerActionLink: 'text-[#63FF8F] hover:text-white font-medium',
+                footerActionLink: 'text-[#C6E76A] hover:text-white font-medium',
                 footer: 'hidden',
                 identityPreview: 'justify-center',
                 identityPreviewEditButton: 'text-white/64',
@@ -173,7 +173,7 @@ export default function SignUpPage() {
   return (
     <Suspense fallback={
       <div className="sb-page flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-[#63FF8F]" />
+        <Loader2 className="w-6 h-6 animate-spin text-[#C6E76A]" />
       </div>
     }>
       <SignUpContent />

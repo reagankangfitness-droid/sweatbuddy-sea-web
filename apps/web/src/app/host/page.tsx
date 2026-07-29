@@ -120,7 +120,7 @@ export default function BecomeAHostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white">
+    <div className="min-h-screen bg-[#0B0D0C] text-white">
       <header className="absolute left-0 right-0 top-0 z-30">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
           <Link
@@ -162,11 +162,11 @@ export default function BecomeAHostPage() {
           priority
         />
         <div className="absolute inset-0 bg-black/65" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D0C] via-[#0B0D0C]/20 to-transparent" />
 
         <div className="relative mx-auto grid max-w-6xl gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
           <div className="max-w-3xl">
-            <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-[#63FF8F]">
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-[#C6E76A]">
               For fitness community hosts
             </p>
             <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
@@ -195,8 +195,8 @@ export default function BecomeAHostPage() {
             </div>
           </div>
 
-          <div className="hidden rounded-lg border border-white/10 bg-[#111111]/85 p-4 shadow-xl shadow-black/25 backdrop-blur lg:block">
-            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#63FF8F]">
+          <div className="hidden rounded-lg border border-white/10 bg-[#111412]/85 p-4 shadow-xl shadow-black/25 backdrop-blur lg:block">
+            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#C6E76A]">
               What people see
             </p>
             <div className="mt-4 space-y-3">
@@ -216,7 +216,7 @@ export default function BecomeAHostPage() {
             </div>
             <Link
               href="/buddy"
-              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-white/15 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:border-[#63FF8F]/60"
+              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-white/15 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:border-[#C6E76A]/60"
             >
               View discovery
             </Link>
@@ -255,7 +255,7 @@ export default function BecomeAHostPage() {
               return (
                 <div
                   key={item.title}
-                  className="overflow-hidden rounded-xl border border-white/[0.08] bg-[#151515]"
+                  className="overflow-hidden rounded-xl border border-white/[0.08] bg-[#151816]"
                 >
                   <div className="relative aspect-[16/10] bg-[#222222]">
                     <Image
@@ -281,7 +281,7 @@ export default function BecomeAHostPage() {
         </div>
       </section>
 
-      <section className="border-y border-white/[0.06] bg-[#111111] px-5 py-16 sm:py-20">
+      <section className="border-y border-white/[0.06] bg-[#111412] px-5 py-16 sm:py-20">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-neutral-500">
@@ -299,7 +299,7 @@ export default function BecomeAHostPage() {
             {HOST_SYSTEM.map((item) => {
               const Icon = item.icon
               return (
-                <div key={item.title} className="rounded-xl bg-[#1A1A1A] p-5">
+                <div key={item.title} className="rounded-xl bg-[#1B1F1C] p-5">
                   <Icon className="h-5 w-5 text-white" />
                   <h3 className="mt-5 text-sm font-bold text-white">{item.title}</h3>
                   <p className="mt-2 text-xs leading-relaxed text-neutral-500">{item.body}</p>
@@ -325,7 +325,7 @@ export default function BecomeAHostPage() {
       </section>
 
       <section id="launch-help" className="px-5 pb-20 sm:pb-28">
-        <div className="mx-auto grid max-w-6xl overflow-hidden rounded-lg border border-white/[0.08] bg-[#151515] lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="mx-auto grid max-w-6xl overflow-hidden rounded-lg border border-white/[0.08] bg-[#151816] lg:grid-cols-[0.95fr_1.05fr]">
           <div className="relative min-h-[360px] overflow-hidden">
             <Image
               src="/images/hero-2.jpg"

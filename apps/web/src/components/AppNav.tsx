@@ -117,7 +117,7 @@ function AppNavInner() {
           initial={false}
           animate={{ opacity: isHovered ? 0 : 1 }}
           transition={{ duration: 0.15 }}
-          className="absolute left-0 top-0 bottom-0 w-14 flex flex-col items-center py-6 bg-[#0D0D0D]/80 backdrop-blur-sm border-r border-white/[0.06]"
+          className="absolute left-0 top-0 bottom-0 w-14 flex flex-col items-center py-6 bg-[#0B0D0C]/80 backdrop-blur-sm border-r border-white/[0.06]"
         >
           <div className="mb-6">
             <Logo size={24} />
@@ -181,7 +181,7 @@ function AppNavInner() {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -80, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-              className="absolute left-0 top-0 bottom-0 w-20 flex flex-col items-center py-6 bg-[#0D0D0D]/95 backdrop-blur-xl border-r border-white/[0.06] shadow-xl"
+              className="absolute left-0 top-0 bottom-0 w-20 flex flex-col items-center py-6 bg-[#0B0D0C]/95 backdrop-blur-xl border-r border-white/[0.06] shadow-xl"
             >
               <Link href="/" className="mb-8" title="Home">
                 <Logo size={32} />
@@ -274,7 +274,7 @@ function AppNavInner() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-[#1A1A1A] flex items-center justify-center">
+                      <div className="w-full h-full bg-[#1B1F1C] flex items-center justify-center">
                         <User className="w-5 h-5 text-[#71717A]" />
                       </div>
                     )}
@@ -301,7 +301,7 @@ function AppNavInner() {
           aria-label="Main navigation"
           className="fixed bottom-0 left-0 right-0 z-30"
         >
-          <div className="absolute inset-0 bg-[#0D0D0D]/95 backdrop-blur-xl border-t border-white/[0.06]" />
+          <div className="absolute inset-0 bg-[#0B0D0C]/95 backdrop-blur-xl border-t border-white/[0.06]" />
           <div className="relative flex items-center justify-around px-2 pt-2 pb-[env(safe-area-inset-bottom,8px)]">
             {navItems.map((item) => {
               const active = isActive(item)
@@ -314,7 +314,7 @@ function AppNavInner() {
                     key={item.id}
                     onClick={() => setCreateMenuOpen(true)}
                     aria-label="Create"
-                    className="flex flex-col items-center justify-center w-14 h-14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0D0D0D] rounded-lg"
+                    className="flex flex-col items-center justify-center w-14 h-14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0D0C] rounded-lg"
                   >
                     <span className="flex items-center justify-center w-11 h-11 rounded-full bg-white">
                       <Plus className="w-6 h-6 text-black stroke-[2.5px]" />
@@ -332,7 +332,7 @@ function AppNavInner() {
                   className={`
                     flex flex-col items-center justify-center w-14 h-14
                     transition-all duration-200 relative
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0D0D0D] rounded-lg
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0D0C] rounded-lg
                     ${active ? 'text-white' : 'text-[#71717A] active:scale-95'}
                   `}
                 >

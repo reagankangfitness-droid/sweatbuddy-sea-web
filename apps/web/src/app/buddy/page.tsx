@@ -313,7 +313,7 @@ function LocationPermissionPanel({
     <section className="border-b border-white/10 bg-[#101010] px-4 py-3">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 rounded-lg border border-white/10 bg-white/[0.035] p-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
             Location setup
           </p>
           <h2 className="mt-1 text-sm font-black text-white">{title}</h2>
@@ -324,7 +324,7 @@ function LocationPermissionPanel({
             type="button"
             onClick={onUseLocation}
             disabled={isDetecting}
-            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6] disabled:cursor-wait disabled:bg-[#2F4735] disabled:text-white/55"
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-[#C6E76A] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A] disabled:cursor-wait disabled:bg-[#3B432C] disabled:text-white/55"
           >
             {isDetecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <MapPinIcon />}
             Use my location
@@ -364,7 +364,7 @@ function MapLocationPermissionOverlay({
     <section className="absolute left-3 right-3 top-3 z-30 rounded-xl border border-white/14 bg-black/82 p-2.5 text-white shadow-2xl shadow-black/35 backdrop-blur-xl md:hidden">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
             Start nearby
           </p>
           <p className="mt-0.5 truncate text-xs font-bold leading-tight text-white/78">
@@ -375,7 +375,7 @@ function MapLocationPermissionOverlay({
           type="button"
           onClick={onUseLocation}
           disabled={isDetecting}
-          className="inline-flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#63FF8F] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6] disabled:cursor-wait disabled:bg-[#2F4735] disabled:text-white/55"
+          className="inline-flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#C6E76A] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A] disabled:cursor-wait disabled:bg-[#3B432C] disabled:text-white/55"
         >
           {isDetecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <MapPin className="h-3.5 w-3.5" />}
           Use
@@ -387,7 +387,7 @@ function MapLocationPermissionOverlay({
             key={city.slug}
             type="button"
             onClick={() => onChooseCity(city.slug)}
-            className="inline-flex min-h-8 shrink-0 items-center justify-center rounded-full border border-white/18 bg-white/[0.06] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white transition-colors hover:border-[#63FF8F]/60 hover:text-[#63FF8F]"
+            className="inline-flex min-h-8 shrink-0 items-center justify-center rounded-full border border-white/18 bg-white/[0.06] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white transition-colors hover:border-[#C6E76A]/60 hover:text-[#C6E76A]"
           >
             {city.name}
           </button>
@@ -457,11 +457,11 @@ function LocalPulsePanel({
           : 'Suggest a community or post a simple session so people know where to show up.'
 
   return (
-    <section className="rounded-lg border border-white/10 bg-[#111111] p-3">
+    <section className="rounded-lg border border-white/10 bg-[#111412] p-3">
       <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(220px,300px)] sm:items-start">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
               Local pulse
             </p>
             <span className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-white/45">
@@ -496,7 +496,7 @@ function LocalPulsePanel({
           {myNextSession ? (
             <Link
               href={`/activities/${myNextSession.id}`}
-              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#63FF8F] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#C6E76A] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
             >
               Open my plan
               <ArrowRight className="h-3.5 w-3.5" />
@@ -505,7 +505,7 @@ function LocalPulsePanel({
             <button
               type="button"
               onClick={onOpenMap}
-              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#63FF8F] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#C6E76A] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
             >
               Open map
               <Map className="h-3.5 w-3.5" />
@@ -513,7 +513,7 @@ function LocalPulsePanel({
           ) : listedCommunityCount > 0 ? (
             <Link
               href={communityHref}
-              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#63FF8F] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#C6E76A] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
             >
               Browse communities
               <Users className="h-3.5 w-3.5" />
@@ -554,8 +554,8 @@ function PulseStat({
   active: boolean
 }) {
   return (
-    <div className={`rounded-lg border px-3 py-2 ${active ? 'border-[#63FF8F]/24 bg-[#63FF8F]/8' : 'border-white/10 bg-white/[0.035]'}`}>
-      <p className={`font-mono text-base font-black leading-none ${active ? 'text-[#63FF8F]' : 'text-white'}`}>
+    <div className={`rounded-lg border px-3 py-2 ${active ? 'border-[#C6E76A]/24 bg-[#C6E76A]/8' : 'border-white/10 bg-white/[0.035]'}`}>
+      <p className={`font-mono text-base font-black leading-none ${active ? 'text-[#C6E76A]' : 'text-white'}`}>
         {value}
       </p>
       <p className="mt-1 truncate font-mono text-[9px] font-black uppercase tracking-wide text-white/42">
@@ -579,14 +579,14 @@ function DiscoveryWorkspaceNav({
       <button
         type="button"
         onClick={onToggleView}
-        className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border border-white/12 bg-[#171717] text-white/72 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+        className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border border-white/12 bg-[#171A18] text-white/72 transition-colors hover:border-[#C6E76A] hover:text-[#C6E76A]"
       >
         {viewMode === 'list' ? <Map className="h-3.5 w-3.5" /> : <List className="h-3.5 w-3.5" />}
         {viewMode === 'list' ? 'Map' : 'List'}
       </button>
       <Link
         href={communityHref}
-        className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border border-white/12 bg-[#171717] text-white/72 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+        className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border border-white/12 bg-[#171A18] text-white/72 transition-colors hover:border-[#C6E76A] hover:text-[#C6E76A]"
       >
         <Users className="h-3.5 w-3.5" />
         Communities
@@ -614,7 +614,7 @@ function ResultsCommandHeader({
     <div className="border-b border-white/[0.08] py-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
             Ranked results
           </p>
           <h1 className="mt-1 truncate text-lg font-black text-white">
@@ -647,8 +647,8 @@ function MiniSignal({
   active: boolean
 }) {
   return (
-    <div className={`rounded-md border px-2 py-1.5 ${active ? 'border-[#63FF8F]/24 bg-[#63FF8F]/8' : 'border-white/10 bg-white/[0.03]'}`}>
-      <p className={`font-mono text-sm font-black leading-none ${active ? 'text-[#63FF8F]' : 'text-white/72'}`}>
+    <div className={`rounded-md border px-2 py-1.5 ${active ? 'border-[#C6E76A]/24 bg-[#C6E76A]/8' : 'border-white/10 bg-white/[0.03]'}`}>
+      <p className={`font-mono text-sm font-black leading-none ${active ? 'text-[#C6E76A]' : 'text-white/72'}`}>
         {value}
       </p>
       <p className="mt-1 truncate font-mono text-[8px] font-black uppercase tracking-wide text-white/36">
@@ -683,8 +683,8 @@ function LocalDirectoryFallback({
 
   return (
     <div className="grid gap-4 py-4">
-      <section className="rounded-lg border border-white/[0.10] bg-[#111111] p-4">
-        <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+      <section className="rounded-lg border border-white/[0.10] bg-[#111412] p-4">
+        <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
           Active communities
         </p>
         <h2 className="mt-2 text-xl font-black leading-tight text-white">
@@ -701,7 +701,7 @@ function LocalDirectoryFallback({
         <div className="mt-4 flex flex-wrap gap-2">
           <Link
             href={communityHref}
-            className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#63FF8F] px-4 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+            className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#C6E76A] px-4 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
           >
             Browse communities
             <ArrowRight className="h-3.5 w-3.5" />
@@ -709,7 +709,7 @@ function LocalDirectoryFallback({
           <button
             type="button"
             onClick={onOpenMap}
-            className="inline-flex min-h-10 items-center gap-2 rounded-full border border-white/12 px-4 font-mono text-[10px] font-black uppercase tracking-wide text-white/72 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+            className="inline-flex min-h-10 items-center gap-2 rounded-full border border-white/12 px-4 font-mono text-[10px] font-black uppercase tracking-wide text-white/72 transition-colors hover:border-[#C6E76A] hover:text-[#C6E76A]"
           >
             Open map
             <Map className="h-3.5 w-3.5" />
@@ -738,7 +738,7 @@ function LocalDirectoryFallback({
       {loading ? (
         <div className="grid gap-2">
           {[0, 1, 2].map((item) => (
-            <div key={item} className="h-28 rounded-lg border border-white/[0.06] bg-[#111111] shimmer" />
+            <div key={item} className="h-28 rounded-lg border border-white/[0.06] bg-[#111412] shimmer" />
           ))}
         </div>
       ) : null}
@@ -751,7 +751,7 @@ function LocalDirectoryFallback({
             </h3>
             <Link
               href={communityHref}
-              className="font-mono text-[10px] font-black uppercase tracking-wide text-white/46 transition-colors hover:text-[#63FF8F]"
+              className="font-mono text-[10px] font-black uppercase tracking-wide text-white/46 transition-colors hover:text-[#C6E76A]"
             >
               View all
             </Link>
@@ -779,7 +779,7 @@ function CommunityDecisionCard({ community }: { community: DirectoryCommunityPre
   ].filter((signal): signal is string => Boolean(signal)).slice(0, 3)
 
   return (
-    <article className="grid min-h-[132px] grid-cols-[116px_minmax(0,1fr)] overflow-hidden rounded-lg border border-white/[0.08] bg-[#151515] transition-colors hover:border-[#63FF8F]/35">
+    <article className="grid min-h-[132px] grid-cols-[116px_minmax(0,1fr)] overflow-hidden rounded-lg border border-white/[0.08] bg-[#151816] transition-colors hover:border-[#C6E76A]/35">
       <Link href={`/communities/${community.slug}`} className="relative block bg-[#222222]">
         <Image
           src={imageUrl}
@@ -790,7 +790,7 @@ function CommunityDecisionCard({ community }: { community: DirectoryCommunityPre
           unoptimized={!imageUrl.startsWith('/')}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-        <span className="absolute bottom-2 left-2 rounded-md bg-black/60 px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-[#63FF8F] backdrop-blur">
+        <span className="absolute bottom-2 left-2 rounded-md bg-black/60 px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-[#C6E76A] backdrop-blur">
           {score}
         </span>
       </Link>
@@ -801,13 +801,13 @@ function CommunityDecisionCard({ community }: { community: DirectoryCommunityPre
               {formatCommunityCategory(community.category)}
             </p>
             <Link href={`/communities/${community.slug}`} className="mt-1 block">
-              <h4 className="line-clamp-1 text-sm font-black text-white transition-colors hover:text-[#63FF8F]">
+              <h4 className="line-clamp-1 text-sm font-black text-white transition-colors hover:text-[#C6E76A]">
                 {community.name}
               </h4>
             </Link>
           </div>
           {community.isVerified ? (
-            <ShieldCheck className="h-4 w-4 shrink-0 text-[#63FF8F]" />
+            <ShieldCheck className="h-4 w-4 shrink-0 text-[#C6E76A]" />
           ) : null}
         </div>
         <p className="mt-1 line-clamp-1 text-xs font-semibold text-white/54">
@@ -840,7 +840,7 @@ function CommunityDecisionCard({ community }: { community: DirectoryCommunityPre
               href={joinHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-9 items-center justify-center gap-1 rounded-full bg-[#63FF8F] px-3 font-mono text-[9px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+              className="inline-flex min-h-9 items-center justify-center gap-1 rounded-full bg-[#C6E76A] px-3 font-mono text-[9px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
             >
               {formatJoinPlatformLabel(community.joinPlatform)}
               <ExternalLink className="h-3 w-3" />
@@ -848,7 +848,7 @@ function CommunityDecisionCard({ community }: { community: DirectoryCommunityPre
           ) : (
             <Link
               href={`/communities/${community.slug}`}
-              className="inline-flex min-h-9 items-center justify-center rounded-full bg-[#63FF8F] px-3 font-mono text-[9px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+              className="inline-flex min-h-9 items-center justify-center rounded-full bg-[#C6E76A] px-3 font-mono text-[9px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
             >
               Join path
             </Link>
@@ -2082,7 +2082,7 @@ function BuddyPageInner() {
 
   if (!hasMounted) {
     return (
-      <div className="flex h-dvh items-center justify-center bg-[#0B0B0B] text-white">
+      <div className="flex h-dvh items-center justify-center bg-[#0B0D0C] text-white">
         <Loader2 className="h-6 w-6 animate-spin text-white/50" />
       </div>
     )
@@ -2090,7 +2090,7 @@ function BuddyPageInner() {
 
   return (
     <div
-      className="flex flex-col bg-[#0B0B0B]"
+      className="flex flex-col bg-[#0B0D0C]"
       style={{ height: '100dvh', overflow: 'hidden' }}
     >
       {/* Create Session Sheet */}
@@ -2135,7 +2135,7 @@ function BuddyPageInner() {
 
       {/* ── Filters — sticky top bar ── */}
       <div className="sticky top-0 z-20 pt-[env(safe-area-inset-top,4px)]">
-        <div className="space-y-1.5 border-b border-white/[0.07] bg-[#0B0B0B]/92 px-3 pb-2 pt-1.5 font-mono backdrop-blur-xl">
+        <div className="space-y-1.5 border-b border-white/[0.07] bg-[#0B0D0C]/92 px-3 pb-2 pt-1.5 font-mono backdrop-blur-xl">
           <div className="flex min-h-9 items-center justify-between gap-3">
             <Link
               href="/"
@@ -2210,7 +2210,7 @@ function BuddyPageInner() {
                       className={`flex min-h-10 min-w-[42px] flex-shrink-0 flex-col items-center justify-center rounded-lg px-2.5 py-1.5 text-center transition-all ${
                         dateFilter === dateStr
                           ? 'bg-white text-black shadow-md'
-                          : 'bg-[#171717] text-[#999999] shadow-none'
+                          : 'bg-[#171A18] text-[#999999] shadow-none'
                       }`}
                     >
                       <span className="text-[10px] font-medium leading-tight">{dayLabel}</span>
@@ -2225,7 +2225,7 @@ function BuddyPageInner() {
                 className={`flex min-h-10 min-w-[70px] flex-shrink-0 flex-col items-center justify-center rounded-lg px-2.5 py-1.5 text-center transition-all ${
                   !dateFilter
                     ? 'bg-white text-black shadow-md'
-                    : 'bg-[#171717] text-[#999999] shadow-none'
+                    : 'bg-[#171A18] text-[#999999] shadow-none'
                 }`}
               >
                 <span className="text-[10px] font-medium leading-tight">All</span>
@@ -2234,7 +2234,7 @@ function BuddyPageInner() {
             </div>
             <button
               onClick={() => setShowCreateMenu(true)}
-              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#63FF8F] shadow-lg shadow-[#63FF8F]/16 transition-colors hover:bg-[#83FFA6] active:scale-95"
+              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#C6E76A] shadow-lg shadow-[#C6E76A]/16 transition-colors hover:bg-[#D8F18A] active:scale-95"
               aria-label="Add to the map"
             >
               <Plus className="w-4 h-4 text-black" />
@@ -2242,7 +2242,7 @@ function BuddyPageInner() {
             <button
               type="button"
               onClick={toggleViewMode}
-              className="flex h-10 flex-shrink-0 items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#171717] px-3 text-[11px] font-black uppercase tracking-wide text-white transition-colors hover:border-white/30 active:scale-95 max-[360px]:hidden lg:hidden"
+              className="flex h-10 flex-shrink-0 items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#171A18] px-3 text-[11px] font-black uppercase tracking-wide text-white transition-colors hover:border-white/30 active:scale-95 max-[360px]:hidden lg:hidden"
               aria-label={viewMode === 'list' ? 'Show map' : 'Show list'}
             >
               {viewMode === 'list' ? (
@@ -2259,7 +2259,7 @@ function BuddyPageInner() {
 
           {/* Mobile collapsed filters */}
           <details className={viewMode === 'map' ? 'hidden' : 'group sm:hidden'}>
-            <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between rounded-lg border border-white/[0.12] bg-[#171717] px-3 text-[12px] font-black uppercase tracking-wide text-white transition-colors group-open:border-white/30 [&::-webkit-details-marker]:hidden">
+            <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between rounded-lg border border-white/[0.12] bg-[#171A18] px-3 text-[12px] font-black uppercase tracking-wide text-white transition-colors group-open:border-white/30 [&::-webkit-details-marker]:hidden">
               <span>Filters</span>
               <span className="min-w-0 truncate text-right text-[10px] text-[#999999]">
                 {[neighborhoodFilter?.name ?? activeLocationLabel, activeTypeLabel, activePriceLabel]
@@ -2355,7 +2355,7 @@ function BuddyPageInner() {
             ].map((value) => (
               <span
                 key={value}
-                className="shrink-0 rounded-full border border-white/[0.08] bg-[#111111] px-2.5 py-1"
+                className="shrink-0 rounded-full border border-white/[0.08] bg-[#111412] px-2.5 py-1"
               >
                 {value}
               </span>
@@ -2390,7 +2390,7 @@ function BuddyPageInner() {
         <div className="flex-1 min-h-0 overflow-hidden lg:grid lg:grid-cols-[minmax(390px,42vw)_1fr]">
           {/* List view — community-first cards backed by known sessions */}
           <div className="h-full min-h-0 overflow-y-auto border-white/[0.08] px-4 pb-24 lg:border-r">
-            <div className="sticky top-0 z-10 -mx-4 border-b border-white/[0.08] bg-[#0B0B0B]/96 px-4 py-3 backdrop-blur-xl">
+            <div className="sticky top-0 z-10 -mx-4 border-b border-white/[0.08] bg-[#0B0D0C]/96 px-4 py-3 backdrop-blur-xl">
               <LocalPulsePanel
                 activeLocationLabel={neighborhoodFilter?.name ?? activeLocationLabel}
                 activeDateLabel={activeDateLabel}
@@ -2485,23 +2485,23 @@ function BuddyPageInner() {
                     {[0, 1, 2, 3, 4].map((i) => (
                       <div
                         key={i}
-                        className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 rounded-xl border border-white/[0.06] bg-[#111111] p-3"
+                        className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 rounded-xl border border-white/[0.06] bg-[#111412] p-3"
                       >
-                        <div className="h-20 rounded-lg bg-[#1A1A1A] shimmer" />
+                        <div className="h-20 rounded-lg bg-[#1B1F1C] shimmer" />
                         <div className="min-w-0 py-1">
-                          <div className="h-3 w-20 rounded bg-[#1A1A1A] shimmer" />
-                          <div className="mt-3 h-4 w-4/5 rounded bg-[#1A1A1A] shimmer" />
-                          <div className="mt-2 h-3 w-3/5 rounded bg-[#1A1A1A] shimmer" />
+                          <div className="h-3 w-20 rounded bg-[#1B1F1C] shimmer" />
+                          <div className="mt-3 h-4 w-4/5 rounded bg-[#1B1F1C] shimmer" />
+                          <div className="mt-2 h-3 w-3/5 rounded bg-[#1B1F1C] shimmer" />
                           <div className="mt-4 flex gap-2">
-                            <div className="h-6 w-16 rounded-full bg-[#1A1A1A] shimmer" />
-                            <div className="h-6 w-20 rounded-full bg-[#1A1A1A] shimmer" />
+                            <div className="h-6 w-16 rounded-full bg-[#1B1F1C] shimmer" />
+                            <div className="h-6 w-20 rounded-full bg-[#1B1F1C] shimmer" />
                           </div>
                         </div>
                       </div>
                     ))}
                     <style>{`
                   .shimmer {
-                    background: linear-gradient(90deg, #1A1A1A 25%, #2A2A2A 50%, #1A1A1A 75%);
+                    background: linear-gradient(90deg, #1B1F1C 25%, #2A2A2A 50%, #1B1F1C 75%);
                     background-size: 200% 100%;
                     animation: shimmer 1.5s infinite;
                   }
@@ -2623,7 +2623,7 @@ function BuddyPageInner() {
                           </button>
                           <Link
                             href="/communities"
-                            className="inline-flex items-center gap-1 rounded-full border border-white/[0.08] bg-[#1A1A1A] px-3.5 py-2 text-xs font-semibold text-[#999999]"
+                            className="inline-flex items-center gap-1 rounded-full border border-white/[0.08] bg-[#1B1F1C] px-3.5 py-2 text-xs font-semibold text-[#999999]"
                           >
                             Browse communities
                           </Link>
@@ -2635,7 +2635,7 @@ function BuddyPageInner() {
               </>
             )}
           </div>
-          <div className="relative hidden min-h-0 bg-[#151515] lg:block">
+          <div className="relative hidden min-h-0 bg-[#151816] lg:block">
             <LazySessionVectorMap
               center={userLocation ?? cityConfig.center}
               pins={mapPins}
@@ -2937,11 +2937,11 @@ function GoingSoloAfterRsvpPrompt({
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 18 }}
-      className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+12px)] z-50 mx-auto max-w-md rounded-2xl border border-[#B6FF00]/20 bg-[#101010]/96 p-3 shadow-[0_18px_60px_rgba(0,0,0,0.55)] backdrop-blur md:left-auto md:right-5 md:mx-0"
+      className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+12px)] z-50 mx-auto max-w-md rounded-2xl border border-[#C6E76A]/20 bg-[#101010]/96 p-3 shadow-[0_18px_60px_rgba(0,0,0,0.55)] backdrop-blur md:left-auto md:right-5 md:mx-0"
     >
       <div className="flex items-start gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#B6FF00]/12">
-          <Users className="h-5 w-5 text-[#B6FF00]" />
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#C6E76A]/12">
+          <Users className="h-5 w-5 text-[#C6E76A]" />
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-bold text-white">Going solo?</p>
@@ -2953,7 +2953,7 @@ function GoingSoloAfterRsvpPrompt({
               type="button"
               onClick={() => onAnswer(true)}
               disabled={loading}
-              className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#B6FF00] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#CAFF33] disabled:cursor-wait disabled:bg-neutral-300"
+              className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#C6E76A] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A] disabled:cursor-wait disabled:bg-neutral-300"
             >
               {loading ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -3011,7 +3011,7 @@ function FollowAfterRsvpPrompt({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={session.community.logoImage} alt="" className="h-full w-full object-cover" />
           ) : (
-            <UserPlus className="h-5 w-5 text-[#63FF8F]" />
+            <UserPlus className="h-5 w-5 text-[#C6E76A]" />
           )}
         </div>
         <div className="min-w-0 flex-1">
@@ -3077,7 +3077,7 @@ function FilterMenu({
 }) {
   return (
     <details className="group relative min-w-0">
-      <summary className="flex min-h-[58px] cursor-pointer list-none items-center justify-between gap-2 rounded-md border-2 border-white/70 bg-[#0D0D0D] px-3 py-2 font-mono shadow-[0_0_0_1px_rgba(255,255,255,0.06)] transition-colors hover:border-[#63FF8F] group-open:border-[#63FF8F] [&::-webkit-details-marker]:hidden">
+      <summary className="flex min-h-[58px] cursor-pointer list-none items-center justify-between gap-2 rounded-md border-2 border-white/70 bg-[#0B0D0C] px-3 py-2 font-mono shadow-[0_0_0_1px_rgba(255,255,255,0.06)] transition-colors hover:border-[#C6E76A] group-open:border-[#C6E76A] [&::-webkit-details-marker]:hidden">
         <span className="min-w-0">
           <span className="block truncate text-[10px] font-black uppercase tracking-[0.14em] text-white/44">
             {label}
@@ -3088,7 +3088,7 @@ function FilterMenu({
         </span>
         <ChevronDown className="h-4 w-4 shrink-0 text-white/56 transition-transform group-open:rotate-180" />
       </summary>
-      <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 max-h-[360px] overflow-y-auto rounded-md border border-white/14 bg-[#151515]/94 p-1 shadow-2xl shadow-black/50 backdrop-blur-xl">
+      <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 max-h-[360px] overflow-y-auto rounded-md border border-white/14 bg-[#151816]/94 p-1 shadow-2xl shadow-black/50 backdrop-blur-xl">
         {options.map((option) => {
           const active = value === option.value
 
@@ -3102,7 +3102,7 @@ function FilterMenu({
               }}
               className={`flex min-h-11 w-full items-center justify-between gap-2 rounded px-3 text-left text-sm font-bold transition-colors ${
                 active
-                  ? 'bg-[#63FF8F] text-black'
+                  ? 'bg-[#C6E76A] text-black'
                   : 'text-white/76 hover:bg-white/[0.08] hover:text-white'
               }`}
             >
@@ -3143,8 +3143,8 @@ function FilterOptionGroup({
               onClick={() => onChange(option.value)}
               className={`min-h-11 shrink-0 rounded-md border px-3 font-mono text-[11px] font-black uppercase tracking-wide transition-colors ${
                 active
-                  ? 'border-[#63FF8F] bg-[#63FF8F] text-black'
-                  : 'border-white/[0.10] bg-[#171717] text-white/66 hover:border-white/24 hover:text-white'
+                  ? 'border-[#C6E76A] bg-[#C6E76A] text-black'
+                  : 'border-white/[0.10] bg-[#171A18] text-white/66 hover:border-white/24 hover:text-white'
               }`}
             >
               {option.label}
@@ -3169,7 +3169,7 @@ function QuickIntentRail({
     <section className="border-b border-white/[0.08] py-3">
       <div className="mb-2 flex items-end justify-between gap-3">
         <div>
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
             I want to...
           </p>
           <p className="mt-1 text-xs font-semibold text-white/48">
@@ -3188,7 +3188,7 @@ function QuickIntentRail({
               onClick={() => onSelect(idea)}
               className={`grid min-h-[86px] w-[168px] shrink-0 content-between rounded-lg border p-3 text-left transition-colors ${
                 active
-                  ? 'border-[#63FF8F]/45 bg-[#63FF8F]/10'
+                  ? 'border-[#C6E76A]/45 bg-[#C6E76A]/10'
                   : 'border-white/[0.10] bg-[#121212] hover:border-white/25'
               }`}
             >
@@ -3199,7 +3199,7 @@ function QuickIntentRail({
                 </span>
               </span>
               <span className={`mt-2 inline-flex h-7 w-7 items-center justify-center rounded-full ${
-                active ? 'bg-[#63FF8F] text-black' : 'bg-white text-black'
+                active ? 'bg-[#C6E76A] text-black' : 'bg-white text-black'
               }`}>
                 <Plus className="h-3.5 w-3.5" />
               </span>
@@ -3238,7 +3238,7 @@ function CityEmptyState({
 
   return (
     <div className="grid gap-4 py-5 sm:py-6">
-      <section className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#141414] sm:grid sm:grid-cols-[0.95fr_1.05fr]">
+      <section className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#151816] sm:grid sm:grid-cols-[0.95fr_1.05fr]">
         <div className="relative min-h-[190px] bg-[#222222] sm:min-h-full">
           <Image
             src={cityImage}
@@ -3247,10 +3247,10 @@ function CityEmptyState({
             sizes="(min-width: 640px) 45vw, 100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-black/10 to-transparent sm:bg-gradient-to-r" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#151816] via-black/10 to-transparent sm:bg-gradient-to-r" />
         </div>
         <div className="p-4 sm:p-5">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
             No solo-friendly plans yet
           </p>
           <h2 className="mt-2 text-2xl font-bold leading-tight text-white">
@@ -3272,7 +3272,7 @@ function CityEmptyState({
             </Link>
             <button
               onClick={onCreate}
-              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/[0.12] bg-[#1A1A1A] px-4 text-xs font-black uppercase tracking-wide text-white hover:border-[#63FF8F] hover:text-[#63FF8F]"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/[0.12] bg-[#1B1F1C] px-4 text-xs font-black uppercase tracking-wide text-white hover:border-[#C6E76A] hover:text-[#C6E76A]"
             >
               <Zap className="h-3.5 w-3.5" />
               Post a session
@@ -3305,7 +3305,7 @@ function CityEmptyState({
             <button
               key={idea.label}
               onClick={() => onStarterSelect(idea.type)}
-              className="min-h-[74px] rounded-xl border border-white/[0.08] bg-[#181818] p-3 text-left transition-colors hover:border-[#63FF8F]"
+              className="min-h-[74px] rounded-xl border border-white/[0.08] bg-[#1A1E1B] p-3 text-left transition-colors hover:border-[#C6E76A]"
             >
               <p className="text-sm font-bold text-white">{idea.label}</p>
               <p className="mt-1 text-xs leading-5 text-[#777777]">{idea.note}</p>
@@ -3317,7 +3317,7 @@ function CityEmptyState({
       <section className="grid gap-2 sm:grid-cols-2">
         <Link
           href="/communities"
-          className="rounded-xl border border-white/[0.08] bg-[#111111] p-4 hover:border-white/18"
+          className="rounded-xl border border-white/[0.08] bg-[#111412] p-4 hover:border-white/18"
         >
           <p className="text-sm font-bold text-white">Browse communities</p>
           <p className="mt-1 text-xs leading-5 text-[#777777]">
@@ -3327,7 +3327,7 @@ function CityEmptyState({
         {showMarketSwitch ? (
           <Link
             href={otherCity.href}
-            className="rounded-xl border border-white/[0.08] bg-[#111111] p-4 hover:border-white/18"
+            className="rounded-xl border border-white/[0.08] bg-[#111412] p-4 hover:border-white/18"
           >
             <p className="text-sm font-bold text-white">Browse {otherCity.name}</p>
             <p className="mt-1 text-xs leading-5 text-[#777777]">
@@ -3338,7 +3338,7 @@ function CityEmptyState({
           <button
             type="button"
             onClick={onOpenMap}
-            className="rounded-xl border border-white/[0.08] bg-[#111111] p-4 text-left hover:border-white/18"
+            className="rounded-xl border border-white/[0.08] bg-[#111412] p-4 text-left hover:border-white/18"
           >
             <p className="text-sm font-bold text-white">Open community map</p>
             <p className="mt-1 text-xs leading-5 text-[#777777]">
@@ -3354,7 +3354,7 @@ function CityEmptyState({
 function MapEmptyOverlay({ cityName, onCreate }: { cityName: string; onCreate: () => void }) {
   return (
     <div className="absolute inset-x-4 top-4 z-20 max-w-sm rounded-2xl border border-white/[0.10] bg-black/70 p-4 shadow-2xl shadow-black/40 backdrop-blur">
-      <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+      <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
         No solo-friendly pins
       </p>
       <h3 className="mt-2 text-lg font-bold leading-tight text-white">
@@ -3440,7 +3440,7 @@ function MapActivityDrawer({
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#63FF8F] px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#C6E76A] px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
         >
           <Plus className="h-3.5 w-3.5" />
           Post
@@ -3607,7 +3607,7 @@ function MapQuietTodayBanner({
     <div className="absolute left-3 right-3 top-[13rem] z-20 hidden rounded-2xl border border-white/[0.10] bg-black/70 p-3 shadow-2xl shadow-black/30 backdrop-blur md:left-4 md:right-auto md:block md:w-[320px]">
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#B6FF00]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#C6E76A]">
             Communities active
           </p>
           <p className="mt-1 truncate text-xs font-semibold text-white/80">
@@ -3648,7 +3648,7 @@ function MapCommandOverlay({
     <div className="absolute left-3 top-3 z-20 hidden w-[min(350px,calc(100%-24px))] rounded-lg border border-white/[0.12] bg-black/68 p-3 shadow-2xl shadow-black/40 backdrop-blur-xl md:block">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
             Activity map
           </p>
           <h2 className="mt-1 truncate text-sm font-black text-white">
@@ -3675,7 +3675,7 @@ function MapCommandOverlay({
       </div>
       <Link
         href={communityHref}
-        className="mt-2 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-full border border-white/12 font-mono text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+        className="mt-2 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-full border border-white/12 font-mono text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#C6E76A] hover:text-[#C6E76A]"
       >
         Browse communities
         <Users className="h-3.5 w-3.5" />
@@ -3996,7 +3996,7 @@ function AttendeePreview({
   if (attendeeCount === 0) {
     return (
       <div className="inline-flex min-w-0 items-center gap-1.5 text-[11px] font-medium text-[#777777]">
-        <span className="flex h-6 w-6 items-center justify-center rounded-full border border-dashed border-white/[0.16] bg-[#171717] text-[10px]">
+        <span className="flex h-6 w-6 items-center justify-center rounded-full border border-dashed border-white/[0.16] bg-[#171A18] text-[10px]">
           +
         </span>
         <span className="truncate">Be first in</span>
@@ -4166,7 +4166,7 @@ function MapSelectedSessionCard({
             onClick={onPreviewAttendees ? () => onPreviewAttendees(session) : undefined}
           />
           <div className="flex min-w-0 flex-wrap gap-1.5">
-            <span className="rounded-full border border-[#B6FF00]/25 bg-[#B6FF00]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#B6FF00]">
+            <span className="rounded-full border border-[#C6E76A]/25 bg-[#C6E76A]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#C6E76A]">
               {showUpConfidence.level} confidence
             </span>
             {confidenceBadges.map((badge) => (
@@ -4178,7 +4178,7 @@ function MapSelectedSessionCard({
               </span>
             ))}
             {soloCount > 0 ? (
-              <span className="rounded-full border border-[#B6FF00]/25 bg-[#B6FF00]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#B6FF00]">
+              <span className="rounded-full border border-[#C6E76A]/25 bg-[#C6E76A]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#C6E76A]">
                 {soloCount} solo
               </span>
             ) : null}
@@ -4196,12 +4196,12 @@ function MapSelectedSessionCard({
               </span>
             ) : null}
             {levelLabel ? (
-              <span className="rounded-full border border-[#B6FF00]/25 bg-[#B6FF00]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#B6FF00]">
+              <span className="rounded-full border border-[#C6E76A]/25 bg-[#C6E76A]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#C6E76A]">
                 {levelLabel}
               </span>
             ) : null}
             {officialJoinUrl ? (
-              <span className="rounded-full border border-[#63FF8F]/25 bg-[#63FF8F]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#63FF8F]">
+              <span className="rounded-full border border-[#C6E76A]/25 bg-[#C6E76A]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#C6E76A]">
                 Official link
               </span>
             ) : null}
@@ -4225,7 +4225,7 @@ function MapSelectedSessionCard({
                 }}
                 className={`inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 font-mono text-[10px] font-black uppercase transition-colors ${
                   isJoined
-                    ? 'border border-[#63FF8F]/30 bg-[#63FF8F]/10 text-[#63FF8F]'
+                    ? 'border border-[#C6E76A]/30 bg-[#C6E76A]/10 text-[#C6E76A]'
                     : 'bg-white text-black hover:bg-neutral-200'
                 } disabled:cursor-not-allowed disabled:bg-[#222222] disabled:text-[#666666]`}
               >
@@ -4245,7 +4245,7 @@ function MapSelectedSessionCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackOfficialJoinClick(session, source)}
-                className="inline-flex min-h-8 items-center gap-1.5 rounded-full bg-[#63FF8F] px-3 font-mono text-[10px] font-black uppercase text-black transition-colors hover:bg-[#83FFA6]"
+                className="inline-flex min-h-8 items-center gap-1.5 rounded-full bg-[#C6E76A] px-3 font-mono text-[10px] font-black uppercase text-black transition-colors hover:bg-[#D8F18A]"
               >
                 {ctaLabel}
                 <ArrowRight className="h-3 w-3" />

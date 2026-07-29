@@ -86,8 +86,8 @@ function SignUpContent() {
 
   const getContextualContent = () => {
     switch (intent) {
-      case 'rsvp': return { title: 'Join the session', subtitle: 'Create an account to save your spot' }
-      case 'host': return { title: 'Become a host', subtitle: 'Create an account to list sessions and bring people back' }
+      case 'rsvp': return { title: 'Join the plan', subtitle: 'Create an account to save your spot' }
+      case 'host': return { title: 'Become a host', subtitle: 'Create an account to list plans and bring people back' }
       default: return { title: 'Join SweatBuddies', subtitle: 'Find people through local fitness' }
     }
   }
@@ -99,14 +99,14 @@ function SignUpContent() {
       <div className="w-full max-w-sm mx-auto">
         <Link
           href="/"
-          className="mb-8 inline-flex items-center gap-1.5 text-sm text-white/68 transition-colors hover:text-white"
+          className="mb-8 inline-flex min-h-11 items-center gap-1.5 text-sm text-white/68 transition-colors hover:text-white"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
         </Link>
 
         <div className="flex justify-center mb-6">
-          <Logo size={40} />
+          <Logo size={40} color="#FFFFFF" />
         </div>
 
         <div className="text-center mb-6">
@@ -136,15 +136,15 @@ function SignUpContent() {
                 formFieldRow: 'w-full',
                 formField: 'w-full gap-1',
                 socialButtons: 'w-full',
-                socialButtonsBlockButton: 'border border-white/15 hover:bg-white/[0.06] rounded-xl w-full py-3',
+                socialButtonsBlockButton: 'min-h-11 border border-white/15 bg-white/[0.03] hover:bg-white/[0.06] rounded-xl w-full py-3',
                 socialButtonsBlockButtonText: 'font-semibold text-white/76',
                 socialButtonsProviderIcon: 'w-5 h-5',
                 dividerRow: 'my-4',
                 dividerLine: 'bg-white/12',
                 dividerText: 'text-white/60 text-sm px-3',
                 formFieldLabel: 'text-white/76 font-medium text-sm',
-                formFieldInput: 'border-white/15 bg-[#101010] text-white focus:border-[#63FF8F] focus:ring-[#63FF8F]/10 rounded-xl w-full py-3',
-                formButtonPrimary: 'bg-[#63FF8F] hover:bg-[#83FFA6] text-black rounded-xl w-full py-3 text-base font-bold',
+                formFieldInput: 'min-h-11 border-white/15 bg-[#101010] text-white focus:border-[#63FF8F] focus:ring-[#63FF8F]/10 rounded-xl w-full py-3',
+                formButtonPrimary: 'min-h-11 bg-[#63FF8F] hover:bg-[#83FFA6] text-black rounded-xl w-full py-3 text-base font-bold',
                 otpCodeFieldInput: 'border-white/15 bg-[#101010] text-white text-lg',
                 otpCodeFieldInputs: 'gap-2',
                 footerAction: 'pt-4 justify-center',
@@ -152,7 +152,7 @@ function SignUpContent() {
                 footer: 'hidden',
                 identityPreview: 'justify-center',
                 identityPreviewEditButton: 'text-white/64',
-                formFieldInputShowPasswordButton: 'text-white/64',
+                formFieldInputShowPasswordButton: 'min-h-11 min-w-11 text-white/64',
                 alert: 'rounded-xl',
                 alertText: 'text-sm',
               }
@@ -162,7 +162,7 @@ function SignUpContent() {
         </div>
 
         <p className="mt-6 text-center text-xs text-white/60">
-          One account for everything — join and host sessions.
+          One account for everything: join and host community plans.
         </p>
       </div>
     </div>

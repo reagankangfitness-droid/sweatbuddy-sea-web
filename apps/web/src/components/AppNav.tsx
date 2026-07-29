@@ -72,12 +72,12 @@ function AppNavInner() {
   const hasOwnActionBar =
     pathname.match(/^\/activities\/[^/]+$/) || // activity detail
     pathname.match(/^\/activities\/[^/]+\/edit/) || // activity edit
-    pathname.startsWith('/buddy/host/new') || // full session creation
+    pathname.startsWith('/buddy/host/new') || // full plan creation
     pathname.startsWith('/buddy/host/quick') || // quick post
     pathname.startsWith('/onboarding') || // onboarding flows
     pathname.startsWith('/communities/create') || // community creation
-    pathname.match(/^\/e\/[^/]+$/) || // event detail
-    pathname.match(/^\/event\/[^/]+$/) // event detail
+    pathname.match(/^\/e\/[^/]+$/) || // plan detail
+    pathname.match(/^\/event\/[^/]+$/) // plan detail
 
   if (isPublicDiscoveryRoute || !isAppPage || hasOwnActionBar) return null
 
@@ -90,7 +90,12 @@ function AppNavInner() {
       )
     }
     if (item.id === 'profile') {
-      return pathname.startsWith('/profile') || pathname.startsWith('/hub') || pathname.startsWith('/settings') || pathname.startsWith('/saved') || pathname.startsWith('/my-bookings') || pathname.startsWith('/my-sessions') || pathname.startsWith('/notifications')
+      return (
+        pathname.startsWith('/profile') ||
+        pathname.startsWith('/hub') ||
+        pathname.startsWith('/settings') ||
+        pathname.startsWith('/saved')
+      )
     }
     return pathname.startsWith(item.href)
   }
@@ -141,8 +146,13 @@ function AppNavInner() {
           <div className="mt-auto flex flex-col items-center gap-3">
             <Link
               href="/notifications"
-              className="relative w-11 h-11 rounded-xl flex items-center justify-center text-[#71717A] hover:text-white transition-colors"
+              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition-colors ${
+                pathname.startsWith('/notifications')
+                  ? 'bg-white text-black'
+                  : 'text-[#71717A] hover:text-white'
+              }`}
               aria-label="Notifications"
+              aria-current={pathname.startsWith('/notifications') ? 'page' : undefined}
             >
               <Bell className="w-4 h-4" />
               {unreadNotifications > 0 && (

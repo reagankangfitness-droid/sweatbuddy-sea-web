@@ -26,41 +26,41 @@ const HOST_OUTCOMES = [
   {
     icon: MapPin,
     image: '/images/hosts/run-club-group.jpg',
-    imageAlt: 'Fitness community gathering after a group session',
+    imageAlt: 'Fitness community gathering after a group plan',
     title: 'Be visible where people choose plans',
-    body: 'Show up where people nearby are actively looking for run clubs, yoga groups, pickleball crews, and wellness events.',
+    body: 'Show up where people nearby are actively looking for run clubs, yoga groups, pickleball crews, and community workouts.',
   },
   {
     icon: Users,
     image: '/images/community-bonds.jpg',
     imageAlt: 'People connecting through a local wellness community',
     title: 'Turn first-timers into regulars',
-    body: 'Give new people a clear page, upcoming sessions, and an easy reason to come back after the first visit.',
+    body: 'Give new people a clear community page, upcoming plans, and an easy reason to come back after the first visit.',
   },
   {
     icon: CreditCard,
     image: '/images/attendees-dashboard.png',
     imageAlt: 'Host dashboard showing attendee management',
     title: 'Stop chasing payments in chat',
-    body: 'Run free sessions or collect paid spots without stitching together payment screenshots, reminders, and spreadsheets.',
+    body: 'Run free plans or collect paid spots without stitching together payment screenshots, reminders, and spreadsheets.',
   },
 ]
 
 const HOST_SYSTEM = [
   {
     icon: CalendarPlus,
-    title: 'Publish one joinable event',
-    body: 'Create the session once, set capacity, add the location, and share one clean link.',
+    title: 'Publish one joinable plan',
+    body: 'Create the plan once, set capacity, add the meeting point, and share one clean link.',
   },
   {
     icon: BarChart3,
     title: 'See what brings people back',
-    body: 'Track who is joining, who is new, and which sessions build repeat attendance.',
+    body: 'Track who is joining, who is new, and which plans build repeat attendance.',
   },
   {
     icon: MessageCircle,
     title: 'Keep chat for connection',
-    body: 'Move discovery, sessions, payments, and attendance out of scattered DMs.',
+    body: 'Move discovery, plans, payments, and attendance out of scattered DMs.',
   },
 ]
 
@@ -72,13 +72,13 @@ const LAUNCH_STEPS = [
   },
   {
     label: '02',
-    title: 'Make the first session easy to join',
+    title: 'Make the first plan easy to join',
     body: 'Clarify who it is for, what happens, where to go, and why a newcomer should feel comfortable showing up.',
   },
   {
     label: '03',
     title: 'Turn attendance into repeat community',
-    body: 'Use sessions, community pages, and attendee history to bring people back instead of restarting every week.',
+    body: 'Use plans, community pages, and attendee history to bring people back instead of restarting every week.',
   },
 ]
 
@@ -144,18 +144,18 @@ export default function BecomeAHostPage() {
             </Link>
             <Link
               href="/buddy?create=session"
-              className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#63FF8F] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-black hover:bg-[#83FFA6]"
+              className="sb-button-secondary px-4"
             >
-              Post a session
+              Post a plan
             </Link>
           </div>
         </div>
       </header>
 
-      <section className="relative min-h-[86svh] overflow-hidden px-5 pt-28 pb-16 sm:min-h-[82svh] sm:pt-36">
+      <section className="relative min-h-[76svh] overflow-hidden px-5 pt-28 pb-14 sm:min-h-[78svh] sm:pt-32">
         <Image
           src="/images/organizers-bg.jpg"
-          alt="A local fitness crew smiling together after a session"
+          alt="A local fitness crew smiling together after a group plan"
           fill
           sizes="100vw"
           className="object-cover"
@@ -169,10 +169,10 @@ export default function BecomeAHostPage() {
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-[#63FF8F]">
               For fitness community hosts
             </p>
-            <h1 className="text-4xl font-bold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
+            <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
               Make it easier for new people to walk in.
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/72 sm:text-lg">
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/72">
               SweatBuddies helps fitness hosts show first-timers what happens, who it is for,
               who is going, and why showing up solo is okay.
             </p>
@@ -182,26 +182,26 @@ export default function BecomeAHostPage() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/buddy?create=session"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-7 py-4 text-sm font-bold uppercase tracking-wider text-black hover:bg-[#83FFA6]"
+                className="sb-button-primary px-5"
               >
-                Post your first session <ChevronRight className="h-4 w-4" />
+                Post your first plan <ChevronRight className="h-4 w-4" />
               </Link>
               <Link
                 href="#launch-help"
-                className="inline-flex items-center justify-center rounded-full border border-white/20 px-7 py-4 text-sm font-bold uppercase tracking-wider text-white hover:bg-white/10"
+                className="sb-button-secondary px-5"
               >
                 Need launch help?
               </Link>
             </div>
           </div>
 
-          <div className="hidden rounded-xl border border-white/12 bg-[#111111]/85 p-4 shadow-2xl shadow-black/40 backdrop-blur lg:block">
-            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+          <div className="hidden rounded-lg border border-white/10 bg-[#111111]/85 p-4 shadow-xl shadow-black/25 backdrop-blur lg:block">
+            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#63FF8F]">
               What people see
             </p>
             <div className="mt-4 space-y-3">
               {[
-                { label: 'Upcoming session', value: 'Date, place, price, level' },
+                { label: 'Upcoming plan', value: 'Date, meeting point, price, level' },
                 { label: 'People signals', value: 'Going, solo-friendly, regulars' },
                 { label: 'Verified details', value: 'Official page behind the plan' },
               ].map((item) => (
@@ -209,14 +209,14 @@ export default function BecomeAHostPage() {
                   key={item.label}
                   className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-3"
                 >
-                  <p className="text-sm font-black text-white">{item.label}</p>
+                  <p className="text-sm font-bold text-white">{item.label}</p>
                   <p className="mt-1 text-xs leading-5 text-white/55">{item.value}</p>
                 </div>
               ))}
             </div>
             <Link
               href="/buddy"
-              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-white/15 text-xs font-black uppercase tracking-wide text-white transition-colors hover:border-[#63FF8F]/60"
+              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-white/15 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:border-[#63FF8F]/60"
             >
               View discovery
             </Link>
@@ -225,7 +225,7 @@ export default function BecomeAHostPage() {
           <div className="mt-12 grid max-w-3xl grid-cols-3 gap-2 lg:col-span-2">
             {[
               { value: 'Nearby', label: 'discovery' },
-              { value: 'Free + paid', label: 'sessions' },
+              { value: 'Free + paid', label: 'plans' },
               { value: 'Regulars', label: 'repeat attendance' },
             ].map((stat) => (
               <div key={stat.label} className="min-h-[72px] border-t border-white/20 pt-3">
@@ -246,7 +246,7 @@ export default function BecomeAHostPage() {
               Why hosts use SweatBuddies
             </p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Your best sessions should not vanish after one Instagram story.
+              Your best plans should not vanish after one Instagram story.
             </h2>
           </div>
           <div className="mt-10 grid gap-3 md:grid-cols-3">
@@ -288,11 +288,11 @@ export default function BecomeAHostPage() {
               Less admin, more momentum
             </p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Run the event. Let the page carry the proof.
+              Run the plan. Let the page carry the proof.
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-neutral-500">
               Keep WhatsApp, LINE, and Instagram for conversation. Use SweatBuddies for the parts
-              that need structure: discovery, sessions, payments, attendance, and repeat turnout.
+              that need structure: discovery, plans, payments, attendance, and repeat turnout.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
@@ -325,11 +325,11 @@ export default function BecomeAHostPage() {
       </section>
 
       <section id="launch-help" className="px-5 pb-20 sm:pb-28">
-        <div className="mx-auto grid max-w-6xl overflow-hidden rounded-2xl border border-white/[0.08] bg-[#151515] lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="mx-auto grid max-w-6xl overflow-hidden rounded-lg border border-white/[0.08] bg-[#151515] lg:grid-cols-[0.95fr_1.05fr]">
           <div className="relative min-h-[360px] overflow-hidden">
             <Image
               src="/images/hero-2.jpg"
-              alt="Fitness community session"
+              alt="Fitness community plan"
               fill
               className="object-cover"
             />
@@ -340,7 +340,7 @@ export default function BecomeAHostPage() {
                 Need help launching a crew?
               </h2>
               <p className="mt-3 max-w-md text-sm leading-relaxed text-white/70">
-                If you are not ready to post a session yet, tell us what you are building and we
+                If you are not ready to post a plan yet, tell us what you are building and we
                 will point you in the right direction.
               </p>
             </div>
@@ -357,7 +357,7 @@ export default function BecomeAHostPage() {
                 </h2>
                 <p className="text-sm leading-relaxed text-neutral-400 mb-8">
                   Pick the closest activity so we can understand the problem you solve for members
-                  and the sessions you want to fill.
+                  and the plans you want to fill.
                 </p>
 
                 <div className="grid grid-cols-3 gap-2 mb-8">
@@ -365,7 +365,7 @@ export default function BecomeAHostPage() {
                     <button
                       key={t.key}
                       onClick={() => setActivityType(t.key)}
-                      className={`flex min-h-[78px] flex-col items-center justify-center gap-1.5 rounded-xl border px-2 py-3 text-center transition-all ${
+                      className={`flex min-h-[78px] flex-col items-center justify-center gap-1.5 rounded-lg border px-2 py-3 text-center transition-all ${
                         activityType === t.key
                           ? 'border-white bg-white/10 text-white'
                           : 'border-neutral-800 text-neutral-400 hover:border-neutral-600'
@@ -380,7 +380,7 @@ export default function BecomeAHostPage() {
                 <button
                   onClick={() => setStep('details')}
                   disabled={!activityType}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-white py-4 text-sm font-bold text-neutral-900 transition-colors hover:bg-neutral-100 disabled:opacity-30"
+                  className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-white py-3 text-sm font-bold text-neutral-900 transition-colors hover:bg-neutral-100 disabled:opacity-30"
                 >
                   Continue <ChevronRight className="w-4 h-4" />
                 </button>
@@ -420,7 +420,7 @@ export default function BecomeAHostPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Reagan"
-                      className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white placeholder-neutral-600 focus:border-neutral-600 focus:outline-none"
+                      className="min-h-11 w-full rounded-lg border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white placeholder-neutral-600 focus:border-neutral-600 focus:outline-none"
                     />
                   </div>
 
@@ -434,7 +434,7 @@ export default function BecomeAHostPage() {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@email.com"
                       required
-                      className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white placeholder-neutral-600 focus:border-neutral-600 focus:outline-none"
+                      className="min-h-11 w-full rounded-lg border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white placeholder-neutral-600 focus:border-neutral-600 focus:outline-none"
                     />
                   </div>
 
@@ -447,7 +447,7 @@ export default function BecomeAHostPage() {
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
                       placeholder="Singapore"
-                      className="w-full rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white placeholder-neutral-600 focus:border-neutral-600 focus:outline-none"
+                      className="min-h-11 w-full rounded-lg border border-neutral-800 bg-neutral-950 px-4 py-3 text-sm text-white placeholder-neutral-600 focus:border-neutral-600 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -457,7 +457,7 @@ export default function BecomeAHostPage() {
                 <button
                   type="submit"
                   disabled={submitting || !email}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-white py-4 text-sm font-bold text-neutral-900 transition-colors hover:bg-neutral-100 disabled:opacity-30"
+                  className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-white py-3 text-sm font-bold text-neutral-900 transition-colors hover:bg-neutral-100 disabled:opacity-30"
                 >
                   {submitting ? 'Sending...' : 'Get launch help'}
                 </button>
@@ -476,13 +476,13 @@ export default function BecomeAHostPage() {
                 <h2 className="text-3xl font-bold text-white mb-3">You&apos;re on the list.</h2>
                 <p className="mx-auto mb-8 max-w-sm text-neutral-400">
                   We&apos;ll reach out if we can help shape the launch path. You can still post a
-                  session anytime.
+                  plan anytime.
                 </p>
                 <Link
                   href="/buddy?create=session"
                   className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-white"
                 >
-                  Post a session
+                  Post a plan
                 </Link>
               </div>
             )}

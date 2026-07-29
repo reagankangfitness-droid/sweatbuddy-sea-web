@@ -166,7 +166,7 @@ export default function NotificationsPage() {
 
   if (showSignedOut) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] px-4 text-white">
+      <div className="sb-page px-4">
         <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center py-10">
           <Link
             href="/"
@@ -175,32 +175,32 @@ export default function NotificationsPage() {
           >
             <LogoWithText size={28} color="#FFFFFF" textColor="#FFFFFF" />
           </Link>
-          <div className="rounded-2xl border border-white/10 bg-[#151515] p-6 text-left shadow-2xl shadow-black/30">
+          <div className="sb-surface p-5 text-left">
             <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.06]">
               <Bell className="h-5 w-5 text-[#63FF8F]" />
             </span>
-            <p className="mt-5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+            <p className="sb-eyebrow mt-5">
               Live updates
             </p>
-            <h1 className="mt-3 text-3xl font-black leading-tight text-white">
+            <h1 className="mt-3 text-2xl font-bold leading-tight text-white">
               Know when plans need your attention.
             </h1>
-            <p className="mt-3 text-sm leading-6 text-white/58">
+            <p className="mt-3 text-sm leading-6 text-white/60">
               Sign in to get RSVP updates, reminders, host announcements, recap prompts, and buddy
-              signals from the sessions you care about.
+              signals from the plans you care about.
             </p>
             <div className="mt-6 grid gap-2 sm:grid-cols-2">
               <Link
                 href="/sign-in"
-                className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 text-sm font-bold text-black transition-colors hover:bg-neutral-200"
+                className="sb-button-primary px-5"
               >
                 Sign in
               </Link>
               <Link
                 href="/buddy"
-                className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 px-5 text-sm font-bold text-white transition-colors hover:border-[#63FF8F]/60"
+                className="sb-button-secondary px-5"
               >
-                Explore events
+                Open map
               </Link>
             </div>
           </div>
@@ -225,7 +225,7 @@ export default function NotificationsPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/profile"
-              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/[0.06] transition-colors"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-full hover:bg-white/[0.06] transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-white" />
             </Link>
@@ -270,7 +270,7 @@ export default function NotificationsPage() {
             </div>
             <p className="text-white text-base font-medium mb-1">No notifications yet</p>
             <p className="text-[#71717A] text-sm max-w-xs">
-              When someone joins your session, follows you, or sends you a message, it will show up
+              When someone joins your plan, follows you, or sends you a message, it will show up
               here.
             </p>
           </div>

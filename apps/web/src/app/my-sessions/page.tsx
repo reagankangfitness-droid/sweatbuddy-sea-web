@@ -140,7 +140,7 @@ export default function MySessionsPage() {
 
   if (showSignedOut) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] px-4 text-white">
+      <div className="sb-page px-4">
         <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center py-10">
           <Link
             href="/"
@@ -149,24 +149,24 @@ export default function MySessionsPage() {
           >
             <LogoWithText size={28} color="#FFFFFF" textColor="#FFFFFF" />
           </Link>
-          <div className="rounded-2xl border border-white/10 bg-[#151515] p-6 shadow-2xl shadow-black/30">
-            <p className="font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+          <div className="sb-surface p-5">
+            <p className="sb-eyebrow">
               Your plans
             </p>
-            <h1 className="mt-3 text-3xl font-black leading-tight text-white">
-              Save the sessions you are joining.
+            <h1 className="mt-3 text-2xl font-bold leading-tight text-white">
+              Save the community plans you are joining.
             </h1>
-            <p className="mt-3 text-sm leading-6 text-white/58">
-              Sign in to see upcoming plans, calendar links, host details, and the people signals
-              that make showing up easier.
+            <p className="mt-3 text-sm leading-6 text-white/60">
+              Sign in to see upcoming plans, calendar links, community details, and people signals
+              that make showing up solo easier.
             </p>
             <div className="mt-5 grid grid-cols-3 gap-2">
               {['Upcoming', 'Hosted', 'Past'].map((label) => (
                 <div
                   key={label}
-                  className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2"
+                  className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2"
                 >
-                  <p className="truncate font-mono text-[10px] font-black uppercase tracking-wide text-white/60">
+                  <p className="truncate font-mono text-[10px] font-bold uppercase tracking-wide text-white/60">
                     {label}
                   </p>
                 </div>
@@ -175,15 +175,15 @@ export default function MySessionsPage() {
             <div className="mt-6 grid gap-2 sm:grid-cols-2">
               <Link
                 href="/sign-in"
-                className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 text-sm font-bold text-black transition-colors hover:bg-neutral-200"
+                className="sb-button-primary px-5"
               >
                 Sign in
               </Link>
               <Link
                 href="/buddy"
-                className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 px-5 text-sm font-bold text-white transition-colors hover:border-[#63FF8F]/60"
+                className="sb-button-secondary px-5"
               >
-                Explore events
+                Open map
               </Link>
             </div>
           </div>
@@ -200,12 +200,12 @@ export default function MySessionsPage() {
           <div className="flex items-center gap-4 px-4 py-3">
             <Link
               href="/profile"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0D0D0D] border border-[#333333]"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-[#333333] bg-[#0D0D0D]"
             >
               <ArrowLeft className="w-5 h-5 text-[#999999]" />
             </Link>
             <h1 className="text-sm font-semibold text-white uppercase tracking-wider">
-              My Sessions
+              My Plans
             </h1>
           </div>
         </div>
@@ -225,15 +225,15 @@ export default function MySessionsPage() {
               </h2>
 
               {upcoming.length === 0 ? (
-                <div className="bg-[#1A1A1A] rounded-2xl border border-[#333333] p-6 text-center">
+                <div className="rounded-lg border border-[#333333] bg-[#1A1A1A] p-5 text-center">
                   <p className="text-[#999] text-sm mb-4">
-                    No upcoming sessions. Find one to show up to.
+                    No upcoming plans. Find one to show up to.
                   </p>
                   <Link
                     href="/buddy"
-                    className="inline-block px-5 py-2.5 bg-white text-black font-semibold rounded-full text-sm"
+                    className="sb-button-primary px-5"
                   >
-                    Find a Session
+                    Find a plan
                   </Link>
                 </div>
               ) : (
@@ -247,7 +247,7 @@ export default function MySessionsPage() {
                     return (
                       <div
                         key={session.id}
-                        className="bg-[#1A1A1A] rounded-2xl border border-[#333333] overflow-hidden"
+                        className="overflow-hidden rounded-lg border border-[#333333] bg-[#1A1A1A]"
                       >
                         {/* Image / Gradient fallback */}
                         <Link href={`/activities/${session.id}`}>
@@ -322,7 +322,7 @@ export default function MySessionsPage() {
                               ? `${session.community.name}`
                               : session.host.name
                                 ? `Hosted by ${session.host.name}`
-                                : 'SweatBuddies Session'}
+                        : 'SweatBuddies plan'}
                           </p>
 
                           {/* Add to Calendar */}
@@ -352,11 +352,11 @@ export default function MySessionsPage() {
               </h2>
 
               {past.length === 0 ? (
-                <div className="bg-[#1A1A1A] rounded-2xl border border-[#333333] p-6 text-center">
-                  <p className="text-[#999] text-sm">No sessions yet. Your first one is waiting.</p>
+                <div className="rounded-lg border border-[#333333] bg-[#1A1A1A] p-5 text-center">
+                  <p className="text-[#999] text-sm">No plans yet. Your first one is waiting.</p>
                 </div>
               ) : (
-                <div className="bg-[#1A1A1A] rounded-2xl border border-[#333333] overflow-hidden divide-y divide-[#333333]">
+                <div className="overflow-hidden rounded-lg border border-[#333333] bg-[#1A1A1A] divide-y divide-[#333333]">
                   {past.map((session) => (
                     <div key={session.id} className="px-4 py-3.5 flex items-center justify-between">
                       <div className="flex-1 min-w-0 mr-3">

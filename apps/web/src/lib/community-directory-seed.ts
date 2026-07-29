@@ -551,13 +551,21 @@ export const SINGAPORE_COMMUNITY_DIRECTORY_SEED: CommunityDirectorySeed[] = [
 ]
 
 export function getPublicCommunitySeeds() {
+  if (!staticCommunitySeedsEnabled()) return []
+
   return SINGAPORE_COMMUNITY_DIRECTORY_SEED.filter(
     (community) => community.confidenceTier === 'publishable',
   )
 }
 
 export function getCommunitySeedBySlug(slug: string) {
+  if (!staticCommunitySeedsEnabled()) return null
+
   return SINGAPORE_COMMUNITY_DIRECTORY_SEED.find((community) => community.slug === slug) ?? null
+}
+
+function staticCommunitySeedsEnabled() {
+  return process.env.ENABLE_STATIC_COMMUNITY_SEEDS === '1'
 }
 
 export function getCommunitySeedConfidenceScore(community: CommunityDirectorySeed) {
@@ -570,4 +578,3 @@ export function getCommunitySeedConfidenceScore(community: CommunityDirectorySee
   if (community.priceType) score += 5
   return Math.min(score, 100)
 }
-

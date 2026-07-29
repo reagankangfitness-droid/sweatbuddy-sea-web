@@ -17,6 +17,8 @@
     "test:run": "vitest run",
     "smoke:mobile-buddy": "node scripts/smoke-mobile-buddy.js",
     "backfill:community-directory": "node scripts/backfill-community-directory.js",
+    "soft-reset:community-directory": "node scripts/soft-reset-community-directory.js",
+    "soft-reset:community-directory:apply": "COMMUNITY_RESET_APPLY=1 node scripts/soft-reset-community-directory.js",
     "import:osm-fitness-places": "node scripts/import-osm-fitness-places.js",
     "enrich:google-places": "node scripts/enrich-fitness-places-google.js",
     "sync:media-assets": "node scripts/sync-media-assets.js",

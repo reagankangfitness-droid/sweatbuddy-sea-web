@@ -319,9 +319,9 @@ export default function CommunitiesPageClient({
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] text-white">
+    <div className="sb-page">
       <header className="border-b border-white/10 bg-[#0B0B0B]">
-        <div className="mx-auto max-w-6xl px-4 py-5">
+        <div className="mx-auto max-w-6xl px-4 py-4 sm:py-5">
           <div className="flex min-h-11 items-center justify-between gap-2">
             <Link
               href="/"
@@ -338,24 +338,24 @@ export default function CommunitiesPageClient({
             <Link
               href={plansHref}
               aria-label="Explore plans"
-              className="inline-flex min-h-10 shrink-0 items-center rounded-full border border-white/12 px-2.5 text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F] min-[380px]:px-3"
+              className="sb-button-secondary min-h-10 shrink-0 px-3 text-[10px]"
             >
               <span aria-hidden="true" className="min-[380px]:hidden">Plans</span>
               <span aria-hidden="true" className="hidden min-[380px]:inline">Explore plans</span>
             </Link>
           </div>
 
-          <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
+          <div className="mt-5 grid gap-4 sm:mt-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
             <div>
-              <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[#63FF8F]">
+              <p className="sb-eyebrow">
                 Community directory
               </p>
-              <h1 className="mt-3 max-w-3xl text-4xl font-bold leading-[1.03] tracking-tight sm:text-5xl">
+              <h1 className="mt-2 max-w-3xl text-[1.9rem] font-black leading-[1.02] tracking-tight sm:mt-3 sm:text-5xl">
                 {hasSources
                   ? 'Find active fitness communities you can confidently join.'
                   : 'Help map communities people can safely show up to.'}
               </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-6 text-white/58 sm:text-base">
+              <p className="mt-3 line-clamp-2 max-w-2xl text-sm leading-6 text-white/68 sm:mt-4 sm:line-clamp-none sm:text-base">
                 {hasSources
                   ? 'Start with official links, usual areas, schedule signals, and solo-friendly cues so you know where to join before you show up.'
                   : 'SweatBuddies reviews official community pages so solo joiners can find groups that are real, active, and easy to understand.'}
@@ -363,25 +363,25 @@ export default function CommunitiesPageClient({
             </div>
             {hasSources ? (
               <div className="grid grid-cols-3 gap-2 lg:grid-cols-1">
-                <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
+                <div className="sb-surface p-3">
                   <p className="font-mono text-lg font-black text-white">{communities.length}</p>
-                  <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
+                  <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/62">
                     Communities
                   </p>
                 </div>
-                <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
+                <div className="sb-surface p-3">
                   <p className="font-mono text-lg font-black text-white">
                     {communities.filter((community) => community.beginnerFriendly).length}
                   </p>
-                  <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
+                  <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/62">
                     Beginner
                   </p>
                 </div>
-                <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
+                <div className="sb-surface p-3">
                   <p className="font-mono text-lg font-black text-[#63FF8F]">
                     {communities.filter((community) => community.soloFriendly).length}
                   </p>
-                  <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
+                  <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/62">
                     Solo-friendly
                   </p>
                 </div>
@@ -432,12 +432,12 @@ export default function CommunitiesPageClient({
                     onKeyDown={(event) => {
                       if (event.key === 'Enter') trackSearch()
                     }}
-                    className="min-h-11 w-full rounded-lg border border-white/15 bg-[#111111] py-2.5 pl-9 pr-4 text-sm text-white transition-all placeholder:text-[#666666] focus:border-[#63FF8F] focus:outline-none max-[360px]:placeholder:text-[12px]"
+                    className="min-h-11 w-full rounded-lg border border-white/15 bg-[#111111] py-2.5 pl-9 pr-4 text-sm text-white transition-all placeholder:text-white/50 focus:border-[#63FF8F] focus:outline-none max-[360px]:placeholder:text-[12px]"
                   />
                 </div>
                 <Link
                   href="/communities/nominate"
-                  className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#63FF8F] transition-colors hover:bg-[#83FFA6]"
+                  className="sb-button-primary h-11 w-11 flex-shrink-0 p-0"
                   aria-label="Suggest a community"
                 >
                   <Plus className="w-4 h-4 text-black" />
@@ -534,7 +534,7 @@ export default function CommunitiesPageClient({
                   <button
                     type="button"
                     onClick={clearFilters}
-                    className="flex min-h-11 flex-shrink-0 items-center gap-1 rounded-lg border border-white/15 bg-[#141414] px-3 text-[11px] font-semibold uppercase tracking-wide text-[#999999] transition-colors hover:border-[#63FF8F] hover:text-white"
+                    className="sb-button-secondary min-h-11 flex-shrink-0 rounded-lg px-3 text-[11px]"
                   >
                     <X className="h-3.5 w-3.5" />
                     Clear
@@ -548,7 +548,7 @@ export default function CommunitiesPageClient({
           {/* ── Directory count ── */}
           <div className="max-w-6xl mx-auto px-4 pt-4 pb-2">
             <div className="flex items-center justify-between gap-3">
-              <p className="font-mono text-[11px] font-black uppercase tracking-[0.18em] text-white/42">
+              <p className="font-mono text-[11px] font-black uppercase tracking-[0.18em] text-white/62">
                 {hasFilters
                   ? `${filteredCommunities.length} communit${filteredCommunities.length === 1 ? 'y' : 'ies'} found`
                   : `${subtitle} · official join paths checked`}
@@ -646,7 +646,7 @@ export default function CommunitiesPageClient({
 
 function CrewProofStrip() {
   return (
-    <section className="border-b border-white/10 bg-[#0B0B0B] px-4 py-3">
+    <section className="hidden border-b border-white/10 bg-[#0B0B0B] px-4 py-3 sm:block">
       <div className="mx-auto grid max-w-6xl grid-cols-3 gap-2">
         {CREW_PROOF_IMAGES.map((item) => (
           <div

@@ -177,7 +177,7 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
   )
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] text-white">
+    <div className="sb-page">
       <header className="border-b border-white/10 bg-[#0B0B0B]">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4">
           <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-h-11 min-w-11 items-center">
@@ -191,13 +191,13 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
           <nav className="flex shrink-0 items-center gap-2">
             <Link
               href="/communities"
-              className="hidden min-h-10 items-center rounded-full border border-white/12 px-3 text-xs font-black uppercase tracking-wide text-white/62 transition-colors hover:border-white/28 hover:text-white sm:inline-flex"
+              className="sb-button-secondary hidden min-h-10 px-3 text-xs sm:inline-flex"
             >
               Communities
             </Link>
             <Link
               href="/communities/nominate"
-              className="inline-flex min-h-10 items-center rounded-full bg-[#63FF8F] px-3 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+              className="sb-button-primary min-h-10 px-3 text-xs"
             >
               Suggest a community
             </Link>
@@ -210,20 +210,20 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
         <section className="border-b border-white/10">
           <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end lg:py-14">
             <div>
-              <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[#63FF8F]">
-                SweatBuddies city guide
+              <p className="sb-eyebrow">
+                Community-first city guide
               </p>
               <h1 className="mt-3 max-w-4xl text-4xl font-black leading-[1.02] tracking-tight sm:text-5xl lg:text-6xl">
-                  {category.title}
+                Fitness communities in Singapore
               </h1>
-              <p className="mt-5 max-w-2xl text-base leading-7 text-white/62 sm:text-lg">
-                {category.searchIntent}
+              <p className="mt-5 max-w-2xl text-base leading-7 text-white/68 sm:text-lg">
+                Start with communities, then use places as context for where groups train, meet, and repeat.
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2">
-              <StatBlock label="Places" value={stats.places} />
-              <StatBlock label="Activities" value={stats.activities} />
+              <StatBlock label="Meetup spots" value={stats.places} />
+              <StatBlock label="Known plans" value={stats.activities} />
               <StatBlock label="Areas" value={stats.areas} />
               <StatBlock label="Social picks" value={stats.socialPlaces} />
             </div>
@@ -257,8 +257,8 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
                 <input
                   name="q"
                   defaultValue={searchParams?.q ?? ''}
-                  placeholder="Search by activity, area, crew, or first-timer fit..."
-                  className="min-h-12 w-full rounded-lg border border-white/12 bg-[#111111] pl-10 pr-4 text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/32 focus:border-[#63FF8F]"
+                  placeholder="Search communities, activity, area, or first-timer fit..."
+                  className="min-h-12 w-full rounded-lg border border-white/12 bg-[#111111] pl-10 pr-4 text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/50 focus:border-[#63FF8F]"
                 />
               </div>
               <button
@@ -327,16 +327,16 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
           <div>
             <div className="mb-4 flex flex-col gap-2 border-b border-white/10 pb-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="font-mono text-xs font-black uppercase tracking-wide text-white/36">
+                <p className="font-mono text-xs font-black uppercase tracking-wide text-white/62">
                   {places.length} result{places.length === 1 ? '' : 's'}
                 </p>
                 <h2 className="mt-1 text-2xl font-black tracking-tight text-white">
-                  Places ranked by how easy they are to join
+                  Community-friendly places and meetup spots
                 </h2>
               </div>
               <Link
                 href="/communities"
-                className="inline-flex min-h-10 w-fit items-center gap-2 rounded-full border border-white/12 px-3 text-xs font-black uppercase tracking-wide text-white/66 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+                className="sb-button-secondary min-h-10 w-fit px-3 text-xs"
               >
                 <Users size={15} />
                 Browse communities
@@ -367,9 +367,9 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
 
 function StatBlock({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
+    <div className="sb-surface p-3">
       <p className="font-mono text-2xl font-black text-white">{value}</p>
-      <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/42">
+      <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/62">
         {label}
       </p>
     </div>

@@ -270,8 +270,8 @@ describe('route contracts', () => {
     expect(singaporePage).toContain("params.tab === 'map'")
     expect(bangkokPage).toContain('Find Friends Through Fitness in Bangkok')
     expect(bangkokPage).toContain('index: false')
-    expect(cityLanding).toContain('Find friends through fitness in Singapore.')
-    expect(cityLanding).toContain('Find friends through fitness in Bangkok.')
+    expect(cityLanding).toContain('Fitness communities in Singapore you can actually join.')
+    expect(cityLanding).toContain('Fitness communities in Bangkok you can actually join.')
     expect(cityLanding).toContain(
       'where movement gives everyone a reason to show up, talk, and come back',
     )

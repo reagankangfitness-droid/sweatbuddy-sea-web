@@ -3,6 +3,104 @@
 @tailwind utilities;
 
 @layer components {
+  .sb-page {
+    min-height: 100dvh;
+    background: #0B0B0B;
+    color: #FAFAFA;
+  }
+
+  .sb-surface {
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 8px;
+    background: #151515;
+  }
+
+  .sb-control {
+    min-height: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    color: #FFFFFF;
+    font-weight: 800;
+    transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+  }
+
+  .sb-control:hover,
+  .sb-control:focus-visible {
+    border-color: rgba(99, 255, 143, 0.60);
+    color: #FFFFFF;
+  }
+
+  .sb-button-primary {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 999px;
+    background: #63FF8F;
+    color: #000000;
+    font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    transition: background-color 160ms ease, transform 160ms ease;
+  }
+
+  .sb-button-primary:hover {
+    background: #83FFA6;
+  }
+
+  .sb-button-primary:active {
+    transform: scale(0.98);
+  }
+
+  .sb-button-secondary {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    color: #FFFFFF;
+    font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease, transform 160ms ease;
+  }
+
+  .sb-button-secondary:hover {
+    border-color: rgba(99, 255, 143, 0.60);
+    background: rgba(255, 255, 255, 0.07);
+    color: #63FF8F;
+  }
+
+  .sb-button-secondary:active {
+    transform: scale(0.98);
+  }
+
+  .sb-eyebrow {
+    font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #63FF8F;
+  }
+
+  .sb-text-muted {
+    color: rgba(255, 255, 255, 0.68);
+  }
+
+  .sb-text-soft {
+    color: rgba(255, 255, 255, 0.56);
+  }
+
   .sb-map-marker {
     display: flex;
     position: relative;

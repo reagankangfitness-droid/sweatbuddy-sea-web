@@ -17,7 +17,7 @@ export default function Error({
   }, [error])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0D0D0D] px-4">
+    <div className="sb-page flex items-center justify-center px-4">
       <div className="text-center max-w-md">
         <div className="w-16 h-16 mx-auto mb-6 bg-red-950 border border-red-800 rounded-full flex items-center justify-center">
           <span className="text-3xl">😅</span>
@@ -25,19 +25,19 @@ export default function Error({
         <h2 className="text-xl font-bold text-white mb-2">
           Something broke.
         </h2>
-        <p className="text-[#666666] mb-6">
+        <p className="mb-6 text-white/68">
           Not you &mdash; us. We&apos;re on it.
         </p>
         <div className="space-y-3">
           <button
             onClick={reset}
-            className="w-full px-6 py-3 bg-[#1A1A1A] text-white rounded-full font-semibold hover:bg-black transition-colors"
+            className="sb-button-primary w-full px-6 py-3"
           >
             Try again
           </button>
           <button
             onClick={() => window.location.href = '/'}
-            className="w-full px-6 py-3 bg-[#1A1A1A] text-white border border-white/10 rounded-full font-medium hover:bg-[#2A2A2A] transition-colors"
+            className="sb-button-secondary w-full px-6 py-3"
           >
             Go back home
           </button>
@@ -45,7 +45,7 @@ export default function Error({
         {/* Only show error details in development */}
         {process.env.NODE_ENV === 'development' && (
           <details className="mt-6 text-left">
-            <summary className="text-xs text-[#666666] cursor-pointer">
+            <summary className="cursor-pointer text-xs text-white/60">
               Error details
             </summary>
             <pre className="mt-2 p-3 bg-[#1A1A1A] border border-[#333333] rounded-lg text-xs text-red-500 overflow-auto max-h-40">

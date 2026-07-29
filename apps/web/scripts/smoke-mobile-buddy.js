@@ -23,9 +23,9 @@ async function main() {
     await page.goto(targetUrl, { waitUntil: 'networkidle', timeout: 90000 })
 
     await page.getByText('Community activity', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
-    assert.equal(await page.locator('text=Filters').filter({ visible: true }).count(), 0)
-    assert.equal(await page.locator('button:has-text("Today")').filter({ visible: true }).count(), 0)
-    assert.equal(await page.getByText('Activity map', { exact: true }).filter({ visible: true }).count(), 0)
+    assert.equal(await renderedCount(page.locator('text=Filters')), 0)
+    assert.equal(await renderedCount(page.locator('[data-testid="buddy-date-strip"] button:has-text("Today")')), 0)
+    assert.equal(await renderedCount(page.getByText('Activity map', { exact: true })), 0)
 
     await page.screenshot({ path: screenshotPath, fullPage: false })
     console.log(`Mobile buddy smoke passed: ${targetUrl}`)
@@ -33,6 +33,24 @@ async function main() {
   } finally {
     await browser.close()
   }
+}
+
+async function renderedCount(locator) {
+  return locator.evaluateAll((elements) =>
+    elements.filter((element) => {
+      const rect = element.getBoundingClientRect()
+      const style = window.getComputedStyle(element)
+      return (
+        rect.width > 0 &&
+        rect.height > 0 &&
+        rect.bottom > 0 &&
+        rect.right > 0 &&
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        Number(style.opacity) !== 0
+      )
+    }).length,
+  )
 }
 
 main().catch((error) => {

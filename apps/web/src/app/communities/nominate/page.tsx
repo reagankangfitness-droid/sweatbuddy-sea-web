@@ -156,7 +156,7 @@ export default function NominateCommunityPage() {
 
   if (submission) {
     return (
-      <main className="min-h-screen bg-[#0B0B0B] px-4 py-8 pb-28 text-white md:pb-8">
+      <main className="sb-page px-4 py-6 pb-28 md:pb-8">
         <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col justify-center">
           <Link
             href="/communities"
@@ -186,21 +186,21 @@ export default function NominateCommunityPage() {
               <button
                 type="button"
                 onClick={() => setSubmission(null)}
-                className="rounded-full bg-[#63FF8F] px-4 py-3 text-sm font-bold text-black hover:bg-[#83FFA6]"
+                className="sb-button-primary px-4 py-3 text-sm"
               >
                 List another
               </button>
               {submission.slug && (
                 <Link
                   href={`/communities/${submission.slug}`}
-                  className="rounded-full border border-white/15 px-4 py-3 text-sm font-bold text-white hover:bg-white/5"
+                  className="sb-button-secondary px-4 py-3 text-sm"
                 >
                   View community
                 </Link>
               )}
               <Link
                 href="/communities"
-                className="rounded-full border border-white/15 px-4 py-3 text-sm font-bold text-white hover:bg-white/5"
+                className="sb-button-secondary px-4 py-3 text-sm"
               >
                 Browse communities
               </Link>
@@ -212,31 +212,31 @@ export default function NominateCommunityPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0B0B0B] px-4 py-8 pb-28 text-white md:pb-8">
+    <main className="sb-page px-4 py-5 pb-28 md:py-8 md:pb-8">
       <div className="mx-auto max-w-2xl">
         <Link
           href="/communities"
-          className="mb-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#999999] hover:text-white"
+          className="mb-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-white/68 hover:text-white md:mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to communities
         </Link>
 
-        <div className="mb-8">
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#63FF8F]">
+        <div className="mb-5 md:mb-8">
+          <p className="sb-eyebrow mb-2">
             Community requests
           </p>
-          <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h1 className="text-2xl font-black leading-tight tracking-tight sm:text-5xl">
             Submit, claim, update, or remove a community listing.
           </h1>
-          <p className="mt-4 max-w-xl text-sm leading-6 text-[#AAAAAA]">
+          <p className="mt-3 max-w-xl text-sm leading-6 text-white/68">
             Send the official page or group link. New suggestions stay queued until the community is verified or a manager claim is approved.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-white/10 bg-[#151515] p-5 sm:p-6">
+        <form onSubmit={handleSubmit} className="sb-surface space-y-4 p-4 sm:p-6">
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#777777]">
+            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
               What do you need?
             </label>
             <div className="grid gap-2 sm:grid-cols-2">
@@ -249,7 +249,7 @@ export default function NominateCommunityPage() {
                     type="button"
                     aria-pressed={active}
                     onClick={() => update('intent', intent.value)}
-                    className={`min-h-[76px] rounded-lg border p-3 text-left transition-colors ${
+                    className={`min-h-[64px] rounded-lg border p-3 text-left transition-colors ${
                       active
                         ? 'border-[#63FF8F] bg-[#63FF8F]/10'
                         : 'border-white/12 bg-[#101010] hover:border-white/28'
@@ -258,7 +258,7 @@ export default function NominateCommunityPage() {
                     <span className={`block text-sm font-bold ${active ? 'text-[#63FF8F]' : 'text-white'}`}>
                       {intent.label}
                     </span>
-                    <span className="mt-1 block text-xs leading-5 text-[#888888]">
+                    <span className="mt-1 block text-xs leading-5 text-white/64">
                       {intent.description}
                     </span>
                   </button>
@@ -268,7 +268,7 @@ export default function NominateCommunityPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#777777]">
+            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
               Community name
             </label>
             <input
@@ -276,13 +276,13 @@ export default function NominateCommunityPage() {
               onChange={(event) => update('communityName', event.target.value)}
               placeholder="Example: Running Department"
               maxLength={160}
-              className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
+              className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#63FF8F]"
             />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#777777]">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
                 City
               </label>
               <input
@@ -290,12 +290,12 @@ export default function NominateCommunityPage() {
                 onChange={(event) => update('city', event.target.value)}
                 placeholder="Singapore"
                 maxLength={100}
-                className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
+                className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#63FF8F]"
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#777777]">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
                 Activity
               </label>
               <select
@@ -314,7 +314,7 @@ export default function NominateCommunityPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#777777]">
+            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
               Official or listing link
             </label>
             <input
@@ -322,12 +322,12 @@ export default function NominateCommunityPage() {
               onChange={(event) => update('sourceUrl', event.target.value)}
               placeholder="Instagram, website, Telegram, WhatsApp, Strava, or listing URL..."
               maxLength={500}
-              className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
+              className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#63FF8F]"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#777777]">
+            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
               Note
             </label>
             <textarea
@@ -336,13 +336,13 @@ export default function NominateCommunityPage() {
               placeholder="Anything useful: usual meet spot, what changed, owner proof, or why the listing should be removed."
               maxLength={1000}
               rows={4}
-              className="w-full resize-none rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
+              className="w-full resize-none rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#63FF8F]"
             />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#777777]">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
                 Your name
               </label>
               <input
@@ -350,12 +350,12 @@ export default function NominateCommunityPage() {
                 onChange={(event) => update('submitterName', event.target.value)}
                 placeholder="Optional"
                 maxLength={160}
-                className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
+                className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#63FF8F]"
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#777777]">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
                 Email
               </label>
               <input
@@ -364,19 +364,19 @@ export default function NominateCommunityPage() {
                 onChange={(event) => update('submitterEmail', event.target.value)}
                 placeholder="Optional"
                 maxLength={255}
-                className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
+                className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#63FF8F]"
               />
             </div>
           </div>
 
           <div className="flex flex-col gap-3 border-t border-[#2A2A2A] pt-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs text-[#777777]">
+            <p className="text-xs text-white/62">
               {selectedCategory ? `${selectedCategory.emoji} ${selectedCategory.label}` : 'We can classify it during review.'}
             </p>
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-5 text-sm font-bold text-black transition-colors hover:bg-[#83FFA6] disabled:cursor-not-allowed disabled:opacity-60"
+              className="sb-button-primary h-12 px-5 text-sm disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               {selectedIntent.label}

@@ -67,9 +67,10 @@ export function CityLandingPage({
 }: CityLandingPageProps) {
   const trackingBase = { city, citySlug, experiment: 'two_city_newcomer_wedge' }
   const cityPlansHref = `/buddy?view=list&city=${citySlug}`
+  const cityCommunitiesHref = `/communities?city=${citySlug}`
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] text-white">
+    <div className="sb-page">
       <header className="sticky top-0 z-30 border-b border-white/[0.08] bg-[#0B0B0B]/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1920px] items-center justify-between gap-3 px-5 py-4">
           <Link
@@ -86,16 +87,16 @@ export function CityLandingPage({
           </Link>
           <nav className="flex items-center gap-3">
             <TrackedLink
-              href={cityPlansHref}
+              href={cityCommunitiesHref}
               event={EVENTS.LANDING_CTA_CLICKED}
               metadata={{
-                placement: 'city_nav_browse',
-                destination: cityPlansHref,
+                placement: 'city_nav_communities',
+                destination: cityCommunitiesHref,
                 ...trackingBase,
               }}
-              className="hidden min-h-11 items-center text-sm font-medium text-white/65 transition-colors hover:text-white sm:inline-flex"
+              className="hidden min-h-11 items-center text-sm font-medium text-white/70 transition-colors hover:text-white sm:inline-flex"
             >
-              Find plans
+              Communities
             </TrackedLink>
             <LandingIntentCapture
               type="HOST"
@@ -104,7 +105,7 @@ export function CityLandingPage({
               ctaLabel={`Host a session in ${city}`}
               successHref="/host"
               aria-label="Host a session"
-              className="min-h-11 rounded-full bg-[#63FF8F] px-3 py-2.5 text-xs font-bold uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6] min-[380px]:px-4 sm:text-sm"
+              className="sb-button-primary min-h-11 px-3 py-2.5 text-xs min-[380px]:px-4 sm:text-sm"
             >
               <span aria-hidden="true" className="min-[380px]:hidden">Host</span>
               <span aria-hidden="true" className="hidden min-[380px]:inline">Host a session</span>
@@ -112,7 +113,7 @@ export function CityLandingPage({
           </nav>
         </div>
       </header>
-      <CityGuideTabs active="events" citySlug={citySlug} />
+      <CityGuideTabs active="communities" citySlug={citySlug} />
 
       <main className="overflow-x-hidden">
         <section className="relative overflow-hidden border-b border-white/[0.08] px-5 py-10 sm:py-14">
@@ -129,7 +130,7 @@ export function CityLandingPage({
 
           <div className="relative mx-auto grid min-h-[calc(100svh-220px)] max-w-6xl items-end gap-8 sm:min-h-[560px] lg:grid-cols-[minmax(0,1fr)_360px]">
             <div className="max-w-3xl">
-              <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-[#63FF8F]">
+              <p className="sb-eyebrow mb-4">
                 {eyebrow}
               </p>
               <h1 className="max-w-3xl text-4xl font-extrabold leading-[0.98] tracking-tight text-white sm:text-6xl">
@@ -139,7 +140,7 @@ export function CityLandingPage({
                 {description}
               </p>
               <div className="mt-5 grid grid-cols-3 gap-2">
-                {['Events nearby', 'People going', 'Solo-friendly'].map((label) => (
+                {['Communities nearby', 'Known plans', 'Solo-friendly'].map((label) => (
                   <div
                     key={label}
                     className="rounded-lg border border-white/12 bg-white/[0.05] px-3 py-2.5"
@@ -152,43 +153,45 @@ export function CityLandingPage({
               </div>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <TrackedLink
+                  href={cityCommunitiesHref}
+                  event={EVENTS.LANDING_CTA_CLICKED}
+                  metadata={{
+                    placement: 'city_hero_communities',
+                    destination: cityCommunitiesHref,
+                    ...trackingBase,
+                  }}
+                  className="sb-button-primary px-7 py-4 text-sm"
+                >
+                  Browse communities <ArrowRight size={17} strokeWidth={2.4} />
+                </TrackedLink>
+                <TrackedLink
                   href={cityPlansHref}
                   event={EVENTS.LANDING_CTA_CLICKED}
                   metadata={{
-                    placement: 'city_hero_browse',
+                    placement: 'city_hero_plans',
                     destination: cityPlansHref,
                     ...trackingBase,
                   }}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-7 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] transition-colors hover:bg-[#33E66C]"
+                  className="sb-button-secondary px-7 py-4 text-sm"
                 >
-                  Find plans <ArrowRight size={17} strokeWidth={2.4} />
+                  Find plans
                 </TrackedLink>
-                <LandingIntentCapture
-                  type="HOST"
-                  city={city}
-                  sourcePlacement="city_hero_host"
-                  ctaLabel={`Host a session in ${city}`}
-                  successHref="/host"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 px-7 py-4 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-white/10"
-                >
-                  Host a session
-                </LandingIntentCapture>
               </div>
             </div>
 
             <div className="hidden rounded-xl border border-white/12 bg-[#111111]/85 p-4 shadow-2xl shadow-black/40 backdrop-blur lg:block">
               <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
-                Plans people can join
+                Communities people can join
               </p>
               <div className="mt-4 space-y-3">
                 {routes.slice(0, 3).map((route) => (
                   <TrackedLink
                     key={route.label}
-                    href={cityPlansHref}
+                    href={cityCommunitiesHref}
                     event={EVENTS.LANDING_CTA_CLICKED}
                     metadata={{
                       placement: 'city_hero_event_preview',
-                      destination: cityPlansHref,
+                      destination: cityCommunitiesHref,
                       label: route.label,
                       ...trackingBase,
                     }}
@@ -201,7 +204,7 @@ export function CityLandingPage({
                       <p className="truncate text-sm font-black text-white">{route.label}</p>
                       <p className="mt-1 truncate text-xs text-white/55">{route.note}</p>
                       <p className="mt-2 font-mono text-[10px] font-black uppercase tracking-wide text-[#63FF8F]">
-                        View sessions
+                        View communities
                       </p>
                     </div>
                   </TrackedLink>
@@ -275,23 +278,23 @@ export function CityLandingPage({
             <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#63FF8F]">
-                  Start with one plan
+                  Start with one community
                 </p>
                 <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-                  Pick the room where meeting people feels natural.
+                  Pick the crew where meeting people feels natural.
                 </h2>
               </div>
               <TrackedLink
-                href={cityPlansHref}
+                href={cityCommunitiesHref}
                 event={EVENTS.LANDING_CTA_CLICKED}
                 metadata={{
-                  placement: 'city_routes_browse_all',
-                  destination: cityPlansHref,
+                  placement: 'city_routes_communities_all',
+                  destination: cityCommunitiesHref,
                   ...trackingBase,
                 }}
                 className="inline-flex items-center gap-2 text-sm font-semibold text-white/70 hover:text-white"
               >
-                See all plans <ArrowRight size={16} />
+                See communities <ArrowRight size={16} />
               </TrackedLink>
             </div>
 
@@ -299,11 +302,11 @@ export function CityLandingPage({
               {routes.map((route, index) => (
                 <TrackedLink
                   key={route.label}
-                  href={cityPlansHref}
+                  href={cityCommunitiesHref}
                   event={EVENTS.LANDING_CTA_CLICKED}
                   metadata={{
                     placement: 'city_route_card',
-                    destination: cityPlansHref,
+                    destination: cityCommunitiesHref,
                     label: route.label,
                     position: index + 1,
                     ...trackingBase,
@@ -364,7 +367,7 @@ export function CityLandingPage({
                 sourcePlacement="city_host_section"
                 ctaLabel={`List your crew in ${city}`}
                 successHref="/host"
-                className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-7 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] transition-colors hover:bg-[#33E66C]"
+                className="sb-button-primary mt-8 px-7 py-4 text-sm"
               >
                 List your crew <ArrowRight size={17} />
               </LandingIntentCapture>
@@ -402,16 +405,16 @@ export function CityLandingPage({
             <p className="mt-5 text-base leading-8 text-white/58">{finalBody}</p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <TrackedLink
-                href={cityPlansHref}
+                href={cityCommunitiesHref}
                 event={EVENTS.LANDING_CTA_CLICKED}
                 metadata={{
                   placement: 'city_final_browse',
-                  destination: cityPlansHref,
+                  destination: cityCommunitiesHref,
                   ...trackingBase,
                 }}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-8 py-4 text-sm font-bold uppercase tracking-wide text-[#111111] transition-colors hover:bg-[#33E66C]"
+                className="sb-button-primary px-8 py-4 text-sm"
               >
-                Find a session <ArrowRight size={17} />
+                Browse communities <ArrowRight size={17} />
               </TrackedLink>
               <TrackedLink
                 href="/"

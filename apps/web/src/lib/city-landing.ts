@@ -4,7 +4,7 @@ export const singaporeLanding: CityLandingPageProps = {
   city: 'Singapore',
   citySlug: 'singapore',
   eyebrow: 'Social fitness in Singapore',
-  title: 'Find friends through fitness in Singapore.',
+  title: 'Fitness communities in Singapore you can actually join.',
   description:
     'Join local run clubs, pickleball games, yoga groups, and social workouts where movement gives everyone a reason to show up, talk, and come back.',
   heroImage: '/images/cities/singapore.jpg',
@@ -42,7 +42,7 @@ export const bangkokLanding: CityLandingPageProps = {
   city: 'Bangkok',
   citySlug: 'bangkok',
   eyebrow: 'Social fitness in Bangkok',
-  title: 'Find friends through fitness in Bangkok.',
+  title: 'Fitness communities in Bangkok you can actually join.',
   description:
     'Join social runs, pickleball games, yoga sessions, and fitness crews where movement gives everyone a reason to show up, talk, and come back.',
   heroImage: '/images/cities/bangkok.jpg',

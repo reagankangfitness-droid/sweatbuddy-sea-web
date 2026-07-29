@@ -71,11 +71,11 @@ function SignInContent() {
   const content = getContextualContent()
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#0D0D0D] px-4 py-8 pb-24 md:pb-8">
+    <div className="sb-page flex flex-col items-center justify-center px-4 py-8 pb-24 md:pb-8">
       <div className="w-full max-w-sm mx-auto">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm text-[#666666] hover:text-[#999999] transition-colors mb-8"
+          className="mb-8 inline-flex items-center gap-1.5 text-sm text-white/68 transition-colors hover:text-white"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
@@ -87,10 +87,10 @@ function SignInContent() {
 
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-white tracking-tight">{content.title}</h1>
-          <p className="text-[#666666] text-sm mt-1">{content.subtitle}</p>
+          <p className="mt-1 text-sm text-white/68">{content.subtitle}</p>
         </div>
 
-        <div className="bg-[#1A1A1A] rounded-2xl border border-[#333333] overflow-hidden">
+        <div className="sb-surface overflow-hidden">
           <SignIn
             appearance={{
               layout: {
@@ -112,23 +112,23 @@ function SignInContent() {
                 formFieldRow: 'w-full',
                 formField: 'w-full gap-1',
                 socialButtons: 'w-full',
-                socialButtonsBlockButton: 'border border-[#333333] hover:bg-[#2A2A2A] rounded-xl w-full py-3',
-                socialButtonsBlockButtonText: 'font-medium text-[#999999]',
+                socialButtonsBlockButton: 'border border-white/15 hover:bg-white/[0.06] rounded-xl w-full py-3',
+                socialButtonsBlockButtonText: 'font-semibold text-white/76',
                 socialButtonsProviderIcon: 'w-5 h-5',
                 dividerRow: 'my-4',
-                dividerLine: 'bg-[#333333]',
-                dividerText: 'text-[#666666] text-sm px-3',
-                formFieldLabel: 'text-[#999999] font-medium text-sm',
-                formFieldInput: 'border-[#333333] bg-[#2A2A2A] text-white focus:border-white focus:ring-white/10 rounded-xl w-full py-3',
-                formButtonPrimary: 'bg-white hover:bg-neutral-200 text-black rounded-xl w-full py-3 text-base font-semibold',
-                otpCodeFieldInput: 'border-[#333333] bg-[#2A2A2A] text-white text-lg',
+                dividerLine: 'bg-white/12',
+                dividerText: 'text-white/60 text-sm px-3',
+                formFieldLabel: 'text-white/76 font-medium text-sm',
+                formFieldInput: 'border-white/15 bg-[#101010] text-white focus:border-[#63FF8F] focus:ring-[#63FF8F]/10 rounded-xl w-full py-3',
+                formButtonPrimary: 'bg-[#63FF8F] hover:bg-[#83FFA6] text-black rounded-xl w-full py-3 text-base font-bold',
+                otpCodeFieldInput: 'border-white/15 bg-[#101010] text-white text-lg',
                 otpCodeFieldInputs: 'gap-2',
                 footerAction: 'pt-4 justify-center',
-                footerActionLink: 'text-white hover:text-[#999999] font-medium',
+                footerActionLink: 'text-[#63FF8F] hover:text-white font-medium',
                 footer: 'hidden',
                 identityPreview: 'justify-center',
-                identityPreviewEditButton: 'text-[#666666]',
-                formFieldInputShowPasswordButton: 'text-[#666666]',
+                identityPreviewEditButton: 'text-white/64',
+                formFieldInputShowPasswordButton: 'text-white/64',
                 alert: 'rounded-xl',
                 alertText: 'text-sm',
               }
@@ -137,7 +137,7 @@ function SignInContent() {
           />
         </div>
 
-        <p className="text-center text-xs text-[#666666] mt-6">
+        <p className="mt-6 text-center text-xs text-white/60">
           One account for everything — join and host sessions.
         </p>
       </div>
@@ -148,8 +148,8 @@ function SignInContent() {
 export default function SignInPage() {
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center bg-[#0D0D0D]">
-        <Loader2 className="w-6 h-6 animate-spin text-[#666666]" />
+      <div className="sb-page flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-[#63FF8F]" />
       </div>
     }>
       <SignInContent />

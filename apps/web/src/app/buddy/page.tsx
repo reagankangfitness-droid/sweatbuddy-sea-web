@@ -398,6 +398,58 @@ function LocationPermissionPanel({
   )
 }
 
+function MapLocationPermissionOverlay({
+  status,
+  cityOptions,
+  onUseLocation,
+  onChooseCity,
+}: {
+  status: LocationStatus
+  cityOptions: CityLocationConfig[]
+  onUseLocation: () => void
+  onChooseCity: (citySlug: string) => void
+}) {
+  if (status === 'granted' || status === 'stored' || status === 'city') return null
+
+  const isDetecting = status === 'detecting'
+
+  return (
+    <section className="absolute left-3 right-3 top-3 z-30 rounded-xl border border-white/14 bg-black/82 p-2.5 text-white shadow-2xl shadow-black/35 backdrop-blur-xl md:hidden">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+            Start nearby
+          </p>
+          <p className="mt-0.5 truncate text-xs font-bold leading-tight text-white/78">
+            Share location or pick a city
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onUseLocation}
+          disabled={isDetecting}
+          className="inline-flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#63FF8F] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6] disabled:cursor-wait disabled:bg-[#2F4735] disabled:text-white/55"
+        >
+          {isDetecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <MapPin className="h-3.5 w-3.5" />}
+          Use
+        </button>
+      </div>
+      <div className="mt-2 flex gap-2 overflow-x-auto no-scrollbar">
+        {cityOptions.map((city) => (
+          <button
+            key={city.slug}
+            type="button"
+            onClick={() => onChooseCity(city.slug)}
+            className="inline-flex min-h-8 shrink-0 items-center justify-center rounded-full border border-white/18 bg-white/[0.06] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white transition-colors hover:border-[#63FF8F]/60 hover:text-[#63FF8F]"
+          >
+            {city.name}
+          </button>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 function MapPinIcon() {
   return <MapPin className="h-3.5 w-3.5" />
 }
@@ -2391,6 +2443,7 @@ function BuddyPageInner() {
           </div>
           {/* Row 1: Date strip */}
           <div
+            data-testid="buddy-date-strip"
             className={`${viewMode === 'map' ? 'hidden sm:grid' : 'grid'} grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1.5 max-[360px]:grid-cols-[minmax(0,1fr)_auto]`}
           >
             <div className="flex min-w-0 gap-1 overflow-x-auto no-scrollbar">
@@ -2586,12 +2639,14 @@ function BuddyPageInner() {
           </div>
         </div>
       </div>
-      <LocationPermissionPanel
-        status={locationStatus}
-        cityOptions={CITY_LOCATION_CONFIGS}
-        onUseLocation={requestCurrentLocation}
-        onChooseCity={updateCityFilter}
-      />
+      {viewMode === 'list' ? (
+        <LocationPermissionPanel
+          status={locationStatus}
+          cityOptions={CITY_LOCATION_CONFIGS}
+          onUseLocation={requestCurrentLocation}
+          onChooseCity={updateCityFilter}
+        />
+      ) : null}
 
       {viewMode === 'list' ? (
         <div className="flex-1 min-h-0 overflow-hidden lg:grid lg:grid-cols-[minmax(390px,42vw)_1fr]">
@@ -2921,6 +2976,12 @@ function BuddyPageInner() {
               initialZoom={12}
               maxFitZoom={13}
               showEmptyState={false}
+            />
+            <MapLocationPermissionOverlay
+              status={locationStatus}
+              cityOptions={CITY_LOCATION_CONFIGS}
+              onUseLocation={requestCurrentLocation}
+              onChooseCity={updateCityFilter}
             />
             <MapCommandOverlay
               activeLocationLabel={neighborhoodFilter?.name ?? activeLocationLabel}
@@ -3727,18 +3788,18 @@ function MapActivityDrawer({
           : 'Nothing live here yet'
 
   return (
-    <section className="absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-20 rounded-2xl border border-white/[0.14] bg-[#F8F8F4]/92 p-3 text-black shadow-[0_18px_54px_rgba(0,0,0,0.42)] backdrop-blur-xl md:left-auto md:right-4 md:w-[390px] md:p-4">
-      <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-black/12 md:hidden" />
+    <section className="absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-20 rounded-2xl border border-white/[0.16] bg-[#F8F8F4] p-3 text-black shadow-[0_18px_54px_rgba(0,0,0,0.46)] md:left-auto md:right-4 md:w-[390px] md:p-4">
+      <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-black/18 md:hidden" />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-black/45">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-black/62">
             Community activity
           </p>
-          <h2 className="mt-1 truncate text-lg font-black leading-tight md:text-xl">
+          <h2 className="mt-1 truncate text-lg font-black leading-tight text-black md:text-xl">
             {heading}
           </h2>
           {!loading && activityCount > 0 ? (
-            <p className="mt-1 truncate text-xs font-semibold text-black/50">
+            <p className="mt-1 truncate text-xs font-semibold text-black/68">
               {activeLocationLabel} · {activeDateLabel} · {sessions.length} plan{sessions.length !== 1 ? 's' : ''}
             </p>
           ) : null}
@@ -3772,7 +3833,7 @@ function MapActivityDrawer({
               position: 0,
             })
           }
-          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-black/12 px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-black/[0.04]"
+          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-black/18 bg-white/72 px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black shadow-sm transition-colors hover:bg-white"
         >
           <Users className="h-3.5 w-3.5" />
           Communities
@@ -3780,7 +3841,7 @@ function MapActivityDrawer({
         <button
           type="button"
           onClick={onShowList}
-          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-black/12 px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-black/[0.04]"
+          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-black/18 bg-white/72 px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black shadow-sm transition-colors hover:bg-white"
         >
           <ArrowRight className="h-3.5 w-3.5" />
           Plans

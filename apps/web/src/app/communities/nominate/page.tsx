@@ -166,11 +166,11 @@ export default function NominateCommunityPage() {
             Back to communities
           </Link>
 
-          <div className="rounded-lg border border-white/10 bg-[#151515] p-6">
+          <div className="rounded-lg border border-white/10 bg-[#151515] p-5">
             <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#63FF8F]">
               {submission.requiresReview ? 'Submitted' : 'Listed'}
             </p>
-            <h1 className="text-3xl font-semibold tracking-tight">
+            <h1 className="text-2xl font-semibold leading-tight tracking-tight">
               {submission.requiresReview
                 ? `${submission.name} is queued for a quick trust check.`
                 : `${submission.name} was received.`}
@@ -222,11 +222,11 @@ export default function NominateCommunityPage() {
           Back to communities
         </Link>
 
-        <div className="mb-5 md:mb-8">
+        <div className="mb-5 md:mb-7">
           <p className="sb-eyebrow mb-2">
             Community requests
           </p>
-          <h1 className="text-2xl font-black leading-tight tracking-tight sm:text-5xl">
+          <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-4xl">
             Submit, claim, update, or remove a community listing.
           </h1>
           <p className="mt-3 max-w-xl text-sm leading-6 text-white/68">
@@ -234,7 +234,7 @@ export default function NominateCommunityPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="sb-surface space-y-4 p-4 sm:p-6">
+        <form onSubmit={handleSubmit} className="sb-surface space-y-4 p-4 sm:p-5">
           <div>
             <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
               What do you need?
@@ -249,16 +249,16 @@ export default function NominateCommunityPage() {
                     type="button"
                     aria-pressed={active}
                     onClick={() => update('intent', intent.value)}
-                    className={`min-h-[64px] rounded-lg border p-3 text-left transition-colors ${
+                    className={`min-h-[56px] rounded-lg border p-3 text-left transition-colors ${
                       active
-                        ? 'border-[#63FF8F] bg-[#63FF8F]/10'
+                        ? 'border-[#63FF8F]/55 bg-[#63FF8F]/8'
                         : 'border-white/12 bg-[#101010] hover:border-white/28'
                     }`}
                   >
-                    <span className={`block text-sm font-bold ${active ? 'text-[#63FF8F]' : 'text-white'}`}>
+                    <span className={`block text-sm font-semibold ${active ? 'text-[#63FF8F]' : 'text-white'}`}>
                       {intent.label}
                     </span>
-                    <span className="mt-1 block text-xs leading-5 text-white/64">
+                    <span className="mt-1 hidden text-xs leading-5 text-white/64 sm:block">
                       {intent.description}
                     </span>
                   </button>

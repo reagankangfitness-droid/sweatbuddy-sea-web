@@ -2135,15 +2135,15 @@ function BuddyPageInner() {
 
       {/* ── Filters — sticky top bar ── */}
       <div className="sticky top-0 z-20 pt-[env(safe-area-inset-top,4px)]">
-        <div className="space-y-2 border-b border-white/10 bg-[#0B0B0B]/95 px-3 pb-2 pt-2 font-mono backdrop-blur">
-          <div className="flex min-h-11 items-center justify-between gap-3">
+        <div className="space-y-1.5 border-b border-white/[0.07] bg-[#0B0B0B]/92 px-3 pb-2 pt-1.5 font-mono backdrop-blur-xl">
+          <div className="flex min-h-9 items-center justify-between gap-3">
             <Link
               href="/"
               aria-label="SweatBuddies home"
-              className="inline-flex min-h-11 min-w-11 items-center"
+              className="inline-flex min-h-9 min-w-9 items-center"
             >
               <LogoWithText
-                size={27}
+                size={23}
                 color="#FFFFFF"
                 textColor="#FFFFFF"
                 wordmarkClassName="max-[360px]:hidden"
@@ -2154,20 +2154,20 @@ function BuddyPageInner() {
             </p>
             <Link
               href="/host"
-              className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-white/12 px-3 text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+              className="inline-flex min-h-8 shrink-0 items-center justify-center rounded-full border border-white/12 px-3 text-[10px] font-black uppercase tracking-wide text-white/68 transition-colors hover:border-white/30 hover:text-white"
             >
               Host
             </Link>
           </div>
           {/* Search bar */}
-          <div className="relative mb-1.5">
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
             <input
               type="text"
               placeholder="Search communities or activities"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="min-h-11 w-full rounded-lg border border-white/15 bg-[#111111] py-2.5 pl-9 pr-10 text-sm text-white transition-all placeholder:text-[#555555] focus:border-[#63FF8F] focus:outline-none"
+              className="min-h-10 w-full rounded-full border border-white/12 bg-white/[0.045] py-2 pl-9 pr-10 text-sm text-white transition-all placeholder:text-white/38 focus:border-white/30 focus:outline-none"
             />
             {searchQuery && (
               <button
@@ -2207,7 +2207,7 @@ function BuddyPageInner() {
                     <button
                       key={dateStr}
                       onClick={() => updateDateFilter(dateStr)}
-                      className={`flex min-h-11 min-w-[44px] flex-shrink-0 flex-col items-center justify-center rounded-xl px-2.5 py-1.5 text-center transition-all ${
+                      className={`flex min-h-10 min-w-[42px] flex-shrink-0 flex-col items-center justify-center rounded-lg px-2.5 py-1.5 text-center transition-all ${
                         dateFilter === dateStr
                           ? 'bg-white text-black shadow-md'
                           : 'bg-[#171717] text-[#999999] shadow-none'
@@ -2222,7 +2222,7 @@ function BuddyPageInner() {
               })()}
               <button
                 onClick={() => updateDateFilter('')}
-                className={`flex min-h-11 min-w-[70px] flex-shrink-0 flex-col items-center justify-center rounded-xl px-2.5 py-1.5 text-center transition-all ${
+                className={`flex min-h-10 min-w-[70px] flex-shrink-0 flex-col items-center justify-center rounded-lg px-2.5 py-1.5 text-center transition-all ${
                   !dateFilter
                     ? 'bg-white text-black shadow-md'
                     : 'bg-[#171717] text-[#999999] shadow-none'
@@ -2234,7 +2234,7 @@ function BuddyPageInner() {
             </div>
             <button
               onClick={() => setShowCreateMenu(true)}
-              className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#63FF8F] shadow-lg shadow-[#63FF8F]/20 transition-colors hover:bg-[#83FFA6] active:scale-95"
+              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#63FF8F] shadow-lg shadow-[#63FF8F]/16 transition-colors hover:bg-[#83FFA6] active:scale-95"
               aria-label="Add to the map"
             >
               <Plus className="w-4 h-4 text-black" />
@@ -2242,7 +2242,7 @@ function BuddyPageInner() {
             <button
               type="button"
               onClick={toggleViewMode}
-              className="flex h-11 flex-shrink-0 items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#171717] px-3 text-[11px] font-black uppercase tracking-wide text-white transition-colors hover:border-[#63FF8F] active:scale-95 max-[360px]:hidden lg:hidden"
+              className="flex h-10 flex-shrink-0 items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#171717] px-3 text-[11px] font-black uppercase tracking-wide text-white transition-colors hover:border-white/30 active:scale-95 max-[360px]:hidden lg:hidden"
               aria-label={viewMode === 'list' ? 'Show map' : 'Show list'}
             >
               {viewMode === 'list' ? (
@@ -2259,7 +2259,7 @@ function BuddyPageInner() {
 
           {/* Mobile collapsed filters */}
           <details className={viewMode === 'map' ? 'hidden' : 'group sm:hidden'}>
-            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between rounded-lg border border-white/[0.12] bg-[#171717] px-3 text-[12px] font-black uppercase tracking-wide text-white transition-colors group-open:border-[#63FF8F] [&::-webkit-details-marker]:hidden">
+            <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between rounded-lg border border-white/[0.12] bg-[#171717] px-3 text-[12px] font-black uppercase tracking-wide text-white transition-colors group-open:border-white/30 [&::-webkit-details-marker]:hidden">
               <span>Filters</span>
               <span className="min-w-0 truncate text-right text-[10px] text-[#999999]">
                 {[neighborhoodFilter?.name ?? activeLocationLabel, activeTypeLabel, activePriceLabel]
@@ -3399,26 +3399,29 @@ function MapActivityDrawer({
   const hasRows = visibleSessions.length > 0 || visibleCommunities.length > 0
   const activityCount = communities.length + sessions.length
   const heading = loading
-    ? 'Finding community activity...'
+    ? 'Finding activity nearby'
     : communities.length > 0
       ? `${communities.length} communit${communities.length === 1 ? 'y' : 'ies'} nearby`
       : sessions.length > 0
-        ? `${sessions.length} plan${sessions.length === 1 ? '' : 's'} nearby`
-        : 'Nothing live here yet'
+        ? `${sessions.length} plan${sessions.length === 1 ? '' : 's'} today`
+        : 'No verified communities yet'
 
   return (
-    <section className="absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-20 rounded-2xl border border-white/[0.16] bg-[#F8F8F4] p-3 text-black shadow-[0_18px_54px_rgba(0,0,0,0.46)] md:left-auto md:right-4 md:w-[390px] md:p-4">
-      <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-black/18 md:hidden" />
+    <section
+      data-testid="buddy-map-activity-drawer"
+      className="absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.6rem)] z-20 rounded-xl border border-white/[0.12] bg-black/78 p-2.5 text-white shadow-[0_14px_44px_rgba(0,0,0,0.42)] backdrop-blur-xl md:left-auto md:right-4 md:w-[390px] md:bg-[#F8F8F4] md:p-4 md:text-black"
+    >
+      <div className="mx-auto mb-2 h-1 w-9 rounded-full bg-white/20 md:hidden md:bg-black/18" />
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-black/62">
-            Community activity
+          <p className="font-mono text-[9px] font-black uppercase tracking-[0.16em] text-white/48 md:text-black/62">
+            Activity map
           </p>
-          <h2 className="mt-1 truncate text-lg font-black leading-tight text-black md:text-xl">
+          <h2 className="mt-1 truncate text-base font-black leading-tight text-white md:text-xl md:text-black">
             {heading}
           </h2>
           {!loading && activityCount > 0 ? (
-            <p className="mt-1 truncate text-xs font-semibold text-black/68">
+            <p className="mt-0.5 truncate text-xs font-medium text-white/56 md:text-black/68">
               {activeLocationLabel} · {activeDateLabel} · {sessions.length} plan{sessions.length !== 1 ? 's' : ''}
             </p>
           ) : null}
@@ -3426,18 +3429,18 @@ function MapActivityDrawer({
         <button
           type="button"
           onClick={onShowList}
-          className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full bg-black px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white transition-colors hover:bg-[#222222]"
+          className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-full bg-white px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-neutral-200 md:bg-black md:text-white md:hover:bg-[#222222]"
         >
           <List className="h-3.5 w-3.5" />
           List
         </button>
       </div>
 
-      <div className="mt-3 grid grid-cols-3 gap-2">
+      <div className="mt-2.5 grid grid-cols-3 gap-1.5">
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-[#63FF8F] px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#63FF8F] px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
         >
           <Plus className="h-3.5 w-3.5" />
           Post
@@ -3452,7 +3455,7 @@ function MapActivityDrawer({
               position: 0,
             })
           }
-          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-black/18 bg-white/72 px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black shadow-sm transition-colors hover:bg-white"
+          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full border border-white/16 bg-white/10 px-2 font-mono text-[10px] font-black uppercase tracking-wide text-white shadow-sm transition-colors hover:bg-white/16 md:border-black/18 md:bg-white/72 md:text-black md:hover:bg-white"
         >
           <Users className="h-3.5 w-3.5" />
           Communities
@@ -3460,7 +3463,7 @@ function MapActivityDrawer({
         <button
           type="button"
           onClick={onShowList}
-          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-black/18 bg-white/72 px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black shadow-sm transition-colors hover:bg-white"
+          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full border border-white/16 bg-white/10 px-2 font-mono text-[10px] font-black uppercase tracking-wide text-white shadow-sm transition-colors hover:bg-white/16 md:border-black/18 md:bg-white/72 md:text-black md:hover:bg-white"
         >
           <ArrowRight className="h-3.5 w-3.5" />
           Plans

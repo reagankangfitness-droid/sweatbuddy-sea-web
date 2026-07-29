@@ -261,7 +261,9 @@ function StaticPinMapFallback({
       <div className="absolute inset-x-3 top-3 z-[4] flex items-start justify-between gap-2">
         <div className="pointer-events-none min-w-0 rounded-md border border-white/10 bg-black/45 px-2.5 py-2 font-mono text-[10px] font-black uppercase tracking-[0.14em] text-white/72 backdrop-blur min-[380px]:px-3 min-[380px]:text-[11px]">
           <span className="block truncate">
-            {activityPinCount > 0 ? `${activityPinCount} mapped` : 'Activity map'}
+            {activityPinCount > 0
+              ? `${activityPinCount} active plan${activityPinCount === 1 ? '' : 's'}`
+              : 'Activity map'}
           </span>
         </div>
         <button

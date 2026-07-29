@@ -22,10 +22,11 @@ async function main() {
     const page = await context.newPage()
     await page.goto(targetUrl, { waitUntil: 'networkidle', timeout: 90000 })
 
-    await page.getByText('Community activity', { exact: true }).waitFor({ state: 'visible', timeout: 15000 })
+    await page.getByTestId('buddy-map-activity-drawer').waitFor({ state: 'visible', timeout: 15000 })
     assert.equal(await renderedCount(page.locator('text=Filters')), 0)
     assert.equal(await renderedCount(page.locator('[data-testid="buddy-date-strip"] button:has-text("Today")')), 0)
-    assert.equal(await renderedCount(page.getByText('Activity map', { exact: true })), 0)
+    assert.ok(await renderedCount(page.getByText('Activity map', { exact: true })))
+    assert.equal(await renderedCount(page.getByText('Community activity', { exact: true })), 0)
     assert.equal(await renderedCount(page.getByText('Meetup spots', { exact: true })), 0)
     assert.equal(await renderedCount(page.getByText('Open place', { exact: true })), 0)
     assert.equal(await renderedCount(page.getByText('Reviewed place', { exact: true })), 0)

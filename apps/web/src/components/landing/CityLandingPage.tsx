@@ -71,15 +71,15 @@ export function CityLandingPage({
 
   return (
     <div className="sb-page">
-      <header className="sticky top-0 z-30 border-b border-white/[0.08] bg-[#0B0B0B]/95 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[1920px] items-center justify-between gap-3 px-5 py-4">
+      <header className="sticky top-0 z-30 border-b border-white/[0.07] bg-[#0B0B0B]/92 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-[1920px] items-center justify-between gap-3 px-4 py-3">
           <Link
             href="/"
             aria-label="SweatBuddies home"
             className="inline-flex min-h-11 min-w-11 items-center"
           >
             <LogoWithText
-              size={28}
+              size={24}
               color="#FFFFFF"
               textColor="#FFFFFF"
               wordmarkClassName="max-[360px]:hidden"
@@ -105,7 +105,7 @@ export function CityLandingPage({
               ctaLabel={`Host a session in ${city}`}
               successHref="/host"
               aria-label="Host a session"
-              className="sb-button-primary min-h-11 px-3 py-2.5 text-xs min-[380px]:px-4 sm:text-sm"
+              className="sb-button-secondary min-h-9 px-3 py-2 text-xs min-[380px]:px-4 sm:text-sm"
             >
               <span aria-hidden="true" className="min-[380px]:hidden">Host</span>
               <span aria-hidden="true" className="hidden min-[380px]:inline">Host a session</span>
@@ -116,7 +116,7 @@ export function CityLandingPage({
       <CityGuideTabs active="communities" citySlug={citySlug} />
 
       <main className="overflow-x-hidden">
-        <section className="relative overflow-hidden border-b border-white/[0.08] px-5 py-10 sm:py-14">
+        <section className="relative overflow-hidden border-b border-white/[0.08] px-4 py-8 sm:py-12">
           <Image
             src={heroImage}
             alt={heroAlt}
@@ -128,30 +128,30 @@ export function CityLandingPage({
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(11,11,11,0.96)_0%,rgba(11,11,11,0.82)_48%,rgba(11,11,11,0.35)_100%)]" />
           <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-[#0B0B0B] to-transparent" />
 
-          <div className="relative mx-auto grid min-h-[calc(100svh-220px)] max-w-6xl items-end gap-8 sm:min-h-[560px] lg:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="relative mx-auto grid min-h-[calc(100svh-190px)] max-w-6xl items-end gap-8 sm:min-h-[520px] lg:grid-cols-[minmax(0,1fr)_340px]">
             <div className="max-w-3xl">
               <p className="sb-eyebrow mb-4">
                 {eyebrow}
               </p>
-              <h1 className="max-w-3xl text-4xl font-extrabold leading-[0.98] tracking-tight text-white sm:text-6xl">
+              <h1 className="max-w-3xl text-3xl font-semibold leading-[1.04] tracking-tight text-white sm:text-5xl">
                 {title}
               </h1>
-              <p className="mt-6 max-w-xl text-base leading-8 text-white/78 sm:text-lg">
+              <p className="mt-4 max-w-xl text-sm leading-7 text-white/70 sm:text-base">
                 {description}
               </p>
               <div className="mt-5 grid grid-cols-3 gap-2">
-                {['Communities nearby', 'Known plans', 'Solo-friendly'].map((label) => (
+                {['Community-first', 'Source-checked', 'Solo-friendly'].map((label) => (
                   <div
                     key={label}
-                    className="rounded-lg border border-white/12 bg-white/[0.05] px-3 py-2.5"
+                    className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2"
                   >
-                    <p className="truncate font-mono text-[10px] font-black uppercase tracking-wide text-white/72">
+                    <p className="truncate font-mono text-[9px] font-black uppercase tracking-wide text-white/58">
                       {label}
                     </p>
                   </div>
                 ))}
               </div>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <TrackedLink
                   href={cityCommunitiesHref}
                   event={EVENTS.LANDING_CTA_CLICKED}
@@ -160,7 +160,7 @@ export function CityLandingPage({
                     destination: cityCommunitiesHref,
                     ...trackingBase,
                   }}
-                  className="sb-button-primary px-7 py-4 text-sm"
+                  className="sb-button-primary px-6 py-3.5 text-sm"
                 >
                   Browse communities <ArrowRight size={17} strokeWidth={2.4} />
                 </TrackedLink>
@@ -172,15 +172,15 @@ export function CityLandingPage({
                     destination: cityPlansHref,
                     ...trackingBase,
                   }}
-                  className="sb-button-secondary px-7 py-4 text-sm"
+                  className="sb-button-secondary px-6 py-3.5 text-sm"
                 >
                   Find plans
                 </TrackedLink>
               </div>
             </div>
 
-            <div className="hidden rounded-xl border border-white/12 bg-[#111111]/85 p-4 shadow-2xl shadow-black/40 backdrop-blur lg:block">
-              <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
+            <div className="hidden rounded-lg border border-white/10 bg-[#111111]/78 p-4 shadow-2xl shadow-black/32 backdrop-blur lg:block">
+              <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#63FF8F]/84">
                 Communities people can join
               </p>
               <div className="mt-4 space-y-3">
@@ -214,7 +214,7 @@ export function CityLandingPage({
           </div>
         </section>
 
-        <section className="px-5 py-12 sm:py-16">
+        <section className="px-4 py-10 sm:py-14">
           <div className="mx-auto grid max-w-6xl gap-4 sm:grid-cols-3">
             {[
               {
@@ -237,7 +237,7 @@ export function CityLandingPage({
               return (
                 <div
                   key={item.title}
-                  className="rounded-lg border border-white/[0.08] bg-white/[0.035] p-5"
+                  className="rounded-lg border border-white/[0.07] bg-white/[0.03] p-4"
                 >
                   <Icon size={22} strokeWidth={2.2} className="text-white/82" />
                   <h2 className="mt-5 text-base font-bold">{item.title}</h2>
@@ -248,13 +248,13 @@ export function CityLandingPage({
           </div>
         </section>
 
-        <section className="border-y border-white/[0.06] bg-[#0D0D0D] px-5 py-14 sm:py-20">
+        <section className="border-y border-white/[0.06] bg-[#0D0D0D] px-4 py-12 sm:py-16">
           <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#63FF8F]">
                 Why this matters
               </p>
-              <h2 className="mt-3 max-w-lg text-3xl font-bold leading-tight tracking-tight sm:text-5xl">
+              <h2 className="mt-3 max-w-lg text-2xl font-semibold leading-tight tracking-tight sm:text-4xl">
                 {painTitle}
               </h2>
               <p className="mt-5 max-w-md text-base leading-8 text-white/58">{painBody}</p>
@@ -273,14 +273,14 @@ export function CityLandingPage({
           </div>
         </section>
 
-        <section className="px-5 py-14 sm:py-20">
+        <section className="px-4 py-12 sm:py-16">
           <div className="mx-auto max-w-6xl">
             <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#63FF8F]">
                   Start with one community
                 </p>
-                <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+                <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-4xl">
                   Pick the crew where meeting people feels natural.
                 </h2>
               </div>
@@ -311,7 +311,7 @@ export function CityLandingPage({
                     position: index + 1,
                     ...trackingBase,
                   }}
-                  className="group relative min-h-[330px] overflow-hidden rounded-lg bg-[#171717]"
+                  className="group relative min-h-[280px] overflow-hidden rounded-lg bg-[#171717]"
                 >
                   <Image
                     src={route.image}
@@ -339,7 +339,7 @@ export function CityLandingPage({
               <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-[#4F8F46]">
                 For hosts
               </p>
-              <h2 className="mt-3 text-3xl font-extrabold leading-tight tracking-tight text-[#111111] sm:text-5xl">
+              <h2 className="mt-3 text-2xl font-semibold leading-tight tracking-tight text-[#111111] sm:text-4xl">
                 {hostTitle}
               </h2>
               <p className="mt-5 text-base leading-8 text-black/65">{hostBody}</p>
@@ -367,7 +367,7 @@ export function CityLandingPage({
                 sourcePlacement="city_host_section"
                 ctaLabel={`List your crew in ${city}`}
                 successHref="/host"
-                className="sb-button-primary mt-8 px-7 py-4 text-sm"
+                className="sb-button-primary mt-8 px-6 py-3.5 text-sm"
               >
                 List your crew <ArrowRight size={17} />
               </LandingIntentCapture>
@@ -387,19 +387,19 @@ export function CityLandingPage({
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-white/65">
                 Not nightlife. Not networking.
               </p>
-              <h2 className="mt-3 max-w-md text-3xl font-bold leading-tight tracking-tight text-white sm:text-5xl">
+              <h2 className="mt-3 max-w-md text-2xl font-semibold leading-tight tracking-tight text-white sm:text-4xl">
                 A lower-pressure way to make {city} feel familiar.
               </h2>
             </div>
           </div>
         </section>
 
-        <section className="border-t border-white/[0.06] px-5 py-16 sm:py-24">
+        <section className="border-t border-white/[0.06] px-4 py-14 sm:py-20">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#63FF8F]">
               Start this week
             </p>
-            <h2 className="mt-3 text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl">
+            <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
               {finalTitle}
             </h2>
             <p className="mt-5 text-base leading-8 text-white/58">{finalBody}</p>
@@ -412,7 +412,7 @@ export function CityLandingPage({
                   destination: cityCommunitiesHref,
                   ...trackingBase,
                 }}
-                className="sb-button-primary px-8 py-4 text-sm"
+                className="sb-button-primary px-7 py-3.5 text-sm"
               >
                 Browse communities <ArrowRight size={17} />
               </TrackedLink>
@@ -420,7 +420,7 @@ export function CityLandingPage({
                 href="/"
                 event={EVENTS.LANDING_CTA_CLICKED}
                 metadata={{ placement: 'city_final_home', destination: '/', ...trackingBase }}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-8 py-4 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-white/[0.06]"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-7 py-3.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-white/[0.06]"
               >
                 Back to SweatBuddies
               </TrackedLink>

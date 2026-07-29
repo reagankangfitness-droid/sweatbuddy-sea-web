@@ -320,16 +320,16 @@ export default function CommunitiesPageClient({
 
   return (
     <div className="sb-page">
-      <header className="border-b border-white/10 bg-[#0B0B0B]">
-        <div className="mx-auto max-w-6xl px-4 py-4 sm:py-5">
-          <div className="flex min-h-11 items-center justify-between gap-2">
+      <header className="border-b border-white/[0.07] bg-[#0B0B0B]">
+        <div className="mx-auto max-w-6xl px-4 py-3 sm:py-4">
+          <div className="flex min-h-10 items-center justify-between gap-2">
             <Link
               href="/"
               aria-label="SweatBuddies home"
-              className="inline-flex min-h-11 min-w-11 items-center"
+              className="inline-flex min-h-10 min-w-10 items-center"
             >
               <LogoWithText
-                size={28}
+                size={24}
                 color="#FFFFFF"
                 textColor="#FFFFFF"
                 wordmarkClassName="max-[360px]:hidden"
@@ -338,27 +338,27 @@ export default function CommunitiesPageClient({
             <Link
               href={plansHref}
               aria-label="Explore plans"
-              className="sb-button-secondary min-h-10 shrink-0 px-3 text-[10px]"
+              className="sb-button-secondary min-h-9 shrink-0 px-3 text-[10px]"
             >
               <span aria-hidden="true" className="min-[380px]:hidden">Plans</span>
               <span aria-hidden="true" className="hidden min-[380px]:inline">Explore plans</span>
             </Link>
           </div>
 
-          <div className="mt-5 grid gap-4 sm:mt-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
+          <div className="mt-4 grid gap-4 sm:mt-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-end">
             <div>
               <p className="sb-eyebrow">
                 Community directory
               </p>
-              <h1 className="mt-2 max-w-3xl text-[1.9rem] font-black leading-[1.02] tracking-tight sm:mt-3 sm:text-5xl">
+              <h1 className="mt-2 max-w-3xl text-[1.65rem] font-semibold leading-[1.08] tracking-tight sm:mt-3 sm:text-4xl">
                 {hasSources
                   ? 'Find active fitness communities you can confidently join.'
-                  : 'Help map communities people can safely show up to.'}
+                  : 'Help map verified fitness communities.'}
               </h1>
               <p className="mt-3 line-clamp-2 max-w-2xl text-sm leading-6 text-white/68 sm:mt-4 sm:line-clamp-none sm:text-base">
                 {hasSources
                   ? 'Start with official links, usual areas, schedule signals, and solo-friendly cues so you know where to join before you show up.'
-                  : 'SweatBuddies reviews official community pages so solo joiners can find groups that are real, active, and easy to understand.'}
+                  : 'Submit official pages or group links. We review each community before it appears publicly.'}
               </p>
             </div>
             {hasSources ? (
@@ -387,32 +387,23 @@ export default function CommunitiesPageClient({
                 </div>
               </div>
             ) : (
-              <div className="overflow-hidden rounded-lg border border-white/10 bg-white/[0.035]">
-                <div className="relative h-28 bg-[#222222]">
-                  <Image
-                    src="/images/hosts/run-club-group.jpg"
-                    alt="Fitness community after a group session"
-                    fill
-                    sizes="(min-width: 1024px) 320px, 100vw"
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/72 via-black/10 to-transparent" />
-                </div>
-                <div className="p-4">
-                  <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-white/42">
-                    No public communities yet
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-white/64">
-                    Suggest a community or official host page and we will review it before it appears here.
-                  </p>
-                </div>
+              <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
+                <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-white/42">
+                  Clean slate
+                </p>
+                <p className="mt-2 text-sm font-semibold text-white">
+                  No public communities yet.
+                </p>
+                <p className="mt-1 text-sm leading-6 text-white/58">
+                  The first listings will come from verified official sources.
+                </p>
               </div>
             )}
           </div>
         </div>
       </header>
       <CityGuideTabs active="communities" citySlug={cityFilter ?? undefined} />
-      <CrewProofStrip />
+      {hasSources ? <CrewProofStrip /> : null}
 
       {hasSources ? (
         <>
@@ -613,29 +604,29 @@ export default function CommunitiesPageClient({
           </div>
         </>
       ) : (
-        <div className="mx-auto grid max-w-6xl gap-4 px-4 py-10 pb-28 md:grid-cols-2">
+        <div className="mx-auto grid max-w-4xl gap-3 px-4 py-8 pb-28 md:grid-cols-2">
           <Link
-            href={plansHref}
-            className="rounded-lg border border-[#63FF8F]/30 bg-[#63FF8F]/10 p-5 transition-colors hover:border-[#63FF8F]/60"
+            href="/communities/nominate"
+            className="rounded-lg border border-[#63FF8F]/22 bg-[#63FF8F]/8 p-4 transition-colors hover:border-[#63FF8F]/42"
           >
-            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#63FF8F]">
-              Ready now
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#63FF8F]/82">
+              Help map a community
             </p>
-            <h2 className="mt-3 text-2xl font-bold text-white">Explore plans</h2>
+            <h2 className="mt-2 text-xl font-semibold text-white">Suggest a community</h2>
             <p className="mt-2 text-sm leading-6 text-white/62">
-              Plans are the fastest way to decide where to show up while community pages are being reviewed.
+              Send the official page or group link. We will review it before it appears publicly.
             </p>
           </Link>
           <Link
-            href="/communities/nominate"
-            className="rounded-lg border border-white/10 bg-[#111111] p-5 transition-colors hover:border-white/24"
+            href={plansHref}
+            className="rounded-lg border border-white/12 bg-white/[0.04] p-4 transition-colors hover:border-white/28"
           >
-            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-white/42">
-              Help map a community
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-white/44">
+              Ready now
             </p>
-            <h2 className="mt-3 text-2xl font-bold text-white">Suggest a community</h2>
+            <h2 className="mt-2 text-xl font-semibold text-white">Explore plans</h2>
             <p className="mt-2 text-sm leading-6 text-white/62">
-              Send the official page or group link. We will review it before it appears publicly.
+              Plans remain visible while the first community pages are being reviewed.
             </p>
           </Link>
         </div>

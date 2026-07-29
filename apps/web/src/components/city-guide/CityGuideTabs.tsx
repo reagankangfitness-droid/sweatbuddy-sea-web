@@ -35,9 +35,9 @@ export function CityGuideTabs({
   return (
     <nav
       aria-label="Discovery sections"
-      className="border-b border-white/10 bg-[#0B0B0B]/96 backdrop-blur-xl"
+      className="border-b border-white/[0.07] bg-[#0B0B0B]/94 backdrop-blur-xl"
     >
-      <div className="mx-auto grid max-w-7xl grid-cols-3 gap-2 px-4 py-3 sm:flex sm:overflow-x-auto">
+      <div className="mx-auto grid max-w-7xl grid-cols-3 gap-1.5 px-4 py-2.5 sm:flex sm:overflow-x-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon
           const isActive = active === tab.id
@@ -46,10 +46,10 @@ export function CityGuideTabs({
               key={tab.id}
               href={tab.href}
               aria-current={isActive ? 'page' : undefined}
-              className={`inline-flex min-h-11 min-w-0 shrink-0 items-center justify-center gap-1 rounded-full px-1.5 text-[10px] font-black uppercase tracking-wide transition-colors sm:gap-2 sm:px-3 ${
+              className={`inline-flex min-h-11 min-w-0 shrink-0 items-center justify-center gap-1 rounded-full px-1.5 text-[9px] font-black uppercase tracking-wide transition-colors sm:gap-2 sm:px-3 sm:text-[10px] ${
                 isActive
                   ? 'bg-white text-black'
-                  : 'border border-white/12 text-white/62 hover:border-[#63FF8F] hover:text-[#63FF8F]'
+                  : 'border border-white/10 text-white/58 hover:border-white/28 hover:text-white'
               }`}
             >
               <Icon className="h-4 w-4" />

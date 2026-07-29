@@ -22,7 +22,6 @@ import {
   ShieldCheck,
   UserPlus,
   ExternalLink,
-  Star,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
@@ -135,37 +134,6 @@ interface MySessionSummary {
   userStatus: 'JOINED' | 'HOSTING'
 }
 
-interface MapPlace {
-  id: string
-  slug: string
-  name: string
-  description: string | null
-  placeType: string
-  area: string | null
-  address: string | null
-  latitude: number | null
-  longitude: number | null
-  imageUrl: string | null
-  photos: string[]
-  activities: string[]
-  vibeTags: string[]
-  communityTypes: string[]
-  bestFor: string | null
-  beginnerFriendly: boolean
-  socialScore: number
-  googleRating: number | null
-  googleReviewCount: number
-  googleMapsUrl: string | null
-  trustScore: number
-  photoQualityScore: number
-  reviewSentimentScore: number
-  isFeatured: boolean
-  lastVerifiedAt: string | null
-  city: { name: string; slug: string } | null
-  communityLinkCount: number
-  reviewCount: number
-}
-
 interface DirectoryCommunityPreview {
   id: string
   name: string
@@ -241,27 +209,6 @@ function sortSessionsBySocialMomentum(sessions: Session[]): Session[] {
     const scoreDelta = getSocialDiscoveryScore(b) - getSocialDiscoveryScore(a)
     if (scoreDelta !== 0) return scoreDelta
     return compareByShowUpConfidence(a, b)
-  })
-}
-
-function getMapPlaceSupportScore(place: MapPlace): number {
-  return (
-    place.trustScore +
-    place.socialScore +
-    place.communityLinkCount * 12 +
-    place.reviewCount * 3 +
-    Math.min(place.googleReviewCount, 200) / 10 +
-    (place.beginnerFriendly ? 10 : 0) +
-    (place.isFeatured ? 18 : 0) +
-    (place.photoQualityScore >= 70 ? 6 : 0)
-  )
-}
-
-function sortMapPlacesBySupport(places: MapPlace[]): MapPlace[] {
-  return places.slice().sort((a, b) => {
-    const scoreDelta = getMapPlaceSupportScore(b) - getMapPlaceSupportScore(a)
-    if (scoreDelta !== 0) return scoreDelta
-    return a.name.localeCompare(b.name)
   })
 }
 
@@ -458,7 +405,6 @@ function LocalPulsePanel({
   activeLocationLabel,
   activeDateLabel,
   sessions,
-  places,
   communityCount,
   myNextSession,
   loading,
@@ -471,7 +417,6 @@ function LocalPulsePanel({
   activeLocationLabel: string
   activeDateLabel: string
   sessions: Session[]
-  places: MapPlace[]
   communityCount: number | null
   myNextSession: MySessionSummary | null
   loading: boolean
@@ -482,14 +427,12 @@ function LocalPulsePanel({
   onUseLocation: () => void
 }) {
   const planCount = sessions.length
-  const placeCount = places.length
   const listedCommunityCount = communityCount ?? 0
-  const isBootstrapping = loading && planCount === 0 && placeCount === 0 && communityCount === null
-  const hasLocalSupply = planCount > 0 || placeCount > 0 || listedCommunityCount > 0
+  const isBootstrapping = loading && planCount === 0 && communityCount === null
+  const hasLocalSupply = planCount > 0 || listedCommunityCount > 0
   const locationNeedsChoice = locationStatus === 'denied' || locationStatus === 'unsupported'
   const myPlanTime = myNextSession?.startTime ? getRelativeTime(myNextSession.startTime) : null
   const topSession = sessions[0] ?? null
-  const topPlace = places[0] ?? null
 
   const title = myNextSession
     ? `Your next plan is ${myPlanTime ? myPlanTime.toLowerCase() : 'coming up'}.`
@@ -501,14 +444,14 @@ function LocalPulsePanel({
           ? `Quiet for plans, active for communities.`
           : locationNeedsChoice
             ? 'Choose an area to see what is active.'
-            : `Nothing mapped in ${activeLocationLabel} yet.`
+            : `No community workouts in ${activeLocationLabel} yet.`
 
   const body = myNextSession
     ? `${myNextSession.title}${myNextSession.address ? ` · ${myNextSession.address.split(',')[0]}` : ''}`
     : planCount > 0
       ? `Best first option: ${topSession?.title ?? 'open plans'}${topSession?.startTime ? ` · ${getRelativeTime(topSession.startTime)}` : ''}.`
       : hasLocalSupply
-        ? `${listedCommunityCount} communities are mapped nearby. Places stay in the background as meetup context.`
+        ? `${listedCommunityCount} communities are mapped nearby. Open a community or post the next workout.`
         : locationNeedsChoice
           ? 'Location was not shared. Pick a city, use your location, or browse communities while the map catches up.'
           : 'Suggest a community or post a simple session so people know where to show up.'
@@ -536,7 +479,7 @@ function LocalPulsePanel({
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-1.5">
+        <div className="grid grid-cols-2 gap-1.5">
           <PulseStat
             label="Plans"
             value={isBootstrapping ? '...' : String(planCount)}
@@ -546,11 +489,6 @@ function LocalPulsePanel({
             label="Communities"
             value={communityCount === null && loading ? '...' : String(listedCommunityCount)}
             active={listedCommunityCount > 0}
-          />
-          <PulseStat
-            label="Meetup spots"
-            value={isBootstrapping ? '...' : String(placeCount)}
-            active={false}
           />
         </div>
 
@@ -579,14 +517,6 @@ function LocalPulsePanel({
             >
               Browse communities
               <Users className="h-3.5 w-3.5" />
-            </Link>
-          ) : placeCount > 0 && topPlace ? (
-            <Link
-              href={`/places/${topPlace.slug}`}
-              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#63FF8F] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
-            >
-              Start with {topPlace.area ?? 'places'}
-              <MapPin className="h-3.5 w-3.5" />
             </Link>
           ) : null}
 
@@ -670,7 +600,6 @@ function ResultsCommandHeader({
   peopleCount,
   goingSoloCount,
   communityCount,
-  placeCount,
   activeLocationLabel,
   activeDateLabel,
 }: {
@@ -678,7 +607,6 @@ function ResultsCommandHeader({
   peopleCount: number
   goingSoloCount: number
   communityCount: number | null
-  placeCount: number
   activeLocationLabel: string
   activeDateLabel: string
 }) {
@@ -701,10 +629,9 @@ function ResultsCommandHeader({
           <MiniSignal label="Solo" value={goingSoloCount} active={goingSoloCount > 0} />
         </div>
       </div>
-      <div className="mt-3 grid grid-cols-3 gap-1.5">
+      <div className="mt-3 grid grid-cols-2 gap-1.5">
         <MiniSignal label="Plans" value={sessionCount} active={sessionCount > 0} />
         <MiniSignal label="Communities" value={communityCount ?? 0} active={(communityCount ?? 0) > 0} />
-        <MiniSignal label="Meetup spots" value={placeCount} active={false} />
       </div>
     </div>
   )
@@ -735,7 +662,6 @@ function LocalDirectoryFallback({
   cityName,
   communityCount,
   communities,
-  places,
   loading,
   hasFilters,
   communityHref,
@@ -746,7 +672,6 @@ function LocalDirectoryFallback({
   cityName: string
   communityCount: number | null
   communities: DirectoryCommunityPreview[]
-  places: MapPlace[]
   loading: boolean
   hasFilters: boolean
   communityHref: string
@@ -754,7 +679,6 @@ function LocalDirectoryFallback({
   onCreate: () => void
   onOpenMap: () => void
 }) {
-  const visiblePlaces = places.slice(0, 4)
   const listedCommunityCount = communityCount ?? communities.length
 
   return (
@@ -770,10 +694,9 @@ function LocalDirectoryFallback({
           No live session matches this moment. The directory still gives you official links,
           usual areas, schedules, and newcomer signals so the next move is clear.
         </p>
-        <div className="mt-4 grid grid-cols-3 gap-1.5">
+        <div className="mt-4 grid grid-cols-2 gap-1.5">
           <MiniSignal label="Plans" value={0} active={false} />
           <MiniSignal label="Communities" value={listedCommunityCount} active={listedCommunityCount > 0} />
-          <MiniSignal label="Meetup spots" value={visiblePlaces.length} active={false} />
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
           <Link
@@ -806,7 +729,7 @@ function LocalDirectoryFallback({
               className="inline-flex min-h-10 items-center gap-2 rounded-full border border-white/12 px-4 font-mono text-[10px] font-black uppercase tracking-wide text-white/58 transition-colors hover:border-white/30 hover:text-white"
             >
               <Plus className="h-3.5 w-3.5" />
-              Add listing
+              Post workout
             </button>
           )}
         </div>
@@ -836,28 +759,6 @@ function LocalDirectoryFallback({
           <div className="grid gap-2">
             {communities.slice(0, 4).map((community) => (
               <CommunityDecisionCard key={community.id} community={community} />
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {!loading && visiblePlaces.length > 0 ? (
-        <section>
-          <div className="mb-2 flex items-center justify-between gap-3 px-1">
-            <h3 className="font-mono text-xs font-black uppercase tracking-[0.16em] text-white">
-              Meetup spots
-            </h3>
-            <button
-              type="button"
-              onClick={onOpenMap}
-              className="font-mono text-[10px] font-black uppercase tracking-wide text-white/46 transition-colors hover:text-[#63FF8F]"
-            >
-              Open map
-            </button>
-          </div>
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-            {visiblePlaces.map((place) => (
-              <PlaceDecisionCard key={place.id} place={place} />
             ))}
           </div>
         </section>
@@ -958,46 +859,6 @@ function CommunityDecisionCard({ community }: { community: DirectoryCommunityPre
   )
 }
 
-function PlaceDecisionCard({ place }: { place: MapPlace }) {
-  const imageUrl = place.imageUrl || getCityFallbackImage(place.city?.slug ?? 'singapore')
-  const score = Math.max(place.trustScore, place.socialScore, place.photoQualityScore)
-  const meta = [
-    formatMapPlaceType(place.placeType),
-    place.area,
-    place.beginnerFriendly ? 'Beginner-friendly' : null,
-  ].filter(Boolean).join(' · ')
-
-  return (
-    <article className="overflow-hidden rounded-lg border border-white/[0.08] bg-[#151515] transition-colors hover:border-white/20">
-      <Link href={`/places/${place.slug}`} className="relative block aspect-[16/9] bg-[#222222]">
-        <Image
-          src={imageUrl}
-          alt=""
-          fill
-          sizes="(min-width: 1024px) 220px, 50vw"
-          className="object-cover"
-          unoptimized={!imageUrl.startsWith('/')}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/74 via-black/10 to-transparent" />
-        <span className="absolute bottom-2 left-2 rounded-md bg-black/60 px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-white backdrop-blur">
-          Trust {score}
-        </span>
-      </Link>
-      <div className="p-3">
-        <Link href={`/places/${place.slug}`}>
-          <h4 className="line-clamp-1 text-sm font-black text-white transition-colors hover:text-[#63FF8F]">
-            {place.name}
-          </h4>
-        </Link>
-        <p className="mt-1 line-clamp-1 text-xs font-semibold text-white/46">{meta}</p>
-        <p className="mt-1 line-clamp-2 min-h-8 text-xs leading-4 text-white/42">
-          {place.bestFor || place.description || 'Mapped place people can use to decide where to show up.'}
-        </p>
-      </div>
-    </article>
-  )
-}
-
 function getSessionListingImage(
   session: Pick<Session, 'imageUrl' | 'resolvedImageUrl' | 'categorySlug'>,
 ): string {
@@ -1010,12 +871,6 @@ function getSessionListingImage(
 
 function pinEmoji(slug: string | null | undefined) {
   return getActivityEmoji(slug, '🏅')
-}
-
-function formatMapPlaceType(value: string | null | undefined) {
-  if (!value) return 'Place'
-  const label = value.toLowerCase().replace(/_/g, ' ')
-  return label.charAt(0).toUpperCase() + label.slice(1)
 }
 
 function formatCommunityCategory(value: string | null | undefined) {
@@ -1049,30 +904,6 @@ function getCommunityImage(community: DirectoryCommunityPreview) {
 
 function getCommunityJoinHref(community: DirectoryCommunityPreview) {
   return community.communityLink || community.websiteUrl || community.sourceUrl || null
-}
-
-function getPlaceMarkerIcon(place: Pick<MapPlace, 'placeType' | 'activities'>) {
-  const activities = place.activities.map((activity) => activity.toLowerCase())
-  if (activities.some((activity) => activity.includes('run'))) return '🏃'
-  if (activities.some((activity) => activity.includes('yoga') || activity.includes('pilates'))) return '🧘'
-  if (activities.some((activity) => activity.includes('pickleball') || activity.includes('tennis'))) return '🎾'
-  if (activities.some((activity) => activity.includes('climb'))) return '🧗'
-  if (activities.some((activity) => activity.includes('cycle'))) return '🚴'
-
-  switch (place.placeType) {
-    case 'GYM':
-      return '💪'
-    case 'STUDIO':
-      return '🧘'
-    case 'OUTDOOR_FITNESS':
-      return '🏃'
-    case 'SPORTS_FACILITY':
-      return '🏟️'
-    case 'WELLNESS':
-      return '♨️'
-    default:
-      return '✦'
-  }
 }
 
 // ─── Fitness / type filters ───────────────────────────────────────────────────
@@ -1242,9 +1073,7 @@ function BuddyPageInner() {
   )
   const [userTimezone] = useState(getBrowserTimezone)
   const [sessions, setSessions] = useState<Session[]>([])
-  const [places, setPlaces] = useState<MapPlace[]>([])
   const [loading, setLoading] = useState(true)
-  const [placesLoading, setPlacesLoading] = useState(true)
   const [nextCursor, setNextCursor] = useState<string | null>(null)
   const [loadingMore, setLoadingMore] = useState(false)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
@@ -1276,7 +1105,6 @@ function BuddyPageInner() {
   const [showCreateMenu, setShowCreateMenu] = useState(false)
   const [createSeed, setCreateSeed] = useState<{ categorySlug: string; title: string } | null>(null)
   const [selectedPin, setSelectedPin] = useState<Session | null>(null)
-  const [selectedPlace, setSelectedPlace] = useState<MapPlace | null>(null)
   const [selectedMapPinId, setSelectedMapPinId] = useState<string | null>(null)
   const [feedbackSession, setFeedbackSession] = useState<{
     id: string
@@ -1377,16 +1205,6 @@ function BuddyPageInner() {
     [sessions],
   )
 
-  const placeById = useMemo(
-    () => new globalThis.Map(places.map((place) => [place.id, place])),
-    [places],
-  )
-
-  const supportPlaces = useMemo(
-    () => sortMapPlacesBySupport(places).slice(0, sessions.length > 0 ? 18 : 36),
-    [places, sessions.length],
-  )
-
   const mapPins = useMemo<SessionVectorMapPin[]>(
     () => {
       const communityPins = communityPreviews.map((community) => {
@@ -1412,30 +1230,6 @@ function BuddyPageInner() {
             getCategoryFallbackImage(community.category),
           previewCtaLabel: 'View community',
           href: `/communities/${community.slug}`,
-        }
-      })
-
-      const placePins = supportPlaces.map((place) => {
-        const typeLabel = formatMapPlaceType(place.placeType)
-        const ratingLabel = place.googleRating
-          ? `${place.googleRating.toFixed(1)} · ${place.googleReviewCount} reviews`
-          : `Trust ${place.trustScore}`
-
-        return {
-          id: `place:${place.id}`,
-          kind: 'place' as const,
-          markerVariant: place.isFeatured ? ('featured-place' as const) : ('place' as const),
-          title: place.name,
-          latitude: place.latitude,
-          longitude: place.longitude,
-          city: place.city?.name ?? activeLocationLabel,
-          primaryLabel: typeLabel,
-          activityLabel: getPlaceMarkerIcon(place),
-          previewTitle: place.name,
-          previewSubtitle: place.bestFor || place.description || `${typeLabel} in ${place.area || activeLocationLabel}`,
-          previewMeta: `${ratingLabel} · ${place.area || activeLocationLabel}`,
-          previewImage: place.imageUrl,
-          previewCtaLabel: 'Open place',
         }
       })
 
@@ -1474,9 +1268,9 @@ function BuddyPageInner() {
         }
       })
 
-      return [...communityPins, ...sessionPins, ...placePins]
+      return [...communityPins, ...sessionPins]
     },
-    [activeLocationLabel, communityPreviews, sessions, supportPlaces],
+    [activeLocationLabel, communityPreviews, sessions],
   )
 
   useEffect(() => {
@@ -1488,7 +1282,7 @@ function BuddyPageInner() {
       pricingFilter || 'all',
       levelFilter || 'all',
       sessions.length,
-      supportPlaces.length,
+      communityPreviews.length,
     ].join(':')
     if (mapDrawerTrackedRef.current === key) return
     mapDrawerTrackedRef.current = key
@@ -1499,7 +1293,6 @@ function BuddyPageInner() {
       pricing: pricingFilter || 'all',
       fitnessLevel: levelFilter || 'all',
       sessionCount: sessions.length,
-      placeCount: supportPlaces.length,
       communityCount: communityCount ?? 0,
     })
   }, [
@@ -1508,8 +1301,8 @@ function BuddyPageInner() {
     communityCount,
     levelFilter,
     pricingFilter,
+    communityPreviews.length,
     sessions.length,
-    supportPlaces.length,
     typeFilter,
     viewMode,
   ])
@@ -1594,7 +1387,6 @@ function BuddyPageInner() {
     setLocationReady(false)
     setNeighborhoodFilter(null)
     setSelectedPin(null)
-    setSelectedPlace(null)
     setSelectedMapPinId(null)
 
     if (!navigator.geolocation) {
@@ -1667,7 +1459,6 @@ function BuddyPageInner() {
     setUserLocation(nextCity.center)
     setNeighborhoodFilter(null)
     setSelectedPin(null)
-    setSelectedPlace(null)
     setSelectedMapPinId(null)
     trackBrowserEvent('buddy_filter_used', {
       filter: 'city',
@@ -1694,7 +1485,6 @@ function BuddyPageInner() {
   const handleMapPinClick = useCallback(
     (session: Session | null, pinId?: string | null) => {
       setSelectedPin(session)
-      setSelectedPlace(null)
       setSelectedMapPinId(session ? pinId ?? `session:${session.id}` : null)
       if (!session) return
 
@@ -1712,33 +1502,25 @@ function BuddyPageInner() {
     (pin: SessionVectorMapPin | null) => {
       if (!pin) {
         handleMapPinClick(null)
-        setSelectedPlace(null)
         setSelectedMapPinId(null)
         return
       }
 
-      if (pin.kind === 'place' || pin.id.startsWith('place:')) {
-        const placeId = pin.id.replace(/^place:/, '')
-        const place = placeById.get(placeId) ?? null
+      if (pin.kind === 'community') {
         setSelectedPin(null)
-        setSelectedPlace(place)
-        setSelectedMapPinId(place ? pin.id : null)
-        if (place) {
-          trackBrowserEvent('buddy_map_pin_clicked', {
-            placeId: place.id,
-            placeSlug: place.slug,
-            category: place.placeType,
-            city: cityConfig.slug,
-            viewMode,
-          })
-        }
+        setSelectedMapPinId(pin.id)
+        trackBrowserEvent('buddy_map_pin_clicked', {
+          communityPinId: pin.id,
+          city: cityConfig.slug,
+          viewMode,
+        })
         return
       }
 
       const sessionId = pin.id.replace(/^session:/, '')
       handleMapPinClick(sessionById.get(sessionId) ?? null, pin.id)
     },
-    [cityConfig.slug, handleMapPinClick, placeById, sessionById, viewMode],
+    [cityConfig.slug, handleMapPinClick, sessionById, viewMode],
   )
 
   function updateSessionAfterRsvp(sessionId: string, updates: Partial<Session>) {
@@ -1980,7 +1762,6 @@ function BuddyPageInner() {
     setViewMode(next)
     if (nextDateFilter !== dateFilter) setDateFilter(nextDateFilter)
     setSelectedPin(null)
-    setSelectedPlace(null)
     setSelectedMapPinId(null)
 
     const params = new URLSearchParams(searchParams.toString())
@@ -2064,41 +1845,6 @@ function BuddyPageInner() {
       activeTimezone,
     ],
   )
-
-  const fetchPlaces = useCallback(async () => {
-    setPlacesLoading(true)
-
-    try {
-      const params = new URLSearchParams()
-      if (typeFilter) params.set('type', typeFilter)
-      const effectiveLocation = neighborhoodFilter
-        ? { lat: neighborhoodFilter.lat, lng: neighborhoodFilter.lng }
-        : userLocation
-      const isCityScoped = discoveryMode === 'city' || Boolean(neighborhoodFilter)
-      const activeCityConfig =
-        isCityScoped || !effectiveLocation
-          ? cityConfig
-          : getNearestCityLocationConfig(effectiveLocation.lat, effectiveLocation.lng)
-      if (isCityScoped) params.set('city', activeCityConfig.slug)
-      else params.set('location', NEARBY_FILTER_VALUE)
-      if (effectiveLocation) {
-        params.set('lat', String(effectiveLocation.lat))
-        params.set('lng', String(effectiveLocation.lng))
-      }
-      if (neighborhoodFilter) {
-        params.set('radius', String(neighborhoodFilter.radius))
-      }
-
-      const res = await fetch(`/api/map/places?${params.toString()}`)
-      if (!res.ok) throw new Error('Failed to fetch places')
-      const data = await res.json()
-      setPlaces(data.data?.places ?? [])
-    } catch {
-      setPlaces([])
-    } finally {
-      setPlacesLoading(false)
-    }
-  }, [cityConfig, discoveryMode, neighborhoodFilter, typeFilter, userLocation])
 
   useEffect(() => {
     if (!userLocation) return
@@ -2285,7 +2031,6 @@ function BuddyPageInner() {
     if (!profileLocationReady) return
     setSessions([])
     setSelectedPin(null)
-    setSelectedPlace(null)
     setSelectedMapPinId(null)
     fetchSessions()
   }, [
@@ -2298,13 +2043,6 @@ function BuddyPageInner() {
     neighborhoodFilter,
     fetchSessions,
   ])
-
-  useEffect(() => {
-    if (!locationReady) return
-    if (!profileLocationReady) return
-    setPlaces([])
-    fetchPlaces()
-  }, [fetchPlaces, locationReady, profileLocationReady, neighborhoodFilter, typeFilter])
 
   // Debounced search
   useEffect(() => {
@@ -2657,10 +2395,9 @@ function BuddyPageInner() {
                 activeLocationLabel={neighborhoodFilter?.name ?? activeLocationLabel}
                 activeDateLabel={activeDateLabel}
                 sessions={sessions}
-                places={supportPlaces}
                 communityCount={communityCount}
                 myNextSession={myUpcomingSessions[0] ?? null}
-                loading={loading || placesLoading || communityCountLoading || myPlansLoading}
+                loading={loading || communityCountLoading || myPlansLoading}
                 signedIn={Boolean(isSignedIn)}
                 locationStatus={locationStatus}
                 communityHref={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
@@ -2738,7 +2475,6 @@ function BuddyPageInner() {
                     peopleCount={discoveryStats.peopleCount}
                     goingSoloCount={discoveryStats.goingSoloCount}
                     communityCount={communityCount}
-                    placeCount={supportPlaces.length}
                     activeLocationLabel={neighborhoodFilter?.name ?? activeLocationLabel}
                     activeDateLabel={activeDateLabel}
                   />
@@ -2777,15 +2513,12 @@ function BuddyPageInner() {
                   </div>
                 ) : sessions.length === 0 ? (
                   communityCountLoading ||
-                  placesLoading ||
-                  communityPreviews.length > 0 ||
-                  supportPlaces.length > 0 ? (
+                  communityPreviews.length > 0 ? (
                     <LocalDirectoryFallback
                       cityName={neighborhoodFilter?.name ?? activeLocationLabel}
                       communityCount={communityCount}
                       communities={communityPreviews}
-                      places={supportPlaces}
-                      loading={communityCountLoading || placesLoading}
+                      loading={communityCountLoading}
                       hasFilters={Boolean(
                         typeFilter ||
                         pricingFilter ||
@@ -2910,7 +2643,6 @@ function BuddyPageInner() {
               onPinClick={handleVectorMapPinClick}
               onMapClick={() => {
                 setSelectedPin(null)
-                setSelectedPlace(null)
                 setSelectedMapPinId(null)
               }}
               initialZoom={12}
@@ -2934,24 +2666,13 @@ function BuddyPageInner() {
                 />
               </div>
             )}
-            {selectedPlace && (
-              <div className="absolute bottom-5 left-5 z-20 w-[280px] max-w-[calc(100%-40px)]">
-                <MapSelectedPlaceCard place={selectedPlace} onClose={() => {
-                  setSelectedPlace(null)
-                  setSelectedMapPinId(null)
-                }} />
-              </div>
-            )}
-            {!loading && !placesLoading && sessions.length === 0 && places.length === 0 && (
+            {!loading && !communityCountLoading && sessions.length === 0 && communityPreviews.length === 0 && (
               <MapEmptyOverlay
                 cityName={neighborhoodFilter?.name ?? activeLocationLabel}
                 onCreate={() => setShowCreateMenu(true)}
               />
             )}
-            {!loading &&
-              dateFilter === todayDateString &&
-              supportPlaces.length > 0 &&
-              sessions.length < 3 && (
+            {!loading && !communityCountLoading && dateFilter === todayDateString && sessions.length < 3 && communityPreviews.length > 0 && (
                 <MapQuietTodayBanner
                   sessionCount={sessions.length}
                   onViewUpcoming={() => updateDateFilter('')}
@@ -2970,7 +2691,6 @@ function BuddyPageInner() {
               onPinClick={handleVectorMapPinClick}
               onMapClick={() => {
                 setSelectedPin(null)
-                setSelectedPlace(null)
                 setSelectedMapPinId(null)
               }}
               initialZoom={12}
@@ -2992,14 +2712,13 @@ function BuddyPageInner() {
               onShowList={toggleViewMode}
             />
 
-            {!selectedPin && !selectedPlace ? (
+            {!selectedPin ? (
               <MapActivityDrawer
                 activeLocationLabel={neighborhoodFilter?.name ?? activeLocationLabel}
                 activeDateLabel={activeDateLabel}
                 sessions={sessions}
                 communities={communityPreviews}
-                places={supportPlaces}
-                loading={loading || placesLoading || communityCountLoading}
+                loading={loading || communityCountLoading}
                 communityHref={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
                 onShowList={toggleViewMode}
                 onCreate={() => {
@@ -3023,24 +2742,13 @@ function BuddyPageInner() {
                 />
               </div>
             )}
-            {selectedPlace && (
-              <div className="absolute bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] left-3 right-3 z-30 lg:bottom-5 lg:left-5 lg:right-auto lg:w-[340px]">
-                <MapSelectedPlaceCard place={selectedPlace} onClose={() => {
-                  setSelectedPlace(null)
-                  setSelectedMapPinId(null)
-                }} />
-              </div>
-            )}
-            {!loading && !placesLoading && sessions.length === 0 && places.length === 0 && (
+            {!loading && !communityCountLoading && sessions.length === 0 && communityPreviews.length === 0 && (
               <MapEmptyOverlay
                 cityName={neighborhoodFilter?.name ?? activeLocationLabel}
                 onCreate={() => setShowCreateMenu(true)}
               />
             )}
-            {!loading &&
-              dateFilter === todayDateString &&
-              supportPlaces.length > 0 &&
-              sessions.length < 3 && (
+            {!loading && !communityCountLoading && dateFilter === todayDateString && sessions.length < 3 && communityPreviews.length > 0 && (
                 <MapQuietTodayBanner
                   sessionCount={sessions.length}
                   onViewUpcoming={() => updateDateFilter('')}
@@ -3632,9 +3340,9 @@ function CityEmptyState({
             onClick={onOpenMap}
             className="rounded-xl border border-white/[0.08] bg-[#111111] p-4 text-left hover:border-white/18"
           >
-            <p className="text-sm font-bold text-white">Open mapped places</p>
+            <p className="text-sm font-bold text-white">Open community map</p>
             <p className="mt-1 text-xs leading-5 text-[#777777]">
-              See nearby gyms, parks, studios, and community spaces while plans are quiet.
+              See active communities and workouts near this city.
             </p>
           </button>
         )}
@@ -3653,8 +3361,8 @@ function MapEmptyOverlay({ cityName, onCreate }: { cityName: string; onCreate: (
         Start the first easy plan in {cityName}.
       </h3>
       <p className="mt-2 text-xs leading-5 text-[#999999]">
-        The map prioritizes plans people can confidently join, with reviewed communities and places as
-        the trust layer.
+        The map prioritizes workouts people can confidently join, with reviewed communities as the
+        trust layer.
       </p>
       <button
         onClick={onCreate}
@@ -3667,95 +3375,11 @@ function MapEmptyOverlay({ cityName, onCreate }: { cityName: string; onCreate: (
   )
 }
 
-function MapSelectedPlaceCard({ place, onClose }: { place: MapPlace; onClose: () => void }) {
-  const imageUrl = place.imageUrl || '/images/cities/singapore.jpg'
-  const ratingLabel = place.googleRating
-    ? `${place.googleRating.toFixed(1)} Google`
-    : `Trust ${place.trustScore}`
-  const meta = [
-    formatMapPlaceType(place.placeType),
-    place.area,
-    place.beginnerFriendly ? 'Beginner-friendly' : null,
-  ].filter(Boolean).join(' · ')
-
-  return (
-    <article className="overflow-hidden rounded-2xl border border-white/[0.12] bg-[#111111] shadow-2xl shadow-black/50">
-      <div className="relative aspect-[16/9] bg-[#1A1A1A]">
-        <Image
-          src={imageUrl}
-          alt=""
-          fill
-          sizes="340px"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur transition-colors hover:bg-black"
-          aria-label="Close place card"
-        >
-          <X className="h-4 w-4" />
-        </button>
-        <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-3">
-          <div className="min-w-0">
-            <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#63FF8F]">
-              Reviewed place
-            </p>
-            <h3 className="mt-1 line-clamp-2 text-lg font-black leading-tight text-white">{place.name}</h3>
-          </div>
-          <span className="shrink-0 rounded-lg bg-white px-2.5 py-1.5 font-mono text-[11px] font-black uppercase text-black">
-            {ratingLabel}
-          </span>
-        </div>
-      </div>
-      <div className="space-y-3 p-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-[#999999]">{meta}</p>
-        <p className="line-clamp-2 text-sm leading-5 text-[#D6D6D6]">
-          {place.bestFor || place.description || place.address || 'Listed in the SweatBuddies city guide.'}
-        </p>
-        <div className="grid grid-cols-3 gap-2">
-          <PlaceSignal label="Trust" value={place.trustScore} />
-          <PlaceSignal label="Photos" value={place.photoQualityScore} />
-          <PlaceSignal label="Social" value={place.socialScore} />
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Link
-            href={`/places/${place.slug}`}
-            className="inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-full bg-white px-3 font-mono text-[11px] font-black uppercase tracking-wide text-black hover:bg-neutral-200"
-          >
-            Details
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-          {place.googleMapsUrl && (
-            <a
-              href={place.googleMapsUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-white/[0.14] px-3 font-mono text-[11px] font-black uppercase tracking-wide text-white/75 hover:border-[#63FF8F] hover:text-[#63FF8F]"
-            >
-              Map
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          )}
-        </div>
-        {place.googleRating && (
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#999999]">
-            <Star className="h-3.5 w-3.5 text-[#B6FF00]" />
-            {place.googleRating.toFixed(1)} rating from {place.googleReviewCount} public reviews
-          </div>
-        )}
-      </div>
-    </article>
-  )
-}
-
 function MapActivityDrawer({
   activeLocationLabel,
   activeDateLabel,
   sessions,
   communities,
-  places,
   loading,
   communityHref,
   onShowList,
@@ -3765,7 +3389,6 @@ function MapActivityDrawer({
   activeDateLabel: string
   sessions: Session[]
   communities: DirectoryCommunityPreview[]
-  places: MapPlace[]
   loading: boolean
   communityHref: string
   onShowList: () => void
@@ -3773,9 +3396,7 @@ function MapActivityDrawer({
 }) {
   const visibleSessions = sessions.slice(0, 3)
   const visibleCommunities = communities.slice(0, visibleSessions.length >= 2 ? 1 : 2)
-  const visiblePlaces = visibleSessions.length === 0 && visibleCommunities.length === 0 ? places.slice(0, 2) : []
-  const hasRows =
-    visibleSessions.length > 0 || visibleCommunities.length > 0 || visiblePlaces.length > 0
+  const hasRows = visibleSessions.length > 0 || visibleCommunities.length > 0
   const activityCount = communities.length + sessions.length
   const heading = loading
     ? 'Finding community activity...'
@@ -3783,9 +3404,7 @@ function MapActivityDrawer({
       ? `${communities.length} communit${communities.length === 1 ? 'y' : 'ies'} nearby`
       : sessions.length > 0
         ? `${sessions.length} plan${sessions.length === 1 ? '' : 's'} nearby`
-        : places.length > 0
-          ? 'Meetup spots nearby'
-          : 'Nothing live here yet'
+        : 'Nothing live here yet'
 
   return (
     <section className="absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-20 rounded-2xl border border-white/[0.16] bg-[#F8F8F4] p-3 text-black shadow-[0_18px_54px_rgba(0,0,0,0.46)] md:left-auto md:right-4 md:w-[390px] md:p-4">
@@ -3873,13 +3492,6 @@ function MapActivityDrawer({
                 key={community.id}
                 community={community}
                 position={visibleSessions.length + index}
-              />
-            ))}
-            {visiblePlaces.map((place, index) => (
-              <MapDrawerPlaceRow
-                key={place.id}
-                place={place}
-                position={visibleSessions.length + visibleCommunities.length + index}
               />
             ))}
           </>
@@ -3978,57 +3590,6 @@ function MapDrawerCommunityRow({
         Community
       </span>
     </Link>
-  )
-}
-
-function MapDrawerPlaceRow({
-  place,
-  position,
-}: {
-  place: MapPlace
-  position: number
-}) {
-  const imageUrl = place.imageUrl || '/images/cities/singapore.jpg'
-  const meta = place.area || place.city?.name || formatMapPlaceType(place.placeType)
-
-  return (
-    <Link
-      href={`/places/${place.slug}`}
-      onClick={() =>
-        trackBrowserEvent('buddy_map_list_item_clicked', {
-          kind: 'place',
-          placeId: place.id,
-          placeSlug: place.slug,
-          source: 'map_activity_drawer',
-          position,
-          city: place.city?.slug ?? meta,
-        })
-      }
-      className="grid min-h-[64px] grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-3 rounded-xl bg-black/[0.04] p-2 transition-colors hover:bg-black/[0.08]"
-    >
-      <span className="relative h-12 w-12 overflow-hidden rounded-full bg-black/10">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={imageUrl} alt="" className="h-full w-full object-cover" />
-      </span>
-      <span className="min-w-0">
-        <span className="line-clamp-1 text-sm font-black">{place.name}</span>
-        <span className="mt-0.5 block truncate text-xs font-semibold text-black/50">
-          {formatMapPlaceType(place.placeType)} · {meta}
-        </span>
-      </span>
-      <span className="rounded-full border border-black/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-black/62">
-        Spot
-      </span>
-    </Link>
-  )
-}
-
-function PlaceSignal({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-xl border border-white/[0.08] bg-black/25 p-2">
-      <div className="font-mono text-[10px] font-black uppercase tracking-wide text-[#777777]">{label}</div>
-      <div className="mt-1 text-sm font-black text-white">{value}</div>
-    </div>
   )
 }
 

@@ -26,6 +26,9 @@ async function main() {
     assert.equal(await renderedCount(page.locator('text=Filters')), 0)
     assert.equal(await renderedCount(page.locator('[data-testid="buddy-date-strip"] button:has-text("Today")')), 0)
     assert.equal(await renderedCount(page.getByText('Activity map', { exact: true })), 0)
+    assert.equal(await renderedCount(page.getByText('Meetup spots', { exact: true })), 0)
+    assert.equal(await renderedCount(page.getByText('Open place', { exact: true })), 0)
+    assert.equal(await renderedCount(page.getByText('Reviewed place', { exact: true })), 0)
 
     await page.screenshot({ path: screenshotPath, fullPage: false })
     console.log(`Mobile buddy smoke passed: ${targetUrl}`)

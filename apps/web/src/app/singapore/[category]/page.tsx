@@ -1,11 +1,9 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { FitnessDirectoryPage } from '@/components/fitness-directory/FitnessDirectoryPage'
+import { notFound, redirect } from 'next/navigation'
 import {
   fitnessDirectoryCategories,
   getDirectoryCategory,
   isDirectoryCategorySlug,
-  type FitnessDirectoryCategorySlug,
 } from '@/lib/fitness-directory'
 
 interface CategoryPageProps {
@@ -52,10 +50,9 @@ export default async function SingaporeCategoryPage({ params, searchParams }: Ca
     notFound()
   }
 
-  return (
-    <FitnessDirectoryPage
-      categorySlug={category as FitnessDirectoryCategorySlug}
-      searchParams={await searchParams}
-    />
-  )
+  const query = new URLSearchParams({ city: 'singapore' })
+  const paramsValue = await searchParams
+  if (paramsValue.q) query.set('q', paramsValue.q)
+
+  redirect(`/communities?${query.toString()}`)
 }

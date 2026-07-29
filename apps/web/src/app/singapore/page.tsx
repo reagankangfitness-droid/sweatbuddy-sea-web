@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import { FitnessDirectoryPage } from '@/components/fitness-directory/FitnessDirectoryPage'
+import { CityLandingPage } from '@/components/landing/CityLandingPage'
+import { singaporeLanding } from '@/lib/city-landing'
 
 export const metadata: Metadata = {
-  title: 'Singapore Fitness Guide',
+  title: 'Fitness Communities in Singapore | SweatBuddies',
   description:
-    'Discover gyms, studios, run clubs, outdoor fitness, sports facilities, reviews, photos, and communities in Singapore.',
+    'Find Singapore run clubs, yoga groups, pickleball crews, and community workouts you can actually join.',
   openGraph: {
-    title: 'Singapore Fitness Guide',
+    title: 'Fitness Communities in Singapore | SweatBuddies',
     description:
-      'Find where to train, play, and meet active people in Singapore.',
+      'Find local fitness communities in Singapore where first-timers are welcome and meeting people starts with movement.',
     images: ['/images/cities/singapore.jpg'],
   },
 }
@@ -51,5 +52,5 @@ export default async function SingaporePage({ searchParams }: SingaporePageProps
     redirect(`/buddy?${next.toString()}`)
   }
 
-  return <FitnessDirectoryPage categorySlug="fitness" searchParams={params} />
+  return <CityLandingPage {...singaporeLanding} />
 }

@@ -2711,3 +2711,11 @@
 .animate-fade-in {
   animation: fade-in 0.8s ease-out forwards;
 }
+
+[data-testid="buddy-mobile-concept"] h1,
+[data-testid="buddy-mobile-concept"] h2,
+[data-testid="buddy-mobile-concept"] h3 {
+  color: #17130E;
+  font-family: var(--font-barlow), "Arial Narrow", Impact, sans-serif;
+  font-weight: 800;
+}

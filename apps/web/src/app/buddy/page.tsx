@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef, Suspense, type ReactNode } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -971,6 +971,7 @@ type StarterSessionIdea = (typeof STARTER_SESSION_IDEAS)[number]
 
 type DiscoveryMode = 'nearby' | 'city'
 type LocationStatus = 'detecting' | 'granted' | 'stored' | 'denied' | 'unsupported' | 'city'
+type MobileBuddyTab = 'crews' | 'plans' | 'map' | 'you'
 
 const NEARBY_FILTER_VALUE = 'nearby'
 const LAST_LOCATION_STORAGE_KEY = 'sb_last_discovery_location'
@@ -1126,6 +1127,7 @@ function BuddyPageInner() {
 
   // View mode: map-first by default, with list available as a secondary scan mode.
   const [viewMode, setViewMode] = useState<'list' | 'map'>(initialViewMode)
+  const [mobileTab, setMobileTab] = useState<MobileBuddyTab>('crews')
   const mapDrawerTrackedRef = useRef<string | null>(null)
 
   // Neighborhood filter
@@ -2133,6 +2135,53 @@ function BuddyPageInner() {
         hostName={feedbackSession?.hostName ?? null}
       />
 
+      <BuddyMobileConceptShell
+        activeTab={mobileTab}
+        onTabChange={setMobileTab}
+        activeLocationLabel={neighborhoodFilter?.name ?? activeLocationLabel}
+        activeDateLabel={activeDateLabel}
+        activeTimezone={activeTimezone}
+        todayDateString={todayDateString}
+        dateFilter={dateFilter}
+        onDateChange={updateDateFilter}
+        typeFilter={typeFilter}
+        onTypeChange={updateTypeFilter}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searching={searching}
+        searchResults={searchResults}
+        sessions={sessions}
+        communities={communityPreviews}
+        communityCount={communityCount}
+        loading={loading || communityCountLoading}
+        myNextSession={myUpcomingSessions[0] ?? null}
+        myPlansLoading={myPlansLoading}
+        mapCenter={userLocation ?? cityConfig.center}
+        mapPins={mapPins}
+        selectedMapPinId={selectedMapPinId}
+        selectedPin={selectedPin}
+        onPinClick={handleVectorMapPinClick}
+        onClearSelectedPin={() => {
+          setSelectedPin(null)
+          setSelectedMapPinId(null)
+        }}
+        onCreate={() => {
+          setCreateSeed(null)
+          setShowCreateMenu(true)
+        }}
+        onHostSession={() => {
+          setCreateSeed(null)
+          setShowCreateSheet(true)
+        }}
+        onJoin={handleJoinSession}
+        onLeave={handleLeaveSession}
+        onPreviewAttendees={setAttendeeSheetSession}
+        rsvpLoadingId={rsvpLoadingId}
+        signedIn={Boolean(isSignedIn)}
+        citySlug={cityConfig.slug}
+      />
+
+      <div className="hidden min-h-0 flex-1 flex-col md:flex">
       {/* ── Filters — sticky top bar ── */}
       <div className="sticky top-0 z-20 pt-[env(safe-area-inset-top,4px)]">
         <div className="space-y-1.5 border-b border-white/[0.07] bg-[#0B0D0C]/92 px-3 pb-2 pt-1.5 font-mono backdrop-blur-xl">
@@ -2757,6 +2806,7 @@ function BuddyPageInner() {
           </div>
         </>
       )}
+      </div>
 
       {soloPromptSession ? (
         <GoingSoloAfterRsvpPrompt
@@ -2785,6 +2835,742 @@ function BuddyPageInner() {
         />
       ) : null}
     </div>
+  )
+}
+
+function BuddyMobileConceptShell({
+  activeTab,
+  onTabChange,
+  activeLocationLabel,
+  activeDateLabel,
+  activeTimezone,
+  todayDateString,
+  dateFilter,
+  onDateChange,
+  typeFilter,
+  onTypeChange,
+  searchQuery,
+  onSearchChange,
+  searching,
+  searchResults,
+  sessions,
+  communities,
+  communityCount,
+  loading,
+  myNextSession,
+  myPlansLoading,
+  mapCenter,
+  mapPins,
+  selectedMapPinId,
+  selectedPin,
+  onPinClick,
+  onClearSelectedPin,
+  onCreate,
+  onHostSession,
+  onJoin,
+  onLeave,
+  onPreviewAttendees,
+  rsvpLoadingId,
+  signedIn,
+  citySlug,
+}: {
+  activeTab: MobileBuddyTab
+  onTabChange: (tab: MobileBuddyTab) => void
+  activeLocationLabel: string
+  activeDateLabel: string
+  activeTimezone: string
+  todayDateString: string
+  dateFilter: string
+  onDateChange: (date: string) => void
+  typeFilter: string
+  onTypeChange: (type: string) => void
+  searchQuery: string
+  onSearchChange: (query: string) => void
+  searching: boolean
+  searchResults: Session[]
+  sessions: Session[]
+  communities: DirectoryCommunityPreview[]
+  communityCount: number | null
+  loading: boolean
+  myNextSession: MySessionSummary | null
+  myPlansLoading: boolean
+  mapCenter: { lat: number; lng: number }
+  mapPins: SessionVectorMapPin[]
+  selectedMapPinId: string | null
+  selectedPin: Session | null
+  onPinClick: (pin: SessionVectorMapPin | null) => void
+  onClearSelectedPin: () => void
+  onCreate: () => void
+  onHostSession: () => void
+  onJoin: (session: Session, source: string) => void
+  onLeave: (session: Session, source: string) => void
+  onPreviewAttendees: (session: Session) => void
+  rsvpLoadingId: string | null
+  signedIn: boolean
+  citySlug: string
+}) {
+  const [firstTimerOnly, setFirstTimerOnly] = useState(false)
+  const candidateSessions = searchQuery.trim() ? searchResults : sessions
+  const visibleSessions = firstTimerOnly
+    ? candidateSessions.filter(
+        (session) => session.fitnessLevel === 'ALL' || (session.goingSoloCount ?? 0) > 0,
+      )
+    : candidateSessions
+  const featuredSession = visibleSessions[0] ?? sessions[0] ?? null
+  const visibleCommunities = (firstTimerOnly
+    ? communities.filter((community) => community.beginnerFriendly || community.soloFriendly)
+    : communities
+  ).slice(0, 5)
+  const visiblePlans = visibleSessions.slice(0, 6)
+  const crewCount = firstTimerOnly ? visibleCommunities.length : communityCount ?? communities.length
+  const dateOptions = useMemo(() => {
+    return Array.from({ length: 7 }, (_, index) => {
+      const date = getLocalDateString(activeTimezone, index)
+      const parsed = new Date(`${date}T00:00:00`)
+      return {
+        date,
+        label:
+          index === 0
+            ? 'Mon'
+            : parsed.toLocaleDateString('en-US', {
+                weekday: 'short',
+                timeZone: activeTimezone,
+              }),
+        day: parsed.toLocaleDateString('en-US', {
+          day: 'numeric',
+          timeZone: activeTimezone,
+        }),
+      }
+    })
+  }, [activeTimezone])
+
+  return (
+    <section
+      data-testid="buddy-mobile-concept"
+      className="flex h-full min-h-0 flex-col bg-[#F4EFE3] text-[#17130E] md:hidden"
+    >
+      <div className="shrink-0 border-b-2 border-[#17130E] px-3 pb-2 pt-[calc(env(safe-area-inset-top)+8px)]">
+        <div className="flex min-h-9 items-center justify-between gap-3 font-mono">
+          <Link
+            href="/"
+            className="inline-flex min-h-8 items-center bg-[#0B4BA8] px-2.5 text-[13px] font-black lowercase tracking-tight text-white"
+          >
+            sweatbuddies
+          </Link>
+          <p className="min-w-0 flex-1 truncate text-[8px] font-black uppercase tracking-[0.22em] text-[#17130E]/58">
+            {activeLocationLabel} &gt; {crewCount} crews live
+          </p>
+          <Link
+            href="/host"
+            className="inline-flex min-h-8 shrink-0 items-center justify-center border-2 border-[#17130E] bg-[#F4EFE3] px-3 text-[10px] font-black uppercase tracking-wide shadow-[2px_2px_0_#17130E]"
+          >
+            Host
+          </Link>
+        </div>
+
+        <div className="mt-2 grid grid-cols-[minmax(0,1fr)_44px] gap-2">
+          <label className="relative block">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#17130E]/48" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(event) => onSearchChange(event.target.value)}
+              placeholder="Search crews or plans"
+              className="min-h-11 w-full border-2 border-[#17130E] bg-[#F8F4EA] py-2 pl-9 pr-3 font-mono text-[13px] font-black text-[#17130E] placeholder:text-[#17130E]/42 focus:outline-none"
+            />
+          </label>
+          <button
+            type="button"
+            onClick={onCreate}
+            className="flex min-h-11 items-center justify-center border-2 border-[#17130E] bg-[#E8412C] text-white shadow-[2px_2px_0_#17130E]"
+            aria-label="Add a plan or community"
+          >
+            <Plus className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+
+      {activeTab === 'map' ? (
+        <div className="relative min-h-0 flex-1">
+          <LazySessionVectorMap
+            center={mapCenter}
+            pins={mapPins}
+            selectedPinId={selectedMapPinId}
+            onPinClick={onPinClick}
+            onMapClick={onClearSelectedPin}
+            initialZoom={12}
+            maxFitZoom={13}
+            fitPadding={60}
+            showEmptyState={false}
+          />
+          <div className="absolute left-3 right-3 top-3 z-20 border-2 border-[#17130E] bg-[#F8F4EA] px-3 py-2 font-mono shadow-[3px_3px_0_#17130E]">
+            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
+              Within 3 km of {activeLocationLabel}
+            </p>
+            <p className="mt-1 text-[11px] font-black uppercase">
+              {sessions.length} plans + {crewCount} crews
+            </p>
+          </div>
+          {selectedPin ? (
+            <div className="absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+72px)] z-30">
+              <MobileConceptSelectedPlanCard
+                session={selectedPin}
+                onClose={onClearSelectedPin}
+                onJoin={onJoin}
+                onLeave={onLeave}
+                rsvpLoading={rsvpLoadingId === selectedPin.id}
+              />
+            </div>
+          ) : null}
+        </div>
+      ) : (
+        <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-[calc(env(safe-area-inset-bottom)+86px)]">
+          {activeTab === 'crews' ? (
+            <div className="py-4">
+              <div className="border-b-[6px] border-[#17130E] pb-4">
+                <p className="font-mono text-[9px] font-black uppercase tracking-[0.22em] text-[#E8412C]">
+                  Find the crew
+                </p>
+                <h1 className="mt-1 max-w-[320px] font-barlow text-[44px] font-extrabold uppercase leading-[0.82] tracking-normal">
+                  Crews near
+                  <span className="block text-[#0B4BA8]">you this week</span>
+                </h1>
+                <p className="mt-3 max-w-[310px] font-serif text-[13px] italic leading-5 text-[#17130E]/72">
+                  New here? Start with the ones that say first-timers welcome.
+                </p>
+              </div>
+
+              <MobileConceptTypeRail activeType={typeFilter} onTypeChange={onTypeChange} />
+
+              <label className="mt-3 flex min-h-10 items-center gap-2 border-b-2 border-[#17130E] font-mono text-[10px] font-black uppercase tracking-wide">
+                <input
+                  type="checkbox"
+                  checked={firstTimerOnly}
+                  onChange={(event) => setFirstTimerOnly(event.target.checked)}
+                  className="h-4 w-4 accent-[#E8412C]"
+                />
+                First-timer friendly only
+                <span className="ml-auto text-[#E8412C]">{crewCount} crews</span>
+              </label>
+
+              {loading ? (
+                <MobileConceptLoadingRows />
+              ) : visibleCommunities.length > 0 ? (
+                <div className="mt-4 space-y-3">
+                  {visibleCommunities.map((community, index) => (
+                    <MobileConceptCrewCard
+                      key={community.id}
+                      community={community}
+                      index={index}
+                      citySlug={citySlug}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <MobileConceptEmptyState
+                  title="No crews mapped yet"
+                  body="Start with a verified source. Instagram, WhatsApp, Discord, or a public calendar all work."
+                  actionLabel="Submit a crew"
+                  href="/communities/nominate"
+                />
+              )}
+
+              {featuredSession ? (
+                <div className="mt-5">
+                  <p className="border-b-2 border-[#17130E] pb-1 font-mono text-[9px] font-black uppercase tracking-[0.22em] text-[#E8412C]">
+                    Who is out
+                  </p>
+                  <MobileConceptPlanFeature
+                    session={featuredSession}
+                    source="mobile_concept_crews_feature"
+                    onJoin={onJoin}
+                    onLeave={onLeave}
+                    onPreviewAttendees={onPreviewAttendees}
+                    rsvpLoading={rsvpLoadingId === featuredSession.id}
+                  />
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          {activeTab === 'plans' ? (
+            <div className="py-4">
+              <div className="border-b-[6px] border-[#17130E] pb-4">
+                <p className="font-mono text-[9px] font-black uppercase tracking-[0.22em] text-[#E8412C]">
+                  Week of {todayDateString.slice(5).replace('-', ' / ')}
+                </p>
+                <h1 className="mt-1 max-w-[330px] font-barlow text-[42px] font-extrabold uppercase leading-[0.84] tracking-normal">
+                  You&apos;re free.
+                  <span className="block text-[#0B4BA8]">Here&apos;s who&apos;s out.</span>
+                </h1>
+              </div>
+
+              <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1">
+                {dateOptions.map((option) => {
+                  const active = dateFilter ? dateFilter === option.date : option.date === todayDateString
+                  return (
+                    <button
+                      key={option.date}
+                      type="button"
+                      onClick={() => onDateChange(option.date)}
+                      className={`grid min-h-[54px] min-w-[44px] place-items-center border-2 font-mono shadow-[2px_2px_0_#17130E] ${
+                        active
+                          ? 'border-[#17130E] bg-[#17130E] text-white'
+                          : 'border-[#17130E] bg-[#F8F4EA] text-[#17130E]'
+                      }`}
+                    >
+                      <span className="text-[8px] font-black uppercase">{option.label}</span>
+                      <span className="text-lg font-black leading-none">{option.day}</span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              <div className="mt-4 border-t-2 border-[#17130E]">
+                <p className="py-2 font-mono text-[9px] font-black uppercase tracking-[0.2em] text-[#E8412C]">
+                  {activeDateLabel} - {visiblePlans.length} sessions
+                </p>
+                {searching ? (
+                  <MobileConceptLoadingRows />
+                ) : visiblePlans.length > 0 ? (
+                  <div className="divide-y-2 divide-[#17130E] border-y-2 border-[#17130E]">
+                    {visiblePlans.map((session) => (
+                      <MobileConceptPlanRow key={session.id} session={session} />
+                    ))}
+                  </div>
+                ) : (
+                  <MobileConceptEmptyState
+                    title="No one is out then"
+                    body="Try another window or post the kind of plan you wish existed."
+                    actionLabel="Post a plan"
+                    onClick={onHostSession}
+                  />
+                )}
+              </div>
+            </div>
+          ) : null}
+
+          {activeTab === 'you' ? (
+            <div className="py-4">
+              <div className="border-b-[6px] border-[#17130E] pb-4">
+                <p className="font-mono text-[9px] font-black uppercase tracking-[0.22em] text-[#E8412C]">
+                  Your windows
+                </p>
+                <h1 className="mt-1 font-barlow text-[42px] font-extrabold uppercase leading-[0.84] tracking-normal">
+                  Make it easier
+                  <span className="block text-[#0B4BA8]">to show up.</span>
+                </h1>
+              </div>
+
+              <div className="mt-4 grid gap-3">
+                <div className="border-2 border-[#17130E] bg-[#F8F4EA] p-3 shadow-[3px_3px_0_#17130E]">
+                  <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
+                    Next plan
+                  </p>
+                  {myPlansLoading ? (
+                    <p className="mt-2 text-sm font-black">Checking...</p>
+                  ) : myNextSession ? (
+                    <>
+                      <h2 className="mt-2 font-barlow text-2xl font-extrabold uppercase leading-none">
+                        {myNextSession.title}
+                      </h2>
+                      <p className="mt-2 font-serif text-sm italic text-[#17130E]/70">
+                        {myNextSession.startTime ? getRelativeTime(myNextSession.startTime) : 'Time TBA'}
+                        {myNextSession.address ? ` - ${myNextSession.address.split(',')[0]}` : ''}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="mt-2 font-serif text-sm italic text-[#17130E]/70">
+                      No saved plan yet. Pick a crew first, then save a spot.
+                    </p>
+                  )}
+                </div>
+
+                <div className="border-2 border-dashed border-[#0B4BA8] bg-[#F8F4EA] p-3">
+                  <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
+                    Availability v1
+                  </p>
+                  <p className="mt-2 font-serif text-sm italic leading-5 text-[#17130E]/70">
+                    We are using date filters today. Saved free windows can become a real matching
+                    layer once the schema is added.
+                  </p>
+                </div>
+
+                {signedIn ? (
+                  <Link
+                    href="/my-sessions"
+                    className="inline-flex min-h-12 items-center justify-center border-2 border-[#17130E] bg-[#E8412C] font-mono text-[11px] font-black uppercase tracking-wide text-white shadow-[3px_3px_0_#17130E]"
+                  >
+                    Open my plans
+                  </Link>
+                ) : (
+                  <Link
+                    href="/sign-in?redirect_url=%2Fbuddy"
+                    className="inline-flex min-h-12 items-center justify-center border-2 border-[#17130E] bg-[#E8412C] font-mono text-[11px] font-black uppercase tracking-wide text-white shadow-[3px_3px_0_#17130E]"
+                  >
+                    Sign in to save plans
+                  </Link>
+                )}
+              </div>
+            </div>
+          ) : null}
+        </div>
+      )}
+
+      <MobileConceptBottomNav activeTab={activeTab} onTabChange={onTabChange} />
+    </section>
+  )
+}
+
+function MobileConceptTypeRail({
+  activeType,
+  onTypeChange,
+}: {
+  activeType: string
+  onTypeChange: (type: string) => void
+}) {
+  return (
+    <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1">
+      {TYPE_FILTERS.slice(0, 6).map((filter) => {
+        const active = activeType === filter.value
+        return (
+          <button
+            key={filter.value || 'all'}
+            type="button"
+            onClick={() => onTypeChange(filter.value)}
+            className={`min-h-10 shrink-0 border-2 px-3 font-mono text-[10px] font-black uppercase tracking-wide shadow-[2px_2px_0_#17130E] ${
+              active
+                ? 'border-[#17130E] bg-[#17130E] text-white'
+                : 'border-[#17130E] bg-[#F8F4EA] text-[#17130E]'
+            }`}
+          >
+            {filter.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+function MobileConceptCrewCard({
+  community,
+  index,
+  citySlug,
+}: {
+  community: DirectoryCommunityPreview
+  index: number
+  citySlug: string
+}) {
+  const imageUrl = getCommunityImage(community)
+  const joinHref = getCommunityJoinHref(community)
+  const rank = String(index + 1).padStart(2, '0')
+
+  return (
+    <article className="border-2 border-[#17130E] bg-[#F8F4EA] shadow-[3px_3px_0_#17130E]">
+      <Link href={`/communities/${community.slug}`} className="block">
+        <div className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 p-3">
+          <div className="relative h-[86px] overflow-hidden border-2 border-[#17130E] bg-[#0B4BA8]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={imageUrl} alt="" className="h-full w-full object-cover mix-blend-multiply" />
+            <span className="absolute bottom-1 left-1 bg-[#17130E] px-1.5 py-0.5 font-mono text-[8px] font-black uppercase text-white">
+              {formatCommunityCategory(community.category)}
+            </span>
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center justify-between gap-2 font-mono text-[9px] font-black uppercase tracking-[0.18em]">
+              <span className="text-[#0B4BA8]"># {rank}</span>
+              <span>{community.usualArea || community.city?.name || citySlug}</span>
+            </div>
+            <h2 className="mt-1 line-clamp-2 font-barlow text-2xl font-extrabold uppercase leading-[0.88]">
+              {community.name}
+            </h2>
+            <p className="mt-2 line-clamp-2 font-serif text-[13px] italic leading-5 text-[#17130E]/70">
+              {community.bestFor || community.usualSchedule || community.description || 'Community-led sessions vary.'}
+            </p>
+            <div className="mt-2 flex flex-wrap gap-1">
+              {community.beginnerFriendly ? <MobilePaperTag label="First-timers" tone="blue" /> : null}
+              {community.soloFriendly ? <MobilePaperTag label="Solo OK" tone="red" /> : null}
+              <MobilePaperTag label={formatCommunityPrice(community.priceType)} />
+            </div>
+          </div>
+        </div>
+      </Link>
+      <div className="grid grid-cols-[minmax(0,1fr)_44px] border-t-2 border-[#17130E]">
+        <Link
+          href={`/communities/${community.slug}`}
+          className="flex min-h-11 items-center justify-center bg-[#E8412C] font-mono text-[10px] font-black uppercase tracking-wide text-white"
+        >
+          See what happens
+        </Link>
+        <a
+          href={joinHref || `/communities/${community.slug}`}
+          target={joinHref ? '_blank' : undefined}
+          rel={joinHref ? 'noopener noreferrer' : undefined}
+          className="flex min-h-11 items-center justify-center border-l-2 border-[#17130E] bg-[#F8F4EA]"
+          aria-label={`Open ${community.name}`}
+        >
+          <ArrowRight className="h-4 w-4" />
+        </a>
+      </div>
+    </article>
+  )
+}
+
+function MobileConceptPlanFeature({
+  session,
+  source,
+  onJoin,
+  onLeave,
+  onPreviewAttendees,
+  rsvpLoading,
+}: {
+  session: Session
+  source: string
+  onJoin: (session: Session, source: string) => void
+  onLeave: (session: Session, source: string) => void
+  onPreviewAttendees: (session: Session) => void
+  rsvpLoading: boolean
+}) {
+  const isJoined = session.userStatus === 'JOINED' || session.userStatus === 'COMPLETED'
+  const hostLabel = session.community?.name ?? session.host?.name ?? 'Local host'
+  const timeLabel = session.startTime ? getRelativeTime(session.startTime) : 'Time TBA'
+  const priceLabel = session.price === 0 ? 'Free' : formatBuddyMapPrice(session.price, session.currency)
+
+  return (
+    <article className="mt-3 overflow-hidden border-2 border-[#17130E] bg-[#F8F4EA] shadow-[3px_3px_0_#17130E]">
+      <Link href={`/activities/${session.id}`} className="block">
+        <div className="relative h-44 border-b-2 border-[#17130E] bg-[#0B4BA8]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={getSessionListingImage(session)} alt="" className="h-full w-full object-cover opacity-75 mix-blend-multiply" />
+          <span className="absolute bottom-0 left-0 bg-[#17130E] px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-white">
+            {timeLabel}
+          </span>
+          <span className="absolute right-2 top-2 rotate-[-4deg] border-2 border-[#17130E] bg-[#F8F4EA] px-2 py-1 font-mono text-[10px] font-black uppercase shadow-[2px_2px_0_#17130E]">
+            {priceLabel}
+          </span>
+        </div>
+        <div className="p-3">
+          <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
+            {formatCommunityCategory(session.categorySlug || 'fitness')} - {session.city}
+          </p>
+          <h2 className="mt-1 font-barlow text-[30px] font-extrabold uppercase leading-[0.86]">
+            {session.title}
+          </h2>
+          <p className="mt-2 font-serif text-sm italic leading-5 text-[#17130E]/72">
+            Hosted by {hostLabel}. {getShowUpConfidence(session).reason}
+          </p>
+        </div>
+      </Link>
+      <div className="grid grid-cols-[1fr_44px] border-t-2 border-[#17130E]">
+        <button
+          type="button"
+          disabled={rsvpLoading}
+          onClick={() => (isJoined ? onLeave(session, source) : onJoin(session, source))}
+          className="min-h-12 bg-[#E8412C] font-mono text-[11px] font-black uppercase tracking-wide text-white disabled:opacity-60"
+        >
+          {rsvpLoading ? 'Saving...' : isJoined ? "You're in" : 'Save my spot'}
+        </button>
+        <button
+          type="button"
+          onClick={() => onPreviewAttendees(session)}
+          className="flex min-h-12 items-center justify-center border-l-2 border-[#17130E]"
+          aria-label="Preview attendees"
+        >
+          <Users className="h-4 w-4" />
+        </button>
+      </div>
+    </article>
+  )
+}
+
+function MobileConceptPlanRow({ session }: { session: Session }) {
+  const timeLabel = session.startTime
+    ? new Date(session.startTime).toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+      })
+    : 'TBA'
+
+  return (
+    <Link href={`/activities/${session.id}`} className="grid grid-cols-[54px_minmax(0,1fr)] gap-3 bg-[#F8F4EA] py-3">
+      <div className="text-center font-mono">
+        <p className="text-[20px] font-black leading-none">{timeLabel.replace(/\s?[AP]M$/, '')}</p>
+        <p className="mt-0.5 text-[8px] font-black uppercase text-[#17130E]/52">
+          {timeLabel.match(/[AP]M$/)?.[0] ?? ''}
+        </p>
+      </div>
+      <div className="min-w-0 pr-2">
+        <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
+          {formatCommunityCategory(session.categorySlug || 'fitness')} - {session.address?.split(',')[0] || session.city}
+        </p>
+        <h3 className="mt-1 line-clamp-2 font-barlow text-xl font-extrabold uppercase leading-[0.9]">
+          {session.title}
+        </h3>
+        <p className="mt-1 line-clamp-1 font-serif text-[12px] italic text-[#17130E]/66">
+          {session.attendeeCount} going
+          {(session.goingSoloCount ?? 0) > 0 ? ` - ${session.goingSoloCount} solo` : ''}
+        </p>
+      </div>
+    </Link>
+  )
+}
+
+function MobileConceptSelectedPlanCard({
+  session,
+  onClose,
+  onJoin,
+  onLeave,
+  rsvpLoading,
+}: {
+  session: Session
+  onClose: () => void
+  onJoin: (session: Session, source: string) => void
+  onLeave: (session: Session, source: string) => void
+  rsvpLoading: boolean
+}) {
+  const isJoined = session.userStatus === 'JOINED' || session.userStatus === 'COMPLETED'
+
+  return (
+    <div className="border-2 border-[#17130E] bg-[#F8F4EA] shadow-[4px_4px_0_#17130E]">
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center border-2 border-[#17130E] bg-[#F8F4EA]"
+        aria-label="Close selected plan"
+      >
+        <X className="h-4 w-4" />
+      </button>
+      <Link href={`/activities/${session.id}`} className="block p-3 pr-12">
+        <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
+          {session.startTime ? getRelativeTime(session.startTime) : 'Time TBA'} - {session.price === 0 ? 'Free' : formatBuddyMapPrice(session.price, session.currency)}
+        </p>
+        <h2 className="mt-1 line-clamp-2 font-barlow text-2xl font-extrabold uppercase leading-[0.88]">
+          {session.title}
+        </h2>
+        <p className="mt-2 line-clamp-2 font-serif text-[13px] italic text-[#17130E]/72">
+          {getShowUpConfidence(session).reason}
+        </p>
+      </Link>
+      <button
+        type="button"
+        disabled={rsvpLoading}
+        onClick={() => (isJoined ? onLeave(session, 'mobile_concept_map') : onJoin(session, 'mobile_concept_map'))}
+        className="min-h-11 w-full border-t-2 border-[#17130E] bg-[#E8412C] font-mono text-[10px] font-black uppercase tracking-wide text-white disabled:opacity-60"
+      >
+        {rsvpLoading ? 'Saving...' : isJoined ? "You're in" : 'Save my spot'}
+      </button>
+    </div>
+  )
+}
+
+function MobilePaperTag({ label, tone }: { label: string; tone?: 'blue' | 'red' }) {
+  return (
+    <span
+      className={`border px-1.5 py-0.5 font-mono text-[8px] font-black uppercase tracking-wide ${
+        tone === 'blue'
+          ? 'border-[#0B4BA8] text-[#0B4BA8]'
+          : tone === 'red'
+            ? 'border-[#E8412C] text-[#E8412C]'
+            : 'border-[#17130E]/45 text-[#17130E]/66'
+      }`}
+    >
+      {label}
+    </span>
+  )
+}
+
+function MobileConceptLoadingRows() {
+  return (
+    <div className="mt-4 space-y-3">
+      {[0, 1, 2].map((item) => (
+        <div key={item} className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 border-2 border-[#17130E] bg-[#F8F4EA] p-3">
+          <div className="h-20 bg-[#17130E]/12" />
+          <div className="py-1">
+            <div className="h-3 w-20 bg-[#17130E]/12" />
+            <div className="mt-3 h-5 w-4/5 bg-[#17130E]/12" />
+            <div className="mt-2 h-3 w-3/5 bg-[#17130E]/12" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function MobileConceptEmptyState({
+  title,
+  body,
+  actionLabel,
+  href,
+  onClick,
+}: {
+  title: string
+  body: string
+  actionLabel: string
+  href?: string
+  onClick?: () => void
+}) {
+  const content = (
+    <>
+      <h2 className="font-barlow text-2xl font-extrabold uppercase leading-none">{title}</h2>
+      <p className="mt-2 font-serif text-sm italic leading-5 text-[#17130E]/70">{body}</p>
+      <span className="mt-4 inline-flex min-h-11 items-center justify-center bg-[#E8412C] px-4 font-mono text-[10px] font-black uppercase tracking-wide text-white">
+        {actionLabel}
+      </span>
+    </>
+  )
+
+  if (href) {
+    return (
+      <Link href={href} className="mt-4 block border-2 border-dashed border-[#17130E] bg-[#F8F4EA] p-4">
+        {content}
+      </Link>
+    )
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="mt-4 w-full border-2 border-dashed border-[#17130E] bg-[#F8F4EA] p-4 text-left"
+    >
+      {content}
+    </button>
+  )
+}
+
+function MobileConceptBottomNav({
+  activeTab,
+  onTabChange,
+}: {
+  activeTab: MobileBuddyTab
+  onTabChange: (tab: MobileBuddyTab) => void
+}) {
+  const items: Array<{ tab: MobileBuddyTab; label: string; icon: ReactNode }> = [
+    { tab: 'crews', label: 'Crews', icon: <Users className="h-3.5 w-3.5" /> },
+    { tab: 'plans', label: 'Plans', icon: <List className="h-3.5 w-3.5" /> },
+    { tab: 'map', label: 'Map', icon: <Map className="h-3.5 w-3.5" /> },
+    { tab: 'you', label: 'You', icon: <UserPlus className="h-3.5 w-3.5" /> },
+  ]
+
+  return (
+    <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t-2 border-[#17130E] bg-[#F4EFE3] pb-[env(safe-area-inset-bottom)] font-mono">
+      {items.map((item) => {
+        const active = activeTab === item.tab
+        return (
+          <button
+            key={item.tab}
+            type="button"
+            onClick={() => onTabChange(item.tab)}
+            className={`flex min-h-14 flex-col items-center justify-center gap-1 border-r-2 border-[#17130E] text-[9px] font-black uppercase tracking-wide last:border-r-0 ${
+              active ? 'bg-[#17130E] text-white' : 'bg-[#F4EFE3] text-[#17130E]'
+            }`}
+          >
+            {item.icon}
+            {item.label}
+          </button>
+        )
+      })}
+    </nav>
   )
 }
 

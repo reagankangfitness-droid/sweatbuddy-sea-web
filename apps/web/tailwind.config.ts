@@ -24,6 +24,7 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-geist-sans)', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
         mono: ['var(--font-geist-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+        barlow: ['var(--font-barlow)', 'Arial Narrow', 'Impact', 'sans-serif'],
       },
 
       // ═══════════════════════════════════════════════════════

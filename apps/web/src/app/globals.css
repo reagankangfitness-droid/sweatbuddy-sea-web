@@ -2721,3 +2721,150 @@
   color: #17130E;
   font-weight: 800;
 }
+
+@media (min-width: 768px) {
+  [data-buddy-desktop-shell] {
+    background: #F4EFE3;
+    color: #17130E;
+  }
+
+  [data-buddy-desktop-shell] .sticky > div {
+    border-color: #17130E !important;
+    background: rgba(244, 239, 227, 0.96) !important;
+    color: #17130E !important;
+    backdrop-filter: blur(18px);
+  }
+
+  [data-buddy-desktop-shell] input,
+  [data-buddy-desktop-shell] summary {
+    border-color: #17130E !important;
+    border-width: 2px !important;
+    border-radius: 6px !important;
+    background: #F8F4EA !important;
+    color: #17130E !important;
+    box-shadow: 2px 2px 0 #17130E;
+  }
+
+  [data-buddy-desktop-shell] input::placeholder {
+    color: rgba(23, 19, 14, 0.42) !important;
+  }
+
+  [data-buddy-desktop-shell] details > div {
+    border: 2px solid #17130E !important;
+    border-radius: 6px !important;
+    background: rgba(248, 244, 234, 0.98) !important;
+    color: #17130E !important;
+    box-shadow: 4px 4px 0 #17130E !important;
+  }
+
+  [data-buddy-desktop-shell] details button {
+    border-radius: 4px !important;
+    color: #17130E !important;
+  }
+
+  [data-buddy-desktop-shell] details button:hover {
+    background: rgba(11, 75, 168, 0.08) !important;
+  }
+
+  [data-buddy-desktop-shell] details button[class*="bg-[#C6E76A]"],
+  [data-buddy-desktop-shell] details button[class*="bg-white"] {
+    background: #17130E !important;
+    color: #FFFFFF !important;
+  }
+
+  [data-buddy-desktop-shell] [class*="bg-[#0B0D0C]"],
+  [data-buddy-desktop-shell] [class*="bg-[#101010]"],
+  [data-buddy-desktop-shell] [class*="bg-[#111412]"],
+  [data-buddy-desktop-shell] [class*="bg-[#121212]"],
+  [data-buddy-desktop-shell] [class*="bg-[#151816]"],
+  [data-buddy-desktop-shell] [class*="bg-[#171A18]"],
+  [data-buddy-desktop-shell] [class*="bg-[#1A1E1B]"],
+  [data-buddy-desktop-shell] [class*="bg-[#1B1F1C]"] {
+    background-color: #F8F4EA !important;
+  }
+
+  [data-buddy-desktop-shell] [class*="border-white"] {
+    border-color: rgba(23, 19, 14, 0.16) !important;
+  }
+
+  [data-buddy-desktop-shell] [class*="text-white"],
+  [data-buddy-desktop-shell] [class*="text-[#999999]"],
+  [data-buddy-desktop-shell] [class*="text-[#777777]"],
+  [data-buddy-desktop-shell] [class*="text-[#666666]"] {
+    color: #17130E !important;
+  }
+
+  [data-buddy-desktop-shell] p[class*="text-white/"],
+  [data-buddy-desktop-shell] span[class*="text-white/"],
+  [data-buddy-desktop-shell] div[class*="text-white/"],
+  [data-buddy-desktop-shell] a[class*="text-white/"],
+  [data-buddy-desktop-shell] button[class*="text-white/"] {
+    color: rgba(23, 19, 14, 0.58) !important;
+  }
+
+  [data-buddy-desktop-shell] [class*="text-[#C6E76A]"] {
+    color: #0B4BA8 !important;
+  }
+
+  [data-buddy-desktop-shell] [class*="bg-[#C6E76A]"] {
+    background-color: #E8412C !important;
+    color: #FFFFFF !important;
+  }
+
+  [data-buddy-desktop-shell] [class*="bg-[#0B4BA8]"],
+  [data-buddy-desktop-shell] [class*="bg-[#0B4BA8]"] *,
+  [data-buddy-desktop-shell] [class*="bg-[#E8412C]"],
+  [data-buddy-desktop-shell] [class*="bg-[#E8412C]"] * {
+    color: #FFFFFF !important;
+  }
+
+  [data-buddy-desktop-shell] [class*="border-[#C6E76A]"]:not(summary) {
+    border-color: #0B4BA8 !important;
+  }
+
+  [data-buddy-desktop-shell] [class*="hover:text-[#C6E76A]"]:hover {
+    color: #0B4BA8 !important;
+  }
+
+  [data-buddy-desktop-shell] [class*="hover:border-[#C6E76A]"]:hover {
+    border-color: #0B4BA8 !important;
+  }
+
+  [data-buddy-desktop-shell] details > summary[class*="border"] {
+    border-color: #17130E !important;
+  }
+
+  [data-buddy-desktop-shell] details[open] > summary[class*="border"] {
+    border-color: #0B4BA8 !important;
+  }
+
+  [data-buddy-desktop-shell] [class*="rounded-2xl"],
+  [data-buddy-desktop-shell] [class*="rounded-xl"] {
+    border-radius: 8px !important;
+  }
+
+  [data-buddy-desktop-shell] article,
+  [data-buddy-desktop-shell] section[class*="rounded"],
+  [data-buddy-desktop-shell] div[class*="rounded"][class*="border"] {
+    box-shadow: none !important;
+  }
+
+  [data-buddy-desktop-shell] article[class*="bg-[#111412]"],
+  [data-buddy-desktop-shell] article[class*="bg-[#151816]"],
+  [data-buddy-desktop-shell] section[class*="bg-[#111412]"],
+  [data-buddy-desktop-shell] section[class*="bg-[#151816]"] {
+    border: 2px solid #17130E !important;
+    background: #F8F4EA !important;
+    box-shadow: 3px 3px 0 #17130E !important;
+  }
+
+  [data-buddy-desktop-shell] img {
+    filter: saturate(0.9) contrast(0.96);
+  }
+
+  [data-buddy-desktop-shell] [class*="from-[#0B0D0C]"],
+  [data-buddy-desktop-shell] [class*="from-black"],
+  [data-buddy-desktop-shell] [class*="to-black"] {
+    opacity: 0.74;
+  }
+}

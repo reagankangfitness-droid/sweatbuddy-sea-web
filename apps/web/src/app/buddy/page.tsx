@@ -2181,7 +2181,7 @@ function BuddyPageInner() {
         citySlug={cityConfig.slug}
       />
 
-      <div className="hidden min-h-0 flex-1 flex-col md:flex">
+      <div className="hidden min-h-0 flex-1 flex-col md:flex" data-buddy-desktop-shell>
       {/* ── Filters — sticky top bar ── */}
       <div className="sticky top-0 z-20 pt-[env(safe-area-inset-top,4px)]">
         <div className="space-y-1.5 border-b border-white/[0.07] bg-[#0B0D0C]/92 px-3 pb-2 pt-1.5 font-mono backdrop-blur-xl">
@@ -2189,7 +2189,7 @@ function BuddyPageInner() {
             <Link
               href="/"
               aria-label="SweatBuddies home"
-              className="inline-flex min-h-9 min-w-9 items-center"
+              className="inline-flex min-h-9 min-w-9 items-center bg-[#0B4BA8] px-2.5"
             >
               <LogoWithText
                 size={23}
@@ -2203,7 +2203,7 @@ function BuddyPageInner() {
             </p>
             <Link
               href="/host"
-              className="inline-flex min-h-8 shrink-0 items-center justify-center rounded-full border border-white/12 px-3 text-[10px] font-black uppercase tracking-wide text-white/68 transition-colors hover:border-white/30 hover:text-white"
+              className="inline-flex min-h-8 shrink-0 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#F4EFE3] px-3 text-[10px] font-black uppercase tracking-wide text-[#17130E] shadow-[2px_2px_0_#17130E] transition-colors hover:bg-[#F8F4EA]"
             >
               Host
             </Link>
@@ -4215,7 +4215,7 @@ function MapActivityDrawer({
         <button
           type="button"
           onClick={onShowList}
-          className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-full bg-white px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-neutral-200 md:bg-black md:text-white md:hover:bg-[#222222]"
+          className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-[#17130E] shadow-[2px_2px_0_#17130E] transition-colors hover:bg-white"
         >
           <List className="h-3.5 w-3.5" />
           List
@@ -4226,7 +4226,7 @@ function MapActivityDrawer({
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#C6E76A] px-2 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
+          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border-2 border-[#17130E] bg-[#E8412C] px-2 font-mono text-[10px] font-black uppercase tracking-wide text-white shadow-[2px_2px_0_#17130E] transition-colors hover:bg-[#F0523E]"
         >
           <Plus className="h-3.5 w-3.5" />
           Post

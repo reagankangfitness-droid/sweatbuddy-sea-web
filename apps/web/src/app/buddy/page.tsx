@@ -1127,7 +1127,7 @@ function BuddyPageInner() {
 
   // View mode: map-first by default, with list available as a secondary scan mode.
   const [viewMode, setViewMode] = useState<'list' | 'map'>(initialViewMode)
-  const [mobileTab, setMobileTab] = useState<MobileBuddyTab>('crews')
+  const [mobileTab, setMobileTab] = useState<MobileBuddyTab>('map')
   const mapDrawerTrackedRef = useRef<string | null>(null)
 
   // Neighborhood filter

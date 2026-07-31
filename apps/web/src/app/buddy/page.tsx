@@ -3000,14 +3000,14 @@ function BuddyMobileConceptShell({
             onMapClick={onClearSelectedPin}
             initialZoom={12}
             maxFitZoom={13}
-            fitPadding={60}
+            fitPadding={104}
             showEmptyState={false}
           />
-          <div className="absolute left-3 right-3 top-3 z-20 border-2 border-[#17130E] bg-[#F8F4EA] px-3 py-2 font-mono shadow-[3px_3px_0_#17130E]">
-            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
+          <div className="pointer-events-none absolute left-3 top-3 z-20 max-w-[236px] border-2 border-[#17130E] bg-[#F8F4EA]/92 px-2.5 py-2 font-mono shadow-[2px_2px_0_#17130E] backdrop-blur">
+            <p className="truncate text-[8px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
               Within 3 km of {activeLocationLabel}
             </p>
-            <p className="mt-1 text-[11px] font-black uppercase">
+            <p className="mt-1 text-[10px] font-black uppercase text-[#17130E]/56">
               {sessions.length} plans + {crewCount} crews
             </p>
           </div>
@@ -3031,7 +3031,7 @@ function BuddyMobileConceptShell({
                 <p className="font-mono text-[9px] font-black uppercase tracking-[0.22em] text-[#E8412C]">
                   Find the crew
                 </p>
-                <h1 className="mt-1 max-w-[320px] font-barlow text-[44px] font-extrabold uppercase leading-[0.82] tracking-normal">
+                <h1 className="mt-1 max-w-[320px] font-sans text-[36px] font-black uppercase leading-[0.94] tracking-normal">
                   Crews near
                   <span className="block text-[#0B4BA8]">you this week</span>
                 </h1>
@@ -3099,7 +3099,7 @@ function BuddyMobileConceptShell({
                 <p className="font-mono text-[9px] font-black uppercase tracking-[0.22em] text-[#E8412C]">
                   Week of {todayDateString.slice(5).replace('-', ' / ')}
                 </p>
-                <h1 className="mt-1 max-w-[330px] font-barlow text-[42px] font-extrabold uppercase leading-[0.84] tracking-normal">
+                <h1 className="mt-1 max-w-[330px] font-sans text-[34px] font-black uppercase leading-[0.96] tracking-normal">
                   You&apos;re free.
                   <span className="block text-[#0B4BA8]">Here&apos;s who&apos;s out.</span>
                 </h1>
@@ -3156,7 +3156,7 @@ function BuddyMobileConceptShell({
                 <p className="font-mono text-[9px] font-black uppercase tracking-[0.22em] text-[#E8412C]">
                   Your windows
                 </p>
-                <h1 className="mt-1 font-barlow text-[42px] font-extrabold uppercase leading-[0.84] tracking-normal">
+                <h1 className="mt-1 font-sans text-[34px] font-black uppercase leading-[0.96] tracking-normal">
                   Make it easier
                   <span className="block text-[#0B4BA8]">to show up.</span>
                 </h1>
@@ -3171,7 +3171,7 @@ function BuddyMobileConceptShell({
                     <p className="mt-2 text-sm font-black">Checking...</p>
                   ) : myNextSession ? (
                     <>
-                      <h2 className="mt-2 font-barlow text-2xl font-extrabold uppercase leading-none">
+                      <h2 className="mt-2 font-sans text-xl font-black uppercase leading-tight">
                         {myNextSession.title}
                       </h2>
                       <p className="mt-2 font-serif text-sm italic text-[#17130E]/70">
@@ -3281,7 +3281,7 @@ function MobileConceptCrewCard({
               <span className="text-[#0B4BA8]"># {rank}</span>
               <span>{community.usualArea || community.city?.name || citySlug}</span>
             </div>
-            <h2 className="mt-1 line-clamp-2 font-barlow text-2xl font-extrabold uppercase leading-[0.88]">
+            <h2 className="mt-1 line-clamp-2 font-sans text-xl font-black uppercase leading-tight">
               {community.name}
             </h2>
             <p className="mt-2 line-clamp-2 font-serif text-[13px] italic leading-5 text-[#17130E]/70">
@@ -3353,7 +3353,7 @@ function MobileConceptPlanFeature({
           <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
             {formatCommunityCategory(session.categorySlug || 'fitness')} - {session.city}
           </p>
-          <h2 className="mt-1 font-barlow text-[30px] font-extrabold uppercase leading-[0.86]">
+          <h2 className="mt-1 font-sans text-[24px] font-black uppercase leading-tight">
             {session.title}
           </h2>
           <p className="mt-2 font-serif text-sm italic leading-5 text-[#17130E]/72">
@@ -3403,7 +3403,7 @@ function MobileConceptPlanRow({ session }: { session: Session }) {
         <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
           {formatCommunityCategory(session.categorySlug || 'fitness')} - {session.address?.split(',')[0] || session.city}
         </p>
-        <h3 className="mt-1 line-clamp-2 font-barlow text-xl font-extrabold uppercase leading-[0.9]">
+        <h3 className="mt-1 line-clamp-2 font-sans text-lg font-black uppercase leading-tight">
           {session.title}
         </h3>
         <p className="mt-1 line-clamp-1 font-serif text-[12px] italic text-[#17130E]/66">
@@ -3444,7 +3444,7 @@ function MobileConceptSelectedPlanCard({
         <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
           {session.startTime ? getRelativeTime(session.startTime) : 'Time TBA'} - {session.price === 0 ? 'Free' : formatBuddyMapPrice(session.price, session.currency)}
         </p>
-        <h2 className="mt-1 line-clamp-2 font-barlow text-2xl font-extrabold uppercase leading-[0.88]">
+        <h2 className="mt-1 line-clamp-2 font-sans text-xl font-black uppercase leading-tight">
           {session.title}
         </h2>
         <p className="mt-2 line-clamp-2 font-serif text-[13px] italic text-[#17130E]/72">
@@ -3511,7 +3511,7 @@ function MobileConceptEmptyState({
 }) {
   const content = (
     <>
-      <h2 className="font-barlow text-2xl font-extrabold uppercase leading-none">{title}</h2>
+      <h2 className="font-sans text-xl font-black uppercase leading-tight">{title}</h2>
       <p className="mt-2 font-serif text-sm italic leading-5 text-[#17130E]/70">{body}</p>
       <span className="mt-4 inline-flex min-h-11 items-center justify-center bg-[#E8412C] px-4 font-mono text-[10px] font-black uppercase tracking-wide text-white">
         {actionLabel}

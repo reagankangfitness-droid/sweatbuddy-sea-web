@@ -222,15 +222,15 @@ export function SessionVectorMap({
   }
 
   return (
-    <div className={`relative h-full w-full overflow-hidden bg-[#161A18] ${className ?? ''}`}>
+    <div className={`relative h-full w-full overflow-hidden bg-[#F4EFE3] ${className ?? ''}`}>
       <div ref={containerRef} className="h-full w-full" />
       {!ready && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[#161A18]">
-          <Loader2 className="h-6 w-6 animate-spin text-white/50" />
-          <p className="font-mono text-xs font-bold uppercase tracking-wide text-white/40">Loading live map</p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[#F4EFE3]">
+          <Loader2 className="h-6 w-6 animate-spin text-[#17130E]/50" />
+          <p className="font-mono text-xs font-bold uppercase tracking-wide text-[#17130E]/46">Loading live map</p>
         </div>
       )}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,transparent_0,rgba(0,0,0,0.04)_62%,rgba(0,0,0,0.16)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(244,239,227,0.06),rgba(244,239,227,0.2))]" />
     </div>
   )
 }
@@ -254,12 +254,12 @@ function StaticPinMapFallback({
   const activityPinCount = pins.filter((entry) => entry.pin.kind !== 'place').length
 
   return (
-    <div className={`relative h-full w-full overflow-hidden bg-[#1C211F] ${className ?? ''}`}>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_86%_12%,rgba(36,48,52,0.9),transparent_24%),radial-gradient(circle_at_78%_78%,rgba(34,43,47,0.82),transparent_28%),linear-gradient(135deg,rgba(25,31,29,0.96),rgba(28,36,32,0.96))]" />
-      <div className="absolute inset-0 opacity-42 [background-image:linear-gradient(24deg,transparent_0_42%,rgba(239,246,236,0.10)_42.3%,transparent_43.2%),linear-gradient(112deg,transparent_0_45%,rgba(239,246,236,0.075)_45.3%,transparent_46.1%),linear-gradient(154deg,transparent_0_50%,rgba(239,246,236,0.055)_50.2%,transparent_50.9%),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(0deg,rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:360px_240px,430px_280px,520px_320px,96px_96px,96px_96px]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_64%,rgba(54,67,56,0.78),transparent_22%),radial-gradient(circle_at_58%_34%,rgba(45,57,48,0.56),transparent_18%),radial-gradient(circle_at_44%_88%,rgba(33,42,45,0.78),transparent_20%)]" />
+    <div className={`relative h-full w-full overflow-hidden bg-[#F4EFE3] ${className ?? ''}`}>
+      <div className="absolute inset-0 bg-[linear-gradient(135deg,#F4EFE3,#EFE8D8)]" />
+      <div className="absolute inset-0 opacity-70 [background-image:linear-gradient(24deg,transparent_0_42%,rgba(23,19,14,0.10)_42.3%,transparent_43.2%),linear-gradient(112deg,transparent_0_45%,rgba(23,19,14,0.07)_45.3%,transparent_46.1%),linear-gradient(154deg,transparent_0_50%,rgba(23,19,14,0.055)_50.2%,transparent_50.9%),linear-gradient(90deg,rgba(23,19,14,0.045)_1px,transparent_1px),linear-gradient(0deg,rgba(23,19,14,0.04)_1px,transparent_1px)] [background-size:360px_240px,430px_280px,520px_320px,96px_96px,96px_96px]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_64%,rgba(216,227,228,0.62),transparent_22%),radial-gradient(circle_at_58%_34%,rgba(224,231,213,0.52),transparent_18%),radial-gradient(circle_at_44%_88%,rgba(216,227,228,0.58),transparent_20%)]" />
       <div className="absolute inset-x-3 top-3 z-[4] flex items-start justify-between gap-2">
-        <div className="pointer-events-none min-w-0 rounded-md border border-white/10 bg-black/45 px-2.5 py-2 font-mono text-[10px] font-black uppercase tracking-[0.14em] text-white/72 backdrop-blur min-[380px]:px-3 min-[380px]:text-[11px]">
+        <div className="pointer-events-none min-w-0 rounded-md border border-[#17130E] bg-[#F8F4EA]/90 px-2.5 py-2 font-mono text-[10px] font-black uppercase tracking-[0.14em] text-[#17130E]/72 backdrop-blur min-[380px]:px-3 min-[380px]:text-[11px]">
           <span className="block truncate">
             {activityPinCount > 0
               ? `${activityPinCount} active plan${activityPinCount === 1 ? '' : 's'}`
@@ -270,23 +270,23 @@ function StaticPinMapFallback({
           type="button"
           onClick={onRetry}
           aria-label="Retry map"
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-black/45 font-mono text-[10px] font-black uppercase tracking-wide text-white/72 backdrop-blur transition-colors hover:border-[#C6E76A] hover:text-[#C6E76A] sm:w-auto sm:px-4 sm:text-[11px]"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#17130E] bg-[#F8F4EA]/90 font-mono text-[10px] font-black uppercase tracking-wide text-[#17130E]/72 backdrop-blur transition-colors hover:border-[#E8412C] hover:text-[#E8412C] sm:w-auto sm:px-4 sm:text-[11px]"
         >
           <RefreshCw className="h-4 w-4 sm:hidden" />
           <span className="hidden sm:inline">Retry map</span>
         </button>
       </div>
       <div className="pointer-events-none absolute inset-0 z-[2]">
-        <span className="absolute left-[13%] top-[28%] font-mono text-[10px] font-black uppercase tracking-widest text-white/24">
+        <span className="absolute left-[13%] top-[28%] font-mono text-[10px] font-black uppercase tracking-widest text-[#17130E]/22">
           North
         </span>
-        <span className="absolute left-[49%] top-[47%] font-mono text-[10px] font-black uppercase tracking-widest text-white/28">
+        <span className="absolute left-[49%] top-[47%] font-mono text-[10px] font-black uppercase tracking-widest text-[#17130E]/24">
           Central
         </span>
-        <span className="absolute right-[14%] top-[35%] font-mono text-[10px] font-black uppercase tracking-widest text-white/24">
+        <span className="absolute right-[14%] top-[35%] font-mono text-[10px] font-black uppercase tracking-widest text-[#17130E]/22">
           East
         </span>
-        <span className="absolute bottom-[14%] right-[21%] font-mono text-[10px] font-black uppercase tracking-widest text-white/22">
+        <span className="absolute bottom-[14%] right-[21%] font-mono text-[10px] font-black uppercase tracking-widest text-[#17130E]/20">
           Waterfront
         </span>
       </div>
@@ -294,8 +294,8 @@ function StaticPinMapFallback({
       {pins.length === 0 && showEmptyState ? (
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
           <div>
-            <p className="text-sm font-black uppercase tracking-wide text-white">No mapped sessions</p>
-            <p className="mt-2 text-xs font-semibold text-white/50">Sessions still appear in the list.</p>
+            <p className="text-sm font-black uppercase tracking-wide text-[#17130E]">No mapped sessions</p>
+            <p className="mt-2 text-xs font-semibold text-[#17130E]/50">Sessions still appear in the list.</p>
           </div>
         </div>
       ) : (
@@ -367,7 +367,7 @@ function projectStaticPoint(
   point: { lat: number; lng: number },
   bounds: { minLat: number; maxLat: number; minLng: number; maxLng: number },
 ) {
-  const padding = 12
+  const padding = 20
   const x = padding + ((point.lng - bounds.minLng) / (bounds.maxLng - bounds.minLng)) * (100 - padding * 2)
   const y = padding + ((bounds.maxLat - point.lat) / (bounds.maxLat - bounds.minLat)) * (100 - padding * 2)
 
@@ -386,15 +386,15 @@ function applySweatBuddiesMapTone(map: MapLibreMap) {
 
     try {
       if (layer.type === 'background') {
-        map.setPaintProperty(id, 'background-color', '#151A17')
+        map.setPaintProperty(id, 'background-color', '#F4EFE3')
         continue
       }
 
       if (layer.type === 'fill') {
         const isWater = /water|river|stream|ocean|sea|lake/.test(normalizedId)
         const isGreenSpace = /park|wood|forest|grass|landuse|pitch|nature|cemetery/.test(normalizedId)
-        map.setPaintProperty(id, 'fill-color', isWater ? '#222C2F' : isGreenSpace ? '#263126' : '#1D2420')
-        map.setPaintProperty(id, 'fill-opacity', isWater ? 0.98 : 0.9)
+        map.setPaintProperty(id, 'fill-color', isWater ? '#D7E2E3' : isGreenSpace ? '#DCE5D1' : '#F0E9DC')
+        map.setPaintProperty(id, 'fill-opacity', isWater ? 0.94 : isGreenSpace ? 0.78 : 0.9)
         continue
       }
 
@@ -407,24 +407,24 @@ function applySweatBuddiesMapTone(map: MapLibreMap) {
           id,
           'line-color',
           isBoundary
-            ? 'rgba(230,238,226,0.14)'
+            ? 'rgba(23,19,14,0.16)'
             : isRoad
               ? isMajorRoad
-                ? 'rgba(235,244,232,0.22)'
+                ? 'rgba(23,19,14,0.24)'
                 : isPath
-                  ? 'rgba(235,244,232,0.08)'
-                  : 'rgba(235,244,232,0.12)'
-              : 'rgba(223,232,220,0.10)',
+                  ? 'rgba(23,19,14,0.08)'
+                  : 'rgba(23,19,14,0.14)'
+              : 'rgba(23,19,14,0.10)',
         )
         if (isRoad) {
           map.setPaintProperty(
             id,
             'line-opacity',
             isMajorRoad
-              ? ['interpolate', ['linear'], ['zoom'], 8, 0.28, 10.5, 0.42, 13, 0.58]
+              ? ['interpolate', ['linear'], ['zoom'], 8, 0.22, 10.5, 0.34, 13, 0.5]
               : isPath
-                ? ['interpolate', ['linear'], ['zoom'], 8, 0.02, 11, 0.10, 14, 0.22]
-                : ['interpolate', ['linear'], ['zoom'], 8, 0.06, 11, 0.20, 14, 0.36],
+                ? ['interpolate', ['linear'], ['zoom'], 8, 0.01, 11, 0.08, 14, 0.2]
+                : ['interpolate', ['linear'], ['zoom'], 8, 0.04, 11, 0.16, 14, 0.3],
           )
           map.setPaintProperty(
             id,
@@ -436,22 +436,22 @@ function applySweatBuddiesMapTone(map: MapLibreMap) {
                 : ['interpolate', ['linear'], ['zoom'], 9, 0.2, 12, 0.45, 15, 0.9],
           )
         } else {
-          map.setPaintProperty(id, 'line-opacity', isBoundary ? 0.34 : 0.32)
+          map.setPaintProperty(id, 'line-opacity', isBoundary ? 0.26 : 0.22)
         }
         continue
       }
 
       if (layer.type === 'symbol') {
-        map.setPaintProperty(id, 'text-color', '#C7CEC5')
-        map.setPaintProperty(id, 'text-halo-color', '#101411')
-        map.setPaintProperty(id, 'text-halo-width', 1.45)
-        map.setPaintProperty(id, 'icon-color', '#A5AEA4')
+        map.setPaintProperty(id, 'text-color', '#686159')
+        map.setPaintProperty(id, 'text-halo-color', '#F4EFE3')
+        map.setPaintProperty(id, 'text-halo-width', 1.2)
+        map.setPaintProperty(id, 'icon-color', '#8B847A')
         continue
       }
 
       if (layer.type === 'circle') {
-        map.setPaintProperty(id, 'circle-color', '#A1ACA2')
-        map.setPaintProperty(id, 'circle-opacity', 0.68)
+        map.setPaintProperty(id, 'circle-color', '#8B847A')
+        map.setPaintProperty(id, 'circle-opacity', 0.42)
         continue
       }
 
@@ -463,26 +463,26 @@ function applySweatBuddiesMapTone(map: MapLibreMap) {
           0,
           'rgba(0,0,0,0)',
           0.35,
-          'rgba(255,255,255,0.08)',
+          'rgba(23,19,14,0.04)',
           0.7,
-          'rgba(99,255,143,0.14)',
+          'rgba(11,75,168,0.08)',
           1,
-          'rgba(99,255,143,0.24)',
+          'rgba(232,65,44,0.12)',
         ])
         continue
       }
 
       if (layer.type === 'fill-extrusion') {
-        map.setPaintProperty(id, 'fill-extrusion-color', '#252D27')
-        map.setPaintProperty(id, 'fill-extrusion-opacity', 0.5)
+        map.setPaintProperty(id, 'fill-extrusion-color', '#E5DDCF')
+        map.setPaintProperty(id, 'fill-extrusion-opacity', 0.34)
         continue
       }
 
       if (layer.type === 'raster') {
-        map.setPaintProperty(id, 'raster-saturation', -1)
-        map.setPaintProperty(id, 'raster-brightness-min', 0.1)
-        map.setPaintProperty(id, 'raster-brightness-max', 0.72)
-        map.setPaintProperty(id, 'raster-contrast', 0.22)
+        map.setPaintProperty(id, 'raster-saturation', -0.9)
+        map.setPaintProperty(id, 'raster-brightness-min', 0.72)
+        map.setPaintProperty(id, 'raster-brightness-max', 1)
+        map.setPaintProperty(id, 'raster-contrast', -0.08)
       }
     } catch {
       // Some source styles do not support every paint override on every layer.

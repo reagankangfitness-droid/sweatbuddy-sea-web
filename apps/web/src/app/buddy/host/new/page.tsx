@@ -475,7 +475,7 @@ export default function NewSessionPage() {
   // Success screen
   if (publishedId) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-4 text-center">
+      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-4 text-center" data-sb-paper-shell>
         <CheckCircle2 className="w-16 h-16 text-green-500 mb-6" />
         <h1 className="text-2xl font-bold text-white mb-2">
           {requiresReviewSuccess ? 'Session submitted!' : isRecurringSuccess ? 'Recurring session created!' : 'Session created!'}
@@ -524,7 +524,7 @@ export default function NewSessionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D]">
+    <div className="min-h-screen bg-[#0D0D0D]" data-sb-paper-shell>
       {/* Header */}
       <div className="sticky top-0 z-10 bg-[#0D0D0D]/95 backdrop-blur border-b border-[#333333]">
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center gap-3">

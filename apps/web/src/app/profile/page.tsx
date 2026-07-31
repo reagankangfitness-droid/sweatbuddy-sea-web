@@ -114,7 +114,7 @@ export default function ProfilePage() {
 
   if (!isSignedIn) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D]">
+      <div className="min-h-screen bg-[#0D0D0D]" data-sb-paper-shell>
         <header className="fixed top-0 left-0 right-0 z-40 bg-[#0D0D0D]/95 backdrop-blur-lg border-b border-[#333333]">
           <div className="pt-[env(safe-area-inset-top,0px)]">
             <div className="flex items-center gap-4 px-4 py-3">
@@ -154,7 +154,7 @@ export default function ProfilePage() {
 
   const isHost = profile?.isHost
   return (
-    <div className="min-h-screen bg-[#0D0D0D]">
+    <div className="min-h-screen bg-[#0D0D0D]" data-sb-paper-shell>
       {/* Content */}
       <main className="pt-6 pb-24 px-4 max-w-lg mx-auto" style={{ paddingTop: 'max(1.5rem, env(safe-area-inset-top))' }}>
         {/* Profile Card */}

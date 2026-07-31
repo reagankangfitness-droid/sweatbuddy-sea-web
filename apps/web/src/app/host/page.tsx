@@ -120,7 +120,7 @@ export default function BecomeAHostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0D0C] text-white">
+    <div className="min-h-screen bg-[#0B0D0C] text-white" data-sb-paper-shell data-sb-host-shell>
       <header className="absolute left-0 right-0 top-0 z-30">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
           <Link

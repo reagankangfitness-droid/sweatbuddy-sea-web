@@ -319,7 +319,7 @@ export default function CommunitiesPageClient({
   }
 
   return (
-    <div className="sb-page">
+    <div className="sb-page" data-sb-paper-shell>
       <header className="border-b border-white/[0.07] bg-[#0B0D0C]">
         <div className="mx-auto max-w-6xl px-4 py-3 sm:py-4">
           <div className="flex min-h-10 items-center justify-between gap-2">

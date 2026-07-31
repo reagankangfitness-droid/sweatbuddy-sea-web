@@ -2868,3 +2868,203 @@
     opacity: 0.74;
   }
 }
+
+[data-sb-paper-shell] {
+  background: #F4EFE3 !important;
+  color: #17130E !important;
+}
+
+[data-sb-paper-shell] :is(h1, h2, h3, h4, h5, h6, p, span, a, button, label, small, strong, li) {
+  color: #17130E !important;
+}
+
+[data-sb-paper-shell] header svg line,
+[data-sb-paper-shell] header svg path {
+  stroke: #17130E !important;
+}
+
+[data-sb-paper-shell] a[aria-label="SweatBuddies home"] svg line,
+[data-sb-paper-shell] a[aria-label="SweatBuddies home"] svg path {
+  stroke: #17130E !important;
+}
+
+[data-sb-paper-shell] header a[aria-label="SweatBuddies home"] span {
+  color: #17130E !important;
+}
+
+[data-sb-paper-shell].sb-page,
+[data-sb-paper-shell] .sb-page {
+  background: #F4EFE3 !important;
+  color: #17130E !important;
+}
+
+[data-sb-paper-shell] .sb-surface {
+  border: 2px solid #17130E !important;
+  background: #F8F4EA !important;
+  color: #17130E !important;
+  box-shadow: 3px 3px 0 #17130E;
+}
+
+[data-sb-paper-shell] .sb-eyebrow,
+[data-sb-paper-shell] [class*="text-[#C6E76A]"] {
+  color: #0B4BA8 !important;
+}
+
+[data-sb-paper-shell] .sb-button-primary,
+[data-sb-paper-shell] [class*="bg-[#C6E76A]"] {
+  border: 2px solid #17130E !important;
+  border-radius: 6px !important;
+  background: #E8412C !important;
+  color: #FFFFFF !important;
+  box-shadow: 3px 3px 0 #17130E;
+}
+
+[data-sb-paper-shell] .sb-button-primary *,
+[data-sb-paper-shell] [class*="bg-[#C6E76A]"] * {
+  color: #FFFFFF !important;
+}
+
+[data-sb-paper-shell] .sb-button-primary:hover,
+[data-sb-paper-shell] [class*="bg-[#C6E76A]"]:hover {
+  background: #F0523E !important;
+}
+
+[data-sb-paper-shell] .sb-button-secondary,
+[data-sb-paper-shell] [class*="bg-white"] {
+  border: 2px solid #17130E !important;
+  border-radius: 6px !important;
+  background: #F8F4EA !important;
+  color: #17130E !important;
+  box-shadow: 2px 2px 0 #17130E;
+}
+
+[data-sb-paper-shell] .sb-button-secondary:hover {
+  border-color: #17130E !important;
+  background: #FFFFFF !important;
+  color: #17130E !important;
+}
+
+[data-sb-paper-shell] [class*="bg-[#0B0D0C]"],
+[data-sb-paper-shell] [class*="bg-[#0D0D0D]"] {
+  background-color: #F4EFE3 !important;
+}
+
+[data-sb-paper-shell] [class*="bg-[#101010]"],
+[data-sb-paper-shell] [class*="bg-[#111111]"],
+[data-sb-paper-shell] [class*="bg-[#111412]"],
+[data-sb-paper-shell] [class*="bg-[#151816]"],
+[data-sb-paper-shell] [class*="bg-[#1A1A1A]"],
+[data-sb-paper-shell] [class*="bg-[#1A1E1B]"],
+[data-sb-paper-shell] [class*="bg-[#1B1F1C]"],
+[data-sb-paper-shell] [class*="bg-[#2A2A2A]"],
+[data-sb-paper-shell] [class*="bg-white/"] {
+  background-color: #F8F4EA !important;
+}
+
+[data-sb-paper-shell] [class*="border-white"],
+[data-sb-paper-shell] [class*="border-[#333333]"],
+[data-sb-paper-shell] [class*="border-neutral-"],
+[data-sb-paper-shell] [class*="border-[#C6E76A]"] {
+  border-color: rgba(23, 19, 14, 0.18) !important;
+}
+
+[data-sb-paper-shell] [class*="text-white"],
+[data-sb-paper-shell] [class*="text-[#999999]"],
+[data-sb-paper-shell] [class*="text-[#777777]"],
+[data-sb-paper-shell] [class*="text-[#666666]"],
+[data-sb-paper-shell] [class*="text-neutral-"] {
+  color: #17130E !important;
+}
+
+[data-sb-paper-shell] p[class*="text-white/"],
+[data-sb-paper-shell] span[class*="text-white/"],
+[data-sb-paper-shell] div[class*="text-white/"],
+[data-sb-paper-shell] a[class*="text-white/"],
+[data-sb-paper-shell] button[class*="text-white/"],
+[data-sb-paper-shell] p[class*="text-neutral-"],
+[data-sb-paper-shell] span[class*="text-neutral-"],
+[data-sb-paper-shell] div[class*="text-neutral-"] {
+  color: rgba(23, 19, 14, 0.58) !important;
+}
+
+[data-sb-paper-shell] input,
+[data-sb-paper-shell] textarea,
+[data-sb-paper-shell] select {
+  border: 2px solid #17130E !important;
+  border-radius: 6px !important;
+  background: #F8F4EA !important;
+  color: #17130E !important;
+}
+
+[data-sb-paper-shell] input::placeholder,
+[data-sb-paper-shell] textarea::placeholder {
+  color: rgba(23, 19, 14, 0.42) !important;
+}
+
+[data-sb-paper-shell] [class*="rounded-2xl"],
+[data-sb-paper-shell] [class*="rounded-xl"] {
+  border-radius: 8px !important;
+}
+
+[data-sb-paper-shell] article[class*="border"],
+[data-sb-paper-shell] section[class*="border"],
+[data-sb-paper-shell] div[class*="border"][class*="rounded"] {
+  border-color: rgba(23, 19, 14, 0.18) !important;
+}
+
+[data-sb-paper-shell] article[class*="bg-[#151816]"],
+[data-sb-paper-shell] article[class*="bg-[#111412]"],
+[data-sb-paper-shell] section[class*="bg-[#111412]"],
+[data-sb-paper-shell] div[class*="bg-[#1A1A1A]"][class*="border"],
+[data-sb-paper-shell] div[class*="bg-[#151816]"][class*="border"] {
+  border: 2px solid #17130E !important;
+  background: #F8F4EA !important;
+  box-shadow: 3px 3px 0 #17130E;
+}
+
+[data-sb-paper-shell] img {
+  filter: saturate(0.92) contrast(0.96);
+}
+
+[data-sb-host-shell] > section:first-of-type [class*="text-white"],
+[data-sb-host-shell] > section:first-of-type [class*="text-white/"],
+[data-sb-activity-hero] [class*="text-white"],
+[data-sb-activity-hero] [class*="text-white/"] {
+  color: #FFFFFF !important;
+}
+
+[data-sb-paper-shell][data-sb-host-shell] > header :is(a, span, p),
+[data-sb-paper-shell][data-sb-host-shell] > section:first-of-type :is(h1, h2, h3, p, span),
+[data-sb-paper-shell] [data-sb-activity-hero] :is(h1, h2, h3, p, span) {
+  color: #FFFFFF !important;
+}
+
+[data-sb-paper-shell][data-sb-host-shell] > header svg line,
+[data-sb-paper-shell][data-sb-host-shell] > header svg path,
+[data-sb-paper-shell] [data-sb-activity-hero] svg line,
+[data-sb-paper-shell] [data-sb-activity-hero] svg path {
+  stroke: #FFFFFF !important;
+}
+
+[data-sb-paper-shell][data-sb-host-shell] > header a[aria-label="SweatBuddies home"] span {
+  color: #FFFFFF !important;
+}
+
+[data-sb-paper-shell][data-sb-host-shell] > header .sb-button-secondary,
+[data-sb-paper-shell][data-sb-host-shell] > header .sb-button-secondary * {
+  color: #17130E !important;
+}
+
+[data-sb-host-shell] > section:first-of-type [class*="text-[#C6E76A]"] {
+  color: #F8F4EA !important;
+}
+
+[data-sb-host-shell] > section:first-of-type [class*="bg-white/"],
+[data-sb-activity-hero] [class*="bg-[#1A1A1A]"],
+[data-sb-activity-hero] [class*="bg-black/"] {
+  background-color: rgba(23, 19, 14, 0.72) !important;
+}
+
+[data-sb-activity-detail] main {
+  margin-top: -1px;
+}

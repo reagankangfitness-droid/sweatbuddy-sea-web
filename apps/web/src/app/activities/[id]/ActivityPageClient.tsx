@@ -477,9 +477,9 @@ Organized via SweatBuddies - Find local fitness sessions and crews
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D]">
+    <div className="min-h-screen bg-[#0D0D0D]" data-sb-paper-shell data-sb-activity-detail>
       {/* ─── HERO ─── */}
-      <div className="relative">
+      <div className="relative" data-sb-activity-hero>
         {/* Back button overlay */}
         <div className="absolute top-0 left-0 right-0 z-40 pt-[env(safe-area-inset-top,0px)]">
           <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-3">
@@ -498,7 +498,7 @@ Organized via SweatBuddies - Find local fitness sessions and crews
           </div>
         </div>
 
-        <div className="relative h-56 md:h-72 w-full">
+        <div className="relative h-56 w-full md:mx-auto md:h-80 md:max-w-2xl md:overflow-hidden md:border-x-2 md:border-b-2 md:border-[#17130E]">
           <Image
             src={heroImage}
             alt={activity.title}

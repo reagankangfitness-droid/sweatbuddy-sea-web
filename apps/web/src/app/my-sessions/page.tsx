@@ -140,14 +140,14 @@ export default function MySessionsPage() {
 
   if (showSignedOut) {
     return (
-      <div className="sb-page px-4">
+      <div className="sb-page px-4" data-sb-paper-shell>
         <div className="mx-auto flex min-h-screen max-w-lg flex-col justify-center py-10">
           <Link
             href="/"
             aria-label="SweatBuddies home"
             className="mb-10 inline-flex min-h-11 items-center"
           >
-            <LogoWithText size={28} color="#FFFFFF" textColor="#FFFFFF" />
+            <LogoWithText size={28} color="#17130E" textColor="#17130E" />
           </Link>
           <div className="sb-surface p-5">
             <p className="sb-eyebrow">
@@ -193,7 +193,7 @@ export default function MySessionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0D0C]">
+    <div className="min-h-screen bg-[#0B0D0C]" data-sb-paper-shell>
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-40 bg-[#0B0D0C]/95 backdrop-blur-lg border-b border-[#333333]">
         <div className="pt-[env(safe-area-inset-top,0px)]">

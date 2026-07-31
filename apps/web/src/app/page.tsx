@@ -118,7 +118,7 @@ export default async function HomePage() {
     0,
   )
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#0B0D0C] font-sans text-white">
+    <div className="min-h-screen overflow-x-hidden bg-[#0B0D0C] font-sans text-white" data-sb-paper-shell>
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0B0D0C]/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1920px] items-center justify-between gap-3 px-4 py-3">
           <Link

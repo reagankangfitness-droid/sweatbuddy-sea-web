@@ -71,7 +71,7 @@ function SignInContent() {
   const content = getContextualContent()
 
   return (
-    <div className="sb-page flex flex-col items-center justify-center px-4 py-8 pb-24 md:pb-8">
+    <div className="sb-page flex flex-col items-center justify-center px-4 py-8 pb-24 md:pb-8" data-sb-paper-shell>
       <div className="w-full max-w-sm mx-auto">
         <Link
           href="/"
@@ -82,7 +82,7 @@ function SignInContent() {
         </Link>
 
         <div className="flex justify-center mb-6">
-          <Logo size={40} color="#FFFFFF" />
+          <Logo size={40} color="#17130E" />
         </div>
 
         <div className="text-center mb-6">
@@ -148,7 +148,7 @@ function SignInContent() {
 export default function SignInPage() {
   return (
     <Suspense fallback={
-      <div className="sb-page flex items-center justify-center">
+      <div className="sb-page flex items-center justify-center" data-sb-paper-shell>
         <Loader2 className="w-6 h-6 animate-spin text-[#C6E76A]" />
       </div>
     }>

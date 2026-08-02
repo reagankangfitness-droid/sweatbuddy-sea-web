@@ -114,7 +114,7 @@ export function ShareSessionSheet({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-0 bg-black/30 z-50"
+            className="fixed inset-0 z-50 bg-[#17130E]/42"
             onClick={onClose}
           />
 
@@ -127,34 +127,34 @@ export function ShareSessionSheet({
             dragConstraints={{ top: 0 }}
             dragElastic={0.15}
             onDragEnd={(_, info) => { if (info.offset.y > 80) onClose() }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-[#1A1A1A] rounded-t-2xl"
+            className="fixed bottom-0 left-0 right-0 z-50 rounded-t-lg border-x-2 border-t-2 border-[#17130E] bg-[#F4EFE3] text-[#17130E] shadow-[0_-4px_0_#17130E]"
           >
             <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1.5 rounded-full bg-black/[0.08]" />
+              <div className="h-1.5 w-10 rounded-full bg-[#17130E]/20" />
             </div>
 
             <div className="px-5 pb-[env(safe-area-inset-bottom,20px)]">
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-base font-bold text-white tracking-tight">
+                  <h3 className="text-base font-bold tracking-tight text-[#17130E]">
                     {context === 'created' ? 'Spread the word' : 'Know someone who\u2019d be in?'}
                   </h3>
-                  <p className="text-xs text-[#666666] mt-0.5">
+                  <p className="mt-0.5 text-xs text-[#17130E]/62">
                     {context === 'created'
                       ? 'More people, better session'
                       : 'Tag them before spots fill up'}
                   </p>
                 </div>
-                <button onClick={onClose} className="w-8 h-8 rounded-full bg-[#0D0D0D] flex items-center justify-center">
-                  <X className="w-4 h-4 text-[#666666]" />
+                <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#F8F4EA]">
+                  <X className="h-4 w-4 text-[#17130E]" />
                 </button>
               </div>
 
               {/* Session preview */}
-              <div className="bg-[#0D0D0D] rounded-xl p-3 mb-5 border border-[#333333]">
-                <p className="text-sm font-semibold text-white">{sessionTitle}</p>
-                <p className="text-xs text-[#666666] mt-0.5">
+              <div className="mb-5 rounded-md border-2 border-[#17130E] bg-[#F8F4EA] p-3">
+                <p className="text-sm font-semibold text-[#17130E]">{sessionTitle}</p>
+                <p className="mt-0.5 text-xs text-[#17130E]/62">
                   {[timeStr, locationStr].filter(Boolean).join(' · ')}
                   {spotsLeft ? ` · ${spotsLeft} spots left` : ''}
                 </p>
@@ -164,7 +164,7 @@ export function ShareSessionSheet({
               <div className="space-y-2.5 mb-4">
                 <button
                   onClick={shareWhatsApp}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl bg-[#25D366] text-white font-semibold text-sm hover:bg-[#22c55e] transition-colors"
+                  className="flex w-full items-center gap-3 rounded-md border-2 border-[#17130E] bg-[#25D366] px-4 py-3.5 text-sm font-semibold text-white shadow-[2px_2px_0_#17130E] transition-colors hover:bg-[#22c55e]"
                 >
                   <MessageCircle className="w-5 h-5" />
                   Share on WhatsApp
@@ -172,7 +172,7 @@ export function ShareSessionSheet({
 
                 <button
                   onClick={shareInstagram}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 text-white font-semibold text-sm hover:opacity-90 transition-opacity"
+                  className="flex w-full items-center gap-3 rounded-md border-2 border-[#17130E] bg-[#E8412C] px-4 py-3.5 text-sm font-semibold text-white shadow-[2px_2px_0_#17130E] transition-colors hover:bg-[#F0523E]"
                 >
                   <Instagram className="w-5 h-5" />
                   Share to Instagram Story
@@ -181,7 +181,7 @@ export function ShareSessionSheet({
                 {typeof navigator !== 'undefined' && 'share' in navigator && (
                   <button
                     onClick={nativeShare}
-                    className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl bg-[#1A1A1A] text-white font-semibold text-sm hover:bg-black transition-colors"
+                    className="flex w-full items-center gap-3 rounded-md border-2 border-[#17130E] bg-[#0B4BA8] px-4 py-3.5 text-sm font-semibold text-white shadow-[2px_2px_0_#17130E] transition-colors hover:bg-[#0D5BC8]"
                   >
                     <Link2 className="w-5 h-5" />
                     More options...
@@ -190,7 +190,7 @@ export function ShareSessionSheet({
 
                 <button
                   onClick={copyLink}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border border-[#333333] bg-[#1A1A1A] text-[#999999] font-semibold text-sm hover:bg-[#2A2A2A] transition-colors"
+                  className="flex w-full items-center gap-3 rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3.5 text-sm font-semibold text-[#17130E] shadow-[2px_2px_0_#17130E] transition-colors hover:bg-white"
                 >
                   {copied ? <Check className="w-5 h-5 text-emerald-500" /> : <Link2 className="w-5 h-5" />}
                   {copied ? 'Copied!' : 'Copy link'}
@@ -200,7 +200,7 @@ export function ShareSessionSheet({
               {/* Skip */}
               <button
                 onClick={onClose}
-                className="w-full text-center text-xs text-[#9A9AAA] hover:text-[#666666] py-2 transition-colors"
+                className="w-full py-2 text-center text-xs text-[#17130E]/62 transition-colors hover:text-[#17130E]"
               >
                 Maybe later
               </button>

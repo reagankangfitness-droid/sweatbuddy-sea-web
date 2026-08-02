@@ -156,18 +156,18 @@ export default function NominateCommunityPage() {
 
   if (submission) {
     return (
-      <main className="sb-page px-4 py-6 pb-28 md:pb-8">
+      <main className="sb-page px-4 py-6 pb-28 md:pb-8" data-sb-paper-shell>
         <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col justify-center">
           <Link
             href="/communities"
-            className="mb-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#999999] hover:text-white"
+            className="mb-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#17130E]/68 hover:text-[#17130E]"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to communities
           </Link>
 
-          <div className="rounded-lg border border-white/10 bg-[#151515] p-5">
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#63FF8F]">
+          <div className="sb-surface p-5">
+            <p className="sb-eyebrow mb-2">
               {submission.requiresReview ? 'Submitted' : 'Listed'}
             </p>
             <h1 className="text-2xl font-semibold leading-tight tracking-tight">
@@ -175,7 +175,7 @@ export default function NominateCommunityPage() {
                 ? `${submission.name} is queued for a quick trust check.`
                 : `${submission.name} was received.`}
             </h1>
-            <p className="mt-4 text-sm leading-6 text-[#AAAAAA]">
+            <p className="mt-4 text-sm leading-6 text-[#17130E]/68">
               {submission.requiresReview
                 ? 'We will keep it out of public discovery until it passes a trust check or an approved manager claims it.'
                 : submission.limited
@@ -212,11 +212,11 @@ export default function NominateCommunityPage() {
   }
 
   return (
-    <main className="sb-page px-4 py-5 pb-28 md:py-8 md:pb-8">
+    <main className="sb-page px-4 py-5 pb-28 md:py-8 md:pb-8" data-sb-paper-shell>
       <div className="mx-auto max-w-2xl">
         <Link
           href="/communities"
-          className="mb-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-white/68 hover:text-white md:mb-8"
+          className="mb-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#17130E]/68 hover:text-[#17130E] md:mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to communities
@@ -229,14 +229,14 @@ export default function NominateCommunityPage() {
           <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-4xl">
             Submit, claim, update, or remove a community listing.
           </h1>
-          <p className="mt-3 max-w-xl text-sm leading-6 text-white/68">
+          <p className="mt-3 max-w-xl text-sm leading-6 text-[#17130E]/68">
             Send the official page or group link. New suggestions stay queued until the community is verified or a manager claim is approved.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="sb-surface space-y-4 p-4 sm:p-5">
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
+            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#17130E]/62">
               What do you need?
             </label>
             <div className="grid gap-2 sm:grid-cols-2">
@@ -249,16 +249,16 @@ export default function NominateCommunityPage() {
                     type="button"
                     aria-pressed={active}
                     onClick={() => update('intent', intent.value)}
-                    className={`min-h-[56px] rounded-lg border p-3 text-left transition-colors ${
+                    className={`min-h-[56px] rounded-md border-2 p-3 text-left transition-colors ${
                       active
-                        ? 'border-[#63FF8F]/55 bg-[#63FF8F]/8'
-                        : 'border-white/12 bg-[#101010] hover:border-white/28'
+                        ? 'border-[#0B4BA8] bg-[#0B4BA8]/8'
+                        : 'border-[#17130E]/18 bg-[#F8F4EA] hover:border-[#17130E]'
                     }`}
                   >
-                    <span className={`block text-sm font-semibold ${active ? 'text-[#63FF8F]' : 'text-white'}`}>
+                    <span className={`block text-sm font-semibold ${active ? 'text-[#0B4BA8]' : 'text-[#17130E]'}`}>
                       {intent.label}
                     </span>
-                    <span className="mt-1 hidden text-xs leading-5 text-white/64 sm:block">
+                    <span className="mt-1 hidden text-xs leading-5 text-[#17130E]/64 sm:block">
                       {intent.description}
                     </span>
                   </button>
@@ -268,7 +268,7 @@ export default function NominateCommunityPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
+            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#17130E]/62">
               Community name
             </label>
             <input
@@ -276,13 +276,13 @@ export default function NominateCommunityPage() {
               onChange={(event) => update('communityName', event.target.value)}
               placeholder="Example: Running Department"
               maxLength={160}
-              className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#63FF8F]"
+              className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#0B4BA8]"
             />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#17130E]/62">
                 City
               </label>
               <input
@@ -290,18 +290,18 @@ export default function NominateCommunityPage() {
                 onChange={(event) => update('city', event.target.value)}
                 placeholder="Singapore"
                 maxLength={100}
-                className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#63FF8F]"
+                className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#0B4BA8]"
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#17130E]/62">
                 Activity
               </label>
               <select
                 value={form.category}
                 onChange={(event) => update('category', event.target.value)}
-                className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none focus:border-[#63FF8F]"
+                className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none focus:border-[#0B4BA8]"
               >
                 <option value="">Not sure</option>
                 {ACTIVITY_TYPES.map((type) => (
@@ -314,7 +314,7 @@ export default function NominateCommunityPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
+            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#17130E]/62">
               Official or listing link
             </label>
             <input
@@ -322,12 +322,12 @@ export default function NominateCommunityPage() {
               onChange={(event) => update('sourceUrl', event.target.value)}
               placeholder="Instagram, website, Telegram, WhatsApp, Strava, or listing URL..."
               maxLength={500}
-              className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#63FF8F]"
+              className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#0B4BA8]"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
+            <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#17130E]/62">
               Note
             </label>
             <textarea
@@ -336,13 +336,13 @@ export default function NominateCommunityPage() {
               placeholder="Anything useful: usual meet spot, what changed, owner proof, or why the listing should be removed."
               maxLength={1000}
               rows={4}
-              className="w-full resize-none rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#63FF8F]"
+              className="w-full resize-none rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#0B4BA8]"
             />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#17130E]/62">
                 Your name
               </label>
               <input
@@ -350,12 +350,12 @@ export default function NominateCommunityPage() {
                 onChange={(event) => update('submitterName', event.target.value)}
                 placeholder="Optional"
                 maxLength={160}
-                className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#63FF8F]"
+                className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#0B4BA8]"
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-white/62">
+              <label className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-[#17130E]/62">
                 Email
               </label>
               <input
@@ -364,13 +364,13 @@ export default function NominateCommunityPage() {
                 onChange={(event) => update('submitterEmail', event.target.value)}
                 placeholder="Optional"
                 maxLength={255}
-                className="w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-sm text-white outline-none placeholder:text-white/50 focus:border-[#63FF8F]"
+                className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#0B4BA8]"
               />
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 border-t border-[#2A2A2A] pt-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs text-white/62">
+          <div className="flex flex-col gap-3 border-t-2 border-[#17130E]/18 pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs text-[#17130E]/62">
               {selectedCategory ? `${selectedCategory.emoji} ${selectedCategory.label}` : 'We can classify it during review.'}
             </p>
             <button

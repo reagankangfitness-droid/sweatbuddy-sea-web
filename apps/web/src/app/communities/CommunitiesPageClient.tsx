@@ -607,13 +607,13 @@ export default function CommunitiesPageClient({
         <div className="mx-auto grid max-w-4xl gap-3 px-4 py-8 pb-28 md:grid-cols-2">
           <Link
             href="/communities/nominate"
-            className="rounded-lg border border-[#C6E76A]/22 bg-[#C6E76A]/8 p-4 transition-colors hover:border-[#C6E76A]/42"
+            className="rounded-lg border-2 border-[#17130E] bg-[#E8412C] p-4 text-white shadow-[3px_3px_0_#17130E] transition-colors hover:bg-[#F0523E]"
           >
-            <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#C6E76A]/82">
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-white/82">
               Help map a community
             </p>
             <h2 className="mt-2 text-xl font-semibold text-white">Suggest a community</h2>
-            <p className="mt-2 text-sm leading-6 text-white/62">
+            <p className="mt-2 text-sm leading-6 text-white/78">
               Send the official page or group link. We will review it before it appears publicly.
             </p>
           </Link>

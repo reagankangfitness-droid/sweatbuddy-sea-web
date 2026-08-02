@@ -458,7 +458,7 @@ export function CreateSessionSheet({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-0 bg-black/40 z-40"
+            className="fixed inset-0 z-40 bg-[#17130E]/42"
             onClick={onClose}
           />
 
@@ -468,13 +468,14 @@ export function CreateSessionSheet({
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 400, damping: 36 }}
-            className="fixed inset-x-0 bottom-0 top-[env(safe-area-inset-top,40px)] z-50 bg-[#1A1A1A] rounded-t-2xl shadow-2xl flex flex-col"
+            data-sb-paper-shell
+            className="fixed inset-x-0 bottom-0 top-[env(safe-area-inset-top,40px)] z-50 flex flex-col rounded-t-lg border-x-2 border-t-2 border-[#17130E] bg-[#F4EFE3] text-[#17130E] shadow-[0_-4px_0_#17130E]"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-[#333333]">
-              <h2 className="text-lg font-bold text-white">New Session</h2>
-              <button onClick={onClose} className="w-10 h-10 rounded-full bg-[#2A2A2A] flex items-center justify-center hover:bg-[#333333] transition-colors">
-                <X className="w-4 h-4 text-[#999999]" />
+            <div className="flex items-center justify-between border-b-2 border-[#17130E] px-5 pb-3 pt-4">
+              <h2 className="text-lg font-bold text-[#17130E]">New Session</h2>
+              <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#F8F4EA] text-[#17130E] shadow-[2px_2px_0_#17130E] transition-colors hover:bg-white">
+                <X className="h-4 w-4 text-[#17130E]" />
               </button>
             </div>
 
@@ -482,44 +483,44 @@ export function CreateSessionSheet({
             <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
               {!canShowForm ? (
                 <div className="flex min-h-[360px] flex-col justify-center">
-                  <div className="rounded-2xl border border-white/10 bg-[#202020] p-5 text-center">
+                  <div className="rounded-lg border-2 border-[#17130E] bg-[#F8F4EA] p-5 text-center shadow-[3px_3px_0_#17130E]">
                     {!isLoaded || communityLoading ? (
                       <>
-                        <Loader2 className="mx-auto mb-4 h-6 w-6 animate-spin text-white" />
-                        <h3 className="text-lg font-bold text-white">Checking host access...</h3>
+                        <Loader2 className="mx-auto mb-4 h-6 w-6 animate-spin text-[#0B4BA8]" />
+                        <h3 className="text-lg font-bold text-[#17130E]">Checking host access...</h3>
                       </>
                     ) : !isSignedIn ? (
                       <>
-                        <h3 className="text-lg font-bold text-white">Sign in to host sessions.</h3>
-                        <p className="mt-2 text-sm leading-6 text-[#888888]">
+                        <h3 className="text-lg font-bold text-[#17130E]">Sign in to host sessions.</h3>
+                        <p className="mt-2 text-sm leading-6 text-[#17130E]/62">
                           Hosts need an account so attendees know who is behind the plan.
                         </p>
                         <Link
                           href="/sign-in?redirect_url=%2Fbuddy%3Fcreate%3Dsession"
                           onClick={onClose}
-                          className="mt-5 inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 text-sm font-bold text-black"
+                          className="mt-5 inline-flex min-h-11 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#E8412C] px-5 font-mono text-sm font-black uppercase text-white shadow-[2px_2px_0_#17130E]"
                         >
                           Sign in
                         </Link>
                       </>
                     ) : (
                       <>
-                        <h3 className="text-lg font-bold text-white">Getting your host tools ready.</h3>
-                        <p className="mt-2 text-sm leading-6 text-[#888888]">
+                        <h3 className="text-lg font-bold text-[#17130E]">Getting your host tools ready.</h3>
+                        <p className="mt-2 text-sm leading-6 text-[#17130E]/62">
                           You can post a free session as yourself, or use a verified crew for paid and recurring sessions.
                         </p>
                         <div className="mt-5 grid gap-2 sm:grid-cols-2">
                           <Link
                             href="/communities/nominate"
                             onClick={onClose}
-                            className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-5 text-sm font-bold text-black"
+                            className="inline-flex min-h-11 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#E8412C] px-5 font-mono text-sm font-black uppercase text-white shadow-[2px_2px_0_#17130E]"
                           >
                             List or claim community
                           </Link>
                           <Link
                             href="/communities"
                             onClick={onClose}
-                            className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/15 px-5 text-sm font-bold text-white"
+                            className="inline-flex min-h-11 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-5 font-mono text-sm font-black uppercase text-[#17130E] shadow-[2px_2px_0_#17130E]"
                           >
                             Explore communities
                           </Link>
@@ -586,7 +587,7 @@ export function CreateSessionSheet({
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-sm text-[11px] font-semibold text-[#1A1A1A] hover:bg-white transition-colors"
+                        className="rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-3 py-1.5 text-[11px] font-semibold text-[#17130E] shadow-[2px_2px_0_#17130E] transition-colors hover:bg-white"
                       >
                         Change
                       </button>
@@ -708,7 +709,7 @@ export function CreateSessionSheet({
                       className={`px-3 py-1.5 rounded-full text-[11px] font-medium border transition-all ${
                         timeLabel === opt.label
                           ? 'bg-white text-black border-white'
-                          : 'bg-[#1A1A1A] text-[#666666] border-white/10 hover:border-white/[0.16]'
+                          : 'border-[#17130E]/18 bg-[#F8F4EA] text-[#17130E]/62 hover:border-[#17130E]'
                       }`}
                     >
                       {opt.label}
@@ -918,11 +919,11 @@ export function CreateSessionSheet({
             </div>
 
             {/* Sticky bottom CTA */}
-            <div className="px-5 py-4 border-t border-[#333333] pb-[env(safe-area-inset-bottom,16px)]">
+            <div className="border-t-2 border-[#17130E] px-5 py-4 pb-[env(safe-area-inset-bottom,16px)]">
               <button
                 onClick={handlePost}
                 disabled={!canPost || posting}
-                className="w-full py-4 rounded-full bg-white text-black text-sm font-bold uppercase tracking-wider hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-[#17130E] bg-[#E8412C] py-4 font-mono text-sm font-black uppercase tracking-normal text-white shadow-[3px_3px_0_#17130E] transition-all hover:bg-[#F0523E] disabled:cursor-not-allowed disabled:opacity-45"
               >
                 {posting ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /> Posting...</>
@@ -931,7 +932,7 @@ export function CreateSessionSheet({
                 )}
               </button>
               {disabledReason && !posting && (
-                <p className="mt-2 text-center text-xs text-[#666666]">{disabledReason}</p>
+                <p className="mt-2 text-center text-xs text-[#17130E]/62">{disabledReason}</p>
               )}
             </div>
           </motion.div>

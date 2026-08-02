@@ -4431,7 +4431,7 @@ function MapCommandOverlay({
   const listedCommunityCount = communityCount ?? 0
 
   return (
-    <div className="absolute left-3 top-3 z-20 hidden w-[min(350px,calc(100%-24px))] rounded-lg border border-white/[0.12] bg-black/68 p-3 shadow-2xl shadow-black/40 backdrop-blur-xl md:block">
+    <div className="absolute left-3 top-3 z-20 hidden w-[min(350px,calc(100%-24px))] rounded-lg border border-white/[0.12] bg-black/68 p-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">

@@ -80,7 +80,7 @@ export function JoinGateSheet({ open, onClose, onComplete }: JoinGateSheetProps)
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/30 z-50"
+            className="fixed inset-0 bg-[#17130E]/42 z-50"
             onClick={onClose}
           />
 
@@ -95,11 +95,11 @@ export function JoinGateSheet({ open, onClose, onComplete }: JoinGateSheetProps)
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={{ top: 0, bottom: 0.6 }}
             onDragEnd={handleDragEnd}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-[#1A1A1A] rounded-t-2xl shadow-2xl max-h-[92vh] flex flex-col"
+            className="fixed bottom-0 left-0 right-0 z-50 flex max-h-[92vh] flex-col rounded-t-lg border-x-2 border-t-2 border-[#17130E] bg-[#F4EFE3] text-[#17130E] shadow-[0_-4px_0_#17130E]"
           >
             {/* Drag handle */}
             <div className="flex justify-center pt-3 pb-1 shrink-0">
-              <div className="w-8 h-1 rounded-full bg-white/[0.1]" />
+              <div className="h-1 w-8 rounded-full bg-[#17130E]/20" />
             </div>
 
             {/* Scrollable content */}
@@ -122,8 +122,8 @@ export function JoinGateSheet({ open, onClose, onComplete }: JoinGateSheetProps)
                     onClick={() => toggle(i.slug)}
                     className={`flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all ${
                       selected.includes(i.slug)
-                        ? 'bg-white text-black shadow-md scale-[1.04]'
-                        : 'bg-[#2A2A2A] border border-[#333333] text-[#999999] hover:border-white/[0.12]'
+                        ? 'scale-[1.02] border-2 border-[#17130E] bg-[#0B4BA8] text-white shadow-[2px_2px_0_#17130E]'
+                        : 'border-2 border-[#17130E]/18 bg-[#F8F4EA] text-[#17130E] hover:border-[#17130E]'
                     }`}
                   >
                     <span className="text-2xl">{i.emoji}</span>
@@ -150,8 +150,8 @@ export function JoinGateSheet({ open, onClose, onComplete }: JoinGateSheetProps)
                       }
                       className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-full text-xs font-medium transition-all ${
                         fitnessLevel === level.key
-                          ? 'bg-white text-black shadow-md'
-                          : 'bg-[#2A2A2A] border border-[#333333] text-[#999999] hover:border-white/[0.12]'
+                          ? 'border-2 border-[#17130E] bg-[#0B4BA8] text-white shadow-[2px_2px_0_#17130E]'
+                          : 'border-2 border-[#17130E]/18 bg-[#F8F4EA] text-[#17130E] hover:border-[#17130E]'
                       }`}
                     >
                       <span>{level.emoji}</span>
@@ -165,7 +165,7 @@ export function JoinGateSheet({ open, onClose, onComplete }: JoinGateSheetProps)
               <button
                 onClick={submit}
                 disabled={selected.length === 0 || saving}
-                className="w-full py-3.5 rounded-full bg-white text-black text-sm font-bold uppercase tracking-wider disabled:opacity-30 transition-all flex items-center justify-center gap-2"
+                className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-[#17130E] bg-[#E8412C] py-3.5 font-mono text-sm font-black uppercase tracking-normal text-white shadow-[3px_3px_0_#17130E] transition-all disabled:opacity-45"
               >
                 {saving ? (
                   <>

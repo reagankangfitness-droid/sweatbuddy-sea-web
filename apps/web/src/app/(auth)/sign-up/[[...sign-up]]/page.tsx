@@ -99,7 +99,7 @@ function SignUpContent() {
       <div className="w-full max-w-sm mx-auto">
         <Link
           href="/"
-          className="mb-8 inline-flex min-h-11 items-center gap-1.5 text-sm text-white/68 transition-colors hover:text-white"
+          className="mb-8 inline-flex min-h-11 items-center gap-1.5 text-sm text-[#17130E]/68 transition-colors hover:text-[#17130E]"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
@@ -111,7 +111,7 @@ function SignUpContent() {
 
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-white tracking-tight">{content.title}</h1>
-          <p className="mt-1 text-sm text-white/68">{content.subtitle}</p>
+          <p className="mt-1 text-sm text-[#17130E]/68">{content.subtitle}</p>
         </div>
 
         <div className="sb-surface overflow-hidden">
@@ -136,23 +136,23 @@ function SignUpContent() {
                 formFieldRow: 'w-full',
                 formField: 'w-full gap-1',
                 socialButtons: 'w-full',
-                socialButtonsBlockButton: 'min-h-11 border border-white/15 bg-white/[0.03] hover:bg-white/[0.06] rounded-xl w-full py-3',
-                socialButtonsBlockButtonText: 'font-semibold text-white/76',
+                socialButtonsBlockButton: 'min-h-11 border-2 border-[#17130E] bg-[#F8F4EA] hover:bg-white rounded-md w-full py-3 shadow-[2px_2px_0_#17130E]',
+                socialButtonsBlockButtonText: 'font-semibold text-[#17130E]/72',
                 socialButtonsProviderIcon: 'w-5 h-5',
                 dividerRow: 'my-4',
-                dividerLine: 'bg-white/12',
-                dividerText: 'text-white/60 text-sm px-3',
-                formFieldLabel: 'text-white/76 font-medium text-sm',
-                formFieldInput: 'min-h-11 border-white/15 bg-[#101010] text-white focus:border-[#C6E76A] focus:ring-[#C6E76A]/10 rounded-xl w-full py-3',
-                formButtonPrimary: 'min-h-11 bg-[#C6E76A] hover:bg-[#D8F18A] text-black rounded-xl w-full py-3 text-base font-bold',
-                otpCodeFieldInput: 'border-white/15 bg-[#101010] text-white text-lg',
+                dividerLine: 'bg-[#17130E]',
+                dividerText: 'text-[#17130E]/62 text-sm px-3',
+                formFieldLabel: 'text-[#17130E] font-medium text-sm',
+                formFieldInput: 'min-h-11 border-2 border-[#17130E] bg-[#F8F4EA] text-[#17130E] focus:border-[#0B4BA8] focus:ring-[#0B4BA8]/10 rounded-md w-full py-3',
+                formButtonPrimary: 'min-h-11 border-2 border-[#17130E] bg-[#E8412C] hover:bg-[#F0523E] text-white rounded-md w-full py-3 text-base font-bold disabled:bg-[#17130E]/18 disabled:text-[#17130E]/45',
+                otpCodeFieldInput: 'border-[#17130E] bg-[#F8F4EA] text-[#17130E] text-lg',
                 otpCodeFieldInputs: 'gap-2',
                 footerAction: 'pt-4 justify-center',
-                footerActionLink: 'text-[#C6E76A] hover:text-white font-medium',
+                footerActionLink: 'text-[#0B4BA8] hover:text-[#17130E] font-medium',
                 footer: 'hidden',
                 identityPreview: 'justify-center',
-                identityPreviewEditButton: 'text-white/64',
-                formFieldInputShowPasswordButton: 'min-h-11 min-w-11 text-white/64',
+                identityPreviewEditButton: 'text-[#17130E]/64',
+                formFieldInputShowPasswordButton: 'min-h-11 min-w-11 text-[#17130E]/64',
                 alert: 'rounded-xl',
                 alertText: 'text-sm',
               }
@@ -173,7 +173,7 @@ export default function SignUpPage() {
   return (
     <Suspense fallback={
       <div className="sb-page flex items-center justify-center" data-sb-paper-shell>
-        <Loader2 className="w-6 h-6 animate-spin text-[#C6E76A]" />
+        <Loader2 className="w-6 h-6 animate-spin text-[#0B4BA8]" />
       </div>
     }>
       <SignUpContent />

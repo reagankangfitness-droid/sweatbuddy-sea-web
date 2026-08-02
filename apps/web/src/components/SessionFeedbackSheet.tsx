@@ -110,7 +110,7 @@ export function SessionFeedbackSheet({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/30 z-50"
+            className="fixed inset-0 bg-[#17130E]/42 z-50"
             onClick={() => { onClose(); resetState() }}
           />
 
@@ -119,10 +119,10 @@ export function SessionFeedbackSheet({
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 400, damping: 36 }}
-            className="fixed bottom-0 left-0 right-0 z-50 bg-[#1A1A1A] rounded-t-2xl"
+            className="fixed bottom-0 left-0 right-0 z-50 rounded-t-lg border-x-2 border-t-2 border-[#17130E] bg-[#F4EFE3] text-[#17130E] shadow-[0_-4px_0_#17130E]"
           >
             <div className="flex justify-center pt-3 pb-1">
-              <div className="w-8 h-1 rounded-full bg-black/[0.1]" />
+              <div className="h-1 w-8 rounded-full bg-[#17130E]/20" />
             </div>
 
             <div className="px-5 pb-[env(safe-area-inset-bottom,20px)]">
@@ -130,10 +130,10 @@ export function SessionFeedbackSheet({
               {step === 'feedback' && (
                 <div className="py-4">
                   <div className="text-center mb-5">
-                    <h3 className="text-base font-bold text-white tracking-tight">
+                    <h3 className="text-base font-bold tracking-tight text-[#17130E]">
                       How was {sessionTitle}?
                     </h3>
-                    <p className="text-xs text-[#666666] mt-1">
+                    <p className="mt-1 text-xs text-[#17130E]/62">
                       Hosted by {hostName ?? 'the host'}
                     </p>
                   </div>
@@ -142,7 +142,7 @@ export function SessionFeedbackSheet({
                     <button
                       onClick={() => submitFeedback(true)}
                       disabled={submitting}
-                      className="flex flex-col items-center gap-2 px-8 py-4 rounded-2xl border border-black/[0.06] hover:bg-emerald-50 hover:border-emerald-200 transition-all active:scale-95 disabled:opacity-50"
+                      className="flex flex-col items-center gap-2 rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-8 py-4 shadow-[2px_2px_0_#17130E] transition-all hover:bg-white active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-50"
                     >
                       <ThumbsUp className="w-7 h-7 text-emerald-600" />
                       <span className="text-xs font-semibold text-[#999999]">Great</span>
@@ -151,7 +151,7 @@ export function SessionFeedbackSheet({
                     <button
                       onClick={() => submitFeedback(false)}
                       disabled={submitting}
-                      className="flex flex-col items-center gap-2 px-8 py-4 rounded-2xl border border-black/[0.06] hover:bg-red-50 hover:border-red-200 transition-all active:scale-95 disabled:opacity-50"
+                      className="flex flex-col items-center gap-2 rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-8 py-4 shadow-[2px_2px_0_#17130E] transition-all hover:bg-white active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:opacity-50"
                     >
                       <ThumbsDown className="w-7 h-7 text-red-500" />
                       <span className="text-xs font-semibold text-[#999999]">Not great</span>
@@ -160,7 +160,7 @@ export function SessionFeedbackSheet({
 
                   <button
                     onClick={() => { onClose(); resetState() }}
-                    className="w-full text-center text-xs text-[#666666] py-2"
+                    className="w-full py-2 text-center text-xs text-[#17130E]/62"
                   >
                     Skip
                   </button>
@@ -171,11 +171,11 @@ export function SessionFeedbackSheet({
               {step === 'submitted' && (
                 <div className="py-6 text-center">
                   <div className="text-3xl mb-2">&#127881;</div>
-                  <p className="text-sm font-semibold text-white mb-1">Thanks for showing up!</p>
+                  <p className="mb-1 text-sm font-semibold text-[#17130E]">Thanks for showing up!</p>
                   <Link
                     href={`/activities/${sessionId}/recap`}
                     onClick={() => { onClose(); resetState() }}
-                    className="inline-flex items-center gap-1 text-sm text-amber-400 font-semibold mt-3 hover:text-amber-300 transition-colors"
+                    className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[#0B4BA8] transition-colors hover:text-[#0D5BC8]"
                   >
                     See who showed up <ArrowRight className="w-4 h-4" />
                   </Link>
@@ -187,11 +187,11 @@ export function SessionFeedbackSheet({
                 <div className="py-4">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="text-base font-bold text-white tracking-tight">What went wrong?</h3>
-                      <p className="text-xs text-[#666666] mt-0.5">Your report is confidential</p>
+                      <h3 className="text-base font-bold tracking-tight text-[#17130E]">What went wrong?</h3>
+                      <p className="mt-0.5 text-xs text-[#17130E]/62">Your report is confidential</p>
                     </div>
-                    <button onClick={() => { onClose(); resetState() }} className="w-8 h-8 rounded-full bg-[#0D0D0D] flex items-center justify-center">
-                      <X className="w-4 h-4 text-[#666666]" />
+                    <button onClick={() => { onClose(); resetState() }} className="flex h-8 w-8 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#F8F4EA]">
+                      <X className="h-4 w-4 text-[#17130E]" />
                     </button>
                   </div>
 
@@ -200,10 +200,10 @@ export function SessionFeedbackSheet({
                       <button
                         key={r.value}
                         onClick={() => setReportReason(r.value)}
-                        className={`w-full text-left px-4 py-3 rounded-xl text-sm transition-all ${
+                        className={`w-full rounded-md border-2 px-4 py-3 text-left text-sm transition-all ${
                           reportReason === r.value
-                            ? 'bg-[#1A1A1A] text-white font-semibold'
-                            : 'bg-[#0D0D0D] text-[#999999] border border-[#333333] hover:border-[#666666]'
+                            ? 'border-[#17130E] bg-[#0B4BA8] font-semibold text-white'
+                            : 'border-[#17130E]/18 bg-[#F8F4EA] text-[#17130E] hover:border-[#17130E]'
                         }`}
                       >
                         {r.value === 'NO_SHOW' && <Flag className="w-3.5 h-3.5 inline mr-2" />}
@@ -215,7 +215,7 @@ export function SessionFeedbackSheet({
                   <button
                     onClick={submitReport}
                     disabled={!reportReason || submitting}
-                    className="w-full py-3 rounded-full bg-red-500 text-white text-sm font-semibold hover:bg-red-600 disabled:opacity-40 transition-all flex items-center justify-center gap-2"
+                    className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-[#17130E] bg-red-600 py-3 text-sm font-semibold text-white shadow-[2px_2px_0_#17130E] transition-all hover:bg-red-700 disabled:opacity-40"
                   >
                     {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                     Submit report
@@ -227,8 +227,8 @@ export function SessionFeedbackSheet({
               {step === 'done' && (
                 <div className="py-8 text-center">
                   <div className="text-3xl mb-2">✓</div>
-                  <p className="text-sm font-semibold text-white">Report submitted</p>
-                  <p className="text-xs text-[#666666] mt-1">We&apos;ll review it within 24 hours</p>
+                  <p className="text-sm font-semibold text-[#17130E]">Report submitted</p>
+                  <p className="mt-1 text-xs text-[#17130E]/62">We&apos;ll review it within 24 hours</p>
                 </div>
               )}
             </div>

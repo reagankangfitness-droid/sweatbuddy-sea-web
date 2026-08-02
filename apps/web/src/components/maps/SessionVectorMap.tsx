@@ -70,11 +70,11 @@ export function SessionVectorMap({
 
   const resolvedPins = useMemo(
     () =>
-      pins
+      spreadNearbyPins(pins
         .map((pin, index) => ({ pin, position: getPinPosition(pin, index) }))
         .filter((entry): entry is { pin: SessionVectorMapPin; position: { lat: number; lng: number } } =>
           Boolean(entry.position),
-        ),
+        )),
     [pins],
   )
 
@@ -252,6 +252,12 @@ function StaticPinMapFallback({
 }) {
   const bounds = getStaticBounds(pins.map((entry) => entry.position))
   const activityPinCount = pins.filter((entry) => entry.pin.kind !== 'place').length
+  const projectedPins = spreadStaticMarkerPoints(
+    pins.map((entry) => ({
+      ...entry,
+      point: projectStaticPoint(entry.position, bounds),
+    })),
+  )
 
   return (
     <div className={`relative h-full w-full overflow-hidden bg-[#F4EFE3] ${className ?? ''}`}>
@@ -299,8 +305,7 @@ function StaticPinMapFallback({
           </div>
         </div>
       ) : (
-        pins.map(({ pin, position }, index) => {
-          const point = projectStaticPoint(position, bounds)
+        projectedPins.map(({ pin, point }) => {
           const content = (
             <span
               className={getMarkerClassName(pin, selectedPinId === pin.id)}
@@ -375,6 +380,141 @@ function projectStaticPoint(
     x: Math.max(padding, Math.min(100 - padding, x)),
     y: Math.max(padding, Math.min(100 - padding, y)),
   }
+}
+
+function spreadStaticMarkerPoints<T extends { point: { x: number; y: number } }>(entries: T[]) {
+  const bucketSize = 28
+  const bucketed = new Map<string, T[]>()
+
+  entries.forEach((entry) => {
+    const bucket = `${Math.round(entry.point.x / bucketSize)}:${Math.round(entry.point.y / bucketSize)}`
+    const existing = bucketed.get(bucket) ?? []
+    existing.push(entry)
+    bucketed.set(bucket, existing)
+  })
+
+  const spreadEntries = entries.map((entry) => {
+    const bucket = `${Math.round(entry.point.x / bucketSize)}:${Math.round(entry.point.y / bucketSize)}`
+    const group = bucketed.get(bucket)
+    if (!group || group.length <= 1) return entry
+
+    const index = group.indexOf(entry)
+    const offsets = getStaticClusterOffsets(group.length)
+    const offset = offsets[index % offsets.length]
+
+    return {
+      ...entry,
+      point: {
+        x: Math.max(10, Math.min(90, entry.point.x + offset.x)),
+        y: Math.max(12, Math.min(80, entry.point.y + offset.y)),
+      },
+    }
+  })
+
+  return relaxStaticMarkerPoints(spreadEntries)
+}
+
+function getStaticClusterOffsets(size: number) {
+  if (size === 2) {
+    return [
+      { x: -15, y: -10 },
+      { x: 15, y: 10 },
+    ]
+  }
+
+  if (size === 3) {
+    return [
+      { x: 0, y: -22 },
+      { x: -20, y: 10 },
+      { x: 20, y: 10 },
+    ]
+  }
+
+  return [
+    { x: 0, y: -24 },
+    { x: -22, y: -8 },
+    { x: 22, y: -8 },
+    { x: -22, y: 18 },
+    { x: 22, y: 18 },
+    { x: 0, y: 8 },
+  ]
+}
+
+function relaxStaticMarkerPoints<T extends { point: { x: number; y: number } }>(entries: T[]) {
+  const minXGap = 12
+  const minYGap = 12
+  const relaxed = entries.map((entry) => ({
+    ...entry,
+    point: { ...entry.point },
+  }))
+
+  for (let iteration = 0; iteration < 8; iteration += 1) {
+    for (let firstIndex = 0; firstIndex < relaxed.length; firstIndex += 1) {
+      for (let secondIndex = firstIndex + 1; secondIndex < relaxed.length; secondIndex += 1) {
+        const first = relaxed[firstIndex]
+        const second = relaxed[secondIndex]
+        const dx = second.point.x - first.point.x
+        const dy = second.point.y - first.point.y
+        const xOverlap = minXGap - Math.abs(dx)
+        const yOverlap = minYGap - Math.abs(dy)
+
+        if (xOverlap <= 0 || yOverlap <= 0) continue
+
+        if (yOverlap <= xOverlap) {
+          const direction = dy >= 0 ? 1 : -1
+          const adjustment = yOverlap / 2 + 1
+          first.point.y = clampStaticY(first.point.y - direction * adjustment)
+          second.point.y = clampStaticY(second.point.y + direction * adjustment)
+        } else {
+          const direction = dx >= 0 ? 1 : -1
+          const adjustment = xOverlap / 2 + 1
+          first.point.x = clampStaticX(first.point.x - direction * adjustment)
+          second.point.x = clampStaticX(second.point.x + direction * adjustment)
+        }
+      }
+    }
+  }
+
+  return relaxed
+}
+
+function clampStaticX(value: number) {
+  return Math.max(10, Math.min(90, value))
+}
+
+function clampStaticY(value: number) {
+  return Math.max(12, Math.min(80, value))
+}
+
+function spreadNearbyPins(
+  pins: Array<{ pin: SessionVectorMapPin; position: { lat: number; lng: number } }>,
+) {
+  const bucketed = new Map<string, Array<{ pin: SessionVectorMapPin; position: { lat: number; lng: number } }>>()
+
+  pins.forEach((entry) => {
+    const bucket = `${entry.position.lat.toFixed(3)}:${entry.position.lng.toFixed(3)}`
+    const existing = bucketed.get(bucket) ?? []
+    existing.push(entry)
+    bucketed.set(bucket, existing)
+  })
+
+  return pins.map((entry) => {
+    const bucket = `${entry.position.lat.toFixed(3)}:${entry.position.lng.toFixed(3)}`
+    const group = bucketed.get(bucket)
+    if (!group || group.length <= 1) return entry
+
+    const index = group.findIndex((candidate) => candidate.pin.id === entry.pin.id)
+    const angle = (Math.PI * 2 * index) / group.length
+    const radius = 0.0014 + Math.min(group.length, 6) * 0.00012
+
+    return {
+      ...entry,
+      position: {
+        lat: entry.position.lat + Math.sin(angle) * radius,
+        lng: entry.position.lng + Math.cos(angle) * radius,
+      },
+    }
+  })
 }
 
 function applySweatBuddiesMapTone(map: MapLibreMap) {

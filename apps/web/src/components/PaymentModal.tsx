@@ -95,11 +95,11 @@ export function PaymentModal({ session, onClose, onSuccess }: PaymentModalProps)
 
   if (submitted) {
     return (
-      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60">
-        <div className="w-full max-w-md rounded-2xl bg-neutral-900 border border-neutral-800 p-6 text-center space-y-4">
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#17130E]/42 p-4 sm:items-center">
+        <div className="w-full max-w-md space-y-4 rounded-lg border-2 border-[#17130E] bg-[#F4EFE3] p-6 text-center text-[#17130E] shadow-[4px_4px_0_#17130E]">
           <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
-          <h3 className="text-lg font-bold text-white">Payment proof submitted!</h3>
-          <p className="text-sm text-neutral-400">
+          <h3 className="text-lg font-bold text-[#17130E]">Payment proof submitted!</h3>
+          <p className="text-sm text-[#17130E]/62">
             The host will verify your payment and confirm your spot. Check back soon.
           </p>
           <Button
@@ -115,17 +115,17 @@ export function PaymentModal({ session, onClose, onSuccess }: PaymentModalProps)
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60">
-      <div className="w-full max-w-md rounded-2xl bg-neutral-900 border border-neutral-800 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#17130E]/42 p-4 sm:items-center">
+      <div className="w-full max-w-md overflow-hidden rounded-lg border-2 border-[#17130E] bg-[#F4EFE3] text-[#17130E] shadow-[4px_4px_0_#17130E]">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-800">
+        <div className="flex items-center justify-between border-b-2 border-[#17130E] px-5 py-4">
           <div>
-            <h2 className="text-base font-semibold text-white">Complete payment</h2>
-            <p className="text-xs text-neutral-400 mt-0.5">{session.title}</p>
+            <h2 className="text-base font-semibold text-[#17130E]">Complete payment</h2>
+            <p className="mt-0.5 text-xs text-[#17130E]/62">{session.title}</p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-neutral-800 text-neutral-400 hover:text-white transition-colors"
+            className="rounded-md border-2 border-[#17130E] bg-[#F8F4EA] p-1.5 text-[#17130E] shadow-[2px_2px_0_#17130E] transition-colors hover:bg-white"
           >
             <X className="w-4 h-4" />
           </button>
@@ -133,32 +133,32 @@ export function PaymentModal({ session, onClose, onSuccess }: PaymentModalProps)
 
         <div className="p-5 space-y-5">
           {/* Price */}
-          <div className="flex items-center justify-between rounded-xl bg-neutral-800 px-4 py-3">
-            <span className="text-sm text-neutral-300">Amount due</span>
-            <span className="text-lg font-bold text-white">{priceDisplay}</span>
+          <div className="flex items-center justify-between rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3">
+            <span className="text-sm text-[#17130E]/62">Amount due</span>
+            <span className="text-lg font-bold text-[#17130E]">{priceDisplay}</span>
           </div>
 
           {/* Method selector — only shown if both methods available */}
           {session.acceptPayNow && session.acceptStripe && (
             <div>
-              <p className="text-xs font-medium text-neutral-400 mb-3">Pay with</p>
+              <p className="mb-3 text-xs font-medium text-[#17130E]/62">Pay with</p>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => setSelectedMethod('PAYNOW')}
-                  className={`rounded-xl border p-3 text-sm font-medium transition-colors ${
+                  className={`rounded-md border-2 p-3 text-sm font-medium transition-colors ${
                     selectedMethod === 'PAYNOW'
-                      ? 'border-white bg-white/10 text-white'
-                      : 'border-neutral-700 text-neutral-400 hover:border-neutral-500'
+                      ? 'border-[#17130E] bg-[#0B4BA8] text-white'
+                      : 'border-[#17130E]/18 bg-[#F8F4EA] text-[#17130E] hover:border-[#17130E]'
                   }`}
                 >
                   PayNow
                 </button>
                 <button
                   onClick={() => setSelectedMethod('STRIPE')}
-                  className={`rounded-xl border p-3 text-sm font-medium transition-colors ${
+                  className={`rounded-md border-2 p-3 text-sm font-medium transition-colors ${
                     selectedMethod === 'STRIPE'
-                      ? 'border-white bg-white/10 text-white'
-                      : 'border-neutral-700 text-neutral-400 hover:border-neutral-500'
+                      ? 'border-[#17130E] bg-[#0B4BA8] text-white'
+                      : 'border-[#17130E]/18 bg-[#F8F4EA] text-[#17130E] hover:border-[#17130E]'
                   }`}
                 >
                   Card / Stripe
@@ -174,10 +174,10 @@ export function PaymentModal({ session, onClose, onSuccess }: PaymentModalProps)
               {session.paynowQrImageUrl && (
                 <div className="flex flex-col items-center gap-2">
                   {session.paynowName && (
-                    <p className="text-sm text-neutral-300">
-                      Pay to: <span className="font-semibold text-white">{session.paynowName}</span>
+                    <p className="text-sm text-[#17130E]/72">
+                      Pay to: <span className="font-semibold text-[#17130E]">{session.paynowName}</span>
                       {session.paynowPhoneNumber && (
-                        <span className="text-neutral-500"> · {session.paynowPhoneNumber}</span>
+                        <span className="text-[#17130E]/52"> · {session.paynowPhoneNumber}</span>
                       )}
                     </p>
                   )}
@@ -191,15 +191,15 @@ export function PaymentModal({ session, onClose, onSuccess }: PaymentModalProps)
               )}
 
               {/* Steps */}
-              <ol className="space-y-1.5 text-xs text-neutral-400">
-                <li className="flex gap-2"><span className="text-neutral-500">1.</span> Open your banking app and scan the QR code above</li>
-                <li className="flex gap-2"><span className="text-neutral-500">2.</span> Transfer exactly <span className="text-white font-medium">{priceDisplay}</span></li>
-                <li className="flex gap-2"><span className="text-neutral-500">3.</span> Screenshot the confirmation and upload below</li>
+              <ol className="space-y-1.5 text-xs text-[#17130E]/62">
+                <li className="flex gap-2"><span className="text-[#17130E]/42">1.</span> Open your banking app and scan the QR code above</li>
+                <li className="flex gap-2"><span className="text-[#17130E]/42">2.</span> Transfer exactly <span className="font-medium text-[#17130E]">{priceDisplay}</span></li>
+                <li className="flex gap-2"><span className="text-[#17130E]/42">3.</span> Screenshot the confirmation and upload below</li>
               </ol>
 
               {/* Proof upload */}
               <div>
-                <p className="text-xs font-medium text-neutral-400 mb-2">Upload payment screenshot <span className="text-red-400">*</span></p>
+                <p className="mb-2 text-xs font-medium text-[#17130E]/62">Upload payment screenshot <span className="text-red-600">*</span></p>
                 {proofPreview ? (
                   <div className="relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -211,7 +211,7 @@ export function PaymentModal({ session, onClose, onSuccess }: PaymentModalProps)
                     <button
                       type="button"
                       onClick={() => { setProofFile(null); setProofPreview(null) }}
-                      className="absolute top-2 right-2 p-1 rounded-full bg-neutral-800 text-white"
+                      className="absolute right-2 top-2 rounded-md border-2 border-[#17130E] bg-[#F8F4EA] p-1 text-[#17130E]"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -220,7 +220,7 @@ export function PaymentModal({ session, onClose, onSuccess }: PaymentModalProps)
                   <button
                     type="button"
                     onClick={() => proofInputRef.current?.click()}
-                    className="flex items-center gap-2 w-full justify-center rounded-xl border border-dashed border-neutral-600 py-6 text-sm text-neutral-500 hover:border-neutral-400 transition-colors"
+                    className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-dashed border-[#17130E]/32 bg-[#F8F4EA] py-6 text-sm text-[#17130E]/62 transition-colors hover:border-[#17130E]"
                   >
                     <Upload className="w-4 h-4" />
                     Upload screenshot
@@ -258,7 +258,7 @@ export function PaymentModal({ session, onClose, onSuccess }: PaymentModalProps)
           {/* Stripe flow */}
           {selectedMethod === 'STRIPE' && (
             <div className="space-y-4">
-              <p className="text-sm text-neutral-400">
+              <p className="text-sm text-[#17130E]/62">
                 You&apos;ll be redirected to a secure checkout page to complete payment by card.
               </p>
               <Button
@@ -278,7 +278,7 @@ export function PaymentModal({ session, onClose, onSuccess }: PaymentModalProps)
 
           {/* No method selected yet */}
           {!selectedMethod && session.acceptPayNow && session.acceptStripe && (
-            <p className="text-sm text-neutral-500 text-center">Select a payment method above</p>
+            <p className="text-center text-sm text-[#17130E]/52">Select a payment method above</p>
           )}
         </div>
       </div>

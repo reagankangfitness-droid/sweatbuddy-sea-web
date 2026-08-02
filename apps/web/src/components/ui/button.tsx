@@ -5,20 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 select-none",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border-2 border-[#17130E] font-mono text-sm font-black uppercase tracking-normal shadow-[2px_2px_0_#17130E] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B4BA8] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F4EFE3] disabled:pointer-events-none disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 select-none",
   {
     variants: {
       variant: {
-        default: "bg-[#1A1A1A] text-white hover:bg-[#2A2A2A] active:scale-[0.98]",
+        default: "bg-[#E8412C] text-white hover:bg-[#F0523E] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
         destructive:
-          "bg-red-600 text-white shadow-md shadow-red-600/20 hover:bg-red-700 hover:shadow-lg active:scale-[0.98]",
+          "bg-red-600 text-white hover:bg-red-700 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
         outline:
-          "border-2 border-[#333333] bg-transparent text-white hover:bg-[#2A2A2A] hover:border-[#666666] active:scale-[0.98] active:bg-[#1A1A1A]",
+          "bg-[#F8F4EA] text-[#17130E] hover:bg-white active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
         secondary:
-          "bg-[#2A2A2A] text-white hover:bg-[#333333] active:scale-[0.98] active:bg-[#2A2A2A]",
-        ghost: "text-[#666666] hover:bg-[#2A2A2A] hover:text-white active:scale-[0.98] active:bg-[#1A1A1A]",
-        link: "text-white underline-offset-4 hover:underline focus-visible:underline",
-        gradient: "bg-gradient-to-r from-[#1A1A1A] to-[#2A2A2A] text-white hover:from-[#2A2A2A] hover:to-[#333333] active:scale-[0.98]",
+          "bg-[#F8F4EA] text-[#17130E] hover:bg-white active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
+        ghost: "border-transparent bg-transparent text-[#17130E] shadow-none hover:bg-[#17130E]/6",
+        link: "border-transparent bg-transparent text-[#0B4BA8] underline-offset-4 shadow-none hover:underline focus-visible:underline",
+        gradient: "bg-[#0B4BA8] text-white hover:bg-[#0D5BC8] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
       },
       size: {
         default: "h-12 px-6 py-3",

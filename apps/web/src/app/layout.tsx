@@ -101,6 +101,8 @@ export const viewport: Viewport = {
   viewportFit: 'cover', // For iOS notch/safe areas
 }
 
+export const preferredRegion = 'sin1'
+
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">

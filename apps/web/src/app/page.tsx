@@ -11,7 +11,7 @@ import { resolveSessionMediaMap, type ResolvedSessionMedia } from '@/lib/session
 import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
 import { prisma } from '@/lib/prisma'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'SweatBuddies - Fitness Communities You Can Actually Join',

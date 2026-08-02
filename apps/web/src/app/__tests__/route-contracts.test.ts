@@ -82,7 +82,7 @@ describe('route contracts', () => {
     expect(homePage).not.toContain('/host')
     expect(homePage).toContain('/communities')
     expect(homePage).not.toContain('/singapore')
-    expect(homePage).toContain("export const dynamic = 'force-dynamic'")
+    expect(homePage).toContain('export const revalidate = 60')
     expect(homePage).toContain('Failed to load homepage sessions:')
     expect(homePage).not.toContain('LandingTopFilterDropdown')
     expect(homePage).not.toContain('MobileFilterDropdown')

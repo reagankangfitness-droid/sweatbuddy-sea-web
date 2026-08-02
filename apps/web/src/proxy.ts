@@ -59,6 +59,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/uploadthing',
   '/api/activities(.*)',
   '/api/analytics',
+  '/api/health',
   '/api/events(.*)',
   '/api/invites(.*)',
   '/api/profiles(.*)',
@@ -145,6 +146,7 @@ function isPublicApiRequest(request: NextRequest) {
 
   if (isReadMethod) {
     if (pathname === '/api/buddy/sessions') return true
+    if (pathname === '/api/health') return true
     if (pathname === '/api/place-photo') return true
 
     return [

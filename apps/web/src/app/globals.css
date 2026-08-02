@@ -2453,6 +2453,18 @@
   animation: skeletonWave 1.5s ease-in-out infinite;
 }
 
+@keyframes sbLoadingBar {
+  0% {
+    transform: translateX(-120%);
+  }
+  50% {
+    transform: translateX(90%);
+  }
+  100% {
+    transform: translateX(260%);
+  }
+}
+
 /* Pulse fade for loading indicators */
 @keyframes pulseFade {
   0%, 100% {

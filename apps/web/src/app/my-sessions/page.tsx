@@ -8,6 +8,7 @@ import { ArrowLeft, CalendarPlus, MapPin, Loader2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ACTIVITY_TYPES } from '@/lib/activity-types'
 import { LogoWithText } from '@/components/logo'
+import { AppLoadingScreen } from '@/components/AppLoadingScreen'
 
 const EMOJI_MAP = Object.fromEntries(ACTIVITY_TYPES.map((t) => [t.key, t.emoji]))
 
@@ -131,11 +132,7 @@ export default function MySessionsPage() {
   const showSignedOut = (isLoaded && !isSignedIn) || (!isLoaded && authTimedOut)
 
   if (!isLoaded && !authTimedOut) {
-    return (
-      <div className="min-h-screen bg-[#0B0D0C] flex items-center justify-center">
-        <Loader2 className="w-6 h-6 text-[#666] animate-spin" />
-      </div>
-    )
+    return <AppLoadingScreen label="Loading your plans" detail="Checking your joined communities" compact />
   }
 
   if (showSignedOut) {

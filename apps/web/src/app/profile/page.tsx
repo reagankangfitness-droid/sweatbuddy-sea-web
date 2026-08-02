@@ -19,6 +19,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import ProfileStats from '@/components/ProfileStats'
 import InviteSection from '@/components/InviteSection'
+import { AppLoadingScreen } from '@/components/AppLoadingScreen'
 
 interface ProfileData {
   slug: string | null
@@ -102,14 +103,7 @@ export default function ProfilePage() {
   }, [isSignedIn, isLoaded, user?.id])
 
   if (!isLoaded) {
-    return (
-      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
-        <div className="animate-pulse">
-          <div className="w-20 h-20 bg-black/[0.06] rounded-full mb-4" />
-          <div className="h-4 bg-black/[0.06] rounded-lg w-32 mx-auto" />
-        </div>
-      </div>
-    )
+    return <AppLoadingScreen label="Loading profile" detail="Checking your SweatBuddies account" compact />
   }
 
   if (!isSignedIn) {

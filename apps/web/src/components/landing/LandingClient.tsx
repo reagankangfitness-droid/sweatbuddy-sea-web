@@ -7,6 +7,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { MapPin, Clock, ArrowRight } from 'lucide-react'
 import { LogoWithText } from '@/components/logo'
+import { AppLoadingScreen } from '@/components/AppLoadingScreen'
 
 interface UpcomingEvent {
   id: string
@@ -41,11 +42,7 @@ export function LandingClient({ data }: { data: LandingData }) {
 
   // Show nothing while checking auth to avoid flash
   if (!isLoaded || isSignedIn) {
-    return (
-      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-neutral-800 border-t-white rounded-full animate-spin" />
-      </div>
-    )
+    return <AppLoadingScreen label="Opening SweatBuddies" detail="Taking you to your community map" />
   }
 
   const showSocialProof = data.eventCount >= 10 && data.hostCount >= 5

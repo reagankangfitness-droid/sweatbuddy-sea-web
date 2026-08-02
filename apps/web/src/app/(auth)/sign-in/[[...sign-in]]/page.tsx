@@ -4,8 +4,9 @@ import { SignIn, useAuth } from '@clerk/nextjs'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect, Suspense } from 'react'
-import { Loader2, ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { Logo } from '@/components/logo'
+import { AppLoadingScreen } from '@/components/AppLoadingScreen'
 
 function isValidRedirect(url: string): boolean {
   if (!url || !url.startsWith('/')) return false
@@ -148,9 +149,11 @@ function SignInContent() {
 export default function SignInPage() {
   return (
     <Suspense fallback={
-      <div className="sb-page flex items-center justify-center" data-sb-paper-shell>
-        <Loader2 className="w-6 h-6 animate-spin text-[#0B4BA8]" />
-      </div>
+      <AppLoadingScreen
+        label="Preparing sign in"
+        detail="Getting your community map ready"
+        compact
+      />
     }>
       <SignInContent />
     </Suspense>

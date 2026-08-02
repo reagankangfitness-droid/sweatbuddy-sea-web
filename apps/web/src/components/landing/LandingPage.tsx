@@ -13,6 +13,7 @@ import { HostCTASection } from './HostCTASection'
 import { GrowingSection } from './GrowingSection'
 import { FinalCTASection } from './FinalCTASection'
 import { LandingFooter } from './LandingFooter'
+import { AppLoadingScreen } from '@/components/AppLoadingScreen'
 import type { UpcomingEvent } from './EventCard'
 
 interface LandingData {
@@ -33,11 +34,7 @@ export function LandingPage({ data }: { data: LandingData }) {
 
   // Show nothing while checking auth to avoid flash
   if (!isLoaded || isSignedIn) {
-    return (
-      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-neutral-800 border-t-white rounded-full animate-spin" />
-      </div>
-    )
+    return <AppLoadingScreen label="Opening SweatBuddies" detail="Taking you to your community map" />
   }
 
   return (

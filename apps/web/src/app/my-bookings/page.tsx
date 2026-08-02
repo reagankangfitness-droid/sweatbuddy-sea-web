@@ -18,6 +18,7 @@ import {
   Download,
   ExternalLink,
 } from 'lucide-react'
+import { AppLoadingScreen } from '@/components/AppLoadingScreen'
 
 interface Booking {
   id: string
@@ -167,14 +168,7 @@ export default function MyBookingsPage() {
   }
 
   if (!isLoaded || loading) {
-    return (
-      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-[#666666] mx-auto mb-4" />
-          <p className="text-[#666666]">Loading your bookings...</p>
-        </div>
-      </div>
-    )
+    return <AppLoadingScreen label="Loading bookings" detail="Finding your saved plans" compact />
   }
 
   if (error) {

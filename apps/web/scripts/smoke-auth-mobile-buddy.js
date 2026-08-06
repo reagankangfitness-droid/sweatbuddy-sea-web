@@ -35,25 +35,34 @@ async function main() {
 
   try {
     const page = await context.newPage()
-    await page.goto(signInUrl.toString(), { waitUntil: 'domcontentloaded', timeout: 90000 })
+    try {
+      await page.goto(signInUrl.toString(), { waitUntil: 'domcontentloaded', timeout: 90000 })
 
-    await waitForNonBlankBody(page)
-    await page.waitForURL((url) => url.pathname === '/buddy', { timeout: 60000 })
-    await page.waitForLoadState('networkidle', { timeout: 90000 }).catch(() => {})
-    await page.getByTestId('buddy-mobile-concept').waitFor({ state: 'visible', timeout: 20000 })
+      await waitForNonBlankBody(page)
+      await page.waitForURL((url) => url.pathname === '/buddy', { timeout: 60000 })
+      await page.waitForLoadState('networkidle', { timeout: 90000 }).catch(() => {})
+      await page.getByTestId('buddy-mobile-concept').waitFor({ state: 'visible', timeout: 20000 })
 
-    assert.equal(await renderedCount(page.locator('text=Filters')), 0)
-    assert.equal(await renderedCount(page.locator('[data-testid="buddy-date-strip"] button:has-text("Today")')), 0)
-    assert.ok(await renderedCount(page.getByRole('button', { name: 'Crews' })))
-    assert.ok(await renderedCount(page.getByRole('button', { name: 'Plans' })))
-    assert.ok(await renderedCount(page.getByRole('button', { name: 'Map' })))
-    assert.ok(await renderedCount(page.getByRole('button', { name: 'You' })))
-    assert.ok(await renderedCount(page.getByText(/Within 3 km of/i)))
+      assert.equal(await renderedCount(page.locator('text=Filters')), 0)
+      assert.equal(await renderedCount(page.locator('[data-testid="buddy-date-strip"] button:has-text("Today")')), 0)
+      assert.ok(await renderedCount(page.getByRole('button', { name: 'Crews' })))
+      assert.ok(await renderedCount(page.getByRole('button', { name: 'Plans' })))
+      assert.ok(await renderedCount(page.getByRole('button', { name: 'Map' })))
+      assert.ok(await renderedCount(page.getByRole('button', { name: 'You' })))
+      assert.ok(await renderedCount(page.getByText(/Within 3 km of/i)))
 
-    await page.screenshot({ path: screenshotPath, fullPage: false })
-    console.log(`Authenticated mobile buddy smoke passed: ${new URL('/buddy', baseUrl).toString()}`)
-    console.log(`Signed in as: ${email}`)
-    console.log(`Screenshot: ${screenshotPath}`)
+      await page.screenshot({ path: screenshotPath, fullPage: false })
+      console.log(`Authenticated mobile buddy smoke passed: ${new URL('/buddy', baseUrl).toString()}`)
+      console.log(`Signed in as: ${email}`)
+      console.log(`Screenshot: ${screenshotPath}`)
+    } catch (error) {
+      const failureScreenshotPath = screenshotPath.replace(/(\.\w+)?$/, '.failure$1')
+      await page.screenshot({ path: failureScreenshotPath, fullPage: false }).catch(() => {})
+      console.error(`Smoke failed at: ${sanitizeUrl(page.url())}`)
+      console.error(`Visible text: ${await visibleText(page)}`)
+      console.error(`Failure screenshot: ${failureScreenshotPath}`)
+      throw error
+    }
   } finally {
     await browser.close()
   }
@@ -211,6 +220,21 @@ function formatClerkError(payload) {
   if (payload?.errors?.[0]?.message) return payload.errors[0].message
   if (payload?.message) return payload.message
   return JSON.stringify(payload)
+}
+
+function sanitizeUrl(url) {
+  try {
+    const parsed = new URL(url)
+    if (parsed.searchParams.has('token')) parsed.searchParams.set('token', '[redacted]')
+    return parsed.toString()
+  } catch {
+    return url
+  }
+}
+
+async function visibleText(page) {
+  const text = await page.locator('body').innerText({ timeout: 1000 }).catch(() => '')
+  return text.replace(/\s+/g, ' ').trim().slice(0, 500)
 }
 
 main().catch((error) => {

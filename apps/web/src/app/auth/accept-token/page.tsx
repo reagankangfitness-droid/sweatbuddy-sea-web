@@ -1,10 +1,10 @@
 'use client'
 
-import { Suspense, useEffect, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AlertCircle, ArrowRight } from 'lucide-react'
-import { useSignIn } from '@clerk/nextjs'
+import { useAuth, useSignIn } from '@clerk/nextjs'
 import { AppLoadingScreen } from '@/components/AppLoadingScreen'
 
 function isValidRedirect(url: string | null): url is string {
@@ -21,6 +21,8 @@ function AcceptTokenContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { isLoaded, signIn, setActive } = useSignIn()
+  const { isLoaded: authLoaded, isSignedIn } = useAuth()
+  const attemptedRef = useRef(false)
   const [error, setError] = useState('')
 
   const token = searchParams.get('token')
@@ -34,6 +36,12 @@ function AcceptTokenContent() {
 
     async function acceptToken() {
       if (!isLoaded || !signIn || !token) return
+      if (authLoaded && isSignedIn) {
+        router.replace(redirectUrl)
+        return
+      }
+      if (attemptedRef.current) return
+      attemptedRef.current = true
 
       try {
         const result = await signIn.create({
@@ -52,10 +60,18 @@ function AcceptTokenContent() {
         if (!cancelled) router.replace(redirectUrl)
       } catch (acceptError) {
         if (!cancelled) {
-          setError(
+          const message =
             acceptError instanceof Error
               ? acceptError.message
-              : 'This sign-in link could not be completed.',
+              : 'This sign-in link could not be completed.'
+
+          if (message.toLowerCase().includes('already signed in')) {
+            router.replace(redirectUrl)
+            return
+          }
+
+          setError(
+            message,
           )
         }
       }
@@ -66,7 +82,7 @@ function AcceptTokenContent() {
     return () => {
       cancelled = true
     }
-  }, [isLoaded, redirectUrl, router, setActive, signIn, token])
+  }, [authLoaded, isLoaded, isSignedIn, redirectUrl, router, setActive, signIn, token])
 
   if (!token) {
     return <TokenError message="Missing sign-in token." />

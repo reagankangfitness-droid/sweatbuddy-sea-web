@@ -68,11 +68,13 @@ export async function POST(request: NextRequest) {
 
     // Build the magic link URL
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://sweatbuddies.co'
-    const magicLink = `${baseUrl}/sign-in#/verify?token=${tokenData.token}`
+    const magicLinkUrl = new URL('/auth/accept-token', baseUrl)
+    magicLinkUrl.searchParams.set('token', tokenData.token)
+    magicLinkUrl.searchParams.set('redirect_url', '/host/dashboard')
 
     return NextResponse.json({
       success: true,
-      magicLink,
+      magicLink: magicLinkUrl.toString(),
       expiresIn: '30 days',
       message: 'Magic link generated. Send this to the host to let them sign in.',
     })

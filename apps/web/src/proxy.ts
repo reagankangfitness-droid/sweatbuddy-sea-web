@@ -52,6 +52,7 @@ const isPublicRoute = createRouteMatcher([
   '/new-to-singapore',
   '/sign-in(.*)',
   '/sign-up(.*)',
+  '/auth/accept-token',
   '/e/(.*)',
   '/events',
   '/events/(.*)',

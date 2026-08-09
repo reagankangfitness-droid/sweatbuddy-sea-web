@@ -18,8 +18,8 @@ const NUDGE_STYLES: Record<
   { gradient: string; iconBg: string; icon: React.ReactNode }
 > = {
   EVENT_RECOMMENDATION: {
-    gradient: 'from-blue-500/10 to-blue-600/5 border-blue-200',
-    iconBg: 'bg-blue-900 text-blue-400',
+    gradient: 'from-[#E8412C]/10 to-[#E8412C]/5 border-[#E8412C]/20',
+    iconBg: 'bg-[#17130E] text-[#E8412C]',
     icon: <Calendar className="w-4 h-4" />,
   },
   INACTIVITY_REENGAGEMENT: {

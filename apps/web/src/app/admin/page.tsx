@@ -216,13 +216,13 @@ function statusLabel(status: DiscoveryMarket['readinessStatus'] | P2PStats['nort
 }
 
 function statusClasses(status: DiscoveryMarket['readinessStatus'] | P2PStats['northStarStatus']) {
-  if (status === 'HEALTHY') return 'border-lime-700/60 bg-lime-950/25 text-lime-300'
+  if (status === 'HEALTHY') return 'border-[#E8412C]/60 bg-[#E8412C]/10 text-[#E8412C]'
   if (status === 'WATCH') return 'border-amber-700/60 bg-amber-950/30 text-amber-300'
   return 'border-red-900/70 bg-red-950/40 text-red-300'
 }
 
 function scoreBarClass(score: number) {
-  if (score >= 80) return 'bg-lime-400'
+  if (score >= 80) return 'bg-[#E8412C]'
   if (score >= 55) return 'bg-amber-300'
   return 'bg-red-400'
 }
@@ -451,24 +451,24 @@ export default function AdminStatsPage() {
       value: stats?.visibleTodayAcrossMarkets ?? stats?.todayMapSessions ?? 0,
       sub: 'public map, city-local today',
       icon: MapPin,
-      color: 'text-lime-400',
-      border: 'border-lime-800/50',
+      color: 'text-[#E8412C]',
+      border: 'border-[#E8412C]/30',
     },
     {
       label: 'Mapped Today',
       value: stats?.mappedTodayAcrossMarkets ?? stats?.todayMapSessions ?? 0,
       sub: 'visible pins users can inspect',
       icon: Calendar,
-      color: 'text-lime-300',
-      border: 'border-lime-800/40',
+      color: 'text-[#E8412C]',
+      border: 'border-[#E8412C]/25',
     },
     {
       label: 'Next 7 Days',
       value: stats?.nextSevenDaysAcrossMarkets ?? stats?.nextSevenDayMapSessions ?? 0,
       sub: 'upcoming visible supply',
       icon: Calendar,
-      color: 'text-sky-400',
-      border: 'border-sky-800/50',
+      color: 'text-[#E8412C]',
+      border: 'border-[#E8412C]/30',
     },
     {
       label: 'Weekly Visible',
@@ -527,28 +527,28 @@ export default function AdminStatsPage() {
       value: discoveryFunnel?.mapViews ?? 0,
       sub: `${discoveryFunnel?.filterUses ?? 0} filter uses · ${discoveryFunnel?.searches ?? 0} searches`,
       icon: MapPin,
-      color: 'text-lime-300',
+      color: 'text-[#E8412C]',
     },
     {
       label: 'Pin Clicks',
       value: discoveryFunnel?.pinClicks ?? 0,
       sub: `${discoveryFunnel?.pinToDetailRate ?? 0}% pin-to-detail`,
       icon: MousePointerClick,
-      color: 'text-cyan-300',
+      color: 'text-[#E8412C]',
     },
     {
       label: 'Detail Views',
       value: discoveryFunnel?.detailViews ?? 0,
       sub: `${discoveryFunnel?.detailToJoinRate ?? 0}% detail-to-join`,
       icon: Eye,
-      color: 'text-sky-300',
+      color: 'text-[#E8412C]',
     },
     {
       label: 'Official Clicks',
       value: discoveryFunnel?.officialJoinClicks ?? discoveryFunnel?.successfulJoins ?? 0,
       sub: `${discoveryFunnel?.successfulJoins ?? 0} internal joins · source-link intent`,
       icon: UserPlus,
-      color: 'text-lime-300',
+      color: 'text-[#E8412C]',
     },
   ]
 
@@ -576,7 +576,7 @@ export default function AdminStatsPage() {
       )}
 
       {notice && (
-        <div className="mb-6 rounded-xl border border-lime-800/70 bg-lime-950/30 p-4 text-sm text-lime-200">
+        <div className="mb-6 rounded-xl border border-[#E8412C]/40 bg-[#E8412C]/10 p-4 text-sm text-[#E8412C]">
           {notice}
         </div>
       )}
@@ -586,7 +586,7 @@ export default function AdminStatsPage() {
         <section className="rounded-xl border border-neutral-800 bg-neutral-950 p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-lime-300">
+              <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#E8412C]">
                 <Target className="h-4 w-4" />
                 North star
               </p>
@@ -741,7 +741,7 @@ export default function AdminStatsPage() {
         <section className="rounded-xl border border-neutral-800 bg-neutral-950 p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-cyan-300">
+              <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#E8412C]">
                 <Search className="h-4 w-4" />
                 Discovery funnel
               </p>
@@ -776,7 +776,7 @@ export default function AdminStatsPage() {
                     <p className="text-sm font-bold text-neutral-100">{row.clickToJoinRate}%</p>
                   </div>
                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-neutral-800">
-                    <div className="h-full rounded-full bg-lime-300" style={{ width: `${Math.min(row.clickToJoinRate, 100)}%` }} />
+                    <div className="h-full rounded-full bg-[#E8412C]" style={{ width: `${Math.min(row.clickToJoinRate, 100)}%` }} />
                   </div>
                   <p className="mt-2 text-xs text-neutral-500">
                     {row.visibleSupply} visible · {row.interest} intent signals · {row.officialJoinClicks ?? 0} official clicks
@@ -887,7 +887,7 @@ export default function AdminStatsPage() {
                     <td className="px-5 py-4 text-sm text-neutral-300">{row.pinClicks}</td>
                     <td className="px-5 py-4 text-sm text-neutral-300">{row.sessionClicks}</td>
                     <td className="px-5 py-4 text-sm text-neutral-300">{row.detailViews}</td>
-                    <td className="px-5 py-4 text-sm font-bold text-lime-300">{row.officialJoinClicks ?? 0}</td>
+                    <td className="px-5 py-4 text-sm font-bold text-[#E8412C]">{row.officialJoinClicks ?? 0}</td>
                     <td className="px-5 py-4 text-sm font-bold text-neutral-100">{row.joins}</td>
                     <td className="px-5 py-4">
                       <span className="rounded-full border border-neutral-700 px-2.5 py-1 text-xs font-bold text-neutral-300">
@@ -939,7 +939,7 @@ export default function AdminStatsPage() {
             <div className="mt-4 grid gap-3 md:grid-cols-3">
               <div className="rounded-lg border border-neutral-800 bg-neutral-900/40 p-3">
                 <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-300">
-                  <UserCheck className="h-3.5 w-3.5 text-lime-300" />
+                  <UserCheck className="h-3.5 w-3.5 text-[#E8412C]" />
                   Joinability
                 </p>
                 <p className="mt-2 text-sm text-neutral-500">
@@ -949,7 +949,7 @@ export default function AdminStatsPage() {
               </div>
               <div className="rounded-lg border border-neutral-800 bg-neutral-900/40 p-3">
                 <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-300">
-                  <Link2 className="h-3.5 w-3.5 text-sky-300" />
+                  <Link2 className="h-3.5 w-3.5 text-[#E8412C]" />
                   Communities
                 </p>
                 <p className="mt-2 text-sm text-neutral-500">
@@ -1090,7 +1090,7 @@ export default function AdminStatsPage() {
                             Quiet today
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-lime-800/60 bg-lime-950/30 px-2.5 py-1 text-xs font-semibold text-lime-300">
+                          <span className="inline-flex items-center gap-1 rounded-full border border-[#E8412C]/35 bg-[#E8412C]/10 px-2.5 py-1 text-xs font-semibold text-[#E8412C]">
                             <CheckCircle2 className="h-3 w-3" />
                             Healthy
                           </span>
@@ -1143,9 +1143,9 @@ export default function AdminStatsPage() {
           <p className="text-sm text-neutral-500 mb-1">Marketplace Sessions</p>
           <p className="text-4xl font-bold text-neutral-300">{stats?.marketplaceSessions ?? 0}</p>
         </div>
-        <div className="bg-neutral-950 rounded-xl border border-sky-800/50 p-5">
+        <div className="bg-neutral-950 rounded-xl border border-[#E8412C]/30 p-5">
           <p className="text-sm text-neutral-500 mb-1">Avg Attendees (All)</p>
-          <p className="text-4xl font-bold text-sky-400">{stats?.avgAttendeesPerSession ?? 0}</p>
+          <p className="text-4xl font-bold text-[#E8412C]">{stats?.avgAttendeesPerSession ?? 0}</p>
         </div>
       </div>
 

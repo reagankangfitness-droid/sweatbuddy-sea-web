@@ -67,7 +67,7 @@ const REASON_LABELS: Record<string, string> = {
 
 const STATUS_COLORS: Record<ReportStatus, string> = {
   PENDING: 'bg-yellow-100 text-yellow-800',
-  REVIEWED: 'bg-blue-900 text-blue-800',
+  REVIEWED: 'bg-[#17130E] text-[#E8412C]',
   ACTIONED: 'bg-green-900 text-green-800',
   DISMISSED: 'bg-neutral-800 text-neutral-400',
 }

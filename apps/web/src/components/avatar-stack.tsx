@@ -16,7 +16,7 @@ function getAvatarColor(name: string | null): string {
     'from-rose-400 to-rose-500',
     'from-amber-400 to-amber-500',
     'from-emerald-400 to-emerald-500',
-    'from-sky-400 to-sky-500',
+    'from-[#E8412C] to-[#17130E]',
     'from-violet-400 to-violet-500',
     'from-pink-400 to-pink-500',
     'from-teal-400 to-teal-500',

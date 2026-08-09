@@ -104,7 +104,7 @@ function htmlPage(title: string, message: string): string {
     .card { max-width: 480px; margin: 0 auto; background: white; border-radius: 16px; padding: 40px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
     h1 { color: #1e40af; font-size: 24px; margin: 0 0 16px; }
     p { color: #374151; font-size: 16px; line-height: 1.6; margin: 0; }
-    a { color: #3b82f6; text-decoration: none; }
+    a { color: #E8412C; text-decoration: none; }
   </style>
 </head>
 <body>

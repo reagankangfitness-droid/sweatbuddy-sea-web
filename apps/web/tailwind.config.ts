@@ -33,11 +33,10 @@ const config: Config = {
       // Black is the only "accent"
       // ═══════════════════════════════════════════════════════
       colors: {
-        // Landing page brand colors
-        'brand-blue': '#0025CC',
-        'brand-blue-dark': '#001DA3',
-        'brand-blue-light': '#D6DEFF',
-        'brand-blue-glow': '#2244EE',
+        // SweatBuddies brand colors
+        'brand-ink': '#17130E',
+        'brand-coral': '#E8412C',
+        'brand-coral-light': 'rgba(232, 65, 44, 0.15)',
         'dark': '#0A0E1A',
         'dark-card': '#111827',
         'dark-surface': '#1F2937',
@@ -197,7 +196,7 @@ const config: Config = {
           yellow: '#EAB308',
           pink: '#EC4899',
           green: '#16A34A',
-          blue: '#3B82F6',
+          coral: '#E8412C',
         },
       },
 

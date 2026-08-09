@@ -25,7 +25,7 @@ export const TEMPLATES: Record<string, TemplateConfig> = {
     name: 'Classic',
     bgColor: '#FFFFFF',
     textColor: '#171717',
-    accentColor: '#0025CC',
+    accentColor: '#E8412C',
     overlayOpacity: 0.85,
   },
   MINIMAL: {
@@ -37,14 +37,14 @@ export const TEMPLATES: Record<string, TemplateConfig> = {
   },
   BOLD: {
     name: 'Bold',
-    bgColor: '#0025CC',
+    bgColor: '#E8412C',
     textColor: '#FFFFFF',
     accentColor: '#FFD230',
     overlayOpacity: 0.75,
   },
   GRADIENT: {
     name: 'Gradient',
-    bgGradient: ['#0025CC', '#7C3AED'],
+    bgGradient: ['#E8412C', '#7C3AED'],
     textColor: '#FFFFFF',
     accentColor: '#FFD230',
     overlayOpacity: 0.7,
@@ -53,7 +53,7 @@ export const TEMPLATES: Record<string, TemplateConfig> = {
     name: 'Dark',
     bgColor: '#0A0A0A',
     textColor: '#FFFFFF',
-    accentColor: '#0025CC',
+    accentColor: '#E8412C',
     overlayOpacity: 0.8,
   },
   ENERGY: {
@@ -195,7 +195,7 @@ export async function createCompletionCard(
       qrCodeDataUrl = await QRCode.toDataURL(activityLink, {
         width: 200,
         margin: 1,
-        color: { dark: '#0025CC', light: '#FFFFFF' },
+        color: { dark: '#E8412C', light: '#FFFFFF' },
       })
     } catch {
       // QR code generation failed silently

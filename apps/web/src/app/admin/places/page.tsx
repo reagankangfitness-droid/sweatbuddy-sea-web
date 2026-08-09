@@ -159,7 +159,7 @@ export default function AdminPlacesPage() {
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lime-400">Directory trust</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#E8412C]">Directory trust</p>
           <h1 className="mt-2 text-2xl font-bold text-neutral-100 sm:text-3xl">Place review queue</h1>
           <p className="mt-1 max-w-2xl text-sm text-neutral-500">
             Review places by show-up value: can someone join, who is it for, and is there enough social proof to surface it?
@@ -189,7 +189,7 @@ export default function AdminPlacesPage() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search name, area, source, or intelligence status"
-              className="min-h-11 w-full rounded-xl border border-neutral-800 bg-neutral-900 pl-10 pr-3 text-sm text-neutral-100 outline-none focus:border-lime-400"
+              className="min-h-11 w-full rounded-xl border border-neutral-800 bg-neutral-900 pl-10 pr-3 text-sm text-neutral-100 outline-none focus:border-[#E8412C]"
             />
           </label>
           <div className="flex gap-2 overflow-x-auto">
@@ -270,7 +270,7 @@ function AdminPlaceRow({
           <SignalPill label="Trust" value={place.trustScore} />
           <SignalPill label="Photos" value={place.photoQualityScore} />
           <SignalPill label="Reviews" value={place.reviewSentimentScore} />
-          <span className="rounded-full bg-lime-400/10 px-2 py-1 text-xs font-semibold text-lime-300">
+          <span className="rounded-full bg-[#E8412C]/10 px-2 py-1 text-xs font-semibold text-[#E8412C]">
             {positioning.publicPriority}
           </span>
           <span className="rounded-full bg-neutral-900 px-2 py-1 text-xs font-semibold text-neutral-300">
@@ -295,7 +295,7 @@ function AdminPlaceRow({
                 <>
                   <span>·</span>
                   <span className="inline-flex items-center gap-1">
-                    <Star className="h-3.5 w-3.5 text-lime-300" />
+                    <Star className="h-3.5 w-3.5 text-[#E8412C]" />
                     {place.googleRating.toFixed(1)} from {place.googleReviewCount} Google reviews
                   </span>
                 </>
@@ -338,7 +338,7 @@ function AdminPlaceRow({
             value={notes}
             onChange={(event) => onNotesChange(event.target.value)}
             placeholder="Why approve, reject, block, or keep in review?"
-            className="mt-2 min-h-24 w-full resize-y rounded-xl border border-neutral-800 bg-neutral-950 p-3 text-sm normal-case tracking-normal text-neutral-100 outline-none focus:border-lime-400"
+            className="mt-2 min-h-24 w-full resize-y rounded-xl border border-neutral-800 bg-neutral-950 p-3 text-sm normal-case tracking-normal text-neutral-100 outline-none focus:border-[#E8412C]"
           />
         </label>
 
@@ -418,7 +418,7 @@ function AdminPlaceRow({
 function Metric({ label, value, tone }: { label: string; value: number; tone: 'good' | 'warning' | 'muted' }) {
   const toneClass =
     tone === 'good'
-      ? 'text-lime-300'
+      ? 'text-[#E8412C]'
       : tone === 'warning'
         ? 'text-yellow-300'
         : 'text-neutral-200'
@@ -434,7 +434,7 @@ function Metric({ label, value, tone }: { label: string; value: number; tone: 'g
 function StatusPill({ status }: { status: AdminPlace['moderationStatus'] }) {
   const className =
     status === 'LIVE'
-      ? 'bg-lime-400/10 text-lime-300'
+      ? 'bg-[#E8412C]/10 text-[#E8412C]'
       : status === 'UNDER_REVIEW'
         ? 'bg-yellow-400/10 text-yellow-300'
         : status === 'BLOCKED'
@@ -445,7 +445,7 @@ function StatusPill({ status }: { status: AdminPlace['moderationStatus'] }) {
 }
 
 function SignalPill({ label, value }: { label: string; value: number }) {
-  const className = value >= 80 ? 'text-lime-300' : value >= 60 ? 'text-yellow-300' : 'text-red-300'
+  const className = value >= 80 ? 'text-[#E8412C]' : value >= 60 ? 'text-yellow-300' : 'text-red-300'
   return (
     <span className="rounded-full bg-neutral-900 px-2 py-1 text-xs font-semibold text-neutral-400">
       {label}: <span className={className}>{value}</span>
@@ -503,7 +503,7 @@ function PlaceLinks({ place }: { place: AdminPlace }) {
           href={link.href}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-neutral-800 px-3 text-xs font-semibold text-neutral-300 hover:border-lime-400"
+          className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-neutral-800 px-3 text-xs font-semibold text-neutral-300 hover:border-[#E8412C]"
         >
           {link.label} <ExternalLink className="h-3 w-3" />
         </a>
@@ -540,7 +540,7 @@ function ActionButton({
 }) {
   const className =
     tone === 'good'
-      ? 'bg-lime-400 text-neutral-950 hover:bg-lime-300'
+      ? 'bg-[#E8412C] text-neutral-950 hover:bg-[#E8412C]'
       : tone === 'danger'
         ? 'border border-red-900/80 text-red-300 hover:border-red-500'
         : 'border border-neutral-800 text-neutral-300 hover:border-neutral-500'

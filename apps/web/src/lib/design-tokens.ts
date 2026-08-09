@@ -1,14 +1,14 @@
-// Premium Design System with #0025CC Deep Blue Brand Color
+// SweatBuddies Design System with Ink + Coral Brand Color
 
 export const colors = {
-  // Brand Deep Blue - Primary brand color for CTAs, buttons, links
+  // Brand Ink + Coral - Primary brand color for CTAs, buttons, links
   brand: {
-    primary: '#0025CC',        // Deep Blue
-    primaryHover: '#001EB3',   // Darker blue for hover states
-    primaryDark: '#001799',    // Darkest blue for emphasis
-    primaryLight: 'rgba(0, 37, 204, 0.15)',
-    primaryLighter: 'rgba(0, 37, 204, 0.08)',
-    primaryText: '#FFFFFF',    // White text on deep blue (WCAG AA compliant)
+    primary: '#E8412C',        // Coral
+    primaryHover: '#E8412C',
+    primaryDark: '#17130E',    // Ink
+    primaryLight: 'rgba(232, 65, 44, 0.15)',
+    primaryLighter: 'rgba(232, 65, 44, 0.08)',
+    primaryText: '#FFFFFF',
   },
 
   // Accent Yellow - Use for star ratings, featured badges, high-energy elements

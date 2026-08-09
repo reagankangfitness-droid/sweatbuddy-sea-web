@@ -89,7 +89,7 @@ export default function MyEventsViewPage() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-[#f8fafc] to-white flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-[#3477f8] mx-auto mb-4" />
+          <Loader2 className="w-8 h-8 animate-spin text-[#E8412C] mx-auto mb-4" />
           <p className="text-neutral-400">Loading your sessions...</p>
         </div>
       </div>
@@ -127,7 +127,7 @@ export default function MyEventsViewPage() {
           <p className="text-neutral-400 mb-8">{error}</p>
           <Link
             href="/my-events"
-            className="inline-flex items-center justify-center h-12 px-6 rounded-xl bg-[#3477f8] text-white font-semibold hover:bg-[#2563eb] transition-all"
+            className="inline-flex items-center justify-center h-12 px-6 rounded-xl bg-[#E8412C] text-white font-semibold hover:bg-[#2563eb] transition-all"
           >
             Request a new link
           </Link>
@@ -185,7 +185,7 @@ export default function MyEventsViewPage() {
             </p>
             <Link
               href="/#events"
-              className="inline-flex items-center justify-center h-10 px-5 rounded-full bg-[#3477f8] text-white font-semibold text-sm hover:bg-[#2563eb] transition-all"
+              className="inline-flex items-center justify-center h-10 px-5 rounded-full bg-[#E8412C] text-white font-semibold text-sm hover:bg-[#2563eb] transition-all"
             >
               Browse sessions
             </Link>
@@ -235,7 +235,7 @@ export default function MyEventsViewPage() {
         <div className="mt-12 text-center">
           <Link
             href="/#events"
-            className="inline-flex items-center gap-2 text-[#3477f8] font-medium hover:underline"
+            className="inline-flex items-center gap-2 text-[#E8412C] font-medium hover:underline"
           >
             Browse more sessions
             <ExternalLink className="w-4 h-4" />
@@ -267,7 +267,7 @@ function EventCard({ rsvp }: { rsvp: RSVPEvent }) {
               sizes="128px"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-[#3477f8]/10 to-[#3477f8]/5 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-[#E8412C]/10 to-[#E8412C]/5 flex items-center justify-center">
               <span className="text-3xl">{emoji}</span>
             </div>
           )}
@@ -280,7 +280,7 @@ function EventCard({ rsvp }: { rsvp: RSVPEvent }) {
               {event.name}
             </h3>
             {event.recurring && (
-              <span className="flex-shrink-0 px-2 py-0.5 bg-[#3477f8]/10 text-[#3477f8] text-xs font-medium rounded-full">
+              <span className="flex-shrink-0 px-2 py-0.5 bg-[#E8412C]/10 text-[#E8412C] text-xs font-medium rounded-full">
                 Weekly
               </span>
             )}

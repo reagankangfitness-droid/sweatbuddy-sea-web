@@ -49,7 +49,7 @@ interface ActivityColorScheme {
 }
 
 const ACTIVITY_COLORS: Record<string, ActivityColorScheme> = {
-  running:  { bg: 'bg-blue-500/10',   text: 'text-blue-400',   dot: '#60A5FA' },
+  running:  { bg: 'bg-[#E8412C]/10',   text: 'text-[#E8412C]',   dot: '#E8412C' },
   cycling:  { bg: 'bg-red-500/10',    text: 'text-red-400',    dot: '#F87171' },
   yoga:     { bg: 'bg-emerald-500/10',text: 'text-emerald-400',dot: '#34D399' },
   gym:      { bg: 'bg-amber-500/10',  text: 'text-amber-400',  dot: '#FBBF24' },
@@ -57,9 +57,9 @@ const ACTIVITY_COLORS: Record<string, ActivityColorScheme> = {
   hiking:   { bg: 'bg-violet-500/10', text: 'text-violet-400', dot: '#A78BFA' },
   bootcamp: { bg: 'bg-pink-500/10',   text: 'text-pink-400',   dot: '#F472B6' },
   hiit:     { bg: 'bg-orange-500/10', text: 'text-orange-400', dot: '#FB923C' },
-  pilates:  { bg: 'bg-sky-500/10',    text: 'text-sky-400',    dot: '#38BDF8' },
-  swimming: { bg: 'bg-cyan-500/10',   text: 'text-cyan-400',   dot: '#22D3EE' },
-  sports:   { bg: 'bg-lime-500/10',   text: 'text-lime-400',   dot: '#A3E635' },
+  pilates:  { bg: 'bg-[#E8412C]/10',    text: 'text-[#E8412C]',    dot: '#E8412C' },
+  swimming: { bg: 'bg-[#E8412C]/10',   text: 'text-[#E8412C]',   dot: '#E8412C' },
+  sports:   { bg: 'bg-[#E8412C]/10',   text: 'text-[#E8412C]',   dot: '#E8412C' },
 }
 
 export function getActivityColor(type: string): ActivityColorScheme {

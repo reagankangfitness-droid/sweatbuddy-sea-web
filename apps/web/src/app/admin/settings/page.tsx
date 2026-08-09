@@ -143,8 +143,8 @@ export default function AdminSettingsPage() {
         {/* Email Settings */}
         <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-6 shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center">
-              <Mail className="w-5 h-5 text-blue-400" />
+            <div className="w-10 h-10 bg-[#17130E] rounded-lg flex items-center justify-center">
+              <Mail className="w-5 h-5 text-[#E8412C]" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-neutral-100">Email Settings</h2>

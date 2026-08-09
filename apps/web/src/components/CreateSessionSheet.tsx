@@ -486,7 +486,7 @@ export function CreateSessionSheet({
                   <div className="rounded-lg border-2 border-[#17130E] bg-[#F8F4EA] p-5 text-center shadow-[3px_3px_0_#17130E]">
                     {!isLoaded || communityLoading ? (
                       <>
-                        <Loader2 className="mx-auto mb-4 h-6 w-6 animate-spin text-[#0B4BA8]" />
+                        <Loader2 className="mx-auto mb-4 h-6 w-6 animate-spin text-[#E8412C]" />
                         <h3 className="text-lg font-bold text-[#17130E]">Checking host access...</h3>
                       </>
                     ) : !isSignedIn ? (
@@ -923,7 +923,7 @@ export function CreateSessionSheet({
               <button
                 onClick={handlePost}
                 disabled={!canPost || posting}
-                className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-[#17130E] bg-[#E8412C] py-4 font-mono text-sm font-black uppercase tracking-normal text-white shadow-[3px_3px_0_#17130E] transition-all hover:bg-[#F0523E] disabled:cursor-not-allowed disabled:opacity-45"
+                className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-[#17130E] bg-[#E8412C] py-4 font-mono text-sm font-black uppercase tracking-normal text-white shadow-[3px_3px_0_#17130E] transition-all hover:bg-[#E8412C] disabled:cursor-not-allowed disabled:opacity-45"
               >
                 {posting ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /> Posting...</>

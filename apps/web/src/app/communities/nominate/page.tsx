@@ -251,11 +251,11 @@ export default function NominateCommunityPage() {
                     onClick={() => update('intent', intent.value)}
                     className={`min-h-[56px] rounded-md border-2 p-3 text-left transition-colors ${
                       active
-                        ? 'border-[#0B4BA8] bg-[#0B4BA8]/8'
+                        ? 'border-[#E8412C] bg-[#E8412C]/8'
                         : 'border-[#17130E]/18 bg-[#F8F4EA] hover:border-[#17130E]'
                     }`}
                   >
-                    <span className={`block text-sm font-semibold ${active ? 'text-[#0B4BA8]' : 'text-[#17130E]'}`}>
+                    <span className={`block text-sm font-semibold ${active ? 'text-[#E8412C]' : 'text-[#17130E]'}`}>
                       {intent.label}
                     </span>
                     <span className="mt-1 hidden text-xs leading-5 text-[#17130E]/64 sm:block">
@@ -276,7 +276,7 @@ export default function NominateCommunityPage() {
               onChange={(event) => update('communityName', event.target.value)}
               placeholder="Example: Running Department"
               maxLength={160}
-              className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#0B4BA8]"
+              className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#E8412C]"
             />
           </div>
 
@@ -290,7 +290,7 @@ export default function NominateCommunityPage() {
                 onChange={(event) => update('city', event.target.value)}
                 placeholder="Singapore"
                 maxLength={100}
-                className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#0B4BA8]"
+                className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#E8412C]"
               />
             </div>
 
@@ -301,7 +301,7 @@ export default function NominateCommunityPage() {
               <select
                 value={form.category}
                 onChange={(event) => update('category', event.target.value)}
-                className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none focus:border-[#0B4BA8]"
+                className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none focus:border-[#E8412C]"
               >
                 <option value="">Not sure</option>
                 {ACTIVITY_TYPES.map((type) => (
@@ -322,7 +322,7 @@ export default function NominateCommunityPage() {
               onChange={(event) => update('sourceUrl', event.target.value)}
               placeholder="Instagram, website, Telegram, WhatsApp, Strava, or listing URL..."
               maxLength={500}
-              className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#0B4BA8]"
+              className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#E8412C]"
             />
           </div>
 
@@ -336,7 +336,7 @@ export default function NominateCommunityPage() {
               placeholder="Anything useful: usual meet spot, what changed, owner proof, or why the listing should be removed."
               maxLength={1000}
               rows={4}
-              className="w-full resize-none rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#0B4BA8]"
+              className="w-full resize-none rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#E8412C]"
             />
           </div>
 
@@ -350,7 +350,7 @@ export default function NominateCommunityPage() {
                 onChange={(event) => update('submitterName', event.target.value)}
                 placeholder="Optional"
                 maxLength={160}
-                className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#0B4BA8]"
+                className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#E8412C]"
               />
             </div>
 
@@ -364,7 +364,7 @@ export default function NominateCommunityPage() {
                 onChange={(event) => update('submitterEmail', event.target.value)}
                 placeholder="Optional"
                 maxLength={255}
-                className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#0B4BA8]"
+                className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#E8412C]"
               />
             </div>
           </div>

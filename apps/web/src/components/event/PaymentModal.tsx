@@ -343,10 +343,10 @@ export function PaymentModal({ event, onClose, onSuccess }: PaymentModalProps) {
                   rel="noopener noreferrer"
                   className={`w-full py-3 rounded-xl font-medium transition flex items-center justify-center gap-2 text-white ${
                     detectPlatform(event.communityLink) === 'whatsapp'
-                      ? 'bg-[#25D366] hover:bg-[#1da851]'
+                      ? 'bg-[#E8412C] hover:bg-[#E8412C]'
                       : detectPlatform(event.communityLink) === 'telegram'
-                      ? 'bg-[#0088cc] hover:bg-[#0077b3]'
-                      : 'bg-blue-600 hover:bg-blue-700'
+                      ? 'bg-[#E8412C] hover:bg-[#0077b3]'
+                      : 'bg-[#E8412C] hover:bg-[#E8412C]'
                   }`}
                 >
                   <MessageCircle className="w-5 h-5" />

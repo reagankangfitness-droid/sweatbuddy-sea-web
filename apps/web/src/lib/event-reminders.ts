@@ -528,7 +528,7 @@ export async function sendSocialReminderEmail(
         <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
           <!-- Header -->
           <tr>
-            <td style="padding: 32px; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); border-radius: 16px 16px 0 0; text-align: center;">
+            <td style="padding: 32px; background: linear-gradient(135deg, #E8412C 0%, #E8412C 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <div style="font-size: 48px; margin-bottom: 16px;">${headerEmoji}</div>
               <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
                 ${headerTitle}
@@ -587,7 +587,7 @@ export async function sendSocialReminderEmail(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${mapsLink}" style="display: inline-block; padding: 14px 28px; background-color: #3b82f6; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                    <a href="${mapsLink}" style="display: inline-block; padding: 14px 28px; background-color: #E8412C; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
                       Get Directions
                     </a>
                   </td>
@@ -598,7 +598,7 @@ export async function sendSocialReminderEmail(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${communityLink}" style="display: inline-block; padding: 14px 28px; background-color: ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? '#25D366' : '#0088cc'}; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                    <a href="${communityLink}" style="display: inline-block; padding: 14px 28px; background-color: ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? '#E8412C' : '#E8412C'}; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
                       Join Group Chat
                     </a>
                   </td>
@@ -610,11 +610,11 @@ export async function sendSocialReminderEmail(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${calendarLink}" style="color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
+                    <a href="${calendarLink}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
                       Add to Calendar
                     </a>
                     ${instagramLink ? `
-                    <a href="${instagramLink}" style="color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
+                    <a href="${instagramLink}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
                       @${escapeHtml(organizerInstagram || '')}
                     </a>
                     ` : ''}
@@ -625,7 +625,7 @@ export async function sendSocialReminderEmail(
               ${tipsHtml}
 
               <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
-                Can't make it? <a href="${eventUrl}" style="color: #3b82f6; text-decoration: underline;">Manage your RSVP</a>
+                Can't make it? <a href="${eventUrl}" style="color: #E8412C; text-decoration: underline;">Manage your RSVP</a>
               </p>
             </td>
           </tr>
@@ -633,13 +633,13 @@ export async function sendSocialReminderEmail(
           <!-- Footer -->
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
-              <a href="${eventUrl}" style="display: inline-block; margin-bottom: 16px; color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 500;">
+              <a href="${eventUrl}" style="display: inline-block; margin-bottom: 16px; color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500;">
                 View Experience Details &rarr;
               </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
                 Find more sessions at
               </p>
-              <a href="${BASE_URL}" style="color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 600;">
+              <a href="${BASE_URL}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
               </a>
               <p style="margin: 12px 0 0; color: #94a3b8; font-size: 11px;">
@@ -701,7 +701,7 @@ function buildSocialContextHtml(familiarFaces: FamiliarFace[], totalGoing: numbe
         if (face.imageUrl) {
           return `<td style="padding: 0 4px;"><img src="${escapeHtml(face.imageUrl)}" alt="${initials}" width="40" height="40" style="border-radius: 50%; border: 2px solid white; display: block;" /></td>`
         }
-        return `<td style="padding: 0 4px;"><div style="width: 40px; height: 40px; border-radius: 50%; background-color: #3b82f6; color: white; font-size: 16px; font-weight: 600; line-height: 40px; text-align: center; border: 2px solid white;">${initials}</div></td>`
+        return `<td style="padding: 0 4px;"><div style="width: 40px; height: 40px; border-radius: 50%; background-color: #E8412C; color: white; font-size: 16px; font-weight: 600; line-height: 40px; text-align: center; border: 2px solid white;">${initials}</div></td>`
       }).join('')
     : ''
 

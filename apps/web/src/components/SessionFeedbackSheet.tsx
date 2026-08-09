@@ -175,7 +175,7 @@ export function SessionFeedbackSheet({
                   <Link
                     href={`/activities/${sessionId}/recap`}
                     onClick={() => { onClose(); resetState() }}
-                    className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[#0B4BA8] transition-colors hover:text-[#0D5BC8]"
+                    className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[#E8412C] transition-colors hover:text-[#E8412C]"
                   >
                     See who showed up <ArrowRight className="w-4 h-4" />
                   </Link>
@@ -202,7 +202,7 @@ export function SessionFeedbackSheet({
                         onClick={() => setReportReason(r.value)}
                         className={`w-full rounded-md border-2 px-4 py-3 text-left text-sm transition-all ${
                           reportReason === r.value
-                            ? 'border-[#17130E] bg-[#0B4BA8] font-semibold text-white'
+                            ? 'border-[#17130E] bg-[#E8412C] font-semibold text-white'
                             : 'border-[#17130E]/18 bg-[#F8F4EA] text-[#17130E] hover:border-[#17130E]'
                         }`}
                       >

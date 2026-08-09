@@ -51,7 +51,7 @@ export function LandingTopFilterDropdown({
         type="button"
         onClick={() => setOpen((current) => !current)}
         aria-expanded={open}
-        className="flex min-h-12 w-full touch-manipulation select-none items-center justify-between gap-2 rounded-md border-2 border-white/82 bg-[#0D0D0D] px-3 py-2 text-left shadow-[0_0_0_1px_rgba(255,255,255,0.08)] transition-colors hover:border-[#63FF8F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#63FF8F] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0B0B] data-[open=true]:border-[#63FF8F] sm:gap-3 sm:px-4"
+        className="flex min-h-12 w-full touch-manipulation select-none items-center justify-between gap-2 rounded-md border-2 border-white/82 bg-[#0D0D0D] px-3 py-2 text-left shadow-[0_0_0_1px_rgba(255,255,255,0.08)] transition-colors hover:border-[#E8412C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8412C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0B0B] data-[open=true]:border-[#E8412C] sm:gap-3 sm:px-4"
         data-open={open}
       >
         <span className="min-w-0">
@@ -59,7 +59,7 @@ export function LandingTopFilterDropdown({
             <span className="block text-[11px] font-bold uppercase text-white/42">
               {label}
             </span>
-            <span className="rounded-full bg-[#63FF8F]/12 px-1.5 py-0.5 text-[9px] font-bold uppercase text-[#63FF8F]">
+            <span className="rounded-full bg-[#E8412C]/12 px-1.5 py-0.5 text-[9px] font-bold uppercase text-[#E8412C]">
               {state}
             </span>
           </span>
@@ -89,7 +89,7 @@ export function LandingTopFilterDropdown({
               onClick={() => setOpen(false)}
               className={`flex min-h-11 items-center justify-between gap-2 rounded px-3 text-sm font-bold transition-colors ${
                 index === 0
-                  ? 'bg-[#63FF8F] text-black'
+                  ? 'bg-[#E8412C] text-black'
                   : 'bg-[#151515] text-white/76 hover:bg-[#242424] hover:text-white'
               }`}
             >

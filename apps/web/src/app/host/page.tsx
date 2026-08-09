@@ -166,7 +166,7 @@ export default function BecomeAHostPage() {
 
         <div className="relative mx-auto grid max-w-6xl gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
           <div className="max-w-3xl">
-            <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-[#C6E76A]">
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.24em] text-[#E8412C]">
               For fitness community hosts
             </p>
             <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
@@ -196,7 +196,7 @@ export default function BecomeAHostPage() {
           </div>
 
           <div className="hidden rounded-lg border border-white/10 bg-[#111412]/85 p-4 shadow-xl shadow-black/25 backdrop-blur lg:block">
-            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#C6E76A]">
+            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#E8412C]">
               What people see
             </p>
             <div className="mt-4 space-y-3">
@@ -216,7 +216,7 @@ export default function BecomeAHostPage() {
             </div>
             <Link
               href="/buddy"
-              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-white/15 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:border-[#C6E76A]/60"
+              className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-white/15 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:border-[#E8412C]/60"
             >
               View discovery
             </Link>

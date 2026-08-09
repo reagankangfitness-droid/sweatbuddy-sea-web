@@ -129,8 +129,8 @@ export default function NewsletterPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center">
-              <Users className="w-5 h-5 text-blue-400" />
+            <div className="w-10 h-10 bg-[#17130E] rounded-lg flex items-center justify-center">
+              <Users className="w-5 h-5 text-[#E8412C]" />
             </div>
             <div>
               <p className="text-2xl font-bold text-neutral-100">{subscribers.length}</p>
@@ -223,7 +223,7 @@ export default function NewsletterPage() {
                   {filteredSubscribers.map((subscriber) => (
                     <tr key={subscriber.email} className="border-b border-neutral-800 hover:bg-neutral-900">
                       <td className="p-4">
-                        <a href={`mailto:${subscriber.email}`} className="text-blue-400 hover:underline">
+                        <a href={`mailto:${subscriber.email}`} className="text-[#E8412C] hover:underline">
                           {subscriber.email}
                         </a>
                       </td>
@@ -248,7 +248,7 @@ export default function NewsletterPage() {
                 <div key={subscriber.email} className="p-4">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="flex-1 min-w-0">
-                      <a href={`mailto:${subscriber.email}`} className="text-blue-400 hover:underline text-sm break-all">
+                      <a href={`mailto:${subscriber.email}`} className="text-[#E8412C] hover:underline text-sm break-all">
                         {subscriber.email}
                       </a>
                       {subscriber.name && (

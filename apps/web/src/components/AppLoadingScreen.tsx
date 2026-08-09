@@ -38,7 +38,7 @@ export function AppLoadingScreen({
       aria-live="polite"
     >
       <section className="relative w-full max-w-md">
-        <div className="absolute -inset-6 rounded-[32px] bg-[#C6E76A]/8 blur-3xl" aria-hidden="true" />
+        <div className="absolute -inset-6 rounded-[32px] bg-[#E8412C]/8 blur-3xl" aria-hidden="true" />
 
         <div className="relative overflow-hidden rounded-[24px] border border-white/12 bg-[#0B0D0C] shadow-[0_24px_80px_rgba(0,0,0,0.42)]">
           <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
@@ -53,7 +53,7 @@ export function AppLoadingScreen({
                 <p className="font-mono text-[10px] font-bold uppercase text-white/42">Community map</p>
               </div>
             </div>
-            <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#C6E76A]" />
+            <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#E8412C]" />
           </header>
 
           <div className="relative h-64 overflow-hidden border-b border-white/10 bg-[#10130F]">
@@ -71,7 +71,7 @@ export function AppLoadingScreen({
                 className="absolute flex items-center gap-1.5 rounded-full border border-[#17130E] bg-[#F8F4EA] py-1.5 pl-1.5 pr-3 text-[#17130E] shadow-[3px_3px_0_rgba(0,0,0,0.24)]"
                 style={{ top: pin.top, left: pin.left, animationDelay: `${index * 140}ms` }}
               >
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#C6E76A]">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#E8412C]">
                   <Users className="h-3.5 w-3.5" strokeWidth={2.6} />
                 </span>
                 <span className="font-mono text-[10px] font-bold uppercase">{pin.label}</span>
@@ -79,10 +79,10 @@ export function AppLoadingScreen({
             ))}
 
             <div className="absolute inset-x-4 bottom-4 rounded-lg border border-white/12 bg-[#0B0D0C]/88 p-3 backdrop-blur-md">
-              <p className="font-mono text-[10px] font-bold uppercase text-[#C6E76A]">{label}</p>
+              <p className="font-mono text-[10px] font-bold uppercase text-[#E8412C]">{label}</p>
               <p className="mt-1 text-lg font-bold leading-tight text-white">{detail}</p>
               <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full w-2/5 rounded-full bg-[#C6E76A] [animation:sbLoadingBar_1.4s_ease-in-out_infinite]" />
+                <div className="h-full w-2/5 rounded-full bg-[#E8412C] [animation:sbLoadingBar_1.4s_ease-in-out_infinite]" />
               </div>
             </div>
           </div>
@@ -95,7 +95,7 @@ export function AppLoadingScreen({
                   <div className="mt-2 h-5 w-44 rounded-full bg-white/12 skeleton-wave" />
                 </div>
                 <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/[0.04]">
-                  <MapPin className="h-4 w-4 text-[#C6E76A]" />
+                  <MapPin className="h-4 w-4 text-[#E8412C]" />
                 </div>
               </div>
 

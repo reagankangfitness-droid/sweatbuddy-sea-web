@@ -66,7 +66,7 @@ export default async function SingaporeCommunityGuidePage({ params }: PageProps)
 
           <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
             <div>
-              <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#63FF8F]">
+              <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#E8412C]">
                 {guide.eyebrow}
               </p>
               <h1 className="mt-3 max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
@@ -108,7 +108,7 @@ export default async function SingaporeCommunityGuidePage({ params }: PageProps)
               <Link
                 key={search}
                 href="/communities"
-                className="inline-flex min-h-11 items-center rounded-full border border-white/12 px-3 text-xs font-black uppercase tracking-wide text-white/62 transition-colors hover:border-[#63FF8F] hover:text-[#63FF8F]"
+                className="inline-flex min-h-11 items-center rounded-full border border-white/12 px-3 text-xs font-black uppercase tracking-wide text-white/62 transition-colors hover:border-[#E8412C] hover:text-[#E8412C]"
               >
                 {search}
               </Link>
@@ -139,7 +139,7 @@ function GuideCommunityCard({ community }: { community: CommunityData }) {
         <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
           {getCategoryEmoji(community.category)} {community.category.replace(/_/g, ' ')}
         </span>
-        <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#63FF8F] backdrop-blur">
+        <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#E8412C] backdrop-blur">
           {readiness.score >= 80 ? 'High confidence' : 'Source checked'}
         </span>
       </Link>
@@ -147,7 +147,7 @@ function GuideCommunityCard({ community }: { community: CommunityData }) {
         <h2 className="line-clamp-2 text-lg font-bold leading-tight text-white">{community.name}</h2>
         <div className="mt-2 grid gap-1 text-xs font-semibold text-white/50">
           <p className="flex min-w-0 items-center gap-1">
-            <MapPin className="h-3.5 w-3.5 flex-shrink-0 text-[#63FF8F]" />
+            <MapPin className="h-3.5 w-3.5 flex-shrink-0 text-[#E8412C]" />
             <span className="truncate">{community.usualArea || community.cityName || 'Area TBA'}</span>
           </p>
           <p className="truncate">{community.usualSchedule || 'Schedule varies'}</p>
@@ -158,14 +158,14 @@ function GuideCommunityCard({ community }: { community: CommunityData }) {
         <div className="mt-3 flex flex-wrap gap-1.5">
           {readiness.strengths.slice(0, 3).map((strength) => (
             <span key={strength} className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.05] px-2 py-1 text-[10px] font-bold text-white/64">
-              <CheckCircle2 className="h-3 w-3 text-[#63FF8F]" />
+              <CheckCircle2 className="h-3 w-3 text-[#E8412C]" />
               {strength}
             </span>
           ))}
         </div>
         <Link
           href={`/communities/${community.slug}`}
-          className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-[#63FF8F] px-4 text-sm font-black text-black transition-colors hover:bg-[#83FFA6]"
+          className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-[#E8412C] px-4 text-sm font-black text-black transition-colors hover:bg-[#E8412C]"
         >
           View join details
           <ArrowRight className="h-4 w-4" />

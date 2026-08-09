@@ -313,7 +313,7 @@ function LocationPermissionPanel({
     <section className="border-b border-white/10 bg-[#101010] px-4 py-3">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 rounded-lg border border-white/10 bg-white/[0.035] p-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
             Location setup
           </p>
           <h2 className="mt-1 text-sm font-black text-white">{title}</h2>
@@ -324,7 +324,7 @@ function LocationPermissionPanel({
             type="button"
             onClick={onUseLocation}
             disabled={isDetecting}
-            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-[#C6E76A] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A] disabled:cursor-wait disabled:bg-[#3B432C] disabled:text-white/55"
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-[#E8412C] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#E8412C] disabled:cursor-wait disabled:bg-[#3B432C] disabled:text-white/55"
           >
             {isDetecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <MapPinIcon />}
             Use my location
@@ -364,7 +364,7 @@ function MapLocationPermissionOverlay({
     <section className="absolute left-3 right-3 top-3 z-30 rounded-xl border border-white/14 bg-black/82 p-2.5 text-white shadow-2xl shadow-black/35 backdrop-blur-xl md:hidden">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
             Start nearby
           </p>
           <p className="mt-0.5 truncate text-xs font-bold leading-tight text-white/78">
@@ -375,7 +375,7 @@ function MapLocationPermissionOverlay({
           type="button"
           onClick={onUseLocation}
           disabled={isDetecting}
-          className="inline-flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#C6E76A] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A] disabled:cursor-wait disabled:bg-[#3B432C] disabled:text-white/55"
+          className="inline-flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#E8412C] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#E8412C] disabled:cursor-wait disabled:bg-[#3B432C] disabled:text-white/55"
         >
           {isDetecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <MapPin className="h-3.5 w-3.5" />}
           Use
@@ -387,7 +387,7 @@ function MapLocationPermissionOverlay({
             key={city.slug}
             type="button"
             onClick={() => onChooseCity(city.slug)}
-            className="inline-flex min-h-8 shrink-0 items-center justify-center rounded-full border border-white/18 bg-white/[0.06] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white transition-colors hover:border-[#C6E76A]/60 hover:text-[#C6E76A]"
+            className="inline-flex min-h-8 shrink-0 items-center justify-center rounded-full border border-white/18 bg-white/[0.06] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white transition-colors hover:border-[#E8412C]/60 hover:text-[#E8412C]"
           >
             {city.name}
           </button>
@@ -461,7 +461,7 @@ function LocalPulsePanel({
       <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(220px,300px)] sm:items-start">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
               Local pulse
             </p>
             <span className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide text-white/45">
@@ -496,7 +496,7 @@ function LocalPulsePanel({
           {myNextSession ? (
             <Link
               href={`/activities/${myNextSession.id}`}
-              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#C6E76A] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
+              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#E8412C] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#E8412C]"
             >
               Open my plan
               <ArrowRight className="h-3.5 w-3.5" />
@@ -505,7 +505,7 @@ function LocalPulsePanel({
             <button
               type="button"
               onClick={onOpenMap}
-              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#C6E76A] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
+              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#E8412C] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#E8412C]"
             >
               Open map
               <Map className="h-3.5 w-3.5" />
@@ -513,7 +513,7 @@ function LocalPulsePanel({
           ) : listedCommunityCount > 0 ? (
             <Link
               href={communityHref}
-              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#C6E76A] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
+              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#E8412C] px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#E8412C]"
             >
               Browse communities
               <Users className="h-3.5 w-3.5" />
@@ -554,8 +554,8 @@ function PulseStat({
   active: boolean
 }) {
   return (
-    <div className={`rounded-lg border px-3 py-2 ${active ? 'border-[#C6E76A]/24 bg-[#C6E76A]/8' : 'border-white/10 bg-white/[0.035]'}`}>
-      <p className={`font-mono text-base font-black leading-none ${active ? 'text-[#C6E76A]' : 'text-white'}`}>
+    <div className={`rounded-lg border px-3 py-2 ${active ? 'border-[#E8412C]/24 bg-[#E8412C]/8' : 'border-white/10 bg-white/[0.035]'}`}>
+      <p className={`font-mono text-base font-black leading-none ${active ? 'text-[#E8412C]' : 'text-white'}`}>
         {value}
       </p>
       <p className="mt-1 truncate font-mono text-[9px] font-black uppercase tracking-wide text-white/42">
@@ -579,14 +579,14 @@ function DiscoveryWorkspaceNav({
       <button
         type="button"
         onClick={onToggleView}
-        className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border border-white/12 bg-[#171A18] text-white/72 transition-colors hover:border-[#C6E76A] hover:text-[#C6E76A]"
+        className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border border-white/12 bg-[#171A18] text-white/72 transition-colors hover:border-[#E8412C] hover:text-[#E8412C]"
       >
         {viewMode === 'list' ? <Map className="h-3.5 w-3.5" /> : <List className="h-3.5 w-3.5" />}
         {viewMode === 'list' ? 'Map' : 'List'}
       </button>
       <Link
         href={communityHref}
-        className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border border-white/12 bg-[#171A18] text-white/72 transition-colors hover:border-[#C6E76A] hover:text-[#C6E76A]"
+        className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border border-white/12 bg-[#171A18] text-white/72 transition-colors hover:border-[#E8412C] hover:text-[#E8412C]"
       >
         <Users className="h-3.5 w-3.5" />
         Communities
@@ -614,7 +614,7 @@ function ResultsCommandHeader({
     <div className="border-b border-white/[0.08] py-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
             Ranked results
           </p>
           <h1 className="mt-1 truncate text-lg font-black text-white">
@@ -647,8 +647,8 @@ function MiniSignal({
   active: boolean
 }) {
   return (
-    <div className={`rounded-md border px-2 py-1.5 ${active ? 'border-[#C6E76A]/24 bg-[#C6E76A]/8' : 'border-white/10 bg-white/[0.03]'}`}>
-      <p className={`font-mono text-sm font-black leading-none ${active ? 'text-[#C6E76A]' : 'text-white/72'}`}>
+    <div className={`rounded-md border px-2 py-1.5 ${active ? 'border-[#E8412C]/24 bg-[#E8412C]/8' : 'border-white/10 bg-white/[0.03]'}`}>
+      <p className={`font-mono text-sm font-black leading-none ${active ? 'text-[#E8412C]' : 'text-white/72'}`}>
         {value}
       </p>
       <p className="mt-1 truncate font-mono text-[8px] font-black uppercase tracking-wide text-white/36">
@@ -684,7 +684,7 @@ function LocalDirectoryFallback({
   return (
     <div className="grid gap-4 py-4">
       <section className="rounded-lg border border-white/[0.10] bg-[#111412] p-4">
-        <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
+        <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
           Active communities
         </p>
         <h2 className="mt-2 text-xl font-black leading-tight text-white">
@@ -701,7 +701,7 @@ function LocalDirectoryFallback({
         <div className="mt-4 flex flex-wrap gap-2">
           <Link
             href={communityHref}
-            className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#C6E76A] px-4 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
+            className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#E8412C] px-4 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#E8412C]"
           >
             Browse communities
             <ArrowRight className="h-3.5 w-3.5" />
@@ -709,7 +709,7 @@ function LocalDirectoryFallback({
           <button
             type="button"
             onClick={onOpenMap}
-            className="inline-flex min-h-10 items-center gap-2 rounded-full border border-white/12 px-4 font-mono text-[10px] font-black uppercase tracking-wide text-white/72 transition-colors hover:border-[#C6E76A] hover:text-[#C6E76A]"
+            className="inline-flex min-h-10 items-center gap-2 rounded-full border border-white/12 px-4 font-mono text-[10px] font-black uppercase tracking-wide text-white/72 transition-colors hover:border-[#E8412C] hover:text-[#E8412C]"
           >
             Open map
             <Map className="h-3.5 w-3.5" />
@@ -751,7 +751,7 @@ function LocalDirectoryFallback({
             </h3>
             <Link
               href={communityHref}
-              className="font-mono text-[10px] font-black uppercase tracking-wide text-white/46 transition-colors hover:text-[#C6E76A]"
+              className="font-mono text-[10px] font-black uppercase tracking-wide text-white/46 transition-colors hover:text-[#E8412C]"
             >
               View all
             </Link>
@@ -779,7 +779,7 @@ function CommunityDecisionCard({ community }: { community: DirectoryCommunityPre
   ].filter((signal): signal is string => Boolean(signal)).slice(0, 3)
 
   return (
-    <article className="grid min-h-[132px] grid-cols-[116px_minmax(0,1fr)] overflow-hidden rounded-lg border border-white/[0.08] bg-[#151816] transition-colors hover:border-[#C6E76A]/35">
+    <article className="grid min-h-[132px] grid-cols-[116px_minmax(0,1fr)] overflow-hidden rounded-lg border border-white/[0.08] bg-[#151816] transition-colors hover:border-[#E8412C]/35">
       <Link href={`/communities/${community.slug}`} className="relative block bg-[#222222]">
         <Image
           src={imageUrl}
@@ -790,7 +790,7 @@ function CommunityDecisionCard({ community }: { community: DirectoryCommunityPre
           unoptimized={!imageUrl.startsWith('/')}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-        <span className="absolute bottom-2 left-2 rounded-md bg-black/60 px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-[#C6E76A] backdrop-blur">
+        <span className="absolute bottom-2 left-2 rounded-md bg-black/60 px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-[#E8412C] backdrop-blur">
           {score}
         </span>
       </Link>
@@ -801,13 +801,13 @@ function CommunityDecisionCard({ community }: { community: DirectoryCommunityPre
               {formatCommunityCategory(community.category)}
             </p>
             <Link href={`/communities/${community.slug}`} className="mt-1 block">
-              <h4 className="line-clamp-1 text-sm font-black text-white transition-colors hover:text-[#C6E76A]">
+              <h4 className="line-clamp-1 text-sm font-black text-white transition-colors hover:text-[#E8412C]">
                 {community.name}
               </h4>
             </Link>
           </div>
           {community.isVerified ? (
-            <ShieldCheck className="h-4 w-4 shrink-0 text-[#C6E76A]" />
+            <ShieldCheck className="h-4 w-4 shrink-0 text-[#E8412C]" />
           ) : null}
         </div>
         <p className="mt-1 line-clamp-1 text-xs font-semibold text-white/54">
@@ -840,7 +840,7 @@ function CommunityDecisionCard({ community }: { community: DirectoryCommunityPre
               href={joinHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-9 items-center justify-center gap-1 rounded-full bg-[#C6E76A] px-3 font-mono text-[9px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
+              className="inline-flex min-h-9 items-center justify-center gap-1 rounded-full bg-[#E8412C] px-3 font-mono text-[9px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#E8412C]"
             >
               {formatJoinPlatformLabel(community.joinPlatform)}
               <ExternalLink className="h-3 w-3" />
@@ -848,7 +848,7 @@ function CommunityDecisionCard({ community }: { community: DirectoryCommunityPre
           ) : (
             <Link
               href={`/communities/${community.slug}`}
-              className="inline-flex min-h-9 items-center justify-center rounded-full bg-[#C6E76A] px-3 font-mono text-[9px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
+              className="inline-flex min-h-9 items-center justify-center rounded-full bg-[#E8412C] px-3 font-mono text-[9px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#E8412C]"
             >
               Join path
             </Link>
@@ -2189,7 +2189,7 @@ function BuddyPageInner() {
             <Link
               href="/"
               aria-label="SweatBuddies home"
-              className="inline-flex min-h-9 min-w-9 items-center bg-[#0B4BA8] px-2.5"
+              className="inline-flex min-h-9 min-w-9 items-center bg-[#E8412C] px-2.5"
             >
               <LogoWithText
                 size={23}
@@ -2283,7 +2283,7 @@ function BuddyPageInner() {
             </div>
             <button
               onClick={() => setShowCreateMenu(true)}
-              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#C6E76A] shadow-lg shadow-[#C6E76A]/16 transition-colors hover:bg-[#D8F18A] active:scale-95"
+              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#E8412C] shadow-lg shadow-[#E8412C]/16 transition-colors hover:bg-[#E8412C] active:scale-95"
               aria-label="Add to the map"
             >
               <Plus className="w-4 h-4 text-black" />
@@ -2953,7 +2953,7 @@ function BuddyMobileConceptShell({
         <div className="flex min-h-9 items-center justify-between gap-3 font-mono">
           <Link
             href="/"
-            className="inline-flex min-h-8 items-center bg-[#0B4BA8] px-2.5 text-[13px] font-black lowercase tracking-tight text-white"
+            className="inline-flex min-h-8 items-center bg-[#E8412C] px-2.5 text-[13px] font-black lowercase tracking-tight text-white"
           >
             sweatbuddies
           </Link>
@@ -3004,7 +3004,7 @@ function BuddyMobileConceptShell({
             showEmptyState={false}
           />
           <div className="pointer-events-none absolute left-3 top-3 z-20 max-w-[236px] border-2 border-[#17130E] bg-[#F8F4EA]/92 px-2.5 py-2 font-mono shadow-[2px_2px_0_#17130E] backdrop-blur">
-            <p className="truncate text-[8px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
+            <p className="truncate text-[8px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
               Within 3 km of {activeLocationLabel}
             </p>
             <p className="mt-1 text-[10px] font-black uppercase text-[#17130E]/56">
@@ -3033,7 +3033,7 @@ function BuddyMobileConceptShell({
                 </p>
                 <h1 className="mt-1 max-w-[320px] font-sans text-[36px] font-black uppercase leading-[0.94] tracking-normal">
                   Crews near
-                  <span className="block text-[#0B4BA8]">you this week</span>
+                  <span className="block text-[#E8412C]">you this week</span>
                 </h1>
                 <p className="mt-3 max-w-[310px] font-serif text-[13px] italic leading-5 text-[#17130E]/72">
                   New here? Start with the ones that say first-timers welcome.
@@ -3101,7 +3101,7 @@ function BuddyMobileConceptShell({
                 </p>
                 <h1 className="mt-1 max-w-[330px] font-sans text-[34px] font-black uppercase leading-[0.96] tracking-normal">
                   You&apos;re free.
-                  <span className="block text-[#0B4BA8]">Here&apos;s who&apos;s out.</span>
+                  <span className="block text-[#E8412C]">Here&apos;s who&apos;s out.</span>
                 </h1>
               </div>
 
@@ -3158,13 +3158,13 @@ function BuddyMobileConceptShell({
                 </p>
                 <h1 className="mt-1 font-sans text-[34px] font-black uppercase leading-[0.96] tracking-normal">
                   Make it easier
-                  <span className="block text-[#0B4BA8]">to show up.</span>
+                  <span className="block text-[#E8412C]">to show up.</span>
                 </h1>
               </div>
 
               <div className="mt-4 grid gap-3">
                 <div className="border-2 border-[#17130E] bg-[#F8F4EA] p-3 shadow-[3px_3px_0_#17130E]">
-                  <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
+                  <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
                     Next plan
                   </p>
                   {myPlansLoading ? (
@@ -3186,7 +3186,7 @@ function BuddyMobileConceptShell({
                   )}
                 </div>
 
-                <div className="border-2 border-dashed border-[#0B4BA8] bg-[#F8F4EA] p-3">
+                <div className="border-2 border-dashed border-[#E8412C] bg-[#F8F4EA] p-3">
                   <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
                     Availability v1
                   </p>
@@ -3269,7 +3269,7 @@ function MobileConceptCrewCard({
     <article className="border-2 border-[#17130E] bg-[#F8F4EA] shadow-[3px_3px_0_#17130E]">
       <Link href={`/communities/${community.slug}`} className="block">
         <div className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 p-3">
-          <div className="relative h-[86px] overflow-hidden border-2 border-[#17130E] bg-[#0B4BA8]">
+          <div className="relative h-[86px] overflow-hidden border-2 border-[#17130E] bg-[#E8412C]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={imageUrl} alt="" className="h-full w-full object-cover mix-blend-multiply" />
             <span className="absolute bottom-1 left-1 bg-[#17130E] px-1.5 py-0.5 font-mono text-[8px] font-black uppercase text-white">
@@ -3278,7 +3278,7 @@ function MobileConceptCrewCard({
           </div>
           <div className="min-w-0">
             <div className="flex items-center justify-between gap-2 font-mono text-[9px] font-black uppercase tracking-[0.18em]">
-              <span className="text-[#0B4BA8]"># {rank}</span>
+              <span className="text-[#E8412C]"># {rank}</span>
               <span>{community.usualArea || community.city?.name || citySlug}</span>
             </div>
             <h2 className="mt-1 line-clamp-2 font-sans text-xl font-black uppercase leading-tight">
@@ -3288,7 +3288,7 @@ function MobileConceptCrewCard({
               {community.bestFor || community.usualSchedule || community.description || 'Community-led sessions vary.'}
             </p>
             <div className="mt-2 flex flex-wrap gap-1">
-              {community.beginnerFriendly ? <MobilePaperTag label="First-timers" tone="blue" /> : null}
+              {community.beginnerFriendly ? <MobilePaperTag label="First-timers" tone="coral" /> : null}
               {community.soloFriendly ? <MobilePaperTag label="Solo OK" tone="red" /> : null}
               <MobilePaperTag label={formatCommunityPrice(community.priceType)} />
             </div>
@@ -3339,7 +3339,7 @@ function MobileConceptPlanFeature({
   return (
     <article className="mt-3 overflow-hidden border-2 border-[#17130E] bg-[#F8F4EA] shadow-[3px_3px_0_#17130E]">
       <Link href={`/activities/${session.id}`} className="block">
-        <div className="relative h-44 border-b-2 border-[#17130E] bg-[#0B4BA8]">
+        <div className="relative h-44 border-b-2 border-[#17130E] bg-[#E8412C]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={getSessionListingImage(session)} alt="" className="h-full w-full object-cover opacity-75 mix-blend-multiply" />
           <span className="absolute bottom-0 left-0 bg-[#17130E] px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-white">
@@ -3350,7 +3350,7 @@ function MobileConceptPlanFeature({
           </span>
         </div>
         <div className="p-3">
-          <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
+          <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
             {formatCommunityCategory(session.categorySlug || 'fitness')} - {session.city}
           </p>
           <h2 className="mt-1 font-sans text-[24px] font-black uppercase leading-tight">
@@ -3400,7 +3400,7 @@ function MobileConceptPlanRow({ session }: { session: Session }) {
         </p>
       </div>
       <div className="min-w-0 pr-2">
-        <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
+        <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
           {formatCommunityCategory(session.categorySlug || 'fitness')} - {session.address?.split(',')[0] || session.city}
         </p>
         <h3 className="mt-1 line-clamp-2 font-sans text-lg font-black uppercase leading-tight">
@@ -3441,7 +3441,7 @@ function MobileConceptSelectedPlanCard({
         <X className="h-4 w-4" />
       </button>
       <Link href={`/activities/${session.id}`} className="block p-3 pr-12">
-        <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
+        <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
           {session.startTime ? getRelativeTime(session.startTime) : 'Time TBA'} - {session.price === 0 ? 'Free' : formatBuddyMapPrice(session.price, session.currency)}
         </p>
         <h2 className="mt-1 line-clamp-2 font-sans text-xl font-black uppercase leading-tight">
@@ -3463,12 +3463,12 @@ function MobileConceptSelectedPlanCard({
   )
 }
 
-function MobilePaperTag({ label, tone }: { label: string; tone?: 'blue' | 'red' }) {
+function MobilePaperTag({ label, tone }: { label: string; tone?: 'coral' | 'red' }) {
   return (
     <span
       className={`border px-1.5 py-0.5 font-mono text-[8px] font-black uppercase tracking-wide ${
-        tone === 'blue'
-          ? 'border-[#0B4BA8] text-[#0B4BA8]'
+        tone === 'coral'
+          ? 'border-[#E8412C] text-[#E8412C]'
           : tone === 'red'
             ? 'border-[#E8412C] text-[#E8412C]'
             : 'border-[#17130E]/45 text-[#17130E]/66'
@@ -3601,7 +3601,7 @@ function AttendeePreviewSheet({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#C6E76A]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#E8412C]">
             Going to this
           </p>
           <h3 className="mt-1 line-clamp-2 text-base font-black leading-tight text-white">
@@ -3629,13 +3629,13 @@ function AttendeePreviewSheet({
           </p>
         </div>
         <div className="rounded-xl border border-white/[0.10] bg-[#151816] px-3 py-2">
-          <p className="text-lg font-black text-[#C6E76A]">{soloCount}</p>
+          <p className="text-lg font-black text-[#E8412C]">{soloCount}</p>
           <p className="font-mono text-[9px] font-black uppercase tracking-wide text-white/56">
             Solo
           </p>
         </div>
         <div className="rounded-xl border border-white/[0.10] bg-[#151816] px-3 py-2">
-          <p className="text-lg font-black text-[#C6E76A]">
+          <p className="text-lg font-black text-[#E8412C]">
             {session.maxPeople ? Math.max(session.maxPeople - session.attendeeCount, 0) : 'Open'}
           </p>
           <p className="font-mono text-[9px] font-black uppercase tracking-wide text-white/56">
@@ -3665,7 +3665,7 @@ function AttendeePreviewSheet({
                 </span>
               </div>
               {attendee.goingSolo ? (
-                <span className="shrink-0 rounded-full border border-[#C6E76A]/25 bg-[#C6E76A]/10 px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-[#C6E76A]">
+                <span className="shrink-0 rounded-full border border-[#E8412C]/25 bg-[#E8412C]/10 px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-[#E8412C]">
                   Solo
                 </span>
               ) : null}
@@ -3698,7 +3698,7 @@ function AttendeePreviewSheet({
         <Link
           href={`/activities/${session.id}`}
           onClick={() => trackSessionClick(session, 'attendee_preview_sheet', 0)}
-          className={`inline-flex min-h-10 items-center justify-center rounded-full border border-white/[0.14] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#C6E76A]/55 hover:text-white ${canQuickRsvp && !isJoined ? '' : 'col-span-2'}`}
+          className={`inline-flex min-h-10 items-center justify-center rounded-full border border-white/[0.14] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#E8412C]/55 hover:text-white ${canQuickRsvp && !isJoined ? '' : 'col-span-2'}`}
         >
           Details
         </Link>
@@ -3723,11 +3723,11 @@ function GoingSoloAfterRsvpPrompt({
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 18 }}
-      className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+12px)] z-50 mx-auto max-w-md rounded-2xl border border-[#C6E76A]/20 bg-[#101010]/96 p-3 shadow-[0_18px_60px_rgba(0,0,0,0.55)] backdrop-blur md:left-auto md:right-5 md:mx-0"
+      className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+12px)] z-50 mx-auto max-w-md rounded-2xl border border-[#E8412C]/20 bg-[#101010]/96 p-3 shadow-[0_18px_60px_rgba(0,0,0,0.55)] backdrop-blur md:left-auto md:right-5 md:mx-0"
     >
       <div className="flex items-start gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#C6E76A]/12">
-          <Users className="h-5 w-5 text-[#C6E76A]" />
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#E8412C]/12">
+          <Users className="h-5 w-5 text-[#E8412C]" />
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-bold text-white">Going solo?</p>
@@ -3739,7 +3739,7 @@ function GoingSoloAfterRsvpPrompt({
               type="button"
               onClick={() => onAnswer(true)}
               disabled={loading}
-              className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#C6E76A] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A] disabled:cursor-wait disabled:bg-neutral-300"
+              className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full bg-[#E8412C] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#E8412C] disabled:cursor-wait disabled:bg-neutral-300"
             >
               {loading ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -3797,7 +3797,7 @@ function FollowAfterRsvpPrompt({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={session.community.logoImage} alt="" className="h-full w-full object-cover" />
           ) : (
-            <UserPlus className="h-5 w-5 text-[#C6E76A]" />
+            <UserPlus className="h-5 w-5 text-[#E8412C]" />
           )}
         </div>
         <div className="min-w-0 flex-1">
@@ -3863,7 +3863,7 @@ function FilterMenu({
 }) {
   return (
     <details className="group relative min-w-0">
-      <summary className="flex min-h-[58px] cursor-pointer list-none items-center justify-between gap-2 rounded-md border-2 border-white/70 bg-[#0B0D0C] px-3 py-2 font-mono shadow-[0_0_0_1px_rgba(255,255,255,0.06)] transition-colors hover:border-[#C6E76A] group-open:border-[#C6E76A] [&::-webkit-details-marker]:hidden">
+      <summary className="flex min-h-[58px] cursor-pointer list-none items-center justify-between gap-2 rounded-md border-2 border-white/70 bg-[#0B0D0C] px-3 py-2 font-mono shadow-[0_0_0_1px_rgba(255,255,255,0.06)] transition-colors hover:border-[#E8412C] group-open:border-[#E8412C] [&::-webkit-details-marker]:hidden">
         <span className="min-w-0">
           <span className="block truncate text-[10px] font-black uppercase tracking-[0.14em] text-white/44">
             {label}
@@ -3888,7 +3888,7 @@ function FilterMenu({
               }}
               className={`flex min-h-11 w-full items-center justify-between gap-2 rounded px-3 text-left text-sm font-bold transition-colors ${
                 active
-                  ? 'bg-[#C6E76A] text-black'
+                  ? 'bg-[#E8412C] text-black'
                   : 'text-white/76 hover:bg-white/[0.08] hover:text-white'
               }`}
             >
@@ -3929,7 +3929,7 @@ function FilterOptionGroup({
               onClick={() => onChange(option.value)}
               className={`min-h-11 shrink-0 rounded-md border px-3 font-mono text-[11px] font-black uppercase tracking-wide transition-colors ${
                 active
-                  ? 'border-[#C6E76A] bg-[#C6E76A] text-black'
+                  ? 'border-[#E8412C] bg-[#E8412C] text-black'
                   : 'border-white/[0.10] bg-[#171A18] text-white/66 hover:border-white/24 hover:text-white'
               }`}
             >
@@ -3955,7 +3955,7 @@ function QuickIntentRail({
     <section className="border-b border-white/[0.08] py-3">
       <div className="mb-2 flex items-end justify-between gap-3">
         <div>
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
             I want to...
           </p>
           <p className="mt-1 text-xs font-semibold text-white/48">
@@ -3974,7 +3974,7 @@ function QuickIntentRail({
               onClick={() => onSelect(idea)}
               className={`grid min-h-[86px] w-[168px] shrink-0 content-between rounded-lg border p-3 text-left transition-colors ${
                 active
-                  ? 'border-[#C6E76A]/45 bg-[#C6E76A]/10'
+                  ? 'border-[#E8412C]/45 bg-[#E8412C]/10'
                   : 'border-white/[0.10] bg-[#121212] hover:border-white/25'
               }`}
             >
@@ -3985,7 +3985,7 @@ function QuickIntentRail({
                 </span>
               </span>
               <span className={`mt-2 inline-flex h-7 w-7 items-center justify-center rounded-full ${
-                active ? 'bg-[#C6E76A] text-black' : 'bg-white text-black'
+                active ? 'bg-[#E8412C] text-black' : 'bg-white text-black'
               }`}>
                 <Plus className="h-3.5 w-3.5" />
               </span>
@@ -4036,7 +4036,7 @@ function CityEmptyState({
           <div className="absolute inset-0 bg-gradient-to-t from-[#151816] via-black/10 to-transparent sm:bg-gradient-to-r" />
         </div>
         <div className="p-4 sm:p-5">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
             No solo-friendly plans yet
           </p>
           <h2 className="mt-2 text-2xl font-bold leading-tight text-white">
@@ -4058,7 +4058,7 @@ function CityEmptyState({
             </Link>
             <button
               onClick={onCreate}
-              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/[0.12] bg-[#1B1F1C] px-4 text-xs font-black uppercase tracking-wide text-white hover:border-[#C6E76A] hover:text-[#C6E76A]"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/[0.12] bg-[#1B1F1C] px-4 text-xs font-black uppercase tracking-wide text-white hover:border-[#E8412C] hover:text-[#E8412C]"
             >
               <Zap className="h-3.5 w-3.5" />
               Post a session
@@ -4091,7 +4091,7 @@ function CityEmptyState({
             <button
               key={idea.label}
               onClick={() => onStarterSelect(idea.type)}
-              className="min-h-[74px] rounded-xl border border-white/[0.08] bg-[#1A1E1B] p-3 text-left transition-colors hover:border-[#C6E76A]"
+              className="min-h-[74px] rounded-xl border border-white/[0.08] bg-[#1A1E1B] p-3 text-left transition-colors hover:border-[#E8412C]"
             >
               <p className="text-sm font-bold text-white">{idea.label}</p>
               <p className="mt-1 text-xs leading-5 text-[#777777]">{idea.note}</p>
@@ -4140,7 +4140,7 @@ function CityEmptyState({
 function MapEmptyOverlay({ cityName, onCreate }: { cityName: string; onCreate: () => void }) {
   return (
     <div className="absolute inset-x-4 top-4 z-20 max-w-sm rounded-2xl border border-white/[0.10] bg-black/70 p-4 shadow-2xl shadow-black/40 backdrop-blur">
-      <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
+      <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
         No solo-friendly pins
       </p>
       <h3 className="mt-2 text-lg font-bold leading-tight text-white">
@@ -4226,7 +4226,7 @@ function MapActivityDrawer({
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border-2 border-[#17130E] bg-[#E8412C] px-2 font-mono text-[10px] font-black uppercase tracking-wide text-white shadow-[2px_2px_0_#17130E] transition-colors hover:bg-[#F0523E]"
+          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md border-2 border-[#17130E] bg-[#E8412C] px-2 font-mono text-[10px] font-black uppercase tracking-wide text-white shadow-[2px_2px_0_#17130E] transition-colors hover:bg-[#E8412C]"
         >
           <Plus className="h-3.5 w-3.5" />
           Post
@@ -4393,7 +4393,7 @@ function MapQuietTodayBanner({
     <div className="absolute left-3 right-3 top-[13rem] z-20 hidden rounded-2xl border border-white/[0.10] bg-black/70 p-3 shadow-2xl shadow-black/30 backdrop-blur md:left-4 md:right-auto md:block md:w-[320px]">
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#C6E76A]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#E8412C]">
             Communities active
           </p>
           <p className="mt-1 truncate text-xs font-semibold text-white/80">
@@ -4434,7 +4434,7 @@ function MapCommandOverlay({
     <div className="absolute left-3 top-3 z-20 hidden w-[min(350px,calc(100%-24px))] rounded-lg border border-white/[0.12] bg-black/68 p-3 shadow-2xl shadow-black/40 backdrop-blur-xl">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#C6E76A]">
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
             Activity map
           </p>
           <h2 className="mt-1 truncate text-sm font-black text-white">
@@ -4461,7 +4461,7 @@ function MapCommandOverlay({
       </div>
       <Link
         href={communityHref}
-        className="mt-2 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-full border border-white/12 font-mono text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#C6E76A] hover:text-[#C6E76A]"
+        className="mt-2 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-full border border-white/12 font-mono text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#E8412C] hover:text-[#E8412C]"
       >
         Browse communities
         <Users className="h-3.5 w-3.5" />
@@ -4596,7 +4596,7 @@ function SessionCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
     >
-      <div className="group flex w-[286px] min-h-[420px] flex-shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-white/[0.10] bg-[#111412] shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition-colors hover:border-[#C6E76A]/35 hover:bg-[#151816] sm:w-auto sm:flex-shrink">
+      <div className="group flex w-[286px] min-h-[420px] flex-shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-white/[0.10] bg-[#111412] shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition-colors hover:border-[#E8412C]/35 hover:bg-[#151816] sm:w-auto sm:flex-shrink">
         <Link
           href={`/activities/${session.id}`}
           onClick={() => trackSessionClick(session, source, index)}
@@ -4614,14 +4614,14 @@ function SessionCard({
           <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
             {activityLabel}
           </span>
-          <span className="absolute right-3 top-3 rounded-md bg-[#C6E76A] px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-black shadow-md">
+          <span className="absolute right-3 top-3 rounded-md bg-[#E8412C] px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-black shadow-md">
             {priceDisplay}
           </span>
           <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-white backdrop-blur">
             {timeLabel}
           </span>
           {isJoined && !isHosting ? (
-            <span className="absolute bottom-3 right-3 rounded-md bg-[#C6E76A] px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-black">
+            <span className="absolute bottom-3 right-3 rounded-md bg-[#E8412C] px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-black">
               Going
             </span>
           ) : session.imageSourceLabel ? (
@@ -4634,7 +4634,7 @@ function SessionCard({
         <div className="flex flex-1 flex-col p-3.5">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="truncate font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#C6E76A]">
+              <p className="truncate font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#E8412C]">
                 {timeLabel}
               </p>
               <p className="mt-1 truncate text-[11px] font-semibold capitalize text-white/56">
@@ -4643,7 +4643,7 @@ function SessionCard({
             </div>
             <div className="flex shrink-0 items-center gap-1.5">
               {isJoined && !isHosting ? (
-                <span className="rounded-full bg-[#C6E76A] px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-black">
+                <span className="rounded-full bg-[#E8412C] px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-black">
                   Going
                 </span>
               ) : null}
@@ -4658,7 +4658,7 @@ function SessionCard({
             onClick={() => trackSessionClick(session, source, index)}
             className="mt-3 block"
           >
-            <h3 className="line-clamp-2 min-h-[40px] text-[15px] font-black leading-tight text-white transition-colors group-hover:text-[#C6E76A]">
+            <h3 className="line-clamp-2 min-h-[40px] text-[15px] font-black leading-tight text-white transition-colors group-hover:text-[#E8412C]">
               {displayName}
             </h3>
           </Link>
@@ -4685,7 +4685,7 @@ function SessionCard({
                 attendeeCount={session.attendeeCount}
                 onClick={onPreviewAttendees ? () => onPreviewAttendees(session) : undefined}
               />
-              <span className="shrink-0 rounded-full bg-[#C6E76A]/10 px-2 py-1 text-right text-[10px] font-black uppercase tracking-wide text-[#C6E76A]">
+              <span className="shrink-0 rounded-full bg-[#E8412C]/10 px-2 py-1 text-right text-[10px] font-black uppercase tracking-wide text-[#E8412C]">
                 {confidenceLabel}
               </span>
             </div>
@@ -4702,11 +4702,11 @@ function SessionCard({
                     key={signal.key}
                     className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-wide ${
                       signal.tone === 'teal'
-                        ? 'border-[#C6E76A]/25 bg-[#C6E76A]/10 text-[#C6E76A]'
+                        ? 'border-[#E8412C]/25 bg-[#E8412C]/10 text-[#E8412C]'
                         : signal.tone === 'hot'
-                          ? 'border-[#C6E76A]/25 bg-[#C6E76A]/10 text-[#C6E76A]'
+                          ? 'border-[#E8412C]/25 bg-[#E8412C]/10 text-[#E8412C]'
                           : signal.tone === 'gold'
-                            ? 'border-[#C6E76A]/25 bg-[#C6E76A]/10 text-[#C6E76A]'
+                            ? 'border-[#E8412C]/25 bg-[#E8412C]/10 text-[#E8412C]'
                             : 'border-white/[0.10] bg-white/[0.06] text-white/70'
                     }`}
                   >
@@ -4731,7 +4731,7 @@ function SessionCard({
                   }}
                   className={`inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full px-3 font-mono text-[10px] font-black uppercase tracking-wide transition-colors ${
                     isJoined
-                      ? 'border border-[#C6E76A]/30 bg-[#C6E76A]/10 text-[#C6E76A] hover:bg-[#C6E76A]/15'
+                      ? 'border border-[#E8412C]/30 bg-[#E8412C]/10 text-[#E8412C] hover:bg-[#E8412C]/15'
                       : 'bg-white text-black hover:bg-neutral-200'
                   } disabled:cursor-not-allowed disabled:bg-[#1B1F1C] disabled:text-white/40`}
                 >
@@ -4750,7 +4750,7 @@ function SessionCard({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => trackOfficialJoinClick(session, source)}
-                  className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#C6E76A] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#D8F18A]"
+                  className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#E8412C] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-black transition-colors hover:bg-[#E8412C]"
                 >
                   {officialJoinLabel}
                 </a>
@@ -4758,7 +4758,7 @@ function SessionCard({
               <Link
                 href={`/activities/${session.id}`}
                 onClick={() => trackSessionClick(session, source, index)}
-                className={`inline-flex min-h-10 items-center justify-center rounded-full border border-white/[0.14] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#C6E76A]/55 hover:text-white ${showQuickRsvp || officialJoinUrl ? '' : 'col-span-2'}`}
+                className={`inline-flex min-h-10 items-center justify-center rounded-full border border-white/[0.14] px-3 font-mono text-[10px] font-black uppercase tracking-wide text-white/70 transition-colors hover:border-[#E8412C]/55 hover:text-white ${showQuickRsvp || officialJoinUrl ? '' : 'col-span-2'}`}
               >
                 Details
               </Link>
@@ -4809,7 +4809,7 @@ function AttendeePreview({
         ))}
       </div>
       <span className="inline-flex min-w-0 items-center gap-1 truncate text-[11px] font-semibold text-white/70">
-        <Users className="h-3 w-3 shrink-0 text-[#C6E76A]" />
+        <Users className="h-3 w-3 shrink-0 text-[#E8412C]" />
         {attendeeCount} going
       </span>
     </>
@@ -4916,7 +4916,7 @@ function MapSelectedSessionCard({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={getSessionListingImage(session)} alt="" className="h-full w-full object-cover" />
-          <span className="absolute left-2 top-2 rounded-md bg-[#C6E76A] px-2 py-1 font-mono text-[10px] font-black uppercase text-black">
+          <span className="absolute left-2 top-2 rounded-md bg-[#E8412C] px-2 py-1 font-mono text-[10px] font-black uppercase text-black">
             {priceDisplay}
           </span>
           {session.imageSourceLabel ? (
@@ -4942,7 +4942,7 @@ function MapSelectedSessionCard({
           <p className="line-clamp-2 text-xs leading-snug text-white/56">
             {showUpConfidence.reason}
           </p>
-          <p className="truncate text-[11px] font-semibold text-[#C6E76A]">
+          <p className="truncate text-[11px] font-semibold text-[#E8412C]">
             {session.startTime ? getRelativeTime(session.startTime) : 'Time TBA'}
             {session.address ? ` · ${session.address.split(',')[0]}` : ''}
           </p>
@@ -4952,7 +4952,7 @@ function MapSelectedSessionCard({
             onClick={onPreviewAttendees ? () => onPreviewAttendees(session) : undefined}
           />
           <div className="flex min-w-0 flex-wrap gap-1.5">
-            <span className="rounded-full border border-[#C6E76A]/25 bg-[#C6E76A]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#C6E76A]">
+            <span className="rounded-full border border-[#E8412C]/25 bg-[#E8412C]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#E8412C]">
               {showUpConfidence.level} confidence
             </span>
             {confidenceBadges.map((badge) => (
@@ -4964,7 +4964,7 @@ function MapSelectedSessionCard({
               </span>
             ))}
             {soloCount > 0 ? (
-              <span className="rounded-full border border-[#C6E76A]/25 bg-[#C6E76A]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#C6E76A]">
+              <span className="rounded-full border border-[#E8412C]/25 bg-[#E8412C]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#E8412C]">
                 {soloCount} solo
               </span>
             ) : null}
@@ -4982,12 +4982,12 @@ function MapSelectedSessionCard({
               </span>
             ) : null}
             {levelLabel ? (
-              <span className="rounded-full border border-[#C6E76A]/25 bg-[#C6E76A]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#C6E76A]">
+              <span className="rounded-full border border-[#E8412C]/25 bg-[#E8412C]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#E8412C]">
                 {levelLabel}
               </span>
             ) : null}
             {officialJoinUrl ? (
-              <span className="rounded-full border border-[#C6E76A]/25 bg-[#C6E76A]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#C6E76A]">
+              <span className="rounded-full border border-[#E8412C]/25 bg-[#E8412C]/10 px-2 py-1 font-mono text-[10px] font-black uppercase text-[#E8412C]">
                 Official link
               </span>
             ) : null}
@@ -5011,7 +5011,7 @@ function MapSelectedSessionCard({
                 }}
                 className={`inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 font-mono text-[10px] font-black uppercase transition-colors ${
                   isJoined
-                    ? 'border border-[#C6E76A]/30 bg-[#C6E76A]/10 text-[#C6E76A]'
+                    ? 'border border-[#E8412C]/30 bg-[#E8412C]/10 text-[#E8412C]'
                     : 'bg-white text-black hover:bg-neutral-200'
                 } disabled:cursor-not-allowed disabled:bg-[#222222] disabled:text-[#666666]`}
               >
@@ -5031,7 +5031,7 @@ function MapSelectedSessionCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackOfficialJoinClick(session, source)}
-                className="inline-flex min-h-8 items-center gap-1.5 rounded-full bg-[#C6E76A] px-3 font-mono text-[10px] font-black uppercase text-black transition-colors hover:bg-[#D8F18A]"
+                className="inline-flex min-h-8 items-center gap-1.5 rounded-full bg-[#E8412C] px-3 font-mono text-[10px] font-black uppercase text-black transition-colors hover:bg-[#E8412C]"
               >
                 {ctaLabel}
                 <ArrowRight className="h-3 w-3" />

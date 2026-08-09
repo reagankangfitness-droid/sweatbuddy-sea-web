@@ -224,7 +224,7 @@ export function DirectChatWindow({
           className="bg-neutral-950 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg h-[80vh] sm:h-[70vh] flex flex-col overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-[#1800ad] to-[#3477f8] text-white">
+          <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-[#1800ad] to-[#E8412C] text-white">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
                 <Instagram className="w-5 h-5" />
@@ -352,7 +352,7 @@ export function DirectChatWindow({
                         }`}
                       >
                         {!isOwnMessage && (
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#1800ad] to-[#3477f8] flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#1800ad] to-[#E8412C] flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
                             {organizerHandle.charAt(0).toUpperCase()}
                           </div>
                         )}

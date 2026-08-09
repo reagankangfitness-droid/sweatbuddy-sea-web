@@ -88,19 +88,11 @@ export async function GET(
   }
 }
 
-// Generate a consistent pastel color from an ID
+// Generate a consistent brand color from an ID
 function getColorFromId(id: string): string {
   const colors = [
-    '#FF6B6B', // coral red
-    '#4ECDC4', // teal
-    '#45B7D1', // sky blue
-    '#96CEB4', // sage green
-    '#FFEAA7', // soft yellow
-    '#DDA0DD', // plum
-    '#98D8C8', // mint
-    '#F7DC6F', // golden
-    '#BB8FCE', // lavender
-    '#85C1E9', // light blue
+    '#E8412C',
+    '#17130E',
   ]
 
   // Simple hash from id

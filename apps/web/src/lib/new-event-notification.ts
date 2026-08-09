@@ -120,7 +120,7 @@ function buildNewEventEmail(params: {
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background-color:#f5f5f5;">
   <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;margin-top:20px;margin-bottom:20px;">
     <!-- Header -->
-    <div style="background:linear-gradient(135deg,#3b82f6,#6366f1);padding:32px 24px;text-align:center;">
+    <div style="background:linear-gradient(135deg,#E8412C,#E8412C);padding:32px 24px;text-align:center;">
       <div style="font-size:36px;margin-bottom:8px;">🎉</div>
       <h1 style="color:#ffffff;font-size:20px;margin:0;">New Event from ${escapeHtml(params.communityName)}</h1>
     </div>

@@ -31,10 +31,10 @@ const tierColors: Record<string, { bg: string; border: string; text: string; ico
     icon: 'text-yellow-500',
   },
   platinum: {
-    bg: 'bg-cyan-950/50',
-    border: 'border-cyan-700/50',
-    text: 'text-cyan-400',
-    icon: 'text-cyan-500',
+    bg: 'bg-[#17130E]',
+    border: 'border-[#E8412C]/30',
+    text: 'text-[#E8412C]',
+    icon: 'text-[#E8412C]',
   },
 }
 

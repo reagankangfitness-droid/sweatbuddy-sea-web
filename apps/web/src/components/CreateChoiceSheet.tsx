@@ -23,7 +23,7 @@ export function CreateChoiceSheet({ open, onClose, onHostSession }: CreateChoice
       <div className="w-full max-w-md rounded-lg border-2 border-[#17130E] bg-[#F4EFE3] p-4 text-[#17130E] shadow-[4px_4px_0_#17130E]">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#0B4BA8]">
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
               Add to the map
             </p>
             <h2 id="create-choice-title" className="mt-1 text-xl font-bold leading-tight text-[#17130E]">
@@ -47,7 +47,7 @@ export function CreateChoiceSheet({ open, onClose, onHostSession }: CreateChoice
           <button
             type="button"
             onClick={onHostSession}
-            className="flex min-h-[76px] items-center gap-3 rounded-md border-2 border-[#17130E] bg-[#E8412C] text-left text-white shadow-[3px_3px_0_#17130E] transition-colors hover:bg-[#F0523E]"
+            className="flex min-h-[76px] items-center gap-3 rounded-md border-2 border-[#17130E] bg-[#E8412C] text-left text-white shadow-[3px_3px_0_#17130E] transition-colors hover:bg-[#E8412C]"
           >
             <span className="ml-4 flex h-11 w-11 shrink-0 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#F8F4EA] text-[#17130E]">
               <CalendarPlus className="h-5 w-5" />
@@ -65,7 +65,7 @@ export function CreateChoiceSheet({ open, onClose, onHostSession }: CreateChoice
             onClick={onClose}
             className="flex min-h-[76px] items-center gap-3 rounded-md border-2 border-[#17130E] bg-[#F8F4EA] text-left shadow-[3px_3px_0_#17130E] transition-colors hover:bg-white"
           >
-            <span className="ml-4 flex h-11 w-11 shrink-0 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#0B4BA8] text-white">
+            <span className="ml-4 flex h-11 w-11 shrink-0 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#E8412C] text-white">
               <Users className="h-5 w-5" />
             </span>
             <span className="min-w-0 pr-4">

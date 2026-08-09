@@ -276,7 +276,7 @@ export function EventPageClient({ event, familiarFaces = [], communityFollow }: 
                       href={`https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-blue-400 hover:underline"
+                      className="text-sm text-[#E8412C] hover:underline"
                     >
                       Get directions
                     </a>

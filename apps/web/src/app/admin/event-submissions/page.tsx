@@ -205,7 +205,7 @@ export default function AdminEventSubmissionsPage() {
                         >
                           {submission.status}
                         </span>
-                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-900 text-blue-800">
+                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-[#17130E] text-[#E8412C]">
                           {submission.category}
                         </span>
                       </div>
@@ -243,14 +243,14 @@ export default function AdminEventSubmissionsPage() {
                             href={`https://instagram.com/${submission.organizerInstagram}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1 text-blue-400 hover:underline"
+                            className="flex items-center gap-1 text-[#E8412C] hover:underline"
                           >
                             <Instagram className="w-4 h-4" />
                             @{submission.organizerInstagram}
                           </a>
                           <a
                             href={`mailto:${submission.contactEmail}`}
-                            className="flex items-center gap-1 text-neutral-400 hover:text-blue-600"
+                            className="flex items-center gap-1 text-neutral-400 hover:text-[#E8412C]"
                           >
                             <Mail className="w-4 h-4" />
                             {submission.contactEmail}

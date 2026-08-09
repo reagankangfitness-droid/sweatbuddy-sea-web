@@ -99,7 +99,7 @@ export function WaiverLink({ onClick, className = '' }: WaiverLinkProps) {
     <button
       type="button"
       onClick={onClick}
-      className={`text-[#2563EB] hover:underline font-medium ${className}`}
+      className={`text-[#E8412C] hover:underline font-medium ${className}`}
     >
       Participation Waiver
     </button>

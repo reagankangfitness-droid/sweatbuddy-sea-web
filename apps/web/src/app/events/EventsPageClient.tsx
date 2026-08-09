@@ -608,7 +608,7 @@ export default function EventsPage() {
                 {friendsGoingEvents.length > 0 && (
                   <section className="py-6 md:py-12 border-t border-neutral-800">
                     <div className="flex items-center gap-2 mb-3">
-                      <Users className="w-4 h-4 text-indigo-500" />
+                      <Users className="w-4 h-4 text-[#E8412C]" />
                       <h2 className="text-base font-semibold text-neutral-100">Friends Are Going</h2>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -712,8 +712,8 @@ function EventCard({ event, index, compact }: { event: HostedEvent; index: numbe
 
           {event.friendsGoing && event.friendsGoing.length > 0 ? (
             <div className="flex items-center gap-1 mt-1.5">
-              <Users className="w-3 h-3 flex-shrink-0 text-indigo-500" />
-              <span className="text-xs text-indigo-600 truncate">
+              <Users className="w-3 h-3 flex-shrink-0 text-[#E8412C]" />
+              <span className="text-xs text-[#E8412C] truncate">
                 {event.friendsGoing.length === 1 ? (
                   <><strong>{event.friendsGoing[0].firstName || event.friendsGoing[0].name}</strong> is going</>
                 ) : event.friendsGoing.length === 2 ? (

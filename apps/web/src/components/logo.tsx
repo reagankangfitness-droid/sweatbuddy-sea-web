@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
  * A minimalist smiley face icon representing community and positivity
  *
  * @param size - Size in pixels (default 40)
- * @param color - Logo color (default #0025CC)
+ * @param color - Logo color (default #17130E)
  * @param variant - 'default' | 'white' | 'mono'
  */
 interface LogoProps {
@@ -20,7 +20,7 @@ interface LogoProps {
 
 export function Logo({
   size = 40,
-  color = '#0025CC',
+  color = '#17130E',
   variant = 'default',
   className,
   onClick,
@@ -92,8 +92,8 @@ interface LogoWithTextProps {
 
 export function LogoWithText({
   size = 32,
-  color = '#0025CC',
-  textColor = '#0025CC',
+  color = '#17130E',
+  textColor = '#17130E',
   variant = 'default',
   className,
   wordmarkClassName,
@@ -129,7 +129,7 @@ interface LogoIconProps {
 
 export function LogoIcon({
   size = 40,
-  bgColor = '#0025CC',
+  bgColor = '#E8412C',
   iconColor = '#FFFFFF',
   className,
 }: LogoIconProps) {

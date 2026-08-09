@@ -44,7 +44,7 @@ interface AttendanceStats {
 function getLoyaltyBadge(count: number): { label: string; color: string; emoji: string } | null {
   if (count >= 20) return { label: 'Superfan', color: 'bg-purple-900 text-purple-700', emoji: '💎' }
   if (count >= 10) return { label: 'Loyal', color: 'bg-amber-900 text-amber-400', emoji: '🔥' }
-  if (count >= 5) return { label: 'Regular', color: 'bg-blue-900 text-blue-700', emoji: '⭐' }
+  if (count >= 5) return { label: 'Regular', color: 'bg-[#17130E] text-[#E8412C]', emoji: '⭐' }
   if (count === 1) return { label: 'First time!', color: 'bg-green-900 text-green-400', emoji: '👋' }
   return null // 2-4 times, no badge
 }
@@ -512,7 +512,7 @@ export default function AttendeesPage() {
         {/* Returning Attendees */}
         <div>
           <h2 className="text-lg font-semibold text-neutral-100 mb-4 flex items-center gap-2">
-            <Users className="w-5 h-5 text-blue-500" />
+            <Users className="w-5 h-5 text-[#E8412C]" />
             {returningAttendees.length > 0 ? `Returning (${returningAttendees.length})` : `All Attendees (${confirmedAttendees.length})`}
           </h2>
           {/* Show returning attendees (non-first-timers, excluding pending) */}

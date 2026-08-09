@@ -240,7 +240,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
             className="bg-neutral-950 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl max-h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="relative bg-gradient-to-br from-[#2563EB] to-[#38BDF8] p-6 text-white flex-shrink-0">
+            <div className="relative bg-gradient-to-br from-[#E8412C] to-[#E8412C] p-6 text-white flex-shrink-0">
               <button
                 onClick={handleClose}
                 className="absolute top-4 right-4 p-1 hover:bg-white/20 rounded-full transition"
@@ -276,7 +276,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                       onChange={(e) => !isSignedIn && setFormData({ ...formData, email: e.target.value })}
                       readOnly={isSignedIn}
                       placeholder="you@example.com"
-                      className={`w-full px-4 py-3 border border-neutral-800 rounded-xl focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition ${
+                      className={`w-full px-4 py-3 border border-neutral-800 rounded-xl focus:ring-2 focus:ring-[#E8412C] focus:border-transparent outline-none transition ${
                         isSignedIn ? 'bg-neutral-900 cursor-not-allowed' : ''
                       }`}
                     />
@@ -295,7 +295,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="What should we call you?"
-                      className="w-full px-4 py-3 border border-neutral-800 rounded-xl focus:ring-2 focus:ring-[#2563EB] focus:border-transparent outline-none transition"
+                      className="w-full px-4 py-3 border border-neutral-800 rounded-xl focus:ring-2 focus:ring-[#E8412C] focus:border-transparent outline-none transition"
                     />
                   </div>
 
@@ -317,7 +317,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                             onClick={() => setFormData({ ...formData, mealPreference: option.value })}
                             className={`p-3 rounded-xl border-2 transition-all text-center ${
                               formData.mealPreference === option.value
-                                ? 'border-[#2563EB] bg-blue-950 text-[#2563EB]'
+                                ? 'border-[#E8412C] bg-[#17130E] text-[#E8412C]'
                                 : 'border-neutral-800 hover:border-neutral-600'
                             }`}
                           >
@@ -340,14 +340,14 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                           type="checkbox"
                           checked={formData.waiverAccepted}
                           onChange={(e) => setFormData({ ...formData, waiverAccepted: e.target.checked })}
-                          className="mt-1 w-4 h-4 text-[#2563EB] border-neutral-700 rounded focus:ring-[#2563EB]"
+                          className="mt-1 w-4 h-4 text-[#E8412C] border-neutral-700 rounded focus:ring-[#E8412C]"
                         />
                         <span className="text-sm text-neutral-400">
                           I have read and agree to the{' '}
                           <button
                             type="button"
                             onClick={() => setShowWaiverText(!showWaiverText)}
-                            className="text-[#2563EB] hover:underline font-medium"
+                            className="text-[#E8412C] hover:underline font-medium"
                           >
                             Participation Waiver
                           </button>
@@ -378,7 +378,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                       type="checkbox"
                       checked={formData.subscribe}
                       onChange={(e) => setFormData({ ...formData, subscribe: e.target.checked })}
-                      className="mt-1 w-4 h-4 text-[#2563EB] border-neutral-700 rounded focus:ring-[#2563EB]"
+                      className="mt-1 w-4 h-4 text-[#E8412C] border-neutral-700 rounded focus:ring-[#E8412C]"
                     />
                     <span className="text-sm text-neutral-400">
                       Send me the weekly drop — the best local sessions, every Wednesday.
@@ -398,7 +398,7 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                   <button
                     type="submit"
                     disabled={isSubmitDisabled()}
-                    className="w-full bg-gradient-to-r from-[#2563EB] to-[#38BDF8] hover:opacity-90 text-white py-3.5 rounded-xl font-semibold transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gradient-to-r from-[#E8412C] to-[#E8412C] hover:opacity-90 text-white py-3.5 rounded-xl font-semibold transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? (
                       <>
@@ -469,10 +469,10 @@ export function AttendanceModal({ isOpen, onClose, event, onSuccess, showMealPre
                           rel="noopener noreferrer"
                           className={`w-full py-3 rounded-xl font-medium transition flex items-center justify-center gap-2 text-white ${
                             detectPlatform(event.communityLink) === 'whatsapp'
-                              ? 'bg-[#25D366] hover:bg-[#1da851]'
+                              ? 'bg-[#E8412C] hover:bg-[#E8412C]'
                               : detectPlatform(event.communityLink) === 'telegram'
-                              ? 'bg-[#0088cc] hover:bg-[#0077b3]'
-                              : 'bg-blue-600 hover:bg-blue-700'
+                              ? 'bg-[#E8412C] hover:bg-[#0077b3]'
+                              : 'bg-[#E8412C] hover:bg-[#E8412C]'
                           }`}
                         >
                           <MessageCircle className="w-5 h-5" />

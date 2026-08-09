@@ -178,7 +178,7 @@ export default function NotificationsPage() {
           </Link>
           <div className="sb-surface p-5 text-left">
             <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.06]">
-              <Bell className="h-5 w-5 text-[#C6E76A]" />
+              <Bell className="h-5 w-5 text-[#E8412C]" />
             </span>
             <p className="sb-eyebrow mt-5">
               Live updates
@@ -309,7 +309,7 @@ export default function NotificationsPage() {
                     <div className="flex-shrink-0 flex items-center gap-1.5 pt-1">
                       {!n.isRead && (
                         <>
-                          <span className="w-2 h-2 rounded-full bg-blue-500" />
+                          <span className="w-2 h-2 rounded-full bg-[#E8412C]" />
                           <button
                             onClick={(e) => {
                               e.preventDefault()

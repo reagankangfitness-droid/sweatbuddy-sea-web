@@ -95,7 +95,7 @@ function PlaceCard({ place }: { place: FitnessPlace }) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/76 via-black/16 to-transparent" />
           <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-3">
             <div className="min-w-0">
-              <p className="font-mono text-[10px] font-black uppercase tracking-wide text-[#63FF8F]">
+              <p className="font-mono text-[10px] font-black uppercase tracking-wide text-[#E8412C]">
                 {place.area}
               </p>
               <h2 className="mt-1 line-clamp-2 text-xl font-black leading-tight text-white">
@@ -112,7 +112,7 @@ function PlaceCard({ place }: { place: FitnessPlace }) {
 
       <div className="p-4">
         <div className="flex flex-wrap gap-1.5">
-          <span className="rounded-full bg-[#63FF8F] px-2.5 py-1 text-[11px] font-black text-black">
+          <span className="rounded-full bg-[#E8412C] px-2.5 py-1 text-[11px] font-black text-black">
             {positioning.publicPriority}
           </span>
           {primaryTags.map((tag) => (
@@ -146,7 +146,7 @@ function PlaceCard({ place }: { place: FitnessPlace }) {
           </div>
           <Link
             href={`/places/${place.slug}`}
-            className="inline-flex shrink-0 items-center gap-1 text-xs font-black uppercase tracking-wide text-[#63FF8F]"
+            className="inline-flex shrink-0 items-center gap-1 text-xs font-black uppercase tracking-wide text-[#E8412C]"
           >
             View <ArrowRight size={14} />
           </Link>
@@ -258,12 +258,12 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
                   name="q"
                   defaultValue={searchParams?.q ?? ''}
                   placeholder="Search communities, activity, area, or first-timer fit..."
-                  className="min-h-12 w-full rounded-lg border border-white/12 bg-[#111111] pl-10 pr-4 text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/50 focus:border-[#63FF8F]"
+                  className="min-h-12 w-full rounded-lg border border-white/12 bg-[#111111] pl-10 pr-4 text-sm font-semibold text-white outline-none transition-colors placeholder:text-white/50 focus:border-[#E8412C]"
                 />
               </div>
               <button
                 type="submit"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#63FF8F] px-5 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#83FFA6]"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#E8412C] px-5 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#E8412C]"
               >
                 <Search size={16} />
                 Search
@@ -275,9 +275,9 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
         <section className="mx-auto grid max-w-7xl gap-6 px-4 py-6 lg:grid-cols-[260px_minmax(0,1fr)]">
           <aside className="h-fit lg:sticky lg:top-[154px]">
             <details className="group lg:hidden">
-              <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 rounded-lg border border-white/12 bg-[#111111] px-3 font-mono text-xs font-black uppercase tracking-wide text-white/72 group-open:border-[#63FF8F] [&::-webkit-details-marker]:hidden">
+              <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 rounded-lg border border-white/12 bg-[#111111] px-3 font-mono text-xs font-black uppercase tracking-wide text-white/72 group-open:border-[#E8412C] [&::-webkit-details-marker]:hidden">
                 <span className="inline-flex items-center gap-2">
-                  <SlidersHorizontal size={16} className="text-[#63FF8F]" />
+                  <SlidersHorizontal size={16} className="text-[#E8412C]" />
                   Filters
                 </span>
                 <span className="truncate text-right text-[10px] text-white/42">
@@ -301,7 +301,7 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
 
             <div className="hidden lg:block">
               <div className="flex items-center gap-2 border-b border-white/10 pb-3">
-                <SlidersHorizontal size={17} className="text-[#63FF8F]" />
+                <SlidersHorizontal size={17} className="text-[#E8412C]" />
                 <p className="font-mono text-xs font-black uppercase tracking-wide text-white/62">
                   Filters
                 </p>
@@ -351,7 +351,7 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
               </div>
             ) : (
               <div className="rounded-lg border border-white/10 bg-white/[0.03] px-5 py-10 text-center">
-                <Sparkles className="mx-auto text-[#63FF8F]" size={28} />
+                <Sparkles className="mx-auto text-[#E8412C]" size={28} />
                 <h2 className="mt-4 text-xl font-black">No matching places yet</h2>
                 <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-white/54">
                   Try a broader search or submit a place so the directory can add it to this city guide.
@@ -483,7 +483,7 @@ function FilterLink({
       href={href}
       className={`inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-xs font-bold transition-colors lg:w-full lg:justify-between lg:rounded-md ${
         active
-          ? 'bg-[#63FF8F] text-black'
+          ? 'bg-[#E8412C] text-black'
           : 'border border-white/10 text-white/62 hover:border-white/24 hover:text-white'
       }`}
     >

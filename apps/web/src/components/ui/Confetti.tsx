@@ -15,13 +15,10 @@ interface ConfettiPiece {
 }
 
 const CONFETTI_COLORS = [
-  '#8B5CF6', // Purple
-  '#3B82F6', // Blue
-  '#10B981', // Green
-  '#F59E0B', // Amber
-  '#EF4444', // Red
-  '#EC4899', // Pink
-  '#06B6D4', // Cyan
+  '#E8412C',
+  '#17130E',
+  '#E8412C',
+  '#17130E',
 ]
 
 interface ConfettiProps {

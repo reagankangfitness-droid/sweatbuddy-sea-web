@@ -256,7 +256,7 @@ export default function AdminEventsPage() {
           <button
             onClick={handleGeocode}
             disabled={isGeocoding}
-            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 text-sm"
+            className="flex items-center gap-2 px-4 py-2.5 bg-[#E8412C] text-white rounded-lg font-medium hover:bg-[#E8412C] transition-colors disabled:opacity-50 text-sm"
           >
             {isGeocoding ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -512,7 +512,7 @@ export default function AdminEventsPage() {
                         href={`https://instagram.com/${submission.organizerInstagram}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-blue-400 hover:underline"
+                        className="flex items-center gap-1 text-[#E8412C] hover:underline"
                       >
                         <Instagram className="w-4 h-4" />
                         @{submission.organizerInstagram}

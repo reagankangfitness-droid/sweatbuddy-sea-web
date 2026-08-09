@@ -122,7 +122,7 @@ export function JoinGateSheet({ open, onClose, onComplete }: JoinGateSheetProps)
                     onClick={() => toggle(i.slug)}
                     className={`flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all ${
                       selected.includes(i.slug)
-                        ? 'scale-[1.02] border-2 border-[#17130E] bg-[#0B4BA8] text-white shadow-[2px_2px_0_#17130E]'
+                        ? 'scale-[1.02] border-2 border-[#17130E] bg-[#E8412C] text-white shadow-[2px_2px_0_#17130E]'
                         : 'border-2 border-[#17130E]/18 bg-[#F8F4EA] text-[#17130E] hover:border-[#17130E]'
                     }`}
                   >
@@ -150,7 +150,7 @@ export function JoinGateSheet({ open, onClose, onComplete }: JoinGateSheetProps)
                       }
                       className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-full text-xs font-medium transition-all ${
                         fitnessLevel === level.key
-                          ? 'border-2 border-[#17130E] bg-[#0B4BA8] text-white shadow-[2px_2px_0_#17130E]'
+                          ? 'border-2 border-[#17130E] bg-[#E8412C] text-white shadow-[2px_2px_0_#17130E]'
                           : 'border-2 border-[#17130E]/18 bg-[#F8F4EA] text-[#17130E] hover:border-[#17130E]'
                       }`}
                     >

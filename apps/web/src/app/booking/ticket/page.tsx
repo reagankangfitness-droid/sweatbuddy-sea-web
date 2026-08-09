@@ -202,8 +202,8 @@ function TicketContent() {
           <div className="p-6 border-b border-neutral-800">
             {activity.startTime && (
               <div className="flex items-start gap-4 mb-4">
-                <div className="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Calendar className="w-5 h-5 text-blue-400" />
+                <div className="w-10 h-10 bg-[#17130E] rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Calendar className="w-5 h-5 text-[#E8412C]" />
                 </div>
                 <div>
                   <p className="font-medium text-neutral-100">{formatDate(activity.startTime)}</p>

@@ -51,7 +51,7 @@ export default function InviteSection() {
         </button>
         <button
           onClick={shareWhatsApp}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-[#25D366]/10 text-[#25D366] text-xs font-medium"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-[#E8412C]/10 text-[#E8412C] text-xs font-medium"
         >
           WhatsApp
         </button>

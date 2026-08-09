@@ -49,7 +49,7 @@ export default function SavedCommunitiesPageClient({
 
         <section className="mt-8 grid gap-4 border-b border-white/10 pb-7 md:grid-cols-[minmax(0,1fr)_340px] md:items-end">
           <div>
-            <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#C6E76A]">
+            <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#E8412C]">
               Saved communities
             </p>
             <h1 className="mt-3 max-w-2xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
@@ -96,7 +96,7 @@ export default function SavedCommunitiesPageClient({
               </p>
               <Link
                 href="/communities"
-                className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-[#C6E76A] px-4 text-sm font-black text-black transition-colors hover:bg-[#D8F18A]"
+                className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-[#E8412C] px-4 text-sm font-black text-black transition-colors hover:bg-[#E8412C]"
               >
                 Browse communities
                 <ArrowRight className="h-4 w-4" />
@@ -130,7 +130,7 @@ function SavedCommunityCard({
           unoptimized={!image.startsWith('/')}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/12 to-black/10" />
-        <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#C6E76A] backdrop-blur">
+        <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#E8412C] backdrop-blur">
           {community.communityLink || community.websiteUrl ? 'Official link found' : 'Source checked'}
         </span>
       </Link>
@@ -168,7 +168,7 @@ function SavedCommunityCard({
         </div>
         <Link
           href={`/communities/${community.slug}`}
-          className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-[#C6E76A] px-4 text-sm font-black text-black transition-colors hover:bg-[#D8F18A]"
+          className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-[#E8412C] px-4 text-sm font-black text-black transition-colors hover:bg-[#E8412C]"
         >
           View details
           <ArrowRight className="h-4 w-4" />

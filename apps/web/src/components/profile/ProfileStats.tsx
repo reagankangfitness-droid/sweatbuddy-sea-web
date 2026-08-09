@@ -39,7 +39,7 @@ export function ProfileStats({ stats }: { stats: FitnessStats }) {
 
       <div className="bg-neutral-950 rounded-2xl border border-neutral-800 p-4">
         <div className="flex items-center gap-2 mb-1">
-          <Users className="w-4 h-4 text-blue-400" />
+          <Users className="w-4 h-4 text-[#E8412C]" />
           <p className="text-xs text-neutral-500">Communities</p>
         </div>
         <p className="text-2xl font-bold text-neutral-100">{stats.uniqueCommunities}</p>

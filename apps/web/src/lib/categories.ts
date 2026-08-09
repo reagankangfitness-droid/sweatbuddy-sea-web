@@ -133,12 +133,12 @@ export const ACTIVITY_CATEGORIES: ActivityCategory[] = [
   { slug: 'badminton', name: 'Badminton', description: 'Badminton games and shuttlecock sessions', emoji: '🏸', icon: 'feather', color: '#FED7AA', groupSlug: 'outdoor', displayOrder: 43, featured: false },
   { slug: 'basketball', name: 'Basketball', description: 'Pickup basketball and hoops sessions', emoji: '🏀', icon: 'circle', color: '#F97316', groupSlug: 'outdoor', displayOrder: 44, featured: false },
   { slug: 'soccer', name: 'Soccer', description: 'Football/soccer games and futsal', emoji: '⚽', icon: 'circle', color: '#22C55E', groupSlug: 'outdoor', displayOrder: 45, featured: false },
-  { slug: 'frisbee', name: 'Frisbee', description: 'Ultimate frisbee and disc sports', emoji: '🥏', icon: 'disc', color: '#3B82F6', groupSlug: 'outdoor', displayOrder: 46, featured: false },
+  { slug: 'frisbee', name: 'Frisbee', description: 'Ultimate frisbee and disc sports', emoji: '🥏', icon: 'disc', color: '#E8412C', groupSlug: 'outdoor', displayOrder: 46, featured: false },
 
   // RECOVERY & WELLNESS
   { slug: 'cold_plunge', name: 'Cold Plunge', description: 'Ice baths, cold water immersion, and Wim Hof', emoji: '🧊', icon: 'snowflake', color: '#06B6D4', groupSlug: 'recovery', displayOrder: 50, featured: true },
   { slug: 'sauna', name: 'Sauna', description: 'Sauna sessions, contrast therapy, and heat exposure', emoji: '🔥', icon: 'thermometer', color: '#0891B2', groupSlug: 'recovery', displayOrder: 51, featured: true },
-  { slug: 'sound_bath', name: 'Sound Bath', description: 'Sound healing, gong baths, and sound therapy', emoji: '🔔', icon: 'bell', color: '#22D3EE', groupSlug: 'recovery', displayOrder: 52, featured: true },
+  { slug: 'sound_bath', name: 'Sound Bath', description: 'Sound healing, gong baths, and sound therapy', emoji: '🔔', icon: 'bell', color: '#E8412C', groupSlug: 'recovery', displayOrder: 52, featured: true },
   { slug: 'massage', name: 'Massage', description: 'Partner stretching, Thai massage, and bodywork', emoji: '💆', icon: 'hand', color: '#67E8F9', groupSlug: 'recovery', displayOrder: 53, featured: false },
   { slug: 'foam_rolling', name: 'Foam Rolling', description: 'Self-myofascial release and recovery tools', emoji: '🧴', icon: 'cylinder', color: '#A5F3FC', groupSlug: 'recovery', displayOrder: 54, featured: false },
   { slug: 'wellness_circle', name: 'Wellness Circle', description: 'Mindfulness circles and wellness discussions', emoji: '⭕', icon: 'users', color: '#CFFAFE', groupSlug: 'recovery', displayOrder: 55, featured: false },

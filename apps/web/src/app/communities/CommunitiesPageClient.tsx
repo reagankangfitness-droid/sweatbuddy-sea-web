@@ -103,6 +103,10 @@ interface CommunitiesPageClientProps {
   cities: CityData[]
   subtitle: string
   initialCitySlug?: string | null
+  initialSearchQuery?: string
+  initialCategoryFilter?: string | null
+  initialFitFilter?: string | null
+  initialPriceFilter?: string | null
 }
 
 interface FilterOption {
@@ -152,14 +156,18 @@ export default function CommunitiesPageClient({
   cities,
   subtitle,
   initialCitySlug = null,
+  initialSearchQuery = '',
+  initialCategoryFilter = null,
+  initialFitFilter = null,
+  initialPriceFilter = null,
 }: CommunitiesPageClientProps) {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery)
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(initialCategoryFilter)
   const [cityFilter, setCityFilter] = useState<string | null>(initialCitySlug)
   const [areaFilter, setAreaFilter] = useState<string | null>(null)
-  const [priceFilter, setPriceFilter] = useState<string | null>(null)
+  const [priceFilter, setPriceFilter] = useState<string | null>(initialPriceFilter)
   const [platformFilter, setPlatformFilter] = useState<string | null>(null)
-  const [fitFilter, setFitFilter] = useState<string | null>(null)
+  const [fitFilter, setFitFilter] = useState<string | null>(initialFitFilter)
   const [vibeFilter, setVibeFilter] = useState<string | null>(null)
 
   const availableCategories = useMemo(() => {
@@ -337,11 +345,11 @@ export default function CommunitiesPageClient({
             </Link>
             <Link
               href={plansHref}
-              aria-label="Explore plans"
+              aria-label="See what is happening this week"
               className="sb-button-secondary min-h-9 shrink-0 px-3 text-[10px]"
             >
-              <span aria-hidden="true" className="min-[380px]:hidden">Plans</span>
-              <span aria-hidden="true" className="hidden min-[380px]:inline">Explore plans</span>
+              <span aria-hidden="true" className="min-[380px]:hidden">This week</span>
+              <span aria-hidden="true" className="hidden min-[380px]:inline">Happening this week</span>
             </Link>
           </div>
 
@@ -357,7 +365,7 @@ export default function CommunitiesPageClient({
               </h1>
               <p className="mt-3 line-clamp-2 max-w-2xl text-sm leading-6 text-white/68 sm:mt-4 sm:line-clamp-none sm:text-base">
                 {hasSources
-                  ? 'Start with official links, usual areas, schedule signals, and solo-friendly cues so you know where to join before you show up.'
+                  ? 'Compare official links, usual areas, schedule signals, and first-timer cues. When you find a fit, we hand you directly to the community.'
                   : 'Submit official pages or group links. We review each community before it appears publicly.'}
               </p>
             </div>
@@ -624,7 +632,7 @@ export default function CommunitiesPageClient({
             <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-white/44">
               Ready now
             </p>
-            <h2 className="mt-2 text-xl font-semibold text-white">Explore plans</h2>
+            <h2 className="mt-2 text-xl font-semibold text-white">See what&apos;s happening</h2>
             <p className="mt-2 text-sm leading-6 text-white/62">
               Plans remain visible while the first community pages are being reviewed.
             </p>

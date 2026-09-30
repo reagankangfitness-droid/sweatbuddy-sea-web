@@ -8,7 +8,7 @@ export const colors = {
     primaryDark: '#17130E',    // Ink
     primaryLight: 'rgba(232, 65, 44, 0.15)',
     primaryLighter: 'rgba(232, 65, 44, 0.08)',
-    primaryText: '#FFFFFF',
+    primaryText: '#17130E',    // Ink maintains WCAG AA contrast on coral
   },
 
   // Accent Yellow - Use for star ratings, featured badges, high-energy elements

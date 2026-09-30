@@ -18,7 +18,7 @@ function getTabs(citySlug?: string): Array<{
       href: citySlug ? `/communities?city=${encodeURIComponent(citySlug)}` : '/communities',
       icon: Users,
     },
-    { id: 'events', label: 'Plans', href: `/buddy?view=list&${cityQuery}`, icon: CalendarDays },
+    { id: 'events', label: 'This week', href: `/buddy?view=list&${cityQuery}`, icon: CalendarDays },
     { id: 'map', label: 'Map', href: `/buddy?view=map&${cityQuery}`, icon: Map },
   ]
 }

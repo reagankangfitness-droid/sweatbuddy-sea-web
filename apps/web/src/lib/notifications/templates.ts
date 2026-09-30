@@ -45,7 +45,7 @@ export function buildNotificationEmail(params: {
       <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
         <tr>
           <td align="center" style="padding: 8px;">
-            <a href="${linkUrl}" style="display: inline-block; padding: 14px 32px; background-color: #E8412C; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
+            <a href="${linkUrl}" style="display: inline-block; padding: 14px 32px; background-color: #C73522; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
               ${linkLabel || 'View Details'}
             </a>
           </td>

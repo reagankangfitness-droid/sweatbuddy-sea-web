@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-[#E8412C] text-white hover:bg-[#E8412C] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
+        default: "bg-[#E8412C] text-[#17130E] hover:bg-[#F0523E] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
         destructive:
           "bg-red-600 text-white hover:bg-red-700 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
         outline:
@@ -18,7 +18,7 @@ const buttonVariants = cva(
           "bg-[#F8F4EA] text-[#17130E] hover:bg-white active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
         ghost: "border-transparent bg-transparent text-[#17130E] shadow-none hover:bg-[#17130E]/6",
         link: "border-transparent bg-transparent text-[#E8412C] underline-offset-4 shadow-none hover:underline focus-visible:underline",
-        gradient: "bg-[#E8412C] text-white hover:bg-[#E8412C] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
+        gradient: "bg-[#E8412C] text-[#17130E] hover:bg-[#F0523E] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
       },
       size: {
         default: "h-12 px-6 py-3",

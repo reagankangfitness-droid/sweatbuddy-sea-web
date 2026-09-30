@@ -49,7 +49,7 @@
   }
 
   .sb-button-primary:hover {
-    background: #E8412C;
+    background: #F0523E;
   }
 
   .sb-button-primary:active {
@@ -2824,10 +2824,8 @@
   }
 
   [data-buddy-desktop-shell] [class*="bg-[#E8412C]"],
-  [data-buddy-desktop-shell] [class*="bg-[#E8412C]"] *,
-  [data-buddy-desktop-shell] [class*="bg-[#E8412C]"],
   [data-buddy-desktop-shell] [class*="bg-[#E8412C]"] * {
-    color: #FFFFFF !important;
+    color: #17130E !important;
   }
 
   [data-buddy-desktop-shell] [class*="border-[#E8412C]"]:not(summary) {
@@ -2933,12 +2931,17 @@
 
 [data-sb-paper-shell] .sb-button-primary *,
 [data-sb-paper-shell] [class*="bg-[#E8412C]"] * {
-  color: #FFFFFF !important;
+  color: #17130E !important;
 }
 
 [data-sb-paper-shell] .sb-button-primary:hover,
 [data-sb-paper-shell] [class*="bg-[#E8412C]"]:hover {
-  background: #E8412C !important;
+  background: #F0523E !important;
+}
+
+/* Coral is a mid-tone brand color; ink is the accessible foreground for normal text. */
+[class*="bg-[#E8412C]"][class*="text-white"] {
+  color: #17130E !important;
 }
 
 [data-sb-paper-shell] .sb-button-secondary,

@@ -20,19 +20,19 @@ export const metadata: Metadata = {
 }
 
 const activityFilters = [
-  { label: 'Run clubs', href: '/communities' },
-  { label: 'Yoga / Pilates', href: '/communities' },
-  { label: 'Pickleball', href: '/communities' },
-  { label: 'Strength', href: '/communities' },
-  { label: 'Recovery', href: '/communities' },
+  { label: 'Run clubs', href: '/communities?category=running' },
+  { label: 'Yoga / Pilates', href: '/communities?category=yoga' },
+  { label: 'Pickleball', href: '/communities?category=pickleball' },
+  { label: 'Strength', href: '/communities?category=strength' },
+  { label: 'Recovery', href: '/communities?category=recovery' },
   { label: 'Communities', href: '/communities' },
 ]
 
 const decisionFilters = [
-  { label: 'Run clubs', href: '/communities' },
-  { label: 'Beginner-friendly', href: '/communities' },
-  { label: 'Solo-friendly', href: '/communities' },
-  { label: 'Free', href: '/communities' },
+  { label: 'Run clubs', href: '/communities?category=running' },
+  { label: 'Beginner-friendly', href: '/communities?fit=beginner' },
+  { label: 'Solo-friendly', href: '/communities?fit=solo' },
+  { label: 'Free', href: '/communities?price=free' },
 ]
 
 const fallbackPlanCards = [
@@ -134,7 +134,7 @@ export default async function HomePage() {
             />
           </Link>
           <p className="hidden min-w-0 flex-1 truncate text-sm font-semibold uppercase tracking-[0.18em] text-white/44 lg:block">
-            Fitness community directory
+            Singapore&apos;s social fitness guide
           </p>
           <nav className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
             <TrackedLink
@@ -152,8 +152,8 @@ export default async function HomePage() {
               aria-label="List your community"
               className={`${compactButtonBase} rounded-full bg-[#E8412C] px-3 py-2.5 text-[11px] font-bold uppercase text-black hover:bg-[#E8412C] min-[420px]:px-4 sm:px-5 sm:text-xs`}
             >
-              <span aria-hidden="true" className="sm:hidden">List</span>
-              <span aria-hidden="true" className="hidden sm:inline">List community</span>
+              <span aria-hidden="true" className="sm:hidden">Suggest</span>
+              <span aria-hidden="true" className="hidden sm:inline">Suggest a community</span>
             </TrackedLink>
           </nav>
         </div>
@@ -167,14 +167,14 @@ export default async function HomePage() {
             <div className="min-w-0 bg-[#0B0D0C]">
               <div className="border-b border-white/10 p-4 sm:p-6">
                 <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[#E8412C]">
-                  Find communities near you
+                  Your local guide to moving with people
                 </p>
                 <h1 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight text-white sm:text-5xl">
-                  Find fitness communities you can actually join.
+                  Find your people. Then go move together.
                 </h1>
                 <p className="mt-4 max-w-2xl text-sm leading-6 text-white/62 sm:text-base">
-                  Browse run clubs, yoga groups, games, and wellness communities by area, vibe,
-                  schedule, and beginner-friendliness.
+                  Source-checked run clubs, yoga groups, games, and wellness communities—organized
+                  by area, vibe, schedule, and beginner-friendliness.
                 </p>
                 <p className="mt-3 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-white/42">
                   Global submissions open · {publicCommunitySeeds.length} Singapore seed communities · {beginnerCommunityCount} beginner-friendly · {soloCommunityCount} solo-friendly
@@ -187,7 +187,7 @@ export default async function HomePage() {
                     metadata={{ placement: 'homepage_primary_find_communities', destination: '/communities' }}
                     className={`${touchButtonBase} inline-flex flex-1 gap-2 rounded-full bg-[#E8412C] px-5 py-3 text-sm font-bold text-black hover:bg-[#E8412C]`}
                   >
-                    Find communities near me <ArrowRight size={17} className="shrink-0" />
+                    Explore the local guide <ArrowRight size={17} className="shrink-0" />
                   </TrackedLink>
                   <TrackedLink
                     href="/communities/nominate"
@@ -195,7 +195,7 @@ export default async function HomePage() {
                     metadata={{ placement: 'homepage_primary_list_community', destination: '/communities/nominate' }}
                     className={`${touchButtonBase} inline-flex gap-2 rounded-full border border-white/12 px-5 py-3 text-sm font-bold text-white/72 hover:border-[#E8412C] hover:text-[#E8412C]`}
                   >
-                    List your community
+                    Suggest a community
                   </TrackedLink>
                 </div>
               </div>
@@ -274,15 +274,15 @@ export default async function HomePage() {
                 <div className="grid gap-3 sm:grid-cols-3">
                   <SignalBlock
                     title="Communities first"
-                    description="Start with active crews, hosts, schedules, and joining signals."
+                    description="Start with active crews, real schedules, and the details you need before showing up."
                   />
                   <SignalBlock
                     title="Any city"
                     description="Nominate a crew wherever you train; Singapore is the first dense supply base."
                   />
                   <SignalBlock
-                    title="Plans next"
-                    description="When a community has joinable plans, they surface as the next best click."
+                    title="Official handoff"
+                    description="We send you to the community's own group or website—no booking maze or middleman."
                   />
                 </div>
               </div>
@@ -295,10 +295,10 @@ export default async function HomePage() {
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="font-mono text-xs font-bold uppercase tracking-wide text-white/42">
-                  Plans layer
+                  This week
                 </p>
                 <h2 className="mt-1 text-2xl font-semibold leading-tight text-white sm:text-3xl">
-                  Upcoming plans people can join
+                  A few upcoming ways to move
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-white/58">
                   {peopleGoingCount > 0
@@ -312,7 +312,7 @@ export default async function HomePage() {
                 metadata={{ placement: 'homepage_events_view_all', destination: '/buddy?view=list&location=nearby' }}
                 className={`${compactButtonBase} inline-flex w-fit gap-1.5 rounded-full border border-white/10 px-3 py-2 font-mono text-xs font-bold uppercase text-white/60 hover:border-[#E8412C] hover:text-[#E8412C]`}
               >
-                Find plans <ArrowRight size={14} className="shrink-0" />
+                See this week <ArrowRight size={14} className="shrink-0" />
               </TrackedLink>
             </div>
 
@@ -351,7 +351,7 @@ export default async function HomePage() {
               Communities
             </Link>
             <Link href="/buddy?view=list&location=nearby" className="transition-colors hover:text-white">
-              Plans
+              This week
             </Link>
             <Link href="/communities/nominate" className="transition-colors hover:text-white">
               List community

@@ -19,13 +19,19 @@ export const metadata: Metadata = {
 }
 
 interface CommunitiesPageProps {
-  searchParams: Promise<{ city?: string }>
+  searchParams: Promise<{
+    city?: string
+    q?: string
+    category?: string
+    fit?: string
+    price?: string
+  }>
 }
 
 export default async function CommunitiesPage({ searchParams }: CommunitiesPageProps) {
   const communities = await getCommunityDirectory()
   const cities = getCitiesFromCommunityDirectory(communities)
-  const { city } = await searchParams
+  const { city, q, category, fit, price } = await searchParams
 
   const subtitle = getCommunityDirectorySubtitle(communities.length, cities)
 
@@ -35,6 +41,10 @@ export default async function CommunitiesPage({ searchParams }: CommunitiesPageP
       cities={cities}
       subtitle={subtitle}
       initialCitySlug={city ?? null}
+      initialSearchQuery={q ?? ''}
+      initialCategoryFilter={category ?? null}
+      initialFitFilter={fit ?? null}
+      initialPriceFilter={price ?? null}
     />
   )
 }

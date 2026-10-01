@@ -8,7 +8,6 @@ import {
   ArrowRight,
   Search,
   Users,
-  MapPin,
   Plus,
   CheckCircle2,
   ChevronDown,
@@ -18,28 +17,10 @@ import { LogoWithText } from '@/components/logo'
 import { CityGuideTabs } from '@/components/city-guide/CityGuideTabs'
 import { getCategoryEmoji } from '@/lib/categories'
 import { ACTIVITY_CATEGORIES } from '@/lib/categories'
-import { COMMUNITY_SEO_GUIDES } from '@/lib/community-seo-guides'
 import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
 import {
-  CommunityWeeklyPicksForm,
-  SaveCommunityButton,
   trackCommunityDirectoryEvent,
 } from '@/components/community/CommunityDirectoryActions'
-
-const CREW_PROOF_IMAGES = [
-  { src: '/images/hosts/run-club-group.jpg', label: 'Run groups' },
-  { src: '/images/community-bonds.jpg', label: 'Social proof' },
-  { src: '/images/organizers-bg.jpg', label: 'Hosts' },
-]
-
-const QUICK_FILTERS = [
-  { label: 'Run clubs', category: 'running' },
-  { label: 'Yoga', category: 'yoga' },
-  { label: 'Pickleball', category: 'pickleball' },
-  { label: 'Beginner', fit: 'beginner' },
-  { label: 'Solo-friendly', fit: 'solo' },
-  { label: 'Free', price: 'free' },
-]
 
 // ─── Types ───────────────────────────────────────────────────────
 export interface CommunityMemberData {
@@ -127,14 +108,6 @@ function formatEventDate(iso: string): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-function formatVerifiedDate(iso: string | null): string | null {
-  if (!iso) return null
-  return new Date(iso).toLocaleDateString('en-US', {
-    month: 'short',
-    year: 'numeric',
-  })
-}
-
 function humanizeSlug(value: string): string {
   return value.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
 }
@@ -166,9 +139,7 @@ export default function CommunitiesPageClient({
   const [cityFilter, setCityFilter] = useState<string | null>(initialCitySlug)
   const [areaFilter, setAreaFilter] = useState<string | null>(null)
   const [priceFilter, setPriceFilter] = useState<string | null>(initialPriceFilter)
-  const [platformFilter, setPlatformFilter] = useState<string | null>(null)
   const [fitFilter, setFitFilter] = useState<string | null>(initialFitFilter)
-  const [vibeFilter, setVibeFilter] = useState<string | null>(null)
 
   const availableCategories = useMemo(() => {
     const knownOrder = new Map(ACTIVITY_CATEGORIES.map((cat) => [cat.slug, cat.displayOrder]))
@@ -189,27 +160,6 @@ export default function CommunitiesPageClient({
         .map((value) => ({ value, label: formatPriceType(value) })),
     [communities],
   )
-
-  const platformOptions = useMemo(
-    () =>
-      [...new Set(communities.map((c) => c.joinPlatform).filter(Boolean) as string[])]
-        .sort((a, b) => formatJoinPlatform(a).localeCompare(formatJoinPlatform(b)))
-        .map((value) => ({ value, label: formatJoinPlatform(value) })),
-    [communities],
-  )
-
-  const vibeOptions = useMemo(() => {
-    const counts = new Map<string, number>()
-    for (const community of communities) {
-      for (const tag of community.vibeTags) {
-        counts.set(tag, (counts.get(tag) ?? 0) + 1)
-      }
-    }
-    return [...counts.entries()]
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-      .slice(0, 18)
-      .map(([value]) => ({ value, label: humanizeSlug(value) }))
-  }, [communities])
 
   const cityOptions = useMemo(
     () => cities.map((city) => ({ value: city.slug, label: city.name })),
@@ -236,11 +186,9 @@ export default function CommunitiesPageClient({
     if (cityFilter) result = result.filter((c) => c.citySlug === cityFilter)
     if (areaFilter) result = result.filter((c) => c.usualArea === areaFilter)
     if (priceFilter) result = result.filter((c) => c.priceType === priceFilter)
-    if (platformFilter) result = result.filter((c) => c.joinPlatform === platformFilter)
     if (fitFilter === 'beginner') result = result.filter((c) => c.beginnerFriendly)
     if (fitFilter === 'solo') result = result.filter((c) => c.soloFriendly)
     if (fitFilter === 'experienced') result = result.filter((c) => !c.beginnerFriendly)
-    if (vibeFilter) result = result.filter((c) => c.vibeTags.includes(vibeFilter))
     return result
   }, [
     communities,
@@ -249,9 +197,7 @@ export default function CommunitiesPageClient({
     cityFilter,
     areaFilter,
     priceFilter,
-    platformFilter,
     fitFilter,
-    vibeFilter,
   ])
 
   const hasFilters = !!(
@@ -260,9 +206,7 @@ export default function CommunitiesPageClient({
     cityFilter ||
     areaFilter ||
     priceFilter ||
-    platformFilter ||
-    fitFilter ||
-    vibeFilter
+    fitFilter
   )
   const hasSources = communities.length > 0
   const plansHref = cityFilter
@@ -276,38 +220,8 @@ export default function CommunitiesPageClient({
     setCityFilter(null)
     setAreaFilter(null)
     setPriceFilter(null)
-    setPlatformFilter(null)
     setFitFilter(null)
-    setVibeFilter(null)
   }
-
-  const applyQuickFilter = (filter: typeof QUICK_FILTERS[number]) => {
-    if (filter.category) {
-      const nextValue = categoryFilter === filter.category ? null : filter.category
-      setCategoryFilter(nextValue)
-      trackFilter('quick_activity', nextValue)
-      return
-    }
-
-    if (filter.fit) {
-      const nextValue = fitFilter === filter.fit ? null : filter.fit
-      setFitFilter(nextValue)
-      trackFilter('quick_fit', nextValue)
-      return
-    }
-
-    if (filter.price) {
-      const nextValue = priceFilter === filter.price ? null : filter.price
-      setPriceFilter(nextValue)
-      trackFilter('quick_price', nextValue)
-    }
-  }
-
-  const isQuickFilterActive = (filter: typeof QUICK_FILTERS[number]) => (
-    (filter.category && categoryFilter === filter.category) ||
-    (filter.fit && fitFilter === filter.fit) ||
-    (filter.price && priceFilter === filter.price)
-  )
 
   const trackFilter = (filter: string, value: string | null) => {
     trackCommunityDirectoryEvent('community_directory_filter_used', {
@@ -411,7 +325,6 @@ export default function CommunitiesPageClient({
         </div>
       </header>
       <CityGuideTabs active="communities" citySlug={cityFilter ?? undefined} />
-      {hasSources ? <CrewProofStrip /> : null}
 
       {hasSources ? (
         <>
@@ -441,17 +354,6 @@ export default function CommunitiesPageClient({
                 >
                   <Plus className="w-4 h-4 text-black" />
                 </Link>
-              </div>
-
-              <div className="flex gap-1.5 overflow-x-auto pb-0.5 sm:hidden">
-                {QUICK_FILTERS.map((filter) => (
-                  <QuickFilterButton
-                    key={filter.label}
-                    label={filter.label}
-                    active={Boolean(isQuickFilterActive(filter))}
-                    onClick={() => applyQuickFilter(filter)}
-                  />
-                ))}
               </div>
 
               {/* Row 2: Directory command filters */}
@@ -507,28 +409,6 @@ export default function CommunitiesPageClient({
                     trackFilter('fit', value)
                   }}
                 />
-                <div className="hidden sm:block">
-                  <FilterSelect
-                    label="Join"
-                    value={platformFilter}
-                    options={platformOptions}
-                    onChange={(value) => {
-                      setPlatformFilter(value)
-                      trackFilter('join', value)
-                    }}
-                  />
-                </div>
-                <div className="hidden sm:block">
-                  <FilterSelect
-                    label="Vibe"
-                    value={vibeFilter}
-                    options={vibeOptions}
-                    onChange={(value) => {
-                      setVibeFilter(value)
-                      trackFilter('vibe', value)
-                    }}
-                  />
-                </div>
                 {hasFilters && (
                   <button
                     type="button"
@@ -558,20 +438,6 @@ export default function CommunitiesPageClient({
               >
                 Suggest a community
               </Link>
-            </div>
-            <div className="mt-4">
-              <CommunityWeeklyPicksForm source="directory" city={cityFilter ? cityOptions.find((city) => city.value === cityFilter)?.label : 'your city'} />
-            </div>
-            <div className="mt-4 flex gap-1.5 overflow-x-auto pb-0.5">
-              {COMMUNITY_SEO_GUIDES.map((guide) => (
-                <Link
-                  key={guide.slug}
-                  href={`/communities/singapore/${guide.slug}`}
-                  className="inline-flex min-h-10 flex-shrink-0 items-center rounded-full border border-white/12 px-3 text-[10px] font-black uppercase tracking-wide text-white/52 transition-colors hover:border-[#E8412C] hover:text-[#E8412C]"
-                >
-                  {guide.filterLabel}
-                </Link>
-              ))}
             </div>
           </div>
 
@@ -643,33 +509,6 @@ export default function CommunitiesPageClient({
   )
 }
 
-function CrewProofStrip() {
-  return (
-    <section className="hidden border-b border-white/10 bg-[#0B0D0C] px-4 py-3 sm:block">
-      <div className="mx-auto grid max-w-6xl grid-cols-3 gap-2">
-        {CREW_PROOF_IMAGES.map((item) => (
-          <div
-            key={item.src}
-            className="relative h-20 overflow-hidden rounded-xl border border-white/[0.08] bg-[#1A1E1B] sm:h-28"
-          >
-            <Image
-              src={item.src}
-              alt={`${item.label} on SweatBuddies`}
-              fill
-              sizes="(min-width: 640px) 33vw, 33vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-black/12 to-transparent" />
-            <span className="absolute bottom-2 left-2 rounded-md bg-black/45 px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-white/86 backdrop-blur">
-              {item.label}
-            </span>
-          </div>
-        ))}
-      </div>
-    </section>
-  )
-}
-
 // ─── Compact Crew Card ──────────────────────────────────────────
 function CrewCard({ community }: { community: CommunityData }) {
   const chips = [
@@ -680,19 +519,7 @@ function CrewCard({ community }: { community: CommunityData }) {
   ]
     .filter(Boolean)
     .slice(0, 3)
-  const hasOfficialLink = Boolean(community.communityLink || community.websiteUrl || community.sourceUrl)
-  const verifiedDate = formatVerifiedDate(community.lastVerifiedAt)
   const cardImage = community.coverImage || community.logoImage || community.creatorImageUrl || getCategoryFallbackImage(community.category)
-  const activitySignal = community.eventCount > 0
-    ? `${community.eventCount} known plan${community.eventCount === 1 ? '' : 's'}`
-    : hasOfficialLink
-      ? 'Official join path'
-      : 'Source pending'
-  const confidenceLabel = community.confidenceScore
-    ? `Confidence ${community.confidenceScore}`
-    : community.confidenceTier
-      ? `${community.confidenceTier} confidence`
-      : null
 
   return (
     <motion.div
@@ -750,23 +577,6 @@ function CrewCard({ community }: { community: CommunityData }) {
             <p className="truncate">{community.usualSchedule || 'Schedule varies'}</p>
           </div>
 
-          <div className="mt-2 grid grid-cols-2 gap-1.5">
-            <div className="rounded-lg border border-[#E8412C]/18 bg-[#E8412C]/8 px-2 py-1.5 text-left">
-              <p className="truncate font-mono text-[9px] font-black uppercase tracking-wide text-[#E8412C]">
-                Activity
-              </p>
-              <p className="mt-0.5 truncate text-[11px] font-bold text-white/82">{activitySignal}</p>
-            </div>
-            <div className="rounded-lg border border-white/10 bg-white/[0.04] px-2 py-1.5 text-left">
-              <p className="truncate font-mono text-[9px] font-black uppercase tracking-wide text-[#777777]">
-                Join path
-              </p>
-              <p className="mt-0.5 truncate text-[11px] font-bold text-white/82">
-                {confidenceLabel || (hasOfficialLink ? 'Link found' : 'Needs review')}
-              </p>
-            </div>
-          </div>
-
           {community.bestFor && (
             <p className="mt-2 line-clamp-2 min-h-[32px] text-xs leading-4 text-white/66">
               {community.bestFor}
@@ -786,47 +596,10 @@ function CrewCard({ community }: { community: CommunityData }) {
             </div>
           )}
 
-          {/* Known plan */}
-          <div className="mt-2 rounded-lg border border-white/10 bg-[#101010] px-3 py-2 text-left">
-            <p className="font-mono text-[9px] font-black uppercase tracking-[0.16em] text-[#E8412C]">
-              {community.nextEvent ? 'Next known plan' : 'Source check'}
-            </p>
-            <p className="mt-1 truncate text-xs font-bold text-white/82">
-              {community.nextEvent
-                ? `${community.nextEvent.title} · ${formatEventDate(community.nextEvent.startTime)}`
-                : hasOfficialLink
-                  ? 'Official join path found'
-                  : 'Join path pending'}
-            </p>
-          </div>
-
-          {(community.joinPlatform || community.lastVerifiedAt) && (
-            <p className="mt-1 text-[10px] uppercase tracking-wider text-[#555555]">
-              {community.sourceLabel || (community.joinPlatform
-                ? `Official ${formatJoinPlatform(community.joinPlatform)}`
-                : 'Official link')}
-              {verifiedDate ? ` · checked ${verifiedDate}` : ''}
-            </p>
-          )}
-
-          {/* City */}
-          {community.cityName && (
-            <p className="text-[10px] text-[#555555] mt-1 flex items-center justify-center gap-0.5">
-              <MapPin className="w-2.5 h-2.5" />
-              {community.cityName}
-            </p>
-          )}
-
-          <div className="mt-auto grid grid-cols-2 gap-2 pt-3">
-            <SaveCommunityButton
-              communitySlug={community.slug}
-              communityName={community.name}
-              source="card"
-              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full border border-white/12 px-2 text-[11px] font-bold text-white transition-colors hover:border-[#E8412C]/60 hover:bg-white/5"
-            />
+          <div className="mt-auto pt-3">
             <Link
               href={`/communities/${community.slug}`}
-              className="inline-flex min-h-11 items-center justify-center gap-1 rounded-full bg-[#E8412C] px-2 text-[11px] font-bold text-black transition-colors hover:bg-[#E8412C]"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-1 rounded-full bg-[#E8412C] px-3 text-[11px] font-bold text-black transition-colors hover:bg-[#E8412C]"
               aria-label={`View ${community.name} details`}
             >
               View details
@@ -836,31 +609,6 @@ function CrewCard({ community }: { community: CommunityData }) {
         </div>
       </article>
     </motion.div>
-  )
-}
-
-function QuickFilterButton({
-  label,
-  active,
-  onClick,
-}: {
-  label: string
-  active: boolean
-  onClick: () => void
-}) {
-  return (
-    <button
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={`min-h-10 shrink-0 rounded-full border px-3 text-[11px] font-black uppercase tracking-wide transition-colors ${
-        active
-          ? 'border-[#E8412C] bg-[#E8412C] text-black'
-          : 'border-white/12 bg-[#151816] text-white/66 hover:border-[#E8412C]/60 hover:text-white'
-      }`}
-    >
-      {label}
-    </button>
   )
 }
 
@@ -896,10 +644,6 @@ function FilterSelect({
       <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#777777]" />
     </label>
   )
-}
-
-function formatJoinPlatform(value: string): string {
-  return humanizeSlug(value.toLowerCase())
 }
 
 function formatPriceType(value: string): string {

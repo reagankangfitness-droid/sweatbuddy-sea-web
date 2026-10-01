@@ -32,9 +32,6 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const MOBILE_USER_AGENT_PATTERN = /\b(Android.*Mobile|iPhone|iPod|BlackBerry|IEMobile|Opera Mini)\b/i
-const BOT_USER_AGENT_PATTERN = /\b(bot|crawler|spider|preview|facebookexternalhit|slackbot|twitterbot|linkedinbot|whatsapp)\b/i
-
 // Routes that don't require authentication
 const isPublicRoute = createRouteMatcher([
   '/',
@@ -100,23 +97,13 @@ const isPublicRoute = createRouteMatcher([
   '/api/host-leads(.*)',
   '/my-sessions',
   '/notifications',
+  '/support',
   '/admin(.*)', // Admin shell handles Clerk/admin checks and admin APIs remain protected.
 ])
 
 export default clerkMiddleware(async (auth, request) => {
   const legacyRedirect = getLegacyRouteRedirect(request)
   if (legacyRedirect) return legacyRedirect
-
-  if (shouldSendRootToMobileMap(request)) {
-    const target = new URL('/buddy', request.url)
-
-    for (const [key, value] of request.nextUrl.searchParams.entries()) {
-      if (key !== 'landing') target.searchParams.set(key, value)
-    }
-
-    target.searchParams.set('view', 'map')
-    return NextResponse.redirect(target)
-  }
 
   const isAdminShellRoute = request.nextUrl.pathname === '/admin' || request.nextUrl.pathname.startsWith('/admin/')
   const isPublicApi = isPublicApiRequest(request)
@@ -238,6 +225,14 @@ function getLegacyRouteRedirect(request: NextRequest) {
     return NextResponse.redirect(new URL('/my-sessions', request.url))
   }
 
+  if (pathname === '/my-bookings' || pathname === '/communities/saved') {
+    return NextResponse.redirect(new URL('/my-sessions', request.url))
+  }
+
+  if (pathname === '/bangkok') {
+    return NextResponse.redirect(new URL('/communities?city=singapore', request.url))
+  }
+
   if (pathname === '/cities') {
     return NextResponse.redirect(new URL('/singapore?tab=map', request.url))
   }
@@ -245,7 +240,7 @@ function getLegacyRouteRedirect(request: NextRequest) {
   if (pathname.startsWith('/cities/')) {
     const slug = pathname.replace('/cities/', '').split('/')[0]
     if (slug === 'singapore') return NextResponse.redirect(new URL('/singapore', request.url))
-    if (slug === 'bangkok') return NextResponse.redirect(new URL('/bangkok', request.url))
+    if (slug === 'bangkok') return NextResponse.redirect(new URL('/communities?city=singapore', request.url))
     return NextResponse.redirect(new URL(`/singapore?tab=map&city=${encodeURIComponent(slug)}`, request.url))
   }
 
@@ -262,17 +257,6 @@ function getLegacyRouteRedirect(request: NextRequest) {
   }
 
   return null
-}
-
-function shouldSendRootToMobileMap(request: NextRequest) {
-  if (request.nextUrl.pathname !== '/') return false
-  if (request.nextUrl.searchParams.get('landing') === '1') return false
-
-  const userAgent = request.headers.get('user-agent') ?? ''
-  if (!MOBILE_USER_AGENT_PATTERN.test(userAgent)) return false
-  if (BOT_USER_AGENT_PATTERN.test(userAgent)) return false
-
-  return true
 }
 
 export const config = {

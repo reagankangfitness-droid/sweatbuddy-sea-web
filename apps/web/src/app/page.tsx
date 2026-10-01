@@ -6,7 +6,6 @@ import { LogoWithText } from '@/components/logo'
 import { TrackedLink } from '@/components/TrackedLink'
 import { CityGuideTabs } from '@/components/city-guide/CityGuideTabs'
 import { EVENTS } from '@/lib/analytics'
-import { getPublicCommunitySeeds } from '@/lib/community-directory-seed'
 import { resolveSessionMediaMap, type ResolvedSessionMedia } from '@/lib/session-media'
 import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
 import { prisma } from '@/lib/prisma'
@@ -18,15 +17,6 @@ export const metadata: Metadata = {
   description:
     'Find active fitness communities near you by area, vibe, schedule, and beginner-friendliness.',
 }
-
-const activityFilters = [
-  { label: 'Run clubs', href: '/communities?category=running' },
-  { label: 'Yoga / Pilates', href: '/communities?category=yoga' },
-  { label: 'Pickleball', href: '/communities?category=pickleball' },
-  { label: 'Strength', href: '/communities?category=strength' },
-  { label: 'Recovery', href: '/communities?category=recovery' },
-  { label: 'Communities', href: '/communities' },
-]
 
 const decisionFilters = [
   { label: 'Run clubs', href: '/communities?category=running' },
@@ -67,9 +57,6 @@ const touchButtonBase = `${buttonBase} min-h-12`
 
 export default async function HomePage() {
   const now = new Date()
-  const publicCommunitySeeds = getPublicCommunitySeeds()
-  const beginnerCommunityCount = publicCommunitySeeds.filter((community) => community.beginnerFriendly).length
-  const soloCommunityCount = publicCommunitySeeds.filter((community) => community.soloFriendly).length
   const upcomingSessions = await prisma.activity
     .findMany({
       where: {
@@ -78,6 +65,7 @@ export default async function HomePage() {
         deletedAt: null,
         activityMode: { in: ['P2P_FREE', 'P2P_PAID'] },
         startTime: { gte: now },
+        city: { equals: 'Singapore', mode: 'insensitive' },
       },
       select: {
         id: true,
@@ -102,7 +90,7 @@ export default async function HomePage() {
         },
       },
       orderBy: [{ isFeatured: 'desc' }, { startTime: 'asc' }, { id: 'asc' }],
-      take: 8,
+      take: 3,
     })
     .catch((error) => {
       if (process.env.NODE_ENV === 'production') {
@@ -112,7 +100,7 @@ export default async function HomePage() {
     })
 
   const sessionMediaById = await resolveSessionMediaMap(upcomingSessions)
-  const featuredSessions = upcomingSessions.slice(0, 6)
+  const featuredSessions = upcomingSessions.slice(0, 3)
   const peopleGoingCount = featuredSessions.reduce(
     (sum, session) => sum + session._count.userActivities,
     0,
@@ -176,26 +164,14 @@ export default async function HomePage() {
                   Source-checked run clubs, yoga groups, games, and wellness communities—organized
                   by area, vibe, schedule, and beginner-friendliness.
                 </p>
-                <p className="mt-3 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-white/42">
-                  Global submissions open · {publicCommunitySeeds.length} Singapore seed communities · {beginnerCommunityCount} beginner-friendly · {soloCommunityCount} solo-friendly
-                </p>
-
-                <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+                <div className="mt-5">
                   <TrackedLink
                     href="/communities"
                     event={EVENTS.LANDING_CTA_CLICKED}
                     metadata={{ placement: 'homepage_primary_find_communities', destination: '/communities' }}
-                    className={`${touchButtonBase} inline-flex flex-1 gap-2 rounded-full bg-[#E8412C] px-5 py-3 text-sm font-bold text-black hover:bg-[#E8412C]`}
+                    className={`${touchButtonBase} inline-flex gap-2 rounded-full bg-[#E8412C] px-5 py-3 text-sm font-bold text-black hover:bg-[#E8412C]`}
                   >
                     Explore the local guide <ArrowRight size={17} className="shrink-0" />
-                  </TrackedLink>
-                  <TrackedLink
-                    href="/communities/nominate"
-                    event={EVENTS.LANDING_CTA_CLICKED}
-                    metadata={{ placement: 'homepage_primary_list_community', destination: '/communities/nominate' }}
-                    className={`${touchButtonBase} inline-flex gap-2 rounded-full border border-white/12 px-5 py-3 text-sm font-bold text-white/72 hover:border-[#E8412C] hover:text-[#E8412C]`}
-                  >
-                    Suggest a community
                   </TrackedLink>
                 </div>
               </div>
@@ -224,14 +200,11 @@ export default async function HomePage() {
                   ))}
                 </div>
 
-                <div className="mt-5">
+                <div className="mt-6">
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <div>
-                      <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#E8412C]">
-                        Good first clicks
-                      </p>
                       <h2 className="mt-1 text-lg font-semibold leading-tight text-white">
-                        Communities with the least guesswork
+                        Good places to start
                       </h2>
                     </div>
                     <TrackedLink
@@ -252,40 +225,6 @@ export default async function HomePage() {
                 </div>
               </div>
 
-              <div className="p-4 sm:p-6">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <div>
-                    <p className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-white/42">
-                      Browse by intent
-                    </p>
-                    <h2 className="mt-1 text-lg font-semibold text-white">Start with a lane</h2>
-                  </div>
-                </div>
-                <div className="mb-4 flex flex-wrap gap-2">
-                  {activityFilters.slice(0, 5).map((filter) => (
-                    <DiscoveryPill
-                      key={`${filter.label}-${filter.href}`}
-                      href={filter.href}
-                      label={filter.label}
-                      placement="homepage_community_quick_filter"
-                    />
-                  ))}
-                </div>
-                <div className="grid gap-3 sm:grid-cols-3">
-                  <SignalBlock
-                    title="Communities first"
-                    description="Start with active crews, real schedules, and the details you need before showing up."
-                  />
-                  <SignalBlock
-                    title="Any city"
-                    description="Nominate a crew wherever you train; Singapore is the first dense supply base."
-                  />
-                  <SignalBlock
-                    title="Official handoff"
-                    description="We send you to the community's own group or website—no booking maze or middleman."
-                  />
-                </div>
-              </div>
             </div>
           </div>
         </section>
@@ -362,21 +301,6 @@ export default async function HomePage() {
           </div>
         </div>
       </footer>
-    </div>
-  )
-}
-
-function SignalBlock({
-  title,
-  description,
-}: {
-  title: string
-  description: string
-}) {
-  return (
-    <div className="rounded-xl border border-white/10 bg-[#111412] p-4">
-      <h2 className="text-lg font-semibold text-white">{title}</h2>
-      <p className="mt-2 text-sm leading-6 text-white/56">{description}</p>
     </div>
   )
 }

@@ -1,19 +1,16 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { Compass, User, Plus, Bell } from 'lucide-react'
+import { Compass, User, Bell } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Logo } from '@/components/logo'
 import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
-import { CreateSessionSheet } from '@/components/CreateSessionSheet'
-import { CreateChoiceSheet } from '@/components/CreateChoiceSheet'
 
 const navItems = [
   { id: 'discover', label: 'Communities', icon: Compass, href: '/communities', mobileOnly: false },
-  { id: 'create', label: 'Create', icon: Plus, href: '#', mobileOnly: true, isCreate: true },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile', mobileOnly: false },
 ]
 
@@ -30,17 +27,10 @@ function AppNavInner() {
   const pathname = usePathname()
   const { user, isSignedIn } = useUser()
   const [isHovered, setIsHovered] = useState(false)
-  const [pendingCount, setPendingCount] = useState(0)
   const [unreadNotifications, setUnreadNotifications] = useState(0)
-  const [createOpen, setCreateOpen] = useState(false)
-  const [createMenuOpen, setCreateMenuOpen] = useState(false)
 
   useEffect(() => {
     if (!isSignedIn) return
-    fetch('/api/p2p/payments/pending')
-      .then((r) => (r.ok ? r.json() : { payments: [] }))
-      .then((data) => setPendingCount(data.payments?.length ?? 0))
-      .catch(() => {})
     fetch('/api/notifications?limit=1')
       .then((r) => (r.ok ? r.json() : { unreadCount: 0 }))
       .then((data) => setUnreadNotifications(data.unreadCount ?? 0))
@@ -134,11 +124,6 @@ function AppNavInner() {
                   }`}
                 >
                   <Icon className="w-4 h-4" />
-                  {item.id === 'discover' && pendingCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full text-[8px] text-white font-bold flex items-center justify-center leading-none">
-                      {pendingCount > 9 ? '9' : pendingCount}
-                    </span>
-                  )}
                 </div>
               )
             })}
@@ -161,13 +146,6 @@ function AppNavInner() {
                 </span>
               )}
             </Link>
-            <button
-              onClick={() => setCreateMenuOpen(true)}
-              className="w-11 h-11 rounded-full bg-white flex items-center justify-center text-black hover:opacity-90 transition-opacity"
-              aria-label="Create"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
           </div>
         </motion.div>
 
@@ -215,11 +193,6 @@ function AppNavInner() {
                       )}
                       <Icon className={`w-5 h-5 ${active ? 'stroke-[2.5px]' : ''}`} />
                       <span className="text-[10px] mt-1 font-medium">{item.label}</span>
-                      {item.id === 'discover' && pendingCount > 0 && (
-                        <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-red-500 rounded-full text-[9px] text-white font-bold flex items-center justify-center leading-none">
-                          {pendingCount > 9 ? '9+' : pendingCount}
-                        </span>
-                      )}
                     </Link>
                   )
                 })}
@@ -246,17 +219,6 @@ function AppNavInner() {
                   </span>
                 )}
               </Link>
-
-              {/* Create button */}
-              <div className="mb-4">
-                <button
-                  onClick={() => setCreateMenuOpen(true)}
-                  className="w-11 h-11 rounded-full bg-white flex items-center justify-center text-black hover:opacity-90 transition-opacity shadow-lg"
-                  aria-label="Create"
-                >
-                  <Plus className="w-5 h-5 stroke-[2.5px]" />
-                </button>
-              </div>
 
               {/* User avatar */}
               <div className="mt-auto">
@@ -306,23 +268,6 @@ function AppNavInner() {
             {navItems.map((item) => {
               const active = isActive(item)
               const Icon = item.icon
-              const isCreateBtn = 'isCreate' in item && item.isCreate
-
-              if (isCreateBtn) {
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setCreateMenuOpen(true)}
-                    aria-label="Create"
-                    className="flex flex-col items-center justify-center w-14 h-14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0D0C] rounded-lg"
-                  >
-                    <span className="flex items-center justify-center w-11 h-11 rounded-full bg-white">
-                      <Plus className="w-6 h-6 text-black stroke-[2.5px]" />
-                    </span>
-                  </button>
-                )
-              }
-
               return (
                 <Link
                   key={item.id}
@@ -338,11 +283,6 @@ function AppNavInner() {
                 >
                   <span className="relative">
                     <Icon className={`w-6 h-6 transition-all duration-200 ${active ? 'stroke-[2.5px]' : ''}`} />
-                    {item.id === 'discover' && pendingCount > 0 && (
-                      <span className="absolute -top-1 -right-1.5 w-4 h-4 bg-red-500 rounded-full text-[9px] text-white font-bold flex items-center justify-center leading-none">
-                        {pendingCount > 9 ? '9+' : pendingCount}
-                      </span>
-                    )}
                   </span>
                   <span className="text-[10px] mt-1 font-medium">{item.label}</span>
                   {active && (
@@ -359,16 +299,6 @@ function AppNavInner() {
         </nav>
       </div>
 
-      {/* Create Session Sheet */}
-      <CreateChoiceSheet
-        open={createMenuOpen}
-        onClose={() => setCreateMenuOpen(false)}
-        onHostSession={() => {
-          setCreateMenuOpen(false)
-          setCreateOpen(true)
-        }}
-      />
-      <CreateSessionSheet open={createOpen} onClose={() => setCreateOpen(false)} />
     </>
   )
 }

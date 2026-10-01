@@ -1127,7 +1127,6 @@ function BuddyPageInner() {
 
   // View mode: map-first by default, with list available as a secondary scan mode.
   const [viewMode, setViewMode] = useState<'list' | 'map'>(initialViewMode)
-  const [mobileTab, setMobileTab] = useState<MobileBuddyTab>('map')
   const mapDrawerTrackedRef = useRef<string | null>(null)
 
   // Neighborhood filter
@@ -2135,53 +2134,7 @@ function BuddyPageInner() {
         hostName={feedbackSession?.hostName ?? null}
       />
 
-      <BuddyMobileConceptShell
-        activeTab={mobileTab}
-        onTabChange={setMobileTab}
-        activeLocationLabel={neighborhoodFilter?.name ?? activeLocationLabel}
-        activeDateLabel={activeDateLabel}
-        activeTimezone={activeTimezone}
-        todayDateString={todayDateString}
-        dateFilter={dateFilter}
-        onDateChange={updateDateFilter}
-        typeFilter={typeFilter}
-        onTypeChange={updateTypeFilter}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        searching={searching}
-        searchResults={searchResults}
-        sessions={sessions}
-        communities={communityPreviews}
-        communityCount={communityCount}
-        loading={loading || communityCountLoading}
-        myNextSession={myUpcomingSessions[0] ?? null}
-        myPlansLoading={myPlansLoading}
-        mapCenter={userLocation ?? cityConfig.center}
-        mapPins={mapPins}
-        selectedMapPinId={selectedMapPinId}
-        selectedPin={selectedPin}
-        onPinClick={handleVectorMapPinClick}
-        onClearSelectedPin={() => {
-          setSelectedPin(null)
-          setSelectedMapPinId(null)
-        }}
-        onCreate={() => {
-          setCreateSeed(null)
-          setShowCreateMenu(true)
-        }}
-        onHostSession={() => {
-          setCreateSeed(null)
-          setShowCreateSheet(true)
-        }}
-        onJoin={handleJoinSession}
-        onLeave={handleLeaveSession}
-        onPreviewAttendees={setAttendeeSheetSession}
-        rsvpLoadingId={rsvpLoadingId}
-        signedIn={Boolean(isSignedIn)}
-        citySlug={cityConfig.slug}
-      />
-
-      <div className="hidden min-h-0 flex-1 flex-col md:flex" data-buddy-desktop-shell>
+      <div className="flex min-h-0 flex-1 flex-col" data-buddy-desktop-shell>
       {/* ── Filters — sticky top bar ── */}
       <div className="sticky top-0 z-20 pt-[env(safe-area-inset-top,4px)]">
         <div className="space-y-1.5 border-b border-white/[0.07] bg-[#0B0D0C]/92 px-3 pb-2 pt-1.5 font-mono backdrop-blur-xl">
@@ -2201,12 +2154,28 @@ function BuddyPageInner() {
             <p className="hidden min-w-0 flex-1 truncate text-xs font-bold uppercase tracking-[0.16em] text-white/42 sm:block">
               Solo-friendly fitness plans
             </p>
-            <Link
-              href="/host"
-              className="inline-flex min-h-8 shrink-0 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#F4EFE3] px-3 text-[10px] font-black uppercase tracking-wide text-[#17130E] shadow-[2px_2px_0_#17130E] transition-colors hover:bg-[#F8F4EA]"
-            >
-              Host
-            </Link>
+            <nav aria-label="Discovery sections" className="flex items-center gap-1">
+              <Link
+                href={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
+                className="inline-flex min-h-9 items-center rounded-full px-3 text-[10px] font-black uppercase tracking-wide text-white/58 hover:text-white"
+              >
+                Communities
+              </Link>
+              <button
+                type="button"
+                onClick={() => viewMode === 'map' && toggleViewMode()}
+                className={`min-h-9 rounded-full px-3 text-[10px] font-black uppercase tracking-wide ${viewMode === 'list' ? 'bg-white text-black' : 'text-white/58'}`}
+              >
+                This week
+              </button>
+              <button
+                type="button"
+                onClick={() => viewMode === 'list' && toggleViewMode()}
+                className={`min-h-9 rounded-full px-3 text-[10px] font-black uppercase tracking-wide ${viewMode === 'map' ? 'bg-white text-black' : 'text-white/58'}`}
+              >
+                Map
+              </button>
+            </nav>
           </div>
           {/* Search bar */}
           <div className="relative">
@@ -2228,7 +2197,7 @@ function BuddyPageInner() {
               </button>
             )}
           </div>
-          {/* Row 1: Date strip */}
+          {/* Date strip */}
           <div
             data-testid="buddy-date-strip"
             className={`${viewMode === 'map' ? 'hidden sm:grid' : 'grid'} grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1.5 max-[360px]:grid-cols-[minmax(0,1fr)_auto]`}
@@ -2281,13 +2250,6 @@ function BuddyPageInner() {
                 <span className="text-[13px] font-bold leading-tight">Upcoming</span>
               </button>
             </div>
-            <button
-              onClick={() => setShowCreateMenu(true)}
-              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#E8412C] shadow-lg shadow-[#E8412C]/16 transition-colors hover:bg-[#E8412C] active:scale-95"
-              aria-label="Add to the map"
-            >
-              <Plus className="w-4 h-4 text-black" />
-            </button>
             <button
               type="button"
               onClick={toggleViewMode}
@@ -2354,14 +2316,7 @@ function BuddyPageInner() {
           </details>
 
           {/* Tablet and desktop dropdown filters */}
-          <div className="hidden grid-cols-5 gap-1.5 sm:grid">
-            <FilterMenu
-              label="Location"
-              displayValue={activeLocationLabel}
-              value={locationFilterValue}
-              onChange={updateCityFilter}
-              options={locationFilterOptions}
-            />
+          <div className="hidden grid-cols-3 gap-1.5 sm:grid">
             <FilterMenu
               label="Area"
               displayValue={neighborhoodFilter?.name ?? 'All areas'}
@@ -2379,37 +2334,10 @@ function BuddyPageInner() {
               onChange={updateTypeFilter}
               options={TYPE_FILTERS}
             />
-            <FilterMenu
-              label="Price"
-              displayValue={activePriceLabel}
-              value={pricingFilter}
-              onChange={updatePricingFilter}
-              options={PRICING_FILTERS}
-            />
-            <FilterMenu
-              label="Level"
-              displayValue={activeLevelLabel}
-              value={levelFilter}
-              onChange={updateLevelFilter}
-              options={LEVEL_FILTERS}
-            />
           </div>
 
-          <div className="hidden min-h-7 items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5 text-[10px] font-bold uppercase tracking-wide text-[#777777] sm:flex">
-            {[
-              neighborhoodFilter?.name ?? activeLocationLabel,
-              activeTypeLabel,
-              activePriceLabel,
-              activeLevelLabel,
-            ].map((value) => (
-              <span
-                key={value}
-                className="shrink-0 rounded-full border border-white/[0.08] bg-[#111412] px-2.5 py-1"
-              >
-                {value}
-              </span>
-            ))}
-            {(typeFilter || pricingFilter || levelFilter || dateFilter || neighborhoodFilter) && (
+          <div className="hidden min-h-7 items-center gap-1.5 pt-0.5 text-[10px] font-bold uppercase tracking-wide text-[#777777] sm:flex">
+            {(typeFilter || dateFilter || neighborhoodFilter) && (
               <button
                 onClick={() => {
                   setTypeFilter('')
@@ -2427,45 +2355,16 @@ function BuddyPageInner() {
         </div>
       </div>
       {viewMode === 'list' ? (
-        <LocationPermissionPanel
-          status={locationStatus}
-          cityOptions={CITY_LOCATION_CONFIGS}
-          onUseLocation={requestCurrentLocation}
-          onChooseCity={updateCityFilter}
-        />
-      ) : null}
-
-      {viewMode === 'list' ? (
         <div className="flex-1 min-h-0 overflow-hidden lg:grid lg:grid-cols-[minmax(390px,42vw)_1fr]">
           {/* List view — community-first cards backed by known sessions */}
           <div className="h-full min-h-0 overflow-y-auto border-white/[0.08] px-4 pb-24 lg:border-r">
             <div className="sticky top-0 z-10 -mx-4 border-b border-white/[0.08] bg-[#0B0D0C]/96 px-4 py-3 backdrop-blur-xl">
-              <LocalPulsePanel
-                activeLocationLabel={neighborhoodFilter?.name ?? activeLocationLabel}
-                activeDateLabel={activeDateLabel}
-                sessions={sessions}
-                communityCount={communityCount}
-                myNextSession={myUpcomingSessions[0] ?? null}
-                loading={loading || communityCountLoading || myPlansLoading}
-                signedIn={Boolean(isSignedIn)}
-                locationStatus={locationStatus}
-                communityHref={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
-                onOpenMap={toggleViewMode}
-                onUseLocation={requestCurrentLocation}
-              />
               <DiscoveryWorkspaceNav
                 viewMode={viewMode}
                 communityHref={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
                 onToggleView={toggleViewMode}
               />
             </div>
-            {!searchQuery.trim() ? (
-              <QuickIntentRail
-                ideas={STARTER_SESSION_IDEAS}
-                activeType={typeFilter}
-                onSelect={(idea) => openSeededCreate(idea, 'list_intent_rail')}
-              />
-            ) : null}
             {/* Search results */}
             {searchQuery.trim() ? (
               <div className="pt-3">

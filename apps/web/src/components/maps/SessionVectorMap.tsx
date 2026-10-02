@@ -493,20 +493,24 @@ function spreadNearbyPins(
   const bucketed = new Map<string, Array<{ pin: SessionVectorMapPin; position: { lat: number; lng: number } }>>()
 
   pins.forEach((entry) => {
-    const bucket = `${entry.position.lat.toFixed(3)}:${entry.position.lng.toFixed(3)}`
+    const precision = entry.pin.kind === 'community' ? 2 : 3
+    const bucket = `${entry.position.lat.toFixed(precision)}:${entry.position.lng.toFixed(precision)}`
     const existing = bucketed.get(bucket) ?? []
     existing.push(entry)
     bucketed.set(bucket, existing)
   })
 
   return pins.map((entry) => {
-    const bucket = `${entry.position.lat.toFixed(3)}:${entry.position.lng.toFixed(3)}`
+    const precision = entry.pin.kind === 'community' ? 2 : 3
+    const bucket = `${entry.position.lat.toFixed(precision)}:${entry.position.lng.toFixed(precision)}`
     const group = bucketed.get(bucket)
     if (!group || group.length <= 1) return entry
 
     const index = group.findIndex((candidate) => candidate.pin.id === entry.pin.id)
     const angle = (Math.PI * 2 * index) / group.length
-    const radius = 0.0014 + Math.min(group.length, 6) * 0.00012
+    const radius = entry.pin.kind === 'community'
+      ? 0.0048 + Math.min(group.length, 8) * 0.00055
+      : 0.0014 + Math.min(group.length, 6) * 0.00012
 
     return {
       ...entry,

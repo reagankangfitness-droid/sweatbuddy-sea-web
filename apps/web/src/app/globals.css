@@ -143,15 +143,35 @@
   }
 
   .sb-map-marker--community {
+    width: 46px;
+    min-width: 46px;
+    height: 46px;
+    min-height: 46px;
+    align-items: center;
+    justify-content: center;
     border-color: #17130E;
+    border-radius: 50%;
     background: #E8412C;
     color: #ffffff;
-    box-shadow: 3px 3px 0 #17130E;
+    box-shadow: 2px 3px 0 #17130E, 0 8px 20px rgba(23, 19, 14, 0.18);
   }
 
   .sb-map-marker--community .sb-map-marker__emoji {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    border: 0;
+    border-radius: 50%;
     background: #F8F4EA;
     color: #17130E;
+    font-size: 20px;
+  }
+
+  .sb-map-marker--community .sb-map-marker__single,
+  .sb-map-marker--community .sb-map-marker__primary,
+  .sb-map-marker--community .sb-map-marker__price {
+    display: none !important;
   }
 
   .sb-map-marker--place {
@@ -196,6 +216,11 @@
     background: #E8412C;
     color: #ffffff;
     box-shadow: 4px 4px 0 #17130E;
+  }
+
+  .sb-map-marker--community.is-selected {
+    transform: translateY(-2px) scale(1.14);
+    box-shadow: 3px 5px 0 #17130E, 0 12px 26px rgba(23, 19, 14, 0.24);
   }
 
   .sb-map-marker.is-selected .sb-map-marker__emoji {

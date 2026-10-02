@@ -47,6 +47,7 @@ import {
 } from '@/lib/location-config'
 import { compareByShowUpConfidence, getShowUpConfidence } from '@/lib/show-up-confidence'
 import { getCategoryFallbackImage, getCityFallbackImage } from '@/lib/visual-fallbacks'
+import { MobileNav } from '@/app/communities/CommunitiesPageClient'
 
 interface Host {
   id: string
@@ -2154,7 +2155,7 @@ function BuddyPageInner() {
             <p className="hidden min-w-0 flex-1 truncate text-xs font-bold uppercase tracking-[0.16em] text-white/42 sm:block">
               Solo-friendly fitness plans
             </p>
-            <nav aria-label="Discovery sections" className="flex items-center gap-1">
+            <nav aria-label="Discovery sections" className="hidden items-center gap-1 sm:flex">
               <Link
                 href={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
                 className="inline-flex min-h-9 items-center rounded-full px-3 text-[10px] font-black uppercase tracking-wide text-white/58 hover:text-white"
@@ -2358,7 +2359,7 @@ function BuddyPageInner() {
         <div className="flex-1 min-h-0 overflow-hidden lg:grid lg:grid-cols-[minmax(390px,42vw)_1fr]">
           {/* List view — community-first cards backed by known sessions */}
           <div className="h-full min-h-0 overflow-y-auto border-white/[0.08] px-4 pb-24 lg:border-r">
-            <div className="sticky top-0 z-10 -mx-4 border-b border-white/[0.08] bg-[#0B0D0C]/96 px-4 py-3 backdrop-blur-xl">
+            <div className="sticky top-0 z-10 -mx-4 hidden border-b border-white/[0.08] bg-[#0B0D0C]/96 px-4 py-3 backdrop-blur-xl sm:block">
               <DiscoveryWorkspaceNav
                 viewMode={viewMode}
                 communityHref={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
@@ -2733,6 +2734,9 @@ function BuddyPageInner() {
           onJoin={handleJoinSession}
         />
       ) : null}
+      <div className="md:hidden">
+        <MobileNav active="week" />
+      </div>
     </div>
   )
 }

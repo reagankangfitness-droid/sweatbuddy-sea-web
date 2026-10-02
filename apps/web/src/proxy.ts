@@ -225,7 +225,7 @@ function getLegacyRouteRedirect(request: NextRequest) {
     return NextResponse.redirect(new URL('/my-sessions', request.url))
   }
 
-  if (pathname === '/my-bookings' || pathname === '/communities/saved') {
+  if (pathname === '/my-bookings') {
     return NextResponse.redirect(new URL('/my-sessions', request.url))
   }
 

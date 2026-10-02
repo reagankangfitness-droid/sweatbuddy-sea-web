@@ -1,41 +1,30 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import Link from 'next/link'
+import { useMemo, useState } from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
+import Link from 'next/link'
 import {
   ArrowRight,
-  Search,
-  Users,
-  Plus,
+  Bell,
+  Bookmark,
+  CalendarDays,
   CheckCircle2,
   ChevronDown,
+  List,
+  Map as MapIcon,
+  MapPin,
+  Plus,
+  Search,
+  UserRound,
+  Users,
   X,
 } from 'lucide-react'
 import { LogoWithText } from '@/components/logo'
-import { CityGuideTabs } from '@/components/city-guide/CityGuideTabs'
-import { getCategoryEmoji } from '@/lib/categories'
-import { ACTIVITY_CATEGORIES } from '@/lib/categories'
+import { ACTIVITY_CATEGORIES, getCategoryEmoji } from '@/lib/categories'
 import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
-import {
-  trackCommunityDirectoryEvent,
-} from '@/components/community/CommunityDirectoryActions'
 
-// ─── Types ───────────────────────────────────────────────────────
-export interface CommunityMemberData {
-  id: string
-  name: string | null
-  imageUrl: string | null
-}
-
-export interface NextEventData {
-  id: string
-  title: string
-  startTime: string
-  categorySlug: string | null
-}
-
+export interface CommunityMemberData { id: string; name: string | null; imageUrl: string | null }
+export interface NextEventData { id: string; title: string; startTime: string; categorySlug: string | null }
 export interface CommunityData {
   id: string
   name: string
@@ -72,14 +61,9 @@ export interface CommunityData {
   nextEvent: NextEventData | null
   _count: { members: number; activities: number }
 }
+export interface CityData { name: string; slug: string; communityCount: number }
 
-export interface CityData {
-  name: string
-  slug: string
-  communityCount: number
-}
-
-interface CommunitiesPageClientProps {
+interface Props {
   communities: CommunityData[]
   cities: CityData[]
   subtitle: string
@@ -90,569 +74,142 @@ interface CommunitiesPageClientProps {
   initialPriceFilter?: string | null
 }
 
-interface FilterOption {
-  value: string
-  label: string
+const markerPositions = [
+  ['18%', '33%'], ['67%', '28%'], ['42%', '48%'], ['77%', '55%'], ['24%', '63%'],
+  ['56%', '70%'], ['83%', '76%'], ['35%', '82%'], ['68%', '86%'],
+] as const
+
+function categoryName(slug: string) {
+  return ACTIVITY_CATEGORIES.find((item) => item.slug === slug)?.name
+    ?? slug.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase())
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────
-function formatEventDate(iso: string): string {
-  const d = new Date(iso)
-  const now = new Date()
-  const diffMs = d.getTime() - now.getTime()
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-
-  if (diffDays === 0) return 'Today'
-  if (diffDays === 1) return 'Tomorrow'
-  if (diffDays < 7) return d.toLocaleDateString('en-US', { weekday: 'short' })
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+function priceLabel(value: string | null) {
+  if (!value) return 'Price varies'
+  if (value === 'free_paid' || value === 'mixed') return 'Free + paid'
+  return value.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase())
 }
 
-function humanizeSlug(value: string): string {
-  return value.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
+function nextDate(value: string) {
+  const date = new Date(value)
+  const today = new Date()
+  if (date.toDateString() === today.toDateString()) return 'Today'
+  const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1)
+  if (date.toDateString() === tomorrow.toDateString()) return 'Tomorrow'
+  return date.toLocaleDateString('en-SG', { weekday: 'short', day: 'numeric' })
 }
 
-function categoryLabel(slug: string): string {
-  const category = ACTIVITY_CATEGORIES.find((cat) => cat.slug === slug)
-  return category ? category.name : humanizeSlug(slug)
-}
-
-function uniqueOptions(values: Array<string | null | undefined>): FilterOption[] {
-  return [...new Set(values.filter(Boolean) as string[])]
-    .sort((a, b) => a.localeCompare(b))
-    .map((value) => ({ value, label: humanizeSlug(value) }))
-}
-
-// ─── Component ───────────────────────────────────────────────────
 export default function CommunitiesPageClient({
   communities,
   cities,
-  subtitle,
   initialCitySlug = null,
   initialSearchQuery = '',
   initialCategoryFilter = null,
   initialFitFilter = null,
   initialPriceFilter = null,
-}: CommunitiesPageClientProps) {
-  const [searchQuery, setSearchQuery] = useState(initialSearchQuery)
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(initialCategoryFilter)
-  const [cityFilter, setCityFilter] = useState<string | null>(initialCitySlug)
-  const [areaFilter, setAreaFilter] = useState<string | null>(null)
-  const [priceFilter, setPriceFilter] = useState<string | null>(initialPriceFilter)
-  const [fitFilter, setFitFilter] = useState<string | null>(initialFitFilter)
+}: Props) {
+  const [query, setQuery] = useState(initialSearchQuery)
+  const [category, setCategory] = useState<string | null>(initialCategoryFilter)
+  const [city, setCity] = useState<string | null>(initialCitySlug)
+  const [beginnerOnly, setBeginnerOnly] = useState(initialFitFilter === 'beginner')
+  const [freeOnly, setFreeOnly] = useState(initialPriceFilter === 'free')
+  const [view, setView] = useState<'map' | 'list'>('map')
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(communities[0]?.slug ?? null)
 
-  const availableCategories = useMemo(() => {
-    const knownOrder = new Map(ACTIVITY_CATEGORIES.map((cat) => [cat.slug, cat.displayOrder]))
-    return [...new Set(communities.map((c) => c.category))]
-      .sort((a, b) => (knownOrder.get(a) ?? 999) - (knownOrder.get(b) ?? 999) || a.localeCompare(b))
-      .map((slug) => ({ value: slug, label: categoryLabel(slug) }))
-  }, [communities])
-
-  const areaOptions = useMemo(
-    () => uniqueOptions(communities.map((c) => c.usualArea)),
-    [communities],
-  )
-
-  const priceOptions = useMemo(
-    () =>
-      [...new Set(communities.map((c) => c.priceType).filter(Boolean) as string[])]
-        .sort((a, b) => formatPriceType(a).localeCompare(formatPriceType(b)))
-        .map((value) => ({ value, label: formatPriceType(value) })),
-    [communities],
-  )
-
-  const cityOptions = useMemo(
-    () => cities.map((city) => ({ value: city.slug, label: city.name })),
-    [cities],
-  )
-
-  const filteredCommunities = useMemo(() => {
-    let result = communities
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase()
-      result = result.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          c.description?.toLowerCase().includes(q) ||
-          c.category.toLowerCase().includes(q) ||
-          c.cityName?.toLowerCase().includes(q) ||
-          c.usualArea?.toLowerCase().includes(q) ||
-          c.bestFor?.toLowerCase().includes(q) ||
-          c.sourceLabel?.toLowerCase().includes(q) ||
-          c.vibeTags.some((tag) => tag.toLowerCase().includes(q)),
-      )
-    }
-    if (categoryFilter) result = result.filter((c) => c.category === categoryFilter)
-    if (cityFilter) result = result.filter((c) => c.citySlug === cityFilter)
-    if (areaFilter) result = result.filter((c) => c.usualArea === areaFilter)
-    if (priceFilter) result = result.filter((c) => c.priceType === priceFilter)
-    if (fitFilter === 'beginner') result = result.filter((c) => c.beginnerFriendly)
-    if (fitFilter === 'solo') result = result.filter((c) => c.soloFriendly)
-    if (fitFilter === 'experienced') result = result.filter((c) => !c.beginnerFriendly)
-    return result
-  }, [
-    communities,
-    searchQuery,
-    categoryFilter,
-    cityFilter,
-    areaFilter,
-    priceFilter,
-    fitFilter,
-  ])
-
-  const hasFilters = !!(
-    searchQuery.trim() ||
-    categoryFilter ||
-    cityFilter ||
-    areaFilter ||
-    priceFilter ||
-    fitFilter
-  )
-  const hasSources = communities.length > 0
-  const plansHref = cityFilter
-    ? `/buddy?view=list&city=${encodeURIComponent(cityFilter)}`
-    : '/buddy?view=list&location=nearby'
-  const showCityFilter = cityOptions.length > 1
-
-  const clearFilters = () => {
-    setSearchQuery('')
-    setCategoryFilter(null)
-    setCityFilter(null)
-    setAreaFilter(null)
-    setPriceFilter(null)
-    setFitFilter(null)
-  }
-
-  const trackFilter = (filter: string, value: string | null) => {
-    trackCommunityDirectoryEvent('community_directory_filter_used', {
-      filter,
-      value,
-      resultCount: filteredCommunities.length,
-    })
-  }
-
-  const trackSearch = () => {
-    const query = searchQuery.trim()
-    if (!query) return
-    trackCommunityDirectoryEvent('community_directory_search_used', {
-      query,
-      resultCount: filteredCommunities.length,
-    })
-  }
+  const categories = useMemo(() => [...new Set(communities.map((item) => item.category))], [communities])
+  const filtered = useMemo(() => communities.filter((item) => {
+    const match = `${item.name} ${item.category} ${item.usualArea ?? ''} ${item.bestFor ?? ''}`.toLowerCase()
+    return (!query.trim() || match.includes(query.toLowerCase()))
+      && (!category || item.category === category)
+      && (!city || item.citySlug === city)
+      && (!beginnerOnly || item.beginnerFriendly)
+      && (!freeOnly || item.priceType === 'free')
+  }), [communities, query, category, city, beginnerOnly, freeOnly])
+  const selected = filtered.find((item) => item.slug === selectedSlug) ?? filtered[0] ?? null
 
   return (
-    <div className="sb-page" data-sb-paper-shell>
-      <header className="border-b border-white/[0.07] bg-[#0B0D0C]">
-        <div className="mx-auto max-w-6xl px-4 py-3 sm:py-4">
-          <div className="flex min-h-10 items-center justify-between gap-2">
-            <Link
-              href="/"
-              aria-label="SweatBuddies home"
-              className="inline-flex min-h-10 min-w-10 items-center"
-            >
-              <LogoWithText
-                size={24}
-                color="#FFFFFF"
-                textColor="#FFFFFF"
-                wordmarkClassName="max-[360px]:hidden"
-              />
-            </Link>
-            <Link
-              href={plansHref}
-              aria-label="See what is happening this week"
-              className="sb-button-secondary min-h-9 shrink-0 px-3 text-[10px]"
-            >
-              <span aria-hidden="true" className="min-[380px]:hidden">This week</span>
-              <span aria-hidden="true" className="hidden min-[380px]:inline">Happening this week</span>
-            </Link>
-          </div>
-
-          <div className="mt-4 grid gap-4 sm:mt-6 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-end">
-            <div>
-              <p className="sb-eyebrow">
-                Community directory
-              </p>
-              <h1 className="mt-2 max-w-3xl text-[1.65rem] font-semibold leading-[1.08] tracking-tight sm:mt-3 sm:text-4xl">
-                {hasSources
-                  ? 'Find active fitness communities you can confidently join.'
-                  : 'Help map verified fitness communities.'}
-              </h1>
-              <p className="mt-3 line-clamp-2 max-w-2xl text-sm leading-6 text-white/68 sm:mt-4 sm:line-clamp-none sm:text-base">
-                {hasSources
-                  ? 'Compare official links, usual areas, schedule signals, and first-timer cues. When you find a fit, we hand you directly to the community.'
-                  : 'Submit official pages or group links. We review each community before it appears publicly.'}
-              </p>
+    <main className="min-h-screen bg-[#F8F4EA] text-[#17130E]">
+      <div className="md:hidden">
+        <header className="sticky top-0 z-50 border-b border-black/10 bg-[#F8F4EA]/95 px-4 pb-3 pt-[max(12px,env(safe-area-inset-top))] backdrop-blur-xl">
+          <div className="flex h-12 items-center justify-between">
+            <Link href="/" aria-label="SweatBuddies home"><LogoWithText size={25} color="#E8412C" textColor="#17130E" /></Link>
+            <div className="flex items-center gap-1">
+              <Link href="/notifications" aria-label="Notifications" className="grid h-11 w-11 place-items-center rounded-full"><Bell className="h-5 w-5" /></Link>
+              <Link href="/profile" aria-label="Profile" className="grid h-11 w-11 place-items-center rounded-full bg-white shadow-sm"><UserRound className="h-5 w-5" /></Link>
             </div>
-            {hasSources ? (
-              <div className="grid grid-cols-3 gap-2 lg:grid-cols-1">
-                <div className="sb-surface p-3">
-                  <p className="font-mono text-lg font-black text-white">{communities.length}</p>
-                  <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/62">
-                    Communities
-                  </p>
-                </div>
-                <div className="sb-surface p-3">
-                  <p className="font-mono text-lg font-black text-white">
-                    {communities.filter((community) => community.beginnerFriendly).length}
-                  </p>
-                  <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/62">
-                    Beginner
-                  </p>
-                </div>
-                <div className="sb-surface p-3">
-                  <p className="font-mono text-lg font-black text-[#E8412C]">
-                    {communities.filter((community) => community.soloFriendly).length}
-                  </p>
-                  <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-wide text-white/62">
-                    Solo-friendly
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
-                <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-white/42">
-                  Clean slate
-                </p>
-                <p className="mt-2 text-sm font-semibold text-white">
-                  No public communities yet.
-                </p>
-                <p className="mt-1 text-sm leading-6 text-white/58">
-                  The first listings will come from verified official sources.
-                </p>
-              </div>
-            )}
+          </div>
+          <div className="mt-2 flex items-center gap-2">
+            <label className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search communities or activities" className="h-12 w-full rounded-full border border-black/10 bg-white pl-12 pr-4 text-sm outline-none focus:border-[#E8412C]" />
+            </label>
+            <button type="button" onClick={() => setView(view === 'map' ? 'list' : 'map')} className="grid h-12 w-12 place-items-center rounded-full bg-[#17130E] text-white" aria-label={`Switch to ${view === 'map' ? 'list' : 'map'} view`}>
+              {view === 'map' ? <List className="h-5 w-5" /> : <MapIcon className="h-5 w-5" />}
+            </button>
+          </div>
+        </header>
+
+        <div className="sticky top-[88px] z-40 overflow-x-auto border-b border-black/10 bg-[#F8F4EA] px-4 py-3 [scrollbar-width:none]">
+          <div className="flex w-max gap-2">
+            <FilterChip active={!category} onClick={() => setCategory(null)}>All <span className="opacity-55">{communities.length}</span></FilterChip>
+            {categories.slice(0, 6).map((item) => <FilterChip key={item} active={category === item} onClick={() => setCategory(item)}>{getCategoryEmoji(item)} {categoryName(item)}</FilterChip>)}
+            <FilterChip active={beginnerOnly} onClick={() => setBeginnerOnly(!beginnerOnly)}>First-timer friendly</FilterChip>
+            <FilterChip active={freeOnly} onClick={() => setFreeOnly(!freeOnly)}>Free</FilterChip>
           </div>
         </div>
-      </header>
-      <CityGuideTabs active="communities" citySlug={cityFilter ?? undefined} />
 
-      {hasSources ? (
-        <>
-          {/* ── Compact top bar: search + filters + create ── */}
-          <div className="sticky top-0 z-40 border-b border-white/10 bg-[#0B0D0C]/95 backdrop-blur-xl">
-            <div className="max-w-6xl mx-auto px-4 py-3 space-y-2.5">
-              {/* Row 1: Search + Create */}
-              <div className="flex items-center gap-2">
-                <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
-                  <input
-                    type="text"
-                    placeholder="Search communities, activities, or areas..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onBlur={trackSearch}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter') trackSearch()
-                    }}
-                    className="min-h-11 w-full rounded-lg border border-white/15 bg-[#111412] py-2.5 pl-9 pr-4 text-sm text-white transition-all placeholder:text-white/50 focus:border-[#E8412C] focus:outline-none max-[360px]:placeholder:text-[12px]"
-                  />
-                </div>
-                <Link
-                  href="/communities/nominate"
-                  className="sb-button-primary h-11 w-11 flex-shrink-0 p-0"
-                  aria-label="Suggest a community"
-                >
-                  <Plus className="w-4 h-4 text-black" />
-                </Link>
-              </div>
-
-              {/* Row 2: Directory command filters */}
-              <div className="grid grid-cols-2 gap-1.5 sm:flex sm:flex-wrap">
-                {showCityFilter && (
-                  <FilterSelect
-                    label="City"
-                    value={cityFilter}
-                    options={cityOptions}
-                    onChange={(value) => {
-                      setCityFilter(value)
-                      trackFilter('city', value)
-                    }}
-                  />
-                )}
-                <FilterSelect
-                  label="Activity"
-                  value={categoryFilter}
-                  options={availableCategories}
-                  onChange={(value) => {
-                    setCategoryFilter(value)
-                    trackFilter('activity', value)
-                  }}
-                />
-                <FilterSelect
-                  label="Area"
-                  value={areaFilter}
-                  options={areaOptions}
-                  onChange={(value) => {
-                    setAreaFilter(value)
-                    trackFilter('area', value)
-                  }}
-                />
-                <FilterSelect
-                  label="Price"
-                  value={priceFilter}
-                  options={priceOptions}
-                  onChange={(value) => {
-                    setPriceFilter(value)
-                    trackFilter('price', value)
-                  }}
-                />
-                <FilterSelect
-                  label="Fit"
-                  value={fitFilter}
-                  options={[
-                    { value: 'beginner', label: 'Beginner-friendly' },
-                    { value: 'solo', label: 'Solo-friendly' },
-                    { value: 'experienced', label: 'Experienced' },
-                  ]}
-                  onChange={(value) => {
-                    setFitFilter(value)
-                    trackFilter('fit', value)
-                  }}
-                />
-                {hasFilters && (
-                  <button
-                    type="button"
-                    onClick={clearFilters}
-                    className="sb-button-secondary min-h-11 flex-shrink-0 rounded-lg px-3 text-[11px]"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                    Clear
-                  </button>
-                )}
-              </div>
-
+        {view === 'map' ? (
+          <section className="relative min-h-[calc(100dvh-214px)] overflow-hidden bg-[#CFE3D1] pb-44">
+            <Image src="/images/singapore-map.svg" alt="Map of Singapore" fill priority className="object-cover opacity-70" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0,rgba(248,244,234,0.14)_75%)]" />
+            <div className="absolute left-4 top-4 rounded-full bg-white/95 px-4 py-2 text-xs font-semibold shadow-lg">
+              <MapPin className="mr-1 inline h-4 w-4 text-[#E8412C]" /> Singapore <ChevronDown className="ml-1 inline h-3.5 w-3.5" />
             </div>
-          </div>
+            {filtered.slice(0, markerPositions.length).map((item, index) => (
+              <button key={item.slug} type="button" onClick={() => setSelectedSlug(item.slug)} style={{ left: markerPositions[index][0], top: markerPositions[index][1] }} className={`absolute grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-4 shadow-xl transition-transform ${selected?.slug === item.slug ? 'z-20 scale-110 border-[#E8412C] bg-[#17130E] text-white' : 'border-white bg-white'}`} aria-label={`Show ${item.name}`}>
+                <span className="text-2xl">{getCategoryEmoji(item.category)}</span>
+                {item.logoImage && <span className="absolute -bottom-1 -right-1 h-6 w-6 overflow-hidden rounded-full border-2 border-white bg-white"><Image src={item.logoImage} alt="" fill className="object-cover" unoptimized={!item.logoImage.startsWith('/')} /></span>}
+              </button>
+            ))}
+            {selected && <div className="absolute inset-x-3 bottom-24 z-30"><CommunitySpotlight community={selected} /></div>}
+          </section>
+        ) : (
+          <section className="px-4 pb-28 pt-5">
+            <div className="mb-4 flex items-end justify-between"><div><p className="text-2xl font-bold">{filtered.length} communities</p><p className="mt-1 text-sm text-black/55">Active groups with checked join paths</p></div><Link href="/communities/nominate" className="text-xs font-bold text-[#E8412C]">Suggest one</Link></div>
+            <div className="space-y-3">{filtered.map((item) => <CommunityRow key={item.slug} community={item} />)}</div>
+          </section>
+        )}
+        <Link href="/communities/nominate" aria-label="Suggest a community" className="fixed bottom-24 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-[#E8412C] text-white shadow-[0_10px_30px_rgba(232,65,44,.35)]"><Plus className="h-7 w-7" /></Link>
+        <MobileNav active="explore" />
+      </div>
 
-          {/* ── Directory count ── */}
-          <div className="max-w-6xl mx-auto px-4 pt-4 pb-2">
-            <div className="flex items-center justify-between gap-3">
-              <p className="font-mono text-[11px] font-black uppercase tracking-[0.18em] text-white/62">
-                {hasFilters
-                  ? `${filteredCommunities.length} communit${filteredCommunities.length === 1 ? 'y' : 'ies'} found`
-                  : `${subtitle} · official join paths checked`}
-              </p>
-              <Link
-                href="/communities/nominate"
-                className="inline-flex min-h-11 flex-shrink-0 items-center rounded-full px-2 text-[11px] font-black uppercase tracking-wide text-[#E8412C] hover:text-white"
-              >
-                Suggest a community
-              </Link>
-            </div>
-          </div>
-
-          {/* ── Grid ── */}
-          <div className="max-w-6xl mx-auto px-4 pb-24">
-            {filteredCommunities.length > 0 ? (
-              <motion.div
-                className="grid grid-cols-1 gap-3 min-[430px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
-                initial="hidden"
-                animate="visible"
-                variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.03 } } }}
-              >
-                {filteredCommunities.map((community) => (
-                  <CrewCard key={community.id} community={community} />
-                ))}
-              </motion.div>
-            ) : (
-              <div className="text-center py-20">
-                <Users className="w-8 h-8 text-[#666666] mx-auto mb-3" />
-                <p className="text-sm text-[#999999] mb-1">No communities match your search.</p>
-                <div className="mt-3 flex flex-wrap items-center justify-center gap-4">
-                  <button
-                    type="button"
-                    onClick={clearFilters}
-                    className="inline-flex min-h-11 items-center rounded-full px-2 text-xs font-medium text-white hover:underline"
-                  >
-                    Clear filters
-                  </button>
-                  <Link
-                    href="/communities/nominate"
-                    className="inline-flex min-h-11 items-center rounded-full px-2 text-xs font-medium text-[#9fe600] hover:underline"
-                  >
-                    Suggest a community
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-        </>
-      ) : (
-        <div className="mx-auto grid max-w-4xl gap-3 px-4 py-8 pb-28 md:grid-cols-2">
-          <Link
-            href="/communities/nominate"
-            className="rounded-lg border-2 border-[#17130E] bg-[#E8412C] p-4 text-white shadow-[3px_3px_0_#17130E] transition-colors hover:bg-[#E8412C]"
-          >
-            <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-white/82">
-              Help map a community
-            </p>
-            <h2 className="mt-2 text-xl font-semibold text-white">Suggest a community</h2>
-            <p className="mt-2 text-sm leading-6 text-white/78">
-              Send the official page or group link. We will review it before it appears publicly.
-            </p>
-          </Link>
-          <Link
-            href={plansHref}
-            className="rounded-lg border border-white/12 bg-white/[0.04] p-4 transition-colors hover:border-white/28"
-          >
-            <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-white/44">
-              Ready now
-            </p>
-            <h2 className="mt-2 text-xl font-semibold text-white">See what&apos;s happening</h2>
-            <p className="mt-2 text-sm leading-6 text-white/62">
-              Plans remain visible while the first community pages are being reviewed.
-            </p>
-          </Link>
-        </div>
-      )}
-    </div>
+      <div className="hidden md:block">
+        <header className="border-b border-black/10 px-6 py-5"><div className="mx-auto flex max-w-6xl items-center justify-between"><Link href="/"><LogoWithText size={28} color="#E8412C" textColor="#17130E" /></Link><nav className="flex gap-2"><Link className="rounded-full bg-[#17130E] px-5 py-3 text-sm font-bold text-white" href="/communities">Explore</Link><Link className="rounded-full px-5 py-3 text-sm font-bold" href="/buddy">This week</Link><Link className="rounded-full px-5 py-3 text-sm font-bold" href="/communities/saved">My communities</Link></nav></div></header>
+        <section className="mx-auto max-w-6xl px-6 py-12"><p className="text-xs font-black uppercase tracking-[.18em] text-[#E8412C]">Explore fitness communities</p><div className="mt-3 flex items-end justify-between gap-8"><h1 className="max-w-2xl text-5xl font-bold leading-[1.04]">Find a group that makes showing up easier.</h1><p className="max-w-sm text-black/55">Browse active communities by activity, area, schedule, and first-timer fit.</p></div><div className="mt-10 grid grid-cols-3 gap-5">{filtered.map((item) => <CommunityRow key={item.slug} community={item} desktop />)}</div></section>
+      </div>
+    </main>
   )
 }
 
-// ─── Compact Crew Card ──────────────────────────────────────────
-function CrewCard({ community }: { community: CommunityData }) {
-  const chips = [
-    community.beginnerFriendly ? 'Beginner-friendly' : '',
-    community.soloFriendly ? 'Solo-friendly' : '',
-    community.priceType ? formatPriceType(community.priceType) : '',
-    ...community.vibeTags,
-  ]
-    .filter(Boolean)
-    .slice(0, 3)
-  const cardImage = community.coverImage || community.logoImage || community.creatorImageUrl || getCategoryFallbackImage(community.category)
-
-  return (
-    <motion.div
-      variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
-      transition={{ duration: 0.25 }}
-      className="h-full"
-    >
-      <article className="group flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-[#151816] text-center transition-colors duration-200 hover:border-[#E8412C]/35 hover:bg-[#1B1B1B]">
-        <Link
-          href={`/communities/${community.slug}`}
-          className="relative block aspect-[16/10] overflow-hidden bg-[#222222]"
-          aria-label={`View ${community.name}`}
-        >
-          <Image
-            src={cardImage}
-            alt={community.name}
-            fill
-            sizes="(min-width: 1024px) 260px, (min-width: 640px) 33vw, 100vw"
-            className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
-            unoptimized={!cardImage.startsWith('/')}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/12 to-black/10" />
-          <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
-            {getCategoryEmoji(community.category)} {categoryLabel(community.category)}
-          </span>
-          <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#E8412C] backdrop-blur">
-            {community.nextEvent
-              ? `Next ${formatEventDate(community.nextEvent.startTime)}`
-              : 'Source page'}
-          </span>
-        </Link>
-
-        <div className="flex flex-1 flex-col p-4">
-          {/* Name + verified */}
-          <div className="flex items-center justify-center gap-1 mb-1">
-            <Link
-              href={`/communities/${community.slug}`}
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-white transition-colors hover:text-neutral-300"
-            >
-              <h3 className="truncate">{community.name}</h3>
-            </Link>
-            {community.isVerified && (
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#E8412C] flex-shrink-0" />
-            )}
-          </div>
-
-          <p className="text-[11px] text-[#666666] mb-2 capitalize">
-            {getCategoryEmoji(community.category)}{' '}
-            {community.category.charAt(0).toUpperCase() +
-              community.category.slice(1).replace(/_/g, ' ')}
-          </p>
-
-          <div className="space-y-1 text-[11px] text-[#999999]">
-            <p className="truncate">{community.usualArea || community.cityName || 'Area TBA'}</p>
-            <p className="truncate">{community.usualSchedule || 'Schedule varies'}</p>
-          </div>
-
-          {community.bestFor && (
-            <p className="mt-2 line-clamp-2 min-h-[32px] text-xs leading-4 text-white/66">
-              {community.bestFor}
-            </p>
-          )}
-
-          {chips.length > 0 && (
-            <div className="mt-2 flex flex-wrap justify-center gap-1">
-              {chips.map((chip) => (
-                <span
-                  key={chip}
-                  className="rounded-full border border-white/10 bg-white/[0.06] px-2 py-0.5 text-[9px] font-semibold text-[#CCCCCC]"
-                >
-                  {chip}
-                </span>
-              ))}
-            </div>
-          )}
-
-          <div className="mt-auto pt-3">
-            <Link
-              href={`/communities/${community.slug}`}
-              className="inline-flex min-h-11 w-full items-center justify-center gap-1 rounded-full bg-[#E8412C] px-3 text-[11px] font-bold text-black transition-colors hover:bg-[#E8412C]"
-              aria-label={`View ${community.name} details`}
-            >
-              View details
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-        </div>
-      </article>
-    </motion.div>
-  )
+function FilterChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return <button type="button" onClick={onClick} className={`h-10 whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors ${active ? 'bg-[#E8412C] text-white' : 'border border-black/10 bg-white text-[#17130E]'}`}>{children}</button>
 }
 
-function FilterSelect({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string
-  value: string | null
-  options: FilterOption[]
-  onChange: (value: string | null) => void
-}) {
-  return (
-    <label className="relative flex min-h-11 min-w-[132px] flex-shrink-0 items-center rounded-lg border border-white/15 bg-[#151816] transition-colors focus-within:border-[#E8412C] hover:border-white/25">
-      <span className="pointer-events-none absolute left-3 top-1.5 text-[8px] font-bold uppercase tracking-[0.16em] text-[#666666]">
-        {label}
-      </span>
-      <select
-        value={value ?? ''}
-        onChange={(event) => onChange(event.target.value || null)}
-        className="min-h-11 w-full appearance-none rounded-lg bg-transparent pb-1.5 pl-3 pr-8 pt-4 text-[12px] font-semibold text-white outline-none"
-        aria-label={label}
-      >
-        <option value="">{label}</option>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#777777]" />
-    </label>
-  )
+function CommunitySpotlight({ community }: { community: CommunityData }) {
+  const image = community.coverImage || community.logoImage || getCategoryFallbackImage(community.category)
+  return <article className="overflow-hidden rounded-[1.75rem] border border-black/10 bg-white/95 p-3 shadow-[0_18px_50px_rgba(23,19,14,.22)] backdrop-blur-xl"><div className="flex gap-3"><div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-black/5"><Image src={image} alt={community.name} fill className="object-cover" unoptimized={!image.startsWith('/')} /></div><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-2"><div><p className="truncate text-base font-bold">{community.name}</p><p className="mt-0.5 text-xs text-black/55">{getCategoryEmoji(community.category)} {categoryName(community.category)} · {community.usualArea || community.cityName}</p></div>{community.isVerified && <CheckCircle2 className="h-4 w-4 shrink-0 text-[#E8412C]" />}</div><div className="mt-2 flex gap-1.5"><span className="rounded-full bg-[#F8F4EA] px-2 py-1 text-[10px] font-semibold">{community.beginnerFriendly ? 'First-timer friendly' : 'Some experience'}</span><span className="rounded-full bg-[#F8F4EA] px-2 py-1 text-[10px] font-semibold">{priceLabel(community.priceType)}</span></div></div></div><Link href={`/communities/${community.slug}`} className="mt-3 flex h-11 items-center justify-center gap-2 rounded-full bg-[#17130E] text-sm font-bold text-white">View community <ArrowRight className="h-4 w-4" /></Link></article>
 }
 
-function formatPriceType(value: string): string {
-  const normalized = value.toLowerCase()
-  if (normalized === 'free') return 'Free'
-  if (normalized === 'paid') return 'Paid'
-  if (normalized === 'mixed' || normalized === 'free_paid') return 'Free + paid'
-  if (normalized === 'membership') return 'Membership'
-  if (normalized === 'charity') return 'Charity'
-  if (normalized === 'pay_what_you_can') return 'Pay what you can'
-  return humanizeSlug(normalized)
+function CommunityRow({ community, desktop = false }: { community: CommunityData; desktop?: boolean }) {
+  const image = community.coverImage || community.logoImage || getCategoryFallbackImage(community.category)
+  return <Link href={`/communities/${community.slug}`} className={`group block overflow-hidden border border-black/10 bg-white shadow-sm ${desktop ? 'rounded-3xl' : 'rounded-2xl'}`}><div className={`relative ${desktop ? 'aspect-[16/9]' : 'h-32'}`}><Image src={image} alt={community.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" unoptimized={!image.startsWith('/')} /><div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" /><span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold">{getCategoryEmoji(community.category)} {categoryName(community.category)}</span></div><div className="p-4"><div className="flex items-start justify-between gap-3"><div className="min-w-0"><h2 className="truncate text-lg font-bold">{community.name}</h2><p className="mt-1 text-xs text-black/55">{community.usualArea || community.cityName || 'Singapore'} · {community.usualSchedule || 'Schedule varies'}</p></div><ArrowRight className="mt-1 h-4 w-4 shrink-0" /></div><div className="mt-3 flex flex-wrap gap-1.5"><span className="rounded-full bg-[#F8F4EA] px-2.5 py-1 text-[10px] font-semibold">{community.beginnerFriendly ? 'Beginner-friendly' : 'Experienced'}</span><span className="rounded-full bg-[#F8F4EA] px-2.5 py-1 text-[10px] font-semibold">{priceLabel(community.priceType)}</span>{community.nextEvent && <span className="rounded-full bg-[#FDE6E1] px-2.5 py-1 text-[10px] font-semibold text-[#B72E1E]">Next {nextDate(community.nextEvent.startTime)}</span>}</div></div></Link>
+}
+
+export function MobileNav({ active }: { active: 'explore' | 'week' | 'mine' }) {
+  const items = [
+    { key: 'explore', href: '/communities', label: 'Explore', icon: MapIcon },
+    { key: 'week', href: '/buddy?view=list', label: 'This week', icon: CalendarDays },
+    { key: 'mine', href: '/communities/saved', label: 'My communities', icon: Bookmark },
+  ] as const
+  return <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-black/10 bg-white/95 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl">{items.map((item) => { const Icon = item.icon; const on = item.key === active; return <Link key={item.key} href={item.href} className={`flex min-h-14 flex-col items-center justify-center gap-1 text-[10px] font-bold ${on ? 'text-[#E8412C]' : 'text-black/45'}`}><Icon className="h-5 w-5" />{item.label}</Link> })}</nav>
 }

@@ -320,7 +320,7 @@ export default async function CommunityPage({ params }: Props) {
   const communityHeroImage = community.coverImage || community.logoImage || getCategoryFallbackImage(community.category)
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] pb-28 md:pb-0">
+    <div className="min-h-screen bg-[#0D0D0D] pb-28 md:pb-0" data-community-detail-v2>
       <CommunityViewTracker
         communitySlug={community.slug}
         communityName={community.name}

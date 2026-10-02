@@ -502,6 +502,39 @@
   }
 }
 
+@media (max-width: 767px) {
+  [data-community-detail-v2] {
+    background: #F8F4EA !important;
+    color: #17130E;
+  }
+
+  [data-community-detail-v2] > header {
+    border-color: rgba(23, 19, 14, 0.1) !important;
+    background: rgba(248, 244, 234, 0.94) !important;
+  }
+
+  [data-community-detail-v2] > header a,
+  [data-community-detail-v2] > header button {
+    color: #17130E !important;
+  }
+
+  [data-community-detail-v2] > section > div {
+    border-color: rgba(23, 19, 14, 0.1) !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 12px 36px rgba(23, 19, 14, 0.08);
+  }
+
+  [data-community-detail-v2] h1,
+  [data-community-detail-v2] h2,
+  [data-community-detail-v2] h3 {
+    color: #17130E !important;
+  }
+
+  [data-community-detail-v2] p {
+    color: rgba(23, 19, 14, 0.62) !important;
+  }
+}
+
 @layer base {
   /* Force light color scheme for native form elements */
   html {

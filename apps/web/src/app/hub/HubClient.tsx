@@ -548,13 +548,13 @@ export default function HubClient({
 
         {/* Quick links */}
         <div className="flex gap-2">
-          <Link href="/buddy?create=session" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
+          <Link href="/this-week?create=session" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
             Post session
           </Link>
           <Link href="/communities/nominate" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
             List community
           </Link>
-          <Link href="/my-sessions" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
+          <Link href="/me?tab=upcoming" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
             My sessions
           </Link>
         </div>

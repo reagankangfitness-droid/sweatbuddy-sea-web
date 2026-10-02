@@ -8,7 +8,7 @@ import { PushPromptBanner } from '@/components/push-prompt-banner'
 import { StripeConnectProvider } from '@/contexts/StripeConnectContext'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 
-const localPublicRoutes = ['/', '/browse', '/singapore', '/bangkok', '/new-to-singapore']
+const localPublicRoutes = ['/', '/browse', '/explore', '/singapore', '/bangkok', '/new-to-singapore']
 const localPublicRoutePrefixes = ['/communities']
 
 export function Providers({ children }: PropsWithChildren) {

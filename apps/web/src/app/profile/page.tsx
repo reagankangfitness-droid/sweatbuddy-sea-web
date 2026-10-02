@@ -247,7 +247,7 @@ export default function ProfilePage() {
           </h3>
           <div className="bg-[#1A1A1A] rounded-2xl border border-[#333333]  overflow-hidden">
             <Link
-              href="/buddy?create=session"
+              href="/this-week?create=session"
               className="flex items-center justify-between px-4 py-3.5 border-b border-[#333333] hover:bg-[#2A2A2A] transition-colors"
             >
               <div className="flex items-center gap-3">
@@ -263,7 +263,7 @@ export default function ProfilePage() {
             </Link>
 
             <Link
-              href="/communities"
+              href="/explore"
               className="flex items-center justify-between px-4 py-3.5 border-b border-[#333333] hover:bg-[#2A2A2A] transition-colors"
             >
               <div className="flex items-center gap-3">
@@ -279,7 +279,7 @@ export default function ProfilePage() {
             </Link>
 
             <Link
-              href="/my-sessions"
+              href="/me?tab=upcoming"
               className="flex items-center justify-between px-4 py-3.5 hover:bg-[#2A2A2A] transition-colors"
             >
               <div className="flex items-center gap-3">

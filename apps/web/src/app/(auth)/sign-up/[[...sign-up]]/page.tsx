@@ -81,7 +81,7 @@ function SignUpContent() {
         } catch { /* ignore */ }
         sessionStorage.removeItem('auth_intent')
       }
-      router.push(redirectUrl || '/buddy')
+      router.push(redirectUrl || '/this-week')
     }
   }, [isLoaded, isSignedIn, router, redirectUrl])
 
@@ -158,7 +158,7 @@ function SignUpContent() {
                 alertText: 'text-sm',
               }
             }}
-            fallbackRedirectUrl={redirectUrl || '/buddy'}
+            fallbackRedirectUrl={redirectUrl || '/this-week'}
           />
         </div>
 

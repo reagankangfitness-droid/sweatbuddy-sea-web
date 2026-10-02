@@ -93,19 +93,19 @@ const nextConfig = {
   async redirects() {
     return [
       // Legacy route redirects
-      { source: '/organizer/:path*', destination: '/singapore?tab=map', permanent: false },
-      { source: '/crews', destination: '/buddy', permanent: false },
-      { source: '/community', destination: '/communities', permanent: true },
-      { source: '/saved', destination: '/my-sessions', permanent: true },
-      { source: '/cities', destination: '/singapore?tab=map', permanent: true },
-      { source: '/cities/singapore', destination: '/singapore', permanent: true },
-      { source: '/cities/bangkok', destination: '/bangkok', permanent: true },
-      { source: '/cities/:slug', destination: '/singapore?tab=map&city=:slug', permanent: true },
+      { source: '/organizer/:path*', destination: '/explore', permanent: false },
+      { source: '/crews', destination: '/this-week', permanent: false },
+      { source: '/community', destination: '/explore', permanent: true },
+      { source: '/saved', destination: '/me', permanent: true },
+      { source: '/cities', destination: '/explore', permanent: true },
+      { source: '/cities/singapore', destination: '/explore?city=singapore', permanent: true },
+      { source: '/cities/bangkok', destination: '/explore?city=bangkok', permanent: true },
+      { source: '/cities/:slug', destination: '/explore?city=:slug', permanent: true },
       { source: '/coach/templates', destination: '/hub', permanent: true },
       { source: '/coach/templates/new', destination: '/hub', permanent: true },
       { source: '/coach/templates/:path*', destination: '/hub', permanent: true },
       { source: '/onboarding/coach', destination: '/host', permanent: true },
-      { source: '/onboarding/p2p', destination: '/buddy', permanent: true },
+      { source: '/onboarding/p2p', destination: '/this-week', permanent: true },
 
       // Host surface consolidation
       { source: '/host/dashboard', destination: '/hub', permanent: true },
@@ -119,14 +119,13 @@ const nextConfig = {
       { source: '/host/waves', destination: '/buddy/host/new', permanent: true },
 
       // SEO preservation
-      { source: '/discover', destination: '/communities', permanent: true },
-      { source: '/explore', destination: '/communities', permanent: true },
-      { source: '/events', destination: '/buddy?view=list&location=nearby', permanent: true },
-      { source: '/events/:path*', destination: '/buddy?view=list&location=nearby', permanent: true },
-      { source: '/app', destination: '/buddy', permanent: true },
+      { source: '/discover', destination: '/explore', permanent: true },
+      { source: '/events', destination: '/this-week', permanent: true },
+      { source: '/events/:path*', destination: '/this-week', permanent: true },
+      { source: '/app', destination: '/this-week', permanent: true },
       { source: '/activities/create', destination: '/buddy/host/new', permanent: true },
-      { source: '/my-events', destination: '/my-bookings', permanent: false },
-      { source: '/my-activities', destination: '/my-bookings', permanent: false },
+      { source: '/my-events', destination: '/me?tab=upcoming', permanent: false },
+      { source: '/my-activities', destination: '/me?tab=upcoming', permanent: false },
     ]
   },
 

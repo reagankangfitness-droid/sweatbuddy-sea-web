@@ -12,5 +12,5 @@ export default async function BrowsePage({ searchParams }: PageProps) {
   if (activity) params.set('q', activity)
 
   const query = params.toString()
-  redirect(query ? `/singapore?${query}` : '/singapore')
+  redirect(query ? `/explore?${query}` : '/explore')
 }

@@ -136,7 +136,7 @@ function showSessionCapToast(
     description: data.guidance || `New hosts can list ${cap} upcoming sessions at once. Finish or cancel one to add another.`,
     action: {
       label: 'Manage',
-      onClick: () => navigate(data.manageUrl || '/my-sessions'),
+      onClick: () => navigate(data.manageUrl || '/me?tab=upcoming'),
     },
   })
 }
@@ -260,7 +260,7 @@ export default function QuickPostPage() {
       if (!res.ok) {
         if (data.code === 'ONBOARDING_REQUIRED') {
           toast.error('Complete quick setup in discovery before posting a session.')
-          router.push('/buddy')
+          router.push('/this-week')
           return
         }
         if (data.code === 'SESSION_CAP') {
@@ -285,7 +285,7 @@ export default function QuickPostPage() {
 
       if (data.requiresReview) {
         toast.success('Session submitted for review.')
-        router.push('/buddy')
+        router.push('/this-week')
         return
       }
 

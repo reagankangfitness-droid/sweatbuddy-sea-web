@@ -55,7 +55,7 @@ export function MyCommunities() {
           My Communities
         </h2>
         <Link
-          href="/communities"
+          href="/explore"
           className="text-xs text-neutral-500 hover:text-neutral-300 transition-colors flex items-center gap-1"
         >
           View all <ChevronRight className="w-3 h-3" />

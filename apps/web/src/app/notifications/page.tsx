@@ -198,7 +198,7 @@ export default function NotificationsPage() {
                 Sign in
               </Link>
               <Link
-                href="/buddy"
+                href="/this-week"
                 className="sb-button-secondary px-5"
               >
                 Open map

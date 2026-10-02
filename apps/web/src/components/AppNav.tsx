@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { Compass, User, Bell } from 'lucide-react'
+import { Bookmark, CalendarDays, Compass, User, Bell } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -10,7 +10,9 @@ import { useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 
 const navItems = [
-  { id: 'discover', label: 'Communities', icon: Compass, href: '/communities', mobileOnly: false },
+  { id: 'discover', label: 'Explore', icon: Compass, href: '/explore', mobileOnly: false },
+  { id: 'week', label: 'This week', icon: CalendarDays, href: '/this-week', mobileOnly: false },
+  { id: 'me', label: 'My activity', icon: Bookmark, href: '/me', mobileOnly: false },
   { id: 'profile', label: 'Profile', icon: User, href: '/profile', mobileOnly: false },
 ]
 
@@ -39,6 +41,9 @@ function AppNavInner() {
 
   const isPublicDiscoveryRoute =
     pathname === '/buddy' ||
+    pathname === '/this-week' ||
+    pathname === '/explore' ||
+    pathname === '/me' ||
     pathname.startsWith('/singapore') ||
     pathname.startsWith('/communities') ||
     pathname.startsWith('/places') ||
@@ -49,6 +54,7 @@ function AppNavInner() {
   // Plans / Map / Crews / Guide navigation so users do not see two app models.
   const isAppPage =
     pathname.startsWith('/discover') ||
+    pathname === '/me' ||
     pathname === '/profile' ||
     pathname.startsWith('/my-bookings') ||
     pathname.startsWith('/my-sessions') ||
@@ -87,6 +93,8 @@ function AppNavInner() {
         pathname.startsWith('/saved')
       )
     }
+    if (item.id === 'week') return pathname === '/this-week' || pathname.startsWith('/buddy')
+    if (item.id === 'me') return pathname === '/me' || pathname.startsWith('/my-sessions')
     return pathname.startsWith(item.href)
   }
 
@@ -263,7 +271,7 @@ function AppNavInner() {
           aria-label="Main navigation"
           className="fixed bottom-0 left-0 right-0 z-30"
         >
-          <div className="absolute inset-0 bg-[#0B0D0C]/95 backdrop-blur-xl border-t border-white/[0.06]" />
+          <div className="absolute inset-0 border-t border-black/10 bg-white/95 backdrop-blur-xl" />
           <div className="relative flex items-center justify-around px-2 pt-2 pb-[env(safe-area-inset-bottom,8px)]">
             {navItems.map((item) => {
               const active = isActive(item)
@@ -278,7 +286,7 @@ function AppNavInner() {
                     flex flex-col items-center justify-center w-14 h-14
                     transition-all duration-200 relative
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0D0C] rounded-lg
-                    ${active ? 'text-white' : 'text-[#71717A] active:scale-95'}
+                    ${active ? 'text-[#E8412C]' : 'text-black/45 active:scale-95'}
                   `}
                 >
                   <span className="relative">
@@ -288,7 +296,7 @@ function AppNavInner() {
                   {active && (
                     <motion.div
                       layoutId="mobileActiveIndicator"
-                      className="absolute bottom-1 w-4 h-1 bg-white rounded-full"
+                      className="absolute bottom-1 h-1 w-4 rounded-full bg-[#E8412C]"
                       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                     />
                   )}

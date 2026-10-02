@@ -47,7 +47,7 @@ import {
 } from '@/lib/location-config'
 import { compareByShowUpConfidence, getShowUpConfidence } from '@/lib/show-up-confidence'
 import { getCategoryFallbackImage, getCityFallbackImage } from '@/lib/visual-fallbacks'
-import { MobileNav } from '@/app/communities/CommunitiesPageClient'
+import { ProductNav } from '@/components/ProductNav'
 
 interface Host {
   id: string
@@ -523,7 +523,7 @@ function LocalPulsePanel({
 
           {!signedIn && (
             <Link
-              href="/sign-in?redirect_url=/buddy"
+              href="/sign-in?redirect_url=/this-week"
               className="inline-flex min-h-10 items-center rounded-full border border-white/12 px-4 text-xs font-black uppercase tracking-wide text-white/70 transition-colors hover:border-white/30 hover:text-white"
             >
               Sign in
@@ -1057,7 +1057,7 @@ function BuddyPageInner() {
   const initialPricingFilter = searchParams.get('pricing') ?? ''
   const initialLevelFilter = searchParams.get('fitnessLevel') ?? searchParams.get('level') ?? ''
   const initialDateFilter = searchParams.get('date') ?? ''
-  const initialViewMode = searchParams.get('view') === 'list' ? 'list' : 'map'
+  const initialViewMode = 'list'
   const initialCreateMode = searchParams.get('create')
 
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(
@@ -1099,9 +1099,7 @@ function BuddyPageInner() {
   )
   const [dateFilter, setDateFilter] = useState(() => {
     if (/^\d{4}-\d{2}-\d{2}$/.test(initialDateFilter)) return initialDateFilter
-    return initialViewMode === 'map'
-      ? getLocalDateString(shouldStartInCityMode ? initialCityConfig.timezone : getBrowserTimezone())
-      : ''
+    return ''
   })
   const [showCreateSheet, setShowCreateSheet] = useState(false)
   const [showCreateMenu, setShowCreateMenu] = useState(false)
@@ -1126,7 +1124,7 @@ function BuddyPageInner() {
   const [followLoadingId, setFollowLoadingId] = useState<string | null>(null)
   const [followedCommunityIds, setFollowedCommunityIds] = useState<Set<string>>(new Set())
 
-  // View mode: map-first by default, with list available as a secondary scan mode.
+  // This Week is list-first. Map-oriented actions hand off to the canonical Explore map.
   const [viewMode, setViewMode] = useState<'list' | 'map'>(initialViewMode)
   const mapDrawerTrackedRef = useRef<string | null>(null)
 
@@ -1549,8 +1547,8 @@ function BuddyPageInner() {
 
     const redirectUrl =
       discoveryMode === 'nearby'
-        ? `/buddy?view=${viewMode}&location=nearby`
-        : `/buddy?view=${viewMode}&city=${cityConfig.slug}`
+        ? `/this-week?location=nearby`
+        : `/this-week?city=${cityConfig.slug}`
     router.push(`/sign-in?intent=rsvp&redirect_url=${encodeURIComponent(redirectUrl)}`)
   }
 
@@ -1773,7 +1771,7 @@ function BuddyPageInner() {
     } else {
       params.delete('view')
     }
-    router.replace(`/buddy${params.toString() ? `?${params.toString()}` : ''}`, { scroll: false })
+    router.replace(`/this-week${params.toString() ? `?${params.toString()}` : ''}`, { scroll: false })
 
     trackBrowserEvent('buddy_view_changed', {
       viewMode: next,
@@ -2094,6 +2092,7 @@ function BuddyPageInner() {
     <div
       className="flex flex-col bg-[#0B0D0C]"
       style={{ height: '100dvh', overflow: 'hidden' }}
+      data-this-week-shell
     >
       {/* Create Session Sheet */}
       <CreateSessionSheet
@@ -2157,7 +2156,7 @@ function BuddyPageInner() {
             </p>
             <nav aria-label="Discovery sections" className="hidden items-center gap-1 sm:flex">
               <Link
-                href={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
+                href={`/explore?city=${encodeURIComponent(cityConfig.slug)}`}
                 className="inline-flex min-h-9 items-center rounded-full px-3 text-[10px] font-black uppercase tracking-wide text-white/58 hover:text-white"
               >
                 Communities
@@ -2168,13 +2167,6 @@ function BuddyPageInner() {
                 className={`min-h-9 rounded-full px-3 text-[10px] font-black uppercase tracking-wide ${viewMode === 'list' ? 'bg-white text-black' : 'text-white/58'}`}
               >
                 This week
-              </button>
-              <button
-                type="button"
-                onClick={() => viewMode === 'list' && toggleViewMode()}
-                className={`min-h-9 rounded-full px-3 text-[10px] font-black uppercase tracking-wide ${viewMode === 'map' ? 'bg-white text-black' : 'text-white/58'}`}
-              >
-                Map
               </button>
             </nav>
           </div>
@@ -2201,7 +2193,7 @@ function BuddyPageInner() {
           {/* Date strip */}
           <div
             data-testid="buddy-date-strip"
-            className={`${viewMode === 'map' ? 'hidden sm:grid' : 'grid'} grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1.5 max-[360px]:grid-cols-[minmax(0,1fr)_auto]`}
+            className={`${viewMode === 'map' ? 'hidden sm:grid' : 'grid'} grid-cols-1 items-center gap-1.5`}
           >
             <div className="flex min-w-0 gap-1 overflow-x-auto no-scrollbar">
               {(() => {
@@ -2251,22 +2243,6 @@ function BuddyPageInner() {
                 <span className="text-[13px] font-bold leading-tight">Upcoming</span>
               </button>
             </div>
-            <button
-              type="button"
-              onClick={toggleViewMode}
-              className="flex h-10 flex-shrink-0 items-center gap-1.5 rounded-full border border-white/[0.12] bg-[#171A18] px-3 text-[11px] font-black uppercase tracking-wide text-white transition-colors hover:border-white/30 active:scale-95 max-[360px]:hidden lg:hidden"
-              aria-label={viewMode === 'list' ? 'Show map' : 'Show list'}
-            >
-              {viewMode === 'list' ? (
-                <>
-                  <Map className="w-3.5 h-3.5" /> Map
-                </>
-              ) : (
-                <>
-                  <List className="w-3.5 h-3.5" /> List
-                </>
-              )}
-            </button>
           </div>
 
           {/* Mobile collapsed filters */}
@@ -2362,8 +2338,8 @@ function BuddyPageInner() {
             <div className="sticky top-0 z-10 -mx-4 hidden border-b border-white/[0.08] bg-[#0B0D0C]/96 px-4 py-3 backdrop-blur-xl sm:block">
               <DiscoveryWorkspaceNav
                 viewMode={viewMode}
-                communityHref={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
-                onToggleView={toggleViewMode}
+                communityHref={`/explore?city=${encodeURIComponent(cityConfig.slug)}`}
+                onToggleView={() => router.push(`/explore?city=${encodeURIComponent(cityConfig.slug)}`)}
               />
             </div>
             {/* Search results */}
@@ -2475,7 +2451,7 @@ function BuddyPageInner() {
                         dateFilter ||
                         neighborhoodFilter,
                       )}
-                      communityHref={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
+                      communityHref={`/explore?city=${encodeURIComponent(cityConfig.slug)}`}
                       onClearFilters={() => {
                         setTypeFilter('')
                         setPricingFilter('')
@@ -2484,7 +2460,7 @@ function BuddyPageInner() {
                         setNeighborhoodFilter(null)
                       }}
                       onCreate={() => setShowCreateMenu(true)}
-                      onOpenMap={toggleViewMode}
+                      onOpenMap={() => router.push(`/explore?city=${encodeURIComponent(cityConfig.slug)}`)}
                     />
                   ) : (
                     <CityEmptyState
@@ -2512,7 +2488,7 @@ function BuddyPageInner() {
                         openSeededCreate(idea, 'empty_state')
                       }}
                       showMarketSwitch={discoveryMode === 'city'}
-                      onOpenMap={toggleViewMode}
+                      onOpenMap={() => router.push(`/explore?city=${encodeURIComponent(cityConfig.slug)}`)}
                     />
                   )
                 ) : (
@@ -2571,7 +2547,7 @@ function BuddyPageInner() {
                             Post a session
                           </button>
                           <Link
-                            href="/communities"
+                            href="/explore"
                             className="inline-flex items-center gap-1 rounded-full border border-white/[0.08] bg-[#1B1F1C] px-3.5 py-2 text-xs font-semibold text-[#999999]"
                           >
                             Browse communities
@@ -2657,7 +2633,7 @@ function BuddyPageInner() {
               activeDateLabel={activeDateLabel}
               sessionCount={sessions.length}
               communityCount={communityCount}
-              communityHref={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
+              communityHref={`/explore?city=${encodeURIComponent(cityConfig.slug)}`}
               onShowList={toggleViewMode}
             />
 
@@ -2668,7 +2644,7 @@ function BuddyPageInner() {
                 sessions={sessions}
                 communities={communityPreviews}
                 loading={loading || communityCountLoading}
-                communityHref={`/communities?city=${encodeURIComponent(cityConfig.slug)}`}
+                communityHref={`/explore?city=${encodeURIComponent(cityConfig.slug)}`}
                 onShowList={toggleViewMode}
                 onCreate={() => {
                   setCreateSeed(null)
@@ -2735,7 +2711,7 @@ function BuddyPageInner() {
         />
       ) : null}
       <div className="md:hidden">
-        <MobileNav active="week" />
+        <ProductNav active="week" />
       </div>
     </div>
   )
@@ -3101,7 +3077,7 @@ function BuddyMobileConceptShell({
 
                 {signedIn ? (
                   <Link
-                    href="/my-sessions"
+                    href="/me?tab=upcoming"
                     className="inline-flex min-h-12 items-center justify-center border-2 border-[#17130E] bg-[#E8412C] font-mono text-[11px] font-black uppercase tracking-wide text-white shadow-[3px_3px_0_#17130E]"
                   >
                     Open my plans
@@ -3921,8 +3897,8 @@ function CityEmptyState({
 }) {
   const otherCity =
     citySlug === 'bangkok'
-      ? { name: 'Singapore', href: '/buddy?view=list&city=singapore' }
-      : { name: 'Bangkok', href: '/buddy?view=list&city=bangkok' }
+      ? { name: 'Singapore', href: '/this-week?city=singapore' }
+      : { name: 'Bangkok', href: '/this-week?city=bangkok' }
   const cityImage = getCityFallbackImage(citySlug || cityName)
 
   return (
@@ -4005,7 +3981,7 @@ function CityEmptyState({
 
       <section className="grid gap-2 sm:grid-cols-2">
         <Link
-          href="/communities"
+          href="/explore"
           className="rounded-xl border border-white/[0.08] bg-[#111412] p-4 hover:border-white/18"
         >
           <p className="text-sm font-bold text-white">Browse communities</p>

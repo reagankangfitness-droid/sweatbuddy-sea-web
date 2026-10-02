@@ -73,7 +73,7 @@ export function LandingIntentCapture({
         submit: 'Get the drop',
         success: 'You are on the list.',
         next: 'Browse sessions',
-        href: successHref ?? '/buddy',
+        href: successHref ?? '/this-week',
       }
     }
 
@@ -83,7 +83,7 @@ export function LandingIntentCapture({
       submit: 'Find my crew',
       success: 'Got it. We know what kind of crew to look for.',
       next: city ? `Browse ${city}` : 'Browse sessions',
-      href: successHref ?? (city ? `/${city.toLowerCase()}` : '/buddy'),
+      href: successHref ?? (city ? `/explore?city=${encodeURIComponent(city.toLowerCase())}` : '/this-week'),
     }
   }, [city, successHref, type])
 

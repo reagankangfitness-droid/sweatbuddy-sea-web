@@ -93,7 +93,13 @@ function buildCalendarUrl(session: SessionData): string {
   return `https://calendar.google.com/calendar/render?${params.toString()}`
 }
 
-export default function MySessionsPage() {
+export default function MySessionsPage({
+  section = 'all',
+  embedded = false,
+}: {
+  section?: 'all' | 'upcoming' | 'past'
+  embedded?: boolean
+} = {}) {
   const { isSignedIn, isLoaded } = useUser()
   const [authTimedOut, setAuthTimedOut] = useState(false)
   const [upcoming, setUpcoming] = useState<SessionData[]>([])
@@ -177,7 +183,7 @@ export default function MySessionsPage() {
                 Sign in
               </Link>
               <Link
-                href="/buddy"
+                href="/this-week"
                 className="sb-button-secondary px-5"
               >
                 Open map
@@ -192,7 +198,7 @@ export default function MySessionsPage() {
   return (
     <div className="min-h-screen bg-[#0B0D0C]" data-sb-paper-shell>
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-[#0B0D0C]/95 backdrop-blur-lg border-b border-[#333333]">
+      {!embedded && <header className="fixed top-0 left-0 right-0 z-40 bg-[#0B0D0C]/95 backdrop-blur-lg border-b border-[#333333]">
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center gap-4 px-4 py-3">
             <Link
@@ -206,9 +212,9 @@ export default function MySessionsPage() {
             </h1>
           </div>
         </div>
-      </header>
+      </header>}
 
-      <main className="pt-24 pb-28 px-4 max-w-lg mx-auto">
+      <main className={`${embedded ? 'pt-6' : 'pt-24'} pb-28 px-4 max-w-lg mx-auto`}>
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-6 h-6 text-[#666] animate-spin" />
@@ -216,7 +222,7 @@ export default function MySessionsPage() {
         ) : (
           <>
             {/* Upcoming */}
-            <section className="mb-10">
+            {section !== 'past' && <section className="mb-10">
               <h2 className="text-xs font-semibold text-[#666666] uppercase tracking-wider px-1 mb-3">
                 Upcoming
               </h2>
@@ -227,7 +233,7 @@ export default function MySessionsPage() {
                     No upcoming plans. Find one to show up to.
                   </p>
                   <Link
-                    href="/buddy"
+                    href="/this-week"
                     className="sb-button-primary px-5"
                   >
                     Find a plan
@@ -340,10 +346,10 @@ export default function MySessionsPage() {
                   })}
                 </div>
               )}
-            </section>
+            </section>}
 
             {/* Past */}
-            <section>
+            {section !== 'upcoming' && <section>
               <h2 className="text-xs font-semibold text-[#666666] uppercase tracking-wider px-1 mb-3">
                 Past
               </h2>
@@ -387,7 +393,7 @@ export default function MySessionsPage() {
                   ))}
                 </div>
               )}
-            </section>
+            </section>}
           </>
         )}
       </main>

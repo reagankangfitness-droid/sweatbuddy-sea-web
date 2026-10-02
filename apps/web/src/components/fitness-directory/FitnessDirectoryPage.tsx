@@ -190,7 +190,7 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
           </Link>
           <nav className="flex shrink-0 items-center gap-2">
             <Link
-              href="/communities"
+              href="/explore"
               className="sb-button-secondary hidden min-h-10 px-3 text-xs sm:inline-flex"
             >
               Communities
@@ -335,7 +335,7 @@ export async function FitnessDirectoryPage({ categorySlug, searchParams }: Fitne
                 </h2>
               </div>
               <Link
-                href="/communities"
+                href="/explore"
                 className="sb-button-secondary min-h-10 w-fit px-3 text-xs"
               >
                 <Users size={15} />

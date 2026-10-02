@@ -52,7 +52,7 @@ export default async function HubPage() {
 
   if (communities.length === 0) {
     // Not a host — redirect to main feed
-    redirect('/buddy')
+    redirect('/this-week')
   }
 
   const communityIds = communities.map((c) => c.id)

@@ -38,18 +38,18 @@ export default async function SingaporePage({ searchParams }: SingaporePageProps
     const next = new URLSearchParams({ view: 'list', city })
     if (params.type) next.set('type', params.type)
     if (params.date) next.set('date', params.date)
-    redirect(`/buddy?${next.toString()}`)
+    redirect(`/this-week?${next.toString()}`)
   }
 
   if (params.tab === 'communities') {
-    redirect(`/communities?city=${encodeURIComponent(city)}`)
+    redirect(`/explore?city=${encodeURIComponent(city)}`)
   }
 
   if (params.tab === 'map' || params.view === 'map') {
     const next = new URLSearchParams({ view: 'map', city })
     if (params.type) next.set('type', params.type)
     if (params.date) next.set('date', params.date)
-    redirect(`/buddy?${next.toString()}`)
+    redirect(`/explore?city=${encodeURIComponent(city)}`)
   }
 
   return <CityLandingPage {...singaporeLanding} />

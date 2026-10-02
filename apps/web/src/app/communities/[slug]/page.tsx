@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { ProductNav } from '@/components/ProductNav'
 import Image from 'next/image'
 import { ArrowLeft, Users, Calendar, MapPin, Globe, MessageCircle, CheckCircle, Megaphone, Pin, ExternalLink } from 'lucide-react'
 import { Instagram } from '@/components/icons/InstagramIcon'
@@ -331,7 +332,7 @@ export default async function CommunityPage({ params }: Props) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link
-              href="/communities"
+              href="/explore"
               className="flex items-center gap-2 text-[#666666] hover:text-white transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -841,6 +842,7 @@ export default async function CommunityPage({ params }: Props) {
           joinPlatform={community.joinPlatform}
         />
       )}
+      <ProductNav active="explore" />
     </div>
   )
 }
@@ -863,7 +865,7 @@ function SeedCommunityPage({ community }: { community: CommunityDirectorySeed })
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#1A1A1A]/85 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link
-            href="/communities"
+            href="/explore"
             className="flex min-h-11 items-center gap-2 text-sm font-semibold text-[#888888] transition-colors hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -1009,7 +1011,7 @@ function SeedCommunityPage({ community }: { community: CommunityDirectorySeed })
                 Similar communities
               </h2>
               <Link
-                href={`/communities?city=${community.citySlug}`}
+                href={`/explore?city=${community.citySlug}`}
                 className="text-xs font-bold uppercase tracking-wide text-[#E8412C] hover:text-white"
               >
                 View directory

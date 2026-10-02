@@ -13,7 +13,7 @@ export function LandingNav() {
         {/* Right: Nav links + Sign in */}
         <div className="flex items-center gap-5">
           <Link
-            href="/buddy"
+            href="/this-week"
             className="hidden sm:inline text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
           >
             Explore

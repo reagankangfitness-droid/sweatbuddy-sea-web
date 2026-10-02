@@ -88,6 +88,8 @@ const isPublicRoute = createRouteMatcher([
   '/my-events/(.*)',
   '/banned',
   '/explore',
+  '/this-week',
+  '/me',
   '/communities(.*)',
   '/buddy',
   '/hub',
@@ -161,17 +163,34 @@ function isPublicApiRequest(request: NextRequest) {
 function getLegacyRouteRedirect(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl
 
+  if (pathname === '/communities') {
+    const target = new URL('/explore', request.url)
+    searchParams.forEach((value, key) => target.searchParams.set(key, value))
+    return NextResponse.redirect(target)
+  }
+
+  if (pathname === '/communities/saved') {
+    return NextResponse.redirect(new URL('/me', request.url))
+  }
+
+  if (pathname === '/buddy') {
+    const target = new URL('/this-week', request.url)
+    searchParams.forEach((value, key) => {
+      if (key !== 'view') target.searchParams.set(key, value)
+    })
+    return NextResponse.redirect(target)
+  }
+
   if (pathname === '/singapore') {
     const tab = searchParams.get('tab')
     const view = searchParams.get('view')
 
     if (tab === 'events') {
-      const target = new URL('/buddy', request.url)
+      const target = new URL('/this-week', request.url)
       const city = searchParams.get('city') || 'singapore'
       const activity = searchParams.get('type') ?? searchParams.get('cat')
       const date = searchParams.get('date')
 
-      target.searchParams.set('view', 'list')
       target.searchParams.set('city', city)
       if (activity) target.searchParams.set('type', activity)
       if (date) target.searchParams.set('date', date)
@@ -180,68 +199,71 @@ function getLegacyRouteRedirect(request: NextRequest) {
     }
 
     if (tab === 'communities') {
-      const target = new URL('/communities', request.url)
+      const target = new URL('/explore', request.url)
       target.searchParams.set('city', searchParams.get('city') || 'singapore')
       return NextResponse.redirect(target)
     }
 
     if (tab === 'map' || view === 'map') {
-      const target = new URL('/buddy', request.url)
+      const target = new URL('/explore', request.url)
       const city = searchParams.get('city') || 'singapore'
       const activity = searchParams.get('type') ?? searchParams.get('cat')
       const date = searchParams.get('date')
 
-      target.searchParams.set('view', 'map')
       target.searchParams.set('city', city)
       if (activity) target.searchParams.set('type', activity)
       if (date) target.searchParams.set('date', date)
 
       return NextResponse.redirect(target)
     }
+
+    const target = new URL('/explore', request.url)
+    const query = searchParams.get('q')
+    if (query) target.searchParams.set('q', query)
+    return NextResponse.redirect(target)
   }
 
   if (pathname === '/browse' || pathname.startsWith('/browse/')) {
-    const target = new URL('/singapore', request.url)
+    const target = new URL('/explore', request.url)
     const activity = searchParams.get('type') ?? searchParams.get('cat')
     if (activity) target.searchParams.set('q', activity)
     return NextResponse.redirect(target)
   }
 
   if (pathname === '/events' || pathname.startsWith('/events/')) {
-    const target = new URL('/singapore', request.url)
+    const target = new URL('/this-week', request.url)
     const activity = searchParams.get('cat') ?? searchParams.get('type')
     const city = searchParams.get('city')
-    target.searchParams.set('tab', 'events')
     if (activity) target.searchParams.set('type', activity)
     if (city) target.searchParams.set('city', city)
     return NextResponse.redirect(target)
   }
 
   if (pathname === '/community') {
-    return NextResponse.redirect(new URL('/communities', request.url))
+    return NextResponse.redirect(new URL('/explore', request.url))
   }
 
   if (pathname === '/saved') {
-    return NextResponse.redirect(new URL('/my-sessions', request.url))
+    return NextResponse.redirect(new URL('/me', request.url))
   }
 
   if (pathname === '/my-bookings') {
-    return NextResponse.redirect(new URL('/my-sessions', request.url))
+    return NextResponse.redirect(new URL('/me', request.url))
   }
 
   if (pathname === '/bangkok') {
-    return NextResponse.redirect(new URL('/communities?city=singapore', request.url))
+    return NextResponse.redirect(new URL('/explore?city=bangkok', request.url))
   }
 
   if (pathname === '/cities') {
-    return NextResponse.redirect(new URL('/singapore?tab=map', request.url))
+    return NextResponse.redirect(new URL('/explore', request.url))
   }
 
   if (pathname.startsWith('/cities/')) {
     const slug = pathname.replace('/cities/', '').split('/')[0]
-    if (slug === 'singapore') return NextResponse.redirect(new URL('/singapore', request.url))
-    if (slug === 'bangkok') return NextResponse.redirect(new URL('/communities?city=singapore', request.url))
-    return NextResponse.redirect(new URL(`/singapore?tab=map&city=${encodeURIComponent(slug)}`, request.url))
+    if (slug === 'singapore') return NextResponse.redirect(new URL('/explore?city=singapore', request.url))
+    if (slug === 'bangkok') return NextResponse.redirect(new URL('/explore?city=bangkok', request.url))
+    return NextResponse.redirect(new URL(`/explore?city=${encodeURIComponent(slug)}`, request.url))
   }
 
   if (pathname === '/coach/templates' || pathname.startsWith('/coach/templates/')) {
@@ -253,7 +275,7 @@ function getLegacyRouteRedirect(request: NextRequest) {
   }
 
   if (pathname === '/onboarding/p2p') {
-    return NextResponse.redirect(new URL('/buddy', request.url))
+    return NextResponse.redirect(new URL('/this-week', request.url))
   }
 
   return null

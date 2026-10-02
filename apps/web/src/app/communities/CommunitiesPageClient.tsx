@@ -6,7 +6,6 @@ import Link from 'next/link'
 import {
   ArrowRight,
   Bell,
-  Bookmark,
   CalendarDays,
   CheckCircle2,
   ChevronDown,
@@ -22,6 +21,7 @@ import {
 import { LogoWithText } from '@/components/logo'
 import { ACTIVITY_CATEGORIES, getCategoryEmoji } from '@/lib/categories'
 import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
+import { ProductNav } from '@/components/ProductNav'
 
 export interface CommunityMemberData { id: string; name: string | null; imageUrl: string | null }
 export interface NextEventData { id: string; title: string; startTime: string; categorySlug: string | null }
@@ -180,11 +180,11 @@ export default function CommunitiesPageClient({
           </section>
         )}
         <Link href="/communities/nominate" aria-label="Suggest a community" className="fixed bottom-24 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-[#E8412C] text-white shadow-[0_10px_30px_rgba(232,65,44,.35)]"><Plus className="h-7 w-7" /></Link>
-        <MobileNav active="explore" />
+        <ProductNav active="explore" />
       </div>
 
       <div className="hidden md:block">
-        <header className="border-b border-black/10 px-6 py-5"><div className="mx-auto flex max-w-6xl items-center justify-between"><Link href="/"><LogoWithText size={28} color="#E8412C" textColor="#17130E" /></Link><nav className="flex gap-2"><Link className="rounded-full bg-[#17130E] px-5 py-3 text-sm font-bold text-white" href="/communities">Explore</Link><Link className="rounded-full px-5 py-3 text-sm font-bold" href="/buddy">This week</Link><Link className="rounded-full px-5 py-3 text-sm font-bold" href="/communities/saved">My communities</Link></nav></div></header>
+        <header className="border-b border-black/10 px-6 py-5"><div className="mx-auto flex max-w-6xl items-center justify-between"><Link href="/"><LogoWithText size={28} color="#E8412C" textColor="#17130E" /></Link><nav className="flex gap-2"><Link className="rounded-full bg-[#17130E] px-5 py-3 text-sm font-bold text-white" href="/explore">Explore</Link><Link className="rounded-full px-5 py-3 text-sm font-bold" href="/this-week">This week</Link><Link className="rounded-full px-5 py-3 text-sm font-bold" href="/me">My activity</Link><Link className="rounded-full px-5 py-3 text-sm font-bold" href="/profile">Profile</Link></nav></div></header>
         <section className="mx-auto max-w-6xl px-6 py-12"><p className="text-xs font-black uppercase tracking-[.18em] text-[#E8412C]">Explore fitness communities</p><div className="mt-3 flex items-end justify-between gap-8"><h1 className="max-w-2xl text-5xl font-bold leading-[1.04]">Find a group that makes showing up easier.</h1><p className="max-w-sm text-black/55">Browse active communities by activity, area, schedule, and first-timer fit.</p></div><div className="mt-10 grid grid-cols-3 gap-5">{filtered.map((item) => <CommunityRow key={item.slug} community={item} desktop />)}</div></section>
       </div>
     </main>
@@ -203,13 +203,4 @@ function CommunitySpotlight({ community }: { community: CommunityData }) {
 function CommunityRow({ community, desktop = false }: { community: CommunityData; desktop?: boolean }) {
   const image = community.coverImage || community.logoImage || getCategoryFallbackImage(community.category)
   return <Link href={`/communities/${community.slug}`} className={`group block overflow-hidden border border-black/10 bg-white shadow-sm ${desktop ? 'rounded-3xl' : 'rounded-2xl'}`}><div className={`relative ${desktop ? 'aspect-[16/9]' : 'h-32'}`}><Image src={image} alt={community.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" unoptimized={!image.startsWith('/')} /><div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" /><span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold">{getCategoryEmoji(community.category)} {categoryName(community.category)}</span></div><div className="p-4"><div className="flex items-start justify-between gap-3"><div className="min-w-0"><h2 className="truncate text-lg font-bold">{community.name}</h2><p className="mt-1 text-xs text-black/55">{community.usualArea || community.cityName || 'Singapore'} · {community.usualSchedule || 'Schedule varies'}</p></div><ArrowRight className="mt-1 h-4 w-4 shrink-0" /></div><div className="mt-3 flex flex-wrap gap-1.5"><span className="rounded-full bg-[#F8F4EA] px-2.5 py-1 text-[10px] font-semibold">{community.beginnerFriendly ? 'Beginner-friendly' : 'Experienced'}</span><span className="rounded-full bg-[#F8F4EA] px-2.5 py-1 text-[10px] font-semibold">{priceLabel(community.priceType)}</span>{community.nextEvent && <span className="rounded-full bg-[#FDE6E1] px-2.5 py-1 text-[10px] font-semibold text-[#B72E1E]">Next {nextDate(community.nextEvent.startTime)}</span>}</div></div></Link>
-}
-
-export function MobileNav({ active }: { active: 'explore' | 'week' | 'mine' }) {
-  const items = [
-    { key: 'explore', href: '/communities', label: 'Explore', icon: MapIcon },
-    { key: 'week', href: '/buddy?view=list', label: 'This week', icon: CalendarDays },
-    { key: 'mine', href: '/communities/saved', label: 'My communities', icon: Bookmark },
-  ] as const
-  return <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-black/10 bg-white/95 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl">{items.map((item) => { const Icon = item.icon; const on = item.key === active; return <Link key={item.key} href={item.href} className={`flex min-h-14 flex-col items-center justify-center gap-1 text-[10px] font-bold ${on ? 'text-[#E8412C]' : 'text-black/45'}`}><Icon className="h-5 w-5" />{item.label}</Link> })}</nav>
 }

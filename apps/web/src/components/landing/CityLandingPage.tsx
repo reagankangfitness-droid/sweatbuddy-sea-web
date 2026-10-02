@@ -66,8 +66,8 @@ export function CityLandingPage({
   finalBody,
 }: CityLandingPageProps) {
   const trackingBase = { city, citySlug, experiment: 'two_city_newcomer_wedge' }
-  const cityPlansHref = `/buddy?view=list&city=${citySlug}`
-  const cityCommunitiesHref = `/communities?city=${citySlug}`
+  const cityPlansHref = `/this-week?city=${citySlug}`
+  const cityCommunitiesHref = `/explore?city=${citySlug}`
 
   return (
     <div className="sb-page">

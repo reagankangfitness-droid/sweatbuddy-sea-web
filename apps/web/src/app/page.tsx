@@ -19,30 +19,30 @@ export const metadata: Metadata = {
 }
 
 const decisionFilters = [
-  { label: 'Run clubs', href: '/communities?category=running' },
-  { label: 'Beginner-friendly', href: '/communities?fit=beginner' },
-  { label: 'Solo-friendly', href: '/communities?fit=solo' },
-  { label: 'Free', href: '/communities?price=free' },
+  { label: 'Run clubs', href: '/explore?category=running' },
+  { label: 'Beginner-friendly', href: '/explore?fit=beginner' },
+  { label: 'Solo-friendly', href: '/explore?fit=solo' },
+  { label: 'Free', href: '/explore?price=free' },
 ]
 
 const fallbackPlanCards = [
   {
     title: 'Morning run clubs',
-    href: '/communities',
+    href: '/explore',
     image: '/banner/running.jpg',
     meta: 'Easy pace · first-timer friendly',
     signal: 'Community',
   },
   {
     title: 'Beginner-friendly movement',
-    href: '/communities',
+    href: '/explore',
     image: '/images/hero/meditation.png',
     meta: 'Yoga, mobility, recovery',
     signal: 'Beginner',
   },
   {
     title: 'Social games and groups',
-    href: '/communities',
+    href: '/explore',
     image: '/images/community-bonds.jpg',
     meta: 'Pickleball, padel, casual sports',
     signal: 'Social',
@@ -126,9 +126,9 @@ export default async function HomePage() {
           </p>
           <nav className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
             <TrackedLink
-              href="/communities"
+              href="/explore"
               event={EVENTS.LANDING_CTA_CLICKED}
-              metadata={{ placement: 'nav_find_communities', destination: '/communities' }}
+              metadata={{ placement: 'nav_find_communities', destination: '/explore' }}
               className={`${compactButtonBase} hidden rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase text-white/62 hover:border-white/30 hover:text-white sm:inline-flex`}
             >
               Find communities
@@ -166,9 +166,9 @@ export default async function HomePage() {
                 </p>
                 <div className="mt-5">
                   <TrackedLink
-                    href="/communities"
+                    href="/explore"
                     event={EVENTS.LANDING_CTA_CLICKED}
-                    metadata={{ placement: 'homepage_primary_find_communities', destination: '/communities' }}
+                    metadata={{ placement: 'homepage_primary_find_communities', destination: '/explore' }}
                     className={`${touchButtonBase} inline-flex gap-2 rounded-full bg-[#E8412C] px-5 py-3 text-sm font-bold text-black hover:bg-[#E8412C]`}
                   >
                     Explore the local guide <ArrowRight size={17} className="shrink-0" />
@@ -178,9 +178,9 @@ export default async function HomePage() {
 
               <div className="border-b border-white/10 p-4 sm:p-6">
                 <TrackedLink
-                  href="/communities"
+                  href="/explore"
                   event={EVENTS.LANDING_CTA_CLICKED}
-                  metadata={{ placement: 'homepage_community_search', destination: '/communities' }}
+                  metadata={{ placement: 'homepage_community_search', destination: '/explore' }}
                   className={`${touchButtonBase} flex gap-3 rounded-xl border border-white/15 bg-[#111412] px-4 text-left text-sm font-semibold text-white/52 hover:border-white/35 hover:text-white`}
                 >
                   <Search size={18} strokeWidth={2.4} className="shrink-0" />
@@ -208,9 +208,9 @@ export default async function HomePage() {
                       </h2>
                     </div>
                     <TrackedLink
-                      href="/communities"
+                      href="/explore"
                       event={EVENTS.LANDING_CTA_CLICKED}
-                      metadata={{ placement: 'homepage_hero_view_all_communities', destination: '/communities' }}
+                      metadata={{ placement: 'homepage_hero_view_all_communities', destination: '/explore' }}
                       className="hidden min-h-10 shrink-0 items-center rounded-full px-2 font-mono text-[11px] font-bold uppercase text-white/48 hover:text-[#E8412C] sm:inline-flex"
                     >
                       See all
@@ -246,9 +246,9 @@ export default async function HomePage() {
                 </p>
               </div>
               <TrackedLink
-                href="/buddy?view=list&location=nearby"
+                href="/this-week"
                 event={EVENTS.LANDING_CTA_CLICKED}
-                metadata={{ placement: 'homepage_events_view_all', destination: '/buddy?view=list&location=nearby' }}
+                metadata={{ placement: 'homepage_events_view_all', destination: '/this-week' }}
                 className={`${compactButtonBase} inline-flex w-fit gap-1.5 rounded-full border border-white/10 px-3 py-2 font-mono text-xs font-bold uppercase text-white/60 hover:border-[#E8412C] hover:text-[#E8412C]`}
               >
                 See this week <ArrowRight size={14} className="shrink-0" />
@@ -286,10 +286,10 @@ export default async function HomePage() {
             <span className="text-xs text-white/45">&copy; 2026</span>
           </div>
           <div className="flex flex-wrap justify-center gap-4 text-xs font-semibold text-white/48">
-            <Link href="/communities" className="transition-colors hover:text-white">
+            <Link href="/explore" className="transition-colors hover:text-white">
               Communities
             </Link>
-            <Link href="/buddy?view=list&location=nearby" className="transition-colors hover:text-white">
+            <Link href="/this-week" className="transition-colors hover:text-white">
               This week
             </Link>
             <Link href="/communities/nominate" className="transition-colors hover:text-white">

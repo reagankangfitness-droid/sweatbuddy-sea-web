@@ -21,7 +21,7 @@ export default function NotFound() {
             Go back home
           </Link>
           <Link
-            href="/communities"
+            href="/explore"
             className="sb-button-secondary w-full px-6 py-3 text-center"
           >
             Find them

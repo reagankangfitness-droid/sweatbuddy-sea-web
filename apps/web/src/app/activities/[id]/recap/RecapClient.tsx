@@ -124,7 +124,7 @@ export default function RecapClient({ sessionId }: { sessionId: string }) {
     return (
       <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-4">
         <p className="text-[#999] mb-4">{error || 'Could not load recap'}</p>
-        <Link href="/my-sessions" className="text-sm text-white underline">
+        <Link href="/me?tab=past" className="text-sm text-white underline">
           Back to My Sessions
         </Link>
       </div>
@@ -141,7 +141,7 @@ export default function RecapClient({ sessionId }: { sessionId: string }) {
         <div className="pt-[env(safe-area-inset-top,0px)]">
           <div className="flex items-center gap-4 px-4 py-3">
             <Link
-              href="/my-sessions"
+              href="/me?tab=past"
               className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0D0D0D] border border-[#333333]"
             >
               <ArrowLeft className="w-5 h-5 text-[#999999]" />
@@ -304,7 +304,7 @@ export default function RecapClient({ sessionId }: { sessionId: string }) {
 
         {/* Back link */}
         <div className="text-center">
-          <Link href="/my-sessions" className="text-xs text-[#666] hover:text-white transition-colors">
+          <Link href="/me?tab=past" className="text-xs text-[#666] hover:text-white transition-colors">
             Back to My Sessions
           </Link>
         </div>

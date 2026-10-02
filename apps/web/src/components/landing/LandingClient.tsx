@@ -36,7 +36,7 @@ export function LandingClient({ data }: { data: LandingData }) {
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {
-      router.replace('/buddy')
+      router.replace('/this-week')
     }
   }, [isLoaded, isSignedIn, router])
 
@@ -63,7 +63,7 @@ export function LandingClient({ data }: { data: LandingData }) {
             Sign In
           </Link>
           <Link
-            href="/buddy"
+            href="/this-week"
             className="hidden sm:inline-flex text-white/70 font-medium text-sm hover:text-white transition-colors"
           >
             Explore
@@ -103,7 +103,7 @@ export function LandingClient({ data }: { data: LandingData }) {
               Start Hosting — It&apos;s Free
             </Link>
             <Link
-              href="/buddy"
+              href="/this-week"
               className="inline-flex items-center justify-center border border-white/30 text-white px-8 py-3.5 rounded-full font-semibold text-base hover:border-white/50 hover:bg-white/10 transition-colors"
             >
               Explore Communities
@@ -185,7 +185,7 @@ export function LandingClient({ data }: { data: LandingData }) {
 
             <div className="text-center mt-8">
               <Link
-                href="/buddy"
+                href="/this-week"
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-400 hover:text-neutral-100 transition-colors"
               >
                 See all sessions
@@ -202,8 +202,8 @@ export function LandingClient({ data }: { data: LandingData }) {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <Link href="/"><LogoWithText size={24} /></Link>
             <nav className="flex items-center gap-5 text-sm text-neutral-500">
-              <Link href="/buddy" className="hover:text-neutral-100 transition-colors">Explore</Link>
-              <Link href="/communities" className="hover:text-neutral-100 transition-colors">Communities</Link>
+              <Link href="/this-week" className="hover:text-neutral-100 transition-colors">Explore</Link>
+              <Link href="/explore" className="hover:text-neutral-100 transition-colors">Communities</Link>
               <Link href="/host" className="hover:text-neutral-100 transition-colors">Host</Link>
               <Link href="/support" className="hover:text-neutral-100 transition-colors">Support</Link>
             </nav>

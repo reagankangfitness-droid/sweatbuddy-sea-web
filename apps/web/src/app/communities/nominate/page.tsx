@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { ProductNav } from '@/components/ProductNav'
 import { ArrowLeft, Loader2, Send } from 'lucide-react'
 import { toast } from 'sonner'
 interface NominationForm {
@@ -95,7 +96,7 @@ export default function NominateCommunityPage() {
       <main className="sb-page px-4 py-6 pb-28 md:pb-8" data-sb-paper-shell>
         <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col justify-center">
           <Link
-            href="/communities"
+            href="/explore"
             className="mb-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#17130E]/68 hover:text-[#17130E]"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -135,7 +136,7 @@ export default function NominateCommunityPage() {
                 </Link>
               )}
               <Link
-                href="/communities"
+                href="/explore"
                 className="sb-button-secondary px-4 py-3 text-sm"
               >
                 Browse communities
@@ -151,7 +152,7 @@ export default function NominateCommunityPage() {
     <main className="sb-page px-4 py-5 pb-28 md:py-8 md:pb-8" data-sb-paper-shell>
       <div className="mx-auto max-w-2xl">
         <Link
-          href="/communities"
+          href="/explore"
           className="mb-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[#17130E]/68 hover:text-[#17130E] md:mb-8"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -230,6 +231,7 @@ export default function NominateCommunityPage() {
           </div>
         </form>
       </div>
+      <ProductNav active="explore" />
     </main>
   )
 }

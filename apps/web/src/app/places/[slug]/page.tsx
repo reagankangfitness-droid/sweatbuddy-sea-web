@@ -13,5 +13,5 @@ export const metadata: Metadata = {
 }
 
 export default function PlacePage() {
-  redirect('/communities?city=singapore')
+  redirect('/explore?city=singapore')
 }

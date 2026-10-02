@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight, CheckCircle2, PencilLine, ShieldCheck } from 'lucide-react'
 import { LogoWithText } from '@/components/logo'
+import { ProductNav } from '@/components/ProductNav'
 
 const hostActions = [
   {
@@ -28,7 +29,7 @@ export default function HostPage() {
           <Link href="/" aria-label="SweatBuddies home" className="inline-flex min-h-11 items-center">
             <LogoWithText size={28} color="#17130E" textColor="#17130E" />
           </Link>
-          <Link href="/communities" className="sb-button-secondary px-4 text-xs">
+          <Link href="/explore" className="sb-button-secondary px-4 text-xs">
             View communities
           </Link>
         </div>
@@ -77,6 +78,7 @@ export default function HostPage() {
           </p>
         </div>
       </section>
+      <ProductNav active="profile" />
     </main>
   )
 }

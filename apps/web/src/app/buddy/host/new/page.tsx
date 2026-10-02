@@ -60,7 +60,7 @@ function showSessionCapToast(
     description: data.guidance || `New hosts can list ${cap} upcoming sessions at once. Finish or cancel one to add another.`,
     action: {
       label: 'Manage',
-      onClick: () => navigate(data.manageUrl || '/my-sessions'),
+      onClick: () => navigate(data.manageUrl || '/me?tab=upcoming'),
     },
   })
 }
@@ -392,7 +392,7 @@ export default function NewSessionPage() {
 
         const data = await res.json()
         if (!res.ok) {
-          if (data.code === 'ONBOARDING_REQUIRED') { toast.error('Complete quick setup in discovery before posting a session.'); router.push('/buddy'); return }
+          if (data.code === 'ONBOARDING_REQUIRED') { toast.error('Complete quick setup in discovery before posting a session.'); router.push('/this-week'); return }
           if (data.code === 'STRIPE_REQUIRED') { toast.error('Connect Stripe first to charge for sessions'); return }
           if (data.code === 'SESSION_CAP') { showSessionCapToast(data, router.push); return }
           if (data.code === 'COMMUNITY_REQUIRED' || data.code === 'COMMUNITY_FORBIDDEN') { toast.error('Choose a verified crew before posting a session'); return }
@@ -443,7 +443,7 @@ export default function NewSessionPage() {
 
         const data = await res.json()
         if (!res.ok) {
-          if (data.code === 'ONBOARDING_REQUIRED') { toast.error('Complete quick setup in discovery before posting a session.'); router.push('/buddy'); return }
+          if (data.code === 'ONBOARDING_REQUIRED') { toast.error('Complete quick setup in discovery before posting a session.'); router.push('/this-week'); return }
           if (data.code === 'STRIPE_REQUIRED') { toast.error('Connect Stripe first to charge for sessions'); return }
           if (data.code === 'SESSION_CAP') { showSessionCapToast(data, router.push); return }
           if (data.code === 'COMMUNITY_REQUIRED' || data.code === 'COMMUNITY_FORBIDDEN') { toast.error('Choose a verified crew before posting a session'); return }
@@ -490,7 +490,7 @@ export default function NewSessionPage() {
         <div className="flex flex-col gap-3 w-full max-w-xs">
           {requiresReviewSuccess ? (
             <button
-              onClick={() => router.push('/buddy')}
+              onClick={() => router.push('/this-week')}
               className="w-full rounded-xl bg-[#1A1A1A] px-4 py-4 text-sm font-semibold text-white"
             >
               Back to Discover →
@@ -512,7 +512,7 @@ export default function NewSessionPage() {
           )}
           {!requiresReviewSuccess && (
             <button
-              onClick={() => router.push('/buddy')}
+              onClick={() => router.push('/this-week')}
               className="w-full rounded-xl border border-[#333333] px-4 py-3 text-sm font-medium text-[#999999]"
             >
               Back to Discover
@@ -627,7 +627,7 @@ export default function NewSessionPage() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => router.push('/communities')}
+                          onClick={() => router.push('/explore')}
                           className="rounded-full border border-[#333333] px-4 py-2 text-xs font-bold text-white"
                         >
                           Explore communities

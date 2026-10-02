@@ -118,7 +118,7 @@ export default function P2PStripeConnectPage() {
           </div>
         )}
         <button
-          onClick={() => router.push('/buddy')}
+          onClick={() => router.push('/this-week')}
           className="w-full text-sm text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 py-2 transition-colors"
         >
           Skip for now

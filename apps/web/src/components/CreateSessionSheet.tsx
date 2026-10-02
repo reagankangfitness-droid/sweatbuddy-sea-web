@@ -112,7 +112,7 @@ function showSessionCapToast(data: {
     action: {
       label: 'Manage',
       onClick: () => {
-        window.location.href = data.manageUrl || '/my-sessions'
+        window.location.href = data.manageUrl || '/me?tab=upcoming'
       },
     },
   })
@@ -518,7 +518,7 @@ export function CreateSessionSheet({
                             List or claim community
                           </Link>
                           <Link
-                            href="/communities"
+                            href="/explore"
                             onClick={onClose}
                             className="inline-flex min-h-11 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-5 font-mono text-sm font-black uppercase text-[#17130E] shadow-[2px_2px_0_#17130E]"
                           >

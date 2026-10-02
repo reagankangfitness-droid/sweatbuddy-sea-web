@@ -535,6 +535,38 @@
   }
 }
 
+@media (max-width: 767px) {
+  [data-this-week-shell] {
+    background: #F8F4EA !important;
+    color: #17130E;
+  }
+
+  [data-this-week-shell] [data-buddy-desktop-shell] > div:first-child > div,
+  [data-this-week-shell] [class*="bg-[#0B0D0C]"],
+  [data-this-week-shell] [class*="bg-[#111412]"] {
+    background-color: #F8F4EA !important;
+  }
+
+  [data-this-week-shell] [class*="bg-[#151816]"] {
+    background-color: #FFFFFF !important;
+  }
+
+  [data-this-week-shell] [class*="text-white"] {
+    color: #17130E !important;
+  }
+
+  [data-this-week-shell] [class*="border-white"] {
+    border-color: rgba(23, 19, 14, 0.12) !important;
+  }
+
+  [data-this-week-shell] article,
+  [data-this-week-shell] [data-selected-pin-card] {
+    border-color: rgba(23, 19, 14, 0.1) !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 12px 32px rgba(23, 19, 14, 0.08) !important;
+  }
+}
+
 @layer base {
   /* Force light color scheme for native form elements */
   html {

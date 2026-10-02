@@ -6,10 +6,11 @@ interface PageProps {
 
 export default async function EventsPage({ searchParams }: PageProps) {
   const { cat, city } = await searchParams
-  const params = new URLSearchParams({ tab: 'events' })
+  const params = new URLSearchParams()
 
   if (cat) params.set('type', cat)
   if (city) params.set('city', city)
 
-  redirect(`/singapore?${params.toString()}`)
+  const query = params.toString()
+  redirect(query ? `/this-week?${query}` : '/this-week')
 }

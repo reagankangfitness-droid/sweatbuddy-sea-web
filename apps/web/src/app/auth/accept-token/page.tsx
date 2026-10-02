@@ -28,7 +28,7 @@ function AcceptTokenContent() {
   const token = searchParams.get('token')
   const redirectUrl = useMemo(() => {
     const requestedRedirect = searchParams.get('redirect_url')
-    return isValidRedirect(requestedRedirect) ? requestedRedirect : '/buddy'
+    return isValidRedirect(requestedRedirect) ? requestedRedirect : '/this-week'
   }, [searchParams])
 
   useEffect(() => {

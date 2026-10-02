@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
 import ActivityPageClient from './ActivityPageClient'
+import { ProductNav } from '@/components/ProductNav'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -74,5 +75,5 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ActivityPage({ params }: Props) {
   const { id } = await params
-  return <ActivityPageClient params={{ id }} />
+  return <><ActivityPageClient params={{ id }} /><ProductNav active="week" /></>
 }

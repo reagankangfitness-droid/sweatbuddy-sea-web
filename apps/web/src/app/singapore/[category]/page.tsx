@@ -54,5 +54,5 @@ export default async function SingaporeCategoryPage({ params, searchParams }: Ca
   const paramsValue = await searchParams
   if (paramsValue.q) query.set('q', paramsValue.q)
 
-  redirect(`/communities?${query.toString()}`)
+  redirect(`/explore?${query.toString()}`)
 }

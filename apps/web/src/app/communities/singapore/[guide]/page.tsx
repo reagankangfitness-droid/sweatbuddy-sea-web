@@ -57,7 +57,7 @@ export default async function SingaporeCommunityGuidePage({ params }: PageProps)
       <section className="border-b border-white/10 px-4 py-6">
         <div className="mx-auto max-w-6xl">
           <Link
-            href="/communities"
+            href="/explore"
             className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-white/52 transition-colors hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -107,7 +107,7 @@ export default async function SingaporeCommunityGuidePage({ params }: PageProps)
             {guide.relatedSearches.map((search) => (
               <Link
                 key={search}
-                href="/communities"
+                href="/explore"
                 className="inline-flex min-h-11 items-center rounded-full border border-white/12 px-3 text-xs font-black uppercase tracking-wide text-white/62 transition-colors hover:border-[#E8412C] hover:text-[#E8412C]"
               >
                 {search}

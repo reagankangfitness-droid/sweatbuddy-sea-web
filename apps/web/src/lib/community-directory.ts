@@ -8,12 +8,15 @@ import { getCityLocationConfig } from '@/lib/location-config'
 import type { CityData, CommunityData } from '@/app/communities/CommunitiesPageClient'
 
 export async function getCommunityDirectory(): Promise<CommunityData[]> {
+  const verificationCutoff = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000)
   const communities = await prisma.community
     .findMany({
       where: {
         isActive: true,
         moderationStatus: 'LIVE',
         usualArea: { not: null },
+        usualSchedule: { not: null },
+        lastVerifiedAt: { gte: verificationCutoff },
         OR: [
           { sourceUrl: { not: null } },
           { communityLink: { not: null } },

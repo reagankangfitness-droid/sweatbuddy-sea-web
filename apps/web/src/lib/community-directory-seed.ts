@@ -48,7 +48,7 @@ export const SINGAPORE_COMMUNITY_DIRECTORY_SEED: CommunityDirectorySeed[] = [
     soloFriendly: true,
     bestFor: 'Runners who want a known local crew before showing up.',
     confidenceTier: 'publishable',
-    lastVerifiedAt: '2026-07-22',
+    lastVerifiedAt: '2026-10-02',
     coverImage: '/images/hosts/run-club-group.jpg',
   },
   {
@@ -123,7 +123,7 @@ export const SINGAPORE_COMMUNITY_DIRECTORY_SEED: CommunityDirectorySeed[] = [
     soloFriendly: true,
     bestFor: 'Runners who are comfortable with endurance or trail-oriented groups.',
     confidenceTier: 'publishable',
-    lastVerifiedAt: '2026-07-22',
+    lastVerifiedAt: '2026-10-02',
     coverImage: '/images/hosts/run-club-group.jpg',
   },
   {
@@ -148,7 +148,7 @@ export const SINGAPORE_COMMUNITY_DIRECTORY_SEED: CommunityDirectorySeed[] = [
     soloFriendly: true,
     bestFor: 'People who want a low-pressure fitness crew instead of a studio class.',
     confidenceTier: 'publishable',
-    lastVerifiedAt: '2026-07-22',
+    lastVerifiedAt: '2026-10-02',
     coverImage: '/images/community-bonds.jpg',
   },
   {
@@ -198,7 +198,7 @@ export const SINGAPORE_COMMUNITY_DIRECTORY_SEED: CommunityDirectorySeed[] = [
     soloFriendly: true,
     bestFor: 'People who want yoga with purpose and a softer social entry point.',
     confidenceTier: 'publishable',
-    lastVerifiedAt: '2026-07-22',
+    lastVerifiedAt: '2026-10-02',
     coverImage: '/images/organizers-bg.jpg',
   },
   {
@@ -238,9 +238,9 @@ export const SINGAPORE_COMMUNITY_DIRECTORY_SEED: CommunityDirectorySeed[] = [
     usualArea: 'Singapore',
     usualSchedule: 'Recurring meditation sessions',
     joinPlatform: 'website',
-    communityLink: 'https://www.meditateinsingapore.org/',
-    websiteUrl: 'https://www.meditateinsingapore.org/',
-    sourceUrl: 'https://www.meditateinsingapore.org/',
+    communityLink: 'https://nkt-kmc-singapore.org/',
+    websiteUrl: 'https://nkt-kmc-singapore.org/',
+    sourceUrl: 'https://nkt-kmc-singapore.org/',
     sourceLabel: 'Official website',
     vibeTags: ['mind_body', 'quiet', 'beginner'],
     priceType: 'free_paid',
@@ -248,7 +248,7 @@ export const SINGAPORE_COMMUNITY_DIRECTORY_SEED: CommunityDirectorySeed[] = [
     soloFriendly: true,
     bestFor: 'People who want a calmer first step into wellness communities.',
     confidenceTier: 'publishable',
-    lastVerifiedAt: '2026-07-22',
+    lastVerifiedAt: '2026-10-02',
     coverImage: '/images/organizers-bg.jpg',
   },
   {
@@ -396,7 +396,7 @@ export const SINGAPORE_COMMUNITY_DIRECTORY_SEED: CommunityDirectorySeed[] = [
     soloFriendly: true,
     bestFor: 'Cyclists who want organized club rides and membership structure.',
     confidenceTier: 'publishable',
-    lastVerifiedAt: '2026-07-22',
+    lastVerifiedAt: '2026-10-02',
     coverImage: '/images/hosts/run-club-group.jpg',
   },
   {
@@ -421,7 +421,7 @@ export const SINGAPORE_COMMUNITY_DIRECTORY_SEED: CommunityDirectorySeed[] = [
     soloFriendly: true,
     bestFor: 'Cyclists who want a local club rather than solo rides.',
     confidenceTier: 'publishable',
-    lastVerifiedAt: '2026-07-22',
+    lastVerifiedAt: '2026-10-02',
     coverImage: '/images/hosts/run-club-group.jpg',
   },
   {
@@ -550,14 +550,38 @@ export const SINGAPORE_COMMUNITY_DIRECTORY_SEED: CommunityDirectorySeed[] = [
   },
 ]
 
+// Only communities with a currently reachable, direct official joining path
+// belong in the public directory. The remaining records stay in this source
+// file as a research queue so they can be restored after re-verification.
+const COMMUNITY_SEED_RESEARCH_QUEUE = new Set([
+  'running-department',
+  'zephyr-running-club',
+  'punggol-fit-club',
+  'singapore-pickleball-meetup-group',
+  'padel-singapore',
+  'play-tennis',
+  'singapore-social-badminton',
+  'rapha-cycling-club-singapore',
+  'sgtrek',
+  'adventure-lovers-meetup-singapore',
+  'boulder-without-borders',
+  'boulderkakis',
+  'yoga-seeds',
+  'metasport',
+])
+
 export function getPublicCommunitySeeds() {
+  const verificationCutoff = Date.now() - 60 * 24 * 60 * 60 * 1000
   return SINGAPORE_COMMUNITY_DIRECTORY_SEED.filter(
-    (community) => community.confidenceTier === 'publishable',
+    (community) =>
+      community.confidenceTier === 'publishable'
+      && !COMMUNITY_SEED_RESEARCH_QUEUE.has(community.slug)
+      && new Date(community.lastVerifiedAt).getTime() >= verificationCutoff,
   )
 }
 
 export function getCommunitySeedBySlug(slug: string) {
-  return SINGAPORE_COMMUNITY_DIRECTORY_SEED.find((community) => community.slug === slug) ?? null
+  return getPublicCommunitySeeds().find((community) => community.slug === slug) ?? null
 }
 
 export function getCommunitySeedConfidenceScore(community: CommunityDirectorySeed) {

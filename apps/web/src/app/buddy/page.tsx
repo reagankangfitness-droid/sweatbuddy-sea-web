@@ -2159,7 +2159,7 @@ function BuddyPageInner() {
                 href={`/explore?city=${encodeURIComponent(cityConfig.slug)}`}
                 className="inline-flex min-h-9 items-center rounded-full px-3 text-[10px] font-black uppercase tracking-wide text-white/58 hover:text-white"
               >
-                Communities
+                Explore
               </Link>
               <button
                 type="button"
@@ -2168,6 +2168,8 @@ function BuddyPageInner() {
               >
                 This week
               </button>
+              <Link href="/me" className="inline-flex min-h-9 items-center rounded-full px-3 text-[10px] font-black uppercase tracking-wide text-white/58 hover:text-white">My activity</Link>
+              <Link href="/profile" className="inline-flex min-h-9 items-center rounded-full px-3 text-[10px] font-black uppercase tracking-wide text-white/58 hover:text-white">Profile</Link>
             </nav>
           </div>
           {/* Search bar */}
@@ -2332,10 +2334,10 @@ function BuddyPageInner() {
         </div>
       </div>
       {viewMode === 'list' ? (
-        <div className="flex-1 min-h-0 overflow-hidden lg:grid lg:grid-cols-[minmax(390px,42vw)_1fr]">
+        <div className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 overflow-hidden">
           {/* List view — community-first cards backed by known sessions */}
-          <div className="h-full min-h-0 overflow-y-auto border-white/[0.08] px-4 pb-24 lg:border-r">
-            <div className="sticky top-0 z-10 -mx-4 hidden border-b border-white/[0.08] bg-[#0B0D0C]/96 px-4 py-3 backdrop-blur-xl sm:block">
+          <div className="h-full min-h-0 w-full overflow-y-auto px-4 pb-24">
+            <div className="hidden">
               <DiscoveryWorkspaceNav
                 viewMode={viewMode}
                 communityHref={`/explore?city=${encodeURIComponent(cityConfig.slug)}`}
@@ -2375,7 +2377,7 @@ function BuddyPageInner() {
                         Clear search
                       </button>
                     </div>
-                    <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible">
+                    <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
                       {searchResults.map((session, i) => (
                         <SessionCard
                           key={session.id}
@@ -2505,7 +2507,7 @@ function BuddyPageInner() {
                           </span>
                         </div>
                         {/* Horizontal scroll on mobile, grid on desktop */}
-                        <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible">
+                        <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-3">
                           {bucket.sessions.map((session, i) => (
                             <SessionCard
                               key={session.id}
@@ -2560,7 +2562,7 @@ function BuddyPageInner() {
               </>
             )}
           </div>
-          <div className="relative hidden min-h-0 bg-[#151816] lg:block">
+          <div className="relative hidden min-h-0 bg-[#151816]">
             <LazySessionVectorMap
               center={userLocation ?? cityConfig.center}
               pins={mapPins}

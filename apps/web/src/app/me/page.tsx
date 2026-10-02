@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getCommunityDirectory } from '@/lib/community-directory'
 import { LogoWithText } from '@/components/logo'
-import { ProductNav } from '@/components/ProductNav'
+import { ProductHeader, ProductNav } from '@/components/ProductNav'
 import SavedCommunitiesPageClient from '@/app/communities/saved/SavedCommunitiesPageClient'
 import MySessionsPage from '@/app/my-sessions/page'
 
@@ -15,9 +15,10 @@ export default async function MePage({ searchParams }: { searchParams: Promise<{
 
   return (
     <main className="min-h-screen bg-[#F8F4EA] pb-24 text-[#17130E]">
+      <ProductHeader active="me" />
       <header className="border-b border-black/10 px-4 pb-4 pt-[max(16px,env(safe-area-inset-top))]">
-        <div className="mx-auto max-w-4xl">
-          <div className="flex items-center justify-between"><Link href="/"><LogoWithText size={25} color="#E8412C" textColor="#17130E" /></Link><Link href="/profile" className="text-sm font-bold text-[#E8412C]">Profile</Link></div>
+        <div className="mx-auto max-w-5xl">
+          <div className="flex items-center justify-between md:hidden"><Link href="/"><LogoWithText size={25} color="#E8412C" textColor="#17130E" /></Link><Link href="/profile" className="text-sm font-bold text-[#E8412C]">Profile</Link></div>
           <h1 className="mt-7 text-3xl font-bold text-[#17130E]">My activity</h1>
           <p className="mt-1 text-sm text-black/55">Communities you saved and sessions you joined.</p>
           <nav className="mt-5 grid grid-cols-3 gap-2 rounded-2xl bg-black/[0.05] p-1" aria-label="My activity sections">

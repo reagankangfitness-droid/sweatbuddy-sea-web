@@ -14,7 +14,7 @@ function getTabs(citySlug?: string): Array<{
   return [
     {
       id: 'communities',
-      label: 'Communities',
+      label: 'Explore',
       href: citySlug ? `/explore?city=${encodeURIComponent(citySlug)}` : '/explore',
       icon: Map,
     },
@@ -49,7 +49,7 @@ export function CityGuideTabs({
               aria-current={isActive ? 'page' : undefined}
               className={`inline-flex min-h-11 min-w-0 shrink-0 items-center justify-center gap-1 rounded-full px-1.5 text-[9px] font-black uppercase tracking-wide transition-colors sm:gap-2 sm:px-3 sm:text-[10px] ${
                 isActive
-                  ? 'bg-[#17130E] text-white'
+                  ? 'bg-[#17130E] !text-white [&_span]:!text-white [&_svg]:!text-white'
                   : 'border border-[#17130E]/10 bg-white text-[#17130E]/55 hover:border-[#17130E]/28 hover:text-[#17130E]'
               }`}
             >

@@ -214,7 +214,7 @@ export default function MySessionsPage({
         </div>
       </header>}
 
-      <main className={`${embedded ? 'pt-6' : 'pt-24'} pb-28 px-4 max-w-lg mx-auto`}>
+      <main className={`${embedded ? 'max-w-5xl pt-6' : 'max-w-lg pt-24'} mx-auto px-4 pb-28`}>
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-6 h-6 text-[#666] animate-spin" />

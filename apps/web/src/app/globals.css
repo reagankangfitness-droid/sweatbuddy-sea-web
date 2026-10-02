@@ -174,6 +174,25 @@
     display: none !important;
   }
 
+  .community-directory-map .sb-map-marker--community {
+    width: 46px !important;
+    min-width: 46px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    border-radius: 999px !important;
+  }
+
+  .community-directory-map .sb-map-marker--community .sb-map-marker__single,
+  .community-directory-map .sb-map-marker--community .sb-map-marker__primary,
+  .community-directory-map .sb-map-marker--community .sb-map-marker__price {
+    display: none !important;
+  }
+
+  .community-directory-map .sb-map-marker--community .sb-map-marker__emoji {
+    border: 0 !important;
+    border-radius: 999px !important;
+  }
+
   .sb-map-marker--place {
     min-height: 38px;
     background: #F8F4EA;

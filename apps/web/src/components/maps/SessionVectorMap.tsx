@@ -642,6 +642,13 @@ function markerHtml(pin: SessionVectorMapPin) {
   const accent = `<span class="sb-map-marker__emoji" aria-hidden="true">${emoji}</span>`
   const preview = markerPreviewHtml(pin, emoji)
 
+  // Community pins stay icon-only at every breakpoint. Their full name and
+  // metadata remain available in the accessible label and hover preview, while
+  // the map itself stays scannable when several communities share an area.
+  if (pin.markerVariant === 'community' || pin.kind === 'community') {
+    return `${accent}${preview}`
+  }
+
   if (!price) {
     return `${accent}<span class="sb-map-marker__single">${primary}</span>${preview}`
   }
@@ -693,7 +700,10 @@ function markerPreviewHtml(pin: SessionVectorMapPin, emoji: string) {
 }
 
 function getMarkerEmoji(pin: SessionVectorMapPin) {
-  if (pin.activityLabel && EMOJI_PATTERN.test(pin.activityLabel)) return pin.activityLabel
+  if (pin.activityLabel) {
+    const emoji = pin.activityLabel.match(EMOJI_PATTERN)?.[0]
+    if (emoji) return emoji
+  }
   return getActivityEmoji(pin.primaryLabel ?? pin.activityLabel, '✦')
 }
 

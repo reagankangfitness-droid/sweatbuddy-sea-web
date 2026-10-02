@@ -21,7 +21,7 @@ import {
 import { LogoWithText } from '@/components/logo'
 import { ACTIVITY_CATEGORIES, getCategoryEmoji } from '@/lib/categories'
 import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
-import { ProductNav } from '@/components/ProductNav'
+import { ProductHeader, ProductNav } from '@/components/ProductNav'
 import {
   LazySessionVectorMap,
   type SessionVectorMapPin,
@@ -184,6 +184,7 @@ export default function CommunitiesPageClient({
         {view === 'map' ? (
           <section className="relative h-[calc(100dvh-193px)] min-h-[520px] overflow-hidden bg-[#F4EFE3] pb-44">
             <LazySessionVectorMap
+              className="community-directory-map absolute inset-0"
               center={mapCenter}
               pins={communityPins}
               selectedPinId={selected ? `community:${selected.slug}` : null}
@@ -193,7 +194,6 @@ export default function CommunitiesPageClient({
               maxFitZoom={13}
               fitPadding={58}
               showControls
-              className="absolute inset-0"
             />
             <div className="absolute left-4 top-4 rounded-full bg-white/95 px-4 py-2 text-xs font-semibold shadow-lg">
               <MapPin className="mr-1 inline h-4 w-4 text-[#E8412C]" /> {cities.find((item) => item.slug === city)?.name || selected?.cityName || 'Singapore'} <ChevronDown className="ml-1 inline h-3.5 w-3.5" />
@@ -211,8 +211,36 @@ export default function CommunitiesPageClient({
       </div>
 
       <div className="hidden md:block">
-        <header className="border-b border-black/10 px-6 py-5"><div className="mx-auto flex max-w-6xl items-center justify-between"><Link href="/"><LogoWithText size={28} color="#E8412C" textColor="#17130E" /></Link><nav className="flex gap-2"><Link className="rounded-full bg-[#17130E] px-5 py-3 text-sm font-bold text-white" href="/explore">Explore</Link><Link className="rounded-full px-5 py-3 text-sm font-bold" href="/this-week">This week</Link><Link className="rounded-full px-5 py-3 text-sm font-bold" href="/me">My activity</Link><Link className="rounded-full px-5 py-3 text-sm font-bold" href="/profile">Profile</Link></nav></div></header>
-        <section className="mx-auto max-w-6xl px-6 py-12"><p className="text-xs font-black uppercase tracking-[.18em] text-[#E8412C]">Explore fitness communities</p><div className="mt-3 flex items-end justify-between gap-8"><h1 className="max-w-2xl text-5xl font-bold leading-[1.04]">Find a group that makes showing up easier.</h1><p className="max-w-sm text-black/55">Browse active communities by activity, area, schedule, and first-timer fit.</p></div><div className="mt-10 grid grid-cols-3 gap-5">{filtered.map((item) => <CommunityRow key={item.slug} community={item} desktop />)}</div></section>
+        <ProductHeader active="explore" />
+        <section className="mx-auto max-w-6xl px-6 py-10">
+          <p className="text-xs font-black uppercase tracking-[.18em] text-[#E8412C]">Explore fitness communities</p>
+          <div className="mt-3 flex items-end justify-between gap-8">
+            <h1 className="max-w-2xl text-5xl font-bold leading-[1.04] text-[#17130E]">Find a group that makes showing up easier.</h1>
+            <p className="max-w-sm text-black/55">Browse active communities by activity, area, schedule, and first-timer fit.</p>
+          </div>
+          <div className="mt-8 flex items-center gap-3">
+            <label className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search communities or activities" className="h-12 w-full rounded-full border border-black/10 bg-white pl-12 pr-4 text-sm outline-none focus:border-[#E8412C]" />
+            </label>
+            <button type="button" onClick={() => setView('map')} className={`h-12 rounded-full px-5 text-sm font-bold ${view === 'map' ? 'bg-[#17130E] text-white' : 'border border-black/10 bg-white'}`}>Map</button>
+            <button type="button" onClick={() => setView('list')} className={`h-12 rounded-full px-5 text-sm font-bold ${view === 'list' ? 'bg-[#17130E] text-white' : 'border border-black/10 bg-white'}`}>List</button>
+          </div>
+          <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+            <FilterChip active={!category} onClick={() => setCategory(null)}>All {communities.length}</FilterChip>
+            {categories.map((item) => <FilterChip key={item} active={category === item} onClick={() => setCategory(item)}>{getCategoryEmoji(item)} {categoryName(item)}</FilterChip>)}
+            <FilterChip active={beginnerOnly} onClick={() => setBeginnerOnly(!beginnerOnly)}>First-timer friendly</FilterChip>
+            <FilterChip active={freeOnly} onClick={() => setFreeOnly(!freeOnly)}>Free</FilterChip>
+          </div>
+          {view === 'map' ? (
+            <div className="relative mt-6 h-[610px] overflow-hidden rounded-[2rem] border border-black/10 bg-[#F4EFE3] shadow-sm">
+              <LazySessionVectorMap className="community-directory-map" center={mapCenter} pins={communityPins} selectedPinId={selected ? `community:${selected.slug}` : null} onPinClick={(pin) => setSelectedSlug(pin?.id.replace('community:', '') ?? null)} onMapClick={() => setSelectedSlug(null)} initialZoom={11.2} maxFitZoom={13} fitPadding={84} showControls />
+              {selected && <div className="absolute bottom-5 left-5 z-30 w-[380px]"><CommunitySpotlight community={selected} /></div>}
+            </div>
+          ) : (
+            <div className="mt-8 grid grid-cols-3 gap-5 text-[#17130E] [&_h2]:!text-[#17130E]">{filtered.map((item) => <CommunityRow key={item.slug} community={item} desktop />)}</div>
+          )}
+        </section>
       </div>
     </main>
   )

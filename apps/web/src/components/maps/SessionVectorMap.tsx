@@ -252,6 +252,7 @@ function StaticPinMapFallback({
 }) {
   const bounds = getStaticBounds(pins.map((entry) => entry.position))
   const activityPinCount = pins.filter((entry) => entry.pin.kind !== 'place').length
+  const communityOnly = activityPinCount > 0 && pins.every((entry) => entry.pin.kind === 'community')
   const projectedPins = spreadStaticMarkerPoints(
     pins.map((entry) => ({
       ...entry,
@@ -268,7 +269,7 @@ function StaticPinMapFallback({
         <div className="pointer-events-none min-w-0 rounded-md border border-[#17130E] bg-[#F8F4EA]/90 px-2.5 py-2 font-mono text-[10px] font-black uppercase tracking-[0.14em] text-[#17130E]/72 backdrop-blur min-[380px]:px-3 min-[380px]:text-[11px]">
           <span className="block truncate">
             {activityPinCount > 0
-              ? `${activityPinCount} active plan${activityPinCount === 1 ? '' : 's'}`
+              ? `${activityPinCount} active ${communityOnly ? `communit${activityPinCount === 1 ? 'y' : 'ies'}` : `plan${activityPinCount === 1 ? '' : 's'}`}`
               : 'Activity map'}
           </span>
         </div>

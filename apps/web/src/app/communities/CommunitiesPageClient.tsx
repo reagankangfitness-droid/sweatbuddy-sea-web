@@ -22,6 +22,10 @@ import { LogoWithText } from '@/components/logo'
 import { ACTIVITY_CATEGORIES, getCategoryEmoji } from '@/lib/categories'
 import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
 import { ProductNav } from '@/components/ProductNav'
+import {
+  LazySessionVectorMap,
+  type SessionVectorMapPin,
+} from '@/components/maps/LazySessionVectorMap'
 
 export interface CommunityMemberData { id: string; name: string | null; imageUrl: string | null }
 export interface NextEventData { id: string; title: string; startTime: string; categorySlug: string | null }
@@ -74,10 +78,10 @@ interface Props {
   initialPriceFilter?: string | null
 }
 
-const markerPositions = [
-  ['18%', '33%'], ['67%', '28%'], ['42%', '48%'], ['77%', '55%'], ['24%', '63%'],
-  ['56%', '70%'], ['83%', '76%'], ['35%', '82%'], ['68%', '86%'],
-] as const
+const CITY_CENTERS: Record<string, { lat: number; lng: number }> = {
+  singapore: { lat: 1.3521, lng: 103.8198 },
+  bangkok: { lat: 13.7563, lng: 100.5018 },
+}
 
 function categoryName(slug: string) {
   return ACTIVITY_CATEGORIES.find((item) => item.slug === slug)?.name
@@ -126,6 +130,25 @@ export default function CommunitiesPageClient({
       && (!freeOnly || item.priceType === 'free')
   }), [communities, query, category, city, beginnerOnly, freeOnly])
   const selected = filtered.find((item) => item.slug === selectedSlug) ?? filtered[0] ?? null
+  const mapCenter = CITY_CENTERS[city ?? selected?.citySlug ?? 'singapore'] ?? CITY_CENTERS.singapore
+  const communityPins = useMemo<SessionVectorMapPin[]>(() => filtered.map((item) => ({
+    id: `community:${item.slug}`,
+    title: item.name,
+    kind: 'community',
+    markerVariant: 'community',
+    latitude: item.latitude,
+    longitude: item.longitude,
+    city: item.cityName,
+    primaryLabel: categoryName(item.category),
+    activityLabel: `${getCategoryEmoji(item.category)} ${categoryName(item.category)}`,
+    previewTitle: item.name,
+    previewSubtitle: item.usualArea || item.cityName || 'Singapore',
+    previewMeta: [item.usualSchedule, item.beginnerFriendly ? 'First-timer friendly' : null]
+      .filter(Boolean)
+      .join(' · '),
+    previewImage: item.coverImage || item.logoImage || getCategoryFallbackImage(item.category),
+    previewCtaLabel: 'View community',
+  })), [filtered])
 
   return (
     <main className="min-h-screen bg-[#F8F4EA] text-[#17130E]">
@@ -159,18 +182,22 @@ export default function CommunitiesPageClient({
         </div>
 
         {view === 'map' ? (
-          <section className="relative min-h-[calc(100dvh-214px)] overflow-hidden bg-[#CFE3D1] pb-44">
-            <Image src="/images/singapore-map.svg" alt="Map of Singapore" fill priority className="object-cover opacity-70" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0,rgba(248,244,234,0.14)_75%)]" />
+          <section className="relative h-[calc(100dvh-193px)] min-h-[520px] overflow-hidden bg-[#F4EFE3] pb-44">
+            <LazySessionVectorMap
+              center={mapCenter}
+              pins={communityPins}
+              selectedPinId={selected ? `community:${selected.slug}` : null}
+              onPinClick={(pin) => setSelectedSlug(pin?.id.replace('community:', '') ?? null)}
+              onMapClick={() => setSelectedSlug(null)}
+              initialZoom={11.2}
+              maxFitZoom={13}
+              fitPadding={58}
+              showControls
+              className="absolute inset-0"
+            />
             <div className="absolute left-4 top-4 rounded-full bg-white/95 px-4 py-2 text-xs font-semibold shadow-lg">
-              <MapPin className="mr-1 inline h-4 w-4 text-[#E8412C]" /> Singapore <ChevronDown className="ml-1 inline h-3.5 w-3.5" />
+              <MapPin className="mr-1 inline h-4 w-4 text-[#E8412C]" /> {cities.find((item) => item.slug === city)?.name || selected?.cityName || 'Singapore'} <ChevronDown className="ml-1 inline h-3.5 w-3.5" />
             </div>
-            {filtered.slice(0, markerPositions.length).map((item, index) => (
-              <button key={item.slug} type="button" onClick={() => setSelectedSlug(item.slug)} style={{ left: markerPositions[index][0], top: markerPositions[index][1] }} className={`absolute grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-4 shadow-xl transition-transform ${selected?.slug === item.slug ? 'z-20 scale-110 border-[#E8412C] bg-[#17130E] text-white' : 'border-white bg-white'}`} aria-label={`Show ${item.name}`}>
-                <span className="text-2xl">{getCategoryEmoji(item.category)}</span>
-                {item.logoImage && <span className="absolute -bottom-1 -right-1 h-6 w-6 overflow-hidden rounded-full border-2 border-white bg-white"><Image src={item.logoImage} alt="" fill className="object-cover" unoptimized={!item.logoImage.startsWith('/')} /></span>}
-              </button>
-            ))}
             {selected && <div className="absolute inset-x-3 bottom-24 z-30"><CommunitySpotlight community={selected} /></div>}
           </section>
         ) : (

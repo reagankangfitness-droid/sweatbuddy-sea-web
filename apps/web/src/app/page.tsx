@@ -9,13 +9,14 @@ import { EVENTS } from '@/lib/analytics'
 import { resolveSessionMediaMap, type ResolvedSessionMedia } from '@/lib/session-media'
 import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
 import { prisma } from '@/lib/prisma'
+import CommunitiesPage from './communities/page'
 
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'SweatBuddies - Fitness Communities You Can Actually Join',
+  title: 'Explore Fitness Communities Near You',
   description:
-    'Find active fitness communities near you by area, vibe, schedule, and beginner-friendliness.',
+    'Explore active fitness communities by map, activity, area, and first-timer fit.',
 }
 
 const decisionFilters = [
@@ -55,7 +56,21 @@ const buttonBase =
 const compactButtonBase = `${buttonBase} min-h-11 min-w-11`
 const touchButtonBase = `${buttonBase} min-h-12`
 
-export default async function HomePage() {
+type HomePageSearchParams = Awaited<Parameters<typeof CommunitiesPage>[0]['searchParams']> & {
+  welcome?: string
+}
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<HomePageSearchParams>
+}) {
+  const { welcome, ...communitySearchParams } = await searchParams
+  if (welcome === '1') return <MarketingHomePage />
+  return CommunitiesPage({ searchParams: Promise.resolve(communitySearchParams) })
+}
+
+async function MarketingHomePage() {
   const now = new Date()
   const upcomingSessions = await prisma.activity
     .findMany({

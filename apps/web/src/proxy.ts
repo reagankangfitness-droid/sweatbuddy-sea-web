@@ -35,6 +35,7 @@ import type { NextRequest } from 'next/server'
 // Routes that don't require authentication
 const isPublicRoute = createRouteMatcher([
   '/',
+  '/welcome',
   '/sitemap.xml',
   '/robots.txt',
   '/manifest.json',

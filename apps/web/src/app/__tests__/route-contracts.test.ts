@@ -20,6 +20,7 @@ function expectRoute(relativePath: string) {
 describe('route contracts', () => {
   it('keeps the public homepage pointed at the discovery command center', () => {
     const homePage = readRepoFile('apps/web/src/app/page.tsx')
+    const welcomePage = readRepoFile('apps/web/src/app/welcome/page.tsx')
     const rootLayout = readRepoFile('apps/web/src/app/layout.tsx')
     const browsePage = readRepoFile('apps/web/src/app/browse/page.tsx')
     const communitiesPage = readRepoFile('apps/web/src/app/communities/page.tsx')
@@ -59,6 +60,10 @@ describe('route contracts', () => {
     expect(homePage).not.toContain("import { redirect } from 'next/navigation'")
     expect(homePage).not.toContain('NEXT_PUBLIC_HOME_EXPERIENCE')
     expect(homePage).not.toContain("redirect('/buddy?location=nearby')")
+    expect(homePage).toContain("import CommunitiesPage from './communities/page'")
+    expect(homePage).toContain('return CommunitiesPage({ searchParams: Promise.resolve(communitySearchParams) })')
+    expect(welcomePage).toContain("welcome: '1'")
+    expect(proxy).toContain("'/welcome'")
     expect(homePage).toContain('CityGuideTabs')
     expect(homePage).toContain('active="communities"')
     expect(homePage).toContain('Find your people. Then go move together.')

@@ -122,7 +122,7 @@ export function JoinGateSheet({ open, onClose, onComplete }: JoinGateSheetProps)
                     onClick={() => toggle(i.slug)}
                     className={`flex flex-col items-center justify-center gap-1 py-3 rounded-xl transition-all ${
                       selected.includes(i.slug)
-                        ? 'scale-[1.02] border-2 border-[#17130E] bg-[#E8412C] text-white shadow-[2px_2px_0_#17130E]'
+                        ? 'scale-[1.02] border-2 border-[#17130E] bg-[#E83E6B] text-white shadow-[2px_2px_0_#17130E]'
                         : 'border-2 border-[#17130E]/18 bg-[#F8F4EA] text-[#17130E] hover:border-[#17130E]'
                     }`}
                   >
@@ -150,7 +150,7 @@ export function JoinGateSheet({ open, onClose, onComplete }: JoinGateSheetProps)
                       }
                       className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-full text-xs font-medium transition-all ${
                         fitnessLevel === level.key
-                          ? 'border-2 border-[#17130E] bg-[#E8412C] text-white shadow-[2px_2px_0_#17130E]'
+                          ? 'border-2 border-[#17130E] bg-[#E83E6B] text-white shadow-[2px_2px_0_#17130E]'
                           : 'border-2 border-[#17130E]/18 bg-[#F8F4EA] text-[#17130E] hover:border-[#17130E]'
                       }`}
                     >
@@ -165,7 +165,7 @@ export function JoinGateSheet({ open, onClose, onComplete }: JoinGateSheetProps)
               <button
                 onClick={submit}
                 disabled={selected.length === 0 || saving}
-                className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-[#17130E] bg-[#E8412C] py-3.5 font-mono text-sm font-black uppercase tracking-normal text-white shadow-[3px_3px_0_#17130E] transition-all disabled:opacity-45"
+                className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-[#17130E] bg-[#E83E6B] py-3.5 font-mono text-sm font-black uppercase tracking-normal text-white shadow-[3px_3px_0_#17130E] transition-all disabled:opacity-45"
               >
                 {saving ? (
                   <>

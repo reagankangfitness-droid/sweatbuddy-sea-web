@@ -51,7 +51,7 @@ const fallbackPlanCards = [
 ]
 
 const buttonBase =
-  'min-w-0 touch-manipulation select-none items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8412C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0D0C]'
+  'min-w-0 touch-manipulation select-none items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E83E6B] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0D0C]'
 
 const compactButtonBase = `${buttonBase} min-h-11 min-w-11`
 const touchButtonBase = `${buttonBase} min-h-12`
@@ -153,7 +153,7 @@ async function MarketingHomePage() {
               event={EVENTS.LANDING_CTA_CLICKED}
               metadata={{ placement: 'nav_list_community', destination: '/communities/nominate' }}
               aria-label="List your community"
-              className={`${compactButtonBase} rounded-full bg-[#E8412C] px-3 py-2.5 text-[11px] font-bold uppercase text-black hover:bg-[#E8412C] min-[420px]:px-4 sm:px-5 sm:text-xs`}
+              className={`${compactButtonBase} rounded-full bg-[#E83E6B] px-3 py-2.5 text-[11px] font-bold uppercase text-black hover:bg-[#E83E6B] min-[420px]:px-4 sm:px-5 sm:text-xs`}
             >
               <span aria-hidden="true" className="sm:hidden">Suggest</span>
               <span aria-hidden="true" className="hidden sm:inline">Suggest a community</span>
@@ -169,7 +169,7 @@ async function MarketingHomePage() {
           <div className="mx-auto max-w-7xl">
             <div className="min-w-0 bg-[#0B0D0C]">
               <div className="border-b border-white/10 p-4 sm:p-6">
-                <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[#E8412C]">
+                <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[#E83E6B]">
                   Your local guide to moving with people
                 </p>
                 <h1 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight text-white sm:text-5xl">
@@ -184,7 +184,7 @@ async function MarketingHomePage() {
                     href="/explore"
                     event={EVENTS.LANDING_CTA_CLICKED}
                     metadata={{ placement: 'homepage_primary_find_communities', destination: '/explore' }}
-                    className={`${touchButtonBase} inline-flex gap-2 rounded-full bg-[#E8412C] px-5 py-3 text-sm font-bold text-black hover:bg-[#E8412C]`}
+                    className={`${touchButtonBase} inline-flex gap-2 rounded-full bg-[#E83E6B] px-5 py-3 text-sm font-bold text-black hover:bg-[#E83E6B]`}
                   >
                     Explore the local guide <ArrowRight size={17} className="shrink-0" />
                   </TrackedLink>
@@ -226,7 +226,7 @@ async function MarketingHomePage() {
                       href="/explore"
                       event={EVENTS.LANDING_CTA_CLICKED}
                       metadata={{ placement: 'homepage_hero_view_all_communities', destination: '/explore' }}
-                      className="hidden min-h-10 shrink-0 items-center rounded-full px-2 font-mono text-[11px] font-bold uppercase text-white/48 hover:text-[#E8412C] sm:inline-flex"
+                      className="hidden min-h-10 shrink-0 items-center rounded-full px-2 font-mono text-[11px] font-bold uppercase text-white/48 hover:text-[#E83E6B] sm:inline-flex"
                     >
                       See all
                     </TrackedLink>
@@ -264,7 +264,7 @@ async function MarketingHomePage() {
                 href="/this-week"
                 event={EVENTS.LANDING_CTA_CLICKED}
                 metadata={{ placement: 'homepage_events_view_all', destination: '/this-week' }}
-                className={`${compactButtonBase} inline-flex w-fit gap-1.5 rounded-full border border-white/10 px-3 py-2 font-mono text-xs font-bold uppercase text-white/60 hover:border-[#E8412C] hover:text-[#E8412C]`}
+                className={`${compactButtonBase} inline-flex w-fit gap-1.5 rounded-full border border-white/10 px-3 py-2 font-mono text-xs font-bold uppercase text-white/60 hover:border-[#E83E6B] hover:text-[#E83E6B]`}
               >
                 See this week <ArrowRight size={14} className="shrink-0" />
               </TrackedLink>
@@ -336,7 +336,7 @@ function FallbackPlanCard({
       href={card.href}
       event={EVENTS.LANDING_CTA_CLICKED}
       metadata={{ placement: 'homepage_fallback_plan_card', destination: card.href, title: card.title }}
-      className="group grid grid-cols-[118px_minmax(0,1fr)] overflow-hidden rounded-xl border border-white/10 bg-[#151816] transition-colors hover:border-[#E8412C]"
+      className="group grid grid-cols-[118px_minmax(0,1fr)] overflow-hidden rounded-xl border border-white/10 bg-[#151816] transition-colors hover:border-[#E83E6B]"
     >
       <div className="relative aspect-square overflow-hidden bg-[#222222]">
         <Image
@@ -350,7 +350,7 @@ function FallbackPlanCard({
       </div>
       <div className="grid min-w-0 content-between gap-2 p-3">
         <div>
-          <span className="rounded-md bg-[#E8412C] px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-black">
+          <span className="rounded-md bg-[#E83E6B] px-2 py-1 font-mono text-[9px] font-black uppercase tracking-wide text-black">
             {card.signal}
           </span>
           <h3 className="mt-2 line-clamp-2 text-sm font-semibold leading-tight text-white">
@@ -360,7 +360,7 @@ function FallbackPlanCard({
             {card.meta}
           </p>
         </div>
-        <p className="inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-wide text-[#E8412C]">
+        <p className="inline-flex items-center gap-1 font-mono text-[10px] font-bold uppercase tracking-wide text-[#E83E6B]">
           View communities <ArrowRight size={12} />
         </p>
       </div>
@@ -382,7 +382,7 @@ function DiscoveryPill({
       href={href}
       event={EVENTS.LANDING_CTA_CLICKED}
       metadata={{ placement, destination: href, label }}
-      className={`${compactButtonBase} inline-flex snap-start shrink-0 rounded-md border border-white/15 bg-[#151816] px-3 py-2 font-mono text-[11px] font-bold uppercase text-white/60 hover:border-[#E8412C] hover:text-[#E8412C] sm:px-3.5 sm:text-xs`}
+      className={`${compactButtonBase} inline-flex snap-start shrink-0 rounded-md border border-white/15 bg-[#151816] px-3 py-2 font-mono text-[11px] font-bold uppercase text-white/60 hover:border-[#E83E6B] hover:text-[#E83E6B] sm:px-3.5 sm:text-xs`}
     >
       <span className="max-w-[9.5rem] truncate">{label}</span>
     </TrackedLink>
@@ -459,8 +459,8 @@ function SessionCard({
       }}
       className={
         compact
-          ? 'group grid scroll-mt-24 grid-cols-[118px_minmax(0,1fr)] overflow-hidden rounded-xl border border-white/10 bg-[#151816] transition-all target:border-[#E8412C] target:ring-2 target:ring-[#E8412C] hover:border-[#E8412C] sm:block sm:hover:-translate-y-0.5'
-          : 'group scroll-mt-24 overflow-hidden rounded-xl border border-white/10 bg-[#151816] transition-all target:border-[#E8412C] target:ring-2 target:ring-[#E8412C] hover:-translate-y-0.5 hover:border-[#E8412C]'
+          ? 'group grid scroll-mt-24 grid-cols-[118px_minmax(0,1fr)] overflow-hidden rounded-xl border border-white/10 bg-[#151816] transition-all target:border-[#E83E6B] target:ring-2 target:ring-[#E83E6B] hover:border-[#E83E6B] sm:block sm:hover:-translate-y-0.5'
+          : 'group scroll-mt-24 overflow-hidden rounded-xl border border-white/10 bg-[#151816] transition-all target:border-[#E83E6B] target:ring-2 target:ring-[#E83E6B] hover:-translate-y-0.5 hover:border-[#E83E6B]'
       }
     >
       <div
@@ -496,8 +496,8 @@ function SessionCard({
         <div
           className={
             compact
-              ? 'absolute right-3 top-3 rounded-md bg-[#E8412C] px-2 py-1 font-mono text-[10px] font-bold uppercase text-black shadow-md sm:right-4 sm:top-4 sm:rounded-lg sm:px-2.5 sm:py-1.5 sm:text-xs'
-              : 'absolute right-4 top-4 rounded-lg bg-[#E8412C] px-2.5 py-1.5 font-mono text-xs font-bold uppercase text-black shadow-md'
+              ? 'absolute right-3 top-3 rounded-md bg-[#E83E6B] px-2 py-1 font-mono text-[10px] font-bold uppercase text-black shadow-md sm:right-4 sm:top-4 sm:rounded-lg sm:px-2.5 sm:py-1.5 sm:text-xs'
+              : 'absolute right-4 top-4 rounded-lg bg-[#E83E6B] px-2.5 py-1.5 font-mono text-xs font-bold uppercase text-black shadow-md'
           }
         >
           {priceLabel}
@@ -551,16 +551,16 @@ function SessionCard({
         </h3>
         <p className="line-clamp-2 text-white/68">Hosted by {communityName}</p>
         <p className="flex items-center gap-2 truncate">
-          <CalendarDays size={14} strokeWidth={2.2} className="shrink-0 text-[#E8412C]" />
+          <CalendarDays size={14} strokeWidth={2.2} className="shrink-0 text-[#E83E6B]" />
           <span className="truncate">{formatSessionTime(session.startTime, session.city)}</span>
         </p>
         <p className="flex items-center gap-2 truncate">
-          <MapPin size={14} strokeWidth={2.2} className="shrink-0 text-[#E8412C]" />
+          <MapPin size={14} strokeWidth={2.2} className="shrink-0 text-[#E83E6B]" />
           <span className="truncate">{location}</span>
         </p>
         <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-2">
           <span className="inline-flex min-w-0 items-center gap-1 truncate">
-            <Users size={13} strokeWidth={2.4} className="shrink-0 text-[#E8412C]" />
+            <Users size={13} strokeWidth={2.4} className="shrink-0 text-[#E83E6B]" />
             {attendanceLabel}
           </span>
           <span className="truncate">{formatLevel(session.fitnessLevel)}</span>

@@ -5,11 +5,11 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border-2 border-[#17130E] font-mono text-sm font-black uppercase tracking-normal shadow-[2px_2px_0_#17130E] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8412C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F4EFE3] disabled:pointer-events-none disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 select-none",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border-2 border-[#17130E] font-mono text-sm font-black uppercase tracking-normal shadow-[2px_2px_0_#17130E] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E83E6B] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F4EFE3] disabled:pointer-events-none disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 select-none",
   {
     variants: {
       variant: {
-        default: "bg-[#E8412C] text-[#17130E] hover:bg-[#F0523E] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
+        default: "bg-[#E83E6B] text-[#17130E] hover:bg-[#F0547D] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
         destructive:
           "bg-red-600 text-white hover:bg-red-700 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
         outline:
@@ -17,8 +17,8 @@ const buttonVariants = cva(
         secondary:
           "bg-[#F8F4EA] text-[#17130E] hover:bg-white active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
         ghost: "border-transparent bg-transparent text-[#17130E] shadow-none hover:bg-[#17130E]/6",
-        link: "border-transparent bg-transparent text-[#E8412C] underline-offset-4 shadow-none hover:underline focus-visible:underline",
-        gradient: "bg-[#E8412C] text-[#17130E] hover:bg-[#F0523E] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
+        link: "border-transparent bg-transparent text-[#E83E6B] underline-offset-4 shadow-none hover:underline focus-visible:underline",
+        gradient: "bg-[#E83E6B] text-[#17130E] hover:bg-[#F0547D] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none",
       },
       size: {
         default: "h-12 px-6 py-3",

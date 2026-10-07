@@ -372,7 +372,7 @@ export default function SupportPage() {
               href="/my-bookings"
               className="flex items-center gap-3 p-4 bg-neutral-950 rounded-xl border border-neutral-800 hover:border-neutral-600 transition-colors"
             >
-              <Calendar className="w-5 h-5 text-[#E8412C]" />
+              <Calendar className="w-5 h-5 text-[#E83E6B]" />
               <div>
                 <p className="font-medium text-neutral-100">My Bookings</p>
                 <p className="text-sm text-neutral-500">View and manage your bookings</p>
@@ -419,7 +419,7 @@ export default function SupportPage() {
             <p className="text-[10px] text-neutral-500">Within 24 hours</p>
           </div>
           <div className="bg-neutral-950 rounded-xl border border-neutral-800 p-3 text-center">
-            <Mail className="w-5 h-5 text-[#E8412C] mx-auto mb-1" />
+            <Mail className="w-5 h-5 text-[#E83E6B] mx-auto mb-1" />
             <p className="text-xs font-medium text-neutral-100">Email</p>
             <p className="text-[10px] text-neutral-500">support@sweatbuddies.co</p>
           </div>

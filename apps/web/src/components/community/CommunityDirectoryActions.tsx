@@ -288,9 +288,9 @@ export function CommunityWeeklyPicksForm({
   }
 
   return (
-    <section className="rounded-lg border border-[#E8412C]/22 bg-[#E8412C]/8 p-4">
+    <section className="rounded-lg border border-[#E83E6B]/22 bg-[#E83E6B]/8 p-4">
       <div className="flex items-start gap-3">
-        <span className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#E8412C] text-black">
+        <span className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#E83E6B] text-black">
           <Mail className="h-4 w-4" />
         </span>
         <div className="min-w-0 flex-1">
@@ -305,13 +305,13 @@ export function CommunityWeeklyPicksForm({
                 if (status === 'error') setStatus('idle')
               }}
               placeholder="Email"
-              className="min-h-11 min-w-0 flex-1 rounded-full border border-white/12 bg-black/24 px-4 text-sm text-white outline-none placeholder:text-white/35 focus:border-[#E8412C]"
+              className="min-h-11 min-w-0 flex-1 rounded-full border border-white/12 bg-black/24 px-4 text-sm text-white outline-none placeholder:text-white/35 focus:border-[#E83E6B]"
               aria-label="Email for weekly community picks"
             />
             <button
               type="submit"
               disabled={status === 'saving' || status === 'saved'}
-              className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#E8412C] disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-11 items-center justify-center rounded-full bg-white px-4 text-xs font-black uppercase tracking-wide text-black transition-colors hover:bg-[#E83E6B] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {status === 'saving' ? 'Saving' : status === 'saved' ? 'Saved' : 'Get picks'}
             </button>
@@ -354,7 +354,7 @@ export function MobileCommunityStickyActions({
             source: 'mobile_sticky',
             joinPlatform: joinPlatform ?? null,
           }}
-          className="inline-flex min-h-12 min-w-0 items-center justify-center gap-2 rounded-full bg-[#E8412C] px-4 text-sm font-black text-black transition-colors hover:bg-[#E8412C]"
+          className="inline-flex min-h-12 min-w-0 items-center justify-center gap-2 rounded-full bg-[#E83E6B] px-4 text-sm font-black text-black transition-colors hover:bg-[#E83E6B]"
           ariaLabel={`Join ${communityName} through the official link`}
         >
           Join official link
@@ -364,7 +364,7 @@ export function MobileCommunityStickyActions({
           communitySlug={communitySlug}
           communityName={communityName}
           source="sticky"
-          className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-full border border-white/14 px-3 text-xs font-bold text-white transition-colors hover:border-[#E8412C]/60 hover:bg-white/5"
+          className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-full border border-white/14 px-3 text-xs font-bold text-white transition-colors hover:border-[#E83E6B]/60 hover:bg-white/5"
         />
       </div>
     </div>

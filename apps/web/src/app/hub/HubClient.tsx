@@ -332,7 +332,7 @@ export default function HubClient({
               </button>
               <button
                 onClick={() => shareWhatsApp(nextSession)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#E8412C]/10 text-xs font-medium text-[#E8412C] hover:bg-[#E8412C]/20 transition-all"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#E83E6B]/10 text-xs font-medium text-[#E83E6B] hover:bg-[#E83E6B]/20 transition-all"
               >
                 <MessageCircle className="w-3.5 h-3.5" />
                 WhatsApp
@@ -440,7 +440,7 @@ export default function HubClient({
                     </button>
                     <button
                       onClick={() => shareWhatsApp(s)}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#E8412C]/10 text-[10px] font-medium text-[#E8412C]"
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-[#E83E6B]/10 text-[10px] font-medium text-[#E83E6B]"
                     >
                       <MessageCircle className="w-3 h-3" />
                       Share

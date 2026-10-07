@@ -106,7 +106,7 @@ function TokenError({ message }: { message: string }) {
     <main className="sb-page flex min-h-[100dvh] items-center justify-center px-4" data-sb-paper-shell>
       <section className="w-full max-w-sm rounded-lg border border-white/10 bg-[#151816] p-5 text-center">
         <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.06]">
-          <AlertCircle className="h-5 w-5 text-[#E8412C]" />
+          <AlertCircle className="h-5 w-5 text-[#E83E6B]" />
         </span>
         <p className="sb-eyebrow mt-5">Sign-in link</p>
         <h1 className="mt-3 text-2xl font-bold text-white">Link could not be used.</h1>

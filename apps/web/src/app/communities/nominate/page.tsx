@@ -181,7 +181,7 @@ export default function NominateCommunityPage() {
               onChange={(event) => update('communityName', event.target.value)}
               placeholder="Example: Running Department"
               maxLength={160}
-              className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#E8412C]"
+              className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#E83E6B]"
             />
           </div>
 
@@ -194,7 +194,7 @@ export default function NominateCommunityPage() {
               onChange={(event) => update('sourceUrl', event.target.value)}
               placeholder="Instagram, website, Telegram, WhatsApp, Strava, or listing URL..."
               maxLength={500}
-              className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#E8412C]"
+              className="w-full rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#E83E6B]"
             />
           </div>
 
@@ -208,7 +208,7 @@ export default function NominateCommunityPage() {
               placeholder="Optional: usual meet spot, schedule, or what makes the community welcoming."
               maxLength={1000}
               rows={4}
-              className="w-full resize-none rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#E8412C]"
+              className="w-full resize-none rounded-md border-2 border-[#17130E] bg-[#F8F4EA] px-4 py-3 text-sm text-[#17130E] outline-none placeholder:text-[#17130E]/42 focus:border-[#E83E6B]"
             />
           </div>
 

@@ -164,7 +164,7 @@ export function ShareSessionSheet({
               <div className="space-y-2.5 mb-4">
                 <button
                   onClick={shareWhatsApp}
-                  className="flex w-full items-center gap-3 rounded-md border-2 border-[#17130E] bg-[#E8412C] px-4 py-3.5 text-sm font-semibold text-white shadow-[2px_2px_0_#17130E] transition-colors hover:bg-[#E8412C]"
+                  className="flex w-full items-center gap-3 rounded-md border-2 border-[#17130E] bg-[#E83E6B] px-4 py-3.5 text-sm font-semibold text-white shadow-[2px_2px_0_#17130E] transition-colors hover:bg-[#E83E6B]"
                 >
                   <MessageCircle className="w-5 h-5" />
                   Share on WhatsApp
@@ -172,7 +172,7 @@ export function ShareSessionSheet({
 
                 <button
                   onClick={shareInstagram}
-                  className="flex w-full items-center gap-3 rounded-md border-2 border-[#17130E] bg-[#E8412C] px-4 py-3.5 text-sm font-semibold text-white shadow-[2px_2px_0_#17130E] transition-colors hover:bg-[#E8412C]"
+                  className="flex w-full items-center gap-3 rounded-md border-2 border-[#17130E] bg-[#E83E6B] px-4 py-3.5 text-sm font-semibold text-white shadow-[2px_2px_0_#17130E] transition-colors hover:bg-[#E83E6B]"
                 >
                   <Instagram className="w-5 h-5" />
                   Share to Instagram Story
@@ -181,7 +181,7 @@ export function ShareSessionSheet({
                 {typeof navigator !== 'undefined' && 'share' in navigator && (
                   <button
                     onClick={nativeShare}
-                    className="flex w-full items-center gap-3 rounded-md border-2 border-[#17130E] bg-[#E8412C] px-4 py-3.5 text-sm font-semibold text-white shadow-[2px_2px_0_#17130E] transition-colors hover:bg-[#E8412C]"
+                    className="flex w-full items-center gap-3 rounded-md border-2 border-[#17130E] bg-[#E83E6B] px-4 py-3.5 text-sm font-semibold text-white shadow-[2px_2px_0_#17130E] transition-colors hover:bg-[#E83E6B]"
                   >
                     <Link2 className="w-5 h-5" />
                     More options...

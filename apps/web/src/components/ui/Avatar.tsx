@@ -10,12 +10,12 @@ interface AvatarProps {
 }
 
 const GRADIENT_CLASSES = [
-  'from-[#E8412C] to-[#17130E]',
+  'from-[#E83E6B] to-[#17130E]',
   'from-violet-500 to-violet-700',
   'from-pink-500 to-pink-700',
   'from-emerald-500 to-emerald-700',
   'from-amber-500 to-amber-700',
-  'from-[#E8412C] to-[#17130E]',
+  'from-[#E83E6B] to-[#17130E]',
 ]
 
 const SIZE_CLASSES = {

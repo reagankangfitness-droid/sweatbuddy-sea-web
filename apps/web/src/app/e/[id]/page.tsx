@@ -234,7 +234,7 @@ export default async function EventDetailPage({ params }: Props) {
                 </span>
               )}
               {event.recurring && (
-                <span className="px-3 py-1.5 bg-[#E8412C] text-white rounded-lg text-xs font-medium">
+                <span className="px-3 py-1.5 bg-[#E83E6B] text-white rounded-lg text-xs font-medium">
                   Weekly
                 </span>
               )}
@@ -329,7 +329,7 @@ export default async function EventDetailPage({ params }: Props) {
 
               {/* Friends Going */}
               {friendsGoing.length > 0 && (
-                <div className="bg-[#E8412C]/10 rounded-xl p-5 border border-[#E8412C]/20">
+                <div className="bg-[#E83E6B]/10 rounded-xl p-5 border border-[#E83E6B]/20">
                   <h2 className="text-base font-semibold text-[#17130E] mb-3 flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -349,11 +349,11 @@ export default async function EventDetailPage({ params }: Props) {
                             unoptimized
                           />
                         ) : (
-                          <div className="w-7 h-7 rounded-full bg-[#E8412C]/15 flex items-center justify-center text-xs font-medium text-[#E8412C]">
+                          <div className="w-7 h-7 rounded-full bg-[#E83E6B]/15 flex items-center justify-center text-xs font-medium text-[#E83E6B]">
                             {(friend.firstName || friend.name || '?').charAt(0)}
                           </div>
                         )}
-                        <span className="text-sm font-medium text-[#E8412C]">
+                        <span className="text-sm font-medium text-[#E83E6B]">
                           {friend.firstName || friend.name || 'Anonymous'}
                         </span>
                       </div>

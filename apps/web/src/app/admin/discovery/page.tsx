@@ -134,7 +134,7 @@ export default function DiscoveryAdminPage() {
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#E8412C]">Community scout</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#E83E6B]">Community scout</p>
           <h1 className="mt-2 text-2xl font-bold text-neutral-100 sm:text-3xl">Discovery inbox</h1>
           <p className="mt-1 max-w-2xl text-sm text-neutral-500">
             Register public sources, scan for structured event listings, then approve only the sessions that are real and joinable.
@@ -165,18 +165,18 @@ export default function DiscoveryAdminPage() {
             value={form.name}
             onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
             placeholder="Community/source name"
-            className="min-h-11 rounded-xl border border-neutral-800 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:border-[#E8412C]"
+            className="min-h-11 rounded-xl border border-neutral-800 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:border-[#E83E6B]"
           />
           <input
             value={form.url}
             onChange={(event) => setForm((current) => ({ ...current, url: event.target.value }))}
             placeholder="https://..."
-            className="min-h-11 rounded-xl border border-neutral-800 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:border-[#E8412C]"
+            className="min-h-11 rounded-xl border border-neutral-800 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:border-[#E83E6B]"
           />
           <select
             value={form.sourceType}
             onChange={(event) => setForm((current) => ({ ...current, sourceType: event.target.value }))}
-            className="min-h-11 rounded-xl border border-neutral-800 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:border-[#E8412C]"
+            className="min-h-11 rounded-xl border border-neutral-800 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:border-[#E83E6B]"
           >
             {SOURCE_TYPES.map((type) => <option key={type} value={type}>{type}</option>)}
           </select>
@@ -184,13 +184,13 @@ export default function DiscoveryAdminPage() {
             value={form.city}
             onChange={(event) => setForm((current) => ({ ...current, city: event.target.value }))}
             placeholder="Singapore"
-            className="min-h-11 rounded-xl border border-neutral-800 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:border-[#E8412C]"
+            className="min-h-11 rounded-xl border border-neutral-800 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:border-[#E83E6B]"
           />
           <input
             value={form.category}
             onChange={(event) => setForm((current) => ({ ...current, category: event.target.value }))}
             placeholder="running"
-            className="min-h-11 rounded-xl border border-neutral-800 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:border-[#E8412C]"
+            className="min-h-11 rounded-xl border border-neutral-800 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:border-[#E83E6B]"
           />
           <button
             type="submit"
@@ -219,7 +219,7 @@ export default function DiscoveryAdminPage() {
                 <tr key={source.id} className="text-neutral-300">
                   <td className="px-3 py-3">
                     <div className="font-semibold text-neutral-100">{source.name}</div>
-                    <a href={source.url} target="_blank" rel="noreferrer" className="inline-flex max-w-sm items-center gap-1 truncate text-xs text-neutral-500 hover:text-[#E8412C]">
+                    <a href={source.url} target="_blank" rel="noreferrer" className="inline-flex max-w-sm items-center gap-1 truncate text-xs text-neutral-500 hover:text-[#E83E6B]">
                       {source.url}
                       <ExternalLink className="h-3 w-3" />
                     </a>
@@ -233,7 +233,7 @@ export default function DiscoveryAdminPage() {
                     <button
                       onClick={() => scanSource(source.id)}
                       disabled={scanningId === source.id}
-                      className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-neutral-800 px-3 text-xs font-semibold text-neutral-100 hover:border-[#E8412C] disabled:opacity-50"
+                      className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-neutral-800 px-3 text-xs font-semibold text-neutral-100 hover:border-[#E83E6B] disabled:opacity-50"
                     >
                       {scanningId === source.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                       Scan
@@ -286,7 +286,7 @@ export default function DiscoveryAdminPage() {
               <article key={session.id} className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_220px]">
                 <div className="min-w-0">
                   <div className="mb-2 flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-[#E8412C]/10 px-2 py-1 text-xs font-semibold text-[#E8412C]">
+                    <span className="rounded-full bg-[#E83E6B]/10 px-2 py-1 text-xs font-semibold text-[#E83E6B]">
                       {session.confidence}% confidence
                     </span>
                     <span className="rounded-full bg-neutral-900 px-2 py-1 text-xs font-semibold text-neutral-400">
@@ -310,11 +310,11 @@ export default function DiscoveryAdminPage() {
                     {session.createdActivity && <span>Published: {session.createdActivity.title}</span>}
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <a href={session.sourceUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-neutral-800 px-3 text-xs font-semibold text-neutral-300 hover:border-[#E8412C]">
+                    <a href={session.sourceUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-neutral-800 px-3 text-xs font-semibold text-neutral-300 hover:border-[#E83E6B]">
                       Source <ExternalLink className="h-3 w-3" />
                     </a>
                     {session.signupUrl && (
-                      <a href={session.signupUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-neutral-800 px-3 text-xs font-semibold text-neutral-300 hover:border-[#E8412C]">
+                      <a href={session.signupUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-neutral-800 px-3 text-xs font-semibold text-neutral-300 hover:border-[#E83E6B]">
                         Signup <ExternalLink className="h-3 w-3" />
                       </a>
                     )}
@@ -325,7 +325,7 @@ export default function DiscoveryAdminPage() {
                   <button
                     onClick={() => reviewSession(session.id, 'approve')}
                     disabled={reviewingId === session.id}
-                    className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-[#E8412C] px-3 text-xs font-semibold text-neutral-950 disabled:opacity-50"
+                    className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-[#E83E6B] px-3 text-xs font-semibold text-neutral-950 disabled:opacity-50"
                   >
                     <Check className="h-4 w-4" />
                     Approve + publish

@@ -1,14 +1,14 @@
-// SweatBuddies Design System with Ink + Coral Brand Color
+// SweatBuddies Design System with Ink + Raspberry Punch Brand Color
 
 export const colors = {
-  // Brand Ink + Coral - Primary brand color for CTAs, buttons, links
+  // Raspberry Punch is the only expressive brand accent.
   brand: {
-    primary: '#E8412C',        // Coral
-    primaryHover: '#E8412C',
+    primary: '#E83E6B',        // Raspberry Punch
+    primaryHover: '#C92F58',
     primaryDark: '#17130E',    // Ink
-    primaryLight: 'rgba(232, 65, 44, 0.15)',
-    primaryLighter: 'rgba(232, 65, 44, 0.08)',
-    primaryText: '#17130E',    // Ink maintains WCAG AA contrast on coral
+    primaryLight: 'rgba(232, 62, 107, 0.15)',
+    primaryLighter: 'rgba(232, 62, 107, 0.08)',
+    primaryText: '#17130E',    // Ink maintains WCAG AA contrast on Raspberry Punch
   },
 
   // Accent Yellow - Use for star ratings, featured badges, high-energy elements

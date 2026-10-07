@@ -91,7 +91,7 @@ export async function GET(
 // Generate a consistent brand color from an ID
 function getColorFromId(id: string): string {
   const colors = [
-    '#E8412C',
+    '#E83E6B',
     '#17130E',
   ]
 

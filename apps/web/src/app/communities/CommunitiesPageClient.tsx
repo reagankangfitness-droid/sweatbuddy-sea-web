@@ -155,7 +155,7 @@ export default function CommunitiesPageClient({
       <div className="md:hidden">
         <header className="sticky top-0 z-50 border-b border-black/10 bg-[#F8F4EA]/95 px-4 pb-3 pt-[max(12px,env(safe-area-inset-top))] backdrop-blur-xl">
           <div className="flex h-12 items-center justify-between">
-            <Link href="/" aria-label="SweatBuddies home"><LogoWithText size={25} color="#E8412C" textColor="#17130E" /></Link>
+            <Link href="/" aria-label="SweatBuddies home"><LogoWithText size={25} color="#E83E6B" textColor="#17130E" /></Link>
             <div className="flex items-center gap-1">
               <Link href="/notifications" aria-label="Notifications" className="grid h-11 w-11 place-items-center rounded-full"><Bell className="h-5 w-5" /></Link>
               <Link href="/profile" aria-label="Profile" className="grid h-11 w-11 place-items-center rounded-full bg-white shadow-sm"><UserRound className="h-5 w-5" /></Link>
@@ -164,7 +164,7 @@ export default function CommunitiesPageClient({
           <div className="mt-2 flex items-center gap-2">
             <label className="relative flex-1">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45" />
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search communities or activities" className="h-12 w-full rounded-full border border-black/10 bg-white pl-12 pr-4 text-sm outline-none focus:border-[#E8412C]" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search communities or activities" className="h-12 w-full rounded-full border border-black/10 bg-white pl-12 pr-4 text-sm outline-none focus:border-[#E83E6B]" />
             </label>
             <button type="button" onClick={() => setView(view === 'map' ? 'list' : 'map')} className="grid h-12 w-12 place-items-center rounded-full bg-[#17130E] text-white" aria-label={`Switch to ${view === 'map' ? 'list' : 'map'} view`}>
               {view === 'map' ? <List className="h-5 w-5" /> : <MapIcon className="h-5 w-5" />}
@@ -196,17 +196,17 @@ export default function CommunitiesPageClient({
               showControls
             />
             <div className="absolute left-4 top-4 rounded-full bg-white/95 px-4 py-2 text-xs font-semibold shadow-lg">
-              <MapPin className="mr-1 inline h-4 w-4 text-[#E8412C]" /> {cities.find((item) => item.slug === city)?.name || selected?.cityName || 'Singapore'} <ChevronDown className="ml-1 inline h-3.5 w-3.5" />
+              <MapPin className="mr-1 inline h-4 w-4 text-[#E83E6B]" /> {cities.find((item) => item.slug === city)?.name || selected?.cityName || 'Singapore'} <ChevronDown className="ml-1 inline h-3.5 w-3.5" />
             </div>
             {selected && <div className="absolute inset-x-3 bottom-24 z-30"><CommunitySpotlight community={selected} /></div>}
           </section>
         ) : (
           <section className="px-4 pb-28 pt-5">
-            <div className="mb-4 flex items-end justify-between"><div><p className="text-2xl font-bold">{filtered.length} communities</p><p className="mt-1 text-sm text-black/55">Active groups with checked join paths</p></div><Link href="/communities/nominate" className="text-xs font-bold text-[#E8412C]">Suggest one</Link></div>
+            <div className="mb-4 flex items-end justify-between"><div><p className="text-2xl font-bold">{filtered.length} communities</p><p className="mt-1 text-sm text-black/55">Active groups with checked join paths</p></div><Link href="/communities/nominate" className="text-xs font-bold text-[#E83E6B]">Suggest one</Link></div>
             <div className="space-y-3">{filtered.map((item) => <CommunityRow key={item.slug} community={item} />)}</div>
           </section>
         )}
-        <Link href="/communities/nominate" aria-label="Suggest a community" className="fixed bottom-24 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-[#E8412C] text-white shadow-[0_10px_30px_rgba(232,65,44,.35)]"><Plus className="h-7 w-7" /></Link>
+        <Link href="/communities/nominate" aria-label="Suggest a community" className="fixed bottom-24 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-[#E83E6B] text-white shadow-[0_10px_30px_rgba(232, 62, 107,.35)]"><Plus className="h-7 w-7" /></Link>
         <ProductNav active="explore" />
       </div>
 
@@ -221,7 +221,7 @@ export default function CommunitiesPageClient({
           <div className="mt-8 flex items-center gap-3">
             <label className="relative flex-1">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45" />
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search communities or activities" className="h-12 w-full rounded-full border border-black/10 bg-white pl-12 pr-4 text-sm outline-none focus:border-[#E8412C]" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search communities or activities" className="h-12 w-full rounded-full border border-black/10 bg-white pl-12 pr-4 text-sm outline-none focus:border-[#E83E6B]" />
             </label>
             <button type="button" onClick={() => setView('map')} className={`h-12 rounded-full px-5 text-sm font-bold ${view === 'map' ? 'bg-[#17130E] text-white' : 'border border-black/10 bg-white'}`}>Map</button>
             <button type="button" onClick={() => setView('list')} className={`h-12 rounded-full px-5 text-sm font-bold ${view === 'list' ? 'bg-[#17130E] text-white' : 'border border-black/10 bg-white'}`}>List</button>
@@ -247,12 +247,12 @@ export default function CommunitiesPageClient({
 }
 
 function FilterChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
-  return <button type="button" onClick={onClick} className={`h-10 whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors ${active ? 'bg-[#E8412C] text-white' : 'border border-black/10 bg-white text-[#17130E]'}`}>{children}</button>
+  return <button type="button" onClick={onClick} className={`h-10 whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors ${active ? 'bg-[#E83E6B] text-white' : 'border border-black/10 bg-white text-[#17130E]'}`}>{children}</button>
 }
 
 function CommunitySpotlight({ community }: { community: CommunityData }) {
   const image = community.coverImage || community.logoImage || getCategoryFallbackImage(community.category)
-  return <article className="overflow-hidden rounded-[1.75rem] border border-black/10 bg-white/95 p-3 shadow-[0_18px_50px_rgba(23,19,14,.22)] backdrop-blur-xl"><div className="flex gap-3"><div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-black/5"><Image src={image} alt={community.name} fill className="object-cover" unoptimized={!image.startsWith('/')} /></div><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-2"><div><p className="truncate text-base font-bold">{community.name}</p><p className="mt-0.5 text-xs text-black/55">{getCategoryEmoji(community.category)} {categoryName(community.category)} · {community.usualArea || community.cityName}</p></div>{community.isVerified && <CheckCircle2 className="h-4 w-4 shrink-0 text-[#E8412C]" />}</div><div className="mt-2 flex gap-1.5"><span className="rounded-full bg-[#F8F4EA] px-2 py-1 text-[10px] font-semibold">{community.beginnerFriendly ? 'First-timer friendly' : 'Some experience'}</span><span className="rounded-full bg-[#F8F4EA] px-2 py-1 text-[10px] font-semibold">{priceLabel(community.priceType)}</span></div></div></div><Link href={`/communities/${community.slug}`} className="mt-3 flex h-11 items-center justify-center gap-2 rounded-full bg-[#17130E] text-sm font-bold text-white">View community <ArrowRight className="h-4 w-4" /></Link></article>
+  return <article className="overflow-hidden rounded-[1.75rem] border border-black/10 bg-white/95 p-3 shadow-[0_18px_50px_rgba(23,19,14,.22)] backdrop-blur-xl"><div className="flex gap-3"><div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-black/5"><Image src={image} alt={community.name} fill className="object-cover" unoptimized={!image.startsWith('/')} /></div><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-2"><div><p className="truncate text-base font-bold">{community.name}</p><p className="mt-0.5 text-xs text-black/55">{getCategoryEmoji(community.category)} {categoryName(community.category)} · {community.usualArea || community.cityName}</p></div>{community.isVerified && <CheckCircle2 className="h-4 w-4 shrink-0 text-[#E83E6B]" />}</div><div className="mt-2 flex gap-1.5"><span className="rounded-full bg-[#F8F4EA] px-2 py-1 text-[10px] font-semibold">{community.beginnerFriendly ? 'First-timer friendly' : 'Some experience'}</span><span className="rounded-full bg-[#F8F4EA] px-2 py-1 text-[10px] font-semibold">{priceLabel(community.priceType)}</span></div></div></div><Link href={`/communities/${community.slug}`} className="mt-3 flex h-11 items-center justify-center gap-2 rounded-full bg-[#17130E] text-sm font-bold text-white">View community <ArrowRight className="h-4 w-4" /></Link></article>
 }
 
 function CommunityRow({ community, desktop = false }: { community: CommunityData; desktop?: boolean }) {

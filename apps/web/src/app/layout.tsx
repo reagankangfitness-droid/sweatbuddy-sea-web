@@ -49,7 +49,8 @@ export const metadata: Metadata = {
   creator: 'SweatBuddies',
   icons: {
     icon: '/favicon.svg',
-    apple: '/images/logo/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/apple-touch-icon.png',
   },
   manifest: '/manifest.json',
   openGraph: {
@@ -85,7 +86,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#F8F4EA',
+  themeColor: '#E83E6B',
   colorScheme: 'light',
   width: 'device-width',
   initialScale: 1,

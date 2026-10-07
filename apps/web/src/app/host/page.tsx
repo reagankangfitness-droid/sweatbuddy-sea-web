@@ -37,7 +37,7 @@ export default function HostPage() {
 
       <section className="border-b border-[#17130E]/14 px-5 py-16 sm:py-24">
         <div className="mx-auto max-w-5xl">
-          <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#E8412C]">
+          <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#E83E6B]">
             For community hosts
           </p>
           <h1 className="mt-4 max-w-3xl text-4xl font-semibold leading-tight sm:text-6xl">
@@ -65,7 +65,7 @@ export default function HostPage() {
               const Icon = action.icon
               return (
                 <article key={action.title} className="rounded-xl border-2 border-[#17130E] bg-[#F8F4EA] p-5 shadow-[3px_3px_0_#17130E]">
-                  <Icon className="h-5 w-5 text-[#E8412C]" />
+                  <Icon className="h-5 w-5 text-[#E83E6B]" />
                   <h2 className="mt-5 text-lg font-semibold">{action.title}</h2>
                   <p className="mt-2 text-sm leading-6 text-[#17130E]/62">{action.body}</p>
                 </article>

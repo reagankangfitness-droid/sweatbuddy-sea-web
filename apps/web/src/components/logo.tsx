@@ -129,7 +129,7 @@ interface LogoIconProps {
 
 export function LogoIcon({
   size = 40,
-  bgColor = '#E8412C',
+  bgColor = '#E83E6B',
   iconColor = '#FFFFFF',
   className,
 }: LogoIconProps) {

@@ -45,7 +45,7 @@ export function CommunityShareButtons({ communityName, communitySlug }: { commun
           communityName,
           source: 'detail_whatsapp_share',
         })}
-        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#E8412C]/10 border border-[#E8412C]/20 text-sm font-medium text-[#E8412C] hover:bg-[#E8412C]/20 transition-colors"
+        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#E83E6B]/10 border border-[#E83E6B]/20 text-sm font-medium text-[#E83E6B] hover:bg-[#E83E6B]/20 transition-colors"
       >
         WhatsApp
       </a>

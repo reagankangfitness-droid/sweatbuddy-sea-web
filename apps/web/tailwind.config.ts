@@ -29,15 +29,18 @@ const config: Config = {
       },
 
       // ═══════════════════════════════════════════════════════
-      // ULTRA-MINIMAL COLOR PALETTE
-      // Warm neutrals only — no accent colors
-      // Black is the only "accent"
+      // RASPBERRY PUNCH COLOR PALETTE
+      // Warm neutrals carry the interface; raspberry is the sole brand accent.
       // ═══════════════════════════════════════════════════════
       colors: {
         // SweatBuddies brand colors
         'brand-ink': '#17130E',
-        'brand-coral': '#E8412C',
-        'brand-coral-light': 'rgba(232, 65, 44, 0.15)',
+        'brand-raspberry': '#E83E6B',
+        'brand-raspberry-hover': '#C92F58',
+        'brand-raspberry-light': 'rgba(232, 62, 107, 0.15)',
+        // Legacy aliases retained while older class names are migrated.
+        'brand-coral': '#E83E6B',
+        'brand-coral-light': 'rgba(232, 62, 107, 0.15)',
         'dark': '#0A0E1A',
         'dark-card': '#111827',
         'dark-surface': '#1F2937',
@@ -197,7 +200,7 @@ const config: Config = {
           yellow: '#EAB308',
           pink: '#EC4899',
           green: '#16A34A',
-          coral: '#E8412C',
+          coral: '#E83E6B',
         },
       },
 

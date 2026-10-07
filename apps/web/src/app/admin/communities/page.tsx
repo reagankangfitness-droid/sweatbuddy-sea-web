@@ -489,7 +489,7 @@ export default function AdminCommunitiesPage() {
         <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#E8412C]">Quality queue</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#E83E6B]">Quality queue</p>
               <h2 className="mt-1 text-lg font-semibold text-neutral-100">Listings to improve next</h2>
             </div>
             <span className="rounded-full border border-neutral-800 px-3 py-1 text-xs font-semibold text-neutral-400">
@@ -1257,7 +1257,7 @@ export default function AdminCommunitiesPage() {
 }
 
 function moderationBadgeClass(status: AdminCommunity['moderationStatus']): string {
-  if (status === 'LIMITED') return 'bg-[#17130E] text-[#E8412C] border-[#E8412C]/30'
+  if (status === 'LIMITED') return 'bg-[#17130E] text-[#E83E6B] border-[#E83E6B]/30'
   if (status === 'UNDER_REVIEW') return 'bg-yellow-900/40 text-yellow-300 border-yellow-800'
   if (status === 'BLOCKED') return 'bg-red-950 text-red-300 border-red-900'
   if (status === 'REJECTED') return 'bg-red-900/50 text-red-400 border-red-800'

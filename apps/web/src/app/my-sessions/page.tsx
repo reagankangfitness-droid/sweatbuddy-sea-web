@@ -24,7 +24,7 @@ const CATEGORY_GRADIENTS: Record<string, [string, string]> = {
   pilates: ['#DB2777', '#831843'],
   hiking: ['#65A30D', '#3F6212'],
   strength: ['#4F46E5', '#312E81'],
-  gym: ['#E8412C', '#1E3A5F'],
+  gym: ['#E83E6B', '#1E3A5F'],
   cold_plunge: ['#0284C7', '#0C4A6E'],
   dance_fitness: ['#C026D3', '#701A75'],
   badminton: ['#059669', '#064E3B'],

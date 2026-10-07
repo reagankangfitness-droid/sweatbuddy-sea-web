@@ -129,10 +129,10 @@ export function EventPageClient({ event, initialGoingCount }: EventPageClientPro
           rel="noopener noreferrer"
           className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold transition-colors ${
             detectPlatform(event.communityLink) === 'whatsapp'
-              ? 'bg-[#E8412C] hover:bg-[#E8412C] text-white'
+              ? 'bg-[#E83E6B] hover:bg-[#E83E6B] text-white'
               : detectPlatform(event.communityLink) === 'telegram'
-              ? 'bg-[#E8412C] hover:bg-[#0077b5] text-white'
-              : 'bg-[#E8412C] hover:bg-[#E8412C] text-white'
+              ? 'bg-[#E83E6B] hover:bg-[#0077b5] text-white'
+              : 'bg-[#E83E6B] hover:bg-[#E83E6B] text-white'
           }`}
         >
           <MessageCircle className="w-4 h-4" />

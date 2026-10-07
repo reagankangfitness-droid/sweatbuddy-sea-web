@@ -85,7 +85,7 @@
     justify-content: center;
     gap: 8px;
     border-radius: 999px;
-    background: #E8412C;
+    background: #E83E6B;
     color: #000000;
     font-family: var(--font-geist-sans), system-ui, sans-serif;
     font-size: 14px;
@@ -96,7 +96,7 @@
   }
 
   .sb-button-primary:hover {
-    background: #F0523E;
+    background: #F0547D;
   }
 
   .sb-button-primary:active {
@@ -124,7 +124,7 @@
   .sb-button-secondary:hover {
     border-color: rgba(198, 231, 106, 0.60);
     background: rgba(255, 255, 255, 0.07);
-    color: #E8412C;
+    color: #E83E6B;
   }
 
   .sb-button-secondary:active {
@@ -137,7 +137,7 @@
     font-weight: 800;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #E8412C;
+    color: #E83E6B;
   }
 
   .sb-text-muted {
@@ -198,7 +198,7 @@
     justify-content: center;
     border-color: #17130E;
     border-radius: 50%;
-    background: #E8412C;
+    background: #E83E6B;
     color: #ffffff;
     box-shadow: 2px 3px 0 #17130E, 0 8px 20px rgba(23, 19, 14, 0.18);
   }
@@ -265,7 +265,7 @@
   .sb-map-marker--featured-place {
     min-height: 42px;
     border-color: #17130E;
-    background: #E8412C;
+    background: #E83E6B;
     color: #ffffff;
     box-shadow: 3px 3px 0 #17130E;
   }
@@ -279,7 +279,7 @@
 
   .sb-map-marker.is-selected {
     border-color: #17130E;
-    background: #E8412C;
+    background: #E83E6B;
     color: #ffffff;
     box-shadow: 4px 4px 0 #17130E;
   }
@@ -398,7 +398,7 @@
     min-height: 18px;
     align-items: center;
     border-radius: 4px;
-    background: #E8412C;
+    background: #E83E6B;
     color: #ffffff;
     padding: 0 5px;
   }
@@ -440,7 +440,7 @@
     margin-top: 2px;
     width: fit-content;
     border-radius: 4px;
-    background: #E8412C;
+    background: #E83E6B;
     color: #ffffff;
     padding: 6px 8px;
     font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -491,7 +491,7 @@
       height: 48px;
       min-height: 48px;
       min-width: 48px;
-      background: #E8412C;
+      background: #E83E6B;
       box-shadow: 2px 2px 0 #17130E;
     }
 
@@ -522,7 +522,7 @@
       height: 48px;
       min-height: 46px;
       min-width: 46px;
-      background: #E8412C;
+      background: #E83E6B;
     }
 
     .sb-map-marker--featured-place .sb-map-marker__emoji {
@@ -531,7 +531,7 @@
     }
 
     .sb-map-marker.is-selected {
-      background: #E8412C;
+      background: #E83E6B;
       transform: translate(-1px, -1px);
       box-shadow: 3px 3px 0 #17130E;
     }
@@ -590,6 +590,71 @@
 
   .maplibregl-ctrl-attrib a {
     color: rgba(23, 19, 14, 0.72) !important;
+  }
+
+  .sb-map-poi-popup .maplibregl-popup-content {
+    min-width: 190px;
+    border: 1.5px solid #17130E;
+    border-radius: 10px;
+    background: rgba(255, 252, 247, 0.98);
+    padding: 14px 38px 14px 14px;
+    color: #17130E;
+    box-shadow: 3px 3px 0 #17130E, 0 12px 32px rgba(23, 19, 14, 0.14);
+  }
+
+  .sb-map-poi-popup .maplibregl-popup-tip {
+    border-top-color: #17130E;
+    border-bottom-color: #17130E;
+  }
+
+  .sb-map-poi-popup .maplibregl-popup-close-button {
+    right: 7px;
+    top: 6px;
+    display: inline-flex;
+    height: 28px;
+    width: 28px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: rgba(23, 19, 14, 0.62);
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .sb-map-poi-popup .maplibregl-popup-close-button:hover {
+    background: rgba(232, 62, 107, 0.12);
+    color: #E83E6B;
+  }
+
+  .sb-map-poi-popup__content {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .sb-map-poi-popup__eyebrow {
+    color: #E83E6B;
+    font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .sb-map-poi-popup__title {
+    overflow: hidden;
+    color: #17130E;
+    font-size: 14px;
+    font-weight: 750;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+  }
+
+  .sb-map-poi-popup__category {
+    color: rgba(23, 19, 14, 0.58);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
   }
 }
 
@@ -2770,7 +2835,7 @@
 
 /* Analytics bar chart gradient */
 .landing-bar {
-  background: linear-gradient(to top, #E8412C, #E8412C);
+  background: linear-gradient(to top, #E83E6B, #E83E6B);
 }
 
 /* CTA section bottom glow */
@@ -2934,7 +2999,7 @@
     background: rgba(11, 75, 168, 0.08) !important;
   }
 
-  [data-buddy-desktop-shell] details button[class*="bg-[#E8412C]"],
+  [data-buddy-desktop-shell] details button[class*="bg-[#E83E6B]"],
   [data-buddy-desktop-shell] details button[class*="bg-white"] {
     background: #17130E !important;
     color: #FFFFFF !important;
@@ -2970,30 +3035,30 @@
     color: rgba(23, 19, 14, 0.58) !important;
   }
 
-  [data-buddy-desktop-shell] [class*="text-[#E8412C]"] {
-    color: #E8412C !important;
+  [data-buddy-desktop-shell] [class*="text-[#E83E6B]"] {
+    color: #E83E6B !important;
   }
 
-  [data-buddy-desktop-shell] [class*="bg-[#E8412C]"] {
-    background-color: #E8412C !important;
+  [data-buddy-desktop-shell] [class*="bg-[#E83E6B]"] {
+    background-color: #E83E6B !important;
     color: #FFFFFF !important;
   }
 
-  [data-buddy-desktop-shell] [class*="bg-[#E8412C]"],
-  [data-buddy-desktop-shell] [class*="bg-[#E8412C]"] * {
+  [data-buddy-desktop-shell] [class*="bg-[#E83E6B]"],
+  [data-buddy-desktop-shell] [class*="bg-[#E83E6B]"] * {
     color: #17130E !important;
   }
 
-  [data-buddy-desktop-shell] [class*="border-[#E8412C]"]:not(summary) {
-    border-color: #E8412C !important;
+  [data-buddy-desktop-shell] [class*="border-[#E83E6B]"]:not(summary) {
+    border-color: #E83E6B !important;
   }
 
-  [data-buddy-desktop-shell] [class*="hover:text-[#E8412C]"]:hover {
-    color: #E8412C !important;
+  [data-buddy-desktop-shell] [class*="hover:text-[#E83E6B]"]:hover {
+    color: #E83E6B !important;
   }
 
-  [data-buddy-desktop-shell] [class*="hover:border-[#E8412C]"]:hover {
-    border-color: #E8412C !important;
+  [data-buddy-desktop-shell] [class*="hover:border-[#E83E6B]"]:hover {
+    border-color: #E83E6B !important;
   }
 
   [data-buddy-desktop-shell] details > summary[class*="border"] {
@@ -3001,7 +3066,7 @@
   }
 
   [data-buddy-desktop-shell] details[open] > summary[class*="border"] {
-    border-color: #E8412C !important;
+    border-color: #E83E6B !important;
   }
 
   [data-buddy-desktop-shell] [class*="rounded-2xl"],
@@ -3072,31 +3137,31 @@
 }
 
 [data-sb-paper-shell] .sb-eyebrow,
-[data-sb-paper-shell] [class*="text-[#E8412C]"] {
-  color: #E8412C !important;
+[data-sb-paper-shell] [class*="text-[#E83E6B]"] {
+  color: #E83E6B !important;
 }
 
 [data-sb-paper-shell] .sb-button-primary,
-[data-sb-paper-shell] [class*="bg-[#E8412C]"] {
+[data-sb-paper-shell] [class*="bg-[#E83E6B]"] {
   border: 2px solid #17130E !important;
   border-radius: 6px !important;
-  background: #E8412C !important;
+  background: #E83E6B !important;
   color: #FFFFFF !important;
   box-shadow: 3px 3px 0 #17130E;
 }
 
 [data-sb-paper-shell] .sb-button-primary *,
-[data-sb-paper-shell] [class*="bg-[#E8412C]"] * {
+[data-sb-paper-shell] [class*="bg-[#E83E6B]"] * {
   color: #17130E !important;
 }
 
 [data-sb-paper-shell] .sb-button-primary:hover,
-[data-sb-paper-shell] [class*="bg-[#E8412C]"]:hover {
-  background: #F0523E !important;
+[data-sb-paper-shell] [class*="bg-[#E83E6B]"]:hover {
+  background: #F0547D !important;
 }
 
 /* Coral is a mid-tone brand color; ink is the accessible foreground for normal text. */
-[class*="bg-[#E8412C]"][class*="text-white"] {
+[class*="bg-[#E83E6B]"][class*="text-white"] {
   color: #17130E !important;
 }
 
@@ -3135,7 +3200,7 @@
 [data-sb-paper-shell] [class*="border-white"],
 [data-sb-paper-shell] [class*="border-[#333333]"],
 [data-sb-paper-shell] [class*="border-neutral-"],
-[data-sb-paper-shell] [class*="border-[#E8412C]"] {
+[data-sb-paper-shell] [class*="border-[#E83E6B]"] {
   border-color: rgba(23, 19, 14, 0.18) !important;
 }
 
@@ -3226,7 +3291,7 @@
   color: #17130E !important;
 }
 
-[data-sb-host-shell] > section:first-of-type [class*="text-[#E8412C]"] {
+[data-sb-host-shell] > section:first-of-type [class*="text-[#E83E6B]"] {
   color: #F8F4EA !important;
 }
 

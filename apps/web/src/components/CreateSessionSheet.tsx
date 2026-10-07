@@ -486,7 +486,7 @@ export function CreateSessionSheet({
                   <div className="rounded-lg border-2 border-[#17130E] bg-[#F8F4EA] p-5 text-center shadow-[3px_3px_0_#17130E]">
                     {!isLoaded || communityLoading ? (
                       <>
-                        <Loader2 className="mx-auto mb-4 h-6 w-6 animate-spin text-[#E8412C]" />
+                        <Loader2 className="mx-auto mb-4 h-6 w-6 animate-spin text-[#E83E6B]" />
                         <h3 className="text-lg font-bold text-[#17130E]">Checking host access...</h3>
                       </>
                     ) : !isSignedIn ? (
@@ -498,7 +498,7 @@ export function CreateSessionSheet({
                         <Link
                           href="/sign-in?redirect_url=%2Fbuddy%3Fcreate%3Dsession"
                           onClick={onClose}
-                          className="mt-5 inline-flex min-h-11 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#E8412C] px-5 font-mono text-sm font-black uppercase text-white shadow-[2px_2px_0_#17130E]"
+                          className="mt-5 inline-flex min-h-11 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#E83E6B] px-5 font-mono text-sm font-black uppercase text-white shadow-[2px_2px_0_#17130E]"
                         >
                           Sign in
                         </Link>
@@ -513,7 +513,7 @@ export function CreateSessionSheet({
                           <Link
                             href="/communities/nominate"
                             onClick={onClose}
-                            className="inline-flex min-h-11 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#E8412C] px-5 font-mono text-sm font-black uppercase text-white shadow-[2px_2px_0_#17130E]"
+                            className="inline-flex min-h-11 items-center justify-center rounded-md border-2 border-[#17130E] bg-[#E83E6B] px-5 font-mono text-sm font-black uppercase text-white shadow-[2px_2px_0_#17130E]"
                           >
                             List or claim community
                           </Link>
@@ -923,7 +923,7 @@ export function CreateSessionSheet({
               <button
                 onClick={handlePost}
                 disabled={!canPost || posting}
-                className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-[#17130E] bg-[#E8412C] py-4 font-mono text-sm font-black uppercase tracking-normal text-white shadow-[3px_3px_0_#17130E] transition-all hover:bg-[#E8412C] disabled:cursor-not-allowed disabled:opacity-45"
+                className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-[#17130E] bg-[#E83E6B] py-4 font-mono text-sm font-black uppercase tracking-normal text-white shadow-[3px_3px_0_#17130E] transition-all hover:bg-[#E83E6B] disabled:cursor-not-allowed disabled:opacity-45"
               >
                 {posting ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /> Posting...</>

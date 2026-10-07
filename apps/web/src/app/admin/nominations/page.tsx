@@ -91,7 +91,7 @@ const CATEGORY_OPTIONS = [
 
 const PLATFORM_OPTIONS = ['telegram', 'whatsapp', 'instagram', 'strava', 'meetup', 'website', 'linktree', 'other']
 const PRICE_OPTIONS = ['FREE', 'PAID', 'MIXED', 'MEMBERSHIP', 'PAY_WHAT_YOU_CAN']
-const INPUT_CLASS = 'w-full min-h-11 rounded-xl border border-neutral-800 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:border-[#E8412C] disabled:cursor-not-allowed disabled:opacity-60'
+const INPUT_CLASS = 'w-full min-h-11 rounded-xl border border-neutral-800 bg-neutral-900 px-3 text-sm text-neutral-100 outline-none focus:border-[#E83E6B] disabled:cursor-not-allowed disabled:opacity-60'
 
 export default function AdminNominationsPage() {
   const [nominations, setNominations] = useState<CommunityNomination[]>([])
@@ -177,7 +177,7 @@ export default function AdminNominationsPage() {
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#E8412C]">Growth loop</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#E83E6B]">Growth loop</p>
           <h1 className="mt-2 text-2xl font-bold text-neutral-100 sm:text-3xl">Community nominations</h1>
           <p className="mt-1 max-w-2xl text-sm text-neutral-500">
             Review user-submitted communities, add the missing directory context, then approve only listings with a real official link.
@@ -252,7 +252,7 @@ export default function AdminNominationsPage() {
                     href={claim.verificationUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-2 inline-flex max-w-full items-center gap-1 truncate text-xs text-[#E8412C] hover:text-[#E8412C]"
+                    className="mt-2 inline-flex max-w-full items-center gap-1 truncate text-xs text-[#E83E6B] hover:text-[#E83E6B]"
                   >
                     {claim.verificationUrl}
                     <ExternalLink className="h-3 w-3 flex-shrink-0" />
@@ -299,7 +299,7 @@ export default function AdminNominationsPage() {
                           Risk {nomination.riskScore}
                         </span>
                       )}
-                      <span className="rounded-full bg-[#E8412C]/15 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-[#E8412C]">
+                      <span className="rounded-full bg-[#E83E6B]/15 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-[#E83E6B]">
                         {requestType}
                       </span>
                       <span className="text-xs text-neutral-500">{formatDate(nomination.createdAt)}</span>
@@ -312,7 +312,7 @@ export default function AdminNominationsPage() {
                       href={nomination.sourceUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="mt-2 inline-flex max-w-full items-center gap-1 truncate text-sm text-[#E8412C] hover:text-[#E8412C]"
+                      className="mt-2 inline-flex max-w-full items-center gap-1 truncate text-sm text-[#E83E6B] hover:text-[#E83E6B]"
                     >
                       {nomination.sourceUrl}
                       <ExternalLink className="h-3.5 w-3.5 flex-shrink-0" />
@@ -588,14 +588,14 @@ function getPublicNominationNote(note: string | null): string | null {
 
 function statusClass(status: string): string {
   if (status === 'PENDING') return 'bg-yellow-400/15 text-yellow-300'
-  if (status === 'APPROVED') return 'bg-[#E8412C]/15 text-[#E8412C]'
+  if (status === 'APPROVED') return 'bg-[#E83E6B]/15 text-[#E83E6B]'
   if (status === 'REJECTED') return 'bg-red-400/15 text-red-300'
   return 'bg-neutral-800 text-neutral-300'
 }
 
 function moderationClass(status: CommunityNomination['moderationStatus']): string {
-  if (status === 'LIVE') return 'bg-[#E8412C]/15 text-[#E8412C]'
-  if (status === 'LIMITED') return 'bg-[#E8412C]/15 text-[#E8412C]'
+  if (status === 'LIVE') return 'bg-[#E83E6B]/15 text-[#E83E6B]'
+  if (status === 'LIMITED') return 'bg-[#E83E6B]/15 text-[#E83E6B]'
   if (status === 'UNDER_REVIEW') return 'bg-yellow-400/15 text-yellow-300'
   if (status === 'BLOCKED') return 'bg-red-500/20 text-red-200'
   return 'bg-red-400/15 text-red-300'

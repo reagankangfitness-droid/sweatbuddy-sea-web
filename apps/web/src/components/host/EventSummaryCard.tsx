@@ -129,9 +129,9 @@ export function EventSummaryCard({ eventId }: EventSummaryCardProps) {
       {/* Metrics Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-6">
         <div className="bg-[#17130E] rounded-lg p-3 text-center">
-          <Users className="w-5 h-5 text-[#E8412C] mx-auto mb-1" />
-          <div className="text-xl font-bold text-[#E8412C]">{metrics.attendance}</div>
-          <div className="text-xs text-[#E8412C]">Attendees</div>
+          <Users className="w-5 h-5 text-[#E83E6B] mx-auto mb-1" />
+          <div className="text-xl font-bold text-[#E83E6B]">{metrics.attendance}</div>
+          <div className="text-xs text-[#E83E6B]">Attendees</div>
         </div>
         <div className="bg-green-950 rounded-lg p-3 text-center">
           <DollarSign className="w-5 h-5 text-green-400 mx-auto mb-1" />
@@ -203,7 +203,7 @@ export function EventSummaryCard({ eventId }: EventSummaryCardProps) {
           className="w-full flex items-center justify-between px-6 py-3 hover:bg-neutral-900 transition-colors border-t"
         >
           <span className="flex items-center gap-2 text-sm font-medium text-neutral-300">
-            <ArrowRight className="w-4 h-4 text-[#E8412C]" /> Suggestions for Next Time
+            <ArrowRight className="w-4 h-4 text-[#E83E6B]" /> Suggestions for Next Time
           </span>
           {expandedSection === 'suggestions' ? <ChevronUp className="w-4 h-4 text-neutral-400" /> : <ChevronDown className="w-4 h-4 text-neutral-400" />}
         </button>
@@ -211,7 +211,7 @@ export function EventSummaryCard({ eventId }: EventSummaryCardProps) {
           <ul className="px-6 pb-4 space-y-2">
             {(data.suggestions || []).map((s, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-neutral-400">
-                <span className="text-[#E8412C] mt-0.5">{i + 1}.</span> {s}
+                <span className="text-[#E83E6B] mt-0.5">{i + 1}.</span> {s}
               </li>
             ))}
           </ul>

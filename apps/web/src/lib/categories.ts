@@ -36,7 +36,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     name: 'Cardio & Endurance',
     description: 'Heart-pumping activities to build stamina',
     emoji: '❤️‍🔥',
-    color: '#EF4444',
+    color: '#E83E6B',
     displayOrder: 1,
   },
   {
@@ -44,7 +44,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     name: 'Strength & Power',
     description: 'Build muscle and functional fitness',
     emoji: '💪',
-    color: '#F59E0B',
+    color: '#E83E6B',
     displayOrder: 2,
   },
   {
@@ -52,7 +52,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     name: 'Mind & Body',
     description: 'Connect movement with mindfulness',
     emoji: '🧘',
-    color: '#8B5CF6',
+    color: '#E83E6B',
     displayOrder: 3,
   },
   {
@@ -60,7 +60,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     name: 'Outdoor & Adventure',
     description: 'Get outside and explore',
     emoji: '🏔️',
-    color: '#10B981',
+    color: '#E83E6B',
     displayOrder: 4,
   },
   {
@@ -68,7 +68,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     name: 'Recovery & Wellness',
     description: 'Rest, recover, and rejuvenate',
     emoji: '🧊',
-    color: '#06B6D4',
+    color: '#E83E6B',
     displayOrder: 5,
   },
   {
@@ -76,7 +76,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     name: 'Social & Community',
     description: 'Connect through movement',
     emoji: '🤝',
-    color: '#EC4899',
+    color: '#E83E6B',
     displayOrder: 6,
   },
   {
@@ -84,7 +84,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     name: 'Skills & Learning',
     description: 'Learn new techniques and sports',
     emoji: '🎯',
-    color: '#6366F1',
+    color: '#E83E6B',
     displayOrder: 7,
   },
 ]
@@ -95,69 +95,69 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
 
 export const ACTIVITY_CATEGORIES: ActivityCategory[] = [
   // CARDIO & ENDURANCE
-  { slug: 'running', name: 'Running', description: 'Running clubs, trail runs, and run/walk meetups', emoji: '🏃', icon: 'footprints', color: '#EF4444', groupSlug: 'cardio', displayOrder: 1, featured: true },
-  { slug: 'cycling', name: 'Cycling', description: 'Group bike rides, spin classes, and cycling clubs', emoji: '🚴', icon: 'bike', color: '#F97316', groupSlug: 'cardio', displayOrder: 2, featured: true },
-  { slug: 'hiit', name: 'HIIT', description: 'High-intensity interval training and circuit workouts', emoji: '⚡', icon: 'zap', color: '#FBBF24', groupSlug: 'cardio', displayOrder: 3, featured: true },
-  { slug: 'swimming', name: 'Swimming', description: 'Pool workouts, lake swims, and water-based fitness', emoji: '🏊', icon: 'waves', color: '#0EA5E9', groupSlug: 'cardio', displayOrder: 4, featured: false },
-  { slug: 'dance', name: 'Dance Fitness', description: 'Cardio dance, Zumba, and social dance workouts', emoji: '💃', icon: 'music', color: '#EC4899', groupSlug: 'cardio', displayOrder: 5, featured: true },
-  { slug: 'jump_rope', name: 'Jump Rope', description: 'Jump rope workouts and skipping sessions', emoji: '🪢', icon: 'repeat', color: '#F43F5E', groupSlug: 'cardio', displayOrder: 6, featured: false },
+  { slug: 'running', name: 'Running', description: 'Running clubs, trail runs, and run/walk meetups', emoji: '🏃', icon: 'footprints', color: '#E83E6B', groupSlug: 'cardio', displayOrder: 1, featured: true },
+  { slug: 'cycling', name: 'Cycling', description: 'Group bike rides, spin classes, and cycling clubs', emoji: '🚴', icon: 'bike', color: '#E83E6B', groupSlug: 'cardio', displayOrder: 2, featured: true },
+  { slug: 'hiit', name: 'HIIT', description: 'High-intensity interval training and circuit workouts', emoji: '⚡', icon: 'zap', color: '#E83E6B', groupSlug: 'cardio', displayOrder: 3, featured: true },
+  { slug: 'swimming', name: 'Swimming', description: 'Pool workouts, lake swims, and water-based fitness', emoji: '🏊', icon: 'waves', color: '#E83E6B', groupSlug: 'cardio', displayOrder: 4, featured: false },
+  { slug: 'dance', name: 'Dance Fitness', description: 'Cardio dance, Zumba, and social dance workouts', emoji: '💃', icon: 'music', color: '#E83E6B', groupSlug: 'cardio', displayOrder: 5, featured: true },
+  { slug: 'jump_rope', name: 'Jump Rope', description: 'Jump rope workouts and skipping sessions', emoji: '🪢', icon: 'repeat', color: '#E83E6B', groupSlug: 'cardio', displayOrder: 6, featured: false },
 
   // STRENGTH & POWER
-  { slug: 'strength', name: 'Strength Training', description: 'Weight training, resistance workouts, and lifting', emoji: '🏋️', icon: 'dumbbell', color: '#F59E0B', groupSlug: 'strength', displayOrder: 10, featured: true },
-  { slug: 'bootcamp', name: 'Bootcamp', description: 'Military-style fitness bootcamps', emoji: '🎖️', icon: 'shield', color: '#D97706', groupSlug: 'strength', displayOrder: 11, featured: true },
-  { slug: 'crossfit', name: 'CrossFit', description: 'CrossFit workouts and functional fitness', emoji: '🔥', icon: 'flame', color: '#EA580C', groupSlug: 'strength', displayOrder: 12, featured: true },
-  { slug: 'hyrox', name: 'Hyrox', description: 'Hyrox training and competition prep', emoji: '🏆', icon: 'trophy', color: '#B45309', groupSlug: 'strength', displayOrder: 13, featured: false },
-  { slug: 'functional', name: 'Functional Fitness', description: 'Functional movement and athletic training', emoji: '⚙️', icon: 'settings', color: '#CA8A04', groupSlug: 'strength', displayOrder: 14, featured: false },
-  { slug: 'calisthenics', name: 'Calisthenics', description: 'Bodyweight training and street workout', emoji: '🤸', icon: 'user', color: '#EAB308', groupSlug: 'strength', displayOrder: 15, featured: false },
+  { slug: 'strength', name: 'Strength Training', description: 'Weight training, resistance workouts, and lifting', emoji: '🏋️', icon: 'dumbbell', color: '#E83E6B', groupSlug: 'strength', displayOrder: 10, featured: true },
+  { slug: 'bootcamp', name: 'Bootcamp', description: 'Military-style fitness bootcamps', emoji: '🎖️', icon: 'shield', color: '#E83E6B', groupSlug: 'strength', displayOrder: 11, featured: true },
+  { slug: 'crossfit', name: 'CrossFit', description: 'CrossFit workouts and functional fitness', emoji: '🔥', icon: 'flame', color: '#E83E6B', groupSlug: 'strength', displayOrder: 12, featured: true },
+  { slug: 'hyrox', name: 'Hyrox', description: 'Hyrox training and competition prep', emoji: '🏆', icon: 'trophy', color: '#E83E6B', groupSlug: 'strength', displayOrder: 13, featured: false },
+  { slug: 'functional', name: 'Functional Fitness', description: 'Functional movement and athletic training', emoji: '⚙️', icon: 'settings', color: '#E83E6B', groupSlug: 'strength', displayOrder: 14, featured: false },
+  { slug: 'calisthenics', name: 'Calisthenics', description: 'Bodyweight training and street workout', emoji: '🤸', icon: 'user', color: '#E83E6B', groupSlug: 'strength', displayOrder: 15, featured: false },
 
   // MIND & BODY
-  { slug: 'yoga', name: 'Yoga', description: 'All styles - vinyasa, hatha, yin, hot yoga, and more', emoji: '🧘', icon: 'flower-2', color: '#8B5CF6', groupSlug: 'mind_body', displayOrder: 20, featured: true },
-  { slug: 'pilates', name: 'Pilates', description: 'Mat pilates, reformer, and core-focused workouts', emoji: '🦢', icon: 'circle', color: '#A855F7', groupSlug: 'mind_body', displayOrder: 21, featured: true },
-  { slug: 'breathwork', name: 'Breathwork', description: 'Guided breathing exercises and pranayama', emoji: '🌬️', icon: 'wind', color: '#C084FC', groupSlug: 'mind_body', displayOrder: 22, featured: true },
-  { slug: 'meditation', name: 'Meditation', description: 'Guided meditation and mindfulness sessions', emoji: '🧠', icon: 'brain', color: '#D8B4FE', groupSlug: 'mind_body', displayOrder: 23, featured: true },
-  { slug: 'tai_chi', name: 'Tai Chi', description: 'Tai chi, qigong, and moving meditation', emoji: '☯️', icon: 'infinity', color: '#E9D5FF', groupSlug: 'mind_body', displayOrder: 24, featured: false },
-  { slug: 'stretching', name: 'Stretching', description: 'Flexibility, mobility, and stretch sessions', emoji: '🤸‍♀️', icon: 'move', color: '#F3E8FF', groupSlug: 'mind_body', displayOrder: 25, featured: false },
+  { slug: 'yoga', name: 'Yoga', description: 'All styles - vinyasa, hatha, yin, hot yoga, and more', emoji: '🧘', icon: 'flower-2', color: '#E83E6B', groupSlug: 'mind_body', displayOrder: 20, featured: true },
+  { slug: 'pilates', name: 'Pilates', description: 'Mat pilates, reformer, and core-focused workouts', emoji: '🦢', icon: 'circle', color: '#E83E6B', groupSlug: 'mind_body', displayOrder: 21, featured: true },
+  { slug: 'breathwork', name: 'Breathwork', description: 'Guided breathing exercises and pranayama', emoji: '🌬️', icon: 'wind', color: '#E83E6B', groupSlug: 'mind_body', displayOrder: 22, featured: true },
+  { slug: 'meditation', name: 'Meditation', description: 'Guided meditation and mindfulness sessions', emoji: '🧠', icon: 'brain', color: '#E83E6B', groupSlug: 'mind_body', displayOrder: 23, featured: true },
+  { slug: 'tai_chi', name: 'Tai Chi', description: 'Tai chi, qigong, and moving meditation', emoji: '☯️', icon: 'infinity', color: '#E83E6B', groupSlug: 'mind_body', displayOrder: 24, featured: false },
+  { slug: 'stretching', name: 'Stretching', description: 'Flexibility, mobility, and stretch sessions', emoji: '🤸‍♀️', icon: 'move', color: '#E83E6B', groupSlug: 'mind_body', displayOrder: 25, featured: false },
 
   // OUTDOOR & ADVENTURE
-  { slug: 'hiking', name: 'Hiking', description: 'Trail hikes, nature walks, and trekking', emoji: '🥾', icon: 'mountain', color: '#10B981', groupSlug: 'outdoor', displayOrder: 30, featured: true },
-  { slug: 'climbing', name: 'Climbing', description: 'Bouldering, rock climbing, and climbing clubs', emoji: '🧗', icon: 'mountain-snow', color: '#059669', groupSlug: 'outdoor', displayOrder: 31, featured: true },
-  { slug: 'outdoor_fitness', name: 'Outdoor Fitness', description: 'Park workouts, outdoor gyms, and green exercise', emoji: '🌳', icon: 'tree-pine', color: '#34D399', groupSlug: 'outdoor', displayOrder: 32, featured: false },
-  { slug: 'beach_workout', name: 'Beach Workout', description: 'Sand training, beach runs, and coastal fitness', emoji: '🏖️', icon: 'sun', color: '#6EE7B7', groupSlug: 'outdoor', displayOrder: 33, featured: false },
-  { slug: 'trail_running', name: 'Trail Running', description: 'Off-road running and trail adventures', emoji: '🏞️', icon: 'map', color: '#A7F3D0', groupSlug: 'outdoor', displayOrder: 34, featured: false },
-  { slug: 'snowboarding', name: 'Snowboarding', description: 'Snowboarding meetups and mountain sessions', emoji: '🏂', icon: 'mountain-snow', color: '#64748B', groupSlug: 'outdoor', displayOrder: 35, featured: false },
+  { slug: 'hiking', name: 'Hiking', description: 'Trail hikes, nature walks, and trekking', emoji: '🥾', icon: 'mountain', color: '#E83E6B', groupSlug: 'outdoor', displayOrder: 30, featured: true },
+  { slug: 'climbing', name: 'Climbing', description: 'Bouldering, rock climbing, and climbing clubs', emoji: '🧗', icon: 'mountain-snow', color: '#E83E6B', groupSlug: 'outdoor', displayOrder: 31, featured: true },
+  { slug: 'outdoor_fitness', name: 'Outdoor Fitness', description: 'Park workouts, outdoor gyms, and green exercise', emoji: '🌳', icon: 'tree-pine', color: '#E83E6B', groupSlug: 'outdoor', displayOrder: 32, featured: false },
+  { slug: 'beach_workout', name: 'Beach Workout', description: 'Sand training, beach runs, and coastal fitness', emoji: '🏖️', icon: 'sun', color: '#E83E6B', groupSlug: 'outdoor', displayOrder: 33, featured: false },
+  { slug: 'trail_running', name: 'Trail Running', description: 'Off-road running and trail adventures', emoji: '🏞️', icon: 'map', color: '#E83E6B', groupSlug: 'outdoor', displayOrder: 34, featured: false },
+  { slug: 'snowboarding', name: 'Snowboarding', description: 'Snowboarding meetups and mountain sessions', emoji: '🏂', icon: 'mountain-snow', color: '#E83E6B', groupSlug: 'outdoor', displayOrder: 35, featured: false },
 
   // SPORTS
-  { slug: 'volleyball', name: 'Volleyball', description: 'Beach volleyball and indoor volleyball', emoji: '🏐', icon: 'circle', color: '#F97316', groupSlug: 'outdoor', displayOrder: 40, featured: true },
-  { slug: 'pickleball', name: 'Pickleball', description: 'Pickleball games and social play', emoji: '🏓', icon: 'target', color: '#FB923C', groupSlug: 'outdoor', displayOrder: 41, featured: true },
-  { slug: 'tennis', name: 'Tennis', description: 'Tennis sessions and racquet sports', emoji: '🎾', icon: 'circle-dot', color: '#FDBA74', groupSlug: 'outdoor', displayOrder: 42, featured: false },
-  { slug: 'badminton', name: 'Badminton', description: 'Badminton games and shuttlecock sessions', emoji: '🏸', icon: 'feather', color: '#FED7AA', groupSlug: 'outdoor', displayOrder: 43, featured: false },
-  { slug: 'basketball', name: 'Basketball', description: 'Pickup basketball and hoops sessions', emoji: '🏀', icon: 'circle', color: '#F97316', groupSlug: 'outdoor', displayOrder: 44, featured: false },
-  { slug: 'soccer', name: 'Soccer', description: 'Football/soccer games and futsal', emoji: '⚽', icon: 'circle', color: '#22C55E', groupSlug: 'outdoor', displayOrder: 45, featured: false },
-  { slug: 'frisbee', name: 'Frisbee', description: 'Ultimate frisbee and disc sports', emoji: '🥏', icon: 'disc', color: '#E8412C', groupSlug: 'outdoor', displayOrder: 46, featured: false },
+  { slug: 'volleyball', name: 'Volleyball', description: 'Beach volleyball and indoor volleyball', emoji: '🏐', icon: 'circle', color: '#E83E6B', groupSlug: 'outdoor', displayOrder: 40, featured: true },
+  { slug: 'pickleball', name: 'Pickleball', description: 'Pickleball games and social play', emoji: '🏓', icon: 'target', color: '#E83E6B', groupSlug: 'outdoor', displayOrder: 41, featured: true },
+  { slug: 'tennis', name: 'Tennis', description: 'Tennis sessions and racquet sports', emoji: '🎾', icon: 'circle-dot', color: '#E83E6B', groupSlug: 'outdoor', displayOrder: 42, featured: false },
+  { slug: 'badminton', name: 'Badminton', description: 'Badminton games and shuttlecock sessions', emoji: '🏸', icon: 'feather', color: '#E83E6B', groupSlug: 'outdoor', displayOrder: 43, featured: false },
+  { slug: 'basketball', name: 'Basketball', description: 'Pickup basketball and hoops sessions', emoji: '🏀', icon: 'circle', color: '#E83E6B', groupSlug: 'outdoor', displayOrder: 44, featured: false },
+  { slug: 'soccer', name: 'Soccer', description: 'Football/soccer games and futsal', emoji: '⚽', icon: 'circle', color: '#E83E6B', groupSlug: 'outdoor', displayOrder: 45, featured: false },
+  { slug: 'frisbee', name: 'Frisbee', description: 'Ultimate frisbee and disc sports', emoji: '🥏', icon: 'disc', color: '#E83E6B', groupSlug: 'outdoor', displayOrder: 46, featured: false },
 
   // RECOVERY & WELLNESS
-  { slug: 'cold_plunge', name: 'Cold Plunge', description: 'Ice baths, cold water immersion, and Wim Hof', emoji: '🧊', icon: 'snowflake', color: '#06B6D4', groupSlug: 'recovery', displayOrder: 50, featured: true },
-  { slug: 'sauna', name: 'Sauna', description: 'Sauna sessions, contrast therapy, and heat exposure', emoji: '🔥', icon: 'thermometer', color: '#0891B2', groupSlug: 'recovery', displayOrder: 51, featured: true },
-  { slug: 'sound_bath', name: 'Sound Bath', description: 'Sound healing, gong baths, and sound therapy', emoji: '🔔', icon: 'bell', color: '#E8412C', groupSlug: 'recovery', displayOrder: 52, featured: true },
-  { slug: 'massage', name: 'Massage', description: 'Partner stretching, Thai massage, and bodywork', emoji: '💆', icon: 'hand', color: '#67E8F9', groupSlug: 'recovery', displayOrder: 53, featured: false },
-  { slug: 'foam_rolling', name: 'Foam Rolling', description: 'Self-myofascial release and recovery tools', emoji: '🧴', icon: 'cylinder', color: '#A5F3FC', groupSlug: 'recovery', displayOrder: 54, featured: false },
-  { slug: 'wellness_circle', name: 'Wellness Circle', description: 'Mindfulness circles and wellness discussions', emoji: '⭕', icon: 'users', color: '#CFFAFE', groupSlug: 'recovery', displayOrder: 55, featured: false },
+  { slug: 'cold_plunge', name: 'Cold Plunge', description: 'Ice baths, cold water immersion, and Wim Hof', emoji: '🧊', icon: 'snowflake', color: '#E83E6B', groupSlug: 'recovery', displayOrder: 50, featured: true },
+  { slug: 'sauna', name: 'Sauna', description: 'Sauna sessions, contrast therapy, and heat exposure', emoji: '🔥', icon: 'thermometer', color: '#E83E6B', groupSlug: 'recovery', displayOrder: 51, featured: true },
+  { slug: 'sound_bath', name: 'Sound Bath', description: 'Sound healing, gong baths, and sound therapy', emoji: '🔔', icon: 'bell', color: '#E83E6B', groupSlug: 'recovery', displayOrder: 52, featured: true },
+  { slug: 'massage', name: 'Massage', description: 'Partner stretching, Thai massage, and bodywork', emoji: '💆', icon: 'hand', color: '#E83E6B', groupSlug: 'recovery', displayOrder: 53, featured: false },
+  { slug: 'foam_rolling', name: 'Foam Rolling', description: 'Self-myofascial release and recovery tools', emoji: '🧴', icon: 'cylinder', color: '#E83E6B', groupSlug: 'recovery', displayOrder: 54, featured: false },
+  { slug: 'wellness_circle', name: 'Wellness Circle', description: 'Mindfulness circles and wellness discussions', emoji: '⭕', icon: 'users', color: '#E83E6B', groupSlug: 'recovery', displayOrder: 55, featured: false },
 
   // SOCIAL & COMMUNITY
-  { slug: 'fitness_social', name: 'Fitness Social', description: 'Social fitness events and workout meetups', emoji: '🤝', icon: 'users', color: '#EC4899', groupSlug: 'social', displayOrder: 60, featured: true },
-  { slug: 'run_club', name: 'Run Club', description: 'Weekly run clubs and running communities', emoji: '👟', icon: 'footprints', color: '#F472B6', groupSlug: 'social', displayOrder: 61, featured: true },
-  { slug: 'sweat_date', name: 'Sweat Date', description: 'Partner workouts and fitness dating', emoji: '💕', icon: 'heart', color: '#FB7185', groupSlug: 'social', displayOrder: 62, featured: false },
-  { slug: 'corporate_wellness', name: 'Corporate Wellness', description: 'Team building and office fitness', emoji: '🏢', icon: 'building', color: '#FDA4AF', groupSlug: 'social', displayOrder: 63, featured: false },
+  { slug: 'fitness_social', name: 'Fitness Social', description: 'Social fitness events and workout meetups', emoji: '🤝', icon: 'users', color: '#E83E6B', groupSlug: 'social', displayOrder: 60, featured: true },
+  { slug: 'run_club', name: 'Run Club', description: 'Weekly run clubs and running communities', emoji: '👟', icon: 'footprints', color: '#E83E6B', groupSlug: 'social', displayOrder: 61, featured: true },
+  { slug: 'sweat_date', name: 'Sweat Date', description: 'Partner workouts and fitness dating', emoji: '💕', icon: 'heart', color: '#E83E6B', groupSlug: 'social', displayOrder: 62, featured: false },
+  { slug: 'corporate_wellness', name: 'Corporate Wellness', description: 'Team building and office fitness', emoji: '🏢', icon: 'building', color: '#E83E6B', groupSlug: 'social', displayOrder: 63, featured: false },
 
   // SKILLS & LEARNING
-  { slug: 'workshop', name: 'Workshop', description: 'Skill clinics, technique sessions, and learning', emoji: '🎯', icon: 'target', color: '#6366F1', groupSlug: 'skills', displayOrder: 70, featured: true },
-  { slug: 'retreat', name: 'Retreat', description: 'Day retreats, wellness retreats, and immersives', emoji: '🏕️', icon: 'tent', color: '#818CF8', groupSlug: 'skills', displayOrder: 71, featured: true },
-  { slug: 'festival', name: 'Fitness Festival', description: 'Multi-activity events and sweat schedules', emoji: '🎪', icon: 'calendar', color: '#A5B4FC', groupSlug: 'skills', displayOrder: 72, featured: false },
-  { slug: 'nutrition', name: 'Nutrition', description: 'Nutrition workshops and healthy eating sessions', emoji: '🥗', icon: 'apple', color: '#C7D2FE', groupSlug: 'skills', displayOrder: 73, featured: false },
-  { slug: 'coaching', name: 'Coaching', description: 'Personal training intro and fitness coaching', emoji: '📋', icon: 'clipboard', color: '#E0E7FF', groupSlug: 'skills', displayOrder: 74, featured: false },
+  { slug: 'workshop', name: 'Workshop', description: 'Skill clinics, technique sessions, and learning', emoji: '🎯', icon: 'target', color: '#E83E6B', groupSlug: 'skills', displayOrder: 70, featured: true },
+  { slug: 'retreat', name: 'Retreat', description: 'Day retreats, wellness retreats, and immersives', emoji: '🏕️', icon: 'tent', color: '#E83E6B', groupSlug: 'skills', displayOrder: 71, featured: true },
+  { slug: 'festival', name: 'Fitness Festival', description: 'Multi-activity events and sweat schedules', emoji: '🎪', icon: 'calendar', color: '#E83E6B', groupSlug: 'skills', displayOrder: 72, featured: false },
+  { slug: 'nutrition', name: 'Nutrition', description: 'Nutrition workshops and healthy eating sessions', emoji: '🥗', icon: 'apple', color: '#E83E6B', groupSlug: 'skills', displayOrder: 73, featured: false },
+  { slug: 'coaching', name: 'Coaching', description: 'Personal training intro and fitness coaching', emoji: '📋', icon: 'clipboard', color: '#E83E6B', groupSlug: 'skills', displayOrder: 74, featured: false },
 
   // OTHER
-  { slug: 'other', name: 'Other', description: 'Other fitness and wellness activities', emoji: '✨', icon: 'sparkles', color: '#9CA3AF', groupSlug: null, displayOrder: 99, featured: false },
+  { slug: 'other', name: 'Other', description: 'Other fitness and wellness activities', emoji: '✨', icon: 'sparkles', color: '#E83E6B', groupSlug: null, displayOrder: 99, featured: false },
 ]
 
 // =====================================================
@@ -199,7 +199,7 @@ export function getGroupBySlug(slug: string): CategoryGroup | undefined {
  */
 export function getCategoryDisplay(slug: string): { name: string; emoji: string; color: string } {
   const category = getCategoryBySlug(slug)
-  if (!category) return { name: 'Other', emoji: '✨', color: '#9CA3AF' }
+  if (!category) return { name: 'Other', emoji: '✨', color: '#E83E6B' }
   return { name: category.name, emoji: category.emoji, color: category.color }
 }
 

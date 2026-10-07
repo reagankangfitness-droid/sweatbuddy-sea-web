@@ -20,7 +20,7 @@ export function ProductNav({ active }: { active: ProductNavItem }) {
         const Icon = item.icon
         const selected = item.key === active
         return (
-          <Link key={item.key} href={item.href} aria-current={selected ? 'page' : undefined} className={`flex min-h-14 flex-col items-center justify-center gap-1 text-[11px] font-semibold ${selected ? 'text-[#E8412C]' : 'text-black/45'}`}>
+          <Link key={item.key} href={item.href} aria-current={selected ? 'page' : undefined} className={`flex min-h-14 flex-col items-center justify-center gap-1 text-[11px] font-semibold ${selected ? 'text-[#E83E6B]' : 'text-black/45'}`}>
             <Icon className="h-5 w-5" />
             {item.label}
           </Link>
@@ -35,7 +35,7 @@ export function ProductHeader({ active }: { active: ProductNavItem }) {
     <header className="hidden border-b border-black/10 bg-[#F8F4EA]/95 backdrop-blur-xl md:block">
       <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-6">
         <Link href="/" aria-label="SweatBuddies home">
-          <LogoWithText size={27} color="#E8412C" textColor="#17130E" />
+          <LogoWithText size={27} color="#E83E6B" textColor="#17130E" />
         </Link>
         <nav className="flex items-center gap-1" aria-label="Main navigation">
           {items.map((item) => {

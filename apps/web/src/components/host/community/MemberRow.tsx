@@ -19,7 +19,7 @@ export interface Member {
 
 const STATUS_BADGES: Record<MemberStatus, { label: string; className: string }> = {
   regular: { label: 'Regular', className: 'bg-green-900 text-green-400' },
-  new: { label: 'New', className: 'bg-[#17130E] text-[#E8412C]' },
+  new: { label: 'New', className: 'bg-[#17130E] text-[#E83E6B]' },
   at_risk: { label: 'At Risk', className: 'bg-amber-900 text-amber-400' },
   active: { label: 'Active', className: 'bg-neutral-800 text-neutral-400' },
 }

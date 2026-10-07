@@ -1,12 +1,19 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import maplibregl, { LngLatBounds, Map as MapLibreMap, Marker, NavigationControl } from 'maplibre-gl'
+import maplibregl, {
+  LngLatBounds,
+  Map as MapLibreMap,
+  Marker,
+  NavigationControl,
+  Popup,
+  type MapMouseEvent,
+} from 'maplibre-gl'
 import { Loader2, RefreshCw } from 'lucide-react'
 import { getActivityEmoji } from '@/lib/activity-types'
 
 const DEFAULT_STYLE_URL =
-  process.env.NEXT_PUBLIC_OPENFREEMAP_STYLE_URL || 'https://tiles.openfreemap.org/styles/fiord'
+  process.env.NEXT_PUBLIC_OPENFREEMAP_STYLE_URL || 'https://tiles.openfreemap.org/styles/liberty'
 
 const CITY_FALLBACKS = {
   singapore: { lat: 1.3521, lng: 103.8198 },
@@ -62,6 +69,7 @@ export function SessionVectorMap({
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const markersRef = useRef<Marker[]>([])
+  const poiPopupRef = useRef<Popup | null>(null)
   const initialCenterRef = useRef(center)
   const onMapClickRef = useRef(onMapClick)
   const [ready, setReady] = useState(false)
@@ -116,20 +124,54 @@ export function SessionVectorMap({
       loaded = true
       handleLoad()
     }
-    const handleClick = () => onMapClickRef.current?.()
+    const handleClick = (event: MapMouseEvent) => {
+      const poi = findPoiAtPoint(map, event)
+
+      poiPopupRef.current?.remove()
+      poiPopupRef.current = null
+
+      if (poi) {
+        onMapClickRef.current?.()
+        poiPopupRef.current = new Popup({
+          className: 'sb-map-poi-popup',
+          closeButton: true,
+          closeOnClick: true,
+          maxWidth: '260px',
+          offset: 12,
+        })
+          .setLngLat(event.lngLat)
+          .setHTML(poiPopupHtml(poi))
+          .addTo(map)
+        return
+      }
+
+      onMapClickRef.current?.()
+    }
+    const handlePointerMove = (event: MapMouseEvent) => {
+      map.getCanvas().style.cursor = findPoiAtPoint(map, event) ? 'pointer' : ''
+    }
+    const handlePointerLeave = () => {
+      map.getCanvas().style.cursor = ''
+    }
     const failTimer = window.setTimeout(() => {
       if (!loaded) setFailed(true)
     }, 9000)
 
     map.on('load', handleInitialLoad)
     map.on('click', handleClick)
+    map.on('mousemove', handlePointerMove)
+    map.on('mouseout', handlePointerLeave)
 
     return () => {
       window.clearTimeout(failTimer)
       markersRef.current.forEach((marker) => marker.remove())
       markersRef.current = []
+      poiPopupRef.current?.remove()
+      poiPopupRef.current = null
       map.off('load', handleInitialLoad)
       map.off('click', handleClick)
+      map.off('mousemove', handlePointerMove)
+      map.off('mouseout', handlePointerLeave)
       map.remove()
       mapRef.current = null
     }
@@ -277,7 +319,7 @@ function StaticPinMapFallback({
           type="button"
           onClick={onRetry}
           aria-label="Retry map"
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#17130E] bg-[#F8F4EA]/90 font-mono text-[10px] font-black uppercase tracking-wide text-[#17130E]/72 backdrop-blur transition-colors hover:border-[#E8412C] hover:text-[#E8412C] sm:w-auto sm:px-4 sm:text-[11px]"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#17130E] bg-[#F8F4EA]/90 font-mono text-[10px] font-black uppercase tracking-wide text-[#17130E]/72 backdrop-blur transition-colors hover:border-[#E83E6B] hover:text-[#E83E6B] sm:w-auto sm:px-4 sm:text-[11px]"
         >
           <RefreshCw className="h-4 w-4 sm:hidden" />
           <span className="hidden sm:inline">Retry map</span>
@@ -587,10 +629,15 @@ function applySweatBuddiesMapTone(map: MapLibreMap) {
       }
 
       if (layer.type === 'symbol') {
-        map.setPaintProperty(id, 'text-color', '#686159')
+        const isPoi = /poi|transit|station|airport|hospital|school|shop|amenity/.test(normalizedId)
+        map.setPaintProperty(id, 'text-color', isPoi ? '#716A62' : '#5E574F')
         map.setPaintProperty(id, 'text-halo-color', '#F4EFE3')
         map.setPaintProperty(id, 'text-halo-width', 1.2)
-        map.setPaintProperty(id, 'icon-color', '#8B847A')
+        map.setPaintProperty(id, 'icon-color', isPoi ? '#817970' : '#8B847A')
+        if (isPoi) {
+          map.setPaintProperty(id, 'text-opacity', ['interpolate', ['linear'], ['zoom'], 10, 0.3, 12, 0.62, 15, 0.82])
+          map.setPaintProperty(id, 'icon-opacity', ['interpolate', ['linear'], ['zoom'], 10, 0.42, 12, 0.68, 15, 0.88])
+        }
         continue
       }
 
@@ -612,7 +659,7 @@ function applySweatBuddiesMapTone(map: MapLibreMap) {
           0.7,
           'rgba(11,75,168,0.08)',
           1,
-          'rgba(232,65,44,0.12)',
+          'rgba(232, 62, 107,0.12)',
         ])
         continue
       }
@@ -633,6 +680,42 @@ function applySweatBuddiesMapTone(map: MapLibreMap) {
       // Some source styles do not support every paint override on every layer.
     }
   }
+}
+
+function findPoiAtPoint(map: MapLibreMap, event: MapMouseEvent) {
+  const poiLayerIds = (map.getStyle().layers ?? [])
+    .filter((layer) => layer.type === 'symbol' && /poi|transit|station|airport|hospital|school|shop|amenity/.test(layer.id.toLowerCase()))
+    .map((layer) => layer.id)
+
+  if (poiLayerIds.length === 0) return null
+
+  const feature = map
+    .queryRenderedFeatures(event.point, { layers: poiLayerIds })
+    .find((candidate) => typeof candidate.properties?.name === 'string' && candidate.properties.name.trim())
+
+  if (!feature) return null
+
+  return {
+    name: String(feature.properties?.name),
+    category: humanizePoiCategory(
+      feature.properties?.subclass ?? feature.properties?.class ?? feature.properties?.type ?? 'Point of interest',
+    ),
+  }
+}
+
+function humanizePoiCategory(value: unknown) {
+  const category = String(value ?? 'Point of interest').replace(/[_-]+/g, ' ').trim()
+  return category.replace(/\b\w/g, (letter) => letter.toUpperCase())
+}
+
+function poiPopupHtml(poi: { name: string; category: string }) {
+  return `
+    <div class="sb-map-poi-popup__content">
+      <span class="sb-map-poi-popup__eyebrow">Nearby place</span>
+      <strong class="sb-map-poi-popup__title">${escapeHtml(poi.name)}</strong>
+      <span class="sb-map-poi-popup__category">${escapeHtml(poi.category)}</span>
+    </div>
+  `
 }
 
 function markerHtml(pin: SessionVectorMapPin) {

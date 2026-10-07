@@ -996,7 +996,7 @@ async function sendReviewReminderEmail(userActivityId: string): Promise<boolean>
               <p style="margin: 0 0 24px 0; color: #525252; font-size: 16px; line-height: 1.5;">
                 Hey ${booking.user.name || 'there'}, your feedback for <strong>${booking.activity.title}</strong> would really help other SweatBuddies!
               </p>
-              <a href="${reviewUrl}" style="display: inline-block; background: #C73522; color: #FFFFFF; text-decoration: none; padding: 14px 28px; border-radius: 12px; font-size: 16px; font-weight: 600;">
+              <a href="${reviewUrl}" style="display: inline-block; background: #C92F58; color: #FFFFFF; text-decoration: none; padding: 14px 28px; border-radius: 12px; font-size: 16px; font-weight: 600;">
                 Write Your Review
               </a>
               <p style="margin: 24px 0 0 0; color: #9ca3af; font-size: 13px;">
@@ -1069,7 +1069,7 @@ async function notifyHostOfNewReview(reviewId: string): Promise<void> {
                 </p>
               </div>
               ` : ''}
-              <a href="${reviewUrl}" style="display: block; background: #C73522; color: #FFFFFF; text-decoration: none; text-align: center; padding: 14px 24px; border-radius: 12px; font-size: 15px; font-weight: 600;">
+              <a href="${reviewUrl}" style="display: block; background: #C92F58; color: #FFFFFF; text-decoration: none; text-align: center; padding: 14px 24px; border-radius: 12px; font-size: 15px; font-weight: 600;">
                 View & Respond
               </a>
             </td>
@@ -1126,7 +1126,7 @@ async function notifyReviewerOfResponse(reviewId: string): Promise<void> {
                   "${review.hostResponse.content}"
                 </p>
               </div>
-              <a href="${activityUrl}" style="display: block; background: #C73522; color: #FFFFFF; text-decoration: none; text-align: center; padding: 12px 24px; border-radius: 12px; font-size: 15px; font-weight: 600;">
+              <a href="${activityUrl}" style="display: block; background: #C92F58; color: #FFFFFF; text-decoration: none; text-align: center; padding: 12px 24px; border-radius: 12px; font-size: 15px; font-weight: 600;">
                 View Activity
               </a>
             </td>
@@ -1201,7 +1201,7 @@ function buildReviewPromptEmailHtml(params: {
                 <a href="${reviewUrl}?rating=5" style="text-decoration: none; font-size: 28px; margin: 0 2px;">⭐</a>
               </div>
 
-              <a href="${reviewUrl}" style="display: block; background: #C73522; color: #FFFFFF; text-decoration: none; text-align: center; padding: 16px 24px; border-radius: 12px; font-size: 16px; font-weight: 600; margin: 24px 0;">
+              <a href="${reviewUrl}" style="display: block; background: #C92F58; color: #FFFFFF; text-decoration: none; text-align: center; padding: 16px 24px; border-radius: 12px; font-size: 16px; font-weight: 600; margin: 24px 0;">
                 Write a Review
               </a>
 

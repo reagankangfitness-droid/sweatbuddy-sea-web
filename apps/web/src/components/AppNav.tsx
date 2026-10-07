@@ -286,7 +286,7 @@ function AppNavInner() {
                     flex flex-col items-center justify-center w-14 h-14
                     transition-all duration-200 relative
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0D0C] rounded-lg
-                    ${active ? 'text-[#E8412C]' : 'text-black/45 active:scale-95'}
+                    ${active ? 'text-[#E83E6B]' : 'text-black/45 active:scale-95'}
                   `}
                 >
                   <span className="relative">
@@ -296,7 +296,7 @@ function AppNavInner() {
                   {active && (
                     <motion.div
                       layoutId="mobileActiveIndicator"
-                      className="absolute bottom-1 h-1 w-4 rounded-full bg-[#E8412C]"
+                      className="absolute bottom-1 h-1 w-4 rounded-full bg-[#E83E6B]"
                       transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                     />
                   )}

@@ -180,7 +180,7 @@ export function ShareButton({
                   variant="outline"
                   className="flex items-center justify-center gap-2 h-12 touch-manipulation"
                 >
-                  <Send className="w-5 h-5 text-[#E8412C]" />
+                  <Send className="w-5 h-5 text-[#E83E6B]" />
                   <span className="text-sm">Telegram</span>
                 </Button>
                 <Button

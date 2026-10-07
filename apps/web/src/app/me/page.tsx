@@ -18,7 +18,7 @@ export default async function MePage({ searchParams }: { searchParams: Promise<{
       <ProductHeader active="me" />
       <header className="border-b border-black/10 px-4 pb-4 pt-[max(16px,env(safe-area-inset-top))]">
         <div className="mx-auto max-w-5xl">
-          <div className="flex items-center justify-between md:hidden"><Link href="/"><LogoWithText size={25} color="#E8412C" textColor="#17130E" /></Link><Link href="/profile" className="text-sm font-bold text-[#E8412C]">Profile</Link></div>
+          <div className="flex items-center justify-between md:hidden"><Link href="/"><LogoWithText size={25} color="#E83E6B" textColor="#17130E" /></Link><Link href="/profile" className="text-sm font-bold text-[#E83E6B]">Profile</Link></div>
           <h1 className="sb-type-page-title mt-7 text-[#17130E]">My activity</h1>
           <p className="sb-type-body mt-1 text-black/55">Communities you saved and sessions you joined.</p>
           <nav className="mt-5 grid grid-cols-3 gap-2 rounded-2xl bg-black/[0.05] p-1" aria-label="My activity sections">

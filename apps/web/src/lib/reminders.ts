@@ -685,7 +685,7 @@ function buildReminderEmailHtml(params: {
         <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
           <!-- Header -->
           <tr>
-            <td style="padding: 32px; background: linear-gradient(135deg, #E8412C 0%, #059669 100%); border-radius: 16px 16px 0 0;">
+            <td style="padding: 32px; background: linear-gradient(135deg, #E83E6B 0%, #059669 100%); border-radius: 16px 16px 0 0;">
               <h1 style="margin: 0; color: white; font-size: 24px; font-weight: 700;">
                 ${urgencyText}
               </h1>
@@ -763,7 +763,7 @@ function buildReminderEmailHtml(params: {
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center">
-                    <a href="${activityUrl}" style="display: inline-block; padding: 14px 32px; background-color: #E8412C; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
+                    <a href="${activityUrl}" style="display: inline-block; padding: 14px 32px; background-color: #E83E6B; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
                       View Activity Details
                     </a>
                   </td>
@@ -780,7 +780,7 @@ function buildReminderEmailHtml(params: {
                     calendarLink
                       ? `
                   <td align="center" style="padding: 8px;">
-                    <a href="${calendarLink}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500;">
+                    <a href="${calendarLink}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 500;">
                       📅 Add to Calendar
                     </a>
                   </td>
@@ -791,7 +791,7 @@ function buildReminderEmailHtml(params: {
                     mapsLink
                       ? `
                   <td align="center" style="padding: 8px;">
-                    <a href="${mapsLink}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500;">
+                    <a href="${mapsLink}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 500;">
                       🗺️ Get Directions
                     </a>
                   </td>
@@ -817,7 +817,7 @@ function buildReminderEmailHtml(params: {
                 You're receiving this because you booked this activity on SweatBuddies.
               </p>
               <p style="margin: 0; color: #6b7280; font-size: 12px; text-align: center;">
-                <a href="${BASE_URL}/settings/notifications" style="color: #E8412C; text-decoration: none;">
+                <a href="${BASE_URL}/settings/notifications" style="color: #E83E6B; text-decoration: none;">
                   Manage notification preferences
                 </a>
               </p>

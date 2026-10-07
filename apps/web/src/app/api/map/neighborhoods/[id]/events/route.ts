@@ -7,14 +7,14 @@ import { getNextOccurrenceSG, combineDateTimeSG } from '@/lib/event-dates'
 export const dynamic = 'force-dynamic'
 
 const AVATAR_COLORS = [
-  'bg-[#E8412C]/20',
+  'bg-[#E83E6B]/20',
   'bg-green-200',
   'bg-purple-200',
   'bg-pink-200',
   'bg-yellow-200',
   'bg-orange-200',
   'bg-teal-200',
-  'bg-[#E8412C]/15',
+  'bg-[#E83E6B]/15',
 ]
 
 // Unified event response type

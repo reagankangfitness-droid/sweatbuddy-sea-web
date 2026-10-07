@@ -45,7 +45,7 @@ export function buildNotificationEmail(params: {
       <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
         <tr>
           <td align="center" style="padding: 8px;">
-            <a href="${linkUrl}" style="display: inline-block; padding: 14px 32px; background-color: #C73522; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
+            <a href="${linkUrl}" style="display: inline-block; padding: 14px 32px; background-color: #C92F58; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
               ${linkLabel || 'View Details'}
             </a>
           </td>
@@ -81,7 +81,7 @@ export function buildNotificationEmail(params: {
         <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
           <!-- Header -->
           <tr>
-            <td style="padding: 32px; background: linear-gradient(135deg, #E8412C 0%, #E8412C 100%); border-radius: 16px 16px 0 0; text-align: center;">
+            <td style="padding: 32px; background: linear-gradient(135deg, #E83E6B 0%, #E83E6B 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <h1 style="margin: 0; color: white; font-size: 24px; font-weight: 700;">
                 ${title}
               </h1>
@@ -105,7 +105,7 @@ export function buildNotificationEmail(params: {
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
                 You're receiving this from SweatBuddies. Manage your notification preferences in your account settings.
               </p>
-              <a href="${BASE_URL}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 600;">
+              <a href="${BASE_URL}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
               </a>
             </td>

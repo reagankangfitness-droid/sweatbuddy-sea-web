@@ -34,7 +34,7 @@ export function CommunityStats({ totalMembers, activeThisMonth, retentionRate, n
       value: newMembers,
       suffix: 'last 30d',
       icon: UserPlus,
-      color: 'text-[#E8412C]',
+      color: 'text-[#E83E6B]',
     },
   ]
 

@@ -147,7 +147,7 @@ export function PaymentModal({ session, onClose, onSuccess }: PaymentModalProps)
                   onClick={() => setSelectedMethod('PAYNOW')}
                   className={`rounded-md border-2 p-3 text-sm font-medium transition-colors ${
                     selectedMethod === 'PAYNOW'
-                      ? 'border-[#17130E] bg-[#E8412C] text-white'
+                      ? 'border-[#17130E] bg-[#E83E6B] text-white'
                       : 'border-[#17130E]/18 bg-[#F8F4EA] text-[#17130E] hover:border-[#17130E]'
                   }`}
                 >
@@ -157,7 +157,7 @@ export function PaymentModal({ session, onClose, onSuccess }: PaymentModalProps)
                   onClick={() => setSelectedMethod('STRIPE')}
                   className={`rounded-md border-2 p-3 text-sm font-medium transition-colors ${
                     selectedMethod === 'STRIPE'
-                      ? 'border-[#17130E] bg-[#E8412C] text-white'
+                      ? 'border-[#17130E] bg-[#E83E6B] text-white'
                       : 'border-[#17130E]/18 bg-[#F8F4EA] text-[#17130E] hover:border-[#17130E]'
                   }`}
                 >

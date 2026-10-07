@@ -365,7 +365,7 @@ export default async function CommunityPage({ params }: Props) {
                 <span className="rounded-md bg-black/55 px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
                   {getCategoryEmoji(community.category)} {community.category.replace(/_/g, ' ')}
                 </span>
-                <span className="rounded-md bg-black/55 px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#E8412C] backdrop-blur">
+                <span className="rounded-md bg-black/55 px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#E83E6B] backdrop-blur">
                   {Math.max(community._count.activities, community.eventCount)} known plans
                 </span>
               </div>
@@ -426,7 +426,7 @@ export default async function CommunityPage({ params }: Props) {
                   {community.name}
                 </h1>
                 {community.isVerified && (
-                  <CheckCircle className="w-6 h-6 text-[#E8412C]" />
+                  <CheckCircle className="w-6 h-6 text-[#E83E6B]" />
                 )}
               </div>
 
@@ -502,7 +502,7 @@ export default async function CommunityPage({ params }: Props) {
                     href={community.websiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 flex items-center justify-center rounded-full text-[#666666] hover:text-[#E8412C] hover:bg-[#17130E] transition-colors"
+                    className="w-10 h-10 flex items-center justify-center rounded-full text-[#666666] hover:text-[#E83E6B] hover:bg-[#17130E] transition-colors"
                   >
                     <Globe className="w-5 h-5" />
                   </a>
@@ -544,7 +544,7 @@ export default async function CommunityPage({ params }: Props) {
                   communitySlug={community.slug}
                   communityName={community.name}
                   source="detail"
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/12 px-4 text-sm font-bold text-white/72 transition-colors hover:border-[#E8412C]/60 hover:bg-white/5 disabled:border-[#E8412C]/30 disabled:text-[#E8412C]"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/12 px-4 text-sm font-bold text-white/72 transition-colors hover:border-[#E83E6B]/60 hover:bg-white/5 disabled:border-[#E83E6B]/30 disabled:text-[#E83E6B]"
                 />
               )}
               <JoinCommunityButton
@@ -783,7 +783,7 @@ export default async function CommunityPage({ params }: Props) {
                   <span className="absolute -bottom-1 -right-1 text-[8px] px-1 py-0.5 bg-amber-400 text-white rounded-full font-bold leading-none">Host</span>
                 )}
                 {member.role === 'ADMIN' && (
-                  <span className="absolute -bottom-1 -right-1 text-[8px] px-1 py-0.5 bg-[#E8412C] text-white rounded-full font-bold leading-none">Admin</span>
+                  <span className="absolute -bottom-1 -right-1 text-[8px] px-1 py-0.5 bg-[#E83E6B] text-white rounded-full font-bold leading-none">Admin</span>
                 )}
               </div>
               <span className="text-[10px] text-[#999999] group-hover:text-white/80 text-center w-12 truncate">
@@ -828,7 +828,7 @@ export default async function CommunityPage({ params }: Props) {
                 {community.createdBy.name || community.createdBy.username}
               </span>
               {community.createdBy.isVerified && (
-                <CheckCircle className="w-3.5 h-3.5 text-[#E8412C] inline ml-1" />
+                <CheckCircle className="w-3.5 h-3.5 text-[#E83E6B] inline ml-1" />
               )}
             </span>
           </div>
@@ -896,7 +896,7 @@ function SeedCommunityPage({ community }: { community: CommunityDirectorySeed })
                 <span className="rounded-md bg-black/55 px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
                   {getCategoryEmoji(community.category)} {community.category.replace(/_/g, ' ')}
                 </span>
-                <span className="rounded-md bg-black/55 px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#E8412C] backdrop-blur">
+                <span className="rounded-md bg-black/55 px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#E83E6B] backdrop-blur">
                   {confidenceLabel}
                 </span>
               </div>
@@ -918,7 +918,7 @@ function SeedCommunityPage({ community }: { community: CommunityDirectorySeed })
               </div>
 
               <div className="mt-5 rounded-lg border border-white/10 bg-white/[0.035] p-4">
-                <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
+                <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#E83E6B]">
                   Best for
                 </p>
                 <p className="mt-2 text-sm leading-6 text-white/78">
@@ -958,7 +958,7 @@ function SeedCommunityPage({ community }: { community: CommunityDirectorySeed })
                   source: 'community_detail',
                   joinPlatform: community.joinPlatform,
                 }}
-                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#E8412C] px-4 text-sm font-black text-black transition-colors hover:bg-[#E8412C]"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#E83E6B] px-4 text-sm font-black text-black transition-colors hover:bg-[#E83E6B]"
                 ariaLabel={`Join ${community.name} through the official link`}
               >
                 Join through official link
@@ -969,14 +969,14 @@ function SeedCommunityPage({ community }: { community: CommunityDirectorySeed })
                 communitySlug={community.slug}
                 communityName={community.name}
                 source="detail"
-                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-[#E8412C]/24 px-4 text-sm font-bold text-[#E8412C] transition-colors hover:border-[#E8412C]/60 hover:bg-[#E8412C]/8 disabled:border-[#E8412C]/20 disabled:bg-[#E8412C]/8"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-[#E83E6B]/24 px-4 text-sm font-bold text-[#E83E6B] transition-colors hover:border-[#E83E6B]/60 hover:bg-[#E83E6B]/8 disabled:border-[#E83E6B]/20 disabled:bg-[#E83E6B]/8"
               />
 
               <SaveCommunityButton
                 communitySlug={community.slug}
                 communityName={community.name}
                 source="detail"
-                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-white/12 px-4 text-sm font-bold text-white transition-colors hover:border-[#E8412C]/60 hover:bg-white/5"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-white/12 px-4 text-sm font-bold text-white transition-colors hover:border-[#E83E6B]/60 hover:bg-white/5"
               />
 
               <ReportOutdatedButton
@@ -1012,7 +1012,7 @@ function SeedCommunityPage({ community }: { community: CommunityDirectorySeed })
               </h2>
               <Link
                 href={`/explore?city=${community.citySlug}`}
-                className="text-xs font-bold uppercase tracking-wide text-[#E8412C] hover:text-white"
+                className="text-xs font-bold uppercase tracking-wide text-[#E83E6B] hover:text-white"
               >
                 View directory
               </Link>
@@ -1022,7 +1022,7 @@ function SeedCommunityPage({ community }: { community: CommunityDirectorySeed })
                 <Link
                   key={item.slug}
                   href={`/communities/${item.slug}`}
-                  className="rounded-lg border border-white/10 bg-[#171717] p-4 transition-colors hover:border-[#E8412C]/50"
+                  className="rounded-lg border border-white/10 bg-[#171717] p-4 transition-colors hover:border-[#E83E6B]/50"
                 >
                   <p className="text-sm font-bold text-white">{item.name}</p>
                   <p className="mt-1 text-xs leading-5 text-white/58">{item.usualArea}</p>

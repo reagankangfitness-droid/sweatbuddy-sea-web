@@ -180,7 +180,7 @@ export function CityLandingPage({
             </div>
 
             <div className="hidden rounded-lg border border-white/10 bg-[#111412]/78 p-4 shadow-2xl shadow-black/32 backdrop-blur lg:block">
-              <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#E8412C]/84">
+              <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#E83E6B]/84">
                 Communities people can join
               </p>
               <div className="mt-4 space-y-3">
@@ -195,7 +195,7 @@ export function CityLandingPage({
                       label: route.label,
                       ...trackingBase,
                     }}
-                    className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] p-2 transition-colors hover:border-[#E8412C]/45"
+                    className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] p-2 transition-colors hover:border-[#E83E6B]/45"
                   >
                     <div className="relative aspect-square overflow-hidden rounded-md bg-[#222222]">
                       <Image src={route.image} alt="" fill sizes="72px" className="object-cover" />
@@ -203,7 +203,7 @@ export function CityLandingPage({
                     <div className="min-w-0 py-1">
                       <p className="truncate text-sm font-black text-white">{route.label}</p>
                       <p className="mt-1 truncate text-xs text-white/55">{route.note}</p>
-                      <p className="mt-2 font-mono text-[10px] font-black uppercase tracking-wide text-[#E8412C]">
+                      <p className="mt-2 font-mono text-[10px] font-black uppercase tracking-wide text-[#E83E6B]">
                         View communities
                       </p>
                     </div>
@@ -251,7 +251,7 @@ export function CityLandingPage({
         <section className="border-y border-white/[0.06] bg-[#0B0D0C] px-4 py-12 sm:py-16">
           <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#E8412C]">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#E83E6B]">
                 Why this matters
               </p>
               <h2 className="mt-3 max-w-lg text-2xl font-semibold leading-tight tracking-tight sm:text-4xl">
@@ -277,7 +277,7 @@ export function CityLandingPage({
           <div className="mx-auto max-w-6xl">
             <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#E8412C]">
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#E83E6B]">
                   Start with one community
                 </p>
                 <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-4xl">
@@ -396,7 +396,7 @@ export function CityLandingPage({
 
         <section className="border-t border-white/[0.06] px-4 py-14 sm:py-20">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#E8412C]">
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#E83E6B]">
               Start this week
             </p>
             <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">

@@ -93,7 +93,7 @@ function buildMagicLinkEmail({ magicLink, email }: { magicLink: string; email: s
         <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
           <!-- Header -->
           <tr>
-            <td style="padding: 32px; background: linear-gradient(135deg, #E8412C 0%, #E8412C 100%); border-radius: 16px 16px 0 0; text-align: center;">
+            <td style="padding: 32px; background: linear-gradient(135deg, #E83E6B 0%, #E83E6B 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <div style="font-size: 48px; margin-bottom: 16px;">📅</div>
               <h1 style="margin: 0; color: white; font-size: 24px; font-weight: 700;">
                 View Your Experiences
@@ -116,7 +116,7 @@ function buildMagicLinkEmail({ magicLink, email }: { magicLink: string; email: s
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center">
-                    <a href="${magicLink}" style="display: inline-block; padding: 16px 32px; background-color: #E8412C; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
+                    <a href="${magicLink}" style="display: inline-block; padding: 16px 32px; background-color: #E83E6B; color: white; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
                       View My Experiences
                     </a>
                   </td>

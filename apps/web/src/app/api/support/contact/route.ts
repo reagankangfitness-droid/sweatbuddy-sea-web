@@ -133,7 +133,7 @@ Reply directly to this email to respond to ${name}.
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
         </head>
         <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background: linear-gradient(135deg, #E8412C 0%, #059669 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
+          <div style="background: linear-gradient(135deg, #E83E6B 0%, #059669 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
             <div style="font-size: 48px; margin-bottom: 10px;">✉️</div>
             <h1 style="color: white; margin: 0; font-size: 24px;">Message Received!</h1>
           </div>
@@ -148,7 +148,7 @@ Reply directly to this email to respond to ${name}.
               <p style="margin: 0; color: #6b7280; white-space: pre-wrap;">${message}</p>
             </div>
 
-            <p>In the meantime, you might find answers in our <a href="https://sweatbuddies.co/support" style="color: #E8412C; text-decoration: none;">FAQ section</a>.</p>
+            <p>In the meantime, you might find answers in our <a href="https://sweatbuddies.co/support" style="color: #E83E6B; text-decoration: none;">FAQ section</a>.</p>
 
             <p style="margin-bottom: 0;">
               Best,<br>

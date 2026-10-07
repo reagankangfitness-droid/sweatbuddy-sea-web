@@ -390,7 +390,7 @@ export async function sendPostEventFollowUpEmail(
                     <p style="margin: 0 0 16px; color: #047857; font-size: 14px; line-height: 1.5;">
                       Join the community group to stay in the loop for future sessions and connect with other attendees.
                     </p>
-                    <a href="${communityLink}" style="display: inline-block; padding: 12px 24px; background-color: ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? '#E8412C' : '#E8412C'}; color: white; text-decoration: none; font-size: 14px; font-weight: 600; border-radius: 8px;">
+                    <a href="${communityLink}" style="display: inline-block; padding: 12px 24px; background-color: ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? '#E83E6B' : '#E83E6B'}; color: white; text-decoration: none; font-size: 14px; font-weight: 600; border-radius: 8px;">
                       Join Community Group
                     </a>
                   </td>

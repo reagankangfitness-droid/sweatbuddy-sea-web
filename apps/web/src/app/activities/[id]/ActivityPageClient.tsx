@@ -696,7 +696,7 @@ Organized via SweatBuddies - Find local fitness sessions and crews
 
         {/* ─── FRIENDS GOING ─── */}
         {activity.friendsGoing && activity.friendsGoing.length > 0 && (
-          <div className="rounded-2xl bg-[#E8412C]/10 border border-[#E8412C]/20 p-4 mb-4">
+          <div className="rounded-2xl bg-[#E83E6B]/10 border border-[#E83E6B]/20 p-4 mb-4">
             <h3 className="text-[14px] font-semibold text-[#17130E] mb-3 flex items-center gap-2">
               <Users className="w-4 h-4" />
               Friends Going
@@ -714,11 +714,11 @@ Organized via SweatBuddies - Find local fitness sessions and crews
                       unoptimized
                     />
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-[#E8412C]/15 flex items-center justify-center text-xs font-medium text-[#E8412C]">
+                    <div className="w-7 h-7 rounded-full bg-[#E83E6B]/15 flex items-center justify-center text-xs font-medium text-[#E83E6B]">
                       {(friend.firstName || friend.name || '?').charAt(0)}
                     </div>
                   )}
-                  <span className="text-sm font-medium text-[#E8412C]">
+                  <span className="text-sm font-medium text-[#E83E6B]">
                     {friend.firstName || friend.name || 'Anonymous'}
                   </span>
                 </div>

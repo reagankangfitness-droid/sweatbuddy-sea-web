@@ -176,7 +176,7 @@ export async function sendEventApprovedEmail(
         <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
           <!-- Header -->
           <tr>
-            <td style="padding: 32px; background: linear-gradient(135deg, #E8412C 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
+            <td style="padding: 32px; background: linear-gradient(135deg, #E83E6B 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
               <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
                 Experience Approved!
@@ -227,7 +227,7 @@ export async function sendEventApprovedEmail(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 16px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${eventUrl}" style="display: inline-block; padding: 14px 28px; background-color: #E8412C; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                    <a href="${eventUrl}" style="display: inline-block; padding: 14px 28px; background-color: #E83E6B; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
                       View Your Experience
                     </a>
                   </td>
@@ -251,7 +251,7 @@ export async function sendEventApprovedEmail(
                     <p style="margin: 0 0 8px; color: #374151; font-size: 14px; font-weight: 600;">
                       📤 Share your experience:
                     </p>
-                    <p style="margin: 0; color: #E8412C; font-size: 14px; word-break: break-all;">
+                    <p style="margin: 0; color: #E83E6B; font-size: 14px; word-break: break-all;">
                       ${eventUrl}
                     </p>
                   </td>
@@ -259,7 +259,7 @@ export async function sendEventApprovedEmail(
               </table>
 
               <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
-                Questions? Reply to this email or DM us <a href="https://instagram.com/_sweatbuddies" style="color: #E8412C;">@_sweatbuddies</a>
+                Questions? Reply to this email or DM us <a href="https://instagram.com/_sweatbuddies" style="color: #E83E6B;">@_sweatbuddies</a>
               </p>
             </td>
           </tr>
@@ -270,7 +270,7 @@ export async function sendEventApprovedEmail(
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
                 Grow your fitness community at
               </p>
-              <a href="${BASE_URL}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 600;">
+              <a href="${BASE_URL}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
               </a>
             </td>
@@ -510,7 +510,7 @@ export async function sendPaidEventConfirmationEmail(
         <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
           <!-- Header -->
           <tr>
-            <td style="padding: 32px; background: linear-gradient(135deg, #E8412C 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
+            <td style="padding: 32px; background: linear-gradient(135deg, #E83E6B 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
               <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
                 Payment Confirmed!
@@ -601,7 +601,7 @@ export async function sendPaidEventConfirmationEmail(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 12px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${calendarLink}" style="display: inline-block; padding: 14px 28px; background-color: #E8412C; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                    <a href="${calendarLink}" style="display: inline-block; padding: 14px 28px; background-color: #E83E6B; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
                       📅 Add to Calendar
                     </a>
                   </td>
@@ -622,7 +622,7 @@ export async function sendPaidEventConfirmationEmail(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${communityLink}" style="display: inline-block; padding: 14px 28px; background-color: ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? '#E8412C' : communityLink.includes('t.me') || communityLink.includes('telegram') ? '#E8412C' : '#E8412C'}; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                    <a href="${communityLink}" style="display: inline-block; padding: 14px 28px; background-color: ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? '#E83E6B' : communityLink.includes('t.me') || communityLink.includes('telegram') ? '#E83E6B' : '#E83E6B'}; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
                       💬 Join ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? 'WhatsApp' : communityLink.includes('t.me') || communityLink.includes('telegram') ? 'Telegram' : 'Community'} Group
                     </a>
                   </td>
@@ -634,11 +634,11 @@ export async function sendPaidEventConfirmationEmail(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${mapsLink}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
+                    <a href="${mapsLink}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
                       🗺️ Get Directions
                     </a>
                     ${instagramLink ? `
-                    <a href="${instagramLink}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
+                    <a href="${instagramLink}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
                       📸 Follow Organizer
                     </a>
                     ` : ''}
@@ -663,7 +663,7 @@ export async function sendPaidEventConfirmationEmail(
               </table>
 
               <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
-                Need help? Reply to this email or DM us <a href="https://instagram.com/_sweatbuddies" style="color: #E8412C;">@_sweatbuddies</a>
+                Need help? Reply to this email or DM us <a href="https://instagram.com/_sweatbuddies" style="color: #E83E6B;">@_sweatbuddies</a>
               </p>
             </td>
           </tr>
@@ -671,13 +671,13 @@ export async function sendPaidEventConfirmationEmail(
           <!-- Footer -->
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
-              <a href="${eventUrl}" style="display: inline-block; margin-bottom: 16px; color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500;">
+              <a href="${eventUrl}" style="display: inline-block; margin-bottom: 16px; color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 500;">
                 View Experience Details &rarr;
               </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
                 Find more sessions at
               </p>
-              <a href="${BASE_URL}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 600;">
+              <a href="${BASE_URL}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
               </a>
               <p style="margin: 16px 0 0; color: #94a3b8; font-size: 12px;">
@@ -952,7 +952,7 @@ export async function sendHostNewAttendeeNotification(
         <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
           <!-- Header -->
           <tr>
-            <td style="padding: 32px; background: linear-gradient(135deg, #E8412C 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
+            <td style="padding: 32px; background: linear-gradient(135deg, #E83E6B 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
               <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
                 New Attendee!
@@ -995,7 +995,7 @@ export async function sendHostNewAttendeeNotification(
                           ${safeAttendeeEmail}
                         </td>
                       </tr>
-                      <tr style="background-color: #E8412C;">
+                      <tr style="background-color: #E83E6B;">
                         <td style="padding: 12px; color: white; font-size: 14px; font-weight: 600; border-radius: 0 0 0 8px;">
                           Total Attendees:
                         </td>
@@ -1012,7 +1012,7 @@ export async function sendHostNewAttendeeNotification(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${dashboardUrl}" style="display: inline-block; padding: 14px 28px; background-color: #E8412C; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                    <a href="${dashboardUrl}" style="display: inline-block; padding: 14px 28px; background-color: #E83E6B; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
                       View Attendees
                     </a>
                   </td>
@@ -1022,7 +1022,7 @@ export async function sendHostNewAttendeeNotification(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${eventUrl}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500;">
+                    <a href="${eventUrl}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 500;">
                       View Experience Page →
                     </a>
                   </td>
@@ -1041,7 +1041,7 @@ export async function sendHostNewAttendeeNotification(
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
                 Manage your sessions at
               </p>
-              <a href="${BASE_URL}/hub" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 600;">
+              <a href="${BASE_URL}/hub" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
               </a>
               <p style="margin: 16px 0 0; color: #94a3b8; font-size: 12px;">
@@ -1360,7 +1360,7 @@ export async function sendPaymentVerifiedEmail(
         <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
           <!-- Header -->
           <tr>
-            <td style="padding: 32px; background: linear-gradient(135deg, #E8412C 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
+            <td style="padding: 32px; background: linear-gradient(135deg, #E83E6B 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
               <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
                 Payment Verified!
@@ -1428,7 +1428,7 @@ export async function sendPaymentVerifiedEmail(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${calendarLink}" style="display: inline-block; padding: 14px 28px; background-color: #E8412C; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                    <a href="${calendarLink}" style="display: inline-block; padding: 14px 28px; background-color: #E83E6B; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
                       📅 Add to Calendar
                     </a>
                   </td>
@@ -1439,7 +1439,7 @@ export async function sendPaymentVerifiedEmail(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${communityLink}" style="display: inline-block; padding: 14px 28px; background-color: ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? '#E8412C' : '#E8412C'}; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                    <a href="${communityLink}" style="display: inline-block; padding: 14px 28px; background-color: ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? '#E83E6B' : '#E83E6B'}; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
                       💬 Join Group Chat
                     </a>
                   </td>
@@ -1451,11 +1451,11 @@ export async function sendPaymentVerifiedEmail(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${mapsLink}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
+                    <a href="${mapsLink}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
                       🗺️ Get Directions
                     </a>
                     ${instagramLink ? `
-                    <a href="${instagramLink}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
+                    <a href="${instagramLink}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
                       📸 Follow Organizer
                     </a>
                     ` : ''}
@@ -1464,7 +1464,7 @@ export async function sendPaymentVerifiedEmail(
               </table>
 
               <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
-                Questions? Reply to this email or DM us <a href="https://instagram.com/_sweatbuddies" style="color: #E8412C;">@_sweatbuddies</a>
+                Questions? Reply to this email or DM us <a href="https://instagram.com/_sweatbuddies" style="color: #E83E6B;">@_sweatbuddies</a>
               </p>
             </td>
           </tr>
@@ -1472,13 +1472,13 @@ export async function sendPaymentVerifiedEmail(
           <!-- Footer -->
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
-              <a href="${eventUrl}" style="display: inline-block; margin-bottom: 16px; color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500;">
+              <a href="${eventUrl}" style="display: inline-block; margin-bottom: 16px; color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 500;">
                 View Experience Details &rarr;
               </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
                 Find more sessions at
               </p>
-              <a href="${BASE_URL}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 600;">
+              <a href="${BASE_URL}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
               </a>
             </td>
@@ -1796,7 +1796,7 @@ export async function sendEventCancelledByHostEmail(
 
               ${instagramLink ? `
               <p style="margin: 0 0 24px; color: #64748b; font-size: 14px; line-height: 1.6;">
-                Questions about this cancellation? Contact the host: <a href="${instagramLink}" style="color: #E8412C;">@${hostInstagram}</a>
+                Questions about this cancellation? Contact the host: <a href="${instagramLink}" style="color: #E83E6B;">@${hostInstagram}</a>
               </p>
               ` : ''}
 
@@ -1804,7 +1804,7 @@ export async function sendEventCancelledByHostEmail(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${BASE_URL}" style="display: inline-block; padding: 14px 28px; background-color: #E8412C; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                    <a href="${BASE_URL}" style="display: inline-block; padding: 14px 28px; background-color: #E83E6B; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
                       Browse Other Experiences
                     </a>
                   </td>
@@ -1823,7 +1823,7 @@ export async function sendEventCancelledByHostEmail(
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
                 Find more sessions at
               </p>
-              <a href="${BASE_URL}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 600;">
+              <a href="${BASE_URL}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
               </a>
             </td>
@@ -2048,7 +2048,7 @@ function buildConfirmationEmailHtml(params: {
         <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
           <!-- Header -->
           <tr>
-            <td style="padding: 32px; background: linear-gradient(135deg, #E8412C 0%, #E8412C 100%); border-radius: 16px 16px 0 0; text-align: center;">
+            <td style="padding: 32px; background: linear-gradient(135deg, #E83E6B 0%, #E83E6B 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <div style="font-size: 48px; margin-bottom: 16px;">🎉</div>
               <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
                 You're Going!
@@ -2132,7 +2132,7 @@ function buildConfirmationEmailHtml(params: {
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 12px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${calendarLink}" style="display: inline-block; padding: 14px 28px; background-color: #E8412C; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                    <a href="${calendarLink}" style="display: inline-block; padding: 14px 28px; background-color: #E83E6B; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
                       📅 Add to Calendar
                     </a>
                   </td>
@@ -2153,7 +2153,7 @@ function buildConfirmationEmailHtml(params: {
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${communityLink}" style="display: inline-block; padding: 14px 28px; background-color: ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? '#E8412C' : communityLink.includes('t.me') || communityLink.includes('telegram') ? '#E8412C' : '#E8412C'}; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
+                    <a href="${communityLink}" style="display: inline-block; padding: 14px 28px; background-color: ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? '#E83E6B' : communityLink.includes('t.me') || communityLink.includes('telegram') ? '#E83E6B' : '#E83E6B'}; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
                       💬 Join ${communityLink.includes('whatsapp') || communityLink.includes('wa.me') ? 'WhatsApp' : communityLink.includes('t.me') || communityLink.includes('telegram') ? 'Telegram' : 'Community'} Group
                     </a>
                   </td>
@@ -2165,11 +2165,11 @@ function buildConfirmationEmailHtml(params: {
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${mapsLink}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
+                    <a href="${mapsLink}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
                       🗺️ Get Directions
                     </a>
                     ${instagramLink ? `
-                    <a href="${instagramLink}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
+                    <a href="${instagramLink}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 500; margin: 0 12px;">
                       📸 Follow Organizer
                     </a>
                     ` : ''}
@@ -2202,13 +2202,13 @@ function buildConfirmationEmailHtml(params: {
           <!-- Footer -->
           <tr>
             <td style="padding: 24px; background-color: #f8fafc; border-radius: 0 0 16px 16px; text-align: center;">
-              <a href="${myEventsLink}" style="display: inline-block; margin-bottom: 16px; color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 500;">
+              <a href="${myEventsLink}" style="display: inline-block; margin-bottom: 16px; color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 500;">
                 View all your upcoming sessions &rarr;
               </a>
               <p style="margin: 0 0 12px; color: #64748b; font-size: 13px;">
                 Find more sessions at
               </p>
-              <a href="${BASE_URL}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 600;">
+              <a href="${BASE_URL}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
               </a>
               <p style="margin: 16px 0 0; color: #94a3b8; font-size: 12px;">
@@ -2267,7 +2267,7 @@ export async function sendRefundNotificationEmail(
         <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
           <!-- Header -->
           <tr>
-            <td style="padding: 32px; background: linear-gradient(135deg, #E8412C 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
+            <td style="padding: 32px; background: linear-gradient(135deg, #E83E6B 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <div style="font-size: 48px; margin-bottom: 16px;">💸</div>
               <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">
                 Refund Processed
@@ -2335,7 +2335,7 @@ export async function sendRefundNotificationEmail(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 0 0 24px;">
                 <tr>
                   <td align="center" style="padding: 8px;">
-                    <a href="${myBookingsUrl}" style="display: inline-block; padding: 14px 28px; background-color: #E8412C; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px; margin-right: 12px;">
+                    <a href="${myBookingsUrl}" style="display: inline-block; padding: 14px 28px; background-color: #E83E6B; color: white; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px; margin-right: 12px;">
                       View My Bookings
                     </a>
                     <a href="${BASE_URL}" style="display: inline-block; padding: 14px 28px; background-color: #f4f4f5; color: #374151; text-decoration: none; font-size: 15px; font-weight: 600; border-radius: 8px;">
@@ -2346,7 +2346,7 @@ export async function sendRefundNotificationEmail(
               </table>
 
               <p style="margin: 0; color: #64748b; font-size: 14px; text-align: center; line-height: 1.6;">
-                Have questions? <a href="${supportUrl}" style="color: #E8412C; text-decoration: none;">Contact Support</a>
+                Have questions? <a href="${supportUrl}" style="color: #E83E6B; text-decoration: none;">Contact Support</a>
               </p>
             </td>
           </tr>
@@ -2357,7 +2357,7 @@ export async function sendRefundNotificationEmail(
               <p style="margin: 0 0 8px; color: #64748b; font-size: 13px;">
                 SweatBuddies
               </p>
-              <a href="${BASE_URL}" style="color: #E8412C; text-decoration: none; font-size: 14px; font-weight: 600;">
+              <a href="${BASE_URL}" style="color: #E83E6B; text-decoration: none; font-size: 14px; font-weight: 600;">
                 sweatbuddies.co
               </a>
               <p style="margin: 16px 0 0; color: #94a3b8; font-size: 12px;">
@@ -2475,7 +2475,7 @@ export async function sendActivityBookingConfirmationEmail(
         <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse;">
           <!-- Header -->
           <tr>
-            <td style="padding: 32px; background: linear-gradient(135deg, #E8412C 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
+            <td style="padding: 32px; background: linear-gradient(135deg, #E83E6B 0%, #059669 100%); border-radius: 16px 16px 0 0; text-align: center;">
               <div style="font-size: 48px; margin-bottom: 12px;">&#127881;</div>
               <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 700;">You're in!</h1>
               <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">Your spot is confirmed</p>
@@ -2505,7 +2505,7 @@ export async function sendActivityBookingConfirmationEmail(
                         </td>
                       </tr>
                       ${safeHost ? `<tr><td style="padding: 6px 0; font-size: 15px; color: #374151;">&#128100; Hosted by ${safeHost}</td></tr>` : ''}
-                      ${formattedAmount ? `<tr><td style="padding: 6px 0; font-size: 15px; color: #374151;">&#128176; ${formattedAmount}</td></tr>` : '<tr><td style="padding: 6px 0; font-size: 15px; color: #E8412C; font-weight: 600;">&#127881; Free</td></tr>'}
+                      ${formattedAmount ? `<tr><td style="padding: 6px 0; font-size: 15px; color: #374151;">&#128176; ${formattedAmount}</td></tr>` : '<tr><td style="padding: 6px 0; font-size: 15px; color: #E83E6B; font-weight: 600;">&#127881; Free</td></tr>'}
                     </table>
                   </td>
                 </tr>
@@ -2515,7 +2515,7 @@ export async function sendActivityBookingConfirmationEmail(
               <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
                 <tr>
                   <td align="center" style="padding: 0 0 12px;">
-                    <a href="${activityUrl}" style="display: inline-block; padding: 14px 28px; background: #E8412C; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">View Activity</a>
+                    <a href="${activityUrl}" style="display: inline-block; padding: 14px 28px; background: #E83E6B; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">View Activity</a>
                   </td>
                 </tr>
                 ${calendarLink ? `<tr><td align="center" style="padding: 0 0 12px;"><a href="${calendarLink}" style="display: inline-block; padding: 12px 24px; background: #f0fdf4; color: #059669; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid #bbf7d0;">&#128197; Add to Google Calendar</a></td></tr>` : ''}

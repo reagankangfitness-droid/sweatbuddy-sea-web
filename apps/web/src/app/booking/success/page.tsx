@@ -116,7 +116,7 @@ function BookingSuccessContent() {
     confettiContainer.className = 'confetti-container'
     confettiContainer.innerHTML = Array(50)
       .fill(0)
-      .map(() => `<div class="confetti" style="--delay: ${Math.random() * 3}s; --x: ${Math.random() * 100}vw; --color: ${['#E8412C', '#E8412C', '#FFD230', '#10B981', '#4ECDC4'][Math.floor(Math.random() * 5)]}"></div>`)
+      .map(() => `<div class="confetti" style="--delay: ${Math.random() * 3}s; --x: ${Math.random() * 100}vw; --color: ${['#E83E6B', '#E83E6B', '#FFD230', '#10B981', '#4ECDC4'][Math.floor(Math.random() * 5)]}"></div>`)
       .join('')
     document.body.appendChild(confettiContainer)
 

@@ -213,10 +213,10 @@ export default function CommunitiesPageClient({
       <div className="hidden md:block">
         <ProductHeader active="explore" />
         <section className="mx-auto max-w-6xl px-6 py-10">
-          <p className="text-xs font-black uppercase tracking-[.18em] text-[#E8412C]">Explore fitness communities</p>
+          <p className="sb-eyebrow">Explore fitness communities</p>
           <div className="mt-3 flex items-end justify-between gap-8">
-            <h1 className="max-w-2xl text-5xl font-bold leading-[1.04] text-[#17130E]">Find a group that makes showing up easier.</h1>
-            <p className="max-w-sm text-black/55">Browse active communities by activity, area, schedule, and first-timer fit.</p>
+            <h1 className="sb-type-page-title max-w-2xl text-[#17130E]">Find a group that makes showing up easier.</h1>
+            <p className="sb-type-body max-w-sm text-black/55">Browse active communities by activity, area, schedule, and first-timer fit.</p>
           </div>
           <div className="mt-8 flex items-center gap-3">
             <label className="relative flex-1">

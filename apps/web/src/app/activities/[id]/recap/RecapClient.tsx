@@ -156,7 +156,7 @@ export default function RecapClient({ sessionId }: { sessionId: string }) {
         <section className="text-center mb-8">
           <h2
             className="text-4xl font-extrabold text-white uppercase tracking-tight leading-none mb-3"
-            style={{ fontFamily: 'var(--font-barlow), sans-serif' }}
+            style={{ fontFamily: 'var(--font-geist-sans), sans-serif' }}
           >
             YOU SHOWED UP
           </h2>

@@ -169,7 +169,7 @@ export default function MySessionsPage({
                   key={label}
                   className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2"
                 >
-                  <p className="truncate font-mono text-[10px] font-bold uppercase tracking-wide text-white/60">
+                  <p className="truncate text-xs font-semibold text-white/60">
                     {label}
                   </p>
                 </div>
@@ -207,8 +207,8 @@ export default function MySessionsPage({
             >
               <ArrowLeft className="w-5 h-5 text-[#999999]" />
             </Link>
-            <h1 className="text-sm font-semibold text-white uppercase tracking-wider">
-              My Plans
+            <h1 className="text-base font-semibold text-white">
+              My plans
             </h1>
           </div>
         </div>
@@ -223,7 +223,7 @@ export default function MySessionsPage({
           <>
             {/* Upcoming */}
             {section !== 'past' && <section className="mb-10">
-              <h2 className="text-xs font-semibold text-[#666666] uppercase tracking-wider px-1 mb-3">
+              <h2 className="sb-type-section-title mb-3 px-1 text-white">
                 Upcoming
               </h2>
 
@@ -276,7 +276,7 @@ export default function MySessionsPage({
                               }}
                             >
                               <span className="text-4xl drop-shadow-lg mb-1">{emoji}</span>
-                              <p className="text-xs font-bold text-white/80 uppercase tracking-wider line-clamp-1 px-4">
+                              <p className="line-clamp-1 px-4 text-sm font-semibold text-white/80">
                                 {session.title}
                               </p>
                               {session.userStatus === 'HOSTING' && (
@@ -350,7 +350,7 @@ export default function MySessionsPage({
 
             {/* Past */}
             {section !== 'upcoming' && <section>
-              <h2 className="text-xs font-semibold text-[#666666] uppercase tracking-wider px-1 mb-3">
+              <h2 className="sb-type-section-title mb-3 px-1 text-white">
                 Past
               </h2>
 

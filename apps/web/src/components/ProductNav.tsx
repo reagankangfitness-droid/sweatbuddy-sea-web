@@ -20,7 +20,7 @@ export function ProductNav({ active }: { active: ProductNavItem }) {
         const Icon = item.icon
         const selected = item.key === active
         return (
-          <Link key={item.key} href={item.href} aria-current={selected ? 'page' : undefined} className={`flex min-h-14 flex-col items-center justify-center gap-1 text-[10px] font-bold ${selected ? 'text-[#E8412C]' : 'text-black/45'}`}>
+          <Link key={item.key} href={item.href} aria-current={selected ? 'page' : undefined} className={`flex min-h-14 flex-col items-center justify-center gap-1 text-[11px] font-semibold ${selected ? 'text-[#E8412C]' : 'text-black/45'}`}>
             <Icon className="h-5 w-5" />
             {item.label}
           </Link>

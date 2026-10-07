@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import type { PropsWithChildren } from 'react'
-import { Barlow_Condensed, Geist, Geist_Mono } from 'next/font/google'
+import { Geist, Geist_Mono } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import { Toaster } from 'sonner'
 import './globals.css'
@@ -18,13 +18,6 @@ const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   display: 'swap',
   preload: true,
-})
-
-const barlowCondensed = Barlow_Condensed({
-  subsets: ['latin'],
-  weight: ['600', '700', '800'],
-  variable: '--font-barlow',
-  display: 'swap',
 })
 
 const BASE_URL = 'https://www.sweatbuddies.co'
@@ -112,7 +105,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <link rel="dns-prefetch" href="https://utfs.io" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${barlowCondensed.variable} font-sans antialiased bg-[#0D0D0D] text-[#FAFAFA]`}
+        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-[#0D0D0D] text-[#FAFAFA]`}
       >
         <Providers>
           {children}

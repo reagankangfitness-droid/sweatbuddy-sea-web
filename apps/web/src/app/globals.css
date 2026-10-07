@@ -3,6 +3,53 @@
 @tailwind utilities;
 
 @layer components {
+  .sb-type-page-title {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+  }
+
+  .sb-type-section-title {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: clamp(1.375rem, 2vw, 1.75rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  .sb-type-card-title {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  .sb-type-body {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .sb-type-meta {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  .sb-type-action {
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
   .sb-page {
     min-height: 100dvh;
     background: #0B0D0C;
@@ -40,11 +87,11 @@
     border-radius: 999px;
     background: #E8412C;
     color: #000000;
-    font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 12px;
-    font-weight: 800;
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
     letter-spacing: 0;
-    text-transform: uppercase;
+    text-transform: none;
     transition: background-color 160ms ease, transform 160ms ease;
   }
 
@@ -66,11 +113,11 @@
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.04);
     color: #FFFFFF;
-    font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 12px;
-    font-weight: 800;
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
     letter-spacing: 0;
-    text-transform: uppercase;
+    text-transform: none;
     transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease, transform 160ms ease;
   }
 
@@ -396,11 +443,11 @@
     background: #E8412C;
     color: #ffffff;
     padding: 6px 8px;
-    font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 9px;
-    font-weight: 900;
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
     line-height: 1;
-    text-transform: uppercase;
+    text-transform: none;
   }
 
 	  @media (max-width: 767px) {

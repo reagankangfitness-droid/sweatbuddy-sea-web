@@ -2137,7 +2137,7 @@ function BuddyPageInner() {
       <div className="flex min-h-0 flex-1 flex-col" data-buddy-desktop-shell>
       {/* ── Filters — sticky top bar ── */}
       <div className="sticky top-0 z-20 pt-[env(safe-area-inset-top,4px)]">
-        <div className="space-y-1.5 border-b border-white/[0.07] bg-[#0B0D0C]/92 px-3 pb-2 pt-1.5 font-mono backdrop-blur-xl">
+        <div className="space-y-1.5 border-b border-white/[0.07] bg-[#0B0D0C]/92 px-3 pb-2 pt-1.5 font-sans backdrop-blur-xl">
           <div className="flex min-h-9 items-center justify-between gap-3">
             <Link
               href="/"
@@ -2151,25 +2151,25 @@ function BuddyPageInner() {
                 wordmarkClassName="max-[360px]:hidden"
               />
             </Link>
-            <p className="hidden min-w-0 flex-1 truncate text-xs font-bold uppercase tracking-[0.16em] text-white/42 sm:block">
+            <p className="hidden min-w-0 flex-1 truncate text-sm font-medium text-white/42 sm:block">
               Solo-friendly fitness plans
             </p>
             <nav aria-label="Discovery sections" className="hidden items-center gap-1 sm:flex">
               <Link
                 href={`/explore?city=${encodeURIComponent(cityConfig.slug)}`}
-                className="inline-flex min-h-9 items-center rounded-full px-3 text-[10px] font-black uppercase tracking-wide text-white/58 hover:text-white"
+                className="inline-flex min-h-9 items-center rounded-full px-3 text-sm font-semibold text-white/58 hover:text-white"
               >
                 Explore
               </Link>
               <button
                 type="button"
                 onClick={() => viewMode === 'map' && toggleViewMode()}
-                className={`min-h-9 rounded-full px-3 text-[10px] font-black uppercase tracking-wide ${viewMode === 'list' ? 'bg-white text-black' : 'text-white/58'}`}
+                className={`min-h-9 rounded-full px-3 text-sm font-semibold ${viewMode === 'list' ? 'bg-white text-black' : 'text-white/58'}`}
               >
                 This week
               </button>
-              <Link href="/me" className="inline-flex min-h-9 items-center rounded-full px-3 text-[10px] font-black uppercase tracking-wide text-white/58 hover:text-white">My activity</Link>
-              <Link href="/profile" className="inline-flex min-h-9 items-center rounded-full px-3 text-[10px] font-black uppercase tracking-wide text-white/58 hover:text-white">Profile</Link>
+              <Link href="/me" className="inline-flex min-h-9 items-center rounded-full px-3 text-sm font-semibold text-white/58 hover:text-white">My activity</Link>
+              <Link href="/profile" className="inline-flex min-h-9 items-center rounded-full px-3 text-sm font-semibold text-white/58 hover:text-white">Profile</Link>
             </nav>
           </div>
           {/* Search bar */}
@@ -2249,7 +2249,7 @@ function BuddyPageInner() {
 
           {/* Mobile collapsed filters */}
           <details className={viewMode === 'map' ? 'hidden' : 'group sm:hidden'}>
-            <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between rounded-lg border border-white/[0.12] bg-[#171A18] px-3 text-[12px] font-black uppercase tracking-wide text-white transition-colors group-open:border-white/30 [&::-webkit-details-marker]:hidden">
+            <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between rounded-lg border border-white/[0.12] bg-[#171A18] px-3 text-sm font-semibold text-white transition-colors group-open:border-white/30 [&::-webkit-details-marker]:hidden">
               <span>Filters</span>
               <span className="min-w-0 truncate text-right text-[10px] text-[#999999]">
                 {[neighborhoodFilter?.name ?? activeLocationLabel, activeTypeLabel, activePriceLabel]
@@ -2315,7 +2315,7 @@ function BuddyPageInner() {
             />
           </div>
 
-          <div className="hidden min-h-7 items-center gap-1.5 pt-0.5 text-[10px] font-bold uppercase tracking-wide text-[#777777] sm:flex">
+          <div className="hidden min-h-7 items-center gap-1.5 pt-0.5 text-xs font-medium text-[#777777] sm:flex">
             {(typeFilter || dateFilter || neighborhoodFilter) && (
               <button
                 onClick={() => {
@@ -2912,7 +2912,7 @@ function BuddyMobileConceptShell({
                 <p className="font-mono text-[9px] font-black uppercase tracking-[0.22em] text-[#E8412C]">
                   Find the crew
                 </p>
-                <h1 className="mt-1 max-w-[320px] font-sans text-[36px] font-black uppercase leading-[0.94] tracking-normal">
+                <h1 className="mt-1 max-w-[320px] font-sans text-4xl font-bold leading-[1.05] tracking-tight">
                   Crews near
                   <span className="block text-[#E8412C]">you this week</span>
                 </h1>
@@ -2980,7 +2980,7 @@ function BuddyMobileConceptShell({
                 <p className="font-mono text-[9px] font-black uppercase tracking-[0.22em] text-[#E8412C]">
                   Week of {todayDateString.slice(5).replace('-', ' / ')}
                 </p>
-                <h1 className="mt-1 max-w-[330px] font-sans text-[34px] font-black uppercase leading-[0.96] tracking-normal">
+                <h1 className="mt-1 max-w-[330px] font-sans text-4xl font-bold leading-[1.05] tracking-tight">
                   You&apos;re free.
                   <span className="block text-[#E8412C]">Here&apos;s who&apos;s out.</span>
                 </h1>
@@ -3037,7 +3037,7 @@ function BuddyMobileConceptShell({
                 <p className="font-mono text-[9px] font-black uppercase tracking-[0.22em] text-[#E8412C]">
                   Your windows
                 </p>
-                <h1 className="mt-1 font-sans text-[34px] font-black uppercase leading-[0.96] tracking-normal">
+                <h1 className="mt-1 font-sans text-4xl font-bold leading-[1.05] tracking-tight">
                   Make it easier
                   <span className="block text-[#E8412C]">to show up.</span>
                 </h1>
@@ -3052,7 +3052,7 @@ function BuddyMobileConceptShell({
                     <p className="mt-2 text-sm font-black">Checking...</p>
                   ) : myNextSession ? (
                     <>
-                      <h2 className="mt-2 font-sans text-xl font-black uppercase leading-tight">
+                      <h2 className="mt-2 font-sans text-xl font-bold leading-tight tracking-tight">
                         {myNextSession.title}
                       </h2>
                       <p className="mt-2 font-serif text-sm italic text-[#17130E]/70">
@@ -3162,7 +3162,7 @@ function MobileConceptCrewCard({
               <span className="text-[#E8412C]"># {rank}</span>
               <span>{community.usualArea || community.city?.name || citySlug}</span>
             </div>
-            <h2 className="mt-1 line-clamp-2 font-sans text-xl font-black uppercase leading-tight">
+            <h2 className="mt-1 line-clamp-2 font-sans text-xl font-bold leading-tight tracking-tight">
               {community.name}
             </h2>
             <p className="mt-2 line-clamp-2 font-serif text-[13px] italic leading-5 text-[#17130E]/70">
@@ -3234,7 +3234,7 @@ function MobileConceptPlanFeature({
           <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
             {formatCommunityCategory(session.categorySlug || 'fitness')} - {session.city}
           </p>
-          <h2 className="mt-1 font-sans text-[24px] font-black uppercase leading-tight">
+          <h2 className="mt-1 font-sans text-2xl font-bold leading-tight tracking-tight">
             {session.title}
           </h2>
           <p className="mt-2 font-serif text-sm italic leading-5 text-[#17130E]/72">
@@ -3284,7 +3284,7 @@ function MobileConceptPlanRow({ session }: { session: Session }) {
         <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
           {formatCommunityCategory(session.categorySlug || 'fitness')} - {session.address?.split(',')[0] || session.city}
         </p>
-        <h3 className="mt-1 line-clamp-2 font-sans text-lg font-black uppercase leading-tight">
+        <h3 className="mt-1 line-clamp-2 font-sans text-lg font-semibold leading-tight tracking-tight">
           {session.title}
         </h3>
         <p className="mt-1 line-clamp-1 font-serif text-[12px] italic text-[#17130E]/66">
@@ -3325,7 +3325,7 @@ function MobileConceptSelectedPlanCard({
         <p className="font-mono text-[9px] font-black uppercase tracking-[0.18em] text-[#E8412C]">
           {session.startTime ? getRelativeTime(session.startTime) : 'Time TBA'} - {session.price === 0 ? 'Free' : formatBuddyMapPrice(session.price, session.currency)}
         </p>
-        <h2 className="mt-1 line-clamp-2 font-sans text-xl font-black uppercase leading-tight">
+        <h2 className="mt-1 line-clamp-2 font-sans text-xl font-bold leading-tight tracking-tight">
           {session.title}
         </h2>
         <p className="mt-2 line-clamp-2 font-serif text-[13px] italic text-[#17130E]/72">
@@ -3392,7 +3392,7 @@ function MobileConceptEmptyState({
 }) {
   const content = (
     <>
-      <h2 className="font-sans text-xl font-black uppercase leading-tight">{title}</h2>
+      <h2 className="font-sans text-xl font-bold leading-tight tracking-tight">{title}</h2>
       <p className="mt-2 font-serif text-sm italic leading-5 text-[#17130E]/70">{body}</p>
       <span className="mt-4 inline-flex min-h-11 items-center justify-center bg-[#E8412C] px-4 font-mono text-[10px] font-black uppercase tracking-wide text-white">
         {actionLabel}

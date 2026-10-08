@@ -343,7 +343,7 @@ export function MobileCommunityStickyActions({
   joinPlatform,
 }: MobileCommunityStickyActionsProps) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0B0D0C]/95 px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3 backdrop-blur-xl md:hidden">
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-[#F8F4EA]/95 px-4 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3 shadow-[0_-8px_30px_rgba(23,19,14,.08)] backdrop-blur-xl md:hidden">
       <div className="mx-auto grid max-w-md grid-cols-[minmax(0,1fr)_104px] gap-2">
         <TrackedExternalLink
           href={href}
@@ -354,7 +354,7 @@ export function MobileCommunityStickyActions({
             source: 'mobile_sticky',
             joinPlatform: joinPlatform ?? null,
           }}
-          className="inline-flex min-h-12 min-w-0 items-center justify-center gap-2 rounded-full bg-[#E83E6B] px-4 text-sm font-black text-black transition-colors hover:bg-[#E83E6B]"
+          className="inline-flex min-h-12 min-w-0 items-center justify-center gap-2 rounded-full bg-[#E83E6B] px-4 text-sm font-bold text-white transition-opacity hover:opacity-90"
           ariaLabel={`Join ${communityName} through the official link`}
         >
           Join official link
@@ -364,7 +364,7 @@ export function MobileCommunityStickyActions({
           communitySlug={communitySlug}
           communityName={communityName}
           source="sticky"
-          className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-full border border-white/14 px-3 text-xs font-bold text-white transition-colors hover:border-[#E83E6B]/60 hover:bg-white/5"
+          className="inline-flex min-h-12 items-center justify-center gap-1.5 rounded-full border border-black/15 bg-white px-3 text-xs font-bold text-[#17130E] transition-colors hover:border-[#E83E6B] hover:bg-[#FDEBF0]"
         />
       </div>
     </div>

@@ -30,7 +30,6 @@ import { getCurrentDbUser } from '@/lib/current-user'
 import { getCategoryFallbackImage } from '@/lib/visual-fallbacks'
 import {
   getCommunitySeedBySlug,
-  getCommunitySeedConfidenceScore,
   getPublicCommunitySeeds,
   type CommunityDirectorySeed,
 } from '@/lib/community-directory-seed'
@@ -849,38 +848,39 @@ export default async function CommunityPage({ params }: Props) {
 
 function SeedCommunityPage({ community }: { community: CommunityDirectorySeed }) {
   const heroImage = community.coverImage || getCategoryFallbackImage(community.category)
-  const confidenceScore = getCommunitySeedConfidenceScore(community)
-  const confidenceLabel = confidenceScore >= 85 ? 'High confidence' : 'Source checked'
   const similarCommunities = getPublicCommunitySeeds()
     .filter((item) => item.slug !== community.slug && item.category === community.category)
     .slice(0, 4)
+  const verifiedDate = new Date(community.lastVerifiedAt).toLocaleDateString('en-SG', {
+    day: 'numeric', month: 'short', year: 'numeric',
+  })
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white">
+    <div className="min-h-screen bg-[#F8F4EA] pb-28 text-[#17130E] md:pb-0">
       <CommunityViewTracker
         communitySlug={community.slug}
         communityName={community.name}
         source="detail"
       />
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#1A1A1A]/85 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-black/10 bg-[#F8F4EA]/92 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link
-            href="/explore"
-            className="flex min-h-11 items-center gap-2 text-sm font-semibold text-[#888888] transition-colors hover:text-white"
+            href="/"
+            className="flex min-h-11 items-center gap-2 text-sm font-semibold text-black/60 transition-colors hover:text-black"
           >
             <ArrowLeft className="h-4 w-4" />
-            Communities
+            Directory
           </Link>
-          <Link href="/" className="font-sans text-xl font-bold text-white">
+          <Link href="/" className="font-sans text-xl font-bold">
             sweatbuddies
           </Link>
           <ShareButton />
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 pb-32 pt-8 sm:px-6 lg:px-8 md:pb-24">
-        <section className="overflow-hidden rounded-lg border border-white/10 bg-[#171717]">
-          <div className="relative min-h-[240px] overflow-hidden sm:min-h-[340px]">
+      <main className="mx-auto max-w-6xl px-4 pb-16 pt-5 sm:px-6 md:pt-8 lg:px-8">
+        <section className="overflow-hidden rounded-[2rem] border border-black/10 bg-white shadow-sm">
+          <div className="relative min-h-[260px] overflow-hidden sm:min-h-[390px]">
             <Image
               src={heroImage}
               alt={`${community.name} community`}
@@ -890,38 +890,35 @@ function SeedCommunityPage({ community }: { community: CommunityDirectorySeed })
               unoptimized={!heroImage.startsWith('/')}
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#171717] via-black/32 to-black/10" />
-            <div className="absolute bottom-5 left-5 right-5">
-              <div className="mb-3 flex flex-wrap gap-2">
-                <span className="rounded-md bg-black/55 px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-white backdrop-blur">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/18 to-transparent" />
+            <div className="absolute bottom-6 left-5 right-5 sm:left-8 sm:right-8">
+              <div className="mb-3 flex flex-wrap gap-2 text-white">
+                <span className="rounded-full bg-black/55 px-3 py-1 text-[11px] font-bold backdrop-blur">
                   {getCategoryEmoji(community.category)} {community.category.replace(/_/g, ' ')}
                 </span>
-                <span className="rounded-md bg-black/55 px-2.5 py-1 font-mono text-[10px] font-black uppercase tracking-wide text-[#E83E6B] backdrop-blur">
-                  {confidenceLabel}
+                <span className="rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold text-[#17130E]">
+                  <CheckCircle className="mr-1 inline h-3.5 w-3.5 text-[#E83E6B]" /> Verified from official source
                 </span>
               </div>
-              <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
+              <h1 className="max-w-3xl text-3xl font-bold tracking-tight text-white sm:text-5xl">
                 {community.name}
               </h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-white/72 sm:text-base">
-                {community.description}
-              </p>
             </div>
           </div>
 
-          <div className="grid gap-6 p-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:p-6">
+          <div className="grid gap-8 p-5 sm:p-8 lg:grid-cols-[minmax(0,1fr)_300px]">
             <div>
-              <div className="grid gap-3 sm:grid-cols-3">
+              <p className="max-w-2xl text-base leading-7 text-black/65">{community.description}</p>
+              <h2 className="mt-7 text-xl font-bold text-[#17130E]">What to know before you go</h2>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 <DirectoryFact label="Usually around" value={community.usualArea} />
-                <DirectoryFact label="Schedule signal" value={community.usualSchedule} />
-                <DirectoryFact label="Join path" value={formatJoinPlatform(community.joinPlatform)} />
+                <DirectoryFact label="Usual schedule" value={community.usualSchedule} />
+                <DirectoryFact label="How to join" value={`Join on ${formatJoinPlatform(community.joinPlatform)}`} />
               </div>
 
-              <div className="mt-5 rounded-lg border border-white/10 bg-white/[0.035] p-4">
-                <p className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#E83E6B]">
-                  Best for
-                </p>
-                <p className="mt-2 text-sm leading-6 text-white/78">
+              <div className="mt-4 rounded-2xl bg-[#F8F4EA] p-5">
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#E83E6B]">Best for</p>
+                <p className="mt-2 text-sm leading-6 text-black/70">
                   {community.bestFor}
                 </p>
               </div>
@@ -935,20 +932,17 @@ function SeedCommunityPage({ community }: { community: CommunityDirectorySeed })
                 ))}
               </div>
 
-              <div className="mt-6 border-t border-white/10 pt-5">
-                <p className="text-sm leading-6 text-white/58">
-                  Source checked from {community.sourceLabel.toLowerCase()} on{' '}
-                  {new Date(community.lastVerifiedAt).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
-                  . Official links can change, so report anything stale before you show up.
-                </p>
+              <div className="mt-6 flex items-start gap-2 border-t border-black/10 pt-5 text-sm leading-6 text-black/55">
+                <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#E83E6B]" />
+                <p>Verified from {community.sourceLabel.toLowerCase()} on {verifiedDate}. Check the official page before travelling because schedules can change.</p>
               </div>
             </div>
 
-            <aside className="space-y-3">
+            <aside className="space-y-3 max-md:hidden">
+              <div className="rounded-2xl bg-[#F8F4EA] p-4">
+                <p className="text-sm font-bold">Ready to join?</p>
+                <p className="mt-1 text-xs leading-5 text-black/55">Continue to the community&apos;s official page for current details.</p>
+              </div>
               <TrackedExternalLink
                 href={community.communityLink}
                 event="official_join_clicked"
@@ -958,61 +952,40 @@ function SeedCommunityPage({ community }: { community: CommunityDirectorySeed })
                   source: 'community_detail',
                   joinPlatform: community.joinPlatform,
                 }}
-                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#E83E6B] px-4 text-sm font-black text-black transition-colors hover:bg-[#E83E6B]"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-[#E83E6B] px-4 text-sm font-bold text-white transition-opacity hover:opacity-90"
                 ariaLabel={`Join ${community.name} through the official link`}
               >
-                Join through official link
+                Join on official website
                 <OfficialJoinIcon />
               </TrackedExternalLink>
-
-              <JoinedCommunityButton
-                communitySlug={community.slug}
-                communityName={community.name}
-                source="detail"
-                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-[#E83E6B]/24 px-4 text-sm font-bold text-[#E83E6B] transition-colors hover:border-[#E83E6B]/60 hover:bg-[#E83E6B]/8 disabled:border-[#E83E6B]/20 disabled:bg-[#E83E6B]/8"
-              />
 
               <SaveCommunityButton
                 communitySlug={community.slug}
                 communityName={community.name}
                 source="detail"
-                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-white/12 px-4 text-sm font-bold text-white transition-colors hover:border-[#E83E6B]/60 hover:bg-white/5"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-black/15 px-4 text-sm font-bold transition-colors hover:border-[#E83E6B] hover:bg-[#FDEBF0]"
               />
-
-              <ReportOutdatedButton
-                communitySlug={community.slug}
-                communityName={community.name}
-                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-white/12 px-4 text-sm font-bold text-white/76 transition-colors hover:border-white/28 hover:bg-white/5"
-              />
-
-              <DirectoryClaimIntentLink
-                href="/communities/nominate"
-                communitySlug={community.slug}
-                communityName={community.name}
-                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-white/12 px-4 text-sm font-bold text-white/76 transition-colors hover:border-white/28 hover:bg-white/5"
-              />
-
-              <CommunityWeeklyPicksForm
-                source="detail"
-                city={community.cityName}
-                activityType={community.category}
-                communityName={community.name}
-                title="Get similar picks"
-                body="A weekly shortlist of communities with official join paths."
-              />
+              <details className="rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm">
+                <summary className="cursor-pointer font-semibold text-black/60">Listing options</summary>
+                <div className="mt-3 grid gap-2">
+                  <JoinedCommunityButton communitySlug={community.slug} communityName={community.name} source="detail" className="min-h-11 rounded-full border border-black/10 px-3 font-semibold" />
+                  <ReportOutdatedButton communitySlug={community.slug} communityName={community.name} className="min-h-11 rounded-full border border-black/10 px-3 font-semibold" />
+                  <DirectoryClaimIntentLink href="/communities/nominate" communitySlug={community.slug} communityName={community.name} className="inline-flex min-h-11 items-center justify-center rounded-full border border-black/10 px-3 font-semibold" />
+                </div>
+              </details>
             </aside>
           </div>
         </section>
 
         {similarCommunities.length > 0 && (
-          <section className="mt-8">
+          <section className="mt-10">
             <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="text-lg font-bold uppercase tracking-wide text-white">
+              <h2 className="text-xl font-bold text-[#17130E]">
                 Similar communities
               </h2>
               <Link
                 href={`/explore?city=${community.citySlug}`}
-                className="text-xs font-bold uppercase tracking-wide text-[#E83E6B] hover:text-white"
+                className="text-sm font-bold text-[#E83E6B] hover:underline"
               >
                 View directory
               </Link>
@@ -1022,11 +995,11 @@ function SeedCommunityPage({ community }: { community: CommunityDirectorySeed })
                 <Link
                   key={item.slug}
                   href={`/communities/${item.slug}`}
-                  className="rounded-lg border border-white/10 bg-[#171717] p-4 transition-colors hover:border-[#E83E6B]/50"
+                  className="rounded-2xl border border-black/10 bg-white p-4 transition-colors hover:border-[#E83E6B]"
                 >
-                  <p className="text-sm font-bold text-white">{item.name}</p>
-                  <p className="mt-1 text-xs leading-5 text-white/58">{item.usualArea}</p>
-                  <p className="mt-3 line-clamp-2 text-xs leading-5 text-white/64">{item.bestFor}</p>
+                  <p className="text-sm font-bold">{item.name}</p>
+                  <p className="mt-1 text-xs leading-5 text-black/50">{item.usualArea}</p>
+                  <p className="mt-3 line-clamp-2 text-xs leading-5 text-black/65">{item.bestFor}</p>
                 </Link>
               ))}
             </div>
@@ -1045,18 +1018,18 @@ function SeedCommunityPage({ community }: { community: CommunityDirectorySeed })
 
 function DirectoryFact({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
-      <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-white/42">
+    <div className="rounded-2xl border border-black/10 bg-white p-4">
+      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-black/45">
         {label}
       </p>
-      <p className="mt-2 text-sm font-bold leading-5 text-white">{value}</p>
+      <p className="mt-2 text-sm font-bold leading-5">{value}</p>
     </div>
   )
 }
 
 function DecisionChip({ label }: { label: string }) {
   return (
-    <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs font-semibold capitalize text-white/76">
+    <span className="rounded-full bg-[#F8F4EA] px-3 py-1 text-xs font-semibold capitalize text-black/70">
       {label}
     </span>
   )

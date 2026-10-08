@@ -1,22 +1,19 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   ArrowRight,
   Bell,
-  CalendarDays,
   CheckCircle2,
   ChevronDown,
   List,
   Map as MapIcon,
   MapPin,
-  Plus,
   Search,
   UserRound,
-  Users,
-  X,
 } from 'lucide-react'
 import { LogoWithText } from '@/components/logo'
 import { ACTIVITY_CATEGORIES, getCategoryEmoji } from '@/lib/categories'
@@ -76,6 +73,7 @@ interface Props {
   initialCategoryFilter?: string | null
   initialFitFilter?: string | null
   initialPriceFilter?: string | null
+  initialView?: string | null
 }
 
 const CITY_CENTERS: Record<string, { lat: number; lng: number }> = {
@@ -111,14 +109,18 @@ export default function CommunitiesPageClient({
   initialCategoryFilter = null,
   initialFitFilter = null,
   initialPriceFilter = null,
+  initialView = null,
 }: Props) {
   const [query, setQuery] = useState(initialSearchQuery)
   const [category, setCategory] = useState<string | null>(initialCategoryFilter)
   const [city, setCity] = useState<string | null>(initialCitySlug)
   const [beginnerOnly, setBeginnerOnly] = useState(initialFitFilter === 'beginner')
+  const [soloOnly, setSoloOnly] = useState(initialFitFilter === 'solo')
   const [freeOnly, setFreeOnly] = useState(initialPriceFilter === 'free')
-  const [view, setView] = useState<'map' | 'list'>('map')
-  const [selectedSlug, setSelectedSlug] = useState<string | null>(communities[0]?.slug ?? null)
+  const [view, setView] = useState<'map' | 'list'>(initialView === 'list' ? 'list' : 'map')
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
+  const router = useRouter()
+  const pathname = usePathname()
 
   const categories = useMemo(() => [...new Set(communities.map((item) => item.category))], [communities])
   const filtered = useMemo(() => communities.filter((item) => {
@@ -127,9 +129,10 @@ export default function CommunitiesPageClient({
       && (!category || item.category === category)
       && (!city || item.citySlug === city)
       && (!beginnerOnly || item.beginnerFriendly)
+      && (!soloOnly || item.soloFriendly)
       && (!freeOnly || item.priceType === 'free')
-  }), [communities, query, category, city, beginnerOnly, freeOnly])
-  const selected = filtered.find((item) => item.slug === selectedSlug) ?? filtered[0] ?? null
+  }), [communities, query, category, city, beginnerOnly, soloOnly, freeOnly])
+  const selected = filtered.find((item) => item.slug === selectedSlug) ?? null
   const mapCenter = CITY_CENTERS[city ?? selected?.citySlug ?? 'singapore'] ?? CITY_CENTERS.singapore
   const communityPins = useMemo<SessionVectorMapPin[]>(() => filtered.map((item) => ({
     id: `community:${item.slug}`,
@@ -149,6 +152,34 @@ export default function CommunitiesPageClient({
     previewImage: item.coverImage || item.logoImage || getCategoryFallbackImage(item.category),
     previewCtaLabel: 'View community',
   })), [filtered])
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (query.trim()) params.set('q', query.trim())
+    if (city) params.set('city', city)
+    if (category) params.set('category', category)
+    if (beginnerOnly) params.set('fit', 'beginner')
+    else if (soloOnly) params.set('fit', 'solo')
+    if (freeOnly) params.set('price', 'free')
+    if (view !== 'map') params.set('view', view)
+    const next = params.toString() ? `${pathname}?${params}` : pathname
+    const timer = window.setTimeout(() => router.replace(next, { scroll: false }), 200)
+    return () => window.clearTimeout(timer)
+  }, [query, city, category, beginnerOnly, soloOnly, freeOnly, view, pathname, router])
+
+  useEffect(() => {
+    if (selectedSlug && !filtered.some((item) => item.slug === selectedSlug)) setSelectedSlug(null)
+  }, [filtered, selectedSlug])
+
+  function clearFilters() {
+    setQuery('')
+    setCategory(null)
+    setCity(null)
+    setBeginnerOnly(false)
+    setSoloOnly(false)
+    setFreeOnly(false)
+    setSelectedSlug(null)
+  }
 
   return (
     <main className="min-h-screen bg-[#F8F4EA] text-[#17130E]">
@@ -176,8 +207,10 @@ export default function CommunitiesPageClient({
           <div className="flex w-max gap-2">
             <FilterChip active={!category} onClick={() => setCategory(null)}>All <span className="opacity-55">{communities.length}</span></FilterChip>
             {categories.slice(0, 6).map((item) => <FilterChip key={item} active={category === item} onClick={() => setCategory(item)}>{getCategoryEmoji(item)} {categoryName(item)}</FilterChip>)}
-            <FilterChip active={beginnerOnly} onClick={() => setBeginnerOnly(!beginnerOnly)}>First-timer friendly</FilterChip>
+            <FilterChip active={beginnerOnly} onClick={() => { setBeginnerOnly(!beginnerOnly); setSoloOnly(false) }}>First-timer friendly</FilterChip>
+            <FilterChip active={soloOnly} onClick={() => { setSoloOnly(!soloOnly); setBeginnerOnly(false) }}>Solo-friendly</FilterChip>
             <FilterChip active={freeOnly} onClick={() => setFreeOnly(!freeOnly)}>Free</FilterChip>
+            <Link href="/communities/nominate" className="flex h-10 items-center whitespace-nowrap rounded-full border border-black/10 bg-white px-4 text-sm font-semibold text-[#E83E6B]">Suggest a community</Link>
           </div>
         </div>
 
@@ -195,18 +228,25 @@ export default function CommunitiesPageClient({
               fitPadding={58}
               showControls
             />
-            <div className="absolute left-4 top-4 rounded-full bg-white/95 px-4 py-2 text-xs font-semibold shadow-lg">
-              <MapPin className="mr-1 inline h-4 w-4 text-[#E83E6B]" /> {cities.find((item) => item.slug === city)?.name || selected?.cityName || 'Singapore'} <ChevronDown className="ml-1 inline h-3.5 w-3.5" />
-            </div>
+            <label className="absolute left-4 top-4 flex items-center rounded-full bg-white/95 px-4 py-2 text-xs font-semibold shadow-lg">
+              <MapPin className="mr-1 h-4 w-4 text-[#E83E6B]" />
+              <select aria-label="Choose city" value={city ?? ''} onChange={(event) => { setCity(event.target.value || null); setSelectedSlug(null) }} className="appearance-none bg-transparent pr-5 font-semibold outline-none">
+                <option value="">All cities</option>
+                {cities.map((item) => <option key={item.slug} value={item.slug}>{item.name} ({item.communityCount})</option>)}
+              </select>
+              <ChevronDown className="pointer-events-none -ml-4 h-3.5 w-3.5" />
+            </label>
+            <div className="absolute right-4 top-4 rounded-full bg-[#17130E]/88 px-3 py-2 text-xs font-bold text-white shadow-lg">{filtered.length} found</div>
             {selected && <div className="absolute inset-x-3 bottom-24 z-30"><CommunitySpotlight community={selected} /></div>}
+            {!selected && filtered.length > 0 && <div className="absolute inset-x-4 bottom-24 z-20 rounded-2xl bg-white/95 px-4 py-3 text-center text-sm font-semibold shadow-lg">Tap a marker to preview a community</div>}
+            {filtered.length === 0 && <EmptyResults onClear={clearFilters} compact />}
           </section>
         ) : (
           <section className="px-4 pb-28 pt-5">
             <div className="mb-4 flex items-end justify-between"><div><p className="text-2xl font-bold">{filtered.length} communities</p><p className="mt-1 text-sm text-black/55">Active groups with checked join paths</p></div><Link href="/communities/nominate" className="text-xs font-bold text-[#E83E6B]">Suggest one</Link></div>
-            <div className="space-y-3">{filtered.map((item) => <CommunityRow key={item.slug} community={item} />)}</div>
+            {filtered.length ? <div className="space-y-3">{filtered.map((item) => <CommunityRow key={item.slug} community={item} />)}</div> : <EmptyResults onClear={clearFilters} />}
           </section>
         )}
-        <Link href="/communities/nominate" aria-label="Suggest a community" className="fixed bottom-24 right-5 z-50 grid h-14 w-14 place-items-center rounded-full bg-[#E83E6B] text-white shadow-[0_10px_30px_rgba(232, 62, 107,.35)]"><Plus className="h-7 w-7" /></Link>
         <ProductNav active="explore" />
       </div>
 
@@ -229,21 +269,36 @@ export default function CommunitiesPageClient({
           <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
             <FilterChip active={!category} onClick={() => setCategory(null)}>All {communities.length}</FilterChip>
             {categories.map((item) => <FilterChip key={item} active={category === item} onClick={() => setCategory(item)}>{getCategoryEmoji(item)} {categoryName(item)}</FilterChip>)}
-            <FilterChip active={beginnerOnly} onClick={() => setBeginnerOnly(!beginnerOnly)}>First-timer friendly</FilterChip>
+            <FilterChip active={beginnerOnly} onClick={() => { setBeginnerOnly(!beginnerOnly); setSoloOnly(false) }}>First-timer friendly</FilterChip>
+            <FilterChip active={soloOnly} onClick={() => { setSoloOnly(!soloOnly); setBeginnerOnly(false) }}>Solo-friendly</FilterChip>
             <FilterChip active={freeOnly} onClick={() => setFreeOnly(!freeOnly)}>Free</FilterChip>
           </div>
           {view === 'map' ? (
-            <div className="relative mt-6 h-[610px] overflow-hidden rounded-[2rem] border border-black/10 bg-[#F4EFE3] shadow-sm">
-              <LazySessionVectorMap className="community-directory-map" center={mapCenter} pins={communityPins} selectedPinId={selected ? `community:${selected.slug}` : null} onPinClick={(pin) => setSelectedSlug(pin?.id.replace('community:', '') ?? null)} onMapClick={() => setSelectedSlug(null)} initialZoom={11.2} maxFitZoom={13} fitPadding={84} showControls />
-              {selected && <div className="absolute bottom-5 left-5 z-30 w-[380px]"><CommunitySpotlight community={selected} /></div>}
+            <div className="mt-6 grid h-[610px] grid-cols-[minmax(300px,360px)_1fr] overflow-hidden rounded-[2rem] border border-black/10 bg-white shadow-sm">
+              <aside className="overflow-y-auto border-r border-black/10 p-4">
+                <div className="mb-4 flex items-center justify-between"><div><p className="text-lg font-bold">{filtered.length} communities</p><p className="text-xs text-black/50">Choose one to see it on the map</p></div><Link href="/communities/nominate" className="text-xs font-bold text-[#E83E6B]">Suggest one</Link></div>
+                {filtered.length ? <div className="space-y-3">{filtered.map((item) => <CommunityMapResult key={item.slug} community={item} active={selectedSlug === item.slug} onSelect={() => setSelectedSlug(item.slug)} />)}</div> : <EmptyResults onClear={clearFilters} />}
+              </aside>
+              <div className="relative min-w-0 bg-[#F4EFE3]">
+                <LazySessionVectorMap className="community-directory-map" center={mapCenter} pins={communityPins} selectedPinId={selected ? `community:${selected.slug}` : null} onPinClick={(pin) => setSelectedSlug(pin?.id.replace('community:', '') ?? null)} onMapClick={() => setSelectedSlug(null)} initialZoom={11.2} maxFitZoom={13} fitPadding={84} showControls />
+                {selected && <div className="absolute bottom-5 left-5 z-30 w-[380px]"><CommunitySpotlight community={selected} /></div>}
+              </div>
             </div>
           ) : (
-            <div className="mt-8 grid grid-cols-3 gap-5 text-[#17130E] [&_h2]:!text-[#17130E]">{filtered.map((item) => <CommunityRow key={item.slug} community={item} desktop />)}</div>
+            filtered.length ? <div className="mt-8 grid grid-cols-3 gap-5 text-[#17130E] [&_h2]:!text-[#17130E]">{filtered.map((item) => <CommunityRow key={item.slug} community={item} desktop />)}</div> : <EmptyResults onClear={clearFilters} />
           )}
         </section>
       </div>
     </main>
   )
+}
+
+function EmptyResults({ onClear, compact = false }: { onClear: () => void; compact?: boolean }) {
+  return <div className={`${compact ? 'absolute inset-x-4 top-1/2 z-30 -translate-y-1/2' : 'mt-10'} rounded-3xl border border-black/10 bg-white/95 p-6 text-center shadow-sm`}><p className="text-lg font-bold">No communities match yet</p><p className="mt-2 text-sm text-black/55">Try a broader activity or clear the filters.</p><button type="button" onClick={onClear} className="mt-4 h-11 rounded-full bg-[#17130E] px-5 text-sm font-bold text-white">Clear filters</button></div>
+}
+
+function CommunityMapResult({ community, active, onSelect }: { community: CommunityData; active: boolean; onSelect: () => void }) {
+  return <button type="button" onClick={onSelect} aria-pressed={active} className={`w-full rounded-2xl border p-3 text-left transition-colors ${active ? 'border-[#E83E6B] bg-[#FDEBF0]' : 'border-black/10 bg-[#F8F4EA] hover:border-black/25'}`}><p className="truncate text-sm font-bold">{community.name}</p><p className="mt-1 text-xs text-black/55">{getCategoryEmoji(community.category)} {categoryName(community.category)} · {community.usualArea || community.cityName}</p><p className="mt-2 line-clamp-1 text-xs font-medium">{community.usualSchedule || 'Schedule varies'} · {priceLabel(community.priceType)}</p></button>
 }
 
 function FilterChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {

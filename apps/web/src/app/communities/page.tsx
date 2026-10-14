@@ -24,6 +24,7 @@ interface CommunitiesPageProps {
     q?: string
     fit?: string
     price?: string
+    when?: string
     view?: string
   }>
 }
@@ -31,7 +32,7 @@ interface CommunitiesPageProps {
 export default async function CommunitiesPage({ searchParams }: CommunitiesPageProps) {
   const communities = await getCommunityDirectory()
   const cities = getCitiesFromCommunityDirectory(communities)
-  const { city, q, fit, price, view } = await searchParams
+  const { city, q, fit, price, when, view } = await searchParams
 
   const subtitle = getCommunityDirectorySubtitle(communities.length, cities)
 
@@ -44,6 +45,7 @@ export default async function CommunitiesPage({ searchParams }: CommunitiesPageP
       initialSearchQuery={q ?? ''}
       initialFitFilter={fit ?? null}
       initialPriceFilter={price ?? null}
+      initialWhenFilter={when ?? null}
       initialView={view ?? null}
     />
   )

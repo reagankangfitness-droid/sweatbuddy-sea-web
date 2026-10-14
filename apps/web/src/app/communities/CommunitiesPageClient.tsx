@@ -26,6 +26,19 @@ import {
 
 export interface CommunityMemberData { id: string; name: string | null; imageUrl: string | null }
 export interface NextEventData { id: string; title: string; startTime: string; categorySlug: string | null }
+interface DiscoverySession {
+  id: string
+  title: string
+  startTime: string | null
+  categorySlug: string | null
+  city: string
+  address: string | null
+  latitude: number
+  longitude: number
+  activityMode: string
+  community: { slug: string; name: string } | null
+  host: { name?: string | null } | null
+}
 export interface CommunityData {
   id: string
   name: string
@@ -72,6 +85,7 @@ interface Props {
   initialSearchQuery?: string
   initialFitFilter?: string | null
   initialPriceFilter?: string | null
+  initialWhenFilter?: string | null
   initialView?: string | null
 }
 
@@ -100,6 +114,33 @@ function nextDate(value: string) {
   return date.toLocaleDateString('en-SG', { weekday: 'short', day: 'numeric' })
 }
 
+function communitySlugForSession(session: DiscoverySession) {
+  if (session.community?.slug) return session.community.slug
+  if (
+    session.host?.name?.trim().toLowerCase() === 'caliversity official'
+    && session.title.toLowerCase().startsWith('caliversity')
+  ) return 'caliversity'
+  return null
+}
+
+function sessionMatchesWhen(
+  session: Pick<DiscoverySession, 'startTime'> | NextEventData,
+  when: 'anytime' | 'today' | 'this-week' | 'weekend',
+) {
+  if (when === 'anytime') return true
+  if (!session.startTime) return false
+  const date = new Date(session.startTime)
+  const now = new Date()
+  const endOfToday = new Date(now)
+  endOfToday.setHours(23, 59, 59, 999)
+  const endOfWeek = new Date(now)
+  endOfWeek.setDate(now.getDate() + 7)
+  endOfWeek.setHours(23, 59, 59, 999)
+  if (when === 'today') return date >= now && date <= endOfToday
+  if (when === 'this-week') return date >= now && date <= endOfWeek
+  return date >= now && date <= endOfWeek && (date.getDay() === 0 || date.getDay() === 6)
+}
+
 export default function CommunitiesPageClient({
   communities,
   cities,
@@ -107,6 +148,7 @@ export default function CommunitiesPageClient({
   initialSearchQuery = '',
   initialFitFilter = null,
   initialPriceFilter = null,
+  initialWhenFilter = null,
   initialView = null,
 }: Props) {
   const [query, setQuery] = useState(initialSearchQuery)
@@ -115,20 +157,71 @@ export default function CommunitiesPageClient({
   const [soloOnly, setSoloOnly] = useState(initialFitFilter === 'solo')
   const [socialOnly, setSocialOnly] = useState(initialFitFilter === 'social')
   const [freeOnly, setFreeOnly] = useState(initialPriceFilter === 'free')
+  const [when, setWhen] = useState<'anytime' | 'today' | 'this-week' | 'weekend'>(
+    initialWhenFilter === 'today' || initialWhenFilter === 'this-week' || initialWhenFilter === 'weekend'
+      ? initialWhenFilter
+      : 'anytime',
+  )
+  const [sessions, setSessions] = useState<DiscoverySession[]>([])
   const [view, setView] = useState<'map' | 'list'>(initialView === 'list' ? 'list' : 'map')
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
   const router = useRouter()
   const pathname = usePathname()
 
-  const filtered = useMemo(() => communities.filter((item) => {
+  useEffect(() => {
+    const params = new URLSearchParams({ city: city ?? 'singapore' })
+    fetch(`/api/buddy/sessions?${params}`)
+      .then((response) => response.ok ? response.json() : { sessions: [] })
+      .then((data) => setSessions(Array.isArray(data.sessions) ? data.sessions : []))
+      .catch(() => setSessions([]))
+  }, [city])
+
+  const sessionsByCommunity = useMemo(() => {
+    const grouped = new Map<string, DiscoverySession[]>()
+    for (const session of sessions) {
+      const slug = communitySlugForSession(session)
+      if (!slug) continue
+      grouped.set(slug, [...(grouped.get(slug) ?? []), session])
+    }
+    return grouped
+  }, [sessions])
+
+  const communitiesWithSessions = useMemo(() => communities.map((community) => {
+    const nextSession = sessionsByCommunity.get(community.slug)?.[0]
+    if (!nextSession?.startTime) return community
+    return {
+      ...community,
+      nextEvent: {
+        id: nextSession.id,
+        title: nextSession.title,
+        startTime: nextSession.startTime,
+        categorySlug: community.category,
+      },
+    }
+  }), [communities, sessionsByCommunity])
+
+  const filtered = useMemo(() => communitiesWithSessions.filter((item) => {
     const match = `${item.name} ${item.category} ${item.usualArea ?? ''} ${item.bestFor ?? ''}`.toLowerCase()
+    const upcoming = sessionsByCommunity.get(item.slug) ?? []
+    const matchesTime = when === 'anytime'
+      || upcoming.some((session) => sessionMatchesWhen(session, when))
+      || Boolean(item.nextEvent && sessionMatchesWhen(item.nextEvent, when))
     return (!query.trim() || match.includes(query.toLowerCase()))
       && (!city || item.citySlug === city)
       && (!beginnerOnly || item.beginnerFriendly)
       && (!soloOnly || item.soloFriendly)
       && (!socialOnly || item.vibeTags.some((tag) => ['social', 'social_run', 'connection', 'community', 'inclusive'].includes(tag)))
       && (!freeOnly || item.priceType === 'free')
-  }), [communities, query, city, beginnerOnly, soloOnly, socialOnly, freeOnly])
+      && matchesTime
+  }), [communitiesWithSessions, query, city, beginnerOnly, soloOnly, socialOnly, freeOnly, when, sessionsByCommunity])
+  const independentSessions = useMemo(
+    () => sessions.filter((session) => (
+      !communitySlugForSession(session)
+      && session.categorySlug === 'running'
+      && sessionMatchesWhen(session, when)
+    )),
+    [sessions, when],
+  )
   const selected = filtered.find((item) => item.slug === selectedSlug) ?? null
   const mapCenter = CITY_CENTERS[city ?? selected?.citySlug ?? 'singapore'] ?? CITY_CENTERS.singapore
   const communityPins = useMemo<SessionVectorMapPin[]>(() => filtered.map((item) => ({
@@ -158,11 +251,12 @@ export default function CommunitiesPageClient({
     else if (soloOnly) params.set('fit', 'solo')
     else if (socialOnly) params.set('fit', 'social')
     if (freeOnly) params.set('price', 'free')
+    if (when !== 'anytime') params.set('when', when)
     if (view !== 'map') params.set('view', view)
     const next = params.toString() ? `${pathname}?${params}` : pathname
     const timer = window.setTimeout(() => router.replace(next, { scroll: false }), 200)
     return () => window.clearTimeout(timer)
-  }, [query, city, beginnerOnly, soloOnly, socialOnly, freeOnly, view, pathname, router])
+  }, [query, city, beginnerOnly, soloOnly, socialOnly, freeOnly, when, view, pathname, router])
 
   useEffect(() => {
     if (selectedSlug && !filtered.some((item) => item.slug === selectedSlug)) setSelectedSlug(null)
@@ -175,6 +269,7 @@ export default function CommunitiesPageClient({
     setSoloOnly(false)
     setSocialOnly(false)
     setFreeOnly(false)
+    setWhen('anytime')
     setSelectedSlug(null)
   }
 
@@ -202,7 +297,10 @@ export default function CommunitiesPageClient({
 
         <div className="sticky top-[88px] z-40 overflow-x-auto border-b border-black/10 bg-[#F8F4EA] px-4 py-3 [scrollbar-width:none]">
           <div className="flex w-max gap-2">
-            <FilterChip active onClick={() => undefined}>All communities <span className="opacity-55">{communities.length}</span></FilterChip>
+            <FilterChip active={when === 'anytime'} onClick={() => setWhen('anytime')}>Anytime</FilterChip>
+            <FilterChip active={when === 'today'} onClick={() => setWhen('today')}>Today</FilterChip>
+            <FilterChip active={when === 'this-week'} onClick={() => setWhen('this-week')}>This week</FilterChip>
+            <FilterChip active={when === 'weekend'} onClick={() => setWhen('weekend')}>Weekend</FilterChip>
             <FilterChip active={socialOnly} onClick={() => { setSocialOnly(!socialOnly); setBeginnerOnly(false); setSoloOnly(false) }}>Social-first</FilterChip>
             <FilterChip active={beginnerOnly} onClick={() => { setBeginnerOnly(!beginnerOnly); setSoloOnly(false); setSocialOnly(false) }}>First-timer friendly</FilterChip>
             <FilterChip active={soloOnly} onClick={() => { setSoloOnly(!soloOnly); setBeginnerOnly(false); setSocialOnly(false) }}>Solo-friendly</FilterChip>
@@ -240,8 +338,9 @@ export default function CommunitiesPageClient({
           </section>
         ) : (
           <section className="px-4 pb-28 pt-5">
-            <div className="mb-4 flex items-end justify-between"><div><p className="text-2xl font-bold">{filtered.length} communities</p><p className="mt-1 text-sm text-black/55">Active clubs with checked join paths</p></div><Link href="/communities/nominate" className="text-xs font-bold text-[#E83E6B]">Suggest one</Link></div>
+            <div className="mb-4 flex items-end justify-between"><div><p className="text-2xl font-bold">{filtered.length} communities</p><p className="mt-1 text-sm text-black/55">Find a crew and its next session</p></div><Link href="/communities/nominate" className="text-xs font-bold text-[#E83E6B]">Suggest one</Link></div>
             {filtered.length ? <div className="space-y-3">{filtered.map((item) => <CommunityRow key={item.slug} community={item} />)}</div> : <EmptyResults onClear={clearFilters} />}
+            {independentSessions.length > 0 && <SessionSection sessions={independentSessions} />}
           </section>
         )}
         <ProductNav active="explore" />
@@ -250,10 +349,10 @@ export default function CommunitiesPageClient({
       <div className="hidden md:block">
         <ProductHeader active="explore" />
         <section className="mx-auto max-w-6xl px-6 py-10">
-          <p className="sb-eyebrow">Run clubs + Caliversity</p>
+          <p className="sb-eyebrow">Communities + upcoming sessions</p>
           <div className="mt-3 flex items-end justify-between gap-8">
-            <h1 className="sb-type-page-title max-w-2xl text-[#17130E]">Find a crew that makes showing up easier.</h1>
-            <p className="sb-type-body max-w-sm text-black/55">Browse active run clubs and Caliversity by area, schedule, format, and first-timer fit.</p>
+            <h1 className="sb-type-page-title max-w-2xl text-[#17130E]">Find your crew. See when they move next.</h1>
+            <p className="sb-type-body max-w-sm text-black/55">Explore source-checked communities and their upcoming sessions in one place.</p>
           </div>
           <div className="mt-8 flex items-center gap-3">
             <label className="relative flex-1">
@@ -264,7 +363,10 @@ export default function CommunitiesPageClient({
             <button type="button" onClick={() => setView('list')} className={`h-12 rounded-full px-5 text-sm font-bold ${view === 'list' ? 'bg-[#17130E] text-white' : 'border border-black/10 bg-white'}`}>List</button>
           </div>
           <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
-            <FilterChip active onClick={() => undefined}>All communities {communities.length}</FilterChip>
+            <FilterChip active={when === 'anytime'} onClick={() => setWhen('anytime')}>Anytime</FilterChip>
+            <FilterChip active={when === 'today'} onClick={() => setWhen('today')}>Today</FilterChip>
+            <FilterChip active={when === 'this-week'} onClick={() => setWhen('this-week')}>This week</FilterChip>
+            <FilterChip active={when === 'weekend'} onClick={() => setWhen('weekend')}>Weekend</FilterChip>
             <FilterChip active={socialOnly} onClick={() => { setSocialOnly(!socialOnly); setBeginnerOnly(false); setSoloOnly(false) }}>Social-first</FilterChip>
             <FilterChip active={beginnerOnly} onClick={() => { setBeginnerOnly(!beginnerOnly); setSoloOnly(false); setSocialOnly(false) }}>First-timer friendly</FilterChip>
             <FilterChip active={soloOnly} onClick={() => { setSoloOnly(!soloOnly); setBeginnerOnly(false); setSocialOnly(false) }}>Solo-friendly</FilterChip>
@@ -282,7 +384,7 @@ export default function CommunitiesPageClient({
               </div>
             </div>
           ) : (
-            filtered.length ? <div className="mt-8 grid grid-cols-3 gap-5 text-[#17130E] [&_h2]:!text-[#17130E]">{filtered.map((item) => <CommunityRow key={item.slug} community={item} desktop />)}</div> : <EmptyResults onClear={clearFilters} />
+            <>{filtered.length ? <div className="mt-8 grid grid-cols-3 gap-5 text-[#17130E] [&_h2]:!text-[#17130E]">{filtered.map((item) => <CommunityRow key={item.slug} community={item} desktop />)}</div> : <EmptyResults onClear={clearFilters} />}{independentSessions.length > 0 && <SessionSection sessions={independentSessions} />}</>
           )}
         </section>
       </div>
@@ -309,5 +411,24 @@ function CommunitySpotlight({ community }: { community: CommunityData }) {
 
 function CommunityRow({ community, desktop = false }: { community: CommunityData; desktop?: boolean }) {
   const image = community.coverImage || community.logoImage || getCategoryFallbackImage(community.category)
-  return <Link href={`/communities/${community.slug}`} className={`group block overflow-hidden border border-black/10 bg-white shadow-sm ${desktop ? 'rounded-3xl' : 'rounded-2xl'}`}><div className={`relative ${desktop ? 'aspect-[16/9]' : 'h-32'}`}><Image src={image} alt={community.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" unoptimized={!image.startsWith('/')} /><div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" /><span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold">{getCategoryEmoji(community.category)} {categoryName(community.category)}</span></div><div className="p-4"><div className="flex items-start justify-between gap-3"><div className="min-w-0"><h2 className="truncate text-lg font-bold">{community.name}</h2><p className="mt-1 text-xs text-black/55">{community.usualArea || community.cityName || 'Singapore'} · {community.usualSchedule || 'Schedule varies'}</p></div><ArrowRight className="mt-1 h-4 w-4 shrink-0" /></div><div className="mt-3 flex flex-wrap gap-1.5"><span className="rounded-full bg-[#F8F4EA] px-2.5 py-1 text-[10px] font-semibold">{community.beginnerFriendly ? 'Beginner-friendly' : 'Experienced'}</span><span className="rounded-full bg-[#F8F4EA] px-2.5 py-1 text-[10px] font-semibold">{priceLabel(community.priceType)}</span>{community.nextEvent && <span className="rounded-full bg-[#FDE6E1] px-2.5 py-1 text-[10px] font-semibold text-[#B72E1E]">Next {nextDate(community.nextEvent.startTime)}</span>}</div></div></Link>
+  return <Link href={`/communities/${community.slug}`} className={`group block overflow-hidden border border-black/10 bg-white text-[#17130E] shadow-sm ${desktop ? 'rounded-3xl' : 'rounded-2xl'}`}><div className={`relative ${desktop ? 'aspect-[16/9]' : 'h-32'}`}><Image src={image} alt={community.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" unoptimized={!image.startsWith('/')} /><div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" /><span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold">{getCategoryEmoji(community.category)} {categoryName(community.category)}</span></div><div className="p-4"><div className="flex items-start justify-between gap-3"><div className="min-w-0"><h2 className="truncate text-lg font-bold text-[#17130E]">{community.name}</h2><p className="mt-1 text-xs text-black/55">{community.usualArea || community.cityName || 'Singapore'} · {community.usualSchedule || 'Schedule varies'}</p></div><ArrowRight className="mt-1 h-4 w-4 shrink-0" /></div><div className="mt-3 flex flex-wrap gap-1.5"><span className="rounded-full bg-[#F8F4EA] px-2.5 py-1 text-[10px] font-semibold">{community.beginnerFriendly ? 'Beginner-friendly' : 'Experienced'}</span><span className="rounded-full bg-[#F8F4EA] px-2.5 py-1 text-[10px] font-semibold">{priceLabel(community.priceType)}</span>{community.nextEvent && <span className="rounded-full bg-[#FDE6E1] px-2.5 py-1 text-[10px] font-semibold text-[#B72E1E]">Next {nextDate(community.nextEvent.startTime)}</span>}</div></div></Link>
+}
+
+function SessionSection({ sessions }: { sessions: DiscoverySession[] }) {
+  return (
+    <section className="mt-10 border-t border-black/10 pt-6">
+      <p className="sb-eyebrow">Local hosts</p>
+      <h2 className="mt-2 text-xl font-bold text-[#17130E]">Independent running sessions</h2>
+      <p className="mt-1 text-sm text-black/55">One-off plans that are not attached to a directory community.</p>
+      <div className="mt-4 grid gap-3 md:grid-cols-3">
+        {sessions.map((session) => (
+          <Link key={session.id} href={`/activities/${session.id}`} className="rounded-2xl border border-black/10 bg-white p-4 text-[#17130E] shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-wide text-[#E83E6B]">{session.startTime ? nextDate(session.startTime) : 'Time TBA'}</p>
+            <h3 className="mt-2 font-bold text-[#17130E]">{session.title}</h3>
+            <p className="mt-1 text-xs text-black/55">{session.address || session.city} · Local host</p>
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
 }

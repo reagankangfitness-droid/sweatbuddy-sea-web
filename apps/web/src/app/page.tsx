@@ -14,9 +14,9 @@ import CommunitiesPage from './communities/page'
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'Explore Fitness Communities Near You',
+  title: 'Run Clubs & Caliversity in Singapore',
   description:
-    'Explore active fitness communities by map, activity, area, and first-timer fit.',
+    'Explore source-checked Singapore run clubs and Caliversity by map, area, schedule, and first-timer fit.',
 }
 
 const decisionFilters = [
@@ -137,7 +137,7 @@ async function MarketingHomePage() {
             />
           </Link>
           <p className="hidden min-w-0 flex-1 truncate text-sm font-semibold uppercase tracking-[0.18em] text-white/44 lg:block">
-            Singapore&apos;s social fitness guide
+            Singapore&apos;s run club guide
           </p>
           <nav className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
             <TrackedLink
@@ -176,8 +176,8 @@ async function MarketingHomePage() {
                   Find your people. Then go move together.
                 </h1>
                 <p className="mt-4 max-w-2xl text-sm leading-6 text-white/62 sm:text-base">
-                  Source-checked run clubs, yoga groups, games, and wellness communities—organized
-                  by area, vibe, schedule, and beginner-friendliness.
+                  Source-checked Singapore run clubs and Caliversity—organized by area, social fit,
+                  schedule, and beginner-friendliness.
                 </p>
                 <div className="mt-5">
                   <TrackedLink
@@ -200,7 +200,7 @@ async function MarketingHomePage() {
                 >
                   <Search size={18} strokeWidth={2.4} className="shrink-0" />
                   <span className="min-w-0 truncate">
-                    Search communities, activities, or areas...
+                    Search run clubs, Caliversity, or areas...
                   </span>
                 </TrackedLink>
 

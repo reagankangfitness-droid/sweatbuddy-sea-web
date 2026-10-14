@@ -67,7 +67,7 @@ describe('route contracts', () => {
     expect(homePage).toContain('CityGuideTabs')
     expect(homePage).toContain('active="communities"')
     expect(homePage).toContain('Find your people. Then go move together.')
-    expect(homePage).toContain('Source-checked run clubs, yoga groups, games, and wellness communities')
+    expect(homePage).toContain('Source-checked Singapore run clubs and Caliversity')
     expect(homePage).toContain('Good places to start')
     expect(homePage).toContain("city: { equals: 'Singapore'")
     expect(homePage).not.toContain('Plans you can show up to near you.')
@@ -264,7 +264,7 @@ describe('route contracts', () => {
     expect(placePage).not.toContain('Open official link')
     expect(placePage).not.toContain('Suggest official page')
     expect(placePage).not.toContain('sourceConfidenceScore')
-    expect(singaporePage).toContain('Fitness Communities in Singapore')
+    expect(singaporePage).toContain('Run Clubs & Caliversity in Singapore')
     expect(singaporePage).toContain('CityLandingPage')
     expect(singaporePage).toContain('singaporeLanding')
     expect(singaporePage).not.toContain('FitnessDirectoryPage')
@@ -273,7 +273,7 @@ describe('route contracts', () => {
     expect(singaporePage).toContain("params.tab === 'map'")
     expect(bangkokPage).toContain('Find Friends Through Fitness in Bangkok')
     expect(bangkokPage).toContain('index: false')
-    expect(cityLanding).toContain('Fitness communities in Singapore you can actually join.')
+    expect(cityLanding).toContain('Run clubs and Caliversity you can actually join.')
     expect(cityLanding).toContain('Fitness communities in Bangkok you can actually join.')
     expect(cityLanding).toContain(
       'where movement gives everyone a reason to show up, talk, and come back',

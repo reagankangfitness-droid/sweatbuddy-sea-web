@@ -5,8 +5,8 @@ import SavedCommunitiesPageClient from './SavedCommunitiesPageClient'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Saved Fitness Communities',
-  description: 'Return to the fitness communities you saved on SweatBuddies and check their official join paths.',
+  title: 'Saved Run Clubs & Caliversity',
+  description: 'Return to the Singapore run clubs and Caliversity listing you saved on SweatBuddies.',
   robots: {
     index: false,
     follow: false,

@@ -3,10 +3,10 @@ import type { CityLandingPageProps } from '@/components/landing/CityLandingPage'
 export const singaporeLanding: CityLandingPageProps = {
   city: 'Singapore',
   citySlug: 'singapore',
-  eyebrow: 'Social fitness in Singapore',
-  title: 'Fitness communities in Singapore you can actually join.',
+  eyebrow: 'Run crews in Singapore',
+  title: 'Run clubs and Caliversity you can actually join.',
   description:
-    'Join local run clubs, pickleball games, yoga groups, and social workouts where movement gives everyone a reason to show up, talk, and come back.',
+    'Join source-checked run clubs or Caliversity with clearer schedules, social context, and official ways to get started.',
   heroImage: '/images/cities/singapore.jpg',
   heroAlt: 'Singapore skyline and local fitness communities',
   painIntro:
@@ -15,9 +15,9 @@ export const singaporeLanding: CityLandingPageProps = {
   painBody:
     'Singapore is efficient, polished, and busy. SweatBuddies helps you find recurring fitness crews where strangers become familiar faces one session at a time.',
   routes: [
-    { label: 'Run clubs', image: '/banner/running.jpg', note: 'Most repeatable' },
-    { label: 'Yoga groups', image: '/images/hero-bg.jpg', note: 'Low-pressure community' },
-    { label: 'Pickleball crews', image: '/images/community-bonds.jpg', note: 'Beginner-friendly play' },
+    { label: 'Social run clubs', image: '/banner/running.jpg', note: 'Easy weekly rhythm' },
+    { label: 'Performance run clubs', image: '/images/hero/run-club.jpg', note: 'Train with a crew' },
+    { label: 'Caliversity', image: '/images/hosts/caliversity.jpg', note: 'Free calisthenics' },
   ],
   moments: [
     'You just moved here and your week is work, errands, and solo gym sessions.',

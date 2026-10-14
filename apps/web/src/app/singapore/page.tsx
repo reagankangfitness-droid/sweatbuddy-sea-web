@@ -4,13 +4,13 @@ import { CityLandingPage } from '@/components/landing/CityLandingPage'
 import { singaporeLanding } from '@/lib/city-landing'
 
 export const metadata: Metadata = {
-  title: 'Fitness Communities in Singapore | SweatBuddies',
+  title: 'Run Clubs & Caliversity in Singapore | SweatBuddies',
   description:
-    'Find Singapore run clubs, yoga groups, pickleball crews, and community workouts you can actually join.',
+    'Find source-checked Singapore run clubs and Caliversity with official joining paths.',
   openGraph: {
-    title: 'Fitness Communities in Singapore | SweatBuddies',
+    title: 'Run Clubs & Caliversity in Singapore | SweatBuddies',
     description:
-      'Find local fitness communities in Singapore where first-timers are welcome and meeting people starts with movement.',
+      'Find local run clubs and Caliversity where first-timers are welcome and meeting people starts with movement.',
     images: ['/images/cities/singapore.jpg'],
   },
 }

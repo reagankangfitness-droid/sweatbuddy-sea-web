@@ -27,32 +27,6 @@ export const COMMUNITY_SEO_GUIDES: CommunitySeoGuide[] = [
     relatedSearches: ['Solo-friendly run clubs', 'Free running communities', 'Central Singapore running groups'],
   },
   {
-    slug: 'beginner-friendly-yoga-communities',
-    title: 'Beginner-Friendly Yoga and Wellness Communities in Singapore',
-    metaDescription:
-      'Browse yoga, meditation, and wellness communities in Singapore with official links and soft-entry context for beginners.',
-    eyebrow: 'Yoga and wellness',
-    headline: 'Beginner-friendly yoga and wellness communities in Singapore',
-    intro:
-      'For people who want a calmer way in, these listings prioritize mind-body groups with official source links and beginner-friendly signals.',
-    ctaLabel: 'Get wellness picks',
-    filterLabel: 'Yoga and wellness',
-    relatedSearches: ['Meditation communities', 'Outdoor yoga Singapore', 'Solo-friendly wellness groups'],
-  },
-  {
-    slug: 'pickleball-padel-groups',
-    title: 'Pickleball and Padel Groups for Beginners in Singapore',
-    metaDescription:
-      'Find pickleball, padel, tennis, and other social racquet groups in Singapore with public join or booking paths.',
-    eyebrow: 'Social games',
-    headline: 'Pickleball and padel groups for beginners in Singapore',
-    intro:
-      'Racquet sports are easier when you do not need to bring a fixed partner. Start with groups and hubs that make social play easier to discover.',
-    ctaLabel: 'Get game picks',
-    filterLabel: 'Social racquet groups',
-    relatedSearches: ['Pickleball open play', 'Padel Singapore', 'Social badminton groups'],
-  },
-  {
     slug: 'free-fitness-communities',
     title: 'Free and Low-Cost Fitness Communities in Singapore',
     metaDescription:
@@ -91,18 +65,6 @@ export function filterCommunitiesForSeoGuide(communities: CommunityData[], guide
     case 'beginner-friendly-run-clubs':
       return singaporeCommunities.filter(
         (community) => community.category === 'running' && community.beginnerFriendly,
-      )
-    case 'beginner-friendly-yoga-communities':
-      return singaporeCommunities.filter(
-        (community) =>
-          ['yoga', 'pilates', 'meditation'].includes(community.category) &&
-          community.beginnerFriendly,
-      )
-    case 'pickleball-padel-groups':
-      return singaporeCommunities.filter(
-        (community) =>
-          ['pickleball', 'padel', 'tennis', 'badminton'].includes(community.category) ||
-          community.vibeTags.some((tag) => ['racquet', 'open_play'].includes(tag)),
       )
     case 'free-fitness-communities':
       return singaporeCommunities.filter((community) =>

@@ -41,8 +41,15 @@ interface Props {
 }
 
 async function getCommunity(slug: string) {
-  const community = await prisma.community.findUnique({
-    where: { slug },
+  const verificationCutoff = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000)
+  const community = await prisma.community.findFirst({
+    where: {
+      slug,
+      isActive: true,
+      moderationStatus: 'LIVE',
+      lastVerifiedAt: { gte: verificationCutoff },
+      OR: [{ category: 'running' }, { slug: 'caliversity' }],
+    },
     include: {
       city: true,
       createdBy: {

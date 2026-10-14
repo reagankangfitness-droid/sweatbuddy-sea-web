@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import BuddyPage from '../buddy/page'
 
 export const metadata: Metadata = {
-  title: 'This Week',
-  description: 'See upcoming fitness sessions from active communities in Singapore.',
+  title: 'Fitness Sessions This Week in Singapore',
+  description: 'See upcoming sessions from Singapore run clubs, Caliversity, and local hosts.',
 }
 
 export default BuddyPage

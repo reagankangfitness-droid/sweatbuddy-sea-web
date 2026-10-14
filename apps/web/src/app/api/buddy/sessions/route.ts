@@ -15,6 +15,7 @@ import {
   type ResolvedSessionMedia,
 } from '@/lib/session-media'
 import { isRecoverableDiscoveryDbError } from '@/lib/recoverable-db-error'
+import { getCommunitySeedBySlug } from '@/lib/community-directory-seed'
 
 export const dynamic = 'force-dynamic'
 
@@ -436,8 +437,10 @@ function formatSession(
   const attendeeCount = activity._count?.userActivities ?? attendees.length
   const isFull = typeof activity.maxPeople === 'number' && attendeeCount >= activity.maxPeople
   const community = normalizeCommunity(activity.community)
+  const directoryCommunity = community?.slug ? getCommunitySeedBySlug(community.slug) : null
+  const categorySlug = directoryCommunity?.category ?? activity.categorySlug
   const media = resolvedMedia ?? {
-    resolvedImageUrl: activity.imageUrl || getCategoryFallbackImage(activity.categorySlug),
+    resolvedImageUrl: activity.imageUrl || getCategoryFallbackImage(categorySlug),
     imageSourceType: activity.imageUrl ? 'SESSION_UPLOAD' : 'CATEGORY_FALLBACK',
     imageSourceLabel: activity.imageUrl ? 'Session photo' : 'Activity image',
     imageAttributionName: null,
@@ -451,7 +454,7 @@ function formatSession(
     title: activity.title,
     description: activity.description,
     activityMode: activity.activityMode,
-    categorySlug: activity.categorySlug,
+    categorySlug,
     city: activity.city,
     address: activity.address,
     latitude: activity.latitude,

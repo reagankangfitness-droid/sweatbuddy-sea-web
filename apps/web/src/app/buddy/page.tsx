@@ -632,7 +632,7 @@ function ResultsCommandHeader({
       </div>
       <div className="mt-3 grid grid-cols-2 gap-1.5">
         <MiniSignal label="Plans" value={sessionCount} active={sessionCount > 0} />
-        <MiniSignal label="Communities" value={communityCount ?? 0} active={(communityCount ?? 0) > 0} />
+        <MiniSignal label="Directory crews" value={communityCount ?? 0} active={(communityCount ?? 0) > 0} />
       </div>
     </div>
   )
@@ -2142,12 +2142,12 @@ function BuddyPageInner() {
             <Link
               href="/"
               aria-label="SweatBuddies home"
-              className="inline-flex min-h-9 min-w-9 items-center bg-[#E83E6B] px-2.5"
+              className="inline-flex min-h-9 min-w-9 items-center px-1"
             >
               <LogoWithText
                 size={23}
-                color="#FFFFFF"
-                textColor="#FFFFFF"
+                color="#E83E6B"
+                textColor="#17130E"
                 wordmarkClassName="max-[360px]:hidden"
               />
             </Link>
@@ -2177,7 +2177,7 @@ function BuddyPageInner() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#666666]" />
             <input
               type="text"
-              placeholder="Search communities or activities"
+              placeholder="Search upcoming sessions"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="min-h-10 w-full rounded-full border border-white/12 bg-white/[0.045] py-2 pl-9 pr-10 text-sm text-white transition-all placeholder:text-white/38 focus:border-white/30 focus:outline-none"
@@ -2222,8 +2222,8 @@ function BuddyPageInner() {
                       onClick={() => updateDateFilter(dateStr)}
                       className={`flex min-h-10 min-w-[42px] flex-shrink-0 flex-col items-center justify-center rounded-lg px-2.5 py-1.5 text-center transition-all ${
                         dateFilter === dateStr
-                          ? 'bg-white text-black shadow-md'
-                          : 'bg-[#171A18] text-[#999999] shadow-none'
+                          ? 'bg-[#17130E] text-white shadow-sm'
+                          : 'border border-black/10 bg-white text-black/55 shadow-none'
                       }`}
                     >
                       <span className="text-[10px] font-medium leading-tight">{dayLabel}</span>
@@ -2237,8 +2237,8 @@ function BuddyPageInner() {
                 onClick={() => updateDateFilter('')}
                 className={`flex min-h-10 min-w-[70px] flex-shrink-0 flex-col items-center justify-center rounded-lg px-2.5 py-1.5 text-center transition-all ${
                   !dateFilter
-                    ? 'bg-white text-black shadow-md'
-                    : 'bg-[#171A18] text-[#999999] shadow-none'
+                    ? 'bg-[#17130E] text-white shadow-sm'
+                    : 'border border-black/10 bg-white text-black/55 shadow-none'
                 }`}
               >
                 <span className="text-[10px] font-medium leading-tight">All</span>
@@ -2249,7 +2249,7 @@ function BuddyPageInner() {
 
           {/* Mobile collapsed filters */}
           <details className={viewMode === 'map' ? 'hidden' : 'group sm:hidden'}>
-            <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between rounded-lg border border-white/[0.12] bg-[#171A18] px-3 text-sm font-semibold text-white transition-colors group-open:border-white/30 [&::-webkit-details-marker]:hidden">
+            <summary className="flex min-h-10 cursor-pointer list-none items-center justify-between rounded-full border border-black/10 bg-white px-4 text-sm font-semibold text-[#17130E] transition-colors group-open:border-[#E83E6B] [&::-webkit-details-marker]:hidden">
               <span>Filters</span>
               <span className="min-w-0 truncate text-right text-[10px] text-[#999999]">
                 {[neighborhoodFilter?.name ?? activeLocationLabel, activeTypeLabel, activePriceLabel]
@@ -4477,7 +4477,7 @@ function SessionCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
     >
-      <div className="group flex w-[286px] min-h-[420px] flex-shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-white/[0.10] bg-[#111412] shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition-colors hover:border-[#E83E6B]/35 hover:bg-[#151816] sm:w-auto sm:flex-shrink">
+      <div className="group flex w-[calc(100vw-2rem)] max-w-full flex-shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-white/[0.10] bg-[#111412] shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition-colors hover:border-[#E83E6B]/35 hover:bg-[#151816] sm:min-h-[420px] sm:w-auto sm:flex-shrink">
         <Link
           href={`/activities/${session.id}`}
           onClick={() => trackSessionClick(session, source, index)}

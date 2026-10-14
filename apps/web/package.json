@@ -25,6 +25,7 @@
     "import:osm-fitness-places": "node scripts/import-osm-fitness-places.js",
     "enrich:google-places": "node scripts/enrich-fitness-places-google.js",
     "sync:media-assets": "node scripts/sync-media-assets.js",
+    "import:community-research": "node scripts/import-community-research.js",
     "clean": "rm -rf .next .turbo node_modules",
     "db:migrate:deploy": "prisma migrate deploy",
     "ensure:clean": "node -e \"const cp=require('node:child_process'); const status=cp.execSync('git status --porcelain',{encoding:'utf8'}); if (status.trim()) { console.error('Refusing to deploy: git working tree has uncommitted changes. Commit or stash first.'); process.exit(1); }\"",

@@ -116,6 +116,7 @@ export default function CommunitiesPageClient({
   const [city, setCity] = useState<string | null>(initialCitySlug)
   const [beginnerOnly, setBeginnerOnly] = useState(initialFitFilter === 'beginner')
   const [soloOnly, setSoloOnly] = useState(initialFitFilter === 'solo')
+  const [socialOnly, setSocialOnly] = useState(initialFitFilter === 'social')
   const [freeOnly, setFreeOnly] = useState(initialPriceFilter === 'free')
   const [view, setView] = useState<'map' | 'list'>(initialView === 'list' ? 'list' : 'map')
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
@@ -130,8 +131,9 @@ export default function CommunitiesPageClient({
       && (!city || item.citySlug === city)
       && (!beginnerOnly || item.beginnerFriendly)
       && (!soloOnly || item.soloFriendly)
+      && (!socialOnly || item.vibeTags.some((tag) => ['social', 'social_run', 'connection', 'community', 'inclusive'].includes(tag)))
       && (!freeOnly || item.priceType === 'free')
-  }), [communities, query, category, city, beginnerOnly, soloOnly, freeOnly])
+  }), [communities, query, category, city, beginnerOnly, soloOnly, socialOnly, freeOnly])
   const selected = filtered.find((item) => item.slug === selectedSlug) ?? null
   const mapCenter = CITY_CENTERS[city ?? selected?.citySlug ?? 'singapore'] ?? CITY_CENTERS.singapore
   const communityPins = useMemo<SessionVectorMapPin[]>(() => filtered.map((item) => ({
@@ -160,12 +162,13 @@ export default function CommunitiesPageClient({
     if (category) params.set('category', category)
     if (beginnerOnly) params.set('fit', 'beginner')
     else if (soloOnly) params.set('fit', 'solo')
+    else if (socialOnly) params.set('fit', 'social')
     if (freeOnly) params.set('price', 'free')
     if (view !== 'map') params.set('view', view)
     const next = params.toString() ? `${pathname}?${params}` : pathname
     const timer = window.setTimeout(() => router.replace(next, { scroll: false }), 200)
     return () => window.clearTimeout(timer)
-  }, [query, city, category, beginnerOnly, soloOnly, freeOnly, view, pathname, router])
+  }, [query, city, category, beginnerOnly, soloOnly, socialOnly, freeOnly, view, pathname, router])
 
   useEffect(() => {
     if (selectedSlug && !filtered.some((item) => item.slug === selectedSlug)) setSelectedSlug(null)
@@ -177,6 +180,7 @@ export default function CommunitiesPageClient({
     setCity(null)
     setBeginnerOnly(false)
     setSoloOnly(false)
+    setSocialOnly(false)
     setFreeOnly(false)
     setSelectedSlug(null)
   }
@@ -207,8 +211,9 @@ export default function CommunitiesPageClient({
           <div className="flex w-max gap-2">
             <FilterChip active={!category} onClick={() => setCategory(null)}>All <span className="opacity-55">{communities.length}</span></FilterChip>
             {categories.slice(0, 6).map((item) => <FilterChip key={item} active={category === item} onClick={() => setCategory(item)}>{getCategoryEmoji(item)} {categoryName(item)}</FilterChip>)}
-            <FilterChip active={beginnerOnly} onClick={() => { setBeginnerOnly(!beginnerOnly); setSoloOnly(false) }}>First-timer friendly</FilterChip>
-            <FilterChip active={soloOnly} onClick={() => { setSoloOnly(!soloOnly); setBeginnerOnly(false) }}>Solo-friendly</FilterChip>
+            <FilterChip active={socialOnly} onClick={() => { setSocialOnly(!socialOnly); setBeginnerOnly(false); setSoloOnly(false) }}>Social-first</FilterChip>
+            <FilterChip active={beginnerOnly} onClick={() => { setBeginnerOnly(!beginnerOnly); setSoloOnly(false); setSocialOnly(false) }}>First-timer friendly</FilterChip>
+            <FilterChip active={soloOnly} onClick={() => { setSoloOnly(!soloOnly); setBeginnerOnly(false); setSocialOnly(false) }}>Solo-friendly</FilterChip>
             <FilterChip active={freeOnly} onClick={() => setFreeOnly(!freeOnly)}>Free</FilterChip>
             <Link href="/communities/nominate" className="flex h-10 items-center whitespace-nowrap rounded-full border border-black/10 bg-white px-4 text-sm font-semibold text-[#E83E6B]">Suggest a community</Link>
           </div>
@@ -269,8 +274,9 @@ export default function CommunitiesPageClient({
           <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
             <FilterChip active={!category} onClick={() => setCategory(null)}>All {communities.length}</FilterChip>
             {categories.map((item) => <FilterChip key={item} active={category === item} onClick={() => setCategory(item)}>{getCategoryEmoji(item)} {categoryName(item)}</FilterChip>)}
-            <FilterChip active={beginnerOnly} onClick={() => { setBeginnerOnly(!beginnerOnly); setSoloOnly(false) }}>First-timer friendly</FilterChip>
-            <FilterChip active={soloOnly} onClick={() => { setSoloOnly(!soloOnly); setBeginnerOnly(false) }}>Solo-friendly</FilterChip>
+            <FilterChip active={socialOnly} onClick={() => { setSocialOnly(!socialOnly); setBeginnerOnly(false); setSoloOnly(false) }}>Social-first</FilterChip>
+            <FilterChip active={beginnerOnly} onClick={() => { setBeginnerOnly(!beginnerOnly); setSoloOnly(false); setSocialOnly(false) }}>First-timer friendly</FilterChip>
+            <FilterChip active={soloOnly} onClick={() => { setSoloOnly(!soloOnly); setBeginnerOnly(false); setSocialOnly(false) }}>Solo-friendly</FilterChip>
             <FilterChip active={freeOnly} onClick={() => setFreeOnly(!freeOnly)}>Free</FilterChip>
           </div>
           {view === 'map' ? (

@@ -14,6 +14,14 @@ describe('community directory publication gate', () => {
       'meditate-singapore',
       'anza-cycling',
       'five45-cycling-club',
+      'chill-pace-run-club',
+      'offform',
+      'founders-running-club-singapore',
+      'runninghour',
+      'singapore-frontrunners',
+      'singapore-runners-club',
+      'run-jpg',
+      'urban-milers',
     ])
   })
 

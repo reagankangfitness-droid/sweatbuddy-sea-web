@@ -12,17 +12,19 @@ export async function getCommunityDirectory(): Promise<CommunityData[]> {
   const communities = await prisma.community
     .findMany({
       where: {
-        category: 'running',
         isActive: true,
         moderationStatus: 'LIVE',
         usualArea: { not: null },
         usualSchedule: { not: null },
         lastVerifiedAt: { gte: verificationCutoff },
-        OR: [
-          { sourceUrl: { not: null } },
-          { communityLink: { not: null } },
-          { websiteUrl: { not: null } },
-          { instagramHandle: { not: null } },
+        AND: [
+          { OR: [{ category: 'running' }, { slug: 'caliversity' }] },
+          { OR: [
+            { sourceUrl: { not: null } },
+            { communityLink: { not: null } },
+            { websiteUrl: { not: null } },
+            { instagramHandle: { not: null } },
+          ] },
         ],
       },
       include: {

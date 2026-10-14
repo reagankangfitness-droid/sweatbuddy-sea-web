@@ -192,7 +192,7 @@ export default function CommunitiesPageClient({
           <div className="mt-2 flex items-center gap-2">
             <label className="relative flex-1">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45" />
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search run clubs or areas" className="h-12 w-full rounded-full border border-black/10 bg-white pl-12 pr-4 text-sm outline-none focus:border-[#E83E6B]" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search clubs or areas" className="h-12 w-full rounded-full border border-black/10 bg-white pl-12 pr-4 text-sm outline-none focus:border-[#E83E6B]" />
             </label>
             <button type="button" onClick={() => setView(view === 'map' ? 'list' : 'map')} className="grid h-12 w-12 place-items-center rounded-full bg-[#17130E] text-white" aria-label={`Switch to ${view === 'map' ? 'list' : 'map'} view`}>
               {view === 'map' ? <List className="h-5 w-5" /> : <MapIcon className="h-5 w-5" />}
@@ -202,7 +202,7 @@ export default function CommunitiesPageClient({
 
         <div className="sticky top-[88px] z-40 overflow-x-auto border-b border-black/10 bg-[#F8F4EA] px-4 py-3 [scrollbar-width:none]">
           <div className="flex w-max gap-2">
-            <FilterChip active onClick={() => undefined}>All run clubs <span className="opacity-55">{communities.length}</span></FilterChip>
+            <FilterChip active onClick={() => undefined}>All communities <span className="opacity-55">{communities.length}</span></FilterChip>
             <FilterChip active={socialOnly} onClick={() => { setSocialOnly(!socialOnly); setBeginnerOnly(false); setSoloOnly(false) }}>Social-first</FilterChip>
             <FilterChip active={beginnerOnly} onClick={() => { setBeginnerOnly(!beginnerOnly); setSoloOnly(false); setSocialOnly(false) }}>First-timer friendly</FilterChip>
             <FilterChip active={soloOnly} onClick={() => { setSoloOnly(!soloOnly); setBeginnerOnly(false); setSocialOnly(false) }}>Solo-friendly</FilterChip>
@@ -240,7 +240,7 @@ export default function CommunitiesPageClient({
           </section>
         ) : (
           <section className="px-4 pb-28 pt-5">
-            <div className="mb-4 flex items-end justify-between"><div><p className="text-2xl font-bold">{filtered.length} run clubs</p><p className="mt-1 text-sm text-black/55">Active clubs with checked join paths</p></div><Link href="/communities/nominate" className="text-xs font-bold text-[#E83E6B]">Suggest one</Link></div>
+            <div className="mb-4 flex items-end justify-between"><div><p className="text-2xl font-bold">{filtered.length} communities</p><p className="mt-1 text-sm text-black/55">Active clubs with checked join paths</p></div><Link href="/communities/nominate" className="text-xs font-bold text-[#E83E6B]">Suggest one</Link></div>
             {filtered.length ? <div className="space-y-3">{filtered.map((item) => <CommunityRow key={item.slug} community={item} />)}</div> : <EmptyResults onClear={clearFilters} />}
           </section>
         )}
@@ -250,21 +250,21 @@ export default function CommunitiesPageClient({
       <div className="hidden md:block">
         <ProductHeader active="explore" />
         <section className="mx-auto max-w-6xl px-6 py-10">
-          <p className="sb-eyebrow">Explore run clubs</p>
+          <p className="sb-eyebrow">Run clubs + Caliversity</p>
           <div className="mt-3 flex items-end justify-between gap-8">
-            <h1 className="sb-type-page-title max-w-2xl text-[#17130E]">Find a run club that makes showing up easier.</h1>
-            <p className="sb-type-body max-w-sm text-black/55">Browse active run clubs by area, schedule, pace, and first-timer fit.</p>
+            <h1 className="sb-type-page-title max-w-2xl text-[#17130E]">Find a crew that makes showing up easier.</h1>
+            <p className="sb-type-body max-w-sm text-black/55">Browse active run clubs and Caliversity by area, schedule, format, and first-timer fit.</p>
           </div>
           <div className="mt-8 flex items-center gap-3">
             <label className="relative flex-1">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-black/45" />
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search run clubs or areas" className="h-12 w-full rounded-full border border-black/10 bg-white pl-12 pr-4 text-sm outline-none focus:border-[#E83E6B]" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search clubs or areas" className="h-12 w-full rounded-full border border-black/10 bg-white pl-12 pr-4 text-sm outline-none focus:border-[#E83E6B]" />
             </label>
             <button type="button" onClick={() => setView('map')} className={`h-12 rounded-full px-5 text-sm font-bold ${view === 'map' ? 'bg-[#17130E] text-white' : 'border border-black/10 bg-white'}`}>Map</button>
             <button type="button" onClick={() => setView('list')} className={`h-12 rounded-full px-5 text-sm font-bold ${view === 'list' ? 'bg-[#17130E] text-white' : 'border border-black/10 bg-white'}`}>List</button>
           </div>
           <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
-            <FilterChip active onClick={() => undefined}>All run clubs {communities.length}</FilterChip>
+            <FilterChip active onClick={() => undefined}>All communities {communities.length}</FilterChip>
             <FilterChip active={socialOnly} onClick={() => { setSocialOnly(!socialOnly); setBeginnerOnly(false); setSoloOnly(false) }}>Social-first</FilterChip>
             <FilterChip active={beginnerOnly} onClick={() => { setBeginnerOnly(!beginnerOnly); setSoloOnly(false); setSocialOnly(false) }}>First-timer friendly</FilterChip>
             <FilterChip active={soloOnly} onClick={() => { setSoloOnly(!soloOnly); setBeginnerOnly(false); setSocialOnly(false) }}>Solo-friendly</FilterChip>
@@ -273,7 +273,7 @@ export default function CommunitiesPageClient({
           {view === 'map' ? (
             <div className="mt-6 grid h-[610px] grid-cols-[minmax(300px,360px)_1fr] overflow-hidden rounded-[2rem] border border-black/10 bg-white shadow-sm">
               <aside className="overflow-y-auto border-r border-black/10 p-4">
-                <div className="mb-4 flex items-center justify-between"><div><p className="text-lg font-bold">{filtered.length} run clubs</p><p className="text-xs text-black/50">Choose one to see it on the map</p></div><Link href="/communities/nominate" className="text-xs font-bold text-[#E83E6B]">Suggest one</Link></div>
+                <div className="mb-4 flex items-center justify-between"><div><p className="text-lg font-bold">{filtered.length} communities</p><p className="text-xs text-black/50">Choose one to see it on the map</p></div><Link href="/communities/nominate" className="text-xs font-bold text-[#E83E6B]">Suggest one</Link></div>
                 {filtered.length ? <div className="space-y-3">{filtered.map((item) => <CommunityMapResult key={item.slug} community={item} active={selectedSlug === item.slug} onSelect={() => setSelectedSlug(item.slug)} />)}</div> : <EmptyResults onClear={clearFilters} />}
               </aside>
               <div className="relative min-w-0 bg-[#F4EFE3]">

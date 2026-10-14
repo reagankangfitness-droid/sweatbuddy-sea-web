@@ -183,10 +183,10 @@ describe('route contracts', () => {
     expect(buddyPage).toContain('const explicitNearbyLocation = requestedLocation === NEARBY_FILTER_VALUE')
     expect(buddyPage).toContain("setDiscoveryMode(explicitNearbyLocation ? 'nearby' : 'city')")
 
-    expect(communitiesPage).toContain('Find active Singapore run clubs you can confidently join')
-    expect(communitiesPage).toContain("title: 'Run Clubs in Singapore'")
+    expect(communitiesPage).toContain('Find active Singapore run clubs and Caliversity')
+    expect(communitiesPage).toContain("title: 'Run Clubs & Caliversity in Singapore'")
     expect(communitiesPage).not.toContain("title: 'Communities | SweatBuddies'")
-    expect(communitiesClient).toContain('Explore run clubs')
+    expect(communitiesClient).toContain('Run clubs + Caliversity')
     expect(communitiesClient).toContain("setView(view === 'map' ? 'list' : 'map')")
     expect(communitiesClient).toContain('Suggest a community')
     expect(communitiesClient).toContain('ProductHeader active="explore"')

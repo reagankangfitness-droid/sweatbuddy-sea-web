@@ -748,6 +748,31 @@ export const SINGAPORE_COMMUNITY_DIRECTORY_SEED: CommunityDirectorySeed[] = [
     lastVerifiedAt: '2026-10-14',
     coverImage: '/images/hosts/run-club-group.jpg',
   },
+  {
+    id: 'seed-caliversity',
+    name: 'Caliversity',
+    slug: 'caliversity',
+    description:
+      'A free Singapore calisthenics community built around welcoming bodyweight workouts at neighbourhood fitness corners.',
+    category: 'calisthenics',
+    cityName: 'Singapore',
+    citySlug: 'singapore',
+    usualArea: 'Island-wide neighbourhood fitness corners',
+    usualSchedule: 'Monday–Saturday · locations and times vary',
+    joinPlatform: 'website',
+    communityLink: 'https://caliversity.com/',
+    websiteUrl: 'https://caliversity.com/',
+    sourceUrl: 'https://caliversity.com/',
+    sourceLabel: 'Official website',
+    vibeTags: ['calisthenics', 'street_workout', 'community', 'beginner_friendly'],
+    priceType: 'free',
+    beginnerFriendly: true,
+    soloFriendly: true,
+    bestFor: 'First-timers who want free bodyweight training and a social neighbourhood workout crew.',
+    confidenceTier: 'publishable',
+    lastVerifiedAt: '2026-10-14',
+    coverImage: '/images/hosts/caliversity.jpg',
+  },
 ]
 
 // Only communities with a currently reachable, direct official joining path
@@ -774,7 +799,7 @@ export function getPublicCommunitySeeds() {
   const verificationCutoff = Date.now() - 60 * 24 * 60 * 60 * 1000
   return SINGAPORE_COMMUNITY_DIRECTORY_SEED.filter(
     (community) =>
-      community.category === 'running'
+      (community.category === 'running' || community.slug === 'caliversity')
       && community.confidenceTier === 'publishable'
       && !COMMUNITY_SEED_RESEARCH_QUEUE.has(community.slug)
       && new Date(community.lastVerifiedAt).getTime() >= verificationCutoff,

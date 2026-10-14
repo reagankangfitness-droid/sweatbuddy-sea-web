@@ -17,6 +17,7 @@ describe('community directory publication gate', () => {
       'singapore-runners-club',
       'run-jpg',
       'urban-milers',
+      'caliversity',
     ])
   })
 
@@ -25,5 +26,6 @@ describe('community directory publication gate', () => {
     expect(getCommunitySeedBySlug('boulder-without-borders')).toBeNull()
     expect(getCommunitySeedBySlug('metasport')).toBeNull()
     expect(getCommunitySeedBySlug('fitfam-singapore')).toBeNull()
+    expect(getCommunitySeedBySlug('caliversity')?.category).toBe('calisthenics')
   })
 })

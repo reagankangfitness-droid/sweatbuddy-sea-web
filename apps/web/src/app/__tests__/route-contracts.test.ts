@@ -187,7 +187,8 @@ describe('route contracts', () => {
     expect(buddyPage).toContain('Search upcoming sessions')
     expect(buddyPage).toContain('Directory crews')
     expect(buddySessionsRoute).toContain('getCommunitySeedBySlug')
-    expect(buddySessionsRoute).toContain('directoryCommunity?.category ?? activity.categorySlug')
+    expect(buddySessionsRoute).toContain('isOfficialCaliversitySession')
+    expect(buddySessionsRoute).toContain("isOfficialCaliversitySession ? 'calisthenics'")
     expect(thisWeekPage).toContain('Singapore run clubs, Caliversity, and local hosts')
 
     expect(communitiesPage).toContain('Find active Singapore run clubs and Caliversity')

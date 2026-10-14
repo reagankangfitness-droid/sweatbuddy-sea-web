@@ -438,7 +438,17 @@ function formatSession(
   const isFull = typeof activity.maxPeople === 'number' && attendeeCount >= activity.maxPeople
   const community = normalizeCommunity(activity.community)
   const directoryCommunity = community?.slug ? getCommunitySeedBySlug(community.slug) : null
-  const categorySlug = directoryCommunity?.category ?? activity.categorySlug
+  const hostName =
+    activity.user && typeof activity.user === 'object' && 'name' in activity.user
+      ? String((activity.user as { name?: unknown }).name ?? '')
+      : ''
+  const isOfficialCaliversitySession =
+    !community &&
+    hostName.trim().toLowerCase() === 'caliversity official' &&
+    activity.title.trim().toLowerCase().startsWith('caliversity')
+  const categorySlug =
+    directoryCommunity?.category ??
+    (isOfficialCaliversitySession ? 'calisthenics' : activity.categorySlug)
   const media = resolvedMedia ?? {
     resolvedImageUrl: activity.imageUrl || getCategoryFallbackImage(categorySlug),
     imageSourceType: activity.imageUrl ? 'SESSION_UPLOAD' : 'CATEGORY_FALLBACK',

@@ -9,11 +9,6 @@ describe('community directory publication gate', () => {
     expect(getPublicCommunitySeeds().map((community) => community.slug)).toEqual([
       'fast-and-free-running-club',
       'mr25',
-      'fitfam-singapore',
-      'yoga-for-a-change',
-      'meditate-singapore',
-      'anza-cycling',
-      'five45-cycling-club',
       'chill-pace-run-club',
       'offform',
       'founders-running-club-singapore',
@@ -29,5 +24,6 @@ describe('community directory publication gate', () => {
     expect(getCommunitySeedBySlug('singapore-pickleball-meetup-group')).toBeNull()
     expect(getCommunitySeedBySlug('boulder-without-borders')).toBeNull()
     expect(getCommunitySeedBySlug('metasport')).toBeNull()
+    expect(getCommunitySeedBySlug('fitfam-singapore')).toBeNull()
   })
 })

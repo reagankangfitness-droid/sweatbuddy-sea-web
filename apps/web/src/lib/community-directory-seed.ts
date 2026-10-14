@@ -774,7 +774,8 @@ export function getPublicCommunitySeeds() {
   const verificationCutoff = Date.now() - 60 * 24 * 60 * 60 * 1000
   return SINGAPORE_COMMUNITY_DIRECTORY_SEED.filter(
     (community) =>
-      community.confidenceTier === 'publishable'
+      community.category === 'running'
+      && community.confidenceTier === 'publishable'
       && !COMMUNITY_SEED_RESEARCH_QUEUE.has(community.slug)
       && new Date(community.lastVerifiedAt).getTime() >= verificationCutoff,
   )

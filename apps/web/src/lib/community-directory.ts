@@ -12,6 +12,7 @@ export async function getCommunityDirectory(): Promise<CommunityData[]> {
   const communities = await prisma.community
     .findMany({
       where: {
+        category: 'running',
         isActive: true,
         moderationStatus: 'LIVE',
         usualArea: { not: null },

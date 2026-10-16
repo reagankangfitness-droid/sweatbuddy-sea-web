@@ -36,6 +36,7 @@ import type { NextRequest } from 'next/server'
 const isPublicRoute = createRouteMatcher([
   '/',
   '/welcome',
+  '/for-organizers',
   '/sitemap.xml',
   '/robots.txt',
   '/manifest.json',

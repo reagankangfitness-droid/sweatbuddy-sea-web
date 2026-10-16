@@ -60,7 +60,7 @@ export default async function HubPage() {
   // Get upcoming sessions for these communities
   const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
 
-  const [upcomingSessions, pastSessions, recentAttendees] = await Promise.all([
+  const [upcomingSessions, pastSessions, recentAttendees, subscription] = await Promise.all([
     prisma.activity.findMany({
       where: {
         communityId: { in: communityIds },
@@ -133,6 +133,10 @@ export default async function HubPage() {
       select: { userId: true },
       distinct: ['userId'],
     }),
+    prisma.hostSubscription.findUnique({
+      where: { organizerEmail: dbUser.email },
+      select: { tier: true, status: true, currentPeriodEnd: true },
+    }),
   ])
 
   const totalMembers = communities.reduce((sum, c) => sum + c.memberCount, 0)
@@ -179,6 +183,11 @@ export default async function HubPage() {
       }))}
       totalMembers={totalMembers}
       activeThisMonth={activeThisMonth}
+      subscription={subscription ? {
+        tier: subscription.tier,
+        status: subscription.status,
+        currentPeriodEnd: subscription.currentPeriodEnd?.toISOString() ?? null,
+      } : null}
     />
   )
 }

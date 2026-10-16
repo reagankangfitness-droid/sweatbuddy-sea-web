@@ -115,7 +115,6 @@ const nextConfig = {
       { source: '/host/growth', destination: '/hub', permanent: true },
       { source: '/host/earnings', destination: '/hub', permanent: true },
       { source: '/host/payments', destination: '/hub', permanent: true },
-      { source: '/host/templates', destination: '/hub', permanent: true },
       { source: '/host/waves', destination: '/buddy/host/new', permanent: true },
 
       // SEO preservation

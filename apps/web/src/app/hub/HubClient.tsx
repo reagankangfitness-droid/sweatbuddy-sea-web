@@ -47,6 +47,7 @@ interface HubClientProps {
   pastSessions: HubSession[]
   totalMembers: number
   activeThisMonth: number
+  subscription: { tier: string; status: string; currentPeriodEnd: string | null } | null
 }
 
 function formatTime(iso: string): string {
@@ -86,6 +87,7 @@ export default function HubClient({
   pastSessions,
   totalMembers,
   activeThisMonth,
+  subscription,
 }: HubClientProps) {
   const [showCreate, setShowCreate] = useState(false)
   const [shareSession, setShareSession] = useState<HubSession | null>(null)
@@ -285,6 +287,20 @@ export default function HubClient({
       </div>
 
       <div className="px-5 space-y-5">
+
+        {/* Club Manager plan */}
+        {subscription?.tier === 'PREMIUM' && subscription.status === 'ACTIVE' ? (
+          <div className="flex items-center justify-between rounded-2xl border border-[#E83E6B]/30 bg-[#E83E6B]/10 p-4">
+            <div><p className="text-[11px] font-bold uppercase tracking-widest text-[#E83E6B]">Founding Club active</p><p className="mt-1 text-[12px] text-[#999999]">Recurring sessions, reminders and attendance are unlocked.</p></div>
+            <form action="/api/club/portal" method="post"><button className="rounded-full bg-[#2A2A2A] px-3 py-2 text-[10px] font-bold text-white">Manage plan</button></form>
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-[#333333] bg-[#1A1A1A] p-4">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-[#E83E6B]">Founding Club · S$15/month</p>
+            <p className="mt-2 text-[13px] font-semibold text-white">Turn your weekly schedule into a repeatable member workflow.</p>
+            <div className="mt-3 flex gap-2"><Link href="/for-organizers" className="rounded-full bg-white px-4 py-2 text-[11px] font-bold text-black">View plan</Link><Link href="/host/templates" className="rounded-full bg-[#2A2A2A] px-4 py-2 text-[11px] font-bold text-white">Set recurring schedule</Link></div>
+          </div>
+        )}
 
         {/* ── #5: Weekly schedule strip ── */}
         {dayGroups.length > 0 && (
@@ -547,7 +563,10 @@ export default function HubClient({
         </div>
 
         {/* Quick links */}
-        <div className="flex gap-2">
+        <div className="grid grid-cols-2 gap-2">
+          <Link href="/host/templates" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
+            Recurring schedule
+          </Link>
           <Link href="/this-week?create=session" className="flex-1 py-3 rounded-xl bg-[#1A1A1A] text-[11px] font-medium text-[#999999] text-center hover:bg-[#2A2A2A] transition-all">
             Post session
           </Link>

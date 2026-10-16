@@ -306,6 +306,7 @@ export default function CommunitiesPageClient({
             <FilterChip active={soloOnly} onClick={() => { setSoloOnly(!soloOnly); setBeginnerOnly(false); setSocialOnly(false) }}>Solo-friendly</FilterChip>
             <FilterChip active={freeOnly} onClick={() => setFreeOnly(!freeOnly)}>Free</FilterChip>
             <Link href="/communities/nominate" className="flex h-10 items-center whitespace-nowrap rounded-full border border-black/10 bg-white px-4 text-sm font-semibold text-[#E83E6B]">Suggest a community</Link>
+            <Link href="/for-organizers" className="flex h-10 items-center whitespace-nowrap rounded-full bg-[#17130E] px-4 text-sm font-semibold text-white">For organizers</Link>
           </div>
         </div>
 
@@ -371,6 +372,7 @@ export default function CommunitiesPageClient({
             <FilterChip active={beginnerOnly} onClick={() => { setBeginnerOnly(!beginnerOnly); setSoloOnly(false); setSocialOnly(false) }}>First-timer friendly</FilterChip>
             <FilterChip active={soloOnly} onClick={() => { setSoloOnly(!soloOnly); setBeginnerOnly(false); setSocialOnly(false) }}>Solo-friendly</FilterChip>
             <FilterChip active={freeOnly} onClick={() => setFreeOnly(!freeOnly)}>Free</FilterChip>
+            <Link href="/for-organizers" className="flex h-10 items-center whitespace-nowrap rounded-full bg-[#17130E] px-4 text-sm font-semibold text-white">For organizers</Link>
           </div>
           {view === 'map' ? (
             <div className="mt-6 grid h-[610px] grid-cols-[minmax(300px,360px)_1fr] overflow-hidden rounded-[2rem] border border-black/10 bg-white shadow-sm">

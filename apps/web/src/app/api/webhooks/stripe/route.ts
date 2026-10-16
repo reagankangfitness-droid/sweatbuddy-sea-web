@@ -58,6 +58,11 @@ export async function POST(request: NextRequest) {
         await handleCheckoutComplete(event.data.object as Stripe.Checkout.Session)
         break
 
+      case 'customer.subscription.updated':
+      case 'customer.subscription.deleted':
+        await handleClubSubscriptionChange(event.data.object as Stripe.Subscription)
+        break
+
       case 'checkout.session.expired':
         await handleCheckoutExpired(event.data.object as Stripe.Checkout.Session)
         break
@@ -105,6 +110,11 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   const amountTotal = session.amount_total || 0
   const currency = session.currency?.toUpperCase() || 'SGD'
   const isP2PSession = metadata.flow === 'p2p_session'
+
+  if (metadata.flow === 'club_subscription') {
+    await handleClubSubscriptionCheckout(session)
+    return
+  }
 
   // Check if this is an EventSubmission payment (public events)
   if (metadata.eventId) {
@@ -333,6 +343,61 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
     console.error('Error handling checkout completion:', error)
     throw error
   }
+}
+
+async function handleClubSubscriptionCheckout(session: Stripe.Checkout.Session) {
+  const email = session.metadata?.organizer_email || session.customer_details?.email
+  if (!email) throw new Error('Club subscription checkout is missing organizer email')
+  const subscriptionId = typeof session.subscription === 'string' ? session.subscription : session.subscription?.id
+  const customerId = typeof session.customer === 'string' ? session.customer : session.customer?.id
+
+  await prisma.hostSubscription.upsert({
+    where: { organizerEmail: email.toLowerCase() },
+    update: {
+      tier: 'PREMIUM',
+      status: 'ACTIVE',
+      stripeSubscriptionId: subscriptionId ?? null,
+      stripeCustomerId: customerId ?? null,
+      startedAt: new Date(),
+      cancelledAt: null,
+      endsAt: null,
+    },
+    create: {
+      organizerEmail: email.toLowerCase(),
+      tier: 'PREMIUM',
+      status: 'ACTIVE',
+      stripeSubscriptionId: subscriptionId ?? null,
+      stripeCustomerId: customerId ?? null,
+    },
+  })
+}
+
+async function handleClubSubscriptionChange(subscription: Stripe.Subscription) {
+  if (subscription.metadata?.flow !== 'club_subscription') return
+  const email = subscription.metadata.organizer_email
+  if (!email) return
+  const cancelled = subscription.status === 'canceled'
+  const active = subscription.status === 'active' || subscription.status === 'trialing'
+  const status = cancelled ? 'CANCELLED' : active ? 'ACTIVE' : 'PAST_DUE'
+
+  await prisma.hostSubscription.upsert({
+    where: { organizerEmail: email.toLowerCase() },
+    update: {
+      tier: active ? 'PREMIUM' : 'FREE',
+      status,
+      stripeSubscriptionId: subscription.id,
+      stripeCustomerId: typeof subscription.customer === 'string' ? subscription.customer : subscription.customer.id,
+      cancelledAt: cancelled ? new Date() : null,
+    },
+    create: {
+      organizerEmail: email.toLowerCase(),
+      tier: active ? 'PREMIUM' : 'FREE',
+      status,
+      stripeSubscriptionId: subscription.id,
+      stripeCustomerId: typeof subscription.customer === 'string' ? subscription.customer : subscription.customer.id,
+      cancelledAt: cancelled ? new Date() : null,
+    },
+  })
 }
 
 // Handle expired checkout session

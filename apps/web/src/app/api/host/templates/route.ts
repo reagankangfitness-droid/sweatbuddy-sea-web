@@ -48,13 +48,6 @@ export async function POST(request: Request) {
       select: { id: true, p2pOnboardingCompleted: true, p2pStripeConnectId: true },
     })
     if (!dbUser) return NextResponse.json({ error: 'User not found' }, { status: 404 })
-    if (!dbUser.p2pOnboardingCompleted) {
-      return NextResponse.json(
-        { error: 'Complete onboarding first', code: 'ONBOARDING_REQUIRED' },
-        { status: 403 },
-      )
-    }
-
     const body = await request.json()
     const {
       title,
@@ -143,6 +136,27 @@ export async function POST(request: Request) {
           code: 'MANAGER_VERIFICATION_REQUIRED',
         },
         { status: 403 },
+      )
+    }
+
+    const [subscription, activeTemplateCount] = await Promise.all([
+      prisma.hostSubscription.findUnique({
+        where: { organizerEmail: email.toLowerCase() },
+        select: { tier: true, status: true },
+      }),
+      prisma.sessionTemplate.count({
+        where: { hostId: dbUser.id, deletedAt: null, isActive: true },
+      }),
+    ])
+    const hasFoundingClub = subscription?.tier === 'PREMIUM' && subscription.status === 'ACTIVE'
+    if (!hasFoundingClub && activeTemplateCount >= 1) {
+      return NextResponse.json(
+        {
+          error: 'The free plan includes one recurring schedule. Upgrade for unlimited schedules.',
+          code: 'FOUNDING_CLUB_REQUIRED',
+          checkoutUrl: '/for-organizers',
+        },
+        { status: 402 },
       )
     }
 

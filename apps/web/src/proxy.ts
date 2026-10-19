@@ -37,6 +37,7 @@ const isPublicRoute = createRouteMatcher([
   '/',
   '/welcome',
   '/for-organizers',
+  '/gym-research',
   '/sitemap.xml',
   '/robots.txt',
   '/manifest.json',
@@ -152,6 +153,7 @@ function isPublicApiRequest(request: NextRequest) {
     return [
       '/api/community-nominations',
       '/api/host-leads',
+      '/api/gym-research',
       '/api/landing-leads',
       '/api/newsletter',
       '/api/uploadthing',

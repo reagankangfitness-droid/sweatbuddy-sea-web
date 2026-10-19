@@ -3615,6 +3615,40 @@ model CrewMatchLead {
   @@map("crew_match_leads")
 }
 
+model GymResearchResponse {
+  id                  String   @id @default(cuid())
+  name                String   @db.VarChar(160)
+  email               String   @unique @db.VarChar(255)
+  phone               String?  @db.VarChar(80)
+  recentAction        String   @db.VarChar(50)
+  actionTiming        String   @db.VarChar(40)
+  gymsConsidered      String?  @db.Text
+  currentGym          String?  @db.VarChar(200)
+  trainingFrequency   String   @db.VarChar(40)
+  trainingStyles      Json
+  researchActions     Json
+  informationGaps     Json
+  biggestSurprise     String?  @db.Text
+  contributionIntent  Json
+  paidReportIntent    String   @db.VarChar(40)
+  interviewConsent    Boolean  @default(false)
+  interviewAvailability String? @db.VarChar(300)
+  researchConsent     Boolean  @default(false)
+  eligibilityScore    Int      @default(0)
+  qualified           Boolean  @default(false)
+  source              String?  @db.VarChar(120)
+  utmSource           String?  @db.VarChar(120)
+  utmMedium           String?  @db.VarChar(120)
+  utmCampaign         String?  @db.VarChar(160)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([qualified, createdAt])
+  @@index([recentAction, actionTiming])
+  @@index([paidReportIntent])
+  @@map("gym_research_responses")
+}
+
 model CommunityNomination {
   id               String                    @id @default(cuid())
   status           CommunityNominationStatus @default(PENDING)

@@ -23,7 +23,8 @@ import {
   Building2,
   MapPin,
   Search,
-  Inbox
+  Inbox,
+  ClipboardCheck,
 } from 'lucide-react'
 import { Logo } from '@/components/logo'
 
@@ -37,6 +38,7 @@ const navigation = [
   { name: 'Place Review', href: '/admin/places', icon: MapPin },
   { name: 'Nominations', href: '/admin/nominations', icon: Inbox },
   { name: 'Discovery', href: '/admin/discovery', icon: Search },
+  { name: 'Gym Research', href: '/admin/gym-research', icon: ClipboardCheck },
   { name: 'Events', href: '/admin/events', icon: Calendar },
   { name: 'Hosts', href: '/admin/hosts', icon: UserPlus },
   { name: 'Newsletter', href: '/admin/newsletter', icon: Mail },

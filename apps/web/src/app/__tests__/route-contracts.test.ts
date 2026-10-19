@@ -937,6 +937,8 @@ describe('route contracts', () => {
     expect(researchPage).toContain('What made the decision harder than it should have been?')
     expect(researchPage).toContain('Would you pay S$9')
     expect(researchPage).toContain('researchConsent')
+    expect(researchPage).not.toContain('20-minute')
+    expect(researchPage).not.toContain('interviewConsent')
     expect(researchRoute).toContain('eligibilityScore')
     expect(researchRoute).toContain('gymResearchResponse.upsert')
     expect(researchRoute).toContain('isAdminRequest')

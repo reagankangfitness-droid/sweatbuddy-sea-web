@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     const recent = recentAction !== 'NONE' && actionTiming !== 'OVER_SIX_MONTHS' && actionTiming !== 'NOT_APPLICABLE'
     const meaningfulResearch = researchActions.some((value) => ['VISITED', 'CONTACTED', 'COMPARED_PRICES', 'ASKED_COMMUNITY'].includes(value))
-    const eligibilityScore = Number(recent) * 2 + Number(meaningfulResearch) + Number(informationGaps.length >= 2) + Number(body.interviewConsent === true)
+    const eligibilityScore = Number(recent) * 2 + Number(meaningfulResearch) + Number(informationGaps.length >= 2)
     const qualified = recent && meaningfulResearch && eligibilityScore >= 3
 
     const response = await prisma.gymResearchResponse.upsert({
@@ -61,8 +61,8 @@ export async function POST(request: NextRequest) {
         biggestSurprise: text(body.biggestSurprise, 2000),
         contributionIntent,
         paidReportIntent,
-        interviewConsent: body.interviewConsent === true,
-        interviewAvailability: text(body.interviewAvailability, 300),
+        interviewConsent: false,
+        interviewAvailability: null,
         researchConsent,
         eligibilityScore,
         qualified,
@@ -86,8 +86,8 @@ export async function POST(request: NextRequest) {
         biggestSurprise: text(body.biggestSurprise, 2000),
         contributionIntent,
         paidReportIntent,
-        interviewConsent: body.interviewConsent === true,
-        interviewAvailability: text(body.interviewAvailability, 300),
+        interviewConsent: false,
+        interviewAvailability: null,
         researchConsent,
         eligibilityScore,
         qualified,

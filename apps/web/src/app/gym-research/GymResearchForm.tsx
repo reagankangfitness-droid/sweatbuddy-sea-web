@@ -19,9 +19,6 @@ type FormState = {
   paidReportIntent: string
   name: string
   email: string
-  phone: string
-  interviewConsent: boolean
-  interviewAvailability: string
   researchConsent: boolean
   website: string
 }
@@ -29,7 +26,7 @@ type FormState = {
 const initial: FormState = {
   recentAction: '', actionTiming: '', gymsConsidered: '', currentGym: '', trainingFrequency: '',
   trainingStyles: [], researchActions: [], informationGaps: [], biggestSurprise: '', contributionIntent: [],
-  paidReportIntent: '', name: '', email: '', phone: '', interviewConsent: true, interviewAvailability: '',
+  paidReportIntent: '', name: '', email: '',
   researchConsent: false, website: '',
 }
 
@@ -105,11 +102,7 @@ export default function GymResearchForm() {
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#E83E6B] text-white"><Check className="h-7 w-7" /></div>
           <p className="sb-eyebrow mt-8">Response received</p>
           <h1 className="mt-3 text-4xl font-bold !text-[#17130E]">Thank you for helping us build something useful.</h1>
-          <p className="mt-5 text-base leading-7 text-black/60">
-            {result.qualified && form.interviewConsent
-              ? 'Your recent experience is a strong fit for this study. We’ll contact you about a short follow-up conversation.'
-              : 'Your response is saved and will help us understand where gym information currently falls short.'}
-          </p>
+          <p className="mt-5 text-base leading-7 text-black/60">Your response is saved and will help us understand where gym information currently falls short.</p>
           <Link href="/" className="mt-8 inline-flex h-12 items-center rounded-full bg-[#17130E] px-6 text-sm font-bold !text-white">Back to SweatBuddies</Link>
         </div>
       </Shell>
@@ -164,7 +157,7 @@ function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) { re
 function Label({ children }: { children: React.ReactNode }) { return <label className="mt-6 block text-xs font-bold uppercase tracking-wide text-black/55">{children}</label> }
 
 function Intro({ form, set }: { form: FormState; set: <K extends keyof FormState>(key: K, value: FormState[K]) => void }) {
-  return <><Title help="We’re researching how people choose gyms in Singapore. This is not a sales form, and honest answers—including negative ones—are useful.">Help us understand how people really choose a gym.</Title><div className="mt-8 rounded-3xl border border-black/10 bg-white p-5 text-sm leading-6 text-black/60"><p className="font-bold text-[#17130E]">What we’ll ask</p><p className="mt-2">Your most recent gym decision, what was difficult to compare, and whether you would speak with us for 20 minutes. We will use responses only for product research and will not publish answers with your identity.</p></div><label className="mt-6 flex cursor-pointer items-start gap-3 rounded-2xl border border-black/10 bg-white p-4 text-sm leading-6"><input type="checkbox" checked={form.researchConsent} onChange={(event) => set('researchConsent', event.target.checked)} className="mt-1 h-5 w-5 accent-[#E83E6B]" /><span>I’m at least 18 and consent to SweatBuddies storing these answers for product research. I can ask for my response to be deleted.</span></label></>
+  return <><Title help="We’re researching how people choose gyms in Singapore. This is not a sales form, and honest answers—including negative ones—are useful.">Help us understand how people really choose a gym.</Title><div className="mt-8 rounded-3xl border border-black/10 bg-white p-5 text-sm leading-6 text-black/60"><p className="font-bold text-[#17130E]">What we’ll ask</p><p className="mt-2">Your most recent gym decision, what was difficult to compare, and which information would have helped. We will use responses only for product research and will not publish answers with your identity.</p></div><label className="mt-6 flex cursor-pointer items-start gap-3 rounded-2xl border border-black/10 bg-white p-4 text-sm leading-6"><input type="checkbox" checked={form.researchConsent} onChange={(event) => set('researchConsent', event.target.checked)} className="mt-1 h-5 w-5 accent-[#E83E6B]" /><span>I’m at least 18 and consent to SweatBuddies storing these answers for product research. I can ask for my response to be deleted.</span></label></>
 }
 
 function Decision({ form, set }: { form: FormState; set: <K extends keyof FormState>(key: K, value: FormState[K]) => void }) {
@@ -188,5 +181,5 @@ function Contribution({ form, set, toggle }: { form: FormState; set: <K extends 
 }
 
 function Contact({ form, set }: { form: FormState; set: <K extends keyof FormState>(key: K, value: FormState[K]) => void }) {
-  return <><Title help="We’re looking for 20 people for a conversational 20-minute follow-up. No preparation is needed.">Last step: may we follow up?</Title><div className="mt-7 grid gap-4 sm:grid-cols-2"><div><Label>Name</Label><Input required value={form.name} onChange={(event) => set('name', event.target.value)} autoComplete="name" /></div><div><Label>Email</Label><Input required type="email" value={form.email} onChange={(event) => set('email', event.target.value)} autoComplete="email" /></div></div><Label>WhatsApp number (optional)</Label><Input type="tel" value={form.phone} onChange={(event) => set('phone', event.target.value)} autoComplete="tel" /><label className="mt-6 flex items-start gap-3 rounded-2xl border border-black/10 bg-white p-4 text-sm font-semibold"><input type="checkbox" checked={form.interviewConsent} onChange={(event) => set('interviewConsent', event.target.checked)} className="mt-0.5 h-5 w-5 accent-[#E83E6B]" />I’m open to a 20-minute follow-up interview.</label>{form.interviewConsent && <><Label>When are you generally available? (optional)</Label><Input value={form.interviewAvailability} onChange={(event) => set('interviewAvailability', event.target.value)} placeholder="e.g. weekday evenings after 7 PM" /></>}<input aria-hidden="true" tabIndex={-1} autoComplete="off" value={form.website} onChange={(event) => set('website', event.target.value)} className="hidden" /></>
+  return <><Title help="We’ll use your email only to identify duplicate responses and share relevant research updates.">Last step: tell us who you are.</Title><div className="mt-7 grid gap-4 sm:grid-cols-2"><div><Label>Name</Label><Input required value={form.name} onChange={(event) => set('name', event.target.value)} autoComplete="name" /></div><div><Label>Email</Label><Input required type="email" value={form.email} onChange={(event) => set('email', event.target.value)} autoComplete="email" /></div></div><input aria-hidden="true" tabIndex={-1} autoComplete="off" value={form.website} onChange={(event) => set('website', event.target.value)} className="hidden" /></>
 }

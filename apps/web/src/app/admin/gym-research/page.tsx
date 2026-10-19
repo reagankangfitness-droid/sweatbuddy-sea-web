@@ -14,8 +14,6 @@ type ResearchResponse = {
   trainingStyles: string[]
   informationGaps: string[]
   paidReportIntent: string
-  interviewConsent: boolean
-  interviewAvailability: string | null
   eligibilityScore: number
   qualified: boolean
   createdAt: string
@@ -38,8 +36,8 @@ export default function GymResearchAdminPage() {
   }, [])
 
   function downloadCsv() {
-    const headers = ['Name', 'Email', 'Phone', 'Qualified', 'Score', 'Action', 'Timing', 'Gyms considered', 'Training styles', 'Information gaps', 'S$9 report', 'Interview', 'Availability', 'Submitted']
-    const rows = responses.map((item) => [item.name, item.email, item.phone, item.qualified, item.eligibilityScore, item.recentAction, item.actionTiming, item.gymsConsidered, item.trainingStyles.join('; '), item.informationGaps.join('; '), item.paidReportIntent, item.interviewConsent, item.interviewAvailability, item.createdAt])
+    const headers = ['Name', 'Email', 'Qualified', 'Score', 'Action', 'Timing', 'Gyms considered', 'Training styles', 'Information gaps', 'S$9 report', 'Submitted']
+    const rows = responses.map((item) => [item.name, item.email, item.qualified, item.eligibilityScore, item.recentAction, item.actionTiming, item.gymsConsidered, item.trainingStyles.join('; '), item.informationGaps.join('; '), item.paidReportIntent, item.createdAt])
     const csv = [headers, ...rows].map((row) => row.map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`).join(',')).join('\n')
     const link = document.createElement('a')
     link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }))
@@ -55,7 +53,7 @@ export default function GymResearchAdminPage() {
     <div className="min-h-screen bg-neutral-900 p-5 text-white lg:p-8">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <div><p className="text-xs font-bold uppercase tracking-widest text-pink-400">Validation cohort</p><h1 className="mt-2 text-3xl font-bold">Gym research</h1><p className="mt-2 text-sm text-neutral-400">Screening responses for the first 20 interviews.</p></div>
+          <div><p className="text-xs font-bold uppercase tracking-widest text-pink-400">Validation research</p><h1 className="mt-2 text-3xl font-bold">Gym research</h1><p className="mt-2 text-sm text-neutral-400">Questionnaire responses from prospective gym users.</p></div>
           <button onClick={downloadCsv} disabled={!responses.length} className="inline-flex h-11 items-center gap-2 rounded-full bg-white px-5 text-sm font-bold text-black disabled:opacity-40"><Download className="h-4 w-4" /> Export CSV</button>
         </div>
 
@@ -70,10 +68,10 @@ export default function GymResearchAdminPage() {
             {responses.length === 0 ? <p className="p-10 text-center text-neutral-500">No responses yet. Share /gym-research to begin recruiting.</p> : responses.map((item) => (
               <div key={item.id} className="border-b border-neutral-800 p-5 last:border-0">
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div><div className="flex items-center gap-2"><p className="font-bold">{item.name}</p>{item.qualified && <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/10 px-2 py-1 text-[10px] font-bold text-emerald-300"><CheckCircle2 className="h-3 w-3" /> Qualified</span>}</div><p className="mt-1 text-sm text-neutral-400">{item.email}{item.phone ? ` · ${item.phone}` : ''}</p></div>
+                  <div><div className="flex items-center gap-2"><p className="font-bold">{item.name}</p>{item.qualified && <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/10 px-2 py-1 text-[10px] font-bold text-emerald-300"><CheckCircle2 className="h-3 w-3" /> Qualified</span>}</div><p className="mt-1 text-sm text-neutral-400">{item.email}</p></div>
                   <div className="text-right"><p className="text-xs font-bold text-pink-400">Score {item.eligibilityScore}</p><p className="mt-1 text-xs text-neutral-500">{new Date(item.createdAt).toLocaleDateString('en-SG')}</p></div>
                 </div>
-                <div className="mt-4 grid gap-3 text-xs text-neutral-300 sm:grid-cols-3"><Info label="Recent decision" value={`${item.recentAction} · ${item.actionTiming}`} /><Info label="Information gaps" value={item.informationGaps.join(', ')} /><Info label="Payment / interview" value={`${item.paidReportIntent} · ${item.interviewConsent ? 'Open to interview' : 'No interview'}`} /></div>
+                <div className="mt-4 grid gap-3 text-xs text-neutral-300 sm:grid-cols-3"><Info label="Recent decision" value={`${item.recentAction} · ${item.actionTiming}`} /><Info label="Information gaps" value={item.informationGaps.join(', ')} /><Info label="S$9 report" value={item.paidReportIntent} /></div>
                 {item.gymsConsidered && <p className="mt-4 text-sm text-neutral-400"><span className="font-bold text-neutral-200">Considered:</span> {item.gymsConsidered}</p>}
               </div>
             ))}

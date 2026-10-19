@@ -10,13 +10,25 @@ type FormState = {
   actionTiming: string
   gymsConsidered: string
   currentGym: string
+  chosenGym: string
+  decisionReason: string
+  almostStoppedReason: string
+  monthlyPrice: string
   trainingFrequency: string
   trainingStyles: string[]
   researchActions: string[]
+  researchTime: string
+  priorityFactors: string[]
+  decidingFactor: string
   informationGaps: string[]
   biggestSurprise: string
+  conceptUsefulness: string
+  firstFeature: string
+  verifyYourself: string
+  distrustReason: string
   contributionIntent: string[]
   paidReportIntent: string
+  earlyAccessConsent: boolean
   name: string
   email: string
   researchConsent: boolean
@@ -24,9 +36,10 @@ type FormState = {
 }
 
 const initial: FormState = {
-  recentAction: '', actionTiming: '', gymsConsidered: '', currentGym: '', trainingFrequency: '',
-  trainingStyles: [], researchActions: [], informationGaps: [], biggestSurprise: '', contributionIntent: [],
-  paidReportIntent: '', name: '', email: '',
+  recentAction: '', actionTiming: '', gymsConsidered: '', currentGym: '', chosenGym: '', decisionReason: '',
+  almostStoppedReason: '', monthlyPrice: '', trainingFrequency: '', trainingStyles: [], researchActions: [], researchTime: '',
+  priorityFactors: [], decidingFactor: '', informationGaps: [], biggestSurprise: '', conceptUsefulness: '', firstFeature: '',
+  verifyYourself: '', distrustReason: '', contributionIntent: [], paidReportIntent: '', earlyAccessConsent: false, name: '', email: '',
   researchConsent: false, website: '',
 }
 
@@ -39,6 +52,7 @@ const timingOptions = [
   ['FOUR_TO_SIX_MONTHS', '4–6 months ago'], ['OVER_SIX_MONTHS', 'More than 6 months ago'],
   ['NOT_APPLICABLE', 'Not applicable'],
 ]
+const factorOptions = [["PRICE","True total price"],["LOCATION","Location"],["EQUIPMENT","Equipment"],["CROWDING","Crowding"],["CONTRACT","Contract flexibility"],["HOURS","Opening hours"],["ATMOSPHERE","Atmosphere"],["AMENITIES","Amenities"]]
 
 export default function GymResearchForm() {
   const [step, setStep] = useState(0)
@@ -46,15 +60,17 @@ export default function GymResearchForm() {
   const [saving, setSaving] = useState(false)
   const [result, setResult] = useState<{ qualified: boolean } | null>(null)
   const [error, setError] = useState('')
-  const totalSteps = 7
+  const totalSteps = 9
 
   const valid = useMemo(() => {
     if (step === 0) return form.researchConsent
-    if (step === 1) return Boolean(form.recentAction && form.actionTiming && form.gymsConsidered.trim())
+    if (step === 1) return Boolean(form.recentAction && form.actionTiming && form.gymsConsidered.trim() && form.chosenGym.trim() && form.decisionReason.trim())
     if (step === 2) return Boolean(form.trainingFrequency && form.trainingStyles.length)
-    if (step === 3) return form.researchActions.length > 0
-    if (step === 4) return form.informationGaps.length > 0
-    if (step === 5) return Boolean(form.paidReportIntent)
+    if (step === 3) return form.researchActions.length > 0 && Boolean(form.researchTime)
+    if (step === 4) return form.priorityFactors.length === 3 && Boolean(form.decidingFactor)
+    if (step === 5) return form.informationGaps.length > 0
+    if (step === 6) return Boolean(form.conceptUsefulness && form.firstFeature && form.verifyYourself.trim() && form.distrustReason.trim())
+    if (step === 7) return form.contributionIntent.length > 0 && Boolean(form.paidReportIntent)
     return Boolean(form.name.trim() && /^\S+@\S+\.\S+$/.test(form.email.trim()))
   }, [form, step])
 
@@ -62,10 +78,10 @@ export default function GymResearchForm() {
     setForm((current) => ({ ...current, [key]: value }))
   }
 
-  function toggle(key: 'trainingStyles' | 'researchActions' | 'informationGaps' | 'contributionIntent', value: string) {
+  function toggle(key: 'trainingStyles' | 'researchActions' | 'priorityFactors' | 'informationGaps' | 'contributionIntent', value: string) {
     setForm((current) => ({
       ...current,
-      [key]: current[key].includes(value) ? current[key].filter((item) => item !== value) : [...current[key], value],
+      [key]: current[key].includes(value) ? current[key].filter((item) => item !== value) : key === 'priorityFactors' && current[key].length >= 3 ? current[key] : [...current[key], value],
     }))
   }
 
@@ -117,10 +133,12 @@ export default function GymResearchForm() {
         {step === 0 && <Intro form={form} set={set} />}
         {step === 1 && <Decision form={form} set={set} />}
         {step === 2 && <Training form={form} set={set} toggle={toggle} />}
-        {step === 3 && <Research form={form} toggle={toggle} />}
-        {step === 4 && <Gaps form={form} set={set} toggle={toggle} />}
-        {step === 5 && <Contribution form={form} set={set} toggle={toggle} />}
-        {step === 6 && <Contact form={form} set={set} />}
+        {step === 3 && <Research form={form} set={set} toggle={toggle} />}
+        {step === 4 && <Priorities form={form} set={set} toggle={toggle} />}
+        {step === 5 && <Gaps form={form} set={set} toggle={toggle} />}
+        {step === 6 && <Concept form={form} set={set} />}
+        {step === 7 && <Contribution form={form} set={set} toggle={toggle} />}
+        {step === 8 && <Contact form={form} set={set} />}
 
         {error && <p role="alert" className="mt-5 rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-700">{error}</p>}
         <div className="mt-8 flex items-center justify-between gap-3">
@@ -137,7 +155,7 @@ export default function GymResearchForm() {
 }
 
 function Shell({ children, progress }: { children: React.ReactNode; progress: number }) {
-  return <main className="min-h-screen bg-[#F8F4EA] text-[#17130E]"><header className="border-b border-black/10 bg-[#F8F4EA]"><div className="mx-auto flex h-20 max-w-5xl items-center justify-between px-5"><Link href="/"><LogoWithText size={25} color="#E83E6B" textColor="#17130E" /></Link><span className="text-xs font-semibold text-black/50">About 4 minutes</span></div><div className="h-1 bg-black/5"><div className="h-full bg-[#E83E6B] transition-[width] duration-300" style={{ width: `${progress}%` }} /></div></header><div className="px-5">{children}</div></main>
+  return <main className="min-h-screen bg-[#F8F4EA] text-[#17130E]"><header className="border-b border-black/10 bg-[#F8F4EA]"><div className="mx-auto flex h-20 max-w-5xl items-center justify-between px-5"><Link href="/"><LogoWithText size={25} color="#E83E6B" textColor="#17130E" /></Link><span className="text-xs font-semibold text-black/50">About 6 minutes</span></div><div className="h-1 bg-black/5"><div className="h-full bg-[#E83E6B] transition-[width] duration-300" style={{ width: `${progress}%` }} /></div></header><div className="px-5">{children}</div></main>
 }
 
 function Title({ children, help }: { children: React.ReactNode; help?: string }) {
@@ -161,15 +179,19 @@ function Intro({ form, set }: { form: FormState; set: <K extends keyof FormState
 }
 
 function Decision({ form, set }: { form: FormState; set: <K extends keyof FormState>(key: K, value: FormState[K]) => void }) {
-  return <><Title help="Think about your most recent real decision, not your ideal process.">What happened the last time you considered a gym?</Title><Options options={actionOptions} value={form.recentAction} onChange={(value) => set('recentAction', value)} /><Label>When was this?</Label><Options options={timingOptions} value={form.actionTiming} onChange={(value) => set('actionTiming', value)} /><Label>Which gyms did you consider?</Label><Textarea rows={3} value={form.gymsConsidered} onChange={(event) => set('gymsConsidered', event.target.value)} placeholder="List at least one—even if you did not join" /><Label>Which gym do you currently use? (optional)</Label><Input value={form.currentGym} onChange={(event) => set('currentGym', event.target.value)} /></>
+  return <><Title help="Think about your most recent real decision, not your ideal process.">What happened the last time you considered a gym?</Title><Options options={actionOptions} value={form.recentAction} onChange={(value) => set('recentAction', value)} /><Label>When was this?</Label><Options options={timingOptions} value={form.actionTiming} onChange={(value) => set('actionTiming', value)} /><Label>Which gyms did you seriously compare?</Label><Textarea rows={2} value={form.gymsConsidered} onChange={(event) => set('gymsConsidered', event.target.value)} placeholder="List the actual gym names" /><Label>Which gym did you choose? Write “none” if you did not join.</Label><Input value={form.chosenGym} onChange={(event) => set('chosenGym', event.target.value)} /><Label>What was the main reason for that decision?</Label><Textarea rows={2} value={form.decisionReason} onChange={(event) => set('decisionReason', event.target.value)} /><Label>What nearly stopped you? (optional)</Label><Textarea rows={2} value={form.almostStoppedReason} onChange={(event) => set('almostStoppedReason', event.target.value)} /><Label>Final monthly price including recurring fees (optional)</Label><Input value={form.monthlyPrice} onChange={(event) => set('monthlyPrice', event.target.value)} placeholder="e.g. S$135/month" /><Label>Which gym do you currently use? (optional)</Label><Input value={form.currentGym} onChange={(event) => set('currentGym', event.target.value)} /></>
 }
 
 function Training({ form, set, toggle }: { form: FormState; set: <K extends keyof FormState>(key: K, value: FormState[K]) => void; toggle: (key: 'trainingStyles', value: string) => void }) {
   return <><Title>Tell us about your training.</Title><Label>How often do you train?</Label><Options options={[["LESS_THAN_WEEKLY","Less than weekly"],["ONE_TO_TWO","1–2 times a week"],["THREE_TO_FOUR","3–4 times a week"],["FIVE_PLUS","5+ times a week"]]} value={form.trainingFrequency} onChange={(value) => set('trainingFrequency', value)} /><Label>What do you mainly train?</Label><Checks options={[["GENERAL","General fitness"],["BODYBUILDING","Bodybuilding"],["POWERLIFTING","Powerlifting"],["WEIGHTLIFTING","Olympic weightlifting"],["HYROX","HYROX / functional"],["CARDIO","Cardio"],["CLASSES","Group classes"],["OTHER","Other"]]} values={form.trainingStyles} onToggle={(value) => toggle('trainingStyles', value)} /></>
 }
 
-function Research({ form, toggle }: { form: FormState; toggle: (key: 'researchActions', value: string) => void }) {
-  return <><Title help="Select everything you actually did.">How did you compare your options?</Title><Checks options={[["GOOGLE","Used Google Maps or search"],["SOCIAL","Checked social media"],["ASKED_COMMUNITY","Asked friends, Reddit or a community"],["CONTACTED","Contacted gyms directly"],["VISITED","Visited or trialled gyms"],["COMPARED_PRICES","Compared prices or contracts"],["NOTES","Kept notes or a spreadsheet"],["OTHER","Something else"]]} values={form.researchActions} onToggle={(value) => toggle('researchActions', value)} /></>
+function Research({ form, set, toggle }: { form: FormState; set: <K extends keyof FormState>(key: K, value: FormState[K]) => void; toggle: (key: 'researchActions', value: string) => void }) {
+  return <><Title help="Select everything you actually did.">How did you compare your options?</Title><Checks options={[["GOOGLE","Used Google Maps or search"],["SOCIAL","Checked social media"],["ASKED_COMMUNITY","Asked friends, Reddit or a community"],["CONTACTED","Contacted gyms directly"],["VISITED","Visited or trialled gyms"],["COMPARED_PRICES","Compared prices or contracts"],["NOTES","Kept notes or a spreadsheet"],["OTHER","Something else"]]} values={form.researchActions} onToggle={(value) => toggle('researchActions', value)} /><Label>Roughly how much time did the search take?</Label><Options options={[["UNDER_1_HOUR","Under 1 hour"],["ONE_TO_THREE_HOURS","1–3 hours"],["FOUR_TO_SEVEN_HOURS","4–7 hours"],["EIGHT_PLUS_HOURS","8+ hours"]]} value={form.researchTime} onChange={(value) => set('researchTime', value)} /></>
+}
+
+function Priorities({ form, set, toggle }: { form: FormState; set: <K extends keyof FormState>(key: K, value: FormState[K]) => void; toggle: (key: 'priorityFactors', value: string) => void }) {
+  return <><Title help="Pick exactly three. Forced choices help us distinguish necessities from nice-to-haves.">Which three factors mattered most?</Title><p className="mt-5 text-sm font-bold text-[#E83E6B]">{form.priorityFactors.length} of 3 selected</p><Checks options={factorOptions} values={form.priorityFactors} onToggle={(value) => toggle('priorityFactors', value)} /><Label>Which single factor ultimately decided it?</Label><Options options={factorOptions} value={form.decidingFactor} onChange={(value) => set('decidingFactor', value)} /></>
 }
 
 function Gaps({ form, set, toggle }: { form: FormState; set: <K extends keyof FormState>(key: K, value: FormState[K]) => void; toggle: (key: 'informationGaps', value: string) => void }) {
@@ -177,9 +199,13 @@ function Gaps({ form, set, toggle }: { form: FormState; set: <K extends keyof Fo
 }
 
 function Contribution({ form, set, toggle }: { form: FormState; set: <K extends keyof FormState>(key: K, value: FormState[K]) => void; toggle: (key: 'contributionIntent', value: string) => void }) {
-  return <><Title help="These answers help us assess whether member-reported gym data can stay accurate.">What would you be willing to contribute?</Title><Checks options={[["PRICE","An anonymous price quote"],["CROWD","A 10-second crowd check-in"],["EQUIPMENT","Confirm equipment available"],["CONTRACT","A redacted quotation or contract"],["NONE","I would not contribute"]]} values={form.contributionIntent} onToggle={(value) => toggle('contributionIntent', value)} /><Label>Would you pay S$9 for a personalized comparison of your five best gym options?</Label><Options options={[["YES","Yes, if I were choosing now"],["MAYBE","Maybe—it depends on the report"],["NO","No"]]} value={form.paidReportIntent} onChange={(value) => set('paidReportIntent', value)} /></>
+  return <><Title help="These answers test whether the data can stay current and whether a paid product has a real place.">What would you contribute—and what would you buy?</Title><Checks options={[["PRICE","An anonymous price quote"],["CROWD","A 10-second crowd check-in"],["EQUIPMENT","Confirm equipment available"],["CONTRACT","A redacted quotation or contract"],["NONE","I would not contribute"]]} values={form.contributionIntent} onToggle={(value) => toggle('contributionIntent', value)} /><Label>If you were choosing a gym today, which would you select?</Label><Options options={[["FREE","Free basic gym listings"],["S5","S$5 detailed comparison"],["S9","S$9 personalized shortlist of five gyms"],["NONE","I would not use any of these"]]} value={form.paidReportIntent} onChange={(value) => set('paidReportIntent', value)} /></>
+}
+
+function Concept({ form, set }: { form: FormState; set: <K extends keyof FormState>(key: K, value: FormState[K]) => void }) {
+  return <><Title help="Imagine one dashboard comparing gyms using verified listings and recent member reports.">Would this have changed your last gym search?</Title><div className="mt-7 rounded-3xl border border-[#E83E6B]/30 bg-white p-5 text-sm leading-6"><p className="font-bold">The concept</p><p className="mt-2 text-black/60">Compare gyms by real prices, exact equipment, crowd levels, contract terms, amenities and member-reported atmosphere.</p></div><Label>How useful would this have been?</Label><Options options={[["ESSENTIAL","Essential—I would rely on it"],["VERY_USEFUL","Very useful"],["SOMEWHAT_USEFUL","Somewhat useful"],["NOT_USEFUL","Not useful"]]} value={form.conceptUsefulness} onChange={(value) => set('conceptUsefulness', value)} /><Label>Which feature would you check first?</Label><Options options={factorOptions} value={form.firstFeature} onChange={(value) => set('firstFeature', value)} /><Label>What would you still verify yourself?</Label><Textarea rows={2} value={form.verifyYourself} onChange={(event) => set('verifyYourself', event.target.value)} /><Label>What would make you distrust this dashboard?</Label><Textarea rows={2} value={form.distrustReason} onChange={(event) => set('distrustReason', event.target.value)} /></>
 }
 
 function Contact({ form, set }: { form: FormState; set: <K extends keyof FormState>(key: K, value: FormState[K]) => void }) {
-  return <><Title help="We’ll use your email only to identify duplicate responses and share relevant research updates.">Last step: tell us who you are.</Title><div className="mt-7 grid gap-4 sm:grid-cols-2"><div><Label>Name</Label><Input required value={form.name} onChange={(event) => set('name', event.target.value)} autoComplete="name" /></div><div><Label>Email</Label><Input required type="email" value={form.email} onChange={(event) => set('email', event.target.value)} autoComplete="email" /></div></div><input aria-hidden="true" tabIndex={-1} autoComplete="off" value={form.website} onChange={(event) => set('website', event.target.value)} className="hidden" /></>
+  return <><Title help="We’ll use your email to identify duplicate responses. Product updates are optional.">Last step: tell us who you are.</Title><div className="mt-7 grid gap-4 sm:grid-cols-2"><div><Label>Name</Label><Input required value={form.name} onChange={(event) => set('name', event.target.value)} autoComplete="name" /></div><div><Label>Email</Label><Input required type="email" value={form.email} onChange={(event) => set('email', event.target.value)} autoComplete="email" /></div></div><label className="mt-6 flex cursor-pointer items-start gap-3 rounded-2xl border border-black/10 bg-white p-4 text-sm leading-6"><input type="checkbox" checked={form.earlyAccessConsent} onChange={(event) => set('earlyAccessConsent', event.target.checked)} className="mt-1 h-5 w-5 accent-[#E83E6B]" /><span>Send me early access when the gym dashboard is ready.</span></label><input aria-hidden="true" tabIndex={-1} autoComplete="off" value={form.website} onChange={(event) => set('website', event.target.value)} className="hidden" /></>
 }

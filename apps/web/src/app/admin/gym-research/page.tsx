@@ -11,9 +11,19 @@ type ResearchResponse = {
   recentAction: string
   actionTiming: string
   gymsConsidered: string | null
+  chosenGym: string | null
+  decisionReason: string | null
+  monthlyPrice: string | null
   trainingStyles: string[]
+  researchTime: string | null
+  priorityFactors: string[] | null
+  decidingFactor: string | null
   informationGaps: string[]
+  conceptUsefulness: string | null
+  firstFeature: string | null
+  distrustReason: string | null
   paidReportIntent: string
+  earlyAccessConsent: boolean
   eligibilityScore: number
   qualified: boolean
   createdAt: string
@@ -36,8 +46,8 @@ export default function GymResearchAdminPage() {
   }, [])
 
   function downloadCsv() {
-    const headers = ['Name', 'Email', 'Qualified', 'Score', 'Action', 'Timing', 'Gyms considered', 'Training styles', 'Information gaps', 'S$9 report', 'Submitted']
-    const rows = responses.map((item) => [item.name, item.email, item.qualified, item.eligibilityScore, item.recentAction, item.actionTiming, item.gymsConsidered, item.trainingStyles.join('; '), item.informationGaps.join('; '), item.paidReportIntent, item.createdAt])
+    const headers = ['Name', 'Email', 'Qualified', 'Score', 'Action', 'Timing', 'Gyms considered', 'Chosen gym', 'Decision reason', 'Monthly price', 'Training styles', 'Research time', 'Top 3 factors', 'Deciding factor', 'Information gaps', 'Concept usefulness', 'First feature', 'Distrust reason', 'Product choice', 'Early access', 'Submitted']
+    const rows = responses.map((item) => [item.name, item.email, item.qualified, item.eligibilityScore, item.recentAction, item.actionTiming, item.gymsConsidered, item.chosenGym, item.decisionReason, item.monthlyPrice, item.trainingStyles.join('; '), item.researchTime, item.priorityFactors?.join('; '), item.decidingFactor, item.informationGaps.join('; '), item.conceptUsefulness, item.firstFeature, item.distrustReason, item.paidReportIntent, item.earlyAccessConsent, item.createdAt])
     const csv = [headers, ...rows].map((row) => row.map((value) => `"${String(value ?? '').replaceAll('"', '""')}"`).join(',')).join('\n')
     const link = document.createElement('a')
     link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }))
@@ -47,7 +57,7 @@ export default function GymResearchAdminPage() {
   }
 
   const qualified = responses.filter((item) => item.qualified)
-  const willingToPay = responses.filter((item) => item.paidReportIntent === 'YES')
+  const willingToPay = responses.filter((item) => ['S5', 'S9'].includes(item.paidReportIntent))
 
   return (
     <div className="min-h-screen bg-neutral-900 p-5 text-white lg:p-8">
@@ -60,7 +70,7 @@ export default function GymResearchAdminPage() {
         <div className="mt-8 grid gap-3 sm:grid-cols-3">
           <Metric label="Responses" value={responses.length} />
           <Metric label="Qualified" value={qualified.length} />
-          <Metric label="Would pay S$9" value={willingToPay.length} />
+          <Metric label="Selected paid" value={willingToPay.length} />
         </div>
 
         {loading ? <div className="flex justify-center py-24"><Loader2 className="h-7 w-7 animate-spin text-neutral-500" /></div> : error ? <p className="mt-8 rounded-xl bg-red-950 p-4 text-red-200">{error}</p> : (
@@ -71,7 +81,7 @@ export default function GymResearchAdminPage() {
                   <div><div className="flex items-center gap-2"><p className="font-bold">{item.name}</p>{item.qualified && <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/10 px-2 py-1 text-[10px] font-bold text-emerald-300"><CheckCircle2 className="h-3 w-3" /> Qualified</span>}</div><p className="mt-1 text-sm text-neutral-400">{item.email}</p></div>
                   <div className="text-right"><p className="text-xs font-bold text-pink-400">Score {item.eligibilityScore}</p><p className="mt-1 text-xs text-neutral-500">{new Date(item.createdAt).toLocaleDateString('en-SG')}</p></div>
                 </div>
-                <div className="mt-4 grid gap-3 text-xs text-neutral-300 sm:grid-cols-3"><Info label="Recent decision" value={`${item.recentAction} · ${item.actionTiming}`} /><Info label="Information gaps" value={item.informationGaps.join(', ')} /><Info label="S$9 report" value={item.paidReportIntent} /></div>
+                <div className="mt-4 grid gap-3 text-xs text-neutral-300 sm:grid-cols-3"><Info label="Decision" value={`${item.chosenGym || 'Not provided'} · ${item.decisionReason || item.recentAction}`} /><Info label="Top factors" value={item.priorityFactors?.join(', ') || 'Legacy response'} /><Info label="Concept / product" value={`${item.conceptUsefulness || 'Not asked'} · ${item.paidReportIntent}`} /></div>
                 {item.gymsConsidered && <p className="mt-4 text-sm text-neutral-400"><span className="font-bold text-neutral-200">Considered:</span> {item.gymsConsidered}</p>}
               </div>
             ))}

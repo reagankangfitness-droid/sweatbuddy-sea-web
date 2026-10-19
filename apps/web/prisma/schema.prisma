@@ -3624,13 +3624,25 @@ model GymResearchResponse {
   actionTiming        String   @db.VarChar(40)
   gymsConsidered      String?  @db.Text
   currentGym          String?  @db.VarChar(200)
+  chosenGym           String?  @db.VarChar(200)
+  decisionReason      String?  @db.Text
+  almostStoppedReason String?  @db.Text
+  monthlyPrice        String?  @db.VarChar(120)
   trainingFrequency   String   @db.VarChar(40)
   trainingStyles      Json
   researchActions     Json
+  researchTime        String?  @db.VarChar(40)
+  priorityFactors     Json?
+  decidingFactor      String?  @db.VarChar(80)
   informationGaps     Json
   biggestSurprise     String?  @db.Text
+  conceptUsefulness   String?  @db.VarChar(40)
+  firstFeature        String?  @db.VarChar(80)
+  verifyYourself      String?  @db.Text
+  distrustReason      String?  @db.Text
   contributionIntent  Json
   paidReportIntent    String   @db.VarChar(40)
+  earlyAccessConsent  Boolean  @default(false)
   interviewConsent    Boolean  @default(false)
   interviewAvailability String? @db.VarChar(300)
   researchConsent     Boolean  @default(false)

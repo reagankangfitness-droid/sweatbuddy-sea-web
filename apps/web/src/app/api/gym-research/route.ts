@@ -7,7 +7,9 @@ import { isAdminRequest } from '@/lib/admin-auth'
 const ACTIONS = new Set(['JOINED', 'SWITCHED', 'CANCELLED', 'COMPARED', 'NONE'])
 const TIMINGS = new Set(['LAST_MONTH', 'TWO_TO_THREE_MONTHS', 'FOUR_TO_SIX_MONTHS', 'OVER_SIX_MONTHS', 'NOT_APPLICABLE'])
 const FREQUENCIES = new Set(['LESS_THAN_WEEKLY', 'ONE_TO_TWO', 'THREE_TO_FOUR', 'FIVE_PLUS'])
-const PAYMENT_INTENT = new Set(['YES', 'MAYBE', 'NO'])
+const PAYMENT_INTENT = new Set(['FREE', 'S5', 'S9', 'NONE'])
+const RESEARCH_TIMES = new Set(['UNDER_1_HOUR', 'ONE_TO_THREE_HOURS', 'FOUR_TO_SEVEN_HOURS', 'EIGHT_PLUS_HOURS'])
+const USEFULNESS = new Set(['ESSENTIAL', 'VERY_USEFUL', 'SOMEWHAT_USEFUL', 'NOT_USEFUL'])
 
 type Payload = Record<string, unknown>
 
@@ -25,18 +27,21 @@ export async function POST(request: NextRequest) {
     const actionTiming = enumValue(body.actionTiming, TIMINGS)
     const trainingFrequency = enumValue(body.trainingFrequency, FREQUENCIES)
     const paidReportIntent = enumValue(body.paidReportIntent, PAYMENT_INTENT)
+    const researchTime = enumValue(body.researchTime, RESEARCH_TIMES)
+    const conceptUsefulness = enumValue(body.conceptUsefulness, USEFULNESS)
     const trainingStyles = stringArray(body.trainingStyles, 10)
     const researchActions = stringArray(body.researchActions, 10)
     const informationGaps = stringArray(body.informationGaps, 10)
     const contributionIntent = stringArray(body.contributionIntent, 10)
+    const priorityFactors = stringArray(body.priorityFactors, 3)
     const researchConsent = body.researchConsent === true
 
     if (!name || !email) return NextResponse.json({ error: 'Name and a valid email are required' }, { status: 400 })
     if (!researchConsent) return NextResponse.json({ error: 'Research consent is required' }, { status: 400 })
-    if (!recentAction || !actionTiming || !trainingFrequency || !paidReportIntent) {
+    if (!recentAction || !actionTiming || !trainingFrequency || !paidReportIntent || !researchTime || !conceptUsefulness) {
       return NextResponse.json({ error: 'Please complete all required questions' }, { status: 400 })
     }
-    if (!trainingStyles.length || !researchActions.length || !informationGaps.length) {
+    if (!trainingStyles.length || !researchActions.length || !informationGaps.length || priorityFactors.length !== 3) {
       return NextResponse.json({ error: 'Please complete all required selections' }, { status: 400 })
     }
 
@@ -54,13 +59,25 @@ export async function POST(request: NextRequest) {
         actionTiming,
         gymsConsidered: text(body.gymsConsidered, 2000),
         currentGym: text(body.currentGym, 200),
+        chosenGym: text(body.chosenGym, 200),
+        decisionReason: text(body.decisionReason, 2000),
+        almostStoppedReason: text(body.almostStoppedReason, 2000),
+        monthlyPrice: text(body.monthlyPrice, 120),
         trainingFrequency,
         trainingStyles,
         researchActions,
+        researchTime,
+        priorityFactors,
+        decidingFactor: text(body.decidingFactor, 80),
         informationGaps,
         biggestSurprise: text(body.biggestSurprise, 2000),
+        conceptUsefulness,
+        firstFeature: text(body.firstFeature, 80),
+        verifyYourself: text(body.verifyYourself, 2000),
+        distrustReason: text(body.distrustReason, 2000),
         contributionIntent,
         paidReportIntent,
+        earlyAccessConsent: body.earlyAccessConsent === true,
         interviewConsent: false,
         interviewAvailability: null,
         researchConsent,
@@ -79,13 +96,25 @@ export async function POST(request: NextRequest) {
         actionTiming,
         gymsConsidered: text(body.gymsConsidered, 2000),
         currentGym: text(body.currentGym, 200),
+        chosenGym: text(body.chosenGym, 200),
+        decisionReason: text(body.decisionReason, 2000),
+        almostStoppedReason: text(body.almostStoppedReason, 2000),
+        monthlyPrice: text(body.monthlyPrice, 120),
         trainingFrequency,
         trainingStyles,
         researchActions,
+        researchTime,
+        priorityFactors,
+        decidingFactor: text(body.decidingFactor, 80),
         informationGaps,
         biggestSurprise: text(body.biggestSurprise, 2000),
+        conceptUsefulness,
+        firstFeature: text(body.firstFeature, 80),
+        verifyYourself: text(body.verifyYourself, 2000),
+        distrustReason: text(body.distrustReason, 2000),
         contributionIntent,
         paidReportIntent,
+        earlyAccessConsent: body.earlyAccessConsent === true,
         interviewConsent: false,
         interviewAvailability: null,
         researchConsent,
